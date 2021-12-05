@@ -41,23 +41,25 @@ Future<List> fetchSongsList(searchQuery) async {
 }
 
 Future<List> topSongs() async {
-  String topSongsUrl = "";
+  String topSongsUrl =
+      "https://musap.vv2021.repl.co/get_data?act=playlist_data";
   var songsListJSON =
       await http.get(topSongsUrl, headers: {"Accept": "application/json"});
   var songsList = json.decode(songsListJSON.body);
-  topSongsList = songsList["list"];
-  for (int i = 0; i < topSongsList.length; i++) {
+  topSongsList = songsList[0]["list"];
+  var songsNumber = 10;
+  for (int i = 0; i < songsNumber; i++) {
     topSongsList[i]['title'] = topSongsList[i]['title']
         .toString()
         .replaceAll("&amp;", "&")
         .replaceAll("&#039;", "'")
         .replaceAll("&quot;", "\"");
-    topSongsList[i]["more_info"]["artistMap"]["primary_artists"][0]["name"] =
-        topSongsList[i]["more_info"]["artistMap"]["primary_artists"][0]["name"]
-            .toString()
-            .replaceAll("&amp;", "&")
-            .replaceAll("&#039;", "'")
-            .replaceAll("&quot;", "\"");
+    topSongsList[i]["more_info"]["singers"] = topSongsList[i]["more_info"]
+            ["singers"]
+        .toString()
+        .replaceAll("&amp;", "&")
+        .replaceAll("&#039;", "'")
+        .replaceAll("&quot;", "\"");
     topSongsList[i]['image'] = topSongsList[i]['image'].toString();
   }
   return topSongsList;

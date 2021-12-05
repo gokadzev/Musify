@@ -479,7 +479,7 @@ class AppState extends State<Musify> {
                                   padding: const EdgeInsets.only(
                                       top: 30.0, bottom: 10, left: 8),
                                   child: Text(
-                                    "Top 15 Songs",
+                                    "Top 10 Songs",
                                     textAlign: TextAlign.left,
                                     style: TextStyle(
                                       fontSize: 22,
@@ -491,17 +491,16 @@ class AppState extends State<Musify> {
                                 Container(
                                   //padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
                                   height:
-                                      MediaQuery.of(context).size.height * 0.22,
+                                      MediaQuery.of(context).size.height * 0.25,
                                   child: ListView.builder(
                                     scrollDirection: Axis.horizontal,
-                                    itemCount: 15,
+                                    itemCount: 10,
                                     itemBuilder: (context, index) {
                                       return getTopSong(
                                           data.data[index]["image"],
                                           data.data[index]["title"],
                                           data.data[index]["more_info"]
-                                                  ["artistMap"]
-                                              ["primary_artists"][0]["name"],
+                                              ["primary_artists"],
                                           data.data[index]["id"]);
                                     },
                                   ),

@@ -196,13 +196,13 @@ class AudioAppState extends State<AudioApp> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  width: 350,
-                  height: 350,
+                  width: 300,
+                  height: 300,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
                     shape: BoxShape.rectangle,
                     image: DecorationImage(
-                      fit: BoxFit.fill,
+                      fit: BoxFit.cover,
                       image: CachedNetworkImageProvider(image),
                     ),
                   ),
