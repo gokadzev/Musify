@@ -5,6 +5,7 @@ import 'package:Musify/ui/homePage.dart';
 main() async {
   runApp(
     MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: "DMSans",
         accentColor: accent,

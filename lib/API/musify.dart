@@ -37,13 +37,11 @@ Future<List> fetchSongsList(searchQuery) async {
         .replaceAll("&#039;", "'")
         .replaceAll("&quot;", "\"");
   }
-  print(searchedList);
   return searchedList;
 }
 
 Future<List> topSongs() async {
-  String topSongsUrl =
-      "https://www.jiosaavn.com/api.php?__call=webapi.get&token=8MT-LQlP35c_&type=playlist&p=1&n=20&includeMetaTags=0&ctx=web6dot0&api_version=4&_format=json&_marker=0";
+  String topSongsUrl = "";
   var songsListJSON =
       await http.get(topSongsUrl, headers: {"Accept": "application/json"});
   var songsList = json.decode(songsListJSON.body);
@@ -60,8 +58,7 @@ Future<List> topSongs() async {
             .replaceAll("&amp;", "&")
             .replaceAll("&#039;", "'")
             .replaceAll("&quot;", "\"");
-    topSongsList[i]['image'] =
-        topSongsList[i]['image'].toString().replaceAll("150x150", "500x500");
+    topSongsList[i]['image'] = topSongsList[i]['image'].toString();
   }
   return topSongsList;
 }
@@ -82,7 +79,6 @@ Future fetchSongDetails(songId) async {
       .replaceAll("&quot;", "\"")
       .replaceAll("&#039;", "'")
       .replaceAll("&amp;", "&");
-
   try {
     artist = getMain['songs']['data'][0]['more_info']['singers'];
   } catch (e) {

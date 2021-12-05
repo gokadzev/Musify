@@ -68,7 +68,7 @@ class AboutCards extends StatelessWidget {
               children: <Widget>[
                 ListTile(
                   title: Image.network(
-                    "image",
+                    "https://static.vecteezy.com/system/resources/thumbnails/000/540/989/small/Music_banner_alphabet_sign_marquee_light_bulb_vintage_carnival_or_circus_style__Vector_illustration.jpg",
                     height: 120,
                   ),
                   subtitle: Padding(
@@ -110,7 +110,8 @@ class AboutCards extends StatelessWidget {
                     shape: BoxShape.circle,
                     image: DecorationImage(
                       fit: BoxFit.fill,
-                      image: NetworkImage("image"),
+                      image: NetworkImage(
+                          "https://avatars.githubusercontent.com/u/79704324?v=4"),
                     ),
                   ),
                 ),

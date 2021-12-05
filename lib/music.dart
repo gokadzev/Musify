@@ -318,10 +318,7 @@ class AudioAppState extends State<AudioApp> {
                   Padding(
                     padding: const EdgeInsets.only(top: 40.0),
                     child: Builder(builder: (context) {
-                      return FlatButton(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18.0)),
-                          color: Colors.black12,
+                      return TextButton(
                           onPressed: () {
                             showBottomSheet(
                                 context: context,
