@@ -113,13 +113,6 @@ Future fetchSongDetails(songId) async {
   kUrl = getMain["songs"]["data"][0]["more_info"]["vlink"];
 
   rawkUrl = kUrl;
-
-  final client = http.Client();
-  final request = http.Request('HEAD', Uri.parse(kUrl))
-    ..followRedirects = false;
-  final response = await client.send(request);
-  print(response);
-  kUrl = (response.headers['location']);
   artist = (getMain["songs"]["data"][0]["more_info"]["singers"])
       .toString()
       .replaceAll("&quot;", "\"")

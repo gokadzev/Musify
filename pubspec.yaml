@@ -41,6 +41,7 @@ dependencies:
   permission_handler: ^5.0.1+1
   fluttertoast: ^7.0.2
   cached_network_image: ^2.2.0+1
+  audio_service: ^0.2.1
 
 dev_dependencies:
   flutter_test:
