@@ -12,7 +12,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gradient_widgets/gradient_widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:Musify/API/saavn.dart';
+import 'package:Musify/API/musify.dart';
 import 'package:Musify/music.dart';
 import 'package:Musify/style/appColors.dart';
 import 'package:Musify/ui/aboutPage.dart';
@@ -49,7 +49,7 @@ class AppState extends State<Musify> {
     setState(() {});
   }
 
-  getSongDetails(String id, var context) async {
+  getSongDetails(int id, var context) async {
     try {
       await fetchSongDetails(id);
       print(kUrl);
@@ -107,7 +107,7 @@ class AppState extends State<Musify> {
       );
       await pr.show();
 
-      final filename = title + ".m4a";
+      final filename = title + ".mp3";
       final artname = title + "_artwork.jpg";
       //Directory appDocDir = await getExternalStorageDirectory();
       String dlPath = await ExtStorage.getExternalStoragePublicDirectory(
@@ -120,23 +120,6 @@ class AppState extends State<Musify> {
           .then((value) => filepath2 = value.path);
       debugPrint('Audio path $filepath');
       debugPrint('Image path $filepath2');
-      if (has_320 == "true") {
-        kUrl = rawkUrl.replaceAll("_96.mp4", "_320.mp4");
-        final client = http.Client();
-        final request = http.Request('HEAD', Uri.parse(kUrl))
-          ..followRedirects = false;
-        final response = await client.send(request);
-        debugPrint(response.statusCode.toString());
-        kUrl = (response.headers['location']);
-        debugPrint(rawkUrl);
-        debugPrint(kUrl);
-        final request2 = http.Request('HEAD', Uri.parse(kUrl))
-          ..followRedirects = false;
-        final response2 = await client.send(request2);
-        if (response2.statusCode != 200) {
-          kUrl = kUrl.replaceAll(".mp4", ".mp3");
-        }
-      }
       var request = await HttpClient().getUrl(Uri.parse(kUrl));
       var response = await request.close();
       var bytes = await consolidateHttpClientResponseBytes(response);
@@ -217,7 +200,6 @@ class AppState extends State<Musify> {
         ),
       ),
       child: Scaffold(
-        resizeToAvoidBottomPadding: false,
         backgroundColor: Colors.transparent,
         //backgroundColor: Color(0xff384850),
         bottomNavigationBar: kUrl != ""
@@ -544,7 +526,7 @@ class AppState extends State<Musify> {
     );
   }
 
-  Widget getTopSong(String image, String title, String subtitle, String id) {
+  Widget getTopSong(String image, String title, String subtitle, int id) {
     return InkWell(
       onTap: () {
         getSongDetails(id, context);

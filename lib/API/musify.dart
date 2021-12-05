@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:des_plugin/des_plugin.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -13,19 +12,15 @@ String kUrl = "",
     album = "",
     artist = "",
     lyrics,
-    has_320,
     rawkUrl;
 String key = "38346591";
 String decrypt = "";
 
 Future<List> fetchSongsList(searchQuery) async {
   String searchUrl =
-      "https://www.jiosaavn.com/api.php?app_version=5.18.3&api_version=4&readable_version=5.18.3&v=79&_format=json&query=" +
-          searchQuery +
-          "&__call=autocomplete.get";
+      "https://musap.vv2021.repl.co/get_data?act=search&q=" + searchQuery;
   var res = await http.get(searchUrl, headers: {"Accept": "application/json"});
-  var resEdited = (res.body).split("-->");
-  var getMain = json.decode(resEdited[1]);
+  var getMain = json.decode(res.body);
 
   searchedList = getMain["songs"]["data"];
   for (int i = 0; i < searchedList.length; i++) {
@@ -42,6 +37,7 @@ Future<List> fetchSongsList(searchQuery) async {
         .replaceAll("&#039;", "'")
         .replaceAll("&quot;", "\"");
   }
+  print(searchedList);
   return searchedList;
 }
 
@@ -71,34 +67,28 @@ Future<List> topSongs() async {
 }
 
 Future fetchSongDetails(songId) async {
-  String songUrl =
-      "https://www.jiosaavn.com/api.php?app_version=5.18.3&api_version=4&readable_version=5.18.3&v=79&_format=json&__call=song.getDetails&pids=" +
-          songId;
+  String songUrl = "https://musap.vv2021.repl.co/get_data?act=search&id=" +
+      songId.toString();
   var res = await http.get(songUrl, headers: {"Accept": "application/json"});
-  var resEdited = (res.body).split("-->");
-  var getMain = json.decode(resEdited[1]);
+  var getMain = json.decode(res.body);
 
-  title = (getMain[songId]["title"])
-      .toString()
+  title = (getMain["songs"]["data"][0]["title"])
       .split("(")[0]
       .replaceAll("&amp;", "&")
       .replaceAll("&#039;", "'")
       .replaceAll("&quot;", "\"");
-  image = (getMain[songId]["image"]).replaceAll("150x150", "500x500");
-  album = (getMain[songId]["more_info"]["album"])
-      .toString()
+  image = (getMain["songs"]["data"][0]["image"]);
+  album = (getMain["songs"]["data"][0]["album"])
       .replaceAll("&quot;", "\"")
       .replaceAll("&#039;", "'")
       .replaceAll("&amp;", "&");
 
   try {
-    artist =
-        getMain[songId]['more_info']['artistMap']['primary_artists'][0]['name'];
+    artist = getMain['songs']['data'][0]['more_info']['singers'];
   } catch (e) {
     artist = "-";
   }
-  print(getMain[songId]["more_info"]["has_lyrics"]);
-  if (getMain[songId]["more_info"]["has_lyrics"] == "true") {
+  if (getMain['songs']['data'][0]["more_info"]["has_lyrics"] == "true") {
     String lyricsUrl =
         "https://www.jiosaavn.com/api.php?__call=lyrics.getLyrics&lyrics_id=" +
             songId +
@@ -120,9 +110,7 @@ Future fetchSongDetails(songId) async {
     }
   }
 
-  has_320 = getMain[songId]["more_info"]["320kbps"];
-  kUrl = await DesPlugin.decrypt(
-      key, getMain[songId]["more_info"]["encrypted_media_url"]);
+  kUrl = getMain["songs"]["data"][0]["more_info"]["vlink"];
 
   rawkUrl = kUrl;
 
@@ -132,8 +120,7 @@ Future fetchSongDetails(songId) async {
   final response = await client.send(request);
   print(response);
   kUrl = (response.headers['location']);
-  artist = (getMain[songId]["more_info"]["artistMap"]["primary_artists"][0]
-          ["name"])
+  artist = (getMain["songs"]["data"][0]["more_info"]["singers"])
       .toString()
       .replaceAll("&quot;", "\"")
       .replaceAll("&#039;", "'")

@@ -3,11 +3,12 @@ import 'dart:async';
 import 'package:audioplayer/audioplayer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gradient_widgets/gradient_widgets.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:Musify/style/appColors.dart';
 
-import 'API/saavn.dart';
+import 'API/musify.dart';
 
 String status = 'hidden';
 AudioPlayer audioPlayer;
@@ -101,6 +102,7 @@ class AudioAppState extends State<AudioApp> {
   }
 
   Future play() async {
+    print(kUrl);
     await audioPlayer.play(kUrl);
     if (mounted)
       setState(() {
@@ -154,7 +156,8 @@ class AudioAppState extends State<AudioApp> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          brightness: Brightness.dark,
+          systemOverlayStyle:
+              SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
           backgroundColor: Colors.transparent,
           elevation: 0,
           //backgroundColor: Color(0xff384850),
