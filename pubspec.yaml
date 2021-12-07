@@ -31,7 +31,6 @@ dependencies:
   http: ^0.13.4
   audioplayer: 0.8.1
   audioplayer_web: 0.7.1
-  ext_storage: ^1.0.3
   audiotagger: ^2.2.1
   path_provider: ^2.0.7
   progress_dialog: ^1.2.4

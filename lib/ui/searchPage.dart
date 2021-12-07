@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:Musify/API/musify.dart';
+import 'package:Musify/services/ext_storage.dart';
 import 'package:Musify/style/appColors.dart';
 import 'package:audiotagger/audiotagger.dart';
-import 'package:ext_storage/ext_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -64,8 +64,7 @@ class _SearchPageState extends State<SearchPage> {
       final filename = title + ".mp3";
       final artname = title + "_artwork.jpg";
       //Directory appDocDir = await getExternalStorageDirectory();
-      String dlPath = await ExtStorage.getExternalStoragePublicDirectory(
-          ExtStorage.DIRECTORY_MUSIC);
+      String dlPath = await ExtStorageProvider.getExtStorage(dirName: 'Music');
       await File(dlPath + "/" + filename)
           .create(recursive: true)
           .then((value) => filepath = value.path);
