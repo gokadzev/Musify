@@ -9,7 +9,6 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:Musify/API/musify.dart';
 import 'package:Musify/music.dart';
 import 'package:Musify/style/appColors.dart';
-import 'package:flutter_icons/flutter_icons.dart';
 
 class Musify extends StatefulWidget {
   @override
@@ -54,10 +53,10 @@ class AppState extends State<Musify> {
 
   Widget getFooter() {
     List items = [
-      Feather.home,
-      Feather.search,
-      Feather.book,
-      Feather.settings,
+      MdiIcons.homeOutline,
+      MdiIcons.magnify,
+      MdiIcons.bookOutline,
+      MdiIcons.cogOutline,
     ];
 
     return Column(
@@ -105,7 +104,7 @@ class AppState extends State<Musify> {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(8.0),
                             child: CachedNetworkImage(
-                              imageUrl: image,
+                              imageUrl: image!,
                               fit: BoxFit.fill,
                             ),
                           ),
@@ -117,18 +116,18 @@ class AppState extends State<Musify> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
                               Text(
-                                title.length > 18
-                                    ? title.substring(0, 18) + "..."
-                                    : title,
+                                title!.length > 18
+                                    ? title!.substring(0, 18) + "..."
+                                    : title!,
                                 style: TextStyle(
                                     color: accent,
                                     fontSize: 17,
                                     fontWeight: FontWeight.w600),
                               ),
                               Text(
-                                artist.length > 18
-                                    ? artist.substring(0, 18) + "..."
-                                    : artist,
+                                artist!.length > 18
+                                    ? artist!.substring(0, 18) + "..."
+                                    : artist!,
                                 style:
                                     TextStyle(color: accentLight, fontSize: 15),
                               )
@@ -145,10 +144,11 @@ class AppState extends State<Musify> {
                           onPressed: () {
                             setState(() {
                               if (playerState == PlayerState.playing) {
-                                audioPlayer.pause();
+                                audioPlayer?.pause();
                                 playerState = PlayerState.paused;
                               } else if (playerState == PlayerState.paused) {
-                                audioPlayer.play(kUrl);
+                                audioPlayer?.setUrl(kUrl!);
+                                audioPlayer?.play();
                                 playerState = PlayerState.playing;
                               }
                             });

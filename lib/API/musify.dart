@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 
 List searchedList = [];
 List topSongsList = [];
-String kUrl = "",
+String? kUrl = "",
     checker,
     image = "",
     title = "",
@@ -101,7 +101,7 @@ Future fetchSongDetails(songId) async {
   } else {
     lyrics = "null";
     String lyricsApiUrl =
-        "https://musifydev.vercel.app/lyrics/" + artist + "/" + title;
+        "https://musifydev.vercel.app/lyrics/" + artist! + "/" + title!;
     var lyricsApiRes = await http
         .get(Uri.parse(lyricsApiUrl), headers: {"Accept": "application/json"});
     var lyricsResponse = json.decode(lyricsApiRes.body);

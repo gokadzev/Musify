@@ -18,7 +18,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 2.1.0+1
 
 environment:
-  sdk: ">=2.11.0 <3.0.0"
+  sdk: ">=2.13.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -29,19 +29,16 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.4
   http: ^0.13.4
-  audioplayer: 0.8.1
-  audioplayer_web: 0.7.1
   audiotagger: ^2.2.1
   path_provider: ^2.0.7
-  progress_dialog: ^1.2.4
   gradient_widgets: ^0.6.0
   material_design_icons_flutter: ^5.0.6595
   url_launcher: ^6.0.17
   permission_handler: ^8.3.0
   fluttertoast: ^8.0.8
-  cached_network_image: ^2.5.1
-  flutter_icons: ^1.1.0
-  audio_service: ^0.16.1
+  cached_network_image: ^3.2.0
+  audio_service: ^0.18.1
+  just_audio: ^0.9.18 
 
 dev_dependencies:
   flutter_test:

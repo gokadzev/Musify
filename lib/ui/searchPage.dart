@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:progress_dialog/progress_dialog.dart';
 import 'package:audiotagger/models/tag.dart';
 import 'package:Musify/music.dart';
 
@@ -37,34 +36,38 @@ class _SearchPageState extends State<SearchPage> {
     status = await Permission.storage.status;
     await fetchSongDetails(id);
     if (status.isGranted) {
-      ProgressDialog pr = ProgressDialog(context);
-      pr = ProgressDialog(
-        context,
-        type: ProgressDialogType.Normal,
-        isDismissible: false,
-        showLogs: false,
-      );
+      // ProgressDialog pr = ProgressDialog(context);
+      // pr = ProgressDialog(
+      //   context,
+      //   type: ProgressDialogType.Normal,
+      //   isDismissible: false,
+      //   showLogs: false,
+      // );
 
-      pr.style(
-        backgroundColor: Color(0xff263238),
-        elevation: 4,
-        textAlign: TextAlign.left,
-        progressTextStyle: TextStyle(color: Colors.white),
-        message: "Downloading " + title,
-        messageTextStyle: TextStyle(color: accent),
-        progressWidget: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(accent),
-          ),
-        ),
-      );
-      await pr.show();
+      // pr.style(
+      //   backgroundColor: Color(0xff263238),
+      //   elevation: 4,
+      //   textAlign: TextAlign.left,
+      //   progressTextStyle: TextStyle(color: Colors.white),
+      //   message: "Downloading " + title,
+      //   messageTextStyle: TextStyle(color: accent),
+      //   progressWidget: Padding(
+      //     padding: const EdgeInsets.all(20.0),
+      //     child: CircularProgressIndicator(
+      //       valueColor: AlwaysStoppedAnimation<Color>(accent),
+      //     ),
+      //   ),
+      // );
+      // await pr.show();
 
-      final filename = title + ".mp3";
-      final artname = title + "_artwork.jpg";
+      final filename = title! + ".mp3";
+      final artname = title! + "_artwork.jpg";
+      filepath = '';
+      filepath2 = '';
       //Directory appDocDir = await getExternalStorageDirectory();
-      String dlPath = await ExtStorageProvider.getExtStorage(dirName: 'Music');
+      String dlPath =
+          await ExtStorageProvider.getExtStorage(dirName: 'Music') ??
+              '/storage/emulated/0/Music';
       await File(dlPath + "/" + filename)
           .create(recursive: true)
           .then((value) => filepath = value.path);
@@ -73,12 +76,12 @@ class _SearchPageState extends State<SearchPage> {
           .then((value) => filepath2 = value.path);
       debugPrint('Audio path $filepath');
       debugPrint('Image path $filepath2');
-      var request = await HttpClient().getUrl(Uri.parse(kUrl));
+      var request = await HttpClient().getUrl(Uri.parse(kUrl!));
       var response = await request.close();
       var bytes = await consolidateHttpClientResponseBytes(response);
       File file = File(filepath);
 
-      var request2 = await HttpClient().getUrl(Uri.parse(image));
+      var request2 = await HttpClient().getUrl(Uri.parse(image!));
       var response2 = await request2.close();
       var bytes2 = await consolidateHttpClientResponseBytes(response2);
       File file2 = File(filepath2);
@@ -103,7 +106,7 @@ class _SearchPageState extends State<SearchPage> {
         tag: tag,
       );
       await Future.delayed(const Duration(seconds: 1), () {});
-      await pr.hide();
+      // await pr.hide();
 
       if (await file2.exists()) {
         await file2.delete();

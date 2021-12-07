@@ -1,22 +1,22 @@
 import 'dart:async';
 
-import 'package:audioplayer/audioplayer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gradient_widgets/gradient_widgets.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:Musify/style/appColors.dart';
 
 import 'API/musify.dart';
 
 String status = 'hidden';
-AudioPlayer audioPlayer;
-PlayerState playerState;
+AudioPlayer? audioPlayer;
+PlayerState? playerState;
 
 typedef void OnError(Exception exception);
 
-enum PlayerState { stopped, playing, paused }
+enum PlayerState { stopped, playing, paused, loading }
 
 class AudioApp extends StatefulWidget {
   @override
@@ -25,8 +25,8 @@ class AudioApp extends StatefulWidget {
 
 @override
 class AudioAppState extends State<AudioApp> {
-  Duration duration;
-  Duration position;
+  Duration? duration;
+  Duration? position;
 
   get isPlaying => playerState == PlayerState.playing;
 
@@ -40,8 +40,8 @@ class AudioAppState extends State<AudioApp> {
 
   bool isMuted = false;
 
-  StreamSubscription _positionSubscription;
-  StreamSubscription _audioPlayerStateSubscription;
+  StreamSubscription? _positionSubscription;
+  StreamSubscription? _audioPlayerStateSubscription;
 
   @override
   void initState() {
@@ -52,6 +52,7 @@ class AudioAppState extends State<AudioApp> {
 
   @override
   void dispose() {
+    audioPlayer!.dispose();
     super.dispose();
   }
 
@@ -75,63 +76,46 @@ class AudioAppState extends State<AudioApp> {
       }
     });
 
-    _positionSubscription = audioPlayer.onAudioPositionChanged
+    _positionSubscription = audioPlayer?.positionStream
         .listen((p) => {if (mounted) setState(() => position = p)});
 
-    _audioPlayerStateSubscription =
-        audioPlayer.onPlayerStateChanged.listen((s) {
-      if (s == AudioPlayerState.PLAYING) {
-        {
-          if (mounted) setState(() => duration = audioPlayer.duration);
-        }
-      } else if (s == AudioPlayerState.STOPPED) {
-        onComplete();
-        if (mounted)
-          setState(() {
-            position = duration;
-          });
+    _audioPlayerStateSubscription = audioPlayer?.playerStateStream.listen((s) {
+      final isPlaying = s.playing;
+      final processingState = s.processingState;
+      if (processingState == ProcessingState.loading ||
+          processingState == ProcessingState.buffering) {
+        playerState = PlayerState.loading;
+      } else if (!isPlaying) {
+        playerState = PlayerState.paused;
+      } else if (processingState != ProcessingState.completed) {
+        playerState = PlayerState.playing;
+      } else {
+        playerState = PlayerState.stopped;
+        audioPlayer!.seek(Duration.zero);
       }
-    }, onError: (msg) {
-      if (mounted)
-        setState(() {
-          playerState = PlayerState.stopped;
-          duration = Duration(seconds: 0);
-          position = Duration(seconds: 0);
-        });
     });
   }
 
   Future play() async {
     print(kUrl);
-    await audioPlayer.play(kUrl);
-    if (mounted)
-      setState(() {
-        playerState = PlayerState.playing;
-      });
+    await audioPlayer?.setUrl(kUrl!);
+    await audioPlayer?.play();
   }
 
   Future pause() async {
-    await audioPlayer.pause();
-    setState(() {
-      playerState = PlayerState.paused;
-    });
+    await audioPlayer?.pause();
   }
 
   Future stop() async {
-    await audioPlayer.stop();
-    if (mounted)
-      setState(() {
-        playerState = PlayerState.stopped;
-        position = Duration();
-      });
+    await audioPlayer?.stop();
   }
 
   Future mute(bool muted) async {
-    await audioPlayer.mute(muted);
-    if (mounted)
-      setState(() {
-        isMuted = muted;
-      });
+    if (muted) {
+      audioPlayer?.setVolume(0);
+    } else {
+      audioPlayer?.setVolume(1);
+    }
   }
 
   void onComplete() {
@@ -202,7 +186,7 @@ class AudioAppState extends State<AudioApp> {
                     shape: BoxShape.rectangle,
                     image: DecorationImage(
                       fit: BoxFit.cover,
-                      image: CachedNetworkImageProvider(image),
+                      image: CachedNetworkImageProvider(image!),
                     ),
                   ),
                 ),
@@ -211,7 +195,7 @@ class AudioAppState extends State<AudioApp> {
                   child: Column(
                     children: <Widget>[
                       GradientText(
-                        title,
+                        title!,
                         shaderRect: Rect.fromLTWH(13.0, 0.0, 100.0, 50.0),
                         gradient: LinearGradient(colors: [
                           Color(0xff4db6ac),
@@ -225,7 +209,7 @@ class AudioAppState extends State<AudioApp> {
                       Padding(
                         padding: const EdgeInsets.only(top: 8.0),
                         child: Text(
-                          album + "  |  " + artist,
+                          album! + "  |  " + artist!,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: accentLight,
@@ -258,11 +242,15 @@ class AudioAppState extends State<AudioApp> {
                   activeColor: accent,
                   inactiveColor: Colors.green[50],
                   value: position?.inMilliseconds?.toDouble() ?? 0.0,
-                  onChanged: (double value) {
-                    return audioPlayer.seek((value / 1000).roundToDouble());
+                  onChanged: (double? value) {
+                    setState(() {
+                      audioPlayer!.seek((Duration(
+                          seconds: (value! / 1000).roundToDouble().toInt())));
+                      value = value;
+                    });
                   },
                   min: 0.0,
-                  max: duration.inMilliseconds.toDouble()),
+                  max: duration!.inMilliseconds.toDouble()),
             if (position != null) _buildProgressView(),
             Padding(
               padding: const EdgeInsets.only(top: 18.0),
@@ -380,7 +368,7 @@ class AudioAppState extends State<AudioApp> {
                                                         child:
                                                             SingleChildScrollView(
                                                           child: Text(
-                                                            lyrics,
+                                                            lyrics!,
                                                             style: TextStyle(
                                                               fontSize: 16.0,
                                                               color:

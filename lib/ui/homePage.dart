@@ -107,11 +107,11 @@ class _HomePageState extends State<HomePage> {
                             itemCount: 10,
                             itemBuilder: (context, index) {
                               return getTopSong(
-                                  data.data[index]["image"],
-                                  data.data[index]["title"],
-                                  data.data[index]["more_info"]
+                                  (data as dynamic).data[index]["image"],
+                                  (data as dynamic).data[index]["title"],
+                                  (data as dynamic).data[index]["more_info"]
                                       ["primary_artists"],
-                                  data.data[index]["id"]);
+                                  (data as dynamic).data[index]["id"]);
                             },
                           ),
                         ),

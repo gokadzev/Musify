@@ -19,8 +19,8 @@ class ExtStorageProvider {
   }
 
   // getting external storage path
-  static Future<String> getExtStorage({String dirName}) async {
-    Directory directory;
+  static Future<String?> getExtStorage({required String dirName}) async {
+    Directory? directory;
 
     try {
       // checking platform
@@ -29,7 +29,7 @@ class ExtStorageProvider {
           directory = await getExternalStorageDirectory();
 
           // getting main path
-          final String newPath = directory.path
+          final String newPath = directory!.path
               .replaceFirst('Android/data/com.shadow.blackhole/files', dirName);
 
           directory = Directory(newPath);
@@ -58,7 +58,7 @@ class ExtStorageProvider {
         return directory.path;
       } else {
         directory = await getDownloadsDirectory();
-        return directory.path;
+        return directory!.path;
       }
     } catch (e) {
       rethrow;
