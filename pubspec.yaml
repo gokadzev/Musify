@@ -40,7 +40,7 @@ dependencies:
   url_launcher: ^6.0.17
   permission_handler: ^8.3.0
   fluttertoast: ^8.0.8
-  cached_network_image: ^3.2.0
+  cached_network_image: ^2.5.1
   audio_service: ^0.16.2+1
   flutter_icons: ^1.1.0
 
