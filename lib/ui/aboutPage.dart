@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gradient_widgets/gradient_widgets.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:Musify/helper/utils.dart';
 import 'package:Musify/style/appColors.dart';
 
 class AboutPage extends StatelessWidget {
@@ -122,30 +120,6 @@ class AboutCards extends StatelessWidget {
                 subtitle: Text(
                   'Web/APP Developer',
                   style: TextStyle(color: accentLight),
-                ),
-                trailing: Wrap(
-                  children: <Widget>[
-                    IconButton(
-                      icon: Icon(
-                        MdiIcons.telegram,
-                        color: accentLight,
-                      ),
-                      tooltip: 'Contact on Telegram',
-                      onPressed: () {
-                        launchURL("");
-                      },
-                    ),
-                    IconButton(
-                      icon: Icon(
-                        MdiIcons.twitter,
-                        color: accentLight,
-                      ),
-                      tooltip: 'Contact on Twitter',
-                      onPressed: () {
-                        launchURL("");
-                      },
-                    ),
-                  ],
                 ),
               ),
             ),

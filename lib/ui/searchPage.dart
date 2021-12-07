@@ -26,7 +26,7 @@ class _SearchPageState extends State<SearchPage> {
     String filepath;
     String filepath2;
     var status = await Permission.storage.status;
-    if (status.isUndetermined || status.isDenied) {
+    if (status.isDenied) {
       // code of read or write file in external storage (SD card)
       // You can request multiple permissions at once.
       Map<Permission, PermissionStatus> statuses = await [
