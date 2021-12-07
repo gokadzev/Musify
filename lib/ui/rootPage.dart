@@ -117,14 +117,18 @@ class AppState extends State<Musify> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
                               Text(
-                                title,
+                                title.length > 18
+                                    ? title.substring(0, 18) + "..."
+                                    : title,
                                 style: TextStyle(
                                     color: accent,
                                     fontSize: 17,
                                     fontWeight: FontWeight.w600),
                               ),
                               Text(
-                                artist,
+                                artist.length > 18
+                                    ? artist.substring(0, 18) + "..."
+                                    : artist,
                                 style:
                                     TextStyle(color: accentLight, fontSize: 15),
                               )
@@ -198,7 +202,7 @@ class AppState extends State<Musify> {
         ),
         Center(
           child: Text(
-            "Setting",
+            "Settings",
             style: TextStyle(
                 fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
           ),
