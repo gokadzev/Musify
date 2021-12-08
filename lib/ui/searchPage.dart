@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:Musify/API/musify.dart';
+import 'package:Musify/services/audio_manager.dart';
 import 'package:Musify/services/ext_storage.dart';
 import 'package:Musify/style/appColors.dart';
 import 'package:audiotagger/audiotagger.dart';
@@ -151,20 +152,6 @@ class _SearchPageState extends State<SearchPage> {
     setState(() {});
   }
 
-  getSongDetails(int id, var context) async {
-    try {
-      await fetchSongDetails(id);
-    } catch (e) {
-      artist = "Unknown";
-    }
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => AudioApp(),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -250,8 +237,7 @@ class _SearchPageState extends State<SearchPage> {
                           child: InkWell(
                             borderRadius: BorderRadius.circular(10.0),
                             onTap: () {
-                              getSongDetails(
-                                  searchedList[index]["id"], context);
+                              playSong(searchedList[index]["id"], context);
                             },
                             onLongPress: () {
                               topSongs();

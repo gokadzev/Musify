@@ -1,3 +1,4 @@
+import 'package:Musify/services/audio_manager.dart';
 import 'package:Musify/style/appColors.dart';
 import 'package:Musify/ui/aboutPage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -13,20 +14,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  getSongDetails(int id, var context) async {
-    try {
-      await fetchSongDetails(id);
-    } catch (e) {
-      artist = "Unknown";
-    }
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => AudioApp(),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -133,7 +120,7 @@ class _HomePageState extends State<HomePage> {
   Widget getTopSong(String image, String title, String subtitle, int id) {
     return InkWell(
       onTap: () {
-        getSongDetails(id, context);
+        playSong(id, context);
       },
       child: Column(
         children: [

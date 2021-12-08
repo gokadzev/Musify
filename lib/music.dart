@@ -9,14 +9,23 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:Musify/style/appColors.dart';
 
 import 'API/musify.dart';
+import 'services/audio_manager.dart';
 
 String status = 'hidden';
-AudioPlayer? audioPlayer;
-PlayerState? playerState;
 
 typedef void OnError(Exception exception);
 
-enum PlayerState { stopped, playing, paused, loading }
+StreamSubscription? _positionSubscription;
+StreamSubscription? _audioPlayerStateSubscription;
+
+Duration? duration;
+Duration? position;
+
+get isPlaying => buttonNotifier.value == MPlayerState.playing;
+
+get isPaused => buttonNotifier.value == MPlayerState.paused;
+
+enum MPlayerState { stopped, playing, paused, loading }
 
 class AudioApp extends StatefulWidget {
   @override
@@ -25,28 +34,6 @@ class AudioApp extends StatefulWidget {
 
 @override
 class AudioAppState extends State<AudioApp> {
-  Duration? duration;
-  Duration? position;
-
-  bool get hasNext => audioPlayer!.hasNext;
-
-  bool get hasPrevious => audioPlayer!.hasPrevious;
-
-  get isPlaying => playerState == PlayerState.playing;
-
-  get isPaused => playerState == PlayerState.paused;
-
-  get durationText =>
-      duration != null ? duration.toString().split('.').first : '';
-
-  get positionText =>
-      position != null ? position.toString().split('.').first : '';
-
-  bool isMuted = false;
-
-  StreamSubscription? _positionSubscription;
-  StreamSubscription? _audioPlayerStateSubscription;
-
   @override
   void initState() {
     super.initState();
@@ -54,19 +41,12 @@ class AudioAppState extends State<AudioApp> {
     initAudioPlayer();
   }
 
-  @override
-  void dispose() {
-    audioPlayer!.dispose();
-    super.dispose();
-  }
-
   void initAudioPlayer() {
-    if (audioPlayer == null) {
-      audioPlayer = AudioPlayer();
+    if (buttonNotifier.value != MPlayerState.playing) {
+      setState(() {
+        play();
+      });
     }
-    setState(() {
-      play();
-    });
 
     audioPlayer?.durationStream.listen((d) => setState(() => duration = d));
 
@@ -78,43 +58,21 @@ class AudioAppState extends State<AudioApp> {
       final processingState = s.processingState;
       if (processingState == ProcessingState.loading ||
           processingState == ProcessingState.buffering) {
-        playerState = PlayerState.loading;
+        buttonNotifier.value = MPlayerState.loading;
       } else if (!isPlaying) {
-        playerState = PlayerState.paused;
+        buttonNotifier.value = MPlayerState.paused;
       } else if (processingState != ProcessingState.completed) {
-        playerState = PlayerState.playing;
+        buttonNotifier.value = MPlayerState.playing;
       } else {
-        playerState = PlayerState.stopped;
+        buttonNotifier.value = MPlayerState.stopped;
         duration = Duration.zero;
         audioPlayer!.seek(Duration.zero);
       }
     });
   }
 
-  Future play() async {
-    print(kUrl);
-    await audioPlayer?.setUrl(kUrl!);
-    await audioPlayer?.play();
-  }
-
-  Future pause() async {
-    await audioPlayer?.pause();
-  }
-
-  Future stop() async {
-    await audioPlayer?.stop();
-  }
-
-  Future mute(bool muted) async {
-    if (muted) {
-      audioPlayer?.setVolume(0);
-    } else {
-      audioPlayer?.setVolume(1);
-    }
-  }
-
   void onComplete() {
-    if (mounted) setState(() => playerState = PlayerState.stopped);
+    if (mounted) setState(() => buttonNotifier.value = MPlayerState.stopped);
   }
 
   @override
@@ -255,47 +213,55 @@ class AudioAppState extends State<AudioApp> {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      isPlaying
-                          ? Container()
-                          : Container(
-                              decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      Color(0xff4db6ac),
-                                      //Color(0xff00c754),
-                                      Color(0xff61e88a),
-                                    ],
-                                  ),
-                                  borderRadius: BorderRadius.circular(100)),
-                              child: IconButton(
-                                onPressed: isPlaying ? null : () => play(),
-                                iconSize: 40.0,
-                                icon: Padding(
-                                  padding: const EdgeInsets.only(left: 2.2),
-                                  child: Icon(MdiIcons.playOutline),
-                                ),
-                                color: Color(0xff263238),
-                              ),
+                      Container(
+                        decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                Color(0xff4db6ac),
+                                //Color(0xff00c754),
+                                Color(0xff61e88a),
+                              ],
                             ),
-                      isPlaying
-                          ? Container(
-                              decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      Color(0xff4db6ac),
-                                      //Color(0xff00c754),
-                                      Color(0xff61e88a),
-                                    ],
-                                  ),
-                                  borderRadius: BorderRadius.circular(100)),
-                              child: IconButton(
-                                onPressed: isPlaying ? () => pause() : null,
-                                iconSize: 40.0,
-                                icon: Icon(MdiIcons.pause),
-                                color: Color(0xff263238),
-                              ),
-                            )
-                          : Container()
+                            borderRadius: BorderRadius.circular(100)),
+                        child: ValueListenableBuilder<MPlayerState>(
+                          valueListenable: buttonNotifier,
+                          builder: (_, value, __) {
+                            switch (value) {
+                              case MPlayerState.loading:
+                                return Container(
+                                  margin: const EdgeInsets.all(8.0),
+                                  width: 32.0,
+                                  height: 32.0,
+                                  child: const CircularProgressIndicator(),
+                                );
+                              case MPlayerState.paused:
+                                return IconButton(
+                                  icon: const Icon(MdiIcons.play),
+                                  iconSize: 32.0,
+                                  onPressed: () {
+                                    play();
+                                  },
+                                );
+                              case MPlayerState.playing:
+                                return IconButton(
+                                  icon: const Icon(MdiIcons.pause),
+                                  iconSize: 32.0,
+                                  onPressed: () {
+                                    pause();
+                                  },
+                                );
+                              case MPlayerState.stopped:
+                                return IconButton(
+                                  icon: const Icon(MdiIcons.play),
+                                  iconSize: 32.0,
+                                  onPressed: () {
+                                    play();
+                                  },
+                                );
+                            }
+                          },
+                        ),
+                      )
                     ],
                   ),
                   Padding(

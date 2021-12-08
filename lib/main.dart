@@ -1,8 +1,10 @@
+import 'package:Musify/services/locator.dart';
 import 'package:flutter/material.dart';
 import 'package:Musify/style/appColors.dart';
 import 'package:Musify/ui/rootPage.dart';
 
 main() async {
+  setupServiceLocator();
   runApp(
     MaterialApp(
       debugShowCheckedModeBanner: false,

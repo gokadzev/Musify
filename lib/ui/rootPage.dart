@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:Musify/services/audio_manager.dart';
 import 'package:Musify/ui/homePage.dart';
 import 'package:Musify/ui/searchPage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -22,7 +23,6 @@ class AppState extends State<Musify> {
 
   void initState() {
     super.initState();
-
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       systemNavigationBarColor: Color(0xff1c252a),
       statusBarColor: Colors.transparent,
@@ -62,104 +62,114 @@ class AppState extends State<Musify> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        kUrl != ""
-            ? Container(
-                height: 75,
-                //color: Color(0xff1c252a),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(18),
-                        topRight: Radius.circular(18)),
-                    color: Color(0xff1c252a)),
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 5.0, bottom: 2),
-                  child: GestureDetector(
-                    onTap: () {
-                      if (kUrl != "") {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => AudioApp()),
-                        );
-                      }
-                    },
-                    child: Row(
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            top: 8.0,
-                          ),
-                          child: IconButton(
-                            icon: Icon(
-                              MdiIcons.appleKeyboardControl,
-                              size: 22,
-                            ),
-                            onPressed: null,
-                            disabledColor: accent,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              left: 0.0, top: 7, bottom: 7, right: 15),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(8.0),
-                            child: CachedNetworkImage(
-                              imageUrl: image!,
-                              fit: BoxFit.fill,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 0.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
+        ValueListenableBuilder<String>(
+            valueListenable: kUrlNotifier,
+            builder: (_, value, __) {
+              return kUrlNotifier.value != ""
+                  ? Container(
+                      height: 75,
+                      //color: Color(0xff1c252a),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(18),
+                              topRight: Radius.circular(18)),
+                          color: Color(0xff1c252a)),
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 5.0, bottom: 2),
+                        child: GestureDetector(
+                          onTap: () {
+                            if (kUrl != "") {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => AudioApp()),
+                              );
+                            }
+                          },
+                          child: Row(
                             children: <Widget>[
-                              Text(
-                                title!.length > 18
-                                    ? title!.substring(0, 18) + "..."
-                                    : title!,
-                                style: TextStyle(
-                                    color: accent,
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.w600),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 8.0,
+                                ),
+                                child: IconButton(
+                                  icon: Icon(
+                                    MdiIcons.appleKeyboardControl,
+                                    size: 22,
+                                  ),
+                                  onPressed: null,
+                                  disabledColor: accent,
+                                ),
                               ),
-                              Text(
-                                artist!.length > 18
-                                    ? artist!.substring(0, 18) + "..."
-                                    : artist!,
-                                style:
-                                    TextStyle(color: accentLight, fontSize: 15),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 0.0, top: 7, bottom: 7, right: 15),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  child: CachedNetworkImage(
+                                    imageUrl: image!,
+                                    fit: BoxFit.fill,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 0.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Text(
+                                      title!.length > 18
+                                          ? title!.substring(0, 18) + "..."
+                                          : title!,
+                                      style: TextStyle(
+                                          color: accent,
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                    Text(
+                                      artist!.length > 18
+                                          ? artist!.substring(0, 18) + "..."
+                                          : artist!,
+                                      style: TextStyle(
+                                          color: accentLight, fontSize: 15),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              Spacer(),
+                              IconButton(
+                                icon:
+                                    buttonNotifier.value == MPlayerState.playing
+                                        ? Icon(MdiIcons.pause)
+                                        : Icon(MdiIcons.playOutline),
+                                color: accent,
+                                splashColor: Colors.transparent,
+                                onPressed: () {
+                                  setState(() {
+                                    if (buttonNotifier.value ==
+                                        MPlayerState.playing) {
+                                      audioPlayer?.pause();
+                                      buttonNotifier.value =
+                                          MPlayerState.paused;
+                                    } else if (buttonNotifier.value ==
+                                        MPlayerState.paused) {
+                                      audioPlayer?.setUrl(kUrl!);
+                                      audioPlayer?.play();
+                                      buttonNotifier.value =
+                                          MPlayerState.playing;
+                                    }
+                                  });
+                                },
+                                iconSize: 45,
                               )
                             ],
                           ),
                         ),
-                        Spacer(),
-                        IconButton(
-                          icon: playerState == PlayerState.playing
-                              ? Icon(MdiIcons.pause)
-                              : Icon(MdiIcons.playOutline),
-                          color: accent,
-                          splashColor: Colors.transparent,
-                          onPressed: () {
-                            setState(() {
-                              if (playerState == PlayerState.playing) {
-                                audioPlayer?.pause();
-                                playerState = PlayerState.paused;
-                              } else if (playerState == PlayerState.paused) {
-                                audioPlayer?.setUrl(kUrl!);
-                                audioPlayer?.play();
-                                playerState = PlayerState.playing;
-                              }
-                            });
-                          },
-                          iconSize: 45,
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              )
-            : SizedBox.shrink(),
+                      ),
+                    )
+                  : SizedBox.shrink();
+            }),
         Container(
           height: 65,
           decoration: BoxDecoration(color: Colors.transparent),

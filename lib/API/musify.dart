@@ -1,7 +1,10 @@
 import 'dart:convert';
 
+import 'package:Musify/services/audio_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+
+import '../music.dart';
 
 List searchedList = [];
 List topSongsList = [];
@@ -104,6 +107,7 @@ Future fetchSongDetails(songId) async {
   }
 
   kUrl = getMain["songs"]["data"][0]["more_info"]["vlink"];
+  kUrlNotifier.value = getMain["songs"]["data"][0]["more_info"]["vlink"];
 
   artist = (getMain["songs"]["data"][0]["more_info"]["singers"])
       .toString()
