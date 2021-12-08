@@ -75,7 +75,6 @@ class AppState extends State<Musify> {
                   padding: const EdgeInsets.only(top: 5.0, bottom: 2),
                   child: GestureDetector(
                     onTap: () {
-                      checker = "Nahi";
                       if (kUrl != "") {
                         Navigator.push(
                           context,

@@ -28,6 +28,10 @@ class AudioAppState extends State<AudioApp> {
   Duration? duration;
   Duration? position;
 
+  bool get hasNext => audioPlayer!.hasNext;
+
+  bool get hasPrevious => audioPlayer!.hasPrevious;
+
   get isPlaying => playerState == PlayerState.playing;
 
   get isPaused => playerState == PlayerState.paused;
@@ -61,20 +65,10 @@ class AudioAppState extends State<AudioApp> {
       audioPlayer = AudioPlayer();
     }
     setState(() {
-      if (checker == "Haa") {
-        stop();
-        play();
-      }
-      if (checker == "Nahi") {
-        if (playerState == PlayerState.playing) {
-          play();
-        } else {
-          //Using (Hack) Play() here Else UI glitch is being caused, Will try to find better solution.
-          play();
-          pause();
-        }
-      }
+      play();
     });
+
+    audioPlayer?.durationStream.listen((d) => setState(() => duration = d));
 
     _positionSubscription = audioPlayer?.positionStream
         .listen((p) => {if (mounted) setState(() => position = p)});
@@ -91,6 +85,7 @@ class AudioAppState extends State<AudioApp> {
         playerState = PlayerState.playing;
       } else {
         playerState = PlayerState.stopped;
+        duration = Duration.zero;
         audioPlayer!.seek(Duration.zero);
       }
     });
@@ -243,6 +238,7 @@ class AudioAppState extends State<AudioApp> {
                   inactiveColor: Colors.green[50],
                   value: position?.inMilliseconds?.toDouble() ?? 0.0,
                   onChanged: (double? value) {
+                    print(value);
                     setState(() {
                       audioPlayer!.seek((Duration(
                           seconds: (value! / 1000).roundToDouble().toInt())));

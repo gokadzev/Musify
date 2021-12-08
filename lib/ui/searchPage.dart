@@ -157,9 +157,6 @@ class _SearchPageState extends State<SearchPage> {
     } catch (e) {
       artist = "Unknown";
     }
-    setState(() {
-      checker = "Haa";
-    });
     Navigator.push(
       context,
       MaterialPageRoute(

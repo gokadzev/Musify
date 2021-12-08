@@ -5,14 +5,7 @@ import 'package:http/http.dart' as http;
 
 List searchedList = [];
 List topSongsList = [];
-String? kUrl = "",
-    checker,
-    image = "",
-    title = "",
-    album = "",
-    artist = "",
-    lyrics,
-    rawkUrl;
+String? kUrl = "", image = "", title = "", album = "", artist = "", lyrics;
 String key = "38346591";
 String decrypt = "";
 
@@ -112,7 +105,6 @@ Future fetchSongDetails(songId) async {
 
   kUrl = getMain["songs"]["data"][0]["more_info"]["vlink"];
 
-  rawkUrl = kUrl;
   artist = (getMain["songs"]["data"][0]["more_info"]["singers"])
       .toString()
       .replaceAll("&quot;", "\"")

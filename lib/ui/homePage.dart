@@ -19,9 +19,6 @@ class _HomePageState extends State<HomePage> {
     } catch (e) {
       artist = "Unknown";
     }
-    setState(() {
-      checker = "Haa";
-    });
     Navigator.push(
       context,
       MaterialPageRoute(
