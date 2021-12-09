@@ -84,26 +84,14 @@ Future fetchSongDetails(songId) async {
   } catch (e) {
     artist = "-";
   }
-  if (getMain['songs']['data'][0]["more_info"]["has_lyrics"] == "true") {
-    String lyricsUrl =
-        "https://www.jiosaavn.com/api.php?__call=lyrics.getLyrics&lyrics_id=" +
-            songId +
-            "&ctx=web6dot0&api_version=4&_format=json";
-    var lyricsRes = await http
-        .get(Uri.parse(lyricsUrl), headers: {"Accept": "application/json"});
-    var lyricsEdited = (lyricsRes.body).split("-->");
-    var fetchedLyrics = json.decode(lyricsEdited[1]);
-    lyrics = fetchedLyrics["lyrics"].toString().replaceAll("<br>", "\n");
-  } else {
-    lyrics = "null";
-    String lyricsApiUrl =
-        "https://musifydev.vercel.app/lyrics/" + artist! + "/" + title!;
-    var lyricsApiRes = await http
-        .get(Uri.parse(lyricsApiUrl), headers: {"Accept": "application/json"});
-    var lyricsResponse = json.decode(lyricsApiRes.body);
-    if (lyricsResponse['status'] == true && lyricsResponse['lyrics'] != null) {
-      lyrics = lyricsResponse['lyrics'];
-    }
+
+  lyrics = "null";
+  String lyricsApiUrl = "https://api.lyrics.ovh/v1/" + artist! + "/" + title!;
+  var lyricsApiRes = await http
+      .get(Uri.parse(lyricsApiUrl), headers: {"Accept": "application/json"});
+  var lyricsResponse = json.decode(lyricsApiRes.body);
+  if (lyricsResponse['lyrics'] != null) {
+    lyrics = lyricsResponse['lyrics'];
   }
 
   kUrl = getMain["songs"]["data"][0]["more_info"]["vlink"];
