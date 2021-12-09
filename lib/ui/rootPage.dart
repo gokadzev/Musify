@@ -139,31 +139,35 @@ class AppState extends State<Musify> {
                                 ),
                               ),
                               Spacer(),
-                              IconButton(
-                                icon:
-                                    buttonNotifier.value == MPlayerState.playing
-                                        ? Icon(MdiIcons.pause)
-                                        : Icon(MdiIcons.playOutline),
-                                color: accent,
-                                splashColor: Colors.transparent,
-                                onPressed: () {
-                                  setState(() {
-                                    if (buttonNotifier.value ==
-                                        MPlayerState.playing) {
-                                      audioPlayer?.pause();
-                                      buttonNotifier.value =
-                                          MPlayerState.paused;
-                                    } else if (buttonNotifier.value ==
-                                        MPlayerState.paused) {
-                                      audioPlayer?.setUrl(kUrl!);
-                                      audioPlayer?.play();
-                                      buttonNotifier.value =
-                                          MPlayerState.playing;
-                                    }
-                                  });
-                                },
-                                iconSize: 45,
-                              )
+                              ValueListenableBuilder<MPlayerState>(
+                                  valueListenable: buttonNotifier,
+                                  builder: (_, value, __) {
+                                    return IconButton(
+                                      icon: buttonNotifier.value ==
+                                              MPlayerState.playing
+                                          ? Icon(MdiIcons.pause)
+                                          : Icon(MdiIcons.playOutline),
+                                      color: accent,
+                                      splashColor: Colors.transparent,
+                                      onPressed: () {
+                                        setState(() {
+                                          if (buttonNotifier.value ==
+                                              MPlayerState.playing) {
+                                            audioPlayer?.pause();
+                                            buttonNotifier.value =
+                                                MPlayerState.paused;
+                                          } else if (buttonNotifier.value ==
+                                              MPlayerState.paused) {
+                                            audioPlayer?.setUrl(kUrl!);
+                                            audioPlayer?.play();
+                                            buttonNotifier.value =
+                                                MPlayerState.playing;
+                                          }
+                                        });
+                                      },
+                                      iconSize: 45,
+                                    );
+                                  })
                             ],
                           ),
                         ),

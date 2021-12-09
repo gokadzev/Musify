@@ -9,8 +9,6 @@ import '../music.dart';
 List searchedList = [];
 List topSongsList = [];
 String? kUrl = "", image = "", title = "", album = "", artist = "", lyrics;
-String key = "38346591";
-String decrypt = "";
 
 Future<List> fetchSongsList(searchQuery) async {
   String searchUrl =
