@@ -18,22 +18,22 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(12.0),
+        padding: EdgeInsets.all(10.0),
         child: Column(
           children: <Widget>[
-            Padding(padding: EdgeInsets.only(top: 30, bottom: 20.0)),
+            Padding(padding: EdgeInsets.only(top: 10, bottom: 20.0)),
             Center(
               child: Row(children: <Widget>[
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 42.0),
+                    padding: const EdgeInsets.only(),
                     child: Center(
                       child: GradientText(
                         "Musify.",
                         shaderRect: Rect.fromLTWH(13.0, 0.0, 100.0, 50.0),
                         gradient: LinearGradient(colors: [
-                          Color(0xff4db6ac),
-                          Color(0xff61e88a),
+                          accent,
+                          accent,
                         ]),
                         style: TextStyle(
                           fontSize: 35,
@@ -43,22 +43,6 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
-                Container(
-                  child: IconButton(
-                    iconSize: 26,
-                    alignment: Alignment.center,
-                    icon: Icon(MdiIcons.dotsVertical),
-                    color: accent,
-                    onPressed: () => {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AboutPage(),
-                        ),
-                      ),
-                    },
-                  ),
-                )
               ]),
             ),
             Padding(padding: EdgeInsets.only(top: 20)),

@@ -28,8 +28,8 @@ class AboutPage extends StatelessWidget {
             "About",
             shaderRect: Rect.fromLTWH(13.0, 0.0, 100.0, 50.0),
             gradient: LinearGradient(colors: [
-              Color(0xff4db6ac),
-              Color(0xff61e88a),
+              accent,
+              accent,
             ]),
             style: TextStyle(
               color: accent,

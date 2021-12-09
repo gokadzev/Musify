@@ -103,8 +103,8 @@ class AudioAppState extends State<AudioApp> {
             "Now Playing",
             shaderRect: Rect.fromLTWH(13.0, 0.0, 100.0, 50.0),
             gradient: LinearGradient(colors: [
-              Color(0xff4db6ac),
-              Color(0xff61e88a),
+              accent,
+              accent,
             ]),
             style: TextStyle(
               color: accent,
@@ -151,8 +151,8 @@ class AudioAppState extends State<AudioApp> {
                         title!,
                         shaderRect: Rect.fromLTWH(13.0, 0.0, 100.0, 50.0),
                         gradient: LinearGradient(colors: [
-                          Color(0xff4db6ac),
-                          Color(0xff61e88a),
+                          accent,
+                          accent,
                         ]),
                         textScaleFactor: 2.5,
                         textAlign: TextAlign.center,
@@ -217,9 +217,9 @@ class AudioAppState extends State<AudioApp> {
                         decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: [
-                                Color(0xff4db6ac),
+                                accent,
                                 //Color(0xff00c754),
-                                Color(0xff61e88a),
+                                accent,
                               ],
                             ),
                             borderRadius: BorderRadius.circular(100)),

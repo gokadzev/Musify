@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:Musify/services/audio_manager.dart';
 import 'package:Musify/ui/homePage.dart';
 import 'package:Musify/ui/searchPage.dart';
+import 'package:Musify/ui/settingsPage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -209,13 +210,7 @@ class AppState extends State<Musify> {
                 fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
           ),
         ),
-        Center(
-          child: Text(
-            "Settings",
-            style: TextStyle(
-                fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-        ),
+        SettingsPage()
       ],
     );
   }
