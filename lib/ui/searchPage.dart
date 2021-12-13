@@ -11,7 +11,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:audiotagger/models/tag.dart';
-import 'package:Musify/music.dart';
 
 class SearchPage extends StatefulWidget {
   @override
@@ -240,7 +239,7 @@ class _SearchPageState extends State<SearchPage> {
                               playSong(searchedList[index]["id"], context);
                             },
                             onLongPress: () {
-                              topSongs();
+                              getTop50();
                             },
                             splashColor: accent,
                             hoverColor: accent,
@@ -283,15 +282,7 @@ class _SearchPageState extends State<SearchPage> {
                       );
                     },
                   )
-                : FutureBuilder(
-                    future: topSongs(),
-                    builder: (context, data) {
-                      return Center(
-                          child: Padding(
-                        padding: const EdgeInsets.all(35.0),
-                      ));
-                    },
-                  ),
+                : Container()
           ],
         ),
       ),

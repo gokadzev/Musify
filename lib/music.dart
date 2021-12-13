@@ -91,11 +91,11 @@ class AudioAppState extends State<AudioApp> {
         ),
       ),
       child: Scaffold(
-        backgroundColor: Colors.transparent,
+        backgroundColor: bgColor,
         appBar: AppBar(
           systemOverlayStyle:
               SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
-          backgroundColor: Colors.transparent,
+          backgroundColor: bgColor,
           elevation: 0,
           //backgroundColor: Color(0xff384850),
           centerTitle: true,
@@ -194,7 +194,7 @@ class AudioAppState extends State<AudioApp> {
               Slider(
                   activeColor: accent,
                   inactiveColor: Colors.green[50],
-                  value: position?.inMilliseconds?.toDouble() ?? 0.0,
+                  value: position?.inMilliseconds.toDouble() ?? 0.0,
                   onChanged: (double? value) {
                     print(value);
                     setState(() {

@@ -4,10 +4,9 @@ import 'package:Musify/services/audio_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import '../music.dart';
-
 List searchedList = [];
-List topSongsList = [];
+List top50songs = [];
+List playlists = [];
 String? kUrl = "", image = "", title = "", album = "", artist = "", lyrics;
 
 Future<List> fetchSongsList(searchQuery) async {
@@ -35,29 +34,39 @@ Future<List> fetchSongsList(searchQuery) async {
   return searchedList;
 }
 
-Future<List> topSongs() async {
-  String topSongsUrl =
-      "https://musap.vv2021.repl.co/get_data?act=playlist_data";
+Future<List> getTop50() async {
+  String topSongsUrl = "https://musap.vv2021.repl.co/get_data?act=global_fifty";
   var songsListJSON = await http
       .get(Uri.parse(topSongsUrl), headers: {"Accept": "application/json"});
   var songsList = json.decode(songsListJSON.body);
-  topSongsList = songsList[0]["list"];
+  top50songs = songsList["list"];
   var songsNumber = 10;
   for (int i = 0; i < songsNumber; i++) {
-    topSongsList[i]['title'] = topSongsList[i]['title']
+    top50songs[i]['title'] = top50songs[i]['title']
         .toString()
         .replaceAll("&amp;", "&")
         .replaceAll("&#039;", "'")
         .replaceAll("&quot;", "\"");
-    topSongsList[i]["more_info"]["singers"] = topSongsList[i]["more_info"]
+    top50songs[i]["more_info"]["singers"] = top50songs[i]["more_info"]
             ["singers"]
         .toString()
         .replaceAll("&amp;", "&")
         .replaceAll("&#039;", "'")
         .replaceAll("&quot;", "\"");
-    topSongsList[i]['image'] = topSongsList[i]['image'].toString();
+    top50songs[i]['image'] = top50songs[i]['image'].toString();
   }
-  return topSongsList;
+
+  return top50songs;
+}
+
+Future<List> getPlaylists() async {
+  String playlistsURL =
+      "https://musap.vv2021.repl.co/get_data?act=playlists_data";
+  var playlistsJSON = await http
+      .get(Uri.parse(playlistsURL), headers: {"Accept": "application/json"});
+  playlists = json.decode(playlistsJSON.body);
+
+  return playlists;
 }
 
 Future fetchSongDetails(songId) async {

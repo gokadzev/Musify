@@ -1,12 +1,9 @@
 import 'package:Musify/services/audio_manager.dart';
 import 'package:Musify/style/appColors.dart';
-import 'package:Musify/ui/aboutPage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:gradient_widgets/gradient_widgets.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:Musify/API/musify.dart';
-import 'package:Musify/music.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -47,7 +44,7 @@ class _HomePageState extends State<HomePage> {
             ),
             Padding(padding: EdgeInsets.only(top: 20)),
             FutureBuilder(
-              future: topSongs(),
+              future: getTop50(),
               builder: (context, data) {
                 if (data.hasData)
                   return Container(
@@ -58,7 +55,7 @@ class _HomePageState extends State<HomePage> {
                           padding: const EdgeInsets.only(
                               top: 30.0, bottom: 10, left: 8),
                           child: Text(
-                            "Top 10 Songs",
+                            "Top 50 Songs",
                             textAlign: TextAlign.left,
                             style: TextStyle(
                               fontSize: 22,
@@ -72,7 +69,7 @@ class _HomePageState extends State<HomePage> {
                           height: MediaQuery.of(context).size.height * 0.25,
                           child: ListView.builder(
                             scrollDirection: Axis.horizontal,
-                            itemCount: 10,
+                            itemCount: 50,
                             itemBuilder: (context, index) {
                               return getTopSong(
                                   (data as dynamic).data[index]["image"],
@@ -137,7 +134,7 @@ class _HomePageState extends State<HomePage> {
                 .replaceAll("&#039;", "'")
                 .replaceAll("&quot;", "\""),
             style: TextStyle(
-              color: Colors.white,
+              color: accent,
               fontSize: 14.0,
               fontWeight: FontWeight.bold,
             ),
@@ -148,7 +145,7 @@ class _HomePageState extends State<HomePage> {
           Text(
             subtitle,
             style: TextStyle(
-              color: Colors.white38,
+              color: Colors.white60,
               fontSize: 12.0,
               fontWeight: FontWeight.bold,
             ),

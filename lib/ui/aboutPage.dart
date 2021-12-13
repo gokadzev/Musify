@@ -75,7 +75,7 @@ class AboutCards extends StatelessWidget {
                       child: Text(
                         "Musify  | 1.0.0",
                         style: TextStyle(
-                            color: accentLight,
+                            color: accent,
                             fontSize: 24,
                             fontWeight: FontWeight.w600),
                       ),
@@ -115,11 +115,11 @@ class AboutCards extends StatelessWidget {
                 ),
                 title: Text(
                   'Valeri Gokadze',
-                  style: TextStyle(color: accentLight),
+                  style: TextStyle(color: accent),
                 ),
                 subtitle: Text(
                   'Web/APP Developer',
-                  style: TextStyle(color: accentLight),
+                  style: TextStyle(color: accent),
                 ),
               ),
             ),

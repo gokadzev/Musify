@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:Musify/services/audio_manager.dart';
 import 'package:Musify/ui/homePage.dart';
+import 'package:Musify/ui/playlistsPage.dart';
 import 'package:Musify/ui/searchPage.dart';
 import 'package:Musify/ui/settingsPage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -44,11 +45,7 @@ class AppState extends State<Musify> {
           ],
         ),
       ),
-      child: Scaffold(
-          backgroundColor: Colors.transparent,
-          //backgroundColor: Color(0xff384850),
-          bottomNavigationBar: getFooter(),
-          body: getBody()),
+      child: Scaffold(bottomNavigationBar: getFooter(), body: getBody()),
     );
   }
 
@@ -133,7 +130,7 @@ class AppState extends State<Musify> {
                                           ? artist!.substring(0, 18) + "..."
                                           : artist!,
                                       style: TextStyle(
-                                          color: accentLight, fontSize: 15),
+                                          color: accent, fontSize: 15),
                                     )
                                   ],
                                 ),
@@ -177,7 +174,15 @@ class AppState extends State<Musify> {
             }),
         Container(
           height: 65,
-          decoration: BoxDecoration(color: Colors.transparent),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(80.0),
+              color: Color(0XFF282828),
+              boxShadow: [
+                BoxShadow(
+                    color: Colors.black.withAlpha(40),
+                    blurRadius: 6,
+                    offset: const Offset(0, 0))
+              ]),
           child: Padding(
             padding: const EdgeInsets.only(left: 20, right: 20),
             child: Row(
@@ -204,18 +209,7 @@ class AppState extends State<Musify> {
   Widget getBody() {
     return IndexedStack(
       index: activeTab,
-      children: [
-        HomePage(),
-        SearchPage(),
-        Center(
-          child: Text(
-            "Library",
-            style: TextStyle(
-                fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-        ),
-        SettingsPage()
-      ],
+      children: [HomePage(), SearchPage(), PlaylistsPage(), SettingsPage()],
     );
   }
 }

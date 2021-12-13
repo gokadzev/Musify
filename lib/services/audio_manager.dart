@@ -6,6 +6,8 @@ import 'package:just_audio/just_audio.dart';
 import 'package:audio_service/audio_service.dart';
 import '../music.dart';
 
+ConcatenatingAudioSource? _playlist = ConcatenatingAudioSource(children: []);
+
 AudioPlayer? audioPlayer = AudioPlayer();
 AudioHandler? _audioHandler;
 
@@ -39,6 +41,12 @@ Future<void> playSong(int id, var context) async {
   } catch (e) {
     artist = "Unknown";
   }
+}
+
+Future addToQueue(audioUrl, audio) async {
+  // in testing mode
+  final song = Uri.parse(audioUrl);
+  await _playlist?.add(AudioSource.uri(song, tag: audio));
 }
 
 Future play() async {
@@ -98,15 +106,6 @@ class MyAudioHandler extends BaseAudioHandler {
       controls: [MediaControl.pause],
     ));
 
-    mediaItem.add(MediaItem(
-      id: kUrl!,
-      album: album!,
-      title: title!,
-      artist: artist!,
-      duration: duration!,
-      artUri: Uri.parse(image!),
-    ));
-
     audioPlayer?.play();
   }
 
@@ -127,7 +126,6 @@ class MyAudioHandler extends BaseAudioHandler {
         album: album!,
         title: title!,
         artist: artist!,
-        duration: duration!,
         artUri: Uri.parse(image!),
       ));
       playbackState.add(playbackState.value.copyWith(
