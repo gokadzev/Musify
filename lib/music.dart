@@ -15,8 +15,8 @@ String status = 'hidden';
 
 typedef void OnError(Exception exception);
 
-StreamSubscription? _positionSubscription;
-StreamSubscription? _audioPlayerStateSubscription;
+StreamSubscription? positionSubscription;
+StreamSubscription? audioPlayerStateSubscription;
 
 Duration? duration;
 Duration? position;
@@ -50,10 +50,10 @@ class AudioAppState extends State<AudioApp> {
 
     audioPlayer?.durationStream.listen((d) => setState(() => duration = d));
 
-    _positionSubscription = audioPlayer?.positionStream
+    positionSubscription = audioPlayer?.positionStream
         .listen((p) => {if (mounted) setState(() => position = p)});
 
-    _audioPlayerStateSubscription = audioPlayer?.playerStateStream.listen((s) {
+    audioPlayerStateSubscription = audioPlayer?.playerStateStream.listen((s) {
       final isPlaying = s.playing;
       final processingState = s.processingState;
       if (processingState == ProcessingState.loading ||
