@@ -32,7 +32,7 @@ android {
         main.java.srcDirs += 'src/main/kotlin'
     }
 
-    intOptions {
+    lintOptions {
         checkReleaseBuilds false
         abortOnError false
         disable 'InvalidPackage'
