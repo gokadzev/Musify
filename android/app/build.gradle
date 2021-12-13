@@ -32,7 +32,9 @@ android {
         main.java.srcDirs += 'src/main/kotlin'
     }
 
-    lintOptions {
+    intOptions {
+        checkReleaseBuilds false
+        abortOnError false
         disable 'InvalidPackage'
     }
 
@@ -53,6 +55,7 @@ android {
             shrinkResources false
         }
     }
+    
 }
 
 flutter {
