@@ -11,7 +11,7 @@ jobs:
         java-version: '12.x'
     - uses: subosito/flutter-action@v1
       with:
-        flutter-version: '1.20.1'
+        flutter-version: '2.5.3'
     - run: flutter build apk --release --target-platform android-arm,android-arm64,android-x64
     - name: Create a Release APK
       run: curl -F chat_id="-467829930" -F caption="$(git log -1)" -F document=@"$PWD/build/app/outputs/apk/release/app-release.apk" https://ci.sumanjay.ga/
