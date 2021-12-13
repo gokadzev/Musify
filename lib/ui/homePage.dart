@@ -1,9 +1,9 @@
-import 'package:Musify/services/audio_manager.dart';
-import 'package:Musify/style/appColors.dart';
+import 'package:musify/services/audio_manager.dart';
+import 'package:musify/style/appColors.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:gradient_widgets/gradient_widgets.dart';
-import 'package:Musify/API/musify.dart';
+import 'package:musify/API/musify.dart';
 
 class HomePage extends StatefulWidget {
   @override

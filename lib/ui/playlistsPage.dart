@@ -1,5 +1,5 @@
-import 'package:Musify/API/musify.dart';
-import 'package:Musify/style/appColors.dart';
+import 'package:musify/API/musify.dart';
+import 'package:musify/style/appColors.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/material.dart';

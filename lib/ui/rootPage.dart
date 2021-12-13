@@ -1,17 +1,15 @@
-import 'dart:ui';
-
-import 'package:Musify/services/audio_manager.dart';
-import 'package:Musify/ui/homePage.dart';
-import 'package:Musify/ui/playlistsPage.dart';
-import 'package:Musify/ui/searchPage.dart';
-import 'package:Musify/ui/settingsPage.dart';
+import 'package:musify/services/audio_manager.dart';
+import 'package:musify/ui/homePage.dart';
+import 'package:musify/ui/playlistsPage.dart';
+import 'package:musify/ui/searchPage.dart';
+import 'package:musify/ui/settingsPage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:Musify/API/musify.dart';
-import 'package:Musify/music.dart';
-import 'package:Musify/style/appColors.dart';
+import 'package:musify/API/musify.dart';
+import 'package:musify/music.dart';
+import 'package:musify/style/appColors.dart';
 
 class Musify extends StatefulWidget {
   @override

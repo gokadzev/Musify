@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gradient_widgets/gradient_widgets.dart';
-import 'package:Musify/style/appColors.dart';
+import 'package:musify/style/appColors.dart';
 
 class AboutPage extends StatelessWidget {
   @override

@@ -1,8 +1,8 @@
-import 'package:Musify/services/data_manager.dart';
-import 'package:Musify/services/locator.dart';
-import 'package:Musify/ui/rootPage.dart';
+import 'package:musify/services/data_manager.dart';
+import 'package:musify/services/locator.dart';
+import 'package:musify/ui/rootPage.dart';
 import 'package:flutter/material.dart';
-import 'package:Musify/style/appColors.dart';
+import 'package:musify/style/appColors.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 main() async {

@@ -1,6 +1,6 @@
-import 'package:Musify/services/data_manager.dart';
-import 'package:Musify/style/appColors.dart';
-import 'package:Musify/ui/aboutPage.dart';
+import 'package:musify/services/data_manager.dart';
+import 'package:musify/style/appColors.dart';
+import 'package:musify/ui/aboutPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gradient_widgets/gradient_widgets.dart';

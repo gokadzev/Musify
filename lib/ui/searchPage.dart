@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:Musify/API/musify.dart';
-import 'package:Musify/services/audio_manager.dart';
-import 'package:Musify/services/ext_storage.dart';
-import 'package:Musify/style/appColors.dart';
+import 'package:musify/API/musify.dart';
+import 'package:musify/services/audio_manager.dart';
+import 'package:musify/services/ext_storage.dart';
+import 'package:musify/style/appColors.dart';
 import 'package:audiotagger/audiotagger.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

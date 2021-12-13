@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:gradient_widgets/gradient_widgets.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:Musify/style/appColors.dart';
+import 'package:musify/style/appColors.dart';
 
 import 'API/musify.dart';
 import 'services/audio_manager.dart';
