@@ -26,7 +26,7 @@ jobs:
     # Setup the flutter environment.
     - uses: subosito/flutter-action@v1
       with:
-        channel: "stable"
+        flutter-version: '2.5.3'
     # Get flutter dependencies.
     - run: flutter pub get
     # Check for any formatting issues in the code.
