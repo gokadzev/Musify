@@ -26,49 +26,30 @@ class _SearchPageState extends State<SearchPage> {
     String filepath2;
     var status = await Permission.storage.status;
     if (status.isDenied) {
-      // code of read or write file in external storage (SD card)
-      // You can request multiple permissions at once.
       Map<Permission, PermissionStatus> statuses = await [
         Permission.storage,
+        Permission.manageExternalStorage
       ].request();
       debugPrint(statuses[Permission.storage].toString());
     }
     status = await Permission.storage.status;
     await fetchSongDetails(id);
     if (status.isGranted) {
-      // ProgressDialog pr = ProgressDialog(context);
-      // pr = ProgressDialog(
-      //   context,
-      //   type: ProgressDialogType.Normal,
-      //   isDismissible: false,
-      //   showLogs: false,
-      // );
-
-      // pr.style(
-      //   backgroundColor: Color(0xff263238),
-      //   elevation: 4,
-      //   textAlign: TextAlign.left,
-      //   progressTextStyle: TextStyle(color: Colors.white),
-      //   message: "Downloading " + title,
-      //   messageTextStyle: TextStyle(color: accent),
-      //   progressWidget: Padding(
-      //     padding: const EdgeInsets.all(20.0),
-      //     child: CircularProgressIndicator(
-      //       valueColor: AlwaysStoppedAnimation<Color>(accent),
-      //     ),
-      //   ),
-      // );
-      // await pr.show();
+      Fluttertoast.showToast(
+          msg: "Download Started!",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black,
+          textColor: Color(0xff61e88a),
+          fontSize: 14.0);
 
       final filename = title! + ".mp3";
       final artname = title! + "_artwork.jpg";
       filepath = '';
       filepath2 = '';
-      //Directory appDocDir = await getExternalStorageDirectory();
-      String dlPath =
-          await ExtStorageProvider.getExtStorage(dirName: 'Music') ??
-              '/storage/emulated/0/Music';
-      await File(dlPath + "/" + filename)
+      String? dlPath = await ExtStorageProvider.getExtStorage(dirName: 'Music');
+      await File(dlPath! + "/" + filename)
           .create(recursive: true)
           .then((value) => filepath = value.path);
       await File(dlPath + "/" + artname)
@@ -106,14 +87,13 @@ class _SearchPageState extends State<SearchPage> {
         tag: tag,
       );
       await Future.delayed(const Duration(seconds: 1), () {});
-      // await pr.hide();
 
       if (await file2.exists()) {
         await file2.delete();
       }
       debugPrint("Done");
       Fluttertoast.showToast(
-          msg: "Download Complete!",
+          msg: "Download Completed!",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,
