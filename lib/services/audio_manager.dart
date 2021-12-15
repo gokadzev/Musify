@@ -28,9 +28,9 @@ get positionText =>
 
 bool isMuted = false;
 
-Future<void> playSong(int id, var context) async {
+Future<void> playSong(song, var context) async {
   try {
-    await fetchSongDetails(id);
+    await setSongDetails(song);
     await audioPlayer?.setUrl(kUrl!);
     Navigator.push(
       context,

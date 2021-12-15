@@ -69,25 +69,13 @@ Future<List> getPlaylists() async {
   return playlists;
 }
 
-Future fetchSongDetails(songId) async {
-  String songUrl = "https://musap.vv2021.repl.co/get_data?act=search&id=" +
-      songId.toString();
-  var res = await http
-      .get(Uri.parse(songUrl), headers: {"Accept": "application/json"});
-  var getMain = json.decode(res.body);
+Future setSongDetails(song) async {
+  title = song["title"];
+  image = song["image"];
+  album = song["album"] == null ? '' : song["album"];
 
-  title = (getMain["songs"]["data"][0]["title"])
-      .split("(")[0]
-      .replaceAll("&amp;", "&")
-      .replaceAll("&#039;", "'")
-      .replaceAll("&quot;", "\"");
-  image = (getMain["songs"]["data"][0]["image"]);
-  album = (getMain["songs"]["data"][0]["album"])
-      .replaceAll("&quot;", "\"")
-      .replaceAll("&#039;", "'")
-      .replaceAll("&amp;", "&");
   try {
-    artist = getMain['songs']['data'][0]['more_info']['singers'];
+    artist = song['more_info']['singers'];
   } catch (e) {
     artist = "-";
   }
@@ -101,13 +89,6 @@ Future fetchSongDetails(songId) async {
     lyrics = lyricsResponse['lyrics'];
   }
 
-  kUrl = getMain["songs"]["data"][0]["more_info"]["vlink"];
-  kUrlNotifier.value = getMain["songs"]["data"][0]["more_info"]["vlink"];
-
-  artist = (getMain["songs"]["data"][0]["more_info"]["singers"])
-      .toString()
-      .replaceAll("&quot;", "\"")
-      .replaceAll("&#039;", "'")
-      .replaceAll("&amp;", "&");
-  debugPrint(kUrl);
+  kUrl = song["more_info"]["vlink"];
+  kUrlNotifier.value = song["more_info"]["vlink"];
 }

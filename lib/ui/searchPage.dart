@@ -21,7 +21,7 @@ class _SearchPageState extends State<SearchPage> {
   TextEditingController searchBar = TextEditingController();
   bool fetchingSongs = false;
 
-  downloadSong(id) async {
+  downloadSong(song) async {
     String filepath;
     String filepath2;
     var status = await Permission.storage.status;
@@ -33,7 +33,7 @@ class _SearchPageState extends State<SearchPage> {
       debugPrint(statuses[Permission.storage].toString());
     }
     status = await Permission.storage.status;
-    await fetchSongDetails(id);
+    await setSongDetails(song);
     if (status.isGranted) {
       Fluttertoast.showToast(
           msg: "Download Started!",
@@ -216,7 +216,7 @@ class _SearchPageState extends State<SearchPage> {
                           child: InkWell(
                             borderRadius: BorderRadius.circular(10.0),
                             onTap: () {
-                              playSong(searchedList[index]["id"], context);
+                              playSong(searchedList[index], context);
                             },
                             onLongPress: () {
                               getTop50();
@@ -252,7 +252,7 @@ class _SearchPageState extends State<SearchPage> {
                                     color: accent,
                                     icon: Icon(MdiIcons.downloadOutline),
                                     onPressed: () =>
-                                        downloadSong(searchedList[index]["id"]),
+                                        downloadSong(searchedList[index]),
                                   ),
                                 ),
                               ],
