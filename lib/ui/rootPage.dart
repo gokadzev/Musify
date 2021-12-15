@@ -24,8 +24,8 @@ class AppState extends State<Musify> {
   void initState() {
     super.initState();
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      systemNavigationBarColor: Color(0xff1c252a),
-      statusBarColor: Colors.transparent,
+      systemNavigationBarColor: bgColor,
+      statusBarColor: bgColor,
     ));
   }
 
