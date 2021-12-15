@@ -32,17 +32,6 @@ class AppState extends State<Musify> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color(0xff384850),
-            Color(0xff263238),
-            Color(0xff263238),
-          ],
-        ),
-      ),
       child: Scaffold(bottomNavigationBar: getFooter(), body: getBody()),
     );
   }

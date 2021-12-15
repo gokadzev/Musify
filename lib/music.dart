@@ -61,12 +61,8 @@ class AudioAppState extends State<AudioApp> {
         buttonNotifier.value = MPlayerState.loading;
       } else if (!isPlaying) {
         buttonNotifier.value = MPlayerState.paused;
-      } else if (processingState != ProcessingState.completed) {
-        buttonNotifier.value = MPlayerState.playing;
       } else {
-        buttonNotifier.value = MPlayerState.stopped;
-        duration = Duration.zero;
-        audioPlayer!.seek(Duration.zero);
+        buttonNotifier.value = MPlayerState.playing;
       }
     });
   }
@@ -196,10 +192,9 @@ class AudioAppState extends State<AudioApp> {
                   inactiveColor: Colors.green[50],
                   value: position?.inMilliseconds.toDouble() ?? 0.0,
                   onChanged: (double? value) {
-                    print(value);
                     setState(() {
                       audioPlayer!.seek((Duration(
-                          seconds: (value! / 1000).roundToDouble().toInt())));
+                          seconds: (value! / 1000).toDouble().round())));
                       value = value;
                     });
                   },
