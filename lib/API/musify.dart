@@ -68,6 +68,17 @@ Future<List> getPlaylists() async {
   return playlists;
 }
 
+Future getPlaylistInfoForWidget(int id) async {
+  String playlistURL =
+      "https://musap.vv2021.repl.co/get_data?act=playlist_data&id=" +
+          id.toString();
+  var playlistJSON = await http
+      .get(Uri.parse(playlistURL), headers: {"Accept": "application/json"});
+  var playlist = json.decode(playlistJSON.body);
+
+  return playlist;
+}
+
 Future setSongDetails(song) async {
   title = song["title"];
   image = song["image"];

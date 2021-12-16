@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/material.dart';
 import 'package:gradient_widgets/gradient_widgets.dart';
+import 'package:musify/ui/playlistPage.dart';
 
 class PlaylistsPage extends StatefulWidget {
   @override
@@ -14,7 +15,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.transparent,
+        backgroundColor: bgColor,
         body: SingleChildScrollView(
             child: Column(children: <Widget>[
           Padding(padding: EdgeInsets.only(top: 10, bottom: 20.0)),
@@ -70,7 +71,10 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
     return SingleChildScrollView(
         child: InkWell(
             onTap: () {
-              print(title);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => PlaylistPage(id: id)));
             },
             child: DelayedDisplay(
               delay: Duration(milliseconds: 100 * index + 1),

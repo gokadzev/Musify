@@ -1,10 +1,17 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:audiotagger/audiotagger.dart';
+import 'package:audiotagger/models/tag.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:musify/API/musify.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:audio_service/audio_service.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../music.dart';
+import 'ext_storage.dart';
 
 ConcatenatingAudioSource? _playlist = ConcatenatingAudioSource(children: []);
 
@@ -27,6 +34,104 @@ get positionText =>
     position != null ? position.toString().split('.').first : '';
 
 bool isMuted = false;
+
+downloadSong(song) async {
+  String filepath;
+  String filepath2;
+  var status = await Permission.storage.status;
+  if (status.isDenied) {
+    Map<Permission, PermissionStatus> statuses =
+        await [Permission.storage, Permission.manageExternalStorage].request();
+    debugPrint(statuses[Permission.storage].toString());
+  }
+  status = await Permission.storage.status;
+  await setSongDetails(song);
+  if (status.isGranted) {
+    Fluttertoast.showToast(
+        msg: "Download Started!",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.black,
+        textColor: Color(0xff61e88a),
+        fontSize: 14.0);
+
+    final filename = title! + ".mp3";
+    final artname = title! + "_artwork.jpg";
+    filepath = '';
+    filepath2 = '';
+    String? dlPath = await ExtStorageProvider.getExtStorage(dirName: 'Music');
+    await File(dlPath! + "/" + filename)
+        .create(recursive: true)
+        .then((value) => filepath = value.path);
+    await File(dlPath + "/" + artname)
+        .create(recursive: true)
+        .then((value) => filepath2 = value.path);
+    debugPrint('Audio path $filepath');
+    debugPrint('Image path $filepath2');
+    var request = await HttpClient().getUrl(Uri.parse(kUrl!));
+    var response = await request.close();
+    var bytes = await consolidateHttpClientResponseBytes(response);
+    File file = File(filepath);
+
+    var request2 = await HttpClient().getUrl(Uri.parse(image!));
+    var response2 = await request2.close();
+    var bytes2 = await consolidateHttpClientResponseBytes(response2);
+    File file2 = File(filepath2);
+
+    await file.writeAsBytes(bytes);
+    await file2.writeAsBytes(bytes2);
+    debugPrint("Started tag editing");
+
+    final tag = Tag(
+      title: title,
+      artist: artist,
+      artwork: filepath2,
+      album: album,
+      lyrics: lyrics,
+      genre: null,
+    );
+
+    debugPrint("Setting up Tags");
+    final tagger = Audiotagger();
+    await tagger.writeTags(
+      path: filepath,
+      tag: tag,
+    );
+    await Future.delayed(const Duration(seconds: 1), () {});
+
+    if (await file2.exists()) {
+      await file2.delete();
+    }
+    debugPrint("Done");
+    Fluttertoast.showToast(
+        msg: "Download Completed!",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.black,
+        textColor: Color(0xff61e88a),
+        fontSize: 14.0);
+  } else if (status.isDenied || status.isPermanentlyDenied) {
+    Fluttertoast.showToast(
+        msg: "Storage Permission Denied!\nCan't Download Songs",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.black,
+        textColor: Color(0xff61e88a),
+        fontSize: 14.0);
+  } else {
+    Fluttertoast.showToast(
+        msg: "Permission Error!",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.values[50],
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.black,
+        textColor: Color(0xff61e88a),
+        fontSize: 14.0);
+  }
+}
 
 Future<void> playSong(song, var context) async {
   try {
