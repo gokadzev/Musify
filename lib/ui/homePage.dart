@@ -76,7 +76,7 @@ class _HomePageState extends State<HomePage> {
                                   (data as dynamic).data[index]["title"],
                                   (data as dynamic).data[index]["more_info"]
                                       ["primary_artists"],
-                                  (data as dynamic).data[index]["id"]);
+                                  (data as dynamic).data[index]);
                             },
                           ),
                         ),
@@ -98,10 +98,10 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget getTopSong(String image, String title, String subtitle, int id) {
+  Widget getTopSong(String image, String title, String subtitle, song) {
     return InkWell(
       onTap: () {
-        playSong(id, context);
+        playSong(song, context);
       },
       child: Column(
         children: [

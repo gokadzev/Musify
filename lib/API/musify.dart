@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:musify/services/audio_manager.dart';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 List searchedList = [];
