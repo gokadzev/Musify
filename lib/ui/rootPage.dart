@@ -142,7 +142,6 @@ class AppState extends State<Musify> {
                                                 MPlayerState.paused;
                                           } else if (buttonNotifier.value ==
                                               MPlayerState.paused) {
-                                            audioPlayer?.setUrl(kUrl!);
                                             audioPlayer?.play();
                                             buttonNotifier.value =
                                                 MPlayerState.playing;

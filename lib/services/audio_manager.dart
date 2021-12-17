@@ -24,7 +24,7 @@ bool get hasNext => audioPlayer!.hasNext;
 
 bool get hasPrevious => audioPlayer!.hasPrevious;
 
-final buttonNotifier = ValueNotifier<MPlayerState>(MPlayerState.paused);
+final buttonNotifier = ValueNotifier<MPlayerState>(MPlayerState.stopped);
 final kUrlNotifier = ValueNotifier<String>('');
 
 get durationText =>
@@ -155,7 +155,6 @@ Future addToQueue(audioUrl, audio) async {
 }
 
 Future play() async {
-  await audioPlayer?.setUrl(kUrl!);
   await audioPlayer?.play();
   await _audioHandler?.play();
 }
@@ -198,7 +197,7 @@ class MyAudioHandler extends BaseAudioHandler {
   @override
   Future stop() async {
     playbackState.add(playbackState.value.copyWith(
-      processingState: AudioProcessingState.idle,
+      processingState: AudioProcessingState.completed,
     ));
 
     audioPlayer?.stop();
