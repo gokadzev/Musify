@@ -73,6 +73,7 @@ class AudioAppState extends State<AudioApp> {
 
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -122,14 +123,14 @@ class AudioAppState extends State<AudioApp> {
         ),
         body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.only(top: 35.0),
+            padding: const EdgeInsets.only(top: 5.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  width: 300,
-                  height: 300,
+                  width: size.width / 1.5,
+                  height: size.width / 1.5,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
                     shape: BoxShape.rectangle,
@@ -170,7 +171,7 @@ class AudioAppState extends State<AudioApp> {
                     ],
                   ),
                 ),
-                Material(child: _buildPlayer()),
+                Material(child: _buildPlayer(size)),
               ],
             ),
           ),
@@ -179,8 +180,8 @@ class AudioAppState extends State<AudioApp> {
     );
   }
 
-  Widget _buildPlayer() => Container(
-        padding: EdgeInsets.only(top: 15.0, left: 16, right: 16, bottom: 16),
+  Widget _buildPlayer(size) => Container(
+        padding: EdgeInsets.only(top: 5.0, left: 16, right: 16, bottom: 5.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -202,7 +203,7 @@ class AudioAppState extends State<AudioApp> {
                   max: duration!.inMilliseconds.toDouble()),
             if (position != null) _buildProgressView(),
             Padding(
-              padding: const EdgeInsets.only(top: 18.0),
+              padding: const EdgeInsets.only(top: 5.0),
               child: Column(
                 children: <Widget>[
                   Row(
