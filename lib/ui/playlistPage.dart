@@ -137,10 +137,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
                                             borderRadius:
                                                 BorderRadius.circular(10.0),
                                             onTap: () {
-                                              playSong(
-                                                  (data as dynamic).data["list"]
-                                                      [index],
-                                                  context);
+                                              playSong((data as dynamic)
+                                                  .data["list"][index]);
                                               Navigator.pop(context, false);
                                             },
                                             splashColor: accent,

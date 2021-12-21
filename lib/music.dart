@@ -53,22 +53,22 @@ class AudioAppState extends State<AudioApp> {
     positionSubscription = audioPlayer?.positionStream
         .listen((p) => {if (mounted) setState(() => position = p)});
 
-    audioPlayerStateSubscription = audioPlayer?.playerStateStream.listen((s) {
-      final isPlaying = s.playing;
-      final processingState = s.processingState;
+    audioPlayerStateSubscription =
+        audioPlayer?.playerStateStream.listen((playerState) {
+      final isPlaying = playerState.playing;
+      final processingState = playerState.processingState;
       if (processingState == ProcessingState.loading ||
           processingState == ProcessingState.buffering) {
         buttonNotifier.value = MPlayerState.loading;
       } else if (!isPlaying) {
         buttonNotifier.value = MPlayerState.paused;
-      } else {
+      } else if (processingState != ProcessingState.completed) {
         buttonNotifier.value = MPlayerState.playing;
+      } else {
+        audioPlayer?.seek(Duration.zero);
+        audioPlayer?.pause();
       }
     });
-  }
-
-  void onComplete() {
-    if (mounted) setState(() => buttonNotifier.value = MPlayerState.stopped);
   }
 
   @override

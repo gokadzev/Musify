@@ -108,7 +108,7 @@ class _SearchPageState extends State<SearchPage> {
                           child: InkWell(
                             borderRadius: BorderRadius.circular(10.0),
                             onTap: () {
-                              playSong(searchedList[index], context);
+                              playSong(searchedList[index]);
                             },
                             onLongPress: () {
                               getTop50();

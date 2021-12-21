@@ -133,16 +133,12 @@ downloadSong(song) async {
   }
 }
 
-Future<void> playSong(song, var context) async {
+Future<void> playSong(
+  song,
+) async {
   try {
     await setSongDetails(song);
     await audioPlayer?.setUrl(kUrl!);
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => AudioApp(),
-      ),
-    );
   } catch (e) {
     artist = "Unknown";
   }
