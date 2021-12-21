@@ -19,7 +19,7 @@ class AboutPage extends StatelessWidget {
         ),
       ),
       child: Scaffold(
-        backgroundColor: Colors.transparent,
+        backgroundColor: bgColor,
         appBar: AppBar(
           systemOverlayStyle:
               SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
@@ -61,15 +61,11 @@ class AboutCards extends StatelessWidget {
         children: <Widget>[
           Padding(
             padding:
-                const EdgeInsets.only(top: 20, left: 8, right: 8, bottom: 6),
+                const EdgeInsets.only(top: 17, left: 8, right: 8, bottom: 6),
             child: Column(
               children: <Widget>[
                 ListTile(
-                  title: Image.network(
-                    "https://static.vecteezy.com/system/resources/thumbnails/000/540/989/small/Music_banner_alphabet_sign_marquee_light_bulb_vintage_carnival_or_circus_style__Vector_illustration.jpg",
-                    height: 120,
-                  ),
-                  subtitle: Padding(
+                  title: Padding(
                     padding: const EdgeInsets.all(13.0),
                     child: Center(
                       child: Text(

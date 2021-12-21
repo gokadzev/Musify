@@ -1,3 +1,4 @@
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:musify/ui/aboutPage.dart';
@@ -107,7 +108,11 @@ class SettingsCards extends StatelessWidget {
                                 ),
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(20))),
-                            child: ListView.builder(
+                            child: GridView.builder(
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 3,
+                                ),
                                 shrinkWrap: true,
                                 physics: const BouncingScrollPhysics(),
                                 itemCount: colors.length,
@@ -121,33 +126,38 @@ class SettingsCards extends StatelessWidget {
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceEvenly,
                                           children: [
-                                            for (int num in [0, 1, 2])
-                                              colors.length > index + num
-                                                  ? //error
-                                                  GestureDetector(
-                                                      onTap: () {
-                                                        addOrUpdateData(
-                                                            "settings",
-                                                            "accentColor",
-                                                            colors[
-                                                                index + num]);
-                                                        accent = Color(colors[
-                                                            index + num]);
+                                            colors.length - 1 > index
+                                                ? GestureDetector(
+                                                    onTap: () {
+                                                      addOrUpdateData(
+                                                          "settings",
+                                                          "accentColor",
+                                                          colors[index]);
+                                                      accent =
+                                                          Color(colors[index]);
+                                                      Fluttertoast.showToast(
+                                                          msg:
+                                                              "Accent Color has been Changed, move to other page to see changes!",
+                                                          toastLength: Toast
+                                                              .LENGTH_SHORT,
+                                                          gravity: ToastGravity
+                                                              .BOTTOM,
+                                                          timeInSecForIosWeb: 1,
+                                                          fontSize: 14.0);
 
-                                                        Navigator.pop(context);
-                                                      },
-                                                      child: Material(
-                                                          elevation: 4.0,
-                                                          shape:
-                                                              const CircleBorder(),
-                                                          child: CircleAvatar(
-                                                              radius: 25,
-                                                              backgroundColor:
-                                                                  Color(colors[
-                                                                      index +
-                                                                          num]))),
-                                                    )
-                                                  : Row()
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: Material(
+                                                        elevation: 4.0,
+                                                        shape:
+                                                            const CircleBorder(),
+                                                        child: CircleAvatar(
+                                                            radius: 25,
+                                                            backgroundColor:
+                                                                Color(colors[
+                                                                    index]))),
+                                                  )
+                                                : SizedBox.shrink()
                                           ]));
                                 }));
                       });
