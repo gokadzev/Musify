@@ -2,11 +2,18 @@ import 'dart:convert';
 
 import 'package:musify/services/audio_manager.dart';
 import 'package:http/http.dart' as http;
+import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 List searchedList = [];
 List top50songs = [];
 List playlists = [];
-String? kUrl = "", image = "", title = "", album = "", artist = "", lyrics;
+String? kUrl = "",
+    image = "",
+    title = "",
+    album = "",
+    artist = "",
+    ytid = "",
+    lyrics;
 
 Future<List> fetchSongsList(searchQuery) async {
   String searchUrl =
@@ -83,6 +90,7 @@ Future setSongDetails(song) async {
   title = song["title"];
   image = song["image"];
   album = song["album"] == null ? '' : song["album"];
+  ytid = song["ytid"];
 
   try {
     artist = song['more_info']['singers'];
@@ -99,6 +107,12 @@ Future setSongDetails(song) async {
     lyrics = lyricsResponse['lyrics'];
   }
 
-  kUrl = song["more_info"]["vlink"];
-  kUrlNotifier.value = song["more_info"]["vlink"];
+  var yt = YoutubeExplode();
+  var manifest = await yt.videos.streamsClient.getManifest(ytid!);
+  final List<AudioOnlyStreamInfo> sortedStreamInfo =
+      manifest.audioOnly.sortByBitrate();
+  var audio = sortedStreamInfo.first.url.toString();
+
+  kUrl = audio;
+  kUrlNotifier.value = audio;
 }

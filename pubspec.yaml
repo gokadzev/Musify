@@ -43,6 +43,7 @@ dependencies:
   hive: ^2.0.5
   hive_flutter: ^1.1.0
   delayed_display: ^2.0.0
+  youtube_explode_dart: ^1.10.9+1
 
 dev_dependencies:
   flutter_test:
