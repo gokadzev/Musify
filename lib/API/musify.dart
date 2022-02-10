@@ -4,9 +4,29 @@ import 'package:musify/services/audio_manager.dart';
 import 'package:http/http.dart' as http;
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
+var yt = YoutubeExplode();
+
 List searchedList = [];
 List top50songs = [];
-List playlists = [];
+List playlists = [
+  {
+    "id": "top50",
+    "title": "Top 50 Global",
+    "subtitle": "Just Updated",
+    "header_desc": "Top 50 Global Song.",
+    "type": "playlist",
+    "perma_url": "",
+    "image":
+        "https://charts-images.scdn.co/assets/locale_en/regional/daily/region_global_large.jpg",
+    "language": "",
+    "year": "",
+    "play_count": "",
+    "explicit_content": 0,
+    "list_count": 30,
+    "list_type": "",
+    "list": []
+  }
+];
 String? kUrl = "",
     image = "",
     title = "",
@@ -16,72 +36,81 @@ String? kUrl = "",
     lyrics;
 
 Future<List> fetchSongsList(searchQuery) async {
-  String searchUrl =
-      "https://musap.vv2021.repl.co/get_data?act=search&q=" + searchQuery;
-  var res = await http
-      .get(Uri.parse(searchUrl), headers: {"Accept": "application/json"});
-  var getMain = json.decode(res.body);
-
-  searchedList = getMain["songs"]["data"];
-  for (int i = 0; i < searchedList.length; i++) {
-    searchedList[i]['title'] = searchedList[i]['title']
-        .toString()
-        .replaceAll("&amp;", "&")
-        .replaceAll("&#039;", "'")
-        .replaceAll("&quot;", "\"");
-
-    searchedList[i]['more_info']['singers'] = searchedList[i]['more_info']
-            ['singers']
-        .toString()
-        .replaceAll("&amp;", "&")
-        .replaceAll("&#039;", "'")
-        .replaceAll("&quot;", "\"");
-  }
+  var s = yt.search.getVideos(searchQuery);
+  List list = await s;
+  searchedList = [];
+  list.forEach((v) => {
+        searchedList.add({
+          "id": 0,
+          "ytid": v.id,
+          "title": v.title
+              .split('-')[v.title.split('-').length - 1]
+              .replaceAll("&amp;", "&")
+              .replaceAll("&#039;", "'")
+              .replaceAll("&quot;", "\""),
+          "image": v.thumbnails.highResUrl,
+          "album": "",
+          "type": "song",
+          "description": "",
+          "ctr": 943,
+          "position": 1,
+          "more_info": {
+            "vcode": "6010910441258415",
+            "primary_artists": v.title.split('-')[0],
+            "singers": v.title.split('-')[0],
+            "video_available": "null",
+            "triller_available": "false",
+            "language": "English"
+          }
+        })
+      });
   return searchedList;
 }
 
 Future<List> getTop50() async {
-  String topSongsUrl = "https://musap.vv2021.repl.co/get_data?act=global_fifty";
-  var songsListJSON = await http
-      .get(Uri.parse(topSongsUrl), headers: {"Accept": "application/json"});
-  var songsList = json.decode(songsListJSON.body);
-  top50songs = songsList["list"];
-  var songsNumber = 10;
-  for (int i = 0; i < songsNumber; i++) {
-    top50songs[i]['title'] = top50songs[i]['title']
-        .toString()
-        .replaceAll("&amp;", "&")
-        .replaceAll("&#039;", "'")
-        .replaceAll("&quot;", "\"");
-    top50songs[i]["more_info"]["singers"] = top50songs[i]["more_info"]
-            ["singers"]
-        .toString()
-        .replaceAll("&amp;", "&")
-        .replaceAll("&#039;", "'")
-        .replaceAll("&quot;", "\"");
-    top50songs[i]['image'] = top50songs[i]['image'].toString();
+  top50songs = [];
+  var index = 0;
+  await for (var video
+      in yt.playlists.getVideos('PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx')) {
+    top50songs.add({
+      "id": index,
+      "ytid": video.id,
+      "title": video.title
+          .split('-')[video.title.split('-').length - 1]
+          .replaceAll("&amp;", "&")
+          .replaceAll("&#039;", "'")
+          .replaceAll("&quot;", "\""),
+      "image": video.thumbnails.highResUrl,
+      "album": "",
+      "type": "song",
+      "description": "",
+      "ctr": 943,
+      "position": 1,
+      "more_info": {
+        "vcode": "6010910441258415",
+        "primary_artists": video.title.split('-')[0],
+        "singers": video.title.split('-')[0],
+        "video_available": "null",
+        "triller_available": "false",
+        "language": "English"
+      }
+    });
+    index += 1;
   }
-
   return top50songs;
 }
 
-Future<List> getPlaylists() async {
-  String playlistsURL =
-      "https://musap.vv2021.repl.co/get_data?act=playlists_data";
-  var playlistsJSON = await http
-      .get(Uri.parse(playlistsURL), headers: {"Accept": "application/json"});
-  playlists = json.decode(playlistsJSON.body);
-
+Future<List<dynamic>> getPlaylists() async {
   return playlists;
 }
 
-Future getPlaylistInfoForWidget(int id) async {
-  String playlistURL =
-      "https://musap.vv2021.repl.co/get_data?act=playlist_data&id=" +
-          id.toString();
-  var playlistJSON = await http
-      .get(Uri.parse(playlistURL), headers: {"Accept": "application/json"});
-  var playlist = json.decode(playlistJSON.body);
+Future getPlaylistInfoForWidget(dynamic id) async {
+  var playlist;
+  if (id == "top50") {
+    playlist = playlists[0];
+    playlist["list"] = await getTop50();
+    print(playlist);
+  }
 
   return playlist;
 }
@@ -90,7 +119,7 @@ Future setSongDetails(song) async {
   title = song["title"];
   image = song["image"];
   album = song["album"] == null ? '' : song["album"];
-  ytid = song["ytid"];
+  ytid = song["ytid"].toString();
 
   try {
     artist = song['more_info']['singers'];
@@ -107,7 +136,6 @@ Future setSongDetails(song) async {
     lyrics = lyricsResponse['lyrics'];
   }
 
-  var yt = YoutubeExplode();
   var manifest = await yt.videos.streamsClient.getManifest(ytid!);
   final List<AudioOnlyStreamInfo> sortedStreamInfo =
       manifest.audioOnly.sortByBitrate();

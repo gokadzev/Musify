@@ -46,26 +46,31 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
           FutureBuilder(
               future: getPlaylists(),
               builder: (context, data) {
-                return Container(
-                    child: GridView.count(
-                        crossAxisCount: 2,
-                        shrinkWrap: true,
-                        physics: ScrollPhysics(),
-                        padding: EdgeInsets.only(
-                            left: 16.0, right: 16.0, top: 16.0, bottom: 150),
-                        children: List.generate(playlists.length, (index) {
-                          return Center(
-                              child: getPlaylist(
-                                  index,
-                                  (data as dynamic).data[index]["image"],
-                                  (data as dynamic).data[index]["title"],
-                                  (data as dynamic).data[index]["id"]));
-                        })));
+                return (data as dynamic).data != null
+                    ? Container(
+                        child: GridView.count(
+                            crossAxisCount: 2,
+                            shrinkWrap: true,
+                            physics: ScrollPhysics(),
+                            padding: EdgeInsets.only(
+                                left: 16.0,
+                                right: 16.0,
+                                top: 16.0,
+                                bottom: 150),
+                            children: List.generate(playlists.length, (index) {
+                              return Center(
+                                  child: getPlaylist(
+                                      index,
+                                      (data as dynamic).data[index]["image"],
+                                      (data as dynamic).data[index]["title"],
+                                      (data as dynamic).data[index]["id"]));
+                            })))
+                    : Container();
               })
         ])));
   }
 
-  Widget getPlaylist(int index, String image, String title, int id) {
+  Widget getPlaylist(int index, String image, String title, dynamic id) {
     Size size = MediaQuery.of(context).size;
 
     return SingleChildScrollView(

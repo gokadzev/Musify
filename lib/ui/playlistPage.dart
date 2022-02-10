@@ -8,7 +8,7 @@ import 'package:musify/services/audio_manager.dart';
 import 'package:musify/style/appColors.dart';
 
 class PlaylistPage extends StatefulWidget {
-  final int id;
+  final dynamic id;
   const PlaylistPage({Key? key, required this.id}) : super(key: key);
 
   @override
@@ -18,7 +18,7 @@ class PlaylistPage extends StatefulWidget {
 class _PlaylistPageState extends State<PlaylistPage> {
   @override
   Widget build(BuildContext context) {
-    final int id = widget.id;
+    final dynamic id = widget.id;
     return Material(
         child: Container(
       decoration: BoxDecoration(
