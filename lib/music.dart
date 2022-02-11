@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gradient_widgets/gradient_widgets.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/style/appColors.dart';
@@ -83,7 +82,6 @@ class AudioAppState extends State<AudioApp> {
             Color(0xff384850),
             Color(0xff263238),
             Color(0xff263238),
-            //Color(0xff61e88a),
           ],
         ),
       ),
@@ -94,15 +92,9 @@ class AudioAppState extends State<AudioApp> {
               SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
           backgroundColor: bgColor,
           elevation: 0,
-          //backgroundColor: Color(0xff384850),
           centerTitle: true,
-          title: GradientText(
+          title: Text(
             "Now Playing",
-            shaderRect: Rect.fromLTWH(13.0, 0.0, 100.0, 50.0),
-            gradient: LinearGradient(colors: [
-              accent,
-              accent,
-            ]),
             style: TextStyle(
               color: accent,
               fontSize: 25,
@@ -144,17 +136,14 @@ class AudioAppState extends State<AudioApp> {
                   padding: const EdgeInsets.only(top: 35.0, bottom: 35),
                   child: Column(
                     children: <Widget>[
-                      GradientText(
+                      Text(
                         title!,
-                        shaderRect: Rect.fromLTWH(13.0, 0.0, 100.0, 50.0),
-                        gradient: LinearGradient(colors: [
-                          accent,
-                          accent,
-                        ]),
                         textScaleFactor: 2.5,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            fontSize: 12, fontWeight: FontWeight.w700),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: accent),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 8.0),
@@ -211,13 +200,7 @@ class AudioAppState extends State<AudioApp> {
                     children: [
                       Container(
                         decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                accent,
-                                //Color(0xff00c754),
-                                accent,
-                              ],
-                            ),
+                            color: accent,
                             borderRadius: BorderRadius.circular(100)),
                         child: ValueListenableBuilder<MPlayerState>(
                           valueListenable: buttonNotifier,

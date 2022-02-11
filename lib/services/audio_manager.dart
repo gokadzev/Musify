@@ -144,6 +144,24 @@ Future<void> playSong(
   }
 }
 
+Future changeShuffleStatus(bool status) async {
+  if (status == true) {
+    await audioPlayer?.setShuffleModeEnabled(true);
+  } else {
+    await audioPlayer?.setShuffleModeEnabled(false);
+  }
+}
+
+Future changeLoopStatus(type) async {
+  if (type == "item") {
+    await audioPlayer?.setLoopMode(LoopMode.all);
+  } else if (type == "playlist") {
+    await audioPlayer?.setLoopMode(LoopMode.one);
+  } else {
+    await audioPlayer?.setLoopMode(LoopMode.off);
+  }
+}
+
 Future addToQueue(audioUrl, audio) async {
   // in testing mode
   final song = Uri.parse(audioUrl);
