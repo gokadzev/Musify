@@ -113,8 +113,8 @@ class _HomePageState extends State<HomePage> {
       child: Column(
         children: [
           Container(
-            height: MediaQuery.of(context).size.height * 0.17,
-            width: MediaQuery.of(context).size.width * 0.4,
+            height: MediaQuery.of(context).size.height * 0.19,
+            width: MediaQuery.of(context).size.width * 0.45,
             child: Card(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8.0),

@@ -134,11 +134,11 @@ class _SearchPageState extends State<SearchPage> {
                                         .split("(")[0]
                                         .replaceAll("&quot;", "\"")
                                         .replaceAll("&amp;", "&"),
-                                    style: TextStyle(color: Colors.white),
+                                    style: TextStyle(color: accent),
                                   ),
                                   subtitle: Text(
                                     searchedList[index]['more_info']["singers"],
-                                    style: TextStyle(color: Colors.white),
+                                    style: TextStyle(color: accentLight),
                                   ),
                                   trailing: IconButton(
                                     color: accent,

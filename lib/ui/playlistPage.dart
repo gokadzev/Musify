@@ -73,31 +73,40 @@ class _PlaylistPageState extends State<PlaylistPage> {
                           children: [
                             Row(
                               children: [
-                                CachedNetworkImage(
-                                  imageUrl: (data as dynamic).data["image"],
-                                  height: 200.0,
-                                  width: 200.0,
-                                  fit: BoxFit.cover,
-                                ),
+                                Container(
+                                    height: 200.0,
+                                    width: 200.0,
+                                    child: Card(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                      ),
+                                      color: Colors.transparent,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                          image: DecorationImage(
+                                            fit: BoxFit.cover,
+                                            image: CachedNetworkImageProvider(
+                                                (data as dynamic)
+                                                    .data["image"]),
+                                          ),
+                                        ),
+                                      ),
+                                    )),
                                 const SizedBox(width: 16.0),
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        'PLAYLIST',
-                                        style: TextStyle(
-                                            color: accent,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600),
-                                      ),
                                       const SizedBox(height: 12.0),
                                       Text(
                                         (data as dynamic).data["title"],
                                         style: TextStyle(
                                             color: accent,
-                                            fontSize: 14,
+                                            fontSize: 18,
                                             fontWeight: FontWeight.w600),
                                       ),
                                       const SizedBox(height: 16.0),
@@ -169,7 +178,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                                                         .replaceAll(
                                                             "&amp;", "&"),
                                                     style: TextStyle(
-                                                        color: Colors.white),
+                                                        color: accent),
                                                   ),
                                                   subtitle: Text(
                                                     (data as dynamic)
@@ -177,7 +186,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                                                             [index]['more_info']
                                                         ["singers"],
                                                     style: TextStyle(
-                                                        color: Colors.white),
+                                                        color: accentLight),
                                                   ),
                                                   trailing: IconButton(
                                                     color: accent,
@@ -200,7 +209,15 @@ class _PlaylistPageState extends State<PlaylistPage> {
                                 : Container()
                           ],
                         ))
-                    : Container();
+                    : Container(
+                        height: MediaQuery.of(context).size.height - 100,
+                        child: Align(
+                            alignment: Alignment.center,
+                            child: Center(
+                                child: CircularProgressIndicator(
+                              color: accent,
+                              strokeWidth: 3,
+                            ))));
               }),
         ),
       ),

@@ -99,7 +99,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                               offset: const Offset(0, 0))
                         ]),
                         child: ClipRRect(
-                          borderRadius: BorderRadius.circular(20.0),
+                          borderRadius: BorderRadius.circular(15.0),
                           child: CachedNetworkImage(
                             imageUrl: image,
                             fit: BoxFit.cover,
@@ -110,7 +110,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                           child: Container(
                         width: size.width * 0.4,
                         decoration: new BoxDecoration(
-                            borderRadius: BorderRadius.circular(20.0),
+                            borderRadius: BorderRadius.circular(15.0),
                             gradient: new LinearGradient(
                               colors: [
                                 accent.withAlpha(30),

@@ -115,7 +115,7 @@ class AboutCards extends StatelessWidget {
                 ),
                 subtitle: Text(
                   'Web/APP Developer',
-                  style: TextStyle(color: accent),
+                  style: TextStyle(color: accentLight),
                 ),
               ),
             ),

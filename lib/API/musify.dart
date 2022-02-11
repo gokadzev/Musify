@@ -113,7 +113,6 @@ Future getPlaylistInfoForWidget(dynamic id) async {
   if (id == "top50") {
     playlist = playlists[0];
     playlist["list"] = await getTop50();
-    print(playlist);
   }
 
   return playlist;
