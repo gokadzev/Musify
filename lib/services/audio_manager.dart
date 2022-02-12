@@ -19,13 +19,14 @@ AudioPlayer? audioPlayer = AudioPlayer();
 AudioHandler? _audioHandler;
 
 final durationNotifier = ValueNotifier<Duration?>(Duration.zero);
+final buttonNotifier = ValueNotifier<MPlayerState>(MPlayerState.stopped);
+final kUrlNotifier = ValueNotifier<String>('');
+final shuffleNotifier = ValueNotifier<bool>(false);
+final repeatNotifier = ValueNotifier<bool>(false);
 
 bool get hasNext => audioPlayer!.hasNext;
 
 bool get hasPrevious => audioPlayer!.hasPrevious;
-
-final buttonNotifier = ValueNotifier<MPlayerState>(MPlayerState.stopped);
-final kUrlNotifier = ValueNotifier<String>('');
 
 get durationText =>
     duration != null ? duration.toString().split('.').first : '';
@@ -133,6 +134,13 @@ downloadSong(song) async {
   }
 }
 
+void listenForChangesInSequenceState() {
+  audioPlayer?.sequenceStateStream.listen((sequenceState) {
+    if (sequenceState == null) return;
+    shuffleNotifier.value = sequenceState.shuffleModeEnabled;
+  });
+}
+
 Future<void> playSong(
   song,
 ) async {
@@ -144,20 +152,20 @@ Future<void> playSong(
   }
 }
 
-Future changeShuffleStatus(bool status) async {
-  if (status == true) {
-    await audioPlayer?.setShuffleModeEnabled(true);
-  } else {
+Future changeShuffleStatus() async {
+  if (shuffleNotifier.value == true) {
     await audioPlayer?.setShuffleModeEnabled(false);
+  } else {
+    await audioPlayer?.setShuffleModeEnabled(true);
   }
 }
 
-Future changeLoopStatus(type) async {
-  if (type == "item") {
-    await audioPlayer?.setLoopMode(LoopMode.all);
-  } else if (type == "playlist") {
+Future changeLoopStatus() async {
+  if (repeatNotifier.value == false) {
+    repeatNotifier.value = true;
     await audioPlayer?.setLoopMode(LoopMode.one);
   } else {
+    repeatNotifier.value = false;
     await audioPlayer?.setLoopMode(LoopMode.off);
   }
 }

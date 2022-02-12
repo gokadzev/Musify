@@ -38,6 +38,7 @@ class AudioAppState extends State<AudioApp> {
     super.initState();
 
     initAudioPlayer();
+    listenForChangesInSequenceState();
   }
 
   void initAudioPlayer() {
@@ -195,53 +196,104 @@ class AudioAppState extends State<AudioApp> {
               padding: const EdgeInsets.only(top: 5.0),
               child: Column(
                 children: <Widget>[
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                            color: accent,
-                            borderRadius: BorderRadius.circular(100)),
-                        child: ValueListenableBuilder<MPlayerState>(
-                          valueListenable: buttonNotifier,
-                          builder: (_, value, __) {
-                            switch (value) {
-                              case MPlayerState.loading:
-                                return Container(
-                                  margin: const EdgeInsets.all(8.0),
-                                  width: 32.0,
-                                  height: 32.0,
-                                  child: const CircularProgressIndicator(),
-                                );
-                              case MPlayerState.paused:
-                                return IconButton(
-                                  icon: const Icon(MdiIcons.play),
-                                  iconSize: 32.0,
-                                  onPressed: () {
-                                    play();
-                                  },
-                                );
-                              case MPlayerState.playing:
-                                return IconButton(
-                                  icon: const Icon(MdiIcons.pause),
-                                  iconSize: 32.0,
-                                  onPressed: () {
-                                    pause();
-                                  },
-                                );
-                              case MPlayerState.stopped:
-                                return IconButton(
-                                  icon: const Icon(MdiIcons.play),
-                                  iconSize: 32.0,
-                                  onPressed: () {
-                                    play();
-                                  },
-                                );
-                            }
+                  Container(
+                    padding: EdgeInsets.only(left: 22, right: 22),
+                    width: double.infinity,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        IconButton(
+                          padding: EdgeInsets.zero,
+                          icon: Icon(
+                            MdiIcons.shuffle,
+                            color:
+                                shuffleNotifier.value ? accent : Colors.white,
+                          ),
+                          iconSize: 22.0,
+                          onPressed: () {
+                            changeShuffleStatus();
                           },
                         ),
-                      )
-                    ],
+                        IconButton(
+                          padding: EdgeInsets.zero,
+                          icon: Icon(
+                            Icons.skip_previous,
+                            color: Colors.white,
+                            size: 40,
+                          ),
+                          iconSize: 22.0,
+                          onPressed: () {},
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                              color: accent,
+                              borderRadius: BorderRadius.circular(100)),
+                          child: ValueListenableBuilder<MPlayerState>(
+                            valueListenable: buttonNotifier,
+                            builder: (_, value, __) {
+                              switch (value) {
+                                case MPlayerState.loading:
+                                  return Container(
+                                    margin: const EdgeInsets.all(8.0),
+                                    width: 32.0,
+                                    height: 32.0,
+                                    child: const CircularProgressIndicator(
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                                Colors.white)),
+                                  );
+                                case MPlayerState.paused:
+                                  return IconButton(
+                                    icon: const Icon(MdiIcons.play),
+                                    iconSize: 32.0,
+                                    onPressed: () {
+                                      play();
+                                    },
+                                  );
+                                case MPlayerState.playing:
+                                  return IconButton(
+                                    icon: const Icon(MdiIcons.pause),
+                                    iconSize: 32.0,
+                                    onPressed: () {
+                                      pause();
+                                    },
+                                  );
+                                case MPlayerState.stopped:
+                                  return IconButton(
+                                    icon: const Icon(MdiIcons.play),
+                                    iconSize: 32.0,
+                                    onPressed: () {
+                                      play();
+                                    },
+                                  );
+                              }
+                            },
+                          ),
+                        ),
+                        IconButton(
+                          padding: EdgeInsets.zero,
+                          icon: Icon(
+                            Icons.skip_next,
+                            color: Colors.white,
+                            size: 40,
+                          ),
+                          iconSize: 32.0,
+                          onPressed: () {},
+                        ),
+                        IconButton(
+                          padding: EdgeInsets.zero,
+                          icon: Icon(
+                            MdiIcons.repeat,
+                            color: repeatNotifier.value ? accent : Colors.white,
+                          ),
+                          iconSize: 22.0,
+                          onPressed: () {
+                            changeLoopStatus();
+                          },
+                        )
+                      ],
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 40.0),
