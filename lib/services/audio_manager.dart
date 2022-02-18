@@ -147,6 +147,7 @@ Future<void> playSong(
   try {
     await setSongDetails(song);
     await audioPlayer?.setUrl(kUrl!);
+    await play();
   } catch (e) {
     artist = "Unknown";
   }

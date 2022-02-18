@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:gradient_widgets/gradient_widgets.dart';
 import 'package:musify/API/musify.dart';
 
-import '../music.dart';
-
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -104,11 +102,6 @@ class _HomePageState extends State<HomePage> {
     return InkWell(
       onTap: () {
         playSong(song);
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AudioApp(),
-            ));
       },
       child: Column(
         children: [

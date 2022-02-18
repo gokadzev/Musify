@@ -30,15 +30,15 @@ dependencies:
   cupertino_icons: ^1.0.4
   http: ^0.13.4
   audiotagger: ^2.2.1
-  path_provider: ^2.0.8
+  path_provider: ^2.0.9
   gradient_widgets: ^0.6.0
   material_design_icons_flutter: ^5.0.6595
-  url_launcher: ^6.0.18
-  permission_handler: ^8.3.0
+  url_launcher: ^6.0.20
+  permission_handler: ^9.1.0
   fluttertoast: ^8.0.8
   cached_network_image: ^3.2.0
   audio_service: ^0.18.3
-  just_audio: ^0.9.19 
+  just_audio: ^0.9.20 
   get_it: ^7.2.0
   hive: ^2.0.5
   hive_flutter: ^1.1.0

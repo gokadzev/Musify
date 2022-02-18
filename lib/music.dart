@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/style/appColors.dart';
 
@@ -36,39 +35,6 @@ class AudioAppState extends State<AudioApp> {
   @override
   void initState() {
     super.initState();
-
-    initAudioPlayer();
-    listenForChangesInSequenceState();
-  }
-
-  void initAudioPlayer() {
-    if (buttonNotifier.value != MPlayerState.playing) {
-      setState(() {
-        play();
-      });
-    }
-
-    audioPlayer?.durationStream.listen((d) => setState(() => duration = d));
-
-    positionSubscription = audioPlayer?.positionStream
-        .listen((p) => {if (mounted) setState(() => position = p)});
-
-    audioPlayerStateSubscription =
-        audioPlayer?.playerStateStream.listen((playerState) {
-      final isPlaying = playerState.playing;
-      final processingState = playerState.processingState;
-      if (processingState == ProcessingState.loading ||
-          processingState == ProcessingState.buffering) {
-        buttonNotifier.value = MPlayerState.loading;
-      } else if (!isPlaying) {
-        buttonNotifier.value = MPlayerState.paused;
-      } else if (processingState != ProcessingState.completed) {
-        buttonNotifier.value = MPlayerState.playing;
-      } else {
-        audioPlayer?.seek(Duration.zero);
-        audioPlayer?.pause();
-      }
-    });
   }
 
   @override

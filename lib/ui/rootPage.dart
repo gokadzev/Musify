@@ -1,3 +1,4 @@
+import 'package:just_audio/just_audio.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/ui/homePage.dart';
 import 'package:musify/ui/playlistsPage.dart';
@@ -27,6 +28,32 @@ class AppState extends State<Musify> {
       systemNavigationBarColor: bgColor,
       statusBarColor: bgColor,
     ));
+    initAudioPlayer();
+    listenForChangesInSequenceState();
+  }
+
+  void initAudioPlayer() {
+    audioPlayer?.durationStream.listen((d) => setState(() => duration = d));
+
+    positionSubscription = audioPlayer?.positionStream
+        .listen((p) => {if (mounted) setState(() => position = p)});
+
+    audioPlayerStateSubscription =
+        audioPlayer?.playerStateStream.listen((playerState) {
+      final isPlaying = playerState.playing;
+      final processingState = playerState.processingState;
+      if (processingState == ProcessingState.loading ||
+          processingState == ProcessingState.buffering) {
+        buttonNotifier.value = MPlayerState.loading;
+      } else if (!isPlaying) {
+        buttonNotifier.value = MPlayerState.paused;
+      } else if (processingState != ProcessingState.completed) {
+        buttonNotifier.value = MPlayerState.playing;
+      } else {
+        audioPlayer?.seek(Duration.zero);
+        audioPlayer?.pause();
+      }
+    });
   }
 
   @override
@@ -38,10 +65,10 @@ class AppState extends State<Musify> {
 
   Widget getFooter() {
     List items = [
-      MdiIcons.homeOutline,
-      MdiIcons.magnify,
-      MdiIcons.bookOutline,
-      MdiIcons.cogOutline,
+      {'icon': MdiIcons.homeOutline, 'name': 'Home'},
+      {'icon': MdiIcons.magnify, 'name': 'Search'},
+      {'icon': MdiIcons.bookOutline, 'name': 'Playlists'},
+      {'icon': MdiIcons.cogOutline, 'name': 'Settings'},
     ];
 
     return Column(
@@ -138,13 +165,9 @@ class AppState extends State<Musify> {
                                           if (buttonNotifier.value ==
                                               MPlayerState.playing) {
                                             audioPlayer?.pause();
-                                            buttonNotifier.value =
-                                                MPlayerState.paused;
                                           } else if (buttonNotifier.value ==
                                               MPlayerState.paused) {
                                             audioPlayer?.play();
-                                            buttonNotifier.value =
-                                                MPlayerState.playing;
                                           }
                                         });
                                       },
@@ -161,7 +184,7 @@ class AppState extends State<Musify> {
         Container(
           height: 65,
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(80.0),
+              borderRadius: BorderRadius.circular(30.0),
               color: Color(0XFF282828),
               boxShadow: [
                 BoxShadow(
@@ -175,16 +198,27 @@ class AppState extends State<Musify> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: List.generate(items.length, (index) {
-                  return IconButton(
-                      icon: Icon(
-                        items[index],
-                        color: activeTab == index ? accent : Colors.white,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          activeTab = index;
-                        });
+                  return InkWell(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Icon(
+                          items[index]["icon"],
+                          color: activeTab == index ? accent : Colors.white,
+                        ),
+                        Text(items[index]["name"],
+                            style: TextStyle(
+                              color: activeTab == index ? accent : Colors.white,
+                              fontWeight: FontWeight.bold,
+                            )),
+                      ],
+                    ),
+                    onTap: () {
+                      setState(() {
+                        activeTab = index;
                       });
+                    },
+                  );
                 })),
           ),
         )
