@@ -71,37 +71,38 @@ Future<List> fetchSongsList(searchQuery) async {
 }
 
 Future<List> getTop50() async {
-  top50songs = [];
-  var index = 0;
-  await for (var video
-      in yt.playlists.getVideos('PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx')) {
-    top50songs.add({
-      "id": index,
-      "ytid": video.id,
-      "title": video.title
-          .split('-')[video.title.split('-').length - 1]
-          .replaceAll("&amp;", "&")
-          .replaceAll("&#039;", "'")
-          .replaceAll("&quot;", "\"")
-          .replaceAll("[Official Video]", "")
-          .replaceAll("(Official Video)", "")
-          .replaceAll("(Official Music Video)", ""),
-      "image": video.thumbnails.highResUrl,
-      "album": "",
-      "type": "song",
-      "description": "",
-      "ctr": 943,
-      "position": 1,
-      "more_info": {
-        "vcode": "6010910441258415",
-        "primary_artists": video.title.split('-')[0],
-        "singers": video.title.split('-')[0],
-        "video_available": "null",
-        "triller_available": "false",
-        "language": "English"
-      }
-    });
-    index += 1;
+  if (top50songs.length == 0) {
+    var index = 0;
+    await for (var video
+        in yt.playlists.getVideos('PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx')) {
+      top50songs.add({
+        "id": index,
+        "ytid": video.id,
+        "title": video.title
+            .split('-')[video.title.split('-').length - 1]
+            .replaceAll("&amp;", "&")
+            .replaceAll("&#039;", "'")
+            .replaceAll("&quot;", "\"")
+            .replaceAll("[Official Video]", "")
+            .replaceAll("(Official Video)", "")
+            .replaceAll("(Official Music Video)", ""),
+        "image": video.thumbnails.standardResUrl,
+        "album": "",
+        "type": "song",
+        "description": "",
+        "ctr": 943,
+        "position": 1,
+        "more_info": {
+          "vcode": "6010910441258415",
+          "primary_artists": video.title.split('-')[0],
+          "singers": video.title.split('-')[0],
+          "video_available": "null",
+          "triller_available": "false",
+          "language": "English"
+        }
+      });
+      index += 1;
+    }
   }
   return top50songs;
 }

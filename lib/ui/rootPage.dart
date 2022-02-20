@@ -176,7 +176,9 @@ class AppState extends State<Musify> {
                   : SizedBox.shrink();
             }),
         Container(
+          width: MediaQuery.of(context).size.width * 0.95,
           height: 65,
+          margin: const EdgeInsets.only(bottom: 10),
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(30.0),
               color: Color(0XFF282828),
@@ -192,27 +194,35 @@ class AppState extends State<Musify> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: List.generate(items.length, (index) {
-                  return InkWell(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Icon(
-                          items[index]["icon"],
-                          color: activeTab == index ? accent : Colors.white,
+                  return Container(
+                      padding: EdgeInsets.all(12.0),
+                      decoration: new BoxDecoration(
+                          borderRadius: BorderRadius.circular(50.0),
+                          color:
+                              activeTab == index ? accent : Colors.transparent),
+                      child: InkWell(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Icon(
+                              items[index]["icon"],
+                              color: Colors.white,
+                            ),
+                            activeTab != index
+                                ? Text(items[index]["name"],
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ))
+                                : Wrap(),
+                          ],
                         ),
-                        Text(items[index]["name"],
-                            style: TextStyle(
-                              color: activeTab == index ? accent : Colors.white,
-                              fontWeight: FontWeight.bold,
-                            )),
-                      ],
-                    ),
-                    onTap: () {
-                      setState(() {
-                        activeTab = index;
-                      });
-                    },
-                  );
+                        onTap: () {
+                          setState(() {
+                            activeTab = index;
+                          });
+                        },
+                      ));
                 })),
           ),
         )

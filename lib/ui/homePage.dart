@@ -1,8 +1,8 @@
+import 'package:delayed_display/delayed_display.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:gradient_widgets/gradient_widgets.dart';
 import 'package:musify/API/musify.dart';
 
 class HomePage extends StatefulWidget {
@@ -25,17 +25,12 @@ class _HomePageState extends State<HomePage> {
                   child: Padding(
                     padding: const EdgeInsets.only(),
                     child: Center(
-                      child: GradientText(
+                      child: Text(
                         "Musify.",
-                        shaderRect: Rect.fromLTWH(13.0, 0.0, 100.0, 50.0),
-                        gradient: LinearGradient(colors: [
-                          accent,
-                          accent,
-                        ]),
                         style: TextStyle(
-                          fontSize: 35,
-                          fontWeight: FontWeight.w800,
-                        ),
+                            fontSize: 35,
+                            fontWeight: FontWeight.w800,
+                            color: accent),
                       ),
                     ),
                   ),
@@ -58,14 +53,13 @@ class _HomePageState extends State<HomePage> {
                             "Top 50 Songs",
                             textAlign: TextAlign.left,
                             style: TextStyle(
-                              fontSize: 22,
+                              fontSize: 18,
                               color: accent,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),
                         Container(
-                          //padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
                           height: MediaQuery.of(context).size.height * 0.25,
                           child: ListView.builder(
                             scrollDirection: Axis.horizontal,
@@ -99,59 +93,62 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget getTopSong(String image, String title, String subtitle, song) {
-    return InkWell(
-      onTap: () {
-        playSong(song);
-      },
-      child: Column(
-        children: [
-          Container(
-            height: MediaQuery.of(context).size.height * 0.19,
-            width: MediaQuery.of(context).size.width * 0.45,
-            child: Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              color: Colors.transparent,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0),
-                  image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image: CachedNetworkImageProvider(image),
+    return DelayedDisplay(
+        delay: Duration(milliseconds: 200),
+        fadingDuration: Duration(milliseconds: 600),
+        child: InkWell(
+          onTap: () {
+            playSong(song);
+          },
+          child: Column(
+            children: [
+              Container(
+                height: MediaQuery.of(context).size.height * 0.19,
+                width: MediaQuery.of(context).size.width * 0.45,
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  color: Colors.transparent,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: CachedNetworkImageProvider(image),
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
+              SizedBox(
+                height: 2,
+              ),
+              Text(
+                title
+                    .split("(")[0]
+                    .replaceAll("&amp;", "&")
+                    .replaceAll("&#039;", "'")
+                    .replaceAll("&quot;", "\""),
+                style: TextStyle(
+                  color: accent,
+                  fontSize: 14.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(
+                height: 2,
+              ),
+              Text(
+                subtitle,
+                style: TextStyle(
+                  color: Colors.white60,
+                  fontSize: 12.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
-          SizedBox(
-            height: 2,
-          ),
-          Text(
-            title
-                .split("(")[0]
-                .replaceAll("&amp;", "&")
-                .replaceAll("&#039;", "'")
-                .replaceAll("&quot;", "\""),
-            style: TextStyle(
-              color: accent,
-              fontSize: 14.0,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(
-            height: 2,
-          ),
-          Text(
-            subtitle,
-            style: TextStyle(
-              color: Colors.white60,
-              fontSize: 12.0,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
-    );
+        ));
   }
 }
