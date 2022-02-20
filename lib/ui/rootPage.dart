@@ -29,15 +29,9 @@ class AppState extends State<Musify> {
       statusBarColor: bgColor,
     ));
     initAudioPlayer();
-    listenForChangesInSequenceState();
   }
 
   void initAudioPlayer() {
-    audioPlayer?.durationStream.listen((d) => setState(() => duration = d));
-
-    positionSubscription = audioPlayer?.positionStream
-        .listen((p) => {if (mounted) setState(() => position = p)});
-
     audioPlayerStateSubscription =
         audioPlayer?.playerStateStream.listen((playerState) {
       final isPlaying = playerState.playing;

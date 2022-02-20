@@ -49,7 +49,8 @@ Future<List> fetchSongsList(searchQuery) async {
               .replaceAll("&#039;", "'")
               .replaceAll("&quot;", "\"")
               .replaceAll("[Official Video]", "")
-              .replaceAll("(Official Video)", ""),
+              .replaceAll("(Official Video)", "")
+              .replaceAll("(Official Music Video)", ""),
           "image": v.thumbnails.highResUrl,
           "album": "",
           "type": "song",
@@ -83,7 +84,8 @@ Future<List> getTop50() async {
           .replaceAll("&#039;", "'")
           .replaceAll("&quot;", "\"")
           .replaceAll("[Official Video]", "")
-          .replaceAll("(Official Video)", ""),
+          .replaceAll("(Official Video)", "")
+          .replaceAll("(Official Music Video)", ""),
       "image": video.thumbnails.highResUrl,
       "album": "",
       "type": "song",

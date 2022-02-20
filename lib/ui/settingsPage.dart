@@ -65,10 +65,8 @@ class SettingsCards extends StatelessWidget {
                 onTap: () {
                   showModalBottomSheet(
                       isDismissible: true,
-                      backgroundColor: bgColor,
+                      backgroundColor: Colors.transparent,
                       context: context,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0)),
                       builder: (BuildContext context) {
                         final List<int> colors = [
                           0xFFFFCDD2,
@@ -101,65 +99,75 @@ class SettingsCards extends StatelessWidget {
                           0xFFFF9E80,
                           0xFFFFFFFF
                         ];
-                        return Container(
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: accent,
-                                ),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(20))),
-                            child: GridView.builder(
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 3,
-                                ),
-                                shrinkWrap: true,
-                                physics: const BouncingScrollPhysics(),
-                                itemCount: colors.length,
-                                itemBuilder: (context, index) {
-                                  return Padding(
-                                      padding: const EdgeInsets.only(
-                                        top: 15.0,
-                                        bottom: 15.0,
-                                      ),
-                                      child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            colors.length - 1 > index
-                                                ? GestureDetector(
-                                                    onTap: () {
-                                                      addOrUpdateData(
-                                                          "settings",
-                                                          "accentColor",
-                                                          colors[index]);
-                                                      accent =
-                                                          Color(colors[index]);
-                                                      Fluttertoast.showToast(
-                                                          msg:
-                                                              "Accent Color has been Changed, move to other page to see changes!",
-                                                          toastLength: Toast
-                                                              .LENGTH_SHORT,
-                                                          gravity: ToastGravity
-                                                              .BOTTOM,
-                                                          timeInSecForIosWeb: 1,
-                                                          fontSize: 14.0);
+                        return Center(
+                            child: Container(
+                                decoration: BoxDecoration(
+                                    color: bgColor,
+                                    border: Border.all(
+                                      color: accent,
+                                    ),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(20))),
+                                width: MediaQuery.of(context)
+                                        .copyWith()
+                                        .size
+                                        .width *
+                                    0.90,
+                                child: GridView.builder(
+                                    gridDelegate:
+                                        SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 3,
+                                    ),
+                                    shrinkWrap: true,
+                                    physics: const BouncingScrollPhysics(),
+                                    itemCount: colors.length,
+                                    itemBuilder: (context, index) {
+                                      return Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 15.0,
+                                            bottom: 15.0,
+                                          ),
+                                          child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                              children: [
+                                                colors.length - 1 > index
+                                                    ? GestureDetector(
+                                                        onTap: () {
+                                                          addOrUpdateData(
+                                                              "settings",
+                                                              "accentColor",
+                                                              colors[index]);
+                                                          accent = Color(
+                                                              colors[index]);
+                                                          Fluttertoast.showToast(
+                                                              msg:
+                                                                  "Accent Color has been Changed, move to other page to see changes!",
+                                                              toastLength: Toast
+                                                                  .LENGTH_SHORT,
+                                                              gravity:
+                                                                  ToastGravity
+                                                                      .BOTTOM,
+                                                              timeInSecForIosWeb:
+                                                                  1,
+                                                              fontSize: 14.0);
 
-                                                      Navigator.pop(context);
-                                                    },
-                                                    child: Material(
-                                                        elevation: 4.0,
-                                                        shape:
-                                                            const CircleBorder(),
-                                                        child: CircleAvatar(
-                                                            radius: 25,
-                                                            backgroundColor:
-                                                                Color(colors[
-                                                                    index]))),
-                                                  )
-                                                : SizedBox.shrink()
-                                          ]));
-                                }));
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child: Material(
+                                                            elevation: 4.0,
+                                                            shape:
+                                                                const CircleBorder(),
+                                                            child: CircleAvatar(
+                                                                radius: 25,
+                                                                backgroundColor:
+                                                                    Color(colors[
+                                                                        index]))),
+                                                      )
+                                                    : SizedBox.shrink()
+                                              ]));
+                                    })));
                       });
                 },
               ),
