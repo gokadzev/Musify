@@ -196,10 +196,11 @@ class AppState extends State<Musify> {
                 children: List.generate(items.length, (index) {
                   return Container(
                       padding: EdgeInsets.all(12.0),
-                      decoration: new BoxDecoration(
-                          borderRadius: BorderRadius.circular(50.0),
-                          color:
-                              activeTab == index ? accent : Colors.transparent),
+                      decoration: activeTab == index
+                          ? new BoxDecoration(
+                              borderRadius: BorderRadius.circular(50.0),
+                              color: accent)
+                          : null,
                       child: InkWell(
                         child: Column(
                           mainAxisSize: MainAxisSize.min,

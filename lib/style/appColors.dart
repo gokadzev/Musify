@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
 
-Color accent = Color(0xFFFFFFFF);
+Color accent = Color(0xFFFF9E80);
 Color? accentLight = Colors.white;
 Color bgColor = Color(0XFF202124);
