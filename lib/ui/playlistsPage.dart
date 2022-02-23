@@ -1,3 +1,4 @@
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -70,11 +71,11 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
         ])));
   }
 
-  Widget getPlaylist(int index, String image, String title, dynamic id) {
+  Widget getPlaylist(int index, dynamic image, String title, dynamic id) {
     Size size = MediaQuery.of(context).size;
 
     return SingleChildScrollView(
-        child: InkWell(
+        child: GestureDetector(
             onTap: () {
               Navigator.push(
                   context,
@@ -88,6 +89,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                 padding: EdgeInsets.only(right: 15.0),
                 child: SizedBox(
                   width: size.width * 0.4,
+                  height: size.height * 0.18,
                   child: Stack(
                     alignment: Alignment.bottomLeft,
                     children: [
@@ -99,16 +101,34 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                               offset: const Offset(0, 0))
                         ]),
                         child: ClipRRect(
-                          borderRadius: BorderRadius.circular(15.0),
-                          child: CachedNetworkImage(
-                            imageUrl: image,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
+                            borderRadius: BorderRadius.circular(15.0),
+                            child: image != ""
+                                ? CachedNetworkImage(
+                                    width: size.width * 0.4,
+                                    height: size.height * 0.18,
+                                    imageUrl: image,
+                                    fit: BoxFit.cover,
+                                  )
+                                : Center(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        Icon(MdiIcons.musicNoteOutline,
+                                            size: 30, color: accent),
+                                        Text(
+                                          title,
+                                          style: TextStyle(color: accent),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ],
+                                    ),
+                                  )),
                       ),
                       Positioned.fill(
                           child: Container(
                         width: size.width * 0.4,
+                        height: size.height * 0.18,
                         decoration: new BoxDecoration(
                             borderRadius: BorderRadius.circular(15.0),
                             gradient: new LinearGradient(

@@ -82,18 +82,40 @@ class _PlaylistPageState extends State<PlaylistPage> {
                                             BorderRadius.circular(8.0),
                                       ),
                                       color: Colors.transparent,
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10.0),
-                                          image: DecorationImage(
-                                            fit: BoxFit.cover,
-                                            image: CachedNetworkImageProvider(
-                                                (data as dynamic)
-                                                    .data["image"]),
-                                          ),
-                                        ),
-                                      ),
+                                      child: (data as dynamic).data["image"] !=
+                                              ""
+                                          ? Container(
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(10.0),
+                                                image: DecorationImage(
+                                                  fit: BoxFit.cover,
+                                                  image:
+                                                      CachedNetworkImageProvider(
+                                                          (data as dynamic)
+                                                              .data["image"]),
+                                                ),
+                                              ),
+                                            )
+                                          : Center(
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: <Widget>[
+                                                  Icon(
+                                                      MdiIcons.musicNoteOutline,
+                                                      size: 30,
+                                                      color: accent),
+                                                  Text(
+                                                    (data as dynamic)
+                                                        .data["title"],
+                                                    style: TextStyle(
+                                                        color: accent),
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
                                     )),
                                 const SizedBox(width: 16.0),
                                 Expanded(

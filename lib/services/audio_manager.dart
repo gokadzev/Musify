@@ -146,7 +146,6 @@ Future<void> playSong(song, [isFromPlaylist]) async {
   }
   try {
     await setSongDetails(song);
-    await audioPlayer?.setUrl(kUrl!);
     await play();
   } catch (e) {
     artist = "Unknown";
@@ -156,7 +155,6 @@ Future<void> playSong(song, [isFromPlaylist]) async {
 Future<void> playPlaylist() async {
   try {
     await setSongDetails(activePlaylist[0]);
-    await audioPlayer?.setUrl(kUrl!);
     await play();
   } catch (e) {
     artist = "Unknown";

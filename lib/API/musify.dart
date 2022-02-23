@@ -1,11 +1,12 @@
-import 'dart:convert';
+// import 'dart:convert';
 
 import 'package:musify/services/audio_manager.dart';
-import 'package:http/http.dart' as http;
+// import 'package:http/http.dart' as http;
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 var yt = YoutubeExplode();
 
+List ytplaylists = ["PLmQPPVKNGMHipaJbw0lHPuGPuKQDJkcdn"];
 List searchedList = [];
 List top50songs = [];
 List playlists = [
@@ -15,15 +16,8 @@ List playlists = [
     "subtitle": "Just Updated",
     "header_desc": "Top 50 Global Song.",
     "type": "playlist",
-    "perma_url": "",
     "image":
         "https://charts-images.scdn.co/assets/locale_en/regional/daily/region_global_large.jpg",
-    "language": "",
-    "year": "",
-    "play_count": "",
-    "explicit_content": 0,
-    "list_count": 30,
-    "list_type": "",
     "list": []
   }
 ];
@@ -99,7 +93,53 @@ Future<List> getTop50() async {
 }
 
 Future<List<dynamic>> getPlaylists() async {
+  if (playlists.length == 1) {
+    var index = 0;
+    ytplaylists.forEach((playlistID) async {
+      var plist = await yt.playlists.get(playlistID);
+      playlists.add({
+        "id": index,
+        "ytid": plist.id,
+        "title": plist.title,
+        "subtitle": "Just Updated",
+        "header_desc": plist.description,
+        "type": "playlist",
+        "image": "",
+        "list": []
+      });
+      index += 1;
+    });
+  }
+
   return playlists;
+}
+
+Future getSongsFromPlaylist(playlistid) async {
+  var index = 0;
+  var playlistSongs = [];
+  await for (var video in yt.playlists.getVideos(playlistid)) {
+    playlistSongs.add({
+      "id": index,
+      "ytid": video.id,
+      "title": video.title
+          .split('-')[video.title.split('-').length - 1]
+          .replaceAll("&amp;", "&")
+          .replaceAll("&#039;", "'")
+          .replaceAll("&quot;", "\"")
+          .replaceAll("[Official Video]", "")
+          .replaceAll("(Official Video)", "")
+          .replaceAll("(Official Music Video)", ""),
+      "image": video.thumbnails.standardResUrl,
+      "album": "",
+      "type": "song",
+      "more_info": {
+        "primary_artists": video.title.split('-')[0],
+        "singers": video.title.split('-')[0],
+      }
+    });
+    index += 1;
+  }
+  return playlistSongs;
 }
 
 setActivePlaylist(playlist) async {
@@ -113,6 +153,14 @@ Future getPlaylistInfoForWidget(dynamic id) async {
   if (id == "top50") {
     playlist = playlists[0];
     playlist["list"] = await getTop50();
+  } else {
+    playlist = playlists
+        .where((list) => list["id"] is int && list["id"] == id)
+        .toList()[0];
+  }
+
+  if (playlist["list"].length == 0) {
+    playlist["list"] = await getSongsFromPlaylist(playlist["ytid"]);
   }
 
   return playlist;
@@ -132,19 +180,20 @@ Future setSongDetails(song) async {
   }
 
   lyrics = "null";
-  String lyricsApiUrl = "https://api.lyrics.ovh/v1/" + artist! + "/" + title!;
-  var lyricsApiRes = await http
-      .get(Uri.parse(lyricsApiUrl), headers: {"Accept": "application/json"});
-  var lyricsResponse = json.decode(lyricsApiRes.body);
-  if (lyricsResponse['lyrics'] != null) {
-    lyrics = lyricsResponse['lyrics'];
-  }
+  // service is temporary unavailable
+  // String lyricsApiUrl = "https://api.lyrics.ovh/v1/" + artist! + "/" + title!;
+  // var lyricsApiRes = await http
+  //     .get(Uri.parse(lyricsApiUrl), headers: {"Accept": "application/json"});
+  // var lyricsResponse = json.decode(lyricsApiRes.body);
+  // if (lyricsResponse['lyrics'] != null) {
+  //   lyrics = lyricsResponse['lyrics'];
+  // }
 
   var manifest = await yt.videos.streamsClient.getManifest(ytid!);
   final List<AudioOnlyStreamInfo> sortedStreamInfo =
       manifest.audioOnly.sortByBitrate();
   var audio = sortedStreamInfo.first.url.toString();
-
+  audioPlayer?.setUrl(audio);
   kUrl = audio;
   kUrlNotifier.value = audio;
 }
