@@ -187,16 +187,20 @@ class AudioAppState extends State<AudioApp> {
                             changeShuffleStatus();
                           },
                         ),
-                        IconButton(
-                          padding: EdgeInsets.zero,
-                          icon: Icon(
-                            Icons.skip_previous,
-                            color: Colors.white,
-                            size: 40,
-                          ),
-                          iconSize: 22.0,
-                          onPressed: () {},
-                        ),
+                        activePlaylist.length != 0
+                            ? IconButton(
+                                padding: EdgeInsets.zero,
+                                icon: Icon(
+                                  Icons.skip_previous,
+                                  color: Colors.white,
+                                  size: 40,
+                                ),
+                                iconSize: 22.0,
+                                onPressed: () {
+                                  playPrevious();
+                                },
+                              )
+                            : Center(),
                         Container(
                           decoration: BoxDecoration(
                               color: accent,
@@ -243,16 +247,20 @@ class AudioAppState extends State<AudioApp> {
                             },
                           ),
                         ),
-                        IconButton(
-                          padding: EdgeInsets.zero,
-                          icon: Icon(
-                            Icons.skip_next,
-                            color: Colors.white,
-                            size: 40,
-                          ),
-                          iconSize: 32.0,
-                          onPressed: () {},
-                        ),
+                        activePlaylist.length != 0
+                            ? IconButton(
+                                padding: EdgeInsets.zero,
+                                icon: Icon(
+                                  Icons.skip_next,
+                                  color: Colors.white,
+                                  size: 40,
+                                ),
+                                iconSize: 32.0,
+                                onPressed: () {
+                                  playNext();
+                                },
+                              )
+                            : Center(),
                         IconButton(
                           padding: EdgeInsets.zero,
                           icon: Icon(

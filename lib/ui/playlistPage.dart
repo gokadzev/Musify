@@ -117,6 +117,23 @@ class _PlaylistPageState extends State<PlaylistPage> {
                                             fontSize: 10,
                                             fontWeight: FontWeight.w600),
                                       ),
+                                      Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 5, bottom: 5)),
+                                      TextButton(
+                                          onPressed: () => {
+                                                setActivePlaylist(
+                                                    (data as dynamic)
+                                                        .data["list"]),
+                                                Navigator.pop(context, false)
+                                              },
+                                          style: TextButton.styleFrom(
+                                              backgroundColor: accent),
+                                          child: Text(
+                                            "PLAY ALL",
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          )),
                                       const SizedBox(height: 16.0),
                                     ],
                                   ),

@@ -27,6 +27,7 @@ List playlists = [
     "list": []
   }
 ];
+
 String? kUrl = "",
     image = "",
     title = "",
@@ -34,6 +35,10 @@ String? kUrl = "",
     artist = "",
     ytid = "",
     lyrics;
+
+int? id = 0;
+
+List activePlaylist = [];
 
 Future<List> fetchSongsList(searchQuery) async {
   var s = yt.search.getVideos(searchQuery);
@@ -54,16 +59,9 @@ Future<List> fetchSongsList(searchQuery) async {
           "image": v.thumbnails.highResUrl,
           "album": "",
           "type": "song",
-          "description": "",
-          "ctr": 943,
-          "position": 1,
           "more_info": {
-            "vcode": "6010910441258415",
             "primary_artists": v.title.split('-')[0],
             "singers": v.title.split('-')[0],
-            "video_available": "null",
-            "triller_available": "false",
-            "language": "English"
           }
         })
       });
@@ -89,16 +87,9 @@ Future<List> getTop50() async {
         "image": video.thumbnails.standardResUrl,
         "album": "",
         "type": "song",
-        "description": "",
-        "ctr": 943,
-        "position": 1,
         "more_info": {
-          "vcode": "6010910441258415",
           "primary_artists": video.title.split('-')[0],
           "singers": video.title.split('-')[0],
-          "video_available": "null",
-          "triller_available": "false",
-          "language": "English"
         }
       });
       index += 1;
@@ -109,6 +100,12 @@ Future<List> getTop50() async {
 
 Future<List<dynamic>> getPlaylists() async {
   return playlists;
+}
+
+setActivePlaylist(playlist) async {
+  activePlaylist = playlist;
+  id = 0;
+  setSongDetails(activePlaylist[id!]);
 }
 
 Future getPlaylistInfoForWidget(dynamic id) async {
@@ -122,6 +119,7 @@ Future getPlaylistInfoForWidget(dynamic id) async {
 }
 
 Future setSongDetails(song) async {
+  id = song["id"];
   title = song["title"];
   image = song["image"];
   album = song["album"] == null ? '' : song["album"];

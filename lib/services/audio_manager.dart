@@ -13,8 +13,6 @@ import 'package:permission_handler/permission_handler.dart';
 import '../music.dart';
 import 'ext_storage.dart';
 
-ConcatenatingAudioSource? _playlist = ConcatenatingAudioSource(children: []);
-
 AudioPlayer? audioPlayer = AudioPlayer();
 AudioHandler? _audioHandler;
 
@@ -141,11 +139,23 @@ void listenForChangesInSequenceState() {
   });
 }
 
-Future<void> playSong(
-  song,
-) async {
+Future<void> playSong(song, [isFromPlaylist]) async {
+  if (isFromPlaylist == null) {
+    activePlaylist = [];
+    id = 0;
+  }
   try {
     await setSongDetails(song);
+    await audioPlayer?.setUrl(kUrl!);
+    await play();
+  } catch (e) {
+    artist = "Unknown";
+  }
+}
+
+Future<void> playPlaylist() async {
+  try {
+    await setSongDetails(activePlaylist[0]);
     await audioPlayer?.setUrl(kUrl!);
     await play();
   } catch (e) {
@@ -171,12 +181,6 @@ Future changeLoopStatus() async {
   }
 }
 
-Future addToQueue(audioUrl, audio) async {
-  // in testing mode
-  final song = Uri.parse(audioUrl);
-  await _playlist?.add(AudioSource.uri(song, tag: audio));
-}
-
 Future play() async {
   await audioPlayer?.play();
   await _audioHandler?.play();
@@ -190,6 +194,20 @@ Future pause() async {
 Future stop() async {
   await audioPlayer?.stop();
   await _audioHandler?.stop();
+}
+
+Future playNext() async {
+  if (id! + 1 <= activePlaylist.length) {
+    await playSong(activePlaylist[id! + 1], true);
+    id = id! + 1;
+  }
+}
+
+Future playPrevious() async {
+  if (id! - 1 >= 0) {
+    await playSong(activePlaylist[id! - 1], true);
+    id = id! - 1;
+  }
 }
 
 Future mute(bool muted) async {
