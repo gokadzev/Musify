@@ -236,6 +236,7 @@ class MyAudioHandler extends BaseAudioHandler {
   @override
   Future stop() async {
     playbackState.add(playbackState.value.copyWith(
+      playing: false,
       processingState: AudioProcessingState.completed,
     ));
 
@@ -250,6 +251,24 @@ class MyAudioHandler extends BaseAudioHandler {
     ));
 
     audioPlayer?.play();
+  }
+
+  @override
+  Future<void> skipToPrevious() async {
+    playbackState.add(playbackState.value.copyWith(
+      controls: [MediaControl.skipToPrevious],
+    ));
+
+    playPrevious();
+  }
+
+  @override
+  Future<void> skipToNext() async {
+    playbackState.add(playbackState.value.copyWith(
+      controls: [MediaControl.skipToNext],
+    ));
+
+    playNext();
   }
 
   @override
@@ -273,10 +292,10 @@ class MyAudioHandler extends BaseAudioHandler {
       ));
       playbackState.add(playbackState.value.copyWith(
         controls: [
-          MediaControl.skipToPrevious, //not working yet
+          MediaControl.skipToPrevious,
           if (playing) MediaControl.pause else MediaControl.play,
           MediaControl.stop,
-          MediaControl.skipToNext, // not working yet
+          MediaControl.skipToNext,
         ],
         systemActions: const {
           MediaAction.seek,

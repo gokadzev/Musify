@@ -281,7 +281,10 @@ class AudioAppState extends State<AudioApp> {
                     padding: const EdgeInsets.only(top: 40.0),
                     child: Builder(builder: (context) {
                       return TextButton(
-                          onPressed: () {
+                          onPressed: () async {
+                            if (lyrics == "null") {
+                              await getSongLyrics();
+                            }
                             showBottomSheet(
                                 context: context,
                                 builder: (context) => Container(

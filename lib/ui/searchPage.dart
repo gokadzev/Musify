@@ -110,9 +110,6 @@ class _SearchPageState extends State<SearchPage> {
                             onTap: () {
                               playSong(searchedList[index]);
                             },
-                            onLongPress: () {
-                              getTop50();
-                            },
                             splashColor: accent,
                             hoverColor: accent,
                             focusColor: accent,

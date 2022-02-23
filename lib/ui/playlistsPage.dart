@@ -64,7 +64,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                                       index,
                                       (data as dynamic).data[index]["image"],
                                       (data as dynamic).data[index]["title"],
-                                      (data as dynamic).data[index]["id"]));
+                                      (data as dynamic).data[index]["ytid"]));
                             })))
                     : Container();
               })

@@ -46,6 +46,9 @@ class AppState extends State<Musify> {
       } else {
         audioPlayer?.seek(Duration.zero);
         audioPlayer?.pause();
+        if (activePlaylist.length != 0 && id! + 1 < activePlaylist.length) {
+          playNext();
+        }
       }
     });
   }
