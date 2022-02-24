@@ -16,7 +16,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
         body: Container(
       child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 40.0, horizontal: 25.0),
+        padding: EdgeInsets.symmetric(vertical: 25.0, horizontal: 25.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
@@ -40,8 +40,7 @@ class _HomePageState extends State<HomePage> {
                           child: Wrap(
                             children: <Widget>[
                               Padding(
-                                padding:
-                                    const EdgeInsets.only(top: 30, bottom: 10),
+                                padding: const EdgeInsets.only(top: 20),
                                 child: Text(
                                   "Recommended for you",
                                   style: TextStyle(
