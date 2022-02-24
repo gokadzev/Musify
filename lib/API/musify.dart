@@ -9,24 +9,16 @@ var yt = YoutubeExplode();
 List ytplaylists = [
   "PLmQPPVKNGMHipaJbw0lHPuGPuKQDJkcdn",
   "PLPZdY4vhqvRAKdgI75eWn5XM0gPqs3QMY",
-  "PLSR9lWowvoE3A9i4JVVHtQFjlJt0_LItG"
+  "PLSR9lWowvoE3A9i4JVVHtQFjlJt0_LItG",
+  "PLwztIBLgL4YCJ50tpYJaDZ6Z9aECNuJYe",
+  "PLgzTt0k8mXzHcKebL8d0uYHfawiARhQja"
 ];
 List searchedList = [];
-List playlists = [
-  {
-    "ytid": "PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx",
-    "title": "Top 50 Global",
-    "subtitle": "Just Updated",
-    "header_desc": "Top 50 Global Song.",
-    "type": "playlist",
-    "image":
-        "https://charts-images.scdn.co/assets/locale_en/regional/daily/region_global_large.jpg",
-    "list": []
-  }
-];
+List playlists = [];
 
 String? kUrl = "",
     image = "",
+    highResImage = "",
     title = "",
     album = "",
     artist = "",
@@ -96,9 +88,20 @@ Future get7Music(playlistId) async {
 }
 
 Future<List<dynamic>> getPlaylists() async {
-  var localPlaylists = [];
+  var localPlaylists = [
+    {
+      "ytid": "PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx",
+      "title": "Top 50 Global",
+      "subtitle": "Just Updated",
+      "header_desc": "Top 50 Global Song.",
+      "type": "playlist",
+      "image":
+          "https://charts-images.scdn.co/assets/locale_en/regional/daily/region_global_large.jpg",
+      "list": []
+    }
+  ];
 
-  if (playlists.length == 1) {
+  if (playlists.length == 0) {
     ytplaylists.forEach((playlistID) async {
       var plist = await yt.playlists.get(playlistID);
       localPlaylists.add({
@@ -168,6 +171,7 @@ Future setSongDetails(song) async {
   id = song["id"];
   title = song["title"];
   image = song["image"];
+  highResImage = song["highResImage"];
   album = song["album"] == null ? '' : song["album"];
   ytid = song["ytid"].toString();
 

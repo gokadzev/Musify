@@ -103,7 +103,7 @@ class AudioAppState extends State<AudioApp> {
                     shape: BoxShape.rectangle,
                     image: DecorationImage(
                       fit: BoxFit.cover,
-                      image: CachedNetworkImageProvider(image!),
+                      image: CachedNetworkImageProvider(highResImage!),
                     ),
                   ),
                 ),

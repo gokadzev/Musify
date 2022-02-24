@@ -77,7 +77,6 @@ class AppState extends State<Musify> {
               return kUrlNotifier.value != ""
                   ? Container(
                       height: 75,
-                      //color: Color(0xff1c252a),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(18),
@@ -116,7 +115,7 @@ class AppState extends State<Musify> {
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(8.0),
                                   child: CachedNetworkImage(
-                                    imageUrl: image!,
+                                    imageUrl: highResImage!,
                                     fit: BoxFit.fill,
                                   ),
                                 ),

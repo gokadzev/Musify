@@ -84,7 +84,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
             },
             child: DelayedDisplay(
               delay: Duration(milliseconds: 100 * index + 1),
-              fadingDuration: Duration(milliseconds: 600 * index + 1),
+              fadingDuration: Duration(milliseconds: 400 * index + 1),
               child: Padding(
                 padding: EdgeInsets.only(right: 15.0),
                 child: SizedBox(
