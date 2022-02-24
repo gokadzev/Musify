@@ -9,6 +9,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:musify/API/musify.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:audio_service/audio_service.dart';
+import 'package:musify/style/appColors.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../music.dart';
 import 'ext_storage.dart';
@@ -44,7 +45,6 @@ downloadSong(song) async {
     debugPrint(statuses[Permission.storage].toString());
   }
   status = await Permission.storage.status;
-  await setSongDetails(song);
   if (status.isGranted) {
     Fluttertoast.showToast(
         msg: "Download Started!",
@@ -52,11 +52,11 @@ downloadSong(song) async {
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 1,
         backgroundColor: Colors.black,
-        textColor: Color(0xff61e88a),
+        textColor: Colors.white,
         fontSize: 14.0);
 
-    final filename = title! + ".mp3";
-    final artname = title! + "_artwork.jpg";
+    final filename = song["title"] + ".mp3";
+    final artname = song["title"] + "_artwork.jpg";
     filepath = '';
     filepath2 = '';
     String? dlPath = await ExtStorageProvider.getExtStorage(dirName: 'Music');
@@ -68,12 +68,13 @@ downloadSong(song) async {
         .then((value) => filepath2 = value.path);
     debugPrint('Audio path $filepath');
     debugPrint('Image path $filepath2');
-    var request = await HttpClient().getUrl(Uri.parse(kUrl!));
+    var request =
+        await HttpClient().getUrl(Uri.parse(await getSongUrl(song["ytid"])));
     var response = await request.close();
     var bytes = await consolidateHttpClientResponseBytes(response);
     File file = File(filepath);
 
-    var request2 = await HttpClient().getUrl(Uri.parse(image!));
+    var request2 = await HttpClient().getUrl(Uri.parse(song["image"]));
     var response2 = await request2.close();
     var bytes2 = await consolidateHttpClientResponseBytes(response2);
     File file2 = File(filepath2);
@@ -83,12 +84,12 @@ downloadSong(song) async {
     debugPrint("Started tag editing");
 
     final tag = Tag(
-      title: title,
-      artist: artist,
+      title: song["title"],
+      artist: song['more_info']['singers'],
       artwork: filepath2,
-      album: album,
-      lyrics: lyrics,
-      genre: null,
+      album: "",
+      lyrics: "",
+      genre: "",
     );
 
     debugPrint("Setting up Tags");
@@ -108,8 +109,8 @@ downloadSong(song) async {
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 1,
-        backgroundColor: Colors.black,
-        textColor: Color(0xff61e88a),
+        backgroundColor: accent,
+        textColor: Colors.white,
         fontSize: 14.0);
   } else if (status.isDenied || status.isPermanentlyDenied) {
     Fluttertoast.showToast(
@@ -117,8 +118,8 @@ downloadSong(song) async {
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 1,
-        backgroundColor: Colors.black,
-        textColor: Color(0xff61e88a),
+        backgroundColor: accent,
+        textColor: Colors.white,
         fontSize: 14.0);
   } else {
     Fluttertoast.showToast(
@@ -126,8 +127,8 @@ downloadSong(song) async {
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.values[50],
         timeInSecForIosWeb: 1,
-        backgroundColor: Colors.black,
-        textColor: Color(0xff61e88a),
+        backgroundColor: accent,
+        textColor: Colors.white,
         fontSize: 14.0);
   }
 }

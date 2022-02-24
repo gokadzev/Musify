@@ -96,10 +96,12 @@ Future get7Music(playlistId) async {
 }
 
 Future<List<dynamic>> getPlaylists() async {
+  var localPlaylists = [];
+
   if (playlists.length == 1) {
     ytplaylists.forEach((playlistID) async {
       var plist = await yt.playlists.get(playlistID);
-      playlists.add({
+      localPlaylists.add({
         "ytid": plist.id,
         "title": plist.title,
         "subtitle": "Just Updated",
@@ -111,8 +113,8 @@ Future<List<dynamic>> getPlaylists() async {
         "list": []
       });
     });
+    playlists = localPlaylists;
   }
-
   return playlists;
 }
 
@@ -177,13 +179,17 @@ Future setSongDetails(song) async {
 
   lyrics = "null";
 
-  var manifest = await yt.videos.streamsClient.getManifest(ytid!);
-  final List<AudioOnlyStreamInfo> sortedStreamInfo =
-      manifest.audioOnly.sortByBitrate();
-  var audio = sortedStreamInfo.first.url.toString();
+  var audio = await getSongUrl(ytid);
   audioPlayer?.setUrl(audio);
   kUrl = audio;
   kUrlNotifier.value = audio;
+}
+
+Future getSongUrl(songId) async {
+  var manifest = await yt.videos.streamsClient.getManifest(songId);
+  final List<AudioOnlyStreamInfo> sortedStreamInfo =
+      manifest.audioOnly.sortByBitrate();
+  return sortedStreamInfo.first.url.toString();
 }
 
 Future getSongLyrics() async {
