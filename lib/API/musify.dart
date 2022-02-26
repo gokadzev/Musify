@@ -45,7 +45,8 @@ Future<List> fetchSongsList(searchQuery) async {
               .replaceAll("[Official Video]", "")
               .replaceAll("(Official Video)", "")
               .replaceAll("(Official Music Video)", ""),
-          "image": v.thumbnails.highResUrl,
+          "image": v.thumbnails.standardResUrl,
+          "highResImage": v.thumbnails.maxResUrl,
           "album": "",
           "type": "song",
           "more_info": {
@@ -197,7 +198,10 @@ Future getSongUrl(songId) async {
 }
 
 Future getSongLyrics() async {
-  String lyricsApiUrl = "https://api.lyrics.ovh/v1/" + artist! + "/" + title!;
+  String lyricsApiUrl = "https://api.lyrics.ovh/v1/" +
+      artist! +
+      "/" +
+      title!.split(' (')[0].split('|')[0].trim();
   var lyricsApiRes = await http
       .get(Uri.parse(lyricsApiUrl), headers: {"Accept": "application/json"});
   var lyricsResponse;

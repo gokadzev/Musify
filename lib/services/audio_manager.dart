@@ -197,15 +197,15 @@ Future stop() async {
 
 Future playNext() async {
   if (id! + 1 <= activePlaylist.length) {
-    await playSong(activePlaylist[id! + 1], true);
     id = id! + 1;
+    await playSong(activePlaylist[id!], true);
   }
 }
 
 Future playPrevious() async {
   if (id! - 1 >= 0) {
-    await playSong(activePlaylist[id! - 1], true);
     id = id! - 1;
+    await playSong(activePlaylist[id!], true);
   }
 }
 

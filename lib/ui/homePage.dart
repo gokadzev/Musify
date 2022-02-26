@@ -93,8 +93,8 @@ class _HomePageState extends State<HomePage> {
                           child: Wrap(
                             children: <Widget>[
                               Padding(
-                                padding:
-                                    const EdgeInsets.only(bottom: 10, left: 8),
+                                padding: const EdgeInsets.only(
+                                    top: 30, bottom: 10, left: 8),
                                 child: Text(
                                   "New Music",
                                   style: TextStyle(
@@ -144,6 +144,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget cubeContainer(String image, String title, String singer, song) {
+    var size = MediaQuery.of(context).size;
     return DelayedDisplay(
         delay: Duration(milliseconds: 200),
         fadingDuration: Duration(milliseconds: 400),
@@ -160,8 +161,8 @@ class _HomePageState extends State<HomePage> {
                   ),
                   color: Colors.transparent,
                   child: Container(
-                    height: 200.0,
-                    width: 200.0,
+                    height: size.height / 4,
+                    width: size.width / 1.9,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.0),
                       image: DecorationImage(
