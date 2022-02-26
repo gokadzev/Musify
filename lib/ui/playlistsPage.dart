@@ -2,7 +2,6 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:musify/API/musify.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/material.dart';
 import 'package:gradient_widgets/gradient_widgets.dart';
 import 'package:musify/ui/playlistPage.dart';
@@ -76,78 +75,72 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
 
     return SingleChildScrollView(
         child: GestureDetector(
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => PlaylistPage(id: id)));
-            },
-            child: DelayedDisplay(
-              delay: Duration(milliseconds: 100 * index + 1),
-              fadingDuration: Duration(milliseconds: 400 * index + 1),
-              child: Padding(
-                padding: EdgeInsets.only(right: 15.0),
-                child: SizedBox(
-                  width: size.width * 0.4,
-                  height: size.height * 0.18,
-                  child: Stack(
-                    alignment: Alignment.bottomLeft,
-                    children: [
-                      Container(
-                        decoration: new BoxDecoration(boxShadow: [
-                          BoxShadow(
-                              blurRadius: 6,
-                              color: Colors.black.withAlpha(40),
-                              offset: const Offset(0, 0))
-                        ]),
-                        child: ClipRRect(
-                            borderRadius: BorderRadius.circular(15.0),
-                            child: image != ""
-                                ? CachedNetworkImage(
-                                    width: size.width * 0.4,
-                                    height: size.height * 0.18,
-                                    imageUrl: image,
-                                    fit: BoxFit.cover,
-                                  )
-                                : Center(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: <Widget>[
-                                        Icon(MdiIcons.musicNoteOutline,
-                                            size: 30, color: accent),
-                                        Text(
-                                          title,
-                                          style: TextStyle(color: accent),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ],
-                                    ),
-                                  )),
-                      ),
-                      Positioned.fill(
-                          child: Container(
-                        width: size.width * 0.4,
-                        height: size.height * 0.18,
-                        decoration: new BoxDecoration(
-                            borderRadius: BorderRadius.circular(15.0),
-                            gradient: new LinearGradient(
-                              colors: [
-                                accent.withAlpha(30),
-                                Colors.white.withAlpha(30)
+      onTap: () {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => PlaylistPage(id: id)));
+      },
+      child: Padding(
+        padding: EdgeInsets.only(right: 15.0),
+        child: SizedBox(
+          width: size.width * 0.4,
+          height: size.height * 0.18,
+          child: Stack(
+            alignment: Alignment.bottomLeft,
+            children: [
+              Container(
+                decoration: new BoxDecoration(boxShadow: [
+                  BoxShadow(
+                      blurRadius: 6,
+                      color: Colors.black.withAlpha(40),
+                      offset: const Offset(0, 0))
+                ]),
+                child: ClipRRect(
+                    borderRadius: BorderRadius.circular(15.0),
+                    child: image != ""
+                        ? CachedNetworkImage(
+                            width: size.width * 0.4,
+                            height: size.height * 0.18,
+                            imageUrl: image,
+                            fit: BoxFit.cover,
+                          )
+                        : Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Icon(MdiIcons.musicNoteOutline,
+                                    size: 30, color: accent),
+                                Text(
+                                  title,
+                                  style: TextStyle(color: accent),
+                                  textAlign: TextAlign.center,
+                                ),
                               ],
-                              begin: index % 2 == 1
-                                  ? Alignment.bottomCenter
-                                  : Alignment.topCenter,
-                              end: index % 2 == 1
-                                  ? Alignment.topCenter
-                                  : Alignment.bottomCenter,
-                            )),
-                      )),
-                    ],
-                  ),
-                ),
+                            ),
+                          )),
               ),
-            )));
+              Positioned.fill(
+                  child: Container(
+                width: size.width * 0.4,
+                height: size.height * 0.18,
+                decoration: new BoxDecoration(
+                    borderRadius: BorderRadius.circular(15.0),
+                    gradient: new LinearGradient(
+                      colors: [
+                        accent.withAlpha(30),
+                        Colors.white.withAlpha(30)
+                      ],
+                      begin: index % 2 == 1
+                          ? Alignment.bottomCenter
+                          : Alignment.topCenter,
+                      end: index % 2 == 1
+                          ? Alignment.topCenter
+                          : Alignment.bottomCenter,
+                    )),
+              )),
+            ],
+          ),
+        ),
+      ),
+    ));
   }
 }

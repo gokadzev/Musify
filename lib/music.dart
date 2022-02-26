@@ -123,7 +123,7 @@ class AudioAppState extends State<AudioApp> {
                       Padding(
                         padding: const EdgeInsets.only(top: 8.0),
                         child: Text(
-                          album! + "  |  " + artist!,
+                          album! + "   " + artist!,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: accentLight,
@@ -189,20 +189,20 @@ class AudioAppState extends State<AudioApp> {
                             changeShuffleStatus();
                           },
                         ),
-                        activePlaylist.length != 0
-                            ? IconButton(
-                                padding: EdgeInsets.zero,
-                                icon: Icon(
-                                  Icons.skip_previous,
-                                  color: Colors.white,
-                                  size: 40,
-                                ),
-                                iconSize: 22.0,
-                                onPressed: () {
-                                  playPrevious();
-                                },
-                              )
-                            : Center(),
+                        IconButton(
+                          padding: EdgeInsets.zero,
+                          icon: Icon(
+                            Icons.skip_previous,
+                            color: activePlaylist.length == 0
+                                ? Colors.grey
+                                : Colors.white,
+                            size: 40,
+                          ),
+                          iconSize: 22.0,
+                          onPressed: () {
+                            playPrevious();
+                          },
+                        ),
                         Container(
                           decoration: BoxDecoration(
                               color: accent,
@@ -224,7 +224,7 @@ class AudioAppState extends State<AudioApp> {
                                 case MPlayerState.paused:
                                   return IconButton(
                                     icon: const Icon(MdiIcons.play),
-                                    iconSize: 32.0,
+                                    iconSize: 40.0,
                                     onPressed: () {
                                       play();
                                     },
@@ -232,7 +232,7 @@ class AudioAppState extends State<AudioApp> {
                                 case MPlayerState.playing:
                                   return IconButton(
                                     icon: const Icon(MdiIcons.pause),
-                                    iconSize: 32.0,
+                                    iconSize: 40.0,
                                     onPressed: () {
                                       pause();
                                     },
@@ -249,20 +249,20 @@ class AudioAppState extends State<AudioApp> {
                             },
                           ),
                         ),
-                        activePlaylist.length != 0
-                            ? IconButton(
-                                padding: EdgeInsets.zero,
-                                icon: Icon(
-                                  Icons.skip_next,
-                                  color: Colors.white,
-                                  size: 40,
-                                ),
-                                iconSize: 32.0,
-                                onPressed: () {
-                                  playNext();
-                                },
-                              )
-                            : Center(),
+                        IconButton(
+                          padding: EdgeInsets.zero,
+                          icon: Icon(
+                            Icons.skip_next,
+                            color: activePlaylist.length == 0
+                                ? Colors.grey
+                                : Colors.white,
+                            size: 40,
+                          ),
+                          iconSize: 32.0,
+                          onPressed: () {
+                            playNext();
+                          },
+                        ),
                         IconButton(
                           padding: EdgeInsets.zero,
                           icon: Icon(

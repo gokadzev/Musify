@@ -76,6 +76,7 @@ class _SearchPageState extends State<SearchPage> {
                   color: accent,
                   onPressed: () {
                     search();
+                    FocusManager.instance.primaryFocus?.unfocus();
                   },
                 ),
                 border: InputBorder.none,
