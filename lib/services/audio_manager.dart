@@ -225,6 +225,8 @@ Future<AudioHandler> initAudioService() async {
       androidNotificationChannelName: 'Musify',
       androidNotificationOngoing: true,
       androidStopForegroundOnPause: true,
+      androidNotificationIcon: 'drawable/musify',
+      androidShowNotificationBadge: true,
     ),
   );
 }
