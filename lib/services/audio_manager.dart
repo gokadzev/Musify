@@ -293,13 +293,15 @@ class MyAudioHandler extends BaseAudioHandler {
       ));
       playbackState.add(playbackState.value.copyWith(
         controls: [
-          MediaControl.skipToPrevious,
+          if (activePlaylist.length != 0) MediaControl.skipToPrevious,
           if (playing) MediaControl.pause else MediaControl.play,
           MediaControl.stop,
-          MediaControl.skipToNext,
+          if (activePlaylist.length != 0) MediaControl.skipToNext,
         ],
         systemActions: const {
           MediaAction.seek,
+          MediaAction.seekForward,
+          MediaAction.seekBackward,
         },
         androidCompactActionIndices: const [0, 1, 3],
         processingState: const {

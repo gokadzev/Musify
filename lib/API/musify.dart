@@ -207,8 +207,7 @@ Future getSongLyrics() async {
   var lyricsResponse;
   if (lyricsApiRes.statusCode > 200 ||
       lyricsApiRes.statusCode <= 400 ||
-      // ignore: unnecessary_null_comparison
-      lyricsApiRes.body != null) {
+      json.decode(lyricsApiRes.body)["error"] != null) {
     lyricsResponse = await json.decode(lyricsApiRes.body);
     if (lyricsResponse['lyrics'] != null) {
       lyrics = lyricsResponse['lyrics'];
