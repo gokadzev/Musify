@@ -10,7 +10,7 @@ main() async {
   await Hive.initFlutter();
   accent = await getData("settings", "accentColor") != null
       ? Color(await getData("settings", "accentColor"))
-      : Color(0xFFFFFFFF);
+      : Color(0xFFFF9E80);
   setupServiceLocator();
   runApp(MyApp());
 }
