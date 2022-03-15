@@ -198,10 +198,8 @@ Future getSongUrl(songId) async {
 }
 
 Future getSongLyrics() async {
-  String lyricsApiUrl = "https://api.lyrics.ovh/v1/" +
-      artist! +
-      "/" +
-      title!.split(' (')[0].split('|')[0].trim();
+  String lyricsApiUrl =
+      'https://api.lyrics.ovh/v1/${artist!}/${title!.split(" (")[0].split("|")[0].trim()}';
   var lyricsApiRes = await http
       .get(Uri.parse(lyricsApiUrl), headers: {"Accept": "application/json"});
   var lyricsResponse;

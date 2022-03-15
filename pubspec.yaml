@@ -43,13 +43,13 @@ dependencies:
   hive: ^2.0.6
   hive_flutter: ^1.1.0
   delayed_display: ^2.0.0
-  youtube_explode_dart: ^1.10.9+1
+  youtube_explode_dart: ^1.10.10+2
   google_fonts: ^2.3.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_native_splash: ^2.0.5
+  flutter_native_splash: ^2.1.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

@@ -72,7 +72,6 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
 
   Widget getPlaylist(int index, dynamic image, String title, dynamic id) {
     Size size = MediaQuery.of(context).size;
-
     return SingleChildScrollView(
         child: GestureDetector(
       onTap: () {

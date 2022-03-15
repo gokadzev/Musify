@@ -141,7 +141,7 @@ void listenForChangesInSequenceState() {
 }
 
 Future<void> playSong(song, [isFromPlaylist]) async {
-  if (isFromPlaylist == null) {
+  if (isFromPlaylist == null && activePlaylist.length != 0) {
     activePlaylist = [];
     id = 0;
   }
@@ -295,10 +295,10 @@ class MyAudioHandler extends BaseAudioHandler {
       ));
       playbackState.add(playbackState.value.copyWith(
         controls: [
-          if (activePlaylist.length != 0) MediaControl.skipToPrevious,
+          MediaControl.skipToPrevious,
           if (playing) MediaControl.pause else MediaControl.play,
+          MediaControl.skipToNext,
           MediaControl.stop,
-          if (activePlaylist.length != 0) MediaControl.skipToNext,
         ],
         systemActions: const {
           MediaAction.seek,
