@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:musify/services/audio_manager.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 var yt = YoutubeExplode();
@@ -200,15 +200,13 @@ Future getSongUrl(songId) async {
 Future getSongLyrics() async {
   String lyricsApiUrl =
       'https://api.lyrics.ovh/v1/${artist!}/${title!.split(" (")[0].split("|")[0].trim()}';
-  var lyricsApiRes = await http
-      .get(Uri.parse(lyricsApiUrl), headers: {"Accept": "application/json"});
-  var lyricsResponse;
-  if (lyricsApiRes.statusCode > 200 ||
-      lyricsApiRes.statusCode <= 400 ||
-      json.decode(lyricsApiRes.body)["error"] != null) {
-    lyricsResponse = await json.decode(lyricsApiRes.body);
+  try {
+    var lyricsApiRes = await DefaultCacheManager()
+        .getSingleFile(lyricsApiUrl, headers: {"Accept": "application/json"});
+    var lyricsResponse;
+    lyricsResponse = await json.decode(await lyricsApiRes.readAsString());
     if (lyricsResponse['lyrics'] != null) {
       lyrics = lyricsResponse['lyrics'];
     }
-  }
+  } catch (e) {}
 }

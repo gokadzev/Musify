@@ -141,6 +141,10 @@ class SettingsCards extends StatelessWidget {
                                                           accent = Color(
                                                               colors[index]);
                                                           Fluttertoast.showToast(
+                                                              backgroundColor:
+                                                                  accent,
+                                                              textColor:
+                                                                  Colors.white,
                                                               msg:
                                                                   "Accent Color has been Changed, move to other page to see changes!",
                                                               toastLength: Toast
@@ -151,7 +155,6 @@ class SettingsCards extends StatelessWidget {
                                                               timeInSecForIosWeb:
                                                                   1,
                                                               fontSize: 14.0);
-
                                                           Navigator.pop(
                                                               context);
                                                         },
@@ -182,7 +185,35 @@ class SettingsCards extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10.0)),
               elevation: 2.3,
               child: ListTile(
-                leading: Icon(MdiIcons.informationOutline, color: accent),
+                leading: Icon(MdiIcons.broom, color: accent),
+                title: Text(
+                  'Clear Cache',
+                  style: TextStyle(color: accent),
+                ),
+                onTap: () {
+                  clearCache();
+                  Fluttertoast.showToast(
+                      backgroundColor: accent,
+                      textColor: Colors.white,
+                      msg: "Cache cleared!",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      fontSize: 14.0);
+                },
+              ),
+            ),
+          ),
+          Padding(
+            padding:
+                const EdgeInsets.only(top: 8, left: 8, right: 8, bottom: 6),
+            child: Card(
+              color: Color(0xff263238),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0)),
+              elevation: 2.3,
+              child: ListTile(
+                leading: Icon(MdiIcons.information, color: accent),
                 title: Text(
                   'About',
                   style: TextStyle(color: accent),

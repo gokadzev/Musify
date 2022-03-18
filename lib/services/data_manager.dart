@@ -1,3 +1,4 @@
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:hive/hive.dart';
 
 addOrUpdateData(category, key, value) async {
@@ -13,4 +14,8 @@ getData(category, key) async {
 deleteData(category, key) async {
   var box = await Hive.openBox(category);
   box.delete(key);
+}
+
+clearCache() {
+  DefaultCacheManager().emptyCache();
 }
