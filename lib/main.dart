@@ -21,12 +21,14 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primaryColor: accent,
-        scaffoldBackgroundColor: bgColor,
-        canvasColor: bgColor,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-        textTheme: GoogleFonts.ubuntuTextTheme(Theme.of(context).textTheme),
-      ),
+          primaryColor: accent,
+          scaffoldBackgroundColor: bgColor,
+          canvasColor: bgColor,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+          textTheme: GoogleFonts.ubuntuTextTheme(Theme.of(context).textTheme),
+          pageTransitionsTheme: PageTransitionsTheme(builders: {
+            TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+          })),
       home: Musify(),
     );
   }
