@@ -14,7 +14,17 @@ import 'package:permission_handler/permission_handler.dart';
 import '../music.dart';
 import 'ext_storage.dart';
 
-AudioPlayer? audioPlayer = AudioPlayer();
+final _equalizer = AndroidEqualizer();
+final _loudnessEnhancer = AndroidLoudnessEnhancer();
+
+AudioPlayer? audioPlayer = AudioPlayer(
+  audioPipeline: AudioPipeline(
+    androidAudioEffects: [
+      _loudnessEnhancer,
+      _equalizer,
+    ],
+  ),
+);
 AudioHandler? _audioHandler;
 
 final durationNotifier = ValueNotifier<Duration?>(Duration.zero);
@@ -22,6 +32,7 @@ final buttonNotifier = ValueNotifier<MPlayerState>(MPlayerState.stopped);
 final kUrlNotifier = ValueNotifier<String>('');
 final shuffleNotifier = ValueNotifier<bool>(false);
 final repeatNotifier = ValueNotifier<bool>(false);
+final equalizerNotifier = ValueNotifier<bool>(false);
 
 bool get hasNext => audioPlayer!.hasNext;
 
@@ -177,6 +188,18 @@ Future changeLoopStatus() async {
   } else {
     repeatNotifier.value = false;
     await audioPlayer?.setLoopMode(LoopMode.off);
+  }
+}
+
+Future changeEqualizerStatus() async {
+  if (equalizerNotifier.value == false) {
+    equalizerNotifier.value = true;
+    _loudnessEnhancer.setEnabled(true);
+    _loudnessEnhancer.setTargetGain(1);
+  } else {
+    equalizerNotifier.value = false;
+    _loudnessEnhancer.setEnabled(false);
+    _loudnessEnhancer.setTargetGain(0);
   }
 }
 

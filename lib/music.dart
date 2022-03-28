@@ -273,10 +273,25 @@ class AudioAppState extends State<AudioApp> {
                           onPressed: () {
                             changeLoopStatus();
                           },
-                        )
+                        ),
                       ],
                     ),
                   ),
+                  Container(
+                      padding: EdgeInsets.only(left: 22, right: 22),
+                      alignment: Alignment.bottomRight,
+                      child: IconButton(
+                        padding: EdgeInsets.zero,
+                        icon: Icon(
+                          MdiIcons.equalizer,
+                          color:
+                              equalizerNotifier.value ? accent : Colors.white,
+                        ),
+                        iconSize: 22.0,
+                        onPressed: () {
+                          changeEqualizerStatus();
+                        },
+                      )),
                   Padding(
                     padding: const EdgeInsets.only(top: 40.0),
                     child: Builder(builder: (context) {
