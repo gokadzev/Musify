@@ -14,6 +14,17 @@
     320Kbps m4a/mp3 Format :fire:<br>
     ID3 Tags Attached :notes:<br>
   	Lyrics Support :pencil:<br>
+ 
+
+---
+
+<h3 align="center">Screenshots</h3>
+
+<div align="center" style="width:100%;display:flex;justify-content:space-between;">
+<img width="300px" src="https://user-images.githubusercontent.com/79704324/160352000-4d20546e-4d33-4bed-953b-938645abfb9b.jpg" align="center" alt="screenshot" />
+<img width="300px" src="https://user-images.githubusercontent.com/79704324/160352017-f88597b7-0e07-4890-b0a7-0339ee426650.jpg" align="center" alt="screenshot" />
+<img width="300px" src="https://user-images.githubusercontent.com/79704324/160352032-604694da-46d6-4b8b-9158-d3280c5b2e81.jpg" align="center" alt="screenshot" />
+</div>
 
 ---
 
