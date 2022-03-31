@@ -4,7 +4,6 @@ import 'package:musify/style/appColors.dart';
 import 'package:musify/ui/aboutPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gradient_widgets/gradient_widgets.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -21,13 +20,8 @@ class _SettingsPageState extends State<SettingsPage> {
         systemOverlayStyle:
             SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
         centerTitle: true,
-        title: GradientText(
+        title: Text(
           "Settings",
-          shaderRect: Rect.fromLTWH(13.0, 0.0, 100.0, 50.0),
-          gradient: LinearGradient(colors: [
-            accent,
-            accent,
-          ]),
           style: TextStyle(
             color: accent,
             fontSize: 25,

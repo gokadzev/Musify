@@ -3,7 +3,6 @@ import 'package:musify/API/musify.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:gradient_widgets/gradient_widgets.dart';
 import 'package:musify/ui/playlistPage.dart';
 
 class PlaylistsPage extends StatefulWidget {
@@ -18,21 +17,17 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
         backgroundColor: bgColor,
         body: SingleChildScrollView(
             child: Column(children: <Widget>[
-          Padding(padding: EdgeInsets.only(top: 10, bottom: 20.0)),
+          const Padding(padding: EdgeInsets.only(top: 10, bottom: 20.0)),
           Center(
             child: Row(children: <Widget>[
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.only(),
                   child: Center(
-                    child: GradientText(
+                    child: Text(
                       "Playlists",
-                      shaderRect: Rect.fromLTWH(13.0, 0.0, 100.0, 50.0),
-                      gradient: LinearGradient(colors: [
-                        accent,
-                        accent,
-                      ]),
                       style: TextStyle(
+                        color: accent,
                         fontSize: 35,
                         fontWeight: FontWeight.w800,
                       ),
@@ -42,7 +37,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
               ),
             ]),
           ),
-          Padding(padding: EdgeInsets.only(top: 20)),
+          const Padding(padding: EdgeInsets.only(top: 20)),
           FutureBuilder(
               future: getPlaylists(),
               builder: (context, data) {
@@ -52,7 +47,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                             crossAxisCount: 2,
                             shrinkWrap: true,
                             physics: ScrollPhysics(),
-                            padding: EdgeInsets.only(
+                            padding: const EdgeInsets.only(
                                 left: 16.0,
                                 right: 16.0,
                                 top: 16.0,

@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gradient_widgets/gradient_widgets.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/services/audio_manager.dart';
@@ -21,30 +20,14 @@ class _PlaylistPageState extends State<PlaylistPage> {
     final dynamic id = widget.id;
     return Material(
         child: Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color(0xff384850),
-            Color(0xff263238),
-            Color(0xff263238),
-          ],
-        ),
-      ),
       child: Scaffold(
         backgroundColor: bgColor,
         appBar: AppBar(
           systemOverlayStyle:
               SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
           centerTitle: true,
-          title: GradientText(
+          title: Text(
             "Playlist",
-            shaderRect: Rect.fromLTWH(13.0, 0.0, 100.0, 50.0),
-            gradient: LinearGradient(colors: [
-              accent,
-              accent,
-            ]),
             style: TextStyle(
               color: accent,
               fontSize: 25,
@@ -67,7 +50,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
               builder: (context, data) {
                 return (data as dynamic).data != null
                     ? Padding(
-                        padding: EdgeInsets.only(
+                        padding: const EdgeInsets.only(
                             top: 30, bottom: 20.0, right: 10.0, left: 10.0),
                         child: Column(
                           children: [

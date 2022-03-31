@@ -1,36 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gradient_widgets/gradient_widgets.dart';
 import 'package:musify/style/appColors.dart';
 
 class AboutPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color(0xff384850),
-            Color(0xff263238),
-            Color(0xff263238),
-          ],
-        ),
-      ),
       child: Scaffold(
         backgroundColor: bgColor,
         appBar: AppBar(
           systemOverlayStyle:
               SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
           centerTitle: true,
-          title: GradientText(
+          title: Text(
             "About",
-            shaderRect: Rect.fromLTWH(13.0, 0.0, 100.0, 50.0),
-            gradient: LinearGradient(colors: [
-              accent,
-              accent,
-            ]),
             style: TextStyle(
               color: accent,
               fontSize: 25,

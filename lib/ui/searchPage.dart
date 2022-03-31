@@ -27,10 +27,10 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(12.0),
+        padding: const EdgeInsets.all(12.0),
         child: Column(
           children: <Widget>[
-            Padding(padding: EdgeInsets.only(top: 30, bottom: 20.0)),
+            Padding(padding: const EdgeInsets.only(top: 30, bottom: 20.0)),
             TextField(
               onSubmitted: (String value) {
                 search();
