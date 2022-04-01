@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/API/musify.dart';
-import 'package:musify/music.dart';
+import 'package:musify/ui/player.dart';
 import 'package:musify/style/appColors.dart';
 
 class Musify extends StatefulWidget {

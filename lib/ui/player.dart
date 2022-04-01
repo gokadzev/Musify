@@ -4,10 +4,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:musify/API/musify.dart';
+import 'package:musify/services/audio_manager.dart';
 import 'package:musify/style/appColors.dart';
-
-import 'API/musify.dart';
-import 'services/audio_manager.dart';
 
 String status = 'hidden';
 

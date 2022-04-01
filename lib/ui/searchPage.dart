@@ -95,18 +95,17 @@ class _SearchPageState extends State<SearchPage> {
                 ),
               ),
             ),
-            searchedList.isNotEmpty
-                ? ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: searchedList.length,
-                    itemBuilder: (BuildContext ctxt, int index) {
-                      return Padding(
-                          padding: const EdgeInsets.only(top: 5, bottom: 5),
-                          child: songBar(searchedList[index]));
-                    },
-                  )
-                : Container()
+            if (searchedList.isNotEmpty)
+              ListView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: searchedList.length,
+                itemBuilder: (BuildContext ctxt, int index) {
+                  return Padding(
+                      padding: const EdgeInsets.only(top: 5, bottom: 5),
+                      child: songBar(searchedList[index]));
+                },
+              )
           ],
         ),
       ),

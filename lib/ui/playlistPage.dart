@@ -146,22 +146,23 @@ class _PlaylistPageState extends State<PlaylistPage> {
                               ],
                             ),
                             const SizedBox(height: 20.0),
-                            (data as dynamic).data["list"].isNotEmpty
-                                ? ListView.builder(
-                                    shrinkWrap: true,
-                                    physics: const BouncingScrollPhysics(),
-                                    itemCount:
-                                        (data as dynamic).data["list"].length,
-                                    itemBuilder:
-                                        (BuildContext ctxt, int index) {
-                                      return Padding(
-                                          padding: const EdgeInsets.only(
-                                              top: 5, bottom: 5),
-                                          child: songBar((data as dynamic)
-                                              .data["list"][index]));
-                                    },
-                                  )
-                                : Container()
+                            if ((data as dynamic).data["list"].isNotEmpty)
+                              ListView.builder(
+                                shrinkWrap: true,
+                                physics: const BouncingScrollPhysics(),
+                                addAutomaticKeepAlives:
+                                    false, // may be problem with lazyload if it implemented
+                                addRepaintBoundaries: false,
+                                itemCount:
+                                    (data as dynamic).data["list"].length,
+                                itemBuilder: (BuildContext ctxt, int index) {
+                                  return Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 5, bottom: 5),
+                                      child: songBar((data as dynamic)
+                                          .data["list"][index]));
+                                },
+                              )
                           ],
                         ))
                     : Container(
