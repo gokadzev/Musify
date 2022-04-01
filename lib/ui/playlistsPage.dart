@@ -74,7 +74,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
             MaterialPageRoute(builder: (context) => PlaylistPage(id: id)));
       },
       child: Padding(
-        padding: EdgeInsets.only(right: 15.0),
+        padding: const EdgeInsets.only(right: 15.0),
         child: SizedBox(
           width: size.width * 0.4,
           height: size.height * 0.18,

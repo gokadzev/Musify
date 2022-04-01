@@ -117,6 +117,11 @@ class AppState extends State<Musify> {
                                   child: CachedNetworkImage(
                                     imageUrl: highResImage!,
                                     fit: BoxFit.fill,
+                                    errorWidget: (context, url, error) =>
+                                        CachedNetworkImage(
+                                      imageUrl: image!,
+                                      fit: BoxFit.fill,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -197,7 +202,7 @@ class AppState extends State<Musify> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: List.generate(items.length, (index) {
                   return Container(
-                      padding: EdgeInsets.all(12.0),
+                      padding: const EdgeInsets.all(12.0),
                       decoration: activeTab == index
                           ? new BoxDecoration(
                               borderRadius: BorderRadius.circular(50.0),

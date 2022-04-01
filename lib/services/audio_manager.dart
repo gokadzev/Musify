@@ -25,14 +25,12 @@ AudioPlayer? audioPlayer = AudioPlayer(
     ],
   ),
 );
-AudioHandler? _audioHandler;
 
 final durationNotifier = ValueNotifier<Duration?>(Duration.zero);
 final buttonNotifier = ValueNotifier<MPlayerState>(MPlayerState.stopped);
 final kUrlNotifier = ValueNotifier<String>('');
 final shuffleNotifier = ValueNotifier<bool>(false);
 final repeatNotifier = ValueNotifier<bool>(false);
-final equalizerNotifier = ValueNotifier<bool>(false);
 
 bool get hasNext => audioPlayer!.hasNext;
 
@@ -191,32 +189,16 @@ Future changeLoopStatus() async {
   }
 }
 
-Future changeEqualizerStatus() async {
-  if (equalizerNotifier.value == false) {
-    equalizerNotifier.value = true;
-    _loudnessEnhancer.setEnabled(true);
-    _loudnessEnhancer.setTargetGain(1);
-  } else {
-    equalizerNotifier.value = false;
-    _loudnessEnhancer.setEnabled(false);
-    _loudnessEnhancer.setTargetGain(0);
-  }
+Future enableBooster() async {
+  _loudnessEnhancer.setEnabled(true);
+  _loudnessEnhancer.setTargetGain(1);
 }
 
-Future play() async {
-  await audioPlayer?.play();
-  await _audioHandler?.play();
-}
+Future<void>? play() => audioPlayer?.play();
 
-Future pause() async {
-  await audioPlayer?.pause();
-  await _audioHandler?.pause();
-}
+Future<void>? pause() => audioPlayer?.pause();
 
-Future stop() async {
-  await audioPlayer?.stop();
-  await _audioHandler?.stop();
-}
+Future<void>? stop() => audioPlayer?.stop();
 
 Future playNext() async {
   if (id! + 1 <= activePlaylist.length) {
@@ -310,17 +292,19 @@ class MyAudioHandler extends BaseAudioHandler {
     audioPlayer?.playbackEventStream.listen((PlaybackEvent event) {
       final playing = audioPlayer!.playing;
       mediaItem.add(MediaItem(
-        id: kUrl!,
-        album: album!,
-        title: title!,
-        artist: artist!,
-        artUri: Uri.parse(image!),
-      ));
+          id: kUrl!,
+          album: album!,
+          title: title!,
+          artist: artist!,
+          artUri: Uri.parse(image!),
+          duration: duration));
       playbackState.add(playbackState.value.copyWith(
         controls: [
-          MediaControl.skipToPrevious,
+          if (activePlaylist.length != 0 && id! - 1 >= 0)
+            MediaControl.skipToPrevious,
           if (playing) MediaControl.pause else MediaControl.play,
-          MediaControl.skipToNext,
+          if (activePlaylist.length != 0 && id! + 1 <= activePlaylist.length)
+            MediaControl.skipToNext,
           MediaControl.stop,
         ],
         systemActions: const {

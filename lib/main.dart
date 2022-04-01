@@ -1,3 +1,4 @@
+import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/locator.dart';
 import 'package:musify/ui/rootPage.dart';
@@ -11,6 +12,7 @@ main() async {
   accent = await getData("settings", "accentColor") != null
       ? Color(await getData("settings", "accentColor"))
       : Color(0xFFFF9E80);
+  await enableBooster();
   setupServiceLocator();
   runApp(MyApp());
 }

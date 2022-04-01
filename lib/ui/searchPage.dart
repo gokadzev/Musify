@@ -1,8 +1,7 @@
 import 'package:musify/API/musify.dart';
-import 'package:musify/services/audio_manager.dart';
+import 'package:musify/customWidgets/song_bar.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:flutter/material.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class SearchPage extends StatefulWidget {
   @override
@@ -12,6 +11,7 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   TextEditingController searchBar = TextEditingController();
   bool fetchingSongs = false;
+  FocusNode inputNode = FocusNode();
 
   search() async {
     String searchQuery = searchBar.text;
@@ -34,8 +34,11 @@ class _SearchPageState extends State<SearchPage> {
             TextField(
               onSubmitted: (String value) {
                 search();
+                FocusManager.instance.primaryFocus?.unfocus();
               },
               controller: searchBar,
+              focusNode: inputNode,
+              autofocus: false,
               style: TextStyle(
                 fontSize: 16,
                 color: accent,
@@ -99,57 +102,8 @@ class _SearchPageState extends State<SearchPage> {
                     itemCount: searchedList.length,
                     itemBuilder: (BuildContext ctxt, int index) {
                       return Padding(
-                        padding: const EdgeInsets.only(top: 5, bottom: 5),
-                        child: Card(
-                          color: Colors.black12,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          elevation: 0,
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(10.0),
-                            onTap: () {
-                              playSong(searchedList[index]);
-                            },
-                            splashColor: accent,
-                            hoverColor: accent,
-                            focusColor: accent,
-                            highlightColor: accent,
-                            child: Column(
-                              children: <Widget>[
-                                ListTile(
-                                  leading: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Icon(
-                                      MdiIcons.musicNoteOutline,
-                                      size: 30,
-                                      color: accent,
-                                    ),
-                                  ),
-                                  title: Text(
-                                    (searchedList[index]['title'])
-                                        .toString()
-                                        .split("(")[0]
-                                        .replaceAll("&quot;", "\"")
-                                        .replaceAll("&amp;", "&"),
-                                    style: TextStyle(color: accent),
-                                  ),
-                                  subtitle: Text(
-                                    searchedList[index]['more_info']["singers"],
-                                    style: TextStyle(color: accentLight),
-                                  ),
-                                  trailing: IconButton(
-                                    color: accent,
-                                    icon: Icon(MdiIcons.downloadOutline),
-                                    onPressed: () =>
-                                        downloadSong(searchedList[index]),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
+                          padding: const EdgeInsets.only(top: 5, bottom: 5),
+                          child: songBar(searchedList[index]));
                     },
                   )
                 : Container()

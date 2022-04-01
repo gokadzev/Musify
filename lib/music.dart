@@ -98,12 +98,33 @@ class AudioAppState extends State<AudioApp> {
                 Container(
                   width: size.width / 1.3,
                   height: size.width / 1.3,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    shape: BoxShape.rectangle,
-                    image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: CachedNetworkImageProvider(highResImage!),
+                  child: CachedNetworkImage(
+                    imageUrl: highResImage!,
+                    imageBuilder: (context, imageProvider) => Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        shape: BoxShape.rectangle,
+                        image: DecorationImage(
+                          image: imageProvider,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    placeholder: (context, url) => CircularProgressIndicator(
+                      color: accent,
+                    ),
+                    errorWidget: (context, url, error) => CachedNetworkImage(
+                      imageUrl: image!,
+                      imageBuilder: (context, imageProvider) => Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          shape: BoxShape.rectangle,
+                          image: DecorationImage(
+                            image: imageProvider,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -145,7 +166,8 @@ class AudioAppState extends State<AudioApp> {
   }
 
   Widget _buildPlayer(size) => Container(
-        padding: EdgeInsets.only(top: 5.0, left: 16, right: 16, bottom: 5.0),
+        padding:
+            const EdgeInsets.only(top: 5.0, left: 16, right: 16, bottom: 5.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -171,7 +193,7 @@ class AudioAppState extends State<AudioApp> {
               child: Column(
                 children: <Widget>[
                   Container(
-                    padding: EdgeInsets.only(left: 22, right: 22),
+                    padding: const EdgeInsets.only(left: 22, right: 22),
                     width: double.infinity,
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -277,21 +299,6 @@ class AudioAppState extends State<AudioApp> {
                       ],
                     ),
                   ),
-                  Container(
-                      padding: EdgeInsets.only(left: 22, right: 22),
-                      alignment: Alignment.bottomRight,
-                      child: IconButton(
-                        padding: EdgeInsets.zero,
-                        icon: Icon(
-                          MdiIcons.equalizer,
-                          color:
-                              equalizerNotifier.value ? accent : Colors.white,
-                        ),
-                        iconSize: 22.0,
-                        onPressed: () {
-                          changeEqualizerStatus();
-                        },
-                      )),
                   Padding(
                     padding: const EdgeInsets.only(top: 40.0),
                     child: Builder(builder: (context) {

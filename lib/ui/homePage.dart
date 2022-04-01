@@ -16,7 +16,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
         body: Container(
       child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 25.0, horizontal: 25.0),
+        padding: const EdgeInsets.symmetric(vertical: 25.0, horizontal: 25.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
@@ -35,107 +35,119 @@ class _HomePageState extends State<HomePage> {
                 child: FutureBuilder(
                     future: get7Music("PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx"),
                     builder: (context, data) {
-                      if (data.hasData) {
-                        return Container(
-                          child: Wrap(
-                            children: <Widget>[
-                              Padding(
-                                padding:
-                                    const EdgeInsets.only(top: 30, bottom: 10),
-                                child: Text(
-                                  "Recommended for you",
-                                  style: TextStyle(
-                                    color: accent,
-                                    fontSize: 20.0,
-                                    fontWeight: FontWeight.w700,
+                      return data.hasData
+                          ? Container(
+                              child: Wrap(
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 30, bottom: 10),
+                                    child: Text(
+                                      "Recommended for you",
+                                      style: TextStyle(
+                                        color: accent,
+                                        fontSize: 20.0,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
                                   ),
-                                ),
+                                  Container(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.50,
+                                      child: ListView.builder(
+                                          scrollDirection: Axis.horizontal,
+                                          itemCount:
+                                              (data as dynamic).data.length,
+                                          itemBuilder: (context, index) {
+                                            return Padding(
+                                                padding: const EdgeInsets.only(
+                                                    right: 25),
+                                                child: cubeContainer(
+                                                    (data as dynamic)
+                                                            .data[index]
+                                                        ["highResImage"],
+                                                    (data as dynamic)
+                                                        .data[index]["image"],
+                                                    (data as dynamic)
+                                                        .data[index]["title"],
+                                                    (data as dynamic)
+                                                                .data[index]
+                                                            ["more_info"]
+                                                        ["primary_artists"],
+                                                    (data as dynamic)
+                                                        .data[index]));
+                                          }))
+                                ],
                               ),
-                              Container(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.50,
-                                  child: ListView.builder(
-                                      scrollDirection: Axis.horizontal,
-                                      itemCount: (data as dynamic).data.length,
-                                      itemBuilder: (context, index) {
-                                        return Padding(
-                                            padding: EdgeInsets.only(right: 25),
-                                            child: cubeContainer(
-                                                (data as dynamic).data[index]
-                                                    ["highResImage"],
-                                                (data as dynamic).data[index]
-                                                    ["title"],
-                                                (data as dynamic).data[index]
-                                                        ["more_info"]
-                                                    ["primary_artists"],
-                                                (data as dynamic).data[index]));
-                                      }))
-                            ],
-                          ),
-                        );
-                      } else {
-                        return Center(
-                            child: Padding(
-                          padding: const EdgeInsets.all(35.0),
-                          child: CircularProgressIndicator(
-                            valueColor:
-                                new AlwaysStoppedAnimation<Color>(accent),
-                          ),
-                        ));
-                      }
+                            )
+                          : Center(
+                              child: Padding(
+                              padding: const EdgeInsets.all(35.0),
+                              child: CircularProgressIndicator(
+                                valueColor:
+                                    new AlwaysStoppedAnimation<Color>(accent),
+                              ),
+                            ));
                     })),
             Expanded(
                 child: FutureBuilder(
                     future: get7Music("PL7zsB-C3aNu2yRY2869T0zj1FhtRIu5am"),
                     builder: (context, data) {
-                      if (data.hasData) {
-                        return Container(
-                          child: Wrap(
-                            children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 30, bottom: 10, left: 8),
-                                child: Text(
-                                  "New Music",
-                                  style: TextStyle(
-                                    color: accent,
-                                    fontSize: 20.0,
-                                    fontWeight: FontWeight.w700,
+                      return data.hasData
+                          ? Container(
+                              child: Wrap(
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 30, bottom: 10, left: 8),
+                                    child: Text(
+                                      "New Music",
+                                      style: TextStyle(
+                                        color: accent,
+                                        fontSize: 20.0,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
                                   ),
-                                ),
+                                  Container(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.50,
+                                      child: ListView.builder(
+                                          scrollDirection: Axis.horizontal,
+                                          itemCount:
+                                              (data as dynamic).data.length,
+                                          itemBuilder: (context, index) {
+                                            return Padding(
+                                                padding: const EdgeInsets.only(
+                                                    right: 25),
+                                                child: cubeContainer(
+                                                    (data as dynamic)
+                                                            .data[index]
+                                                        ["highResImage"],
+                                                    (data as dynamic)
+                                                        .data[index]["image"],
+                                                    (data as dynamic)
+                                                        .data[index]["title"],
+                                                    (data as dynamic)
+                                                                .data[index]
+                                                            ["more_info"]
+                                                        ["primary_artists"],
+                                                    (data as dynamic)
+                                                        .data[index]));
+                                          }))
+                                ],
                               ),
-                              Container(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.50,
-                                  child: ListView.builder(
-                                      scrollDirection: Axis.horizontal,
-                                      itemCount: (data as dynamic).data.length,
-                                      itemBuilder: (context, index) {
-                                        return Padding(
-                                            padding: EdgeInsets.only(right: 25),
-                                            child: cubeContainer(
-                                                (data as dynamic).data[index]
-                                                    ["highResImage"],
-                                                (data as dynamic).data[index]
-                                                    ["title"],
-                                                (data as dynamic).data[index]
-                                                        ["more_info"]
-                                                    ["primary_artists"],
-                                                (data as dynamic).data[index]));
-                                      }))
-                            ],
-                          ),
-                        );
-                      } else {
-                        return Center(
-                            child: Padding(
-                          padding: const EdgeInsets.all(35.0),
-                          child: CircularProgressIndicator(
-                            valueColor:
-                                new AlwaysStoppedAnimation<Color>(accent),
-                          ),
-                        ));
-                      }
+                            )
+                          : Center(
+                              child: Padding(
+                              padding: const EdgeInsets.all(35.0),
+                              child: CircularProgressIndicator(
+                                valueColor:
+                                    new AlwaysStoppedAnimation<Color>(accent),
+                              ),
+                            ));
                     }))
           ],
         ),
@@ -143,7 +155,8 @@ class _HomePageState extends State<HomePage> {
     ));
   }
 
-  Widget cubeContainer(String image, String title, String singer, song) {
+  Widget cubeContainer(
+      String image, String fallbackImage, String title, String singer, song) {
     var size = MediaQuery.of(context).size;
     return DelayedDisplay(
         delay: Duration(milliseconds: 200),
@@ -163,11 +176,30 @@ class _HomePageState extends State<HomePage> {
                   child: Container(
                     height: size.height / 4,
                     width: size.width / 1.9,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                      image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: CachedNetworkImageProvider(image),
+                    child: CachedNetworkImage(
+                      imageUrl: image,
+                      imageBuilder: (context, imageProvider) => Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          shape: BoxShape.rectangle,
+                          image: DecorationImage(
+                            image: imageProvider,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      errorWidget: (context, url, error) => CachedNetworkImage(
+                        imageUrl: fallbackImage,
+                        imageBuilder: (context, imageProvider) => Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            shape: BoxShape.rectangle,
+                            image: DecorationImage(
+                              image: imageProvider,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ),
