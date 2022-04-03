@@ -29,6 +29,9 @@ class AppState extends State<Musify> {
       statusBarColor: bgColor,
     ));
     initAudioPlayer();
+    audioPlayer?.durationStream.listen((d) => {
+          if (this.mounted) {setState(() => duration = d)}
+        });
   }
 
   void initAudioPlayer() {
@@ -74,27 +77,26 @@ class AppState extends State<Musify> {
         ValueListenableBuilder<String>(
             valueListenable: kUrlNotifier,
             builder: (_, value, __) {
-              return kUrlNotifier.value != ""
-                  ? Container(
-                      height: 75,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(18),
-                              topRight: Radius.circular(18)),
-                          color: Color(0xff1c252a)),
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 5.0, bottom: 2),
-                        child: GestureDetector(
-                          onTap: () {
-                            if (kUrl != "") {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => AudioApp()),
-                              );
-                            }
-                          },
-                          child: Row(
+              return Container(
+                height: 75,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(18),
+                        topRight: Radius.circular(18)),
+                    color: Color(0xff1c252a)),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 5.0, bottom: 2),
+                  child: GestureDetector(
+                    onTap: () {
+                      if (kUrl != "") {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => AudioApp()),
+                        );
+                      }
+                    },
+                    child: kUrlNotifier.value != ""
+                        ? Row(
                             children: <Widget>[
                               Padding(
                                 padding: const EdgeInsets.only(
@@ -176,11 +178,11 @@ class AppState extends State<Musify> {
                                     );
                                   })
                             ],
-                          ),
-                        ),
-                      ),
-                    )
-                  : SizedBox.shrink();
+                          )
+                        : SizedBox.shrink(),
+                  ),
+                ),
+              );
             }),
         Container(
           width: MediaQuery.of(context).size.width * 0.95,

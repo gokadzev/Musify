@@ -174,7 +174,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   color: Colors.transparent,
                   child: Container(
-                    height: size.height / 4,
+                    height: size.height / 4.15,
                     width: size.width / 1.9,
                     child: CachedNetworkImage(
                       imageUrl: image,
