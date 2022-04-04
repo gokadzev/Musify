@@ -48,10 +48,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                             shrinkWrap: true,
                             physics: ScrollPhysics(),
                             padding: const EdgeInsets.only(
-                                left: 16.0,
-                                right: 16.0,
-                                top: 16.0,
-                                bottom: 150),
+                                left: 16.0, right: 16.0, top: 16.0, bottom: 20),
                             children: List.generate(playlists.length, (index) {
                               return Center(
                                   child: getPlaylist(

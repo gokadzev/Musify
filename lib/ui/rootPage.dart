@@ -83,7 +83,8 @@ class AppState extends State<Musify> {
                     borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(18),
                         topRight: Radius.circular(18)),
-                    color: Color(0xff1c252a)),
+                    color:
+                        kUrlNotifier.value != "" ? Color(0xff1c252a) : bgColor),
                 child: Padding(
                   padding: const EdgeInsets.only(top: 5.0, bottom: 2),
                   child: GestureDetector(
@@ -179,7 +180,22 @@ class AppState extends State<Musify> {
                                   })
                             ],
                           )
-                        : SizedBox.shrink(),
+                        : Container(
+                            width: MediaQuery.of(context).size.width,
+                            alignment: Alignment.center,
+                            child: Wrap(
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.play_disabled,
+                                  color: accent,
+                                ),
+                                Text(
+                                  'Nothing is playing right now',
+                                  style: TextStyle(color: accent),
+                                ),
+                              ],
+                            )),
                   ),
                 ),
               );

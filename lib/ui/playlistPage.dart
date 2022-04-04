@@ -57,49 +57,58 @@ class _PlaylistPageState extends State<PlaylistPage> {
                             Row(
                               children: [
                                 Container(
-                                    height: 200.0,
-                                    width: 200.0,
-                                    child: Card(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
-                                      ),
-                                      color: Colors.transparent,
-                                      child: (data as dynamic).data["image"] !=
-                                              ""
-                                          ? Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(10.0),
-                                                image: DecorationImage(
-                                                  fit: BoxFit.cover,
-                                                  image:
-                                                      CachedNetworkImageProvider(
-                                                          (data as dynamic)
-                                                              .data["image"]),
-                                                ),
+                                  height: 200.0,
+                                  width: 200.0,
+                                  child: Card(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                    color: Colors.transparent,
+                                    child: (data as dynamic).data["image"] != ""
+                                        ? Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10.0),
+                                              image: DecorationImage(
+                                                fit: BoxFit.cover,
+                                                image:
+                                                    CachedNetworkImageProvider(
+                                                        (data as dynamic)
+                                                            .data["image"]),
                                               ),
-                                            )
-                                          : Center(
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: <Widget>[
-                                                  Icon(
-                                                      MdiIcons.musicNoteOutline,
-                                                      size: 30,
-                                                      color: accent),
-                                                  Text(
-                                                    (data as dynamic)
-                                                        .data["title"],
-                                                    style: TextStyle(
-                                                        color: accent),
-                                                    textAlign: TextAlign.center,
-                                                  ),
+                                            ),
+                                          )
+                                        : Container(
+                                            width: 200,
+                                            height: 200,
+                                            decoration: new BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10.0),
+                                              gradient: new LinearGradient(
+                                                colors: [
+                                                  accent.withAlpha(30),
+                                                  Colors.white.withAlpha(30)
                                                 ],
                                               ),
                                             ),
-                                    )),
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: <Widget>[
+                                                Icon(MdiIcons.musicNoteOutline,
+                                                    size: 30, color: accent),
+                                                Text(
+                                                  (data as dynamic)
+                                                      .data["title"],
+                                                  style:
+                                                      TextStyle(color: accent),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                  ),
+                                ),
                                 const SizedBox(width: 16.0),
                                 Expanded(
                                   child: Column(
