@@ -91,6 +91,8 @@ class _SearchPageState extends State<SearchPage> {
             if (searchedList.isNotEmpty)
               ListView.builder(
                 shrinkWrap: true,
+                addAutomaticKeepAlives: false,
+                addRepaintBoundaries: false,
                 physics: NeverScrollableScrollPhysics(),
                 itemCount: searchedList.length,
                 itemBuilder: (BuildContext ctxt, int index) {

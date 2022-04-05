@@ -35,15 +35,15 @@ Future<List> fetchSongsList(searchQuery) async {
   var s = yt.search.search(searchQuery);
   List list = await s;
   searchedList = [];
-  list.forEach((v) => {
-        searchedList.add(returnSongLayout(
-            0,
-            v.id.toString(),
-            formatSongTitle(v.title.split('-')[v.title.split('-').length - 1]),
-            v.thumbnails.standardResUrl,
-            v.thumbnails.maxResUrl,
-            v.title.split('-')[0]))
-      });
+  for (var v in list) {
+    searchedList.add(returnSongLayout(
+        0,
+        v.id.toString(),
+        formatSongTitle(v.title.split('-')[v.title.split('-').length - 1]),
+        v.thumbnails.standardResUrl,
+        v.thumbnails.maxResUrl,
+        v.title.split('-')[0]));
+  }
   return searchedList;
 }
 
@@ -208,8 +208,8 @@ Future getSongLyrics() async {
   String lyricsApiUrl =
       'https://api.lyrics.ovh/v1/${artist!}/${title!.split(" (")[0].split("|")[0].trim()}';
   try {
-    var lyricsApiRes = await DefaultCacheManager()
-        .getSingleFile(lyricsApiUrl, headers: {"Accept": "application/json"});
+    var lyricsApiRes = await DefaultCacheManager().getSingleFile(lyricsApiUrl,
+        headers: {"Accept": "application/json"}).timeout(Duration(seconds: 5));
     var lyricsResponse = await json.decode(await lyricsApiRes.readAsString());
     if (lyricsResponse['lyrics'] != null) {
       lyrics = lyricsResponse['lyrics'];

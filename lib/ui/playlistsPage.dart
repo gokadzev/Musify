@@ -45,6 +45,8 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                 return (data as dynamic).data != null
                     ? Container(
                         child: GridView.builder(
+                            addAutomaticKeepAlives: false,
+                            addRepaintBoundaries: false,
                             gridDelegate:
                                 const SliverGridDelegateWithMaxCrossAxisExtent(
                                     maxCrossAxisExtent: 200,
