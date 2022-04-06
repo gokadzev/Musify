@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:musify/helper/formatter.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
@@ -49,14 +50,8 @@ Future<List> fetchSongsList(searchQuery) async {
         searchedList.add({
           "id": 0,
           "ytid": v.id,
-          "title": v.title
-              .split('-')[v.title.split('-').length - 1]
-              .replaceAll("&amp;", "&")
-              .replaceAll("&#039;", "'")
-              .replaceAll("&quot;", "\"")
-              .replaceAll("[Official Video]", "")
-              .replaceAll("(Official Video)", "")
-              .replaceAll("(Official Music Video)", ""),
+          "title": formatSongTitle(
+              v.title.split('-')[v.title.split('-').length - 1]),
           "image": v.thumbnails.standardResUrl,
           "highResImage": v.thumbnails.maxResUrl,
           "album": "",
@@ -77,14 +72,8 @@ Future get7Music(playlistId) async {
     newSongs.add({
       "id": index,
       "ytid": video.id,
-      "title": video.title
-          .split('-')[video.title.split('-').length - 1]
-          .replaceAll("&amp;", "&")
-          .replaceAll("&#039;", "'")
-          .replaceAll("&quot;", "\"")
-          .replaceAll("[Official Video]", "")
-          .replaceAll("(Official Video)", "")
-          .replaceAll("(Official Music Video)", ""),
+      "title": formatSongTitle(
+          video.title.split('-')[video.title.split('-').length - 1]),
       "image": video.thumbnails.standardResUrl,
       "highResImage": video.thumbnails.maxResUrl,
       "album": "",
@@ -141,14 +130,8 @@ Future getSongsFromPlaylist(playlistid) async {
     playlistSongs.add({
       "id": index,
       "ytid": video.id,
-      "title": video.title
-          .split('-')[video.title.split('-').length - 1]
-          .replaceAll("&amp;", "&")
-          .replaceAll("&#039;", "'")
-          .replaceAll("&quot;", "\"")
-          .replaceAll("[Official Video]", "")
-          .replaceAll("(Official Video)", "")
-          .replaceAll("(Official Music Video)", ""),
+      "title": formatSongTitle(
+          video.title.split('-')[video.title.split('-').length - 1]),
       "image": video.thumbnails.standardResUrl,
       "highResImage": video.thumbnails.maxResUrl,
       "album": "",
