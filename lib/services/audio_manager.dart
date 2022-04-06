@@ -154,21 +154,8 @@ Future<void> playSong(song, [isFromPlaylist]) async {
     activePlaylist = [];
     id = 0;
   }
-  try {
-    await setSongDetails(song);
-    await play();
-  } catch (e) {
-    artist = "Unknown";
-  }
-}
-
-Future<void> playPlaylist() async {
-  try {
-    await setSongDetails(activePlaylist[0]);
-    await play();
-  } catch (e) {
-    artist = "Unknown";
-  }
+  await setSongDetails(song);
+  await play();
 }
 
 Future changeShuffleStatus() async {
