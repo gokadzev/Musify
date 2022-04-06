@@ -47,20 +47,13 @@ Future<List> fetchSongsList(searchQuery) async {
   List list = await s;
   searchedList = [];
   list.forEach((v) => {
-        searchedList.add({
-          "id": 0,
-          "ytid": v.id,
-          "title": formatSongTitle(
-              v.title.split('-')[v.title.split('-').length - 1]),
-          "image": v.thumbnails.standardResUrl,
-          "highResImage": v.thumbnails.maxResUrl,
-          "album": "",
-          "type": "song",
-          "more_info": {
-            "primary_artists": v.title.split('-')[0],
-            "singers": v.title.split('-')[0],
-          }
-        })
+        searchedList.add(returnSongLayout(
+            0,
+            v.id.toString(),
+            formatSongTitle(v.title.split('-')[v.title.split('-').length - 1]),
+            v.thumbnails.standardResUrl,
+            v.thumbnails.maxResUrl,
+            v.title.split('-')[0]))
       });
   return searchedList;
 }
@@ -69,20 +62,14 @@ Future get7Music(playlistId) async {
   var newSongs = [];
   var index = 0;
   await for (var video in yt.playlists.getVideos(playlistId).take(7)) {
-    newSongs.add({
-      "id": index,
-      "ytid": video.id,
-      "title": formatSongTitle(
-          video.title.split('-')[video.title.split('-').length - 1]),
-      "image": video.thumbnails.standardResUrl,
-      "highResImage": video.thumbnails.maxResUrl,
-      "album": "",
-      "type": "song",
-      "more_info": {
-        "primary_artists": video.title.split('-')[0],
-        "singers": video.title.split('-')[0],
-      }
-    });
+    newSongs.add(returnSongLayout(
+        index,
+        video.id.toString(),
+        formatSongTitle(
+            video.title.split('-')[video.title.split('-').length - 1]),
+        video.thumbnails.standardResUrl,
+        video.thumbnails.maxResUrl,
+        video.title.split('-')[0]));
     index += 1;
   }
 
@@ -127,20 +114,14 @@ Future getSongsFromPlaylist(playlistid) async {
   var playlistSongs = [];
   var index = 0;
   await for (var video in yt.playlists.getVideos(playlistid)) {
-    playlistSongs.add({
-      "id": index,
-      "ytid": video.id,
-      "title": formatSongTitle(
-          video.title.split('-')[video.title.split('-').length - 1]),
-      "image": video.thumbnails.standardResUrl,
-      "highResImage": video.thumbnails.maxResUrl,
-      "album": "",
-      "type": "song",
-      "more_info": {
-        "primary_artists": video.title.split('-')[0],
-        "singers": video.title.split('-')[0],
-      }
-    });
+    playlistSongs.add(returnSongLayout(
+        index,
+        video.id.toString(),
+        formatSongTitle(
+            video.title.split('-')[video.title.split('-').length - 1]),
+        video.thumbnails.standardResUrl,
+        video.thumbnails.maxResUrl,
+        video.title.split('-')[0]));
     index += 1;
   }
 

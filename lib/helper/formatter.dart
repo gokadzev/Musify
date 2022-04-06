@@ -15,3 +15,20 @@ formatSongTitle(String title) {
       .replaceAll("Lyric Video", "")
       .replaceAll("[Official Lyric Video]", "");
 }
+
+returnSongLayout(index, String ytid, String title, String image,
+    String highResImage, String artist) {
+  return {
+    "id": index,
+    "ytid": ytid,
+    "title": formatSongTitle(title.split('-')[title.split('-').length - 1]),
+    "image": image,
+    "highResImage": highResImage,
+    "album": "",
+    "type": "song",
+    "more_info": {
+      "primary_artists": artist,
+      "singers": artist,
+    }
+  };
+}
