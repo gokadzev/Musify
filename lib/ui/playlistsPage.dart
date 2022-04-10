@@ -51,24 +51,46 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                                 left: 16.0, right: 16.0, top: 16.0, bottom: 20),
                             children: List.generate(playlists.length, (index) {
                               return Center(
-                                  child: getPlaylist(
-                                      index,
-                                      (data as dynamic).data[index]["image"],
-                                      (data as dynamic).data[index]["title"],
-                                      (data as dynamic).data[index]["ytid"]));
+                                  child: GetPlaylist(
+                                      index: index,
+                                      image: (data as dynamic).data[index]
+                                          ["image"],
+                                      title: (data as dynamic).data[index]
+                                          ["title"],
+                                      id: (data as dynamic).data[index]
+                                          ["ytid"]));
                             })))
                     : Container();
               })
         ])));
   }
+}
 
-  Widget getPlaylist(int index, dynamic image, String title, dynamic id) {
+class GetPlaylist extends StatelessWidget {
+  final int index;
+  final dynamic image;
+  final String title;
+  final dynamic id;
+
+  const GetPlaylist({
+    required this.index,
+    required this.image,
+    required this.title,
+    required this.id,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return SingleChildScrollView(
         child: GestureDetector(
       onTap: () {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => PlaylistPage(id: id)));
+        getPlaylistInfoForWidget(id).then((value) => {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => PlaylistPage(playlist: value)))
+            });
       },
       child: Padding(
         padding: const EdgeInsets.only(right: 15.0),

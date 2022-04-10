@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,117 +9,167 @@ import 'package:musify/customWidgets/song_bar.dart';
 import 'package:musify/style/appColors.dart';
 
 class PlaylistPage extends StatefulWidget {
-  final dynamic id;
-  const PlaylistPage({Key? key, required this.id}) : super(key: key);
+  final dynamic playlist;
+  const PlaylistPage({Key? key, required this.playlist}) : super(key: key);
 
   @override
   _PlaylistPageState createState() => _PlaylistPageState();
 }
 
 class _PlaylistPageState extends State<PlaylistPage> {
+  final _songsList = [];
+  late final itemFetcher;
+
+  bool _isLoading = true;
+  bool _hasMore = true;
+  final _itemsPerPage = 10;
+  var _currentPage = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _isLoading = true;
+    _hasMore = true;
+    _loadMore();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  void _loadMore() {
+    _isLoading = true;
+    fetch().then((List fetchedList) {
+      if (!mounted) return;
+      if (fetchedList.isEmpty) {
+        setState(() {
+          _isLoading = false;
+          _hasMore = false;
+        });
+      } else {
+        setState(() {
+          _isLoading = false;
+          _songsList.addAll(fetchedList);
+        });
+      }
+    });
+  }
+
+  Future<List> fetch() async {
+    final list = [];
+    final int _count = widget.playlist["list"].length;
+    final n = min(_itemsPerPage, _count - _currentPage * _itemsPerPage);
+    // Uncomment the following line to see in real time now items are loaded lazily.
+    // print('Now on page $_currentPage');
+    await Future.delayed(Duration(seconds: 1), () {
+      for (int i = 0; i < n; i++) {
+        list.add(widget.playlist["list"][i]);
+      }
+    });
+    _currentPage++;
+    return list;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final dynamic id = widget.id;
     return Material(
         child: Container(
-      child: Scaffold(
-        backgroundColor: bgColor,
-        appBar: AppBar(
-          systemOverlayStyle:
-              SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
-          centerTitle: true,
-          title: Text(
-            "Playlist",
-            style: TextStyle(
-              color: accent,
-              fontSize: 25,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back,
-              color: accent,
-            ),
-            onPressed: () => Navigator.pop(context, false),
-          ),
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-        ),
-        body: SingleChildScrollView(
-          child: FutureBuilder(
-              future: getPlaylistInfoForWidget(id),
-              builder: (context, data) {
-                return (data as dynamic).data != null
-                    ? Padding(
-                        padding: const EdgeInsets.only(
-                            top: 30, bottom: 20.0, right: 10.0, left: 10.0),
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                Container(
-                                  height: 200.0,
-                                  width: 200.0,
-                                  child: Card(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8.0),
-                                    ),
-                                    color: Colors.transparent,
-                                    child: (data as dynamic).data["image"] != ""
-                                        ? Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(10.0),
-                                              image: DecorationImage(
-                                                fit: BoxFit.cover,
-                                                image:
-                                                    CachedNetworkImageProvider(
-                                                        (data as dynamic)
-                                                            .data["image"]),
+            child: Scaffold(
+                backgroundColor: bgColor,
+                appBar: AppBar(
+                  systemOverlayStyle: SystemUiOverlayStyle(
+                      statusBarBrightness: Brightness.dark),
+                  centerTitle: true,
+                  title: Text(
+                    "Playlist",
+                    style: TextStyle(
+                      color: accent,
+                      fontSize: 25,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  leading: IconButton(
+                    icon: Icon(
+                      Icons.arrow_back,
+                      color: accent,
+                    ),
+                    onPressed: () => Navigator.pop(context, false),
+                  ),
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                ),
+                body: SingleChildScrollView(
+                    padding: const EdgeInsets.only(
+                        top: 30, bottom: 20.0, right: 10.0, left: 10.0),
+                    child: widget.playlist != null
+                        ? Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Container(
+                                    height: 200.0,
+                                    width: 200.0,
+                                    child: Card(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                      ),
+                                      color: Colors.transparent,
+                                      child: widget.playlist["image"] != ""
+                                          ? Container(
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(10.0),
+                                                image: DecorationImage(
+                                                  fit: BoxFit.cover,
+                                                  image:
+                                                      CachedNetworkImageProvider(
+                                                          widget.playlist[
+                                                              "image"]),
+                                                ),
                                               ),
-                                            ),
-                                          )
-                                        : Container(
-                                            width: 200,
-                                            height: 200,
-                                            decoration: new BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(10.0),
-                                              gradient: new LinearGradient(
-                                                colors: [
-                                                  accent.withAlpha(30),
-                                                  Colors.white.withAlpha(30)
+                                            )
+                                          : Container(
+                                              width: 200,
+                                              height: 200,
+                                              decoration: new BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(10.0),
+                                                gradient: new LinearGradient(
+                                                  colors: [
+                                                    accent.withAlpha(30),
+                                                    Colors.white.withAlpha(30)
+                                                  ],
+                                                ),
+                                              ),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: <Widget>[
+                                                  Icon(
+                                                      MdiIcons.musicNoteOutline,
+                                                      size: 30,
+                                                      color: accent),
+                                                  Text(
+                                                    widget.playlist["title"],
+                                                    style: TextStyle(
+                                                        color: accent),
+                                                    textAlign: TextAlign.center,
+                                                  ),
                                                 ],
                                               ),
                                             ),
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: <Widget>[
-                                                Icon(MdiIcons.musicNoteOutline,
-                                                    size: 30, color: accent),
-                                                Text(
-                                                  (data as dynamic)
-                                                      .data["title"],
-                                                  style:
-                                                      TextStyle(color: accent),
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(width: 16.0),
-                                Expanded(
-                                  child: Column(
+                                  const SizedBox(width: 16.0),
+                                  Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
                                       const SizedBox(height: 12.0),
                                       Text(
-                                        (data as dynamic).data["title"],
+                                        widget.playlist["title"],
                                         style: TextStyle(
                                             color: accent,
                                             fontSize: 18,
@@ -125,7 +177,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                                       ),
                                       const SizedBox(height: 16.0),
                                       Text(
-                                        (data as dynamic).data["header_desc"],
+                                        widget.playlist["header_desc"],
                                         style: TextStyle(
                                             color: accent,
                                             fontSize: 10,
@@ -137,8 +189,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                                       TextButton(
                                           onPressed: () => {
                                                 setActivePlaylist(
-                                                    (data as dynamic)
-                                                        .data["list"]),
+                                                    widget.playlist["list"]),
                                                 Navigator.pop(context, false)
                                               },
                                           style: TextButton.styleFrom(
@@ -151,41 +202,57 @@ class _PlaylistPageState extends State<PlaylistPage> {
                                       const SizedBox(height: 16.0),
                                     ],
                                   ),
-                                )
-                              ],
-                            ),
-                            const SizedBox(height: 20.0),
-                            if ((data as dynamic).data["list"].isNotEmpty)
-                              ListView.builder(
-                                shrinkWrap: true,
-                                physics: const BouncingScrollPhysics(),
-                                addAutomaticKeepAlives:
-                                    false, // may be problem with lazyload if it implemented
-                                addRepaintBoundaries: false,
-                                itemCount:
-                                    (data as dynamic).data["list"].length,
-                                itemBuilder: (BuildContext ctxt, int index) {
-                                  return Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 5, bottom: 5),
-                                      child: songBar((data as dynamic)
-                                          .data["list"][index]));
-                                },
-                              )
-                          ],
-                        ))
-                    : Container(
-                        height: MediaQuery.of(context).size.height - 100,
-                        child: Align(
-                            alignment: Alignment.center,
-                            child: Center(
-                                child: CircularProgressIndicator(
-                              color: accent,
-                              strokeWidth: 3,
-                            ))));
-              }),
-        ),
-      ),
-    ));
+                                ],
+                              ),
+                              const SizedBox(height: 20.0),
+                              _songsList.isNotEmpty
+                                  ? ListView.builder(
+                                      shrinkWrap: true,
+                                      physics: const BouncingScrollPhysics(),
+                                      addAutomaticKeepAlives:
+                                          false, // may be problem with lazyload if it implemented
+                                      addRepaintBoundaries: false,
+                                      // Need to display a loading tile if more items are coming
+                                      itemCount: _hasMore
+                                          ? _songsList.length + 1
+                                          : _songsList.length,
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        if (index >= _songsList.length) {
+                                          if (!_isLoading) {
+                                            _loadMore();
+                                          }
+                                          return SizedBox(
+                                              child: Center(
+                                                  child:
+                                                      CircularProgressIndicator(
+                                            color: accent,
+                                            strokeWidth: 3,
+                                          )));
+                                        }
+                                        return Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: 5, bottom: 5),
+                                            child: SongBar(
+                                                song: _songsList[index]));
+                                      })
+                                  : Align(
+                                      alignment: Alignment.center,
+                                      child: Center(
+                                          child: CircularProgressIndicator(
+                                        color: accent,
+                                        strokeWidth: 3,
+                                      )))
+                            ],
+                          )
+                        : Container(
+                            height: MediaQuery.of(context).size.height - 100,
+                            child: Align(
+                                alignment: Alignment.center,
+                                child: Center(
+                                    child: CircularProgressIndicator(
+                                  color: accent,
+                                  strokeWidth: 3,
+                                ))))))));
   }
 }

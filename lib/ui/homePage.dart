@@ -63,19 +63,19 @@ class _HomePageState extends State<HomePage> {
                                             return Padding(
                                                 padding: const EdgeInsets.only(
                                                     right: 25),
-                                                child: cubeContainer(
-                                                    (data as dynamic)
+                                                child: CubeContainer(
+                                                    image: (data as dynamic)
                                                             .data[index]
                                                         ["highResImage"],
-                                                    (data as dynamic)
+                                                    fallbackImage: (data as dynamic)
                                                         .data[index]["image"],
-                                                    (data as dynamic)
+                                                    title: (data as dynamic)
                                                         .data[index]["title"],
-                                                    (data as dynamic)
+                                                    singer: (data as dynamic)
                                                                 .data[index]
                                                             ["more_info"]
                                                         ["primary_artists"],
-                                                    (data as dynamic)
+                                                    song: (data as dynamic)
                                                         .data[index]));
                                           }))
                                 ],
@@ -122,19 +122,19 @@ class _HomePageState extends State<HomePage> {
                                             return Padding(
                                                 padding: const EdgeInsets.only(
                                                     right: 25),
-                                                child: cubeContainer(
-                                                    (data as dynamic)
+                                                child: CubeContainer(
+                                                    image: (data as dynamic)
                                                             .data[index]
                                                         ["highResImage"],
-                                                    (data as dynamic)
+                                                    fallbackImage: (data as dynamic)
                                                         .data[index]["image"],
-                                                    (data as dynamic)
+                                                    title: (data as dynamic)
                                                         .data[index]["title"],
-                                                    (data as dynamic)
+                                                    singer: (data as dynamic)
                                                                 .data[index]
                                                             ["more_info"]
                                                         ["primary_artists"],
-                                                    (data as dynamic)
+                                                    song: (data as dynamic)
                                                         .data[index]));
                                           }))
                                 ],
@@ -154,10 +154,26 @@ class _HomePageState extends State<HomePage> {
       ),
     ));
   }
+}
 
-  Widget cubeContainer(
-      String image, String fallbackImage, String title, String singer, song) {
-    var size = MediaQuery.of(context).size;
+class CubeContainer extends StatelessWidget {
+  final String image;
+  final String fallbackImage;
+  final String title;
+  final String singer;
+  final dynamic song;
+
+  const CubeContainer({
+    required this.image,
+    required this.fallbackImage,
+    required this.title,
+    required this.singer,
+    required this.song,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return DelayedDisplay(
         delay: Duration(milliseconds: 200),
         fadingDuration: Duration(milliseconds: 400),
