@@ -163,48 +163,49 @@ class _PlaylistPageState extends State<PlaylistPage> {
                                     ),
                                   ),
                                   const SizedBox(width: 16.0),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const SizedBox(height: 12.0),
-                                      Text(
-                                        widget.playlist["title"],
-                                        style: TextStyle(
-                                            color: accent,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                      const SizedBox(height: 16.0),
-                                      Text(
-                                        widget.playlist["header_desc"],
-                                        style: TextStyle(
-                                            color: accent,
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                      Padding(
-                                          padding: const EdgeInsets.only(
-                                              top: 5, bottom: 5)),
-                                      TextButton(
-                                          onPressed: () => {
-                                                setActivePlaylist(
-                                                    widget.playlist["list"]),
-                                                Navigator.pop(context, false)
-                                              },
-                                          style: TextButton.styleFrom(
-                                              backgroundColor: accent),
-                                          child: Text(
-                                            "PLAY ALL",
-                                            style:
-                                                TextStyle(color: Colors.white),
-                                          )),
-                                      const SizedBox(height: 16.0),
-                                    ],
-                                  ),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const SizedBox(height: 12.0),
+                                        Text(
+                                          widget.playlist["title"],
+                                          style: TextStyle(
+                                              color: accent,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                        const SizedBox(height: 16.0),
+                                        Text(
+                                          widget.playlist["header_desc"],
+                                          style: TextStyle(
+                                              color: accent,
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                        Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: 5, bottom: 5)),
+                                        TextButton(
+                                            onPressed: () => {
+                                                  setActivePlaylist(
+                                                      widget.playlist["list"]),
+                                                  Navigator.pop(context, false)
+                                                },
+                                            style: TextButton.styleFrom(
+                                                backgroundColor: accent),
+                                            child: Text(
+                                              "PLAY ALL",
+                                              style: TextStyle(
+                                                  color: Colors.white),
+                                            )),
+                                      ],
+                                    ),
+                                  )
                                 ],
                               ),
-                              const SizedBox(height: 20.0),
+                              const SizedBox(height: 30.0),
                               _songsList.isNotEmpty
                                   ? ListView.builder(
                                       shrinkWrap: true,
