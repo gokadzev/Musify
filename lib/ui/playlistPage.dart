@@ -24,6 +24,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
   bool _hasMore = true;
   final _itemsPerPage = 10;
   var _currentPage = 0;
+  var _currentLastLoadedId = 0;
 
   @override
   void initState() {
@@ -64,7 +65,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
     // print('Now on page $_currentPage');
     await Future.delayed(Duration(seconds: 1), () {
       for (int i = 0; i < n; i++) {
-        list.add(widget.playlist["list"][i]);
+        list.add(widget.playlist["list"][_currentLastLoadedId]);
+        _currentLastLoadedId++;
       }
     });
     _currentPage++;
