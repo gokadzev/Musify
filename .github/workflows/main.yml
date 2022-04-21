@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v3
 
     # Setup Java environment in order to build the Android app.
     - uses: actions/setup-java@v1
@@ -15,7 +15,7 @@ jobs:
 
 
     # Gradle cache for faster builds
-    - uses: actions/cache@v2
+    - uses: actions/cache@v3
       with:
         path: |
           ~/.gradle/caches
@@ -24,7 +24,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-gradle-
     # Setup the flutter environment.
-    - uses: subosito/flutter-action@v1
+    - uses: subosito/flutter-action@v2
       with:
         channel: "stable"
     # Get flutter dependencies.
@@ -36,7 +36,7 @@ jobs:
     # Build apk.
     - run: flutter build apk --release
     # Upload generated apk to the artifacts.
-    - uses: actions/upload-artifact@v1
+    - uses: actions/upload-artifact@v3
       with:
-        name: app-release.apk
+        name: Musify.apk
         path: build/app/outputs/apk/release/app-release.apk
