@@ -10,6 +10,7 @@ formatSongTitle(String title) {
       .replaceAll("[official music video]", "")
       .replaceAll("(Official Music Video)", "")
       .replaceAll("[Official Perfomance Video]", "")
+      .replaceAll("(Lyrics)", "")
       .replaceAll("[Lyrics]", "")
       .replaceAll("[Lyric Video]", "")
       .replaceAll("Lyric Video", "")

@@ -43,7 +43,7 @@ int? id = 0;
 List activePlaylist = [];
 
 Future<List> fetchSongsList(searchQuery) async {
-  var s = yt.search.getVideos(searchQuery);
+  var s = yt.search.search(searchQuery);
   List list = await s;
   searchedList = [];
   list.forEach((v) => {
