@@ -29,18 +29,18 @@ dependencies:
   path_provider: ^2.0.9
   gradient_widgets: ^0.6.0
   material_design_icons_flutter: ^5.0.6595
-  url_launcher: ^6.0.20
+  url_launcher: ^6.1.0
   permission_handler: ^9.1.0
   fluttertoast: ^8.0.9
   cached_network_image: ^3.2.0
   audio_service: ^0.18.4
-  just_audio: ^0.9.20 
+  just_audio: ^0.9.21 
   get_it: ^7.2.0
   hive: ^2.1.0
   hive_flutter: ^1.1.0
   delayed_display: ^2.0.0
   youtube_explode_dart: ^1.11.0
-  google_fonts: ^2.3.1
+  google_fonts: ^2.3.2
   flutter_cache_manager: ^3.3.0
 
 dev_dependencies:
