@@ -26,8 +26,11 @@ clearCache() {
 backupData() async {
   String? dlPath = await ExtStorageProvider.getExtStorage(dirName: 'Musify');
   var box = await Hive.openBox('user');
-  File(Hive.box('user').path!).copy(dlPath! + '/backup.hive');
+  File(Hive.box('user').path!).copy(dlPath! + '/userdata.hive');
   box.close();
+  var box1 = await Hive.openBox('settings');
+  File(Hive.box('settings').path!).copy(dlPath + '/settings.hive');
+  box1.close();
 }
 
 restoreData() async {
@@ -36,6 +39,12 @@ restoreData() async {
   var boxPath = box.path;
   await box.close();
   String? uplPath = await ExtStorageProvider.getExtStorage(dirName: 'Musify');
-  File(uplPath! + '/backup.hive').copy(boxPath!);
+  File(uplPath! + '/userdata.hive').copy(boxPath!);
   box = await Hive.openBox('user');
+  await Hive.openBox('settings');
+  var box1 = Hive.box('settings');
+  var boxPath1 = box1.path;
+  await box1.close();
+  File(uplPath + '/settings.hive').copy(boxPath1!);
+  box1 = await Hive.openBox('settings');
 }

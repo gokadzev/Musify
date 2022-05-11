@@ -28,6 +28,7 @@ List ytplaylists = [
 ];
 List searchedList = [];
 List playlists = [];
+List userPlaylists = [];
 
 String? kUrl = "",
     image = "",
@@ -74,6 +75,25 @@ Future get7Music(playlistId) async {
   }
 
   return newSongs;
+}
+
+Future<List<dynamic>> getUserPlaylists() async {
+  var playlistsByUser = [];
+  userPlaylists.forEach((playlistID) async {
+    var plist = await yt.playlists.get(playlistID);
+    playlistsByUser.add({
+      "ytid": plist.id,
+      "title": plist.title,
+      "subtitle": "Just Updated",
+      "header_desc": plist.description.length < 120
+          ? plist.description
+          : plist.description.substring(0, 120),
+      "type": "playlist",
+      "image": "",
+      "list": []
+    });
+  });
+  return playlistsByUser;
 }
 
 Future<List<dynamic>> getPlaylists() async {
