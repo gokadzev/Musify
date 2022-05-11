@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:musify/helper/formatter.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:musify/services/data_manager.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 var yt = YoutubeExplode();
@@ -79,7 +80,7 @@ Future get7Music(playlistId) async {
 
 Future<List<dynamic>> getUserPlaylists() async {
   var playlistsByUser = [];
-  userPlaylists.forEach((playlistID) async {
+  for (var playlistID in userPlaylists) {
     var plist = await yt.playlists.get(playlistID);
     playlistsByUser.add({
       "ytid": plist.id,
@@ -92,8 +93,18 @@ Future<List<dynamic>> getUserPlaylists() async {
       "image": "",
       "list": []
     });
-  });
+  }
   return playlistsByUser;
+}
+
+addUserPlaylist(playlistId) {
+  userPlaylists.add(playlistId);
+  addOrUpdateData("user", "playlists", userPlaylists);
+}
+
+removeUserPlaylist(playlistId) {
+  userPlaylists.remove(playlistId.toString());
+  addOrUpdateData("user", "playlists", userPlaylists);
 }
 
 Future<List<dynamic>> getPlaylists() async {
@@ -155,7 +166,14 @@ setActivePlaylist(playlist) async {
 }
 
 Future getPlaylistInfoForWidget(dynamic id) async {
-  var playlist = playlists.where((list) => list["ytid"] == id).toList()[0];
+  var searchPlaylist = playlists.where((list) => list["ytid"] == id).toList();
+
+  if (searchPlaylist.length == 0) {
+    var usPlaylists = await getUserPlaylists();
+    searchPlaylist = usPlaylists.where((list) => list["ytid"] == id).toList();
+  }
+
+  var playlist = searchPlaylist[0];
 
   if (playlist["list"].length == 0) {
     playlist["list"] = await getSongsFromPlaylist(playlist["ytid"]);

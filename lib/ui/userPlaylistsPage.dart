@@ -36,6 +36,46 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
           backgroundColor: Colors.transparent,
           elevation: 0,
         ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  var id;
+                  return AlertDialog(
+                    backgroundColor: accent,
+                    content: Stack(
+                      children: <Widget>[
+                        TextField(
+                            decoration: new InputDecoration.collapsed(
+                                hintText: 'Youtube Playlist ID'),
+                            onChanged: (value) {
+                              setState(() {
+                                id = value;
+                              });
+                            })
+                      ],
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        child: Text(
+                          'ADD',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                        onPressed: () {
+                          addUserPlaylist(id);
+                          setState(() {
+                            Navigator.pop(context);
+                          });
+                        },
+                      ),
+                    ],
+                  );
+                });
+          },
+          backgroundColor: accent,
+          child: const Icon(Icons.add),
+        ),
         body: SingleChildScrollView(
             child: Column(children: <Widget>[
           const Padding(padding: EdgeInsets.only(top: 20)),
@@ -51,19 +91,26 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                             physics: ScrollPhysics(),
                             padding: const EdgeInsets.only(
                                 left: 16.0, right: 16.0, top: 16.0, bottom: 20),
-                            children: List.generate(playlists.length, (index) {
+                            children:
+                                List.generate(userPlaylists.length, (index) {
                               return Center(
-                                  child: GetPlaylist(
-                                      index: index,
-                                      image: (data as dynamic).data[index]
-                                          ["image"],
-                                      title: (data as dynamic).data[index]
-                                          ["title"],
-                                      id: (data as dynamic).data[index]
-                                          ["ytid"]));
+                                  child: GestureDetector(
+                                      onLongPress: () {
+                                        removeUserPlaylist((data as dynamic)
+                                            .data[index]["ytid"]);
+                                        setState(() {});
+                                      },
+                                      child: GetPlaylist(
+                                          index: index,
+                                          image: (data as dynamic).data[index]
+                                              ["image"],
+                                          title: (data as dynamic).data[index]
+                                              ["title"],
+                                          id: (data as dynamic).data[index]
+                                              ["ytid"])));
                             })))
                     : Container();
-              })
+              }),
         ])));
   }
 }
