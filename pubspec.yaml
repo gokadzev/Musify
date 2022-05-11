@@ -26,10 +26,10 @@ dependencies:
 
 
   audiotagger: ^2.2.1
-  path_provider: ^2.0.9
+  path_provider: ^2.0.10
   gradient_widgets: ^0.6.0
   material_design_icons_flutter: ^5.0.6595
-  url_launcher: ^6.1.0
+  url_launcher: ^6.1.1
   permission_handler: ^9.1.0
   fluttertoast: ^8.0.9
   cached_network_image: ^3.2.0

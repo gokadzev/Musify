@@ -207,6 +207,62 @@ class SettingsCards extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10.0)),
               elevation: 2.3,
               child: ListTile(
+                leading: Icon(MdiIcons.cloudUpload, color: accent),
+                title: Text(
+                  'Backup User Data',
+                  style: TextStyle(color: accent),
+                ),
+                onTap: () {
+                  backupData();
+                  Fluttertoast.showToast(
+                      backgroundColor: accent,
+                      textColor: Colors.white,
+                      msg: "User Data Backuped!",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      fontSize: 14.0);
+                },
+              ),
+            ),
+          ),
+          Padding(
+            padding:
+                const EdgeInsets.only(top: 8, left: 8, right: 8, bottom: 6),
+            child: Card(
+              color: Color(0xff263238),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0)),
+              elevation: 2.3,
+              child: ListTile(
+                leading: Icon(MdiIcons.cloudDownload, color: accent),
+                title: Text(
+                  'Restore User Data',
+                  style: TextStyle(color: accent),
+                ),
+                onTap: () {
+                  restoreData();
+                  Fluttertoast.showToast(
+                      backgroundColor: accent,
+                      textColor: Colors.white,
+                      msg: "User Data Restored!",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      fontSize: 14.0);
+                },
+              ),
+            ),
+          ),
+          Padding(
+            padding:
+                const EdgeInsets.only(top: 8, left: 8, right: 8, bottom: 6),
+            child: Card(
+              color: Color(0xff263238),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0)),
+              elevation: 2.3,
+              child: ListTile(
                 leading: Icon(MdiIcons.information, color: accent),
                 title: Text(
                   'About',
@@ -218,7 +274,7 @@ class SettingsCards extends StatelessWidget {
                 },
               ),
             ),
-          )
+          ),
         ],
       ),
     );

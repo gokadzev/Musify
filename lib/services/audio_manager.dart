@@ -75,8 +75,6 @@ downloadSong(song) async {
     await File(dlPath + "/" + artname)
         .create(recursive: true)
         .then((value) => filepath2 = value.path);
-    debugPrint('Audio path $filepath');
-    debugPrint('Image path $filepath2');
     var request =
         await HttpClient().getUrl(Uri.parse(await getSongUrl(song["ytid"])));
     var response = await request.close();
@@ -90,7 +88,6 @@ downloadSong(song) async {
 
     await file.writeAsBytes(bytes);
     await file2.writeAsBytes(bytes2);
-    debugPrint("Started tag editing");
 
     final tag = Tag(
       title: song["title"],
