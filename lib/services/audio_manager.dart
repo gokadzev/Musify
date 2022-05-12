@@ -247,20 +247,16 @@ class MyAudioHandler extends BaseAudioHandler {
 
   @override
   Future<void> skipToPrevious() async {
-    playbackState.add(playbackState.value.copyWith(
-      controls: [MediaControl.skipToPrevious],
-    ));
-
-    playPrevious();
+    if (activePlaylist.length != 0 && id! - 1 >= 0) {
+      playPrevious();
+    }
   }
 
   @override
   Future<void> skipToNext() async {
-    playbackState.add(playbackState.value.copyWith(
-      controls: [MediaControl.skipToNext],
-    ));
-
-    playNext();
+    if (activePlaylist.length != 0 && id! + 1 <= activePlaylist.length) {
+      playNext();
+    }
   }
 
   @override
@@ -284,11 +280,9 @@ class MyAudioHandler extends BaseAudioHandler {
           duration: duration));
       playbackState.add(playbackState.value.copyWith(
         controls: [
-          if (activePlaylist.length != 0 && id! - 1 >= 0)
-            MediaControl.skipToPrevious,
+          MediaControl.skipToPrevious,
           if (playing) MediaControl.pause else MediaControl.play,
-          if (activePlaylist.length != 0 && id! + 1 <= activePlaylist.length)
-            MediaControl.skipToNext,
+          MediaControl.skipToNext,
           MediaControl.stop,
         ],
         systemActions: const {

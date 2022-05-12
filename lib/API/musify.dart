@@ -163,6 +163,7 @@ setActivePlaylist(playlist) async {
   activePlaylist = playlist;
   id = 0;
   setSongDetails(activePlaylist[id!]);
+  play();
 }
 
 Future getPlaylistInfoForWidget(dynamic id) async {
