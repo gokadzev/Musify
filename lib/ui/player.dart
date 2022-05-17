@@ -94,34 +94,40 @@ class AudioAppState extends State<AudioApp> {
                   width: size.width / 1.3,
                   height: size.width / 1.3,
                   child: CachedNetworkImage(
-                    imageUrl: highResImage!,
-                    imageBuilder: (context, imageProvider) => Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        shape: BoxShape.rectangle,
-                        image: DecorationImage(
-                          image: imageProvider,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    placeholder: (context, url) => CircularProgressIndicator(
-                      color: accent,
-                    ),
-                    errorWidget: (context, url, error) => CachedNetworkImage(
-                      imageUrl: image!,
+                      imageUrl: highResImage!,
                       imageBuilder: (context, imageProvider) => Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          shape: BoxShape.rectangle,
-                          image: DecorationImage(
-                            image: imageProvider,
-                            fit: BoxFit.cover,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              shape: BoxShape.rectangle,
+                              image: DecorationImage(
+                                image: imageProvider,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
-                  ),
+                      placeholder: (context, url) => CircularProgressIndicator(
+                            color: accent,
+                          ),
+                      errorWidget: (context, url, error) => Container(
+                            width: size.width / 1.3,
+                            height: size.width / 1.3,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Icon(MdiIcons.musicNoteOutline,
+                                    size: 50, color: accent),
+                              ],
+                            ),
+                            decoration: new BoxDecoration(
+                              borderRadius: BorderRadius.circular(10.0),
+                              gradient: new LinearGradient(
+                                colors: [
+                                  accent.withAlpha(30),
+                                  Colors.white.withAlpha(30)
+                                ],
+                              ),
+                            ),
+                          )),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 35.0, bottom: 35),

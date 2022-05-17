@@ -118,14 +118,31 @@ class AppState extends State<Musify> {
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(8.0),
                                   child: CachedNetworkImage(
-                                    imageUrl: highResImage!,
-                                    fit: BoxFit.fill,
-                                    errorWidget: (context, url, error) =>
-                                        CachedNetworkImage(
-                                      imageUrl: image!,
+                                      imageUrl: highResImage!,
                                       fit: BoxFit.fill,
-                                    ),
-                                  ),
+                                      errorWidget: (context, url, error) =>
+                                          Container(
+                                            width: 50,
+                                            height: 50,
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: <Widget>[
+                                                Icon(MdiIcons.musicNoteOutline,
+                                                    size: 30, color: accent),
+                                              ],
+                                            ),
+                                            decoration: new BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10.0),
+                                              gradient: new LinearGradient(
+                                                colors: [
+                                                  accent.withAlpha(30),
+                                                  Colors.white.withAlpha(30)
+                                                ],
+                                              ),
+                                            ),
+                                          )),
                                 ),
                               ),
                               Padding(
