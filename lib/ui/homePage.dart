@@ -1,5 +1,6 @@
 import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/services.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/style/appColors.dart';
@@ -32,8 +33,7 @@ class _HomePageState extends State<HomePage> {
         ),
         body: Container(
           child: Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: 25.0, horizontal: 25.0),
+            padding: const EdgeInsets.symmetric(horizontal: 25.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
@@ -192,48 +192,55 @@ class CubeContainer extends StatelessWidget {
     return DelayedDisplay(
         delay: Duration(milliseconds: 200),
         fadingDuration: Duration(milliseconds: 400),
-        child: InkWell(
+        child: GestureDetector(
           onTap: () {
             playSong(song);
           },
           child: Column(
             children: [
               Container(
+                height: size.height / 4.15,
+                width: size.width / 1.9,
                 child: Card(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                   color: Colors.transparent,
                   child: Container(
-                    height: size.height / 4.15,
-                    width: size.width / 1.9,
-                    child: CachedNetworkImage(
-                      imageUrl: image,
-                      imageBuilder: (context, imageProvider) => Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          shape: BoxShape.rectangle,
-                          image: DecorationImage(
-                            image: imageProvider,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      errorWidget: (context, url, error) => CachedNetworkImage(
-                        imageUrl: fallbackImage,
-                        imageBuilder: (context, imageProvider) => Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            shape: BoxShape.rectangle,
-                            image: DecorationImage(
-                              image: imageProvider,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                      height: size.height / 4.15,
+                      width: size.width / 1.9,
+                      child: CachedNetworkImage(
+                          imageUrl: image,
+                          imageBuilder: (context, imageProvider) => Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  shape: BoxShape.rectangle,
+                                  image: DecorationImage(
+                                    image: imageProvider,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                          errorWidget: (context, url, error) => Container(
+                                width: 200,
+                                height: 200,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Icon(MdiIcons.musicNoteOutline,
+                                        size: 30, color: accent),
+                                  ],
+                                ),
+                                decoration: new BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  gradient: new LinearGradient(
+                                    colors: [
+                                      accent.withAlpha(30),
+                                      Colors.white.withAlpha(30)
+                                    ],
+                                  ),
+                                ),
+                              ))),
                 ),
               ),
               const SizedBox(
