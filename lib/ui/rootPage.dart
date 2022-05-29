@@ -152,8 +152,8 @@ class AppState extends State<Musify> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
                                     Text(
-                                      title!.length > 18
-                                          ? title!.substring(0, 18) + "..."
+                                      title!.length > 15
+                                          ? title!.substring(0, 15) + "..."
                                           : title!,
                                       style: TextStyle(
                                           color: accent,
@@ -161,8 +161,8 @@ class AppState extends State<Musify> {
                                           fontWeight: FontWeight.w600),
                                     ),
                                     Text(
-                                      artist!.length > 18
-                                          ? artist!.substring(0, 18) + "..."
+                                      artist!.length > 15
+                                          ? artist!.substring(0, 15) + "..."
                                           : artist!,
                                       style: TextStyle(
                                           color: accent, fontSize: 15),
