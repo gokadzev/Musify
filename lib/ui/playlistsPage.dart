@@ -1,5 +1,6 @@
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/API/musify.dart';
+import 'package:musify/customWidgets/spinner.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -43,13 +44,19 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
               builder: (context, data) {
                 return (data as dynamic).data != null
                     ? Container(
-                        child: GridView.count(
-                            crossAxisCount: 2,
+                        child: GridView.builder(
+                            gridDelegate:
+                                const SliverGridDelegateWithMaxCrossAxisExtent(
+                                    maxCrossAxisExtent: 200,
+                                    childAspectRatio: 1,
+                                    crossAxisSpacing: 20,
+                                    mainAxisSpacing: 20),
                             shrinkWrap: true,
                             physics: ScrollPhysics(),
+                            itemCount: (data as dynamic).data.length,
                             padding: const EdgeInsets.only(
                                 left: 16.0, right: 16.0, top: 16.0, bottom: 20),
-                            children: List.generate(playlists.length, (index) {
+                            itemBuilder: (BuildContext context, index) {
                               return Center(
                                   child: GetPlaylist(
                                       index: index,
@@ -59,8 +66,8 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                                           ["title"],
                                       id: (data as dynamic).data[index]
                                           ["ytid"]));
-                            })))
-                    : Container();
+                            }))
+                    : Spinner();
               })
         ])));
   }

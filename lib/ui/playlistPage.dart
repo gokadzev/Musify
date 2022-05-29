@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/customWidgets/song_bar.dart';
+import 'package:musify/customWidgets/spinner.dart';
 import 'package:musify/style/appColors.dart';
 
 class PlaylistPage extends StatefulWidget {
@@ -61,8 +62,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
     final list = [];
     final int _count = widget.playlist["list"].length;
     final n = min(_itemsPerPage, _count - _currentPage * _itemsPerPage);
-    // Uncomment the following line to see in real time now items are loaded lazily.
-    // print('Now on page $_currentPage');
     await Future.delayed(Duration(seconds: 1), () {
       for (int i = 0; i < n; i++) {
         list.add(widget.playlist["list"][_currentLastLoadedId]);
@@ -225,13 +224,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                                           if (!_isLoading) {
                                             _loadMore();
                                           }
-                                          return SizedBox(
-                                              child: Center(
-                                                  child:
-                                                      CircularProgressIndicator(
-                                            color: accent,
-                                            strokeWidth: 3,
-                                          )));
+                                          return SizedBox(child: Spinner());
                                         }
                                         return Padding(
                                             padding: const EdgeInsets.only(
@@ -241,21 +234,13 @@ class _PlaylistPageState extends State<PlaylistPage> {
                                       })
                                   : Align(
                                       alignment: Alignment.center,
-                                      child: Center(
-                                          child: CircularProgressIndicator(
-                                        color: accent,
-                                        strokeWidth: 3,
-                                      )))
+                                      child: Spinner())
                             ],
                           )
                         : Container(
                             height: MediaQuery.of(context).size.height - 100,
                             child: Align(
                                 alignment: Alignment.center,
-                                child: Center(
-                                    child: CircularProgressIndicator(
-                                  color: accent,
-                                  strokeWidth: 3,
-                                ))))))));
+                                child: Spinner()))))));
   }
 }

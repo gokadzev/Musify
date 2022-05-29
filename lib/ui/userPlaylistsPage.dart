@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:musify/API/musify.dart';
+import 'package:musify/customWidgets/spinner.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:musify/ui/playlistsPage.dart';
 
@@ -82,17 +83,21 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
           FutureBuilder(
               future: getUserPlaylists(),
               builder: (context, data) {
-                return (data as dynamic).data != null &&
-                        (data as dynamic).data.length > 0
+                return (data as dynamic).data != null
                     ? Container(
-                        child: GridView.count(
-                            crossAxisCount: 2,
+                        child: GridView.builder(
+                            gridDelegate:
+                                const SliverGridDelegateWithMaxCrossAxisExtent(
+                                    maxCrossAxisExtent: 200,
+                                    childAspectRatio: 1,
+                                    crossAxisSpacing: 20,
+                                    mainAxisSpacing: 20),
                             shrinkWrap: true,
                             physics: ScrollPhysics(),
+                            itemCount: (data as dynamic).data.length,
                             padding: const EdgeInsets.only(
                                 left: 16.0, right: 16.0, top: 16.0, bottom: 20),
-                            children:
-                                List.generate(userPlaylists.length, (index) {
+                            itemBuilder: (BuildContext context, index) {
                               return Center(
                                   child: GestureDetector(
                                       onLongPress: () {
@@ -108,8 +113,8 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                                               ["title"],
                                           id: (data as dynamic).data[index]
                                               ["ytid"])));
-                            })))
-                    : Container();
+                            }))
+                    : Spinner();
               }),
         ])));
   }

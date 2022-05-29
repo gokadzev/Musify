@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/API/musify.dart';
+import 'package:musify/customWidgets/spinner.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/style/appColors.dart';
 
@@ -105,9 +106,7 @@ class AudioAppState extends State<AudioApp> {
                               ),
                             ),
                           ),
-                      placeholder: (context, url) => CircularProgressIndicator(
-                            color: accent,
-                          ),
+                      placeholder: (context, url) => Spinner(),
                       errorWidget: (context, url, error) => Container(
                             width: size.width / 1.3,
                             height: size.width / 1.3,
@@ -236,14 +235,10 @@ class AudioAppState extends State<AudioApp> {
                               switch (value) {
                                 case MPlayerState.loading:
                                   return Container(
-                                    margin: const EdgeInsets.all(8.0),
-                                    width: 32.0,
-                                    height: 32.0,
-                                    child: const CircularProgressIndicator(
-                                        valueColor:
-                                            AlwaysStoppedAnimation<Color>(
-                                                Colors.white)),
-                                  );
+                                      margin: const EdgeInsets.all(8.0),
+                                      width: 32.0,
+                                      height: 32.0,
+                                      child: Spinner());
                                 case MPlayerState.paused:
                                   return IconButton(
                                     icon: const Icon(MdiIcons.play),

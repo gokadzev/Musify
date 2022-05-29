@@ -1,5 +1,6 @@
 import 'package:musify/API/musify.dart';
 import 'package:musify/customWidgets/song_bar.dart';
+import 'package:musify/customWidgets/spinner.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:flutter/material.dart';
 
@@ -63,15 +64,7 @@ class _SearchPageState extends State<SearchPage> {
                 ),
                 suffixIcon: IconButton(
                   icon: fetchingSongs
-                      ? SizedBox(
-                          height: 18,
-                          width: 18,
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(accent),
-                            ),
-                          ),
-                        )
+                      ? SizedBox(height: 18, width: 18, child: Spinner())
                       : Icon(
                           Icons.search,
                           color: accent,
