@@ -30,6 +30,7 @@ List ytplaylists = [
 List searchedList = [];
 List playlists = [];
 List userPlaylists = [];
+List userLikedSongs = [];
 
 String? kUrl = "",
     image = "",
@@ -105,6 +106,41 @@ addUserPlaylist(playlistId) {
 removeUserPlaylist(playlistId) {
   userPlaylists.remove(playlistId.toString());
   addOrUpdateData("user", "playlists", userPlaylists);
+}
+
+Future<List<dynamic>> getUserLikedSongs() async {
+  var likedSongsByUser = [];
+  for (var songId in userLikedSongs) {
+    print(songId);
+    var song = await yt.videos.get(songId);
+    likedSongsByUser.add(returnSongLayout(
+        0,
+        song.id.toString(),
+        formatSongTitle(
+            song.title.split('-')[song.title.split('-').length - 1]),
+        song.thumbnails.standardResUrl,
+        song.thumbnails.maxResUrl,
+        song.title.split('-')[0]));
+  }
+  return likedSongsByUser;
+}
+
+addUserLikedSong(songId) {
+  userLikedSongs.add(songId);
+  addOrUpdateData("user", "likedSongs", userLikedSongs);
+}
+
+removeUserLikedSong(songId) {
+  userLikedSongs.remove(songId.toString());
+  addOrUpdateData("user", "likedSongs", userLikedSongs);
+}
+
+isSongAlreadyLiked(songId) {
+  if (userLikedSongs.contains(songId)) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 Future<List<dynamic>> getPlaylists() async {

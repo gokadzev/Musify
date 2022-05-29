@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:musify/API/musify.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/style/appColors.dart';
 
@@ -48,12 +49,23 @@ class SongBar extends StatelessWidget {
                 song['more_info']["singers"],
                 style: TextStyle(color: accentLight),
               ),
-              trailing: IconButton(
-                color: accent,
-                icon: Icon(MdiIcons.downloadOutline),
-                onPressed: () => downloadSong(song),
-              ),
-            ),
+              trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+                IconButton(
+                  color: accent,
+                  icon: isSongAlreadyLiked(song['ytid'])
+                      ? Icon(MdiIcons.star)
+                      : Icon(MdiIcons.starOutline),
+                  onPressed: () => isSongAlreadyLiked(song['ytid'])
+                      ? removeUserLikedSong(song['ytid'])
+                      : addUserLikedSong(song['ytid']),
+                ),
+                IconButton(
+                  color: accent,
+                  icon: Icon(MdiIcons.downloadOutline),
+                  onPressed: () => downloadSong(song),
+                ),
+              ]),
+            )
           ],
         ),
       ),

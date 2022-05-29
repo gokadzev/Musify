@@ -5,6 +5,7 @@ import 'package:musify/ui/aboutPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:musify/ui/userLikedSongsPage.dart';
 import 'package:musify/ui/userPlaylistsPage.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -218,6 +219,29 @@ class SettingsCards extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                           builder: (context) => UserPlaylistsPage()));
+                },
+              ),
+            ),
+          ),
+          Padding(
+            padding:
+                const EdgeInsets.only(top: 8, left: 8, right: 8, bottom: 6),
+            child: Card(
+              color: Color(0xff263238),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0)),
+              elevation: 2.3,
+              child: ListTile(
+                leading: Icon(MdiIcons.star, color: accent),
+                title: Text(
+                  'User Liked Songs',
+                  style: TextStyle(color: accent),
+                ),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => UserLikedSongs()));
                 },
               ),
             ),
