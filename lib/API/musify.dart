@@ -30,7 +30,7 @@ List ytplaylists = [
 List searchedList = [];
 List playlists = [];
 List userPlaylists = [];
-List userLikedSongs = [];
+List userLikedSongsList = [];
 
 String? kUrl = "",
     image = "",
@@ -108,39 +108,25 @@ removeUserPlaylist(playlistId) {
   addOrUpdateData("user", "playlists", userPlaylists);
 }
 
-Future<List<dynamic>> getUserLikedSongs() async {
-  var likedSongsByUser = [];
-  for (var songId in userLikedSongs) {
-    print(songId);
-    var song = await yt.videos.get(songId);
-    likedSongsByUser.add(returnSongLayout(
-        0,
-        song.id.toString(),
-        formatSongTitle(
-            song.title.split('-')[song.title.split('-').length - 1]),
-        song.thumbnails.standardResUrl,
-        song.thumbnails.maxResUrl,
-        song.title.split('-')[0]));
+addUserLikedSong(songId) async {
+  userLikedSongsList
+      .add(await getSongDetails(userLikedSongsList.length, songId));
+  await addOrUpdateData("user", "likedSongs", userLikedSongsList);
+}
+
+removeUserLikedSong(songId) async {
+  userLikedSongsList.removeWhere((song) => song["ytid"] == songId);
+  await addOrUpdateData("user", "likedSongs", userLikedSongsList);
+}
+
+bool isSongAlreadyLiked(songId) {
+  bool result = false;
+  var isSongLiked = userLikedSongsList.where((song) => song["ytid"] == songId);
+  if (isSongLiked.length > 0) {
+    result = true;
   }
-  return likedSongsByUser;
-}
 
-addUserLikedSong(songId) {
-  userLikedSongs.add(songId);
-  addOrUpdateData("user", "likedSongs", userLikedSongs);
-}
-
-removeUserLikedSong(songId) {
-  userLikedSongs.remove(songId.toString());
-  addOrUpdateData("user", "likedSongs", userLikedSongs);
-}
-
-isSongAlreadyLiked(songId) {
-  if (userLikedSongs.contains(songId)) {
-    return true;
-  } else {
-    return false;
-  }
+  return result;
 }
 
 Future<List<dynamic>> getPlaylists() async {
@@ -246,6 +232,17 @@ Future getSongUrl(songId) async {
   final List<AudioOnlyStreamInfo> sortedStreamInfo =
       manifest.audioOnly.sortByBitrate();
   return sortedStreamInfo.first.url.toString();
+}
+
+Future getSongDetails(songIndex, songId) async {
+  var song = await yt.videos.get(songId);
+  return returnSongLayout(
+      songIndex,
+      song.id.toString(),
+      formatSongTitle(song.title.split('-')[song.title.split('-').length - 1]),
+      song.thumbnails.standardResUrl,
+      song.thumbnails.maxResUrl,
+      song.title.split('-')[0]);
 }
 
 Future getSongLyrics() async {

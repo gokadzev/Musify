@@ -16,7 +16,7 @@ main() async {
   userPlaylists = await getData("user", "playlists") != null
       ? await getData("user", "playlists")
       : [];
-  userLikedSongs = await await getData("user", "likedSongs") != null
+  userLikedSongsList = await await getData("user", "likedSongs") != null
       ? await getData("user", "likedSongs")
       : [];
   await enableBooster();
