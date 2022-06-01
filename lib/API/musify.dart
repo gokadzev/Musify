@@ -41,6 +41,8 @@ String? kUrl = "",
     ytid = "",
     lyrics;
 
+dynamic activeSong;
+
 int? id = 0;
 
 List activePlaylist = [];
@@ -111,22 +113,16 @@ removeUserPlaylist(playlistId) {
 addUserLikedSong(songId) async {
   userLikedSongsList
       .add(await getSongDetails(userLikedSongsList.length, songId));
-  await addOrUpdateData("user", "likedSongs", userLikedSongsList);
+  addOrUpdateData("user", "likedSongs", userLikedSongsList);
 }
 
-removeUserLikedSong(songId) async {
+removeUserLikedSong(songId) {
   userLikedSongsList.removeWhere((song) => song["ytid"] == songId);
-  await addOrUpdateData("user", "likedSongs", userLikedSongsList);
+  addOrUpdateData("user", "likedSongs", userLikedSongsList);
 }
 
 bool isSongAlreadyLiked(songId) {
-  bool result = false;
-  var isSongLiked = userLikedSongsList.where((song) => song["ytid"] == songId);
-  if (isSongLiked.length > 0) {
-    result = true;
-  }
-
-  return result;
+  return userLikedSongsList.where((song) => song["ytid"] == songId).length > 0;
 }
 
 Future<List<dynamic>> getPlaylists() async {
@@ -212,6 +208,7 @@ Future setSongDetails(song) async {
   highResImage = song["highResImage"];
   album = song["album"] == null ? '' : song["album"];
   ytid = song["ytid"].toString();
+  activeSong = song;
 
   try {
     artist = song['more_info']['singers'];

@@ -193,12 +193,22 @@ class AudioAppState extends State<AudioApp> {
               child: Column(
                 children: <Widget>[
                   Container(
-                    padding: const EdgeInsets.only(left: 22, right: 22),
                     width: double.infinity,
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
+                        IconButton(
+                          padding: EdgeInsets.zero,
+                          icon: Icon(
+                            MdiIcons.download,
+                            color: Colors.white,
+                          ),
+                          iconSize: 22.0,
+                          onPressed: () {
+                            downloadSong(activeSong);
+                          },
+                        ),
                         IconButton(
                           padding: EdgeInsets.zero,
                           icon: Icon(
@@ -292,6 +302,19 @@ class AudioAppState extends State<AudioApp> {
                             changeLoopStatus();
                           },
                         ),
+                        IconButton(
+                            color: accent,
+                            icon: isSongAlreadyLiked(ytid)
+                                ? Icon(MdiIcons.star)
+                                : Icon(MdiIcons.starOutline),
+                            iconSize: 22.0,
+                            onPressed: () => {
+                                  setState(() {
+                                    isSongAlreadyLiked(ytid)
+                                        ? removeUserLikedSong(ytid)
+                                        : addUserLikedSong(ytid);
+                                  })
+                                }),
                       ],
                     ),
                   ),
