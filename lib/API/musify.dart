@@ -125,22 +125,22 @@ bool isSongAlreadyLiked(songId) {
   return userLikedSongsList.where((song) => song["ytid"] == songId).length > 0;
 }
 
-Future<List<dynamic>> getPlaylists() async {
-  var localPlaylists = [
-    {
-      "ytid": "PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx",
-      "title": "Top 50 Global",
-      "subtitle": "Just Updated",
-      "header_desc": "Top 50 Global Song.",
-      "type": "playlist",
-      "image":
-          "https://charts-images.scdn.co/assets/locale_en/regional/daily/region_global_large.jpg",
-      "list": []
-    }
-  ];
-
+Future<List> getPlaylists() async {
   if (playlists.length == 0) {
-    ytplaylists.forEach((playlistID) async {
+    var localPlaylists = [
+      {
+        "ytid": "PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx",
+        "title": "Top 50 Global",
+        "subtitle": "Just Updated",
+        "header_desc": "Top 50 Global Song.",
+        "type": "playlist",
+        "image":
+            "https://charts-images.scdn.co/assets/locale_en/regional/daily/region_global_large.jpg",
+        "list": []
+      }
+    ];
+
+    for (var playlistID in ytplaylists) {
       var plist = await yt.playlists.get(playlistID);
       localPlaylists.add({
         "ytid": plist.id,
@@ -153,7 +153,8 @@ Future<List<dynamic>> getPlaylists() async {
         "image": "",
         "list": []
       });
-    });
+    }
+
     playlists = localPlaylists;
   }
   return playlists;
