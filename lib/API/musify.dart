@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/services.dart';
 import 'package:musify/helper/formatter.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -8,25 +9,8 @@ import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 var yt = YoutubeExplode();
 
-List ytplaylists = [
-  "PLmQPPVKNGMHipaJbw0lHPuGPuKQDJkcdn",
-  "PLPZdY4vhqvRAKdgI75eWn5XM0gPqs3QMY",
-  "PLSR9lWowvoE3A9i4JVVHtQFjlJt0_LItG",
-  "PLwztIBLgL4YCJ50tpYJaDZ6Z9aECNuJYe",
-  "PLgzTt0k8mXzHcKebL8d0uYHfawiARhQja",
-  "RDCLAK5uy_lBNUteBRencHzKelu5iDHwLF6mYqjL-JU",
-  "RDCLAK5uy_kA_dvd-bpRQ98y6LwOjAnhQL5lyjNnZYA",
-  "RDCLAK5uy_no33oh6TOe0vPTFGabR24wAu3NeiVvc-Q",
-  "RDCLAK5uy_n0oLcyKJhNW8BmrnMySAoVuLjRZfgozG0",
-  "RDCLAK5uy_lHUYsU7VTxndTCtf-ofbHDsvQWspcFBJ8",
-  "RDCLAK5uy_n0TxkLvMf0yENdVCRD31Oes1XEBoJgpIU",
-  "RDCLAK5uy_lrRVyinf4bGiN8dQ1jRWkVOMroYKAvnqE",
-  "RDCLAK5uy_mpcC2CwnVbb6kBi_d99_FZvgG2QSi5ylo",
-  "RDCLAK5uy_mnNGm2TBGoE7ciVFLrzepoNMWyreMuNlw",
-  "RDCLAK5uy_mnBFITP45AFCdVtu8b7JfLFLbUZR46ObU",
-  "RDCLAK5uy_k-fiP0mCE_HlLqk-h15LlxGmjTCTn4_aA",
-  "RDCLAK5uy_nnZGCEPxzc5FASdbQVMufD25OfYBJlHqY"
-];
+List ytplaylists = [];
+
 List searchedList = [];
 List playlists = [];
 List userPlaylists = [];
@@ -127,35 +111,9 @@ bool isSongAlreadyLiked(songId) {
 
 Future<List> getPlaylists() async {
   if (playlists.length == 0) {
-    var localPlaylists = [
-      {
-        "ytid": "PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx",
-        "title": "Top 50 Global",
-        "subtitle": "Just Updated",
-        "header_desc": "Top 50 Global Song.",
-        "type": "playlist",
-        "image":
-            "https://charts-images.scdn.co/assets/locale_en/regional/daily/region_global_large.jpg",
-        "list": []
-      }
-    ];
-
-    for (var playlistID in ytplaylists) {
-      var plist = await yt.playlists.get(playlistID);
-      localPlaylists.add({
-        "ytid": plist.id,
-        "title": plist.title,
-        "subtitle": "Just Updated",
-        "header_desc": plist.description.length < 120
-            ? plist.description
-            : plist.description.substring(0, 120),
-        "type": "playlist",
-        "image": "",
-        "list": []
-      });
-    }
-
-    playlists = localPlaylists;
+    var localplaylists =
+        json.decode(await rootBundle.loadString('assets/db/playlists.db.json'));
+    playlists = localplaylists;
   }
   return playlists;
 }
