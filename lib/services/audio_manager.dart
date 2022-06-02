@@ -50,7 +50,7 @@ downloadSong(song) async {
   var status = await Permission.storage.status;
   if (status.isDenied) {
     Map<Permission, PermissionStatus> statuses =
-        await [Permission.storage, Permission.manageExternalStorage].request();
+        await [Permission.storage].request();
     debugPrint(statuses[Permission.storage].toString());
   }
   status = await Permission.storage.status;
@@ -69,19 +69,32 @@ downloadSong(song) async {
     filepath = '';
     filepath2 = '';
     String? dlPath = await ExtStorageProvider.getExtStorage(dirName: 'Music');
-    await File(dlPath! + "/" + filename)
-        .create(recursive: true)
-        .then((value) => filepath = value.path);
-    await File(dlPath + "/" + artname)
-        .create(recursive: true)
-        .then((value) => filepath2 = value.path);
-    var request =
-        await HttpClient().getUrl(Uri.parse(await getSongUrl(song["ytid"])));
+    try {
+      await File(dlPath! + "/" + filename)
+          .create(recursive: true)
+          .then((value) => filepath = value.path);
+      await File(dlPath + "/" + artname)
+          .create(recursive: true)
+          .then((value) => filepath2 = value.path);
+    } catch (e) {
+      await [
+        Permission.manageExternalStorage,
+      ].request();
+      await File(dlPath! + "/" + filename)
+          .create(recursive: true)
+          .then((value) => filepath = value.path);
+      await File(dlPath + "/" + artname)
+          .create(recursive: true)
+          .then((value) => filepath2 = value.path);
+    }
+    var request = await HttpClient()
+        .getUrl(Uri.parse(await getSongUrl(song["ytid"].toString())));
     var response = await request.close();
     var bytes = await consolidateHttpClientResponseBytes(response);
     File file = File(filepath);
 
-    var request2 = await HttpClient().getUrl(Uri.parse(song["image"]));
+    var request2 =
+        await HttpClient().getUrl(Uri.parse(song["highResImage"].toString()));
     var response2 = await request2.close();
     var bytes2 = await consolidateHttpClientResponseBytes(response2);
     File file2 = File(filepath2);
