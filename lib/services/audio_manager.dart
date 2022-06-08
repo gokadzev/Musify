@@ -60,7 +60,7 @@ downloadSong(song) async {
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 1,
-        backgroundColor: Colors.black,
+        backgroundColor: accent,
         textColor: Colors.white,
         fontSize: 14.0);
 

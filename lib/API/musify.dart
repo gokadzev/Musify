@@ -185,9 +185,7 @@ Future setSongDetails(song) async {
 
 Future getSongUrl(songId) async {
   var manifest = await yt.videos.streamsClient.getManifest(songId);
-  final List<AudioOnlyStreamInfo> sortedStreamInfo =
-      manifest.audioOnly.sortByBitrate();
-  return sortedStreamInfo.first.url.toString();
+  return manifest.audioOnly.withHighestBitrate().url.toString();
 }
 
 Future getSongDetails(songIndex, songId) async {
