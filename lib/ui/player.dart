@@ -86,7 +86,7 @@ class AudioAppState extends State<AudioApp> {
         ),
         body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.only(top: 10.0),
+            padding: EdgeInsets.only(top: size.height * 0.012),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               mainAxisSize: MainAxisSize.min,
@@ -114,7 +114,7 @@ class AudioAppState extends State<AudioApp> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
                                 Icon(MdiIcons.musicNoteOutline,
-                                    size: 50, color: accent),
+                                    size: size.width / 8, color: accent),
                               ],
                             ),
                             decoration: new BoxDecoration(
@@ -166,8 +166,11 @@ class AudioAppState extends State<AudioApp> {
   }
 
   Widget _buildPlayer(size) => Container(
-        padding:
-            const EdgeInsets.only(top: 5.0, left: 16, right: 16, bottom: 5.0),
+        padding: EdgeInsets.only(
+            top: size.height * 0.01,
+            left: 16,
+            right: 16,
+            bottom: size.height * 0.03),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -189,7 +192,7 @@ class AudioAppState extends State<AudioApp> {
                   max: duration!.inMilliseconds.toDouble()),
             if (position != null) _buildProgressView(),
             Padding(
-              padding: const EdgeInsets.only(top: 5.0),
+              padding: EdgeInsets.only(top: size.height * 0.03),
               child: Column(
                 children: <Widget>[
                   Container(
@@ -204,7 +207,7 @@ class AudioAppState extends State<AudioApp> {
                             MdiIcons.download,
                             color: Colors.white,
                           ),
-                          iconSize: 22.0,
+                          iconSize: size.width * 0.056,
                           onPressed: () {
                             downloadSong(activeSong);
                           },
@@ -216,7 +219,7 @@ class AudioAppState extends State<AudioApp> {
                             color:
                                 shuffleNotifier.value ? accent : Colors.white,
                           ),
-                          iconSize: 22.0,
+                          iconSize: size.width * 0.056,
                           onPressed: () {
                             changeShuffleStatus();
                           },
@@ -228,9 +231,9 @@ class AudioAppState extends State<AudioApp> {
                             color: activePlaylist.length == 0
                                 ? Colors.grey
                                 : Colors.white,
-                            size: 40,
+                            size: size.width * 0.1,
                           ),
-                          iconSize: 22.0,
+                          iconSize: size.width * 0.056,
                           onPressed: () {
                             playPrevious();
                           },
@@ -246,13 +249,13 @@ class AudioAppState extends State<AudioApp> {
                                 case MPlayerState.loading:
                                   return Container(
                                       margin: const EdgeInsets.all(8.0),
-                                      width: 32.0,
-                                      height: 32.0,
+                                      width: size.width * 0.08,
+                                      height: size.width * 0.08,
                                       child: Spinner());
                                 case MPlayerState.paused:
                                   return IconButton(
                                     icon: const Icon(MdiIcons.play),
-                                    iconSize: 40.0,
+                                    iconSize: size.width * 0.1,
                                     onPressed: () {
                                       play();
                                     },
@@ -260,7 +263,7 @@ class AudioAppState extends State<AudioApp> {
                                 case MPlayerState.playing:
                                   return IconButton(
                                     icon: const Icon(MdiIcons.pause),
-                                    iconSize: 40.0,
+                                    iconSize: size.width * 0.1,
                                     onPressed: () {
                                       pause();
                                     },
@@ -268,7 +271,7 @@ class AudioAppState extends State<AudioApp> {
                                 case MPlayerState.stopped:
                                   return IconButton(
                                     icon: const Icon(MdiIcons.play),
-                                    iconSize: 32.0,
+                                    iconSize: size.width * 0.08,
                                     onPressed: () {
                                       play();
                                     },
@@ -284,9 +287,9 @@ class AudioAppState extends State<AudioApp> {
                             color: activePlaylist.length == 0
                                 ? Colors.grey
                                 : Colors.white,
-                            size: 40,
+                            size: size.width * 0.1,
                           ),
-                          iconSize: 32.0,
+                          iconSize: size.width * 0.08,
                           onPressed: () {
                             playNext();
                           },
@@ -297,7 +300,7 @@ class AudioAppState extends State<AudioApp> {
                             MdiIcons.repeat,
                             color: repeatNotifier.value ? accent : Colors.white,
                           ),
-                          iconSize: 22.0,
+                          iconSize: size.width * 0.056,
                           onPressed: () {
                             changeLoopStatus();
                           },
@@ -307,7 +310,7 @@ class AudioAppState extends State<AudioApp> {
                             icon: isSongAlreadyLiked(ytid)
                                 ? Icon(MdiIcons.star)
                                 : Icon(MdiIcons.starOutline),
-                            iconSize: 22.0,
+                            iconSize: size.width * 0.056,
                             onPressed: () => {
                                   setState(() {
                                     isSongAlreadyLiked(ytid)
@@ -319,7 +322,7 @@ class AudioAppState extends State<AudioApp> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 40.0),
+                    padding: EdgeInsets.only(top: size.height * 0.047),
                     child: Builder(builder: (context) {
                       return TextButton(
                           onPressed: () async {
@@ -336,14 +339,14 @@ class AudioAppState extends State<AudioApp> {
                                                   const Radius.circular(18.0),
                                               topRight:
                                                   const Radius.circular(18.0))),
-                                      height: 400,
+                                      height: size.height / 2.14,
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.center,
                                         children: <Widget>[
                                           Padding(
-                                            padding: const EdgeInsets.only(
-                                                top: 10.0),
+                                            padding: EdgeInsets.only(
+                                                top: size.height * 0.012),
                                             child: Row(
                                               children: <Widget>[
                                                 IconButton(

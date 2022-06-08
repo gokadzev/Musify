@@ -93,13 +93,14 @@ downloadSong(song) async {
     var bytes = await consolidateHttpClientResponseBytes(response);
     File file = File(filepath);
 
+    await file.writeAsBytes(bytes);
+
     var request2 =
         await HttpClient().getUrl(Uri.parse(song["highResImage"].toString()));
     var response2 = await request2.close();
     var bytes2 = await consolidateHttpClientResponseBytes(response2);
     File file2 = File(filepath2);
 
-    await file.writeAsBytes(bytes);
     await file2.writeAsBytes(bytes2);
 
     final tag = Tag(
