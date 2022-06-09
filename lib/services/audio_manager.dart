@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:audiotagger/audiotagger.dart';
 import 'package:audiotagger/models/tag.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:musify/API/musify.dart';
@@ -13,6 +12,7 @@ import 'package:musify/services/ext_storage.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:musify/ui/player.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:http/http.dart' as http;
 
 final _equalizer = AndroidEqualizer();
 final _loudnessEnhancer = AndroidLoudnessEnhancer();
@@ -64,8 +64,26 @@ downloadSong(song) async {
         textColor: Colors.white,
         fontSize: 14.0);
 
-    final filename = song["title"] + ".mp3";
-    final artname = song["title"] + "_artwork.jpg";
+    final filename = song["title"]
+            .replaceAll(r'\', '')
+            .replaceAll('/', '')
+            .replaceAll('*', '')
+            .replaceAll('?', '')
+            .replaceAll('"', '')
+            .replaceAll('<', '')
+            .replaceAll('>', '')
+            .replaceAll('|', '') +
+        ".mp3";
+    final artname = song["title"]
+            .replaceAll(r'\', '')
+            .replaceAll('/', '')
+            .replaceAll('*', '')
+            .replaceAll('?', '')
+            .replaceAll('"', '')
+            .replaceAll('<', '')
+            .replaceAll('>', '')
+            .replaceAll('|', '') +
+        "_artwork.jpg";
     filepath = '';
     filepath2 = '';
     String? dlPath = await ExtStorageProvider.getExtStorage(dirName: 'Music');
@@ -87,21 +105,19 @@ downloadSong(song) async {
           .create(recursive: true)
           .then((value) => filepath2 = value.path);
     }
-    var request = await HttpClient()
-        .getUrl(Uri.parse(await getSongUrl(song["ytid"].toString())));
-    var response = await request.close();
-    var bytes = await consolidateHttpClientResponseBytes(response);
+
+    var client = http.Client();
+    var request = await client
+        .readBytes(Uri.parse(await getSongUrl(song["ytid"].toString())));
     File file = File(filepath);
 
-    await file.writeAsBytes(bytes);
+    await file.writeAsBytes(request);
 
     var request2 =
-        await HttpClient().getUrl(Uri.parse(song["highResImage"].toString()));
-    var response2 = await request2.close();
-    var bytes2 = await consolidateHttpClientResponseBytes(response2);
+        await client.readBytes(Uri.parse(song["highResImage"].toString()));
     File file2 = File(filepath2);
 
-    await file2.writeAsBytes(bytes2);
+    await file2.writeAsBytes(request2);
 
     final tag = Tag(
       title: song["title"],
@@ -123,6 +139,7 @@ downloadSong(song) async {
     if (await file2.exists()) {
       await file2.delete();
     }
+    client.close();
     debugPrint("Done");
     Fluttertoast.showToast(
         msg: "Download Completed!",
