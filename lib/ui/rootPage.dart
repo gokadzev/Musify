@@ -99,18 +99,13 @@ class AppState extends State<Musify> {
                     child: kUrlNotifier.value != ""
                         ? Row(
                             children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  top: 8.0,
+                              IconButton(
+                                icon: Icon(
+                                  MdiIcons.appleKeyboardControl,
+                                  size: 22,
                                 ),
-                                child: IconButton(
-                                  icon: Icon(
-                                    MdiIcons.appleKeyboardControl,
-                                    size: 22,
-                                  ),
-                                  onPressed: null,
-                                  disabledColor: accent,
-                                ),
+                                onPressed: null,
+                                disabledColor: accent,
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(

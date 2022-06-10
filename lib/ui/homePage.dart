@@ -48,8 +48,12 @@ class _HomePageState extends State<HomePage> {
                                   child: Wrap(
                                     children: <Widget>[
                                       Padding(
-                                        padding: const EdgeInsets.only(
-                                            top: 30, bottom: 10),
+                                        padding: EdgeInsets.only(
+                                            top: MediaQuery.of(context)
+                                                    .size
+                                                    .height /
+                                                55,
+                                            bottom: 10),
                                         child: Text(
                                           "Recommended for you",
                                           style: TextStyle(
@@ -107,8 +111,12 @@ class _HomePageState extends State<HomePage> {
                                   child: Wrap(
                                     children: <Widget>[
                                       Padding(
-                                        padding: const EdgeInsets.only(
-                                            top: 30, bottom: 10, left: 8),
+                                        padding: EdgeInsets.only(
+                                            top: MediaQuery.of(context)
+                                                    .size
+                                                    .height /
+                                                65,
+                                            bottom: 10),
                                         child: Text(
                                           "New Music",
                                           style: TextStyle(
@@ -196,8 +204,6 @@ class CubeContainer extends StatelessWidget {
                   ),
                   color: Colors.transparent,
                   child: Container(
-                      height: size.height / 4.15,
-                      width: size.width / 1.9,
                       child: CachedNetworkImage(
                           imageUrl: image,
                           imageBuilder: (context, imageProvider) => Container(
@@ -211,8 +217,6 @@ class CubeContainer extends StatelessWidget {
                                 ),
                               ),
                           errorWidget: (context, url, error) => Container(
-                                width: 200,
-                                height: 200,
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
