@@ -39,6 +39,9 @@ dependencies:
   youtube_explode_dart: ^1.11.0
   google_fonts: ^3.0.1
   flutter_cache_manager: ^3.3.0
+  package_info_plus: ^1.4.2
+  open_file: ^3.2.1
+  flutter_downloader: ^1.8.0+1
 
 dev_dependencies:
   flutter_test:

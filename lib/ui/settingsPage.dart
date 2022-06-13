@@ -1,4 +1,5 @@
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:musify/helper/version.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:musify/ui/aboutPage.dart';
@@ -298,6 +299,50 @@ class SettingsCards extends StatelessWidget {
                       gravity: ToastGravity.BOTTOM,
                       timeInSecForIosWeb: 1,
                       fontSize: 14.0);
+                },
+              ),
+            ),
+          ),
+          Padding(
+            padding:
+                const EdgeInsets.only(top: 8, left: 8, right: 8, bottom: 6),
+            child: Card(
+              color: Color(0xff263238),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0)),
+              elevation: 2.3,
+              child: ListTile(
+                leading: Icon(MdiIcons.download, color: accent),
+                title: Text(
+                  'Download App Update',
+                  style: TextStyle(color: accent),
+                ),
+                onTap: () {
+                  checkAppUpdates().then((available) => {
+                        if (available)
+                          {
+                            Fluttertoast.showToast(
+                                msg: "App Update Is Available And Downloading!",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM,
+                                timeInSecForIosWeb: 1,
+                                backgroundColor: accent,
+                                textColor: Colors.white,
+                                fontSize: 14.0),
+                            downloadAppUpdates()
+                          }
+                        else
+                          {
+                            Fluttertoast.showToast(
+                                msg: "App Update Is Not Available!",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM,
+                                timeInSecForIosWeb: 1,
+                                backgroundColor: accent,
+                                textColor: Colors.white,
+                                fontSize: 14.0)
+                          }
+                      });
                 },
               ),
             ),
