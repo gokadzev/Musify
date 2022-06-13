@@ -12,7 +12,6 @@
     Streaming Support :musical_note:<br>
     Offline Download Support :arrow_down:<br>
     High Quality mp3 Format :fire:<br>
-    ID3 Tags Attached :notes:<br>
   	Lyrics Support :pencil:<br>
     No Ads :no_entry_sign:<br>
     No Subscriptions :dollar:<br>

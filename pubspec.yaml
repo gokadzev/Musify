@@ -25,10 +25,8 @@ dependencies:
     sdk: flutter
 
 
-  audiotagger: ^2.2.1
   path_provider: ^2.0.11
   material_design_icons_flutter: ^5.0.6595
-  url_launcher: ^6.1.3
   permission_handler: ^9.1.0
   fluttertoast: ^8.0.9
   cached_network_image: ^3.2.1

@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:audiotagger/audiotagger.dart';
-import 'package:audiotagger/models/tag.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:musify/API/musify.dart';
@@ -12,7 +10,6 @@ import 'package:musify/services/ext_storage.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:musify/ui/player.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:http/http.dart' as http;
 
 final _equalizer = AndroidEqualizer();
 final _loudnessEnhancer = AndroidLoudnessEnhancer();
@@ -45,8 +42,6 @@ get positionText =>
 bool isMuted = false;
 
 downloadSong(song) async {
-  String filepath;
-  String filepath2;
   var status = await Permission.storage.status;
   if (status.isDenied) {
     Map<Permission, PermissionStatus> statuses =
@@ -74,26 +69,13 @@ downloadSong(song) async {
             .replaceAll('>', '')
             .replaceAll('|', '') +
         ".mp3";
-    final artname = song["title"]
-            .replaceAll(r'\', '')
-            .replaceAll('/', '')
-            .replaceAll('*', '')
-            .replaceAll('?', '')
-            .replaceAll('"', '')
-            .replaceAll('<', '')
-            .replaceAll('>', '')
-            .replaceAll('|', '') +
-        "_artwork.jpg";
-    filepath = '';
-    filepath2 = '';
+
+    String filepath = '';
     String? dlPath = await ExtStorageProvider.getExtStorage(dirName: 'Music');
     try {
       await File(dlPath! + "/" + filename)
           .create(recursive: true)
           .then((value) => filepath = value.path);
-      await File(dlPath + "/" + artname)
-          .create(recursive: true)
-          .then((value) => filepath2 = value.path);
     } catch (e) {
       await [
         Permission.manageExternalStorage,
@@ -101,45 +83,14 @@ downloadSong(song) async {
       await File(dlPath! + "/" + filename)
           .create(recursive: true)
           .then((value) => filepath = value.path);
-      await File(dlPath + "/" + artname)
-          .create(recursive: true)
-          .then((value) => filepath2 = value.path);
     }
-
-    var client = http.Client();
-    var request = await client
-        .readBytes(Uri.parse(await getSongUrl(song["ytid"].toString())));
+    var audioStream = await getSongStream(song["ytid"].toString());
     File file = File(filepath);
+    var fileStream = file.openWrite();
+    await yt.videos.streamsClient.get(audioStream).pipe(fileStream);
+    await fileStream.flush();
+    await fileStream.close();
 
-    await file.writeAsBytes(request);
-
-    var request2 =
-        await client.readBytes(Uri.parse(song["highResImage"].toString()));
-    File file2 = File(filepath2);
-
-    await file2.writeAsBytes(request2);
-
-    final tag = Tag(
-      title: song["title"],
-      artist: song['more_info']['singers'],
-      artwork: filepath2,
-      album: "",
-      lyrics: "",
-      genre: "",
-    );
-
-    debugPrint("Setting up Tags");
-    final tagger = Audiotagger();
-    await tagger.writeTags(
-      path: filepath,
-      tag: tag,
-    );
-    await Future.delayed(const Duration(seconds: 1), () {});
-
-    if (await file2.exists()) {
-      await file2.delete();
-    }
-    client.close();
     debugPrint("Done");
     Fluttertoast.showToast(
         msg: "Download Completed!",

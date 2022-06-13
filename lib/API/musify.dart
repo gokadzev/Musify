@@ -188,6 +188,11 @@ Future getSongUrl(songId) async {
   return manifest.audioOnly.withHighestBitrate().url.toString();
 }
 
+Future getSongStream(songId) async {
+  var manifest = await yt.videos.streamsClient.getManifest(songId);
+  return manifest.audioOnly.withHighestBitrate();
+}
+
 Future getSongDetails(songIndex, songId) async {
   var song = await yt.videos.get(songId);
   return returnSongLayout(
@@ -205,8 +210,7 @@ Future getSongLyrics() async {
   try {
     var lyricsApiRes = await DefaultCacheManager()
         .getSingleFile(lyricsApiUrl, headers: {"Accept": "application/json"});
-    var lyricsResponse;
-    lyricsResponse = await json.decode(await lyricsApiRes.readAsString());
+    var lyricsResponse = await json.decode(await lyricsApiRes.readAsString());
     if (lyricsResponse['lyrics'] != null) {
       lyrics = lyricsResponse['lyrics'];
     }
