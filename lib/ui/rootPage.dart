@@ -1,4 +1,6 @@
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:musify/helper/version.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/ui/homePage.dart';
 import 'package:musify/ui/playlistsPage.dart';
@@ -31,6 +33,19 @@ class AppState extends State<Musify> {
     initAudioPlayer();
     audioPlayer?.durationStream.listen((d) => {
           if (this.mounted) {setState(() => duration = d)}
+        });
+    checkAppUpdates().then((value) => {
+          if (value)
+            {
+              Fluttertoast.showToast(
+                  msg: "App Update Is Available!",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: accent,
+                  textColor: Colors.white,
+                  fontSize: 14.0)
+            }
         });
   }
 
