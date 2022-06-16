@@ -92,140 +92,133 @@ class AppState extends State<Musify> {
         ValueListenableBuilder<String>(
             valueListenable: kUrlNotifier,
             builder: (_, value, __) {
-              return Container(
-                height: 75,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(18),
-                        topRight: Radius.circular(18)),
-                    color:
-                        kUrlNotifier.value != "" ? Color(0xff1c252a) : bgColor),
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 5.0, bottom: 2),
-                  child: GestureDetector(
-                    onTap: () {
-                      if (kUrl != "") {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => AudioApp()),
-                        );
-                      }
-                    },
-                    child: kUrlNotifier.value != ""
-                        ? Row(
-                            children: <Widget>[
-                              IconButton(
-                                icon: Icon(
-                                  MdiIcons.appleKeyboardControl,
-                                  size: 22,
-                                ),
-                                onPressed: null,
-                                disabledColor: accent,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 0.0, top: 7, bottom: 7, right: 15),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  child: CachedNetworkImage(
-                                      imageUrl: highResImage!,
-                                      fit: BoxFit.fill,
-                                      errorWidget: (context, url, error) =>
-                                          Container(
-                                            width: 50,
-                                            height: 50,
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: <Widget>[
-                                                Icon(MdiIcons.musicNoteOutline,
-                                                    size: 30, color: accent),
-                                              ],
-                                            ),
-                                            decoration: new BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(10.0),
-                                              gradient: new LinearGradient(
-                                                colors: [
-                                                  accent.withAlpha(30),
-                                                  Colors.white.withAlpha(30)
-                                                ],
-                                              ),
-                                            ),
-                                          )),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 0.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Text(
-                                      title!.length > 15
-                                          ? title!.substring(0, 15) + "..."
-                                          : title!,
-                                      style: TextStyle(
-                                          color: accent,
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.w600),
+              return kUrlNotifier.value != ""
+                  ? Container(
+                      height: 75,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(18),
+                              topRight: Radius.circular(18)),
+                          color: kUrlNotifier.value != ""
+                              ? Color(0xff1c252a)
+                              : bgColor),
+                      child: Padding(
+                          padding: const EdgeInsets.only(top: 5.0, bottom: 2),
+                          child: GestureDetector(
+                              onTap: () {
+                                if (kUrl != "") {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => AudioApp()),
+                                  );
+                                }
+                              },
+                              child: Row(
+                                children: <Widget>[
+                                  IconButton(
+                                    icon: Icon(
+                                      MdiIcons.appleKeyboardControl,
+                                      size: 22,
                                     ),
-                                    Text(
-                                      artist!.length > 15
-                                          ? artist!.substring(0, 15) + "..."
-                                          : artist!,
-                                      style: TextStyle(
-                                          color: accent, fontSize: 15),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              Spacer(),
-                              ValueListenableBuilder<MPlayerState>(
-                                  valueListenable: buttonNotifier,
-                                  builder: (_, value, __) {
-                                    return IconButton(
-                                      icon: buttonNotifier.value ==
-                                              MPlayerState.playing
-                                          ? Icon(MdiIcons.pause)
-                                          : Icon(MdiIcons.playOutline),
-                                      color: accent,
-                                      splashColor: Colors.transparent,
-                                      onPressed: () {
-                                        setState(() {
-                                          if (buttonNotifier.value ==
-                                              MPlayerState.playing) {
-                                            audioPlayer?.pause();
-                                          } else if (buttonNotifier.value ==
-                                              MPlayerState.paused) {
-                                            audioPlayer?.play();
-                                          }
-                                        });
-                                      },
-                                      iconSize: 45,
-                                    );
-                                  })
-                            ],
-                          )
-                        : Container(
-                            width: MediaQuery.of(context).size.width,
-                            alignment: Alignment.center,
-                            child: Wrap(
-                              crossAxisAlignment: WrapCrossAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.play_disabled,
-                                  color: accent,
-                                ),
-                                Text(
-                                  'Nothing is playing right now',
-                                  style: TextStyle(color: accent),
-                                ),
-                              ],
-                            )),
-                  ),
-                ),
-              );
+                                    onPressed: null,
+                                    disabledColor: accent,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 0.0,
+                                        top: 7,
+                                        bottom: 7,
+                                        right: 15),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      child: CachedNetworkImage(
+                                          imageUrl: highResImage!,
+                                          fit: BoxFit.fill,
+                                          errorWidget: (context, url, error) =>
+                                              Container(
+                                                width: 50,
+                                                height: 50,
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    Icon(
+                                                        MdiIcons
+                                                            .musicNoteOutline,
+                                                        size: 30,
+                                                        color: accent),
+                                                  ],
+                                                ),
+                                                decoration: new BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10.0),
+                                                  gradient: new LinearGradient(
+                                                    colors: [
+                                                      accent.withAlpha(30),
+                                                      Colors.white.withAlpha(30)
+                                                    ],
+                                                  ),
+                                                ),
+                                              )),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 0.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        Text(
+                                          title!.length > 15
+                                              ? title!.substring(0, 15) + "..."
+                                              : title!,
+                                          style: TextStyle(
+                                              color: accent,
+                                              fontSize: 17,
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                        Text(
+                                          artist!.length > 15
+                                              ? artist!.substring(0, 15) + "..."
+                                              : artist!,
+                                          style: TextStyle(
+                                              color: accent, fontSize: 15),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  ValueListenableBuilder<MPlayerState>(
+                                      valueListenable: buttonNotifier,
+                                      builder: (_, value, __) {
+                                        return IconButton(
+                                          icon: buttonNotifier.value ==
+                                                  MPlayerState.playing
+                                              ? Icon(MdiIcons.pause)
+                                              : Icon(MdiIcons.playOutline),
+                                          color: accent,
+                                          splashColor: Colors.transparent,
+                                          onPressed: () {
+                                            setState(() {
+                                              if (buttonNotifier.value ==
+                                                  MPlayerState.playing) {
+                                                audioPlayer?.pause();
+                                              } else if (buttonNotifier.value ==
+                                                  MPlayerState.paused) {
+                                                audioPlayer?.play();
+                                              }
+                                            });
+                                          },
+                                          iconSize: 45,
+                                        );
+                                      })
+                                ],
+                              ))))
+                  : const SizedBox.shrink();
             }),
         Container(
           width: MediaQuery.of(context).size.width * 0.95,

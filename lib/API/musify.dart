@@ -15,6 +15,7 @@ List searchedList = [];
 List playlists = [];
 List userPlaylists = [];
 List userLikedSongsList = [];
+List suggestedPlaylists = [];
 
 String? kUrl = "",
     image = "",
@@ -47,10 +48,10 @@ Future<List> fetchSongsList(searchQuery) async {
   return searchedList;
 }
 
-Future get7Music(playlistId) async {
+Future get10Music(playlistId) async {
   var newSongs = [];
   var index = 0;
-  await for (var video in yt.playlists.getVideos(playlistId).take(7)) {
+  await for (var video in yt.playlists.getVideos(playlistId).take(10)) {
     newSongs.add(returnSongLayout(
         index,
         video.id.toString(),
@@ -116,6 +117,19 @@ Future<List> getPlaylists() async {
     playlists = localplaylists;
   }
   return playlists;
+}
+
+Future get5playlists() async {
+  if (playlists.length == 0) {
+    var localplaylists =
+        json.decode(await rootBundle.loadString('assets/db/playlists.db.json'));
+    playlists = localplaylists;
+  }
+  if (suggestedPlaylists.length == 0) {
+    suggestedPlaylists = (playlists.toList()..shuffle()).take(5).toList();
+  }
+
+  return suggestedPlaylists;
 }
 
 Future getSongsFromPlaylist(playlistid) async {
