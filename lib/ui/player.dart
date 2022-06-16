@@ -92,8 +92,8 @@ class AudioAppState extends State<AudioApp> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  width: size.width / 1.3,
-                  height: size.width / 1.3,
+                  width: size.width / 1.2,
+                  height: size.width / 1.2,
                   child: CachedNetworkImage(
                       imageUrl: highResImage!,
                       imageBuilder: (context, imageProvider) => Container(
@@ -108,8 +108,8 @@ class AudioAppState extends State<AudioApp> {
                           ),
                       placeholder: (context, url) => Spinner(),
                       errorWidget: (context, url, error) => Container(
-                            width: size.width / 1.3,
-                            height: size.width / 1.3,
+                            width: size.width / 1.2,
+                            height: size.width / 1.2,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
