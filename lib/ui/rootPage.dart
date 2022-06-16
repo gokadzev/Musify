@@ -1,5 +1,6 @@
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:musify/customWidgets/custom_animated_bottom_bar.dart';
 import 'package:musify/helper/version.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/ui/homePage.dart';
@@ -79,11 +80,35 @@ class AppState extends State<Musify> {
   }
 
   Widget getFooter() {
-    List items = [
-      {'icon': MdiIcons.homeOutline, 'name': 'Home'},
-      {'icon': MdiIcons.magnify, 'name': 'Search'},
-      {'icon': MdiIcons.bookOutline, 'name': 'Playlists'},
-      {'icon': MdiIcons.cogOutline, 'name': 'Settings'},
+    List items = <BottomNavBarItem>[
+      BottomNavBarItem(
+        icon: Icon(MdiIcons.homeOutline),
+        title: Text('Home'),
+        activeColor: accent,
+        inactiveColor: Colors.white,
+        textAlign: TextAlign.center,
+      ),
+      BottomNavBarItem(
+        icon: Icon(MdiIcons.magnify),
+        title: Text('Search'),
+        activeColor: accent,
+        inactiveColor: Colors.white,
+        textAlign: TextAlign.center,
+      ),
+      BottomNavBarItem(
+        icon: Icon(MdiIcons.bookOutline),
+        title: Text('Playlists'),
+        activeColor: accent,
+        inactiveColor: Colors.white,
+        textAlign: TextAlign.center,
+      ),
+      BottomNavBarItem(
+        icon: Icon(MdiIcons.cogOutline),
+        title: Text('Settings'),
+        activeColor: accent,
+        inactiveColor: Colors.white,
+        textAlign: TextAlign.center,
+      )
     ];
 
     return Column(
@@ -221,56 +246,11 @@ class AppState extends State<Musify> {
                   : const SizedBox.shrink();
             }),
         Container(
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(30.0)),
           width: MediaQuery.of(context).size.width * 0.95,
           height: 65,
           margin: const EdgeInsets.only(bottom: 10),
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(30.0),
-              color: Color(0XFF282828),
-              boxShadow: [
-                BoxShadow(
-                    color: Colors.black.withAlpha(40),
-                    blurRadius: 6,
-                    offset: const Offset(0, 0))
-              ]),
-          child: Padding(
-            padding: const EdgeInsets.only(left: 20, right: 20),
-            child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: List.generate(items.length, (index) {
-                  return Container(
-                      padding: const EdgeInsets.all(12.0),
-                      decoration: activeTab == index
-                          ? new BoxDecoration(
-                              borderRadius: BorderRadius.circular(50.0),
-                              color: accent)
-                          : null,
-                      child: InkWell(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Icon(
-                              items[index]["icon"],
-                              color: Colors.white,
-                            ),
-                            activeTab != index
-                                ? Text(items[index]["name"],
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                    ))
-                                : Wrap(),
-                          ],
-                        ),
-                        onTap: () {
-                          setState(() {
-                            activeTab = index;
-                          });
-                        },
-                      ));
-                })),
-          ),
+          child: _buildBottomBar(items),
         )
       ],
     );
@@ -280,6 +260,20 @@ class AppState extends State<Musify> {
     return IndexedStack(
       index: activeTab,
       children: [HomePage(), SearchPage(), PlaylistsPage(), SettingsPage()],
+    );
+  }
+
+  Widget _buildBottomBar(items) {
+    return CustomAnimatedBottomBar(
+      animationDuration: Duration(milliseconds: 360),
+      containerHeight: 70,
+      backgroundColor: Color(0XFF282828),
+      selectedIndex: activeTab,
+      showElevation: true,
+      itemCornerRadius: 24,
+      curve: Curves.easeIn,
+      onItemSelected: (index) => setState(() => activeTab = index),
+      items: items,
     );
   }
 }
