@@ -11,7 +11,7 @@ class CustomAnimatedBottomBar extends StatelessWidget {
     this.containerHeight = 56,
     this.animationDuration = const Duration(milliseconds: 270),
     this.mainAxisAlignment = MainAxisAlignment.spaceBetween,
-    this.radius = 30,
+    this.radius = BorderRadius.zero,
     required this.items,
     required this.onItemSelected,
     this.curve = Curves.linear,
@@ -29,7 +29,7 @@ class CustomAnimatedBottomBar extends StatelessWidget {
   final double itemCornerRadius;
   final double containerHeight;
   final Curve curve;
-  final double radius;
+  final BorderRadius radius;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +38,7 @@ class CustomAnimatedBottomBar extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: bgColor,
-        borderRadius: BorderRadius.circular(radius),
+        borderRadius: radius,
         boxShadow: [
           if (showElevation)
             const BoxShadow(

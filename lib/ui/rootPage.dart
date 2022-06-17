@@ -124,9 +124,7 @@ class AppState extends State<Musify> {
                           borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(18),
                               topRight: Radius.circular(18)),
-                          color: kUrlNotifier.value != ""
-                              ? Color(0xff1c252a)
-                              : bgColor),
+                          color: bgLight),
                       child: Padding(
                           padding: const EdgeInsets.only(top: 5.0, bottom: 2),
                           child: GestureDetector(
@@ -245,13 +243,7 @@ class AppState extends State<Musify> {
                               ))))
                   : const SizedBox.shrink();
             }),
-        Container(
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(30.0)),
-          width: MediaQuery.of(context).size.width * 0.95,
-          height: 65,
-          margin: const EdgeInsets.only(bottom: 10),
-          child: _buildBottomBar(items),
-        )
+        _buildBottomBar(items),
       ],
     );
   }
@@ -266,14 +258,18 @@ class AppState extends State<Musify> {
   Widget _buildBottomBar(items) {
     return CustomAnimatedBottomBar(
       animationDuration: Duration(milliseconds: 360),
-      containerHeight: 70,
-      backgroundColor: Color(0XFF282828),
+      containerHeight: 65,
+      backgroundColor: bgLight,
       selectedIndex: activeTab,
       showElevation: true,
       itemCornerRadius: 24,
       curve: Curves.easeIn,
       onItemSelected: (index) => setState(() => activeTab = index),
       items: items,
+      radius: kUrlNotifier.value != ""
+          ? BorderRadius.zero
+          : BorderRadius.only(
+              topLeft: Radius.circular(20), topRight: Radius.circular(20)),
     );
   }
 }

@@ -16,13 +16,13 @@ class _SongBarState extends State<SongBar> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.black12,
+      color: Colors.black26,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
+        borderRadius: BorderRadius.circular(20.0),
       ),
       elevation: 0,
       child: InkWell(
-        borderRadius: BorderRadius.circular(10.0),
+        borderRadius: BorderRadius.circular(20.0),
         onTap: () {
           playSong((widget.song));
         },

@@ -49,7 +49,7 @@ class SettingsCards extends StatelessWidget {
             padding:
                 const EdgeInsets.only(top: 8, left: 8, right: 8, bottom: 6),
             child: Card(
-              color: Color(0xff263238),
+              color: bgLight,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0)),
               elevation: 2.3,
@@ -177,7 +177,7 @@ class SettingsCards extends StatelessWidget {
             padding:
                 const EdgeInsets.only(top: 8, left: 8, right: 8, bottom: 6),
             child: Card(
-              color: Color(0xff263238),
+              color: bgLight,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0)),
               elevation: 2.3,
@@ -205,7 +205,7 @@ class SettingsCards extends StatelessWidget {
             padding:
                 const EdgeInsets.only(top: 8, left: 8, right: 8, bottom: 6),
             child: Card(
-              color: Color(0xff263238),
+              color: bgLight,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0)),
               elevation: 2.3,
@@ -228,7 +228,7 @@ class SettingsCards extends StatelessWidget {
             padding:
                 const EdgeInsets.only(top: 8, left: 8, right: 8, bottom: 6),
             child: Card(
-              color: Color(0xff263238),
+              color: bgLight,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0)),
               elevation: 2.3,
@@ -251,7 +251,7 @@ class SettingsCards extends StatelessWidget {
             padding:
                 const EdgeInsets.only(top: 8, left: 8, right: 8, bottom: 6),
             child: Card(
-              color: Color(0xff263238),
+              color: bgLight,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0)),
               elevation: 2.3,
@@ -279,7 +279,7 @@ class SettingsCards extends StatelessWidget {
             padding:
                 const EdgeInsets.only(top: 8, left: 8, right: 8, bottom: 6),
             child: Card(
-              color: Color(0xff263238),
+              color: bgLight,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0)),
               elevation: 2.3,
@@ -307,7 +307,7 @@ class SettingsCards extends StatelessWidget {
             padding:
                 const EdgeInsets.only(top: 8, left: 8, right: 8, bottom: 6),
             child: Card(
-              color: Color(0xff263238),
+              color: bgLight,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0)),
               elevation: 2.3,
@@ -351,7 +351,7 @@ class SettingsCards extends StatelessWidget {
             padding:
                 const EdgeInsets.only(top: 8, left: 8, right: 8, bottom: 6),
             child: Card(
-              color: Color(0xff263238),
+              color: bgLight,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0)),
               elevation: 2.3,
