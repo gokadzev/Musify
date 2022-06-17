@@ -130,7 +130,7 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
                     itemBuilder: (BuildContext context, int index) {
                       return Padding(
                           padding: const EdgeInsets.only(top: 5, bottom: 5),
-                          child: SongBar(song: userLikedSongsList[index]));
+                          child: SongBar(userLikedSongsList[index]));
                     })
               ],
             )

@@ -23,6 +23,8 @@ get isPlaying => buttonNotifier.value == MPlayerState.playing;
 
 get isPaused => buttonNotifier.value == MPlayerState.paused;
 
+final songLikeStatus = ValueNotifier<bool>(isSongAlreadyLiked(ytid));
+
 enum MPlayerState { stopped, playing, paused, loading }
 
 class AudioApp extends StatefulWidget {
@@ -305,19 +307,29 @@ class AudioAppState extends State<AudioApp> {
                             changeLoopStatus();
                           },
                         ),
-                        IconButton(
-                            color: accent,
-                            icon: isSongAlreadyLiked(ytid)
-                                ? Icon(MdiIcons.star)
-                                : Icon(MdiIcons.starOutline),
-                            iconSize: size.width * 0.056,
-                            onPressed: () => {
-                                  setState(() {
-                                    isSongAlreadyLiked(ytid)
-                                        ? removeUserLikedSong(ytid)
-                                        : addUserLikedSong(ytid);
-                                  })
-                                }),
+                        ValueListenableBuilder<bool>(
+                            valueListenable: songLikeStatus,
+                            builder: (_, value, __) {
+                              if (value == true) {
+                                return IconButton(
+                                    color: accent,
+                                    icon: Icon(MdiIcons.star),
+                                    iconSize: size.width * 0.056,
+                                    onPressed: () => {
+                                          removeUserLikedSong(ytid),
+                                          songLikeStatus.value = false
+                                        });
+                              } else {
+                                return IconButton(
+                                    color: accent,
+                                    icon: Icon(MdiIcons.starOutline),
+                                    iconSize: size.width * 0.056,
+                                    onPressed: () => {
+                                          addUserLikedSong(ytid),
+                                          songLikeStatus.value = true
+                                        });
+                              }
+                            }),
                       ],
                     ),
                   ),

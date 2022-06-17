@@ -4,15 +4,13 @@ import 'package:musify/API/musify.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/style/appColors.dart';
 
-class SongBar extends StatefulWidget {
-  final dynamic song;
-  const SongBar({Key? key, required this.song}) : super(key: key);
+class SongBar extends StatelessWidget {
+  SongBar(this.song);
 
-  @override
-  State<SongBar> createState() => _SongBarState();
-}
+  late final dynamic song;
+  late final songLikeStatus =
+      ValueNotifier<bool>(isSongAlreadyLiked(song["ytid"]));
 
-class _SongBarState extends State<SongBar> {
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -24,7 +22,7 @@ class _SongBarState extends State<SongBar> {
       child: InkWell(
         borderRadius: BorderRadius.circular(20.0),
         onTap: () {
-          playSong((widget.song));
+          playSong((song));
         },
         splashColor: accent,
         hoverColor: accent,
@@ -42,7 +40,7 @@ class _SongBarState extends State<SongBar> {
                 ),
               ),
               title: Text(
-                ((widget.song)['title'])
+                ((song)['title'])
                     .toString()
                     .split("(")[0]
                     .replaceAll("&quot;", "\"")
@@ -50,26 +48,35 @@ class _SongBarState extends State<SongBar> {
                 style: TextStyle(color: accent),
               ),
               subtitle: Text(
-                widget.song['more_info']["singers"],
+                song['more_info']["singers"],
                 style: TextStyle(color: accentLight),
               ),
               trailing: Row(mainAxisSize: MainAxisSize.min, children: [
-                IconButton(
-                    color: accent,
-                    icon: isSongAlreadyLiked((widget.song)['ytid'])
-                        ? Icon(MdiIcons.star)
-                        : Icon(MdiIcons.starOutline),
-                    onPressed: () => {
-                          setState(() {
-                            isSongAlreadyLiked((widget.song)['ytid'])
-                                ? removeUserLikedSong((widget.song)['ytid'])
-                                : addUserLikedSong((widget.song)['ytid']);
-                          })
-                        }),
+                ValueListenableBuilder<bool>(
+                    valueListenable: songLikeStatus,
+                    builder: (_, value, __) {
+                      if (value == true) {
+                        return IconButton(
+                            color: accent,
+                            icon: Icon(MdiIcons.star),
+                            onPressed: () => {
+                                  removeUserLikedSong((song)['ytid']),
+                                  songLikeStatus.value = false
+                                });
+                      } else {
+                        return IconButton(
+                            color: accent,
+                            icon: Icon(MdiIcons.starOutline),
+                            onPressed: () => {
+                                  addUserLikedSong((song)['ytid']),
+                                  songLikeStatus.value = true
+                                });
+                      }
+                    }),
                 IconButton(
                   color: accent,
                   icon: Icon(MdiIcons.downloadOutline),
-                  onPressed: () => downloadSong((widget.song)),
+                  onPressed: () => downloadSong((song)),
                 ),
               ]),
             )
