@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:musify/helper/version.dart';
 import 'package:musify/style/appColors.dart';
 
 class AboutPage extends StatelessWidget {
@@ -52,7 +53,7 @@ class AboutCards extends StatelessWidget {
                     padding: const EdgeInsets.all(13.0),
                     child: Center(
                       child: Text(
-                        "Musify  | 1.3.0",
+                        "Musify  | " + version.toString(),
                         style: TextStyle(
                             color: accent,
                             fontSize: 24,
