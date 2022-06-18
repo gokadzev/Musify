@@ -19,6 +19,7 @@ List suggestedPlaylists = [];
 
 String? kUrl = "",
     image = "",
+    lowResImage = "",
     highResImage = "",
     title = "",
     album = "",
@@ -36,14 +37,15 @@ Future<List> fetchSongsList(searchQuery) async {
   var s = yt.search.search(searchQuery);
   List list = await s;
   searchedList = [];
-  for (var v in list) {
+  for (var s in list) {
     searchedList.add(returnSongLayout(
         0,
-        v.id.toString(),
-        formatSongTitle(v.title.split('-')[v.title.split('-').length - 1]),
-        v.thumbnails.standardResUrl,
-        v.thumbnails.maxResUrl,
-        v.title.split('-')[0]));
+        s.id.toString(),
+        formatSongTitle(s.title.split('-')[s.title.split('-').length - 1]),
+        s.thumbnails.standardResUrl,
+        s.thumbnails.lowResUrl,
+        s.thumbnails.maxResUrl,
+        s.title.split('-')[0]));
   }
   return searchedList;
 }
@@ -51,15 +53,16 @@ Future<List> fetchSongsList(searchQuery) async {
 Future get10Music(playlistId) async {
   var newSongs = [];
   var index = 0;
-  await for (var video in yt.playlists.getVideos(playlistId).take(10)) {
+  await for (var song in yt.playlists.getVideos(playlistId).take(10)) {
     newSongs.add(returnSongLayout(
         index,
-        video.id.toString(),
+        song.id.toString(),
         formatSongTitle(
-            video.title.split('-')[video.title.split('-').length - 1]),
-        video.thumbnails.standardResUrl,
-        video.thumbnails.maxResUrl,
-        video.title.split('-')[0]));
+            song.title.split('-')[song.title.split('-').length - 1]),
+        song.thumbnails.standardResUrl,
+        song.thumbnails.lowResUrl,
+        song.thumbnails.maxResUrl,
+        song.title.split('-')[0]));
     index += 1;
   }
 
@@ -131,15 +134,16 @@ Future<List> getPlaylists([int? playlistsNum]) async {
 Future getSongsFromPlaylist(playlistid) async {
   var playlistSongs = [];
   var index = 0;
-  await for (var video in yt.playlists.getVideos(playlistid)) {
+  await for (var song in yt.playlists.getVideos(playlistid)) {
     playlistSongs.add(returnSongLayout(
         index,
-        video.id.toString(),
+        song.id.toString(),
         formatSongTitle(
-            video.title.split('-')[video.title.split('-').length - 1]),
-        video.thumbnails.standardResUrl,
-        video.thumbnails.maxResUrl,
-        video.title.split('-')[0]));
+            song.title.split('-')[song.title.split('-').length - 1]),
+        song.thumbnails.standardResUrl,
+        song.thumbnails.lowResUrl,
+        song.thumbnails.maxResUrl,
+        song.title.split('-')[0]));
     index += 1;
   }
 
@@ -174,6 +178,7 @@ Future setSongDetails(song) async {
   id = song["id"];
   title = song["title"];
   image = song["image"];
+  lowResImage = song["lowResImage"];
   highResImage = song["highResImage"];
   album = song["album"] == null ? '' : song["album"];
   ytid = song["ytid"].toString();
@@ -210,6 +215,7 @@ Future getSongDetails(songIndex, songId) async {
       song.id.toString(),
       formatSongTitle(song.title.split('-')[song.title.split('-').length - 1]),
       song.thumbnails.standardResUrl,
+      song.thumbnails.lowResUrl,
       song.thumbnails.maxResUrl,
       song.title.split('-')[0]);
 }

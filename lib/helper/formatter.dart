@@ -21,12 +21,13 @@ formatSongTitle(String title) {
 }
 
 returnSongLayout(index, String ytid, String title, String image,
-    String highResImage, String artist) {
+    String lowResImage, String highResImage, String artist) {
   return {
     "id": index,
     "ytid": ytid,
     "title": formatSongTitle(title.split('-')[title.split('-').length - 1]),
     "image": image,
+    "lowResImage": lowResImage,
     "highResImage": highResImage,
     "album": "",
     "type": "song",

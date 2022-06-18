@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/API/musify.dart';
@@ -32,13 +33,22 @@ class SongBar extends StatelessWidget {
           children: <Widget>[
             ListTile(
               leading: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Icon(
-                  MdiIcons.musicNoteOutline,
-                  size: 30,
-                  color: accent,
-                ),
-              ),
+                  padding: const EdgeInsets.all(8.0),
+                  child: CachedNetworkImage(
+                    width: 70,
+                    height: 70,
+                    imageUrl: song["lowResImage"],
+                    imageBuilder: (context, imageProvider) => Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        shape: BoxShape.rectangle,
+                        image: DecorationImage(
+                          image: imageProvider,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  )),
               title: Text(
                 (song['title'])
                     .toString()
