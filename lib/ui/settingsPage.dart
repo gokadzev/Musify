@@ -81,6 +81,7 @@ class SettingsCards extends StatelessWidget {
                           0xFFB2DFDB,
                           0xFFA7FFEB,
                           0xFFC8E6C9,
+                          0xFFACE1AF,
                           0xFFB9F6CA,
                           0xFFDCEDC8,
                           0xFFCCFF90,
@@ -94,6 +95,7 @@ class SettingsCards extends StatelessWidget {
                           0xFFFFD180,
                           0xFFFFCCBC,
                           0xFFFF9E80,
+                          0xFFFD5C63,
                           0xFFFFFFFF
                         ];
                         return Center(
