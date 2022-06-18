@@ -1,19 +1,19 @@
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:just_audio/just_audio.dart';
-import 'package:musify/customWidgets/custom_animated_bottom_bar.dart';
-import 'package:musify/helper/version.dart';
-import 'package:musify/services/audio_manager.dart';
-import 'package:musify/ui/homePage.dart';
-import 'package:musify/ui/playlistsPage.dart';
-import 'package:musify/ui/searchPage.dart';
-import 'package:musify/ui/settingsPage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/API/musify.dart';
-import 'package:musify/ui/player.dart';
+import 'package:musify/customWidgets/custom_animated_bottom_bar.dart';
+import 'package:musify/helper/version.dart';
+import 'package:musify/services/audio_manager.dart';
 import 'package:musify/style/appColors.dart';
+import 'package:musify/ui/homePage.dart';
+import 'package:musify/ui/player.dart';
+import 'package:musify/ui/playlistsPage.dart';
+import 'package:musify/ui/searchPage.dart';
+import 'package:musify/ui/settingsPage.dart';
 
 class Musify extends StatefulWidget {
   @override
@@ -25,6 +25,7 @@ class Musify extends StatefulWidget {
 class AppState extends State<Musify> {
   int activeTab = 0;
 
+  @override
   void initState() {
     super.initState();
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -65,7 +66,7 @@ class AppState extends State<Musify> {
       } else {
         audioPlayer?.seek(Duration.zero);
         audioPlayer?.pause();
-        if (activePlaylist.length != 0 && id! + 1 < activePlaylist.length) {
+        if (activePlaylist.isNotEmpty && id! + 1 < activePlaylist.length) {
           playNext();
         }
       }
@@ -80,31 +81,31 @@ class AppState extends State<Musify> {
   }
 
   Widget getFooter() {
-    List items = <BottomNavBarItem>[
+    final List items = <BottomNavBarItem>[
       BottomNavBarItem(
-        icon: Icon(MdiIcons.homeOutline),
-        title: Text('Home'),
+        icon: const Icon(MdiIcons.homeOutline),
+        title: const Text('Home'),
         activeColor: accent,
         inactiveColor: Colors.white,
         textAlign: TextAlign.center,
       ),
       BottomNavBarItem(
-        icon: Icon(MdiIcons.magnify),
-        title: Text('Search'),
+        icon: const Icon(MdiIcons.magnify),
+        title: const Text('Search'),
         activeColor: accent,
         inactiveColor: Colors.white,
         textAlign: TextAlign.center,
       ),
       BottomNavBarItem(
-        icon: Icon(MdiIcons.bookOutline),
-        title: Text('Playlists'),
+        icon: const Icon(MdiIcons.bookOutline),
+        title: const Text('Playlists'),
         activeColor: accent,
         inactiveColor: Colors.white,
         textAlign: TextAlign.center,
       ),
       BottomNavBarItem(
-        icon: Icon(MdiIcons.cogOutline),
-        title: Text('Settings'),
+        icon: const Icon(MdiIcons.cogOutline),
+        title: const Text('Settings'),
         activeColor: accent,
         inactiveColor: Colors.white,
         textAlign: TextAlign.center,
@@ -121,7 +122,7 @@ class AppState extends State<Musify> {
                   ? Container(
                       height: 75,
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(
+                          borderRadius: const BorderRadius.only(
                               topLeft: Radius.circular(18),
                               topRight: Radius.circular(18)),
                           color: bgLight),
@@ -140,7 +141,7 @@ class AppState extends State<Musify> {
                               child: Row(
                                 children: <Widget>[
                                   IconButton(
-                                    icon: Icon(
+                                    icon: const Icon(
                                       MdiIcons.appleKeyboardControl,
                                       size: 22,
                                     ),
@@ -173,11 +174,11 @@ class AppState extends State<Musify> {
                                                         color: accent),
                                                   ],
                                                 ),
-                                                decoration: new BoxDecoration(
+                                                decoration: BoxDecoration(
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                           10.0),
-                                                  gradient: new LinearGradient(
+                                                  gradient: LinearGradient(
                                                     colors: [
                                                       accent.withAlpha(30),
                                                       Colors.white.withAlpha(30)
@@ -188,7 +189,7 @@ class AppState extends State<Musify> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.only(top: 0.0),
+                                    padding: EdgeInsets.zero,
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -197,7 +198,7 @@ class AppState extends State<Musify> {
                                       children: <Widget>[
                                         Text(
                                           title!.length > 15
-                                              ? title!.substring(0, 15) + "..."
+                                              ? "${title!.substring(0, 15)}..."
                                               : title!,
                                           style: TextStyle(
                                               color: accent,
@@ -206,7 +207,7 @@ class AppState extends State<Musify> {
                                         ),
                                         Text(
                                           artist!.length > 15
-                                              ? artist!.substring(0, 15) + "..."
+                                              ? "${artist!.substring(0, 15)}..."
                                               : artist!,
                                           style: TextStyle(
                                               color: accent, fontSize: 15),
@@ -214,15 +215,16 @@ class AppState extends State<Musify> {
                                       ],
                                     ),
                                   ),
-                                  Spacer(),
+                                  const Spacer(),
                                   ValueListenableBuilder<MPlayerState>(
                                       valueListenable: buttonNotifier,
                                       builder: (_, value, __) {
                                         return IconButton(
                                           icon: buttonNotifier.value ==
                                                   MPlayerState.playing
-                                              ? Icon(MdiIcons.pause)
-                                              : Icon(MdiIcons.playOutline),
+                                              ? const Icon(MdiIcons.pause)
+                                              : const Icon(
+                                                  MdiIcons.playOutline),
                                           color: accent,
                                           splashColor: Colors.transparent,
                                           onPressed: () {
@@ -257,7 +259,7 @@ class AppState extends State<Musify> {
 
   Widget _buildBottomBar(items) {
     return CustomAnimatedBottomBar(
-      animationDuration: Duration(milliseconds: 360),
+      animationDuration: const Duration(milliseconds: 360),
       containerHeight: 65,
       backgroundColor: bgLight,
       selectedIndex: activeTab,
@@ -268,7 +270,7 @@ class AppState extends State<Musify> {
       items: items,
       radius: kUrlNotifier.value != ""
           ? BorderRadius.zero
-          : BorderRadius.only(
+          : const BorderRadius.only(
               topLeft: Radius.circular(20), topRight: Radius.circular(20)),
     );
   }

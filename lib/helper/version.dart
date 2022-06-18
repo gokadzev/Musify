@@ -27,8 +27,9 @@ downloadAppUpdates() async {
   final response = await request.close();
   final contentAsString = await utf8.decodeStream(response);
   final map = json.decode(contentAsString);
-  String? dlPath = await ExtStorageProvider.getExtStorage(dirName: 'Download');
-  File file = File(dlPath! + "/Musify.apk");
+  final String? dlPath =
+      await ExtStorageProvider.getExtStorage(dirName: 'Download');
+  final File file = File("${dlPath!}/Musify.apk");
   if (await file.exists()) {
     await file.delete();
   }

@@ -17,7 +17,7 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
         backgroundColor: bgColor,
         appBar: AppBar(
           systemOverlayStyle:
-              SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
+              const SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
           centerTitle: true,
           title: Text(
             "User Liked Songs",
@@ -54,9 +54,9 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
                         child: Container(
                           width: 200,
                           height: 200,
-                          decoration: new BoxDecoration(
+                          decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10.0),
-                            gradient: new LinearGradient(
+                            gradient: LinearGradient(
                               colors: [
                                 accent.withAlpha(30),
                                 Colors.white.withAlpha(30)
@@ -99,9 +99,8 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
                                 fontSize: 10,
                                 fontWeight: FontWeight.w600),
                           ),
-                          Padding(
-                              padding:
-                                  const EdgeInsets.only(top: 5, bottom: 5)),
+                          const Padding(
+                              padding: EdgeInsets.only(top: 5, bottom: 5)),
                           TextButton(
                               onPressed: () => {
                                     setActivePlaylist(userLikedSongsList),
@@ -109,7 +108,7 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
                                   },
                               style:
                                   TextButton.styleFrom(backgroundColor: accent),
-                              child: Text(
+                              child: const Text(
                                 "PLAY ALL",
                                 style: TextStyle(color: Colors.white),
                               )),

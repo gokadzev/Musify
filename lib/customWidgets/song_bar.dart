@@ -22,7 +22,7 @@ class SongBar extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(20.0),
         onTap: () {
-          playSong((song));
+          playSong(song);
         },
         splashColor: accent,
         hoverColor: accent,
@@ -40,7 +40,7 @@ class SongBar extends StatelessWidget {
                 ),
               ),
               title: Text(
-                ((song)['title'])
+                (song['title'])
                     .toString()
                     .split("(")[0]
                     .replaceAll("&quot;", "\"")
@@ -58,25 +58,25 @@ class SongBar extends StatelessWidget {
                       if (value == true) {
                         return IconButton(
                             color: accent,
-                            icon: Icon(MdiIcons.star),
+                            icon: const Icon(MdiIcons.star),
                             onPressed: () => {
-                                  removeUserLikedSong((song)['ytid']),
+                                  removeUserLikedSong(song['ytid']),
                                   songLikeStatus.value = false
                                 });
                       } else {
                         return IconButton(
                             color: accent,
-                            icon: Icon(MdiIcons.starOutline),
+                            icon: const Icon(MdiIcons.starOutline),
                             onPressed: () => {
-                                  addUserLikedSong((song)['ytid']),
+                                  addUserLikedSong(song['ytid']),
                                   songLikeStatus.value = true
                                 });
                       }
                     }),
                 IconButton(
                   color: accent,
-                  icon: Icon(MdiIcons.downloadOutline),
-                  onPressed: () => downloadSong((song)),
+                  icon: const Icon(MdiIcons.downloadOutline),
+                  onPressed: () => downloadSong(song),
                 ),
               ]),
             )

@@ -1,12 +1,12 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:delayed_display/delayed_display.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/customWidgets/song_bar.dart';
 import 'package:musify/customWidgets/spinner.dart';
 import 'package:musify/style/appColors.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
 import 'package:musify/ui/playlistPage.dart';
 
 class HomePage extends StatefulWidget {
@@ -20,10 +20,10 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         systemOverlayStyle:
-            SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
+            const SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
         centerTitle: true,
         title: Text(
-          "Musify.",
+          'Musify.',
           style: TextStyle(
             color: accent,
             fontSize: 35,
@@ -152,10 +152,10 @@ class CubeContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    final Size size = MediaQuery.of(context).size;
     return DelayedDisplay(
-        delay: Duration(milliseconds: 200),
-        fadingDuration: Duration(milliseconds: 400),
+        delay: const Duration(milliseconds: 200),
+        fadingDuration: const Duration(milliseconds: 400),
         child: GestureDetector(
           onTap: () {
             getPlaylistInfoForWidget(id).then((value) => {
@@ -196,9 +196,9 @@ class CubeContainer extends StatelessWidget {
                                         size: 30, color: accent),
                                   ],
                                 ),
-                                decoration: new BoxDecoration(
+                                decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10.0),
-                                  gradient: new LinearGradient(
+                                  gradient: LinearGradient(
                                     colors: [
                                       accent.withAlpha(30),
                                       Colors.white.withAlpha(30)

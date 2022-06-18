@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:musify/helper/formatter.dart';
 import 'package:musify/services/audio_manager.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
@@ -69,7 +69,7 @@ Future get10Music(playlistId) async {
 Future<List<dynamic>> getUserPlaylists() async {
   var playlistsByUser = [];
   for (var playlistID in userPlaylists) {
-    var plist = await yt.playlists.get(playlistID);
+    final plist = await yt.playlists.get(playlistID);
     playlistsByUser.add({
       "ytid": plist.id,
       "title": plist.title,
@@ -107,18 +107,18 @@ removeUserLikedSong(songId) {
 }
 
 bool isSongAlreadyLiked(songId) {
-  return userLikedSongsList.where((song) => song["ytid"] == songId).length > 0;
+  return userLikedSongsList.where((song) => song["ytid"] == songId).isNotEmpty;
 }
 
 Future<List> getPlaylists([int? playlistsNum]) async {
-  if (playlists.length == 0) {
+  if (playlists.isEmpty) {
     var localplaylists =
         json.decode(await rootBundle.loadString('assets/db/playlists.db.json'));
     playlists = localplaylists;
   }
 
   if (playlistsNum != null) {
-    if (suggestedPlaylists.length == 0) {
+    if (suggestedPlaylists.isEmpty) {
       suggestedPlaylists =
           (playlists.toList()..shuffle()).take(playlistsNum).toList();
     }
@@ -156,7 +156,7 @@ setActivePlaylist(playlist) async {
 Future getPlaylistInfoForWidget(dynamic id) async {
   var searchPlaylist = playlists.where((list) => list["ytid"] == id).toList();
 
-  if (searchPlaylist.length == 0) {
+  if (searchPlaylist.isEmpty) {
     var usPlaylists = await getUserPlaylists();
     searchPlaylist = usPlaylists.where((list) => list["ytid"] == id).toList();
   }
@@ -187,24 +187,24 @@ Future setSongDetails(song) async {
 
   lyrics = "null";
 
-  var audio = await getSongUrl(ytid);
+  final audio = await getSongUrl(ytid);
   audioPlayer?.setUrl(audio);
   kUrl = audio;
   kUrlNotifier.value = audio;
 }
 
 Future getSongUrl(songId) async {
-  var manifest = await yt.videos.streamsClient.getManifest(songId);
+  final manifest = await yt.videos.streamsClient.getManifest(songId);
   return manifest.audioOnly.withHighestBitrate().url.toString();
 }
 
 Future getSongStream(songId) async {
-  var manifest = await yt.videos.streamsClient.getManifest(songId);
+  final manifest = await yt.videos.streamsClient.getManifest(songId);
   return manifest.audioOnly.withHighestBitrate();
 }
 
 Future getSongDetails(songIndex, songId) async {
-  var song = await yt.videos.get(songId);
+  final song = await yt.videos.get(songId);
   return returnSongLayout(
       songIndex,
       song.id.toString(),
@@ -215,12 +215,14 @@ Future getSongDetails(songIndex, songId) async {
 }
 
 Future getSongLyrics() async {
-  String lyricsApiUrl =
+  final String lyricsApiUrl =
       'https://api.lyrics.ovh/v1/${artist!}/${title!.split(" (")[0].split("|")[0].trim()}';
   try {
-    var lyricsApiRes = await DefaultCacheManager().getSingleFile(lyricsApiUrl,
-        headers: {"Accept": "application/json"}).timeout(Duration(seconds: 5));
-    var lyricsResponse = await json.decode(await lyricsApiRes.readAsString());
+    final lyricsApiRes = await DefaultCacheManager().getSingleFile(lyricsApiUrl,
+        headers: {
+          "Accept": "application/json"
+        }).timeout(const Duration(seconds: 5));
+    final lyricsResponse = await json.decode(await lyricsApiRes.readAsString());
     if (lyricsResponse['lyrics'] != null) {
       lyrics = lyricsResponse['lyrics'];
     }

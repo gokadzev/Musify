@@ -1,15 +1,15 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/helper/version.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/locator.dart';
-import 'package:musify/ui/rootPage.dart';
-import 'package:flutter/material.dart';
 import 'package:musify/style/appColors.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:musify/ui/rootPage.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 
 main() async {
   await Hive.initFlutter();
@@ -29,7 +29,7 @@ main() async {
   userLikedSongsList = await getData("user", "likedSongs") != null
       ? await getData("user", "likedSongs")
       : [];
-  PackageInfo packageInfo = await PackageInfo.fromPlatform();
+  final PackageInfo packageInfo = await PackageInfo.fromPlatform();
   version = packageInfo.version;
   await enableBooster();
   setupServiceLocator();
@@ -42,14 +42,17 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-          primaryColor: accent,
-          scaffoldBackgroundColor: bgColor,
-          canvasColor: bgColor,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-          textTheme: GoogleFonts.ubuntuTextTheme(Theme.of(context).textTheme),
-          pageTransitionsTheme: PageTransitionsTheme(builders: {
+        primaryColor: accent,
+        scaffoldBackgroundColor: bgColor,
+        canvasColor: bgColor,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+        textTheme: GoogleFonts.ubuntuTextTheme(Theme.of(context).textTheme),
+        pageTransitionsTheme: const PageTransitionsTheme(
+          builders: {
             TargetPlatform.android: ZoomPageTransitionsBuilder(),
-          })),
+          },
+        ),
+      ),
       home: Musify(),
     );
   }

@@ -1,8 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/customWidgets/song_bar.dart';
 import 'package:musify/customWidgets/spinner.dart';
 import 'package:musify/style/appColors.dart';
-import 'package:flutter/material.dart';
 
 class SearchPage extends StatefulWidget {
   @override
@@ -31,7 +31,7 @@ class _SearchPageState extends State<SearchPage> {
         padding: const EdgeInsets.all(12.0),
         child: Column(
           children: <Widget>[
-            Padding(padding: const EdgeInsets.only(top: 30, bottom: 20.0)),
+            const Padding(padding: EdgeInsets.only(top: 30, bottom: 20.0)),
             TextField(
               onSubmitted: (String value) {
                 search();
@@ -57,7 +57,7 @@ class _SearchPageState extends State<SearchPage> {
                   ),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(
+                  borderRadius: const BorderRadius.all(
                     Radius.circular(100),
                   ),
                   borderSide: BorderSide(color: accent),
@@ -93,7 +93,7 @@ class _SearchPageState extends State<SearchPage> {
                 shrinkWrap: true,
                 addAutomaticKeepAlives: false,
                 addRepaintBoundaries: false,
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 itemCount: searchedList.length,
                 itemBuilder: (BuildContext ctxt, int index) {
                   return Padding(

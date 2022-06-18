@@ -17,7 +17,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
         backgroundColor: bgColor,
         appBar: AppBar(
           systemOverlayStyle:
-              SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
+              const SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
           centerTitle: true,
           title: Text(
             "User Playlists",
@@ -48,7 +48,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                     content: Stack(
                       children: <Widget>[
                         TextField(
-                            decoration: new InputDecoration.collapsed(
+                            decoration: const InputDecoration.collapsed(
                                 hintText: 'Youtube Playlist ID'),
                             onChanged: (value) {
                               setState(() {
@@ -59,7 +59,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                     ),
                     actions: <Widget>[
                       TextButton(
-                        child: Text(
+                        child: const Text(
                           'ADD',
                           style: TextStyle(color: Colors.black),
                         ),
@@ -93,7 +93,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                                     crossAxisSpacing: 20,
                                     mainAxisSpacing: 20),
                             shrinkWrap: true,
-                            physics: ScrollPhysics(),
+                            physics: const ScrollPhysics(),
                             itemCount: (data as dynamic).data.length,
                             padding: const EdgeInsets.only(
                                 left: 16.0, right: 16.0, top: 16.0, bottom: 20),

@@ -45,122 +45,109 @@ class AudioAppState extends State<AudioApp> {
 
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color(0xff384850),
-            Color(0xff263238),
-            Color(0xff263238),
-          ],
+    final size = MediaQuery.of(context).size;
+    return Scaffold(
+      backgroundColor: bgColor,
+      appBar: AppBar(
+        systemOverlayStyle:
+            const SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
+        backgroundColor: bgColor,
+        elevation: 0,
+        centerTitle: true,
+        title: Text(
+          "Now Playing",
+          style: TextStyle(
+            color: accent,
+            fontSize: 25,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 14.0),
+          child: IconButton(
+            icon: Icon(
+              Icons.keyboard_arrow_down,
+              size: 32,
+              color: accent,
+            ),
+            onPressed: () => Navigator.pop(context, false),
+          ),
         ),
       ),
-      child: Scaffold(
-        backgroundColor: bgColor,
-        appBar: AppBar(
-          systemOverlayStyle:
-              SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
-          backgroundColor: bgColor,
-          elevation: 0,
-          centerTitle: true,
-          title: Text(
-            "Now Playing",
-            style: TextStyle(
-              color: accent,
-              fontSize: 25,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          leading: Padding(
-            padding: const EdgeInsets.only(left: 14.0),
-            child: IconButton(
-              icon: Icon(
-                Icons.keyboard_arrow_down,
-                size: 32,
-                color: accent,
-              ),
-              onPressed: () => Navigator.pop(context, false),
-            ),
-          ),
-        ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.only(top: size.height * 0.012),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: size.width / 1.2,
-                  height: size.width / 1.2,
-                  child: CachedNetworkImage(
-                      imageUrl: highResImage!,
-                      imageBuilder: (context, imageProvider) => Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              shape: BoxShape.rectangle,
-                              image: DecorationImage(
-                                image: imageProvider,
-                                fit: BoxFit.cover,
-                              ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.only(top: size.height * 0.012),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: size.width / 1.2,
+                height: size.width / 1.2,
+                child: CachedNetworkImage(
+                    imageUrl: highResImage!,
+                    imageBuilder: (context, imageProvider) => Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            shape: BoxShape.rectangle,
+                            image: DecorationImage(
+                              image: imageProvider,
+                              fit: BoxFit.cover,
                             ),
-                          ),
-                      placeholder: (context, url) => Spinner(),
-                      errorWidget: (context, url, error) => Container(
-                            width: size.width / 1.2,
-                            height: size.width / 1.2,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Icon(MdiIcons.musicNoteOutline,
-                                    size: size.width / 8, color: accent),
-                              ],
-                            ),
-                            decoration: new BoxDecoration(
-                              borderRadius: BorderRadius.circular(10.0),
-                              gradient: new LinearGradient(
-                                colors: [
-                                  accent.withAlpha(30),
-                                  Colors.white.withAlpha(30)
-                                ],
-                              ),
-                            ),
-                          )),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 35.0, bottom: 35),
-                  child: Column(
-                    children: <Widget>[
-                      Text(
-                        title!.split(' (')[0].split('|')[0].trim(),
-                        textScaleFactor: 2.5,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                            color: accent),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: Text(
-                          album! + "   " + artist!,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: accentLight,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
                           ),
                         ),
+                    placeholder: (context, url) => Spinner(),
+                    errorWidget: (context, url, error) => Container(
+                          width: size.width / 1.2,
+                          height: size.width / 1.2,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Icon(MdiIcons.musicNoteOutline,
+                                  size: size.width / 8, color: accent),
+                            ],
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            gradient: LinearGradient(
+                              colors: [
+                                accent.withAlpha(30),
+                                Colors.white.withAlpha(30)
+                              ],
+                            ),
+                          ),
+                        )),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 35.0, bottom: 35),
+                child: Column(
+                  children: <Widget>[
+                    Text(
+                      title!.split(' (')[0].split('|')[0].trim(),
+                      textScaleFactor: 2.5,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          color: accent),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        "${album!}   ${artist!}",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: accentLight,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                Material(child: _buildPlayer(size)),
-              ],
-            ),
+              ),
+              Material(child: _buildPlayer(size)),
+            ],
           ),
         ),
       ),
@@ -185,8 +172,8 @@ class AudioAppState extends State<AudioApp> {
                   value: position?.inMilliseconds.toDouble() ?? 0.0,
                   onChanged: (double? value) {
                     setState(() {
-                      audioPlayer!.seek((Duration(
-                          seconds: (value! / 1000).toDouble().round())));
+                      audioPlayer!.seek(Duration(
+                          seconds: (value! / 1000).toDouble().round()));
                       value = value;
                     });
                   },
@@ -205,7 +192,7 @@ class AudioAppState extends State<AudioApp> {
                       children: <Widget>[
                         IconButton(
                           padding: EdgeInsets.zero,
-                          icon: Icon(
+                          icon: const Icon(
                             MdiIcons.download,
                             color: Colors.white,
                           ),
@@ -230,7 +217,7 @@ class AudioAppState extends State<AudioApp> {
                           padding: EdgeInsets.zero,
                           icon: Icon(
                             Icons.skip_previous,
-                            color: activePlaylist.length == 0
+                            color: activePlaylist.isEmpty
                                 ? Colors.grey
                                 : Colors.white,
                             size: size.width * 0.1,
@@ -286,7 +273,7 @@ class AudioAppState extends State<AudioApp> {
                           padding: EdgeInsets.zero,
                           icon: Icon(
                             Icons.skip_next,
-                            color: activePlaylist.length == 0
+                            color: activePlaylist.isEmpty
                                 ? Colors.grey
                                 : Colors.white,
                             size: size.width * 0.1,
@@ -313,7 +300,7 @@ class AudioAppState extends State<AudioApp> {
                               if (value == true) {
                                 return IconButton(
                                     color: accent,
-                                    icon: Icon(MdiIcons.star),
+                                    icon: const Icon(MdiIcons.star),
                                     iconSize: size.width * 0.056,
                                     onPressed: () => {
                                           removeUserLikedSong(ytid),
@@ -322,7 +309,7 @@ class AudioAppState extends State<AudioApp> {
                               } else {
                                 return IconButton(
                                     color: accent,
-                                    icon: Icon(MdiIcons.starOutline),
+                                    icon: const Icon(MdiIcons.starOutline),
                                     iconSize: size.width * 0.056,
                                     onPressed: () => {
                                           addUserLikedSong(ytid),
@@ -344,13 +331,11 @@ class AudioAppState extends State<AudioApp> {
                             showBottomSheet(
                                 context: context,
                                 builder: (context) => Container(
-                                      decoration: BoxDecoration(
+                                      decoration: const BoxDecoration(
                                           color: Color(0xff212c31),
                                           borderRadius: BorderRadius.only(
-                                              topLeft:
-                                                  const Radius.circular(18.0),
-                                              topRight:
-                                                  const Radius.circular(18.0))),
+                                              topLeft: Radius.circular(18.0),
+                                              topRight: Radius.circular(18.0))),
                                       height: size.height / 2.14,
                                       child: Column(
                                         crossAxisAlignment:
@@ -391,44 +376,42 @@ class AudioAppState extends State<AudioApp> {
                                               ],
                                             ),
                                           ),
-                                          lyrics != "null"
-                                              ? Expanded(
-                                                  flex: 1,
-                                                  child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              6.0),
-                                                      child: Center(
-                                                        child:
-                                                            SingleChildScrollView(
-                                                          child: Text(
-                                                            lyrics!,
-                                                            style: TextStyle(
-                                                              fontSize: 16.0,
-                                                              color:
-                                                                  accentLight,
-                                                            ),
-                                                            textAlign: TextAlign
-                                                                .center,
-                                                          ),
-                                                        ),
-                                                      )),
-                                                )
-                                              : Padding(
+                                          if (lyrics != "null")
+                                            Expanded(
+                                              flex: 1,
+                                              child: Padding(
                                                   padding:
-                                                      const EdgeInsets.only(
-                                                          top: 120.0),
+                                                      const EdgeInsets.all(6.0),
                                                   child: Center(
-                                                    child: Container(
+                                                    child:
+                                                        SingleChildScrollView(
                                                       child: Text(
-                                                        "No Lyrics available ;(",
+                                                        lyrics!,
                                                         style: TextStyle(
-                                                            color: accentLight,
-                                                            fontSize: 25),
+                                                          fontSize: 16.0,
+                                                          color: accentLight,
+                                                        ),
+                                                        textAlign:
+                                                            TextAlign.center,
                                                       ),
                                                     ),
+                                                  )),
+                                            )
+                                          else
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 120.0),
+                                              child: Center(
+                                                child: Container(
+                                                  child: Text(
+                                                    "No Lyrics available ;(",
+                                                    style: TextStyle(
+                                                        color: accentLight,
+                                                        fontSize: 25),
                                                   ),
                                                 ),
+                                              ),
+                                            ),
                                         ],
                                       ),
                                     ));
@@ -453,16 +436,16 @@ class AudioAppState extends State<AudioApp> {
               : duration != null
                   ? durationText
                   : '',
-          style: TextStyle(fontSize: 18.0, color: Colors.green[50]),
+          style: const TextStyle(fontSize: 18.0, color: Colors.white),
         ),
-        Spacer(),
+        const Spacer(),
         Text(
           position != null
               ? "${durationText ?? ''}".replaceAll("0:", "")
               : duration != null
                   ? durationText
                   : '',
-          style: TextStyle(fontSize: 18.0, color: Colors.green[50]),
+          style: const TextStyle(fontSize: 18.0, color: Colors.white),
         )
       ]);
 }

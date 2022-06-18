@@ -44,7 +44,7 @@ bool isMuted = false;
 downloadSong(song) async {
   var status = await Permission.storage.status;
   if (status.isDenied) {
-    Map<Permission, PermissionStatus> statuses =
+    final Map<Permission, PermissionStatus> statuses =
         await [Permission.storage].request();
     debugPrint(statuses[Permission.storage].toString());
   }
@@ -71,7 +71,8 @@ downloadSong(song) async {
         ".mp3";
 
     String filepath = '';
-    String? dlPath = await ExtStorageProvider.getExtStorage(dirName: 'Music');
+    final String? dlPath =
+        await ExtStorageProvider.getExtStorage(dirName: 'Music');
     try {
       await File(dlPath! + "/" + filename)
           .create(recursive: true)
@@ -84,9 +85,9 @@ downloadSong(song) async {
           .create(recursive: true)
           .then((value) => filepath = value.path);
     }
-    var audioStream = await getSongStream(song["ytid"].toString());
-    File file = File(filepath);
-    var fileStream = file.openWrite();
+    final audioStream = await getSongStream(song["ytid"].toString());
+    final File file = File(filepath);
+    final fileStream = file.openWrite();
     await yt.videos.streamsClient.get(audioStream).pipe(fileStream);
     await fileStream.flush();
     await fileStream.close();
@@ -129,7 +130,7 @@ void listenForChangesInSequenceState() {
 }
 
 Future<void> playSong(song, [isFromPlaylist]) async {
-  if (isFromPlaylist == null && activePlaylist.length != 0) {
+  if (isFromPlaylist == null && activePlaylist.isNotEmpty) {
     activePlaylist = [];
     id = 0;
   }
@@ -189,9 +190,9 @@ Future mute(bool muted) async {
 }
 
 Future<AudioHandler> initAudioService() async {
-  return await AudioService.init(
+  return AudioService.init(
     builder: () => MyAudioHandler(),
-    config: AudioServiceConfig(
+    config: const AudioServiceConfig(
       androidNotificationChannelId: 'me.musify',
       androidNotificationChannelName: 'Musify',
       androidNotificationOngoing: true,
@@ -229,14 +230,14 @@ class MyAudioHandler extends BaseAudioHandler {
 
   @override
   Future<void> skipToPrevious() async {
-    if (activePlaylist.length != 0 && id! - 1 >= 0) {
+    if (activePlaylist.isNotEmpty && id! - 1 >= 0) {
       playPrevious();
     }
   }
 
   @override
   Future<void> skipToNext() async {
-    if (activePlaylist.length != 0 && id! + 1 <= activePlaylist.length) {
+    if (activePlaylist.isNotEmpty && id! + 1 <= activePlaylist.length) {
       playNext();
     }
   }
