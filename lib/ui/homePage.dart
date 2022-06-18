@@ -39,7 +39,7 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             FutureBuilder(
-                future: get5playlists(),
+                future: getPlaylists(5),
                 builder: (context, data) {
                   return data.hasData
                       ? Container(

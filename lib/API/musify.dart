@@ -110,26 +110,22 @@ bool isSongAlreadyLiked(songId) {
   return userLikedSongsList.where((song) => song["ytid"] == songId).length > 0;
 }
 
-Future<List> getPlaylists() async {
+Future<List> getPlaylists([int? playlistsNum]) async {
   if (playlists.length == 0) {
     var localplaylists =
         json.decode(await rootBundle.loadString('assets/db/playlists.db.json'));
     playlists = localplaylists;
   }
-  return playlists;
-}
 
-Future get5playlists() async {
-  if (playlists.length == 0) {
-    var localplaylists =
-        json.decode(await rootBundle.loadString('assets/db/playlists.db.json'));
-    playlists = localplaylists;
+  if (playlistsNum != null) {
+    if (suggestedPlaylists.length == 0) {
+      suggestedPlaylists =
+          (playlists.toList()..shuffle()).take(playlistsNum).toList();
+    }
+    return suggestedPlaylists;
+  } else {
+    return playlists;
   }
-  if (suggestedPlaylists.length == 0) {
-    suggestedPlaylists = (playlists.toList()..shuffle()).take(5).toList();
-  }
-
-  return suggestedPlaylists;
 }
 
 Future getSongsFromPlaylist(playlistid) async {
