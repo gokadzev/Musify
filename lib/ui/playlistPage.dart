@@ -186,22 +186,21 @@ class _PlaylistPageState extends State<PlaylistPage> {
                             const Padding(
                               padding: EdgeInsets.only(top: 5, bottom: 5),
                             ),
-                            if (widget.playlist["list"].length < 12)
-                              TextButton(
-                                onPressed: () => {
-                                  setActivePlaylist(
-                                    widget.playlist["list"] as List,
-                                  ),
-                                  Navigator.pop(context, false)
-                                },
-                                style: TextButton.styleFrom(
-                                  backgroundColor: accent,
+                            TextButton(
+                              onPressed: () => {
+                                setActivePlaylist(
+                                  widget.playlist["list"] as List,
                                 ),
-                                child: const Text(
-                                  "PLAY ALL",
-                                  style: TextStyle(color: Colors.white),
-                                ),
+                                Navigator.pop(context, false)
+                              },
+                              style: TextButton.styleFrom(
+                                backgroundColor: accent,
                               ),
+                              child: const Text(
+                                "PLAY ALL",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
                           ],
                         ),
                       )
