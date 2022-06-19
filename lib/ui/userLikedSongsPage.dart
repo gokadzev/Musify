@@ -101,17 +101,18 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
                           ),
                           const Padding(
                               padding: EdgeInsets.only(top: 5, bottom: 5)),
-                          TextButton(
-                              onPressed: () => {
-                                    setActivePlaylist(userLikedSongsList),
-                                    Navigator.pop(context, false)
-                                  },
-                              style:
-                                  TextButton.styleFrom(backgroundColor: accent),
-                              child: const Text(
-                                "PLAY ALL",
-                                style: TextStyle(color: Colors.white),
-                              )),
+                          if (userLikedSongsList.length < 12)
+                            TextButton(
+                                onPressed: () => {
+                                      setActivePlaylist(userLikedSongsList),
+                                      Navigator.pop(context, false)
+                                    },
+                                style: TextButton.styleFrom(
+                                    backgroundColor: accent),
+                                child: const Text(
+                                  "PLAY ALL",
+                                  style: TextStyle(color: Colors.white),
+                                )),
                         ],
                       ),
                     )

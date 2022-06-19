@@ -1,15 +1,19 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:get_it/get_it.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/helper/version.dart';
+import 'package:musify/services/audio_handler.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/data_manager.dart';
-import 'package:musify/services/locator.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:musify/ui/rootPage.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+
+GetIt getIt = GetIt.instance;
 
 main() async {
   await Hive.initFlutter();
@@ -32,7 +36,7 @@ main() async {
   final PackageInfo packageInfo = await PackageInfo.fromPlatform();
   version = packageInfo.version;
   await enableBooster();
-  setupServiceLocator();
+  initialisation();
   runApp(MyApp());
 }
 
@@ -56,6 +60,21 @@ class MyApp extends StatelessWidget {
       home: Musify(),
     );
   }
+}
+
+Future<void> initialisation() async {
+  final AudioHandler audioHandler = await AudioService.init(
+    builder: () => MyAudioHandler(),
+    config: const AudioServiceConfig(
+      androidNotificationChannelId: 'me.musify',
+      androidNotificationChannelName: 'Musify',
+      androidNotificationOngoing: true,
+      androidStopForegroundOnPause: true,
+      androidNotificationIcon: 'drawable/musify',
+      androidShowNotificationBadge: true,
+    ),
+  );
+  getIt.registerSingleton<AudioHandler>(audioHandler);
 }
 
 class TestClass {

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/customWidgets/spinner.dart';
@@ -23,8 +24,6 @@ get isPlaying => buttonNotifier.value == MPlayerState.playing;
 
 get isPaused => buttonNotifier.value == MPlayerState.paused;
 
-final songLikeStatus = ValueNotifier<bool>(isSongAlreadyLiked(ytid));
-
 enum MPlayerState { stopped, playing, paused, loading }
 
 class AudioApp extends StatefulWidget {
@@ -37,7 +36,6 @@ class AudioAppState extends State<AudioApp> {
   @override
   void initState() {
     super.initState();
-    listenForChangesInSequenceState();
 
     positionSubscription = audioPlayer?.positionStream
         .listen((p) => {if (mounted) setState(() => position = p)});
@@ -47,114 +45,130 @@ class AudioAppState extends State<AudioApp> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: bgColor,
-      appBar: AppBar(
-        systemOverlayStyle:
-            const SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
         backgroundColor: bgColor,
-        elevation: 0,
-        centerTitle: true,
-        title: Text(
-          "Now Playing",
-          style: TextStyle(
-            color: accent,
-            fontSize: 25,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 14.0),
-          child: IconButton(
-            icon: Icon(
-              Icons.keyboard_arrow_down,
-              size: 32,
+        appBar: AppBar(
+          systemOverlayStyle:
+              const SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
+          backgroundColor: bgColor,
+          elevation: 0,
+          centerTitle: true,
+          title: Text(
+            "Now Playing",
+            style: TextStyle(
               color: accent,
+              fontSize: 25,
+              fontWeight: FontWeight.w700,
             ),
-            onPressed: () => Navigator.pop(context, false),
+          ),
+          leading: Padding(
+            padding: const EdgeInsets.only(left: 14.0),
+            child: IconButton(
+              icon: Icon(
+                Icons.keyboard_arrow_down,
+                size: 32,
+                color: accent,
+              ),
+              onPressed: () => Navigator.pop(context, false),
+            ),
           ),
         ),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.only(top: size.height * 0.012),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: size.width / 1.2,
-                height: size.width / 1.2,
-                child: CachedNetworkImage(
-                    imageUrl: highResImage!,
-                    imageBuilder: (context, imageProvider) => Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            shape: BoxShape.rectangle,
-                            image: DecorationImage(
-                              image: imageProvider,
-                              fit: BoxFit.cover,
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.only(top: size.height * 0.012),
+            child: StreamBuilder<SequenceState?>(
+                stream: audioPlayer!.sequenceStateStream,
+                builder: (context, snapshot) {
+                  final state = snapshot.data;
+                  if (state?.sequence.isEmpty ?? true) {
+                    return const SizedBox();
+                  }
+                  final metadata = state!.currentSource!.tag;
+                  final songLikeStatus = ValueNotifier<bool>(
+                      isSongAlreadyLiked(metadata.extras["ytid"]));
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: size.width / 1.2,
+                        height: size.width / 1.2,
+                        child: CachedNetworkImage(
+                            imageUrl: metadata.artUri.toString(),
+                            imageBuilder: (context, imageProvider) => Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    shape: BoxShape.rectangle,
+                                    image: DecorationImage(
+                                      image: imageProvider,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                            placeholder: (context, url) => Spinner(),
+                            errorWidget: (context, url, error) => Container(
+                                  width: size.width / 1.2,
+                                  height: size.width / 1.2,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Icon(MdiIcons.musicNoteOutline,
+                                          size: size.width / 8, color: accent),
+                                    ],
+                                  ),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        accent.withAlpha(30),
+                                        Colors.white.withAlpha(30)
+                                      ],
+                                    ),
+                                  ),
+                                )),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 35.0, bottom: 35),
+                        child: Column(
+                          children: <Widget>[
+                            Text(
+                              metadata!.title
+                                  .toString()
+                                  .split(' (')[0]
+                                  .split('|')[0]
+                                  .trim(),
+                              textScaleFactor: 2.5,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                  color: accent),
                             ),
-                          ),
-                        ),
-                    placeholder: (context, url) => Spinner(),
-                    errorWidget: (context, url, error) => Container(
-                          width: size.width / 1.2,
-                          height: size.width / 1.2,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Icon(MdiIcons.musicNoteOutline,
-                                  size: size.width / 8, color: accent),
-                            ],
-                          ),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.0),
-                            gradient: LinearGradient(
-                              colors: [
-                                accent.withAlpha(30),
-                                Colors.white.withAlpha(30)
-                              ],
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Text(
+                                "${metadata!.artist}",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: accentLight,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
                             ),
-                          ),
-                        )),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 35.0, bottom: 35),
-                child: Column(
-                  children: <Widget>[
-                    Text(
-                      title!.split(' (')[0].split('|')[0].trim(),
-                      textScaleFactor: 2.5,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                          color: accent),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: Text(
-                        "${album!}   ${artist!}",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: accentLight,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
+                          ],
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              Material(child: _buildPlayer(size)),
-            ],
+                      Material(
+                          child: _buildPlayer(size, songLikeStatus,
+                              metadata.extras["ytid"], metadata)),
+                    ],
+                  );
+                }),
           ),
-        ),
-      ),
-    );
+        ));
   }
 
-  Widget _buildPlayer(size) => Container(
+  Widget _buildPlayer(size, songLikeStatus, ytid, metadata) => Container(
         padding: EdgeInsets.only(
             top: size.height * 0.01,
             left: 16,
@@ -217,9 +231,9 @@ class AudioAppState extends State<AudioApp> {
                           padding: EdgeInsets.zero,
                           icon: Icon(
                             Icons.skip_previous,
-                            color: activePlaylist.isEmpty
-                                ? Colors.grey
-                                : Colors.white,
+                            color: audioPlayer!.hasPrevious
+                                ? Colors.white
+                                : Colors.grey,
                             size: size.width * 0.1,
                           ),
                           iconSize: size.width * 0.056,
@@ -273,9 +287,9 @@ class AudioAppState extends State<AudioApp> {
                           padding: EdgeInsets.zero,
                           icon: Icon(
                             Icons.skip_next,
-                            color: activePlaylist.isEmpty
-                                ? Colors.grey
-                                : Colors.white,
+                            color: audioPlayer!.hasNext
+                                ? Colors.white
+                                : Colors.grey,
                             size: size.width * 0.1,
                           ),
                           iconSize: size.width * 0.08,
@@ -326,7 +340,8 @@ class AudioAppState extends State<AudioApp> {
                       return TextButton(
                           onPressed: () async {
                             if (lyrics == "null") {
-                              await getSongLyrics();
+                              await getSongLyrics(metadata.artist.toString(),
+                                  metadata.title.toString());
                             }
                             showBottomSheet(
                                 context: context,

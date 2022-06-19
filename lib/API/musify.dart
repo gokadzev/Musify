@@ -1,8 +1,11 @@
 import 'dart:convert';
 
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:musify/helper/formatter.dart';
+import 'package:musify/helper/mediaitem.dart';
+import 'package:musify/services/audio_handler.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
@@ -17,15 +20,7 @@ List userPlaylists = [];
 List userLikedSongsList = [];
 List suggestedPlaylists = [];
 
-String? kUrl = "",
-    image = "",
-    lowResImage = "",
-    highResImage = "",
-    title = "",
-    album = "",
-    artist = "",
-    ytid = "",
-    lyrics;
+String? lyrics = "null";
 
 dynamic activeSong;
 
@@ -150,10 +145,16 @@ Future getSongsFromPlaylist(playlistid) async {
   return playlistSongs;
 }
 
-setActivePlaylist(playlist) async {
-  activePlaylist = playlist;
-  id = 0;
-  setSongDetails(activePlaylist[id!]);
+setActivePlaylist(List plist) async {
+  List<MediaItem> activePlaylist = [];
+
+  for (var song in plist) {
+    final songUrl = await getSongUrl(song["ytid"]);
+    activePlaylist.add(mapToMediaItem(song, songUrl));
+  }
+
+  MyAudioHandler().addQueueItems(activePlaylist);
+
   play();
 }
 
@@ -172,30 +173,6 @@ Future getPlaylistInfoForWidget(dynamic id) async {
   }
 
   return playlist;
-}
-
-Future setSongDetails(song) async {
-  id = song["id"];
-  title = song["title"];
-  image = song["image"];
-  lowResImage = song["lowResImage"];
-  highResImage = song["highResImage"];
-  album = song["album"] == null ? '' : song["album"];
-  ytid = song["ytid"].toString();
-  activeSong = song;
-
-  try {
-    artist = song['more_info']['singers'];
-  } catch (e) {
-    artist = "-";
-  }
-
-  lyrics = "null";
-
-  final audio = await getSongUrl(ytid);
-  audioPlayer?.setUrl(audio);
-  kUrl = audio;
-  kUrlNotifier.value = audio;
 }
 
 Future getSongUrl(songId) async {
@@ -220,7 +197,7 @@ Future getSongDetails(songIndex, songId) async {
       song.title.split('-')[0]);
 }
 
-Future getSongLyrics() async {
+Future getSongLyrics(artist, title) async {
   final String lyricsApiUrl =
       'https://api.lyrics.ovh/v1/${artist!}/${title!.split(" (")[0].split("|")[0].trim()}';
   try {
