@@ -1,4 +1,5 @@
 import 'package:audio_service/audio_service.dart';
+import 'package:flutter/widgets.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:musify/services/audio_manager.dart';
 
@@ -17,45 +18,47 @@ class MyAudioHandler extends BaseAudioHandler {
     try {
       await audioPlayer!.setAudioSource(_playlist);
     } catch (e) {
-      print("Error: $e");
+      debugPrint("Error: $e");
     }
   }
 
   void _notifyAudioHandlerAboutPlaybackEvents() {
     audioPlayer!.playbackEventStream.listen((PlaybackEvent event) {
       final playing = audioPlayer!.playing;
-      playbackState.add(playbackState.value.copyWith(
-        controls: [
-          MediaControl.skipToPrevious,
-          if (playing) MediaControl.pause else MediaControl.play,
-          MediaControl.skipToNext,
-          MediaControl.stop
-        ],
-        systemActions: const {
-          MediaAction.seek,
-        },
-        androidCompactActionIndices: const [0, 1, 3],
-        processingState: const {
-          ProcessingState.idle: AudioProcessingState.idle,
-          ProcessingState.loading: AudioProcessingState.loading,
-          ProcessingState.buffering: AudioProcessingState.buffering,
-          ProcessingState.ready: AudioProcessingState.ready,
-          ProcessingState.completed: AudioProcessingState.completed,
-        }[audioPlayer!.processingState]!,
-        repeatMode: const {
-          LoopMode.off: AudioServiceRepeatMode.none,
-          LoopMode.one: AudioServiceRepeatMode.one,
-          LoopMode.all: AudioServiceRepeatMode.all,
-        }[audioPlayer!.loopMode]!,
-        shuffleMode: (audioPlayer!.shuffleModeEnabled)
-            ? AudioServiceShuffleMode.all
-            : AudioServiceShuffleMode.none,
-        playing: playing,
-        updatePosition: audioPlayer!.position,
-        bufferedPosition: audioPlayer!.bufferedPosition,
-        speed: audioPlayer!.speed,
-        queueIndex: event.currentIndex,
-      ));
+      playbackState.add(
+        playbackState.value.copyWith(
+          controls: [
+            MediaControl.skipToPrevious,
+            if (playing) MediaControl.pause else MediaControl.play,
+            MediaControl.skipToNext,
+            MediaControl.stop
+          ],
+          systemActions: const {
+            MediaAction.seek,
+          },
+          androidCompactActionIndices: const [0, 1, 3],
+          processingState: const {
+            ProcessingState.idle: AudioProcessingState.idle,
+            ProcessingState.loading: AudioProcessingState.loading,
+            ProcessingState.buffering: AudioProcessingState.buffering,
+            ProcessingState.ready: AudioProcessingState.ready,
+            ProcessingState.completed: AudioProcessingState.completed,
+          }[audioPlayer!.processingState]!,
+          repeatMode: const {
+            LoopMode.off: AudioServiceRepeatMode.none,
+            LoopMode.one: AudioServiceRepeatMode.one,
+            LoopMode.all: AudioServiceRepeatMode.all,
+          }[audioPlayer!.loopMode]!,
+          shuffleMode: (audioPlayer!.shuffleModeEnabled)
+              ? AudioServiceShuffleMode.all
+              : AudioServiceShuffleMode.none,
+          playing: playing,
+          updatePosition: audioPlayer!.position,
+          bufferedPosition: audioPlayer!.bufferedPosition,
+          speed: audioPlayer!.speed,
+          queueIndex: event.currentIndex,
+        ),
+      );
     });
   }
 
@@ -116,7 +119,7 @@ class MyAudioHandler extends BaseAudioHandler {
 
   UriAudioSource _createAudioSource(MediaItem mediaItem) {
     return AudioSource.uri(
-      Uri.parse(mediaItem.extras!['url']),
+      Uri.parse(mediaItem.extras!['url'].toString()),
       tag: mediaItem,
     );
   }

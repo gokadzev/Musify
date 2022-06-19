@@ -1,8 +1,8 @@
-formatSongTitle(String title) {
+String formatSongTitle(String title) {
   return title
       .replaceAll("&amp;", "&")
       .replaceAll("&#039;", "'")
-      .replaceAll("&quot;", "\"")
+      .replaceAll("&quot;", '"')
       .replaceAll("[Official Music Video]", "")
       .replaceAll("(Official Music Video)", "")
       .replaceAll("OFFICIAL MUSIC VIDEO", "")
@@ -20,8 +20,15 @@ formatSongTitle(String title) {
       .replaceAll("[Official Lyric Video]", "");
 }
 
-returnSongLayout(index, String ytid, String title, String image,
-    String lowResImage, String highResImage, String artist) {
+Map<String, dynamic> returnSongLayout(
+  index,
+  String ytid,
+  String title,
+  String image,
+  String lowResImage,
+  String highResImage,
+  String artist,
+) {
   return {
     "id": index,
     "ytid": ytid,

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:musify/helper/formatter.dart';
 import 'package:musify/helper/mediaitem.dart';
@@ -10,7 +11,7 @@ import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
-var yt = YoutubeExplode();
+final yt = YoutubeExplode();
 
 List ytplaylists = [];
 
@@ -28,19 +29,21 @@ int? id = 0;
 
 List activePlaylist = [];
 
-Future<List> fetchSongsList(searchQuery) async {
-  var s = yt.search.search(searchQuery);
-  List list = await s;
+Future<List> fetchSongsList(String searchQuery) async {
+  final List list = await yt.search.search(searchQuery);
   searchedList = [];
   for (var s in list) {
-    searchedList.add(returnSongLayout(
+    searchedList.add(
+      returnSongLayout(
         0,
         s.id.toString(),
         formatSongTitle(s.title.split('-')[s.title.split('-').length - 1]),
         s.thumbnails.standardResUrl,
         s.thumbnails.lowResUrl,
         s.thumbnails.maxResUrl,
-        s.title.split('-')[0]));
+        s.title.split('-')[0],
+      ),
+    );
   }
   return searchedList;
 }
@@ -49,15 +52,19 @@ Future get10Music(playlistId) async {
   var newSongs = [];
   var index = 0;
   await for (var song in yt.playlists.getVideos(playlistId).take(10)) {
-    newSongs.add(returnSongLayout(
+    newSongs.add(
+      returnSongLayout(
         index,
         song.id.toString(),
         formatSongTitle(
-            song.title.split('-')[song.title.split('-').length - 1]),
+          song.title.split('-')[song.title.split('-').length - 1],
+        ),
         song.thumbnails.standardResUrl,
         song.thumbnails.lowResUrl,
         song.thumbnails.maxResUrl,
-        song.title.split('-')[0]));
+        song.title.split('-')[0],
+      ),
+    );
     index += 1;
   }
 
@@ -130,15 +137,19 @@ Future getSongsFromPlaylist(playlistid) async {
   var playlistSongs = [];
   var index = 0;
   await for (var song in yt.playlists.getVideos(playlistid)) {
-    playlistSongs.add(returnSongLayout(
+    playlistSongs.add(
+      returnSongLayout(
         index,
         song.id.toString(),
         formatSongTitle(
-            song.title.split('-')[song.title.split('-').length - 1]),
+          song.title.split('-')[song.title.split('-').length - 1],
+        ),
         song.thumbnails.standardResUrl,
         song.thumbnails.lowResUrl,
         song.thumbnails.maxResUrl,
-        song.title.split('-')[0]));
+        song.title.split('-')[0],
+      ),
+    );
     index += 1;
   }
 
@@ -175,39 +186,42 @@ Future getPlaylistInfoForWidget(dynamic id) async {
   return playlist;
 }
 
-Future getSongUrl(songId) async {
+Future getSongUrl(dynamic songId) async {
   final manifest = await yt.videos.streamsClient.getManifest(songId);
   return manifest.audioOnly.withHighestBitrate().url.toString();
 }
 
-Future getSongStream(songId) async {
+Future getSongStream(dynamic songId) async {
   final manifest = await yt.videos.streamsClient.getManifest(songId);
   return manifest.audioOnly.withHighestBitrate();
 }
 
-Future getSongDetails(songIndex, songId) async {
+Future getSongDetails(dynamic songIndex, dynamic songId) async {
   final song = await yt.videos.get(songId);
   return returnSongLayout(
-      songIndex,
-      song.id.toString(),
-      formatSongTitle(song.title.split('-')[song.title.split('-').length - 1]),
-      song.thumbnails.standardResUrl,
-      song.thumbnails.lowResUrl,
-      song.thumbnails.maxResUrl,
-      song.title.split('-')[0]);
+    songIndex,
+    song.id.toString(),
+    formatSongTitle(song.title.split('-')[song.title.split('-').length - 1]),
+    song.thumbnails.standardResUrl,
+    song.thumbnails.lowResUrl,
+    song.thumbnails.maxResUrl,
+    song.title.split('-')[0],
+  );
 }
 
-Future getSongLyrics(artist, title) async {
+Future getSongLyrics(String artist, String title) async {
   final String lyricsApiUrl =
-      'https://api.lyrics.ovh/v1/${artist!}/${title!.split(" (")[0].split("|")[0].trim()}';
+      'https://api.lyrics.ovh/v1/$artist/${title.split(" (")[0].split("|")[0].trim()}';
   try {
-    final lyricsApiRes = await DefaultCacheManager().getSingleFile(lyricsApiUrl,
-        headers: {
-          "Accept": "application/json"
-        }).timeout(const Duration(seconds: 5));
+    final lyricsApiRes = await DefaultCacheManager().getSingleFile(
+      lyricsApiUrl,
+      headers: {"Accept": "application/json"},
+    ).timeout(const Duration(seconds: 5));
     final lyricsResponse = await json.decode(await lyricsApiRes.readAsString());
     if (lyricsResponse['lyrics'] != null) {
-      lyrics = lyricsResponse['lyrics'];
+      lyrics = lyricsResponse['lyrics'].toString();
     }
-  } catch (e) {}
+  } catch (e) {
+    debugPrint(e.toString());
+  }
 }

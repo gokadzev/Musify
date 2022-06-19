@@ -49,7 +49,8 @@ class SettingsCards extends StatelessWidget {
           child: Card(
             color: bgLight,
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0)),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
             elevation: 2.3,
             child: ListTile(
               leading: Icon(MdiIcons.shapeOutline, color: accent),
@@ -59,110 +60,116 @@ class SettingsCards extends StatelessWidget {
               ),
               onTap: () {
                 showModalBottomSheet(
-                    isDismissible: true,
-                    backgroundColor: Colors.transparent,
-                    context: context,
-                    builder: (BuildContext context) {
-                      final List<int> colors = [
-                        0xFFFFCDD2,
-                        0xFFF8BBD0,
-                        0xFFE1BEE7,
-                        0xFFD1C4E9,
-                        0xFFC5CAE9,
-                        0xFF8C9EFF,
-                        0xFFBBDEFB,
-                        0xFF82B1FF,
-                        0xFFB3E5FC,
-                        0xFF80D8FF,
-                        0xFFB2EBF2,
-                        0xFF84FFFF,
-                        0xFFB2DFDB,
-                        0xFFA7FFEB,
-                        0xFFC8E6C9,
-                        0xFFACE1AF,
-                        0xFFB9F6CA,
-                        0xFFDCEDC8,
-                        0xFFCCFF90,
-                        0xFFF0F4C3,
-                        0xFFF4FF81,
-                        0xFFFFF9C4,
-                        0xFFFFFF8D,
-                        0xFFFFECB3,
-                        0xFFFFE57F,
-                        0xFFFFE0B2,
-                        0xFFFFD180,
-                        0xFFFFCCBC,
-                        0xFFFF9E80,
-                        0xFFFD5C63,
-                        0xFFFFFFFF
-                      ];
-                      return Center(
-                          child: Container(
-                              decoration: BoxDecoration(
-                                  color: bgColor,
-                                  border: Border.all(
-                                    color: accent,
-                                  ),
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(20))),
-                              width:
-                                  MediaQuery.of(context).copyWith().size.width *
-                                      0.90,
-                              child: GridView.builder(
-                                  gridDelegate:
-                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 3,
-                                  ),
-                                  shrinkWrap: true,
-                                  physics: const BouncingScrollPhysics(),
-                                  itemCount: colors.length,
-                                  itemBuilder: (context, index) {
-                                    return Padding(
-                                        padding: const EdgeInsets.only(
-                                          top: 15.0,
-                                          bottom: 15.0,
+                  isDismissible: true,
+                  backgroundColor: Colors.transparent,
+                  context: context,
+                  builder: (BuildContext context) {
+                    final List<int> colors = [
+                      0xFFFFCDD2,
+                      0xFFF8BBD0,
+                      0xFFE1BEE7,
+                      0xFFD1C4E9,
+                      0xFFC5CAE9,
+                      0xFF8C9EFF,
+                      0xFFBBDEFB,
+                      0xFF82B1FF,
+                      0xFFB3E5FC,
+                      0xFF80D8FF,
+                      0xFFB2EBF2,
+                      0xFF84FFFF,
+                      0xFFB2DFDB,
+                      0xFFA7FFEB,
+                      0xFFC8E6C9,
+                      0xFFACE1AF,
+                      0xFFB9F6CA,
+                      0xFFDCEDC8,
+                      0xFFCCFF90,
+                      0xFFF0F4C3,
+                      0xFFF4FF81,
+                      0xFFFFF9C4,
+                      0xFFFFFF8D,
+                      0xFFFFECB3,
+                      0xFFFFE57F,
+                      0xFFFFE0B2,
+                      0xFFFFD180,
+                      0xFFFFCCBC,
+                      0xFFFF9E80,
+                      0xFFFD5C63,
+                      0xFFFFFFFF
+                    ];
+                    return Center(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: bgColor,
+                          border: Border.all(
+                            color: accent,
+                          ),
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(20),
+                          ),
+                        ),
+                        width:
+                            MediaQuery.of(context).copyWith().size.width * 0.90,
+                        child: GridView.builder(
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                          ),
+                          shrinkWrap: true,
+                          physics: const BouncingScrollPhysics(),
+                          itemCount: colors.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.only(
+                                top: 15.0,
+                                bottom: 15.0,
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  if (colors.length - 1 > index)
+                                    GestureDetector(
+                                      onTap: () {
+                                        addOrUpdateData(
+                                          "settings",
+                                          "accentColor",
+                                          colors[index],
+                                        );
+                                        accent = Color(colors[index]);
+                                        Fluttertoast.showToast(
+                                          backgroundColor: accent,
+                                          textColor: Colors.white,
+                                          msg:
+                                              "Accent Color has been Changed, move to other page to see changes!",
+                                          toastLength: Toast.LENGTH_SHORT,
+                                          gravity: ToastGravity.BOTTOM,
+                                          fontSize: 14.0,
+                                        );
+                                        Navigator.pop(context);
+                                      },
+                                      child: Material(
+                                        elevation: 4.0,
+                                        shape: const CircleBorder(),
+                                        child: CircleAvatar(
+                                          radius: 25,
+                                          backgroundColor: Color(
+                                            colors[index],
+                                          ),
                                         ),
-                                        child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceEvenly,
-                                            children: [
-                                              if (colors.length - 1 > index)
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    addOrUpdateData(
-                                                        "settings",
-                                                        "accentColor",
-                                                        colors[index]);
-                                                    accent =
-                                                        Color(colors[index]);
-                                                    Fluttertoast.showToast(
-                                                        backgroundColor: accent,
-                                                        textColor: Colors.white,
-                                                        msg:
-                                                            "Accent Color has been Changed, move to other page to see changes!",
-                                                        toastLength:
-                                                            Toast.LENGTH_SHORT,
-                                                        gravity:
-                                                            ToastGravity.BOTTOM,
-                                                        timeInSecForIosWeb: 1,
-                                                        fontSize: 14.0);
-                                                    Navigator.pop(context);
-                                                  },
-                                                  child: Material(
-                                                      elevation: 4.0,
-                                                      shape:
-                                                          const CircleBorder(),
-                                                      child: CircleAvatar(
-                                                          radius: 25,
-                                                          backgroundColor:
-                                                              Color(colors[
-                                                                  index]))),
-                                                )
-                                              else
-                                                const SizedBox.shrink()
-                                            ]));
-                                  })));
-                    });
+                                      ),
+                                    )
+                                  else
+                                    const SizedBox.shrink()
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    );
+                  },
+                );
               },
             ),
           ),
@@ -172,7 +179,8 @@ class SettingsCards extends StatelessWidget {
           child: Card(
             color: bgLight,
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0)),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
             elevation: 2.3,
             child: ListTile(
               leading: Icon(MdiIcons.broom, color: accent),
@@ -183,13 +191,13 @@ class SettingsCards extends StatelessWidget {
               onTap: () {
                 clearCache();
                 Fluttertoast.showToast(
-                    backgroundColor: accent,
-                    textColor: Colors.white,
-                    msg: "Cache cleared!",
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.BOTTOM,
-                    timeInSecForIosWeb: 1,
-                    fontSize: 14.0);
+                  backgroundColor: accent,
+                  textColor: Colors.white,
+                  msg: "Cache cleared!",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  fontSize: 14.0,
+                );
               },
             ),
           ),
@@ -199,7 +207,8 @@ class SettingsCards extends StatelessWidget {
           child: Card(
             color: bgLight,
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0)),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
             elevation: 2.3,
             child: ListTile(
               leading: Icon(MdiIcons.account, color: accent),
@@ -209,9 +218,11 @@ class SettingsCards extends StatelessWidget {
               ),
               onTap: () {
                 Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => UserPlaylistsPage()));
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => UserPlaylistsPage(),
+                  ),
+                );
               },
             ),
           ),
@@ -221,7 +232,8 @@ class SettingsCards extends StatelessWidget {
           child: Card(
             color: bgLight,
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0)),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
             elevation: 2.3,
             child: ListTile(
               leading: Icon(MdiIcons.star, color: accent),
@@ -230,8 +242,10 @@ class SettingsCards extends StatelessWidget {
                 style: TextStyle(color: accent),
               ),
               onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => UserLikedSongs()));
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => UserLikedSongs()),
+                );
               },
             ),
           ),
@@ -241,7 +255,8 @@ class SettingsCards extends StatelessWidget {
           child: Card(
             color: bgLight,
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0)),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
             elevation: 2.3,
             child: ListTile(
               leading: Icon(MdiIcons.cloudUpload, color: accent),
@@ -252,13 +267,13 @@ class SettingsCards extends StatelessWidget {
               onTap: () {
                 backupData();
                 Fluttertoast.showToast(
-                    backgroundColor: accent,
-                    textColor: Colors.white,
-                    msg: "User Data Backuped!",
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.BOTTOM,
-                    timeInSecForIosWeb: 1,
-                    fontSize: 14.0);
+                  backgroundColor: accent,
+                  textColor: Colors.white,
+                  msg: "User Data Backuped!",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  fontSize: 14.0,
+                );
               },
             ),
           ),
@@ -268,7 +283,8 @@ class SettingsCards extends StatelessWidget {
           child: Card(
             color: bgLight,
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0)),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
             elevation: 2.3,
             child: ListTile(
               leading: Icon(MdiIcons.cloudDownload, color: accent),
@@ -279,13 +295,13 @@ class SettingsCards extends StatelessWidget {
               onTap: () {
                 restoreData();
                 Fluttertoast.showToast(
-                    backgroundColor: accent,
-                    textColor: Colors.white,
-                    msg: "User Data Restored! Restart app to see changes",
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.BOTTOM,
-                    timeInSecForIosWeb: 1,
-                    fontSize: 14.0);
+                  backgroundColor: accent,
+                  textColor: Colors.white,
+                  msg: "User Data Restored! Restart app to see changes",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  fontSize: 14.0,
+                );
               },
             ),
           ),
@@ -295,7 +311,8 @@ class SettingsCards extends StatelessWidget {
           child: Card(
             color: bgLight,
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0)),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
             elevation: 2.3,
             child: ListTile(
               leading: Icon(MdiIcons.download, color: accent),
@@ -304,31 +321,33 @@ class SettingsCards extends StatelessWidget {
                 style: TextStyle(color: accent),
               ),
               onTap: () {
-                checkAppUpdates().then((available) => {
-                      if (available)
-                        {
-                          Fluttertoast.showToast(
-                              msg: "App Update Is Available And Downloading!",
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.BOTTOM,
-                              timeInSecForIosWeb: 1,
-                              backgroundColor: accent,
-                              textColor: Colors.white,
-                              fontSize: 14.0),
-                          downloadAppUpdates()
-                        }
-                      else
-                        {
-                          Fluttertoast.showToast(
-                              msg: "App Update Is Not Available!",
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.BOTTOM,
-                              timeInSecForIosWeb: 1,
-                              backgroundColor: accent,
-                              textColor: Colors.white,
-                              fontSize: 14.0)
-                        }
-                    });
+                checkAppUpdates().then(
+                  (available) => {
+                    if (available == true)
+                      {
+                        Fluttertoast.showToast(
+                          msg: "App Update Is Available And Downloading!",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM,
+                          backgroundColor: accent,
+                          textColor: Colors.white,
+                          fontSize: 14.0,
+                        ),
+                        downloadAppUpdates()
+                      }
+                    else
+                      {
+                        Fluttertoast.showToast(
+                          msg: "App Update Is Not Available!",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM,
+                          backgroundColor: accent,
+                          textColor: Colors.white,
+                          fontSize: 14.0,
+                        )
+                      }
+                  },
+                );
               },
             ),
           ),
@@ -338,7 +357,8 @@ class SettingsCards extends StatelessWidget {
           child: Card(
             color: bgLight,
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0)),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
             elevation: 2.3,
             child: ListTile(
               leading: Icon(MdiIcons.information, color: accent),

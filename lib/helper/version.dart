@@ -34,7 +34,7 @@ downloadAppUpdates() async {
     await file.delete();
   }
   await FlutterDownloader.enqueue(
-    url: map["url"],
+    url: map["url"].toString(),
     savedDir: dlPath,
     saveInPublicStorage: true,
     showNotification:

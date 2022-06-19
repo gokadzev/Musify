@@ -25,14 +25,10 @@ main() async {
       );
   FlutterDownloader.registerCallback(TestClass.callback);
   accent = await getData("settings", "accentColor") != null
-      ? Color(await getData("settings", "accentColor"))
-      : Color(0xFFFF9E80);
-  userPlaylists = await getData("user", "playlists") != null
-      ? await getData("user", "playlists")
-      : [];
-  userLikedSongsList = await getData("user", "likedSongs") != null
-      ? await getData("user", "likedSongs")
-      : [];
+      ? Color(await getData("settings", "accentColor") as int)
+      : const Color(0xFFFF9E80);
+  userPlaylists = await getData("user", "playlists") ?? [];
+  userLikedSongsList = await getData("user", "likedSongs") ?? [];
   final PackageInfo packageInfo = await PackageInfo.fromPlatform();
   version = packageInfo.version;
   await enableBooster();

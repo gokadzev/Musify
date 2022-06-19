@@ -33,62 +33,69 @@ class SongBar extends StatelessWidget {
           children: <Widget>[
             ListTile(
               leading: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: CachedNetworkImage(
-                    width: 70,
-                    height: 70,
-                    imageUrl: song["lowResImage"],
-                    imageBuilder: (context, imageProvider) => Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        shape: BoxShape.rectangle,
-                        image: DecorationImage(
-                          image: imageProvider,
-                          fit: BoxFit.cover,
-                        ),
+                padding: const EdgeInsets.all(8.0),
+                child: CachedNetworkImage(
+                  width: 70,
+                  height: 70,
+                  imageUrl: song["lowResImage"].toString(),
+                  imageBuilder: (context, imageProvider) => Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      shape: BoxShape.rectangle,
+                      image: DecorationImage(
+                        image: imageProvider,
+                        fit: BoxFit.cover,
                       ),
                     ),
-                  )),
+                  ),
+                ),
+              ),
               title: Text(
                 (song['title'])
                     .toString()
                     .split("(")[0]
-                    .replaceAll("&quot;", "\"")
+                    .replaceAll("&quot;", '"')
                     .replaceAll("&amp;", "&"),
                 style: TextStyle(color: accent),
               ),
               subtitle: Text(
-                song['more_info']["singers"],
+                song['more_info']["singers"].toString(),
                 style: TextStyle(color: accentLight),
               ),
-              trailing: Row(mainAxisSize: MainAxisSize.min, children: [
-                ValueListenableBuilder<bool>(
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ValueListenableBuilder<bool>(
                     valueListenable: songLikeStatus,
                     builder: (_, value, __) {
                       if (value == true) {
                         return IconButton(
-                            color: accent,
-                            icon: const Icon(MdiIcons.star),
-                            onPressed: () => {
-                                  removeUserLikedSong(song['ytid']),
-                                  songLikeStatus.value = false
-                                });
+                          color: accent,
+                          icon: const Icon(MdiIcons.star),
+                          onPressed: () => {
+                            removeUserLikedSong(song['ytid']),
+                            songLikeStatus.value = false
+                          },
+                        );
                       } else {
                         return IconButton(
-                            color: accent,
-                            icon: const Icon(MdiIcons.starOutline),
-                            onPressed: () => {
-                                  addUserLikedSong(song['ytid']),
-                                  songLikeStatus.value = true
-                                });
+                          color: accent,
+                          icon: const Icon(MdiIcons.starOutline),
+                          onPressed: () => {
+                            addUserLikedSong(song['ytid']),
+                            songLikeStatus.value = true
+                          },
+                        );
                       }
-                    }),
-                IconButton(
-                  color: accent,
-                  icon: const Icon(MdiIcons.downloadOutline),
-                  onPressed: () => downloadSong(song),
-                ),
-              ]),
+                    },
+                  ),
+                  IconButton(
+                    color: accent,
+                    icon: const Icon(MdiIcons.downloadOutline),
+                    onPressed: () => downloadSong(song),
+                  ),
+                ],
+              ),
             )
           ],
         ),

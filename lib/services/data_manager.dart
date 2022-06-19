@@ -4,26 +4,26 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:hive/hive.dart';
 import 'package:musify/services/ext_storage.dart';
 
-addOrUpdateData(category, key, value) async {
+Future<void> addOrUpdateData(String category, key, value) async {
   final box = await Hive.openBox(category);
   box.put(key, value);
 }
 
-getData(category, key) async {
+Future getData(String category, key) async {
   final box = await Hive.openBox(category);
   return box.get(key);
 }
 
-deleteData(category, key) async {
+Future<void> deleteData(String category, key) async {
   final box = await Hive.openBox(category);
   box.delete(key);
 }
 
-clearCache() {
+Future<void> clearCache() async {
   DefaultCacheManager().emptyCache();
 }
 
-backupData() async {
+Future<void> backupData() async {
   final String? dlPath =
       await ExtStorageProvider.getExtStorage(dirName: 'Musify');
   final box = await Hive.openBox('user');
@@ -34,7 +34,7 @@ backupData() async {
   box1.close();
 }
 
-restoreData() async {
+Future<void> restoreData() async {
   await Hive.openBox('user');
   var box = Hive.box('user');
   final boxPath = box.path;

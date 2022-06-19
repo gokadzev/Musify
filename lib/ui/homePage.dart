@@ -36,104 +36,114 @@ class _HomePageState extends State<HomePage> {
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             FutureBuilder(
-                future: getPlaylists(5),
-                builder: (context, data) {
-                  return data.hasData
-                      ? Container(
-                          child: Wrap(
-                            children: <Widget>[
-                              Padding(
-                                padding: EdgeInsets.only(
-                                    top:
-                                        MediaQuery.of(context).size.height / 55,
-                                    bottom: 10,
-                                    left: 25,
-                                    right: 25),
-                                child: Text(
-                                  "Suggested Playlists",
-                                  style: TextStyle(
-                                    color: accent,
-                                    fontSize: 20.0,
-                                    fontWeight: FontWeight.w700,
-                                  ),
+              future: getPlaylists(5),
+              builder: (context, data) {
+                return data.hasData
+                    ? Container(
+                        child: Wrap(
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.only(
+                                top: MediaQuery.of(context).size.height / 55,
+                                bottom: 10,
+                                left: 25,
+                                right: 25,
+                              ),
+                              child: Text(
+                                "Suggested Playlists",
+                                style: TextStyle(
+                                  color: accent,
+                                  fontSize: 20.0,
+                                  fontWeight: FontWeight.w700,
                                 ),
                               ),
-                              Container(
-                                  height: 230,
-                                  child: ListView.builder(
-                                      scrollDirection: Axis.horizontal,
-                                      itemCount: (data as dynamic).data.length,
-                                      itemBuilder: (context, index) {
-                                        return Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 15.0),
-                                            child: CubeContainer(
-                                                id: (data as dynamic)
-                                                    .data[index]["ytid"],
-                                                image: (data as dynamic)
-                                                    .data[index]["image"]));
-                                      }))
-                            ],
-                          ),
-                        )
-                      : Center(
-                          child: Padding(
+                            ),
+                            Container(
+                              height: 230,
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: (data as dynamic).data.length,
+                                itemBuilder: (context, index) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 15.0,
+                                    ),
+                                    child: CubeContainer(
+                                      id: (data as dynamic).data[index]["ytid"],
+                                      image: (data as dynamic)
+                                          .data[index]["image"]
+                                          .toString(),
+                                    ),
+                                  );
+                                },
+                              ),
+                            )
+                          ],
+                        ),
+                      )
+                    : Center(
+                        child: Padding(
                           padding: const EdgeInsets.all(35.0),
                           child: Spinner(),
-                        ));
-                }),
+                        ),
+                      );
+              },
+            ),
             FutureBuilder(
-                future: get10Music("PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx"),
-                builder: (context, data) {
-                  return data.hasData
-                      ? Container(
-                          child: Wrap(
-                            children: <Widget>[
-                              Padding(
-                                padding: EdgeInsets.only(
-                                    top:
-                                        MediaQuery.of(context).size.height / 55,
-                                    bottom: 10,
-                                    left: 25,
-                                    right: 25),
-                                child: Text(
-                                  "Recommended for you",
-                                  style: TextStyle(
-                                    color: accent,
-                                    fontSize: 20.0,
-                                    fontWeight: FontWeight.w700,
-                                  ),
+              future: get10Music("PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx"),
+              builder: (context, data) {
+                return data.hasData
+                    ? Container(
+                        child: Wrap(
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.only(
+                                top: MediaQuery.of(context).size.height / 55,
+                                bottom: 10,
+                                left: 25,
+                                right: 25,
+                              ),
+                              child: Text(
+                                "Recommended for you",
+                                style: TextStyle(
+                                  color: accent,
+                                  fontSize: 20.0,
+                                  fontWeight: FontWeight.w700,
                                 ),
                               ),
-                              Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 15.0),
-                                  child: Container(
-                                      child: ListView.builder(
-                                          shrinkWrap: true,
-                                          addAutomaticKeepAlives: false,
-                                          addRepaintBoundaries: false,
-                                          physics:
-                                              const BouncingScrollPhysics(),
-                                          scrollDirection: Axis.vertical,
-                                          itemCount:
-                                              (data as dynamic).data.length,
-                                          itemBuilder: (context, index) {
-                                            return SongBar(
-                                                (data as dynamic).data[index]);
-                                          })))
-                            ],
-                          ),
-                        )
-                      : Center(
-                          child: Padding(
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 15.0,
+                              ),
+                              child: Container(
+                                child: ListView.builder(
+                                  shrinkWrap: true,
+                                  addAutomaticKeepAlives: false,
+                                  addRepaintBoundaries: false,
+                                  physics: const BouncingScrollPhysics(),
+                                  itemCount: (data as dynamic).data.length,
+                                  itemBuilder: (context, index) {
+                                    return SongBar(
+                                      (data as dynamic).data[index],
+                                    );
+                                  },
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      )
+                    : Center(
+                        child: Padding(
                           padding: const EdgeInsets.all(35.0),
                           child: Spinner(),
-                        ));
-                }),
+                        ),
+                      );
+              },
+            ),
           ],
         ),
       ),
@@ -154,62 +164,72 @@ class CubeContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     return DelayedDisplay(
-        delay: const Duration(milliseconds: 200),
-        fadingDuration: const Duration(milliseconds: 400),
-        child: GestureDetector(
-          onTap: () {
-            getPlaylistInfoForWidget(id).then((value) => {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => PlaylistPage(playlist: value)))
-                });
-          },
-          child: Column(
-            children: [
-              Container(
-                height: size.height / 4.15,
-                width: size.width / 1.9,
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
+      delay: const Duration(milliseconds: 200),
+      fadingDuration: const Duration(milliseconds: 400),
+      child: GestureDetector(
+        onTap: () {
+          getPlaylistInfoForWidget(id).then(
+            (value) => {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PlaylistPage(playlist: value),
+                ),
+              )
+            },
+          );
+        },
+        child: Column(
+          children: [
+            Container(
+              height: size.height / 4.15,
+              width: size.width / 1.9,
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                color: Colors.transparent,
+                child: Container(
+                  child: CachedNetworkImage(
+                    imageUrl: image,
+                    imageBuilder: (context, imageProvider) => Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        shape: BoxShape.rectangle,
+                        image: DecorationImage(
+                          image: imageProvider,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    errorWidget: (context, url, error) => Container(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(
+                            MdiIcons.musicNoteOutline,
+                            size: 30,
+                            color: accent,
+                          ),
+                        ],
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.0),
+                        gradient: LinearGradient(
+                          colors: [
+                            accent.withAlpha(30),
+                            Colors.white.withAlpha(30)
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
-                  color: Colors.transparent,
-                  child: Container(
-                      child: CachedNetworkImage(
-                          imageUrl: image,
-                          imageBuilder: (context, imageProvider) => Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  shape: BoxShape.rectangle,
-                                  image: DecorationImage(
-                                    image: imageProvider,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                          errorWidget: (context, url, error) => Container(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Icon(MdiIcons.musicNoteOutline,
-                                        size: 30, color: accent),
-                                  ],
-                                ),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      accent.withAlpha(30),
-                                      Colors.white.withAlpha(30)
-                                    ],
-                                  ),
-                                ),
-                              ))),
                 ),
               ),
-            ],
-          ),
-        ));
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

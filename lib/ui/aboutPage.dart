@@ -51,9 +51,10 @@ class AboutCards extends StatelessWidget {
                     child: Text(
                       "Musify  | $version",
                       style: TextStyle(
-                          color: accent,
-                          fontSize: 24,
-                          fontWeight: FontWeight.w600),
+                        color: accent,
+                        fontSize: 24,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),
@@ -73,7 +74,8 @@ class AboutCards extends StatelessWidget {
           child: Card(
             color: bgLight,
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0)),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
             elevation: 2.3,
             child: ListTile(
               leading: Container(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CustomAnimatedBottomBar extends StatelessWidget {
-  CustomAnimatedBottomBar({
+  const CustomAnimatedBottomBar({
     Key? key,
     this.selectedIndex = 0,
     this.showElevation = true,
@@ -55,7 +55,7 @@ class CustomAnimatedBottomBar extends StatelessWidget {
           child: Row(
             mainAxisAlignment: mainAxisAlignment,
             children: items.map((item) {
-              var index = items.indexOf(item);
+              final index = items.indexOf(item);
               return GestureDetector(
                 onTap: () => onItemSelected(index),
                 child: _ItemWidget(
@@ -118,18 +118,13 @@ class _ItemWidget extends StatelessWidget {
             width: isSelected ? 130 : 50,
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 IconTheme(
                   data: IconThemeData(
                     size: iconSize,
                     color: isSelected
                         ? item.activeColor.withOpacity(1)
-                        : item.inactiveColor == null
-                            ? item.activeColor
-                            : item.inactiveColor,
+                        : item.inactiveColor ?? item.activeColor,
                   ),
                   child: item.icon,
                 ),
@@ -161,7 +156,7 @@ class BottomNavBarItem {
   BottomNavBarItem({
     required this.icon,
     required this.title,
-    this.activeColor = Colors.blue,
+    this.activeColor = Colors.orange,
     this.textAlign,
     this.inactiveColor,
   });

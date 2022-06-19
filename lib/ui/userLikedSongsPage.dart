@@ -14,31 +14,32 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: bgColor,
-        appBar: AppBar(
-          systemOverlayStyle:
-              const SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
-          centerTitle: true,
-          title: Text(
-            "User Liked Songs",
-            style: TextStyle(
-              color: accent,
-              fontSize: 25,
-              fontWeight: FontWeight.w700,
-            ),
+      backgroundColor: bgColor,
+      appBar: AppBar(
+        systemOverlayStyle:
+            const SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
+        centerTitle: true,
+        title: Text(
+          "User Liked Songs",
+          style: TextStyle(
+            color: accent,
+            fontSize: 25,
+            fontWeight: FontWeight.w700,
           ),
-          leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back,
-              color: accent,
-            ),
-            onPressed: () => Navigator.pop(context, false),
-          ),
-          backgroundColor: Colors.transparent,
-          elevation: 0,
         ),
-        body: SingleChildScrollView(
-          child: Column(children: <Widget>[
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: accent,
+          ),
+          onPressed: () => Navigator.pop(context, false),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
             Column(
               children: [
                 Row(
@@ -66,8 +67,11 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
-                              Icon(MdiIcons.musicNoteOutline,
-                                  size: 30, color: accent),
+                              Icon(
+                                MdiIcons.musicNoteOutline,
+                                size: 30,
+                                color: accent,
+                              ),
                               Text(
                                 "User Liked Songs",
                                 style: TextStyle(color: accent),
@@ -87,32 +91,37 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
                           Text(
                             "User Liked Songs",
                             style: TextStyle(
-                                color: accent,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600),
+                              color: accent,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                           const SizedBox(height: 16.0),
                           Text(
                             "Your favorite songs here!",
                             style: TextStyle(
-                                color: accent,
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600),
+                              color: accent,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                           const Padding(
-                              padding: EdgeInsets.only(top: 5, bottom: 5)),
+                            padding: EdgeInsets.only(top: 5, bottom: 5),
+                          ),
                           if (userLikedSongsList.length < 12)
                             TextButton(
-                                onPressed: () => {
-                                      setActivePlaylist(userLikedSongsList),
-                                      Navigator.pop(context, false)
-                                    },
-                                style: TextButton.styleFrom(
-                                    backgroundColor: accent),
-                                child: const Text(
-                                  "PLAY ALL",
-                                  style: TextStyle(color: Colors.white),
-                                )),
+                              onPressed: () => {
+                                setActivePlaylist(userLikedSongsList),
+                                Navigator.pop(context, false)
+                              },
+                              style: TextButton.styleFrom(
+                                backgroundColor: accent,
+                              ),
+                              child: const Text(
+                                "PLAY ALL",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
                         ],
                       ),
                     )
@@ -120,21 +129,25 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
                 ),
                 const Padding(padding: EdgeInsets.only(top: 20)),
                 ListView.builder(
-                    shrinkWrap: true,
-                    physics: const BouncingScrollPhysics(),
-                    addAutomaticKeepAlives:
-                        false, // may be problem with lazyload if it implemented
-                    addRepaintBoundaries: false,
-                    // Need to display a loading tile if more items are coming
-                    itemCount: userLikedSongsList.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Padding(
-                          padding: const EdgeInsets.only(top: 5, bottom: 5),
-                          child: SongBar(userLikedSongsList[index]));
-                    })
+                  shrinkWrap: true,
+                  physics: const BouncingScrollPhysics(),
+                  addAutomaticKeepAlives:
+                      false, // may be problem with lazyload if it implemented
+                  addRepaintBoundaries: false,
+                  // Need to display a loading tile if more items are coming
+                  itemCount: userLikedSongsList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 5, bottom: 5),
+                      child: SongBar(userLikedSongsList[index]),
+                    );
+                  },
+                )
               ],
             )
-          ]),
-        ));
+          ],
+        ),
+      ),
+    );
   }
 }

@@ -14,8 +14,8 @@ class _SearchPageState extends State<SearchPage> {
   bool fetchingSongs = false;
   FocusNode inputNode = FocusNode();
 
-  search() async {
-    String searchQuery = searchBar.text;
+  Future<void> search() async {
+    final String searchQuery = searchBar.text;
     if (searchQuery.isEmpty) return;
     fetchingSongs = true;
     setState(() {});
@@ -39,7 +39,6 @@ class _SearchPageState extends State<SearchPage> {
               },
               controller: searchBar,
               focusNode: inputNode,
-              autofocus: false,
               style: TextStyle(
                 fontSize: 16,
                 color: accent,
@@ -97,8 +96,9 @@ class _SearchPageState extends State<SearchPage> {
                 itemCount: searchedList.length,
                 itemBuilder: (BuildContext ctxt, int index) {
                   return Padding(
-                      padding: const EdgeInsets.only(top: 5, bottom: 5),
-                      child: SongBar(searchedList[index]));
+                    padding: const EdgeInsets.only(top: 5, bottom: 5),
+                    child: SongBar(searchedList[index]),
+                  );
                 },
               )
           ],
