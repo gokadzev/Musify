@@ -1,4 +1,4 @@
-on: [push, pull_request]
+on: workflow_dispatch
 name: Test, Build and Release apk
 jobs:
   build:
