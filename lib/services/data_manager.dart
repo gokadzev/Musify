@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:hive/hive.dart';
 import 'package:musify/services/ext_storage.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 Future<void> addOrUpdateData(String category, key, value) async {
   final box = await Hive.openBox(category);
@@ -24,29 +25,43 @@ Future<void> clearCache() async {
 }
 
 Future<void> backupData() async {
+  final List boxNames = ["user", "settings"];
   final String? dlPath =
       await ExtStorageProvider.getExtStorage(dirName: 'Musify');
-  final box = await Hive.openBox('user');
-  File(Hive.box('user').path!).copy('${dlPath!}/userdata.hive');
-  box.close();
-  final box1 = await Hive.openBox('settings');
-  File(Hive.box('settings').path!).copy('$dlPath/settings.hive');
-  box1.close();
+
+  for (int i = 0; i < boxNames.length; i++) {
+    await Hive.openBox(boxNames[i].toString());
+    try {
+      await File(Hive.box(boxNames[i].toString()).path!)
+          .copy('$dlPath/${boxNames[i]}Data.hive');
+    } catch (e) {
+      await [
+        Permission.manageExternalStorage,
+      ].request();
+      await File(Hive.box(boxNames[i].toString()).path!)
+          .copy('$dlPath/${boxNames[i]}Data.hive');
+    }
+  }
 }
 
 Future<void> restoreData() async {
-  await Hive.openBox('user');
-  var box = Hive.box('user');
-  final boxPath = box.path;
-  await box.close();
+  final List boxNames = ["user", "settings"];
   final String? uplPath =
       await ExtStorageProvider.getExtStorage(dirName: 'Musify');
-  File('${uplPath!}/userdata.hive').copy(boxPath!);
-  box = await Hive.openBox('user');
-  await Hive.openBox('settings');
-  var box1 = Hive.box('settings');
-  final boxPath1 = box1.path;
-  await box1.close();
-  File('$uplPath/settings.hive').copy(boxPath1!);
-  box1 = await Hive.openBox('settings');
+
+  for (int i = 0; i < boxNames.length; i++) {
+    await Hive.openBox(boxNames[i].toString());
+    try {
+      final Box box = await Hive.openBox(boxNames[i]);
+      final boxPath = box.path;
+      File('${uplPath!}/${boxNames[i]}Data.hive').copy(boxPath!);
+    } catch (e) {
+      await [
+        Permission.manageExternalStorage,
+      ].request();
+      final Box box = await Hive.openBox(boxNames[i]);
+      final boxPath = box.path;
+      File('${uplPath!}/${boxNames[i]}Data.hive').copy(boxPath!);
+    }
+  }
 }

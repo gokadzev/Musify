@@ -269,7 +269,8 @@ class SettingsCards extends StatelessWidget {
                 Fluttertoast.showToast(
                   backgroundColor: accent,
                   textColor: Colors.white,
-                  msg: "User Data Backuped!",
+                  msg:
+                      "If Permissions Are Given User Data Should Be Backuped! Check Directory Named Musify",
                   toastLength: Toast.LENGTH_SHORT,
                   gravity: ToastGravity.BOTTOM,
                   fontSize: 14.0,
@@ -297,7 +298,8 @@ class SettingsCards extends StatelessWidget {
                 Fluttertoast.showToast(
                   backgroundColor: accent,
                   textColor: Colors.white,
-                  msg: "User Data Restored! Restart app to see changes",
+                  msg:
+                      "If Permissions Are Given User Data Should be Restored! Restart app to see changes",
                   toastLength: Toast.LENGTH_SHORT,
                   gravity: ToastGravity.BOTTOM,
                   fontSize: 14.0,
