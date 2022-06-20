@@ -137,19 +137,19 @@ Future<void> playSong(song) async {
 
 Future changeShuffleStatus() async {
   if (shuffleNotifier.value == true) {
-    MyAudioHandler().setShuffleMode(AudioServiceShuffleMode.none);
+    await audioPlayer?.setShuffleModeEnabled(false);
   } else {
-    MyAudioHandler().setShuffleMode(AudioServiceShuffleMode.all);
+    await audioPlayer?.setShuffleModeEnabled(true);
   }
 }
 
 Future changeLoopStatus() async {
   if (repeatNotifier.value == false) {
     repeatNotifier.value = true;
-    MyAudioHandler().setRepeatMode(AudioServiceRepeatMode.one);
+    await audioPlayer?.setLoopMode(LoopMode.one);
   } else {
     repeatNotifier.value = false;
-    MyAudioHandler().setRepeatMode(AudioServiceRepeatMode.none);
+    await audioPlayer?.setLoopMode(LoopMode.off);
   }
 }
 
