@@ -21,7 +21,8 @@ List userPlaylists = [];
 List userLikedSongsList = [];
 List suggestedPlaylists = [];
 
-String? lyrics = "null";
+final lyrics = ValueNotifier<String>("null");
+String _lastLyricsUrl = "";
 
 dynamic activeSong;
 
@@ -211,18 +212,22 @@ Future getSongDetails(dynamic songIndex, dynamic songId) async {
 }
 
 Future getSongLyrics(String artist, String title) async {
-  final String lyricsApiUrl =
-      'https://api.lyrics.ovh/v1/$artist/${title.split(" (")[0].split("|")[0].trim()}';
-  try {
-    final lyricsApiRes = await DefaultCacheManager().getSingleFile(
-      lyricsApiUrl,
-      headers: {"Accept": "application/json"},
-    ).timeout(const Duration(seconds: 5));
-    final lyricsResponse = await json.decode(await lyricsApiRes.readAsString());
-    if (lyricsResponse['lyrics'] != null) {
-      lyrics = lyricsResponse['lyrics'].toString();
+  if (_lastLyricsUrl !=
+      'https://api.lyrics.ovh/v1/$artist/${title.split(" (")[0].split("|")[0].trim()}') {
+    lyrics.value = "null";
+    _lastLyricsUrl =
+        'https://api.lyrics.ovh/v1/$artist/${title.split(" (")[0].split("|")[0].trim()}';
+    try {
+      final lyricsApiRes = await DefaultCacheManager().getSingleFile(
+        _lastLyricsUrl,
+        headers: {"Accept": "application/json"},
+      );
+      final lyricsResponse =
+          await json.decode(await lyricsApiRes.readAsString());
+      lyrics.value = lyricsResponse['lyrics'].toString();
+    } catch (e) {
+      lyrics.value = "not found";
+      debugPrint(e.toString());
     }
-  } catch (e) {
-    debugPrint(e.toString());
   }
 }

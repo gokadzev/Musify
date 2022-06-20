@@ -30,7 +30,6 @@ AudioPlayer? audioPlayer = AudioPlayer(
 
 final durationNotifier = ValueNotifier<Duration?>(Duration.zero);
 final buttonNotifier = ValueNotifier<MPlayerState>(MPlayerState.stopped);
-final kUrlNotifier = ValueNotifier<String>('');
 final shuffleNotifier = ValueNotifier<bool>(false);
 final repeatNotifier = ValueNotifier<bool>(false);
 

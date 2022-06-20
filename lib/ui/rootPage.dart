@@ -85,7 +85,7 @@ class AppState extends State<Musify> {
   }
 
   Widget getFooter() {
-    final List<BottomNavBarItem> items = <BottomNavBarItem>[
+    final List<BottomNavBarItem> items = [
       BottomNavBarItem(
         icon: const Icon(MdiIcons.homeOutline),
         title: const Text('Home'),
@@ -202,7 +202,7 @@ class AppState extends State<Musify> {
                           children: <Widget>[
                             Text(
                               metadata!.title.toString().length > 15
-                                  ? "${metadata!.title.toString().substring(0, 15)}..."
+                                  ? "${metadata!.title.toString().split(' (')[0].split('|')[0].trim().substring(0, 15)}..."
                                   : metadata!.title.toString(),
                               style: TextStyle(
                                 color: accent,
@@ -268,20 +268,15 @@ class AppState extends State<Musify> {
 
   Widget _buildBottomBar(List<BottomNavBarItem> items) {
     return CustomAnimatedBottomBar(
-      animationDuration: const Duration(milliseconds: 360),
-      containerHeight: 65,
-      backgroundColor: bgLight,
-      selectedIndex: activeTab,
-      itemCornerRadius: 24,
-      curve: Curves.easeIn,
-      onItemSelected: (index) => setState(() => activeTab = index),
-      items: items,
-      radius: kUrlNotifier.value != ""
-          ? BorderRadius.zero
-          : const BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
-            ),
-    );
+        animationDuration: const Duration(milliseconds: 330),
+        containerHeight: 65,
+        backgroundColor: bgLight,
+        selectedIndex: activeTab,
+        showElevation: true,
+        itemCornerRadius: 15,
+        curve: Curves.easeIn,
+        onItemSelected: (index) => setState(() => activeTab = index),
+        items: items,
+        radius: BorderRadius.zero);
   }
 }

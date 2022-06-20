@@ -365,13 +365,12 @@ class AudioAppState extends State<AudioApp> {
                     child: Builder(
                       builder: (context) {
                         return TextButton(
-                          onPressed: () async {
-                            if (lyrics == "null") {
-                              await getSongLyrics(
-                                metadata.artist.toString(),
-                                metadata.title.toString(),
-                              );
-                            }
+                          onPressed: () {
+                            getSongLyrics(
+                              metadata.artist.toString(),
+                              metadata.title.toString(),
+                            );
+
                             showBottomSheet(
                               context: context,
                               builder: (context) => Container(
@@ -420,41 +419,50 @@ class AudioAppState extends State<AudioApp> {
                                         ],
                                       ),
                                     ),
-                                    if (lyrics != "null")
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(6.0),
-                                          child: Center(
-                                            child: SingleChildScrollView(
-                                              child: Text(
-                                                lyrics!,
-                                                style: TextStyle(
-                                                  fontSize: 16.0,
-                                                  color: accentLight,
+                                    ValueListenableBuilder<String>(
+                                        valueListenable: lyrics,
+                                        builder: (_, value, __) {
+                                          if (value != "null" &&
+                                              value != "not found")
+                                            return Expanded(
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(6.0),
+                                                child: Center(
+                                                  child: SingleChildScrollView(
+                                                    child: Text(
+                                                      value,
+                                                      style: TextStyle(
+                                                        fontSize: 16.0,
+                                                        color: accentLight,
+                                                      ),
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    ),
+                                                  ),
                                                 ),
-                                                textAlign: TextAlign.center,
                                               ),
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                    else
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                          top: 120.0,
-                                        ),
-                                        child: Center(
-                                          child: Container(
-                                            child: Text(
-                                              "No Lyrics available ;(",
-                                              style: TextStyle(
-                                                color: accentLight,
-                                                fontSize: 25,
+                                            );
+                                          else if (value == "null")
+                                            return SizedBox(child: Spinner());
+                                          else
+                                            return Padding(
+                                              padding: const EdgeInsets.only(
+                                                top: 120.0,
                                               ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
+                                              child: Center(
+                                                child: Container(
+                                                  child: Text(
+                                                    "No Lyrics available ;(",
+                                                    style: TextStyle(
+                                                      color: accentLight,
+                                                      fontSize: 25,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                        })
                                   ],
                                 ),
                               ),

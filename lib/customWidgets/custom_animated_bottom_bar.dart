@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CustomAnimatedBottomBar extends StatelessWidget {
-  const CustomAnimatedBottomBar({
+  CustomAnimatedBottomBar({
     Key? key,
     this.selectedIndex = 0,
     this.showElevation = true,
@@ -55,7 +55,7 @@ class CustomAnimatedBottomBar extends StatelessWidget {
           child: Row(
             mainAxisAlignment: mainAxisAlignment,
             children: items.map((item) {
-              final index = items.indexOf(item);
+              var index = items.indexOf(item);
               return GestureDetector(
                 onTap: () => onItemSelected(index),
                 child: _ItemWidget(
@@ -113,25 +113,30 @@ class _ItemWidget extends StatelessWidget {
         ),
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
-          physics: const NeverScrollableScrollPhysics(),
+          physics: NeverScrollableScrollPhysics(),
           child: Container(
             width: isSelected ? 130 : 50,
-            padding: const EdgeInsets.symmetric(horizontal: 8),
+            padding: EdgeInsets.symmetric(horizontal: 8),
             child: Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 IconTheme(
                   data: IconThemeData(
                     size: iconSize,
                     color: isSelected
                         ? item.activeColor.withOpacity(1)
-                        : item.inactiveColor ?? item.activeColor,
+                        : item.inactiveColor == null
+                            ? item.activeColor
+                            : item.inactiveColor,
                   ),
                   child: item.icon,
                 ),
                 if (isSelected)
                   Expanded(
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      padding: EdgeInsets.symmetric(horizontal: 4),
                       child: DefaultTextStyle.merge(
                         style: TextStyle(
                           color: item.activeColor,
