@@ -18,11 +18,12 @@ GetIt getIt = GetIt.instance;
 main() async {
   await Hive.initFlutter();
   await FlutterDownloader.initialize(
-      debug:
-          true, // optional: set to false to disable printing logs to console (default: true)
-      ignoreSsl:
-          true // option: set to false to disable working with http links (default: false)
-      );
+    debug:
+        true, // optional: set to false to disable printing logs to console (default: true)
+    ignoreSsl:
+        true // option: set to false to disable working with http links (default: false)
+    ,
+  );
   FlutterDownloader.registerCallback(TestClass.callback);
   accent = await getData("settings", "accentColor") != null
       ? Color(await getData("settings", "accentColor") as int)

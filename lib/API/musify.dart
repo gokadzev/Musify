@@ -73,7 +73,7 @@ Future get10Music(playlistId) async {
 
 Future<List<dynamic>> getUserPlaylists() async {
   var playlistsByUser = [];
-  for (var playlistID in userPlaylists) {
+  for (final playlistID in userPlaylists) {
     final plist = await yt.playlists.get(playlistID);
     playlistsByUser.add({
       "ytid": plist.id,
@@ -117,7 +117,7 @@ bool isSongAlreadyLiked(songId) {
 
 Future<List> getPlaylists([int? playlistsNum]) async {
   if (playlists.isEmpty) {
-    var localplaylists =
+    final localplaylists =
         json.decode(await rootBundle.loadString('assets/db/playlists.db.json'));
     playlists = localplaylists;
   }
@@ -136,7 +136,7 @@ Future<List> getPlaylists([int? playlistsNum]) async {
 Future getSongsFromPlaylist(playlistid) async {
   var playlistSongs = [];
   var index = 0;
-  await for (var song in yt.playlists.getVideos(playlistid)) {
+  await for (final song in yt.playlists.getVideos(playlistid)) {
     playlistSongs.add(
       returnSongLayout(
         index,
@@ -159,7 +159,7 @@ Future getSongsFromPlaylist(playlistid) async {
 setActivePlaylist(List plist) async {
   List<MediaItem> activePlaylist = [];
 
-  for (var song in plist) {
+  for (final song in plist) {
     final songUrl = await getSongUrl(song["ytid"]);
     activePlaylist.add(mapToMediaItem(song, songUrl));
   }
@@ -173,7 +173,7 @@ Future getPlaylistInfoForWidget(dynamic id) async {
   var searchPlaylist = playlists.where((list) => list["ytid"] == id).toList();
 
   if (searchPlaylist.isEmpty) {
-    var usPlaylists = await getUserPlaylists();
+    final usPlaylists = await getUserPlaylists();
     searchPlaylist = usPlaylists.where((list) => list["ytid"] == id).toList();
   }
 
