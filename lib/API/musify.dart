@@ -160,9 +160,9 @@ Future getSongsFromPlaylist(playlistid) async {
 setActivePlaylist(List plist) async {
   List<MediaItem> activePlaylist = [];
 
-  for (final song in plist) {
-    final songUrl = await getSongUrl(song["ytid"]);
-    activePlaylist.add(mapToMediaItem(song, songUrl));
+  for (var i = 0; i < 20; i++) {
+    final songUrl = await getSongUrl(plist[i]["ytid"]);
+    activePlaylist.add(mapToMediaItem(plist[i], songUrl));
   }
 
   MyAudioHandler().addQueueItems(activePlaylist);

@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/customWidgets/song_bar.dart';
@@ -183,6 +184,14 @@ class _PlaylistPageState extends State<PlaylistPage> {
                               onPressed: () => {
                                 setActivePlaylist(
                                   widget.playlist["list"] as List,
+                                ),
+                                Fluttertoast.showToast(
+                                  msg:
+                                      "Initialising queue... Because of perfomance, only first 20 songs will be added in the queue.",
+                                  toastLength: Toast.LENGTH_LONG,
+                                  gravity: ToastGravity.BOTTOM,
+                                  backgroundColor: accent,
+                                  textColor: Colors.white,
                                 ),
                                 Navigator.pop(context, false)
                               },
