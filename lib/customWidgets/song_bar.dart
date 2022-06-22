@@ -51,6 +51,7 @@ class SongBar extends StatelessWidget {
                 ),
               ),
               title: Text(
+                overflow: TextOverflow.ellipsis,
                 (song['title'])
                     .toString()
                     .split("(")[0]
@@ -59,6 +60,7 @@ class SongBar extends StatelessWidget {
                 style: TextStyle(color: accent),
               ),
               subtitle: Text(
+                overflow: TextOverflow.ellipsis,
                 song['more_info']["singers"].toString(),
                 style: TextStyle(color: accentLight),
               ),

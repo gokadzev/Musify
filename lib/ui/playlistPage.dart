@@ -99,18 +99,13 @@ class _PlaylistPageState extends State<PlaylistPage> {
         elevation: 0,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.only(
-          top: 30,
-          bottom: 20.0,
-          right: 10.0,
-          left: 10.0,
-        ),
         child: widget.playlist != null
             ? Column(
                 children: [
                   Row(
                     children: [
                       Container(
+                        margin: const EdgeInsets.only(left: 10.0, right: 10.0),
                         height: 200.0,
                         width: 200.0,
                         child: Card(
@@ -183,9 +178,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                            const Padding(
-                              padding: EdgeInsets.only(top: 5, bottom: 5),
-                            ),
+                            const SizedBox(height: 5.0),
                             TextButton(
                               onPressed: () => {
                                 setActivePlaylist(
