@@ -48,7 +48,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                 content: Stack(
                   children: <Widget>[
                     TextField(
-                      decoration: const InputDecoration.collapsed(
+                      decoration: const InputDecoration(
                         hintText: 'Youtube Playlist ID',
                       ),
                       onChanged: (value) {

@@ -91,12 +91,15 @@ Future<List<dynamic>> getUserPlaylists() async {
   return playlistsByUser;
 }
 
-addUserPlaylist(playlistId) {
+addUserPlaylist(String playlistId) {
+  if (playlistId.length != 0) {
+    print("okrr");
+  }
   userPlaylists.add(playlistId);
   addOrUpdateData("user", "playlists", userPlaylists);
 }
 
-removeUserPlaylist(playlistId) {
+removeUserPlaylist(String playlistId) {
   userPlaylists.remove(playlistId.toString());
   addOrUpdateData("user", "playlists", userPlaylists);
 }
