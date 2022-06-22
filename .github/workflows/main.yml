@@ -1,5 +1,7 @@
 on: workflow_dispatch
 name: Test, Build and Release apk
+env:
+  PROPERTIES_PATH: "./android/key.properties"
 jobs:
   build:
     name: Build APK
@@ -27,6 +29,16 @@ jobs:
     - uses: subosito/flutter-action@v2
       with:
         channel: "stable"
+
+    # 
+    - run: |
+          echo keyPassword=\${{ secrets.KEY_STORE }} > ${{env.PROPERTIES_PATH}}
+          echo storePassword=\${{ secrets.KEY_PASSWORD }} >> ${{env.PROPERTIES_PATH}}
+          echo keyAlias=\${{ secrets.KEY_ALIAS }} >> ${{env.PROPERTIES_PATH}}
+
+    #
+    - run: echo "${{ secrets.KEYSTORE2 }}" | base64 --decode > android/app/key.jks
+
     # Get flutter dependencies.
     - run: flutter pub get
     # Check for any formatting issues in the code.
