@@ -265,15 +265,15 @@ class SettingsCards extends StatelessWidget {
                 style: TextStyle(color: accent),
               ),
               onTap: () {
-                backupData();
-                Fluttertoast.showToast(
-                  backgroundColor: accent,
-                  textColor: Colors.white,
-                  msg:
-                      "If Permissions Are Given User Data Should Be Backuped! Check Directory Named Musify",
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.BOTTOM,
-                  fontSize: 14.0,
+                backupData().then(
+                  (value) => Fluttertoast.showToast(
+                    backgroundColor: accent,
+                    textColor: Colors.white,
+                    msg: value,
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    fontSize: 14.0,
+                  ),
                 );
               },
             ),
@@ -294,16 +294,14 @@ class SettingsCards extends StatelessWidget {
                 style: TextStyle(color: accent),
               ),
               onTap: () {
-                restoreData();
-                Fluttertoast.showToast(
-                  backgroundColor: accent,
-                  textColor: Colors.white,
-                  msg:
-                      "If Permissions Are Given User Data Should be Restored! Restart app to see changes",
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.BOTTOM,
-                  fontSize: 14.0,
-                );
+                restoreData().then((value) => Fluttertoast.showToast(
+                      backgroundColor: accent,
+                      textColor: Colors.white,
+                      msg: value,
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      fontSize: 14.0,
+                    ));
               },
             ),
           ),
@@ -375,6 +373,9 @@ class SettingsCards extends StatelessWidget {
             ),
           ),
         ),
+        const SizedBox(
+          height: 20.0,
+        )
       ],
     );
   }
