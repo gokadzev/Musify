@@ -9,9 +9,11 @@ import 'package:musify/helper/mediaitem.dart';
 import 'package:musify/services/audio_handler.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/data_manager.dart';
+import 'package:on_audio_query/on_audio_query.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 final yt = YoutubeExplode();
+final OnAudioQuery _audioQuery = OnAudioQuery();
 
 List ytplaylists = [];
 
@@ -20,6 +22,7 @@ List playlists = [];
 List userPlaylists = [];
 List userLikedSongsList = [];
 List suggestedPlaylists = [];
+List<SongModel> localSongs = [];
 
 final lyrics = ValueNotifier<String>("null");
 String _lastLyricsUrl = "";
@@ -160,9 +163,15 @@ Future getSongsFromPlaylist(playlistid) async {
 setActivePlaylist(List plist) async {
   List<MediaItem> activePlaylist = [];
 
-  for (var i = 0; i < 20; i++) {
-    final songUrl = await getSongUrl(plist[i]["ytid"]);
-    activePlaylist.add(mapToMediaItem(plist[i], songUrl));
+  if (plist is List<SongModel>) {
+    for (var song in plist) {
+      activePlaylist.add(songModelToMediaItem(song, song.data.toString()));
+    }
+  } else {
+    for (var i = 0; i < plist.length && i < 20; i++) {
+      final songUrl = await getSongUrl(plist[i]["ytid"]);
+      activePlaylist.add(mapToMediaItem(plist[i], songUrl));
+    }
   }
 
   MyAudioHandler().addQueueItems(activePlaylist);
@@ -209,6 +218,15 @@ Future getSongDetails(dynamic songIndex, dynamic songId) async {
     song.thumbnails.maxResUrl,
     song.title.split('-')[0],
   );
+}
+
+getLocalSongs() async {
+  // DEFAULT:
+  // SongSortType.TITLE,
+  // OrderType.ASC_OR_SMALLER,
+  // UriType.EXTERNAL,
+  localSongs = await _audioQuery.querySongs();
+  return localSongs;
 }
 
 Future getSongLyrics(String artist, String title) async {

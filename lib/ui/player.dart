@@ -225,17 +225,18 @@ class AudioAppState extends State<AudioApp> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        IconButton(
-                          padding: EdgeInsets.zero,
-                          icon: const Icon(
-                            MdiIcons.download,
-                            color: Colors.white,
+                        if (metadata.extras["ytid"].toString().length != 0)
+                          IconButton(
+                            padding: EdgeInsets.zero,
+                            icon: const Icon(
+                              MdiIcons.download,
+                              color: Colors.white,
+                            ),
+                            iconSize: size.width * 0.056,
+                            onPressed: () {
+                              downloadSong(activeSong);
+                            },
                           ),
-                          iconSize: size.width * 0.056,
-                          onPressed: () {
-                            downloadSong(activeSong);
-                          },
-                        ),
                         IconButton(
                           padding: EdgeInsets.zero,
                           icon: Icon(
@@ -331,151 +332,155 @@ class AudioAppState extends State<AudioApp> {
                             changeLoopStatus();
                           },
                         ),
-                        ValueListenableBuilder<bool>(
-                          valueListenable: songLikeStatus,
-                          builder: (_, value, __) {
-                            if (value == true) {
-                              return IconButton(
-                                color: accent,
-                                icon: const Icon(MdiIcons.star),
-                                iconSize: size.width * 0.056,
-                                onPressed: () => {
-                                  removeUserLikedSong(ytid),
-                                  songLikeStatus.value = false
-                                },
-                              );
-                            } else {
-                              return IconButton(
-                                color: accent,
-                                icon: const Icon(MdiIcons.starOutline),
-                                iconSize: size.width * 0.056,
-                                onPressed: () => {
-                                  addUserLikedSong(ytid),
-                                  songLikeStatus.value = true
-                                },
-                              );
-                            }
-                          },
-                        ),
+                        if (metadata.extras["ytid"].toString().length != 0)
+                          ValueListenableBuilder<bool>(
+                            valueListenable: songLikeStatus,
+                            builder: (_, value, __) {
+                              if (value == true) {
+                                return IconButton(
+                                  color: accent,
+                                  icon: const Icon(MdiIcons.star),
+                                  iconSize: size.width * 0.056,
+                                  onPressed: () => {
+                                    removeUserLikedSong(ytid),
+                                    songLikeStatus.value = false
+                                  },
+                                );
+                              } else {
+                                return IconButton(
+                                  color: accent,
+                                  icon: const Icon(MdiIcons.starOutline),
+                                  iconSize: size.width * 0.056,
+                                  onPressed: () => {
+                                    addUserLikedSong(ytid),
+                                    songLikeStatus.value = true
+                                  },
+                                );
+                              }
+                            },
+                          ),
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(top: size.height * 0.047),
-                    child: Builder(
-                      builder: (context) {
-                        return TextButton(
-                          onPressed: () {
-                            getSongLyrics(
-                              metadata.artist.toString(),
-                              metadata.title.toString(),
-                            );
+                  if (metadata.extras["ytid"].toString().length != 0)
+                    Padding(
+                      padding: EdgeInsets.only(top: size.height * 0.047),
+                      child: Builder(
+                        builder: (context) {
+                          return TextButton(
+                            onPressed: () {
+                              getSongLyrics(
+                                metadata.artist.toString(),
+                                metadata.title.toString(),
+                              );
 
-                            showBottomSheet(
-                              context: context,
-                              builder: (context) => Container(
-                                decoration: const BoxDecoration(
-                                  color: Color(0xff212c31),
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(18.0),
-                                    topRight: Radius.circular(18.0),
+                              showBottomSheet(
+                                context: context,
+                                builder: (context) => Container(
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xff212c31),
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(18.0),
+                                      topRight: Radius.circular(18.0),
+                                    ),
+                                  ),
+                                  height: size.height / 2.14,
+                                  child: Column(
+                                    children: <Widget>[
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                          top: size.height * 0.012,
+                                        ),
+                                        child: Row(
+                                          children: <Widget>[
+                                            IconButton(
+                                              icon: Icon(
+                                                Icons.arrow_back_ios,
+                                                color: accent,
+                                                size: 20,
+                                              ),
+                                              onPressed: () =>
+                                                  {Navigator.pop(context)},
+                                            ),
+                                            Expanded(
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(
+                                                  right: 42.0,
+                                                ),
+                                                child: Center(
+                                                  child: Text(
+                                                    "Lyrics",
+                                                    style: TextStyle(
+                                                      color: accent,
+                                                      fontSize: 30,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      ValueListenableBuilder<String>(
+                                          valueListenable: lyrics,
+                                          builder: (_, value, __) {
+                                            if (value != "null" &&
+                                                value != "not found")
+                                              return Expanded(
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(6.0),
+                                                  child: Center(
+                                                    child:
+                                                        SingleChildScrollView(
+                                                      child: Text(
+                                                        value,
+                                                        style: TextStyle(
+                                                          fontSize: 16.0,
+                                                          color: accentLight,
+                                                        ),
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            else if (value == "null")
+                                              return SizedBox(child: Spinner());
+                                            else
+                                              return Padding(
+                                                padding: const EdgeInsets.only(
+                                                  top: 120.0,
+                                                ),
+                                                child: Center(
+                                                  child: Container(
+                                                    child: Text(
+                                                      "No Lyrics available ;(",
+                                                      style: TextStyle(
+                                                        color: accentLight,
+                                                        fontSize: 25,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                          })
+                                    ],
                                   ),
                                 ),
-                                height: size.height / 2.14,
-                                child: Column(
-                                  children: <Widget>[
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                        top: size.height * 0.012,
-                                      ),
-                                      child: Row(
-                                        children: <Widget>[
-                                          IconButton(
-                                            icon: Icon(
-                                              Icons.arrow_back_ios,
-                                              color: accent,
-                                              size: 20,
-                                            ),
-                                            onPressed: () =>
-                                                {Navigator.pop(context)},
-                                          ),
-                                          Expanded(
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                right: 42.0,
-                                              ),
-                                              child: Center(
-                                                child: Text(
-                                                  "Lyrics",
-                                                  style: TextStyle(
-                                                    color: accent,
-                                                    fontSize: 30,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    ValueListenableBuilder<String>(
-                                        valueListenable: lyrics,
-                                        builder: (_, value, __) {
-                                          if (value != "null" &&
-                                              value != "not found")
-                                            return Expanded(
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(6.0),
-                                                child: Center(
-                                                  child: SingleChildScrollView(
-                                                    child: Text(
-                                                      value,
-                                                      style: TextStyle(
-                                                        fontSize: 16.0,
-                                                        color: accentLight,
-                                                      ),
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            );
-                                          else if (value == "null")
-                                            return SizedBox(child: Spinner());
-                                          else
-                                            return Padding(
-                                              padding: const EdgeInsets.only(
-                                                top: 120.0,
-                                              ),
-                                              child: Center(
-                                                child: Container(
-                                                  child: Text(
-                                                    "No Lyrics available ;(",
-                                                    style: TextStyle(
-                                                      color: accentLight,
-                                                      fontSize: 25,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            );
-                                        })
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                          child: Text(
-                            "Lyrics",
-                            style: TextStyle(color: accent),
-                          ),
-                        );
-                      },
-                    ),
-                  )
+                              );
+                            },
+                            child: Text(
+                              "Lyrics",
+                              style: TextStyle(color: accent),
+                            ),
+                          );
+                        },
+                      ),
+                    )
                 ],
               ),
             ),

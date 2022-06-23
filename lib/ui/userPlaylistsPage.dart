@@ -110,7 +110,9 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                               child: GestureDetector(
                                 onLongPress: () {
                                   removeUserPlaylist(
-                                    (data as dynamic).data[index]["ytid"],
+                                    (data as dynamic)
+                                        .data[index]["ytid"]
+                                        .toString(),
                                   );
                                   setState(() {});
                                 },

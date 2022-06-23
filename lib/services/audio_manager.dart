@@ -129,8 +129,14 @@ downloadSong(song) async {
 }
 
 Future<void> playSong(song) async {
-  final songUrl = await getSongUrl(song["ytid"]);
-  await MyAudioHandler().addQueueItem(mapToMediaItem(song, songUrl.toString()));
+  if (song["ytid"].length == 0) {
+    await MyAudioHandler()
+        .addQueueItem(mapToMediaItem(song, song["songUrl"].toString()));
+  } else {
+    final songUrl = await getSongUrl(song["ytid"]);
+    await MyAudioHandler()
+        .addQueueItem(mapToMediaItem(song, songUrl.toString()));
+  }
   await play();
 }
 

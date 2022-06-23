@@ -10,9 +10,10 @@
   <p align="center">
     Online Song Search :mag:<br>
     Streaming Support :musical_note:<br>
-    Offline Download Support :arrow_down:<br>
+    Download Support :arrow_down:<br>
+    Play Local / Downloaded Songs Support :open_file_folder: <br>
     High Quality mp3 Format :fire:<br>
-  	Lyrics Support :pencil:<br>
+  	 Lyrics Support :pencil:<br>
     No Ads :no_entry_sign:<br>
     No Subscriptions :dollar:<br>
  

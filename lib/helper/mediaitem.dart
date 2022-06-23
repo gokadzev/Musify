@@ -1,4 +1,5 @@
 import 'package:audio_service/audio_service.dart';
+import 'package:on_audio_query/on_audio_query.dart';
 
 Map mediaItemToMap(MediaItem mediaItem) {
   return {
@@ -11,6 +12,17 @@ Map mediaItemToMap(MediaItem mediaItem) {
     'lowResImage': mediaItem.extras!['lowResImage'],
     'url': mediaItem.extras!['url'].toString(),
   };
+}
+
+MediaItem songModelToMediaItem(SongModel song, String songUrl) {
+  return MediaItem(
+    id: song.id.toString(),
+    album: "",
+    artist: "",
+    title: song.displayName.toString(),
+    artUri: Uri.parse(""),
+    extras: {'url': songUrl, 'lowResImage': "", 'ytid': "", 'ogid': song.id},
+  );
 }
 
 MediaItem mapToMediaItem(Map song, String songUrl) {

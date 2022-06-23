@@ -10,6 +10,7 @@ import 'package:musify/helper/version.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:musify/ui/homePage.dart';
+import 'package:musify/ui/localSongsPage.dart';
 import 'package:musify/ui/player.dart';
 import 'package:musify/ui/playlistsPage.dart';
 import 'package:musify/ui/searchPage.dart';
@@ -103,6 +104,13 @@ class AppState extends State<Musify> {
       BottomNavBarItem(
         icon: const Icon(MdiIcons.bookOutline),
         title: const Text('Playlists'),
+        activeColor: accent,
+        inactiveColor: Colors.white,
+        textAlign: TextAlign.center,
+      ),
+      BottomNavBarItem(
+        icon: const Icon(MdiIcons.download),
+        title: const Text('Local Songs'),
         activeColor: accent,
         inactiveColor: Colors.white,
         textAlign: TextAlign.center,
@@ -202,7 +210,7 @@ class AppState extends State<Musify> {
                           children: <Widget>[
                             Text(
                               metadata!.title.toString().length > 15
-                                  ? "${metadata!.title.toString().split(' (')[0].split('|')[0].trim().substring(0, 15)}..."
+                                  ? "${metadata!.title.toString().substring(0, 15)}..."
                                   : metadata!.title.toString(),
                               style: TextStyle(
                                 color: accent,
@@ -262,7 +270,13 @@ class AppState extends State<Musify> {
   Widget getBody() {
     return IndexedStack(
       index: activeTab,
-      children: [HomePage(), SearchPage(), PlaylistsPage(), SettingsPage()],
+      children: [
+        HomePage(),
+        SearchPage(),
+        PlaylistsPage(),
+        LocalSongsPage(),
+        SettingsPage()
+      ],
     );
   }
 

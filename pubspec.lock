@@ -254,6 +254,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.0.0"
+  id3:
+    dependency: transitive
+    description:
+      name: id3
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.2"
   image:
     dependency: transitive
     description:
@@ -338,6 +345,27 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.2"
+  on_audio_query:
+    dependency: "direct main"
+    description:
+      name: on_audio_query
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.6.1"
+  on_audio_query_platform_interface:
+    dependency: transitive
+    description:
+      name: on_audio_query_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.4.0"
+  on_audio_query_web:
+    dependency: transitive
+    description:
+      name: on_audio_query_web
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.3.2+2"
   package_info_plus:
     dependency: "direct main"
     description:

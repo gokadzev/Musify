@@ -41,6 +41,7 @@ dependencies:
   flutter_cache_manager: ^3.3.0
   package_info_plus: ^1.4.2
   flutter_downloader: ^1.8.0+1
+  on_audio_query: ^2.6.1
 
 dev_dependencies:
   flutter_test:
