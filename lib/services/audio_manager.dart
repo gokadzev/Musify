@@ -54,15 +54,6 @@ downloadSong(song) async {
   }
   status = await Permission.storage.status;
   if (status.isGranted) {
-    Fluttertoast.showToast(
-      msg: "Download Started!",
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-      backgroundColor: accent,
-      textColor: Colors.white,
-      fontSize: 14.0,
-    );
-
     final filename = song["title"]
             .replaceAll(r'\', '')
             .replaceAll('/', '')
@@ -76,19 +67,26 @@ downloadSong(song) async {
 
     String filepath = '';
     final String? dlPath =
-        await ExtStorageProvider.getExtStorage(dirName: 'Music');
+        await ExtStorageProvider.getExtStorage(dirName: 'Musify/Songs');
     try {
       await File("${dlPath!}/$filename")
           .create(recursive: true)
           .then((value) => filepath = value.path);
     } catch (e) {
-      await [
-        Permission.manageExternalStorage,
-      ].request();
+      await [Permission.manageExternalStorage, Permission.accessMediaLocation]
+          .request();
       await File("${dlPath!}/$filename")
           .create(recursive: true)
           .then((value) => filepath = value.path);
     }
+    Fluttertoast.showToast(
+      msg: "Download Started!",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: accent,
+      textColor: Colors.white,
+      fontSize: 14.0,
+    );
     final audioStream = await getSongStream(song["ytid"].toString());
     final File file = File(filepath);
     final fileStream = file.openWrite();

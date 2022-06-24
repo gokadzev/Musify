@@ -225,6 +225,9 @@ getLocalSongs() async {
   // SongSortType.TITLE,
   // OrderType.ASC_OR_SMALLER,
   // UriType.EXTERNAL,
+  if (await _audioQuery.permissionsStatus() == false) {
+    await _audioQuery.permissionsRequest();
+  }
   localSongs = await _audioQuery.querySongs();
   return localSongs;
 }
