@@ -67,14 +67,13 @@ downloadSong(song) async {
 
     String filepath = '';
     final String? dlPath =
-        await ExtStorageProvider.getExtStorage(dirName: 'Musify/Songs');
+        await ExtStorageProvider.getExtStorage(dirName: 'Musify');
     try {
       await File("${dlPath!}/$filename")
           .create(recursive: true)
           .then((value) => filepath = value.path);
     } catch (e) {
-      await [Permission.manageExternalStorage, Permission.accessMediaLocation]
-          .request();
+      await [Permission.manageExternalStorage].request();
       await File("${dlPath!}/$filename")
           .create(recursive: true)
           .then((value) => filepath = value.path);
