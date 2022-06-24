@@ -46,14 +46,7 @@ String get positionText =>
 bool isMuted = false;
 
 downloadSong(song) async {
-  var status = await Permission.storage.status;
-  if (status.isDenied) {
-    final Map<Permission, PermissionStatus> statuses =
-        await [Permission.storage].request();
-    debugPrint(statuses[Permission.storage].toString());
-  }
-  status = await Permission.storage.status;
-  if (status.isGranted) {
+  if (await Permission.storage.request().isGranted) {
     final filename = song["title"]
             .replaceAll(r'\', '')
             .replaceAll('/', '')
@@ -100,24 +93,6 @@ downloadSong(song) async {
       msg: "Download Completed!",
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM,
-      backgroundColor: accent,
-      textColor: Colors.white,
-      fontSize: 14.0,
-    );
-  } else if (status.isDenied || status.isPermanentlyDenied) {
-    Fluttertoast.showToast(
-      msg: "Storage Permission Denied!\nCan't Download Songs",
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-      backgroundColor: accent,
-      textColor: Colors.white,
-      fontSize: 14.0,
-    );
-  } else {
-    Fluttertoast.showToast(
-      msg: "Permission Error!",
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.values[50],
       backgroundColor: accent,
       textColor: Colors.white,
       fontSize: 14.0,

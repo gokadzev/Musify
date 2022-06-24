@@ -10,6 +10,7 @@ import 'package:musify/services/audio_handler.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:on_audio_query/on_audio_query.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 final yt = YoutubeExplode();
@@ -225,10 +226,9 @@ getLocalSongs() async {
   // SongSortType.TITLE,
   // OrderType.ASC_OR_SMALLER,
   // UriType.EXTERNAL,
-  if (await _audioQuery.permissionsStatus() == false) {
-    await _audioQuery.permissionsRequest();
+  if (await Permission.storage.request().isGranted) {
+    localSongs = await _audioQuery.querySongs();
   }
-  localSongs = await _audioQuery.querySongs();
   return localSongs;
 }
 
