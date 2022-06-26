@@ -4,6 +4,7 @@ import 'package:musify/API/musify.dart';
 import 'package:musify/customWidgets/spinner.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:musify/ui/playlistsPage.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class UserPlaylistsPage extends StatefulWidget {
   @override
@@ -20,7 +21,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
             const SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
         centerTitle: true,
         title: Text(
-          "User Playlists",
+          AppLocalizations.of(context)!.userPlaylists,
           style: TextStyle(
             color: accent,
             fontSize: 25,
@@ -48,8 +49,9 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                 content: Stack(
                   children: <Widget>[
                     TextField(
-                      decoration: const InputDecoration(
-                        hintText: 'Youtube Playlist ID',
+                      decoration: InputDecoration(
+                        hintText:
+                            AppLocalizations.of(context)!.youtubePlaylistID,
                       ),
                       onChanged: (value) {
                         setState(() {
@@ -61,8 +63,11 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                 ),
                 actions: <Widget>[
                   TextButton(
-                    child: const Text(
-                      'ADD',
+                    child: Text(
+                      AppLocalizations.of(context)!
+                          .add
+                          .toString()
+                          .toUpperCase(),
                       style: TextStyle(color: Colors.black),
                     ),
                     onPressed: () {

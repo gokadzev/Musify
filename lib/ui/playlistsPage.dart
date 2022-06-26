@@ -1,10 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/customWidgets/spinner.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:musify/ui/playlistPage.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PlaylistsPage extends StatefulWidget {
   @override
@@ -15,33 +17,25 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: bgColor,
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        systemOverlayStyle:
+            const SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
+        centerTitle: true,
+        title: Text(
+          AppLocalizations.of(context)!.playlists,
+          style: TextStyle(
+            color: accent,
+            fontSize: 30,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            const Padding(padding: EdgeInsets.only(top: 10, bottom: 20.0)),
-            Center(
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.zero,
-                      child: Center(
-                        child: Text(
-                          "Playlists",
-                          style: TextStyle(
-                            color: accent,
-                            fontSize: 35,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const Padding(padding: EdgeInsets.only(top: 20)),
             FutureBuilder(
               future: getPlaylists(),
               builder: (context, data) {

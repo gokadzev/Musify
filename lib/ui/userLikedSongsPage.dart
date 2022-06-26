@@ -4,6 +4,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:musify/API/musify.dart';
 import 'package:musify/customWidgets/song_bar.dart';
 import 'package:musify/style/appColors.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class UserLikedSongs extends StatefulWidget {
   @override
@@ -20,7 +21,7 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
             const SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
         centerTitle: true,
         title: Text(
-          "User Liked Songs",
+          AppLocalizations.of(context)!.userLikedSongs,
           style: TextStyle(
             color: accent,
             fontSize: 25,
@@ -72,7 +73,7 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
                           color: accent,
                         ),
                         Text(
-                          "User Liked Songs",
+                          AppLocalizations.of(context)!.userLikedSongs,
                           style: TextStyle(color: accent),
                           textAlign: TextAlign.center,
                         ),
@@ -88,7 +89,7 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
                   children: [
                     const SizedBox(height: 12.0),
                     Text(
-                      "User Liked Songs",
+                      AppLocalizations.of(context)!.userLikedSongs,
                       style: TextStyle(
                         color: accent,
                         fontSize: 18,
@@ -97,7 +98,7 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
                     ),
                     const SizedBox(height: 16.0),
                     Text(
-                      "Your favorite songs here!",
+                      "${AppLocalizations.of(context)!.yourFavoriteSongsHere}!",
                       style: TextStyle(
                         color: accent,
                         fontSize: 10,
@@ -115,8 +116,11 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
                       style: TextButton.styleFrom(
                         backgroundColor: accent,
                       ),
-                      child: const Text(
-                        "PLAY ALL",
+                      child: Text(
+                        AppLocalizations.of(context)!
+                            .playAll
+                            .toString()
+                            .toUpperCase(),
                         style: TextStyle(color: Colors.white),
                       ),
                     ),

@@ -8,6 +8,7 @@ import 'package:musify/style/appColors.dart';
 import 'package:musify/ui/aboutPage.dart';
 import 'package:musify/ui/userLikedSongsPage.dart';
 import 'package:musify/ui/userPlaylistsPage.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -24,7 +25,7 @@ class _SettingsPageState extends State<SettingsPage> {
             const SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
         centerTitle: true,
         title: Text(
-          "Settings",
+          AppLocalizations.of(context)!.settings,
           style: TextStyle(
             color: accent,
             fontSize: 25,
@@ -55,7 +56,7 @@ class SettingsCards extends StatelessWidget {
             child: ListTile(
               leading: Icon(MdiIcons.shapeOutline, color: accent),
               title: Text(
-                'Accent Color',
+                AppLocalizations.of(context)!.accentColor,
                 style: TextStyle(color: accent),
               ),
               onTap: () {
@@ -140,8 +141,8 @@ class SettingsCards extends StatelessWidget {
                                         Fluttertoast.showToast(
                                           backgroundColor: accent,
                                           textColor: Colors.white,
-                                          msg:
-                                              "Accent Color has been Changed, move to other page to see changes!",
+                                          msg: AppLocalizations.of(context)!
+                                              .accentChangeMsg,
                                           toastLength: Toast.LENGTH_SHORT,
                                           gravity: ToastGravity.BOTTOM,
                                           fontSize: 14.0,
@@ -185,7 +186,7 @@ class SettingsCards extends StatelessWidget {
             child: ListTile(
               leading: Icon(MdiIcons.broom, color: accent),
               title: Text(
-                'Clear Cache',
+                AppLocalizations.of(context)!.clearCache,
                 style: TextStyle(color: accent),
               ),
               onTap: () {
@@ -193,7 +194,7 @@ class SettingsCards extends StatelessWidget {
                 Fluttertoast.showToast(
                   backgroundColor: accent,
                   textColor: Colors.white,
-                  msg: "Cache cleared!",
+                  msg: "${AppLocalizations.of(context)!.cacheMsg}!",
                   toastLength: Toast.LENGTH_SHORT,
                   gravity: ToastGravity.BOTTOM,
                   fontSize: 14.0,
@@ -213,7 +214,7 @@ class SettingsCards extends StatelessWidget {
             child: ListTile(
               leading: Icon(MdiIcons.account, color: accent),
               title: Text(
-                'User Playlists',
+                AppLocalizations.of(context)!.userPlaylists,
                 style: TextStyle(color: accent),
               ),
               onTap: () {
@@ -238,7 +239,7 @@ class SettingsCards extends StatelessWidget {
             child: ListTile(
               leading: Icon(MdiIcons.star, color: accent),
               title: Text(
-                'User Liked Songs',
+                AppLocalizations.of(context)!.userLikedSongs,
                 style: TextStyle(color: accent),
               ),
               onTap: () {
@@ -261,7 +262,7 @@ class SettingsCards extends StatelessWidget {
             child: ListTile(
               leading: Icon(MdiIcons.cloudUpload, color: accent),
               title: Text(
-                'Backup User Data',
+                AppLocalizations.of(context)!.backupUserData,
                 style: TextStyle(color: accent),
               ),
               onTap: () {
@@ -290,7 +291,7 @@ class SettingsCards extends StatelessWidget {
             child: ListTile(
               leading: Icon(MdiIcons.cloudDownload, color: accent),
               title: Text(
-                'Restore User Data',
+                AppLocalizations.of(context)!.restoreUserData,
                 style: TextStyle(color: accent),
               ),
               onTap: () {
@@ -317,7 +318,7 @@ class SettingsCards extends StatelessWidget {
             child: ListTile(
               leading: Icon(MdiIcons.download, color: accent),
               title: Text(
-                'Download App Update',
+                AppLocalizations.of(context)!.downloadAppUpdate,
                 style: TextStyle(color: accent),
               ),
               onTap: () {
@@ -326,7 +327,8 @@ class SettingsCards extends StatelessWidget {
                     if (available == true)
                       {
                         Fluttertoast.showToast(
-                          msg: "App Update Is Available And Downloading!",
+                          msg:
+                              "${AppLocalizations.of(context)!.appUpdateAvailableAndDownloading}!",
                           toastLength: Toast.LENGTH_SHORT,
                           gravity: ToastGravity.BOTTOM,
                           backgroundColor: accent,
@@ -338,7 +340,8 @@ class SettingsCards extends StatelessWidget {
                     else
                       {
                         Fluttertoast.showToast(
-                          msg: "App Update Is Not Available!",
+                          msg:
+                              "${AppLocalizations.of(context)!.appUpdateIsNotAvailable}!",
                           toastLength: Toast.LENGTH_SHORT,
                           gravity: ToastGravity.BOTTOM,
                           backgroundColor: accent,
@@ -363,7 +366,7 @@ class SettingsCards extends StatelessWidget {
             child: ListTile(
               leading: Icon(MdiIcons.information, color: accent),
               title: Text(
-                'About',
+                AppLocalizations.of(context)!.about,
                 style: TextStyle(color: accent),
               ),
               onTap: () {

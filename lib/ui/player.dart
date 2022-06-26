@@ -9,6 +9,7 @@ import 'package:musify/API/musify.dart';
 import 'package:musify/customWidgets/spinner.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/style/appColors.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 String status = 'hidden';
 
@@ -53,7 +54,7 @@ class AudioAppState extends State<AudioApp> {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          "Now Playing",
+          AppLocalizations.of(context)!.nowPlaying,
           style: TextStyle(
             color: accent,
             fontSize: 25,
@@ -409,7 +410,9 @@ class AudioAppState extends State<AudioApp> {
                                                 ),
                                                 child: Center(
                                                   child: Text(
-                                                    "Lyrics",
+                                                    AppLocalizations.of(
+                                                            context)!
+                                                        .lyrics,
                                                     style: TextStyle(
                                                       color: accent,
                                                       fontSize: 30,
@@ -458,7 +461,9 @@ class AudioAppState extends State<AudioApp> {
                                                 child: Center(
                                                   child: Container(
                                                     child: Text(
-                                                      "No Lyrics available ;(",
+                                                      AppLocalizations.of(
+                                                              context)!
+                                                          .lyricsNotAvailable,
                                                       style: TextStyle(
                                                         color: accentLight,
                                                         fontSize: 25,
@@ -474,7 +479,7 @@ class AudioAppState extends State<AudioApp> {
                               );
                             },
                             child: Text(
-                              "Lyrics",
+                              AppLocalizations.of(context)!.lyrics,
                               style: TextStyle(color: accent),
                             ),
                           );

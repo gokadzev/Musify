@@ -4,6 +4,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:musify/API/musify.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/style/appColors.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LocalSongsPage extends StatelessWidget {
   const LocalSongsPage({Key? key}) : super(key: key);
@@ -17,7 +18,7 @@ class LocalSongsPage extends StatelessWidget {
             const SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
         centerTitle: true,
         title: Text(
-          "Local Songs",
+          AppLocalizations.of(context)!.localSongs,
           style: TextStyle(
             color: accent,
             fontSize: 25,
@@ -62,7 +63,7 @@ class LocalSongsPage extends StatelessWidget {
                           color: accent,
                         ),
                         Text(
-                          "Local Songs",
+                          AppLocalizations.of(context)!.localSongs,
                           style: TextStyle(color: accent),
                           textAlign: TextAlign.center,
                         ),
@@ -78,7 +79,7 @@ class LocalSongsPage extends StatelessWidget {
                   children: [
                     const SizedBox(height: 12.0),
                     Text(
-                      "Local Songs",
+                      AppLocalizations.of(context)!.localSongs,
                       style: TextStyle(
                         color: accent,
                         fontSize: 18,
@@ -87,7 +88,7 @@ class LocalSongsPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 16.0),
                     Text(
-                      "Your downloaded songs here!",
+                      "${AppLocalizations.of(context)!.yourDownloadedSongsHere}!",
                       style: TextStyle(
                         color: accent,
                         fontSize: 10,
@@ -104,8 +105,11 @@ class LocalSongsPage extends StatelessWidget {
                       style: TextButton.styleFrom(
                         backgroundColor: accent,
                       ),
-                      child: const Text(
-                        "PLAY ALL",
+                      child: Text(
+                        AppLocalizations.of(context)!
+                            .playAll
+                            .toString()
+                            .toUpperCase(),
                         style: TextStyle(color: Colors.white),
                       ),
                     ),

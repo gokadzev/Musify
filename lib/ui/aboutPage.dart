@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:musify/helper/version.dart';
 import 'package:musify/style/appColors.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AboutPage extends StatelessWidget {
   @override
@@ -13,7 +14,7 @@ class AboutPage extends StatelessWidget {
             const SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
         centerTitle: true,
         title: Text(
-          "About",
+          AppLocalizations.of(context)!.about,
           style: TextStyle(
             color: accent,
             fontSize: 25,

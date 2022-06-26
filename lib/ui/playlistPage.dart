@@ -9,6 +9,7 @@ import 'package:musify/API/musify.dart';
 import 'package:musify/customWidgets/song_bar.dart';
 import 'package:musify/customWidgets/spinner.dart';
 import 'package:musify/style/appColors.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PlaylistPage extends StatefulWidget {
   final dynamic playlist;
@@ -82,7 +83,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
             const SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
         centerTitle: true,
         title: Text(
-          "Playlist",
+          AppLocalizations.of(context)!.playlist,
           style: TextStyle(
             color: accent,
             fontSize: 25,
@@ -186,8 +187,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
                                   widget.playlist["list"] as List,
                                 ),
                                 Fluttertoast.showToast(
-                                  msg:
-                                      "Initialising queue... Because of perfomance, only first 20 songs will be added in the queue.",
+                                  msg: AppLocalizations.of(context)!
+                                      .queueInitText,
                                   toastLength: Toast.LENGTH_LONG,
                                   gravity: ToastGravity.BOTTOM,
                                   backgroundColor: accent,
@@ -198,8 +199,11 @@ class _PlaylistPageState extends State<PlaylistPage> {
                               style: TextButton.styleFrom(
                                 backgroundColor: accent,
                               ),
-                              child: const Text(
-                                "PLAY ALL",
+                              child: Text(
+                                AppLocalizations.of(context)!
+                                    .playAll
+                                    .toString()
+                                    .toUpperCase(),
                                 style: TextStyle(color: Colors.white),
                               ),
                             ),

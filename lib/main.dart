@@ -1,6 +1,7 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -12,11 +13,18 @@ import 'package:musify/services/data_manager.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:musify/ui/rootPage.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 GetIt getIt = GetIt.instance;
+Locale _locale = const Locale('en', '');
 
 main() async {
   await Hive.initFlutter();
+  final String lang = await getData("settings", "languages") ?? "English";
+  final Map<String, String> codes = {
+    'English': 'en',
+  };
+  _locale = Locale(codes[lang]!);
   await getLocalSongs();
   await FlutterDownloader.initialize(
     debug:
@@ -55,6 +63,14 @@ class MyApp extends StatelessWidget {
           },
         ),
       ),
+      localizationsDelegates: [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: [Locale('en', '')],
+      locale: _locale,
       home: Musify(),
     );
   }

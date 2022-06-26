@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/customWidgets/song_bar.dart';
 import 'package:musify/customWidgets/spinner.dart';
 import 'package:musify/style/appColors.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SearchPage extends StatefulWidget {
   @override
@@ -27,11 +29,27 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        systemOverlayStyle:
+            const SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
+        centerTitle: true,
+        title: Text(
+          AppLocalizations.of(context)!.search,
+          style: TextStyle(
+            color: accent,
+            fontSize: 30,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(12.0),
         child: Column(
           children: <Widget>[
-            const Padding(padding: EdgeInsets.only(top: 30, bottom: 20.0)),
+            const Padding(padding: EdgeInsets.only(bottom: 20.0)),
             TextField(
               onSubmitted: (String value) {
                 search();
@@ -75,7 +93,7 @@ class _SearchPageState extends State<SearchPage> {
                   },
                 ),
                 border: InputBorder.none,
-                hintText: "Search...",
+                hintText: "${AppLocalizations.of(context)!.search}...",
                 hintStyle: TextStyle(
                   color: accent,
                 ),

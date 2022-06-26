@@ -8,6 +8,7 @@ import 'package:musify/customWidgets/song_bar.dart';
 import 'package:musify/customWidgets/spinner.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:musify/ui/playlistPage.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -52,7 +53,8 @@ class _HomePageState extends State<HomePage> {
                                 right: 25,
                               ),
                               child: Text(
-                                "Suggested Playlists",
+                                AppLocalizations.of(context)!
+                                    .suggestedPlaylists,
                                 style: TextStyle(
                                   color: accent,
                                   fontSize: 20.0,
@@ -106,7 +108,7 @@ class _HomePageState extends State<HomePage> {
                                 right: 25,
                               ),
                               child: Text(
-                                "Recommended for you",
+                                AppLocalizations.of(context)!.recommendedForYou,
                                 style: TextStyle(
                                   color: accent,
                                   fontSize: 20.0,
