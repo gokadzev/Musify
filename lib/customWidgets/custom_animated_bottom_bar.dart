@@ -5,29 +5,31 @@ class CustomAnimatedBottomBar extends StatelessWidget {
     Key? key,
     this.selectedIndex = 0,
     this.showElevation = true,
-    this.iconSize = 24,
+    this.onTap,
+    this.selectedItemColor,
     this.backgroundColor,
-    this.itemCornerRadius = 50,
-    this.containerHeight = 56,
-    this.animationDuration = const Duration(milliseconds: 270),
-    this.mainAxisAlignment = MainAxisAlignment.spaceBetween,
+    this.unselectedItemColor,
+    this.selectedColorOpacity,
+    this.itemShape = const StadiumBorder(),
+    this.margin = const EdgeInsets.all(8),
+    this.itemPadding = const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+    this.duration = const Duration(milliseconds: 500),
+    this.curve = Curves.easeOutQuint,
     this.radius = BorderRadius.zero,
     required this.items,
-    required this.onItemSelected,
-    this.curve = Curves.linear,
-  })  : assert(items.length >= 2 && items.length <= 5),
-        super(key: key);
-
-  final int selectedIndex;
-  final double iconSize;
+  }) : super(key: key);
   final Color? backgroundColor;
   final bool showElevation;
-  final Duration animationDuration;
   final List<BottomNavBarItem> items;
-  final ValueChanged<int> onItemSelected;
-  final MainAxisAlignment mainAxisAlignment;
-  final double itemCornerRadius;
-  final double containerHeight;
+  final int selectedIndex;
+  final Function(int)? onTap;
+  final Color? selectedItemColor;
+  final Color? unselectedItemColor;
+  final double? selectedColorOpacity;
+  final ShapeBorder itemShape;
+  final EdgeInsets margin;
+  final EdgeInsets itemPadding;
+  final Duration duration;
   final Curve curve;
   final BorderRadius radius;
 
@@ -36,139 +38,126 @@ class CustomAnimatedBottomBar extends StatelessWidget {
     final bgColor = backgroundColor ?? Theme.of(context).bottomAppBarColor;
 
     return Container(
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: radius,
-        boxShadow: [
-          if (showElevation)
-            const BoxShadow(
-              color: Colors.black12,
-              blurRadius: 2,
-            ),
-        ],
-      ),
-      child: SafeArea(
-        child: Container(
-          width: double.infinity,
-          height: containerHeight,
-          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
-          child: Row(
-            mainAxisAlignment: mainAxisAlignment,
-            children: items.map((item) {
-              var index = items.indexOf(item);
-              return GestureDetector(
-                onTap: () => onItemSelected(index),
-                child: _ItemWidget(
-                  item: item,
-                  iconSize: iconSize,
-                  isSelected: index == selectedIndex,
-                  backgroundColor: bgColor,
-                  itemCornerRadius: itemCornerRadius,
-                  animationDuration: animationDuration,
-                  curve: curve,
-                ),
-              );
-            }).toList(),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ItemWidget extends StatelessWidget {
-  final double iconSize;
-  final bool isSelected;
-  final BottomNavBarItem item;
-  final Color backgroundColor;
-  final double itemCornerRadius;
-  final Duration animationDuration;
-  final Curve curve;
-
-  const _ItemWidget({
-    Key? key,
-    required this.item,
-    required this.isSelected,
-    required this.backgroundColor,
-    required this.animationDuration,
-    required this.itemCornerRadius,
-    required this.iconSize,
-    this.curve = Curves.linear,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      container: true,
-      selected: isSelected,
-      child: AnimatedContainer(
-        width: isSelected ? 130 : 50,
-        height: double.maxFinite,
-        duration: animationDuration,
-        curve: curve,
         decoration: BoxDecoration(
-          color:
-              isSelected ? item.activeColor.withOpacity(0.2) : backgroundColor,
-          borderRadius: BorderRadius.circular(itemCornerRadius),
+          color: bgColor,
+          borderRadius: radius,
+          boxShadow: [
+            if (showElevation)
+              const BoxShadow(
+                color: Colors.black12,
+                blurRadius: 2,
+              ),
+          ],
         ),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          physics: NeverScrollableScrollPhysics(),
-          child: Container(
-            width: isSelected ? 130 : 50,
-            padding: EdgeInsets.symmetric(horizontal: 8),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                IconTheme(
-                  data: IconThemeData(
-                    size: iconSize,
-                    color: isSelected
-                        ? item.activeColor.withOpacity(1)
-                        : item.inactiveColor == null
-                            ? item.activeColor
-                            : item.inactiveColor,
+        child: SafeArea(
+          minimum: margin,
+          child: Row(
+            mainAxisAlignment: items.length <= 2
+                ? MainAxisAlignment.spaceEvenly
+                : MainAxisAlignment.spaceBetween,
+            children: [
+              for (final item in items)
+                TweenAnimationBuilder<double>(
+                  tween: Tween(
+                    end: items.indexOf(item) == selectedIndex ? 1.0 : 0.0,
                   ),
-                  child: item.icon,
-                ),
-                if (isSelected)
-                  Expanded(
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 4),
-                      child: DefaultTextStyle.merge(
-                        style: TextStyle(
-                          color: item.activeColor,
-                          fontWeight: FontWeight.bold,
+                  curve: curve,
+                  duration: duration,
+                  builder: (context, t, _) {
+                    final _selectedColor =
+                        item.activeColor ?? selectedItemColor;
+
+                    final _unselectedColor =
+                        item.inactiveColor ?? unselectedItemColor;
+
+                    return Material(
+                      color: Color.lerp(
+                          _selectedColor!.withOpacity(0.0),
+                          _selectedColor
+                              .withOpacity(selectedColorOpacity ?? 0.1),
+                          t),
+                      shape: itemShape,
+                      child: InkWell(
+                        onTap: () => onTap?.call(items.indexOf(item)),
+                        customBorder: itemShape,
+                        focusColor: _selectedColor.withOpacity(0.1),
+                        highlightColor: _selectedColor.withOpacity(0.1),
+                        splashColor: _selectedColor.withOpacity(0.1),
+                        hoverColor: _selectedColor.withOpacity(0.1),
+                        child: Padding(
+                          padding: itemPadding -
+                              (Directionality.of(context) == TextDirection.ltr
+                                  ? EdgeInsets.only(
+                                      right: itemPadding.right * t)
+                                  : EdgeInsets.only(
+                                      left: itemPadding.left * t)),
+                          child: Row(
+                            children: [
+                              IconTheme(
+                                data: IconThemeData(
+                                  color: Color.lerp(
+                                      _unselectedColor, _selectedColor, t),
+                                  size: 24,
+                                ),
+                                child: items.indexOf(item) == selectedIndex
+                                    ? item.activeIcon ?? item.icon
+                                    : item.icon,
+                              ),
+                              ClipRect(
+                                clipBehavior: Clip.antiAlias,
+                                child: SizedBox(
+                                  height: 20,
+                                  child: Align(
+                                    alignment: Alignment(-0.2, 0.0),
+                                    widthFactor: t,
+                                    child: Padding(
+                                      padding: Directionality.of(context) ==
+                                              TextDirection.ltr
+                                          ? EdgeInsets.only(
+                                              left: itemPadding.left / 2,
+                                              right: itemPadding.right)
+                                          : EdgeInsets.only(
+                                              left: itemPadding.left,
+                                              right: itemPadding.right / 2),
+                                      child: DefaultTextStyle(
+                                        style: TextStyle(
+                                          color: Color.lerp(
+                                              _selectedColor.withOpacity(0.0),
+                                              _selectedColor,
+                                              t),
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        child: item.title,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                        maxLines: 1,
-                        textAlign: item.textAlign,
-                        child: item.title,
                       ),
-                    ),
-                  ),
-              ],
-            ),
+                    );
+                  },
+                ),
+            ],
           ),
-        ),
-      ),
-    );
+        ));
   }
 }
 
 class BottomNavBarItem {
+  final Widget icon;
+  final Widget? activeIcon;
+  final Widget title;
+  final Color? activeColor;
+  final Color? inactiveColor;
+
   BottomNavBarItem({
     required this.icon,
     required this.title,
-    this.activeColor = Colors.orange,
-    this.textAlign,
+    this.activeColor,
     this.inactiveColor,
+    this.activeIcon,
   });
-
-  final Widget icon;
-  final Widget title;
-  final Color activeColor;
-  final Color? inactiveColor;
-  final TextAlign? textAlign;
 }

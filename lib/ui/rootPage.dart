@@ -89,38 +89,38 @@ class AppState extends State<Musify> {
     final List<BottomNavBarItem> items = [
       BottomNavBarItem(
         icon: const Icon(MdiIcons.homeOutline),
+        activeIcon: const Icon(MdiIcons.home),
         title: const Text('Home'),
         activeColor: accent,
         inactiveColor: Colors.white,
-        textAlign: TextAlign.center,
       ),
       BottomNavBarItem(
-        icon: const Icon(MdiIcons.magnify),
+        icon: const Icon(MdiIcons.magnifyMinusOutline),
+        activeIcon: const Icon(MdiIcons.magnify),
         title: const Text('Search'),
         activeColor: accent,
         inactiveColor: Colors.white,
-        textAlign: TextAlign.center,
       ),
       BottomNavBarItem(
         icon: const Icon(MdiIcons.bookOutline),
+        activeIcon: const Icon(MdiIcons.book),
         title: const Text('Playlists'),
         activeColor: accent,
         inactiveColor: Colors.white,
-        textAlign: TextAlign.center,
       ),
       BottomNavBarItem(
-        icon: const Icon(MdiIcons.download),
+        icon: const Icon(MdiIcons.downloadOutline),
+        activeIcon: const Icon(MdiIcons.download),
         title: const Text('Local Songs'),
         activeColor: accent,
         inactiveColor: Colors.white,
-        textAlign: TextAlign.center,
       ),
       BottomNavBarItem(
         icon: const Icon(MdiIcons.cogOutline),
+        activeIcon: const Icon(MdiIcons.cog),
         title: const Text('Settings'),
         activeColor: accent,
         inactiveColor: Colors.white,
-        textAlign: TextAlign.center,
       )
     ];
 
@@ -281,16 +281,16 @@ class AppState extends State<Musify> {
   }
 
   Widget _buildBottomBar(List<BottomNavBarItem> items) {
-    return CustomAnimatedBottomBar(
-        animationDuration: const Duration(milliseconds: 330),
-        containerHeight: 65,
-        backgroundColor: bgLight,
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 100),
+      height: 65,
+      child: CustomAnimatedBottomBar(
         selectedIndex: activeTab,
-        showElevation: true,
-        itemCornerRadius: 15,
-        curve: Curves.easeIn,
-        onItemSelected: (index) => setState(() => activeTab = index),
+        backgroundColor: bgLight,
+        onTap: (index) => setState(() => activeTab = index),
         items: items,
-        radius: BorderRadius.zero);
+        margin: const EdgeInsets.only(top: 0, bottom: 0, left: 8.0, right: 8.0),
+      ),
+    );
   }
 }
