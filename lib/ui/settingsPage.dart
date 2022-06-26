@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/helper/version.dart';
+import 'package:musify/main.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:musify/ui/aboutPage.dart';
@@ -165,6 +166,96 @@ class SettingsCards extends StatelessWidget {
                                 ],
                               ),
                             );
+                          },
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 8, left: 8, right: 8, bottom: 6),
+          child: Card(
+            color: bgLight,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            elevation: 2.3,
+            child: ListTile(
+              leading: Icon(MdiIcons.translate, color: accent),
+              title: Text(
+                AppLocalizations.of(context)!.language,
+                style: TextStyle(color: accent),
+              ),
+              onTap: () {
+                showModalBottomSheet(
+                  isDismissible: true,
+                  backgroundColor: Colors.transparent,
+                  context: context,
+                  builder: (BuildContext context) {
+                    final Map<String, String> codes = {
+                      'English': 'en',
+                      'Georgian': 'ka'
+                    };
+
+                    final List availableLanguages = [
+                      "English",
+                      "Georgian",
+                    ];
+                    return Center(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: bgColor,
+                          border: Border.all(
+                            color: accent,
+                          ),
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(20),
+                          ),
+                        ),
+                        width:
+                            MediaQuery.of(context).copyWith().size.width * 0.90,
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          physics: const BouncingScrollPhysics(),
+                          itemCount: availableLanguages.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Card(
+                                    color: bgLight,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                    elevation: 2.3,
+                                    child: ListTile(
+                                      title: Text(
+                                        availableLanguages[index],
+                                        style: TextStyle(color: accent),
+                                      ),
+                                      onTap: () {
+                                        addOrUpdateData("settings", "language",
+                                            availableLanguages[index]);
+                                        MyApp.setLocale(
+                                            context,
+                                            Locale(codes[
+                                                availableLanguages[index]]!));
+
+                                        Fluttertoast.showToast(
+                                          backgroundColor: accent,
+                                          textColor: Colors.white,
+                                          msg: AppLocalizations.of(context)!
+                                              .languageMsg,
+                                          toastLength: Toast.LENGTH_SHORT,
+                                          gravity: ToastGravity.BOTTOM,
+                                          fontSize: 14.0,
+                                        );
+                                        Navigator.pop(context);
+                                      },
+                                    )));
                           },
                         ),
                       ),

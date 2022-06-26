@@ -15,6 +15,7 @@ import 'package:musify/ui/player.dart';
 import 'package:musify/ui/playlistsPage.dart';
 import 'package:musify/ui/searchPage.dart';
 import 'package:musify/ui/settingsPage.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Musify extends StatefulWidget {
   @override
@@ -46,7 +47,7 @@ class AppState extends State<Musify> {
         if (value == true)
           {
             Fluttertoast.showToast(
-              msg: "App Update Is Available!",
+              msg: "${AppLocalizations.of(context)!.appUpdateIsAvailable}!",
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.BOTTOM,
               backgroundColor: accent,
@@ -90,35 +91,35 @@ class AppState extends State<Musify> {
       BottomNavBarItem(
         icon: const Icon(MdiIcons.homeOutline),
         activeIcon: const Icon(MdiIcons.home),
-        title: const Text('Home'),
+        title: Text(AppLocalizations.of(context)!.home),
         activeColor: accent,
         inactiveColor: Colors.white,
       ),
       BottomNavBarItem(
         icon: const Icon(MdiIcons.magnifyMinusOutline),
         activeIcon: const Icon(MdiIcons.magnify),
-        title: const Text('Search'),
+        title: Text(AppLocalizations.of(context)!.search),
         activeColor: accent,
         inactiveColor: Colors.white,
       ),
       BottomNavBarItem(
         icon: const Icon(MdiIcons.bookOutline),
         activeIcon: const Icon(MdiIcons.book),
-        title: const Text('Playlists'),
+        title: Text(AppLocalizations.of(context)!.playlists),
         activeColor: accent,
         inactiveColor: Colors.white,
       ),
       BottomNavBarItem(
         icon: const Icon(MdiIcons.downloadOutline),
         activeIcon: const Icon(MdiIcons.download),
-        title: const Text('Local Songs'),
+        title: Text(AppLocalizations.of(context)!.localSongs),
         activeColor: accent,
         inactiveColor: Colors.white,
       ),
       BottomNavBarItem(
         icon: const Icon(MdiIcons.cogOutline),
         activeIcon: const Icon(MdiIcons.cog),
-        title: const Text('Settings'),
+        title: Text(AppLocalizations.of(context)!.settings),
         activeColor: accent,
         inactiveColor: Colors.white,
       )

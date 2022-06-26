@@ -16,37 +16,40 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 GetIt getIt = GetIt.instance;
-Locale _locale = const Locale('en', '');
 
-main() async {
-  await Hive.initFlutter();
-  final String lang = await getData("settings", "languages") ?? "English";
-  final Map<String, String> codes = {
-    'English': 'en',
-  };
-  _locale = Locale(codes[lang]!);
-  await getLocalSongs();
-  await FlutterDownloader.initialize(
-    debug:
-        true, // optional: set to false to disable printing logs to console (default: true)
-    ignoreSsl:
-        true // option: set to false to disable working with http links (default: false)
-    ,
-  );
-  FlutterDownloader.registerCallback(TestClass.callback);
-  accent = await getData("settings", "accentColor") != null
-      ? Color(await getData("settings", "accentColor") as int)
-      : const Color(0xFFFF9E80);
-  userPlaylists = await getData("user", "playlists") ?? [];
-  userLikedSongsList = await getData("user", "likedSongs") ?? [];
-  final PackageInfo packageInfo = await PackageInfo.fromPlatform();
-  version = packageInfo.version;
-  await enableBooster();
-  initialisation();
-  runApp(MyApp());
+class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  static void setLocale(BuildContext context, Locale newLocale) async {
+    _MyAppState state = context.findAncestorStateOfType<_MyAppState>()!;
+    state.changeLanguage(newLocale);
+  }
+
+  @override
+  _MyAppState createState() => _MyAppState();
 }
 
-class MyApp extends StatelessWidget {
+class _MyAppState extends State<MyApp> {
+  Locale _locale = const Locale('en', '');
+
+  changeLanguage(Locale locale) {
+    setState(() {
+      _locale = locale;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    final String lang =
+        Hive.box('settings').get('language', defaultValue: 'English') as String;
+    final Map<String, String> codes = {
+      'English': 'en',
+      'Georgian': 'ka',
+    };
+    _locale = Locale(codes[lang]!);
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -69,11 +72,34 @@ class MyApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: [Locale('en', '')],
+      supportedLocales: [Locale('en', ''), Locale('ka', '')],
       locale: _locale,
       home: Musify(),
     );
   }
+}
+
+main() async {
+  await Hive.initFlutter();
+  await getLocalSongs();
+  await FlutterDownloader.initialize(
+    debug:
+        true, // optional: set to false to disable printing logs to console (default: true)
+    ignoreSsl:
+        true // option: set to false to disable working with http links (default: false)
+    ,
+  );
+  FlutterDownloader.registerCallback(TestClass.callback);
+  accent = await getData("settings", "accentColor") != null
+      ? Color(await getData("settings", "accentColor") as int)
+      : const Color(0xFFFF9E80);
+  userPlaylists = await getData("user", "playlists") ?? [];
+  userLikedSongsList = await getData("user", "likedSongs") ?? [];
+  final PackageInfo packageInfo = await PackageInfo.fromPlatform();
+  version = packageInfo.version;
+  await enableBooster();
+  initialisation();
+  runApp(MyApp());
 }
 
 Future<void> initialisation() async {
