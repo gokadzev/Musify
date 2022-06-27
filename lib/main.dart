@@ -49,7 +49,6 @@ class _MyAppState extends State<MyApp> {
       'English': 'en',
       'Georgian': 'ka',
       'Chinese': 'zh',
-      'Czech': 'cs',
       'Dutch': 'nl',
       'German': 'de',
       'Indonesian': 'id',
