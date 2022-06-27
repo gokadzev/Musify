@@ -43,7 +43,7 @@ Future backupData() async {
       return "Permissions problem, if you already gave requested permission, Backup data again!";
     }
   }
-  return "Backuped Succesfully!";
+  return "Backuped Successfully!";
 }
 
 Future restoreData() async {
@@ -65,5 +65,5 @@ Future restoreData() async {
     }
   }
 
-  return "Restored Succesfully!";
+  return "Restored Successfully!";
 }
