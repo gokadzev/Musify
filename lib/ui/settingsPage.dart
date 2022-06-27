@@ -198,12 +198,46 @@ class SettingsCards extends StatelessWidget {
                   builder: (BuildContext context) {
                     final Map<String, String> codes = {
                       'English': 'en',
-                      'Georgian': 'ka'
+                      'Georgian': 'ka',
+                      'Chinese': 'zh',
+                      'Czech': 'cs',
+                      'Dutch': 'nl',
+                      'French': 'fr',
+                      'German': 'de',
+                      'Hebrew': 'he',
+                      'Hindi': 'hi',
+                      'Hungarian': 'hu',
+                      'Indonesian': 'id',
+                      'Italian': 'it',
+                      'Polish': 'pl',
+                      'Portuguese': 'pt',
+                      'Spanish': 'es',
+                      'Tamil': 'ta',
+                      'Turkish': 'tr',
+                      'Ukrainian': 'uk',
+                      'Urdu': 'ur',
                     };
 
                     final List availableLanguages = [
                       "English",
                       "Georgian",
+                      "Chinese",
+                      "Czech",
+                      "Dutch",
+                      "French",
+                      "German",
+                      "Hebrew",
+                      "Hindi",
+                      "Hungarian",
+                      "Indonesian",
+                      "Italian",
+                      "Polish",
+                      "Portuguese",
+                      "Spanish",
+                      "Tamil",
+                      "Turkish",
+                      "Ukrainian",
+                      "Urdu",
                     ];
                     return Center(
                       child: Container(
