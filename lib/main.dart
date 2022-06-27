@@ -61,10 +61,8 @@ class _MyAppState extends State<MyApp> {
       'Polish': 'pl',
       'Portuguese': 'pt',
       'Spanish': 'es',
-      'Tamil': 'ta',
       'Turkish': 'tr',
       'Ukrainian': 'uk',
-      'Urdu': 'ur',
     };
     _locale = Locale(codes[lang]!);
   }

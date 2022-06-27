@@ -213,10 +213,8 @@ class SettingsCards extends StatelessWidget {
                       'Polish': 'pl',
                       'Portuguese': 'pt',
                       'Spanish': 'es',
-                      'Tamil': 'ta',
                       'Turkish': 'tr',
                       'Ukrainian': 'uk',
-                      'Urdu': 'ur',
                     };
 
                     final List availableLanguages = [
@@ -235,10 +233,8 @@ class SettingsCards extends StatelessWidget {
                       "Polish",
                       "Portuguese",
                       "Spanish",
-                      "Tamil",
                       "Turkish",
                       "Ukrainian",
-                      "Urdu",
                     ];
                     return Center(
                       child: Container(
