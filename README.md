@@ -12,10 +12,11 @@
     Streaming Support :musical_note:<br>
     Download Support :arrow_down:<br>
     Play Local / Downloaded Songs Support :open_file_folder: <br>
-    High Quality mp3 Format :fire:<br>
-  	 Lyrics Support :pencil:<br>
+    High Quality mp3 / flac Format :fire:<br>
+  	Lyrics Support :pencil:<br>
     No Ads :no_entry_sign:<br>
-    No Subscriptions :dollar:<br>
+    No Subscriptions :dollar:<br> 
+    12 Supported Languages :us:<br>
  
 
 ---
