@@ -6,6 +6,8 @@
   "appUpdateAvailableAndDownloading": "აპლიკაციის განახლება ხელმისაწვდომია და იტვირთება",
   "appUpdateIsAvailable": "აპლიკაციის განახლება ხელმისაწვდომია",
   "appUpdateIsNotAvailable": "აპლიკაციის განახლება არაა ხელმისაწვდომი",
+  "audioFileType": "სიმღერის ფაილის დაბოლოვება",
+  "audioFileTypeMsg": "სიმღერის ფაილის დაბოლოვება შეიცვალა",
   "backupUserData": "მომხმარებლის ინფორმაციის დარეზერვება",
   "backupedSuccesfully": "დარეზერვდა წარმატებით",
   "cacheMsg": "ქეში გასუფთავდა",

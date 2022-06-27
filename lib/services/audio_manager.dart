@@ -32,6 +32,7 @@ final durationNotifier = ValueNotifier<Duration?>(Duration.zero);
 final buttonNotifier = ValueNotifier<MPlayerState>(MPlayerState.stopped);
 final shuffleNotifier = ValueNotifier<bool>(false);
 final repeatNotifier = ValueNotifier<bool>(false);
+final prefferedFileExtension = ValueNotifier<String>("mp3");
 
 bool get hasNext => audioPlayer!.hasNext;
 
@@ -56,7 +57,8 @@ downloadSong(song) async {
             .replaceAll('<', '')
             .replaceAll('>', '')
             .replaceAll('|', '') +
-        ".mp3";
+        "." +
+        prefferedFileExtension.value;
 
     String filepath = '';
     final String? dlPath =

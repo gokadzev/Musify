@@ -43,6 +43,8 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     final String lang =
         Hive.box('settings').get('language', defaultValue: 'English') as String;
+    prefferedFileExtension.value = Hive.box('settings')
+        .get('audioFileType', defaultValue: 'mp3') as String;
     final Map<String, String> codes = {
       'English': 'en',
       'Georgian': 'ka',
