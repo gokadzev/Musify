@@ -29,14 +29,14 @@ dependencies:
 
 
   path_provider: ^2.0.11
-  material_design_icons_flutter: ^5.0.6595
-  permission_handler: ^9.1.0
+  material_design_icons_flutter: ^5.0.6996
+  permission_handler: ^10.0.0
   fluttertoast: ^8.0.9
   cached_network_image: ^3.2.1
   audio_service: ^0.18.6
-  just_audio: ^0.9.26
+  just_audio: ^0.9.27
   get_it: ^7.2.0
-  hive: ^2.2.1
+  hive: ^2.2.3
   hive_flutter: ^1.1.0
   delayed_display: ^2.0.0
   youtube_explode_dart: ^1.12.0
@@ -49,7 +49,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_native_splash: ^2.2.3+1
+  flutter_native_splash: ^2.2.4
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
