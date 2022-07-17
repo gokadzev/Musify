@@ -28,8 +28,6 @@ List<SongModel> localSongs = [];
 final lyrics = ValueNotifier<String>("null");
 String _lastLyricsUrl = "";
 
-dynamic activeSong;
-
 int? id = 0;
 
 List activePlaylist = [];
