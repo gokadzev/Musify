@@ -10,6 +10,7 @@ import 'package:musify/customWidgets/spinner.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:on_audio_query/on_audio_query.dart';
 
 String status = 'hidden';
 
@@ -91,47 +92,63 @@ class AudioAppState extends State<AudioApp> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Container(
-                    width: size.width / 1.2,
-                    height: size.width / 1.2,
-                    child: CachedNetworkImage(
-                      imageUrl: metadata.artUri.toString(),
-                      imageBuilder: (context, imageProvider) => Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          shape: BoxShape.rectangle,
-                          image: DecorationImage(
-                            image: imageProvider,
-                            fit: BoxFit.cover,
+                  metadata.extras["localSongId"] is int
+                      ? QueryArtworkWidget(
+                          id: metadata.extras["localSongId"] as int,
+                          type: ArtworkType.AUDIO,
+                          artworkBorder: BorderRadius.circular(8),
+                          artworkQuality: FilterQuality.high,
+                          quality: 100,
+                          artworkWidth: size.width / 1.2,
+                          artworkHeight: size.width / 1.2,
+                          nullArtworkWidget: Icon(
+                            MdiIcons.musicNoteOutline,
+                            size: 30,
+                            color: accent,
                           ),
-                        ),
-                      ),
-                      placeholder: (context, url) => Spinner(),
-                      errorWidget: (context, url, error) => Container(
-                        width: size.width / 1.2,
-                        height: size.width / 1.2,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.0),
-                          gradient: LinearGradient(
-                            colors: [
-                              accent.withAlpha(30),
-                              Colors.white.withAlpha(30)
-                            ],
-                          ),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Icon(
-                              MdiIcons.musicNoteOutline,
-                              size: size.width / 8,
-                              color: accent,
+                          keepOldArtwork: true,
+                        )
+                      : Container(
+                          width: size.width / 1.2,
+                          height: size.width / 1.2,
+                          child: CachedNetworkImage(
+                            imageUrl: metadata.artUri.toString(),
+                            imageBuilder: (context, imageProvider) => Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                shape: BoxShape.rectangle,
+                                image: DecorationImage(
+                                  image: imageProvider,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
                             ),
-                          ],
+                            placeholder: (context, url) => Spinner(),
+                            errorWidget: (context, url, error) => Container(
+                              width: size.width / 1.2,
+                              height: size.width / 1.2,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.0),
+                                gradient: LinearGradient(
+                                  colors: [
+                                    accent.withAlpha(30),
+                                    Colors.white.withAlpha(30)
+                                  ],
+                                ),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Icon(
+                                    MdiIcons.musicNoteOutline,
+                                    size: size.width / 8,
+                                    color: accent,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
                   Padding(
                     padding: const EdgeInsets.only(top: 35.0, bottom: 35),
                     child: Column(

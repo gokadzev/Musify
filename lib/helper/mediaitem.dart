@@ -37,7 +37,8 @@ MediaItem mapToMediaItem(Map song, String songUrl) {
     extras: {
       'url': songUrl,
       'lowResImage': song['lowResImage'],
-      'ytid': song['ytid']
+      'ytid': song['ytid'],
+      'localSongId': song['localSongId']
     },
   );
 }

@@ -16,6 +16,7 @@ import 'package:musify/ui/playlistsPage.dart';
 import 'package:musify/ui/searchPage.dart';
 import 'package:musify/ui/settingsPage.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:on_audio_query/on_audio_query.dart';
 
 class Musify extends StatefulWidget {
   @override
@@ -172,36 +173,50 @@ class AppState extends State<Musify> {
                           bottom: 7,
                           right: 15,
                         ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8.0),
-                          child: CachedNetworkImage(
-                            imageUrl: metadata!.artUri.toString(),
-                            fit: BoxFit.fill,
-                            errorWidget: (context, url, error) => Container(
-                              width: 50,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.0),
-                                gradient: LinearGradient(
-                                  colors: [
-                                    accent.withAlpha(30),
-                                    Colors.white.withAlpha(30)
-                                  ],
+                        child: metadata.extras["localSongId"] is int
+                            ? QueryArtworkWidget(
+                                id: metadata.extras["localSongId"] as int,
+                                type: ArtworkType.AUDIO,
+                                artworkBorder: BorderRadius.circular(8),
+                                nullArtworkWidget: Icon(
+                                  MdiIcons.musicNoteOutline,
+                                  size: 30,
+                                  color: accent,
+                                ),
+                                keepOldArtwork: true,
+                              )
+                            : ClipRRect(
+                                borderRadius: BorderRadius.circular(8.0),
+                                child: CachedNetworkImage(
+                                  imageUrl: metadata!.artUri.toString(),
+                                  fit: BoxFit.fill,
+                                  errorWidget: (context, url, error) =>
+                                      Container(
+                                    width: 50,
+                                    height: 50,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          accent.withAlpha(30),
+                                          Colors.white.withAlpha(30)
+                                        ],
+                                      ),
+                                    ),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        Icon(
+                                          MdiIcons.musicNoteOutline,
+                                          size: 30,
+                                          color: accent,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
                               ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Icon(
-                                    MdiIcons.musicNoteOutline,
-                                    size: 30,
-                                    color: accent,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
                       ),
                       Padding(
                         padding: EdgeInsets.zero,

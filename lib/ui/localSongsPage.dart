@@ -5,6 +5,7 @@ import 'package:musify/API/musify.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:on_audio_query/on_audio_query.dart';
 
 class LocalSongsPage extends StatelessWidget {
   const LocalSongsPage({Key? key}) : super(key: key);
@@ -138,6 +139,7 @@ class LocalSongsPage extends StatelessWidget {
                 "songUrl": localSongs[index].data,
                 "album": "",
                 "type": "song",
+                "localSongId": localSongs[index].id,
                 "more_info": {
                   "primary_artists": "",
                   "singers": "",
@@ -171,10 +173,16 @@ class LocalSongsPage extends StatelessWidget {
                                   bottom: 8.0,
                                   left: 8.0,
                                   right: 25.0),
-                              child: Icon(
-                                MdiIcons.musicNoteOutline,
-                                size: 30,
-                                color: accent,
+                              child: QueryArtworkWidget(
+                                id: lsong["localSongId"] as int,
+                                type: ArtworkType.AUDIO,
+                                artworkBorder: BorderRadius.circular(8),
+                                nullArtworkWidget: Icon(
+                                  MdiIcons.musicNoteOutline,
+                                  size: 30,
+                                  color: accent,
+                                ),
+                                keepOldArtwork: true,
                               ),
                             ),
                             title: Text(
