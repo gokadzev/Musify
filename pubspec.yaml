@@ -33,8 +33,8 @@ dependencies:
   permission_handler: ^10.0.0
   fluttertoast: ^8.0.9
   cached_network_image: ^3.2.1
-  audio_service: ^0.18.6
-  just_audio: ^0.9.27
+  audio_service: ^0.18.7
+  just_audio: ^0.9.28
   get_it: ^7.2.0
   hive: ^2.2.3
   hive_flutter: ^1.1.0
@@ -43,13 +43,13 @@ dependencies:
   google_fonts: ^3.0.1
   flutter_cache_manager: ^3.3.0
   package_info_plus: ^1.4.2
-  flutter_downloader: ^1.8.0+1
+  flutter_downloader: ^1.8.1
   on_audio_query: ^2.6.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_native_splash: ^2.2.4
+  flutter_native_splash: ^2.2.5
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
