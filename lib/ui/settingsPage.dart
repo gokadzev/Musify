@@ -487,7 +487,7 @@ class SettingsCards extends StatelessWidget {
                   backgroundColor: Colors.transparent,
                   context: context,
                   builder: (BuildContext context) {
-                    final availableFileTypes = ["mp3", "flac"];
+                    final availableFileTypes = ["mp3", "flac", "m4a"];
                     return Center(
                       child: Container(
                         decoration: BoxDecoration(
