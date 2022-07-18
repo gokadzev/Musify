@@ -5,17 +5,21 @@ import 'package:hive/hive.dart';
 import 'package:musify/services/ext_storage.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-Future<void> addOrUpdateData(String category, key, value) async {
+Future<void> addOrUpdateData(
+  String category,
+  dynamic key,
+  dynamic value,
+) async {
   final box = await Hive.openBox(category);
   box.put(key, value);
 }
 
-Future getData(String category, key) async {
+Future getData(String category, dynamic key) async {
   final box = await Hive.openBox(category);
   return box.get(key);
 }
 
-Future<void> deleteData(String category, key) async {
+Future<void> deleteData(String category, dynamic key) async {
   final box = await Hive.openBox(category);
   box.delete(key);
 }
@@ -25,7 +29,7 @@ Future<void> clearCache() async {
 }
 
 Future backupData() async {
-  final List boxNames = ["user", "settings"];
+  final List boxNames = ['user', 'settings'];
   final String? dlPath =
       await ExtStorageProvider.getExtStorage(dirName: 'Musify/Data');
 
@@ -40,30 +44,30 @@ Future backupData() async {
       ].request();
       await File(Hive.box(boxNames[i].toString()).path!)
           .copy('$dlPath/${boxNames[i]}Data.hive');
-      return "Permissions problem, if you already gave requested permission, Backup data again!";
+      return 'Permissions problem, if you already gave requested permission, Backup data again!';
     }
   }
-  return "Backuped Successfully!";
+  return 'Backuped Successfully!';
 }
 
 Future restoreData() async {
-  final List boxNames = ["user", "settings"];
+  final List boxNames = ['user', 'settings'];
   final String? uplPath =
       await ExtStorageProvider.getExtStorage(dirName: 'Musify/Data');
 
   for (int i = 0; i < boxNames.length; i++) {
     await Hive.openBox(boxNames[i].toString());
     try {
-      final Box box = await Hive.openBox(boxNames[i]);
+      final Box box = await Hive.openBox(boxNames[i].toString());
       final boxPath = box.path;
       File('${uplPath!}/${boxNames[i]}Data.hive').copy(boxPath!);
     } catch (e) {
       await [
         Permission.manageExternalStorage,
       ].request();
-      return "Permissions problem, if you already gave requested permission, Restore data again!";
+      return 'Permissions problem, if you already gave requested permission, Restore data again!';
     }
   }
 
-  return "Restored Successfully!";
+  return 'Restored Successfully!';
 }

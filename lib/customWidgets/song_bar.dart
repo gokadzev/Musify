@@ -10,7 +10,7 @@ class SongBar extends StatelessWidget {
 
   late final dynamic song;
   late final songLikeStatus =
-      ValueNotifier<bool>(isSongAlreadyLiked(song["ytid"]));
+      ValueNotifier<bool>(isSongAlreadyLiked(song['ytid']));
 
   @override
   Widget build(BuildContext context) {
@@ -37,11 +37,10 @@ class SongBar extends StatelessWidget {
                 child: CachedNetworkImage(
                   width: 70,
                   height: 70,
-                  imageUrl: song["lowResImage"].toString(),
+                  imageUrl: song['lowResImage'].toString(),
                   imageBuilder: (context, imageProvider) => Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
-                      shape: BoxShape.rectangle,
                       image: DecorationImage(
                         image: imageProvider,
                         fit: BoxFit.cover,
@@ -54,14 +53,14 @@ class SongBar extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 (song['title'])
                     .toString()
-                    .split("(")[0]
-                    .replaceAll("&quot;", '"')
-                    .replaceAll("&amp;", "&"),
+                    .split('(')[0]
+                    .replaceAll('&quot;', '"')
+                    .replaceAll('&amp;', '&'),
                 style: TextStyle(color: accent),
               ),
               subtitle: Text(
                 overflow: TextOverflow.ellipsis,
-                song['more_info']["singers"].toString(),
+                song['more_info']['singers'].toString(),
                 style: TextStyle(color: accentLight),
               ),
               trailing: Row(

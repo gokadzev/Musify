@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/customWidgets/song_bar.dart';
 import 'package:musify/customWidgets/spinner.dart';
 import 'package:musify/style/appColors.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SearchPage extends StatefulWidget {
   @override
@@ -93,7 +93,7 @@ class _SearchPageState extends State<SearchPage> {
                   },
                 ),
                 border: InputBorder.none,
-                hintText: "${AppLocalizations.of(context)!.search}...",
+                hintText: '${AppLocalizations.of(context)!.search}...',
                 hintStyle: TextStyle(
                   color: accent,
                 ),

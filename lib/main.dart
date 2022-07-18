@@ -1,6 +1,7 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,15 +14,14 @@ import 'package:musify/services/data_manager.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:musify/ui/rootPage.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 GetIt getIt = GetIt.instance;
 
 class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  static void setLocale(BuildContext context, Locale newLocale) async {
-    _MyAppState state = context.findAncestorStateOfType<_MyAppState>()!;
+  static Future<void> setLocale(BuildContext context, Locale newLocale) async {
+    final _MyAppState state = context.findAncestorStateOfType<_MyAppState>()!;
     state.changeLanguage(newLocale);
   }
 
@@ -32,7 +32,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   Locale _locale = const Locale('en', '');
 
-  changeLanguage(Locale locale) {
+  void changeLanguage(Locale locale) {
     setState(() {
       _locale = locale;
     });
@@ -78,13 +78,13 @@ class _MyAppState extends State<MyApp> {
           },
         ),
       ),
-      localizationsDelegates: [
+      localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: [
+      supportedLocales: const [
         Locale('en', ''),
         Locale('ka', ''),
         Locale('zh', ''),
@@ -110,7 +110,7 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-main() async {
+void main() async {
   await Hive.initFlutter();
   await getLocalSongs();
   await FlutterDownloader.initialize(
@@ -121,16 +121,16 @@ main() async {
     ,
   );
   FlutterDownloader.registerCallback(TestClass.callback);
-  accent = await getData("settings", "accentColor") != null
-      ? Color(await getData("settings", "accentColor") as int)
+  accent = await getData('settings', 'accentColor') != null
+      ? Color(await getData('settings', 'accentColor') as int)
       : const Color(0xFFFF9E80);
-  userPlaylists = await getData("user", "playlists") ?? [];
-  userLikedSongsList = await getData("user", "likedSongs") ?? [];
+  userPlaylists = await getData('user', 'playlists') ?? [];
+  userLikedSongsList = await getData('user', 'likedSongs') ?? [];
   final PackageInfo packageInfo = await PackageInfo.fromPlatform();
   version = packageInfo.version;
   await enableBooster();
   initialisation();
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 Future<void> initialisation() async {

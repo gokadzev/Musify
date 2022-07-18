@@ -1,12 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/customWidgets/spinner.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:musify/ui/playlistPage.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PlaylistsPage extends StatefulWidget {
   @override
@@ -40,38 +40,36 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
               future: getPlaylists(),
               builder: (context, data) {
                 return (data as dynamic).data != null
-                    ? Container(
-                        child: GridView.builder(
-                          addAutomaticKeepAlives: false,
-                          addRepaintBoundaries: false,
-                          gridDelegate:
-                              const SliverGridDelegateWithMaxCrossAxisExtent(
-                            maxCrossAxisExtent: 200,
-                            crossAxisSpacing: 20,
-                            mainAxisSpacing: 20,
-                          ),
-                          shrinkWrap: true,
-                          physics: const ScrollPhysics(),
-                          itemCount: (data as dynamic).data.length,
-                          padding: const EdgeInsets.only(
-                            left: 16.0,
-                            right: 16.0,
-                            top: 16.0,
-                            bottom: 20,
-                          ),
-                          itemBuilder: (BuildContext context, index) {
-                            return Center(
-                              child: GetPlaylist(
-                                index: index,
-                                image: (data as dynamic).data[index]["image"],
-                                title: (data as dynamic)
-                                    .data[index]["title"]
-                                    .toString(),
-                                id: (data as dynamic).data[index]["ytid"],
-                              ),
-                            );
-                          },
+                    ? GridView.builder(
+                        addAutomaticKeepAlives: false,
+                        addRepaintBoundaries: false,
+                        gridDelegate:
+                            const SliverGridDelegateWithMaxCrossAxisExtent(
+                          maxCrossAxisExtent: 200,
+                          crossAxisSpacing: 20,
+                          mainAxisSpacing: 20,
                         ),
+                        shrinkWrap: true,
+                        physics: const ScrollPhysics(),
+                        itemCount: (data as dynamic).data.length as int,
+                        padding: const EdgeInsets.only(
+                          left: 16.0,
+                          right: 16.0,
+                          top: 16.0,
+                          bottom: 20,
+                        ),
+                        itemBuilder: (BuildContext context, index) {
+                          return Center(
+                            child: GetPlaylist(
+                              index: index,
+                              image: (data as dynamic).data[index]['image'],
+                              title: (data as dynamic)
+                                  .data[index]['title']
+                                  .toString(),
+                              id: (data as dynamic).data[index]['ytid'],
+                            ),
+                          );
+                        },
                       )
                     : Spinner();
               },
@@ -132,7 +130,7 @@ class GetPlaylist extends StatelessWidget {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(15.0),
-                    child: image != ""
+                    child: image != ''
                         ? CachedNetworkImage(
                             width: size.width * 0.4,
                             height: size.height * 0.18,

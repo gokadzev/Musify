@@ -2,13 +2,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/customWidgets/song_bar.dart';
 import 'package:musify/customWidgets/spinner.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:musify/ui/playlistPage.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -42,48 +42,47 @@ class _HomePageState extends State<HomePage> {
               future: getPlaylists(5),
               builder: (context, data) {
                 return data.hasData
-                    ? Container(
-                        child: Wrap(
-                          children: <Widget>[
-                            Padding(
-                              padding: EdgeInsets.only(
-                                top: MediaQuery.of(context).size.height / 55,
-                                bottom: 10,
-                                left: 25,
-                                right: 25,
-                              ),
-                              child: Text(
-                                AppLocalizations.of(context)!
-                                    .suggestedPlaylists,
-                                style: TextStyle(
-                                  color: accent,
-                                  fontSize: 20.0,
-                                  fontWeight: FontWeight.w700,
-                                ),
+                    ? Wrap(
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.only(
+                              top: MediaQuery.of(context).size.height / 55,
+                              bottom: 10,
+                              left: 25,
+                              right: 25,
+                            ),
+                            child: Text(
+                              AppLocalizations.of(context)!.suggestedPlaylists,
+                              style: TextStyle(
+                                color: accent,
+                                fontSize: 20.0,
+                                fontWeight: FontWeight.w700,
                               ),
                             ),
-                            Container(
-                              height: 230,
-                              child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: (data as dynamic).data.length,
-                                itemBuilder: (context, index) {
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 15.0,
-                                    ),
-                                    child: CubeContainer(
-                                      id: (data as dynamic).data[index]["ytid"],
-                                      image: (data as dynamic)
-                                          .data[index]["image"]
-                                          .toString(),
-                                    ),
-                                  );
-                                },
-                              ),
-                            )
-                          ],
-                        ),
+                          ),
+                          SizedBox(
+                            height: 230,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: (data as dynamic).data.length as int,
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 15.0,
+                                  ),
+                                  child: CubeContainer(
+                                    id: (data as dynamic)
+                                        .data[index]['ytid']
+                                        .toString(),
+                                    image: (data as dynamic)
+                                        .data[index]['image']
+                                        .toString(),
+                                  ),
+                                );
+                              },
+                            ),
+                          )
+                        ],
                       )
                     : Center(
                         child: Padding(
@@ -94,49 +93,45 @@ class _HomePageState extends State<HomePage> {
               },
             ),
             FutureBuilder(
-              future: get10Music("PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx"),
+              future: get10Music('PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx'),
               builder: (context, data) {
                 return data.hasData
-                    ? Container(
-                        child: Wrap(
-                          children: <Widget>[
-                            Padding(
-                              padding: EdgeInsets.only(
-                                top: MediaQuery.of(context).size.height / 55,
-                                bottom: 10,
-                                left: 25,
-                                right: 25,
-                              ),
-                              child: Text(
-                                AppLocalizations.of(context)!.recommendedForYou,
-                                style: TextStyle(
-                                  color: accent,
-                                  fontSize: 20.0,
-                                  fontWeight: FontWeight.w700,
-                                ),
+                    ? Wrap(
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.only(
+                              top: MediaQuery.of(context).size.height / 55,
+                              bottom: 10,
+                              left: 25,
+                              right: 25,
+                            ),
+                            child: Text(
+                              AppLocalizations.of(context)!.recommendedForYou,
+                              style: TextStyle(
+                                color: accent,
+                                fontSize: 20.0,
+                                fontWeight: FontWeight.w700,
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 15.0,
-                              ),
-                              child: Container(
-                                child: ListView.builder(
-                                  shrinkWrap: true,
-                                  addAutomaticKeepAlives: false,
-                                  addRepaintBoundaries: false,
-                                  physics: const BouncingScrollPhysics(),
-                                  itemCount: (data as dynamic).data.length,
-                                  itemBuilder: (context, index) {
-                                    return SongBar(
-                                      (data as dynamic).data[index],
-                                    );
-                                  },
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 15.0,
+                            ),
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              addAutomaticKeepAlives: false,
+                              addRepaintBoundaries: false,
+                              physics: const BouncingScrollPhysics(),
+                              itemCount: (data as dynamic).data.length as int,
+                              itemBuilder: (context, index) {
+                                return SongBar(
+                                  (data as dynamic).data[index],
+                                );
+                              },
+                            ),
+                          )
+                        ],
                       )
                     : Center(
                         child: Padding(
@@ -183,7 +178,7 @@ class CubeContainer extends StatelessWidget {
         },
         child: Column(
           children: [
-            Container(
+            SizedBox(
               height: size.height / 4.15,
               width: size.width / 1.9,
               child: Card(
@@ -191,39 +186,36 @@ class CubeContainer extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8.0),
                 ),
                 color: Colors.transparent,
-                child: Container(
-                  child: CachedNetworkImage(
-                    imageUrl: image,
-                    imageBuilder: (context, imageProvider) => Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        shape: BoxShape.rectangle,
-                        image: DecorationImage(
-                          image: imageProvider,
-                          fit: BoxFit.cover,
-                        ),
+                child: CachedNetworkImage(
+                  imageUrl: image,
+                  imageBuilder: (context, imageProvider) => Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      image: DecorationImage(
+                        image: imageProvider,
+                        fit: BoxFit.cover,
                       ),
                     ),
-                    errorWidget: (context, url, error) => Container(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Icon(
-                            MdiIcons.musicNoteOutline,
-                            size: 30,
-                            color: accent,
-                          ),
+                  ),
+                  errorWidget: (context, url, error) => Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      gradient: LinearGradient(
+                        colors: [
+                          accent.withAlpha(30),
+                          Colors.white.withAlpha(30)
                         ],
                       ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10.0),
-                        gradient: LinearGradient(
-                          colors: [
-                            accent.withAlpha(30),
-                            Colors.white.withAlpha(30)
-                          ],
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Icon(
+                          MdiIcons.musicNoteOutline,
+                          size: 30,
+                          color: accent,
                         ),
-                      ),
+                      ],
                     ),
                   ),
                 ),

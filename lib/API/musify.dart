@@ -25,8 +25,8 @@ List userLikedSongsList = [];
 List suggestedPlaylists = [];
 List<SongModel> localSongs = [];
 
-final lyrics = ValueNotifier<String>("null");
-String _lastLyricsUrl = "";
+final lyrics = ValueNotifier<String>('null');
+String _lastLyricsUrl = '';
 
 int? id = 0;
 
@@ -35,26 +35,28 @@ List activePlaylist = [];
 Future<List> fetchSongsList(String searchQuery) async {
   final List list = await yt.search.search(searchQuery);
   searchedList = [];
-  for (var s in list) {
+  for (final s in list) {
     searchedList.add(
       returnSongLayout(
         0,
         s.id.toString(),
-        formatSongTitle(s.title.split('-')[s.title.split('-').length - 1]),
-        s.thumbnails.standardResUrl,
-        s.thumbnails.lowResUrl,
-        s.thumbnails.maxResUrl,
-        s.title.split('-')[0],
+        formatSongTitle(
+          s.title.split('-')[s.title.split('-').length - 1].toString(),
+        ),
+        s.thumbnails.standardResUrl.toString(),
+        s.thumbnails.lowResUrl.toString(),
+        s.thumbnails.maxResUrl.toString(),
+        s.title.split('-')[0].toString(),
       ),
     );
   }
   return searchedList;
 }
 
-Future get10Music(playlistId) async {
-  var newSongs = [];
+Future get10Music(dynamic playlistId) async {
+  final newSongs = [];
   var index = 0;
-  await for (var song in yt.playlists.getVideos(playlistId).take(10)) {
+  await for (final song in yt.playlists.getVideos(playlistId).take(10)) {
     newSongs.add(
       returnSongLayout(
         index,
@@ -75,53 +77,54 @@ Future get10Music(playlistId) async {
 }
 
 Future<List<dynamic>> getUserPlaylists() async {
-  var playlistsByUser = [];
+  final playlistsByUser = [];
   for (final playlistID in userPlaylists) {
     final plist = await yt.playlists.get(playlistID);
     playlistsByUser.add({
-      "ytid": plist.id,
-      "title": plist.title,
-      "subtitle": "Just Updated",
-      "header_desc": plist.description.length < 120
+      'ytid': plist.id,
+      'title': plist.title,
+      'subtitle': 'Just Updated',
+      'header_desc': plist.description.length < 120
           ? plist.description
           : plist.description.substring(0, 120),
-      "type": "playlist",
-      "image": "",
-      "list": []
+      'type': 'playlist',
+      'image': '',
+      'list': []
     });
   }
   return playlistsByUser;
 }
 
-addUserPlaylist(String playlistId) {
+void addUserPlaylist(String playlistId) {
   userPlaylists.add(playlistId);
-  addOrUpdateData("user", "playlists", userPlaylists);
+  addOrUpdateData('user', 'playlists', userPlaylists);
 }
 
-removeUserPlaylist(String playlistId) {
-  userPlaylists.remove(playlistId.toString());
-  addOrUpdateData("user", "playlists", userPlaylists);
+void removeUserPlaylist(String playlistId) {
+  userPlaylists.remove(playlistId);
+  addOrUpdateData('user', 'playlists', userPlaylists);
 }
 
-addUserLikedSong(songId) async {
+Future<void> addUserLikedSong(dynamic songId) async {
   userLikedSongsList
       .add(await getSongDetails(userLikedSongsList.length, songId));
-  addOrUpdateData("user", "likedSongs", userLikedSongsList);
+  addOrUpdateData('user', 'likedSongs', userLikedSongsList);
 }
 
-removeUserLikedSong(songId) {
-  userLikedSongsList.removeWhere((song) => song["ytid"] == songId);
-  addOrUpdateData("user", "likedSongs", userLikedSongsList);
+void removeUserLikedSong(dynamic songId) {
+  userLikedSongsList.removeWhere((song) => song['ytid'] == songId);
+  addOrUpdateData('user', 'likedSongs', userLikedSongsList);
 }
 
-bool isSongAlreadyLiked(songId) {
-  return userLikedSongsList.where((song) => song["ytid"] == songId).isNotEmpty;
+bool isSongAlreadyLiked(dynamic songId) {
+  return userLikedSongsList.where((song) => song['ytid'] == songId).isNotEmpty;
 }
 
 Future<List> getPlaylists([int? playlistsNum]) async {
   if (playlists.isEmpty) {
     final localplaylists =
-        json.decode(await rootBundle.loadString('assets/db/playlists.db.json'));
+        json.decode(await rootBundle.loadString('assets/db/playlists.db.json'))
+            as List;
     playlists = localplaylists;
   }
 
@@ -136,8 +139,8 @@ Future<List> getPlaylists([int? playlistsNum]) async {
   }
 }
 
-Future getSongsFromPlaylist(playlistid) async {
-  var playlistSongs = [];
+Future getSongsFromPlaylist(dynamic playlistid) async {
+  final playlistSongs = [];
   var index = 0;
   await for (final song in yt.playlists.getVideos(playlistid)) {
     playlistSongs.add(
@@ -159,17 +162,17 @@ Future getSongsFromPlaylist(playlistid) async {
   return playlistSongs;
 }
 
-setActivePlaylist(List plist) async {
-  List<MediaItem> activePlaylist = [];
+Future<void> setActivePlaylist(List plist) async {
+  final List<MediaItem> activePlaylist = [];
 
   if (plist is List<SongModel>) {
-    for (var song in plist) {
-      activePlaylist.add(songModelToMediaItem(song, song.data.toString()));
+    for (final song in plist) {
+      activePlaylist.add(songModelToMediaItem(song, song.data));
     }
   } else {
     for (var i = 0; i < plist.length && i < 20; i++) {
-      final songUrl = await getSongUrl(plist[i]["ytid"]);
-      activePlaylist.add(mapToMediaItem(plist[i], songUrl));
+      final songUrl = await getSongUrl(plist[i]['ytid']);
+      activePlaylist.add(mapToMediaItem(plist[i] as Map, songUrl));
     }
   }
 
@@ -179,24 +182,24 @@ setActivePlaylist(List plist) async {
 }
 
 Future getPlaylistInfoForWidget(dynamic id) async {
-  var searchPlaylist = playlists.where((list) => list["ytid"] == id).toList();
+  var searchPlaylist = playlists.where((list) => list['ytid'] == id).toList();
 
   if (searchPlaylist.isEmpty) {
     final usPlaylists = await getUserPlaylists();
-    searchPlaylist = usPlaylists.where((list) => list["ytid"] == id).toList();
+    searchPlaylist = usPlaylists.where((list) => list['ytid'] == id).toList();
   }
 
-  var playlist = searchPlaylist[0];
+  final playlist = searchPlaylist[0];
 
-  if (playlist["list"].length == 0) {
-    searchPlaylist[searchPlaylist.indexOf(playlist)]["list"] =
-        await getSongsFromPlaylist(playlist["ytid"]);
+  if (playlist['list'].length == 0) {
+    searchPlaylist[searchPlaylist.indexOf(playlist)]['list'] =
+        await getSongsFromPlaylist(playlist['ytid']);
   }
 
   return playlist;
 }
 
-Future getSongUrl(dynamic songId) async {
+Future<String> getSongUrl(dynamic songId) async {
   final manifest = await yt.videos.streamsClient.getManifest(songId);
   return manifest.audioOnly.withHighestBitrate().url.toString();
 }
@@ -219,7 +222,7 @@ Future getSongDetails(dynamic songIndex, dynamic songId) async {
   );
 }
 
-getLocalSongs() async {
+Future<List<SongModel>> getLocalSongs() async {
   // DEFAULT:
   // SongSortType.TITLE,
   // OrderType.ASC_OR_SMALLER,
@@ -233,19 +236,19 @@ getLocalSongs() async {
 Future getSongLyrics(String artist, String title) async {
   if (_lastLyricsUrl !=
       'https://api.lyrics.ovh/v1/$artist/${title.split(" (")[0].split("|")[0].trim()}') {
-    lyrics.value = "null";
+    lyrics.value = 'null';
     _lastLyricsUrl =
         'https://api.lyrics.ovh/v1/$artist/${title.split(" (")[0].split("|")[0].trim()}';
     try {
       final lyricsApiRes = await DefaultCacheManager().getSingleFile(
         _lastLyricsUrl,
-        headers: {"Accept": "application/json"},
+        headers: {'Accept': 'application/json'},
       );
       final lyricsResponse =
           await json.decode(await lyricsApiRes.readAsString());
       lyrics.value = lyricsResponse['lyrics'].toString();
     } catch (e) {
-      lyrics.value = "not found";
+      lyrics.value = 'not found';
       debugPrint(e.toString());
     }
   }

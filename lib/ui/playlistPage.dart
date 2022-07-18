@@ -3,13 +3,13 @@ import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/customWidgets/song_bar.dart';
 import 'package:musify/customWidgets/spinner.dart';
 import 'package:musify/style/appColors.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PlaylistPage extends StatefulWidget {
   final dynamic playlist;
@@ -21,7 +21,6 @@ class PlaylistPage extends StatefulWidget {
 
 class _PlaylistPageState extends State<PlaylistPage> {
   final _songsList = [];
-  late final itemFetcher;
 
   bool _isLoading = true;
   bool _hasMore = true;
@@ -62,11 +61,11 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
   Future<List> fetch() async {
     final list = [];
-    final int _count = widget.playlist["list"].length;
+    final int _count = widget.playlist['list'].length as int;
     final n = min(_itemsPerPage, _count - _currentPage * _itemsPerPage);
     await Future.delayed(const Duration(seconds: 1), () {
       for (int i = 0; i < n; i++) {
-        list.add(widget.playlist["list"][_currentLastLoadedId]);
+        list.add(widget.playlist['list'][_currentLastLoadedId]);
         _currentLastLoadedId++;
       }
     });
@@ -115,14 +114,14 @@ class _PlaylistPageState extends State<PlaylistPage> {
                             borderRadius: BorderRadius.circular(8.0),
                           ),
                           color: Colors.transparent,
-                          child: widget.playlist["image"] != ""
+                          child: widget.playlist['image'] != ''
                               ? Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10.0),
                                     image: DecorationImage(
                                       fit: BoxFit.cover,
                                       image: CachedNetworkImageProvider(
-                                        widget.playlist["image"].toString(),
+                                        widget.playlist['image'].toString(),
                                       ),
                                     ),
                                   ),
@@ -148,7 +147,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                                         color: accent,
                                       ),
                                       Text(
-                                        widget.playlist["title"].toString(),
+                                        widget.playlist['title'].toString(),
                                         style: TextStyle(color: accent),
                                         textAlign: TextAlign.center,
                                       ),
@@ -164,7 +163,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                           children: [
                             const SizedBox(height: 12.0),
                             Text(
-                              widget.playlist["title"].toString(),
+                              widget.playlist['title'].toString(),
                               style: TextStyle(
                                 color: accent,
                                 fontSize: 18,
@@ -173,7 +172,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                             ),
                             const SizedBox(height: 16.0),
                             Text(
-                              widget.playlist["header_desc"].toString(),
+                              widget.playlist['header_desc'].toString(),
                               style: TextStyle(
                                 color: accent,
                                 fontSize: 10,
@@ -184,7 +183,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                             TextButton(
                               onPressed: () => {
                                 setActivePlaylist(
-                                  widget.playlist["list"] as List,
+                                  widget.playlist['list'] as List,
                                 ),
                                 Fluttertoast.showToast(
                                   msg: AppLocalizations.of(context)!
@@ -202,9 +201,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
                               child: Text(
                                 AppLocalizations.of(context)!
                                     .playAll
-                                    .toString()
                                     .toUpperCase(),
-                                style: TextStyle(color: Colors.white),
+                                style: const TextStyle(color: Colors.white),
                               ),
                             ),
                           ],
@@ -237,12 +235,12 @@ class _PlaylistPageState extends State<PlaylistPage> {
                       },
                     )
                   else
-                    Align(alignment: Alignment.center, child: Spinner())
+                    Align(child: Spinner())
                 ],
               )
-            : Container(
+            : SizedBox(
                 height: MediaQuery.of(context).size.height - 100,
-                child: Align(alignment: Alignment.center, child: Spinner()),
+                child: Align(child: Spinner()),
               ),
       ),
     );

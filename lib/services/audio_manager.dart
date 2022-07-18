@@ -4,8 +4,8 @@ import 'dart:io';
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:musify/API/musify.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:musify/API/musify.dart';
 import 'package:musify/helper/mediaitem.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/audio_handler.dart';
@@ -32,7 +32,7 @@ final durationNotifier = ValueNotifier<Duration?>(Duration.zero);
 final buttonNotifier = ValueNotifier<MPlayerState>(MPlayerState.stopped);
 final shuffleNotifier = ValueNotifier<bool>(false);
 final repeatNotifier = ValueNotifier<bool>(false);
-final prefferedFileExtension = ValueNotifier<String>("mp3");
+final prefferedFileExtension = ValueNotifier<String>('mp3');
 
 bool get hasNext => audioPlayer!.hasNext;
 
@@ -46,9 +46,9 @@ String get positionText =>
 
 bool isMuted = false;
 
-downloadSong(song) async {
+Future<void> downloadSong(dynamic song) async {
   if (await Permission.storage.request().isGranted) {
-    final filename = song["title"]
+    final filename = song['title']
             .replaceAll(r'\', '')
             .replaceAll('/', '')
             .replaceAll('*', '')
@@ -57,31 +57,31 @@ downloadSong(song) async {
             .replaceAll('<', '')
             .replaceAll('>', '')
             .replaceAll('|', '') +
-        "." +
+        '.' +
         prefferedFileExtension.value;
 
     String filepath = '';
     final String? dlPath =
         await ExtStorageProvider.getExtStorage(dirName: 'Musify');
     try {
-      await File("${dlPath!}/$filename")
+      await File('${dlPath!}/$filename')
           .create(recursive: true)
           .then((value) => filepath = value.path);
     } catch (e) {
       await [Permission.manageExternalStorage].request();
-      await File("${dlPath!}/$filename")
+      await File('${dlPath!}/$filename')
           .create(recursive: true)
           .then((value) => filepath = value.path);
     }
     Fluttertoast.showToast(
-      msg: "Download Started!",
+      msg: 'Download Started!',
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM,
       backgroundColor: accent,
       textColor: Colors.white,
       fontSize: 14.0,
     );
-    final audioStream = await getSongStream(song["ytid"].toString());
+    final audioStream = await getSongStream(song['ytid'].toString());
     final File file = File(filepath);
     final fileStream = file.openWrite();
     await yt.videos.streamsClient
@@ -90,9 +90,9 @@ downloadSong(song) async {
     await fileStream.flush();
     await fileStream.close();
 
-    debugPrint("Done");
+    debugPrint('Done');
     Fluttertoast.showToast(
-      msg: "Download Completed!",
+      msg: 'Download Completed!',
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM,
       backgroundColor: accent,
@@ -102,14 +102,13 @@ downloadSong(song) async {
   }
 }
 
-Future<void> playSong(song) async {
-  if (song["ytid"].length == 0) {
+Future<void> playSong(dynamic song) async {
+  if (song['ytid'].length == 0) {
     await MyAudioHandler()
-        .addQueueItem(mapToMediaItem(song, song["songUrl"].toString()));
+        .addQueueItem(mapToMediaItem(song as Map, song['songUrl'].toString()));
   } else {
-    final songUrl = await getSongUrl(song["ytid"]);
-    await MyAudioHandler()
-        .addQueueItem(mapToMediaItem(song, songUrl.toString()));
+    final songUrl = await getSongUrl(song['ytid']);
+    await MyAudioHandler().addQueueItem(mapToMediaItem(song as Map, songUrl));
   }
   await play();
 }

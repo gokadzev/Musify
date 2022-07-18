@@ -7,7 +7,7 @@ Map mediaItemToMap(MediaItem mediaItem) {
     'ytid': mediaItem.extras!['ytid'],
     'album': mediaItem.album.toString(),
     'artist': mediaItem.artist.toString(),
-    'title': mediaItem.title.toString(),
+    'title': mediaItem.title,
     'highResImage': mediaItem.artUri.toString(),
     'lowResImage': mediaItem.extras!['lowResImage'],
     'url': mediaItem.extras!['url'].toString(),
@@ -17,18 +17,18 @@ Map mediaItemToMap(MediaItem mediaItem) {
 MediaItem songModelToMediaItem(SongModel song, String songUrl) {
   return MediaItem(
     id: song.id.toString(),
-    album: "",
-    artist: "",
-    title: song.displayName.toString(),
-    artUri: Uri.parse(""),
-    extras: {'url': songUrl, 'lowResImage': "", 'ytid': "", 'ogid': song.id},
+    album: '',
+    artist: '',
+    title: song.displayName,
+    artUri: Uri.parse(''),
+    extras: {'url': songUrl, 'lowResImage': '', 'ytid': '', 'ogid': song.id},
   );
 }
 
 MediaItem mapToMediaItem(Map song, String songUrl) {
   return MediaItem(
     id: song['id'].toString(),
-    album: "",
+    album: '',
     artist: song['more_info']['singers'].toString(),
     title: song['title'].toString(),
     artUri: Uri.parse(

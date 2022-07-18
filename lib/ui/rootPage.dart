@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -15,7 +16,6 @@ import 'package:musify/ui/player.dart';
 import 'package:musify/ui/playlistsPage.dart';
 import 'package:musify/ui/searchPage.dart';
 import 'package:musify/ui/settingsPage.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 class Musify extends StatefulWidget {
@@ -48,7 +48,7 @@ class AppState extends State<Musify> {
         if (value == true)
           {
             Fluttertoast.showToast(
-              msg: "${AppLocalizations.of(context)!.appUpdateIsAvailable}!",
+              msg: '${AppLocalizations.of(context)!.appUpdateIsAvailable}!',
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.BOTTOM,
               backgroundColor: accent,
@@ -173,9 +173,9 @@ class AppState extends State<Musify> {
                           bottom: 7,
                           right: 15,
                         ),
-                        child: metadata.extras["localSongId"] is int
+                        child: metadata.extras['localSongId'] is int
                             ? QueryArtworkWidget(
-                                id: metadata.extras["localSongId"] as int,
+                                id: metadata.extras['localSongId'] as int,
                                 type: ArtworkType.AUDIO,
                                 artworkBorder: BorderRadius.circular(8),
                                 nullArtworkWidget: Icon(
@@ -226,7 +226,7 @@ class AppState extends State<Musify> {
                           children: <Widget>[
                             Text(
                               metadata!.title.toString().length > 15
-                                  ? "${metadata!.title.toString().substring(0, 15)}..."
+                                  ? '${metadata!.title.toString().substring(0, 15)}...'
                                   : metadata!.title.toString(),
                               style: TextStyle(
                                 color: accent,
@@ -236,7 +236,7 @@ class AppState extends State<Musify> {
                             ),
                             Text(
                               metadata!.artist.toString().length > 15
-                                  ? "${metadata!.artist.toString().substring(0, 15)}..."
+                                  ? '${metadata!.artist.toString().substring(0, 15)}...'
                                   : metadata!.artist.toString(),
                               style: TextStyle(
                                 color: accent,
@@ -290,7 +290,7 @@ class AppState extends State<Musify> {
         HomePage(),
         SearchPage(),
         PlaylistsPage(),
-        LocalSongsPage(),
+        const LocalSongsPage(),
         SettingsPage()
       ],
     );
@@ -305,7 +305,7 @@ class AppState extends State<Musify> {
         backgroundColor: bgLight,
         onTap: (index) => setState(() => activeTab = index),
         items: items,
-        margin: const EdgeInsets.only(top: 0, bottom: 0, left: 8.0, right: 8.0),
+        margin: const EdgeInsets.only(left: 8.0, right: 8.0),
       ),
     );
   }

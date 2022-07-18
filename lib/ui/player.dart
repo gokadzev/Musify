@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:audio_service/audio_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/API/musify.dart';
@@ -10,7 +12,6 @@ import 'package:musify/customWidgets/spinner.dart';
 import 'package:musify/helper/mediaitem.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/style/appColors.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 String status = 'hidden';
@@ -87,69 +88,69 @@ class AudioAppState extends State<AudioApp> {
               }
               final metadata = state!.currentSource!.tag;
               final songLikeStatus = ValueNotifier<bool>(
-                isSongAlreadyLiked(metadata.extras["ytid"]),
+                isSongAlreadyLiked(metadata.extras['ytid']),
               );
               return Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  metadata.extras["localSongId"] is int
-                      ? QueryArtworkWidget(
-                          id: metadata.extras["localSongId"] as int,
-                          type: ArtworkType.AUDIO,
-                          artworkBorder: BorderRadius.circular(8),
-                          artworkQuality: FilterQuality.high,
-                          quality: 100,
-                          artworkWidth: size.width / 1.2,
-                          artworkHeight: size.width / 1.2,
-                          nullArtworkWidget: Icon(
-                            MdiIcons.musicNoteOutline,
-                            size: 30,
-                            color: accent,
-                          ),
-                          keepOldArtwork: true,
-                        )
-                      : Container(
-                          width: size.width / 1.2,
-                          height: size.width / 1.2,
-                          child: CachedNetworkImage(
-                            imageUrl: metadata.artUri.toString(),
-                            imageBuilder: (context, imageProvider) => Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                shape: BoxShape.rectangle,
-                                image: DecorationImage(
-                                  image: imageProvider,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                            placeholder: (context, url) => Spinner(),
-                            errorWidget: (context, url, error) => Container(
-                              width: size.width / 1.2,
-                              height: size.width / 1.2,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.0),
-                                gradient: LinearGradient(
-                                  colors: [
-                                    accent.withAlpha(30),
-                                    Colors.white.withAlpha(30)
-                                  ],
-                                ),
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Icon(
-                                    MdiIcons.musicNoteOutline,
-                                    size: size.width / 8,
-                                    color: accent,
-                                  ),
-                                ],
-                              ),
+                  if (metadata.extras['localSongId'] is int)
+                    QueryArtworkWidget(
+                      id: metadata.extras['localSongId'] as int,
+                      type: ArtworkType.AUDIO,
+                      artworkBorder: BorderRadius.circular(8),
+                      artworkQuality: FilterQuality.high,
+                      quality: 100,
+                      artworkWidth: size.width / 1.2,
+                      artworkHeight: size.width / 1.2,
+                      nullArtworkWidget: Icon(
+                        MdiIcons.musicNoteOutline,
+                        size: 30,
+                        color: accent,
+                      ),
+                      keepOldArtwork: true,
+                    )
+                  else
+                    SizedBox(
+                      width: size.width / 1.2,
+                      height: size.width / 1.2,
+                      child: CachedNetworkImage(
+                        imageUrl: metadata.artUri.toString(),
+                        imageBuilder: (context, imageProvider) => Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            image: DecorationImage(
+                              image: imageProvider,
+                              fit: BoxFit.cover,
                             ),
                           ),
                         ),
+                        placeholder: (context, url) => Spinner(),
+                        errorWidget: (context, url, error) => Container(
+                          width: size.width / 1.2,
+                          height: size.width / 1.2,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            gradient: LinearGradient(
+                              colors: [
+                                accent.withAlpha(30),
+                                Colors.white.withAlpha(30)
+                              ],
+                            ),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Icon(
+                                MdiIcons.musicNoteOutline,
+                                size: size.width / 8,
+                                color: accent,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
                   Padding(
                     padding: const EdgeInsets.only(top: 35.0, bottom: 35),
                     child: Column(
@@ -171,7 +172,7 @@ class AudioAppState extends State<AudioApp> {
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0),
                           child: Text(
-                            "${metadata!.artist}",
+                            '${metadata!.artist}',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: accentLight,
@@ -187,7 +188,7 @@ class AudioAppState extends State<AudioApp> {
                     child: _buildPlayer(
                       size,
                       songLikeStatus,
-                      metadata.extras["ytid"],
+                      metadata.extras['ytid'],
                       metadata,
                     ),
                   ),
@@ -202,16 +203,16 @@ class AudioAppState extends State<AudioApp> {
 
   Widget _buildPlayer(
     size,
-    songLikeStatus,
+    ValueNotifier<bool> songLikeStatus,
     ytid,
     metadata,
   ) =>
       Container(
         padding: EdgeInsets.only(
-          top: size.height * 0.01,
+          top: size.height * 0.01 as double,
           left: 16,
           right: 16,
-          bottom: size.height * 0.03,
+          bottom: size.height * 0.03 as double,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -236,24 +237,26 @@ class AudioAppState extends State<AudioApp> {
               ),
             if (position != null) _buildProgressView(),
             Padding(
-              padding: EdgeInsets.only(top: size.height * 0.03),
+              padding: EdgeInsets.only(top: size.height * 0.03 as double),
               child: Column(
                 children: <Widget>[
-                  Container(
+                  SizedBox(
                     width: double.infinity,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        if (metadata.extras["ytid"].toString().length != 0)
+                        if (metadata.extras['ytid'].toString().isNotEmpty)
                           IconButton(
                             padding: EdgeInsets.zero,
                             icon: const Icon(
                               MdiIcons.download,
                               color: Colors.white,
                             ),
-                            iconSize: size.width * 0.056,
+                            iconSize: size.width * 0.056 as double,
                             onPressed: () {
-                              downloadSong(mediaItemToMap(metadata));
+                              downloadSong(
+                                mediaItemToMap(metadata as MediaItem),
+                              );
                             },
                           ),
                         IconButton(
@@ -263,7 +266,7 @@ class AudioAppState extends State<AudioApp> {
                             color:
                                 shuffleNotifier.value ? accent : Colors.white,
                           ),
-                          iconSize: size.width * 0.056,
+                          iconSize: size.width * 0.056 as double,
                           onPressed: () {
                             changeShuffleStatus();
                           },
@@ -275,9 +278,9 @@ class AudioAppState extends State<AudioApp> {
                             color: audioPlayer!.hasPrevious
                                 ? Colors.white
                                 : Colors.grey,
-                            size: size.width * 0.1,
+                            size: size.width * 0.1 as double,
                           ),
-                          iconSize: size.width * 0.056,
+                          iconSize: size.width * 0.056 as double,
                           onPressed: () {
                             playPrevious();
                           },
@@ -294,14 +297,14 @@ class AudioAppState extends State<AudioApp> {
                                 case MPlayerState.loading:
                                   return Container(
                                     margin: const EdgeInsets.all(8.0),
-                                    width: size.width * 0.08,
-                                    height: size.width * 0.08,
+                                    width: size.width * 0.08 as double,
+                                    height: size.width * 0.08 as double,
                                     child: Spinner(),
                                   );
                                 case MPlayerState.paused:
                                   return IconButton(
                                     icon: const Icon(MdiIcons.play),
-                                    iconSize: size.width * 0.1,
+                                    iconSize: size.width * 0.1 as double,
                                     onPressed: () {
                                       play();
                                     },
@@ -309,7 +312,7 @@ class AudioAppState extends State<AudioApp> {
                                 case MPlayerState.playing:
                                   return IconButton(
                                     icon: const Icon(MdiIcons.pause),
-                                    iconSize: size.width * 0.1,
+                                    iconSize: size.width * 0.1 as double,
                                     onPressed: () {
                                       pause();
                                     },
@@ -317,7 +320,7 @@ class AudioAppState extends State<AudioApp> {
                                 case MPlayerState.stopped:
                                   return IconButton(
                                     icon: const Icon(MdiIcons.play),
-                                    iconSize: size.width * 0.08,
+                                    iconSize: size.width * 0.08 as double,
                                     onPressed: () {
                                       play();
                                     },
@@ -333,9 +336,9 @@ class AudioAppState extends State<AudioApp> {
                             color: audioPlayer!.hasNext
                                 ? Colors.white
                                 : Colors.grey,
-                            size: size.width * 0.1,
+                            size: size.width * 0.1 as double,
                           ),
-                          iconSize: size.width * 0.08,
+                          iconSize: size.width * 0.08 as double,
                           onPressed: () {
                             playNext();
                           },
@@ -346,12 +349,12 @@ class AudioAppState extends State<AudioApp> {
                             MdiIcons.repeat,
                             color: repeatNotifier.value ? accent : Colors.white,
                           ),
-                          iconSize: size.width * 0.056,
+                          iconSize: size.width * 0.056 as double,
                           onPressed: () {
                             changeLoopStatus();
                           },
                         ),
-                        if (metadata.extras["ytid"].toString().length != 0)
+                        if (metadata.extras['ytid'].toString().isNotEmpty)
                           ValueListenableBuilder<bool>(
                             valueListenable: songLikeStatus,
                             builder: (_, value, __) {
@@ -359,7 +362,7 @@ class AudioAppState extends State<AudioApp> {
                                 return IconButton(
                                   color: accent,
                                   icon: const Icon(MdiIcons.star),
-                                  iconSize: size.width * 0.056,
+                                  iconSize: size.width * 0.056 as double,
                                   onPressed: () => {
                                     removeUserLikedSong(ytid),
                                     songLikeStatus.value = false
@@ -369,7 +372,7 @@ class AudioAppState extends State<AudioApp> {
                                 return IconButton(
                                   color: accent,
                                   icon: const Icon(MdiIcons.starOutline),
-                                  iconSize: size.width * 0.056,
+                                  iconSize: size.width * 0.056 as double,
                                   onPressed: () => {
                                     addUserLikedSong(ytid),
                                     songLikeStatus.value = true
@@ -381,9 +384,10 @@ class AudioAppState extends State<AudioApp> {
                       ],
                     ),
                   ),
-                  if (metadata.extras["ytid"].toString().length != 0)
+                  if (metadata.extras['ytid'].toString().isNotEmpty)
                     Padding(
-                      padding: EdgeInsets.only(top: size.height * 0.047),
+                      padding:
+                          EdgeInsets.only(top: size.height * 0.047 as double),
                       child: Builder(
                         builder: (context) {
                           return TextButton(
@@ -403,12 +407,12 @@ class AudioAppState extends State<AudioApp> {
                                       topRight: Radius.circular(18.0),
                                     ),
                                   ),
-                                  height: size.height / 2.14,
+                                  height: size.height / 2.14 as double,
                                   child: Column(
                                     children: <Widget>[
                                       Padding(
                                         padding: EdgeInsets.only(
-                                          top: size.height * 0.012,
+                                          top: size.height * 0.012 as double,
                                         ),
                                         child: Row(
                                           children: <Widget>[
@@ -429,7 +433,8 @@ class AudioAppState extends State<AudioApp> {
                                                 child: Center(
                                                   child: Text(
                                                     AppLocalizations.of(
-                                                            context)!
+                                                      context,
+                                                    )!
                                                         .lyrics,
                                                     style: TextStyle(
                                                       color: accent,
@@ -445,52 +450,52 @@ class AudioAppState extends State<AudioApp> {
                                         ),
                                       ),
                                       ValueListenableBuilder<String>(
-                                          valueListenable: lyrics,
-                                          builder: (_, value, __) {
-                                            if (value != "null" &&
-                                                value != "not found")
-                                              return Expanded(
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(6.0),
-                                                  child: Center(
-                                                    child:
-                                                        SingleChildScrollView(
-                                                      child: Text(
-                                                        value,
-                                                        style: TextStyle(
-                                                          fontSize: 16.0,
-                                                          color: accentLight,
-                                                        ),
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              );
-                                            else if (value == "null")
-                                              return SizedBox(child: Spinner());
-                                            else
-                                              return Padding(
-                                                padding: const EdgeInsets.only(
-                                                  top: 120.0,
-                                                ),
+                                        valueListenable: lyrics,
+                                        builder: (_, value, __) {
+                                          if (value != 'null' &&
+                                              value != 'not found') {
+                                            return Expanded(
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(6.0),
                                                 child: Center(
-                                                  child: Container(
+                                                  child: SingleChildScrollView(
                                                     child: Text(
-                                                      AppLocalizations.of(
-                                                              context)!
-                                                          .lyricsNotAvailable,
+                                                      value,
                                                       style: TextStyle(
+                                                        fontSize: 16.0,
                                                         color: accentLight,
-                                                        fontSize: 25,
                                                       ),
+                                                      textAlign:
+                                                          TextAlign.center,
                                                     ),
                                                   ),
                                                 ),
-                                              );
-                                          })
+                                              ),
+                                            );
+                                          } else if (value == 'null') {
+                                            return SizedBox(child: Spinner());
+                                          } else {
+                                            return Padding(
+                                              padding: const EdgeInsets.only(
+                                                top: 120.0,
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                  AppLocalizations.of(
+                                                    context,
+                                                  )!
+                                                      .lyricsNotAvailable,
+                                                  style: TextStyle(
+                                                    color: accentLight,
+                                                    fontSize: 25,
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        },
+                                      )
                                     ],
                                   ),
                                 ),
@@ -516,7 +521,7 @@ class AudioAppState extends State<AudioApp> {
         children: [
           Text(
             position != null
-                ? "$positionText ".replaceFirst("0:0", "0")
+                ? '$positionText '.replaceFirst('0:0', '0')
                 : duration != null
                     ? durationText
                     : '',
@@ -525,7 +530,7 @@ class AudioAppState extends State<AudioApp> {
           const Spacer(),
           Text(
             position != null
-                ? "$durationText".replaceAll("0:", "")
+                ? durationText.replaceAll('0:', '')
                 : duration != null
                     ? durationText
                     : '',

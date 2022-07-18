@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/customWidgets/spinner.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:musify/ui/playlistsPage.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class UserPlaylistsPage extends StatefulWidget {
   @override
@@ -43,7 +43,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
           showDialog(
             context: context,
             builder: (BuildContext context) {
-              var id;
+              String id = '';
               return AlertDialog(
                 backgroundColor: accent,
                 content: Stack(
@@ -64,11 +64,8 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                 actions: <Widget>[
                   TextButton(
                     child: Text(
-                      AppLocalizations.of(context)!
-                          .add
-                          .toString()
-                          .toUpperCase(),
-                      style: TextStyle(color: Colors.black),
+                      AppLocalizations.of(context)!.add.toUpperCase(),
+                      style: const TextStyle(color: Colors.black),
                     ),
                     onPressed: () {
                       addUserPlaylist(id);
@@ -93,46 +90,44 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
               future: getUserPlaylists(),
               builder: (context, data) {
                 return (data as dynamic).data != null
-                    ? Container(
-                        child: GridView.builder(
-                          gridDelegate:
-                              const SliverGridDelegateWithMaxCrossAxisExtent(
-                            maxCrossAxisExtent: 200,
-                            crossAxisSpacing: 20,
-                            mainAxisSpacing: 20,
-                          ),
-                          shrinkWrap: true,
-                          physics: const ScrollPhysics(),
-                          itemCount: (data as dynamic).data.length,
-                          padding: const EdgeInsets.only(
-                            left: 16.0,
-                            right: 16.0,
-                            top: 16.0,
-                            bottom: 20,
-                          ),
-                          itemBuilder: (BuildContext context, index) {
-                            return Center(
-                              child: GestureDetector(
-                                onLongPress: () {
-                                  removeUserPlaylist(
-                                    (data as dynamic)
-                                        .data[index]["ytid"]
-                                        .toString(),
-                                  );
-                                  setState(() {});
-                                },
-                                child: GetPlaylist(
-                                  index: index,
-                                  image: (data as dynamic).data[index]["image"],
-                                  title: (data as dynamic)
-                                      .data[index]["title"]
-                                      .toString(),
-                                  id: (data as dynamic).data[index]["ytid"],
-                                ),
-                              ),
-                            );
-                          },
+                    ? GridView.builder(
+                        gridDelegate:
+                            const SliverGridDelegateWithMaxCrossAxisExtent(
+                          maxCrossAxisExtent: 200,
+                          crossAxisSpacing: 20,
+                          mainAxisSpacing: 20,
                         ),
+                        shrinkWrap: true,
+                        physics: const ScrollPhysics(),
+                        itemCount: (data as dynamic).data.length as int,
+                        padding: const EdgeInsets.only(
+                          left: 16.0,
+                          right: 16.0,
+                          top: 16.0,
+                          bottom: 20,
+                        ),
+                        itemBuilder: (BuildContext context, index) {
+                          return Center(
+                            child: GestureDetector(
+                              onLongPress: () {
+                                removeUserPlaylist(
+                                  (data as dynamic)
+                                      .data[index]['ytid']
+                                      .toString(),
+                                );
+                                setState(() {});
+                              },
+                              child: GetPlaylist(
+                                index: index,
+                                image: (data as dynamic).data[index]['image'],
+                                title: (data as dynamic)
+                                    .data[index]['title']
+                                    .toString(),
+                                id: (data as dynamic).data[index]['ytid'],
+                              ),
+                            ),
+                          );
+                        },
                       )
                     : Spinner();
               },

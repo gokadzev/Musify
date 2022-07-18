@@ -18,7 +18,7 @@ class MyAudioHandler extends BaseAudioHandler {
     try {
       await audioPlayer!.setAudioSource(_playlist);
     } catch (e) {
-      debugPrint("Error: $e");
+      debugPrint('Error: $e');
     }
   }
 
@@ -143,11 +143,12 @@ class MyAudioHandler extends BaseAudioHandler {
 
   @override
   Future<void> skipToQueueItem(int index) async {
+    late int ind;
     if (index < 0 || index >= queue.value.length) return;
     if (audioPlayer!.shuffleModeEnabled) {
-      index = audioPlayer!.shuffleIndices![index];
+      ind = audioPlayer!.shuffleIndices![index];
     }
-    audioPlayer!.seek(Duration.zero, index: index);
+    audioPlayer!.seek(Duration.zero, index: ind);
   }
 
   @override

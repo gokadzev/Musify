@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/helper/version.dart';
@@ -10,7 +11,6 @@ import 'package:musify/style/appColors.dart';
 import 'package:musify/ui/aboutPage.dart';
 import 'package:musify/ui/userLikedSongsPage.dart';
 import 'package:musify/ui/userPlaylistsPage.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -135,8 +135,8 @@ class SettingsCards extends StatelessWidget {
                                     GestureDetector(
                                       onTap: () {
                                         addOrUpdateData(
-                                          "settings",
-                                          "accentColor",
+                                          'settings',
+                                          'accentColor',
                                           colors[index],
                                         );
                                         accent = Color(colors[index]);
@@ -213,18 +213,18 @@ class SettingsCards extends StatelessWidget {
                     };
 
                     final List availableLanguages = [
-                      "English",
-                      "Georgian",
-                      "Chinese",
-                      "Dutch",
-                      "German",
-                      "Indonesian",
-                      "Italian",
-                      "Polish",
-                      "Portuguese",
-                      "Spanish",
-                      "Turkish",
-                      "Ukrainian",
+                      'English',
+                      'Georgian',
+                      'Chinese',
+                      'Dutch',
+                      'German',
+                      'Indonesian',
+                      'Italian',
+                      'Polish',
+                      'Portuguese',
+                      'Spanish',
+                      'Turkish',
+                      'Ukrainian',
                     ];
                     return Center(
                       child: Container(
@@ -245,38 +245,45 @@ class SettingsCards extends StatelessWidget {
                           itemCount: availableLanguages.length,
                           itemBuilder: (context, index) {
                             return Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Card(
-                                    color: bgLight,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                    elevation: 2.3,
-                                    child: ListTile(
-                                      title: Text(
-                                        availableLanguages[index],
-                                        style: TextStyle(color: accent),
+                              padding: const EdgeInsets.all(10.0),
+                              child: Card(
+                                color: bgLight,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                elevation: 2.3,
+                                child: ListTile(
+                                  title: Text(
+                                    availableLanguages[index].toString(),
+                                    style: TextStyle(color: accent),
+                                  ),
+                                  onTap: () {
+                                    addOrUpdateData(
+                                      'settings',
+                                      'language',
+                                      availableLanguages[index],
+                                    );
+                                    MyApp.setLocale(
+                                      context,
+                                      Locale(
+                                        codes[availableLanguages[index]]!,
                                       ),
-                                      onTap: () {
-                                        addOrUpdateData("settings", "language",
-                                            availableLanguages[index]);
-                                        MyApp.setLocale(
-                                            context,
-                                            Locale(codes[
-                                                availableLanguages[index]]!));
+                                    );
 
-                                        Fluttertoast.showToast(
-                                          backgroundColor: accent,
-                                          textColor: Colors.white,
-                                          msg: AppLocalizations.of(context)!
-                                              .languageMsg,
-                                          toastLength: Toast.LENGTH_SHORT,
-                                          gravity: ToastGravity.BOTTOM,
-                                          fontSize: 14.0,
-                                        );
-                                        Navigator.pop(context);
-                                      },
-                                    )));
+                                    Fluttertoast.showToast(
+                                      backgroundColor: accent,
+                                      textColor: Colors.white,
+                                      msg: AppLocalizations.of(context)!
+                                          .languageMsg,
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      fontSize: 14.0,
+                                    );
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                              ),
+                            );
                           },
                         ),
                       ),
@@ -306,7 +313,7 @@ class SettingsCards extends StatelessWidget {
                 Fluttertoast.showToast(
                   backgroundColor: accent,
                   textColor: Colors.white,
-                  msg: "${AppLocalizations.of(context)!.cacheMsg}!",
+                  msg: '${AppLocalizations.of(context)!.cacheMsg}!',
                   toastLength: Toast.LENGTH_SHORT,
                   gravity: ToastGravity.BOTTOM,
                   fontSize: 14.0,
@@ -382,7 +389,7 @@ class SettingsCards extends StatelessWidget {
                   (value) => Fluttertoast.showToast(
                     backgroundColor: accent,
                     textColor: Colors.white,
-                    msg: value,
+                    msg: value.toString(),
                     toastLength: Toast.LENGTH_SHORT,
                     gravity: ToastGravity.BOTTOM,
                     fontSize: 14.0,
@@ -407,14 +414,16 @@ class SettingsCards extends StatelessWidget {
                 style: TextStyle(color: accent),
               ),
               onTap: () {
-                restoreData().then((value) => Fluttertoast.showToast(
-                      backgroundColor: accent,
-                      textColor: Colors.white,
-                      msg: value,
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.BOTTOM,
-                      fontSize: 14.0,
-                    ));
+                restoreData().then(
+                  (value) => Fluttertoast.showToast(
+                    backgroundColor: accent,
+                    textColor: Colors.white,
+                    msg: value.toString(),
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    fontSize: 14.0,
+                  ),
+                );
               },
             ),
           ),
@@ -440,7 +449,7 @@ class SettingsCards extends StatelessWidget {
                       {
                         Fluttertoast.showToast(
                           msg:
-                              "${AppLocalizations.of(context)!.appUpdateAvailableAndDownloading}!",
+                              '${AppLocalizations.of(context)!.appUpdateAvailableAndDownloading}!',
                           toastLength: Toast.LENGTH_SHORT,
                           gravity: ToastGravity.BOTTOM,
                           backgroundColor: accent,
@@ -453,7 +462,7 @@ class SettingsCards extends StatelessWidget {
                       {
                         Fluttertoast.showToast(
                           msg:
-                              "${AppLocalizations.of(context)!.appUpdateIsNotAvailable}!",
+                              '${AppLocalizations.of(context)!.appUpdateIsNotAvailable}!',
                           toastLength: Toast.LENGTH_SHORT,
                           gravity: ToastGravity.BOTTOM,
                           backgroundColor: accent,
@@ -487,7 +496,7 @@ class SettingsCards extends StatelessWidget {
                   backgroundColor: Colors.transparent,
                   context: context,
                   builder: (BuildContext context) {
-                    final availableFileTypes = ["mp3", "flac", "m4a"];
+                    final availableFileTypes = ['mp3', 'flac', 'm4a'];
                     return Center(
                       child: Container(
                         decoration: BoxDecoration(
@@ -507,38 +516,41 @@ class SettingsCards extends StatelessWidget {
                           itemCount: availableFileTypes.length,
                           itemBuilder: (context, index) {
                             return Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Card(
-                                    color: bgLight,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                    elevation: 2.3,
-                                    child: ListTile(
-                                      title: Text(
-                                        availableFileTypes[index],
-                                        style: TextStyle(color: accent),
-                                      ),
-                                      onTap: () {
-                                        addOrUpdateData(
-                                            "settings",
-                                            "audioFileType",
-                                            availableFileTypes[index]);
-                                        prefferedFileExtension.value =
-                                            availableFileTypes[index];
+                              padding: const EdgeInsets.all(10.0),
+                              child: Card(
+                                color: bgLight,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                elevation: 2.3,
+                                child: ListTile(
+                                  title: Text(
+                                    availableFileTypes[index],
+                                    style: TextStyle(color: accent),
+                                  ),
+                                  onTap: () {
+                                    addOrUpdateData(
+                                      'settings',
+                                      'audioFileType',
+                                      availableFileTypes[index],
+                                    );
+                                    prefferedFileExtension.value =
+                                        availableFileTypes[index];
 
-                                        Fluttertoast.showToast(
-                                          backgroundColor: accent,
-                                          textColor: Colors.white,
-                                          msg: AppLocalizations.of(context)!
-                                              .audioFileTypeMsg,
-                                          toastLength: Toast.LENGTH_SHORT,
-                                          gravity: ToastGravity.BOTTOM,
-                                          fontSize: 14.0,
-                                        );
-                                        Navigator.pop(context);
-                                      },
-                                    )));
+                                    Fluttertoast.showToast(
+                                      backgroundColor: accent,
+                                      textColor: Colors.white,
+                                      msg: AppLocalizations.of(context)!
+                                          .audioFileTypeMsg,
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      fontSize: 14.0,
+                                    );
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                              ),
+                            );
                           },
                         ),
                       ),
