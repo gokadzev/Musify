@@ -46,6 +46,12 @@ class _MyAppState extends State<MyApp> {
         Hive.box('settings').get('language', defaultValue: 'English') as String;
     prefferedFileExtension.value = Hive.box('settings')
         .get('audioFileType', defaultValue: 'mp3') as String;
+    accent = Hive.box('settings').get('accentColor') != null
+        ? Color(Hive.box('settings').get('accentColor') as int)
+        : const Color(0xFFFF9E80);
+    userPlaylists = Hive.box('user').get('playlists') ?? [];
+    userLikedSongsList = Hive.box('user').get('likedSongs') ?? [];
+    searchHistory = Hive.box('user').get('searchHistory') ?? [];
     final Map<String, String> codes = {
       'English': 'en',
       'Georgian': 'ka',
@@ -61,6 +67,12 @@ class _MyAppState extends State<MyApp> {
       'Ukrainian': 'uk',
     };
     _locale = Locale(codes[lang]!);
+  }
+
+  @override
+  void dispose() {
+    Hive.close();
+    super.dispose();
   }
 
   @override
@@ -113,6 +125,8 @@ class _MyAppState extends State<MyApp> {
 
 void main() async {
   await Hive.initFlutter();
+  await Hive.openBox("settings");
+  await Hive.openBox("user");
   await getLocalSongs();
   await FlutterDownloader.initialize(
     debug:
@@ -122,12 +136,6 @@ void main() async {
     ,
   );
   FlutterDownloader.registerCallback(TestClass.callback);
-  accent = await getData('settings', 'accentColor') != null
-      ? Color(await getData('settings', 'accentColor') as int)
-      : const Color(0xFFFF9E80);
-  userPlaylists = await getData('user', 'playlists') ?? [];
-  userLikedSongsList = await getData('user', 'likedSongs') ?? [];
-  searchHistory = await getData('user', 'searchHistory') ?? [];
   final PackageInfo packageInfo = await PackageInfo.fromPlatform();
   version = packageInfo.version;
   await enableBooster();

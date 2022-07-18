@@ -10,18 +10,24 @@ Future<void> addOrUpdateData(
   dynamic key,
   dynamic value,
 ) async {
-  final box = await Hive.openBox(category);
-  box.put(key, value);
+  if (!Hive.isBoxOpen(category)) {
+    await Hive.openBox(category);
+  }
+  Hive.box(category).put(key, value);
 }
 
 Future getData(String category, dynamic key) async {
-  final box = await Hive.openBox(category);
-  return box.get(key);
+  if (!Hive.isBoxOpen(category)) {
+    await Hive.openBox(category);
+  }
+  return Hive.box(category).get(key);
 }
 
 Future<void> deleteData(String category, dynamic key) async {
-  final box = await Hive.openBox(category);
-  box.delete(key);
+  if (!Hive.isBoxOpen(category)) {
+    await Hive.openBox(category);
+  }
+  Hive.box(category).delete(key);
 }
 
 Future<void> clearCache() async {
