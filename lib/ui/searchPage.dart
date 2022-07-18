@@ -4,12 +4,15 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/customWidgets/song_bar.dart';
 import 'package:musify/customWidgets/spinner.dart';
+import 'package:musify/services/data_manager.dart';
 import 'package:musify/style/appColors.dart';
 
 class SearchPage extends StatefulWidget {
   @override
   _SearchPageState createState() => _SearchPageState();
 }
+
+List searchHistory = [];
 
 class _SearchPageState extends State<SearchPage> {
   TextEditingController searchBar = TextEditingController();
@@ -18,10 +21,20 @@ class _SearchPageState extends State<SearchPage> {
 
   Future<void> search() async {
     final String searchQuery = searchBar.text;
-    if (searchQuery.isEmpty) return;
+    if (searchQuery.isEmpty) {
+      setState(() {
+        searchedList = [];
+      });
+      return;
+    }
+
     fetchingSongs = true;
     setState(() {});
     await fetchSongsList(searchQuery);
+    if (!searchHistory.contains(searchQuery)) {
+      searchHistory.add(searchQuery);
+      addOrUpdateData('user', 'searchHistory', searchHistory);
+    }
     fetchingSongs = false;
     setState(() {});
   }
@@ -116,6 +129,41 @@ class _SearchPageState extends State<SearchPage> {
                   return Padding(
                     padding: const EdgeInsets.only(top: 5, bottom: 5),
                     child: SongBar(searchedList[index]),
+                  );
+                },
+              )
+            else if (searchedList.isEmpty && searchHistory.isNotEmpty)
+              ListView.builder(
+                shrinkWrap: true,
+                addAutomaticKeepAlives: false,
+                addRepaintBoundaries: false,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: searchHistory.length,
+                itemBuilder: (BuildContext ctxt, int index) {
+                  return Padding(
+                    padding: const EdgeInsets.only(
+                        top: 8, left: 8, right: 8, bottom: 6),
+                    child: Card(
+                      color: bgLight,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      elevation: 2.3,
+                      child: ListTile(
+                        leading: Icon(Icons.search, color: accent),
+                        title: Text(
+                          searchHistory[index],
+                          style: TextStyle(color: accent),
+                        ),
+                        onTap: () async {
+                          fetchingSongs = true;
+                          setState(() {});
+                          await fetchSongsList(searchHistory[index]);
+                          fetchingSongs = false;
+                          setState(() {});
+                        },
+                      ),
+                    ),
                   );
                 },
               )

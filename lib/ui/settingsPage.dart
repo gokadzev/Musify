@@ -9,6 +9,7 @@ import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:musify/ui/aboutPage.dart';
+import 'package:musify/ui/searchPage.dart';
 import 'package:musify/ui/userLikedSongsPage.dart';
 import 'package:musify/ui/userPlaylistsPage.dart';
 
@@ -314,6 +315,35 @@ class SettingsCards extends StatelessWidget {
                   backgroundColor: accent,
                   textColor: Colors.white,
                   msg: '${AppLocalizations.of(context)!.cacheMsg}!',
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  fontSize: 14.0,
+                );
+              },
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 8, left: 8, right: 8, bottom: 6),
+          child: Card(
+            color: bgLight,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            elevation: 2.3,
+            child: ListTile(
+              leading: Icon(MdiIcons.history, color: accent),
+              title: Text(
+                AppLocalizations.of(context)!.clearSearchHistory,
+                style: TextStyle(color: accent),
+              ),
+              onTap: () {
+                searchHistory = [];
+                deleteData('user', 'searchHistory');
+                Fluttertoast.showToast(
+                  backgroundColor: accent,
+                  textColor: Colors.white,
+                  msg: '${AppLocalizations.of(context)!.searchHistoryMsg}!',
                   toastLength: Toast.LENGTH_SHORT,
                   gravity: ToastGravity.BOTTOM,
                   fontSize: 14.0,

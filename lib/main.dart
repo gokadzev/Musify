@@ -13,6 +13,7 @@ import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:musify/ui/rootPage.dart';
+import 'package:musify/ui/searchPage.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 GetIt getIt = GetIt.instance;
@@ -126,6 +127,7 @@ void main() async {
       : const Color(0xFFFF9E80);
   userPlaylists = await getData('user', 'playlists') ?? [];
   userLikedSongsList = await getData('user', 'likedSongs') ?? [];
+  searchHistory = await getData('user', 'searchHistory') ?? [];
   final PackageInfo packageInfo = await PackageInfo.fromPlatform();
   version = packageInfo.version;
   await enableBooster();
