@@ -10,7 +10,6 @@ import 'package:musify/API/musify.dart';
 import 'package:musify/helper/version.dart';
 import 'package:musify/services/audio_handler.dart';
 import 'package:musify/services/audio_manager.dart';
-import 'package:musify/services/data_manager.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:musify/ui/rootPage.dart';
 import 'package:musify/ui/searchPage.dart';
