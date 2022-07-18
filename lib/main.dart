@@ -25,6 +25,12 @@ class MyApp extends StatefulWidget {
     state.changeLanguage(newLocale);
   }
 
+  static Future<void> setAccentColor(
+      BuildContext context, Color newAccentColor) async {
+    final _MyAppState state = context.findAncestorStateOfType<_MyAppState>()!;
+    state.changeAccentColor(newAccentColor);
+  }
+
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -35,6 +41,12 @@ class _MyAppState extends State<MyApp> {
   void changeLanguage(Locale locale) {
     setState(() {
       _locale = locale;
+    });
+  }
+
+  void changeAccentColor(Color newAccentColor) {
+    setState(() {
+      accent = newAccentColor;
     });
   }
 

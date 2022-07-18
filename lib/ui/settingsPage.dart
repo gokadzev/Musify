@@ -140,7 +140,8 @@ class SettingsCards extends StatelessWidget {
                                           'accentColor',
                                           colors[index],
                                         );
-                                        accent = Color(colors[index]);
+                                        MyApp.setAccentColor(
+                                            context, Color(colors[index]));
                                         Fluttertoast.showToast(
                                           backgroundColor: accent,
                                           textColor: Colors.white,
