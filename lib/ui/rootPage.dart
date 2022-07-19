@@ -1,11 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:musify/API/musify.dart';
 import 'package:musify/customWidgets/custom_animated_bottom_bar.dart';
 import 'package:musify/helper/version.dart';
 import 'package:musify/services/audio_manager.dart';
@@ -31,18 +29,7 @@ class AppState extends State<Musify> {
   @override
   void initState() {
     super.initState();
-    SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle(
-        systemNavigationBarColor: bgColor,
-        statusBarColor: bgColor,
-      ),
-    );
     initAudioPlayer();
-    audioPlayer?.durationStream.listen(
-      (d) => {
-        if (mounted) {setState(() => duration = d)}
-      },
-    );
     checkAppUpdates().then(
       (value) => {
         if (value == true)
@@ -60,6 +47,12 @@ class AppState extends State<Musify> {
     );
   }
 
+  @override
+  void dispose() {
+    audioPlayer?.dispose();
+    super.dispose();
+  }
+
   void initAudioPlayer() {
     audioPlayerStateSubscription =
         audioPlayer?.playerStateStream.listen((playerState) {
@@ -75,9 +68,6 @@ class AppState extends State<Musify> {
       } else {
         audioPlayer?.seek(Duration.zero);
         audioPlayer?.pause();
-        if (activePlaylist.isNotEmpty && id! + 1 < activePlaylist.length) {
-          playNext();
-        }
       }
     });
   }

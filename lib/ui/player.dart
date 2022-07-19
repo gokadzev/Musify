@@ -43,6 +43,11 @@ class AudioAppState extends State<AudioApp> {
 
     positionSubscription = audioPlayer?.positionStream
         .listen((p) => {if (mounted) setState(() => position = p)});
+    audioPlayer?.durationStream.listen(
+      (d) => {
+        if (mounted) {setState(() => duration = d)}
+      },
+    );
   }
 
   @override

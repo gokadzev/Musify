@@ -117,85 +117,93 @@ class LocalSongsPage extends StatelessWidget {
               ],
             ),
             const Padding(padding: EdgeInsets.only(top: 20)),
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const BouncingScrollPhysics(),
-              addAutomaticKeepAlives:
-                  false, // may be problem with lazyload if it implemented
-              addRepaintBoundaries: false,
-              // Need to display a loading tile if more items are coming
-              itemCount: localSongs.length,
-              itemBuilder: (BuildContext context, int index) {
-                final lsong = {
-                  'id': index,
-                  'ytid': '',
-                  'title': localSongs[index].displayName,
-                  'image': '',
-                  'lowResImage': '',
-                  'highResImage': '',
-                  'songUrl': localSongs[index].data,
-                  'album': '',
-                  'type': 'song',
-                  'localSongId': localSongs[index].id,
-                  'more_info': {
-                    'primary_artists': '',
-                    'singers': '',
-                  }
-                };
+            FutureBuilder(
+                future: getLocalSongs(),
+                builder: (context, data) {
+                  return data.hasData
+                      ? ListView.builder(
+                          shrinkWrap: true,
+                          physics: const BouncingScrollPhysics(),
+                          addAutomaticKeepAlives:
+                              false, // may be problem with lazyload if it implemented
+                          addRepaintBoundaries: false,
+                          // Need to display a loading tile if more items are coming
+                          itemCount: localSongs.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            final lsong = {
+                              'id': index,
+                              'ytid': '',
+                              'title': localSongs[index].displayName,
+                              'image': '',
+                              'lowResImage': '',
+                              'highResImage': '',
+                              'songUrl': localSongs[index].data,
+                              'album': '',
+                              'type': 'song',
+                              'localSongId': localSongs[index].id,
+                              'more_info': {
+                                'primary_artists': '',
+                                'singers': '',
+                              }
+                            };
 
-                return Padding(
-                  padding: const EdgeInsets.only(top: 5, bottom: 5),
-                  child: Card(
-                    color: Colors.black26,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                    elevation: 0,
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(20.0),
-                      onTap: () {
-                        playSong(lsong);
-                      },
-                      splashColor: accent,
-                      hoverColor: accent,
-                      focusColor: accent,
-                      highlightColor: accent,
-                      child: Column(
-                        children: <Widget>[
-                          ListTile(
-                            visualDensity: const VisualDensity(vertical: 3),
-                            leading: Padding(
-                              padding: const EdgeInsets.only(
-                                top: 8.0,
-                                bottom: 8.0,
-                                left: 8.0,
-                                right: 25.0,
-                              ),
-                              child: QueryArtworkWidget(
-                                id: lsong['localSongId'] as int,
-                                type: ArtworkType.AUDIO,
-                                artworkBorder: BorderRadius.circular(8),
-                                nullArtworkWidget: Icon(
-                                  MdiIcons.musicNoteOutline,
-                                  size: 30,
-                                  color: accent,
+                            return Padding(
+                              padding: const EdgeInsets.only(top: 5, bottom: 5),
+                              child: Card(
+                                color: Colors.black26,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
                                 ),
-                                keepOldArtwork: true,
+                                elevation: 0,
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                  onTap: () {
+                                    playSong(lsong);
+                                  },
+                                  splashColor: accent,
+                                  hoverColor: accent,
+                                  focusColor: accent,
+                                  highlightColor: accent,
+                                  child: Column(
+                                    children: <Widget>[
+                                      ListTile(
+                                        visualDensity:
+                                            const VisualDensity(vertical: 3),
+                                        leading: Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 8.0,
+                                            bottom: 8.0,
+                                            left: 8.0,
+                                            right: 25.0,
+                                          ),
+                                          child: QueryArtworkWidget(
+                                            id: lsong['localSongId'] as int,
+                                            type: ArtworkType.AUDIO,
+                                            artworkBorder:
+                                                BorderRadius.circular(8),
+                                            nullArtworkWidget: Icon(
+                                              MdiIcons.musicNoteOutline,
+                                              size: 30,
+                                              color: accent,
+                                            ),
+                                            keepOldArtwork: true,
+                                          ),
+                                        ),
+                                        title: Text(
+                                          overflow: TextOverflow.ellipsis,
+                                          lsong['title'].toString(),
+                                          style: TextStyle(color: accent),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
-                            ),
-                            title: Text(
-                              overflow: TextOverflow.ellipsis,
-                              lsong['title'].toString(),
-                              style: TextStyle(color: accent),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              },
-            )
+                            );
+                          },
+                        )
+                      : CircularProgressIndicator();
+                })
           ],
         ),
       ),

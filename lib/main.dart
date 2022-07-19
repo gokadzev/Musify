@@ -138,7 +138,6 @@ void main() async {
   await Hive.initFlutter();
   await Hive.openBox("settings");
   await Hive.openBox("user");
-  await getLocalSongs();
   await FlutterDownloader.initialize(
     debug:
         true, // optional: set to false to disable printing logs to console (default: true)

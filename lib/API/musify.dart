@@ -16,21 +16,18 @@ import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 final yt = YoutubeExplode();
 final OnAudioQuery _audioQuery = OnAudioQuery();
 
-List ytplaylists = [];
-
-List searchedList = [];
-List playlists = [];
-List userPlaylists = [];
-List userLikedSongsList = [];
-List suggestedPlaylists = [];
+List ytplaylists = [],
+    searchedList = [],
+    playlists = [],
+    userPlaylists = [],
+    userLikedSongsList = [],
+    suggestedPlaylists = [];
 List<SongModel> localSongs = [];
 
 final lyrics = ValueNotifier<String>('null');
 String _lastLyricsUrl = '';
 
 int? id = 0;
-
-List activePlaylist = [];
 
 Future<List> fetchSongsList(String searchQuery) async {
   final List list = await yt.search.search(searchQuery);

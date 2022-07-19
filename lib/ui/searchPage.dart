@@ -16,7 +16,7 @@ List searchHistory = [];
 
 class _SearchPageState extends State<SearchPage> {
   TextEditingController searchBar = TextEditingController();
-  bool fetchingSongs = false;
+  ValueNotifier<bool> fetchingSongs = ValueNotifier(false);
   FocusNode inputNode = FocusNode();
 
   Future<void> search() async {
@@ -28,14 +28,13 @@ class _SearchPageState extends State<SearchPage> {
       return;
     }
 
-    fetchingSongs = true;
-    setState(() {});
+    fetchingSongs.value = true;
     await fetchSongsList(searchQuery);
     if (!searchHistory.contains(searchQuery)) {
       searchHistory.add(searchQuery);
       addOrUpdateData('user', 'searchHistory', searchHistory);
     }
-    fetchingSongs = false;
+    fetchingSongs.value = false;
     setState(() {});
   }
 
@@ -92,19 +91,31 @@ class _SearchPageState extends State<SearchPage> {
                   ),
                   borderSide: BorderSide(color: accent),
                 ),
-                suffixIcon: IconButton(
-                  icon: fetchingSongs
-                      ? SizedBox(height: 18, width: 18, child: Spinner())
-                      : Icon(
-                          Icons.search,
-                          color: accent,
-                        ),
-                  color: accent,
-                  onPressed: () {
-                    search();
-                    FocusManager.instance.primaryFocus?.unfocus();
-                  },
-                ),
+                suffixIcon: ValueListenableBuilder<bool>(
+                    valueListenable: fetchingSongs,
+                    builder: (_, value, __) {
+                      if (value == true) {
+                        return IconButton(
+                            icon: SizedBox(
+                                height: 18, width: 18, child: Spinner()),
+                            color: accent,
+                            onPressed: () {
+                              search();
+                              FocusManager.instance.primaryFocus?.unfocus();
+                            });
+                      } else {
+                        return IconButton(
+                            icon: Icon(
+                              Icons.search,
+                              color: accent,
+                            ),
+                            color: accent,
+                            onPressed: () {
+                              search();
+                              FocusManager.instance.primaryFocus?.unfocus();
+                            });
+                      }
+                    }),
                 border: InputBorder.none,
                 hintText: '${AppLocalizations.of(context)!.search}...',
                 hintStyle: TextStyle(
@@ -156,10 +167,9 @@ class _SearchPageState extends State<SearchPage> {
                           style: TextStyle(color: accent),
                         ),
                         onTap: () async {
-                          fetchingSongs = true;
-                          setState(() {});
+                          fetchingSongs.value = true;
                           await fetchSongsList(searchHistory[index]);
-                          fetchingSongs = false;
+                          fetchingSongs.value = false;
                           setState(() {});
                         },
                       ),
