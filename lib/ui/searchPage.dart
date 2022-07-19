@@ -15,12 +15,12 @@ class SearchPage extends StatefulWidget {
 List searchHistory = [];
 
 class _SearchPageState extends State<SearchPage> {
-  TextEditingController searchBar = TextEditingController();
-  ValueNotifier<bool> fetchingSongs = ValueNotifier(false);
-  FocusNode inputNode = FocusNode();
+  TextEditingController _searchBar = TextEditingController();
+  ValueNotifier<bool> _fetchingSongs = ValueNotifier(false);
+  FocusNode _inputNode = FocusNode();
 
   Future<void> search() async {
-    final String searchQuery = searchBar.text;
+    final String searchQuery = _searchBar.text;
     if (searchQuery.isEmpty) {
       setState(() {
         searchedList = [];
@@ -28,13 +28,13 @@ class _SearchPageState extends State<SearchPage> {
       return;
     }
 
-    fetchingSongs.value = true;
+    _fetchingSongs.value = true;
     await fetchSongsList(searchQuery);
     if (!searchHistory.contains(searchQuery)) {
       searchHistory.add(searchQuery);
       addOrUpdateData('user', 'searchHistory', searchHistory);
     }
-    fetchingSongs.value = false;
+    _fetchingSongs.value = false;
     setState(() {});
   }
 
@@ -67,8 +67,8 @@ class _SearchPageState extends State<SearchPage> {
                 search();
                 FocusManager.instance.primaryFocus?.unfocus();
               },
-              controller: searchBar,
-              focusNode: inputNode,
+              controller: _searchBar,
+              focusNode: _inputNode,
               style: TextStyle(
                 fontSize: 16,
                 color: accent,
@@ -92,7 +92,7 @@ class _SearchPageState extends State<SearchPage> {
                   borderSide: BorderSide(color: accent),
                 ),
                 suffixIcon: ValueListenableBuilder<bool>(
-                    valueListenable: fetchingSongs,
+                    valueListenable: _fetchingSongs,
                     builder: (_, value, __) {
                       if (value == true) {
                         return IconButton(
@@ -167,9 +167,9 @@ class _SearchPageState extends State<SearchPage> {
                           style: TextStyle(color: accent),
                         ),
                         onTap: () async {
-                          fetchingSongs.value = true;
+                          _fetchingSongs.value = true;
                           await fetchSongsList(searchHistory[index]);
-                          fetchingSongs.value = false;
+                          _fetchingSongs.value = false;
                           setState(() {});
                         },
                       ),

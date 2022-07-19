@@ -136,6 +136,20 @@ Future<List> getPlaylists([int? playlistsNum]) async {
   }
 }
 
+Future<List> searchPlaylist(String query) async {
+  if (playlists.isEmpty) {
+    final localplaylists =
+        json.decode(await rootBundle.loadString('assets/db/playlists.db.json'))
+            as List;
+    playlists = localplaylists;
+  }
+
+  return playlists
+      .where((playlist) =>
+          playlist['title'].toLowerCase().contains(query.toLowerCase()))
+      .toList();
+}
+
 Future getSongsFromPlaylist(dynamic playlistid) async {
   final playlistSongs = [];
   var index = 0;
