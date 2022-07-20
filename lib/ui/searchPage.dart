@@ -15,9 +15,9 @@ class SearchPage extends StatefulWidget {
 List searchHistory = [];
 
 class _SearchPageState extends State<SearchPage> {
-  TextEditingController _searchBar = TextEditingController();
-  ValueNotifier<bool> _fetchingSongs = ValueNotifier(false);
-  FocusNode _inputNode = FocusNode();
+  final TextEditingController _searchBar = TextEditingController();
+  final ValueNotifier<bool> _fetchingSongs = ValueNotifier(false);
+  final FocusNode _inputNode = FocusNode();
 
   Future<void> search() async {
     final String searchQuery = _searchBar.text;

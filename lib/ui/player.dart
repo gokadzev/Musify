@@ -207,17 +207,17 @@ class AudioAppState extends State<AudioApp> {
   }
 
   Widget _buildPlayer(
-    size,
+    Size size,
     ValueNotifier<bool> songLikeStatus,
-    ytid,
-    metadata,
+    dynamic ytid,
+    dynamic metadata,
   ) =>
       Container(
         padding: EdgeInsets.only(
-          top: size.height * 0.01 as double,
+          top: size.height * 0.01,
           left: 16,
           right: 16,
-          bottom: size.height * 0.03 as double,
+          bottom: size.height * 0.03,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -242,7 +242,7 @@ class AudioAppState extends State<AudioApp> {
               ),
             if (position != null) _buildProgressView(),
             Padding(
-              padding: EdgeInsets.only(top: size.height * 0.03 as double),
+              padding: EdgeInsets.only(top: size.height * 0.03),
               child: Column(
                 children: <Widget>[
                   SizedBox(
@@ -257,7 +257,7 @@ class AudioAppState extends State<AudioApp> {
                               MdiIcons.download,
                               color: Colors.white,
                             ),
-                            iconSize: size.width * 0.056 as double,
+                            iconSize: size.width * 0.056,
                             onPressed: () {
                               downloadSong(
                                 mediaItemToMap(metadata as MediaItem),
@@ -271,10 +271,8 @@ class AudioAppState extends State<AudioApp> {
                             color:
                                 shuffleNotifier.value ? accent : Colors.white,
                           ),
-                          iconSize: size.width * 0.056 as double,
-                          onPressed: () {
-                            changeShuffleStatus();
-                          },
+                          iconSize: size.width * 0.056,
+                          onPressed: changeShuffleStatus,
                         ),
                         IconButton(
                           padding: EdgeInsets.zero,
@@ -283,12 +281,10 @@ class AudioAppState extends State<AudioApp> {
                             color: audioPlayer!.hasPrevious
                                 ? Colors.white
                                 : Colors.grey,
-                            size: size.width * 0.1 as double,
+                            size: size.width * 0.1,
                           ),
-                          iconSize: size.width * 0.056 as double,
-                          onPressed: () {
-                            playPrevious();
-                          },
+                          iconSize: size.width * 0.056,
+                          onPressed: playPrevious,
                         ),
                         Container(
                           decoration: BoxDecoration(
@@ -302,33 +298,27 @@ class AudioAppState extends State<AudioApp> {
                                 case MPlayerState.loading:
                                   return Container(
                                     margin: const EdgeInsets.all(8.0),
-                                    width: size.width * 0.08 as double,
-                                    height: size.width * 0.08 as double,
+                                    width: size.width * 0.08,
+                                    height: size.width * 0.08,
                                     child: Spinner(),
                                   );
                                 case MPlayerState.paused:
                                   return IconButton(
                                     icon: const Icon(MdiIcons.play),
-                                    iconSize: size.width * 0.1 as double,
-                                    onPressed: () {
-                                      play();
-                                    },
+                                    iconSize: size.width * 0.1,
+                                    onPressed: play,
                                   );
                                 case MPlayerState.playing:
                                   return IconButton(
                                     icon: const Icon(MdiIcons.pause),
-                                    iconSize: size.width * 0.1 as double,
-                                    onPressed: () {
-                                      pause();
-                                    },
+                                    iconSize: size.width * 0.1,
+                                    onPressed: pause,
                                   );
                                 case MPlayerState.stopped:
                                   return IconButton(
                                     icon: const Icon(MdiIcons.play),
-                                    iconSize: size.width * 0.08 as double,
-                                    onPressed: () {
-                                      play();
-                                    },
+                                    iconSize: size.width * 0.08,
+                                    onPressed: play,
                                   );
                               }
                             },
@@ -341,12 +331,10 @@ class AudioAppState extends State<AudioApp> {
                             color: audioPlayer!.hasNext
                                 ? Colors.white
                                 : Colors.grey,
-                            size: size.width * 0.1 as double,
+                            size: size.width * 0.1,
                           ),
-                          iconSize: size.width * 0.08 as double,
-                          onPressed: () {
-                            playNext();
-                          },
+                          iconSize: size.width * 0.08,
+                          onPressed: playNext,
                         ),
                         IconButton(
                           padding: EdgeInsets.zero,
@@ -354,10 +342,8 @@ class AudioAppState extends State<AudioApp> {
                             MdiIcons.repeat,
                             color: repeatNotifier.value ? accent : Colors.white,
                           ),
-                          iconSize: size.width * 0.056 as double,
-                          onPressed: () {
-                            changeLoopStatus();
-                          },
+                          iconSize: size.width * 0.056,
+                          onPressed: changeLoopStatus,
                         ),
                         if (metadata.extras['ytid'].toString().isNotEmpty)
                           ValueListenableBuilder<bool>(
@@ -367,7 +353,7 @@ class AudioAppState extends State<AudioApp> {
                                 return IconButton(
                                   color: accent,
                                   icon: const Icon(MdiIcons.star),
-                                  iconSize: size.width * 0.056 as double,
+                                  iconSize: size.width * 0.056,
                                   onPressed: () => {
                                     removeUserLikedSong(ytid),
                                     songLikeStatus.value = false
@@ -377,7 +363,7 @@ class AudioAppState extends State<AudioApp> {
                                 return IconButton(
                                   color: accent,
                                   icon: const Icon(MdiIcons.starOutline),
-                                  iconSize: size.width * 0.056 as double,
+                                  iconSize: size.width * 0.056,
                                   onPressed: () => {
                                     addUserLikedSong(ytid),
                                     songLikeStatus.value = true
@@ -391,8 +377,7 @@ class AudioAppState extends State<AudioApp> {
                   ),
                   if (metadata.extras['ytid'].toString().isNotEmpty)
                     Padding(
-                      padding:
-                          EdgeInsets.only(top: size.height * 0.047 as double),
+                      padding: EdgeInsets.only(top: size.height * 0.047),
                       child: Builder(
                         builder: (context) {
                           return TextButton(
@@ -412,12 +397,12 @@ class AudioAppState extends State<AudioApp> {
                                       topRight: Radius.circular(18.0),
                                     ),
                                   ),
-                                  height: size.height / 2.14 as double,
+                                  height: size.height / 2.14,
                                   child: Column(
                                     children: <Widget>[
                                       Padding(
                                         padding: EdgeInsets.only(
-                                          top: size.height * 0.012 as double,
+                                          top: size.height * 0.012,
                                         ),
                                         child: Row(
                                           children: <Widget>[

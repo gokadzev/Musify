@@ -136,8 +136,8 @@ class _MyAppState extends State<MyApp> {
 
 void main() async {
   await Hive.initFlutter();
-  await Hive.openBox("settings");
-  await Hive.openBox("user");
+  await Hive.openBox('settings');
+  await Hive.openBox('user');
   await FlutterDownloader.initialize(
     debug:
         true, // optional: set to false to disable printing logs to console (default: true)
@@ -149,18 +149,17 @@ void main() async {
   final PackageInfo packageInfo = await PackageInfo.fromPlatform();
   version = packageInfo.version;
   await enableBooster();
-  initialisation();
+  await initialisation();
   runApp(const MyApp());
 }
 
 Future<void> initialisation() async {
   final AudioHandler audioHandler = await AudioService.init(
-    builder: () => MyAudioHandler(),
+    builder: MyAudioHandler.new,
     config: const AudioServiceConfig(
       androidNotificationChannelId: 'me.musify',
       androidNotificationChannelName: 'Musify',
       androidNotificationOngoing: true,
-      androidStopForegroundOnPause: true,
       androidNotificationIcon: 'drawable/musify',
       androidShowNotificationBadge: true,
     ),

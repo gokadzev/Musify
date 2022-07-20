@@ -4,7 +4,8 @@ import 'package:just_audio/just_audio.dart';
 import 'package:musify/services/audio_manager.dart';
 
 class MyAudioHandler extends BaseAudioHandler {
-  final _playlist = ConcatenatingAudioSource(children: []);
+  final ConcatenatingAudioSource _playlist =
+      ConcatenatingAudioSource(children: []);
 
   MyAudioHandler() {
     _loadEmptyPlaylist();
@@ -24,7 +25,7 @@ class MyAudioHandler extends BaseAudioHandler {
 
   void _notifyAudioHandlerAboutPlaybackEvents() {
     audioPlayer!.playbackEventStream.listen((PlaybackEvent event) {
-      final playing = audioPlayer!.playing;
+      final bool playing = audioPlayer!.playing;
       playbackState.add(
         playbackState.value.copyWith(
           controls: [
@@ -65,13 +66,13 @@ class MyAudioHandler extends BaseAudioHandler {
   void _listenForDurationChanges() {
     audioPlayer!.durationStream.listen((duration) {
       var index = audioPlayer!.currentIndex;
-      final newQueue = queue.value;
+      final List<MediaItem> newQueue = queue.value;
       if (index == null || newQueue.isEmpty) return;
       if (audioPlayer!.shuffleModeEnabled) {
         index = audioPlayer!.shuffleIndices![index];
       }
-      final oldMediaItem = newQueue[index];
-      final newMediaItem = oldMediaItem.copyWith(duration: duration);
+      final MediaItem oldMediaItem = newQueue[index];
+      final MediaItem newMediaItem = oldMediaItem.copyWith(duration: duration);
       newQueue[index] = newMediaItem;
       queue.add(newQueue);
       mediaItem.add(newMediaItem);
@@ -80,7 +81,7 @@ class MyAudioHandler extends BaseAudioHandler {
 
   void _listenForCurrentSongIndexChanges() {
     audioPlayer!.currentIndexStream.listen((index) {
-      final playlist = queue.value;
+      final List<MediaItem> playlist = queue.value;
       if (index == null || playlist.isEmpty) return;
       if (audioPlayer!.shuffleModeEnabled) {
         index = audioPlayer!.shuffleIndices![index];

@@ -16,12 +16,12 @@ import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 final yt = YoutubeExplode();
 final OnAudioQuery _audioQuery = OnAudioQuery();
 
-List ytplaylists = [],
-    searchedList = [],
-    playlists = [],
-    userPlaylists = [],
-    userLikedSongsList = [],
-    suggestedPlaylists = [];
+List ytplaylists = [];
+List searchedList = [];
+List playlists = [];
+List userPlaylists = [];
+List userLikedSongsList = [];
+List suggestedPlaylists = [];
 List<SongModel> localSongs = [];
 
 final lyrics = ValueNotifier<String>('null');
@@ -52,7 +52,7 @@ Future<List> fetchSongsList(String searchQuery) async {
 
 Future get10Music(dynamic playlistId) async {
   final newSongs = [];
-  var index = 0;
+  int index = 0;
   await for (final song in yt.playlists.getVideos(playlistId).take(10)) {
     newSongs.add(
       returnSongLayout(
@@ -152,7 +152,7 @@ Future<List> searchPlaylist(String query) async {
 
 Future getSongsFromPlaylist(dynamic playlistid) async {
   final playlistSongs = [];
-  var index = 0;
+  int index = 0;
   await for (final song in yt.playlists.getVideos(playlistid)) {
     playlistSongs.add(
       returnSongLayout(

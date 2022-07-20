@@ -14,9 +14,9 @@ class PlaylistsPage extends StatefulWidget {
 }
 
 class _PlaylistsPageState extends State<PlaylistsPage> {
-  TextEditingController _searchBar = TextEditingController();
-  ValueNotifier<bool> _fetchingSongs = ValueNotifier(false);
-  FocusNode _inputNode = FocusNode();
+  final TextEditingController _searchBar = TextEditingController();
+  final ValueNotifier<bool> _fetchingSongs = ValueNotifier(false);
+  final FocusNode _inputNode = FocusNode();
   String _searchQuery = '';
 
   Future<void> search() async {
@@ -55,7 +55,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
         child: Column(
           children: <Widget>[
             Padding(
-              padding: EdgeInsets.only(
+              padding: const EdgeInsets.only(
                   top: 12.0, bottom: 20.0, left: 12.0, right: 12.0),
               child: TextField(
                 onSubmitted: (String value) {

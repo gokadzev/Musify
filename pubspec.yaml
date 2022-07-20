@@ -21,35 +21,33 @@ environment:
   sdk: ">=2.17.3 <3.0.0"
 
 dependencies:
+  audio_service: ^0.18.7
+  cached_network_image: ^3.2.1
+  delayed_display: ^2.0.0
   flutter:
     sdk: flutter
+  flutter_cache_manager: ^3.3.0
+  flutter_downloader: ^1.8.1
   flutter_localizations: 
     sdk: flutter
-  intl: ^0.17.0 
-
-
-  path_provider: ^2.0.11
-  material_design_icons_flutter: ^5.0.6996
-  permission_handler: ^10.0.0
   fluttertoast: ^8.0.9
-  cached_network_image: ^3.2.1
-  audio_service: ^0.18.7
-  just_audio: ^0.9.28
   get_it: ^7.2.0
+  google_fonts: ^3.0.1
   hive: ^2.2.3
   hive_flutter: ^1.1.0
-  delayed_display: ^2.0.0
-  youtube_explode_dart: ^1.12.0
-  google_fonts: ^3.0.1
-  flutter_cache_manager: ^3.3.0
-  package_info_plus: ^1.4.2
-  flutter_downloader: ^1.8.1
+  intl: ^0.17.0 
+  just_audio: ^0.9.28
+  material_design_icons_flutter: ^5.0.6996
   on_audio_query: ^2.6.1
+  package_info_plus: ^1.4.2
+  path_provider: ^2.0.11
+  permission_handler: ^10.0.0
+  youtube_explode_dart: ^1.12.0
 
 dev_dependencies:
+  flutter_native_splash: ^2.2.5
   flutter_test:
     sdk: flutter
-  flutter_native_splash: ^2.2.5
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
