@@ -354,7 +354,7 @@ class AudioAppState extends State<AudioApp> {
                                   return IconButton(
                                     padding: EdgeInsets.zero,
                                     icon: Icon(
-                                      MdiIcons.skipNext,
+                                      MdiIcons.chevronRight,
                                       color: value ? accent : Colors.white,
                                     ),
                                     iconSize: size.width * 0.056,

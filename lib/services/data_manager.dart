@@ -31,6 +31,10 @@ void deleteData(String category, dynamic key) {
 }
 
 void clearCache() {
+  if (!Hive.isBoxOpen("cache")) {
+    Hive.openBox("cache");
+  }
+  Hive.box("cache").clear();
   DefaultCacheManager().emptyCache();
 }
 

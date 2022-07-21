@@ -158,46 +158,52 @@ Future<Map> getRandomSong() async {
             as List;
   }
   final _random = new Random();
-  final playlistSongs = [];
-  await for (final song in yt.playlists
-      .getVideos(playlists[_random.nextInt(playlists.length)]['ytid'])
-      .take(5)) {
-    playlistSongs.add(
-      returnSongLayout(
-        0,
-        song.id.toString(),
-        formatSongTitle(
-          song.title.split('-')[song.title.split('-').length - 1],
+  final playlistId = playlists[_random.nextInt(playlists.length)]['ytid'];
+  final playlistSongs =
+      await getData('cache', 'playlistSongs' + playlistId) ?? [];
+  if (playlistSongs.isEmpty) {
+    await for (final song in yt.playlists.getVideos(playlistId).take(5)) {
+      playlistSongs.add(
+        returnSongLayout(
+          0,
+          song.id.toString(),
+          formatSongTitle(
+            song.title.split('-')[song.title.split('-').length - 1],
+          ),
+          song.thumbnails.standardResUrl,
+          song.thumbnails.lowResUrl,
+          song.thumbnails.maxResUrl,
+          song.title.split('-')[0],
         ),
-        song.thumbnails.standardResUrl,
-        song.thumbnails.lowResUrl,
-        song.thumbnails.maxResUrl,
-        song.title.split('-')[0],
-      ),
-    );
+      );
+    }
   }
 
   return playlistSongs[_random.nextInt(playlistSongs.length)];
 }
 
 Future getSongsFromPlaylist(dynamic playlistid) async {
-  final playlistSongs = [];
-  int index = 0;
-  await for (final song in yt.playlists.getVideos(playlistid)) {
-    playlistSongs.add(
-      returnSongLayout(
-        index,
-        song.id.toString(),
-        formatSongTitle(
-          song.title.split('-')[song.title.split('-').length - 1],
+  final List playlistSongs =
+      await getData('cache', 'playlistSongs' + playlistid) ?? [];
+  if (playlistSongs.isEmpty) {
+    int index = 0;
+    await for (final song in yt.playlists.getVideos(playlistid)) {
+      playlistSongs.add(
+        returnSongLayout(
+          index,
+          song.id.toString(),
+          formatSongTitle(
+            song.title.split('-')[song.title.split('-').length - 1],
+          ),
+          song.thumbnails.standardResUrl,
+          song.thumbnails.lowResUrl,
+          song.thumbnails.maxResUrl,
+          song.title.split('-')[0],
         ),
-        song.thumbnails.standardResUrl,
-        song.thumbnails.lowResUrl,
-        song.thumbnails.maxResUrl,
-        song.title.split('-')[0],
-      ),
-    );
-    index += 1;
+      );
+      index += 1;
+    }
+    addOrUpdateData('cache', 'playlistSongs' + playlistid, playlistSongs);
   }
 
   return playlistSongs;
