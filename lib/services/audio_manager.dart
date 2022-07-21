@@ -33,6 +33,7 @@ final buttonNotifier = ValueNotifier<MPlayerState>(MPlayerState.stopped);
 final shuffleNotifier = ValueNotifier<bool>(false);
 final repeatNotifier = ValueNotifier<bool>(false);
 final prefferedFileExtension = ValueNotifier<String>('mp3');
+final playNextSongAutomatically = ValueNotifier<bool>(false);
 
 bool get hasNext => audioPlayer!.hasNext;
 
@@ -102,13 +103,13 @@ Future<void> downloadSong(dynamic song) async {
   }
 }
 
-Future<void> playSong(dynamic song) async {
+Future<void> playSong(Map song) async {
   if (song['ytid'].length == 0) {
     await MyAudioHandler()
-        .addQueueItem(mapToMediaItem(song as Map, song['songUrl'].toString()));
+        .addQueueItem(mapToMediaItem(song, song['songUrl'].toString()));
   } else {
     final songUrl = await getSongUrl(song['ytid']);
-    await MyAudioHandler().addQueueItem(mapToMediaItem(song as Map, songUrl));
+    await MyAudioHandler().addQueueItem(mapToMediaItem(song, songUrl));
   }
   await play();
 }
@@ -118,6 +119,14 @@ Future changeShuffleStatus() async {
     await audioPlayer?.setShuffleModeEnabled(false);
   } else {
     await audioPlayer?.setShuffleModeEnabled(true);
+  }
+}
+
+void changeAutoPlayNextStatus() {
+  if (playNextSongAutomatically.value == false) {
+    playNextSongAutomatically.value = true;
+  } else {
+    playNextSongAutomatically.value = false;
   }
 }
 

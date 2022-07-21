@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/services.dart';
@@ -148,6 +149,35 @@ Future<List> searchPlaylist(String query) async {
       .where((playlist) =>
           playlist['title'].toLowerCase().contains(query.toLowerCase()))
       .toList();
+}
+
+Future<Map> getRandomSong() async {
+  if (playlists.isEmpty) {
+    playlists =
+        json.decode(await rootBundle.loadString('assets/db/playlists.db.json'))
+            as List;
+  }
+  final _random = new Random();
+  final playlistSongs = [];
+  await for (final song in yt.playlists
+      .getVideos(playlists[_random.nextInt(playlists.length)]['ytid'])
+      .take(5)) {
+    playlistSongs.add(
+      returnSongLayout(
+        0,
+        song.id.toString(),
+        formatSongTitle(
+          song.title.split('-')[song.title.split('-').length - 1],
+        ),
+        song.thumbnails.standardResUrl,
+        song.thumbnails.lowResUrl,
+        song.thumbnails.maxResUrl,
+        song.title.split('-')[0],
+      ),
+    );
+  }
+
+  return playlistSongs[_random.nextInt(playlistSongs.length)];
 }
 
 Future getSongsFromPlaylist(dynamic playlistid) async {

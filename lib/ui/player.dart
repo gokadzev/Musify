@@ -346,31 +346,49 @@ class AudioAppState extends State<AudioApp> {
                           onPressed: changeLoopStatus,
                         ),
                         if (metadata.extras['ytid'].toString().isNotEmpty)
-                          ValueListenableBuilder<bool>(
-                            valueListenable: songLikeStatus,
-                            builder: (_, value, __) {
-                              if (value == true) {
-                                return IconButton(
-                                  color: accent,
-                                  icon: const Icon(MdiIcons.star),
-                                  iconSize: size.width * 0.056,
-                                  onPressed: () => {
-                                    removeUserLikedSong(ytid),
-                                    songLikeStatus.value = false
-                                  },
-                                );
-                              } else {
-                                return IconButton(
-                                  color: accent,
-                                  icon: const Icon(MdiIcons.starOutline),
-                                  iconSize: size.width * 0.056,
-                                  onPressed: () => {
-                                    addUserLikedSong(ytid),
-                                    songLikeStatus.value = true
-                                  },
-                                );
-                              }
-                            },
+                          Column(
+                            children: [
+                              ValueListenableBuilder<bool>(
+                                valueListenable: playNextSongAutomatically,
+                                builder: (_, value, __) {
+                                  return IconButton(
+                                    padding: EdgeInsets.zero,
+                                    icon: Icon(
+                                      MdiIcons.skipNext,
+                                      color: value ? accent : Colors.white,
+                                    ),
+                                    iconSize: size.width * 0.056,
+                                    onPressed: changeAutoPlayNextStatus,
+                                  );
+                                },
+                              ),
+                              ValueListenableBuilder<bool>(
+                                valueListenable: songLikeStatus,
+                                builder: (_, value, __) {
+                                  if (value == true) {
+                                    return IconButton(
+                                      color: accent,
+                                      icon: const Icon(MdiIcons.star),
+                                      iconSize: size.width * 0.056,
+                                      onPressed: () => {
+                                        removeUserLikedSong(ytid),
+                                        songLikeStatus.value = false
+                                      },
+                                    );
+                                  } else {
+                                    return IconButton(
+                                      color: Colors.white,
+                                      icon: const Icon(MdiIcons.starOutline),
+                                      iconSize: size.width * 0.056,
+                                      onPressed: () => {
+                                        addUserLikedSong(ytid),
+                                        songLikeStatus.value = true
+                                      },
+                                    );
+                                  }
+                                },
+                              ),
+                            ],
                           ),
                       ],
                     ),

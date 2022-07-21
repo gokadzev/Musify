@@ -5,13 +5,13 @@ import 'package:hive/hive.dart';
 import 'package:musify/services/ext_storage.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-Future<void> addOrUpdateData(
+void addOrUpdateData(
   String category,
   dynamic key,
   dynamic value,
 ) async {
   if (!Hive.isBoxOpen(category)) {
-    await Hive.openBox(category);
+    Hive.openBox(category);
   }
   Hive.box(category).put(key, value);
 }
@@ -23,14 +23,14 @@ Future getData(String category, dynamic key) async {
   return Hive.box(category).get(key);
 }
 
-Future<void> deleteData(String category, dynamic key) async {
+void deleteData(String category, dynamic key) {
   if (!Hive.isBoxOpen(category)) {
-    await Hive.openBox(category);
+    Hive.openBox(category);
   }
   Hive.box(category).delete(key);
 }
 
-Future<void> clearCache() async {
+void clearCache() {
   DefaultCacheManager().emptyCache();
 }
 
