@@ -1,8 +1,8 @@
   flutter_native_splash:
     image: assets/images/splash.png
-    color: "202124"
+    color: "202020"
 
 
     android_12:
       image: assets/images/splash.png
-      color: "202124"
+      color: "202020"

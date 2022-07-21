@@ -59,7 +59,7 @@ class _MyAppState extends State<MyApp> {
         .get('audioFileType', defaultValue: 'mp3') as String;
     accent = Hive.box('settings').get('accentColor') != null
         ? Color(Hive.box('settings').get('accentColor') as int)
-        : const Color(0xFFFF9E80);
+        : const Color(0xFF8C9EFF);
     userPlaylists = Hive.box('user').get('playlists') ?? [];
     userLikedSongsList = Hive.box('user').get('likedSongs') ?? [];
     searchHistory = Hive.box('user').get('searchHistory') ?? [];
@@ -160,7 +160,7 @@ Future<void> initialisation() async {
       androidNotificationChannelId: 'me.musify',
       androidNotificationChannelName: 'Musify',
       androidNotificationOngoing: true,
-      androidNotificationIcon: 'drawable/musify',
+      androidNotificationIcon: 'mipmap/launcher_icon',
       androidShowNotificationBadge: true,
     ),
   );

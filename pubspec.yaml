@@ -2,7 +2,7 @@ name: musify
 description: Music Streaming and Downloading app made in Flutter!
 
 # The following line prevents the package from being accidentally published to
-# pub.dev using `pub publish`. This is preferred for private packages.
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
@@ -18,8 +18,14 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 2.3.0+18
 
 environment:
-  sdk: ">=2.17.3 <3.0.0"
+  sdk: ">=2.17.6 <3.0.0"
 
+# Dependencies specify other packages that your package needs in order to work.
+# To automatically upgrade your package dependencies to the latest versions
+# consider running `flutter pub upgrade --major-versions`. Alternatively,
+# dependencies can be manually updated by changing the version numbers below to
+# the latest version available on pub.dev. To see which dependencies have newer
+# versions available, run `flutter pub outdated`.
 dependencies:
   audio_service: ^0.18.7
   cached_network_image: ^3.2.1
@@ -45,14 +51,22 @@ dependencies:
   youtube_explode_dart: ^1.12.0
 
 dev_dependencies:
+  flutter_launcher_icons: "^0.9.3"
   flutter_native_splash: ^2.2.5
   flutter_test:
     sdk: flutter
 
+  # The "flutter_lints" package below contains a set of recommended lints to
+  # encourage good coding practices. The lint set provided by the package is
+  # activated in the `analysis_options.yaml` file located at the root of your
+  # package. See that file for information about deactivating specific lint
+  # rules and activating additional ones.
+  # flutter_lints: ^2.0.0
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
-# The following section is specific to Flutter.
+# The following section is specific to Flutter packages.
 flutter:
 
   # The following line ensures that the Material Icons font is
@@ -77,7 +91,7 @@ flutter:
     - assets/db/playlists.db.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
-  # https://flutter.dev/assets-and-images/#resolution-aware.
+  # https://flutter.dev/assets-and-images/#resolution-aware
 
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/assets-and-images/#from-packages

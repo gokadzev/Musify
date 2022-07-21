@@ -52,10 +52,10 @@ android {
         checkReleaseBuilds false
         abortOnError false
     }
-
+    
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "me.musify"
+        applicationId "com.gokadzev.musify"
         minSdkVersion 21
         targetSdkVersion 33
         versionCode flutterVersionCode.toInteger()
