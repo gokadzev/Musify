@@ -157,7 +157,8 @@ class AudioAppState extends State<AudioApp> {
                       ),
                     ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 35.0, bottom: 35),
+                    padding: EdgeInsets.only(
+                        top: size.height * 0.04, bottom: size.height * 0.01),
                     child: Column(
                       children: <Widget>[
                         Text(
@@ -167,6 +168,7 @@ class AudioAppState extends State<AudioApp> {
                               .split('|')[0]
                               .trim(),
                           textScaleFactor: 2.5,
+                          maxLines: 1,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 12,
@@ -178,6 +180,7 @@ class AudioAppState extends State<AudioApp> {
                           padding: const EdgeInsets.only(top: 8.0),
                           child: Text(
                             '${metadata!.artist}',
+                            maxLines: 1,
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: accentLight,
