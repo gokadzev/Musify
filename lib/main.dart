@@ -1,4 +1,5 @@
 import 'package:audio_service/audio_service.dart';
+import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -154,10 +155,12 @@ void main() async {
 }
 
 Future<void> initialisation() async {
+  final session = await AudioSession.instance;
+  await session.configure(const AudioSessionConfiguration.music());
   final AudioHandler audioHandler = await AudioService.init(
     builder: MyAudioHandler.new,
     config: const AudioServiceConfig(
-      androidNotificationChannelId: 'me.musify',
+      androidNotificationChannelId: 'com.gokadzev.musify',
       androidNotificationChannelName: 'Musify',
       androidNotificationOngoing: true,
       androidNotificationIcon: 'mipmap/launcher_icon',
