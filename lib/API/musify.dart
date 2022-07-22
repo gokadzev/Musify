@@ -157,10 +157,10 @@ Future<Map> getRandomSong() async {
         json.decode(await rootBundle.loadString('assets/db/playlists.db.json'))
             as List;
   }
-  final _random = new Random();
+  final _random = Random();
   final playlistId = playlists[_random.nextInt(playlists.length)]['ytid'];
   final playlistSongs =
-      await getData('cache', 'playlistSongs' + playlistId) ?? [];
+      await getData('cache', 'playlistSongs$playlistId') ?? [];
   if (playlistSongs.isEmpty) {
     await for (final song in yt.playlists.getVideos(playlistId).take(5)) {
       playlistSongs.add(
@@ -184,7 +184,7 @@ Future<Map> getRandomSong() async {
 
 Future getSongsFromPlaylist(dynamic playlistid) async {
   final List playlistSongs =
-      await getData('cache', 'playlistSongs' + playlistid) ?? [];
+      await getData('cache', 'playlistSongs$playlistid') ?? [];
   if (playlistSongs.isEmpty) {
     int index = 0;
     await for (final song in yt.playlists.getVideos(playlistid)) {
@@ -203,7 +203,7 @@ Future getSongsFromPlaylist(dynamic playlistid) async {
       );
       index += 1;
     }
-    addOrUpdateData('cache', 'playlistSongs' + playlistid, playlistSongs);
+    addOrUpdateData('cache', 'playlistSongs$playlistid', playlistSongs);
   }
 
   return playlistSongs;
@@ -223,9 +223,9 @@ Future<void> setActivePlaylist(List plist) async {
     }
   }
 
-  MyAudioHandler().addQueueItems(activePlaylist);
+  await MyAudioHandler().addQueueItems(activePlaylist);
 
-  play();
+  await play();
 }
 
 Future getPlaylistInfoForWidget(dynamic id) async {

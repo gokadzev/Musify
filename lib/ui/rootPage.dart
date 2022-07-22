@@ -67,8 +67,8 @@ class AppState extends State<Musify> {
       } else if (processingState != ProcessingState.completed) {
         buttonNotifier.value = MPlayerState.playing;
       } else {
-        audioPlayer?.seek(Duration.zero);
-        audioPlayer?.pause();
+        await audioPlayer?.seek(Duration.zero);
+        await audioPlayer?.pause();
         if (playNextSongAutomatically.value && !hasNext) {
           await playSong(await getRandomSong());
         }
@@ -284,6 +284,7 @@ class AppState extends State<Musify> {
         HomePage(),
         SearchPage(),
         PlaylistsPage(),
+        // ignore: prefer_const_constructors
         LocalSongsPage(),
         SettingsPage()
       ],

@@ -115,7 +115,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                           ),
                           color: Colors.transparent,
                           child: widget.playlist['image'] != ''
-                              ? Container(
+                              ? DecoratedBox(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10.0),
                                     image: DecorationImage(

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/API/musify.dart';
+import 'package:musify/customWidgets/spinner.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:on_audio_query/on_audio_query.dart';
@@ -202,7 +203,7 @@ class LocalSongsPage extends StatelessWidget {
                             );
                           },
                         )
-                      : CircularProgressIndicator();
+                      : Spinner();
                 })
           ],
         ),

@@ -188,7 +188,7 @@ class CubeContainer extends StatelessWidget {
                 color: Colors.transparent,
                 child: CachedNetworkImage(
                   imageUrl: image,
-                  imageBuilder: (context, imageProvider) => Container(
+                  imageBuilder: (context, imageProvider) => DecoratedBox(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       image: DecorationImage(
@@ -197,7 +197,7 @@ class CubeContainer extends StatelessWidget {
                       ),
                     ),
                   ),
-                  errorWidget: (context, url, error) => Container(
+                  errorWidget: (context, url, error) => DecoratedBox(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.0),
                       gradient: LinearGradient(

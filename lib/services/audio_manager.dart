@@ -74,7 +74,7 @@ Future<void> downloadSong(dynamic song) async {
           .create(recursive: true)
           .then((value) => filepath = value.path);
     }
-    Fluttertoast.showToast(
+    await Fluttertoast.showToast(
       msg: 'Download Started!',
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM,
@@ -92,7 +92,7 @@ Future<void> downloadSong(dynamic song) async {
     await fileStream.close();
 
     debugPrint('Done');
-    Fluttertoast.showToast(
+    await Fluttertoast.showToast(
       msg: 'Download Completed!',
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM,
@@ -141,8 +141,8 @@ Future changeLoopStatus() async {
 }
 
 Future enableBooster() async {
-  _loudnessEnhancer.setEnabled(true);
-  _loudnessEnhancer.setTargetGain(1);
+  await _loudnessEnhancer.setEnabled(true);
+  await _loudnessEnhancer.setTargetGain(1);
 }
 
 Future<void>? play() => _audioHandler.play();
@@ -152,17 +152,17 @@ Future<void>? pause() => _audioHandler.pause();
 Future<void>? stop() => _audioHandler.stop();
 
 Future playNext() async {
-  _audioHandler.skipToNext();
+  await _audioHandler.skipToNext();
 }
 
 Future playPrevious() async {
-  _audioHandler.skipToPrevious();
+  await _audioHandler.skipToPrevious();
 }
 
 Future mute(bool muted) async {
   if (muted) {
-    audioPlayer?.setVolume(0);
+    await audioPlayer?.setVolume(0);
   } else {
-    audioPlayer?.setVolume(1);
+    await audioPlayer?.setVolume(1);
   }
 }

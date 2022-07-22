@@ -103,7 +103,7 @@ class MyAudioHandler extends BaseAudioHandler {
   @override
   Future<void> addQueueItems(List<MediaItem> mediaItems) async {
     final audioSource = mediaItems.map(_createAudioSource);
-    _playlist.addAll(audioSource.toList());
+    await _playlist.addAll(audioSource.toList());
 
     final newQueue = queue.value..addAll(mediaItems);
     queue.add(newQueue);
@@ -112,7 +112,7 @@ class MyAudioHandler extends BaseAudioHandler {
   @override
   Future<void> addQueueItem(MediaItem mediaItem) async {
     final audioSource = _createAudioSource(mediaItem);
-    _playlist.add(audioSource);
+    await _playlist.add(audioSource);
 
     final newQueue = queue.value..add(mediaItem);
     queue.add(newQueue);
@@ -127,7 +127,7 @@ class MyAudioHandler extends BaseAudioHandler {
 
   @override
   Future<void> removeQueueItemAt(int index) async {
-    _playlist.removeAt(index);
+    await _playlist.removeAt(index);
 
     final newQueue = queue.value..removeAt(index);
     queue.add(newQueue);
@@ -149,7 +149,7 @@ class MyAudioHandler extends BaseAudioHandler {
     if (audioPlayer!.shuffleModeEnabled) {
       ind = audioPlayer!.shuffleIndices![index];
     }
-    audioPlayer!.seek(Duration.zero, index: ind);
+    await audioPlayer!.seek(Duration.zero, index: ind);
   }
 
   @override
@@ -162,14 +162,14 @@ class MyAudioHandler extends BaseAudioHandler {
   Future<void> setRepeatMode(AudioServiceRepeatMode repeatMode) async {
     switch (repeatMode) {
       case AudioServiceRepeatMode.none:
-        audioPlayer!.setLoopMode(LoopMode.off);
+        await audioPlayer!.setLoopMode(LoopMode.off);
         break;
       case AudioServiceRepeatMode.one:
-        audioPlayer!.setLoopMode(LoopMode.one);
+        await audioPlayer!.setLoopMode(LoopMode.one);
         break;
       case AudioServiceRepeatMode.group:
       case AudioServiceRepeatMode.all:
-        audioPlayer!.setLoopMode(LoopMode.all);
+        await audioPlayer!.setLoopMode(LoopMode.all);
         break;
     }
   }
@@ -177,10 +177,10 @@ class MyAudioHandler extends BaseAudioHandler {
   @override
   Future<void> setShuffleMode(AudioServiceShuffleMode shuffleMode) async {
     if (shuffleMode == AudioServiceShuffleMode.none) {
-      audioPlayer!.setShuffleModeEnabled(false);
+      await audioPlayer!.setShuffleModeEnabled(false);
     } else {
       await audioPlayer!.shuffle();
-      audioPlayer!.setShuffleModeEnabled(true);
+      await audioPlayer!.setShuffleModeEnabled(true);
     }
   }
 
@@ -188,7 +188,7 @@ class MyAudioHandler extends BaseAudioHandler {
   Future customAction(String name, [Map<String, dynamic>? extras]) async {
     if (name == 'dispose') {
       await audioPlayer!.dispose();
-      super.stop();
+      await super.stop();
     }
   }
 

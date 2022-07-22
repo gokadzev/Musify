@@ -11,9 +11,9 @@ void addOrUpdateData(
   dynamic value,
 ) async {
   if (!Hive.isBoxOpen(category)) {
-    Hive.openBox(category);
+    await Hive.openBox(category);
   }
-  Hive.box(category).put(key, value);
+  await Hive.box(category).put(key, value);
 }
 
 Future getData(String category, dynamic key) async {
@@ -31,10 +31,10 @@ void deleteData(String category, dynamic key) {
 }
 
 void clearCache() {
-  if (!Hive.isBoxOpen("cache")) {
-    Hive.openBox("cache");
+  if (!Hive.isBoxOpen('cache')) {
+    Hive.openBox('cache');
   }
-  Hive.box("cache").clear();
+  Hive.box('cache').clear();
   DefaultCacheManager().emptyCache();
 }
 
@@ -70,7 +70,7 @@ Future restoreData() async {
     try {
       final Box box = await Hive.openBox(boxNames[i].toString());
       final boxPath = box.path;
-      File('${uplPath!}/${boxNames[i]}Data.hive').copy(boxPath!);
+      await File('${uplPath!}/${boxNames[i]}Data.hive').copy(boxPath!);
     } catch (e) {
       await [
         Permission.manageExternalStorage,

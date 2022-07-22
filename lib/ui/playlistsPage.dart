@@ -248,7 +248,7 @@ class GetPlaylist extends StatelessWidget {
             child: Stack(
               alignment: Alignment.bottomLeft,
               children: [
-                Container(
+                DecoratedBox(
                   decoration: BoxDecoration(
                     boxShadow: [
                       BoxShadow(

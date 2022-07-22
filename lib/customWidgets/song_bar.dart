@@ -38,7 +38,7 @@ class SongBar extends StatelessWidget {
                   width: 70,
                   height: 70,
                   imageUrl: song['lowResImage'].toString(),
-                  imageBuilder: (context, imageProvider) => Container(
+                  imageBuilder: (context, imageProvider) => DecoratedBox(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
                       image: DecorationImage(

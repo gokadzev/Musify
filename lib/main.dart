@@ -167,6 +167,7 @@ Future<void> initialisation() async {
   getIt.registerSingleton<AudioHandler>(audioHandler);
 }
 
+// ignore: avoid_classes_with_only_static_members
 class TestClass {
   static void callback(String id, DownloadTaskStatus status, int progress) {}
 }

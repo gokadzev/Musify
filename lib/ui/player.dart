@@ -121,7 +121,7 @@ class AudioAppState extends State<AudioApp> {
                       height: size.width / 1.2,
                       child: CachedNetworkImage(
                         imageUrl: metadata.artUri.toString(),
-                        imageBuilder: (context, imageProvider) => Container(
+                        imageBuilder: (context, imageProvider) => DecoratedBox(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
                             image: DecorationImage(
@@ -286,7 +286,7 @@ class AudioAppState extends State<AudioApp> {
                           iconSize: size.width * 0.056,
                           onPressed: playPrevious,
                         ),
-                        Container(
+                        DecoratedBox(
                           decoration: BoxDecoration(
                             color: accent,
                             borderRadius: BorderRadius.circular(100),
