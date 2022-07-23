@@ -2,7 +2,10 @@
 
 * Online Song Search
 * Streaming Support
-* Offline Download Support
-* 320Kbps m4a/mp3 Format
-* ID3 Tags Attached
+* Download Support
+* Play Local / Downloaded Songs Supported
+* High Quality m4a/ mp3 / flac Format
 * Lyrics Support
+* No Ads
+* No Subscriptions
+* 12 Supported Languages
