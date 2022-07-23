@@ -161,25 +161,25 @@ Future<Map> getRandomSong() async {
   final playlistId = playlists[_random.nextInt(playlists.length)]['ytid'];
   final playlistSongs =
       await getData('cache', 'playlistSongs$playlistId') ?? [];
-  if (playlistSongs.isEmpty) {
-    await for (final song in yt.playlists.getVideos(playlistId).take(5)) {
-      playlistSongs.add(
-        returnSongLayout(
-          0,
-          song.id.toString(),
-          formatSongTitle(
-            song.title.split('-')[song.title.split('-').length - 1],
-          ),
-          song.thumbnails.standardResUrl,
-          song.thumbnails.lowResUrl,
-          song.thumbnails.maxResUrl,
-          song.title.split('-')[0],
-        ),
-      );
-    }
-  }
 
-  return playlistSongs[_random.nextInt(playlistSongs.length)];
+  if (playlistSongs.isEmpty) {
+    final _songs = await yt.playlists.getVideos(playlistId).take(5).toList();
+    final _choosedSong = _songs[_random.nextInt(playlistSongs.length)];
+
+    return returnSongLayout(
+      0,
+      _choosedSong.id.toString(),
+      formatSongTitle(
+        _choosedSong.title.split('-')[_choosedSong.title.split('-').length - 1],
+      ),
+      _choosedSong.thumbnails.standardResUrl,
+      _choosedSong.thumbnails.lowResUrl,
+      _choosedSong.thumbnails.maxResUrl,
+      _choosedSong.title.split('-')[0],
+    );
+  } else {
+    return playlistSongs[_random.nextInt(playlistSongs.length)];
+  }
 }
 
 Future getSongsFromPlaylist(dynamic playlistid) async {
