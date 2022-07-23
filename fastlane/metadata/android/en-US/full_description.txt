@@ -1,0 +1,8 @@
+<i>Musify</i> is an app for streaming and downloading music. Its features include:
+
+* Online Song Search
+* Streaming Support
+* Offline Download Support
+* 320Kbps m4a/mp3 Format
+* ID3 Tags Attached
+* Lyrics Support
