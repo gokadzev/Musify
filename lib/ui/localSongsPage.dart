@@ -148,59 +148,66 @@ class LocalSongsPage extends StatelessWidget {
                               }
                             };
 
-                            return Padding(
-                              padding: const EdgeInsets.only(top: 5, bottom: 5),
-                              child: Card(
-                                color: Colors.black26,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                ),
-                                elevation: 0,
+                            return Container(
+                                padding: const EdgeInsets.only(
+                                    left: 8.0, right: 8.0, bottom: 15),
                                 child: InkWell(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                  onTap: () {
-                                    playSong(lsong);
-                                  },
-                                  splashColor: accent,
-                                  hoverColor: accent,
-                                  focusColor: accent,
-                                  highlightColor: accent,
-                                  child: Column(
-                                    children: <Widget>[
-                                      ListTile(
-                                        visualDensity:
-                                            const VisualDensity(vertical: 3),
-                                        leading: Padding(
-                                          padding: const EdgeInsets.only(
-                                            top: 8.0,
-                                            bottom: 8.0,
-                                            left: 8.0,
-                                            right: 25.0,
-                                          ),
-                                          child: QueryArtworkWidget(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                    onTap: () {
+                                      playSong(lsong);
+                                    },
+                                    splashColor: accent,
+                                    hoverColor: accent,
+                                    focusColor: accent,
+                                    highlightColor: accent,
+                                    child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          QueryArtworkWidget(
                                             id: lsong['localSongId'] as int,
                                             type: ArtworkType.AUDIO,
+                                            artworkWidth: 70,
+                                            artworkHeight: 70,
+                                            artworkFit: BoxFit.cover,
                                             artworkBorder:
                                                 BorderRadius.circular(8),
-                                            nullArtworkWidget: Icon(
-                                              MdiIcons.musicNoteOutline,
-                                              size: 30,
-                                              color: accent,
+                                            nullArtworkWidget: DecoratedBox(
+                                              decoration: BoxDecoration(
+                                                  color: accent,
+                                                  borderRadius:
+                                                      BorderRadius.circular(8)),
+                                              child: const Icon(
+                                                MdiIcons.musicNoteOutline,
+                                                size: 70,
+                                                color: Colors.white,
+                                              ),
                                             ),
                                             keepOldArtwork: true,
                                           ),
-                                        ),
-                                        title: Text(
-                                          overflow: TextOverflow.ellipsis,
-                                          lsong['title'].toString(),
-                                          style: TextStyle(color: accent),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            );
+                                          Flexible(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                Container(
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 15),
+                                                  child: Text(
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    lsong['title'].toString(),
+                                                    style: TextStyle(
+                                                        color: accent),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ])));
                           },
                         )
                       : Spinner();

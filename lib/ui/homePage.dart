@@ -48,8 +48,8 @@ class _HomePageState extends State<HomePage> {
                             padding: EdgeInsets.only(
                               top: MediaQuery.of(context).size.height / 55,
                               bottom: 10,
-                              left: 25,
-                              right: 25,
+                              left: 20,
+                              right: 20,
                             ),
                             child: Text(
                               AppLocalizations.of(context)!.suggestedPlaylists,
@@ -102,8 +102,8 @@ class _HomePageState extends State<HomePage> {
                             padding: EdgeInsets.only(
                               top: MediaQuery.of(context).size.height / 55,
                               bottom: 10,
-                              left: 25,
-                              right: 25,
+                              left: 20,
+                              right: 20,
                             ),
                             child: Text(
                               AppLocalizations.of(context)!.recommendedForYou,
@@ -116,7 +116,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                           Padding(
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 15.0,
+                              horizontal: 7.0,
                             ),
                             child: ListView.builder(
                               shrinkWrap: true,

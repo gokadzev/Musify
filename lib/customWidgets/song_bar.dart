@@ -14,12 +14,8 @@ class SongBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: Colors.black26,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20.0),
-      ),
-      elevation: 0,
+    return Container(
+      padding: const EdgeInsets.only(left: 12.0, right: 12.0, bottom: 15),
       child: InkWell(
         borderRadius: BorderRadius.circular(20.0),
         onTap: () {
@@ -31,75 +27,94 @@ class SongBar extends StatelessWidget {
         hoverColor: accent,
         focusColor: accent,
         highlightColor: accent,
-        child: Column(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            ListTile(
-              leading: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: CachedNetworkImage(
-                  width: 70,
-                  height: 70,
-                  imageUrl: song['lowResImage'].toString(),
-                  imageBuilder: (context, imageProvider) => DecoratedBox(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      image: DecorationImage(
-                        image: imageProvider,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+            CachedNetworkImage(
+              width: 70,
+              height: 70,
+              imageUrl: song['lowResImage'].toString(),
+              imageBuilder: (context, imageProvider) => DecoratedBox(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  image: DecorationImage(
+                    image: imageProvider,
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),
-              title: Text(
-                overflow: TextOverflow.ellipsis,
-                (song['title'])
-                    .toString()
-                    .split('(')[0]
-                    .replaceAll('&quot;', '"')
-                    .replaceAll('&amp;', '&'),
-                style: TextStyle(color: accent),
-              ),
-              subtitle: Text(
-                overflow: TextOverflow.ellipsis,
-                song['more_info']['singers'].toString(),
-                style: TextStyle(color: accentLight),
-              ),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ValueListenableBuilder<bool>(
-                    valueListenable: songLikeStatus,
-                    builder: (_, value, __) {
-                      if (value == true) {
-                        return IconButton(
+            ),
+            Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                    alignment: Alignment.centerLeft,
+                    padding: const EdgeInsets.only(left: 15),
+                    child: Text(
+                      overflow: TextOverflow.ellipsis,
+                      (song['title'])
+                          .toString()
+                          .split('(')[0]
+                          .replaceAll('&quot;', '"')
+                          .replaceAll('&amp;', '&'),
+                      style: TextStyle(
                           color: accent,
-                          icon: const Icon(MdiIcons.star),
-                          onPressed: () => {
-                            removeUserLikedSong(song['ytid']),
-                            songLikeStatus.value = false
-                          },
-                        );
-                      } else {
-                        return IconButton(
-                          color: accent,
-                          icon: const Icon(MdiIcons.starOutline),
-                          onPressed: () => {
-                            addUserLikedSong(song['ytid']),
-                            songLikeStatus.value = true
-                          },
-                        );
-                      }
-                    },
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700),
+                    ),
                   ),
-                  IconButton(
-                    color: accent,
-                    icon: const Icon(MdiIcons.downloadOutline),
-                    onPressed: () => downloadSong(song),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Container(
+                    padding: const EdgeInsets.only(left: 15),
+                    child: Text(
+                      overflow: TextOverflow.ellipsis,
+                      song['more_info']['singers'].toString(),
+                      style: const TextStyle(
+                          color: Colors.white70,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14),
+                    ),
                   ),
                 ],
               ),
-            )
+            ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ValueListenableBuilder<bool>(
+                  valueListenable: songLikeStatus,
+                  builder: (_, value, __) {
+                    if (value == true) {
+                      return IconButton(
+                        color: accent,
+                        icon: const Icon(MdiIcons.star),
+                        onPressed: () => {
+                          removeUserLikedSong(song['ytid']),
+                          songLikeStatus.value = false
+                        },
+                      );
+                    } else {
+                      return IconButton(
+                        color: accent,
+                        icon: const Icon(MdiIcons.starOutline),
+                        onPressed: () => {
+                          addUserLikedSong(song['ytid']),
+                          songLikeStatus.value = true
+                        },
+                      );
+                    }
+                  },
+                ),
+                IconButton(
+                  color: accent,
+                  icon: const Icon(MdiIcons.downloadOutline),
+                  onPressed: () => downloadSong(song),
+                ),
+              ],
+            ),
           ],
         ),
       ),
