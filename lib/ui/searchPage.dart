@@ -129,6 +129,7 @@ class _SearchPageState extends State<SearchPage> {
                 ),
               ),
             ),
+            const Padding(padding: EdgeInsets.only(top: 20)),
             if (searchedList.isNotEmpty)
               ListView.builder(
                 shrinkWrap: true,
@@ -152,8 +153,7 @@ class _SearchPageState extends State<SearchPage> {
                 itemCount: searchHistory.length,
                 itemBuilder: (BuildContext ctxt, int index) {
                   return Padding(
-                    padding: const EdgeInsets.only(
-                        top: 8, left: 8, right: 8, bottom: 6),
+                    padding: const EdgeInsets.only(top: 8, bottom: 6),
                     child: Card(
                       color: bgLight,
                       shape: RoundedRectangleBorder(

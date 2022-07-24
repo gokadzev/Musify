@@ -92,8 +92,10 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primaryColor: accent,
-        scaffoldBackgroundColor: bgColor,
+        appBarTheme: const AppBarTheme(backgroundColor: Colors.black),
+        scaffoldBackgroundColor: const Color(0xFF121212),
+        backgroundColor: const Color(0xFF121212),
+        primaryColor: Colors.black,
         canvasColor: bgColor,
         visualDensity: VisualDensity.adaptivePlatformDensity,
         textTheme: GoogleFonts.ubuntuTextTheme(Theme.of(context).textTheme),

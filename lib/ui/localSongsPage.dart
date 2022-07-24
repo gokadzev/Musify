@@ -117,7 +117,7 @@ class LocalSongsPage extends StatelessWidget {
                 )
               ],
             ),
-            const Padding(padding: EdgeInsets.only(top: 20)),
+            const Padding(padding: EdgeInsets.only(top: 40)),
             FutureBuilder(
                 future: getLocalSongs(),
                 builder: (context, data) {
@@ -150,7 +150,7 @@ class LocalSongsPage extends StatelessWidget {
 
                             return Container(
                                 padding: const EdgeInsets.only(
-                                    left: 8.0, right: 8.0, bottom: 15),
+                                    left: 12.0, right: 12.0, bottom: 15),
                                 child: InkWell(
                                     borderRadius: BorderRadius.circular(20.0),
                                     onTap: () {
