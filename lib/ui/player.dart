@@ -281,9 +281,7 @@ class AudioAppState extends State<AudioApp> {
                           padding: EdgeInsets.zero,
                           icon: Icon(
                             Icons.skip_previous,
-                            color: audioPlayer!.hasPrevious
-                                ? Colors.white
-                                : Colors.grey,
+                            color: hasPrevious ? Colors.white : Colors.grey,
                             size: size.width * 0.1,
                           ),
                           iconSize: size.width * 0.056,
@@ -331,9 +329,7 @@ class AudioAppState extends State<AudioApp> {
                           padding: EdgeInsets.zero,
                           icon: Icon(
                             Icons.skip_next,
-                            color: audioPlayer!.hasNext
-                                ? Colors.white
-                                : Colors.grey,
+                            color: hasNext ? Colors.white : Colors.grey,
                             size: size.width * 0.1,
                           ),
                           iconSize: size.width * 0.08,

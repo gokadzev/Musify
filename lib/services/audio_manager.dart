@@ -35,9 +35,12 @@ final repeatNotifier = ValueNotifier<bool>(false);
 final prefferedFileExtension = ValueNotifier<String>('mp3');
 final playNextSongAutomatically = ValueNotifier<bool>(false);
 
-bool get hasNext => audioPlayer!.hasNext;
+bool get hasNext => activePlaylist.isEmpty
+    ? audioPlayer!.hasNext
+    : id + 1 <= activePlaylist.length;
 
-bool get hasPrevious => audioPlayer!.hasPrevious;
+bool get hasPrevious =>
+    activePlaylist.isEmpty ? audioPlayer!.hasPrevious : id - 1 >= 0;
 
 String get durationText =>
     duration != null ? duration.toString().split('.').first : '';
@@ -152,11 +155,25 @@ Future<void>? pause() => _audioHandler.pause();
 Future<void>? stop() => _audioHandler.stop();
 
 Future playNext() async {
-  await _audioHandler.skipToNext();
+  if (activePlaylist.isEmpty) {
+    await _audioHandler.skipToNext();
+  } else {
+    if (id + 1 <= activePlaylist.length) {
+      await playSong(activePlaylist[id + 1]);
+      id = id + 1;
+    }
+  }
 }
 
 Future playPrevious() async {
-  await _audioHandler.skipToPrevious();
+  if (activePlaylist.isEmpty) {
+    await _audioHandler.skipToPrevious();
+  } else {
+    if (id - 1 >= 0) {
+      await playSong(activePlaylist[id - 1]);
+      id = id - 1;
+    }
+  }
 }
 
 Future mute(bool muted) async {

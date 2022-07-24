@@ -23,7 +23,7 @@
   "playAll": "Reproduzir todos",
   "playlist": "Lista de reprodução",
   "playlists": "Listas de reprodução",
-  "queueInitText": "Inicializando a fila... por causa do desempenho, apenas as primeiras 20 músicas serão adicionadas na fila.",
+  "queueInitText": "Inicializando a fila... ",
   "recommendedForYou": "Recomendado para você",
   "restoreUserData": "Restaurar dados do usuário",
   "restoredSuccessfully": "Restaurado com sucesso",

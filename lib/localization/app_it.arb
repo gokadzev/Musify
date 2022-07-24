@@ -23,7 +23,7 @@
   "playAll": "Riproduci tutto",
   "playlist": "Playlist",
   "playlists": "Playlist",
-  "queueInitText": "Inizializzando la coda... a causa delle prestazioni, solo le prime 20 canzoni saranno aggiunte alla coda.",
+  "queueInitText": "Inizializzando la coda... ",
   "recommendedForYou": "Consigliati per te",
   "restoreUserData": "Ripristina dati utente",
   "restoredSuccessfully": "Ripristinati con successo",

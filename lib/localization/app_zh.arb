@@ -23,7 +23,7 @@
   "playAll": "全部播放",
   "playlist": "播放列表",
   "playlists": "播放列表",
-  "queueInitText": "正在初始化队列...由于性能原因，队列中只会添加前 20 首歌曲。",
+  "queueInitText": "正在初始化队列...由于性能原因",
   "recommendedForYou": "为你推荐",
   "restoreUserData": "恢复用户数据",
   "restoredSuccessfully": "恢复成功",

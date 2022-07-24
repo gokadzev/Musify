@@ -23,7 +23,7 @@
   "playAll": "Alle wiedergeben",
   "playlist": "Wiedergabeliste",
   "playlists": "Wiedergabelisten",
-  "queueInitText": "Warteschlange wird initialisiert... aus Leistungsgründen werden nur die ersten 20 Songs in die Warteschlange aufgenommen.",
+  "queueInitText": "Warteschlange wird initialisiert... ",
   "recommendedForYou": "für dich empfohlen",
   "restoreUserData": "Wiederherstellen von Benutzerdaten",
   "restoredSuccessfully": "Erfolgreich wiederhergestellt",

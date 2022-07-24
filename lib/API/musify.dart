@@ -23,12 +23,13 @@ List playlists = [];
 List userPlaylists = [];
 List userLikedSongsList = [];
 List suggestedPlaylists = [];
+List activePlaylist = [];
 List<SongModel> localSongs = [];
 
 final lyrics = ValueNotifier<String>('null');
 String _lastLyricsUrl = '';
 
-int? id = 0;
+int id = 0;
 
 Future<List> fetchSongsList(String searchQuery) async {
   final List list = await yt.search.search(searchQuery);
@@ -210,22 +211,21 @@ Future getSongsFromPlaylist(dynamic playlistid) async {
 }
 
 Future<void> setActivePlaylist(List plist) async {
-  final List<MediaItem> activePlaylist = [];
-
   if (plist is List<SongModel>) {
+    activePlaylist = [];
+    id = 0;
+    final List<MediaItem> activeTempPlaylist = [];
     for (final song in plist) {
-      activePlaylist.add(songModelToMediaItem(song, song.data));
+      activeTempPlaylist.add(songModelToMediaItem(song, song.data));
     }
+    await MyAudioHandler().addQueueItems(activeTempPlaylist);
+
+    await play();
   } else {
-    for (var i = 0; i < plist.length && i < 20; i++) {
-      final songUrl = await getSongUrl(plist[i]['ytid']);
-      activePlaylist.add(mapToMediaItem(plist[i] as Map, songUrl));
-    }
+    activePlaylist = plist;
+    id = 0;
+    await playSong(activePlaylist[id]);
   }
-
-  await MyAudioHandler().addQueueItems(activePlaylist);
-
-  await play();
 }
 
 Future getPlaylistInfoForWidget(dynamic id) async {

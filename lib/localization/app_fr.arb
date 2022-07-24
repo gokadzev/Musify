@@ -23,7 +23,7 @@
   "playAll": "Play all",
   "playlist": "Playlist",
   "playlists": "Playlists",
-  "queueInitText": "Initialising queue... because of perfomance, only first 20 songs will be added in the queue.",
+  "queueInitText": "Initialising queue... ",
   "recommendedForYou": "Recommended for you",
   "restoreUserData": "Restore user data",
   "restoredSuccessfully": "Restored Successfully",

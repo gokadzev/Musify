@@ -23,7 +23,7 @@
   "playAll": "Alles afspelen",
   "playlist": "Afspeellijst",
   "playlists": "Afspeellijsten",
-  "queueInitText": "Bezig met initialiseren van wachtrij... vanwege de prestaties zullen alleen de eerste 20 nummers aan de wachtrij worden toegevoegd.",
+  "queueInitText": "Bezig met initialiseren van wachtrij... ",
   "recommendedForYou": "Aanbevolen voor jou",
   "restoreUserData": "Gebruikersgegevens herstellen",
   "restoredSuccessfully": "Succesvol hersteld",

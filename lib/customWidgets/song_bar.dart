@@ -24,6 +24,8 @@ class SongBar extends StatelessWidget {
         borderRadius: BorderRadius.circular(20.0),
         onTap: () {
           playSong(song);
+          activePlaylist = [];
+          id = 0;
         },
         splashColor: accent,
         hoverColor: accent,

@@ -69,8 +69,13 @@ class AppState extends State<Musify> {
       } else {
         await audioPlayer?.seek(Duration.zero);
         await audioPlayer?.pause();
-        if (playNextSongAutomatically.value && !hasNext) {
-          await playSong(await getRandomSong());
+        if (hasNext) {
+          if (activePlaylist.isEmpty && playNextSongAutomatically.value) {
+            await playSong(await getRandomSong());
+          } else {
+            await playSong(activePlaylist[id + 1]);
+            id = id + 1;
+          }
         }
       }
     });

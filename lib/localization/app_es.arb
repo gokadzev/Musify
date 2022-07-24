@@ -23,7 +23,7 @@
   "playAll": "Jugar todo",
   "playlist": "lista de reproducción",
   "playlists": "listas de reproducción",
-  "queueInitText": "Inicializando cola... debido al rendimiento, solo se agregarán las primeras 20 canciones a la cola.",
+  "queueInitText": "Inicializando cola...",
   "recommendedForYou": "Recomendado para ti",
   "restoreUserData": "Restaurar datos de usuario",
   "restoredSuccessfully": "Restaurado con éxito",

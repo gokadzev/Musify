@@ -23,7 +23,7 @@
   "playAll": "Odtwórz wszystko",
   "playlist": "Playlista",
   "playlists": "Playlisty",
-  "queueInitText": "Inicjowanie kolejki... ze względu na wydajność do kolejki zostanie dodanych tylko 20 pierwszych utworów.",
+  "queueInitText": "Inicjowanie kolejki...",
   "recommendedForYou": "Polecane dla Ciebie",
   "restoreUserData": "Przywróć dane użytkownika",
   "restoredSuccessfully": "Przywrócono pomyślnie",

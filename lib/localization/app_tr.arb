@@ -23,7 +23,7 @@
   "playAll": "Hepsini Oynat",
   "playlist": "çalma listesi",
   "playlists": "çalma listeleri",
-  "queueInitText": "Sıra başlatılıyor... performans nedeniyle, sıraya yalnızca ilk 20 şarkı eklenecek.",
+  "queueInitText": "Sıra başlatılıyor... ",
   "recommendedForYou": "sizin için tavsiye edilen",
   "restoreUserData": "Kullanıcı verilerini kurtar",
   "restoredSuccessfully": "Başarıyla Geri Yüklendi",

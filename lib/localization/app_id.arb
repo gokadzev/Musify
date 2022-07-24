@@ -23,7 +23,7 @@
   "playAll": "Mainkan semua",
   "playlist": "Daftar putar",
   "playlists": "Daftar putar",
-  "queueInitText": "Menginisialisasi antrean... karena kinerja, hanya 20 lagu pertama yang akan ditambahkan ke antrean.",
+  "queueInitText": "Menginisialisasi antrean... ",
   "recommendedForYou": "Direkomendasikan untuk Anda",
   "restoreUserData": "Pulihkan data pengguna",
   "restoredSuccessfully": "Berhasil Dipulihkan",
