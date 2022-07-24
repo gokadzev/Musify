@@ -51,61 +51,67 @@ String get positionText =>
 bool isMuted = false;
 
 Future<void> downloadSong(dynamic song) async {
-  if (await Permission.storage.request().isGranted) {
-    final filename = song['title']
-            .replaceAll(r'\', '')
-            .replaceAll('/', '')
-            .replaceAll('*', '')
-            .replaceAll('?', '')
-            .replaceAll('"', '')
-            .replaceAll('<', '')
-            .replaceAll('>', '')
-            .replaceAll('|', '') +
-        '.' +
-        prefferedFileExtension.value;
-
-    String filepath = '';
-    final String? dlPath =
-        await ExtStorageProvider.getExtStorage(dirName: 'Musify');
-    try {
-      await File('${dlPath!}/$filename')
-          .create(recursive: true)
-          .then((value) => filepath = value.path);
-    } catch (e) {
-      await [Permission.manageExternalStorage].request();
-      await File('${dlPath!}/$filename')
-          .create(recursive: true)
-          .then((value) => filepath = value.path);
+  PermissionStatus status = await Permission.storage.status;
+  if (status.isDenied) {
+    await [
+      Permission.storage,
+      Permission.accessMediaLocation,
+      Permission.mediaLibrary,
+    ].request();
+    status = await Permission.storage.status;
+    if (status.isPermanentlyDenied) {
+      await openAppSettings();
     }
-    await Fluttertoast.showToast(
-      msg: 'Download Started!',
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-      backgroundColor: accent,
-      textColor:
-          accent != const Color(0xFFFFFFFF) ? Colors.white : Colors.black,
-      fontSize: 14.0,
-    );
-    final audioStream = await getSongStream(song['ytid'].toString());
-    final File file = File(filepath);
-    final fileStream = file.openWrite();
-    await yt.videos.streamsClient
-        .get(audioStream as StreamInfo)
-        .pipe(fileStream);
-    await fileStream.flush();
-    await fileStream.close();
-
-    debugPrint('Done');
-    await Fluttertoast.showToast(
-      msg: 'Download Completed!',
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-      backgroundColor: accent,
-      textColor:
-          accent != const Color(0xFFFFFFFF) ? Colors.white : Colors.black,
-      fontSize: 14.0,
-    );
   }
+  final filename = song['title']
+          .replaceAll(r'\', '')
+          .replaceAll('/', '')
+          .replaceAll('*', '')
+          .replaceAll('?', '')
+          .replaceAll('"', '')
+          .replaceAll('<', '')
+          .replaceAll('>', '')
+          .replaceAll('|', '') +
+      '.' +
+      prefferedFileExtension.value;
+
+  String filepath = '';
+  final String? dlPath =
+      await ExtStorageProvider.getExtStorage(dirName: 'Musify');
+  try {
+    await File('${dlPath!}/$filename')
+        .create(recursive: true)
+        .then((value) => filepath = value.path);
+  } catch (e) {
+    await [Permission.manageExternalStorage].request();
+    await File('${dlPath!}/$filename')
+        .create(recursive: true)
+        .then((value) => filepath = value.path);
+  }
+  await Fluttertoast.showToast(
+    msg: 'Download Started!',
+    toastLength: Toast.LENGTH_SHORT,
+    gravity: ToastGravity.BOTTOM,
+    backgroundColor: accent,
+    textColor: accent != const Color(0xFFFFFFFF) ? Colors.white : Colors.black,
+    fontSize: 14.0,
+  );
+  final audioStream = await getSongStream(song['ytid'].toString());
+  final File file = File(filepath);
+  final fileStream = file.openWrite();
+  await yt.videos.streamsClient.get(audioStream as StreamInfo).pipe(fileStream);
+  await fileStream.flush();
+  await fileStream.close();
+
+  debugPrint('Done');
+  await Fluttertoast.showToast(
+    msg: 'Download Completed!',
+    toastLength: Toast.LENGTH_SHORT,
+    gravity: ToastGravity.BOTTOM,
+    backgroundColor: accent,
+    textColor: accent != const Color(0xFFFFFFFF) ? Colors.white : Colors.black,
+    fontSize: 14.0,
+  );
 }
 
 Future<void> playSong(Map song) async {
