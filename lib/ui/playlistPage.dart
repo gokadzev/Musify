@@ -191,7 +191,9 @@ class _PlaylistPageState extends State<PlaylistPage> {
                                   toastLength: Toast.LENGTH_LONG,
                                   gravity: ToastGravity.BOTTOM,
                                   backgroundColor: accent,
-                                  textColor: Colors.white,
+                                  textColor: accent != const Color(0xFFFFFFFF)
+                                      ? Colors.white
+                                      : Colors.black,
                                 ),
                                 Navigator.pop(context, false)
                               },
@@ -202,7 +204,10 @@ class _PlaylistPageState extends State<PlaylistPage> {
                                 AppLocalizations.of(context)!
                                     .playAll
                                     .toUpperCase(),
-                                style: const TextStyle(color: Colors.white),
+                                style: TextStyle(
+                                    color: accent != const Color(0xFFFFFFFF)
+                                        ? Colors.white
+                                        : Colors.black),
                               ),
                             ),
                           ],

@@ -82,7 +82,8 @@ Future<void> downloadSong(dynamic song) async {
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM,
       backgroundColor: accent,
-      textColor: Colors.white,
+      textColor:
+          accent != const Color(0xFFFFFFFF) ? Colors.white : Colors.black,
       fontSize: 14.0,
     );
     final audioStream = await getSongStream(song['ytid'].toString());
@@ -100,7 +101,8 @@ Future<void> downloadSong(dynamic song) async {
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM,
       backgroundColor: accent,
-      textColor: Colors.white,
+      textColor:
+          accent != const Color(0xFFFFFFFF) ? Colors.white : Colors.black,
       fontSize: 14.0,
     );
   }

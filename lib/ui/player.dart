@@ -408,7 +408,7 @@ class AudioAppState extends State<AudioApp> {
                                 context: context,
                                 builder: (context) => Container(
                                   decoration: const BoxDecoration(
-                                    color: Color(0XFF303030),
+                                    color: Color(0xFF151515),
                                     borderRadius: BorderRadius.only(
                                       topLeft: Radius.circular(18.0),
                                       topRight: Radius.circular(18.0),

@@ -265,6 +265,27 @@ class GetPlaylist extends StatelessWidget {
                             height: size.height * 0.18,
                             imageUrl: image.toString(),
                             fit: BoxFit.cover,
+                            errorWidget: (context, url, error) => DecoratedBox(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.0),
+                                gradient: LinearGradient(
+                                  colors: [
+                                    accent.withAlpha(30),
+                                    Colors.white.withAlpha(30)
+                                  ],
+                                ),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Icon(
+                                    MdiIcons.musicNoteOutline,
+                                    size: 30,
+                                    color: accent,
+                                  ),
+                                ],
+                              ),
+                            ),
                           )
                         : Center(
                             child: Column(

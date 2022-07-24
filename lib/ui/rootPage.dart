@@ -40,7 +40,9 @@ class AppState extends State<Musify> {
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.BOTTOM,
               backgroundColor: accent,
-              textColor: Colors.white,
+              textColor: accent != const Color(0xFFFFFFFF)
+                  ? Colors.white
+                  : Colors.black,
               fontSize: 14.0,
             )
           }

@@ -109,7 +109,10 @@ class LocalSongsPage extends StatelessWidget {
                         ),
                         child: Text(
                           AppLocalizations.of(context)!.playAll.toUpperCase(),
-                          style: const TextStyle(color: Colors.white),
+                          style: TextStyle(
+                              color: accent != const Color(0xFFFFFFFF)
+                                  ? Colors.white
+                                  : Colors.black),
                         ),
                       ),
                     ],
@@ -177,10 +180,13 @@ class LocalSongsPage extends StatelessWidget {
                                                   color: accent,
                                                   borderRadius:
                                                       BorderRadius.circular(8)),
-                                              child: const Icon(
+                                              child: Icon(
                                                 MdiIcons.musicNoteOutline,
                                                 size: 70,
-                                                color: Colors.white,
+                                                color: accent !=
+                                                        const Color(0xFFFFFFFF)
+                                                    ? Colors.white
+                                                    : Colors.black,
                                               ),
                                             ),
                                             keepOldArtwork: true,

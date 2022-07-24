@@ -69,6 +69,7 @@ class SettingsCards extends StatelessWidget {
                   context: context,
                   builder: (BuildContext context) {
                     final List<int> colors = [
+                      0xFFFFFFFF,
                       0xFFFFCDD2,
                       0xFFF8BBD0,
                       0xFFE1BEE7,
@@ -99,7 +100,6 @@ class SettingsCards extends StatelessWidget {
                       0xFFFFCCBC,
                       0xFFFF9E80,
                       0xFFFD5C63,
-                      0xFFFFFFFF
                     ];
                     return Center(
                       child: Container(
@@ -132,7 +132,7 @@ class SettingsCards extends StatelessWidget {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  if (colors.length - 1 > index)
+                                  if (colors.length > index)
                                     GestureDetector(
                                       onTap: () {
                                         addOrUpdateData(
@@ -144,7 +144,10 @@ class SettingsCards extends StatelessWidget {
                                             context, Color(colors[index]));
                                         Fluttertoast.showToast(
                                           backgroundColor: accent,
-                                          textColor: Colors.white,
+                                          textColor:
+                                              accent != const Color(0xFFFFFFFF)
+                                                  ? Colors.white
+                                                  : Colors.black,
                                           msg: AppLocalizations.of(context)!
                                               .accentChangeMsg,
                                           toastLength: Toast.LENGTH_SHORT,
@@ -274,7 +277,10 @@ class SettingsCards extends StatelessWidget {
 
                                     Fluttertoast.showToast(
                                       backgroundColor: accent,
-                                      textColor: Colors.white,
+                                      textColor:
+                                          accent != const Color(0xFFFFFFFF)
+                                              ? Colors.white
+                                              : Colors.black,
                                       msg: AppLocalizations.of(context)!
                                           .languageMsg,
                                       toastLength: Toast.LENGTH_SHORT,
@@ -314,7 +320,9 @@ class SettingsCards extends StatelessWidget {
                 clearCache();
                 Fluttertoast.showToast(
                   backgroundColor: accent,
-                  textColor: Colors.white,
+                  textColor: accent != const Color(0xFFFFFFFF)
+                      ? Colors.white
+                      : Colors.black,
                   msg: '${AppLocalizations.of(context)!.cacheMsg}!',
                   toastLength: Toast.LENGTH_SHORT,
                   gravity: ToastGravity.BOTTOM,
@@ -343,7 +351,9 @@ class SettingsCards extends StatelessWidget {
                 deleteData('user', 'searchHistory');
                 Fluttertoast.showToast(
                   backgroundColor: accent,
-                  textColor: Colors.white,
+                  textColor: accent != const Color(0xFFFFFFFF)
+                      ? Colors.white
+                      : Colors.black,
                   msg: '${AppLocalizations.of(context)!.searchHistoryMsg}!',
                   toastLength: Toast.LENGTH_SHORT,
                   gravity: ToastGravity.BOTTOM,
@@ -419,7 +429,9 @@ class SettingsCards extends StatelessWidget {
                 backupData().then(
                   (value) => Fluttertoast.showToast(
                     backgroundColor: accent,
-                    textColor: Colors.white,
+                    textColor: accent != const Color(0xFFFFFFFF)
+                        ? Colors.white
+                        : Colors.black,
                     msg: value.toString(),
                     toastLength: Toast.LENGTH_SHORT,
                     gravity: ToastGravity.BOTTOM,
@@ -448,7 +460,9 @@ class SettingsCards extends StatelessWidget {
                 restoreData().then(
                   (value) => Fluttertoast.showToast(
                     backgroundColor: accent,
-                    textColor: Colors.white,
+                    textColor: accent != const Color(0xFFFFFFFF)
+                        ? Colors.white
+                        : Colors.black,
                     msg: value.toString(),
                     toastLength: Toast.LENGTH_SHORT,
                     gravity: ToastGravity.BOTTOM,
@@ -484,7 +498,9 @@ class SettingsCards extends StatelessWidget {
                           toastLength: Toast.LENGTH_SHORT,
                           gravity: ToastGravity.BOTTOM,
                           backgroundColor: accent,
-                          textColor: Colors.white,
+                          textColor: accent != const Color(0xFFFFFFFF)
+                              ? Colors.white
+                              : Colors.black,
                           fontSize: 14.0,
                         ),
                         downloadAppUpdates()
@@ -497,7 +513,9 @@ class SettingsCards extends StatelessWidget {
                           toastLength: Toast.LENGTH_SHORT,
                           gravity: ToastGravity.BOTTOM,
                           backgroundColor: accent,
-                          textColor: Colors.white,
+                          textColor: accent != const Color(0xFFFFFFFF)
+                              ? Colors.white
+                              : Colors.black,
                           fontSize: 14.0,
                         )
                       }
@@ -570,7 +588,10 @@ class SettingsCards extends StatelessWidget {
 
                                     Fluttertoast.showToast(
                                       backgroundColor: accent,
-                                      textColor: Colors.white,
+                                      textColor:
+                                          accent != const Color(0xFFFFFFFF)
+                                              ? Colors.white
+                                              : Colors.black,
                                       msg: AppLocalizations.of(context)!
                                           .audioFileTypeMsg,
                                       toastLength: Toast.LENGTH_SHORT,

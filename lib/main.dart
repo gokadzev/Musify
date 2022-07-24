@@ -60,7 +60,7 @@ class _MyAppState extends State<MyApp> {
         .get('audioFileType', defaultValue: 'mp3') as String;
     accent = Hive.box('settings').get('accentColor') != null
         ? Color(Hive.box('settings').get('accentColor') as int)
-        : const Color(0xFF8C9EFF);
+        : const Color(0xFFFFFFFF);
     userPlaylists = Hive.box('user').get('playlists') ?? [];
     userLikedSongsList = Hive.box('user').get('likedSongs') ?? [];
     searchHistory = Hive.box('user').get('searchHistory') ?? [];
