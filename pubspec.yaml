@@ -39,7 +39,6 @@ dependencies:
     sdk: flutter
   fluttertoast: ^8.0.9
   get_it: ^7.2.0
-  google_fonts: ^3.0.1
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   intl: ^0.17.0 
@@ -76,43 +75,11 @@ flutter:
   generate: true
   uses-material-design: true
   fonts:
-    - family: DMSans
+    - family: Ubuntu
       fonts:
-        - asset: fonts/DMSans-Bold.ttf
-        - asset: fonts/DMSans-Italic.ttf
-        - asset: fonts/DMSans-Regular.ttf
-        - asset: fonts/DMSans-Medium.ttf
-    - family: Nunito
-      fonts:
-        - asset: fonts/Nunito-italic.ttf
-        - asset: fonts/Nunito-norm.ttf
+        - asset: fonts/ubuntu.ttf
 
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/db/playlists.db.json
 
-  # An image asset can refer to one or more resolution-specific "variants", see
-  # https://flutter.dev/assets-and-images/#resolution-aware
-
-  # For details regarding adding assets from package dependencies, see
-  # https://flutter.dev/assets-and-images/#from-packages
-
-  # To add custom fonts to your application, add a fonts section here,
-  # in this "flutter" section. Each entry in this list should have a
-  # "family" key with the font family name, and a "fonts" key with a
-  # list giving the asset and other descriptors for the font. For
-  # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
-  #   - family: Trajan Pro
-  #     fonts:
-  #       - asset: fonts/TrajanPro.ttf
-  #       - asset: fonts/TrajanPro_Bold.ttf
-  #         weight: 700
-  #
-  # For details regarding fonts from package dependencies,
-  # see https://flutter.dev/custom-fonts/#from-packages

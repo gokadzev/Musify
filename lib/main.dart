@@ -5,7 +5,6 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get_it/get_it.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/helper/version.dart';
@@ -98,7 +97,7 @@ class _MyAppState extends State<MyApp> {
         primaryColor: Colors.black,
         canvasColor: bgColor,
         visualDensity: VisualDensity.adaptivePlatformDensity,
-        textTheme: GoogleFonts.ubuntuTextTheme(Theme.of(context).textTheme),
+        fontFamily: 'Ubuntu',
         pageTransitionsTheme: const PageTransitionsTheme(
           builders: {
             TargetPlatform.android: ZoomPageTransitionsBuilder(),
