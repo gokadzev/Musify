@@ -10,6 +10,7 @@ import 'package:musify/helper/mediaitem.dart';
 import 'package:musify/services/audio_handler.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/data_manager.dart';
+import 'package:musify/services/ext_storage.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
@@ -275,7 +276,9 @@ Future<List<SongModel>> getLocalSongs() async {
   // OrderType.ASC_OR_SMALLER,
   // UriType.EXTERNAL,
   if (await Permission.storage.request().isGranted) {
-    localSongs = await _audioQuery.querySongs();
+    localSongs = await _audioQuery.querySongs(uriType: UriType.EXTERNAL);
+    localSongs.addAll(await _audioQuery.querySongs(
+        path: await ExtStorageProvider.getExtStorage(dirName: 'Musify')));
   }
   return localSongs;
 }
