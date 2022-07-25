@@ -1,5 +1,5 @@
 <p align="center">
- <img width="100px" src="https://telegra.ph/file/ceab212e2a6cb5c0ea087.png" align="center" alt="GitHub Readme Stats" />
+ <img width="250px" src="https://github.com/gokadzev/Musify/raw/master/android/app/src/main/res/drawable-xxhdpi/ic_launcher_foreground.png" align="center" alt="GitHub Readme Stats" />
  <h2 align="center"><b>Musify</b></h2>
  <p align="center"><b>Music Streaming and Downloading app made in Flutter!</b></p>
 </p>
@@ -12,11 +12,12 @@
     Streaming Support :musical_note:<br>
     Download Support :arrow_down:<br>
     Play Local / Downloaded Songs Support :open_file_folder: <br>
-    High Quality mp3 / flac Format :fire:<br>
-  	Lyrics Support :pencil:<br>
+    High Quality mp3 / m4a / flac Format :fire:<br>
+  	 Lyrics Support :pencil:<br>
     No Ads :no_entry_sign:<br>
     No Subscriptions :dollar:<br> 
     12 Supported Languages :us:<br>
+    Accent Colors :art: <br>
  
 
 ---
