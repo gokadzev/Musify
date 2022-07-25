@@ -30,7 +30,6 @@ dependencies:
   audio_service: ^0.18.7
   audio_session: ^0.1.10
   cached_network_image: ^3.2.1
-  delayed_display: ^2.0.0
   flutter:
     sdk: flutter
   flutter_cache_manager: ^3.3.0
