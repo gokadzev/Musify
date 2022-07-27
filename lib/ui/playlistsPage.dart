@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/API/musify.dart';
+import 'package:musify/customWidgets/delayed_display.dart';
 import 'package:musify/customWidgets/spinner.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:musify/ui/playlistPage.dart';
@@ -226,7 +227,9 @@ class GetPlaylist extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-    return SingleChildScrollView(
+    return DelayedDisplay(
+      delay: const Duration(milliseconds: 200),
+      fadingDuration: const Duration(milliseconds: 400),
       child: GestureDetector(
         onTap: () {
           getPlaylistInfoForWidget(id).then(
