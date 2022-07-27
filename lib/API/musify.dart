@@ -275,11 +275,14 @@ Future<List<SongModel>> getLocalSongs() async {
   // SongSortType.TITLE,
   // OrderType.ASC_OR_SMALLER,
   // UriType.EXTERNAL,
-  if (await Permission.storage.request().isGranted) {
-    localSongs = await _audioQuery.querySongs(uriType: UriType.EXTERNAL);
-    localSongs.addAll(await _audioQuery.querySongs(
-        path: await ExtStorageProvider.getExtStorage(dirName: 'Musify')));
+  if (localSongs.isEmpty) {
+    if (await Permission.storage.request().isGranted) {
+      localSongs = await _audioQuery.querySongs(uriType: UriType.EXTERNAL);
+      localSongs.addAll(await _audioQuery.querySongs(
+          path: await ExtStorageProvider.getExtStorage(dirName: 'Musify')));
+    }
   }
+
   return localSongs;
 }
 

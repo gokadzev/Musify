@@ -92,9 +92,9 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         appBarTheme: const AppBarTheme(backgroundColor: Colors.black),
-        scaffoldBackgroundColor: const Color(0xFF121212),
-        backgroundColor: const Color(0xFF121212),
-        primaryColor: Colors.black,
+        scaffoldBackgroundColor: bgColor,
+        backgroundColor: bgColor,
+        primaryColor: const Color(0xFF000000),
         canvasColor: bgColor,
         visualDensity: VisualDensity.adaptivePlatformDensity,
         fontFamily: 'Ubuntu',

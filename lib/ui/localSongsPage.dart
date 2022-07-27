@@ -36,7 +36,7 @@ class LocalSongsPage extends StatelessWidget {
             Row(
               children: [
                 Container(
-                  margin: const EdgeInsets.only(left: 10.0, right: 10.0),
+                  margin: const EdgeInsets.only(left: 10.0, right: 26.0),
                   height: 200.0,
                   width: 200.0,
                   child: Card(
@@ -49,10 +49,10 @@ class LocalSongsPage extends StatelessWidget {
                       height: 200,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10.0),
-                        gradient: LinearGradient(
+                        gradient: const LinearGradient(
                           colors: [
-                            accent.withAlpha(30),
-                            Colors.white.withAlpha(30)
+                            Color.fromARGB(30, 255, 255, 255),
+                            Color.fromARGB(30, 233, 233, 233),
                           ],
                         ),
                       ),
@@ -74,7 +74,6 @@ class LocalSongsPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(width: 16.0),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

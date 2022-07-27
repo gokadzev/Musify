@@ -249,11 +249,11 @@ class GetPlaylist extends StatelessWidget {
               alignment: Alignment.bottomLeft,
               children: [
                 DecoratedBox(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     boxShadow: [
                       BoxShadow(
                         blurRadius: 6,
-                        color: Colors.black.withAlpha(40),
+                        color: Color.fromARGB(40, 0, 0, 0),
                       )
                     ],
                   ),
@@ -268,10 +268,10 @@ class GetPlaylist extends StatelessWidget {
                             errorWidget: (context, url, error) => DecoratedBox(
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10.0),
-                                gradient: LinearGradient(
+                                gradient: const LinearGradient(
                                   colors: [
-                                    accent.withAlpha(30),
-                                    Colors.white.withAlpha(30)
+                                    Color.fromARGB(30, 255, 255, 255),
+                                    Color.fromARGB(30, 233, 233, 233),
                                   ],
                                 ),
                               ),
@@ -314,8 +314,8 @@ class GetPlaylist extends StatelessWidget {
                       borderRadius: BorderRadius.circular(15.0),
                       gradient: LinearGradient(
                         colors: [
-                          accent.withAlpha(30),
-                          Colors.white.withAlpha(30)
+                          const Color.fromARGB(30, 255, 255, 255),
+                          const Color.fromARGB(30, 233, 233, 233),
                         ],
                         begin: index.isOdd
                             ? Alignment.bottomCenter

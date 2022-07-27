@@ -24,9 +24,9 @@ class Musify extends StatefulWidget {
   }
 }
 
-class AppState extends State<Musify> {
-  int activeTab = 0;
+ValueNotifier<int> activeTab = ValueNotifier<int>(0);
 
+class AppState extends State<Musify> {
   @override
   void initState() {
     super.initState();
@@ -85,7 +85,23 @@ class AppState extends State<Musify> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(bottomNavigationBar: getFooter(), body: getBody());
+    final pages = [
+      HomePage(),
+      SearchPage(),
+      PlaylistsPage(),
+      // ignore: prefer_const_constructors
+      LocalSongsPage(),
+      SettingsPage(),
+    ];
+    return Scaffold(
+      bottomNavigationBar: getFooter(),
+      body: ValueListenableBuilder<int>(
+        valueListenable: activeTab,
+        builder: (_, value, __) {
+          return pages[value];
+        },
+      ),
+    );
   }
 
   Widget getFooter() {
@@ -197,10 +213,10 @@ class AppState extends State<Musify> {
                                     height: 50,
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(10.0),
-                                      gradient: LinearGradient(
+                                      gradient: const LinearGradient(
                                         colors: [
-                                          accent.withAlpha(30),
-                                          Colors.white.withAlpha(30)
+                                          Color.fromARGB(30, 255, 255, 255),
+                                          Color.fromARGB(30, 233, 233, 233),
                                         ],
                                       ),
                                     ),
@@ -284,28 +300,13 @@ class AppState extends State<Musify> {
     );
   }
 
-  Widget getBody() {
-    return IndexedStack(
-      index: activeTab,
-      children: [
-        HomePage(),
-        SearchPage(),
-        PlaylistsPage(),
-        // ignore: prefer_const_constructors
-        LocalSongsPage(),
-        SettingsPage()
-      ],
-    );
-  }
-
   Widget _buildBottomBar(List<BottomNavBarItem> items) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 100),
       height: 65,
       child: CustomAnimatedBottomBar(
-        selectedIndex: activeTab,
         backgroundColor: bgLight,
-        onTap: (index) => setState(() => activeTab = index),
+        onTap: (index) => activeTab.value = index,
         items: items,
         margin: const EdgeInsets.only(left: 8.0, right: 8.0),
       ),

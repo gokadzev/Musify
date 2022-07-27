@@ -8,6 +8,7 @@ linter:
   - avoid_function_literals_in_foreach_calls
   - avoid_init_to_null
   - avoid_null_checks_in_equality_operators
+  - avoid_print
   - avoid_relative_lib_imports
   - avoid_renaming_method_parameters
   - avoid_return_types_on_setters
@@ -38,6 +39,7 @@ linter:
   - list_remove_unrelated_type
   - no_adjacent_strings_in_list
   - no_duplicate_case_values
+  - no_logic_in_create_state
   - non_constant_identifier_names
   - noop_primitive_operations
   - null_closures
@@ -64,6 +66,7 @@ linter:
   - recursive_getters
   - sized_box_for_whitespace
   - slash_for_doc_comments
+  - sort_child_properties_last
   - test_types_in_equals
   - throw_in_finally
   - type_init_formals

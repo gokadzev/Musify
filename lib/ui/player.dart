@@ -136,10 +136,10 @@ class AudioAppState extends State<AudioApp> {
                           height: size.width / 1.2,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10.0),
-                            gradient: LinearGradient(
+                            gradient: const LinearGradient(
                               colors: [
-                                accent.withAlpha(30),
-                                Colors.white.withAlpha(30)
+                                Color.fromARGB(30, 255, 255, 255),
+                                Color.fromARGB(30, 233, 233, 233),
                               ],
                             ),
                           ),

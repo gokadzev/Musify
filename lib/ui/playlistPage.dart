@@ -106,7 +106,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                   Row(
                     children: [
                       Container(
-                        margin: const EdgeInsets.only(left: 10.0, right: 10.0),
+                        margin: const EdgeInsets.only(left: 10.0, right: 26.0),
                         height: 200.0,
                         width: 200.0,
                         child: Card(
@@ -131,10 +131,10 @@ class _PlaylistPageState extends State<PlaylistPage> {
                                   height: 200,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10.0),
-                                    gradient: LinearGradient(
+                                    gradient: const LinearGradient(
                                       colors: [
-                                        accent.withAlpha(30),
-                                        Colors.white.withAlpha(30)
+                                        Color.fromARGB(30, 255, 255, 255),
+                                        Color.fromARGB(30, 233, 233, 233),
                                       ],
                                     ),
                                   ),
@@ -156,7 +156,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
                                 ),
                         ),
                       ),
-                      const SizedBox(width: 16.0),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -231,7 +230,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                           if (!_isLoading) {
                             _loadMore();
                           }
-                          return SizedBox(child: Spinner());
+                          return Spinner();
                         }
                         return Padding(
                           padding: const EdgeInsets.only(top: 5, bottom: 5),
@@ -240,12 +239,12 @@ class _PlaylistPageState extends State<PlaylistPage> {
                       },
                     )
                   else
-                    Align(child: Spinner())
+                    Spinner()
                 ],
               )
             : SizedBox(
                 height: MediaQuery.of(context).size.height - 100,
-                child: Align(child: Spinner()),
+                child: Spinner(),
               ),
       ),
     );
