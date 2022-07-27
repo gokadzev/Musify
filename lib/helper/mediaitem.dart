@@ -21,7 +21,13 @@ MediaItem songModelToMediaItem(SongModel song, String songUrl) {
     artist: '',
     title: song.displayName,
     artUri: Uri.parse(''),
-    extras: {'url': songUrl, 'lowResImage': '', 'ytid': '', 'ogid': song.id},
+    extras: {
+      'url': songUrl,
+      'lowResImage': '',
+      'ytid': '',
+      'localSongId': song.id,
+      'ogid': song.id
+    },
   );
 }
 

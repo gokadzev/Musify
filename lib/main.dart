@@ -63,6 +63,7 @@ class _MyAppState extends State<MyApp> {
     userPlaylists = Hive.box('user').get('playlists') ?? [];
     userLikedSongsList = Hive.box('user').get('likedSongs') ?? [];
     searchHistory = Hive.box('user').get('searchHistory') ?? [];
+    getLocalSongs();
     final Map<String, String> codes = {
       'English': 'en',
       'Georgian': 'ka',

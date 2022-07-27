@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -8,8 +10,66 @@ import 'package:musify/services/audio_manager.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
-class LocalSongsPage extends StatelessWidget {
+class LocalSongsPage extends StatefulWidget {
   const LocalSongsPage({Key? key}) : super(key: key);
+
+  @override
+  State<LocalSongsPage> createState() => _LocalSongsPageState();
+}
+
+class _LocalSongsPageState extends State<LocalSongsPage> {
+  final _songsList = [];
+
+  bool _isLoading = true;
+  bool _hasMore = true;
+  final _itemsPerPage = 15;
+  var _currentPage = 0;
+  var _currentLastLoadedId = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _isLoading = true;
+    _hasMore = true;
+    _loadMore();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  void _loadMore() {
+    _isLoading = true;
+    fetch().then((List fetchedList) {
+      if (!mounted) return;
+      if (fetchedList.isEmpty) {
+        setState(() {
+          _isLoading = false;
+          _hasMore = false;
+        });
+      } else {
+        setState(() {
+          _isLoading = false;
+          _songsList.addAll(fetchedList);
+        });
+      }
+    });
+  }
+
+  Future<List> fetch() async {
+    final list = [];
+    final int _count = localSongs.length;
+    final n = min(_itemsPerPage, _count - _currentPage * _itemsPerPage);
+    await Future.delayed(const Duration(seconds: 1), () {
+      for (int i = 0; i < n; i++) {
+        list.add(localSongs[_currentLastLoadedId]);
+        _currentLastLoadedId++;
+      }
+    });
+    _currentPage++;
+    return list;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -131,8 +191,17 @@ class LocalSongsPage extends StatelessWidget {
                               false, // may be problem with lazyload if it implemented
                           addRepaintBoundaries: false,
                           // Need to display a loading tile if more items are coming
-                          itemCount: localSongs.length,
+                          itemCount: _hasMore
+                              ? _songsList.length + 1
+                              : _songsList.length,
                           itemBuilder: (BuildContext context, int index) {
+                            if (index >= _songsList.length) {
+                              if (!_isLoading) {
+                                _loadMore();
+                              }
+                              return Spinner();
+                            }
+
                             final lsong = {
                               'id': index,
                               'ytid': '',
