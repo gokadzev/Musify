@@ -80,7 +80,11 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
           );
         },
         backgroundColor: accent,
-        child: const Icon(Icons.add),
+        child: Icon(
+          Icons.add,
+          color:
+              accent != const Color(0xFFFFFFFF) ? Colors.white : Colors.black,
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(

@@ -5,6 +5,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:hive/hive.dart';
 import 'package:musify/helper/formatter.dart';
 import 'package:musify/helper/mediaitem.dart';
 import 'package:musify/services/audio_handler.dart';
@@ -21,8 +22,8 @@ final OnAudioQuery _audioQuery = OnAudioQuery();
 List ytplaylists = [];
 List searchedList = [];
 List playlists = [];
-List userPlaylists = [];
-List userLikedSongsList = [];
+List userPlaylists = Hive.box('user').get('playlists', defaultValue: []);
+List userLikedSongsList = Hive.box('user').get('likedSongs', defaultValue: []);
 List suggestedPlaylists = [];
 List activePlaylist = [];
 List<SongModel> localSongs = [];
@@ -225,7 +226,7 @@ Future<void> setActivePlaylist(List plist) async {
   } else {
     activePlaylist = plist;
     id = 0;
-    await playSong(activePlaylist[id]);
+    await playSong(activePlaylist[id], true);
   }
 }
 

@@ -73,9 +73,9 @@ class AppState extends State<Musify> {
         await audioPlayer?.pause();
         if (hasNext) {
           if (activePlaylist.isEmpty && playNextSongAutomatically.value) {
-            await playSong(await getRandomSong());
+            await playSong(await getRandomSong(), true);
           } else {
-            await playSong(activePlaylist[id + 1]);
+            await playSong(activePlaylist[id + 1], true);
             id = id + 1;
           }
         }

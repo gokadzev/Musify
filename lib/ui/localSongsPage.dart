@@ -225,7 +225,7 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
                                 child: InkWell(
                                     borderRadius: BorderRadius.circular(20.0),
                                     onTap: () {
-                                      playSong(lsong);
+                                      playSong(lsong, false);
                                     },
                                     splashColor: accent,
                                     hoverColor: accent,

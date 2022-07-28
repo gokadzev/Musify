@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:hive/hive.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/helper/mediaitem.dart';
@@ -32,7 +33,8 @@ final durationNotifier = ValueNotifier<Duration?>(Duration.zero);
 final buttonNotifier = ValueNotifier<MPlayerState>(MPlayerState.stopped);
 final shuffleNotifier = ValueNotifier<bool>(false);
 final repeatNotifier = ValueNotifier<bool>(false);
-final prefferedFileExtension = ValueNotifier<String>('mp3');
+final prefferedFileExtension = ValueNotifier<String>(
+    Hive.box('settings').get('audioFileType', defaultValue: 'mp3') as String);
 final playNextSongAutomatically = ValueNotifier<bool>(false);
 
 bool get hasNext => activePlaylist.isEmpty
@@ -114,8 +116,8 @@ Future<void> downloadSong(dynamic song) async {
   );
 }
 
-Future<void> playSong(Map song) async {
-  if (song['ytid'].length == 0) {
+Future<void> playSong(Map song, bool isFromYT) async {
+  if (!isFromYT) {
     await MyAudioHandler()
         .addQueueItem(mapToMediaItem(song, song['songUrl'].toString()));
   } else {
@@ -167,7 +169,7 @@ Future playNext() async {
     await _audioHandler.skipToNext();
   } else {
     if (id + 1 <= activePlaylist.length) {
-      await playSong(activePlaylist[id + 1]);
+      await playSong(activePlaylist[id + 1], true);
       id = id + 1;
     }
   }
@@ -178,7 +180,7 @@ Future playPrevious() async {
     await _audioHandler.skipToPrevious();
   } else {
     if (id - 1 >= 0) {
-      await playSong(activePlaylist[id - 1]);
+      await playSong(activePlaylist[id - 1], true);
       id = id - 1;
     }
   }

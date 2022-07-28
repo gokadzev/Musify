@@ -12,7 +12,6 @@ import 'package:musify/services/audio_handler.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:musify/ui/rootPage.dart';
-import 'package:musify/ui/searchPage.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 GetIt getIt = GetIt.instance;
@@ -53,16 +52,6 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    final String lang =
-        Hive.box('settings').get('language', defaultValue: 'English') as String;
-    prefferedFileExtension.value = Hive.box('settings')
-        .get('audioFileType', defaultValue: 'mp3') as String;
-    accent = Hive.box('settings').get('accentColor') != null
-        ? Color(Hive.box('settings').get('accentColor') as int)
-        : const Color(0xFFFFFFFF);
-    userPlaylists = Hive.box('user').get('playlists') ?? [];
-    userLikedSongsList = Hive.box('user').get('likedSongs') ?? [];
-    searchHistory = Hive.box('user').get('searchHistory') ?? [];
     getLocalSongs();
     final Map<String, String> codes = {
       'English': 'en',
@@ -78,7 +67,8 @@ class _MyAppState extends State<MyApp> {
       'Turkish': 'tr',
       'Ukrainian': 'uk',
     };
-    _locale = Locale(codes[lang]!);
+    _locale = Locale(codes[Hive.box('settings')
+        .get('language', defaultValue: 'English') as String]!);
   }
 
   @override
@@ -138,6 +128,7 @@ class _MyAppState extends State<MyApp> {
 }
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   await Hive.openBox('settings');
   await Hive.openBox('user');
