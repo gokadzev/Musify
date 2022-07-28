@@ -19,7 +19,7 @@ class SongBar extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(20.0),
         onTap: () {
-          playSong(song, true);
+          playSong(song);
           if (activePlaylist.isNotEmpty) {
             activePlaylist = [];
             id = 0;

@@ -226,7 +226,7 @@ Future<void> setActivePlaylist(List plist) async {
   } else {
     activePlaylist = plist;
     id = 0;
-    await playSong(activePlaylist[id], true);
+    await playSong(activePlaylist[id]);
   }
 }
 

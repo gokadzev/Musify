@@ -116,8 +116,8 @@ Future<void> downloadSong(dynamic song) async {
   );
 }
 
-Future<void> playSong(Map song, bool isFromYT) async {
-  if (!isFromYT) {
+Future<void> playSong(Map song) async {
+  if (song['ytid'].length == 0) {
     await MyAudioHandler()
         .addQueueItem(mapToMediaItem(song, song['songUrl'].toString()));
   } else {
@@ -169,7 +169,7 @@ Future playNext() async {
     await _audioHandler.skipToNext();
   } else {
     if (id + 1 <= activePlaylist.length) {
-      await playSong(activePlaylist[id + 1], true);
+      await playSong(activePlaylist[id + 1]);
       id = id + 1;
     }
   }
@@ -180,7 +180,7 @@ Future playPrevious() async {
     await _audioHandler.skipToPrevious();
   } else {
     if (id - 1 >= 0) {
-      await playSong(activePlaylist[id - 1], true);
+      await playSong(activePlaylist[id - 1]);
       id = id - 1;
     }
   }
