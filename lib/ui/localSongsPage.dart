@@ -197,7 +197,7 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
                               if (!_isLoading) {
                                 _loadMore();
                               }
-                              return Spinner();
+                              return const Spinner();
                             }
 
                             final lsong = {
@@ -282,7 +282,7 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
                                         ])));
                           },
                         )
-                      : Spinner();
+                      : const Spinner();
                 })
           ],
         ),

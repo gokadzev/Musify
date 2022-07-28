@@ -97,7 +97,7 @@ class _SearchPageState extends State<SearchPage> {
                     builder: (_, value, __) {
                       if (value == true) {
                         return IconButton(
-                            icon: SizedBox(
+                            icon: const SizedBox(
                                 height: 18, width: 18, child: Spinner()),
                             color: accent,
                             onPressed: () {

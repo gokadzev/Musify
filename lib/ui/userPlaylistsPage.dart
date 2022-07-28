@@ -133,7 +133,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                           );
                         },
                       )
-                    : Spinner();
+                    : const Spinner();
               },
             ),
           ],

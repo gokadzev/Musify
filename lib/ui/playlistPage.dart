@@ -230,7 +230,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                           if (!_isLoading) {
                             _loadMore();
                           }
-                          return Spinner();
+                          return const Spinner();
                         }
                         return Padding(
                           padding: const EdgeInsets.only(top: 5, bottom: 5),
@@ -239,12 +239,12 @@ class _PlaylistPageState extends State<PlaylistPage> {
                       },
                     )
                   else
-                    Spinner()
+                    const Spinner()
                 ],
               )
             : SizedBox(
                 height: MediaQuery.of(context).size.height - 100,
-                child: Spinner(),
+                child: const Spinner(),
               ),
       ),
     );

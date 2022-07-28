@@ -92,7 +92,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                       builder: (_, value, __) {
                         if (value == true) {
                           return IconButton(
-                              icon: SizedBox(
+                              icon: const SizedBox(
                                   height: 18, width: 18, child: Spinner()),
                               color: accent,
                               onPressed: () {
@@ -162,7 +162,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                             );
                           },
                         )
-                      : Spinner();
+                      : const Spinner();
                 },
               )
             else
@@ -201,7 +201,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                             );
                           },
                         )
-                      : Spinner();
+                      : const Spinner();
                 },
               )
           ],

@@ -84,9 +84,9 @@ class _HomePageState extends State<HomePage> {
                           )
                         ],
                       )
-                    : Center(
+                    : const Center(
                         child: Padding(
-                          padding: const EdgeInsets.all(35.0),
+                          padding: EdgeInsets.all(35.0),
                           child: Spinner(),
                         ),
                       );
@@ -133,9 +133,9 @@ class _HomePageState extends State<HomePage> {
                           )
                         ],
                       )
-                    : Center(
+                    : const Center(
                         child: Padding(
-                          padding: const EdgeInsets.all(35.0),
+                          padding: EdgeInsets.all(35.0),
                           child: Spinner(),
                         ),
                       );

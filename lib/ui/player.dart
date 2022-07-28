@@ -123,7 +123,7 @@ class AudioAppState extends State<AudioApp> {
                               ),
                             ),
                           ),
-                          placeholder: (context, url) => Spinner(),
+                          placeholder: (context, url) => const Spinner(),
                           errorWidget: (context, url, error) => Container(
                             width: size.width / 1.2,
                             height: size.width / 1.2,
@@ -166,7 +166,7 @@ class AudioAppState extends State<AudioApp> {
                             ),
                           ),
                         ),
-                        placeholder: (context, url) => Spinner(),
+                        placeholder: (context, url) => const Spinner(),
                         errorWidget: (context, url, error) => Container(
                           width: size.width / 1.2,
                           height: size.width / 1.2,
@@ -337,7 +337,7 @@ class AudioAppState extends State<AudioApp> {
                                     margin: const EdgeInsets.all(8.0),
                                     width: size.width * 0.08,
                                     height: size.width * 0.08,
-                                    child: Spinner(),
+                                    child: const Spinner(),
                                   );
                                 case MPlayerState.paused:
                                   return IconButton(
@@ -517,7 +517,8 @@ class AudioAppState extends State<AudioApp> {
                                               ),
                                             );
                                           } else if (value == 'null') {
-                                            return SizedBox(child: Spinner());
+                                            return const SizedBox(
+                                                child: Spinner());
                                           } else {
                                             return Padding(
                                               padding: const EdgeInsets.only(
