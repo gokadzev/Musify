@@ -89,7 +89,6 @@ class AppState extends State<Musify> {
       HomePage(),
       SearchPage(),
       PlaylistsPage(),
-      // ignore: prefer_const_constructors
       LocalSongsPage(),
       SettingsPage(),
     ];

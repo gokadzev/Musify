@@ -11,8 +11,6 @@ import 'package:musify/style/appColors.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 class LocalSongsPage extends StatefulWidget {
-  const LocalSongsPage({Key? key}) : super(key: key);
-
   @override
   State<LocalSongsPage> createState() => _LocalSongsPageState();
 }
