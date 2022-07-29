@@ -57,7 +57,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.only(
-                  top: 12.0, bottom: 20.0, left: 12.0, right: 12.0),
+                  top: 12, bottom: 20, left: 12, right: 12),
               child: TextField(
                 onSubmitted: (String value) {
                   search();
@@ -144,9 +144,9 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                           physics: const ScrollPhysics(),
                           itemCount: (data as dynamic).data.length as int,
                           padding: const EdgeInsets.only(
-                            left: 16.0,
-                            right: 16.0,
-                            top: 16.0,
+                            left: 16,
+                            right: 16,
+                            top: 16,
                             bottom: 20,
                           ),
                           itemBuilder: (BuildContext context, index) {
@@ -183,9 +183,9 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                           physics: const ScrollPhysics(),
                           itemCount: (data as dynamic).data.length as int,
                           padding: const EdgeInsets.only(
-                            left: 16.0,
-                            right: 16.0,
-                            top: 16.0,
+                            left: 16,
+                            right: 16,
+                            top: 16,
                             bottom: 20,
                           ),
                           itemBuilder: (BuildContext context, index) {
@@ -212,17 +212,17 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
 }
 
 class GetPlaylist extends StatelessWidget {
-  final int index;
-  final dynamic image;
-  final String title;
-  final dynamic id;
-
   const GetPlaylist({
+    Key? key,
     required this.index,
     required this.image,
     required this.title,
     required this.id,
-  });
+  }) : super(key: key);
+  final int index;
+  final dynamic image;
+  final String title;
+  final dynamic id;
 
   @override
   Widget build(BuildContext context) {
@@ -244,7 +244,7 @@ class GetPlaylist extends StatelessWidget {
           );
         },
         child: Padding(
-          padding: const EdgeInsets.only(right: 15.0),
+          padding: const EdgeInsets.only(right: 15),
           child: SizedBox(
             width: size.width * 0.4,
             height: size.height * 0.18,
@@ -261,7 +261,7 @@ class GetPlaylist extends StatelessWidget {
                     ],
                   ),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(15.0),
+                    borderRadius: BorderRadius.circular(15),
                     child: image != ''
                         ? CachedNetworkImage(
                             width: size.width * 0.4,
@@ -270,7 +270,7 @@ class GetPlaylist extends StatelessWidget {
                             fit: BoxFit.cover,
                             errorWidget: (context, url, error) => DecoratedBox(
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.0),
+                                borderRadius: BorderRadius.circular(10),
                                 gradient: const LinearGradient(
                                   colors: [
                                     Color.fromARGB(30, 255, 255, 255),
@@ -314,7 +314,7 @@ class GetPlaylist extends StatelessWidget {
                     width: size.width * 0.4,
                     height: size.height * 0.18,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15.0),
+                      borderRadius: BorderRadius.circular(15),
                       gradient: LinearGradient(
                         colors: [
                           const Color.fromARGB(30, 255, 255, 255),

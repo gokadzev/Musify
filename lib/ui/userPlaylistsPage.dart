@@ -7,6 +7,8 @@ import 'package:musify/style/appColors.dart';
 import 'package:musify/ui/playlistsPage.dart';
 
 class UserPlaylistsPage extends StatefulWidget {
+  const UserPlaylistsPage({Key? key}) : super(key: key);
+
   @override
   State<UserPlaylistsPage> createState() => _UserPlaylistsPageState();
 }
@@ -105,9 +107,9 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                         physics: const ScrollPhysics(),
                         itemCount: (data as dynamic).data.length as int,
                         padding: const EdgeInsets.only(
-                          left: 16.0,
-                          right: 16.0,
-                          top: 16.0,
+                          left: 16,
+                          right: 16,
+                          top: 16,
                           bottom: 20,
                         ),
                         itemBuilder: (BuildContext context, index) {

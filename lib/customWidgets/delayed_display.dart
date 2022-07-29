@@ -29,7 +29,7 @@ class DelayedDisplay extends StatefulWidget {
     this.delay = Duration.zero,
     this.fadingDuration = const Duration(milliseconds: 800),
     this.slidingCurve = Curves.decelerate,
-    this.slidingBeginOffset = const Offset(0.0, 0.35),
+    this.slidingBeginOffset = const Offset(0, 0.35),
     this.fadeIn = true,
   });
 

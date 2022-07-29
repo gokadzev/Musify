@@ -5,6 +5,8 @@ import 'package:musify/helper/version.dart';
 import 'package:musify/style/appColors.dart';
 
 class AboutPage extends StatelessWidget {
+  const AboutPage({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,12 +33,14 @@ class AboutPage extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: SingleChildScrollView(child: AboutCards()),
+      body: const SingleChildScrollView(child: AboutCards()),
     );
   }
 }
 
 class AboutCards extends StatelessWidget {
+  const AboutCards({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -47,7 +51,7 @@ class AboutCards extends StatelessWidget {
             children: <Widget>[
               ListTile(
                 title: Padding(
-                  padding: const EdgeInsets.all(13.0),
+                  padding: const EdgeInsets.all(13),
                   child: Center(
                     child: Text(
                       'Musify  | $version',
@@ -64,7 +68,7 @@ class AboutCards extends StatelessWidget {
           ),
         ),
         const Padding(
-          padding: EdgeInsets.only(bottom: 8.0, left: 10, right: 10),
+          padding: EdgeInsets.only(bottom: 8, left: 10, right: 10),
           child: Divider(
             color: Colors.white24,
             thickness: 0.8,
@@ -75,7 +79,7 @@ class AboutCards extends StatelessWidget {
           child: Card(
             color: bgLight,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
+              borderRadius: BorderRadius.circular(10),
             ),
             elevation: 2.3,
             child: ListTile(

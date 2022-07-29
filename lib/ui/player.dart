@@ -70,7 +70,7 @@ class AudioAppState extends State<AudioApp> {
           ),
         ),
         leading: Padding(
-          padding: const EdgeInsets.only(left: 14.0),
+          padding: const EdgeInsets.only(left: 14),
           child: IconButton(
             icon: Icon(
               Icons.keyboard_arrow_down,
@@ -128,7 +128,7 @@ class AudioAppState extends State<AudioApp> {
                             width: size.width / 1.2,
                             height: size.width / 1.2,
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10.0),
+                              borderRadius: BorderRadius.circular(10),
                               gradient: const LinearGradient(
                                 colors: [
                                   Color.fromARGB(30, 255, 255, 255),
@@ -171,7 +171,7 @@ class AudioAppState extends State<AudioApp> {
                           width: size.width / 1.2,
                           height: size.width / 1.2,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.0),
+                            borderRadius: BorderRadius.circular(10),
                             gradient: const LinearGradient(
                               colors: [
                                 Color.fromARGB(30, 255, 255, 255),
@@ -213,7 +213,7 @@ class AudioAppState extends State<AudioApp> {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
+                          padding: const EdgeInsets.only(top: 8),
                           child: Text(
                             '${metadata!.artist}',
                             maxLines: 1,
@@ -334,7 +334,7 @@ class AudioAppState extends State<AudioApp> {
                               switch (value) {
                                 case MPlayerState.loading:
                                   return Container(
-                                    margin: const EdgeInsets.all(8.0),
+                                    margin: const EdgeInsets.all(8),
                                     width: size.width * 0.08,
                                     height: size.width * 0.08,
                                     child: const Spinner(),
@@ -446,8 +446,8 @@ class AudioAppState extends State<AudioApp> {
                                   decoration: const BoxDecoration(
                                     color: Color(0xFF151515),
                                     borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(18.0),
-                                      topRight: Radius.circular(18.0),
+                                      topLeft: Radius.circular(18),
+                                      topRight: Radius.circular(18),
                                     ),
                                   ),
                                   height: size.height / 2.14,
@@ -471,7 +471,7 @@ class AudioAppState extends State<AudioApp> {
                                             Expanded(
                                               child: Padding(
                                                 padding: const EdgeInsets.only(
-                                                  right: 42.0,
+                                                  right: 42,
                                                 ),
                                                 child: Center(
                                                   child: Text(
@@ -500,13 +500,13 @@ class AudioAppState extends State<AudioApp> {
                                             return Expanded(
                                               child: Padding(
                                                 padding:
-                                                    const EdgeInsets.all(6.0),
+                                                    const EdgeInsets.all(6),
                                                 child: Center(
                                                   child: SingleChildScrollView(
                                                     child: Text(
                                                       value,
                                                       style: TextStyle(
-                                                        fontSize: 16.0,
+                                                        fontSize: 16,
                                                         color: accentLight,
                                                       ),
                                                       textAlign:
@@ -522,7 +522,7 @@ class AudioAppState extends State<AudioApp> {
                                           } else {
                                             return Padding(
                                               padding: const EdgeInsets.only(
-                                                top: 120.0,
+                                                top: 120,
                                               ),
                                               child: Center(
                                                 child: Text(
@@ -569,7 +569,7 @@ class AudioAppState extends State<AudioApp> {
                 : duration != null
                     ? durationText
                     : '',
-            style: const TextStyle(fontSize: 18.0, color: Colors.white),
+            style: const TextStyle(fontSize: 18, color: Colors.white),
           ),
           const Spacer(),
           Text(
@@ -578,7 +578,7 @@ class AudioAppState extends State<AudioApp> {
                 : duration != null
                     ? durationText
                     : '',
-            style: const TextStyle(fontSize: 18.0, color: Colors.white),
+            style: const TextStyle(fontSize: 18, color: Colors.white),
           )
         ],
       );

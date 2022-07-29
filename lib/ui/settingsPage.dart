@@ -53,7 +53,7 @@ class SettingsCards extends StatelessWidget {
           child: Card(
             color: bgLight,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
+              borderRadius: BorderRadius.circular(10),
             ),
             elevation: 2.3,
             child: ListTile(
@@ -125,8 +125,8 @@ class SettingsCards extends StatelessWidget {
                           itemBuilder: (context, index) {
                             return Padding(
                               padding: const EdgeInsets.only(
-                                top: 15.0,
-                                bottom: 15.0,
+                                top: 15,
+                                bottom: 15,
                               ),
                               child: Row(
                                 mainAxisAlignment:
@@ -152,12 +152,12 @@ class SettingsCards extends StatelessWidget {
                                               .accentChangeMsg,
                                           toastLength: Toast.LENGTH_SHORT,
                                           gravity: ToastGravity.BOTTOM,
-                                          fontSize: 14.0,
+                                          fontSize: 14,
                                         );
                                         Navigator.pop(context);
                                       },
                                       child: Material(
-                                        elevation: 4.0,
+                                        elevation: 4,
                                         shape: const CircleBorder(),
                                         child: CircleAvatar(
                                           radius: 25,
@@ -187,7 +187,7 @@ class SettingsCards extends StatelessWidget {
           child: Card(
             color: bgLight,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
+              borderRadius: BorderRadius.circular(10),
             ),
             elevation: 2.3,
             child: ListTile(
@@ -217,7 +217,7 @@ class SettingsCards extends StatelessWidget {
                       'Ukrainian': 'uk',
                     };
 
-                    final List availableLanguages = [
+                    final List<String> availableLanguages = [
                       'English',
                       'Georgian',
                       'Chinese',
@@ -250,16 +250,16 @@ class SettingsCards extends StatelessWidget {
                           itemCount: availableLanguages.length,
                           itemBuilder: (context, index) {
                             return Padding(
-                              padding: const EdgeInsets.all(10.0),
+                              padding: const EdgeInsets.all(10),
                               child: Card(
                                 color: bgLight,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
                                 elevation: 2.3,
                                 child: ListTile(
                                   title: Text(
-                                    availableLanguages[index].toString(),
+                                    availableLanguages[index],
                                     style: TextStyle(color: accent),
                                   ),
                                   onTap: () {
@@ -285,7 +285,7 @@ class SettingsCards extends StatelessWidget {
                                           .languageMsg,
                                       toastLength: Toast.LENGTH_SHORT,
                                       gravity: ToastGravity.BOTTOM,
-                                      fontSize: 14.0,
+                                      fontSize: 14,
                                     );
                                     Navigator.pop(context);
                                   },
@@ -307,7 +307,7 @@ class SettingsCards extends StatelessWidget {
           child: Card(
             color: bgLight,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
+              borderRadius: BorderRadius.circular(10),
             ),
             elevation: 2.3,
             child: ListTile(
@@ -326,7 +326,7 @@ class SettingsCards extends StatelessWidget {
                   msg: '${AppLocalizations.of(context)!.cacheMsg}!',
                   toastLength: Toast.LENGTH_SHORT,
                   gravity: ToastGravity.BOTTOM,
-                  fontSize: 14.0,
+                  fontSize: 14,
                 );
               },
             ),
@@ -337,7 +337,7 @@ class SettingsCards extends StatelessWidget {
           child: Card(
             color: bgLight,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
+              borderRadius: BorderRadius.circular(10),
             ),
             elevation: 2.3,
             child: ListTile(
@@ -357,7 +357,7 @@ class SettingsCards extends StatelessWidget {
                   msg: '${AppLocalizations.of(context)!.searchHistoryMsg}!',
                   toastLength: Toast.LENGTH_SHORT,
                   gravity: ToastGravity.BOTTOM,
-                  fontSize: 14.0,
+                  fontSize: 14,
                 );
               },
             ),
@@ -368,7 +368,7 @@ class SettingsCards extends StatelessWidget {
           child: Card(
             color: bgLight,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
+              borderRadius: BorderRadius.circular(10),
             ),
             elevation: 2.3,
             child: ListTile(
@@ -381,7 +381,7 @@ class SettingsCards extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => UserPlaylistsPage(),
+                    builder: (context) => const UserPlaylistsPage(),
                   ),
                 );
               },
@@ -393,7 +393,7 @@ class SettingsCards extends StatelessWidget {
           child: Card(
             color: bgLight,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
+              borderRadius: BorderRadius.circular(10),
             ),
             elevation: 2.3,
             child: ListTile(
@@ -405,7 +405,8 @@ class SettingsCards extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => UserLikedSongs()),
+                  MaterialPageRoute(
+                      builder: (context) => const UserLikedSongs()),
                 );
               },
             ),
@@ -416,7 +417,7 @@ class SettingsCards extends StatelessWidget {
           child: Card(
             color: bgLight,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
+              borderRadius: BorderRadius.circular(10),
             ),
             elevation: 2.3,
             child: ListTile(
@@ -435,7 +436,7 @@ class SettingsCards extends StatelessWidget {
                     msg: value.toString(),
                     toastLength: Toast.LENGTH_SHORT,
                     gravity: ToastGravity.BOTTOM,
-                    fontSize: 14.0,
+                    fontSize: 14,
                   ),
                 );
               },
@@ -447,7 +448,7 @@ class SettingsCards extends StatelessWidget {
           child: Card(
             color: bgLight,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
+              borderRadius: BorderRadius.circular(10),
             ),
             elevation: 2.3,
             child: ListTile(
@@ -466,7 +467,7 @@ class SettingsCards extends StatelessWidget {
                     msg: value.toString(),
                     toastLength: Toast.LENGTH_SHORT,
                     gravity: ToastGravity.BOTTOM,
-                    fontSize: 14.0,
+                    fontSize: 14,
                   ),
                 );
               },
@@ -478,7 +479,7 @@ class SettingsCards extends StatelessWidget {
           child: Card(
             color: bgLight,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
+              borderRadius: BorderRadius.circular(10),
             ),
             elevation: 2.3,
             child: ListTile(
@@ -501,7 +502,7 @@ class SettingsCards extends StatelessWidget {
                           textColor: accent != const Color(0xFFFFFFFF)
                               ? Colors.white
                               : Colors.black,
-                          fontSize: 14.0,
+                          fontSize: 14,
                         ),
                         downloadAppUpdates()
                       }
@@ -516,7 +517,7 @@ class SettingsCards extends StatelessWidget {
                           textColor: accent != const Color(0xFFFFFFFF)
                               ? Colors.white
                               : Colors.black,
-                          fontSize: 14.0,
+                          fontSize: 14,
                         )
                       }
                   },
@@ -530,7 +531,7 @@ class SettingsCards extends StatelessWidget {
           child: Card(
             color: bgLight,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
+              borderRadius: BorderRadius.circular(10),
             ),
             elevation: 2.3,
             child: ListTile(
@@ -565,11 +566,11 @@ class SettingsCards extends StatelessWidget {
                           itemCount: availableFileTypes.length,
                           itemBuilder: (context, index) {
                             return Padding(
-                              padding: const EdgeInsets.all(10.0),
+                              padding: const EdgeInsets.all(10),
                               child: Card(
                                 color: bgLight,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
                                 elevation: 2.3,
                                 child: ListTile(
@@ -596,7 +597,7 @@ class SettingsCards extends StatelessWidget {
                                           .audioFileTypeMsg,
                                       toastLength: Toast.LENGTH_SHORT,
                                       gravity: ToastGravity.BOTTOM,
-                                      fontSize: 14.0,
+                                      fontSize: 14,
                                     );
                                     Navigator.pop(context);
                                   },
@@ -618,7 +619,7 @@ class SettingsCards extends StatelessWidget {
           child: Card(
             color: bgLight,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
+              borderRadius: BorderRadius.circular(10),
             ),
             elevation: 2.3,
             child: ListTile(
@@ -628,14 +629,14 @@ class SettingsCards extends StatelessWidget {
                 style: TextStyle(color: accent),
               ),
               onTap: () {
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (context) => AboutPage()));
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => const AboutPage()));
               },
             ),
           ),
         ),
         const SizedBox(
-          height: 20.0,
+          height: 20,
         )
       ],
     );

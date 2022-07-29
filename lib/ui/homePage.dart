@@ -55,7 +55,7 @@ class _HomePageState extends State<HomePage> {
                               AppLocalizations.of(context)!.suggestedPlaylists,
                               style: TextStyle(
                                 color: accent,
-                                fontSize: 20.0,
+                                fontSize: 20,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
@@ -68,7 +68,7 @@ class _HomePageState extends State<HomePage> {
                               itemBuilder: (context, index) {
                                 return Padding(
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: 15.0,
+                                    horizontal: 15,
                                   ),
                                   child: CubeContainer(
                                     id: (data as dynamic)
@@ -86,7 +86,7 @@ class _HomePageState extends State<HomePage> {
                       )
                     : const Center(
                         child: Padding(
-                          padding: EdgeInsets.all(35.0),
+                          padding: EdgeInsets.all(35),
                           child: Spinner(),
                         ),
                       );
@@ -109,14 +109,14 @@ class _HomePageState extends State<HomePage> {
                               AppLocalizations.of(context)!.recommendedForYou,
                               style: TextStyle(
                                 color: accent,
-                                fontSize: 20.0,
+                                fontSize: 20,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
                           ),
                           Padding(
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 7.0,
+                              horizontal: 7,
                             ),
                             child: ListView.builder(
                               shrinkWrap: true,
@@ -135,7 +135,7 @@ class _HomePageState extends State<HomePage> {
                       )
                     : const Center(
                         child: Padding(
-                          padding: EdgeInsets.all(35.0),
+                          padding: EdgeInsets.all(35),
                           child: Spinner(),
                         ),
                       );
@@ -149,13 +149,12 @@ class _HomePageState extends State<HomePage> {
 }
 
 class CubeContainer extends StatelessWidget {
-  final String id;
-  final String image;
-
   const CubeContainer({
     required this.id,
     required this.image,
   });
+  final String id;
+  final String image;
 
   @override
   Widget build(BuildContext context) {
@@ -183,7 +182,7 @@ class CubeContainer extends StatelessWidget {
               width: size.width / 1.9,
               child: Card(
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
+                  borderRadius: BorderRadius.circular(8),
                 ),
                 color: Colors.transparent,
                 child: CachedNetworkImage(
@@ -199,7 +198,7 @@ class CubeContainer extends StatelessWidget {
                   ),
                   errorWidget: (context, url, error) => DecoratedBox(
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
+                      borderRadius: BorderRadius.circular(10),
                       gradient: const LinearGradient(
                         colors: [
                           Color.fromARGB(30, 255, 255, 255),

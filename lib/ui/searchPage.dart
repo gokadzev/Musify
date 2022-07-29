@@ -59,10 +59,10 @@ class _SearchPageState extends State<SearchPage> {
         elevation: 0,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(12.0),
+        padding: const EdgeInsets.all(12),
         child: Column(
           children: <Widget>[
-            const Padding(padding: EdgeInsets.only(bottom: 20.0)),
+            const Padding(padding: EdgeInsets.only(bottom: 20)),
             TextField(
               onSubmitted: (String value) {
                 search();
@@ -158,7 +158,7 @@ class _SearchPageState extends State<SearchPage> {
                     child: Card(
                       color: bgLight,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                       elevation: 2.3,
                       child: ListTile(

@@ -74,7 +74,7 @@ class CustomAnimatedBottomBar extends StatelessWidget {
 
                       return Material(
                         color: Color.lerp(
-                          _selectedColor!.withOpacity(0.0),
+                          _selectedColor!.withOpacity(0),
                           _selectedColor
                               .withOpacity(selectedColorOpacity ?? 0.1),
                           t,
@@ -99,7 +99,7 @@ class CustomAnimatedBottomBar extends StatelessWidget {
                                         : EdgeInsets.only(
                                             left: itemPadding.left * t,
                                           ))
-                                : const EdgeInsets.all(10.0),
+                                : const EdgeInsets.all(10),
                             child: Row(
                               children: [
                                 IconTheme(
@@ -122,7 +122,7 @@ class CustomAnimatedBottomBar extends StatelessWidget {
                                     child: SizedBox(
                                       height: 20,
                                       child: Align(
-                                        alignment: const Alignment(-0.2, 0.0),
+                                        alignment: const Alignment(-0.2, 0),
                                         widthFactor: t,
                                         child: Padding(
                                           padding: Directionality.of(context) ==
@@ -138,7 +138,7 @@ class CustomAnimatedBottomBar extends StatelessWidget {
                                           child: DefaultTextStyle(
                                             style: TextStyle(
                                               color: Color.lerp(
-                                                _selectedColor.withOpacity(0.0),
+                                                _selectedColor.withOpacity(0),
                                                 _selectedColor,
                                                 t,
                                               ),
@@ -167,12 +167,6 @@ class CustomAnimatedBottomBar extends StatelessWidget {
 }
 
 class BottomNavBarItem {
-  final Widget icon;
-  final Widget? activeIcon;
-  final Widget title;
-  final Color? activeColor;
-  final Color? inactiveColor;
-
   BottomNavBarItem({
     required this.icon,
     required this.title,
@@ -180,4 +174,9 @@ class BottomNavBarItem {
     this.inactiveColor,
     this.activeIcon,
   });
+  final Widget icon;
+  final Widget? activeIcon;
+  final Widget title;
+  final Color? activeColor;
+  final Color? inactiveColor;
 }

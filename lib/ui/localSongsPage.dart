@@ -94,19 +94,19 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
             Row(
               children: [
                 Container(
-                  margin: const EdgeInsets.only(left: 10.0, right: 26.0),
-                  height: 200.0,
-                  width: 200.0,
+                  margin: const EdgeInsets.only(left: 10, right: 26),
+                  height: 200,
+                  width: 200,
                   child: Card(
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     color: Colors.transparent,
                     child: Container(
                       width: 200,
                       height: 200,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10.0),
+                        borderRadius: BorderRadius.circular(10),
                         gradient: const LinearGradient(
                           colors: [
                             Color.fromARGB(30, 255, 255, 255),
@@ -136,7 +136,7 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 12.0),
+                      const SizedBox(height: 12),
                       Text(
                         AppLocalizations.of(context)!.localSongs,
                         style: TextStyle(
@@ -145,7 +145,7 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      const SizedBox(height: 16.0),
+                      const SizedBox(height: 16),
                       Text(
                         '${AppLocalizations.of(context)!.yourDownloadedSongsHere}!',
                         style: TextStyle(
@@ -219,9 +219,9 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
 
                             return Container(
                                 padding: const EdgeInsets.only(
-                                    left: 12.0, right: 12.0, bottom: 15),
+                                    left: 12, right: 12, bottom: 15),
                                 child: InkWell(
-                                    borderRadius: BorderRadius.circular(20.0),
+                                    borderRadius: BorderRadius.circular(20),
                                     onTap: () {
                                       playSong(lsong);
                                     },

@@ -96,7 +96,7 @@ Future<void> downloadSong(dynamic song) async {
     gravity: ToastGravity.BOTTOM,
     backgroundColor: accent,
     textColor: accent != const Color(0xFFFFFFFF) ? Colors.white : Colors.black,
-    fontSize: 14.0,
+    fontSize: 14,
   );
   final audioStream = await getSongStream(song['ytid'].toString());
   final File file = File(filepath);
@@ -112,7 +112,7 @@ Future<void> downloadSong(dynamic song) async {
     gravity: ToastGravity.BOTTOM,
     backgroundColor: accent,
     textColor: accent != const Color(0xFFFFFFFF) ? Colors.white : Colors.black,
-    fontSize: 14.0,
+    fontSize: 14,
   );
 }
 

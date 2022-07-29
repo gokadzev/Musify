@@ -12,8 +12,8 @@ import 'package:musify/customWidgets/spinner.dart';
 import 'package:musify/style/appColors.dart';
 
 class PlaylistPage extends StatefulWidget {
-  final dynamic playlist;
   const PlaylistPage({Key? key, required this.playlist}) : super(key: key);
+  final dynamic playlist;
 
   @override
   _PlaylistPageState createState() => _PlaylistPageState();
@@ -106,18 +106,18 @@ class _PlaylistPageState extends State<PlaylistPage> {
                   Row(
                     children: [
                       Container(
-                        margin: const EdgeInsets.only(left: 10.0, right: 26.0),
-                        height: 200.0,
-                        width: 200.0,
+                        margin: const EdgeInsets.only(left: 10, right: 26),
+                        height: 200,
+                        width: 200,
                         child: Card(
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0),
+                            borderRadius: BorderRadius.circular(8),
                           ),
                           color: Colors.transparent,
                           child: widget.playlist['image'] != ''
                               ? DecoratedBox(
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10.0),
+                                    borderRadius: BorderRadius.circular(10),
                                     image: DecorationImage(
                                       fit: BoxFit.cover,
                                       image: CachedNetworkImageProvider(
@@ -130,7 +130,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                                   width: 200,
                                   height: 200,
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10.0),
+                                    borderRadius: BorderRadius.circular(10),
                                     gradient: const LinearGradient(
                                       colors: [
                                         Color.fromARGB(30, 255, 255, 255),
@@ -160,7 +160,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const SizedBox(height: 12.0),
+                            const SizedBox(height: 12),
                             Text(
                               widget.playlist['title'].toString(),
                               style: TextStyle(
@@ -169,7 +169,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                            const SizedBox(height: 16.0),
+                            const SizedBox(height: 16),
                             Text(
                               widget.playlist['header_desc'].toString(),
                               style: TextStyle(
@@ -178,7 +178,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                            const SizedBox(height: 5.0),
+                            const SizedBox(height: 5),
                             TextButton(
                               onPressed: () => {
                                 setActivePlaylist(
@@ -214,7 +214,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                       )
                     ],
                   ),
-                  const SizedBox(height: 30.0),
+                  const SizedBox(height: 30),
                   if (_songsList.isNotEmpty)
                     ListView.builder(
                       shrinkWrap: true,

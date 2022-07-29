@@ -43,7 +43,7 @@ class AppState extends State<Musify> {
               textColor: accent != const Color(0xFFFFFFFF)
                   ? Colors.white
                   : Colors.black,
-              fontSize: 14.0,
+              fontSize: 14,
             )
           }
       },
@@ -163,7 +163,7 @@ class AppState extends State<Musify> {
                 color: bgLight,
               ),
               child: Padding(
-                padding: const EdgeInsets.only(top: 5.0, bottom: 2),
+                padding: const EdgeInsets.only(top: 5, bottom: 2),
                 child: GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -202,7 +202,7 @@ class AppState extends State<Musify> {
                                 keepOldArtwork: true,
                               )
                             : ClipRRect(
-                                borderRadius: BorderRadius.circular(8.0),
+                                borderRadius: BorderRadius.circular(8),
                                 child: CachedNetworkImage(
                                   imageUrl: metadata!.artUri.toString(),
                                   fit: BoxFit.fill,
@@ -211,7 +211,7 @@ class AppState extends State<Musify> {
                                     width: 50,
                                     height: 50,
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10.0),
+                                      borderRadius: BorderRadius.circular(10),
                                       gradient: const LinearGradient(
                                         colors: [
                                           Color.fromARGB(30, 255, 255, 255),
@@ -307,7 +307,7 @@ class AppState extends State<Musify> {
         backgroundColor: bgLight,
         onTap: (index) => activeTab.value = index,
         items: items,
-        margin: const EdgeInsets.only(left: 8.0, right: 8.0),
+        margin: const EdgeInsets.only(left: 8, right: 8),
       ),
     );
   }

@@ -6,7 +6,7 @@ import 'package:musify/services/audio_manager.dart';
 import 'package:musify/style/appColors.dart';
 
 class SongBar extends StatelessWidget {
-  SongBar(this.song);
+  SongBar(this.song, {Key? key}) : super(key: key);
 
   late final dynamic song;
   late final songLikeStatus =
@@ -15,9 +15,9 @@ class SongBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(left: 12.0, right: 12.0, bottom: 15),
+      padding: const EdgeInsets.only(left: 12, right: 12, bottom: 15),
       child: InkWell(
-        borderRadius: BorderRadius.circular(20.0),
+        borderRadius: BorderRadius.circular(20),
         onTap: () {
           playSong(song);
           if (activePlaylist.isNotEmpty) {
