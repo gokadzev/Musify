@@ -98,118 +98,111 @@ class _PlaylistPageState extends State<PlaylistPage> {
         child: widget.playlist != null
             ? Column(
                 children: [
-                  Row(
+                  Container(
+                    margin: const EdgeInsets.only(left: 10, right: 26),
+                    height: 250,
+                    width: 250,
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      color: Colors.transparent,
+                      child: widget.playlist['image'] != ''
+                          ? DecoratedBox(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                image: DecorationImage(
+                                  fit: BoxFit.cover,
+                                  image: CachedNetworkImageProvider(
+                                    widget.playlist['image'].toString(),
+                                  ),
+                                ),
+                              ),
+                            )
+                          : Container(
+                              width: 200,
+                              height: 200,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                gradient: const LinearGradient(
+                                  colors: [
+                                    Color.fromARGB(30, 255, 255, 255),
+                                    Color.fromARGB(30, 233, 233, 233),
+                                  ],
+                                ),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Icon(
+                                    MdiIcons.musicNoteOutline,
+                                    size: 30,
+                                    color: accent,
+                                  ),
+                                  Text(
+                                    widget.playlist['title'].toString(),
+                                    style: TextStyle(color: accent),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                            ),
+                    ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Container(
-                        margin: const EdgeInsets.only(left: 10, right: 26),
-                        height: 200,
-                        width: 200,
-                        child: Card(
+                      const SizedBox(height: 12),
+                      Text(
+                        widget.playlist['title'].toString(),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: accent,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        widget.playlist['header_desc'].toString(),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: accent,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      ElevatedButton(
+                        onPressed: () => {
+                          setActivePlaylist(
+                            widget.playlist['list'] as List,
+                          ),
+                          Fluttertoast.showToast(
+                            msg: AppLocalizations.of(context)!.queueInitText,
+                            toastLength: Toast.LENGTH_LONG,
+                            gravity: ToastGravity.BOTTOM,
+                            backgroundColor: accent,
+                            textColor: accent != const Color(0xFFFFFFFF)
+                                ? Colors.white
+                                : Colors.black,
+                          ),
+                          Navigator.pop(context, false)
+                        },
+                        style: ElevatedButton.styleFrom(
+                          primary: accent,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          color: Colors.transparent,
-                          child: widget.playlist['image'] != ''
-                              ? DecoratedBox(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    image: DecorationImage(
-                                      fit: BoxFit.cover,
-                                      image: CachedNetworkImageProvider(
-                                        widget.playlist['image'].toString(),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : Container(
-                                  width: 200,
-                                  height: 200,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    gradient: const LinearGradient(
-                                      colors: [
-                                        Color.fromARGB(30, 255, 255, 255),
-                                        Color.fromARGB(30, 233, 233, 233),
-                                      ],
-                                    ),
-                                  ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Icon(
-                                        MdiIcons.musicNoteOutline,
-                                        size: 30,
-                                        color: accent,
-                                      ),
-                                      Text(
-                                        widget.playlist['title'].toString(),
-                                        style: TextStyle(color: accent),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                        ),
+                        child: Text(
+                          AppLocalizations.of(context)!.playAll.toUpperCase(),
+                          style: TextStyle(
+                              color: accent != const Color(0xFFFFFFFF)
+                                  ? Colors.white
+                                  : Colors.black),
                         ),
                       ),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: 12),
-                            Text(
-                              widget.playlist['title'].toString(),
-                              style: TextStyle(
-                                color: accent,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              widget.playlist['header_desc'].toString(),
-                              style: TextStyle(
-                                color: accent,
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(height: 5),
-                            ElevatedButton(
-                              onPressed: () => {
-                                setActivePlaylist(
-                                  widget.playlist['list'] as List,
-                                ),
-                                Fluttertoast.showToast(
-                                  msg: AppLocalizations.of(context)!
-                                      .queueInitText,
-                                  toastLength: Toast.LENGTH_LONG,
-                                  gravity: ToastGravity.BOTTOM,
-                                  backgroundColor: accent,
-                                  textColor: accent != const Color(0xFFFFFFFF)
-                                      ? Colors.white
-                                      : Colors.black,
-                                ),
-                                Navigator.pop(context, false)
-                              },
-                              style: ElevatedButton.styleFrom(
-                                primary: accent,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              child: Text(
-                                AppLocalizations.of(context)!
-                                    .playAll
-                                    .toUpperCase(),
-                                style: TextStyle(
-                                    color: accent != const Color(0xFFFFFFFF)
-                                        ? Colors.white
-                                        : Colors.black),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
                     ],
                   ),
                   const SizedBox(height: 30),
