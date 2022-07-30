@@ -4,8 +4,9 @@
 * Streaming Support
 * Download Support
 * Play Local / Downloaded Songs Supported
-* High Quality m4a/ mp3 / flac Format
+* High Quality m4a / mp3 / flac Format
 * Lyrics Support
 * No Ads
 * No Subscriptions
 * 12 Supported Languages
+* Material UI & Accent Colors

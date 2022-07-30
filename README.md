@@ -13,11 +13,11 @@
     Download Support :arrow_down:<br>
     Play Local / Downloaded Songs Support :open_file_folder: <br>
     High Quality mp3 / m4a / flac Format :fire:<br>
-  	 Lyrics Support :pencil:<br>
+    Lyrics Support :pencil:<br>
     No Ads :no_entry_sign:<br>
     No Subscriptions :dollar:<br> 
     12 Supported Languages :us:<br>
-    Accent Colors :art: <br>
+    Material UI & Accent Colors :art: <br>
  
 
 ---

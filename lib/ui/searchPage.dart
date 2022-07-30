@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:musify/API/musify.dart';
@@ -42,10 +41,7 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
       appBar: AppBar(
-        systemOverlayStyle:
-            const SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
         centerTitle: true,
         title: Text(
           AppLocalizations.of(context)!.search,
@@ -55,7 +51,6 @@ class _SearchPageState extends State<SearchPage> {
             fontWeight: FontWeight.w700,
           ),
         ),
-        backgroundColor: Colors.transparent,
         elevation: 0,
       ),
       body: SingleChildScrollView(

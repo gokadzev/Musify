@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/API/musify.dart';
@@ -36,10 +35,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
       appBar: AppBar(
-        systemOverlayStyle:
-            const SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
         centerTitle: true,
         title: Text(
           AppLocalizations.of(context)!.playlists,
@@ -49,7 +45,6 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
             fontWeight: FontWeight.w700,
           ),
         ),
-        backgroundColor: Colors.transparent,
         elevation: 0,
       ),
       body: SingleChildScrollView(

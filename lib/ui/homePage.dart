@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/API/musify.dart';
@@ -20,8 +19,6 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        systemOverlayStyle:
-            const SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
         centerTitle: true,
         title: Text(
           'Musify.',
@@ -31,7 +28,6 @@ class _HomePageState extends State<HomePage> {
             fontWeight: FontWeight.w800,
           ),
         ),
-        backgroundColor: Colors.transparent,
         elevation: 0,
       ),
       body: SingleChildScrollView(

@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/API/musify.dart';
@@ -72,10 +71,7 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
       appBar: AppBar(
-        systemOverlayStyle:
-            const SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
         centerTitle: true,
         title: Text(
           AppLocalizations.of(context)!.localSongs,
@@ -85,7 +81,6 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
             fontWeight: FontWeight.w700,
           ),
         ),
-        backgroundColor: Colors.transparent,
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -157,12 +152,15 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
                       const Padding(
                         padding: EdgeInsets.only(top: 5, bottom: 5),
                       ),
-                      TextButton(
+                      ElevatedButton(
                         onPressed: () => {
                           setActivePlaylist(localSongs),
                         },
-                        style: TextButton.styleFrom(
-                          backgroundColor: accent,
+                        style: ElevatedButton.styleFrom(
+                          primary: accent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                         ),
                         child: Text(
                           AppLocalizations.of(context)!.playAll.toUpperCase(),

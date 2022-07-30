@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -76,10 +75,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: bgColor,
       appBar: AppBar(
-        systemOverlayStyle:
-            const SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
         centerTitle: true,
         title: Text(
           AppLocalizations.of(context)!.playlist,
@@ -96,7 +92,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
           ),
           onPressed: () => Navigator.pop(context, false),
         ),
-        backgroundColor: Colors.transparent,
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -179,7 +174,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                               ),
                             ),
                             const SizedBox(height: 5),
-                            TextButton(
+                            ElevatedButton(
                               onPressed: () => {
                                 setActivePlaylist(
                                   widget.playlist['list'] as List,
@@ -196,8 +191,11 @@ class _PlaylistPageState extends State<PlaylistPage> {
                                 ),
                                 Navigator.pop(context, false)
                               },
-                              style: TextButton.styleFrom(
-                                backgroundColor: accent,
+                              style: ElevatedButton.styleFrom(
+                                primary: accent,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
                               ),
                               child: Text(
                                 AppLocalizations.of(context)!

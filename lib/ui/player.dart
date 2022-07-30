@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:audio_service/audio_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -54,11 +53,7 @@ class AudioAppState extends State<AudioApp> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: bgColor,
       appBar: AppBar(
-        systemOverlayStyle:
-            const SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
-        backgroundColor: bgColor,
         elevation: 0,
         centerTitle: true,
         title: Text(
@@ -344,18 +339,21 @@ class AudioAppState extends State<AudioApp> {
                                     icon: const Icon(MdiIcons.play),
                                     iconSize: size.width * 0.1,
                                     onPressed: play,
+                                    splashColor: Colors.transparent,
                                   );
                                 case MPlayerState.playing:
                                   return IconButton(
                                     icon: const Icon(MdiIcons.pause),
                                     iconSize: size.width * 0.1,
                                     onPressed: pause,
+                                    splashColor: Colors.transparent,
                                   );
                                 case MPlayerState.stopped:
                                   return IconButton(
                                     icon: const Icon(MdiIcons.play),
                                     iconSize: size.width * 0.08,
                                     onPressed: play,
+                                    splashColor: Colors.transparent,
                                   );
                               }
                             },

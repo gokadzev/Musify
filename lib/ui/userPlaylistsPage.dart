@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/customWidgets/spinner.dart';
@@ -17,10 +16,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: bgColor,
       appBar: AppBar(
-        systemOverlayStyle:
-            const SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
         centerTitle: true,
         title: Text(
           AppLocalizations.of(context)!.userPlaylists,
@@ -37,7 +33,6 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
           ),
           onPressed: () => Navigator.pop(context, false),
         ),
-        backgroundColor: Colors.transparent,
         elevation: 0,
       ),
       floatingActionButton: FloatingActionButton(
