@@ -44,14 +44,14 @@ dependencies:
   just_audio: ^0.9.28
   material_design_icons_flutter: ^5.0.6996
   on_audio_query: ^2.6.1
-  package_info_plus: ^1.4.2
+  package_info_plus: ^1.4.3
   path_provider: ^2.0.11
   permission_handler: ^10.0.0
   youtube_explode_dart: ^1.12.0
 
 dev_dependencies:
   flutter_launcher_icons: ^0.9.3
-  flutter_native_splash: ^2.2.5
+  flutter_native_splash: ^2.2.6
   flutter_test:
     sdk: flutter
 
