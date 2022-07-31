@@ -30,12 +30,12 @@ void deleteData(String category, dynamic key) {
   Hive.box(category).delete(key);
 }
 
-void clearCache() {
+void clearCache() async {
   if (!Hive.isBoxOpen('cache')) {
-    Hive.openBox('cache');
+    await Hive.openBox('cache');
   }
-  Hive.box('cache').clear();
-  DefaultCacheManager().emptyCache();
+  await Hive.box('cache').clear();
+  await DefaultCacheManager().emptyCache();
 }
 
 Future backupData() async {
