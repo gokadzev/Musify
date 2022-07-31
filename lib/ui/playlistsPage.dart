@@ -15,7 +15,6 @@ class PlaylistsPage extends StatefulWidget {
 
 class _PlaylistsPageState extends State<PlaylistsPage> {
   final TextEditingController _searchBar = TextEditingController();
-  final ValueNotifier<bool> _fetchingSongs = ValueNotifier(false);
   final FocusNode _inputNode = FocusNode();
   String _searchQuery = '';
 
@@ -26,9 +25,6 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
       return;
     }
 
-    _fetchingSongs.value = true;
-    await fetchSongsList(_searchQuery);
-    _fetchingSongs.value = false;
     setState(() {});
   }
 
@@ -82,31 +78,17 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                     ),
                     borderSide: BorderSide(color: accent),
                   ),
-                  suffixIcon: ValueListenableBuilder<bool>(
-                      valueListenable: _fetchingSongs,
-                      builder: (_, value, __) {
-                        if (value == true) {
-                          return IconButton(
-                              icon: const SizedBox(
-                                  height: 18, width: 18, child: Spinner()),
-                              color: accent,
-                              onPressed: () {
-                                search();
-                                FocusManager.instance.primaryFocus?.unfocus();
-                              });
-                        } else {
-                          return IconButton(
-                              icon: Icon(
-                                Icons.search,
-                                color: accent,
-                              ),
-                              color: accent,
-                              onPressed: () {
-                                search();
-                                FocusManager.instance.primaryFocus?.unfocus();
-                              });
-                        }
-                      }),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      Icons.search,
+                      color: accent,
+                    ),
+                    color: accent,
+                    onPressed: () {
+                      search();
+                      FocusManager.instance.primaryFocus?.unfocus();
+                    },
+                  ),
                   border: InputBorder.none,
                   hintText: '${AppLocalizations.of(context)!.search}...',
                   hintStyle: TextStyle(
