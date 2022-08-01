@@ -69,8 +69,9 @@ class AppState extends State<Musify> {
       } else if (processingState != ProcessingState.completed) {
         buttonNotifier.value = MPlayerState.playing;
       } else {
-        await audioPlayer?.seek(Duration.zero);
-        await audioPlayer?.pause();
+        await stop();
+        await audioPlayer!.seek(Duration.zero);
+        buttonNotifier.value = MPlayerState.stopped;
         if (hasNext) {
           if (activePlaylist.isEmpty && playNextSongAutomatically.value) {
             await playSong(await getRandomSong());
