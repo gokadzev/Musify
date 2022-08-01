@@ -31,7 +31,7 @@ class _SearchPageState extends State<SearchPage> {
     _fetchingSongs.value = true;
     await fetchSongsList(searchQuery);
     if (!searchHistory.contains(searchQuery)) {
-      searchHistory.add(searchQuery);
+      searchHistory.insert(0, searchQuery);
       addOrUpdateData('user', 'searchHistory', searchHistory);
     }
     _fetchingSongs.value = false;
