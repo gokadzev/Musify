@@ -225,7 +225,10 @@ class _PlaylistPageState extends State<PlaylistPage> {
                         }
                         return Padding(
                           padding: const EdgeInsets.only(top: 5, bottom: 5),
-                          child: SongBar(_songsList[index]),
+                          child: SongBar(
+                            _songsList[index],
+                            true,
+                          ),
                         );
                       },
                     )

@@ -136,7 +136,10 @@ class _SearchPageState extends State<SearchPage> {
                 itemBuilder: (BuildContext ctxt, int index) {
                   return Padding(
                     padding: const EdgeInsets.only(top: 5, bottom: 5),
-                    child: SongBar(searchedList[index]),
+                    child: SongBar(
+                      searchedList[index],
+                      false,
+                    ),
                   );
                 },
               )

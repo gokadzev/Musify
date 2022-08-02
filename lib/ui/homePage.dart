@@ -123,6 +123,7 @@ class _HomePageState extends State<HomePage> {
                               itemBuilder: (context, index) {
                                 return SongBar(
                                   (data as dynamic).data[index],
+                                  false,
                                 );
                               },
                             ),
