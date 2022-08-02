@@ -91,51 +91,67 @@ class _HomePageState extends State<HomePage> {
             FutureBuilder(
               future: get10Music('PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx'),
               builder: (context, data) {
-                return data.hasData
-                    ? Wrap(
-                        children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.only(
-                              top: MediaQuery.of(context).size.height / 55,
-                              bottom: 10,
-                              left: 20,
-                              right: 20,
-                            ),
-                            child: Text(
-                              AppLocalizations.of(context)!.recommendedForYou,
-                              style: TextStyle(
-                                color: accent,
-                                fontSize: 20,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 7,
-                            ),
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              addAutomaticKeepAlives: false,
-                              addRepaintBoundaries: false,
-                              physics: const BouncingScrollPhysics(),
-                              itemCount: (data as dynamic).data.length as int,
-                              itemBuilder: (context, index) {
-                                return SongBar(
-                                  (data as dynamic).data[index],
-                                  false,
-                                );
-                              },
-                            ),
-                          )
-                        ],
-                      )
-                    : const Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(35),
-                          child: Spinner(),
+                if (data.connectionState != ConnectionState.done) {
+                  return const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(35),
+                      child: Spinner(),
+                    ),
+                  );
+                }
+                if (data.hasError) {
+                  // print(data.error);
+                  return Center(
+                      child: Text(
+                    'Error!',
+                    style: TextStyle(color: accent, fontSize: 18),
+                  ));
+                }
+                if (!data.hasData) {
+                  return Center(
+                      child: Text(
+                    'Nothing Found!',
+                    style: TextStyle(color: accent, fontSize: 18),
+                  ));
+                }
+                return Wrap(
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(
+                        top: MediaQuery.of(context).size.height / 55,
+                        bottom: 10,
+                        left: 20,
+                        right: 20,
+                      ),
+                      child: Text(
+                        AppLocalizations.of(context)!.recommendedForYou,
+                        style: TextStyle(
+                          color: accent,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
                         ),
-                      );
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 7,
+                      ),
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        addAutomaticKeepAlives: false,
+                        addRepaintBoundaries: false,
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: (data as dynamic).data.length as int,
+                        itemBuilder: (context, index) {
+                          return SongBar(
+                            (data as dynamic).data[index],
+                            false,
+                          );
+                        },
+                      ),
+                    )
+                  ],
+                );
               },
             ),
           ],
