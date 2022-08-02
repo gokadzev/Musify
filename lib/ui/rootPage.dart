@@ -50,12 +50,6 @@ class AppState extends State<Musify> {
     );
   }
 
-  @override
-  void dispose() {
-    audioPlayer?.dispose();
-    super.dispose();
-  }
-
   void initAudioPlayer() {
     audioPlayerStateSubscription =
         audioPlayer?.playerStateStream.listen((playerState) async {
