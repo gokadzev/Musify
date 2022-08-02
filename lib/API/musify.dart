@@ -56,7 +56,7 @@ Future<List> fetchSongsList(String searchQuery) async {
 
 Future get10Music(dynamic playlistid) async {
   final List playlistSongs =
-      await getData('cache', 'playlistSongs$playlistid') ?? [];
+      await getData('cache', 'playlist10Songs$playlistid') ?? [];
   if (playlistSongs.isEmpty) {
     int index = 0;
     await for (final song in yt.playlists.getVideos(playlistid).take(10)) {
@@ -76,7 +76,7 @@ Future get10Music(dynamic playlistid) async {
       index += 1;
     }
 
-    addOrUpdateData('cache', 'playlistSongs$playlistid', playlistSongs);
+    addOrUpdateData('cache', 'playlist10Songs$playlistid', playlistSongs);
   }
 
   return playlistSongs;
