@@ -54,27 +54,32 @@ Future<List> fetchSongsList(String searchQuery) async {
   return searchedList;
 }
 
-Future get10Music(dynamic playlistId) async {
-  final newSongs = [];
-  int index = 0;
-  await for (final song in yt.playlists.getVideos(playlistId).take(10)) {
-    newSongs.add(
-      returnSongLayout(
-        index,
-        song.id.toString(),
-        formatSongTitle(
-          song.title.split('-')[song.title.split('-').length - 1],
+Future get10Music(dynamic playlistid) async {
+  final List playlistSongs =
+      await getData('cache', 'playlistSongs$playlistid') ?? [];
+  if (playlistSongs.isEmpty) {
+    int index = 0;
+    await for (final song in yt.playlists.getVideos(playlistid).take(10)) {
+      playlistSongs.add(
+        returnSongLayout(
+          index,
+          song.id.toString(),
+          formatSongTitle(
+            song.title.split('-')[song.title.split('-').length - 1],
+          ),
+          song.thumbnails.standardResUrl,
+          song.thumbnails.lowResUrl,
+          song.thumbnails.maxResUrl,
+          song.title.split('-')[0],
         ),
-        song.thumbnails.standardResUrl,
-        song.thumbnails.lowResUrl,
-        song.thumbnails.maxResUrl,
-        song.title.split('-')[0],
-      ),
-    );
-    index += 1;
+      );
+      index += 1;
+    }
+
+    addOrUpdateData('cache', 'playlistSongs$playlistid', playlistSongs);
   }
 
-  return newSongs;
+  return playlistSongs;
 }
 
 Future<List<dynamic>> getUserPlaylists() async {
