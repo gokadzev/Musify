@@ -18,14 +18,9 @@ String status = 'hidden';
 typedef OnError = void Function(Exception exception);
 
 StreamSubscription? positionSubscription;
-StreamSubscription? audioPlayerStateSubscription;
 
 Duration? duration;
 Duration? position;
-
-bool get isPlaying => buttonNotifier.value == MPlayerState.playing;
-
-bool get isPaused => buttonNotifier.value == MPlayerState.paused;
 
 enum MPlayerState { stopped, playing, paused, loading }
 
@@ -266,7 +261,7 @@ class AudioAppState extends State<AudioApp> {
                   setState(() {
                     audioPlayer!.seek(
                       Duration(
-                        seconds: (value! / 1000).round(),
+                        milliseconds: value!.round(),
                       ),
                     );
                     value = value;
@@ -323,38 +318,22 @@ class AudioAppState extends State<AudioApp> {
                             color: accent,
                             borderRadius: BorderRadius.circular(100),
                           ),
-                          child: ValueListenableBuilder<MPlayerState>(
-                            valueListenable: buttonNotifier,
-                            builder: (_, value, __) {
-                              switch (value) {
-                                case MPlayerState.loading:
-                                  return Container(
-                                    margin: const EdgeInsets.all(8),
-                                    width: size.width * 0.08,
-                                    height: size.width * 0.08,
-                                    child: const Spinner(),
-                                  );
-                                case MPlayerState.paused:
-                                  return IconButton(
-                                    icon: const Icon(MdiIcons.play),
-                                    iconSize: size.width * 0.1,
-                                    onPressed: play,
-                                    splashColor: Colors.transparent,
-                                  );
-                                case MPlayerState.playing:
-                                  return IconButton(
-                                    icon: const Icon(MdiIcons.pause),
-                                    iconSize: size.width * 0.1,
-                                    onPressed: pause,
-                                    splashColor: Colors.transparent,
-                                  );
-                                case MPlayerState.stopped:
-                                  return IconButton(
-                                    icon: const Icon(MdiIcons.play),
-                                    iconSize: size.width * 0.08,
-                                    onPressed: play,
-                                    splashColor: Colors.transparent,
-                                  );
+                          child: StreamBuilder<PlayerState>(
+                            stream: audioPlayer!.playerStateStream,
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                final playerState = snapshot.data;
+                                return _playerControllers(playerState!, size);
+                              } else {
+                                return Container(
+                                  margin: const EdgeInsets.all(8),
+                                  width: size.width * 0.08,
+                                  height: size.width * 0.08,
+                                  child: const CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        Color.fromARGB(255, 0, 0, 0)),
+                                  ),
+                                );
                               }
                             },
                           ),
@@ -580,4 +559,41 @@ class AudioAppState extends State<AudioApp> {
           )
         ],
       );
+
+  Widget _playerControllers(PlayerState playerState, Size size) {
+    final processingState = playerState.processingState;
+    if (processingState == ProcessingState.loading ||
+        processingState == ProcessingState.buffering) {
+      return Container(
+        margin: const EdgeInsets.all(8),
+        width: size.width * 0.08,
+        height: size.width * 0.08,
+        child: const CircularProgressIndicator(
+          valueColor:
+              AlwaysStoppedAnimation<Color>(Color.fromARGB(255, 0, 0, 0)),
+        ),
+      );
+    } else if (audioPlayer!.playing != true) {
+      return IconButton(
+        icon: const Icon(MdiIcons.play),
+        iconSize: size.width * 0.1,
+        onPressed: play,
+        splashColor: Colors.transparent,
+      );
+    } else if (processingState != ProcessingState.completed) {
+      return IconButton(
+        icon: const Icon(MdiIcons.pause),
+        iconSize: size.width * 0.1,
+        onPressed: pause,
+        splashColor: Colors.transparent,
+      );
+    } else {
+      return IconButton(
+        icon: const Icon(MdiIcons.replay),
+        iconSize: 64.0,
+        onPressed: () => audioPlayer!
+            .seek(Duration.zero, index: audioPlayer!.effectiveIndices!.first),
+      );
+    }
+  }
 }

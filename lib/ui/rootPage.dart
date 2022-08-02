@@ -51,21 +51,10 @@ class AppState extends State<Musify> {
   }
 
   void initAudioPlayer() {
-    audioPlayerStateSubscription =
-        audioPlayer?.playerStateStream.listen((playerState) async {
-      final isPlaying = playerState.playing;
-      final processingState = playerState.processingState;
-      if (processingState == ProcessingState.loading ||
-          processingState == ProcessingState.buffering) {
-        buttonNotifier.value = MPlayerState.loading;
-      } else if (!isPlaying) {
-        buttonNotifier.value = MPlayerState.paused;
-      } else if (processingState != ProcessingState.completed) {
-        buttonNotifier.value = MPlayerState.playing;
-      } else {
+    audioPlayer!.processingStateStream.listen((state) async {
+      if (state == ProcessingState.completed) {
         await stop();
         await audioPlayer!.seek(Duration.zero);
-        buttonNotifier.value = MPlayerState.stopped;
         if (hasNext) {
           if (activePlaylist.isEmpty && playNextSongAutomatically.value) {
             await playSong(await getRandomSong());
@@ -258,29 +247,29 @@ class AppState extends State<Musify> {
                         ),
                       ),
                       const Spacer(),
-                      ValueListenableBuilder<MPlayerState>(
-                        valueListenable: buttonNotifier,
-                        builder: (_, value, __) {
-                          return IconButton(
-                            icon: buttonNotifier.value == MPlayerState.playing
-                                ? const Icon(MdiIcons.pause)
-                                : const Icon(MdiIcons.playOutline),
-                            color: accent,
-                            splashColor: Colors.transparent,
-                            onPressed: () {
-                              setState(() {
-                                if (buttonNotifier.value ==
-                                    MPlayerState.playing) {
-                                  audioPlayer?.pause();
-                                } else if (buttonNotifier.value ==
-                                    MPlayerState.paused) {
-                                  audioPlayer?.play();
-                                }
-                              });
-                            },
-                            iconSize: 45,
-                          );
-                        },
+                      Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: StreamBuilder<PlayerState>(
+                          stream: audioPlayer!.playerStateStream,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              final playerState = snapshot.data;
+                              return _playerControllers(
+                                  playerState!, MediaQuery.of(context).size);
+                            } else {
+                              return Container(
+                                margin: const EdgeInsets.all(8),
+                                width: MediaQuery.of(context).size.width * 0.08,
+                                height:
+                                    MediaQuery.of(context).size.width * 0.08,
+                                child: CircularProgressIndicator(
+                                  valueColor:
+                                      AlwaysStoppedAnimation<Color>(accent),
+                                ),
+                              );
+                            }
+                          },
+                        ),
                       )
                     ],
                   ),
@@ -305,5 +294,42 @@ class AppState extends State<Musify> {
         margin: const EdgeInsets.only(left: 8, right: 8),
       ),
     );
+  }
+
+  Widget _playerControllers(PlayerState playerState, Size size) {
+    final processingState = playerState.processingState;
+    if (processingState == ProcessingState.loading ||
+        processingState == ProcessingState.buffering) {
+      return Container(
+        margin: const EdgeInsets.all(8),
+        width: size.width * 0.08,
+        height: size.width * 0.08,
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(accent),
+        ),
+      );
+    } else if (audioPlayer!.playing != true) {
+      return IconButton(
+        icon: Icon(MdiIcons.play, color: accent),
+        iconSize: 45,
+        onPressed: play,
+        splashColor: Colors.transparent,
+      );
+    } else if (processingState != ProcessingState.completed) {
+      return IconButton(
+        icon: Icon(MdiIcons.pause, color: accent),
+        iconSize: 45,
+        onPressed: pause,
+        splashColor: Colors.transparent,
+      );
+    } else {
+      return IconButton(
+        icon: Icon(MdiIcons.replay, color: accent),
+        iconSize: 45,
+        onPressed: () => audioPlayer!
+            .seek(Duration.zero, index: audioPlayer!.effectiveIndices!.first),
+        splashColor: Colors.transparent,
+      );
+    }
   }
 }
