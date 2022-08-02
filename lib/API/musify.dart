@@ -4,8 +4,8 @@ import 'dart:math';
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:hive/hive.dart';
+import 'package:http/http.dart' as http;
 import 'package:musify/helper/formatter.dart';
 import 'package:musify/helper/mediaitem.dart';
 import 'package:musify/services/audio_handler.dart';
@@ -295,20 +295,32 @@ Future<List<SongModel>> getLocalSongs() async {
 Future getSongLyrics(String artist, String title) async {
   if (_lastLyricsUrl !=
       'https://api.lyrics.ovh/v1/$artist/${title.split(" (")[0].split("|")[0].trim()}') {
-    lyrics.value = 'null';
-    _lastLyricsUrl =
-        'https://api.lyrics.ovh/v1/$artist/${title.split(" (")[0].split("|")[0].trim()}';
-    try {
-      final lyricsApiRes = await DefaultCacheManager().getSingleFile(
-        _lastLyricsUrl,
+    if (await getData('cache',
+            'lyrics-https://api.lyrics.ovh/v1/$artist/${title.split(" (")[0].split("|")[0].trim()}') !=
+        null) {
+      lyrics.value = await getData('cache',
+          'lyrics-https://api.lyrics.ovh/v1/$artist/${title.split(" (")[0].split("|")[0].trim()}');
+    } else {
+      lyrics.value = 'null';
+      _lastLyricsUrl =
+          'https://api.lyrics.ovh/v1/$artist/${title.split(" (")[0].split("|")[0].trim()}';
+      final response = await http.get(
+        Uri.parse(_lastLyricsUrl),
         headers: {'Accept': 'application/json'},
       );
-      final lyricsResponse =
-          await json.decode(await lyricsApiRes.readAsString());
-      lyrics.value = lyricsResponse['lyrics'].toString();
-    } catch (e) {
-      lyrics.value = 'not found';
-      debugPrint(e.toString());
+
+      if (response.statusCode == 200) {
+        final lyricsResponse = await json.decode(response.body);
+        if (lyricsResponse['lyrics'] != null) {
+          lyrics.value = lyricsResponse['lyrics'].toString();
+          addOrUpdateData('cache', 'lyrics-$_lastLyricsUrl',
+              lyricsResponse['lyrics'].toString());
+        } else
+          lyrics.value = 'not found';
+      } else {
+        lyrics.value = 'not found';
+        throw Exception('Failed to load lyrics');
+      }
     }
   }
 }

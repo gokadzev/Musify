@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:hive/hive.dart';
 import 'package:musify/services/ext_storage.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -35,7 +34,6 @@ void clearCache() async {
     await Hive.openBox('cache');
   }
   await Hive.box('cache').clear();
-  await DefaultCacheManager().emptyCache();
 }
 
 Future backupData() async {
