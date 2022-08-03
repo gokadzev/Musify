@@ -293,9 +293,9 @@ class GetPlaylist extends StatelessWidget {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(15),
                       gradient: LinearGradient(
-                        colors: [
-                          const Color.fromARGB(30, 255, 255, 255),
-                          const Color.fromARGB(30, 233, 233, 233),
+                        colors: const [
+                          Color.fromARGB(30, 255, 255, 255),
+                          Color.fromARGB(30, 233, 233, 233),
                         ],
                         begin: index.isOdd
                             ? Alignment.bottomCenter

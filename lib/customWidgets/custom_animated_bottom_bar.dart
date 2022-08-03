@@ -66,16 +66,16 @@ class CustomAnimatedBottomBar extends StatelessWidget {
                     curve: curve,
                     duration: duration,
                     builder: (context, t, _) {
-                      final _selectedColor =
+                      final selectedColor =
                           item.activeColor ?? selectedItemColor;
 
-                      final _unselectedColor =
+                      final unselectedColor =
                           item.inactiveColor ?? unselectedItemColor;
 
                       return Material(
                         color: Color.lerp(
-                          _selectedColor!.withOpacity(0),
-                          _selectedColor
+                          selectedColor!.withOpacity(0),
+                          selectedColor
                               .withOpacity(selectedColorOpacity ?? 0.1),
                           t,
                         ),
@@ -83,10 +83,10 @@ class CustomAnimatedBottomBar extends StatelessWidget {
                         child: InkWell(
                           onTap: () => onTap?.call(items.indexOf(item)),
                           customBorder: itemShape,
-                          focusColor: _selectedColor.withOpacity(0.1),
-                          highlightColor: _selectedColor.withOpacity(0.1),
-                          splashColor: _selectedColor.withOpacity(0.1),
-                          hoverColor: _selectedColor.withOpacity(0.1),
+                          focusColor: selectedColor.withOpacity(0.1),
+                          highlightColor: selectedColor.withOpacity(0.1),
+                          splashColor: selectedColor.withOpacity(0.1),
+                          hoverColor: selectedColor.withOpacity(0.1),
                           child: Padding(
                             padding: Localizations.localeOf(context) ==
                                     const Locale('en', '')
@@ -105,8 +105,8 @@ class CustomAnimatedBottomBar extends StatelessWidget {
                                 IconTheme(
                                   data: IconThemeData(
                                     color: Color.lerp(
-                                      _unselectedColor,
-                                      _selectedColor,
+                                      unselectedColor,
+                                      selectedColor,
                                       t,
                                     ),
                                     size: 24,
@@ -138,8 +138,8 @@ class CustomAnimatedBottomBar extends StatelessWidget {
                                           child: DefaultTextStyle(
                                             style: TextStyle(
                                               color: Color.lerp(
-                                                _selectedColor.withOpacity(0),
-                                                _selectedColor,
+                                                selectedColor.withOpacity(0),
+                                                selectedColor,
                                                 t,
                                               ),
                                               fontWeight: FontWeight.w600,

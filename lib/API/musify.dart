@@ -165,28 +165,28 @@ Future<Map> getRandomSong() async {
         json.decode(await rootBundle.loadString('assets/db/playlists.db.json'))
             as List;
   }
-  final _random = Random();
-  final playlistId = playlists[_random.nextInt(playlists.length)]['ytid'];
+  final random = Random();
+  final playlistId = playlists[random.nextInt(playlists.length)]['ytid'];
   final playlistSongs =
       await getData('cache', 'playlistSongs$playlistId') ?? [];
 
   if (playlistSongs.isEmpty) {
-    final _songs = await yt.playlists.getVideos(playlistId).take(5).toList();
-    final _choosedSong = _songs[_random.nextInt(playlistSongs.length)];
+    final songs = await yt.playlists.getVideos(playlistId).take(5).toList();
+    final choosedSong = songs[random.nextInt(playlistSongs.length)];
 
     return returnSongLayout(
       0,
-      _choosedSong.id.toString(),
+      choosedSong.id.toString(),
       formatSongTitle(
-        _choosedSong.title.split('-')[_choosedSong.title.split('-').length - 1],
+        choosedSong.title.split('-')[choosedSong.title.split('-').length - 1],
       ),
-      _choosedSong.thumbnails.standardResUrl,
-      _choosedSong.thumbnails.lowResUrl,
-      _choosedSong.thumbnails.maxResUrl,
-      _choosedSong.title.split('-')[0],
+      choosedSong.thumbnails.standardResUrl,
+      choosedSong.thumbnails.lowResUrl,
+      choosedSong.thumbnails.maxResUrl,
+      choosedSong.title.split('-')[0],
     );
   } else {
-    return playlistSongs[_random.nextInt(playlistSongs.length)];
+    return playlistSongs[random.nextInt(playlistSongs.length)];
   }
 }
 
@@ -315,8 +315,9 @@ Future getSongLyrics(String artist, String title) async {
           lyrics.value = lyricsResponse['lyrics'].toString();
           addOrUpdateData('cache', 'lyrics-$_lastLyricsUrl',
               lyricsResponse['lyrics'].toString());
-        } else
+        } else {
           lyrics.value = 'not found';
+        }
       } else {
         lyrics.value = 'not found';
         throw Exception('Failed to load lyrics');
