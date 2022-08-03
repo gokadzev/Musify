@@ -18,6 +18,7 @@ String status = 'hidden';
 typedef OnError = void Function(Exception exception);
 
 StreamSubscription? positionSubscription;
+StreamSubscription? durationSubscription;
 
 Duration? duration;
 Duration? position;
@@ -37,11 +38,18 @@ class AudioAppState extends State<AudioApp> {
 
     positionSubscription = audioPlayer?.positionStream
         .listen((p) => {if (mounted) setState(() => position = p)});
-    audioPlayer?.durationStream.listen(
+    durationSubscription = audioPlayer?.durationStream.listen(
       (d) => {
         if (mounted) {setState(() => duration = d)}
       },
     );
+  }
+
+  @override
+  void dispose() {
+    positionSubscription!.cancel();
+    durationSubscription!.cancel();
+    super.dispose();
   }
 
   @override
