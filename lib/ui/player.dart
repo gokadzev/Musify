@@ -287,6 +287,7 @@ class AudioAppState extends State<AudioApp> {
                               color: Colors.white,
                             ),
                             iconSize: size.width * 0.056,
+                            splashColor: Colors.transparent,
                             onPressed: () {
                               downloadSong(
                                 mediaItemToMap(metadata as MediaItem),
@@ -302,6 +303,7 @@ class AudioAppState extends State<AudioApp> {
                           ),
                           iconSize: size.width * 0.056,
                           onPressed: changeShuffleStatus,
+                          splashColor: Colors.transparent,
                         ),
                         IconButton(
                           padding: EdgeInsets.zero,
@@ -312,6 +314,7 @@ class AudioAppState extends State<AudioApp> {
                           ),
                           iconSize: size.width * 0.056,
                           onPressed: playPrevious,
+                          splashColor: Colors.transparent,
                         ),
                         DecoratedBox(
                           decoration: BoxDecoration(
@@ -347,6 +350,7 @@ class AudioAppState extends State<AudioApp> {
                           ),
                           iconSize: size.width * 0.08,
                           onPressed: playNext,
+                          splashColor: Colors.transparent,
                         ),
                         IconButton(
                           padding: EdgeInsets.zero,
@@ -356,6 +360,7 @@ class AudioAppState extends State<AudioApp> {
                           ),
                           iconSize: size.width * 0.056,
                           onPressed: changeLoopStatus,
+                          splashColor: Colors.transparent,
                         ),
                         if (metadata.extras['ytid'].toString().isNotEmpty)
                           Column(
@@ -370,6 +375,7 @@ class AudioAppState extends State<AudioApp> {
                                       color: value ? accent : Colors.white,
                                     ),
                                     iconSize: size.width * 0.056,
+                                    splashColor: Colors.transparent,
                                     onPressed: changeAutoPlayNextStatus,
                                   );
                                 },
@@ -382,6 +388,7 @@ class AudioAppState extends State<AudioApp> {
                                       color: accent,
                                       icon: const Icon(MdiIcons.star),
                                       iconSize: size.width * 0.056,
+                                      splashColor: Colors.transparent,
                                       onPressed: () => {
                                         removeUserLikedSong(ytid),
                                         songLikeStatus.value = false
@@ -392,6 +399,7 @@ class AudioAppState extends State<AudioApp> {
                                       color: Colors.white,
                                       icon: const Icon(MdiIcons.starOutline),
                                       iconSize: size.width * 0.056,
+                                      splashColor: Colors.transparent,
                                       onPressed: () => {
                                         addUserLikedSong(ytid),
                                         songLikeStatus.value = true
