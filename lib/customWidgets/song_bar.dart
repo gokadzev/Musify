@@ -29,10 +29,10 @@ class SongBar extends StatelessWidget {
             Navigator.pop(context);
           }
         },
-        splashColor: accent,
-        hoverColor: accent,
-        focusColor: accent,
-        highlightColor: accent,
+        splashColor: accent.withOpacity(0.4),
+        hoverColor: accent.withOpacity(0.4),
+        focusColor: accent.withOpacity(0.4),
+        highlightColor: accent.withOpacity(0.4),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
