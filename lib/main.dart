@@ -1,5 +1,6 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -153,13 +154,10 @@ void main() async {
   await Hive.openBox('user');
   await Hive.openBox('cache');
   await FlutterDownloader.initialize(
-    debug:
-        true, // optional: set to false to disable printing logs to console (default: true)
-    ignoreSsl:
-        true // option: set to false to disable working with http links (default: false)
-    ,
+    debug: kDebugMode,
+    ignoreSsl: true,
   );
-  FlutterDownloader.registerCallback(TestClass.callback);
+  FlutterDownloader.registerCallback(downloadCallback);
   final PackageInfo packageInfo = await PackageInfo.fromPlatform();
   version = packageInfo.version;
   await enableBooster();
@@ -183,7 +181,5 @@ Future<void> initialisation() async {
   getIt.registerSingleton<AudioHandler>(audioHandler);
 }
 
-// ignore: avoid_classes_with_only_static_members
-class TestClass {
-  static void callback(String id, DownloadTaskStatus status, int progress) {}
-}
+@pragma('vm:entry-point')
+void downloadCallback(String id, DownloadTaskStatus status, int progress) {}
