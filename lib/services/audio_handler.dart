@@ -38,7 +38,7 @@ class MyAudioHandler extends BaseAudioHandler {
           systemActions: const {
             MediaAction.seek,
           },
-          androidCompactActionIndices: const [0, 1, 2],
+          androidCompactActionIndices: const [0, 1, 3],
           processingState: const {
             ProcessingState.idle: AudioProcessingState.idle,
             ProcessingState.loading: AudioProcessingState.loading,

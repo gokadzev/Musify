@@ -53,7 +53,7 @@ Future<void> playSong(Map song) async {
     final songUrl = await getSong(song['ytid'], true);
     await MyAudioHandler().addQueueItem(mapToMediaItem(song, songUrl));
   }
-  await play();
+  play();
 }
 
 Future changeShuffleStatus() async {
@@ -87,15 +87,15 @@ Future enableBooster() async {
   await _loudnessEnhancer.setTargetGain(1);
 }
 
-Future<void> play() => _audioHandler.play();
+void play() => _audioHandler.play();
 
-Future<void> pause() => _audioHandler.pause();
+void pause() => _audioHandler.pause();
 
-Future<void> stop() => _audioHandler.stop();
+void stop() => _audioHandler.stop();
 
-Future<void> playNext() => _audioHandler.skipToNext();
+void playNext() => _audioHandler.skipToNext();
 
-Future<void> playPrevious() => _audioHandler.skipToPrevious();
+void playPrevious() => _audioHandler.skipToPrevious();
 
 Future mute(bool muted) async {
   if (muted) {

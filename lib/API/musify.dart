@@ -227,7 +227,7 @@ Future<void> setActivePlaylist(List plist) async {
     }
     await MyAudioHandler().addQueueItems(activeTempPlaylist);
 
-    await play();
+    play();
   } else {
     activePlaylist = plist;
     id = 0;

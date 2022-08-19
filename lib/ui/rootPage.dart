@@ -53,7 +53,7 @@ class AppState extends State<Musify> {
   void initAudioPlayer() {
     audioPlayer!.processingStateStream.listen((state) async {
       if (state == ProcessingState.completed) {
-        await pause();
+        pause();
         await audioPlayer!.seek(Duration.zero);
         if (hasNext) {
           if (activePlaylist.isEmpty && playNextSongAutomatically.value) {

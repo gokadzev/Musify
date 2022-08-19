@@ -153,6 +153,7 @@ void main() async {
   await Hive.openBox('settings');
   await Hive.openBox('user');
   await Hive.openBox('cache');
+  await initialisation();
   await FlutterDownloader.initialize(
     debug: kDebugMode,
     ignoreSsl: true,
@@ -161,7 +162,6 @@ void main() async {
   final PackageInfo packageInfo = await PackageInfo.fromPlatform();
   version = packageInfo.version;
   await enableBooster();
-  await initialisation();
   runApp(const MyApp());
 }
 
