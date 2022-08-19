@@ -1,0 +1,212 @@
+body {
+    font-family: 'Montserrat';
+    font-weight: 400;
+}
+
+.bg-accent {
+    background-color: #51C0A5;
+}
+
+#title {
+    background-color: #191414;
+    color: #fff;
+}
+
+.container-fluid {
+    padding: 3% 15% 7%;
+}
+
+h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: 3rem;
+    line-height: 1.5;
+}
+
+/* NavigationBar */
+
+.navbar {
+    padding: 0 0 4.5rem;
+}
+
+.navbar-brand {
+    font-family: 'Ubuntu';
+    font-size: 2rem;
+    font-weight: 400;
+}
+
+.nav-item {
+    padding: 0 18px;
+}
+
+.nav-link {
+    font-size: 1.3rem;
+    font-family: 'Montserrat';
+}
+
+/* download buttons */
+.download-button {
+    margin: 5% 2% 5% 0;
+}
+
+/* Title-Image */
+.title-image {
+    width: 250px;
+    position: absolute;
+    right: 15%;
+    top: 8%;
+}
+
+/* Features-Section */
+#features {
+    padding: 7% 15%;
+    background-color: #fff;
+    position: relative;
+}
+
+.feature-column {
+    text-align: center;
+    padding: 0 5% 5%;
+}
+
+.feature-icon {
+    color: #373640;
+    width: 50px;
+    margin-bottom: 20px;
+}
+
+h3 {
+    font-family: 'Ubuntu';
+    font-weight: 700;
+}
+
+
+/* d-now */
+
+#d {
+    text-align: center;
+    background-color: #191414;
+    padding: 20px 0;
+    color: #fff;
+}
+
+.d-now {
+    padding: 12% 0;
+}
+
+.d-button {
+    margin: 30px 10px 0;
+}
+
+/* footer */
+#footer {
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    display: flex;
+    height: 100px;
+}
+
+.footer-icon {
+    padding: 150px 30px 30px;
+}
+
+/* media-query */
+@media (max-width: 1020px) {
+    #title {
+        text-align: center;
+    }
+
+    .title-image {
+        position: static;
+        transform: rotate(0);
+    }
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    isolation: isolate;
+} 
+
+.android {
+    width: 248px;
+    height: 537px;
+    background: url("https://user-images.githubusercontent.com/79704324/174258849-6ec25e24-f07e-459e-9e8f-1f3184d107ef.jpeg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    border-radius: 25px;
+    position: relative;
+}
+
+.android::before {
+    content: "";
+    position: absolute;
+    background: white;
+    border-radius: 30px;
+    z-index: -1;
+    inset: -11px;
+    box-shadow:
+        inset 0 0 5px hsl(0, 0%, 80%),
+        0 1px 1px rgba(0, 0, 0, 0.11),
+        0 2px 2px rgba(0, 0, 0, 0.11),
+        0 4px 4px rgba(0, 0, 0, 0.11),
+        0 8px 8px rgba(0, 0, 0, 0.11),
+        0 16px 16px rgba(0, 0, 0, 0.11),
+        0 32px 32px rgba(0, 0, 0, 0.11);
+}
+
+
+.notch {
+    position: absolute;
+    height: 20px;
+    background: white;
+    left: 57%;
+    border-radius: 0 0 10px 10px;
+}
+
+.camera {
+    position: absolute;
+    right: 10px;
+    width: 12px;
+    height: 12px;
+    background: black;
+    border-radius: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.camera::before {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    width: 7px;
+    height: 7px;
+    background: hsl(220, 100%, 18%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%)
+}
+
+.speaker {
+    position: absolute;
+    height: 25%;
+    width: 45%;
+    background: hsl(0, 0%, 95%);
+    border-radius: 100vw;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: inset 0 0 2px hsla(0, 0%, 0%, 0.5);
+}
+
+@media screen and (max-width:760px) {
+    .container {
+        margin-top: 30px;
+    }
+
+    h1 {
+        font-size: 6vw;
+    }
+}
