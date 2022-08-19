@@ -1,20 +1,14 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hive/hive.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/helper/mediaitem.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/audio_handler.dart';
-import 'package:musify/services/ext_storage.dart';
-import 'package:musify/style/appColors.dart';
 import 'package:musify/ui/player.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 final _equalizer = AndroidEqualizer();
 final _loudnessEnhancer = AndroidLoudnessEnhancer();
