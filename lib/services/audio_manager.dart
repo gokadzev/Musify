@@ -51,76 +51,12 @@ String get positionText =>
 
 bool isMuted = false;
 
-Future<void> downloadSong(dynamic song) async {
-  PermissionStatus status = await Permission.storage.status;
-  if (status.isDenied) {
-    await [
-      Permission.storage,
-      Permission.accessMediaLocation,
-      Permission.mediaLibrary,
-    ].request();
-    status = await Permission.storage.status;
-    if (status.isPermanentlyDenied) {
-      await openAppSettings();
-    }
-  }
-  final filename = song['title']
-          .replaceAll(r'\', '')
-          .replaceAll('/', '')
-          .replaceAll('*', '')
-          .replaceAll('?', '')
-          .replaceAll('"', '')
-          .replaceAll('<', '')
-          .replaceAll('>', '')
-          .replaceAll('|', '') +
-      '.' +
-      prefferedFileExtension.value;
-
-  String filepath = '';
-  final String? dlPath =
-      await ExtStorageProvider.getExtStorage(dirName: 'Musify');
-  try {
-    await File('${dlPath!}/$filename')
-        .create(recursive: true)
-        .then((value) => filepath = value.path);
-  } catch (e) {
-    await [Permission.manageExternalStorage].request();
-    await File('${dlPath!}/$filename')
-        .create(recursive: true)
-        .then((value) => filepath = value.path);
-  }
-  await Fluttertoast.showToast(
-    msg: 'Download Started!',
-    toastLength: Toast.LENGTH_SHORT,
-    gravity: ToastGravity.BOTTOM,
-    backgroundColor: accent,
-    textColor: accent != const Color(0xFFFFFFFF) ? Colors.white : Colors.black,
-    fontSize: 14,
-  );
-  final audioStream = await getSongStream(song['ytid'].toString());
-  final File file = File(filepath);
-  final fileStream = file.openWrite();
-  await yt.videos.streamsClient.get(audioStream as StreamInfo).pipe(fileStream);
-  await fileStream.flush();
-  await fileStream.close();
-
-  debugPrint('Done');
-  await Fluttertoast.showToast(
-    msg: 'Download Completed!',
-    toastLength: Toast.LENGTH_SHORT,
-    gravity: ToastGravity.BOTTOM,
-    backgroundColor: accent,
-    textColor: accent != const Color(0xFFFFFFFF) ? Colors.white : Colors.black,
-    fontSize: 14,
-  );
-}
-
 Future<void> playSong(Map song) async {
   if (song['ytid'].length == 0) {
     await MyAudioHandler()
         .addQueueItem(mapToMediaItem(song, song['songUrl'].toString()));
   } else {
-    final songUrl = await getSongUrl(song['ytid']);
+    final songUrl = await getSong(song['ytid'], true);
     await MyAudioHandler().addQueueItem(mapToMediaItem(song, songUrl));
   }
   await play();

@@ -10,6 +10,7 @@ import 'package:musify/API/musify.dart';
 import 'package:musify/customWidgets/spinner.dart';
 import 'package:musify/helper/mediaitem.dart';
 import 'package:musify/services/audio_manager.dart';
+import 'package:musify/services/download_manager.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
