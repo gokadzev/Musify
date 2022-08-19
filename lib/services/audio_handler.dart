@@ -144,21 +144,14 @@ class MyAudioHandler extends BaseAudioHandler {
   Future<void> seek(Duration position) => audioPlayer!.seek(position);
 
   @override
-  Future<void> skipToQueueItem(int index) async {
-    late int ind;
-    if (index < 0 || index >= queue.value.length) return;
-    if (audioPlayer!.shuffleModeEnabled) {
-      ind = audioPlayer!.shuffleIndices![index];
-    }
-    await audioPlayer!.seek(Duration.zero, index: ind);
-  }
-
-  @override
   Future<void> skipToNext() async {
     if (activePlaylist.isEmpty) {
       await audioPlayer!.seekToNext();
     } else {
-      await playNext();
+      if (id + 1 <= activePlaylist.length) {
+        await playSong(activePlaylist[id + 1]);
+        id = id + 1;
+      }
     }
   }
 
@@ -167,7 +160,10 @@ class MyAudioHandler extends BaseAudioHandler {
     if (activePlaylist.isEmpty) {
       await audioPlayer!.seekToPrevious();
     } else {
-      await playPrevious();
+      if (id - 1 >= 0) {
+        await playSong(activePlaylist[id - 1]);
+        id = id - 1;
+      }
     }
   }
 

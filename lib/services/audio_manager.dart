@@ -157,33 +157,15 @@ Future enableBooster() async {
   await _loudnessEnhancer.setTargetGain(1);
 }
 
-Future<void>? play() => _audioHandler.play();
+Future<void> play() => _audioHandler.play();
 
-Future<void>? pause() => _audioHandler.pause();
+Future<void> pause() => _audioHandler.pause();
 
-Future<void>? stop() => _audioHandler.stop();
+Future<void> stop() => _audioHandler.stop();
 
-Future playNext() async {
-  if (activePlaylist.isEmpty) {
-    await _audioHandler.skipToNext();
-  } else {
-    if (id + 1 <= activePlaylist.length) {
-      await playSong(activePlaylist[id + 1]);
-      id = id + 1;
-    }
-  }
-}
+Future<void> playNext() => _audioHandler.skipToNext();
 
-Future playPrevious() async {
-  if (activePlaylist.isEmpty) {
-    await _audioHandler.skipToPrevious();
-  } else {
-    if (id - 1 >= 0) {
-      await playSong(activePlaylist[id - 1]);
-      id = id - 1;
-    }
-  }
-}
+Future<void> playPrevious() => _audioHandler.skipToPrevious();
 
 Future mute(bool muted) async {
   if (muted) {
