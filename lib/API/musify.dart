@@ -286,6 +286,43 @@ Future<List<SongModel>> getLocalSongs() async {
   return localSongs;
 }
 
+Future<List<Map<String, int>>> getSkipSegments(String id) async {
+  try {
+    final res = await http.get(Uri(
+      scheme: 'https',
+      host: 'sponsor.ajay.app',
+      path: '/api/skipSegments',
+      queryParameters: {
+        'videoID': id,
+        'category': [
+          'sponsor',
+          'selfpromo',
+          'interaction',
+          'intro',
+          'outro',
+          'music_offtopic'
+        ],
+        'actionType': 'skip'
+      },
+    ));
+    if (res.body != 'Not Found') {
+      final data = jsonDecode(res.body);
+      final segments = data.map((obj) {
+        return Map.castFrom<String, dynamic, String, int>({
+          'start': obj['segment'].first.toInt(),
+          'end': obj['segment'].last.toInt(),
+        });
+      }).toList();
+      return List.castFrom<dynamic, Map<String, int>>(segments);
+    } else {
+      return List.castFrom<dynamic, Map<String, int>>([]);
+    }
+  } catch (e, stack) {
+    debugPrint('$e $stack');
+    return List.castFrom<dynamic, Map<String, int>>([]);
+  }
+}
+
 Future getSongLyrics(String artist, String title) async {
   final String currentApiUrl =
       'https://api.lyrics.ovh/v1/$artist/${title.split(" (")[0].split("|")[0].trim()}';

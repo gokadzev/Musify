@@ -111,8 +111,14 @@ class MyAudioHandler extends BaseAudioHandler {
   }
 
   @override
-  Future<void> addQueueItem(MediaItem mediaItem) async {
-    final audioSource = _createAudioSource(mediaItem);
+  Future<void> addQueueItem(MediaItem mediaItem, [start, end]) async {
+    final dynamic audioSource;
+    if (start != null || end != null) {
+      audioSource = _createClippingAudioSource(mediaItem, start, end);
+    } else {
+      audioSource = _createAudioSource(mediaItem);
+    }
+
     await _playlist.add(audioSource);
 
     final newQueue = queue.value..add(mediaItem);
@@ -124,6 +130,36 @@ class MyAudioHandler extends BaseAudioHandler {
       Uri.parse(mediaItem.extras!['url'].toString()),
       tag: mediaItem,
     );
+  }
+
+  ClippingAudioSource _createClippingAudioSource(MediaItem mediaItem,
+      [start, end]) {
+    if (start != null && end == null) {
+      return ClippingAudioSource(
+          start: start,
+          tag: mediaItem,
+          child: AudioSource.uri(
+            Uri.parse(mediaItem.extras!['url'].toString()),
+            tag: mediaItem,
+          ));
+    } else if (end != null && start == null) {
+      return ClippingAudioSource(
+          end: end,
+          tag: mediaItem,
+          child: AudioSource.uri(
+            Uri.parse(mediaItem.extras!['url'].toString()),
+            tag: mediaItem,
+          ));
+    } else {
+      return ClippingAudioSource(
+          start: start,
+          end: end,
+          tag: mediaItem,
+          child: AudioSource.uri(
+            Uri.parse(mediaItem.extras!['url'].toString()),
+            tag: mediaItem,
+          ));
+    }
   }
 
   @override

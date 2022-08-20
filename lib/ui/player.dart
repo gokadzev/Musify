@@ -289,19 +289,35 @@ class AudioAppState extends State<AudioApp> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         if (metadata.extras['ytid'].toString().isNotEmpty)
-                          IconButton(
-                            padding: EdgeInsets.zero,
-                            icon: const Icon(
-                              MdiIcons.download,
-                              color: Colors.white,
-                            ),
-                            iconSize: size.width * 0.056,
-                            splashColor: Colors.transparent,
-                            onPressed: () {
-                              downloadSong(
-                                mediaItemToMap(metadata as MediaItem),
-                              );
-                            },
+                          Column(
+                            children: [
+                              IconButton(
+                                padding: EdgeInsets.zero,
+                                icon: const Icon(
+                                  MdiIcons.download,
+                                  color: Colors.white,
+                                ),
+                                iconSize: size.width * 0.056,
+                                splashColor: Colors.transparent,
+                                onPressed: () {
+                                  downloadSong(
+                                    mediaItemToMap(metadata as MediaItem),
+                                  );
+                                },
+                              ),
+                              IconButton(
+                                  padding: EdgeInsets.zero,
+                                  icon: Icon(
+                                    sponsorBlockSupport.value
+                                        ? MdiIcons.playCircle
+                                        : MdiIcons.playCircleOutline,
+                                    color: Colors.white,
+                                  ),
+                                  iconSize: size.width * 0.056,
+                                  splashColor: Colors.transparent,
+                                  onPressed: () =>
+                                      setState(changeSponsorBlockStatus)),
+                            ],
                           ),
                         IconButton(
                           padding: EdgeInsets.zero,
@@ -375,21 +391,6 @@ class AudioAppState extends State<AudioApp> {
                           Column(
                             children: [
                               ValueListenableBuilder<bool>(
-                                valueListenable: playNextSongAutomatically,
-                                builder: (_, value, __) {
-                                  return IconButton(
-                                    padding: EdgeInsets.zero,
-                                    icon: Icon(
-                                      MdiIcons.chevronRight,
-                                      color: value ? accent : Colors.white,
-                                    ),
-                                    iconSize: size.width * 0.056,
-                                    splashColor: Colors.transparent,
-                                    onPressed: changeAutoPlayNextStatus,
-                                  );
-                                },
-                              ),
-                              ValueListenableBuilder<bool>(
                                 valueListenable: songLikeStatus,
                                 builder: (_, value, __) {
                                   if (value == true) {
@@ -415,6 +416,23 @@ class AudioAppState extends State<AudioApp> {
                                       },
                                     );
                                   }
+                                },
+                              ),
+                              ValueListenableBuilder<bool>(
+                                valueListenable: playNextSongAutomatically,
+                                builder: (_, value, __) {
+                                  return IconButton(
+                                    padding: EdgeInsets.zero,
+                                    icon: Icon(
+                                      value
+                                          ? MdiIcons.skipNextCircleOutline
+                                          : MdiIcons.skipNextCircle,
+                                      color: value ? accent : Colors.white,
+                                    ),
+                                    iconSize: size.width * 0.056,
+                                    splashColor: Colors.transparent,
+                                    onPressed: changeAutoPlayNextStatus,
+                                  );
                                 },
                               ),
                             ],
