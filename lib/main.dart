@@ -161,6 +161,7 @@ void main() async {
   FlutterDownloader.registerCallback(downloadCallback);
   final PackageInfo packageInfo = await PackageInfo.fromPlatform();
   version = packageInfo.version;
+  await getAlternateApiUrl();
   await enableBooster();
   runApp(const MyApp());
 }

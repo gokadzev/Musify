@@ -30,6 +30,7 @@ List<SongModel> localSongs = [];
 
 final lyrics = ValueNotifier<String>('null');
 String _lastLyricsUrl = '';
+String _alternateApiUrl = '';
 
 int id = 0;
 
@@ -323,12 +324,33 @@ Future<List<Map<String, int>>> getSkipSegments(String id) async {
   }
 }
 
+Future<void> getAlternateApiUrl() async {
+  final response = await http.get(
+    Uri.parse('https://jsapi.apiary.io/apis/lyricsovh'),
+    headers: {'Accept': 'application/json'},
+  ).timeout(const Duration(seconds: 10));
+
+  if (response.statusCode == 200) {
+    final proxyResponse = await json.decode(response.body);
+    if (proxyResponse['urls']['proxy'] != null) {
+      _alternateApiUrl = proxyResponse['urls']['proxy'];
+    }
+  }
+}
+
 Future getSongLyrics(String artist, String title) async {
-  final String currentApiUrl =
-      'https://api.lyrics.ovh/v1/$artist/${title.split(" (")[0].split("|")[0].trim()}';
+  String currentApiUrl;
+  if (_alternateApiUrl != '') {
+    currentApiUrl =
+        '$_alternateApiUrl${artist.replaceAll(RegExp(r'[^\w\s]+'), '')}/${title.split(" (")[0].split("|")[0].trim().replaceAll(RegExp(r'[^\w\s]+'), '')}';
+  } else {
+    currentApiUrl =
+        'https://api.lyrics.ovh/v1/${artist.replaceAll(RegExp(r'[^\w\s]+'), '')}/${title.split(" (")[0].split("|")[0].trim().replaceAll(RegExp(r'[^\w\s]+'), '')}';
+  }
+
   if (_lastLyricsUrl != currentApiUrl) {
-    if (await getData('cache', 'lyrics-$currentApiUrl') != null) {
-      lyrics.value = await getData('cache', 'lyrics-$currentApiUrl');
+    if (await getData('cache', 'lyrics-$artist-$title') != null) {
+      lyrics.value = await getData('cache', 'lyrics-$artist-$title');
     } else {
       lyrics.value = 'null';
       _lastLyricsUrl = currentApiUrl;
@@ -341,7 +363,7 @@ Future getSongLyrics(String artist, String title) async {
         final lyricsResponse = await json.decode(response.body);
         if (lyricsResponse['lyrics'] != null) {
           lyrics.value = lyricsResponse['lyrics'].toString();
-          addOrUpdateData('cache', 'lyrics-$_lastLyricsUrl',
+          addOrUpdateData('cache', 'lyrics-$artist-$title',
               lyricsResponse['lyrics'].toString());
         } else {
           lyrics.value = 'not found';
