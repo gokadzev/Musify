@@ -2,6 +2,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter/widgets.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:musify/API/musify.dart';
+import 'package:musify/helper/mediaitem.dart';
 import 'package:musify/services/audio_manager.dart';
 
 class MyAudioHandler extends BaseAudioHandler {
@@ -14,6 +15,7 @@ class MyAudioHandler extends BaseAudioHandler {
     _listenForDurationChanges();
     _listenForCurrentSongIndexChanges();
     _listenForSequenceStateChanges();
+    _listenForPositionChanges();
     _listenProcessingStates();
   }
 
@@ -71,15 +73,6 @@ class MyAudioHandler extends BaseAudioHandler {
       if (state.processingState == ProcessingState.completed) {
         await pause();
         await audioPlayer.seek(Duration.zero);
-        // if (hasNext) {
-        //   await playSong(activePlaylist[id + 1]);
-        //   id = id + 1;
-        // }
-
-        // if (!hasNext && playNextSongAutomatically.value) {
-        //   final randomSong = await getRandomSong();
-        //   await playSong(randomSong);
-        // }
       }
     });
   }
@@ -97,6 +90,38 @@ class MyAudioHandler extends BaseAudioHandler {
       newQueue[index] = newMediaItem;
       queue.add(newQueue);
       mediaItem.add(newMediaItem);
+    });
+  }
+
+  bool canBeSkipped = false;
+
+  void _listenForPositionChanges() {
+    audioPlayer.positionStream.listen((position) async {
+      if (playerState.value.processingState != ProcessingState.loading &&
+          audioPlayer.duration != null &&
+          position.inSeconds == audioPlayer.duration!.inSeconds - 5) {
+        if (!hasNext && playNextSongAutomatically.value) {
+          final randomSong = await getRandomSong();
+          final randomSongUrl = await getSong(randomSong['ytid'], true);
+          await addQueueItem(mapToMediaItem(randomSong, randomSongUrl));
+        }
+      } else if (playerState.value.processingState != ProcessingState.loading &&
+          audioPlayer.duration != null &&
+          position.inSeconds == audioPlayer.duration!.inSeconds - 1) {
+        canBeSkipped = true;
+      } else if (playerState.value.processingState != ProcessingState.loading &&
+          audioPlayer.duration != null &&
+          position.inSeconds == audioPlayer.duration!.inSeconds) {
+        if (canBeSkipped && hasNext) {
+          await skipToNext();
+          canBeSkipped = false;
+        } else if (canBeSkipped &&
+            !hasNext &&
+            playNextSongAutomatically.value) {
+          await play();
+          canBeSkipped = false;
+        }
+      }
     });
   }
 
