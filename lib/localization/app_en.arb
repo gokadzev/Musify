@@ -29,6 +29,7 @@
   "restoredSuccessfully": "Restored Successfully",
   "search": "Search",
   "searchHistoryMsg": "Search history cleared",
+  "serverError": "Detected server problem, try again later...",
   "settings": "Settings",
   "suggestedPlaylists": "Suggested playlists",
   "userLikedSongs": "User liked songs",

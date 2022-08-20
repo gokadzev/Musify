@@ -333,7 +333,7 @@ Future getSongLyrics(String artist, String title) async {
           lyrics.value = 'not found';
         }
       } else {
-        lyrics.value = 'not found';
+        lyrics.value = 'server error';
         throw Exception('Failed to load lyrics');
       }
     }

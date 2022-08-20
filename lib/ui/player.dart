@@ -536,7 +536,8 @@ class AudioAppState extends State<AudioApp> {
                                         valueListenable: lyrics,
                                         builder: (_, value, __) {
                                           if (value != 'null' &&
-                                              value != 'not found') {
+                                              value != 'not found' &&
+                                              value != 'server error') {
                                             return Expanded(
                                               child: Padding(
                                                 padding:
@@ -559,6 +560,25 @@ class AudioAppState extends State<AudioApp> {
                                           } else if (value == 'null') {
                                             return const SizedBox(
                                               child: Spinner(),
+                                            );
+                                          } else if (value == 'server error') {
+                                            return Padding(
+                                              padding: const EdgeInsets.only(
+                                                top: 120,
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                  AppLocalizations.of(
+                                                    context,
+                                                  )!
+                                                      .serverError,
+                                                  style: TextStyle(
+                                                    color: accentLight,
+                                                    fontSize: 25,
+                                                  ),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ),
                                             );
                                           } else {
                                             return Padding(
