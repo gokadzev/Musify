@@ -37,9 +37,9 @@ class AudioAppState extends State<AudioApp> {
   void initState() {
     super.initState();
 
-    positionSubscription = audioPlayer?.positionStream
+    positionSubscription = audioPlayer.positionStream
         .listen((p) => {if (mounted) setState(() => position = p)});
-    durationSubscription = audioPlayer?.durationStream.listen(
+    durationSubscription = audioPlayer.durationStream.listen(
       (d) => {
         if (mounted) {setState(() => duration = d)}
       },
@@ -84,7 +84,7 @@ class AudioAppState extends State<AudioApp> {
         child: Padding(
           padding: EdgeInsets.only(top: size.height * 0.012),
           child: StreamBuilder<SequenceState?>(
-            stream: audioPlayer!.sequenceStateStream,
+            stream: audioPlayer.sequenceStateStream,
             builder: (context, snapshot) {
               final state = snapshot.data;
               if (state?.sequence.isEmpty ?? true) {
@@ -268,7 +268,7 @@ class AudioAppState extends State<AudioApp> {
                 value: position?.inMilliseconds.toDouble() ?? 0.0,
                 onChanged: (double? value) {
                   setState(() {
-                    audioPlayer!.seek(
+                    audioPlayer.seek(
                       Duration(
                         milliseconds: value!.round(),
                       ),
@@ -346,25 +346,48 @@ class AudioAppState extends State<AudioApp> {
                             color: accent,
                             borderRadius: BorderRadius.circular(100),
                           ),
-                          child: StreamBuilder<PlayerState>(
-                            stream: audioPlayer!.playerStateStream,
-                            builder: (context, snapshot) {
-                              if (snapshot.hasData) {
-                                final playerState = snapshot.data;
-                                return _playerControllers(playerState!, size);
-                              } else {
-                                return Container(
-                                  margin: const EdgeInsets.all(8),
-                                  width: size.width * 0.08,
-                                  height: size.width * 0.08,
-                                  child: const CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                        Color.fromARGB(255, 0, 0, 0)),
-                                  ),
-                                );
-                              }
-                            },
-                          ),
+                          child: ValueListenableBuilder<PlayerState>(
+                              valueListenable: playerState,
+                              builder: (_, value, __) {
+                                if (value.processingState ==
+                                        ProcessingState.loading ||
+                                    value.processingState ==
+                                        ProcessingState.buffering) {
+                                  return Container(
+                                    margin: const EdgeInsets.all(8),
+                                    width: size.width * 0.08,
+                                    height: size.width * 0.08,
+                                    child: const CircularProgressIndicator(
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          Color.fromARGB(255, 0, 0, 0)),
+                                    ),
+                                  );
+                                } else if (value.playing != true) {
+                                  return IconButton(
+                                    icon: const Icon(MdiIcons.play),
+                                    iconSize: size.width * 0.1,
+                                    onPressed: play,
+                                    splashColor: Colors.transparent,
+                                  );
+                                } else if (value.processingState !=
+                                    ProcessingState.completed) {
+                                  return IconButton(
+                                    icon: const Icon(MdiIcons.pause),
+                                    iconSize: size.width * 0.1,
+                                    onPressed: pause,
+                                    splashColor: Colors.transparent,
+                                  );
+                                } else {
+                                  return IconButton(
+                                    icon: const Icon(MdiIcons.replay),
+                                    iconSize: size.width * 0.056,
+                                    onPressed: () => audioPlayer.seek(
+                                        Duration.zero,
+                                        index: audioPlayer
+                                            .effectiveIndices!.first),
+                                  );
+                                }
+                              }),
                         ),
                         IconButton(
                           padding: EdgeInsets.zero,
@@ -594,41 +617,4 @@ class AudioAppState extends State<AudioApp> {
           )
         ],
       );
-
-  Widget _playerControllers(PlayerState playerState, Size size) {
-    final processingState = playerState.processingState;
-    if (processingState == ProcessingState.loading ||
-        processingState == ProcessingState.buffering) {
-      return Container(
-        margin: const EdgeInsets.all(8),
-        width: size.width * 0.08,
-        height: size.width * 0.08,
-        child: const CircularProgressIndicator(
-          valueColor:
-              AlwaysStoppedAnimation<Color>(Color.fromARGB(255, 0, 0, 0)),
-        ),
-      );
-    } else if (audioPlayer!.playing != true) {
-      return IconButton(
-        icon: const Icon(MdiIcons.play),
-        iconSize: size.width * 0.1,
-        onPressed: play,
-        splashColor: Colors.transparent,
-      );
-    } else if (processingState != ProcessingState.completed) {
-      return IconButton(
-        icon: const Icon(MdiIcons.pause),
-        iconSize: size.width * 0.1,
-        onPressed: pause,
-        splashColor: Colors.transparent,
-      );
-    } else {
-      return IconButton(
-        icon: const Icon(MdiIcons.replay),
-        iconSize: size.width * 0.056,
-        onPressed: () => audioPlayer!
-            .seek(Duration.zero, index: audioPlayer!.effectiveIndices!.first),
-      );
-    }
-  }
 }

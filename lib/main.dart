@@ -79,7 +79,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void dispose() {
     Hive.close();
-    audioPlayer!.dispose();
+    audioPlayer.dispose();
     super.dispose();
   }
 
@@ -152,11 +152,11 @@ class _MyAppState extends State<MyApp> {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await initialisation();
   await Hive.initFlutter();
   await Hive.openBox('settings');
   await Hive.openBox('user');
   await Hive.openBox('cache');
-  await initialisation();
   await getAlternateApiUrl();
   runApp(const MyApp());
 }
@@ -166,7 +166,7 @@ Future<void> initialisation() async {
   await session.configure(const AudioSessionConfiguration.music());
   session.interruptionEventStream.listen((event) {
     if (event.begin) {
-      if (audioPlayer!.playing) {
+      if (audioPlayer.playing) {
         pause();
         _interrupted = true;
       }
@@ -174,7 +174,7 @@ Future<void> initialisation() async {
       switch (event.type) {
         case AudioInterruptionType.pause:
         case AudioInterruptionType.duck:
-          if (!audioPlayer!.playing && _interrupted) {
+          if (!audioPlayer.playing && _interrupted) {
             play();
           }
           break;

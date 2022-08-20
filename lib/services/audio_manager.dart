@@ -15,7 +15,7 @@ final _equalizer = AndroidEqualizer();
 final _loudnessEnhancer = AndroidLoudnessEnhancer();
 final _audioHandler = getIt<AudioHandler>();
 
-AudioPlayer? audioPlayer = AudioPlayer(
+AudioPlayer audioPlayer = AudioPlayer(
   audioPipeline: AudioPipeline(
     androidAudioEffects: [
       _loudnessEnhancer,
@@ -27,6 +27,7 @@ AudioPlayer? audioPlayer = AudioPlayer(
 final durationNotifier = ValueNotifier<Duration?>(Duration.zero);
 final shuffleNotifier = ValueNotifier<bool>(false);
 final repeatNotifier = ValueNotifier<bool>(false);
+final playerState = ValueNotifier<PlayerState>(audioPlayer.playerState);
 final prefferedFileExtension = ValueNotifier<String>(
     Hive.box('settings').get('audioFileType', defaultValue: 'mp3') as String);
 final playNextSongAutomatically = ValueNotifier<bool>(
@@ -35,11 +36,11 @@ final sponsorBlockSupport = ValueNotifier<bool>(
     Hive.box('settings').get('sponsorBlockSupport', defaultValue: false));
 
 bool get hasNext => activePlaylist.isEmpty
-    ? audioPlayer!.hasNext
+    ? audioPlayer.hasNext
     : id + 1 <= activePlaylist.length;
 
 bool get hasPrevious =>
-    activePlaylist.isEmpty ? audioPlayer!.hasPrevious : id - 1 >= 0;
+    activePlaylist.isEmpty ? audioPlayer.hasPrevious : id - 1 >= 0;
 
 String get durationText =>
     duration != null ? duration.toString().split('.').first : '';
@@ -80,9 +81,9 @@ Future<void> playSong(Map song) async {
 
 Future changeShuffleStatus() async {
   if (shuffleNotifier.value == true) {
-    await audioPlayer?.setShuffleModeEnabled(false);
+    await audioPlayer.setShuffleModeEnabled(false);
   } else {
-    await audioPlayer?.setShuffleModeEnabled(true);
+    await audioPlayer.setShuffleModeEnabled(true);
   }
 }
 
@@ -99,10 +100,10 @@ void changeAutoPlayNextStatus() {
 Future changeLoopStatus() async {
   if (repeatNotifier.value == false) {
     repeatNotifier.value = true;
-    await audioPlayer?.setLoopMode(LoopMode.one);
+    await audioPlayer.setLoopMode(LoopMode.one);
   } else {
     repeatNotifier.value = false;
-    await audioPlayer?.setLoopMode(LoopMode.off);
+    await audioPlayer.setLoopMode(LoopMode.off);
   }
 }
 
@@ -133,8 +134,8 @@ void playPrevious() => _audioHandler.skipToPrevious();
 
 Future mute(bool muted) async {
   if (muted) {
-    await audioPlayer?.setVolume(0);
+    await audioPlayer.setVolume(0);
   } else {
-    await audioPlayer?.setVolume(1);
+    await audioPlayer.setVolume(1);
   }
 }
