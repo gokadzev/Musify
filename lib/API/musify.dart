@@ -19,6 +19,8 @@ import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 final yt = YoutubeExplode();
 final OnAudioQuery _audioQuery = OnAudioQuery();
 
+final random = Random();
+
 List ytplaylists = [];
 List searchedList = [];
 List playlists = [];
@@ -160,34 +162,10 @@ Future<List> searchPlaylist(String query) async {
 }
 
 Future<Map> getRandomSong() async {
-  if (playlists.isEmpty) {
-    playlists =
-        json.decode(await rootBundle.loadString('assets/db/playlists.db.json'))
-            as List;
-  }
-  final random = Random();
-  final playlistId = playlists[random.nextInt(playlists.length)]['ytid'];
-  final playlistSongs =
-      await getData('cache', 'playlistSongs$playlistId') ?? [];
+  final playlistId = 'PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx';
+  final List playlistSongs = await getSongsFromPlaylist(playlistId);
 
-  if (playlistSongs.isEmpty) {
-    final songs = await yt.playlists.getVideos(playlistId).take(5).toList();
-    final choosedSong = songs[random.nextInt(playlistSongs.length)];
-
-    return returnSongLayout(
-      0,
-      choosedSong.id.toString(),
-      formatSongTitle(
-        choosedSong.title.split('-')[choosedSong.title.split('-').length - 1],
-      ),
-      choosedSong.thumbnails.standardResUrl,
-      choosedSong.thumbnails.lowResUrl,
-      choosedSong.thumbnails.maxResUrl,
-      choosedSong.title.split('-')[0],
-    );
-  } else {
-    return playlistSongs[random.nextInt(playlistSongs.length)];
-  }
+  return playlistSongs[random.nextInt(playlistSongs.length)];
 }
 
 Future getSongsFromPlaylist(dynamic playlistid) async {

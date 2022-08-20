@@ -425,8 +425,8 @@ class AudioAppState extends State<AudioApp> {
                                     padding: EdgeInsets.zero,
                                     icon: Icon(
                                       value
-                                          ? MdiIcons.skipNextCircleOutline
-                                          : MdiIcons.skipNextCircle,
+                                          ? MdiIcons.skipNextCircle
+                                          : MdiIcons.skipNextCircleOutline,
                                       color: value ? accent : Colors.white,
                                     ),
                                     iconSize: size.width * 0.056,
@@ -625,7 +625,7 @@ class AudioAppState extends State<AudioApp> {
     } else {
       return IconButton(
         icon: const Icon(MdiIcons.replay),
-        iconSize: 64.0,
+        iconSize: size.width * 0.056,
         onPressed: () => audioPlayer!
             .seek(Duration.zero, index: audioPlayer!.effectiveIndices!.first),
       );

@@ -14,6 +14,7 @@ class MyAudioHandler extends BaseAudioHandler {
     _listenForDurationChanges();
     _listenForCurrentSongIndexChanges();
     _listenForSequenceStateChanges();
+    _listenProcessingStates();
   }
 
   Future<void> _loadEmptyPlaylist() async {
@@ -61,6 +62,24 @@ class MyAudioHandler extends BaseAudioHandler {
           queueIndex: event.currentIndex,
         ),
       );
+    });
+  }
+
+  void _listenProcessingStates() {
+    audioPlayer!.processingStateStream.listen((state) async {
+      if (state == ProcessingState.completed) {
+        await pause();
+        await audioPlayer!.seek(Duration.zero);
+        // if (hasNext) {
+        //   await playSong(activePlaylist[id + 1]);
+        //   id = id + 1;
+        // }
+
+        // if (!hasNext && playNextSongAutomatically.value) {
+        //   final randomSong = await getRandomSong();
+        //   await playSong(randomSong);
+        // }
+      }
     });
   }
 

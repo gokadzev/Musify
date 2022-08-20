@@ -17,6 +17,7 @@ import 'package:musify/ui/rootPage.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 GetIt getIt = GetIt.instance;
+bool _interrupted = false;
 
 class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -71,6 +72,8 @@ class _MyAppState extends State<MyApp> {
     };
     _locale = Locale(codes[Hive.box('settings')
         .get('language', defaultValue: 'English') as String]!);
+
+    FlutterDownloader.registerCallback(downloadCallback);
   }
 
   @override
@@ -154,21 +157,33 @@ void main() async {
   await Hive.openBox('user');
   await Hive.openBox('cache');
   await initialisation();
-  await FlutterDownloader.initialize(
-    debug: kDebugMode,
-    ignoreSsl: true,
-  );
-  FlutterDownloader.registerCallback(downloadCallback);
-  final PackageInfo packageInfo = await PackageInfo.fromPlatform();
-  version = packageInfo.version;
   await getAlternateApiUrl();
-  await enableBooster();
   runApp(const MyApp());
 }
 
 Future<void> initialisation() async {
   final session = await AudioSession.instance;
   await session.configure(const AudioSessionConfiguration.music());
+  session.interruptionEventStream.listen((event) {
+    if (event.begin) {
+      if (audioPlayer!.playing) {
+        pause();
+        _interrupted = true;
+      }
+    } else {
+      switch (event.type) {
+        case AudioInterruptionType.pause:
+        case AudioInterruptionType.duck:
+          if (!audioPlayer!.playing && _interrupted) {
+            play();
+          }
+          break;
+        case AudioInterruptionType.unknown:
+          break;
+      }
+      _interrupted = false;
+    }
+  });
   final AudioHandler audioHandler = await AudioService.init(
     builder: MyAudioHandler.new,
     config: const AudioServiceConfig(
@@ -180,6 +195,13 @@ Future<void> initialisation() async {
     ),
   );
   getIt.registerSingleton<AudioHandler>(audioHandler);
+  await enableBooster();
+  await FlutterDownloader.initialize(
+    debug: kDebugMode,
+    ignoreSsl: true,
+  );
+  final PackageInfo packageInfo = await PackageInfo.fromPlatform();
+  version = packageInfo.version;
 }
 
 @pragma('vm:entry-point')

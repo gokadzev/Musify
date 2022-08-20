@@ -4,7 +4,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:musify/API/musify.dart';
 import 'package:musify/customWidgets/custom_animated_bottom_bar.dart';
 import 'package:musify/helper/version.dart';
 import 'package:musify/services/audio_manager.dart';
@@ -30,7 +29,6 @@ class AppState extends State<Musify> {
   @override
   void initState() {
     super.initState();
-    initAudioPlayer();
     checkAppUpdates().then(
       (value) => {
         if (value == true)
@@ -48,23 +46,6 @@ class AppState extends State<Musify> {
           }
       },
     );
-  }
-
-  void initAudioPlayer() {
-    audioPlayer!.processingStateStream.listen((state) async {
-      if (state == ProcessingState.completed) {
-        pause();
-        await audioPlayer!.seek(Duration.zero);
-        if (hasNext) {
-          if (activePlaylist.isEmpty && playNextSongAutomatically.value) {
-            await playSong(await getRandomSong());
-          } else {
-            await playSong(activePlaylist[id + 1]);
-            id = id + 1;
-          }
-        }
-      }
-    });
   }
 
   @override
