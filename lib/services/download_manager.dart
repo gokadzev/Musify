@@ -10,7 +10,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 Future<void> downloadSong(dynamic song) async {
-  PermissionStatus status = await Permission.storage.status;
+  var status = await Permission.storage.status;
   if (status.isDenied) {
     await [
       Permission.storage,
@@ -44,9 +44,8 @@ Future<void> downloadSong(dynamic song) async {
       '.' +
       prefferedFileExtension.value;
 
-  String filepath = '';
-  final String? dlPath =
-      await ExtStorageProvider.getExtStorage(dirName: 'Musify');
+  var filepath = '';
+  final dlPath = await ExtStorageProvider.getExtStorage(dirName: 'Musify');
   try {
     await File('${dlPath!}/$filename')
         .create(recursive: true)
@@ -71,9 +70,13 @@ Future<void> downloadSong(dynamic song) async {
 }
 
 Future<void> downloadFileFromYT(
-    String filename, String filepath, String dlPath, dynamic song) async {
+  String filename,
+  String filepath,
+  String dlPath,
+  dynamic song,
+) async {
   final audioStream = await getSong(song['ytid'].toString(), false);
-  final File file = File(filepath);
+  final file = File(filepath);
   final fileStream = file.openWrite();
   await yt.videos.streamsClient.get(audioStream as StreamInfo).pipe(fileStream);
   await fileStream.flush();

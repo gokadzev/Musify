@@ -33,9 +33,8 @@ Future<void> downloadAppUpdates() async {
   } else {
     dlUrl = map['url'].toString();
   }
-  final String? dlPath =
-      await ExtStorageProvider.getExtStorage(dirName: 'Download');
-  final File file = File('${dlPath!}/Musify.apk');
+  final dlPath = await ExtStorageProvider.getExtStorage(dirName: 'Download');
+  final file = File('${dlPath!}/Musify.apk');
   if (await file.exists()) {
     await file.delete();
   }

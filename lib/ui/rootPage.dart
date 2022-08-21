@@ -69,7 +69,7 @@ class AppState extends State<Musify> {
   }
 
   Widget getFooter() {
-    final List<BottomNavBarItem> items = [
+    final items = <BottomNavBarItem>[
       BottomNavBarItem(
         icon: const Icon(MdiIcons.homeOutline),
         activeIcon: const Icon(MdiIcons.home),
@@ -266,8 +266,10 @@ class AppState extends State<Musify> {
                               return IconButton(
                                 icon: Icon(MdiIcons.replay, color: accent),
                                 iconSize: 45,
-                                onPressed: () => audioPlayer.seek(Duration.zero,
-                                    index: audioPlayer.effectiveIndices!.first),
+                                onPressed: () => audioPlayer.seek(
+                                  Duration.zero,
+                                  index: audioPlayer.effectiveIndices!.first,
+                                ),
                                 splashColor: Colors.transparent,
                               );
                             }

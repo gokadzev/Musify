@@ -6,7 +6,7 @@ import 'package:musify/style/appColors.dart';
 import 'package:musify/ui/playlistsPage.dart';
 
 class UserPlaylistsPage extends StatefulWidget {
-  const UserPlaylistsPage({Key? key}) : super(key: key);
+  const UserPlaylistsPage({super.key});
 
   @override
   State<UserPlaylistsPage> createState() => _UserPlaylistsPageState();
@@ -40,7 +40,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
           showDialog(
             context: context,
             builder: (BuildContext context) {
-              String id = '';
+              var id = '';
               return AlertDialog(
                 backgroundColor: accent,
                 content: Stack(

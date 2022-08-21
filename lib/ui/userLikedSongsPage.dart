@@ -6,7 +6,7 @@ import 'package:musify/customWidgets/song_bar.dart';
 import 'package:musify/style/appColors.dart';
 
 class UserLikedSongs extends StatefulWidget {
-  const UserLikedSongs({Key? key}) : super(key: key);
+  const UserLikedSongs({super.key});
 
   @override
   State<UserLikedSongs> createState() => _UserLikedSongsState();
@@ -119,9 +119,10 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
                         child: Text(
                           AppLocalizations.of(context)!.playAll.toUpperCase(),
                           style: TextStyle(
-                              color: accent != const Color(0xFFFFFFFF)
-                                  ? Colors.white
-                                  : Colors.black),
+                            color: accent != const Color(0xFFFFFFFF)
+                                ? Colors.white
+                                : Colors.black,
+                          ),
                         ),
                       ),
                     ],

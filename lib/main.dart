@@ -20,16 +20,18 @@ GetIt getIt = GetIt.instance;
 bool _interrupted = false;
 
 class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   static Future<void> setLocale(BuildContext context, Locale newLocale) async {
-    final _MyAppState state = context.findAncestorStateOfType<_MyAppState>()!;
+    final state = context.findAncestorStateOfType<_MyAppState>()!;
     state.changeLanguage(newLocale);
   }
 
   static Future<void> setAccentColor(
-      BuildContext context, Color newAccentColor) async {
-    final _MyAppState state = context.findAncestorStateOfType<_MyAppState>()!;
+    BuildContext context,
+    Color newAccentColor,
+  ) async {
+    final state = context.findAncestorStateOfType<_MyAppState>()!;
     state.changeAccentColor(newAccentColor);
   }
 
@@ -56,7 +58,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     getLocalSongs();
-    final Map<String, String> codes = {
+    final codes = <String, String>{
       'English': 'en',
       'Georgian': 'ka',
       'Chinese': 'zh',
@@ -70,8 +72,10 @@ class _MyAppState extends State<MyApp> {
       'Turkish': 'tr',
       'Ukrainian': 'uk',
     };
-    _locale = Locale(codes[Hive.box('settings')
-        .get('language', defaultValue: 'English') as String]!);
+    _locale = Locale(
+      codes[Hive.box('settings').get('language', defaultValue: 'English')
+          as String]!,
+    );
 
     FlutterDownloader.registerCallback(downloadCallback);
   }
@@ -184,7 +188,7 @@ Future<void> initialisation() async {
       _interrupted = false;
     }
   });
-  final AudioHandler audioHandler = await AudioService.init(
+  final audioHandler = await AudioService.init(
     builder: MyAudioHandler.new,
     config: const AudioServiceConfig(
       androidNotificationChannelId: 'com.gokadzev.musify',
@@ -200,7 +204,7 @@ Future<void> initialisation() async {
     debug: kDebugMode,
     ignoreSsl: true,
   );
-  final PackageInfo packageInfo = await PackageInfo.fromPlatform();
+  final packageInfo = await PackageInfo.fromPlatform();
   version = packageInfo.version;
 }
 

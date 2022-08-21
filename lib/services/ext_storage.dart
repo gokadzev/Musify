@@ -29,7 +29,7 @@ class ExtStorageProvider {
           directory = await getExternalStorageDirectory();
 
           // getting main path
-          final String newPath = directory!.path
+          final newPath = directory!.path
               .replaceFirst('Android/data/com.gokadzev.musify/files', dirName);
 
           directory = Directory(newPath);

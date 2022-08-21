@@ -48,7 +48,11 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.only(
-                  top: 12, bottom: 20, left: 12, right: 12),
+                top: 12,
+                bottom: 20,
+                left: 12,
+                right: 12,
+              ),
               child: TextField(
                 onSubmitted: (String value) {
                   search();
@@ -190,12 +194,12 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
 
 class GetPlaylist extends StatelessWidget {
   const GetPlaylist({
-    Key? key,
+    super.key,
     required this.index,
     required this.image,
     required this.title,
     required this.id,
-  }) : super(key: key);
+  });
   final int index;
   final dynamic image;
   final String title;
@@ -203,7 +207,7 @@ class GetPlaylist extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Size size = MediaQuery.of(context).size;
+    final size = MediaQuery.of(context).size;
     return DelayedDisplay(
       delay: const Duration(milliseconds: 200),
       fadingDuration: const Duration(milliseconds: 400),

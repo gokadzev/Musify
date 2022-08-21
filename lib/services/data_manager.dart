@@ -37,20 +37,19 @@ void clearCache() async {
 }
 
 Future backupData() async {
-  final List boxNames = ['user', 'settings'];
-  final String? dlPath =
-      await ExtStorageProvider.getExtStorage(dirName: 'Musify/Data');
+  final boxNames = ['user', 'settings'];
+  final dlPath = await ExtStorageProvider.getExtStorage(dirName: 'Musify/Data');
 
-  for (int i = 0; i < boxNames.length; i++) {
-    await Hive.openBox(boxNames[i].toString());
+  for (var i = 0; i < boxNames.length; i++) {
+    await Hive.openBox(boxNames[i]);
     try {
-      await File(Hive.box(boxNames[i].toString()).path!)
+      await File(Hive.box(boxNames[i]).path!)
           .copy('$dlPath/${boxNames[i]}Data.hive');
     } catch (e) {
       await [
         Permission.manageExternalStorage,
       ].request();
-      await File(Hive.box(boxNames[i].toString()).path!)
+      await File(Hive.box(boxNames[i]).path!)
           .copy('$dlPath/${boxNames[i]}Data.hive');
       return 'Permissions problem, if you already gave requested permission, Backup data again!';
     }
@@ -59,14 +58,14 @@ Future backupData() async {
 }
 
 Future restoreData() async {
-  final List boxNames = ['user', 'settings'];
-  final String? uplPath =
+  final boxNames = ['user', 'settings'];
+  final uplPath =
       await ExtStorageProvider.getExtStorage(dirName: 'Musify/Data');
 
-  for (int i = 0; i < boxNames.length; i++) {
-    await Hive.openBox(boxNames[i].toString());
+  for (var i = 0; i < boxNames.length; i++) {
+    await Hive.openBox(boxNames[i]);
     try {
-      final Box box = await Hive.openBox(boxNames[i].toString());
+      final box = await Hive.openBox(boxNames[i]);
       final boxPath = box.path;
       await File('${uplPath!}/${boxNames[i]}Data.hive').copy(boxPath!);
     } catch (e) {

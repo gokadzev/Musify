@@ -102,17 +102,19 @@ class _HomePageState extends State<HomePage> {
                 if (data.hasError) {
                   // print(data.error);
                   return Center(
-                      child: Text(
-                    'Error!',
-                    style: TextStyle(color: accent, fontSize: 18),
-                  ));
+                    child: Text(
+                      'Error!',
+                      style: TextStyle(color: accent, fontSize: 18),
+                    ),
+                  );
                 }
                 if (!data.hasData) {
                   return Center(
-                      child: Text(
-                    'Nothing Found!',
-                    style: TextStyle(color: accent, fontSize: 18),
-                  ));
+                    child: Text(
+                      'Nothing Found!',
+                      style: TextStyle(color: accent, fontSize: 18),
+                    ),
+                  );
                 }
                 return Wrap(
                   children: <Widget>[
@@ -171,7 +173,7 @@ class CubeContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Size size = MediaQuery.of(context).size;
+    final size = MediaQuery.of(context).size;
     return DelayedDisplay(
       delay: const Duration(milliseconds: 200),
       fadingDuration: const Duration(milliseconds: 400),

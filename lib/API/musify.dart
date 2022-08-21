@@ -60,7 +60,7 @@ Future get10Music(dynamic playlistid) async {
   final List playlistSongs =
       await getData('cache', 'playlist10Songs$playlistid') ?? [];
   if (playlistSongs.isEmpty) {
-    int index = 0;
+    var index = 0;
     await for (final song in yt.playlists.getVideos(playlistid).take(10)) {
       playlistSongs.add(
         returnSongLayout(
@@ -156,8 +156,10 @@ Future<List> searchPlaylist(String query) async {
   }
 
   return playlists
-      .where((playlist) =>
-          playlist['title'].toLowerCase().contains(query.toLowerCase()))
+      .where(
+        (playlist) =>
+            playlist['title'].toLowerCase().contains(query.toLowerCase()),
+      )
       .toList();
 }
 
@@ -172,7 +174,7 @@ Future getSongsFromPlaylist(dynamic playlistid) async {
   final List playlistSongs =
       await getData('cache', 'playlistSongs$playlistid') ?? [];
   if (playlistSongs.isEmpty) {
-    int index = 0;
+    var index = 0;
     await for (final song in yt.playlists.getVideos(playlistid)) {
       playlistSongs.add(
         returnSongLayout(
@@ -199,7 +201,7 @@ Future<void> setActivePlaylist(List plist) async {
   if (plist is List<SongModel>) {
     activePlaylist = [];
     id = 0;
-    final List<MediaItem> activeTempPlaylist = [
+    final activeTempPlaylist = <MediaItem>[
       for (final song in plist) songModelToMediaItem(song, song.data)
     ];
 
@@ -258,7 +260,8 @@ Future<List<SongModel>> getLocalSongs() async {
     localSongs = [
       ...await _audioQuery.querySongs(uriType: UriType.EXTERNAL),
       ...await _audioQuery.querySongs(
-          path: await ExtStorageProvider.getExtStorage(dirName: 'Musify'))
+        path: await ExtStorageProvider.getExtStorage(dirName: 'Musify'),
+      )
     ];
   }
 
@@ -267,23 +270,25 @@ Future<List<SongModel>> getLocalSongs() async {
 
 Future<List<Map<String, int>>> getSkipSegments(String id) async {
   try {
-    final res = await http.get(Uri(
-      scheme: 'https',
-      host: 'sponsor.ajay.app',
-      path: '/api/skipSegments',
-      queryParameters: {
-        'videoID': id,
-        'category': [
-          'sponsor',
-          'selfpromo',
-          'interaction',
-          'intro',
-          'outro',
-          'music_offtopic'
-        ],
-        'actionType': 'skip'
-      },
-    ));
+    final res = await http.get(
+      Uri(
+        scheme: 'https',
+        host: 'sponsor.ajay.app',
+        path: '/api/skipSegments',
+        queryParameters: {
+          'videoID': id,
+          'category': [
+            'sponsor',
+            'selfpromo',
+            'interaction',
+            'intro',
+            'outro',
+            'music_offtopic'
+          ],
+          'actionType': 'skip'
+        },
+      ),
+    );
     if (res.body != 'Not Found') {
       final data = jsonDecode(res.body);
       final segments = data.map((obj) {
@@ -341,8 +346,11 @@ Future getSongLyrics(String artist, String title) async {
         final lyricsResponse = await json.decode(response.body);
         if (lyricsResponse['lyrics'] != null) {
           lyrics.value = lyricsResponse['lyrics'].toString();
-          addOrUpdateData('cache', 'lyrics-$artist-$title',
-              lyricsResponse['lyrics'].toString());
+          addOrUpdateData(
+            'cache',
+            'lyrics-$artist-$title',
+            lyricsResponse['lyrics'].toString(),
+          );
         } else {
           lyrics.value = 'not found';
         }

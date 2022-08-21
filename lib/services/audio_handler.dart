@@ -6,9 +6,6 @@ import 'package:musify/helper/mediaitem.dart';
 import 'package:musify/services/audio_manager.dart';
 
 class MyAudioHandler extends BaseAudioHandler {
-  final ConcatenatingAudioSource _playlist =
-      ConcatenatingAudioSource(children: []);
-
   MyAudioHandler() {
     _loadEmptyPlaylist();
     _notifyAudioHandlerAboutPlaybackEvents();
@@ -18,6 +15,8 @@ class MyAudioHandler extends BaseAudioHandler {
     _listenForPositionChanges();
     _listenProcessingStates();
   }
+  final ConcatenatingAudioSource _playlist =
+      ConcatenatingAudioSource(children: []);
 
   Future<void> _loadEmptyPlaylist() async {
     try {
@@ -29,7 +28,7 @@ class MyAudioHandler extends BaseAudioHandler {
 
   void _notifyAudioHandlerAboutPlaybackEvents() {
     audioPlayer.playbackEventStream.listen((PlaybackEvent event) {
-      final bool playing = audioPlayer.playing;
+      final playing = audioPlayer.playing;
       playbackState.add(
         playbackState.value.copyWith(
           controls: [
@@ -80,13 +79,13 @@ class MyAudioHandler extends BaseAudioHandler {
   void _listenForDurationChanges() {
     audioPlayer.durationStream.listen((duration) {
       var index = audioPlayer.currentIndex;
-      final List<MediaItem> newQueue = queue.value;
+      final newQueue = queue.value;
       if (index == null || newQueue.isEmpty) return;
       if (audioPlayer.shuffleModeEnabled) {
         index = audioPlayer.shuffleIndices![index];
       }
-      final MediaItem oldMediaItem = newQueue[index];
-      final MediaItem newMediaItem = oldMediaItem.copyWith(duration: duration);
+      final oldMediaItem = newQueue[index];
+      final newMediaItem = oldMediaItem.copyWith(duration: duration);
       newQueue[index] = newMediaItem;
       queue.add(newQueue);
       mediaItem.add(newMediaItem);
@@ -127,7 +126,7 @@ class MyAudioHandler extends BaseAudioHandler {
 
   void _listenForCurrentSongIndexChanges() {
     audioPlayer.currentIndexStream.listen((index) {
-      final List<MediaItem> playlist = queue.value;
+      final playlist = queue.value;
       if (index == null || playlist.isEmpty) return;
       if (audioPlayer.shuffleModeEnabled) {
         index = audioPlayer.shuffleIndices![index];
@@ -177,33 +176,39 @@ class MyAudioHandler extends BaseAudioHandler {
     );
   }
 
-  ClippingAudioSource _createClippingAudioSource(MediaItem mediaItem,
-      [start, end]) {
+  ClippingAudioSource _createClippingAudioSource(
+    MediaItem mediaItem, [
+    start,
+    end,
+  ]) {
     if (start != null && end == null) {
       return ClippingAudioSource(
-          start: start,
+        start: start,
+        tag: mediaItem,
+        child: AudioSource.uri(
+          Uri.parse(mediaItem.extras!['url'].toString()),
           tag: mediaItem,
-          child: AudioSource.uri(
-            Uri.parse(mediaItem.extras!['url'].toString()),
-            tag: mediaItem,
-          ));
+        ),
+      );
     } else if (end != null && start == null) {
       return ClippingAudioSource(
-          end: end,
+        end: end,
+        tag: mediaItem,
+        child: AudioSource.uri(
+          Uri.parse(mediaItem.extras!['url'].toString()),
           tag: mediaItem,
-          child: AudioSource.uri(
-            Uri.parse(mediaItem.extras!['url'].toString()),
-            tag: mediaItem,
-          ));
+        ),
+      );
     } else {
       return ClippingAudioSource(
-          start: start,
-          end: end,
+        start: start,
+        end: end,
+        tag: mediaItem,
+        child: AudioSource.uri(
+          Uri.parse(mediaItem.extras!['url'].toString()),
           tag: mediaItem,
-          child: AudioSource.uri(
-            Uri.parse(mediaItem.extras!['url'].toString()),
-            tag: mediaItem,
-          ));
+        ),
+      );
     }
   }
 

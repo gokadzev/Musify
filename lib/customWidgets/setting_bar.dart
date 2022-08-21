@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:musify/style/appColors.dart';
 
 class SettingBar extends StatelessWidget {
+  SettingBar(this.tileName, this.tileIcon, this.onTap);
+
   final Function() onTap;
   final String tileName;
   final IconData tileIcon;
-
-  SettingBar(this.tileName, this.tileIcon, this.onTap);
 
   @override
   Widget build(BuildContext context) {

@@ -29,11 +29,14 @@ final shuffleNotifier = ValueNotifier<bool>(false);
 final repeatNotifier = ValueNotifier<bool>(false);
 final playerState = ValueNotifier<PlayerState>(audioPlayer.playerState);
 final prefferedFileExtension = ValueNotifier<String>(
-    Hive.box('settings').get('audioFileType', defaultValue: 'mp3') as String);
+  Hive.box('settings').get('audioFileType', defaultValue: 'mp3') as String,
+);
 final playNextSongAutomatically = ValueNotifier<bool>(
-    Hive.box('settings').get('playNextSongAutomatically', defaultValue: false));
+  Hive.box('settings').get('playNextSongAutomatically', defaultValue: false),
+);
 final sponsorBlockSupport = ValueNotifier<bool>(
-    Hive.box('settings').get('sponsorBlockSupport', defaultValue: false));
+  Hive.box('settings').get('sponsorBlockSupport', defaultValue: false),
+);
 
 bool get hasNext => activePlaylist.isEmpty
     ? audioPlayer.hasNext
@@ -61,13 +64,16 @@ Future<void> playSong(Map song) async {
       final segments = await getSkipSegments(song['ytid']);
       if (segments.isNotEmpty) {
         if (segments.length == 1) {
-          await MyAudioHandler().addQueueItem(mapToMediaItem(song, songUrl),
-              Duration(seconds: segments[0]['end']!));
+          await MyAudioHandler().addQueueItem(
+            mapToMediaItem(song, songUrl),
+            Duration(seconds: segments[0]['end']!),
+          );
         } else {
           await MyAudioHandler().addQueueItem(
-              mapToMediaItem(song, songUrl),
-              Duration(seconds: segments[0]['end']!),
-              Duration(seconds: segments[1]['start']!));
+            mapToMediaItem(song, songUrl),
+            Duration(seconds: segments[0]['end']!),
+            Duration(seconds: segments[1]['start']!),
+          );
         }
       } else {
         await MyAudioHandler().addQueueItem(mapToMediaItem(song, songUrl));

@@ -193,7 +193,9 @@ class AudioAppState extends State<AudioApp> {
                     ),
                   Padding(
                     padding: EdgeInsets.only(
-                        top: size.height * 0.04, bottom: size.height * 0.01),
+                      top: size.height * 0.04,
+                      bottom: size.height * 0.01,
+                    ),
                     child: Column(
                       children: <Widget>[
                         Text(
@@ -306,17 +308,18 @@ class AudioAppState extends State<AudioApp> {
                                 },
                               ),
                               IconButton(
-                                  padding: EdgeInsets.zero,
-                                  icon: Icon(
-                                    sponsorBlockSupport.value
-                                        ? MdiIcons.playCircle
-                                        : MdiIcons.playCircleOutline,
-                                    color: Colors.white,
-                                  ),
-                                  iconSize: size.width * 0.056,
-                                  splashColor: Colors.transparent,
-                                  onPressed: () =>
-                                      setState(changeSponsorBlockStatus)),
+                                padding: EdgeInsets.zero,
+                                icon: Icon(
+                                  sponsorBlockSupport.value
+                                      ? MdiIcons.playCircle
+                                      : MdiIcons.playCircleOutline,
+                                  color: Colors.white,
+                                ),
+                                iconSize: size.width * 0.056,
+                                splashColor: Colors.transparent,
+                                onPressed: () =>
+                                    setState(changeSponsorBlockStatus),
+                              ),
                             ],
                           ),
                         IconButton(
@@ -347,47 +350,49 @@ class AudioAppState extends State<AudioApp> {
                             borderRadius: BorderRadius.circular(100),
                           ),
                           child: ValueListenableBuilder<PlayerState>(
-                              valueListenable: playerState,
-                              builder: (_, value, __) {
-                                if (value.processingState ==
-                                        ProcessingState.loading ||
-                                    value.processingState ==
-                                        ProcessingState.buffering) {
-                                  return Container(
-                                    margin: const EdgeInsets.all(8),
-                                    width: size.width * 0.08,
-                                    height: size.width * 0.08,
-                                    child: const CircularProgressIndicator(
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                          Color.fromARGB(255, 0, 0, 0)),
+                            valueListenable: playerState,
+                            builder: (_, value, __) {
+                              if (value.processingState ==
+                                      ProcessingState.loading ||
+                                  value.processingState ==
+                                      ProcessingState.buffering) {
+                                return Container(
+                                  margin: const EdgeInsets.all(8),
+                                  width: size.width * 0.08,
+                                  height: size.width * 0.08,
+                                  child: const CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Color.fromARGB(255, 0, 0, 0),
                                     ),
-                                  );
-                                } else if (value.playing != true) {
-                                  return IconButton(
-                                    icon: const Icon(MdiIcons.play),
-                                    iconSize: size.width * 0.1,
-                                    onPressed: play,
-                                    splashColor: Colors.transparent,
-                                  );
-                                } else if (value.processingState !=
-                                    ProcessingState.completed) {
-                                  return IconButton(
-                                    icon: const Icon(MdiIcons.pause),
-                                    iconSize: size.width * 0.1,
-                                    onPressed: pause,
-                                    splashColor: Colors.transparent,
-                                  );
-                                } else {
-                                  return IconButton(
-                                    icon: const Icon(MdiIcons.replay),
-                                    iconSize: size.width * 0.056,
-                                    onPressed: () => audioPlayer.seek(
-                                        Duration.zero,
-                                        index: audioPlayer
-                                            .effectiveIndices!.first),
-                                  );
-                                }
-                              }),
+                                  ),
+                                );
+                              } else if (value.playing != true) {
+                                return IconButton(
+                                  icon: const Icon(MdiIcons.play),
+                                  iconSize: size.width * 0.1,
+                                  onPressed: play,
+                                  splashColor: Colors.transparent,
+                                );
+                              } else if (value.processingState !=
+                                  ProcessingState.completed) {
+                                return IconButton(
+                                  icon: const Icon(MdiIcons.pause),
+                                  iconSize: size.width * 0.1,
+                                  onPressed: pause,
+                                  splashColor: Colors.transparent,
+                                );
+                              } else {
+                                return IconButton(
+                                  icon: const Icon(MdiIcons.replay),
+                                  iconSize: size.width * 0.056,
+                                  onPressed: () => audioPlayer.seek(
+                                    Duration.zero,
+                                    index: audioPlayer.effectiveIndices!.first,
+                                  ),
+                                );
+                              }
+                            },
+                          ),
                         ),
                         IconButton(
                           padding: EdgeInsets.zero,
@@ -553,7 +558,8 @@ class AudioAppState extends State<AudioApp> {
                                             );
                                           } else if (value == 'null') {
                                             return const SizedBox(
-                                                child: Spinner());
+                                              child: Spinner(),
+                                            );
                                           } else {
                                             return Padding(
                                               padding: const EdgeInsets.only(

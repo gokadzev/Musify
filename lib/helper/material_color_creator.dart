@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 
 MaterialColor createMaterialColor(Color color) {
   final List strengths = <double>[.05];
-  final Map<int, Color> swatch = {};
-  final int r = color.red, g = color.green, b = color.blue;
+  final swatch = <int, Color>{};
+  final r = color.red, g = color.green, b = color.blue;
 
-  for (int i = 1; i < 10; i++) {
+  for (var i = 1; i < 10; i++) {
     strengths.add(0.1 * i);
   }
   for (var strength in strengths) {
-    final double ds = 0.5 - strength;
+    final ds = 0.5 - strength;
     swatch[(strength * 1000).round()] = Color.fromRGBO(
       r + ((ds < 0 ? r : (255 - r)) * ds).round(),
       g + ((ds < 0 ? g : (255 - g)) * ds).round(),
