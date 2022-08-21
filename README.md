@@ -14,6 +14,7 @@
     Play Local / Downloaded Songs Support :open_file_folder: <br>
     High Quality mp3 / m4a / flac Format :fire:<br>
     Lyrics Support :pencil:<br>
+    SponsorBlock Support :scissors: <br>
     No Ads :no_entry_sign:<br>
     No Subscriptions :dollar:<br> 
     12 Supported Languages :us:<br>

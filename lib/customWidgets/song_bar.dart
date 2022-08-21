@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/services/audio_manager.dart';
+import 'package:musify/services/download_manager.dart';
 import 'package:musify/style/appColors.dart';
 
 class SongBar extends StatelessWidget {
-  SongBar(this.song, this.moveBackAfterPlay, {Key? key}) : super(key: key);
+  SongBar(this.song, this.moveBackAfterPlay, {super.key});
 
   late final dynamic song;
   late final bool moveBackAfterPlay;
@@ -29,10 +30,10 @@ class SongBar extends StatelessWidget {
             Navigator.pop(context);
           }
         },
-        splashColor: accent,
-        hoverColor: accent,
-        focusColor: accent,
-        highlightColor: accent,
+        splashColor: accent.withOpacity(0.4),
+        hoverColor: accent.withOpacity(0.4),
+        focusColor: accent.withOpacity(0.4),
+        highlightColor: accent.withOpacity(0.4),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
@@ -65,9 +66,10 @@ class SongBar extends StatelessWidget {
                           .replaceAll('&quot;', '"')
                           .replaceAll('&amp;', '&'),
                       style: TextStyle(
-                          color: accent,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700),
+                        color: accent,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                   const SizedBox(
@@ -79,9 +81,10 @@ class SongBar extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       song['more_info']['singers'].toString(),
                       style: const TextStyle(
-                          color: Colors.white70,
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14),
+                        color: Colors.white70,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 14,
+                      ),
                     ),
                   ),
                 ],

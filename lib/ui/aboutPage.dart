@@ -4,7 +4,7 @@ import 'package:musify/helper/version.dart';
 import 'package:musify/style/appColors.dart';
 
 class AboutPage extends StatelessWidget {
-  const AboutPage({Key? key}) : super(key: key);
+  const AboutPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +35,7 @@ class AboutPage extends StatelessWidget {
 }
 
 class AboutCards extends StatelessWidget {
-  const AboutCards({Key? key}) : super(key: key);
+  const AboutCards({super.key});
 
   @override
   Widget build(BuildContext context) {

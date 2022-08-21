@@ -56,10 +56,10 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
 
   Future<List> fetch() async {
     final list = [];
-    final int _count = localSongs.length;
+    final _count = localSongs.length;
     final n = min(_itemsPerPage, _count - _currentPage * _itemsPerPage);
     await Future.delayed(const Duration(seconds: 1), () {
-      for (int i = 0; i < n; i++) {
+      for (var i = 0; i < n; i++) {
         list.add(localSongs[_currentLastLoadedId]);
         _currentLastLoadedId++;
       }
@@ -165,9 +165,10 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
                         child: Text(
                           AppLocalizations.of(context)!.playAll.toUpperCase(),
                           style: TextStyle(
-                              color: accent != const Color(0xFFFFFFFF)
-                                  ? Colors.white
-                                  : Colors.black),
+                            color: accent != const Color(0xFFFFFFFF)
+                                ? Colors.white
+                                : Colors.black,
+                          ),
                         ),
                       ),
                     ],
@@ -177,111 +178,115 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
             ),
             const Padding(padding: EdgeInsets.only(top: 40)),
             FutureBuilder(
-                future: getLocalSongs(),
-                builder: (context, data) {
-                  return data.hasData
-                      ? ListView.builder(
-                          shrinkWrap: true,
-                          physics: const BouncingScrollPhysics(),
-                          addAutomaticKeepAlives:
-                              false, // may be problem with lazyload if it implemented
-                          addRepaintBoundaries: false,
-                          // Need to display a loading tile if more items are coming
-                          itemCount: _hasMore
-                              ? _songsList.length + 1
-                              : _songsList.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            if (index >= _songsList.length) {
-                              if (!_isLoading) {
-                                _loadMore();
-                              }
-                              return const Spinner();
+              future: getLocalSongs(),
+              builder: (context, data) {
+                return data.hasData
+                    ? ListView.builder(
+                        shrinkWrap: true,
+                        physics: const BouncingScrollPhysics(),
+                        addAutomaticKeepAlives:
+                            false, // may be problem with lazyload if it implemented
+                        addRepaintBoundaries: false,
+                        // Need to display a loading tile if more items are coming
+                        itemCount: _hasMore
+                            ? _songsList.length + 1
+                            : _songsList.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          if (index >= _songsList.length) {
+                            if (!_isLoading) {
+                              _loadMore();
                             }
+                            return const Spinner();
+                          }
 
-                            final lsong = {
-                              'id': index,
-                              'ytid': '',
-                              'title': localSongs[index].displayName,
-                              'image': '',
-                              'lowResImage': '',
-                              'highResImage': '',
-                              'songUrl': localSongs[index].data,
-                              'album': '',
-                              'type': 'song',
-                              'localSongId': localSongs[index].id,
-                              'more_info': {
-                                'primary_artists': '',
-                                'singers': '',
-                              }
-                            };
+                          final lsong = {
+                            'id': index,
+                            'ytid': '',
+                            'title': localSongs[index].displayName,
+                            'image': '',
+                            'lowResImage': '',
+                            'highResImage': '',
+                            'songUrl': localSongs[index].data,
+                            'album': '',
+                            'type': 'song',
+                            'localSongId': localSongs[index].id,
+                            'more_info': {
+                              'primary_artists': '',
+                              'singers': '',
+                            }
+                          };
 
-                            return Container(
-                                padding: const EdgeInsets.only(
-                                    left: 12, right: 12, bottom: 15),
-                                child: InkWell(
-                                    borderRadius: BorderRadius.circular(20),
-                                    onTap: () {
-                                      playSong(lsong);
-                                    },
-                                    splashColor: accent,
-                                    hoverColor: accent,
-                                    focusColor: accent,
-                                    highlightColor: accent,
-                                    child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          QueryArtworkWidget(
-                                            id: lsong['localSongId'] as int,
-                                            type: ArtworkType.AUDIO,
-                                            artworkWidth: 70,
-                                            artworkHeight: 70,
-                                            artworkFit: BoxFit.cover,
-                                            artworkBorder:
-                                                BorderRadius.circular(8),
-                                            nullArtworkWidget: DecoratedBox(
-                                              decoration: BoxDecoration(
-                                                  color: accent,
-                                                  borderRadius:
-                                                      BorderRadius.circular(8)),
-                                              child: Icon(
-                                                MdiIcons.musicNoteOutline,
-                                                size: 70,
-                                                color: accent !=
-                                                        const Color(0xFFFFFFFF)
-                                                    ? Colors.white
-                                                    : Colors.black,
-                                              ),
-                                            ),
-                                            keepOldArtwork: true,
+                          return Container(
+                            padding: const EdgeInsets.only(
+                              left: 12,
+                              right: 12,
+                              bottom: 15,
+                            ),
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(20),
+                              onTap: () {
+                                playSong(lsong);
+                              },
+                              splashColor: accent,
+                              hoverColor: accent,
+                              focusColor: accent,
+                              highlightColor: accent,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  QueryArtworkWidget(
+                                    id: lsong['localSongId'] as int,
+                                    type: ArtworkType.AUDIO,
+                                    artworkWidth: 70,
+                                    artworkHeight: 70,
+                                    artworkFit: BoxFit.cover,
+                                    artworkBorder: BorderRadius.circular(8),
+                                    nullArtworkWidget: DecoratedBox(
+                                      decoration: BoxDecoration(
+                                        color: accent,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Icon(
+                                        MdiIcons.musicNoteOutline,
+                                        size: 70,
+                                        color: accent != const Color(0xFFFFFFFF)
+                                            ? Colors.white
+                                            : Colors.black,
+                                      ),
+                                    ),
+                                    keepOldArtwork: true,
+                                  ),
+                                  Flexible(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Container(
+                                          alignment: Alignment.centerLeft,
+                                          padding: const EdgeInsets.only(
+                                            left: 15,
                                           ),
-                                          Flexible(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: <Widget>[
-                                                Container(
-                                                  alignment:
-                                                      Alignment.centerLeft,
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          left: 15),
-                                                  child: Text(
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    lsong['title'].toString(),
-                                                    style: TextStyle(
-                                                        color: accent),
-                                                  ),
-                                                ),
-                                              ],
+                                          child: Text(
+                                            overflow: TextOverflow.ellipsis,
+                                            lsong['title'].toString(),
+                                            style: TextStyle(
+                                              color: accent,
                                             ),
                                           ),
-                                        ])));
-                          },
-                        )
-                      : const Spinner();
-                })
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      )
+                    : const Spinner();
+              },
+            )
           ],
         ),
       ),

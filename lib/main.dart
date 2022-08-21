@@ -1,5 +1,6 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -16,18 +17,21 @@ import 'package:musify/ui/rootPage.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 GetIt getIt = GetIt.instance;
+bool _interrupted = false;
 
 class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   static Future<void> setLocale(BuildContext context, Locale newLocale) async {
-    final _MyAppState state = context.findAncestorStateOfType<_MyAppState>()!;
+    final state = context.findAncestorStateOfType<_MyAppState>()!;
     state.changeLanguage(newLocale);
   }
 
   static Future<void> setAccentColor(
-      BuildContext context, Color newAccentColor) async {
-    final _MyAppState state = context.findAncestorStateOfType<_MyAppState>()!;
+    BuildContext context,
+    Color newAccentColor,
+  ) async {
+    final state = context.findAncestorStateOfType<_MyAppState>()!;
     state.changeAccentColor(newAccentColor);
   }
 
@@ -54,7 +58,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     getLocalSongs();
-    final Map<String, String> codes = {
+    final codes = <String, String>{
       'English': 'en',
       'Georgian': 'ka',
       'Chinese': 'zh',
@@ -68,14 +72,18 @@ class _MyAppState extends State<MyApp> {
       'Turkish': 'tr',
       'Ukrainian': 'uk',
     };
-    _locale = Locale(codes[Hive.box('settings')
-        .get('language', defaultValue: 'English') as String]!);
+    _locale = Locale(
+      codes[Hive.box('settings').get('language', defaultValue: 'English')
+          as String]!,
+    );
+
+    FlutterDownloader.registerCallback(downloadCallback);
   }
 
   @override
   void dispose() {
     Hive.close();
-    audioPlayer!.dispose();
+    audioPlayer.dispose();
     super.dispose();
   }
 
@@ -152,25 +160,35 @@ void main() async {
   await Hive.openBox('settings');
   await Hive.openBox('user');
   await Hive.openBox('cache');
-  await FlutterDownloader.initialize(
-    debug:
-        true, // optional: set to false to disable printing logs to console (default: true)
-    ignoreSsl:
-        true // option: set to false to disable working with http links (default: false)
-    ,
-  );
-  FlutterDownloader.registerCallback(TestClass.callback);
-  final PackageInfo packageInfo = await PackageInfo.fromPlatform();
-  version = packageInfo.version;
-  await enableBooster();
   await initialisation();
+  await getAlternateApiUrl();
   runApp(const MyApp());
 }
 
 Future<void> initialisation() async {
   final session = await AudioSession.instance;
   await session.configure(const AudioSessionConfiguration.music());
-  final AudioHandler audioHandler = await AudioService.init(
+  session.interruptionEventStream.listen((event) {
+    if (event.begin) {
+      if (audioPlayer.playing) {
+        pause();
+        _interrupted = true;
+      }
+    } else {
+      switch (event.type) {
+        case AudioInterruptionType.pause:
+        case AudioInterruptionType.duck:
+          if (!audioPlayer.playing && _interrupted) {
+            play();
+          }
+          break;
+        case AudioInterruptionType.unknown:
+          break;
+      }
+      _interrupted = false;
+    }
+  });
+  final audioHandler = await AudioService.init(
     builder: MyAudioHandler.new,
     config: const AudioServiceConfig(
       androidNotificationChannelId: 'com.gokadzev.musify',
@@ -181,9 +199,14 @@ Future<void> initialisation() async {
     ),
   );
   getIt.registerSingleton<AudioHandler>(audioHandler);
+  await enableBooster();
+  await FlutterDownloader.initialize(
+    debug: kDebugMode,
+    ignoreSsl: true,
+  );
+  final packageInfo = await PackageInfo.fromPlatform();
+  version = packageInfo.version;
 }
 
-// ignore: avoid_classes_with_only_static_members
-class TestClass {
-  static void callback(String id, DownloadTaskStatus status, int progress) {}
-}
+@pragma('vm:entry-point')
+void downloadCallback(String id, DownloadTaskStatus status, int progress) {}

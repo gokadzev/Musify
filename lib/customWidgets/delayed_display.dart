@@ -5,6 +5,16 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 class DelayedDisplay extends StatefulWidget {
+  /// DelayedDisplay constructor
+  const DelayedDisplay({
+    required this.child,
+    this.delay = Duration.zero,
+    this.fadingDuration = const Duration(milliseconds: 800),
+    this.slidingCurve = Curves.decelerate,
+    this.slidingBeginOffset = const Offset(0, 0.35),
+    this.fadeIn = true,
+  });
+
   /// Child that will be displayed with the animation and delay
   final Widget child;
 
@@ -22,16 +32,6 @@ class DelayedDisplay extends StatefulWidget {
 
   /// If true, make the child appear, disappear otherwise. Default to true.
   final bool fadeIn;
-
-  /// DelayedDisplay constructor
-  const DelayedDisplay({
-    required this.child,
-    this.delay = Duration.zero,
-    this.fadingDuration = const Duration(milliseconds: 800),
-    this.slidingCurve = Curves.decelerate,
-    this.slidingBeginOffset = const Offset(0, 0.35),
-    this.fadeIn = true,
-  });
 
   @override
   _DelayedDisplayState createState() => _DelayedDisplayState();
@@ -74,7 +74,7 @@ class _DelayedDisplayState extends State<DelayedDisplay>
       duration: opacityTransitionDuration,
     );
 
-    final CurvedAnimation curvedAnimation = CurvedAnimation(
+    final curvedAnimation = CurvedAnimation(
       curve: slidingCurve,
       parent: _opacityController,
     );

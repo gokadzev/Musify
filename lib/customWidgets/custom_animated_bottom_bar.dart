@@ -3,7 +3,7 @@ import 'package:musify/ui/rootPage.dart';
 
 class CustomAnimatedBottomBar extends StatelessWidget {
   CustomAnimatedBottomBar({
-    Key? key,
+    super.key,
     this.showElevation = true,
     this.onTap,
     this.selectedItemColor,
@@ -17,7 +17,7 @@ class CustomAnimatedBottomBar extends StatelessWidget {
     this.curve = Curves.easeOutQuint,
     this.radius = BorderRadius.zero,
     required this.items,
-  }) : super(key: key);
+  });
   final Color? backgroundColor;
   final bool showElevation;
   final List<BottomNavBarItem> items;

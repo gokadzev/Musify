@@ -4,7 +4,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:musify/API/musify.dart';
 import 'package:musify/customWidgets/custom_animated_bottom_bar.dart';
 import 'package:musify/helper/version.dart';
 import 'package:musify/services/audio_manager.dart';
@@ -30,7 +29,6 @@ class AppState extends State<Musify> {
   @override
   void initState() {
     super.initState();
-    initAudioPlayer();
     checkAppUpdates().then(
       (value) => {
         if (value == true)
@@ -48,23 +46,6 @@ class AppState extends State<Musify> {
           }
       },
     );
-  }
-
-  void initAudioPlayer() {
-    audioPlayer!.processingStateStream.listen((state) async {
-      if (state == ProcessingState.completed) {
-        await pause();
-        await audioPlayer!.seek(Duration.zero);
-        if (hasNext) {
-          if (activePlaylist.isEmpty && playNextSongAutomatically.value) {
-            await playSong(await getRandomSong());
-          } else {
-            await playSong(activePlaylist[id + 1]);
-            id = id + 1;
-          }
-        }
-      }
-    });
   }
 
   @override
@@ -88,7 +69,7 @@ class AppState extends State<Musify> {
   }
 
   Widget getFooter() {
-    final List<BottomNavBarItem> items = [
+    final items = <BottomNavBarItem>[
       BottomNavBarItem(
         icon: const Icon(MdiIcons.homeOutline),
         activeIcon: const Icon(MdiIcons.home),
@@ -130,7 +111,7 @@ class AppState extends State<Musify> {
       mainAxisSize: MainAxisSize.min,
       children: [
         StreamBuilder<SequenceState?>(
-          stream: audioPlayer!.sequenceStateStream,
+          stream: audioPlayer.sequenceStateStream,
           builder: (context, snapshot) {
             final state = snapshot.data;
             if (state?.sequence.isEmpty ?? true) {
@@ -249,14 +230,13 @@ class AppState extends State<Musify> {
                       const Spacer(),
                       Padding(
                         padding: const EdgeInsets.only(right: 8),
-                        child: StreamBuilder<PlayerState>(
-                          stream: audioPlayer!.playerStateStream,
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              final playerState = snapshot.data;
-                              return _playerControllers(
-                                  playerState!, MediaQuery.of(context).size);
-                            } else {
+                        child: ValueListenableBuilder<PlayerState>(
+                          valueListenable: playerState,
+                          builder: (_, value, __) {
+                            if (value.processingState ==
+                                    ProcessingState.loading ||
+                                value.processingState ==
+                                    ProcessingState.buffering) {
                               return Container(
                                 margin: const EdgeInsets.all(8),
                                 width: MediaQuery.of(context).size.width * 0.08,
@@ -266,6 +246,31 @@ class AppState extends State<Musify> {
                                   valueColor:
                                       AlwaysStoppedAnimation<Color>(accent),
                                 ),
+                              );
+                            } else if (value.playing != true) {
+                              return IconButton(
+                                icon: Icon(MdiIcons.play, color: accent),
+                                iconSize: 45,
+                                onPressed: play,
+                                splashColor: Colors.transparent,
+                              );
+                            } else if (value.processingState !=
+                                ProcessingState.completed) {
+                              return IconButton(
+                                icon: Icon(MdiIcons.pause, color: accent),
+                                iconSize: 45,
+                                onPressed: pause,
+                                splashColor: Colors.transparent,
+                              );
+                            } else {
+                              return IconButton(
+                                icon: Icon(MdiIcons.replay, color: accent),
+                                iconSize: 45,
+                                onPressed: () => audioPlayer.seek(
+                                  Duration.zero,
+                                  index: audioPlayer.effectiveIndices!.first,
+                                ),
+                                splashColor: Colors.transparent,
                               );
                             }
                           },
@@ -294,42 +299,5 @@ class AppState extends State<Musify> {
         margin: const EdgeInsets.only(left: 8, right: 8),
       ),
     );
-  }
-
-  Widget _playerControllers(PlayerState playerState, Size size) {
-    final processingState = playerState.processingState;
-    if (processingState == ProcessingState.loading ||
-        processingState == ProcessingState.buffering) {
-      return Container(
-        margin: const EdgeInsets.all(8),
-        width: size.width * 0.08,
-        height: size.width * 0.08,
-        child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(accent),
-        ),
-      );
-    } else if (audioPlayer!.playing != true) {
-      return IconButton(
-        icon: Icon(MdiIcons.play, color: accent),
-        iconSize: 45,
-        onPressed: play,
-        splashColor: Colors.transparent,
-      );
-    } else if (processingState != ProcessingState.completed) {
-      return IconButton(
-        icon: Icon(MdiIcons.pause, color: accent),
-        iconSize: 45,
-        onPressed: pause,
-        splashColor: Colors.transparent,
-      );
-    } else {
-      return IconButton(
-        icon: Icon(MdiIcons.replay, color: accent),
-        iconSize: 45,
-        onPressed: () => audioPlayer!
-            .seek(Duration.zero, index: audioPlayer!.effectiveIndices!.first),
-        splashColor: Colors.transparent,
-      );
-    }
   }
 }
