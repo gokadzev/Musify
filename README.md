@@ -1,10 +1,13 @@
 <p align="center">
- <img width="250px" src="https://github.com/gokadzev/Musify/raw/master/android/app/src/main/res/drawable-xxhdpi/ic_launcher_foreground.png" align="center" alt="GitHub Readme Stats" />
+ <img width="150px" src="https://github.com/gokadzev/Musify/raw/master/android/app/src/main/res/mipmap-xxxhdpi/launcher_icon.png" align="center" alt="GitHub Readme Stats" />
  <h2 align="center"><b>Musify</b></h2>
  <p align="center"><b>Music Streaming and Downloading app made in Flutter!</b></p>
+ <p align="center">
+<a href="https://github.com/gokadzev/Musify/releases"><img alt="GitHub release" src="https://img.shields.io/github/v/release/gokadzev/Musify"/></a> <a href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/gokadzev/Musify?color=blue"/></a>
+</p>
 </p>
 
----
+
 
   <h3 align="center">Features</h3>
   <p align="center">
