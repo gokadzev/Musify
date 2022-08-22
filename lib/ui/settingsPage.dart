@@ -12,6 +12,7 @@ import 'package:musify/ui/aboutPage.dart';
 import 'package:musify/ui/searchPage.dart';
 import 'package:musify/ui/userLikedSongsPage.dart';
 import 'package:musify/ui/userPlaylistsPage.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -474,6 +475,12 @@ class SettingsCards extends StatelessWidget {
               },
             ),
           },
+        ),
+        SettingBar(
+          'Support/Donate',
+          MdiIcons.heart,
+          () =>
+              {launchUrl(Uri.parse('https://www.buymeacoffee.com/gokadzev18'))},
         ),
         SettingBar(
           AppLocalizations.of(context)!.about,
