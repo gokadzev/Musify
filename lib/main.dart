@@ -161,7 +161,6 @@ void main() async {
   await Hive.openBox('user');
   await Hive.openBox('cache');
   await initialisation();
-  await getAlternateApiUrl();
   runApp(const MyApp());
 }
 
