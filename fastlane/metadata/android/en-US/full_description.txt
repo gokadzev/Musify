@@ -8,5 +8,6 @@
 * Lyrics Support
 * No Ads
 * No Subscriptions
+* SponsorBlock Support
 * 12 Supported Languages
 * Material UI & Accent Colors
