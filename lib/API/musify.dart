@@ -227,6 +227,8 @@ Future getPlaylistInfoForWidget(dynamic id) async {
   if (playlist['list'].length == 0) {
     searchPlaylist[searchPlaylist.indexOf(playlist)]['list'] =
         await getSongsFromPlaylist(playlist['ytid']);
+    playlists[playlists.indexOf(playlist)]['list'] =
+        searchPlaylist[searchPlaylist.indexOf(playlist)]['list'];
   }
 
   return playlist;
