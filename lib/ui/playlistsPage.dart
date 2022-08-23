@@ -20,11 +20,6 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
 
   Future<void> search() async {
     _searchQuery = _searchBar.text;
-    if (_searchQuery.isEmpty) {
-      setState(() {});
-      return;
-    }
-
     setState(() {});
   }
 
