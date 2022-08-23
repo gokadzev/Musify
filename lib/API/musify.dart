@@ -299,11 +299,11 @@ Future<List<Map<String, int>>> getSkipSegments(String id) async {
       }).toList();
       return List.castFrom<dynamic, Map<String, int>>(segments);
     } else {
-      return List.castFrom<dynamic, Map<String, int>>([]);
+      return [];
     }
   } catch (e, stack) {
     debugPrint('$e $stack');
-    return List.castFrom<dynamic, Map<String, int>>([]);
+    return [];
   }
 }
 
