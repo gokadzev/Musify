@@ -477,7 +477,7 @@ class SettingsCards extends StatelessWidget {
           },
         ),
         SettingBar(
-          'Support/Donate',
+          AppLocalizations.of(context)!.supportDonate,
           MdiIcons.heart,
           () =>
               {launchUrl(Uri.parse('https://www.buymeacoffee.com/gokadzev18'))},
