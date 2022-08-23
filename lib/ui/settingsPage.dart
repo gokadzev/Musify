@@ -177,6 +177,7 @@ class SettingsCards extends StatelessWidget {
               builder: (BuildContext context) {
                 final codes = <String, String>{
                   'English': 'en',
+                  'French': 'fr',
                   'Georgian': 'ka',
                   'Chinese': 'zh',
                   'Dutch': 'nl',
@@ -192,6 +193,7 @@ class SettingsCards extends StatelessWidget {
 
                 final availableLanguages = <String>[
                   'English',
+                  'French',
                   'Georgian',
                   'Chinese',
                   'Dutch',
