@@ -106,10 +106,10 @@ class AudioAppState extends State<AudioApp> {
                       artworkQuality: FilterQuality.high,
                       quality: 100,
                       artworkWidth: size.width / 1.2,
-                      artworkHeight: size.width / 1.2,
+                      artworkHeight: size.height / 2.7,
                       nullArtworkWidget: SizedBox(
                         width: size.width / 1.2,
-                        height: size.width / 1.2,
+                        height: size.height / 2.7,
                         child: CachedNetworkImage(
                           imageUrl: metadata.artUri.toString(),
                           imageBuilder: (context, imageProvider) =>
@@ -125,7 +125,7 @@ class AudioAppState extends State<AudioApp> {
                           placeholder: (context, url) => const Spinner(),
                           errorWidget: (context, url, error) => Container(
                             width: size.width / 1.2,
-                            height: size.width / 1.2,
+                            height: size.height / 2.7,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
                               gradient: const LinearGradient(
@@ -153,7 +153,7 @@ class AudioAppState extends State<AudioApp> {
                   else
                     SizedBox(
                       width: size.width / 1.2,
-                      height: size.width / 1.2,
+                      height: size.height / 2.7,
                       child: CachedNetworkImage(
                         imageUrl: metadata.artUri.toString(),
                         imageBuilder: (context, imageProvider) => DecoratedBox(
@@ -168,7 +168,7 @@ class AudioAppState extends State<AudioApp> {
                         placeholder: (context, url) => const Spinner(),
                         errorWidget: (context, url, error) => Container(
                           width: size.width / 1.2,
-                          height: size.width / 1.2,
+                          height: size.height / 2.7,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
                             gradient: const LinearGradient(
