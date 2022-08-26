@@ -42,7 +42,10 @@
 
 ---
   <h3 align="center">Credits</h3>
-   <p align="center" ><a href="https://github.com/Harsh-23/Musify">https://github.com/Harsh-23/Musify</a></p>
+   <p align="center">
+   <b>Initial code (now code is fully rebased/changed), App name and App logo (which is remade as well):<b><br>
+   <a href="https://github.com/Harsh-23/Musify">https://github.com/Harsh-23/Musify</a>
+   </p>
    
 ---
 <h3 align="center">Do you like project?</h3>

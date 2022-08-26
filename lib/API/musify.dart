@@ -162,7 +162,7 @@ Future<List> searchPlaylist(String query) async {
 }
 
 Future<Map> getRandomSong() async {
-  final playlistId = 'PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx';
+  const playlistId = 'PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx';
   final List playlistSongs = await getSongsFromPlaylist(playlistId);
 
   return playlistSongs[random.nextInt(playlistSongs.length)];
