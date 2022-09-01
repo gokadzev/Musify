@@ -190,7 +190,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                           Navigator.pop(context, false)
                         },
                         style: ElevatedButton.styleFrom(
-                          primary: accent,
+                          backgroundColor: accent,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),

@@ -111,7 +111,7 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
                           Navigator.pop(context, false)
                         },
                         style: ElevatedButton.styleFrom(
-                          primary: accent,
+                          backgroundColor: accent,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),

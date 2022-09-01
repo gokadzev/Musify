@@ -157,7 +157,7 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
                           setActivePlaylist(localSongs),
                         },
                         style: ElevatedButton.styleFrom(
-                          primary: accent,
+                          backgroundColor: accent,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
