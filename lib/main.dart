@@ -106,6 +106,16 @@ class _MyAppState extends State<MyApp> {
             TargetPlatform.android: ZoomPageTransitionsBuilder(),
           },
         ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all<Color>(accent),
+            shape: MaterialStateProperty.all(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          ),
+        ),
       ),
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.white,
@@ -120,6 +130,16 @@ class _MyAppState extends State<MyApp> {
           builders: {
             TargetPlatform.android: ZoomPageTransitionsBuilder(),
           },
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all<Color>(accent),
+            shape: MaterialStateProperty.all(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          ),
         ),
       ),
       localizationsDelegates: const [

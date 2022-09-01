@@ -156,12 +156,6 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
                         onPressed: () => {
                           setActivePlaylist(localSongs),
                         },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: accent,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
                         child: Text(
                           AppLocalizations.of(context)!.playAll.toUpperCase(),
                           style: TextStyle(
