@@ -12,6 +12,7 @@ import 'package:musify/services/audio_handler.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/ext_storage.dart';
+import 'package:musify/services/lyrics_service.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
@@ -30,7 +31,7 @@ List activePlaylist = [];
 List<SongModel> localSongs = [];
 
 final lyrics = ValueNotifier<String>('null');
-String _lastLyricsUrl = '';
+String lastFetchedLyrics = 'null';
 
 int id = 0;
 
@@ -308,35 +309,13 @@ Future<List<Map<String, int>>> getSkipSegments(String id) async {
 }
 
 Future getSongLyrics(String artist, String title) async {
-  final currentApiUrl =
-      'https://api.lyrics.ovh/v1/$artist/${title.split(" (")[0].split("|")[0].trim()}';
-  if (_lastLyricsUrl != currentApiUrl) {
-    if (await getData('cache', 'lyrics-$currentApiUrl') != null) {
-      lyrics.value = await getData('cache', 'lyrics-$currentApiUrl');
-    } else {
-      lyrics.value = 'null';
-      _lastLyricsUrl = currentApiUrl;
-      final response = await http.get(
-        Uri.parse(_lastLyricsUrl),
-        headers: {'Accept': 'application/json'},
-      );
-
-      if (response.statusCode == 200) {
-        final lyricsResponse = await json.decode(response.body);
-        if (lyricsResponse['lyrics'] != null) {
-          lyrics.value = lyricsResponse['lyrics'].toString();
-          addOrUpdateData(
-            'cache',
-            'lyrics-$_lastLyricsUrl',
-            lyricsResponse['lyrics'].toString(),
-          );
-        } else {
-          lyrics.value = 'not found';
-        }
-      } else {
-        lyrics.value = 'server error';
-        throw Exception('Failed to load lyrics');
-      }
-    }
+  if (lastFetchedLyrics != '$artist - $title') {
+    lyrics.value = 'null';
+    final _lyrics = await Lyrics().getLyrics(artist: artist, track: title);
+    lyrics.value = _lyrics;
+    lastFetchedLyrics = '$artist - $title';
+    return _lyrics;
   }
+
+  return lyrics.value;
 }
