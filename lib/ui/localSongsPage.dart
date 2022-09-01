@@ -102,12 +102,7 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
                       height: 200,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        gradient: const LinearGradient(
-                          colors: [
-                            Color.fromARGB(30, 255, 255, 255),
-                            Color.fromARGB(30, 233, 233, 233),
-                          ],
-                        ),
+                        color: const Color.fromARGB(30, 255, 255, 255),
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
