@@ -227,18 +227,20 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
                                   QueryArtworkWidget(
                                     id: lsong['localSongId'] as int,
                                     type: ArtworkType.AUDIO,
-                                    artworkWidth: 70,
-                                    artworkHeight: 70,
+                                    artworkWidth: 60,
+                                    artworkHeight: 60,
                                     artworkFit: BoxFit.cover,
                                     artworkBorder: BorderRadius.circular(8),
-                                    nullArtworkWidget: DecoratedBox(
+                                    nullArtworkWidget: Container(
+                                      width: 60,
+                                      height: 60,
                                       decoration: BoxDecoration(
                                         color: accent,
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                       child: Icon(
                                         MdiIcons.musicNoteOutline,
-                                        size: 70,
+                                        size: 25,
                                         color: accent != const Color(0xFFFFFFFF)
                                             ? Colors.white
                                             : Colors.black,
