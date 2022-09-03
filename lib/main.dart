@@ -8,7 +8,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:musify/API/musify.dart';
-import 'package:musify/helper/material_color_creator.dart';
 import 'package:musify/helper/version.dart';
 import 'package:musify/services/audio_handler.dart';
 import 'package:musify/services/audio_manager.dart';
@@ -96,8 +95,7 @@ class _MyAppState extends State<MyApp> {
         scaffoldBackgroundColor: bgColor,
         canvasColor: bgColor,
         appBarTheme: AppBarTheme(backgroundColor: bgColor),
-        colorScheme:
-            ColorScheme.fromSwatch(primarySwatch: createMaterialColor(accent)),
+        colorSchemeSeed: accent,
         visualDensity: VisualDensity.adaptivePlatformDensity,
         fontFamily: 'Ubuntu',
         useMaterial3: true,
@@ -121,8 +119,7 @@ class _MyAppState extends State<MyApp> {
         scaffoldBackgroundColor: Colors.white,
         canvasColor: Colors.white,
         appBarTheme: const AppBarTheme(backgroundColor: Colors.white),
-        colorScheme:
-            ColorScheme.fromSwatch(primarySwatch: createMaterialColor(accent)),
+        colorSchemeSeed: accent,
         visualDensity: VisualDensity.adaptivePlatformDensity,
         fontFamily: 'Ubuntu',
         useMaterial3: true,
