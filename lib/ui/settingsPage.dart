@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:musify/customWidgets/flutter_toast.dart';
 import 'package:musify/customWidgets/setting_bar.dart';
 import 'package:musify/helper/version.dart';
 import 'package:musify/main.dart';
@@ -128,17 +128,9 @@ class SettingsCards extends StatelessWidget {
                                       context,
                                       Color(colors[index]),
                                     );
-                                    Fluttertoast.showToast(
-                                      backgroundColor: accent,
-                                      textColor:
-                                          accent != const Color(0xFFFFFFFF)
-                                              ? Colors.white
-                                              : Colors.black,
-                                      msg: AppLocalizations.of(context)!
+                                    showToast(
+                                      AppLocalizations.of(context)!
                                           .accentChangeMsg,
-                                      toastLength: Toast.LENGTH_SHORT,
-                                      gravity: ToastGravity.BOTTOM,
-                                      fontSize: 14,
                                     );
                                     Navigator.pop(context);
                                   },
@@ -229,16 +221,8 @@ class SettingsCards extends StatelessWidget {
                                   ),
                                 );
 
-                                Fluttertoast.showToast(
-                                  backgroundColor: accent,
-                                  textColor: accent != const Color(0xFFFFFFFF)
-                                      ? Colors.white
-                                      : Colors.black,
-                                  msg:
-                                      AppLocalizations.of(context)!.languageMsg,
-                                  toastLength: Toast.LENGTH_SHORT,
-                                  gravity: ToastGravity.BOTTOM,
-                                  fontSize: 14,
+                                showToast(
+                                  AppLocalizations.of(context)!.languageMsg,
                                 );
                                 Navigator.pop(context);
                               },
@@ -258,15 +242,8 @@ class SettingsCards extends StatelessWidget {
           MdiIcons.broom,
           () => {
             clearCache(),
-            Fluttertoast.showToast(
-              backgroundColor: accent,
-              textColor: accent != const Color(0xFFFFFFFF)
-                  ? Colors.white
-                  : Colors.black,
-              msg: '${AppLocalizations.of(context)!.cacheMsg}!',
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              fontSize: 14,
+            showToast(
+              '${AppLocalizations.of(context)!.cacheMsg}!',
             )
           },
         ),
@@ -276,16 +253,7 @@ class SettingsCards extends StatelessWidget {
           () => {
             searchHistory = [],
             deleteData('user', 'searchHistory'),
-            Fluttertoast.showToast(
-              backgroundColor: accent,
-              textColor: accent != const Color(0xFFFFFFFF)
-                  ? Colors.white
-                  : Colors.black,
-              msg: '${AppLocalizations.of(context)!.searchHistoryMsg}!',
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              fontSize: 14,
-            ),
+            showToast('${AppLocalizations.of(context)!.searchHistoryMsg}!'),
           },
         ),
         SettingBar(
@@ -315,16 +283,7 @@ class SettingsCards extends StatelessWidget {
           MdiIcons.cloudUpload,
           () => {
             backupData().then(
-              (value) => Fluttertoast.showToast(
-                backgroundColor: accent,
-                textColor: accent != const Color(0xFFFFFFFF)
-                    ? Colors.white
-                    : Colors.black,
-                msg: value.toString(),
-                toastLength: Toast.LENGTH_SHORT,
-                gravity: ToastGravity.BOTTOM,
-                fontSize: 14,
-              ),
+              (value) => showToast(value.toString()),
             ),
           },
         ),
@@ -333,16 +292,7 @@ class SettingsCards extends StatelessWidget {
           MdiIcons.cloudDownload,
           () => {
             restoreData().then(
-              (value) => Fluttertoast.showToast(
-                backgroundColor: accent,
-                textColor: accent != const Color(0xFFFFFFFF)
-                    ? Colors.white
-                    : Colors.black,
-                msg: value.toString(),
-                toastLength: Toast.LENGTH_SHORT,
-                gravity: ToastGravity.BOTTOM,
-                fontSize: 14,
-              ),
+              (value) => showToast(value.toString()),
             ),
           },
         ),
@@ -354,31 +304,15 @@ class SettingsCards extends StatelessWidget {
               (available) => {
                 if (available == true)
                   {
-                    Fluttertoast.showToast(
-                      msg:
-                          '${AppLocalizations.of(context)!.appUpdateAvailableAndDownloading}!',
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.BOTTOM,
-                      backgroundColor: accent,
-                      textColor: accent != const Color(0xFFFFFFFF)
-                          ? Colors.white
-                          : Colors.black,
-                      fontSize: 14,
+                    showToast(
+                      '${AppLocalizations.of(context)!.appUpdateAvailableAndDownloading}!',
                     ),
                     downloadAppUpdates()
                   }
                 else
                   {
-                    Fluttertoast.showToast(
-                      msg:
-                          '${AppLocalizations.of(context)!.appUpdateIsNotAvailable}!',
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.BOTTOM,
-                      backgroundColor: accent,
-                      textColor: accent != const Color(0xFFFFFFFF)
-                          ? Colors.white
-                          : Colors.black,
-                      fontSize: 14,
+                    showToast(
+                      '${AppLocalizations.of(context)!.appUpdateIsNotAvailable}!',
                     )
                   }
               },
@@ -428,17 +362,9 @@ class SettingsCards extends StatelessWidget {
                                 );
                                 prefferedFileExtension.value =
                                     availableFileTypes[index];
-
-                                Fluttertoast.showToast(
-                                  backgroundColor: accent,
-                                  textColor: accent != const Color(0xFFFFFFFF)
-                                      ? Colors.white
-                                      : Colors.black,
-                                  msg: AppLocalizations.of(context)!
+                                showToast(
+                                  AppLocalizations.of(context)!
                                       .audioFileTypeMsg,
-                                  toastLength: Toast.LENGTH_SHORT,
-                                  gravity: ToastGravity.BOTTOM,
-                                  fontSize: 14,
                                 );
                                 Navigator.pop(context);
                               },

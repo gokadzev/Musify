@@ -14,6 +14,8 @@
   "clearCache": "Cache wissen",
   "clearSearchHistory": "Verwijder zoekgeschiedenis",
   "downloadAppUpdate": "App-update downloaden",
+  "downloadCompleted": "Download Completed",
+  "downloadStarted": "Download Started",
   "language": "Taal",
   "languageMsg": "Taal is gewijzigd",
   "localSongs": "Lokale nummers",

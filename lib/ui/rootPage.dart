@@ -1,10 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/customWidgets/custom_animated_bottom_bar.dart';
+import 'package:musify/customWidgets/flutter_toast.dart';
 import 'package:musify/helper/version.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/style/appTheme.dart';
@@ -33,16 +33,7 @@ class AppState extends State<Musify> {
       (value) => {
         if (value == true)
           {
-            Fluttertoast.showToast(
-              msg: '${AppLocalizations.of(context)!.appUpdateIsAvailable}!',
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              backgroundColor: accent,
-              textColor: accent != const Color(0xFFFFFFFF)
-                  ? Colors.white
-                  : Colors.black,
-              fontSize: 14,
-            )
+            showToast('${AppLocalizations.of(context)!.appUpdateIsAvailable}!'),
           }
       },
     );

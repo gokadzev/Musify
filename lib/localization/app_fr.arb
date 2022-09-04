@@ -14,6 +14,8 @@
   "clearCache": "Vider le cache",
   "clearSearchHistory": "Effacer l'historique",
   "downloadAppUpdate": "Télécharger la mise à jour de l'application",
+  "downloadCompleted": "Download Completed",
+  "downloadStarted": "Download Started",
   "language": "Langue",
   "languageMsg": "La langue a été modifiée",
   "localSongs": "Chansons locales",

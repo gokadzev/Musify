@@ -14,6 +14,8 @@
   "clearCache": "Wyczyść pamięć podręczną",
   "clearSearchHistory": "Wyczyść historię wyszukiwania",
   "downloadAppUpdate": "Pobierz aktualizację aplikacji",
+  "downloadCompleted": "Download Completed",
+  "downloadStarted": "Download Started",
   "language": "Język",
   "languageMsg": "Język został zmieniony",
   "localSongs": "Piosenki lokalne",

@@ -14,6 +14,8 @@
   "clearCache": "Hapus cache",
   "clearSearchHistory": "Hapus Riwayat Pencarian",
   "downloadAppUpdate": "Unduh pembaruan aplikasi",
+  "downloadCompleted": "Download Completed",
+  "downloadStarted": "Download Started",
   "language": "Bahasa",
   "languageMsg": "Bahasa telah diubah",
   "localSongs": "Lagu lokal",

@@ -3,9 +3,9 @@ import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/API/musify.dart';
+import 'package:musify/customWidgets/flutter_toast.dart';
 import 'package:musify/customWidgets/song_bar.dart';
 import 'package:musify/customWidgets/spinner.dart';
 import 'package:musify/style/appTheme.dart';
@@ -170,14 +170,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
                           setActivePlaylist(
                             widget.playlist['list'] as List,
                           ),
-                          Fluttertoast.showToast(
-                            msg: AppLocalizations.of(context)!.queueInitText,
-                            toastLength: Toast.LENGTH_LONG,
-                            gravity: ToastGravity.BOTTOM,
-                            backgroundColor: accent,
-                            textColor: accent != const Color(0xFFFFFFFF)
-                                ? Colors.white
-                                : Colors.black,
+                          showToast(
+                            AppLocalizations.of(context)!.queueInitText,
                           ),
                           Navigator.pop(context, false)
                         },

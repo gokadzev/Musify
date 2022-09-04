@@ -14,6 +14,8 @@
   "clearCache": "Очистити кеш",
   "clearSearchHistory": "Очистити історію пошуку",
   "downloadAppUpdate": "Завантажити оновлення програми",
+  "downloadCompleted": "Download Completed",
+  "downloadStarted": "Download Started",
   "language": "Мову",
   "languageMsg": "Мова була змінена",
   "localSongs": "Місцеві пісні",

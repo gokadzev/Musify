@@ -120,7 +120,7 @@ class SongBar extends StatelessWidget {
                 IconButton(
                   color: accent,
                   icon: const Icon(MdiIcons.downloadOutline),
-                  onPressed: () => downloadSong(song),
+                  onPressed: () => downloadSong(context, song),
                 ),
               ],
             ),

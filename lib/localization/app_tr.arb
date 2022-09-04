@@ -14,6 +14,8 @@
   "clearCache": "Önbelleği temizle",
   "clearSearchHistory": "Arama geçmişini temizle",
   "downloadAppUpdate": "Uygulama güncellemesini indirin",
+  "downloadCompleted": "Download Completed",
+  "downloadStarted": "Download Started",
   "language": "Dil",
   "languageMsg": "Dil değiştirildi",
   "localSongs": "Yerel şarkılar",

@@ -1,15 +1,15 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:musify/API/musify.dart';
+import 'package:musify/customWidgets/flutter_toast.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/ext_storage.dart';
-import 'package:musify/style/appTheme.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
-Future<void> downloadSong(dynamic song) async {
+Future<void> downloadSong(BuildContext context, dynamic song) async {
   var status = await Permission.storage.status;
   if (status.isDenied) {
     await [
@@ -23,13 +23,8 @@ Future<void> downloadSong(dynamic song) async {
     }
   }
 
-  await Fluttertoast.showToast(
-    msg: 'Download Started!',
-    toastLength: Toast.LENGTH_SHORT,
-    gravity: ToastGravity.BOTTOM,
-    backgroundColor: accent,
-    textColor: accent != const Color(0xFFFFFFFF) ? Colors.white : Colors.black,
-    fontSize: 14,
+  showToast(
+    AppLocalizations.of(context)!.downloadStarted,
   );
 
   final filename = song['title']
@@ -58,14 +53,8 @@ Future<void> downloadSong(dynamic song) async {
         .then((value) => filepath = value.path);
     await downloadFileFromYT(filename, filepath, dlPath, song);
   }
-
-  await Fluttertoast.showToast(
-    msg: 'Download Completed!',
-    toastLength: Toast.LENGTH_SHORT,
-    gravity: ToastGravity.BOTTOM,
-    backgroundColor: accent,
-    textColor: accent != const Color(0xFFFFFFFF) ? Colors.white : Colors.black,
-    fontSize: 14,
+  showToast(
+    AppLocalizations.of(context)!.downloadCompleted,
   );
 }
 

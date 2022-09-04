@@ -14,6 +14,8 @@
   "clearCache": "ქეშის გასუფთავება",
   "clearSearchHistory": "საძიებო ისტორიის გასუფთავება",
   "downloadAppUpdate": "აპლიკაციის განახლების ჩამოტვირთვა",
+  "downloadCompleted": "Download Completed",
+  "downloadStarted": "Download Started",
   "language": "ენა",
   "languageMsg": "ენა შეიცვალა",
   "localSongs": "ადგილობრივი მუსიკა",

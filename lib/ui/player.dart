@@ -273,6 +273,7 @@ class AudioAppState extends State<AudioApp> {
                                 splashColor: Colors.transparent,
                                 onPressed: () {
                                   downloadSong(
+                                    context,
                                     mediaItemToMap(metadata as MediaItem),
                                   );
                                 },
