@@ -60,11 +60,12 @@ class AudioAppState extends State<AudioApp> {
       appBar: AppBar(
         elevation: 0,
         centerTitle: true,
+        toolbarHeight: size.height * 0.09,
         title: Text(
           AppLocalizations.of(context)!.nowPlaying,
           style: TextStyle(
             color: accent,
-            fontSize: 25,
+            fontSize: size.height * 0.036,
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -174,11 +175,10 @@ class AudioAppState extends State<AudioApp> {
                               .split(' (')[0]
                               .split('|')[0]
                               .trim(),
-                          textScaleFactor: 2.5,
                           maxLines: 1,
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: 12,
+                            fontSize: size.height * 0.035,
                             fontWeight: FontWeight.w700,
                             color: accent,
                           ),
@@ -191,7 +191,7 @@ class AudioAppState extends State<AudioApp> {
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: accentLight,
-                              fontSize: 15,
+                              fontSize: size.height * 0.015,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
