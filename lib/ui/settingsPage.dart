@@ -7,7 +7,7 @@ import 'package:musify/helper/version.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/data_manager.dart';
-import 'package:musify/style/appColors.dart';
+import 'package:musify/style/appTheme.dart';
 import 'package:musify/ui/aboutPage.dart';
 import 'package:musify/ui/searchPage.dart';
 import 'package:musify/ui/userLikedSongsPage.dart';
@@ -175,22 +175,6 @@ class SettingsCards extends StatelessWidget {
               backgroundColor: Colors.transparent,
               context: context,
               builder: (BuildContext context) {
-                final codes = <String, String>{
-                  'English': 'en',
-                  'French': 'fr',
-                  'Georgian': 'ka',
-                  'Chinese': 'zh',
-                  'Dutch': 'nl',
-                  'German': 'de',
-                  'Indonesian': 'id',
-                  'Italian': 'it',
-                  'Polish': 'pl',
-                  'Portuguese': 'pt',
-                  'Spanish': 'es',
-                  'Turkish': 'tr',
-                  'Ukrainian': 'uk',
-                };
-
                 final availableLanguages = <String>[
                   'English',
                   'French',

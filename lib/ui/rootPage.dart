@@ -7,7 +7,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:musify/customWidgets/custom_animated_bottom_bar.dart';
 import 'package:musify/helper/version.dart';
 import 'package:musify/services/audio_manager.dart';
-import 'package:musify/style/appColors.dart';
+import 'package:musify/style/appTheme.dart';
 import 'package:musify/ui/homePage.dart';
 import 'package:musify/ui/localSongsPage.dart';
 import 'package:musify/ui/player.dart';

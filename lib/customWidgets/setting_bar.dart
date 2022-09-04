@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:musify/style/appColors.dart';
+import 'package:musify/style/appTheme.dart';
 
 class SettingBar extends StatelessWidget {
   SettingBar(this.tileName, this.tileIcon, this.onTap);

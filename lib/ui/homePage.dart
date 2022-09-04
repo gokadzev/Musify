@@ -6,7 +6,7 @@ import 'package:musify/API/musify.dart';
 import 'package:musify/customWidgets/delayed_display.dart';
 import 'package:musify/customWidgets/song_bar.dart';
 import 'package:musify/customWidgets/spinner.dart';
-import 'package:musify/style/appColors.dart';
+import 'package:musify/style/appTheme.dart';
 import 'package:musify/ui/playlistPage.dart';
 
 class HomePage extends StatefulWidget {

@@ -11,12 +11,27 @@ import 'package:musify/API/musify.dart';
 import 'package:musify/helper/version.dart';
 import 'package:musify/services/audio_handler.dart';
 import 'package:musify/services/audio_manager.dart';
-import 'package:musify/style/appColors.dart';
+import 'package:musify/style/appTheme.dart';
 import 'package:musify/ui/rootPage.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 GetIt getIt = GetIt.instance;
 bool _interrupted = false;
+
+final codes = <String, String>{
+  'English': 'en',
+  'Georgian': 'ka',
+  'Chinese': 'zh',
+  'Dutch': 'nl',
+  'German': 'de',
+  'Indonesian': 'id',
+  'Italian': 'it',
+  'Polish': 'pl',
+  'Portuguese': 'pt',
+  'Spanish': 'es',
+  'Turkish': 'tr',
+  'Ukrainian': 'uk',
+};
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -57,20 +72,6 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     getLocalSongs();
-    final codes = <String, String>{
-      'English': 'en',
-      'Georgian': 'ka',
-      'Chinese': 'zh',
-      'Dutch': 'nl',
-      'German': 'de',
-      'Indonesian': 'id',
-      'Italian': 'it',
-      'Polish': 'pl',
-      'Portuguese': 'pt',
-      'Spanish': 'es',
-      'Turkish': 'tr',
-      'Ukrainian': 'uk',
-    };
     _locale = Locale(
       codes[Hive.box('settings').get('language', defaultValue: 'English')
           as String]!,
@@ -91,54 +92,8 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.dark,
-      darkTheme: ThemeData(
-        scaffoldBackgroundColor: bgColor,
-        canvasColor: bgColor,
-        appBarTheme: AppBarTheme(backgroundColor: bgColor),
-        colorSchemeSeed: accent,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-        fontFamily: 'Ubuntu',
-        useMaterial3: true,
-        pageTransitionsTheme: const PageTransitionsTheme(
-          builders: {
-            TargetPlatform.android: ZoomPageTransitionsBuilder(),
-          },
-        ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all<Color>(accent),
-            shape: MaterialStateProperty.all(
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-          ),
-        ),
-      ),
-      theme: ThemeData(
-        scaffoldBackgroundColor: Colors.white,
-        canvasColor: Colors.white,
-        appBarTheme: const AppBarTheme(backgroundColor: Colors.white),
-        colorSchemeSeed: accent,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-        fontFamily: 'Ubuntu',
-        useMaterial3: true,
-        pageTransitionsTheme: const PageTransitionsTheme(
-          builders: {
-            TargetPlatform.android: ZoomPageTransitionsBuilder(),
-          },
-        ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all<Color>(accent),
-            shape: MaterialStateProperty.all(
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-          ),
-        ),
-      ),
+      darkTheme: darkTheme,
+      theme: lightTheme,
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
