@@ -4,7 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/customWidgets/custom_animated_bottom_bar.dart';
-import 'package:musify/customWidgets/flutter_toast.dart';
+import 'package:musify/helper/flutter_toast.dart';
 import 'package:musify/helper/version.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/style/appTheme.dart';

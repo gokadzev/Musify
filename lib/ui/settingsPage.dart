@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:musify/customWidgets/flutter_toast.dart';
 import 'package:musify/customWidgets/setting_bar.dart';
+import 'package:musify/helper/flutter_toast.dart';
 import 'package:musify/helper/version.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/audio_manager.dart';
