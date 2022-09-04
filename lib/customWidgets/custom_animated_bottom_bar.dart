@@ -99,7 +99,7 @@ class CustomAnimatedBottomBar extends StatelessWidget {
                                         : EdgeInsets.only(
                                             left: itemPadding.left * t,
                                           ))
-                                : const EdgeInsets.all(10),
+                                : const EdgeInsets.all(15),
                             child: Row(
                               children: [
                                 IconTheme(
