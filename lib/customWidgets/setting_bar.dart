@@ -14,10 +14,6 @@ class SettingBar extends StatelessWidget {
       padding: const EdgeInsets.only(top: 8, left: 8, right: 8, bottom: 6),
       child: Card(
         color: bgLight,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        elevation: 2.3,
         child: ListTile(
           leading: Icon(tileIcon, color: accent),
           title: Text(

@@ -211,10 +211,6 @@ class SettingsCards extends StatelessWidget {
                           padding: const EdgeInsets.all(10),
                           child: Card(
                             color: bgLight,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            elevation: 2.3,
                             child: ListTile(
                               title: Text(
                                 availableLanguages[index],
@@ -419,11 +415,6 @@ class SettingsCards extends StatelessWidget {
                         return Padding(
                           padding: const EdgeInsets.all(10),
                           child: Card(
-                            color: bgLight,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            elevation: 2.3,
                             child: ListTile(
                               title: Text(
                                 availableFileTypes[index],

@@ -196,9 +196,6 @@ class CubeContainer extends StatelessWidget {
               height: size.height / 4.15,
               width: size.width / 1.9,
               child: Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
                 color: Colors.transparent,
                 child: CachedNetworkImage(
                   imageUrl: image,

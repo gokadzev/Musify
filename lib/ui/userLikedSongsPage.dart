@@ -45,9 +45,6 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
                   height: 200,
                   width: 200,
                   child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
                     color: Colors.transparent,
                     child: Container(
                       width: 200,
@@ -105,6 +102,10 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
                           setActivePlaylist(userLikedSongsList),
                           Navigator.pop(context, false)
                         },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(accent),
+                        ),
                         child: Text(
                           AppLocalizations.of(context)!.playAll.toUpperCase(),
                           style: TextStyle(

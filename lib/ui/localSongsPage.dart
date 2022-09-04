@@ -93,9 +93,6 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
                   height: 200,
                   width: 200,
                   child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
                     color: Colors.transparent,
                     child: Container(
                       width: 200,
@@ -151,6 +148,10 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
                         onPressed: () => {
                           setActivePlaylist(localSongs),
                         },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(accent),
+                        ),
                         child: Text(
                           AppLocalizations.of(context)!.playAll.toUpperCase(),
                           style: TextStyle(

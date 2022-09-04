@@ -340,6 +340,7 @@ class AudioAppState extends State<AudioApp> {
                                 return IconButton(
                                   icon: const Icon(MdiIcons.play),
                                   iconSize: size.width * 0.1,
+                                  color: bgColor,
                                   onPressed: play,
                                   splashColor: Colors.transparent,
                                 );
@@ -348,6 +349,7 @@ class AudioAppState extends State<AudioApp> {
                                 return IconButton(
                                   icon: const Icon(MdiIcons.pause),
                                   iconSize: size.width * 0.1,
+                                  color: bgColor,
                                   onPressed: pause,
                                   splashColor: Colors.transparent,
                                 );
@@ -355,6 +357,7 @@ class AudioAppState extends State<AudioApp> {
                                 return IconButton(
                                   icon: const Icon(MdiIcons.replay),
                                   iconSize: size.width * 0.056,
+                                  color: bgColor,
                                   onPressed: () => audioPlayer.seek(
                                     Duration.zero,
                                     index: audioPlayer.effectiveIndices!.first,

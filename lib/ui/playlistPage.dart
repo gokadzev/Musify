@@ -103,9 +103,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
                     height: 250,
                     width: 250,
                     child: Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
                       color: Colors.transparent,
                       child: widget.playlist['image'] != ''
                           ? DecoratedBox(
@@ -184,6 +181,10 @@ class _PlaylistPageState extends State<PlaylistPage> {
                           ),
                           Navigator.pop(context, false)
                         },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(accent),
+                        ),
                         child: Text(
                           AppLocalizations.of(context)!.playAll.toUpperCase(),
                           style: TextStyle(

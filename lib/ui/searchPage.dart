@@ -139,10 +139,6 @@ class _SearchPageState extends State<SearchPage> {
                     padding: const EdgeInsets.only(top: 8, bottom: 6),
                     child: Card(
                       color: bgLight,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      elevation: 2.3,
                       child: ListTile(
                         leading: Icon(Icons.search, color: accent),
                         title: Text(
