@@ -202,7 +202,6 @@ class SettingsCards extends StatelessWidget {
                         return Padding(
                           padding: const EdgeInsets.all(10),
                           child: Card(
-                            color: bgLight,
                             child: ListTile(
                               title: Text(
                                 availableLanguages[index],

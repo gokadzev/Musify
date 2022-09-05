@@ -13,7 +13,6 @@ class SettingBar extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 8, left: 8, right: 8, bottom: 6),
       child: Card(
-        color: bgLight,
         child: ListTile(
           leading: Icon(tileIcon, color: accent),
           title: Text(

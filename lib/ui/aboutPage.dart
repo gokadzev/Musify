@@ -75,7 +75,6 @@ class AboutCards extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(top: 8, left: 8, right: 8, bottom: 6),
           child: Card(
-            color: bgLight,
             child: ListTile(
               leading: Container(
                 height: 50,
