@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -6,6 +5,7 @@ import 'package:musify/API/musify.dart';
 import 'package:musify/customWidgets/delayed_display.dart';
 import 'package:musify/customWidgets/song_bar.dart';
 import 'package:musify/customWidgets/spinner.dart';
+import 'package:musify/helper/transparent.dart';
 import 'package:musify/style/appTheme.dart';
 import 'package:musify/ui/playlistPage.dart';
 
@@ -197,23 +197,14 @@ class CubeContainer extends StatelessWidget {
               width: size.width / 1.9,
               child: Card(
                 color: Colors.transparent,
-                child: CachedNetworkImage(
-                  imageUrl: image,
-                  imageBuilder: (context, imageProvider) => DecoratedBox(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      image: DecorationImage(
-                        image: imageProvider,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  errorWidget: (context, url, error) => DecoratedBox(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: const Color.fromARGB(30, 255, 255, 255),
-                    ),
-                    child: Column(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10.0),
+                  child: FadeInImage.memoryNetwork(
+                    image: image,
+                    fit: BoxFit.cover,
+                    height: size.height / 4.15,
+                    width: size.width / 1.9,
+                    imageErrorBuilder: (context, url, error) => Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Icon(
@@ -223,6 +214,7 @@ class CubeContainer extends StatelessWidget {
                         ),
                       ],
                     ),
+                    placeholder: transparentImage,
                   ),
                 ),
               ),

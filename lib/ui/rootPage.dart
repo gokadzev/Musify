@@ -1,10 +1,10 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/customWidgets/custom_animated_bottom_bar.dart';
 import 'package:musify/helper/flutter_toast.dart';
+import 'package:musify/helper/transparent.dart';
 import 'package:musify/helper/version.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/style/appTheme.dart';
@@ -159,16 +159,15 @@ class AppState extends State<Musify> {
                               )
                             : ClipRRect(
                                 borderRadius: BorderRadius.circular(8),
-                                child: CachedNetworkImage(
-                                  imageUrl: metadata!.artUri.toString(),
+                                child: FadeInImage.memoryNetwork(
+                                  image: metadata!.artUri.toString(),
                                   fit: BoxFit.fill,
-                                  errorWidget: (context, url, error) =>
+                                  imageErrorBuilder: (context, url, error) =>
                                       Container(
                                     width: 50,
                                     height: 50,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: const Color.fromARGB(
+                                    decoration: const BoxDecoration(
+                                      color: Color.fromARGB(
                                         30,
                                         255,
                                         255,
@@ -187,6 +186,7 @@ class AppState extends State<Musify> {
                                       ],
                                     ),
                                   ),
+                                  placeholder: transparentImage,
                                 ),
                               ),
                       ),

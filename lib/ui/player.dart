@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:just_audio/just_audio.dart';
@@ -9,6 +8,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:musify/API/musify.dart';
 import 'package:musify/customWidgets/spinner.dart';
 import 'package:musify/helper/mediaitem.dart';
+import 'package:musify/helper/transparent.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/download_manager.dart';
 import 'package:musify/style/appTheme.dart';
@@ -132,32 +132,27 @@ class AudioAppState extends State<AudioApp> {
                     SizedBox(
                       width: size.width / 1.2,
                       height: size.height / 2.7,
-                      child: CachedNetworkImage(
-                        imageUrl: metadata.artUri.toString(),
-                        imageBuilder: (context, imageProvider) => DecoratedBox(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            image: DecorationImage(
-                              image: imageProvider,
-                              fit: BoxFit.cover,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10.0),
+                        child: FadeInImage.memoryNetwork(
+                          image: metadata.artUri.toString(),
+                          fit: BoxFit.cover,
+                          placeholder: transparentImage,
+                          imageErrorBuilder: (context, url, error) =>
+                              DecoratedBox(
+                            decoration: const BoxDecoration(
+                              color: Color.fromARGB(30, 255, 255, 255),
                             ),
-                          ),
-                        ),
-                        placeholder: (context, url) => const Spinner(),
-                        errorWidget: (context, url, error) => DecoratedBox(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: const Color.fromARGB(30, 255, 255, 255),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Icon(
-                                MdiIcons.musicNoteOutline,
-                                size: size.width / 8,
-                                color: accent,
-                              ),
-                            ],
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Icon(
+                                  MdiIcons.musicNoteOutline,
+                                  size: size.width / 8,
+                                  color: accent,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
