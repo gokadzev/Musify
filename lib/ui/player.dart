@@ -72,6 +72,10 @@ class AudioAppState extends State<AudioApp> {
         leading: Padding(
           padding: const EdgeInsets.only(left: 14),
           child: IconButton(
+            focusColor: Colors.transparent,
+            splashColor: Colors.transparent,
+            hoverColor: Colors.transparent,
+            highlightColor: Colors.transparent,
             icon: Icon(
               Icons.keyboard_arrow_down,
               size: 32,
