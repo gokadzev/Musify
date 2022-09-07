@@ -80,9 +80,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
         backgroundColor: accent,
         child: Icon(
           Icons.add,
-          color: accent != getMaterialColorFromColor(const Color(0xFFFFFFFF))
-              ? Colors.white
-              : Colors.black,
+          color: isAccentWhite(),
         ),
       ),
       body: SingleChildScrollView(

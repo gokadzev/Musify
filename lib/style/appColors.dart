@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:musify/style/appTheme.dart';
 
 Color getShade(Color color, {bool darker = false, double value = .1}) {
   assert(value >= 0 && value <= 1);
@@ -26,4 +27,10 @@ MaterialColor getMaterialColorFromColor(Color color) {
     900: getShade(color, value: 0.25, darker: true),
   };
   return MaterialColor(color.value, _colorShades);
+}
+
+Color isAccentWhite() {
+  return accent != getMaterialColorFromColor(const Color(0xFFFFFFFF))
+      ? Colors.white
+      : Colors.black;
 }

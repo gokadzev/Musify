@@ -190,12 +190,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                         child: Text(
                           AppLocalizations.of(context)!.playAll.toUpperCase(),
                           style: TextStyle(
-                            color: accent !=
-                                    getMaterialColorFromColor(
-                                      const Color(0xFFFFFFFF),
-                                    )
-                                ? Colors.white
-                                : Colors.black,
+                            color: isAccentWhite(),
                           ),
                         ),
                       ),
