@@ -89,20 +89,17 @@ class AboutCards extends StatelessWidget {
                   ),
                 ),
               ),
-              title: Text(
+              title: const Text(
                 'Valeri Gokadze',
-                style: TextStyle(color: accent),
               ),
-              subtitle: Text(
+              subtitle: const Text(
                 'Web/APP Developer',
-                style: TextStyle(color: accentLight),
               ),
               trailing: Wrap(
                 children: <Widget>[
                   IconButton(
-                    icon: Icon(
+                    icon: const Icon(
                       MdiIcons.github,
-                      color: accentLight,
                     ),
                     tooltip: 'Github',
                     onPressed: () {

@@ -66,35 +66,35 @@ class AppState extends State<Musify> {
         activeIcon: const Icon(MdiIcons.home),
         title: const Text('Home'),
         activeColor: accent,
-        inactiveColor: Colors.white,
+        inactiveColor: Theme.of(context).hintColor,
       ),
       BottomNavBarItem(
         icon: const Icon(MdiIcons.magnifyMinusOutline),
         activeIcon: const Icon(MdiIcons.magnify),
         title: const Text('Search'),
         activeColor: accent,
-        inactiveColor: Colors.white,
+        inactiveColor: Theme.of(context).hintColor,
       ),
       BottomNavBarItem(
         icon: const Icon(MdiIcons.bookOutline),
         activeIcon: const Icon(MdiIcons.book),
         title: const Text('Playlists'),
         activeColor: accent,
-        inactiveColor: Colors.white,
+        inactiveColor: Theme.of(context).hintColor,
       ),
       BottomNavBarItem(
         icon: const Icon(MdiIcons.downloadOutline),
         activeIcon: const Icon(MdiIcons.download),
         title: const Text('Local Songs'),
         activeColor: accent,
-        inactiveColor: Colors.white,
+        inactiveColor: Theme.of(context).hintColor,
       ),
       BottomNavBarItem(
         icon: const Icon(MdiIcons.cogOutline),
         activeIcon: const Icon(MdiIcons.cog),
         title: const Text('Settings'),
         activeColor: accent,
-        inactiveColor: Colors.white,
+        inactiveColor: Theme.of(context).hintColor,
       )
     ];
 
@@ -111,12 +111,11 @@ class AppState extends State<Musify> {
             final metadata = state!.currentSource!.tag;
             return Container(
               height: 75,
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.only(
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(18),
                   topRight: Radius.circular(18),
                 ),
-                color: bgLight,
               ),
               child: Padding(
                 padding: const EdgeInsets.only(top: 5, bottom: 2),
@@ -274,17 +273,17 @@ class AppState extends State<Musify> {
             );
           },
         ),
-        _buildBottomBar(items),
+        _buildBottomBar(context, items),
       ],
     );
   }
 
-  Widget _buildBottomBar(List<BottomNavBarItem> items) {
+  Widget _buildBottomBar(BuildContext context, List<BottomNavBarItem> items) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 100),
       height: 65,
       child: CustomAnimatedBottomBar(
-        backgroundColor: bgLight,
+        backgroundColor: Theme.of(context).bottomAppBarColor,
         onTap: (index) => activeTab.value = index,
         items: items,
         margin: const EdgeInsets.only(left: 8, right: 8),

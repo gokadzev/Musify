@@ -61,7 +61,6 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                 ),
                 cursorColor: Colors.green[50],
                 decoration: InputDecoration(
-                  fillColor: bgLight,
                   filled: true,
                   enabledBorder: const OutlineInputBorder(
                     borderRadius: BorderRadius.all(

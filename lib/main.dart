@@ -11,12 +11,14 @@ import 'package:musify/API/musify.dart';
 import 'package:musify/helper/version.dart';
 import 'package:musify/services/audio_handler.dart';
 import 'package:musify/services/audio_manager.dart';
+import 'package:musify/style/appColors.dart';
 import 'package:musify/style/appTheme.dart';
 import 'package:musify/ui/rootPage.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 GetIt getIt = GetIt.instance;
 bool _interrupted = false;
+ThemeMode themeMode = ThemeMode.system;
 
 final codes = <String, String>{
   'English': 'en',
@@ -36,7 +38,18 @@ final codes = <String, String>{
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
-  static Future<void> setLocale(BuildContext context, Locale newLocale) async {
+  static Future<void> setThemeMode(
+    BuildContext context,
+    ThemeMode newThemeMode,
+  ) async {
+    final state = context.findAncestorStateOfType<_MyAppState>()!;
+    state.changeTheme(newThemeMode);
+  }
+
+  static Future<void> setLocale(
+    BuildContext context,
+    Locale newLocale,
+  ) async {
     final state = context.findAncestorStateOfType<_MyAppState>()!;
     state.changeLanguage(newLocale);
   }
@@ -56,6 +69,12 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   Locale _locale = const Locale('en', '');
 
+  void changeTheme(ThemeMode newThemeMode) {
+    setState(() {
+      themeMode = newThemeMode;
+    });
+  }
+
   void changeLanguage(Locale locale) {
     setState(() {
       _locale = locale;
@@ -64,7 +83,7 @@ class _MyAppState extends State<MyApp> {
 
   void changeAccentColor(Color newAccentColor) {
     setState(() {
-      accent = newAccentColor;
+      accent = getMaterialColorFromColor(newAccentColor);
     });
   }
 
@@ -76,6 +95,12 @@ class _MyAppState extends State<MyApp> {
       codes[Hive.box('settings').get('language', defaultValue: 'English')
           as String]!,
     );
+    themeMode = Hive.box('settings').get('themeMode', defaultValue: 'system') ==
+            'system'
+        ? ThemeMode.system
+        : Hive.box('settings').get('themeMode') == 'light'
+            ? ThemeMode.light
+            : ThemeMode.dark;
 
     FlutterDownloader.registerCallback(downloadCallback);
   }
@@ -90,10 +115,10 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      themeMode: themeMode,
       debugShowCheckedModeBanner: false,
-      themeMode: ThemeMode.dark,
       darkTheme: darkTheme,
-      theme: darkTheme,
+      theme: lightTheme,
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,

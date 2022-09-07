@@ -22,7 +22,6 @@ final OnAudioQuery _audioQuery = OnAudioQuery();
 
 final random = Random();
 
-List ytplaylists = [];
 List playlists = [];
 List userPlaylists = Hive.box('user').get('playlists', defaultValue: []);
 List userLikedSongsList = Hive.box('user').get('likedSongs', defaultValue: []);

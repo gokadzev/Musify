@@ -185,7 +185,6 @@ class AudioAppState extends State<AudioApp> {
                             maxLines: 1,
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              color: accentLight,
                               fontSize: size.height * 0.015,
                               fontWeight: FontWeight.w500,
                             ),
@@ -260,9 +259,9 @@ class AudioAppState extends State<AudioApp> {
                             children: [
                               IconButton(
                                 padding: EdgeInsets.zero,
-                                icon: const Icon(
+                                icon: Icon(
                                   MdiIcons.download,
-                                  color: Colors.white,
+                                  color: Theme.of(context).hintColor,
                                 ),
                                 iconSize: size.width * 0.056,
                                 splashColor: Colors.transparent,
@@ -279,7 +278,7 @@ class AudioAppState extends State<AudioApp> {
                                   sponsorBlockSupport.value
                                       ? MdiIcons.playCircle
                                       : MdiIcons.playCircleOutline,
-                                  color: Colors.white,
+                                  color: Theme.of(context).hintColor,
                                 ),
                                 iconSize: size.width * 0.056,
                                 splashColor: Colors.transparent,
@@ -292,8 +291,9 @@ class AudioAppState extends State<AudioApp> {
                           padding: EdgeInsets.zero,
                           icon: Icon(
                             MdiIcons.shuffle,
-                            color:
-                                shuffleNotifier.value ? accent : Colors.white,
+                            color: shuffleNotifier.value
+                                ? accent
+                                : Theme.of(context).hintColor,
                           ),
                           iconSize: size.width * 0.056,
                           onPressed: changeShuffleStatus,
@@ -303,7 +303,9 @@ class AudioAppState extends State<AudioApp> {
                           padding: EdgeInsets.zero,
                           icon: Icon(
                             Icons.skip_previous,
-                            color: hasPrevious ? Colors.white : Colors.grey,
+                            color: hasPrevious
+                                ? Theme.of(context).hintColor
+                                : Colors.grey,
                             size: size.width * 0.1,
                           ),
                           iconSize: size.width * 0.056,
@@ -336,7 +338,6 @@ class AudioAppState extends State<AudioApp> {
                                 return IconButton(
                                   icon: const Icon(MdiIcons.play),
                                   iconSize: size.width * 0.1,
-                                  color: bgColor,
                                   onPressed: play,
                                   splashColor: Colors.transparent,
                                 );
@@ -345,7 +346,6 @@ class AudioAppState extends State<AudioApp> {
                                 return IconButton(
                                   icon: const Icon(MdiIcons.pause),
                                   iconSize: size.width * 0.1,
-                                  color: bgColor,
                                   onPressed: pause,
                                   splashColor: Colors.transparent,
                                 );
@@ -353,7 +353,6 @@ class AudioAppState extends State<AudioApp> {
                                 return IconButton(
                                   icon: const Icon(MdiIcons.replay),
                                   iconSize: size.width * 0.056,
-                                  color: bgColor,
                                   onPressed: () => audioPlayer.seek(
                                     Duration.zero,
                                     index: audioPlayer.effectiveIndices!.first,
@@ -367,7 +366,9 @@ class AudioAppState extends State<AudioApp> {
                           padding: EdgeInsets.zero,
                           icon: Icon(
                             Icons.skip_next,
-                            color: hasNext ? Colors.white : Colors.grey,
+                            color: hasNext
+                                ? Theme.of(context).hintColor
+                                : Colors.grey,
                             size: size.width * 0.1,
                           ),
                           iconSize: size.width * 0.08,
@@ -378,7 +379,9 @@ class AudioAppState extends State<AudioApp> {
                           padding: EdgeInsets.zero,
                           icon: Icon(
                             MdiIcons.repeat,
-                            color: repeatNotifier.value ? accent : Colors.white,
+                            color: repeatNotifier.value
+                                ? accent
+                                : Theme.of(context).hintColor,
                           ),
                           iconSize: size.width * 0.056,
                           onPressed: changeLoopStatus,
@@ -403,7 +406,7 @@ class AudioAppState extends State<AudioApp> {
                                     );
                                   } else {
                                     return IconButton(
-                                      color: Colors.white,
+                                      color: Theme.of(context).hintColor,
                                       icon: const Icon(MdiIcons.starOutline),
                                       iconSize: size.width * 0.056,
                                       splashColor: Colors.transparent,
@@ -424,7 +427,9 @@ class AudioAppState extends State<AudioApp> {
                                       value
                                           ? MdiIcons.skipNextCircle
                                           : MdiIcons.skipNextCircleOutline,
-                                      color: value ? accent : Colors.white,
+                                      color: value
+                                          ? accent
+                                          : Theme.of(context).hintColor,
                                     ),
                                     iconSize: size.width * 0.056,
                                     splashColor: Colors.transparent,
@@ -453,7 +458,6 @@ class AudioAppState extends State<AudioApp> {
                                 context: context,
                                 builder: (context) => Container(
                                   decoration: const BoxDecoration(
-                                    color: Color(0xFF151515),
                                     borderRadius: BorderRadius.only(
                                       topLeft: Radius.circular(18),
                                       topRight: Radius.circular(18),
@@ -514,9 +518,8 @@ class AudioAppState extends State<AudioApp> {
                                                   child: SingleChildScrollView(
                                                     child: Text(
                                                       value,
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                         fontSize: 16,
-                                                        color: accentLight,
                                                       ),
                                                       textAlign:
                                                           TextAlign.center,
@@ -540,8 +543,7 @@ class AudioAppState extends State<AudioApp> {
                                                     context,
                                                   )!
                                                       .lyricsNotAvailable,
-                                                  style: TextStyle(
-                                                    color: accentLight,
+                                                  style: const TextStyle(
                                                     fontSize: 25,
                                                   ),
                                                 ),
@@ -579,7 +581,10 @@ class AudioAppState extends State<AudioApp> {
                 : duration != null
                     ? durationText
                     : '',
-            style: const TextStyle(fontSize: 18, color: Colors.white),
+            style: TextStyle(
+              fontSize: 18,
+              color: Theme.of(context).hintColor,
+            ),
           ),
           const Spacer(),
           Text(
@@ -588,7 +593,10 @@ class AudioAppState extends State<AudioApp> {
                 : duration != null
                     ? durationText
                     : '',
-            style: const TextStyle(fontSize: 18, color: Colors.white),
+            style: TextStyle(
+              fontSize: 18,
+              color: Theme.of(context).hintColor,
+            ),
           )
         ],
       );

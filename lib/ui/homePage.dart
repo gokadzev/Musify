@@ -100,7 +100,6 @@ class _HomePageState extends State<HomePage> {
                   );
                 }
                 if (data.hasError) {
-                  // print(data.error);
                   return Center(
                     child: Text(
                       'Error!',

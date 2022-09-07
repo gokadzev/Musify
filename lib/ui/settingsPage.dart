@@ -90,7 +90,6 @@ class SettingsCards extends StatelessWidget {
                 return Center(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: bgColor,
                       border: Border.all(
                         color: accent,
                       ),
@@ -159,6 +158,72 @@ class SettingsCards extends StatelessWidget {
           },
         ),
         SettingBar(
+          AppLocalizations.of(context)!.themeMode,
+          MdiIcons.whiteBalanceSunny,
+          () => {
+            showModalBottomSheet(
+              isDismissible: true,
+              backgroundColor: Colors.transparent,
+              context: context,
+              builder: (BuildContext context) {
+                final availableModes = [
+                  ThemeMode.system,
+                  ThemeMode.light,
+                  ThemeMode.dark
+                ];
+                return Center(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: accent,
+                      ),
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(20),
+                      ),
+                    ),
+                    width: MediaQuery.of(context).copyWith().size.width * 0.90,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: availableModes.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Card(
+                            child: ListTile(
+                              title: Text(
+                                availableModes[index].name,
+                                style: TextStyle(color: accent),
+                              ),
+                              onTap: () {
+                                addOrUpdateData(
+                                  'settings',
+                                  'themeMode',
+                                  availableModes[index] == ThemeMode.system
+                                      ? 'system'
+                                      : availableModes[index] == ThemeMode.light
+                                          ? 'light'
+                                          : 'dark',
+                                );
+                                MyApp.setThemeMode(
+                                  context,
+                                  availableModes[index],
+                                );
+
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                );
+              },
+            ),
+          },
+        ),
+        SettingBar(
           AppLocalizations.of(context)!.language,
           MdiIcons.translate,
           () => {
@@ -185,7 +250,6 @@ class SettingsCards extends StatelessWidget {
                 return Center(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: bgColor,
                       border: Border.all(
                         color: accent,
                       ),
@@ -331,7 +395,6 @@ class SettingsCards extends StatelessWidget {
                 return Center(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: bgColor,
                       border: Border.all(
                         color: accent,
                       ),
