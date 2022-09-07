@@ -1,10 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/customWidgets/custom_animated_bottom_bar.dart';
 import 'package:musify/helper/flutter_toast.dart';
-import 'package:musify/helper/transparent.dart';
 import 'package:musify/helper/version.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/style/appTheme.dart';
@@ -158,10 +158,10 @@ class AppState extends State<Musify> {
                               )
                             : ClipRRect(
                                 borderRadius: BorderRadius.circular(8),
-                                child: FadeInImage.memoryNetwork(
-                                  image: metadata!.artUri.toString(),
+                                child: CachedNetworkImage(
+                                  imageUrl: metadata!.artUri.toString(),
                                   fit: BoxFit.fill,
-                                  imageErrorBuilder: (context, url, error) =>
+                                  errorWidget: (context, url, error) =>
                                       Container(
                                     width: 50,
                                     height: 50,
@@ -185,7 +185,6 @@ class AppState extends State<Musify> {
                                       ],
                                     ),
                                   ),
-                                  placeholder: transparentImage,
                                 ),
                               ),
                       ),

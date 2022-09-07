@@ -1,10 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/customWidgets/delayed_display.dart';
 import 'package:musify/customWidgets/spinner.dart';
-import 'package:musify/helper/transparent.dart';
 import 'package:musify/style/appTheme.dart';
 import 'package:musify/ui/playlistPage.dart';
 
@@ -229,12 +229,12 @@ class GetPlaylist extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(15),
                   child: image != ''
-                      ? FadeInImage.memoryNetwork(
+                      ? CachedNetworkImage(
                           width: size.width * 0.4,
                           height: size.height * 0.18,
-                          image: image.toString(),
+                          imageUrl: image.toString(),
                           fit: BoxFit.cover,
-                          imageErrorBuilder: (context, url, error) => SizedBox(
+                          errorWidget: (context, url, error) => SizedBox(
                             width: size.width * 0.4,
                             height: size.height * 0.18,
                             child: Icon(
@@ -243,7 +243,6 @@ class GetPlaylist extends StatelessWidget {
                               color: accent,
                             ),
                           ),
-                          placeholder: transparentImage,
                         )
                       : Center(
                           child: Column(

@@ -1,7 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/API/musify.dart';
-import 'package:musify/helper/transparent.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/download_manager.dart';
 import 'package:musify/style/appTheme.dart';
@@ -37,14 +37,18 @@ class SongBar extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12.0),
-              child: FadeInImage.memoryNetwork(
-                width: 70,
-                height: 70,
-                fit: BoxFit.cover,
-                image: song['lowResImage'].toString(),
-                placeholder: transparentImage,
+            CachedNetworkImage(
+              width: 70,
+              height: 70,
+              imageUrl: song['lowResImage'].toString(),
+              imageBuilder: (context, imageProvider) => DecoratedBox(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  image: DecorationImage(
+                    image: imageProvider,
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
             ),
             Flexible(
