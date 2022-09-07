@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/customWidgets/spinner.dart';
+import 'package:musify/style/appColors.dart';
 import 'package:musify/style/appTheme.dart';
 import 'package:musify/ui/playlistsPage.dart';
 
@@ -79,8 +80,9 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
         backgroundColor: accent,
         child: Icon(
           Icons.add,
-          color:
-              accent != const Color(0xFFFFFFFF) ? Colors.white : Colors.black,
+          color: accent != getMaterialColorFromColor(const Color(0xFFFFFFFF))
+              ? Colors.white
+              : Colors.black,
         ),
       ),
       body: SingleChildScrollView(

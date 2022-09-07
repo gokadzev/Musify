@@ -6,6 +6,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:musify/API/musify.dart';
 import 'package:musify/customWidgets/spinner.dart';
 import 'package:musify/services/audio_manager.dart';
+import 'package:musify/style/appColors.dart';
 import 'package:musify/style/appTheme.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
@@ -155,7 +156,10 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
                         child: Text(
                           AppLocalizations.of(context)!.playAll.toUpperCase(),
                           style: TextStyle(
-                            color: accent != const Color(0xFFFFFFFF)
+                            color: accent !=
+                                    getMaterialColorFromColor(
+                                      const Color(0xFFFFFFFF),
+                                    )
                                 ? Colors.white
                                 : Colors.black,
                           ),
@@ -242,7 +246,10 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
                                       child: Icon(
                                         MdiIcons.musicNoteOutline,
                                         size: 25,
-                                        color: accent != const Color(0xFFFFFFFF)
+                                        color: accent !=
+                                                getMaterialColorFromColor(
+                                                  const Color(0xFFFFFFFF),
+                                                )
                                             ? Colors.white
                                             : Colors.black,
                                       ),

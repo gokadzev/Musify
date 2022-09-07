@@ -8,6 +8,7 @@ import 'package:musify/customWidgets/song_bar.dart';
 import 'package:musify/customWidgets/spinner.dart';
 import 'package:musify/helper/flutter_toast.dart';
 import 'package:musify/helper/transparent.dart';
+import 'package:musify/style/appColors.dart';
 import 'package:musify/style/appTheme.dart';
 
 class PlaylistPage extends StatefulWidget {
@@ -189,7 +190,10 @@ class _PlaylistPageState extends State<PlaylistPage> {
                         child: Text(
                           AppLocalizations.of(context)!.playAll.toUpperCase(),
                           style: TextStyle(
-                            color: accent != const Color(0xFFFFFFFF)
+                            color: accent !=
+                                    getMaterialColorFromColor(
+                                      const Color(0xFFFFFFFF),
+                                    )
                                 ? Colors.white
                                 : Colors.black,
                           ),
