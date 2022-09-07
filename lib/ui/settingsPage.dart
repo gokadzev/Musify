@@ -55,7 +55,6 @@ class SettingsCards extends StatelessWidget {
               context: context,
               builder: (BuildContext context) {
                 final colors = <int>[
-                  0xFFFFFFFF,
                   0xFFFFCDD2,
                   0xFFF8BBD0,
                   0xFFE1BEE7,
