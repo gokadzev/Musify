@@ -53,10 +53,6 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-        <meta-data
-              android:name="io.flutter.embedding.android.SplashScreenDrawable"
-              android:resource="@drawable/launch_background"
-              />
         <service android:name="com.ryanheise.audioservice.AudioService" android:exported="true">
             <intent-filter>
                 <action android:name="android.media.browse.MediaBrowserService" />
