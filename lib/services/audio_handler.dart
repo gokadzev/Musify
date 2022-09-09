@@ -58,8 +58,8 @@ class MyAudioHandler extends BaseAudioHandler {
               ? AudioServiceShuffleMode.all
               : AudioServiceShuffleMode.none,
           playing: playing,
-          updatePosition: audioPlayer.position,
-          bufferedPosition: audioPlayer.bufferedPosition,
+          updatePosition: position.value ?? Duration.zero,
+          bufferedPosition: position.value ?? Duration.zero,
           speed: audioPlayer.speed,
           queueIndex: event.currentIndex,
         ),
