@@ -21,8 +21,8 @@ typedef OnError = void Function(Exception exception);
 StreamSubscription? positionSubscription;
 StreamSubscription? durationSubscription;
 
-Duration? duration;
-Duration? position;
+ValueNotifier<Duration?> duration = ValueNotifier<Duration?>(Duration.zero);
+ValueNotifier<Duration?> position = ValueNotifier<Duration?>(Duration.zero);
 
 enum MPlayerState { stopped, playing, paused, loading }
 
@@ -37,12 +37,11 @@ class AudioAppState extends State<AudioApp> {
   void initState() {
     super.initState();
 
-    positionSubscription = audioPlayer.positionStream
-        .listen((p) => {if (mounted) setState(() => position = p)});
-    durationSubscription = audioPlayer.durationStream.listen(
-      (d) => {
-        if (mounted) {setState(() => duration = d)}
-      },
+    positionSubscription = audioPlayer.positionStream.listen(
+      (p) => position.value = p,
+    );
+    audioPlayer.durationStream.listen(
+      (d) => duration.value = d,
     );
   }
 
@@ -236,24 +235,62 @@ class AudioAppState extends State<AudioApp> {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (duration != null)
-              Slider(
-                activeColor: accent,
-                inactiveColor: Colors.green[50],
-                value: position?.inMilliseconds.toDouble() ?? 0.0,
-                onChanged: (double? value) {
-                  setState(() {
-                    audioPlayer.seek(
-                      Duration(
-                        milliseconds: value!.round(),
-                      ),
+            ValueListenableBuilder<Duration?>(
+              valueListenable: position,
+              builder: (_, positionvalue, __) {
+                return ValueListenableBuilder<Duration?>(
+                  valueListenable: duration,
+                  builder: (_, durationvalue, __) {
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (durationvalue != null)
+                          Slider(
+                            activeColor: accent,
+                            inactiveColor: Colors.green[50],
+                            value:
+                                positionvalue?.inMilliseconds.toDouble() ?? 0.0,
+                            onChanged: (double? value) {
+                              setState(() {
+                                audioPlayer.seek(
+                                  Duration(
+                                    seconds: (value! / 1000).round(),
+                                  ),
+                                );
+                                value = value;
+                              });
+                            },
+                            max: durationvalue.inMilliseconds.toDouble(),
+                          ),
+                        Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            if (positionvalue != null)
+                              Text(
+                                '$positionText '.replaceFirst('0:0', '0'),
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            if (positionvalue != null)
+                              Text(
+                                durationText.replaceAll('0:', ''),
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.white,
+                                ),
+                              )
+                          ],
+                        )
+                      ],
                     );
-                    value = value;
-                  });
-                },
-                max: duration!.inMilliseconds.toDouble(),
-              ),
-            if (position != null) _buildProgressView(),
+                  },
+                );
+              },
+            ),
             Padding(
               padding: EdgeInsets.only(top: size.height * 0.03),
               child: Column(
@@ -579,34 +616,5 @@ class AudioAppState extends State<AudioApp> {
             ),
           ],
         ),
-      );
-
-  Row _buildProgressView() => Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            position != null
-                ? '$positionText '.replaceFirst('0:0', '0')
-                : duration != null
-                    ? durationText
-                    : '',
-            style: TextStyle(
-              fontSize: 18,
-              color: Theme.of(context).hintColor,
-            ),
-          ),
-          const Spacer(),
-          Text(
-            position != null
-                ? durationText.replaceAll('0:', '')
-                : duration != null
-                    ? durationText
-                    : '',
-            style: TextStyle(
-              fontSize: 18,
-              color: Theme.of(context).hintColor,
-            ),
-          )
-        ],
       );
 }
