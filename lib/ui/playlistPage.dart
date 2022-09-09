@@ -174,7 +174,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                           showToast(
                             AppLocalizations.of(context)!.queueInitText,
                           ),
-                          Navigator.pop(context, false)
+                          Navigator.pushReplacementNamed(context, '/'),
                         },
                         style: ButtonStyle(
                           backgroundColor:
