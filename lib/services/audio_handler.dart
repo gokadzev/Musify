@@ -4,6 +4,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/helper/mediaitem.dart';
 import 'package:musify/services/audio_manager.dart';
+import 'package:musify/ui/player.dart';
 
 class MyAudioHandler extends BaseAudioHandler {
   MyAudioHandler() {
@@ -77,7 +78,8 @@ class MyAudioHandler extends BaseAudioHandler {
   }
 
   void _listenForDurationChanges() {
-    audioPlayer.durationStream.listen((duration) {
+    audioPlayer.durationStream.listen((d) {
+      duration.value = d;
       var index = audioPlayer.currentIndex;
       final newQueue = queue.value;
       if (index == null || newQueue.isEmpty) return;
@@ -85,7 +87,7 @@ class MyAudioHandler extends BaseAudioHandler {
         index = audioPlayer.shuffleIndices![index];
       }
       final oldMediaItem = newQueue[index];
-      final newMediaItem = oldMediaItem.copyWith(duration: duration);
+      final newMediaItem = oldMediaItem.copyWith(duration: d);
       newQueue[index] = newMediaItem;
       queue.add(newQueue);
       mediaItem.add(newMediaItem);
@@ -95,10 +97,11 @@ class MyAudioHandler extends BaseAudioHandler {
   bool canBeSkipped = false;
 
   void _listenForPositionChanges() {
-    audioPlayer.positionStream.listen((position) async {
+    audioPlayer.positionStream.listen((p) async {
+      position.value = p;
       if (playerState.value.processingState != ProcessingState.loading &&
           audioPlayer.duration != null &&
-          position.inSeconds == audioPlayer.duration!.inSeconds - 5) {
+          p.inSeconds == audioPlayer.duration!.inSeconds - 5) {
         if (!hasNext && playNextSongAutomatically.value) {
           final randomSong = await getRandomSong();
           final randomSongUrl = await getSong(randomSong['ytid'], true);
@@ -106,11 +109,11 @@ class MyAudioHandler extends BaseAudioHandler {
         }
       } else if (playerState.value.processingState != ProcessingState.loading &&
           audioPlayer.duration != null &&
-          position.inSeconds == audioPlayer.duration!.inSeconds - 1) {
+          p.inSeconds == audioPlayer.duration!.inSeconds - 1) {
         canBeSkipped = true;
       } else if (playerState.value.processingState != ProcessingState.loading &&
           audioPlayer.duration != null &&
-          position.inSeconds == audioPlayer.duration!.inSeconds) {
+          p.inSeconds == audioPlayer.duration!.inSeconds) {
         if (canBeSkipped && hasNext) {
           await skipToNext();
           canBeSkipped = false;

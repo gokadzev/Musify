@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:audio_service/audio_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -18,9 +16,6 @@ String status = 'hidden';
 
 typedef OnError = void Function(Exception exception);
 
-StreamSubscription? positionSubscription;
-StreamSubscription? durationSubscription;
-
 ValueNotifier<Duration?> duration = ValueNotifier<Duration?>(Duration.zero);
 ValueNotifier<Duration?> position = ValueNotifier<Duration?>(Duration.zero);
 
@@ -33,25 +28,6 @@ class AudioApp extends StatefulWidget {
 
 @override
 class AudioAppState extends State<AudioApp> {
-  @override
-  void initState() {
-    super.initState();
-
-    positionSubscription = audioPlayer.positionStream.listen(
-      (p) => position.value = p,
-    );
-    audioPlayer.durationStream.listen(
-      (d) => duration.value = d,
-    );
-  }
-
-  @override
-  void dispose() {
-    positionSubscription!.cancel();
-    durationSubscription!.cancel();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -255,7 +231,7 @@ class AudioAppState extends State<AudioApp> {
                               setState(() {
                                 audioPlayer.seek(
                                   Duration(
-                                    seconds: (value! / 1000).round(),
+                                    milliseconds: value!.round(),
                                   ),
                                 );
                                 value = value;
