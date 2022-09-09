@@ -215,10 +215,12 @@ Future<void> setActivePlaylist(List plist) async {
 
 Future getPlaylistInfoForWidget(dynamic id) async {
   var searchPlaylist = playlists.where((list) => list['ytid'] == id).toList();
+  var isUserPlaylist = false;
 
   if (searchPlaylist.isEmpty) {
     final usPlaylists = await getUserPlaylists();
     searchPlaylist = usPlaylists.where((list) => list['ytid'] == id).toList();
+    isUserPlaylist = true;
   }
 
   final playlist = searchPlaylist[0];
@@ -226,8 +228,10 @@ Future getPlaylistInfoForWidget(dynamic id) async {
   if (playlist['list'].length == 0) {
     searchPlaylist[searchPlaylist.indexOf(playlist)]['list'] =
         await getSongsFromPlaylist(playlist['ytid']);
-    playlists[playlists.indexOf(playlist)]['list'] =
-        searchPlaylist[searchPlaylist.indexOf(playlist)]['list'];
+    if (!isUserPlaylist) {
+      playlists[playlists.indexOf(playlist)]['list'] =
+          searchPlaylist[searchPlaylist.indexOf(playlist)]['list'];
+    }
   }
 
   return playlist;

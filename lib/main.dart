@@ -13,6 +13,7 @@ import 'package:musify/services/audio_handler.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:musify/style/appTheme.dart';
+import 'package:musify/ui/homePage.dart';
 import 'package:musify/ui/rootPage.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -146,7 +147,10 @@ class _MyAppState extends State<MyApp> {
         Locale('ur', '')
       ],
       locale: _locale,
-      home: Musify(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => Musify(),
+      },
     );
   }
 }

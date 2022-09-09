@@ -27,7 +27,7 @@ class SongBar extends StatelessWidget {
             id = 0;
           }
           if (moveBackAfterPlay) {
-            Navigator.pop(context);
+            Navigator.pushReplacementNamed(context, '/');
           }
         },
         splashColor: accent.withOpacity(0.4),
