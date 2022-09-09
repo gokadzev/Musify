@@ -17,7 +17,8 @@
    <application
         android:label="Musify"
         android:name="${applicationName}"
-        android:icon="@mipmap/launcher_icon">
+        android:icon="@mipmap/launcher_icon"
+        android:requestLegacyExternalStorage="true">
         <provider
         android:name="vn.hunghd.flutterdownloader.DownloadedFileProvider"
         android:authorities="${applicationId}.flutter_downloader.provider"
@@ -29,7 +30,7 @@
         </provider>
         <activity
             android:name="com.ryanheise.audioservice.AudioServiceActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleInstance"
             android:theme="@style/LaunchTheme"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
