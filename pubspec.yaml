@@ -82,18 +82,20 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/db/playlists.db.json
-  
+
 
 flutter_native_splash:
-  image: assets/images/splash.png
   color: "#ffffff"
+  image: assets/images/splash.png
   color_dark: "#151515"
-
+  image_dark: assets/images/splash.png
 
   android_12:
     image: assets/images/splash.png
-    color: "#ffffff"
-    color_dark: "#151515"
+    icon_background_color: "#ffffff"
+    image_dark: assets/images/splash.png
+    icon_background_color_dark: "#151515"
+
 
 flutter_icons:
   android: "launcher_icon"
