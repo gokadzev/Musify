@@ -347,15 +347,18 @@ class AudioAppState extends State<AudioApp> {
                                   margin: const EdgeInsets.all(8),
                                   width: size.width * 0.08,
                                   height: size.width * 0.08,
-                                  child: const CircularProgressIndicator(
+                                  child: CircularProgressIndicator(
                                     valueColor: AlwaysStoppedAnimation<Color>(
-                                      Color.fromARGB(255, 0, 0, 0),
+                                      Theme.of(context).hintColor,
                                     ),
                                   ),
                                 );
                               } else if (value.playing != true) {
                                 return IconButton(
-                                  icon: const Icon(MdiIcons.play),
+                                  icon: Icon(
+                                    MdiIcons.play,
+                                    color: Theme.of(context).hintColor,
+                                  ),
                                   iconSize: size.width * 0.1,
                                   onPressed: play,
                                   splashColor: Colors.transparent,
@@ -363,14 +366,20 @@ class AudioAppState extends State<AudioApp> {
                               } else if (value.processingState !=
                                   ProcessingState.completed) {
                                 return IconButton(
-                                  icon: const Icon(MdiIcons.pause),
+                                  icon: Icon(
+                                    MdiIcons.pause,
+                                    color: Theme.of(context).hintColor,
+                                  ),
                                   iconSize: size.width * 0.1,
                                   onPressed: pause,
                                   splashColor: Colors.transparent,
                                 );
                               } else {
                                 return IconButton(
-                                  icon: const Icon(MdiIcons.replay),
+                                  icon: Icon(
+                                    MdiIcons.replay,
+                                    color: Theme.of(context).hintColor,
+                                  ),
                                   iconSize: size.width * 0.056,
                                   onPressed: () => audioPlayer.seek(
                                     Duration.zero,
