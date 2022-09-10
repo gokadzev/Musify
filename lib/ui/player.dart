@@ -61,35 +61,67 @@ class AudioAppState extends State<AudioApp> {
         ),
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.only(top: size.height * 0.012),
-          child: StreamBuilder<SequenceState?>(
-            stream: audioPlayer.sequenceStateStream,
-            builder: (context, snapshot) {
-              final state = snapshot.data;
-              if (state?.sequence.isEmpty ?? true) {
-                return const SizedBox();
-              }
-              final metadata = state!.currentSource!.tag;
-              final songLikeStatus = ValueNotifier<bool>(
-                isSongAlreadyLiked(metadata.extras['ytid']),
-              );
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (metadata.extras['localSongId'] is int)
-                    QueryArtworkWidget(
-                      id: metadata.extras['localSongId'] as int,
-                      type: ArtworkType.AUDIO,
-                      artworkBorder: BorderRadius.circular(8),
-                      artworkQuality: FilterQuality.high,
-                      quality: 100,
-                      artworkWidth: size.width / 1.2,
-                      artworkHeight: size.height / 2.7,
-                      nullArtworkWidget: Container(
-                        width: size.width / 1.2,
-                        height: size.height / 2.7,
+        child: StreamBuilder<SequenceState?>(
+          stream: audioPlayer.sequenceStateStream,
+          builder: (context, snapshot) {
+            final state = snapshot.data;
+            if (state?.sequence.isEmpty ?? true) {
+              return const SizedBox();
+            }
+            final metadata = state!.currentSource!.tag;
+            final songLikeStatus = ValueNotifier<bool>(
+              isSongAlreadyLiked(metadata.extras['ytid']),
+            );
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (metadata.extras['localSongId'] is int)
+                  QueryArtworkWidget(
+                    id: metadata.extras['localSongId'] as int,
+                    type: ArtworkType.AUDIO,
+                    artworkBorder: BorderRadius.circular(8),
+                    artworkQuality: FilterQuality.high,
+                    quality: 100,
+                    artworkWidth: size.width / 1.2,
+                    artworkHeight: size.height / 2.7,
+                    nullArtworkWidget: Container(
+                      width: size.width / 1.2,
+                      height: size.height / 2.7,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: const Color.fromARGB(30, 255, 255, 255),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(
+                            MdiIcons.musicNoteOutline,
+                            size: size.width / 8,
+                            color: accent,
+                          ),
+                        ],
+                      ),
+                    ),
+                    keepOldArtwork: true,
+                  )
+                else
+                  SizedBox(
+                    width: size.width / 1.2,
+                    height: size.height / 2.7,
+                    child: CachedNetworkImage(
+                      imageUrl: metadata.artUri.toString(),
+                      imageBuilder: (context, imageProvider) => DecoratedBox(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          image: DecorationImage(
+                            image: imageProvider,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      placeholder: (context, url) => const Spinner(),
+                      errorWidget: (context, url, error) => DecoratedBox(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
                           color: const Color.fromARGB(30, 255, 255, 255),
@@ -105,90 +137,55 @@ class AudioAppState extends State<AudioApp> {
                           ],
                         ),
                       ),
-                      keepOldArtwork: true,
-                    )
-                  else
-                    SizedBox(
-                      width: size.width / 1.2,
-                      height: size.height / 2.7,
-                      child: CachedNetworkImage(
-                        imageUrl: metadata.artUri.toString(),
-                        imageBuilder: (context, imageProvider) => DecoratedBox(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            image: DecorationImage(
-                              image: imageProvider,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                        placeholder: (context, url) => const Spinner(),
-                        errorWidget: (context, url, error) => DecoratedBox(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: const Color.fromARGB(30, 255, 255, 255),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Icon(
-                                MdiIcons.musicNoteOutline,
-                                size: size.width / 8,
-                                color: accent,
-                              ),
-                            ],
-                          ),
+                    ),
+                  ),
+                Padding(
+                  padding: EdgeInsets.only(
+                    top: size.height * 0.04,
+                    bottom: size.height * 0.01,
+                  ),
+                  child: Column(
+                    children: <Widget>[
+                      Text(
+                        metadata!.title
+                            .toString()
+                            .split(' (')[0]
+                            .split('|')[0]
+                            .trim(),
+                        maxLines: 1,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: size.height * 0.035,
+                          fontWeight: FontWeight.w700,
+                          color: accent,
                         ),
                       ),
-                    ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      top: size.height * 0.04,
-                      bottom: size.height * 0.01,
-                    ),
-                    child: Column(
-                      children: <Widget>[
-                        Text(
-                          metadata!.title
-                              .toString()
-                              .split(' (')[0]
-                              .split('|')[0]
-                              .trim(),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text(
+                          '${metadata!.artist}',
                           maxLines: 1,
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: size.height * 0.035,
-                            fontWeight: FontWeight.w700,
-                            color: accent,
+                            fontSize: size.height * 0.015,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8),
-                          child: Text(
-                            '${metadata!.artist}',
-                            maxLines: 1,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: size.height * 0.015,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                  Material(
-                    child: _buildPlayer(
-                      size,
-                      songLikeStatus,
-                      metadata.extras['ytid'],
-                      metadata,
-                    ),
+                ),
+                Material(
+                  child: _buildPlayer(
+                    size,
+                    songLikeStatus,
+                    metadata.extras['ytid'],
+                    metadata,
                   ),
-                ],
-              );
-            },
-          ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
@@ -246,17 +243,17 @@ class AudioAppState extends State<AudioApp> {
                             if (positionvalue != null)
                               Text(
                                 '$positionText '.replaceFirst('0:0', '0'),
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 18,
-                                  color: Colors.white,
+                                  color: Theme.of(context).hintColor,
                                 ),
                               ),
                             if (positionvalue != null)
                               Text(
                                 durationText.replaceAll('0:', ''),
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 18,
-                                  color: Colors.white,
+                                  color: Theme.of(context).hintColor,
                                 ),
                               )
                           ],
