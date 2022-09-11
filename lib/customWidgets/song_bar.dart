@@ -46,7 +46,7 @@ class SongBar extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                   image: DecorationImage(
                     image: imageProvider,
-                    fit: BoxFit.cover,
+                    centerSlice: const Rect.fromLTRB(1, 1, 1, 1),
                   ),
                 ),
               ),
