@@ -43,13 +43,15 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
             builder: (BuildContext context) {
               var id = '';
               return AlertDialog(
-                backgroundColor: accent,
+                backgroundColor: Theme.of(context).splashColor,
                 content: Stack(
                   children: <Widget>[
                     TextField(
                       decoration: InputDecoration(
                         hintText:
                             AppLocalizations.of(context)!.youtubePlaylistID,
+                        hintStyle:
+                            TextStyle(color: Theme.of(context).hintColor),
                       ),
                       onChanged: (value) {
                         setState(() {
