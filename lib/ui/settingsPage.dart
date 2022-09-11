@@ -54,37 +54,21 @@ class SettingsCards extends StatelessWidget {
               backgroundColor: Colors.transparent,
               context: context,
               builder: (BuildContext context) {
-                final colors = <int>[
-                  0xFFFFCDD2,
-                  0xFFF8BBD0,
-                  0xFFE1BEE7,
-                  0xFFD1C4E9,
-                  0xFFC5CAE9,
-                  0xFF8C9EFF,
-                  0xFFBBDEFB,
-                  0xFF82B1FF,
-                  0xFFB3E5FC,
-                  0xFF80D8FF,
-                  0xFFB2EBF2,
-                  0xFF84FFFF,
-                  0xFFB2DFDB,
-                  0xFFA7FFEB,
-                  0xFFC8E6C9,
-                  0xFFACE1AF,
-                  0xFFB9F6CA,
-                  0xFFDCEDC8,
-                  0xFFCCFF90,
-                  0xFFF0F4C3,
-                  0xFFF4FF81,
-                  0xFFFFF9C4,
-                  0xFFFFFF8D,
-                  0xFFFFECB3,
-                  0xFFFFE57F,
-                  0xFFFFE0B2,
-                  0xFFFFD180,
-                  0xFFFFCCBC,
-                  0xFFFF9E80,
-                  0xFFFD5C63,
+                final colors = <Color>[
+                  Colors.blue,
+                  Colors.red,
+                  Colors.green,
+                  Colors.orange,
+                  Colors.purple,
+                  Colors.pink,
+                  Colors.teal,
+                  Colors.lime,
+                  Colors.indigo,
+                  Colors.cyan,
+                  Colors.brown,
+                  Colors.amber,
+                  Colors.deepOrange,
+                  Colors.deepPurple,
                 ];
                 return Center(
                   child: Container(
@@ -120,11 +104,11 @@ class SettingsCards extends StatelessWidget {
                                     addOrUpdateData(
                                       'settings',
                                       'accentColor',
-                                      colors[index],
+                                      colors[index].value,
                                     );
                                     MyApp.setAccentColor(
                                       context,
-                                      Color(colors[index]),
+                                      colors[index],
                                     );
                                     showToast(
                                       AppLocalizations.of(context)!
@@ -137,9 +121,10 @@ class SettingsCards extends StatelessWidget {
                                     shape: const CircleBorder(),
                                     child: CircleAvatar(
                                       radius: 25,
-                                      backgroundColor: Color(
-                                        colors[index],
-                                      ),
+                                      backgroundColor:
+                                          themeMode == ThemeMode.light
+                                              ? colors[index].withAlpha(150)
+                                              : colors[index],
                                     ),
                                   ),
                                 )
