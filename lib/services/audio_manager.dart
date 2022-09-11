@@ -9,7 +9,6 @@ import 'package:musify/helper/mediaitem.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/audio_handler.dart';
 import 'package:musify/services/data_manager.dart';
-import 'package:musify/ui/player.dart';
 
 final _equalizer = AndroidEqualizer();
 final _loudnessEnhancer = AndroidLoudnessEnhancer();
@@ -24,7 +23,9 @@ AudioPlayer audioPlayer = AudioPlayer(
   ),
 );
 
-final durationNotifier = ValueNotifier<Duration?>(Duration.zero);
+ValueNotifier<Duration?> duration = ValueNotifier<Duration?>(Duration.zero);
+ValueNotifier<Duration?> position = ValueNotifier<Duration?>(Duration.zero);
+
 final shuffleNotifier = ValueNotifier<bool>(false);
 final repeatNotifier = ValueNotifier<bool>(false);
 final playerState = ValueNotifier<PlayerState>(audioPlayer.playerState);

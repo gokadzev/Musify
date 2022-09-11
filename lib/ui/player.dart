@@ -12,15 +12,6 @@ import 'package:musify/services/download_manager.dart';
 import 'package:musify/style/appTheme.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
-String status = 'hidden';
-
-typedef OnError = void Function(Exception exception);
-
-ValueNotifier<Duration?> duration = ValueNotifier<Duration?>(Duration.zero);
-ValueNotifier<Duration?> position = ValueNotifier<Duration?>(Duration.zero);
-
-enum MPlayerState { stopped, playing, paused, loading }
-
 class AudioApp extends StatefulWidget {
   @override
   AudioAppState createState() => AudioAppState();
