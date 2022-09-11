@@ -8,7 +8,9 @@ body {
 }
 
 #title {
-    background-color: #191414;
+    background: url(../assets/img/bg.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
     color: #fff;
 }
 
