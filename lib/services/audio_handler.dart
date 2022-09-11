@@ -16,6 +16,13 @@ class MyAudioHandler extends BaseAudioHandler {
     _listenForPositionChanges();
     _listenProcessingStates();
   }
+
+  @override
+  Future<void> onTaskRemoved() async {
+    await stop();
+    await super.onTaskRemoved();
+  }
+
   final ConcatenatingAudioSource _playlist =
       ConcatenatingAudioSource(children: []);
 
