@@ -77,7 +77,7 @@ ThemeData getAppLightTheme() {
       ),
       elevation: 2.3,
     ),
-    iconTheme: const IconThemeData(color: Colors.black),
-    hintColor: Colors.grey,
+    iconTheme: const IconThemeData(color: Color(0xFF151515)),
+    hintColor: const Color(0xFF151515),
   );
 }
