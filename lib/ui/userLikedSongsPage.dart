@@ -46,13 +46,12 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
                   height: 200,
                   width: 200,
                   child: Card(
-                    color: Colors.transparent,
                     child: Container(
                       width: 200,
                       height: 200,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color: const Color.fromARGB(30, 255, 255, 255),
+                        color: Theme.of(context).backgroundColor.withAlpha(30),
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,

@@ -67,12 +67,12 @@ class _SearchPageState extends State<SearchPage> {
               cursorColor: Colors.green[50],
               decoration: InputDecoration(
                 filled: true,
-                enabledBorder: const OutlineInputBorder(
-                  borderRadius: BorderRadius.all(
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: const BorderRadius.all(
                     Radius.circular(100),
                   ),
                   borderSide: BorderSide(
-                    color: Color(0xff263238),
+                    color: Theme.of(context).backgroundColor,
                   ),
                 ),
                 focusedBorder: OutlineInputBorder(

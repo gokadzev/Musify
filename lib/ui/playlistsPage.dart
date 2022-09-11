@@ -62,12 +62,12 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                 cursorColor: Colors.green[50],
                 decoration: InputDecoration(
                   filled: true,
-                  enabledBorder: const OutlineInputBorder(
-                    borderRadius: BorderRadius.all(
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: const BorderRadius.all(
                       Radius.circular(100),
                     ),
                     borderSide: BorderSide(
-                      color: Color(0xff263238),
+                      color: Theme.of(context).backgroundColor,
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(
@@ -244,21 +244,29 @@ class GetPlaylist extends StatelessWidget {
                             ),
                           ),
                         )
-                      : Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Icon(
-                                MdiIcons.musicNoteOutline,
-                                size: 30,
-                                color: accent,
-                              ),
-                              Text(
-                                title,
-                                style: TextStyle(color: accent),
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
+                      : Container(
+                          width: 200,
+                          height: 200,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Theme.of(context).backgroundColor,
+                          ),
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Icon(
+                                  MdiIcons.musicNoteOutline,
+                                  size: 30,
+                                  color: accent,
+                                ),
+                                Text(
+                                  title,
+                                  style: TextStyle(color: accent),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                 ),
