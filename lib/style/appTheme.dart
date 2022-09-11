@@ -6,7 +6,7 @@ MaterialColor accent = getMaterialColorFromColor(
   Color(Hive.box('settings').get('accentColor', defaultValue: 0xFF8C9EFF)),
 );
 
-final lightTheme = ThemeData(
+var lightTheme = ThemeData(
   scaffoldBackgroundColor: Colors.white,
   canvasColor: Colors.white,
   primarySwatch: getMaterialColorFromColor(accent),

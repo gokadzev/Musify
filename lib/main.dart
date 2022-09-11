@@ -84,6 +84,37 @@ class _MyAppState extends State<MyApp> {
   void changeAccentColor(Color newAccentColor) {
     setState(() {
       accent = getMaterialColorFromColor(newAccentColor);
+      lightTheme = ThemeData(
+        scaffoldBackgroundColor: Colors.white,
+        canvasColor: Colors.white,
+        primarySwatch: getMaterialColorFromColor(accent),
+        bottomAppBarColor: getMaterialColorFromColor(accent).shade300,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+        fontFamily: 'Ubuntu',
+        useMaterial3: true,
+        pageTransitionsTheme: const PageTransitionsTheme(
+          builders: {
+            TargetPlatform.android: ZoomPageTransitionsBuilder(),
+          },
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ButtonStyle(
+            shape: MaterialStateProperty.all(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          ),
+        ),
+        cardTheme: CardTheme(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          elevation: 2.3,
+        ),
+        iconTheme: const IconThemeData(color: Colors.black),
+        hintColor: Colors.grey,
+      );
     });
   }
 
