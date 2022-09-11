@@ -3,7 +3,7 @@ import 'package:hive/hive.dart';
 import 'package:musify/style/appColors.dart';
 
 MaterialColor accent = getMaterialColorFromColor(
-  Color(Hive.box('settings').get('accentColor', defaultValue: Colors.blue)),
+  Color(Hive.box('settings').get('accentColor', defaultValue: 0xFFF08080)),
 );
 
 ThemeData getAppDarkTheme() {
