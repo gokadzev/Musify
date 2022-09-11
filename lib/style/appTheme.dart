@@ -52,7 +52,7 @@ ThemeData getAppLightTheme() {
     scaffoldBackgroundColor: Colors.white,
     canvasColor: Colors.white,
     primarySwatch: getMaterialColorFromColor(accent),
-    bottomAppBarColor: getMaterialColorFromColor(accent).shade300,
+    bottomAppBarColor: getMaterialColorFromColor(accent).shade200,
     splashColor: getMaterialColorFromColor(accent).shade400,
     visualDensity: VisualDensity.adaptivePlatformDensity,
     fontFamily: 'Ubuntu',

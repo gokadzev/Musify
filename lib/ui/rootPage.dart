@@ -6,6 +6,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:musify/customWidgets/custom_animated_bottom_bar.dart';
 import 'package:musify/helper/flutter_toast.dart';
 import 'package:musify/helper/version.dart';
+import 'package:musify/main.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/style/appTheme.dart';
 import 'package:musify/ui/homePage.dart';
@@ -65,36 +66,26 @@ class AppState extends State<Musify> {
         icon: const Icon(MdiIcons.homeOutline),
         activeIcon: const Icon(MdiIcons.home),
         title: const Text('Home'),
-        activeColor: accent,
-        inactiveColor: Theme.of(context).hintColor,
       ),
       BottomNavBarItem(
         icon: const Icon(MdiIcons.magnifyMinusOutline),
         activeIcon: const Icon(MdiIcons.magnify),
         title: const Text('Search'),
-        activeColor: accent,
-        inactiveColor: Theme.of(context).hintColor,
       ),
       BottomNavBarItem(
         icon: const Icon(MdiIcons.bookOutline),
         activeIcon: const Icon(MdiIcons.book),
         title: const Text('Playlists'),
-        activeColor: accent,
-        inactiveColor: Theme.of(context).hintColor,
       ),
       BottomNavBarItem(
         icon: const Icon(MdiIcons.downloadOutline),
         activeIcon: const Icon(MdiIcons.download),
         title: const Text('Local Songs'),
-        activeColor: accent,
-        inactiveColor: Theme.of(context).hintColor,
       ),
       BottomNavBarItem(
         icon: const Icon(MdiIcons.cogOutline),
         activeIcon: const Icon(MdiIcons.cog),
         title: const Text('Settings'),
-        activeColor: accent,
-        inactiveColor: Theme.of(context).hintColor,
       )
     ];
 
@@ -286,6 +277,9 @@ class AppState extends State<Musify> {
         onTap: (index) => activeTab.value = index,
         items: items,
         margin: const EdgeInsets.only(left: 8, right: 8),
+        selectedItemColor:
+            themeMode == ThemeMode.light ? accent.shade900 : accent,
+        unselectedItemColor: Theme.of(context).hintColor,
       ),
     );
   }
