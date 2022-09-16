@@ -32,7 +32,7 @@ dependencies:
   cached_network_image: ^3.2.2
   flutter:
     sdk: flutter
-  flutter_downloader: ^1.8.3
+  flutter_downloader: ^1.8.3+2
   flutter_localizations: 
     sdk: flutter
   fluttertoast: ^8.0.9
@@ -41,7 +41,7 @@ dependencies:
   hive_flutter: ^1.1.0
   http: ^0.13.5
   intl: ^0.17.0 
-  just_audio: ^0.9.28
+  just_audio: ^0.9.29
   material_design_icons_flutter: ^5.0.6996
   on_audio_query: ^2.6.1
   package_info_plus: ^1.4.3+1
