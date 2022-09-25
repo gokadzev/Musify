@@ -140,6 +140,9 @@ class AppState extends State<Musify> {
                                 id: metadata.extras['localSongId'] as int,
                                 type: ArtworkType.AUDIO,
                                 artworkBorder: BorderRadius.circular(8),
+                                artworkWidth: 60,
+                                artworkHeight: 60,
+                                artworkFit: BoxFit.cover,
                                 nullArtworkWidget: Icon(
                                   MdiIcons.musicNoteOutline,
                                   size: 30,
@@ -151,7 +154,9 @@ class AppState extends State<Musify> {
                                 borderRadius: BorderRadius.circular(8),
                                 child: CachedNetworkImage(
                                   imageUrl: metadata!.artUri.toString(),
-                                  fit: BoxFit.fill,
+                                  fit: BoxFit.cover,
+                                  width: 60,
+                                  height: 60,
                                   errorWidget: (context, url, error) =>
                                       Container(
                                     width: 50,

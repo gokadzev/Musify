@@ -38,8 +38,8 @@ class SongBar extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             CachedNetworkImage(
-              width: 70,
-              height: 70,
+              width: 60,
+              height: 60,
               imageUrl: song['lowResImage'].toString(),
               imageBuilder: (context, imageProvider) => DecoratedBox(
                 decoration: BoxDecoration(
