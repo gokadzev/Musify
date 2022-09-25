@@ -173,7 +173,7 @@ packages:
       name: flutter_downloader
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.8.3+2"
+    version: "1.8.4"
   flutter_launcher_icons:
     dependency: "direct dev"
     description:
@@ -489,7 +489,7 @@ packages:
       name: permission_handler
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "10.0.0"
+    version: "10.0.1"
   permission_handler_android:
     dependency: transitive
     description:
@@ -739,7 +739,7 @@ packages:
       name: youtube_explode_dart
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.12.0"
+    version: "1.12.1"
 sdks:
   dart: ">=2.18.0 <3.0.0"
   flutter: ">=3.3.0"

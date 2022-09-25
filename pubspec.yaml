@@ -32,7 +32,7 @@ dependencies:
   cached_network_image: ^3.2.2
   flutter:
     sdk: flutter
-  flutter_downloader: ^1.8.3+2
+  flutter_downloader: ^1.8.4
   flutter_localizations: 
     sdk: flutter
   fluttertoast: ^8.0.9
@@ -46,9 +46,9 @@ dependencies:
   on_audio_query: ^2.6.1
   package_info_plus: ^1.4.3+1
   path_provider: ^2.0.11
-  permission_handler: ^10.0.0
+  permission_handler: ^10.0.1
   url_launcher: ^6.1.5
-  youtube_explode_dart: ^1.12.0
+  youtube_explode_dart: ^1.12.1
 
 dev_dependencies:
   flutter_launcher_icons: ^0.10.0
