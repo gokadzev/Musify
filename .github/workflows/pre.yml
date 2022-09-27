@@ -1,0 +1,58 @@
+on: workflow_dispatch
+name: Test, Build and Pre Release apk
+env:
+  PROPERTIES_PATH: "./android/key.properties"
+jobs:
+  build:
+    name: Build APK
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    # Setup Java environment in order to build the Android app.
+    - uses: actions/setup-java@v1
+      with:
+        java-version: "12.x"
+
+
+    # Gradle cache for faster builds
+    - uses: actions/cache@v3
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+    # Setup the flutter environment.
+    - uses: subosito/flutter-action@v2
+      with:
+        channel: "stable"
+
+    # 
+    - run: |
+          echo keyPassword=\${{ secrets.KEY_STORE }} > ${{env.PROPERTIES_PATH}}
+          echo storePassword=\${{ secrets.KEY_PASSWORD }} >> ${{env.PROPERTIES_PATH}}
+          echo keyAlias=\${{ secrets.KEY_ALIAS }} >> ${{env.PROPERTIES_PATH}}
+    #
+    - run: echo "${{ secrets.KEYSTORE2 }}" | base64 --decode > android/app/key.jks
+
+    # Get flutter dependencies.
+    - run: flutter pub get
+    # Check for any formatting issues in the code.
+    - run: flutter format --set-exit-if-changed .
+    # Statically analyze the Dart code for any errors.
+    - run: flutter analyze .
+    # Build universal apk.
+    - run: flutter build apk --release
+    - uses: svenstaro/upload-release-action@v2
+      with:
+        repo_name: gokadzev/Musify
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: build/app/outputs/apk/release/app-release.apk
+        asset_name: Musify.apk
+        tag: ${{ github.ref }}
+        prerelease: true
+        overwrite: true
+        body: "New Musify Pre-Release! [only for testing purposes]"
