@@ -192,7 +192,7 @@ packages:
       name: flutter_native_splash
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.2.9"
+    version: "2.2.10+1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -315,13 +315,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.4.7"
-  lint:
-    dependency: transitive
-    description:
-      name: lint
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.10.0"
   matcher:
     dependency: transitive
     description:
@@ -489,7 +482,7 @@ packages:
       name: permission_handler
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "10.0.1"
+    version: "10.0.2"
   permission_handler_android:
     dependency: transitive
     description:
@@ -641,7 +634,7 @@ packages:
       name: url_launcher
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "6.1.5"
+    version: "6.1.6"
   url_launcher_android:
     dependency: transitive
     description:
