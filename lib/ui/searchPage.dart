@@ -49,83 +49,88 @@ class _SearchPageState extends State<SearchPage> {
         elevation: 0,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(12),
         child: Column(
           children: <Widget>[
-            const Padding(padding: EdgeInsets.only(bottom: 20)),
-            TextField(
-              onSubmitted: (String value) {
-                search();
-                FocusManager.instance.primaryFocus?.unfocus();
-              },
-              controller: _searchBar,
-              focusNode: _inputNode,
-              style: TextStyle(
-                fontSize: 16,
-                color: accent,
+            Padding(
+              padding: const EdgeInsets.only(
+                top: 12,
+                bottom: 20,
+                left: 12,
+                right: 12,
               ),
-              cursorColor: Colors.green[50],
-              decoration: InputDecoration(
-                filled: true,
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(100),
-                  ),
-                  borderSide: BorderSide(
-                    color: Theme.of(context).backgroundColor,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(100),
-                  ),
-                  borderSide: BorderSide(color: accent),
-                ),
-                suffixIcon: ValueListenableBuilder<bool>(
-                  valueListenable: _fetchingSongs,
-                  builder: (_, value, __) {
-                    if (value == true) {
-                      return IconButton(
-                        icon: const SizedBox(
-                          height: 18,
-                          width: 18,
-                          child: Spinner(),
-                        ),
-                        color: accent,
-                        onPressed: () {
-                          search();
-                          FocusManager.instance.primaryFocus?.unfocus();
-                        },
-                      );
-                    } else {
-                      return IconButton(
-                        icon: Icon(
-                          Icons.search,
-                          color: accent,
-                        ),
-                        color: accent,
-                        onPressed: () {
-                          search();
-                          FocusManager.instance.primaryFocus?.unfocus();
-                        },
-                      );
-                    }
-                  },
-                ),
-                border: InputBorder.none,
-                hintText: '${AppLocalizations.of(context)!.search}...',
-                hintStyle: TextStyle(
+              child: TextField(
+                onSubmitted: (String value) {
+                  search();
+                  FocusManager.instance.primaryFocus?.unfocus();
+                },
+                controller: _searchBar,
+                focusNode: _inputNode,
+                style: TextStyle(
+                  fontSize: 16,
                   color: accent,
                 ),
-                contentPadding: const EdgeInsets.only(
-                  left: 18,
-                  right: 20,
-                  top: 14,
-                  bottom: 14,
+                cursorColor: Colors.green[50],
+                decoration: InputDecoration(
+                  filled: true,
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(100),
+                    ),
+                    borderSide: BorderSide(
+                      color: Theme.of(context).backgroundColor,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(100),
+                    ),
+                    borderSide: BorderSide(color: accent),
+                  ),
+                  suffixIcon: ValueListenableBuilder<bool>(
+                    valueListenable: _fetchingSongs,
+                    builder: (_, value, __) {
+                      if (value == true) {
+                        return IconButton(
+                          icon: const SizedBox(
+                            height: 18,
+                            width: 18,
+                            child: Spinner(),
+                          ),
+                          color: accent,
+                          onPressed: () {
+                            search();
+                            FocusManager.instance.primaryFocus?.unfocus();
+                          },
+                        );
+                      } else {
+                        return IconButton(
+                          icon: Icon(
+                            Icons.search,
+                            color: accent,
+                          ),
+                          color: accent,
+                          onPressed: () {
+                            search();
+                            FocusManager.instance.primaryFocus?.unfocus();
+                          },
+                        );
+                      }
+                    },
+                  ),
+                  border: InputBorder.none,
+                  hintText: '${AppLocalizations.of(context)!.search}...',
+                  hintStyle: TextStyle(
+                    color: accent,
+                  ),
+                  contentPadding: const EdgeInsets.only(
+                    left: 18,
+                    right: 20,
+                    top: 14,
+                    bottom: 14,
+                  ),
                 ),
               ),
             ),
-            const Padding(padding: EdgeInsets.only(top: 20)),
             if (_searchQuery.isEmpty)
               ListView.builder(
                 shrinkWrap: true,
