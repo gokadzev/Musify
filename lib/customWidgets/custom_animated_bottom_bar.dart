@@ -1,163 +1,78 @@
+// License: https://raw.githubusercontent.com/Cuberto/flashy-tabbar-android/master/LICENSE
+// remade
+
 import 'package:flutter/material.dart';
-import 'package:musify/ui/rootPage.dart';
 
 class CustomAnimatedBottomBar extends StatelessWidget {
   CustomAnimatedBottomBar({
     super.key,
+    this.selectedIndex = 0,
+    this.height = 60,
     this.showElevation = true,
-    this.onTap,
-    this.selectedItemColor,
+    this.iconSize = 20,
     this.backgroundColor,
-    this.unselectedItemColor,
-    this.selectedColorOpacity,
-    this.itemShape = const StadiumBorder(),
-    this.margin = const EdgeInsets.all(8),
-    this.itemPadding = const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-    this.duration = const Duration(milliseconds: 500),
-    this.curve = Curves.easeOutQuint,
-    this.radius = BorderRadius.zero,
+    this.animationDuration = const Duration(milliseconds: 170),
+    this.animationCurve = Curves.linear,
+    this.shadows = const [
+      BoxShadow(
+        color: Colors.black12,
+        blurRadius: 3,
+      ),
+    ],
     required this.items,
-  });
+    required this.onItemSelected,
+  }) {
+    assert(height >= 55 && height <= 100);
+    assert(items.length >= 2 && items.length <= 5);
+  }
+
+  final Curve animationCurve;
+  final Duration animationDuration;
   final Color? backgroundColor;
-  final bool showElevation;
+  final double height;
+  final double iconSize;
   final List<BottomNavBarItem> items;
-  final Function(int)? onTap;
-  final Color? selectedItemColor;
-  final Color? unselectedItemColor;
-  final double? selectedColorOpacity;
-  final ShapeBorder itemShape;
-  final EdgeInsets margin;
-  final EdgeInsets itemPadding;
-  final Duration duration;
-  final Curve curve;
-  final BorderRadius radius;
+  final ValueChanged<int> onItemSelected;
+  final int selectedIndex;
+  final List<BoxShadow> shadows;
+  final bool showElevation;
 
   @override
   Widget build(BuildContext context) {
+    final bg = (backgroundColor == null)
+        ? Theme.of(context).bottomAppBarColor
+        : backgroundColor;
+
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: radius,
-        boxShadow: [
-          if (showElevation)
-            const BoxShadow(
-              color: Colors.black12,
-              blurRadius: 2,
-            ),
-        ],
+        color: bg,
+        boxShadow: showElevation ? shadows : [],
       ),
       child: SafeArea(
-        minimum: margin,
-        child: ValueListenableBuilder<int>(
-          valueListenable: activeTab,
-          builder: (_, value, __) {
-            return Row(
-              mainAxisAlignment: items.length <= 2
-                  ? MainAxisAlignment.spaceEvenly
-                  : MainAxisAlignment.spaceBetween,
-              children: [
-                for (final item in items)
-                  TweenAnimationBuilder<double>(
-                    tween: Tween(
-                      end: items.indexOf(item) == value ? 1.0 : 0.0,
-                    ),
-                    curve: curve,
-                    duration: duration,
-                    builder: (context, t, _) {
-                      final selectedColor =
-                          item.activeColor ?? selectedItemColor;
-
-                      final unselectedColor =
-                          item.inactiveColor ?? unselectedItemColor;
-
-                      return Material(
-                        color: Color.lerp(
-                          selectedColor!.withOpacity(0),
-                          selectedColor
-                              .withOpacity(selectedColorOpacity ?? 0.1),
-                          t,
-                        ),
-                        shape: itemShape,
-                        child: InkWell(
-                          onTap: () => onTap?.call(items.indexOf(item)),
-                          customBorder: itemShape,
-                          focusColor: selectedColor.withOpacity(0.1),
-                          highlightColor: selectedColor.withOpacity(0.1),
-                          splashColor: selectedColor.withOpacity(0.1),
-                          hoverColor: selectedColor.withOpacity(0.1),
-                          child: Padding(
-                            padding: Localizations.localeOf(context) ==
-                                    const Locale('en', '')
-                                ? itemPadding -
-                                    (Directionality.of(context) ==
-                                            TextDirection.ltr
-                                        ? EdgeInsets.only(
-                                            right: itemPadding.right * t,
-                                          )
-                                        : EdgeInsets.only(
-                                            left: itemPadding.left * t,
-                                          ))
-                                : const EdgeInsets.all(15),
-                            child: Row(
-                              children: [
-                                IconTheme(
-                                  data: IconThemeData(
-                                    color: Color.lerp(
-                                      unselectedColor,
-                                      selectedColor,
-                                      t,
-                                    ),
-                                    size: 24,
-                                  ),
-                                  child: items.indexOf(item) == value
-                                      ? item.activeIcon ?? item.icon
-                                      : item.icon,
-                                ),
-                                if (Localizations.localeOf(context) ==
-                                    const Locale('en', ''))
-                                  ClipRect(
-                                    clipBehavior: Clip.antiAlias,
-                                    child: SizedBox(
-                                      height: 20,
-                                      child: Align(
-                                        alignment: const Alignment(-0.2, 0),
-                                        widthFactor: t,
-                                        child: Padding(
-                                          padding: Directionality.of(context) ==
-                                                  TextDirection.ltr
-                                              ? EdgeInsets.only(
-                                                  left: itemPadding.left / 2,
-                                                  right: itemPadding.right,
-                                                )
-                                              : EdgeInsets.only(
-                                                  left: itemPadding.left,
-                                                  right: itemPadding.right / 2,
-                                                ),
-                                          child: DefaultTextStyle(
-                                            style: TextStyle(
-                                              color: Color.lerp(
-                                                selectedColor.withOpacity(0),
-                                                selectedColor,
-                                                t,
-                                              ),
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                            child: item.title,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    },
+        child: Container(
+          width: double.infinity,
+          height: height,
+          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: items.map((item) {
+              final index = items.indexOf(item);
+              return Expanded(
+                child: GestureDetector(
+                  onTap: () => onItemSelected(index),
+                  child: _FlashTabBarItem(
+                    item: item,
+                    tabBarHeight: height,
+                    iconSize: iconSize,
+                    isSelected: index == selectedIndex,
+                    backgroundColor: bg!,
+                    animationDuration: animationDuration,
+                    animationCurve: animationCurve,
                   ),
-              ],
-            );
-          },
+                ),
+              );
+            }).toList(),
+          ),
         ),
       ),
     );
@@ -168,13 +83,154 @@ class BottomNavBarItem {
   BottomNavBarItem({
     required this.icon,
     required this.title,
-    this.activeColor,
-    this.inactiveColor,
-    this.activeIcon,
+    this.activeColor = const Color(0xff272e81),
+    this.inactiveColor = const Color(0xff9496c1),
   });
-  final Widget icon;
-  final Widget? activeIcon;
-  final Widget title;
-  final Color? activeColor;
-  final Color? inactiveColor;
+
+  Color activeColor;
+  final Icon icon;
+  Color inactiveColor;
+  final Text title;
+}
+
+class _FlashTabBarItem extends StatelessWidget {
+  const _FlashTabBarItem({
+    required this.item,
+    required this.isSelected,
+    required this.tabBarHeight,
+    required this.backgroundColor,
+    required this.animationDuration,
+    required this.animationCurve,
+    required this.iconSize,
+  });
+
+  final Curve animationCurve;
+  final Duration animationDuration;
+  final Color backgroundColor;
+  final double iconSize;
+  final bool isSelected;
+  final BottomNavBarItem item;
+  final double tabBarHeight;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: backgroundColor,
+      height: double.maxFinite,
+      child: Stack(
+        clipBehavior: Clip.hardEdge,
+        alignment: Alignment.center,
+        children: <Widget>[
+          AnimatedAlign(
+            duration: animationDuration,
+            alignment: isSelected ? Alignment.topCenter : Alignment.center,
+            child: AnimatedOpacity(
+              opacity: isSelected ? 1.0 : 1.0,
+              duration: animationDuration,
+              child: IconTheme(
+                data: IconThemeData(
+                  size: iconSize,
+                  color: isSelected
+                      ? item.activeColor.withOpacity(1)
+                      : item.inactiveColor,
+                ),
+                child: item.icon,
+              ),
+            ),
+          ),
+          AnimatedPositioned(
+            curve: animationCurve,
+            duration: animationDuration,
+            top: isSelected ? -2.0 * iconSize : tabBarHeight / 4,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(
+                  width: iconSize,
+                  height: iconSize,
+                ),
+                CustomPaint(
+                  painter: _CustomPath(backgroundColor),
+                  child: SizedBox(
+                    width: 80,
+                    height: iconSize,
+                  ),
+                )
+              ],
+            ),
+          ),
+          AnimatedAlign(
+            alignment: isSelected ? Alignment.center : Alignment.bottomCenter,
+            duration: animationDuration,
+            curve: animationCurve,
+            child: AnimatedOpacity(
+              opacity: isSelected ? 1.0 : 0.0,
+              duration: animationDuration,
+              child: DefaultTextStyle.merge(
+                style: TextStyle(
+                  color: item.activeColor,
+                  fontWeight: FontWeight.bold,
+                ),
+                child: item.title,
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 0,
+            child: CustomPaint(
+              painter: _CustomPath(backgroundColor),
+              child: SizedBox(
+                width: 80,
+                height: iconSize,
+              ),
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: AnimatedOpacity(
+              duration: animationDuration,
+              opacity: isSelected ? 1.0 : 0.0,
+              child: Container(
+                width: 5,
+                height: 5,
+                alignment: Alignment.bottomCenter,
+                margin: const EdgeInsets.all(5),
+                decoration: BoxDecoration(
+                  color: item.activeColor,
+                  borderRadius: BorderRadius.circular(2.5),
+                ),
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class _CustomPath extends CustomPainter {
+  _CustomPath(this.backgroundColor);
+
+  final Color backgroundColor;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final path = Path();
+    final paint = Paint();
+
+    path.lineTo(0, 0);
+    path.lineTo(0, 2.0 * size.height);
+    path.lineTo(1.0 * size.width, 2.0 * size.height);
+    path.lineTo(1.0 * size.width, 1.0 * size.height);
+    path.lineTo(0, 0);
+    path.close();
+
+    paint.color = backgroundColor;
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return oldDelegate != this;
+  }
 }

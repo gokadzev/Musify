@@ -63,29 +63,34 @@ class AppState extends State<Musify> {
   Widget getFooter() {
     final items = <BottomNavBarItem>[
       BottomNavBarItem(
-        icon: const Icon(MdiIcons.homeOutline),
-        activeIcon: const Icon(MdiIcons.home),
+        icon: const Icon(MdiIcons.home),
         title: const Text('Home'),
+        activeColor: themeMode == ThemeMode.light ? accent.shade900 : accent,
+        inactiveColor: Theme.of(context).hintColor,
       ),
       BottomNavBarItem(
-        icon: const Icon(MdiIcons.magnifyMinusOutline),
-        activeIcon: const Icon(MdiIcons.magnify),
+        icon: const Icon(MdiIcons.magnify),
         title: const Text('Search'),
+        activeColor: themeMode == ThemeMode.light ? accent.shade900 : accent,
+        inactiveColor: Theme.of(context).hintColor,
       ),
       BottomNavBarItem(
-        icon: const Icon(MdiIcons.bookOutline),
-        activeIcon: const Icon(MdiIcons.book),
+        icon: const Icon(MdiIcons.book),
         title: const Text('Playlists'),
+        activeColor: themeMode == ThemeMode.light ? accent.shade900 : accent,
+        inactiveColor: Theme.of(context).hintColor,
       ),
       BottomNavBarItem(
-        icon: const Icon(MdiIcons.downloadOutline),
-        activeIcon: const Icon(MdiIcons.download),
+        icon: const Icon(MdiIcons.download),
         title: const Text('Local Songs'),
+        activeColor: themeMode == ThemeMode.light ? accent.shade900 : accent,
+        inactiveColor: Theme.of(context).hintColor,
       ),
       BottomNavBarItem(
-        icon: const Icon(MdiIcons.cogOutline),
-        activeIcon: const Icon(MdiIcons.cog),
+        icon: const Icon(MdiIcons.cog),
         title: const Text('Settings'),
+        activeColor: themeMode == ThemeMode.light ? accent.shade900 : accent,
+        inactiveColor: Theme.of(context).hintColor,
       )
     ];
 
@@ -279,12 +284,11 @@ class AppState extends State<Musify> {
       height: 65,
       child: CustomAnimatedBottomBar(
         backgroundColor: Theme.of(context).bottomAppBarColor,
-        onTap: (index) => activeTab.value = index,
+        selectedIndex: activeTab.value,
+        onItemSelected: (index) => setState(() {
+          activeTab.value = index;
+        }),
         items: items,
-        margin: const EdgeInsets.only(left: 8, right: 8),
-        selectedItemColor:
-            themeMode == ThemeMode.light ? accent.shade900 : accent,
-        unselectedItemColor: Theme.of(context).hintColor,
       ),
     );
   }
