@@ -82,6 +82,13 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
             fontWeight: FontWeight.w700,
           ),
         ),
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: accent,
+          ),
+          onPressed: () => Navigator.pop(context, false),
+        ),
         elevation: 0,
       ),
       body: SingleChildScrollView(
