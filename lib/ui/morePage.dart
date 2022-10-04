@@ -15,19 +15,19 @@ import 'package:musify/ui/userLikedSongsPage.dart';
 import 'package:musify/ui/userPlaylistsPage.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class SettingsPage extends StatefulWidget {
+class MorePage extends StatefulWidget {
   @override
-  _SettingsPageState createState() => _SettingsPageState();
+  _MorePageState createState() => _MorePageState();
 }
 
-class _SettingsPageState extends State<SettingsPage> {
+class _MorePageState extends State<MorePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          AppLocalizations.of(context)!.settings,
+          AppLocalizations.of(context)!.more,
           style: TextStyle(
             color: accent,
             fontSize: 25,

@@ -10,10 +10,10 @@ import 'package:musify/main.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/style/appTheme.dart';
 import 'package:musify/ui/homePage.dart';
+import 'package:musify/ui/morePage.dart';
 import 'package:musify/ui/player.dart';
 import 'package:musify/ui/playlistsPage.dart';
 import 'package:musify/ui/searchPage.dart';
-import 'package:musify/ui/settingsPage.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 class Musify extends StatefulWidget {
@@ -45,7 +45,7 @@ class AppState extends State<Musify> {
       HomePage(),
       SearchPage(),
       PlaylistsPage(),
-      SettingsPage(),
+      MorePage(),
     ];
     return Scaffold(
       bottomNavigationBar: getFooter(),
@@ -79,8 +79,8 @@ class AppState extends State<Musify> {
         inactiveColor: Theme.of(context).hintColor,
       ),
       BottomNavBarItem(
-        icon: const Icon(MdiIcons.cog),
-        title: const Text('Settings'),
+        icon: const Icon(MdiIcons.dotsHorizontal),
+        title: const Text('More'),
         activeColor: themeMode == ThemeMode.light ? accent.shade900 : accent,
         inactiveColor: Theme.of(context).hintColor,
       )
