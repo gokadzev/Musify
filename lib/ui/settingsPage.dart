@@ -9,6 +9,7 @@ import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/style/appTheme.dart';
 import 'package:musify/ui/aboutPage.dart';
+import 'package:musify/ui/localSongsPage.dart';
 import 'package:musify/ui/searchPage.dart';
 import 'package:musify/ui/userLikedSongsPage.dart';
 import 'package:musify/ui/userPlaylistsPage.dart';
@@ -328,6 +329,16 @@ class SettingsCards extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const UserLikedSongs()),
+            ),
+          },
+        ),
+        SettingBar(
+          AppLocalizations.of(context)!.localSongs,
+          MdiIcons.download,
+          () => {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => LocalSongsPage()),
             ),
           },
         ),

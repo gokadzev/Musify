@@ -10,7 +10,6 @@ import 'package:musify/main.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/style/appTheme.dart';
 import 'package:musify/ui/homePage.dart';
-import 'package:musify/ui/localSongsPage.dart';
 import 'package:musify/ui/player.dart';
 import 'package:musify/ui/playlistsPage.dart';
 import 'package:musify/ui/searchPage.dart';
@@ -46,7 +45,6 @@ class AppState extends State<Musify> {
       HomePage(),
       SearchPage(),
       PlaylistsPage(),
-      LocalSongsPage(),
       SettingsPage(),
     ];
     return Scaffold(
@@ -77,12 +75,6 @@ class AppState extends State<Musify> {
       BottomNavBarItem(
         icon: const Icon(MdiIcons.book),
         title: const Text('Playlists'),
-        activeColor: themeMode == ThemeMode.light ? accent.shade900 : accent,
-        inactiveColor: Theme.of(context).hintColor,
-      ),
-      BottomNavBarItem(
-        icon: const Icon(MdiIcons.download),
-        title: const Text('Local Songs'),
         activeColor: themeMode == ThemeMode.light ? accent.shade900 : accent,
         inactiveColor: Theme.of(context).hintColor,
       ),
