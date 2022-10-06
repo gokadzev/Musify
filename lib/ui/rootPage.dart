@@ -4,6 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/customWidgets/custom_animated_bottom_bar.dart';
+import 'package:musify/customWidgets/marque.dart';
 import 'package:musify/helper/flutter_toast.dart';
 import 'package:musify/helper/version.dart';
 import 'package:musify/main.dart';
@@ -199,25 +200,28 @@ class AppState extends State<Musify> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            Text(
-                              metadata!.title.toString().length > 15
-                                  ? '${metadata!.title.toString().substring(0, 15)}...'
-                                  : metadata!.title.toString(),
-                              style: TextStyle(
-                                color: accent,
-                                fontSize: 17,
-                                fontWeight: FontWeight.w600,
+                            MarqueeWidget(
+                              direction: Axis.horizontal,
+                              child: Text(
+                                metadata!.title.toString(),
+                                maxLines: 1,
+                                style: TextStyle(
+                                  color: accent,
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
-                            Text(
-                              metadata!.artist.toString().length > 15
-                                  ? '${metadata!.artist.toString().substring(0, 15)}...'
-                                  : metadata!.artist.toString(),
-                              style: TextStyle(
-                                color: accent,
-                                fontSize: 15,
+                            MarqueeWidget(
+                              direction: Axis.horizontal,
+                              child: Text(
+                                metadata!.artist.toString(),
+                                style: TextStyle(
+                                  color: accent,
+                                  fontSize: 15,
+                                ),
                               ),
-                            )
+                            ),
                           ],
                         ),
                       ),
