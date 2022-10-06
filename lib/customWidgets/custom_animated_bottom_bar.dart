@@ -2,6 +2,7 @@
 // remade
 
 import 'package:flutter/material.dart';
+import 'package:musify/customWidgets/marque.dart';
 
 class CustomAnimatedBottomBar extends StatelessWidget {
   CustomAnimatedBottomBar({
@@ -166,12 +167,15 @@ class _FlashTabBarItem extends StatelessWidget {
             child: AnimatedOpacity(
               opacity: isSelected ? 1.0 : 0.0,
               duration: animationDuration,
-              child: DefaultTextStyle.merge(
-                style: TextStyle(
-                  color: item.activeColor,
-                  fontWeight: FontWeight.bold,
+              child: MarqueeWidget(
+                direction: Axis.horizontal,
+                child: DefaultTextStyle.merge(
+                  style: TextStyle(
+                    color: item.activeColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  child: item.title,
                 ),
-                child: item.title,
               ),
             ),
           ),

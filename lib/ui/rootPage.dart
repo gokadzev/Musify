@@ -62,25 +62,37 @@ class AppState extends State<Musify> {
     final items = <BottomNavBarItem>[
       BottomNavBarItem(
         icon: const Icon(MdiIcons.home),
-        title: const Text('Home'),
+        title: Text(
+          AppLocalizations.of(context)!.home,
+          maxLines: 1,
+        ),
         activeColor: themeMode == ThemeMode.light ? accent.shade900 : accent,
         inactiveColor: Theme.of(context).hintColor,
       ),
       BottomNavBarItem(
         icon: const Icon(MdiIcons.magnify),
-        title: const Text('Search'),
+        title: Text(
+          AppLocalizations.of(context)!.search,
+          maxLines: 1,
+        ),
         activeColor: themeMode == ThemeMode.light ? accent.shade900 : accent,
         inactiveColor: Theme.of(context).hintColor,
       ),
       BottomNavBarItem(
         icon: const Icon(MdiIcons.book),
-        title: const Text('Playlists'),
+        title: Text(
+          AppLocalizations.of(context)!.playlists,
+          maxLines: 1,
+        ),
         activeColor: themeMode == ThemeMode.light ? accent.shade900 : accent,
         inactiveColor: Theme.of(context).hintColor,
       ),
       BottomNavBarItem(
         icon: const Icon(MdiIcons.dotsHorizontal),
-        title: const Text('More'),
+        title: Text(
+          AppLocalizations.of(context)!.more,
+          maxLines: 1,
+        ),
         activeColor: themeMode == ThemeMode.light ? accent.shade900 : accent,
         inactiveColor: Theme.of(context).hintColor,
       )
