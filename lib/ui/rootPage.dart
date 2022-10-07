@@ -193,33 +193,30 @@ class AppState extends State<Musify> {
                                 ),
                               ),
                       ),
-                      Padding(
-                        padding: EdgeInsets.zero,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Text(
-                              metadata!.title.toString().length > 15
-                                  ? '${metadata!.title.toString().substring(0, 15)}...'
-                                  : metadata!.title.toString(),
-                              style: TextStyle(
-                                color: accent,
-                                fontSize: 17,
-                                fontWeight: FontWeight.w600,
-                              ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            metadata!.title.toString().length > 15
+                                ? '${metadata!.title.toString().substring(0, 15)}...'
+                                : metadata!.title.toString(),
+                            style: TextStyle(
+                              color: accent,
+                              fontSize: 17,
+                              fontWeight: FontWeight.w600,
                             ),
-                            Text(
-                              metadata!.artist.toString().length > 15
-                                  ? '${metadata!.artist.toString().substring(0, 15)}...'
-                                  : metadata!.artist.toString(),
-                              style: TextStyle(
-                                color: accent,
-                                fontSize: 15,
-                              ),
-                            )
-                          ],
-                        ),
+                          ),
+                          Text(
+                            metadata!.artist.toString().length > 15
+                                ? '${metadata!.artist.toString().substring(0, 15)}...'
+                                : metadata!.artist.toString(),
+                            style: TextStyle(
+                              color: accent,
+                              fontSize: 15,
+                            ),
+                          )
+                        ],
                       ),
                       const Spacer(),
                       Padding(
