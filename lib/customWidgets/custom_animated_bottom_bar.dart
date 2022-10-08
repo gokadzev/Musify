@@ -186,7 +186,7 @@ class _FlashTabBarItem extends StatelessWidget {
               painter: _CustomPath(backgroundColor),
               child: SizedBox(
                 width: 80,
-                height: iconSize,
+                height: iconSize - 8,
               ),
             ),
           ),
