@@ -48,7 +48,7 @@ class SettingsCards extends StatelessWidget {
       children: <Widget>[
         // CATEGORY: PAGES
         Text(
-          'Pages',
+          AppLocalizations.of(context)!.pages,
           style: TextStyle(
             color: accent,
             fontSize: 15,
@@ -90,7 +90,7 @@ class SettingsCards extends StatelessWidget {
 
         // CATEGORY: SETTINGS
         Text(
-          'Settings',
+          AppLocalizations.of(context)!.settings,
           style: TextStyle(
             color: accent,
             fontSize: 15,
@@ -404,7 +404,7 @@ class SettingsCards extends StatelessWidget {
 
         // CATEGORY: TOOLS
         Text(
-          'Tools',
+          AppLocalizations.of(context)!.tools,
           style: TextStyle(
             color: accent,
             fontSize: 15,
@@ -473,7 +473,7 @@ class SettingsCards extends StatelessWidget {
         ),
         // CATEGORY: OTHERS
         Text(
-          'Others',
+          AppLocalizations.of(context)!.others,
           style: TextStyle(
             color: accent,
             fontSize: 15,
