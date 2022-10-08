@@ -1,5 +1,6 @@
-// License: https://raw.githubusercontent.com/Cuberto/flashy-tabbar-android/master/LICENSE
-// remade
+// pub: https://pub.dev/packages/flashy_tab_bar2
+// license: https://raw.githubusercontent.com/Cuberto/flashy-tabbar-android/master/LICENSE
+// remade (not original)
 
 import 'package:flutter/material.dart';
 import 'package:musify/customWidgets/marque.dart';
