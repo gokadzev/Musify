@@ -98,8 +98,9 @@ class AboutCards extends StatelessWidget {
               trailing: Wrap(
                 children: <Widget>[
                   IconButton(
-                    icon: const Icon(
+                    icon: Icon(
                       MdiIcons.github,
+                      color: accent,
                     ),
                     tooltip: 'Github',
                     onPressed: () {
