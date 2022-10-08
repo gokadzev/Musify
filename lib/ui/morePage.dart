@@ -46,6 +46,57 @@ class SettingsCards extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
+        // CATEGORY: PAGES
+        Text(
+          'Pages',
+          style: TextStyle(
+            color: accent,
+            fontSize: 15,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+        SettingBar(
+          AppLocalizations.of(context)!.userPlaylists,
+          MdiIcons.account,
+          () => {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const UserPlaylistsPage(),
+              ),
+            ),
+          },
+        ),
+        SettingBar(
+          AppLocalizations.of(context)!.userLikedSongs,
+          MdiIcons.star,
+          () => {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const UserLikedSongs()),
+            ),
+          },
+        ),
+        SettingBar(
+          AppLocalizations.of(context)!.localSongs,
+          MdiIcons.download,
+          () => {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => LocalSongsPage()),
+            ),
+          },
+        ),
+
+        // CATEGORY: SETTINGS
+        Text(
+          'Settings',
+          style: TextStyle(
+            color: accent,
+            fontSize: 15,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
         SettingBar(
           AppLocalizations.of(context)!.accentColor,
           MdiIcons.shapeOutline,
@@ -292,98 +343,6 @@ class SettingsCards extends StatelessWidget {
           },
         ),
         SettingBar(
-          AppLocalizations.of(context)!.clearCache,
-          MdiIcons.broom,
-          () => {
-            clearCache(),
-            showToast(
-              '${AppLocalizations.of(context)!.cacheMsg}!',
-            )
-          },
-        ),
-        SettingBar(
-          AppLocalizations.of(context)!.clearSearchHistory,
-          MdiIcons.history,
-          () => {
-            searchHistory = [],
-            deleteData('user', 'searchHistory'),
-            showToast('${AppLocalizations.of(context)!.searchHistoryMsg}!'),
-          },
-        ),
-        SettingBar(
-          AppLocalizations.of(context)!.userPlaylists,
-          MdiIcons.account,
-          () => {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const UserPlaylistsPage(),
-              ),
-            ),
-          },
-        ),
-        SettingBar(
-          AppLocalizations.of(context)!.userLikedSongs,
-          MdiIcons.star,
-          () => {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const UserLikedSongs()),
-            ),
-          },
-        ),
-        SettingBar(
-          AppLocalizations.of(context)!.localSongs,
-          MdiIcons.download,
-          () => {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => LocalSongsPage()),
-            ),
-          },
-        ),
-        SettingBar(
-          AppLocalizations.of(context)!.backupUserData,
-          MdiIcons.cloudUpload,
-          () => {
-            backupData().then(
-              (value) => showToast(value.toString()),
-            ),
-          },
-        ),
-        SettingBar(
-          AppLocalizations.of(context)!.restoreUserData,
-          MdiIcons.cloudDownload,
-          () => {
-            restoreData().then(
-              (value) => showToast(value.toString()),
-            ),
-          },
-        ),
-        SettingBar(
-          AppLocalizations.of(context)!.downloadAppUpdate,
-          MdiIcons.download,
-          () => {
-            checkAppUpdates().then(
-              (available) => {
-                if (available == true)
-                  {
-                    showToast(
-                      '${AppLocalizations.of(context)!.appUpdateAvailableAndDownloading}!',
-                    ),
-                    downloadAppUpdates()
-                  }
-                else
-                  {
-                    showToast(
-                      '${AppLocalizations.of(context)!.appUpdateIsNotAvailable}!',
-                    )
-                  }
-              },
-            ),
-          },
-        ),
-        SettingBar(
           AppLocalizations.of(context)!.audioFileType,
           MdiIcons.file,
           () => {
@@ -441,6 +400,85 @@ class SettingsCards extends StatelessWidget {
               },
             ),
           },
+        ),
+
+        // CATEGORY: TOOLS
+        Text(
+          'Tools',
+          style: TextStyle(
+            color: accent,
+            fontSize: 15,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+        SettingBar(
+          AppLocalizations.of(context)!.clearCache,
+          MdiIcons.broom,
+          () => {
+            clearCache(),
+            showToast(
+              '${AppLocalizations.of(context)!.cacheMsg}!',
+            )
+          },
+        ),
+        SettingBar(
+          AppLocalizations.of(context)!.clearSearchHistory,
+          MdiIcons.history,
+          () => {
+            searchHistory = [],
+            deleteData('user', 'searchHistory'),
+            showToast('${AppLocalizations.of(context)!.searchHistoryMsg}!'),
+          },
+        ),
+        SettingBar(
+          AppLocalizations.of(context)!.backupUserData,
+          MdiIcons.cloudUpload,
+          () => {
+            backupData().then(
+              (value) => showToast(value.toString()),
+            ),
+          },
+        ),
+        SettingBar(
+          AppLocalizations.of(context)!.restoreUserData,
+          MdiIcons.cloudDownload,
+          () => {
+            restoreData().then(
+              (value) => showToast(value.toString()),
+            ),
+          },
+        ),
+        SettingBar(
+          AppLocalizations.of(context)!.downloadAppUpdate,
+          MdiIcons.download,
+          () => {
+            checkAppUpdates().then(
+              (available) => {
+                if (available == true)
+                  {
+                    showToast(
+                      '${AppLocalizations.of(context)!.appUpdateAvailableAndDownloading}!',
+                    ),
+                    downloadAppUpdates()
+                  }
+                else
+                  {
+                    showToast(
+                      '${AppLocalizations.of(context)!.appUpdateIsNotAvailable}!',
+                    )
+                  }
+              },
+            ),
+          },
+        ),
+        // CATEGORY: OTHERS
+        Text(
+          'Others',
+          style: TextStyle(
+            color: accent,
+            fontSize: 15,
+            fontWeight: FontWeight.w400,
+          ),
         ),
         SettingBar(
           AppLocalizations.of(context)!.supportDonate,
