@@ -105,20 +105,23 @@ class MyAudioHandler extends BaseAudioHandler {
   void _listenForPositionChanges() {
     audioPlayer.positionStream.listen((p) async {
       position.value = p;
-      if (playerState.value.processingState != ProcessingState.loading &&
-          audioPlayer.duration != null &&
+      final isNotLoading =
+          playerState.value.processingState != ProcessingState.loading;
+      final durationIsNotNull = audioPlayer.duration != null;
+      if (isNotLoading &&
+          durationIsNotNull &&
           p.inSeconds == audioPlayer.duration!.inSeconds - 5) {
         if (!hasNext && playNextSongAutomatically.value) {
           final randomSong = await getRandomSong();
           final randomSongUrl = await getSong(randomSong['ytid'], true);
           await addQueueItem(mapToMediaItem(randomSong, randomSongUrl));
         }
-      } else if (playerState.value.processingState != ProcessingState.loading &&
-          audioPlayer.duration != null &&
+      } else if (isNotLoading &&
+          durationIsNotNull &&
           p.inSeconds == audioPlayer.duration!.inSeconds - 1) {
         canBeSkipped = true;
-      } else if (playerState.value.processingState != ProcessingState.loading &&
-          audioPlayer.duration != null &&
+      } else if (isNotLoading &&
+          durationIsNotNull &&
           p.inSeconds == audioPlayer.duration!.inSeconds) {
         if (canBeSkipped && hasNext) {
           await skipToNext();
