@@ -10,15 +10,21 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 Future<void> downloadSong(BuildContext context, dynamic song) async {
-  var status = await Permission.storage.status;
-  if (status.isDenied) {
+  if (await Permission.audio.status.isDenied) {
+    await Permission.audio.request();
+    if (await Permission.audio.status.isPermanentlyDenied) {
+      await openAppSettings();
+    }
+  }
+
+  if (await Permission.storage.status.isDenied) {
     await [
       Permission.storage,
       Permission.accessMediaLocation,
       Permission.mediaLibrary,
     ].request();
-    status = await Permission.storage.status;
-    if (status.isPermanentlyDenied) {
+
+    if (await Permission.storage.status.isPermanentlyDenied) {
       await openAppSettings();
     }
   }
