@@ -242,11 +242,9 @@ class MyAudioHandler extends BaseAudioHandler {
   Future<void> skipToNext() async {
     if (activePlaylist.isEmpty) {
       await audioPlayer.seekToNext();
-    } else {
-      if (id + 1 <= activePlaylist.length) {
-        await playSong(activePlaylist[id + 1]);
-        id = id + 1;
-      }
+    } else if (hasNext) {
+      await playSong(activePlaylist[id + 1]);
+      id = id + 1;
     }
   }
 
@@ -254,11 +252,9 @@ class MyAudioHandler extends BaseAudioHandler {
   Future<void> skipToPrevious() async {
     if (activePlaylist.isEmpty) {
       await audioPlayer.seekToPrevious();
-    } else {
-      if (id - 1 >= 0) {
-        await playSong(activePlaylist[id - 1]);
-        id = id - 1;
-      }
+    } else if (hasPrevious) {
+      await playSong(activePlaylist[id - 1]);
+      id = id - 1;
     }
   }
 

@@ -192,7 +192,7 @@ packages:
       name: flutter_native_splash
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.2.10+1"
+    version: "2.2.11"
   flutter_test:
     dependency: "direct dev"
     description: flutter

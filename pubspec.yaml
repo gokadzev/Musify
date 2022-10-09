@@ -53,7 +53,7 @@ dependencies:
 
 dev_dependencies:
   flutter_launcher_icons: ^0.10.0
-  flutter_native_splash: ^2.2.10+1
+  flutter_native_splash: ^2.2.11
   flutter_test:
     sdk: flutter
 
