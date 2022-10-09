@@ -154,6 +154,7 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
                       ElevatedButton(
                         onPressed: () => {
                           setActivePlaylist(localSongs),
+                          Navigator.pushReplacementNamed(context, '/'),
                         },
                         style: ButtonStyle(
                           backgroundColor:
@@ -221,6 +222,7 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
                               borderRadius: BorderRadius.circular(20),
                               onTap: () {
                                 playSong(lsong);
+                                Navigator.pushReplacementNamed(context, '/');
                               },
                               splashColor: accent.withOpacity(0.4),
                               hoverColor: accent.withOpacity(0.4),
