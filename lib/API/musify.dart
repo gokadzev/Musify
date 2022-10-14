@@ -264,7 +264,7 @@ Future<List<SongModel>> getLocalSongs() async {
     localSongs = [
       ...await _audioQuery.querySongs(uriType: UriType.EXTERNAL),
       ...await _audioQuery.querySongs(
-        path: await ExtStorageProvider.getExtStorage(dirName: 'Musify'),
+        path: await ExtStorageProvider.getExtStorage(dirName: 'Music'),
       )
     ];
   }

@@ -46,7 +46,7 @@ Future<void> downloadSong(BuildContext context, dynamic song) async {
       prefferedFileExtension.value;
 
   var filepath = '';
-  final dlPath = await ExtStorageProvider.getExtStorage(dirName: 'Musify');
+  final dlPath = await ExtStorageProvider.getExtStorage(dirName: 'Music');
   try {
     await File('${dlPath!}/$filename')
         .create(recursive: true)
