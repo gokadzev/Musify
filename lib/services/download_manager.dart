@@ -29,10 +29,6 @@ Future<void> downloadSong(BuildContext context, dynamic song) async {
     }
   }
 
-  showToast(
-    AppLocalizations.of(context)!.downloadStarted,
-  );
-
   final filename = song['title']
           .replaceAll(r'\', '')
           .replaceAll('/', '')
@@ -48,20 +44,28 @@ Future<void> downloadSong(BuildContext context, dynamic song) async {
   var filepath = '';
   final dlPath = await ExtStorageProvider.getExtStorage(dirName: 'Music');
   try {
+    showToast(
+      AppLocalizations.of(context)!.downloadStarted,
+    );
     await File('${dlPath!}/$filename')
         .create(recursive: true)
         .then((value) => filepath = value.path);
-    await downloadFileFromYT(filename, filepath, dlPath, song);
+    await downloadFileFromYT(filename, filepath, dlPath, song).whenComplete(
+      () => showToast(
+        AppLocalizations.of(context)!.downloadCompleted,
+      ),
+    );
   } catch (e) {
     await [Permission.manageExternalStorage].request();
     await File('${dlPath!}/$filename')
         .create(recursive: true)
         .then((value) => filepath = value.path);
-    await downloadFileFromYT(filename, filepath, dlPath, song);
+    await downloadFileFromYT(filename, filepath, dlPath, song).whenComplete(
+      () => showToast(
+        AppLocalizations.of(context)!.downloadCompleted,
+      ),
+    );
   }
-  showToast(
-    AppLocalizations.of(context)!.downloadCompleted,
-  );
 }
 
 Future<void> downloadFileFromYT(
