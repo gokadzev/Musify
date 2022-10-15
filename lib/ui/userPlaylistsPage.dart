@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/customWidgets/spinner.dart';
+import 'package:musify/helper/flutter_toast.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:musify/style/appTheme.dart';
 import 'package:musify/ui/playlistsPage.dart';
@@ -68,7 +69,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                       style: const TextStyle(color: Colors.black),
                     ),
                     onPressed: () {
-                      addUserPlaylist(id);
+                      showToast(addUserPlaylist(id));
                       setState(() {
                         Navigator.pop(context);
                       });

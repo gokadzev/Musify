@@ -101,9 +101,14 @@ Future<List<dynamic>> getUserPlaylists() async {
   return playlistsByUser;
 }
 
-void addUserPlaylist(String playlistId) {
-  userPlaylists.add(playlistId);
-  addOrUpdateData('user', 'playlists', userPlaylists);
+String addUserPlaylist(String playlistId) {
+  if (playlistId.length != 34) {
+    return 'This is not a Youtube playlist ID!';
+  } else {
+    userPlaylists.add(playlistId);
+    addOrUpdateData('user', 'playlists', userPlaylists);
+    return 'Added successfully';
+  }
 }
 
 void removeUserPlaylist(String playlistId) {
