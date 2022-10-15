@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -15,6 +19,7 @@ import 'package:musify/ui/player.dart';
 import 'package:musify/ui/playlistsPage.dart';
 import 'package:musify/ui/searchPage.dart';
 import 'package:on_audio_query/on_audio_query.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class Musify extends StatefulWidget {
   @override
@@ -27,16 +32,28 @@ ValueNotifier<int> activeTab = ValueNotifier<int>(0);
 
 class AppState extends State<Musify> {
   @override
-  void initState() {
+  void initState() async {
     super.initState();
-    checkAppUpdates().then(
-      (value) => {
-        if (value == true)
-          {
-            showToast('${AppLocalizations.of(context)!.appUpdateIsAvailable}!'),
-          }
-      },
+    final packageInfo = await PackageInfo.fromPlatform();
+    version = packageInfo.version;
+    unawaited(
+      checkAppUpdates().then(
+        (value) => {
+          if (value == true)
+            {
+              showToast(
+                '${AppLocalizations.of(context)!.appUpdateIsAvailable}!',
+              ),
+            }
+        },
+      ),
     );
+    await FlutterDownloader.initialize(
+      debug: kDebugMode,
+      ignoreSsl: true,
+    );
+
+    unawaited(FlutterDownloader.registerCallback(downloadCallback));
   }
 
   @override

@@ -25,10 +25,11 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
   var _currentLastLoadedId = 0;
 
   @override
-  void initState() {
+  void initState() async {
     super.initState();
     _isLoading = true;
     _hasMore = true;
+    await getLocalSongs();
     _loadMore();
   }
 
@@ -59,12 +60,12 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
     final list = [];
     final _count = localSongs.length;
     final n = min(_itemsPerPage, _count - _currentPage * _itemsPerPage);
-    await Future.delayed(const Duration(seconds: 1), () {
-      for (var i = 0; i < n; i++) {
-        list.add(localSongs[_currentLastLoadedId]);
-        _currentLastLoadedId++;
-      }
-    });
+
+    for (var i = 0; i < n; i++) {
+      list.add(localSongs[_currentLastLoadedId]);
+      _currentLastLoadedId++;
+    }
+
     _currentPage++;
     return list;
   }

@@ -1,20 +1,18 @@
+import 'dart:async';
+
 import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:musify/API/musify.dart';
-import 'package:musify/helper/version.dart';
 import 'package:musify/services/audio_handler.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:musify/style/appTheme.dart';
 import 'package:musify/ui/rootPage.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 
 GetIt getIt = GetIt.instance;
 bool _interrupted = false;
@@ -90,7 +88,6 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    getLocalSongs();
     _locale = Locale(
       codes[Hive.box('settings').get('language', defaultValue: 'English')
           as String]!,
@@ -101,8 +98,6 @@ class _MyAppState extends State<MyApp> {
         : Hive.box('settings').get('themeMode') == 'light'
             ? ThemeMode.light
             : ThemeMode.dark;
-
-    FlutterDownloader.registerCallback(downloadCallback);
   }
 
   @override
@@ -198,12 +193,6 @@ Future<void> initialisation() async {
   );
   getIt.registerSingleton<AudioHandler>(audioHandler);
   await enableBooster();
-  await FlutterDownloader.initialize(
-    debug: kDebugMode,
-    ignoreSsl: true,
-  );
-  final packageInfo = await PackageInfo.fromPlatform();
-  version = packageInfo.version;
 }
 
 @pragma('vm:entry-point')
