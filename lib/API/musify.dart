@@ -27,7 +27,6 @@ List userPlaylists = Hive.box('user').get('playlists', defaultValue: []);
 List userLikedSongsList = Hive.box('user').get('likedSongs', defaultValue: []);
 List suggestedPlaylists = [];
 List activePlaylist = [];
-List<SongModel> localSongs = [];
 
 final lyrics = ValueNotifier<String>('null');
 String lastFetchedLyrics = 'null';
@@ -265,13 +264,11 @@ Future getSongDetails(dynamic songIndex, dynamic songId) async {
 }
 
 Future<List<SongModel>> getLocalSongs() async {
-  if (await Permission.storage.request().isGranted) {
-    localSongs = [
-      ...await _audioQuery.querySongs(uriType: UriType.EXTERNAL),
-      ...await _audioQuery.querySongs(
-        path: await ExtStorageProvider.getExtStorage(dirName: 'Music'),
-      )
-    ];
+  var localSongs = <SongModel>[];
+  if (await ExtStorageProvider.requestPermission(Permission.storage)) {
+    localSongs = await _audioQuery.querySongs(
+      path: await ExtStorageProvider.getExtStorage(dirName: 'Music'),
+    );
   }
 
   return localSongs;
