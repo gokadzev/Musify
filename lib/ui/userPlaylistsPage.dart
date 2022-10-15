@@ -69,7 +69,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                       style: const TextStyle(color: Colors.black),
                     ),
                     onPressed: () {
-                      showToast(addUserPlaylist(id));
+                      showToast(addUserPlaylist(id, context));
                       setState(() {
                         Navigator.pop(context);
                       });

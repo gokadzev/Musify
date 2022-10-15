@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:musify/helper/formatter.dart';
@@ -100,13 +101,13 @@ Future<List<dynamic>> getUserPlaylists() async {
   return playlistsByUser;
 }
 
-String addUserPlaylist(String playlistId) {
+String addUserPlaylist(String playlistId, BuildContext context) {
   if (playlistId.length != 34) {
-    return 'This is not a Youtube playlist ID!';
+    return '${AppLocalizations.of(context)!.notYTlist}!';
   } else {
     userPlaylists.add(playlistId);
     addOrUpdateData('user', 'playlists', userPlaylists);
-    return 'Added successfully';
+    return '${AppLocalizations.of(context)!.addedSuccess}!';
   }
 }
 
