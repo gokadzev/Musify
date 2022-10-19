@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -193,6 +194,19 @@ Future<void> initialisation() async {
   );
   getIt.registerSingleton<AudioHandler>(audioHandler);
   await enableBooster();
+
+  try {
+    await FlutterDownloader.initialize(
+      debug: kDebugMode,
+      ignoreSsl: true,
+    );
+
+    await FlutterDownloader.registerCallback(downloadCallback);
+  } catch (e) {
+    if (kDebugMode) {
+      print(e);
+    }
+  }
 }
 
 @pragma('vm:entry-point')

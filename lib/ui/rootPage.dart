@@ -1,9 +1,5 @@
-import 'dart:async';
-
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -32,28 +28,23 @@ ValueNotifier<int> activeTab = ValueNotifier<int>(0);
 
 class AppState extends State<Musify> {
   @override
-  void initState() async {
+  void initState() {
     super.initState();
-    final packageInfo = await PackageInfo.fromPlatform();
-    version = packageInfo.version;
-    unawaited(
-      checkAppUpdates().then(
-        (value) => {
-          if (value == true)
-            {
-              showToast(
-                '${AppLocalizations.of(context)!.appUpdateIsAvailable}!',
-              ),
-            }
-        },
-      ),
+    PackageInfo.fromPlatform().then(
+      (packageInfo) => () {
+        version = packageInfo.version;
+        checkAppUpdates().then(
+          (value) => {
+            if (value == true)
+              {
+                showToast(
+                  '${AppLocalizations.of(context)!.appUpdateIsAvailable}!',
+                ),
+              }
+          },
+        );
+      },
     );
-    await FlutterDownloader.initialize(
-      debug: kDebugMode,
-      ignoreSsl: true,
-    );
-
-    unawaited(FlutterDownloader.registerCallback(downloadCallback));
   }
 
   @override
