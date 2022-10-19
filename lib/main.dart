@@ -14,8 +14,10 @@ import 'package:musify/services/audio_manager.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:musify/style/appTheme.dart';
 import 'package:musify/ui/rootPage.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 GetIt getIt = GetIt.instance;
+late PackageInfo packageInfo;
 bool _interrupted = false;
 ThemeMode themeMode = ThemeMode.system;
 
@@ -194,6 +196,8 @@ Future<void> initialisation() async {
   );
   getIt.registerSingleton<AudioHandler>(audioHandler);
   await enableBooster();
+
+  packageInfo = await PackageInfo.fromPlatform();
 
   try {
     await FlutterDownloader.initialize(

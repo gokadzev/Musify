@@ -15,7 +15,6 @@ import 'package:musify/ui/player.dart';
 import 'package:musify/ui/playlistsPage.dart';
 import 'package:musify/ui/searchPage.dart';
 import 'package:on_audio_query/on_audio_query.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 
 class Musify extends StatefulWidget {
   @override
@@ -30,19 +29,14 @@ class AppState extends State<Musify> {
   @override
   void initState() {
     super.initState();
-    PackageInfo.fromPlatform().then(
-      (packageInfo) => () {
-        version = packageInfo.version;
-        checkAppUpdates().then(
-          (value) => {
-            if (value == true)
-              {
-                showToast(
-                  '${AppLocalizations.of(context)!.appUpdateIsAvailable}!',
-                ),
-              }
-          },
-        );
+    checkAppUpdates().then(
+      (value) => {
+        if (value == true)
+          {
+            showToast(
+              '${AppLocalizations.of(context)!.appUpdateIsAvailable}!',
+            ),
+          }
       },
     );
   }
