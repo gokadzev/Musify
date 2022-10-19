@@ -70,6 +70,9 @@ class _HomePageState extends State<HomePage> {
                                     id: (data as dynamic)
                                         .data[index]['ytid']
                                         .toString(),
+                                    title: (data as dynamic)
+                                        .data[index]['title']
+                                        .toString(),
                                     image: (data as dynamic)
                                         .data[index]['image']
                                         .toString(),
@@ -165,9 +168,11 @@ class _HomePageState extends State<HomePage> {
 class CubeContainer extends StatelessWidget {
   const CubeContainer({
     required this.id,
+    required this.title,
     required this.image,
   });
   final String id;
+  final String title;
   final String image;
 
   @override
@@ -178,15 +183,15 @@ class CubeContainer extends StatelessWidget {
       fadingDuration: const Duration(milliseconds: 400),
       child: GestureDetector(
         onTap: () {
-          getPlaylistInfoForWidget(id).then(
-            (value) => {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => PlaylistPage(playlist: value),
-                ),
-              )
-            },
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PlaylistPage(
+                id: id,
+                title: title,
+                image: image,
+              ),
+            ),
           );
         },
         child: Column(
