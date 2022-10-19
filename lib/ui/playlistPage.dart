@@ -12,16 +12,8 @@ import 'package:musify/style/appColors.dart';
 import 'package:musify/style/appTheme.dart';
 
 class PlaylistPage extends StatefulWidget {
-  const PlaylistPage({
-    super.key,
-    required this.id,
-    required this.title,
-    required this.image,
-  });
-
-  final String id;
-  final String title;
-  final String image;
+  const PlaylistPage({super.key, required this.playlist});
+  final dynamic playlist;
 
   @override
   _PlaylistPageState createState() => _PlaylistPageState();
@@ -29,7 +21,6 @@ class PlaylistPage extends StatefulWidget {
 
 class _PlaylistPageState extends State<PlaylistPage> {
   final _songsList = [];
-  late dynamic playlist;
 
   bool _isLoading = true;
   bool _hasMore = true;
@@ -40,7 +31,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
   @override
   void initState() {
     super.initState();
-    playlist = getPlaylistInfoForWidget(widget.id);
     _isLoading = true;
     _hasMore = true;
     _loadMore();
@@ -71,11 +61,11 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
   Future<List> fetch() async {
     final list = [];
-    final _count = playlist['list'].length as int;
+    final _count = widget.playlist['list'].length as int;
     final n = min(_itemsPerPage, _count - _currentPage * _itemsPerPage);
     await Future.delayed(const Duration(seconds: 1), () {
       for (var i = 0; i < n; i++) {
-        list.add(playlist['list'][_currentLastLoadedId]);
+        list.add(widget.playlist['list'][_currentLastLoadedId]);
         _currentLastLoadedId++;
       }
     });
@@ -106,7 +96,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
         elevation: 0,
       ),
       body: SingleChildScrollView(
-        child: playlist != null
+        child: widget.playlist != null
             ? Column(
                 children: [
                   Container(
@@ -115,14 +105,14 @@ class _PlaylistPageState extends State<PlaylistPage> {
                     width: 250,
                     child: Card(
                       color: Colors.transparent,
-                      child: widget.image != ''
+                      child: widget.playlist['image'] != ''
                           ? DecoratedBox(
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
                                 image: DecorationImage(
                                   fit: BoxFit.cover,
                                   image: CachedNetworkImageProvider(
-                                    widget.image,
+                                    widget.playlist['image'].toString(),
                                   ),
                                 ),
                               ),
@@ -143,7 +133,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                                     color: accent,
                                   ),
                                   Text(
-                                    widget.title,
+                                    widget.playlist['title'].toString(),
                                     style: TextStyle(color: accent),
                                     textAlign: TextAlign.center,
                                   ),
@@ -157,7 +147,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                     children: [
                       const SizedBox(height: 12),
                       Text(
-                        widget.title,
+                        widget.playlist['title'].toString(),
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: accent,
@@ -167,7 +157,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        playlist['header_desc'].toString(),
+                        widget.playlist['header_desc'].toString(),
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: accent,
@@ -179,7 +169,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                       ElevatedButton(
                         onPressed: () => {
                           setActivePlaylist(
-                            playlist['list'] as List,
+                            widget.playlist['list'] as List,
                           ),
                           showToast(
                             AppLocalizations.of(context)!.queueInitText,

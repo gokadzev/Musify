@@ -207,15 +207,15 @@ class GetPlaylist extends StatelessWidget {
       fadingDuration: const Duration(milliseconds: 400),
       child: GestureDetector(
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => PlaylistPage(
-                id: id,
-                image: image,
-                title: title,
-              ),
-            ),
+          getPlaylistInfoForWidget(id).then(
+            (value) => {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PlaylistPage(playlist: value),
+                ),
+              )
+            },
           );
         },
         child: Padding(
