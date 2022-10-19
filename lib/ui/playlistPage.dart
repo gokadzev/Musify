@@ -24,7 +24,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
   bool _isLoading = true;
   bool _hasMore = true;
-  final _itemsPerPage = 10;
+  final _itemsPerPage = 35;
   var _currentPage = 0;
   var _currentLastLoadedId = 0;
 
