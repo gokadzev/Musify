@@ -19,7 +19,7 @@ version: 3.5.1+34
 
 environment:
   sdk: '>=2.18.2 <3.0.0'
-  flutter: ^3.3.4
+  flutter: ^3.3.5
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -45,7 +45,7 @@ dependencies:
   just_audio: ^0.9.29
   material_design_icons_flutter: ^5.0.6996
   on_audio_query: ^2.6.1
-  package_info_plus: ^3.0.0
+  package_info_plus: ^3.0.1
   path_provider: ^2.0.11
   permission_handler: ^10.2.0
   url_launcher: ^6.1.6
