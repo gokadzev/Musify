@@ -1,3 +1,5 @@
+import 'package:youtube_explode_dart/youtube_explode_dart.dart';
+
 String formatSongTitle(String title) {
   return title
       .replaceAll('&amp;', '&')
@@ -19,27 +21,21 @@ String formatSongTitle(String title) {
       .trim();
 }
 
-Map<String, dynamic> returnSongLayout(
-  dynamic index,
-  String ytid,
-  String title,
-  String image,
-  String lowResImage,
-  String highResImage,
-  String artist,
-) {
+Map<String, dynamic> returnSongLayout(dynamic index, Video song) {
   return {
     'id': index,
-    'ytid': ytid,
-    'title': formatSongTitle(title.split('-')[title.split('-').length - 1]),
-    'image': image,
-    'lowResImage': lowResImage,
-    'highResImage': highResImage,
+    'ytid': song.id.toString(),
+    'title': formatSongTitle(
+      song.title.split('-')[song.title.split('-').length - 1],
+    ),
+    'image': song.thumbnails.standardResUrl,
+    'lowResImage': song.thumbnails.lowResUrl,
+    'highResImage': song.thumbnails.maxResUrl,
     'album': '',
     'type': 'song',
     'more_info': {
-      'primary_artists': artist,
-      'singers': artist,
+      'primary_artists': song.title.split('-')[0],
+      'singers': song.title.split('-')[0],
     }
   };
 }

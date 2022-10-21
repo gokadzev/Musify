@@ -40,14 +40,7 @@ Future<List> fetchSongsList(String searchQuery) async {
     for (final s in list)
       returnSongLayout(
         0,
-        s.id.toString(),
-        formatSongTitle(
-          s.title.split('-')[s.title.split('-').length - 1].toString(),
-        ),
-        s.thumbnails.standardResUrl.toString(),
-        s.thumbnails.lowResUrl.toString(),
-        s.thumbnails.maxResUrl.toString(),
-        s.title.split('-')[0].toString(),
+        s,
       )
   ];
 
@@ -63,14 +56,7 @@ Future get10Music(dynamic playlistid) async {
       playlistSongs.add(
         returnSongLayout(
           index,
-          song.id.toString(),
-          formatSongTitle(
-            song.title.split('-')[song.title.split('-').length - 1],
-          ),
-          song.thumbnails.standardResUrl,
-          song.thumbnails.lowResUrl,
-          song.thumbnails.maxResUrl,
-          song.title.split('-')[0],
+          song,
         ),
       );
       index += 1;
@@ -180,14 +166,7 @@ Future getSongsFromPlaylist(dynamic playlistid) async {
       playlistSongs.add(
         returnSongLayout(
           index,
-          song.id.toString(),
-          formatSongTitle(
-            song.title.split('-')[song.title.split('-').length - 1],
-          ),
-          song.thumbnails.standardResUrl,
-          song.thumbnails.lowResUrl,
-          song.thumbnails.maxResUrl,
-          song.title.split('-')[0],
+          song,
         ),
       );
       index += 1;
@@ -253,12 +232,7 @@ Future getSongDetails(dynamic songIndex, dynamic songId) async {
   final song = await yt.videos.get(songId);
   return returnSongLayout(
     songIndex,
-    song.id.toString(),
-    formatSongTitle(song.title.split('-')[song.title.split('-').length - 1]),
-    song.thumbnails.standardResUrl,
-    song.thumbnails.lowResUrl,
-    song.thumbnails.maxResUrl,
-    song.title.split('-')[0],
+    song,
   );
 }
 
