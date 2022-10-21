@@ -15,7 +15,7 @@ class LocalSongsPage extends StatefulWidget {
 
 class _LocalSongsPageState extends State<LocalSongsPage> {
   @override
-  void initState() async {
+  void initState() {
     super.initState();
   }
 

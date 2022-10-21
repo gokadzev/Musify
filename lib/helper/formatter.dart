@@ -20,7 +20,7 @@ String formatSongTitle(String title) {
 }
 
 Map<String, dynamic> returnSongLayout(
-  index,
+  dynamic index,
   String ytid,
   String title,
   String image,
