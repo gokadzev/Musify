@@ -192,7 +192,7 @@ packages:
       name: flutter_native_splash
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.2.11"
+    version: "2.2.12"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -244,7 +244,7 @@ packages:
       name: html
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.15.0"
+    version: "0.15.1"
   http:
     dependency: "direct main"
     description:
@@ -300,7 +300,7 @@ packages:
       name: just_audio
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.9.29"
+    version: "0.9.30"
   just_audio_platform_interface:
     dependency: transitive
     description:

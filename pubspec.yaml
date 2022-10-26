@@ -42,7 +42,7 @@ dependencies:
   hive_flutter: ^1.1.0
   http: ^0.13.5
   intl: ^0.17.0 
-  just_audio: ^0.9.29
+  just_audio: ^0.9.30
   material_design_icons_flutter: ^5.0.6996
   on_audio_query: ^2.6.1
   package_info_plus: ^3.0.1
@@ -53,7 +53,7 @@ dependencies:
 
 dev_dependencies:
   flutter_launcher_icons: ^0.10.0
-  flutter_native_splash: ^2.2.11
+  flutter_native_splash: ^2.2.12
   flutter_test:
     sdk: flutter
 
