@@ -3,6 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/customWidgets/setting_bar.dart';
 import 'package:musify/helper/flutter_toast.dart';
+import 'package:musify/helper/url_launcher.dart';
 import 'package:musify/helper/version.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/audio_manager.dart';
@@ -13,7 +14,6 @@ import 'package:musify/ui/localSongsPage.dart';
 import 'package:musify/ui/searchPage.dart';
 import 'package:musify/ui/userLikedSongsPage.dart';
 import 'package:musify/ui/userPlaylistsPage.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class MorePage extends StatefulWidget {
   @override
@@ -483,8 +483,11 @@ class SettingsCards extends StatelessWidget {
         SettingBar(
           AppLocalizations.of(context)!.supportDonate,
           MdiIcons.heart,
-          () =>
-              {launchUrl(Uri.parse('https://www.buymeacoffee.com/gokadzev18'))},
+          () => {
+            launchURL(
+              Uri.parse('https://www.buymeacoffee.com/gokadzev18'),
+            ),
+          },
         ),
         SettingBar(
           AppLocalizations.of(context)!.about,

@@ -104,7 +104,9 @@ class AboutCards extends StatelessWidget {
                     ),
                     tooltip: 'Github',
                     onPressed: () {
-                      launchURL(Uri.parse('https://github.com/gokadzev'));
+                      launchURL(
+                        Uri.parse('https://github.com/gokadzev'),
+                      );
                     },
                   ),
                 ],
