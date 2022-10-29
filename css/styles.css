@@ -45,6 +45,12 @@ h1 {
 .nav-link {
     font-size: 1.3rem;
     font-family: 'Montserrat';
+    border-radius: 10px;
+}
+
+.nav-link:hover {
+    background-color: #AEB6BF;
+    color: #28292B;
 }
 
 /* download buttons */
