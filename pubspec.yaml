@@ -33,7 +33,7 @@ dependencies:
   cached_network_image: ^3.2.2
   flutter:
     sdk: flutter
-  flutter_downloader: ^1.8.4
+  flutter_downloader: ^1.9.0
   flutter_localizations: 
     sdk: flutter
   fluttertoast: ^8.0.9
@@ -53,7 +53,7 @@ dependencies:
 
 dev_dependencies:
   flutter_launcher_icons: ^0.10.0
-  flutter_native_splash: ^2.2.12
+  flutter_native_splash: ^2.2.13
   flutter_test:
     sdk: flutter
 
