@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
@@ -13,6 +14,7 @@ import 'package:musify/services/audio_handler.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:musify/style/appTheme.dart';
+import 'package:musify/ui/morePage.dart';
 import 'package:musify/ui/rootPage.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -111,41 +113,57 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      themeMode: themeMode,
-      debugShowCheckedModeBanner: false,
-      darkTheme: getAppDarkTheme(),
-      theme: getAppLightTheme(),
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('en', ''),
-        Locale('ka', ''),
-        Locale('zh', ''),
-        Locale('nl', ''),
-        Locale('fr', ''),
-        Locale('de', ''),
-        Locale('he', ''),
-        Locale('hi', ''),
-        Locale('hu', ''),
-        Locale('id', ''),
-        Locale('it', ''),
-        Locale('pl', ''),
-        Locale('pt', ''),
-        Locale('es', ''),
-        Locale('ta', ''),
-        Locale('tr', ''),
-        Locale('uk', ''),
-        Locale('ur', '')
-      ],
-      locale: _locale,
-      initialRoute: '/',
-      routes: {
-        '/': (context) => Musify(),
+    return DynamicColorBuilder(
+      builder: (lightColorScheme, darkColorScheme) {
+        return MaterialApp(
+          themeMode: themeMode,
+          debugShowCheckedModeBanner: false,
+          darkTheme: darkColorScheme != null && useSystemColor.value == true
+              ? ThemeData(
+                  scaffoldBackgroundColor: const Color(0xFF121212),
+                  canvasColor: const Color(0xFF121212),
+                  appBarTheme:
+                      const AppBarTheme(backgroundColor: Color(0xFF121212)),
+                  bottomAppBarColor: const Color(0xFF151515),
+                  colorScheme: darkColorScheme,
+                  useMaterial3: true,
+                )
+              : getAppDarkTheme(),
+          theme: lightColorScheme != null && useSystemColor.value == true
+              ? ThemeData(colorScheme: lightColorScheme, useMaterial3: true)
+              : getAppLightTheme(),
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('en', ''),
+            Locale('ka', ''),
+            Locale('zh', ''),
+            Locale('nl', ''),
+            Locale('fr', ''),
+            Locale('de', ''),
+            Locale('he', ''),
+            Locale('hi', ''),
+            Locale('hu', ''),
+            Locale('id', ''),
+            Locale('it', ''),
+            Locale('pl', ''),
+            Locale('pt', ''),
+            Locale('es', ''),
+            Locale('ta', ''),
+            Locale('tr', ''),
+            Locale('uk', ''),
+            Locale('ur', '')
+          ],
+          locale: _locale,
+          initialRoute: '/',
+          routes: {
+            '/': (context) => Musify(),
+          },
+        );
       },
     );
   }

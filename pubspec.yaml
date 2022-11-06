@@ -31,6 +31,7 @@ dependencies:
   audio_service: ^0.18.7
   audio_session: ^0.1.10
   cached_network_image: ^3.2.2
+  dynamic_color: ^1.5.4
   flutter:
     sdk: flutter
   flutter_downloader: ^1.9.0

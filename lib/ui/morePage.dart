@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hive/hive.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/customWidgets/setting_bar.dart';
 import 'package:musify/helper/flutter_toast.dart';
 import 'package:musify/helper/url_launcher.dart';
 import 'package:musify/helper/version.dart';
 import 'package:musify/main.dart';
-import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/style/appTheme.dart';
 import 'package:musify/ui/aboutPage.dart';
@@ -14,6 +14,20 @@ import 'package:musify/ui/localSongsPage.dart';
 import 'package:musify/ui/searchPage.dart';
 import 'package:musify/ui/userLikedSongsPage.dart';
 import 'package:musify/ui/userPlaylistsPage.dart';
+
+final prefferedFileExtension = ValueNotifier<String>(
+  Hive.box('settings').get('audioFileType', defaultValue: 'mp3') as String,
+);
+final playNextSongAutomatically = ValueNotifier<bool>(
+  Hive.box('settings').get('playNextSongAutomatically', defaultValue: false),
+);
+final sponsorBlockSupport = ValueNotifier<bool>(
+  Hive.box('settings').get('sponsorBlockSupport', defaultValue: false),
+);
+
+final useSystemColor = ValueNotifier<bool>(
+  Hive.box('settings').get('useSystemColor', defaultValue: true),
+);
 
 class MorePage extends StatefulWidget {
   @override
@@ -342,6 +356,83 @@ class SettingsCards extends StatelessWidget {
             ),
           },
         ),
+        SettingBar(
+          'Use System Color (Android 12 New Feature)',
+          MdiIcons.toggleSwitch,
+          () => {
+            showModalBottomSheet(
+              isDismissible: true,
+              backgroundColor: Colors.transparent,
+              context: context,
+              builder: (BuildContext context) {
+                return Center(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: accent,
+                      ),
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(20),
+                      ),
+                    ),
+                    width: MediaQuery.of(context).copyWith().size.width * 0.90,
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Card(
+                            child: ListTile(
+                              title: Text(
+                                'True',
+                                style: TextStyle(color: accent),
+                              ),
+                              onTap: () {
+                                addOrUpdateData(
+                                  'settings',
+                                  'useSystemColor',
+                                  true,
+                                );
+                                useSystemColor.value = true;
+                                showToast(
+                                  'Setting changed!',
+                                );
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Card(
+                            child: ListTile(
+                              title: Text(
+                                'False',
+                                style: TextStyle(color: accent),
+                              ),
+                              onTap: () {
+                                addOrUpdateData(
+                                  'settings',
+                                  'useSystemColor',
+                                  false,
+                                );
+                                useSystemColor.value = false;
+                                showToast(
+                                  'Setting changed!',
+                                );
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          },
+        ),
+
         SettingBar(
           AppLocalizations.of(context)!.audioFileType,
           MdiIcons.file,

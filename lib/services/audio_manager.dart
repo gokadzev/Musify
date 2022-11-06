@@ -2,13 +2,13 @@ import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/helper/mediaitem.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/audio_handler.dart';
 import 'package:musify/services/data_manager.dart';
+import 'package:musify/ui/morePage.dart';
 
 final _equalizer = AndroidEqualizer();
 final _loudnessEnhancer = AndroidLoudnessEnhancer();
@@ -29,15 +29,6 @@ ValueNotifier<Duration?> position = ValueNotifier<Duration?>(Duration.zero);
 final shuffleNotifier = ValueNotifier<bool>(false);
 final repeatNotifier = ValueNotifier<bool>(false);
 final playerState = ValueNotifier<PlayerState>(audioPlayer.playerState);
-final prefferedFileExtension = ValueNotifier<String>(
-  Hive.box('settings').get('audioFileType', defaultValue: 'mp3') as String,
-);
-final playNextSongAutomatically = ValueNotifier<bool>(
-  Hive.box('settings').get('playNextSongAutomatically', defaultValue: false),
-);
-final sponsorBlockSupport = ValueNotifier<bool>(
-  Hive.box('settings').get('sponsorBlockSupport', defaultValue: false),
-);
 
 bool get hasNext => activePlaylist.isEmpty
     ? audioPlayer.hasNext
