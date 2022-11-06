@@ -115,6 +115,8 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return DynamicColorBuilder(
       builder: (lightColorScheme, darkColorScheme) {
+        if (lightColorScheme != null && useSystemColor.value == true)
+          accent = getMaterialColorFromColor(lightColorScheme.primary);
         return MaterialApp(
           themeMode: themeMode,
           debugShowCheckedModeBanner: false,
