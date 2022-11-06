@@ -357,7 +357,7 @@ class SettingsCards extends StatelessWidget {
           },
         ),
         SettingBar(
-          'Use System Color (Android 12 New Feature)',
+          AppLocalizations.of(context)!.useSystemColor,
           MdiIcons.toggleSwitch,
           () => {
             showModalBottomSheet(
@@ -383,7 +383,7 @@ class SettingsCards extends StatelessWidget {
                           child: Card(
                             child: ListTile(
                               title: Text(
-                                'True',
+                                AppLocalizations.of(context)!.trueMSG,
                                 style: TextStyle(color: accent.primary),
                               ),
                               onTap: () {
@@ -398,7 +398,8 @@ class SettingsCards extends StatelessWidget {
                                   accent.primary,
                                 );
                                 showToast(
-                                  'Setting changed!',
+                                  AppLocalizations.of(context)!
+                                      .settingChangedMsg,
                                 );
                                 Navigator.pop(context);
                               },
@@ -410,7 +411,7 @@ class SettingsCards extends StatelessWidget {
                           child: Card(
                             child: ListTile(
                               title: Text(
-                                'False',
+                                AppLocalizations.of(context)!.falseMSG,
                                 style: TextStyle(color: accent.primary),
                               ),
                               onTap: () {
@@ -425,7 +426,8 @@ class SettingsCards extends StatelessWidget {
                                   accent.primary,
                                 );
                                 showToast(
-                                  'Setting changed!',
+                                  AppLocalizations.of(context)!
+                                      .settingChangedMsg,
                                 );
                                 Navigator.pop(context);
                               },
