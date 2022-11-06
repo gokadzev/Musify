@@ -8,7 +8,7 @@
   "appUpdateIsAvailable": "應用程式有可用更新",
   "appUpdateIsNotAvailable": "應用程式更新不可用",
   "audioFileType": "音訊檔副檔名",
-  "audioFileTypeMsg": "音訊檔類型已更改",
+  "audioFileTypeMsg": "音訊檔副檔名已更改",
   "backupUserData": "備份使用者資料",
   "backupedSuccessfully": "備份成功",
   "cacheMsg": "快取已清除",
