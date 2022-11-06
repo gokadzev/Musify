@@ -60,9 +60,10 @@ class MyApp extends StatefulWidget {
   static Future<void> setAccentColor(
     BuildContext context,
     Color newAccentColor,
+    bool systemColorStatus,
   ) async {
     final state = context.findAncestorStateOfType<_MyAppState>()!;
-    state.changeAccentColor(newAccentColor);
+    state.changeAccentColor(newAccentColor, systemColorStatus);
   }
 
   @override
@@ -84,8 +85,9 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  void changeAccentColor(Color newAccentColor) {
+  void changeAccentColor(Color newAccentColor, bool systemColorStatus) {
     setState(() {
+      useSystemColor.value = systemColorStatus;
       accent = ColorScheme.fromSwatch(
         primarySwatch: getMaterialColorFromColor(
           newAccentColor,

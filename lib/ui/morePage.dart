@@ -181,6 +181,7 @@ class SettingsCards extends StatelessWidget {
                                     MyApp.setAccentColor(
                                       context,
                                       colors[index],
+                                      false,
                                     );
                                     showToast(
                                       AppLocalizations.of(context)!
@@ -396,6 +397,7 @@ class SettingsCards extends StatelessWidget {
                                 MyApp.setAccentColor(
                                   context,
                                   accent.primary,
+                                  true,
                                 );
                                 showToast(
                                   AppLocalizations.of(context)!
@@ -424,6 +426,7 @@ class SettingsCards extends StatelessWidget {
                                 MyApp.setAccentColor(
                                   context,
                                   accent.primary,
+                                  false,
                                 );
                                 showToast(
                                   AppLocalizations.of(context)!
