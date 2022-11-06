@@ -68,7 +68,8 @@ class AppState extends State<Musify> {
           AppLocalizations.of(context)!.home,
           maxLines: 1,
         ),
-        activeColor: themeMode == ThemeMode.light ? accent.shade900 : accent,
+        activeColor:
+            themeMode == ThemeMode.light ? accent.surface : accent.primary,
         inactiveColor: Theme.of(context).hintColor,
       ),
       BottomNavBarItem(
@@ -77,7 +78,8 @@ class AppState extends State<Musify> {
           AppLocalizations.of(context)!.search,
           maxLines: 1,
         ),
-        activeColor: themeMode == ThemeMode.light ? accent.shade900 : accent,
+        activeColor:
+            themeMode == ThemeMode.light ? accent.surface : accent.primary,
         inactiveColor: Theme.of(context).hintColor,
       ),
       BottomNavBarItem(
@@ -86,7 +88,8 @@ class AppState extends State<Musify> {
           AppLocalizations.of(context)!.playlists,
           maxLines: 1,
         ),
-        activeColor: themeMode == ThemeMode.light ? accent.shade900 : accent,
+        activeColor:
+            themeMode == ThemeMode.light ? accent.surface : accent.primary,
         inactiveColor: Theme.of(context).hintColor,
       ),
       BottomNavBarItem(
@@ -95,7 +98,8 @@ class AppState extends State<Musify> {
           AppLocalizations.of(context)!.more,
           maxLines: 1,
         ),
-        activeColor: themeMode == ThemeMode.light ? accent.shade900 : accent,
+        activeColor:
+            themeMode == ThemeMode.light ? accent.surface : accent.primary,
         inactiveColor: Theme.of(context).hintColor,
       )
     ];
@@ -138,7 +142,7 @@ class AppState extends State<Musify> {
                           size: 22,
                         ),
                         onPressed: null,
-                        disabledColor: accent,
+                        disabledColor: accent.primary,
                       ),
                       Padding(
                         padding: const EdgeInsets.only(
@@ -157,7 +161,7 @@ class AppState extends State<Musify> {
                                 nullArtworkWidget: Icon(
                                   MdiIcons.musicNoteOutline,
                                   size: 30,
-                                  color: accent,
+                                  color: accent.primary,
                                 ),
                                 keepOldArtwork: true,
                               )
@@ -187,7 +191,7 @@ class AppState extends State<Musify> {
                                         Icon(
                                           MdiIcons.musicNoteOutline,
                                           size: 30,
-                                          color: accent,
+                                          color: accent.primary,
                                         ),
                                       ],
                                     ),
@@ -204,7 +208,7 @@ class AppState extends State<Musify> {
                                 ? '${metadata!.title.toString().substring(0, 15)}...'
                                 : metadata!.title.toString(),
                             style: TextStyle(
-                              color: accent,
+                              color: accent.primary,
                               fontSize: 17,
                               fontWeight: FontWeight.w600,
                             ),
@@ -214,7 +218,7 @@ class AppState extends State<Musify> {
                                 ? '${metadata!.artist.toString().substring(0, 15)}...'
                                 : metadata!.artist.toString(),
                             style: TextStyle(
-                              color: accent,
+                              color: accent.primary,
                               fontSize: 15,
                             ),
                           )
@@ -236,13 +240,15 @@ class AppState extends State<Musify> {
                                 height:
                                     MediaQuery.of(context).size.width * 0.08,
                                 child: CircularProgressIndicator(
-                                  valueColor:
-                                      AlwaysStoppedAnimation<Color>(accent),
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    accent.primary,
+                                  ),
                                 ),
                               );
                             } else if (value.playing != true) {
                               return IconButton(
-                                icon: Icon(MdiIcons.play, color: accent),
+                                icon:
+                                    Icon(MdiIcons.play, color: accent.primary),
                                 iconSize: 45,
                                 onPressed: play,
                                 splashColor: Colors.transparent,
@@ -250,14 +256,18 @@ class AppState extends State<Musify> {
                             } else if (value.processingState !=
                                 ProcessingState.completed) {
                               return IconButton(
-                                icon: Icon(MdiIcons.pause, color: accent),
+                                icon:
+                                    Icon(MdiIcons.pause, color: accent.primary),
                                 iconSize: 45,
                                 onPressed: pause,
                                 splashColor: Colors.transparent,
                               );
                             } else {
                               return IconButton(
-                                icon: Icon(MdiIcons.replay, color: accent),
+                                icon: Icon(
+                                  MdiIcons.replay,
+                                  color: accent.primary,
+                                ),
                                 iconSize: 45,
                                 onPressed: () => audioPlayer.seek(
                                   Duration.zero,

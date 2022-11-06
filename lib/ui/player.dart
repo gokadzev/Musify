@@ -31,7 +31,7 @@ class AudioAppState extends State<AudioApp> {
         title: Text(
           AppLocalizations.of(context)!.nowPlaying,
           style: TextStyle(
-            color: accent,
+            color: accent.primary,
             fontSize: size.height * 0.036,
             fontWeight: FontWeight.w700,
           ),
@@ -46,7 +46,7 @@ class AudioAppState extends State<AudioApp> {
             icon: Icon(
               Icons.keyboard_arrow_down,
               size: 32,
-              color: accent,
+              color: accent.primary,
             ),
             onPressed: () => Navigator.pop(context, false),
           ),
@@ -90,7 +90,7 @@ class AudioAppState extends State<AudioApp> {
                           Icon(
                             MdiIcons.musicNoteOutline,
                             size: size.width / 8,
-                            color: accent,
+                            color: accent.primary,
                           ),
                         ],
                       ),
@@ -124,7 +124,7 @@ class AudioAppState extends State<AudioApp> {
                             Icon(
                               MdiIcons.musicNoteOutline,
                               size: size.width / 8,
-                              color: accent,
+                              color: accent.primary,
                             ),
                           ],
                         ),
@@ -149,7 +149,7 @@ class AudioAppState extends State<AudioApp> {
                         style: TextStyle(
                           fontSize: size.height * 0.035,
                           fontWeight: FontWeight.w700,
-                          color: accent,
+                          color: accent.primary,
                         ),
                       ),
                       Padding(
@@ -212,7 +212,7 @@ class AudioAppState extends State<AudioApp> {
                       children: [
                         if (durationvalue != null)
                           Slider(
-                            activeColor: accent,
+                            activeColor: accent.primary,
                             inactiveColor: Colors.green[50],
                             value:
                                 positionvalue?.inMilliseconds.toDouble() ?? 0.0,
@@ -303,7 +303,7 @@ class AudioAppState extends State<AudioApp> {
                           icon: Icon(
                             MdiIcons.shuffle,
                             color: shuffleNotifier.value
-                                ? accent
+                                ? accent.primary
                                 : Theme.of(context).hintColor,
                           ),
                           iconSize: size.width * 0.056,
@@ -325,7 +325,7 @@ class AudioAppState extends State<AudioApp> {
                         ),
                         DecoratedBox(
                           decoration: BoxDecoration(
-                            color: accent,
+                            color: accent.primary,
                             borderRadius: BorderRadius.circular(100),
                           ),
                           child: ValueListenableBuilder<PlayerState>(
@@ -400,7 +400,7 @@ class AudioAppState extends State<AudioApp> {
                           icon: Icon(
                             MdiIcons.repeat,
                             color: repeatNotifier.value
-                                ? accent
+                                ? accent.primary
                                 : Theme.of(context).hintColor,
                           ),
                           iconSize: size.width * 0.056,
@@ -415,7 +415,7 @@ class AudioAppState extends State<AudioApp> {
                                 builder: (_, value, __) {
                                   if (value == true) {
                                     return IconButton(
-                                      color: accent,
+                                      color: accent.primary,
                                       icon: const Icon(MdiIcons.star),
                                       iconSize: size.width * 0.056,
                                       splashColor: Colors.transparent,
@@ -448,7 +448,7 @@ class AudioAppState extends State<AudioApp> {
                                           ? MdiIcons.skipNextCircle
                                           : MdiIcons.skipNextCircleOutline,
                                       color: value
-                                          ? accent
+                                          ? accent.primary
                                           : Theme.of(context).hintColor,
                                     ),
                                     iconSize: size.width * 0.056,
@@ -495,7 +495,7 @@ class AudioAppState extends State<AudioApp> {
                                             IconButton(
                                               icon: Icon(
                                                 Icons.arrow_back_ios,
-                                                color: accent,
+                                                color: accent.primary,
                                                 size: 20,
                                               ),
                                               onPressed: () =>
@@ -513,7 +513,7 @@ class AudioAppState extends State<AudioApp> {
                                                     )!
                                                         .lyrics,
                                                     style: TextStyle(
-                                                      color: accent,
+                                                      color: accent.primary,
                                                       fontSize: 30,
                                                       fontWeight:
                                                           FontWeight.w500,
@@ -579,7 +579,7 @@ class AudioAppState extends State<AudioApp> {
                             },
                             child: Text(
                               AppLocalizations.of(context)!.lyrics,
-                              style: TextStyle(color: accent),
+                              style: TextStyle(color: accent.primary),
                             ),
                           );
                         },

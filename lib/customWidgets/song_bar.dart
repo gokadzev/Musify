@@ -30,10 +30,10 @@ class SongBar extends StatelessWidget {
             Navigator.pushReplacementNamed(context, '/');
           }
         },
-        splashColor: accent.withOpacity(0.4),
-        hoverColor: accent.withOpacity(0.4),
-        focusColor: accent.withOpacity(0.4),
-        highlightColor: accent.withOpacity(0.4),
+        splashColor: accent.primary.withOpacity(0.4),
+        hoverColor: accent.primary.withOpacity(0.4),
+        focusColor: accent.primary.withOpacity(0.4),
+        highlightColor: accent.primary.withOpacity(0.4),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
@@ -66,7 +66,7 @@ class SongBar extends StatelessWidget {
                           .replaceAll('&quot;', '"')
                           .replaceAll('&amp;', '&'),
                       style: TextStyle(
-                        color: accent,
+                        color: accent.primary,
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                       ),
@@ -98,7 +98,7 @@ class SongBar extends StatelessWidget {
                   builder: (_, value, __) {
                     if (value == true) {
                       return IconButton(
-                        color: accent,
+                        color: accent.primary,
                         icon: const Icon(MdiIcons.star),
                         onPressed: () => {
                           removeUserLikedSong(song['ytid']),
@@ -107,7 +107,7 @@ class SongBar extends StatelessWidget {
                       );
                     } else {
                       return IconButton(
-                        color: accent,
+                        color: accent.primary,
                         icon: const Icon(MdiIcons.starOutline),
                         onPressed: () => {
                           addUserLikedSong(song['ytid']),
@@ -118,7 +118,7 @@ class SongBar extends StatelessWidget {
                   },
                 ),
                 IconButton(
-                  color: accent,
+                  color: accent.primary,
                   icon: const Icon(MdiIcons.downloadOutline),
                   onPressed: () => downloadSong(context, song),
                 ),

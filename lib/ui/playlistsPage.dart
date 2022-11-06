@@ -31,7 +31,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
         title: Text(
           AppLocalizations.of(context)!.playlists,
           style: TextStyle(
-            color: accent,
+            color: accent.primary,
             fontSize: 30,
             fontWeight: FontWeight.w700,
           ),
@@ -57,7 +57,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                 focusNode: _inputNode,
                 style: TextStyle(
                   fontSize: 16,
-                  color: accent,
+                  color: accent.primary,
                 ),
                 cursorColor: Colors.green[50],
                 decoration: InputDecoration(
@@ -74,14 +74,14 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                     borderRadius: const BorderRadius.all(
                       Radius.circular(100),
                     ),
-                    borderSide: BorderSide(color: accent),
+                    borderSide: BorderSide(color: accent.primary),
                   ),
                   suffixIcon: IconButton(
                     icon: Icon(
                       Icons.search,
-                      color: accent,
+                      color: accent.primary,
                     ),
-                    color: accent,
+                    color: accent.primary,
                     onPressed: () {
                       search();
                       FocusManager.instance.primaryFocus?.unfocus();
@@ -90,7 +90,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                   border: InputBorder.none,
                   hintText: '${AppLocalizations.of(context)!.search}...',
                   hintStyle: TextStyle(
-                    color: accent,
+                    color: accent.primary,
                   ),
                   contentPadding: const EdgeInsets.only(
                     left: 18,
@@ -240,7 +240,7 @@ class GetPlaylist extends StatelessWidget {
                             child: Icon(
                               MdiIcons.musicNoteOutline,
                               size: 30,
-                              color: accent,
+                              color: accent.primary,
                             ),
                           ),
                         )
@@ -258,11 +258,11 @@ class GetPlaylist extends StatelessWidget {
                                 Icon(
                                   MdiIcons.musicNoteOutline,
                                   size: 30,
-                                  color: accent,
+                                  color: accent.primary,
                                 ),
                                 Text(
                                   title,
-                                  style: TextStyle(color: accent),
+                                  style: TextStyle(color: accent.primary),
                                   textAlign: TextAlign.center,
                                 ),
                               ],

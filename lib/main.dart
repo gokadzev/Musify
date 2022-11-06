@@ -86,7 +86,12 @@ class _MyAppState extends State<MyApp> {
 
   void changeAccentColor(Color newAccentColor) {
     setState(() {
-      accent = getMaterialColorFromColor(newAccentColor);
+      accent = ColorScheme.fromSwatch(
+        primarySwatch: getMaterialColorFromColor(
+          newAccentColor,
+        ),
+        accentColor: newAccentColor,
+      );
     });
   }
 
@@ -116,7 +121,9 @@ class _MyAppState extends State<MyApp> {
     return DynamicColorBuilder(
       builder: (lightColorScheme, darkColorScheme) {
         if (lightColorScheme != null && useSystemColor.value == true)
-          accent = getMaterialColorFromColor(lightColorScheme.primary);
+          accent = (themeMode == ThemeMode.light
+              ? lightColorScheme
+              : darkColorScheme)!;
         return MaterialApp(
           themeMode: themeMode,
           debugShowCheckedModeBanner: false,

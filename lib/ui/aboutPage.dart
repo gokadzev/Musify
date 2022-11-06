@@ -16,7 +16,7 @@ class AboutPage extends StatelessWidget {
         title: Text(
           AppLocalizations.of(context)!.about,
           style: TextStyle(
-            color: accent,
+            color: accent.primary,
             fontSize: 25,
             fontWeight: FontWeight.w700,
           ),
@@ -24,7 +24,7 @@ class AboutPage extends StatelessWidget {
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back,
-            color: accent,
+            color: accent.primary,
           ),
           onPressed: () => Navigator.pop(context, false),
         ),
@@ -54,7 +54,7 @@ class AboutCards extends StatelessWidget {
                     child: Text(
                       'Musify  | $version',
                       style: TextStyle(
-                        color: accent,
+                        color: accent.primary,
                         fontSize: 24,
                         fontWeight: FontWeight.w600,
                       ),
@@ -100,7 +100,7 @@ class AboutCards extends StatelessWidget {
                   IconButton(
                     icon: Icon(
                       MdiIcons.github,
-                      color: accent,
+                      color: accent.primary,
                     ),
                     tooltip: 'Github',
                     onPressed: () {

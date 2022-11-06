@@ -41,7 +41,7 @@ class _SearchPageState extends State<SearchPage> {
         title: Text(
           AppLocalizations.of(context)!.search,
           style: TextStyle(
-            color: accent,
+            color: accent.primary,
             fontSize: 30,
             fontWeight: FontWeight.w700,
           ),
@@ -67,7 +67,7 @@ class _SearchPageState extends State<SearchPage> {
                 focusNode: _inputNode,
                 style: TextStyle(
                   fontSize: 16,
-                  color: accent,
+                  color: accent.primary,
                 ),
                 cursorColor: Colors.green[50],
                 decoration: InputDecoration(
@@ -84,7 +84,7 @@ class _SearchPageState extends State<SearchPage> {
                     borderRadius: const BorderRadius.all(
                       Radius.circular(100),
                     ),
-                    borderSide: BorderSide(color: accent),
+                    borderSide: BorderSide(color: accent.primary),
                   ),
                   suffixIcon: ValueListenableBuilder<bool>(
                     valueListenable: _fetchingSongs,
@@ -96,7 +96,7 @@ class _SearchPageState extends State<SearchPage> {
                             width: 18,
                             child: Spinner(),
                           ),
-                          color: accent,
+                          color: accent.primary,
                           onPressed: () {
                             search();
                             FocusManager.instance.primaryFocus?.unfocus();
@@ -106,9 +106,9 @@ class _SearchPageState extends State<SearchPage> {
                         return IconButton(
                           icon: Icon(
                             Icons.search,
-                            color: accent,
+                            color: accent.primary,
                           ),
-                          color: accent,
+                          color: accent.primary,
                           onPressed: () {
                             search();
                             FocusManager.instance.primaryFocus?.unfocus();
@@ -120,7 +120,7 @@ class _SearchPageState extends State<SearchPage> {
                   border: InputBorder.none,
                   hintText: '${AppLocalizations.of(context)!.search}...',
                   hintStyle: TextStyle(
-                    color: accent,
+                    color: accent.primary,
                   ),
                   contentPadding: const EdgeInsets.only(
                     left: 18,
@@ -143,10 +143,10 @@ class _SearchPageState extends State<SearchPage> {
                     padding: const EdgeInsets.only(top: 8, bottom: 6),
                     child: Card(
                       child: ListTile(
-                        leading: Icon(Icons.search, color: accent),
+                        leading: Icon(Icons.search, color: accent.primary),
                         title: Text(
                           searchHistory[index],
-                          style: TextStyle(color: accent),
+                          style: TextStyle(color: accent.primary),
                         ),
                         onTap: () async {
                           _fetchingSongs.value = true;

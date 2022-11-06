@@ -32,7 +32,7 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
         title: Text(
           AppLocalizations.of(context)!.localSongs,
           style: TextStyle(
-            color: accent,
+            color: accent.primary,
             fontSize: 25,
             fontWeight: FontWeight.w700,
           ),
@@ -40,7 +40,7 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back,
-            color: accent,
+            color: accent.primary,
           ),
           onPressed: () => Navigator.pop(context, false),
         ),
@@ -69,11 +69,11 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
                           Icon(
                             MdiIcons.download,
                             size: 30,
-                            color: accent,
+                            color: accent.primary,
                           ),
                           Text(
                             AppLocalizations.of(context)!.localSongs,
-                            style: TextStyle(color: accent),
+                            style: TextStyle(color: accent.primary),
                             textAlign: TextAlign.center,
                           ),
                         ],
@@ -89,7 +89,7 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
                       Text(
                         AppLocalizations.of(context)!.localSongs,
                         style: TextStyle(
-                          color: accent,
+                          color: accent.primary,
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
                         ),
@@ -98,7 +98,7 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
                       Text(
                         '${AppLocalizations.of(context)!.yourDownloadedSongsHere}!',
                         style: TextStyle(
-                          color: accent,
+                          color: accent.primary,
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
                         ),
@@ -113,7 +113,7 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
                         },
                         style: ButtonStyle(
                           backgroundColor:
-                              MaterialStateProperty.all<Color>(accent),
+                              MaterialStateProperty.all<Color>(accent.primary),
                         ),
                         child: Text(
                           AppLocalizations.of(context)!.playAll.toUpperCase(),
@@ -175,10 +175,10 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
                           playSong(lsong);
                           Navigator.pushReplacementNamed(context, '/');
                         },
-                        splashColor: accent.withOpacity(0.4),
-                        hoverColor: accent.withOpacity(0.4),
-                        focusColor: accent.withOpacity(0.4),
-                        highlightColor: accent.withOpacity(0.4),
+                        splashColor: accent.primary.withOpacity(0.4),
+                        hoverColor: accent.primary.withOpacity(0.4),
+                        focusColor: accent.primary.withOpacity(0.4),
+                        highlightColor: accent.primary.withOpacity(0.4),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
@@ -193,18 +193,16 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
                                 width: 60,
                                 height: 60,
                                 decoration: BoxDecoration(
-                                  color: accent,
+                                  color: accent.primary,
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Icon(
                                   MdiIcons.musicNoteOutline,
                                   size: 25,
-                                  color: accent !=
-                                          getMaterialColorFromColor(
-                                            const Color(0xFFFFFFFF),
-                                          )
-                                      ? Colors.white
-                                      : Colors.black,
+                                  color:
+                                      accent.primary != const Color(0xFFFFFFFF)
+                                          ? Colors.white
+                                          : Colors.black,
                                 ),
                               ),
                               keepOldArtwork: true,
@@ -222,7 +220,7 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
                                       overflow: TextOverflow.ellipsis,
                                       lsong['title'].toString(),
                                       style: TextStyle(
-                                        color: accent,
+                                        color: accent.primary,
                                       ),
                                     ),
                                   ),

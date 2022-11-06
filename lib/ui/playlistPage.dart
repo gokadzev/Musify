@@ -81,7 +81,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
         title: Text(
           AppLocalizations.of(context)!.playlist,
           style: TextStyle(
-            color: accent,
+            color: accent.primary,
             fontSize: 25,
             fontWeight: FontWeight.w700,
           ),
@@ -89,7 +89,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back,
-            color: accent,
+            color: accent.primary,
           ),
           onPressed: () => Navigator.pop(context, false),
         ),
@@ -130,11 +130,11 @@ class _PlaylistPageState extends State<PlaylistPage> {
                                   Icon(
                                     MdiIcons.musicNoteOutline,
                                     size: 30,
-                                    color: accent,
+                                    color: accent.primary,
                                   ),
                                   Text(
                                     widget.playlist['title'].toString(),
-                                    style: TextStyle(color: accent),
+                                    style: TextStyle(color: accent.primary),
                                     textAlign: TextAlign.center,
                                   ),
                                 ],
@@ -150,7 +150,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                         widget.playlist['title'].toString(),
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: accent,
+                          color: accent.primary,
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
                         ),
@@ -160,7 +160,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                         widget.playlist['header_desc'].toString(),
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: accent,
+                          color: accent.primary,
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
                         ),
@@ -178,7 +178,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                         },
                         style: ButtonStyle(
                           backgroundColor:
-                              MaterialStateProperty.all<Color>(accent),
+                              MaterialStateProperty.all<Color>(accent.primary),
                         ),
                         child: Text(
                           AppLocalizations.of(context)!.playAll.toUpperCase(),

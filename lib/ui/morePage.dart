@@ -43,7 +43,7 @@ class _MorePageState extends State<MorePage> {
         title: Text(
           AppLocalizations.of(context)!.more,
           style: TextStyle(
-            color: accent,
+            color: accent.primary,
             fontSize: 25,
             fontWeight: FontWeight.w700,
           ),
@@ -64,7 +64,7 @@ class SettingsCards extends StatelessWidget {
         Text(
           AppLocalizations.of(context)!.pages,
           style: TextStyle(
-            color: accent,
+            color: accent.primary,
             fontSize: 15,
             fontWeight: FontWeight.w400,
           ),
@@ -106,7 +106,7 @@ class SettingsCards extends StatelessWidget {
         Text(
           AppLocalizations.of(context)!.settings,
           style: TextStyle(
-            color: accent,
+            color: accent.primary,
             fontSize: 15,
             fontWeight: FontWeight.w400,
           ),
@@ -146,7 +146,7 @@ class SettingsCards extends StatelessWidget {
                   child: Container(
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: accent,
+                        color: accent.primary,
                       ),
                       borderRadius: const BorderRadius.all(
                         Radius.circular(20),
@@ -231,7 +231,7 @@ class SettingsCards extends StatelessWidget {
                   child: Container(
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: accent,
+                        color: accent.primary,
                       ),
                       borderRadius: const BorderRadius.all(
                         Radius.circular(20),
@@ -249,7 +249,7 @@ class SettingsCards extends StatelessWidget {
                             child: ListTile(
                               title: Text(
                                 availableModes[index].name,
-                                style: TextStyle(color: accent),
+                                style: TextStyle(color: accent.primary),
                               ),
                               onTap: () {
                                 addOrUpdateData(
@@ -307,7 +307,7 @@ class SettingsCards extends StatelessWidget {
                   child: Container(
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: accent,
+                        color: accent.primary,
                       ),
                       borderRadius: const BorderRadius.all(
                         Radius.circular(20),
@@ -325,7 +325,7 @@ class SettingsCards extends StatelessWidget {
                             child: ListTile(
                               title: Text(
                                 availableLanguages[index],
-                                style: TextStyle(color: accent),
+                                style: TextStyle(color: accent.primary),
                               ),
                               onTap: () {
                                 addOrUpdateData(
@@ -369,7 +369,7 @@ class SettingsCards extends StatelessWidget {
                   child: Container(
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: accent,
+                        color: accent.primary,
                       ),
                       borderRadius: const BorderRadius.all(
                         Radius.circular(20),
@@ -384,7 +384,7 @@ class SettingsCards extends StatelessWidget {
                             child: ListTile(
                               title: Text(
                                 'True',
-                                style: TextStyle(color: accent),
+                                style: TextStyle(color: accent.primary),
                               ),
                               onTap: () {
                                 addOrUpdateData(
@@ -407,7 +407,7 @@ class SettingsCards extends StatelessWidget {
                             child: ListTile(
                               title: Text(
                                 'False',
-                                style: TextStyle(color: accent),
+                                style: TextStyle(color: accent.primary),
                               ),
                               onTap: () {
                                 addOrUpdateData(
@@ -447,7 +447,7 @@ class SettingsCards extends StatelessWidget {
                   child: Container(
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: accent,
+                        color: accent.primary,
                       ),
                       borderRadius: const BorderRadius.all(
                         Radius.circular(20),
@@ -465,7 +465,7 @@ class SettingsCards extends StatelessWidget {
                             child: ListTile(
                               title: Text(
                                 availableFileTypes[index],
-                                style: TextStyle(color: accent),
+                                style: TextStyle(color: accent.primary),
                               ),
                               onTap: () {
                                 addOrUpdateData(
@@ -497,7 +497,7 @@ class SettingsCards extends StatelessWidget {
         Text(
           AppLocalizations.of(context)!.tools,
           style: TextStyle(
-            color: accent,
+            color: accent.primary,
             fontSize: 15,
             fontWeight: FontWeight.w400,
           ),
@@ -566,7 +566,7 @@ class SettingsCards extends StatelessWidget {
         Text(
           AppLocalizations.of(context)!.others,
           style: TextStyle(
-            color: accent,
+            color: accent.primary,
             fontSize: 15,
             fontWeight: FontWeight.w400,
           ),

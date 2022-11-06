@@ -22,7 +22,7 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
         title: Text(
           AppLocalizations.of(context)!.userLikedSongs,
           style: TextStyle(
-            color: accent,
+            color: accent.primary,
             fontSize: 25,
             fontWeight: FontWeight.w700,
           ),
@@ -30,7 +30,7 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back,
-            color: accent,
+            color: accent.primary,
           ),
           onPressed: () => Navigator.pop(context, false),
         ),
@@ -59,11 +59,11 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
                           Icon(
                             MdiIcons.musicNoteOutline,
                             size: 30,
-                            color: accent,
+                            color: accent.primary,
                           ),
                           Text(
                             AppLocalizations.of(context)!.userLikedSongs,
-                            style: TextStyle(color: accent),
+                            style: TextStyle(color: accent.primary),
                             textAlign: TextAlign.center,
                           ),
                         ],
@@ -80,7 +80,7 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
                       Text(
                         AppLocalizations.of(context)!.userLikedSongs,
                         style: TextStyle(
-                          color: accent,
+                          color: accent.primary,
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
                         ),
@@ -89,7 +89,7 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
                       Text(
                         '${AppLocalizations.of(context)!.yourFavoriteSongsHere}!',
                         style: TextStyle(
-                          color: accent,
+                          color: accent.primary,
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
                         ),
@@ -104,7 +104,7 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
                         },
                         style: ButtonStyle(
                           backgroundColor:
-                              MaterialStateProperty.all<Color>(accent),
+                              MaterialStateProperty.all<Color>(accent.primary),
                         ),
                         child: Text(
                           AppLocalizations.of(context)!.playAll.toUpperCase(),

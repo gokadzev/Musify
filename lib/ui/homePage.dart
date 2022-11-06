@@ -23,7 +23,7 @@ class _HomePageState extends State<HomePage> {
         title: Text(
           'Musify.',
           style: TextStyle(
-            color: accent,
+            color: accent.primary,
             fontSize: 35,
             fontWeight: FontWeight.w800,
           ),
@@ -50,7 +50,7 @@ class _HomePageState extends State<HomePage> {
                             child: Text(
                               AppLocalizations.of(context)!.suggestedPlaylists,
                               style: TextStyle(
-                                color: accent,
+                                color: accent.primary,
                                 fontSize: 20,
                                 fontWeight: FontWeight.w700,
                               ),
@@ -103,7 +103,7 @@ class _HomePageState extends State<HomePage> {
                   return Center(
                     child: Text(
                       'Error!',
-                      style: TextStyle(color: accent, fontSize: 18),
+                      style: TextStyle(color: accent.primary, fontSize: 18),
                     ),
                   );
                 }
@@ -111,7 +111,7 @@ class _HomePageState extends State<HomePage> {
                   return Center(
                     child: Text(
                       'Nothing Found!',
-                      style: TextStyle(color: accent, fontSize: 18),
+                      style: TextStyle(color: accent.primary, fontSize: 18),
                     ),
                   );
                 }
@@ -127,7 +127,7 @@ class _HomePageState extends State<HomePage> {
                       child: Text(
                         AppLocalizations.of(context)!.recommendedForYou,
                         style: TextStyle(
-                          color: accent,
+                          color: accent.primary,
                           fontSize: 20,
                           fontWeight: FontWeight.w700,
                         ),
@@ -218,7 +218,7 @@ class CubeContainer extends StatelessWidget {
                         Icon(
                           MdiIcons.musicNoteOutline,
                           size: 30,
-                          color: accent,
+                          color: accent.primary,
                         ),
                       ],
                     ),

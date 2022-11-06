@@ -23,7 +23,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
         title: Text(
           AppLocalizations.of(context)!.userPlaylists,
           style: TextStyle(
-            color: accent,
+            color: accent.primary,
             fontSize: 25,
             fontWeight: FontWeight.w700,
           ),
@@ -31,7 +31,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back,
-            color: accent,
+            color: accent.primary,
           ),
           onPressed: () => Navigator.pop(context, false),
         ),
@@ -80,7 +80,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
             },
           );
         },
-        backgroundColor: accent,
+        backgroundColor: accent.primary,
         child: Icon(
           Icons.add,
           color: isAccentWhite(),
