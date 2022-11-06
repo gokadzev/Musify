@@ -6,7 +6,6 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:musify/customWidgets/custom_animated_bottom_bar.dart';
 import 'package:musify/helper/flutter_toast.dart';
 import 'package:musify/helper/version.dart';
-import 'package:musify/main.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/style/appTheme.dart';
 import 'package:musify/ui/homePage.dart';
@@ -68,8 +67,7 @@ class AppState extends State<Musify> {
           AppLocalizations.of(context)!.home,
           maxLines: 1,
         ),
-        activeColor:
-            themeMode == ThemeMode.light ? accent.surface : accent.primary,
+        activeColor: accent.primary,
         inactiveColor: Theme.of(context).hintColor,
       ),
       BottomNavBarItem(
@@ -78,8 +76,7 @@ class AppState extends State<Musify> {
           AppLocalizations.of(context)!.search,
           maxLines: 1,
         ),
-        activeColor:
-            themeMode == ThemeMode.light ? accent.surface : accent.primary,
+        activeColor: accent.primary,
         inactiveColor: Theme.of(context).hintColor,
       ),
       BottomNavBarItem(
@@ -88,8 +85,7 @@ class AppState extends State<Musify> {
           AppLocalizations.of(context)!.playlists,
           maxLines: 1,
         ),
-        activeColor:
-            themeMode == ThemeMode.light ? accent.surface : accent.primary,
+        activeColor: accent.primary,
         inactiveColor: Theme.of(context).hintColor,
       ),
       BottomNavBarItem(
@@ -98,8 +94,7 @@ class AppState extends State<Musify> {
           AppLocalizations.of(context)!.more,
           maxLines: 1,
         ),
-        activeColor:
-            themeMode == ThemeMode.light ? accent.surface : accent.primary,
+        activeColor: accent.primary,
         inactiveColor: Theme.of(context).hintColor,
       )
     ];

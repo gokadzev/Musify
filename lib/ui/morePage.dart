@@ -393,6 +393,10 @@ class SettingsCards extends StatelessWidget {
                                   true,
                                 );
                                 useSystemColor.value = true;
+                                MyApp.setAccentColor(
+                                  context,
+                                  accent.primary,
+                                );
                                 showToast(
                                   'Setting changed!',
                                 );
@@ -416,6 +420,10 @@ class SettingsCards extends StatelessWidget {
                                   false,
                                 );
                                 useSystemColor.value = false;
+                                MyApp.setAccentColor(
+                                  context,
+                                  accent.primary,
+                                );
                                 showToast(
                                   'Setting changed!',
                                 );
