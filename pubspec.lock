@@ -707,4 +707,4 @@ packages:
     version: "1.12.1"
 sdks:
   dart: ">=2.18.2 <3.0.0"
-  flutter: ">=3.3.6"
+  flutter: ">=3.3.7"
