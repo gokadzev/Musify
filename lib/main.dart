@@ -128,18 +128,14 @@ class _MyAppState extends State<MyApp> {
           themeMode: themeMode,
           debugShowCheckedModeBanner: false,
           darkTheme: darkColorScheme != null && useSystemColor.value == true
-              ? ThemeData(
-                  scaffoldBackgroundColor: const Color(0xFF121212),
-                  canvasColor: const Color(0xFF121212),
-                  appBarTheme:
-                      const AppBarTheme(backgroundColor: Color(0xFF121212)),
-                  bottomAppBarColor: const Color(0xFF151515),
+              ? getAppDarkTheme().copyWith(
                   colorScheme: darkColorScheme,
-                  useMaterial3: true,
                 )
               : getAppDarkTheme(),
           theme: lightColorScheme != null && useSystemColor.value == true
-              ? ThemeData(colorScheme: lightColorScheme, useMaterial3: true)
+              ? getAppLightTheme().copyWith(
+                  colorScheme: lightColorScheme,
+                )
               : getAppLightTheme(),
           localizationsDelegates: const [
             AppLocalizations.delegate,
