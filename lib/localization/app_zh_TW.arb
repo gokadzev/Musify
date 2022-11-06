@@ -28,7 +28,7 @@
   "notYTlist": "這不是 YouTube 播放清單 ID",
   "nowPlaying": "現在播放",
   "others": "其他",
-  "pages": "Pages",
+  "pages": "頁面",
   "playAll": "全部播放",
   "playlist": "播放清單",
   "playlists": "播放清單",
@@ -42,7 +42,7 @@
   "settings": "設定",
   "suggestedPlaylists": "推薦的播放清單",
   "supportDonate": "支持/贊助",
-  "themeMode": "主題色",
+  "themeMode": "主題模式",
   "tools": "工具",
   "trueMSG": "是",
   "useSystemColor": "使用系統主題色 (Android 12 新功能)",
@@ -50,5 +50,5 @@
   "userPlaylists": "使用者播放清單",
   "yourDownloadedSongsHere": "你下載的歌曲在這裡",
   "yourFavoriteSongsHere": "你喜歡的歌曲在這裡",
-  "youtubePlaylistID": "Youtube 播放清單 ID"
+  "youtubePlaylistID": "YouTube 播放清單 ID"
 }
