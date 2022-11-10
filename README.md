@@ -3,8 +3,11 @@
  <h2 align="center"><b>Musify</b></h2>
  <p align="center"><b>Music Streaming and Downloading app made in Flutter!</b></p>
  <p align="center">
-<a href="https://github.com/gokadzev/Musify/releases"><img alt="GitHub release" src="https://img.shields.io/github/v/release/gokadzev/Musify"/></a> <a href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/gokadzev/Musify?color=blue"/></a>
-</p>
+    <a href="https://github.com/gokadzev/Musify/stargazers"><img alt="Stars" src="https://img.shields.io/github/stars/gokadzev/Musify?style=flat-square&color=blue"/></a> 
+    <a href="https://github.com/gokadzev/Musify/fork"><img alt="Forks" src="https://img.shields.io/github/forks/gokadzev/Musify?style=flat-square&color=blue"/></a> 
+    <a href="https://github.com/gokadzev/Musify/releases"><img alt="GitHub release" src="https://img.shields.io/github/v/release/gokadzev/Musify"/></a>
+    <a href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/gokadzev/Musify?color=blue"/></a>
+ </p>
 </p>
 
 
