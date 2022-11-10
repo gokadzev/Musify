@@ -294,6 +294,7 @@ class SettingsCards extends StatelessWidget {
                   'French',
                   'Georgian',
                   'Chinese',
+                  'Traditional Chinese Taiwan',
                   'Dutch',
                   'German',
                   'Indonesian',

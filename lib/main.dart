@@ -27,6 +27,7 @@ final codes = <String, String>{
   'English': 'en',
   'Georgian': 'ka',
   'Chinese': 'zh',
+  'Traditional Chinese Taiwan': 'zh_TW',
   'Dutch': 'nl',
   'German': 'de',
   'Indonesian': 'id',
@@ -148,7 +149,12 @@ class _MyAppState extends State<MyApp> {
           supportedLocales: const [
             Locale('en', ''),
             Locale('ka', ''),
-            Locale('zh', ''),
+            Locale.fromSubtags(languageCode: 'zh'),
+            Locale.fromSubtags(
+              languageCode: 'zh',
+              scriptCode: 'Hant',
+              countryCode: 'TW',
+            ),
             Locale('nl', ''),
             Locale('fr', ''),
             Locale('de', ''),
