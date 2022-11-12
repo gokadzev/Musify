@@ -24,7 +24,7 @@
     No Ads :no_entry_sign:<br>
     No Subscriptions :dollar:<br> 
     12 Supported Languages :us:<br>
-    Material UI & Accent Colors :art: <br>
+    Material UI & Accent Colors & Dynamic Colors (Android 12+) :art: <br>
  
 
 ---

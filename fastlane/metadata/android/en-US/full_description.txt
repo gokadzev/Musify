@@ -10,4 +10,4 @@
 * No Subscriptions
 * SponsorBlock Support
 * 12 Supported Languages
-* Material UI & Accent Colors
+* Material UI & Accent Colors & Dynamic Colors (Android 12+)
