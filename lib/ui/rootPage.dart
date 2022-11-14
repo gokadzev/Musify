@@ -11,8 +11,8 @@ import 'package:musify/style/appTheme.dart';
 import 'package:musify/ui/homePage.dart';
 import 'package:musify/ui/morePage.dart';
 import 'package:musify/ui/player.dart';
-import 'package:musify/ui/playlistsPage.dart';
 import 'package:musify/ui/searchPage.dart';
+import 'package:musify/ui/userPlaylistsPage.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 class Musify extends StatefulWidget {
@@ -45,7 +45,7 @@ class AppState extends State<Musify> {
     final pages = [
       HomePage(),
       SearchPage(),
-      PlaylistsPage(),
+      UserPlaylistsPage(),
       MorePage(),
     ];
     return Scaffold(
@@ -82,7 +82,7 @@ class AppState extends State<Musify> {
       BottomNavBarItem(
         icon: const Icon(MdiIcons.book),
         title: Text(
-          AppLocalizations.of(context)!.playlists,
+          AppLocalizations.of(context)!.userPlaylists,
           maxLines: 1,
         ),
         activeColor: accent.primary,

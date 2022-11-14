@@ -8,8 +8,6 @@ import 'package:musify/style/appTheme.dart';
 import 'package:musify/ui/playlistsPage.dart';
 
 class UserPlaylistsPage extends StatefulWidget {
-  const UserPlaylistsPage({super.key});
-
   @override
   State<UserPlaylistsPage> createState() => _UserPlaylistsPageState();
 }

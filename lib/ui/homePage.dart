@@ -8,6 +8,7 @@ import 'package:musify/customWidgets/song_bar.dart';
 import 'package:musify/customWidgets/spinner.dart';
 import 'package:musify/style/appTheme.dart';
 import 'package:musify/ui/playlistPage.dart';
+import 'package:musify/ui/playlistsPage.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -34,6 +35,22 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PlaylistsPage(),
+                  ),
+                );
+              },
+              icon: Icon(
+                MdiIcons.dotsHorizontal,
+                color: accent.primary,
+              ),
+              alignment: Alignment.topRight,
+              padding: const EdgeInsets.only(top: 5, bottom: 5),
+            ),
             FutureBuilder(
               future: getPlaylists(5),
               builder: (context, data) {

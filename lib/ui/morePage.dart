@@ -11,9 +11,9 @@ import 'package:musify/services/data_manager.dart';
 import 'package:musify/style/appTheme.dart';
 import 'package:musify/ui/aboutPage.dart';
 import 'package:musify/ui/localSongsPage.dart';
+import 'package:musify/ui/playlistsPage.dart';
 import 'package:musify/ui/searchPage.dart';
 import 'package:musify/ui/userLikedSongsPage.dart';
-import 'package:musify/ui/userPlaylistsPage.dart';
 
 final prefferedFileExtension = ValueNotifier<String>(
   Hive.box('settings').get('audioFileType', defaultValue: 'mp3') as String,
@@ -70,13 +70,13 @@ class SettingsCards extends StatelessWidget {
           ),
         ),
         SettingBar(
-          AppLocalizations.of(context)!.userPlaylists,
+          AppLocalizations.of(context)!.playlists,
           MdiIcons.account,
           () => {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const UserPlaylistsPage(),
+                builder: (context) => PlaylistsPage(),
               ),
             ),
           },
