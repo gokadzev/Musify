@@ -26,13 +26,6 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
             fontWeight: FontWeight.w700,
           ),
         ),
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: accent.primary,
-          ),
-          onPressed: () => Navigator.pop(context, false),
-        ),
         elevation: 0,
       ),
       floatingActionButton: FloatingActionButton(

@@ -48,7 +48,7 @@ class _HomePageState extends State<HomePage> {
                 MdiIcons.dotsHorizontal,
                 color: accent.primary,
               ),
-              alignment: Alignment.topRight,
+              alignment: Alignment.centerRight,
               padding: const EdgeInsets.only(top: 5, bottom: 5),
             ),
             FutureBuilder(
