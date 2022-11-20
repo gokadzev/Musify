@@ -29,7 +29,7 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   audio_service: ^0.18.7
-  audio_session: ^0.1.10
+  audio_session: ^0.1.11
   cached_network_image: ^3.2.2
   dynamic_color: ^1.5.4
   flutter:
@@ -44,7 +44,7 @@ dependencies:
   http: ^0.13.5
   intl: ^0.17.0 
   just_audio: ^0.9.30
-  material_design_icons_flutter: ^5.0.6996
+  material_design_icons_flutter: ^6.0.7096
   on_audio_query: ^2.6.1
   package_info_plus: ^3.0.2
   path_provider: ^2.0.11
@@ -53,7 +53,7 @@ dependencies:
   youtube_explode_dart: ^1.12.3
 
 dev_dependencies:
-  flutter_launcher_icons: ^0.10.0
+  flutter_launcher_icons: ^0.11.0
   flutter_native_splash: ^2.2.14
   flutter_test:
     sdk: flutter
