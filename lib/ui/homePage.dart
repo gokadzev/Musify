@@ -50,7 +50,6 @@ class _HomePageState extends State<HomePage> {
                   MdiIcons.dotsHorizontal,
                   color: accent.primary,
                 ),
-                padding: const EdgeInsets.only(top: 5, bottom: 5),
               ),
             ),
             FutureBuilder(
