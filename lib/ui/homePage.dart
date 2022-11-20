@@ -35,21 +35,23 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            IconButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PlaylistsPage(),
-                  ),
-                );
-              },
-              icon: Icon(
-                MdiIcons.dotsHorizontal,
-                color: accent.primary,
-              ),
+            Align(
               alignment: Alignment.centerRight,
-              padding: const EdgeInsets.only(top: 5, bottom: 5),
+              child: IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PlaylistsPage(),
+                    ),
+                  );
+                },
+                icon: Icon(
+                  MdiIcons.dotsHorizontal,
+                  color: accent.primary,
+                ),
+                padding: const EdgeInsets.only(top: 5, bottom: 5),
+              ),
             ),
             FutureBuilder(
               future: getPlaylists(5),
