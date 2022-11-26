@@ -18,8 +18,8 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 3.6.0+35
 
 environment:
-  sdk: '>=2.18.4 <3.0.0'
-  flutter: ^3.3.8
+  sdk: '>=2.18.5 <3.0.0'
+  flutter: ^3.3.9
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -30,7 +30,7 @@ environment:
 dependencies:
   audio_service: ^0.18.7
   audio_session: ^0.1.11
-  cached_network_image: ^3.2.2
+  cached_network_image: ^3.2.3
   dynamic_color: ^1.5.4
   flutter:
     sdk: flutter
@@ -49,12 +49,12 @@ dependencies:
   package_info_plus: ^3.0.2
   path_provider: ^2.0.11
   permission_handler: ^10.2.0
-  url_launcher: ^6.1.6
+  url_launcher: ^6.1.7
   youtube_explode_dart: ^1.12.3
 
 dev_dependencies:
   flutter_launcher_icons: ^0.11.0
-  flutter_native_splash: ^2.2.14
+  flutter_native_splash: ^2.2.15
   flutter_test:
     sdk: flutter
 

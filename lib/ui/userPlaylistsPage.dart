@@ -57,7 +57,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                   TextButton(
                     child: Text(
                       AppLocalizations.of(context)!.add.toUpperCase(),
-                      style: const TextStyle(color: Colors.black),
+                      style: TextStyle(color: accent.primary),
                     ),
                     onPressed: () {
                       showToast(addUserPlaylist(id, context));

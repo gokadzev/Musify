@@ -18,8 +18,9 @@ class Lyrics {
   }
 
   Future<String> getLyrics({String? track, String? artist}) async {
-    if (track == null || artist == null)
+    if (track == null || artist == null) {
       throw Exception('track and artist must not be null');
+    }
 
     String lyrics;
 
