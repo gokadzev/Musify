@@ -1,69 +1,11 @@
 name: 🐞 Issue Report
 description: Report a issue in Musify
-labels: [bug]
+title: "[Bug] <title>"
+labels:
+  - bug
+assignees:
+  - gokadzev
 body:
-
-  - type: textarea
-    id: reproduce-steps
-    attributes:
-      label: Steps to reproduce
-      description: Provide an example of the issue.
-      placeholder: |
-        Example:
-          1. First step
-          2. Second step
-          3. Issue here
-    validations:
-      required: true
-
-  - type: textarea
-    id: expected-behavior
-    attributes:
-      label: Expected behavior
-      placeholder: |
-        Example:
-          "This should happen..."
-    validations:
-      required: true
-
-  - type: textarea
-    id: actual-behavior
-    attributes:
-      label: Actual behavior
-      placeholder: |
-        Example:
-          "This happened instead..."
-    validations:
-      required: true
-
-  - type: input
-    id: musify-version
-    attributes:
-      label: Musify version
-      description: |
-        You can find your Musify version in **Settings**.
-      placeholder: |
-        Example: "1.0.0"
-    validations:
-      required: true
-
-  - type: input
-    id: android-version
-    attributes:
-      label: Android version
-      description: |
-        You can find this somewhere in your Android settings.
-      placeholder: |
-        Example: "Android 12"
-    validations:
-      required: true
-
-  - type: textarea
-    id: other-details
-    attributes:
-      label: Other details
-      placeholder: |
-        Additional details and attachments.
   - type: checkboxes
     id: acknowledgements
     attributes:
@@ -77,3 +19,45 @@ body:
         - label: I have updated the app to latest version **[Latest](https://github.com/gokadzev/Musify/releases)**.
           required: true
         - label: I will fill out all
+          required: true
+  - type: textarea
+    attributes:
+      label: Current Behavior
+      description: Tell us what you're experiencing concisely.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Expected Behavior
+      description: Let us know what you expected to happen concisely.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Steps To Reproduce
+      description: Steps to reproduce the behavior.
+      placeholder: |
+        Example:
+          1. First step
+          2. Second step
+          3. Issue here
+    validations:
+      required: false
+  - type: input
+    attributes:
+      label: Musify Version
+      description: In which version of Musify did you encounter this bug?
+      placeholder: e.g. v3.0.0
+  - type: input
+    attributes:
+      label: Operating System Version
+      description: In which version of your OS you're experiencing the bug?
+      placeholder: e.g. Android 12
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Additional information
+      description: Anything else you'd like to add?
+    validations:
+      required: false
