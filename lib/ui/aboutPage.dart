@@ -21,13 +21,6 @@ class AboutPage extends StatelessWidget {
             fontWeight: FontWeight.w700,
           ),
         ),
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: accent.primary,
-          ),
-          onPressed: () => Navigator.pop(context, false),
-        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),

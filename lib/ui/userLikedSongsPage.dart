@@ -27,13 +27,6 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
             fontWeight: FontWeight.w700,
           ),
         ),
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: accent.primary,
-          ),
-          onPressed: () => Navigator.pop(context, false),
-        ),
         elevation: 0,
       ),
       body: SingleChildScrollView(
