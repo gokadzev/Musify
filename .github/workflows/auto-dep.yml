@@ -34,9 +34,6 @@ jobs:
       # Get/install packages
       - name: Run get
         run: flutter pub get
-      # Run tests
-      - name: Run tests
-        run: flutter test
       # Captures the output of `flutter pub outdated`
       - name: Check remaining outdated packages
         id: check_outdated
