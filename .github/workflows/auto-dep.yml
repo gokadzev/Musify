@@ -42,10 +42,10 @@ jobs:
           content="${content//'%'/'%25'}"
           content="${content//$'\n'/'%0A'}"
           content="${content//$'\r'/'%0D'}"
-          echo "::set-output name=outdated_info::$content"
+          echo "outdated_info=$content" >> $GITHUB_OUTPUT
       # Opens a pull request with changes
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
+        uses: peter-evans/create-pull-request@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: Upgrade packages
