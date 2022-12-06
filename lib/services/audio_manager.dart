@@ -46,34 +46,32 @@ String get positionText =>
 bool isMuted = false;
 
 Future<void> playSong(Map song) async {
-  if (song['ytid'].length == 0) {
-    await MyAudioHandler()
-        .addQueueItem(mapToMediaItem(song, song['songUrl'].toString()));
-  } else {
-    final songUrl = await getSong(song['ytid'], true);
+  final String songUrl = song['ytid'].length == 0
+      ? song['songUrl'].toString()
+      : await getSong(song['ytid'], true);
 
-    if (sponsorBlockSupport.value) {
-      final segments = await getSkipSegments(song['ytid']);
-      if (segments.isNotEmpty) {
-        if (segments.length == 1) {
-          await MyAudioHandler().addQueueItem(
-            mapToMediaItem(song, songUrl),
-            Duration(seconds: segments[0]['end']!),
-          );
-        } else {
-          await MyAudioHandler().addQueueItem(
-            mapToMediaItem(song, songUrl),
-            Duration(seconds: segments[0]['end']!),
-            Duration(seconds: segments[1]['start']!),
-          );
-        }
+  if (sponsorBlockSupport.value && song['ytid'].length != 0) {
+    final segments = await getSkipSegments(song['ytid']);
+    if (segments.isNotEmpty) {
+      if (segments.length == 1) {
+        await MyAudioHandler().addQueueItem(
+          mapToMediaItem(song, songUrl),
+          Duration(seconds: segments[0]['end']!),
+        );
       } else {
-        await MyAudioHandler().addQueueItem(mapToMediaItem(song, songUrl));
+        await MyAudioHandler().addQueueItem(
+          mapToMediaItem(song, songUrl),
+          Duration(seconds: segments[0]['end']!),
+          Duration(seconds: segments[1]['start']!),
+        );
       }
     } else {
       await MyAudioHandler().addQueueItem(mapToMediaItem(song, songUrl));
     }
+  } else {
+    await MyAudioHandler().addQueueItem(mapToMediaItem(song, songUrl));
   }
+
   play();
 }
 
