@@ -29,7 +29,7 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   audio_service: ^0.18.7
-  audio_session: ^0.1.11
+  audio_session: ^0.1.13
   cached_network_image: ^3.2.3
   dynamic_color: ^1.5.4
   flutter:
@@ -37,7 +37,7 @@ dependencies:
   flutter_downloader: ^1.9.1
   flutter_localizations: 
     sdk: flutter
-  fluttertoast: ^8.0.9
+  fluttertoast: ^8.1.2
   get_it: ^7.2.0
   hive: ^2.2.3
   hive_flutter: ^1.1.0
