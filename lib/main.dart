@@ -37,6 +37,7 @@ final codes = <String, String>{
   'Spanish': 'es',
   'Turkish': 'tr',
   'Ukrainian': 'uk',
+  'Russian': 'ru',
 };
 
 class MyApp extends StatefulWidget {
@@ -170,7 +171,8 @@ class _MyAppState extends State<MyApp> {
             Locale('ta', ''),
             Locale('tr', ''),
             Locale('uk', ''),
-            Locale('ur', '')
+            Locale('ur', ''),
+            Locale('ru', '')
           ],
           locale: _locale,
           initialRoute: '/',
