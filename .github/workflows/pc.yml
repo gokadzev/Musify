@@ -18,19 +18,25 @@ jobs:
       - name: Enable linux build
         run: flutter config --enable-linux-desktop
       - name: Build artifacts
-        run: bash ./buildlinux.sh
+        run: flutter build linux --release
+      - name: Archive Release
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'zip'
+          filename: Musify-linux.zip
+          directory: build/linux/x64/release/bundle
       - name: Linux Release
         uses: actions/upload-artifact@v3
         with:
-          name: Musify-linux
-          path: debian/packages/
+          name: Musify-linux.zip
+          path: build/linux/x64/release/bundle/Musify-linux.zip
           
           
   build-and-release-windows:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
