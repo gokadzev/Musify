@@ -28,7 +28,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  audio_service: ^0.18.7
+  audio_service: ^0.18.8
   audio_session: ^0.1.13
   cached_network_image: ^3.2.3
   dynamic_color: ^1.5.4
