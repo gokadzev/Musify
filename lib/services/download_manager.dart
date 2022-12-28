@@ -29,7 +29,9 @@ Future<void> downloadSong(BuildContext context, dynamic song) async {
     }
   }
 
-  final filename = song['title']
+  final filename = song['more_info']['singers'] +
+      ' - ' +
+      song['title']
           .replaceAll(r'\', '')
           .replaceAll('/', '')
           .replaceAll('*', '')
