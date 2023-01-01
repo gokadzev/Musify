@@ -28,7 +28,7 @@ packages:
       name: audio_service
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.18.8"
+    version: "0.18.9"
   audio_service_platform_interface:
     dependency: transitive
     description:
@@ -286,7 +286,7 @@ packages:
       name: image
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.2.2"
+    version: "3.3.0"
   intl:
     dependency: "direct main"
     description:
@@ -314,7 +314,7 @@ packages:
       name: just_audio
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.9.30"
+    version: "0.9.31"
   just_audio_platform_interface:
     dependency: transitive
     description:
@@ -697,7 +697,7 @@ packages:
       name: win32
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.1.2"
+    version: "3.1.3"
   xdg_directories:
     dependency: transitive
     description:
