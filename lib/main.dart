@@ -196,6 +196,18 @@ void main() async {
 }
 
 Future<void> initialisation() async {
+  final audioHandler = await AudioService.init(
+    builder: MyAudioHandler.new,
+    config: const AudioServiceConfig(
+      androidNotificationChannelId: 'com.gokadzev.musify',
+      androidNotificationChannelName: 'Musify',
+      androidNotificationOngoing: true,
+      androidNotificationIcon: 'mipmap/launcher_icon',
+      androidShowNotificationBadge: true,
+    ),
+  );
+  getIt.registerSingleton<AudioHandler>(audioHandler);
+
   final session = await AudioSession.instance;
   await session.configure(const AudioSessionConfiguration.music());
   session.interruptionEventStream.listen((event) {
@@ -218,17 +230,6 @@ Future<void> initialisation() async {
       _interrupted = false;
     }
   });
-  final audioHandler = await AudioService.init(
-    builder: MyAudioHandler.new,
-    config: const AudioServiceConfig(
-      androidNotificationChannelId: 'com.gokadzev.musify',
-      androidNotificationChannelName: 'Musify',
-      androidNotificationOngoing: true,
-      androidNotificationIcon: 'mipmap/launcher_icon',
-      androidShowNotificationBadge: true,
-    ),
-  );
-  getIt.registerSingleton<AudioHandler>(audioHandler);
   await enableBooster();
 
   packageInfo = await PackageInfo.fromPlatform();
