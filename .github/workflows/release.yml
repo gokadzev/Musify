@@ -1,10 +1,14 @@
-on: workflow_dispatch
+on:
+  push:
+    branches:
+      - master
 name: Test, Build and Release apk
 env:
   PROPERTIES_PATH: "./android/key.properties"
 jobs:
   build:
     name: Build APK
+    if: "contains(github.event.head_commit.message, 'Update:')"
     runs-on: ubuntu-latest
 
     steps:
