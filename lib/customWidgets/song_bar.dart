@@ -7,10 +7,9 @@ import 'package:musify/services/download_manager.dart';
 import 'package:musify/style/appTheme.dart';
 
 class SongBar extends StatelessWidget {
-  SongBar(this.song, this.moveBackAfterPlay, {super.key});
+  SongBar(this.song, {super.key});
 
   late final dynamic song;
-  late final bool moveBackAfterPlay;
   late final songLikeStatus =
       ValueNotifier<bool>(isSongAlreadyLiked(song['ytid']));
 
@@ -25,9 +24,6 @@ class SongBar extends StatelessWidget {
           if (activePlaylist.isNotEmpty) {
             activePlaylist = [];
             id = 0;
-          }
-          if (moveBackAfterPlay) {
-            Navigator.pushReplacementNamed(context, '/');
           }
         },
         splashColor: accent.primary.withOpacity(0.4),

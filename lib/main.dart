@@ -175,10 +175,7 @@ class _MyAppState extends State<MyApp> {
             Locale('ru', '')
           ],
           locale: _locale,
-          initialRoute: '/',
-          routes: {
-            '/': (context) => Musify(),
-          },
+          home: Musify(),
         );
       },
     );

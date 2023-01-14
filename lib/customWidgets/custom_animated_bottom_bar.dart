@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:musify/customWidgets/marque.dart';
+import 'package:musify/ui/rootPage.dart';
 
 class CustomAnimatedBottomBar extends StatelessWidget {
   CustomAnimatedBottomBar({
@@ -61,7 +62,10 @@ class CustomAnimatedBottomBar extends StatelessWidget {
               final index = items.indexOf(item);
               return Expanded(
                 child: GestureDetector(
-                  onTap: () => onItemSelected(index),
+                  onTap: () => {
+                    activeTab.value = item.routeName,
+                    onItemSelected(index),
+                  },
                   child: _FlashTabBarItem(
                     item: item,
                     tabBarHeight: height,
@@ -85,6 +89,7 @@ class BottomNavBarItem {
   BottomNavBarItem({
     required this.icon,
     required this.title,
+    required this.routeName,
     this.activeColor = const Color(0xff272e81),
     this.inactiveColor = const Color(0xff9496c1),
   });
@@ -93,6 +98,7 @@ class BottomNavBarItem {
   final Icon icon;
   Color inactiveColor;
   final Text title;
+  final String routeName;
 }
 
 class _FlashTabBarItem extends StatelessWidget {

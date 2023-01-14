@@ -115,18 +115,13 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
             ListView.builder(
               shrinkWrap: true,
               physics: const BouncingScrollPhysics(),
-              addAutomaticKeepAlives:
-                  false, // may be problem with lazyload if it implemented
+              addAutomaticKeepAlives: false,
               addRepaintBoundaries: false,
-              // Need to display a loading tile if more items are coming
               itemCount: userLikedSongsList.length,
               itemBuilder: (BuildContext context, int index) {
                 return Padding(
                   padding: const EdgeInsets.only(top: 5, bottom: 5),
-                  child: SongBar(
-                    userLikedSongsList[index],
-                    true,
-                  ),
+                  child: SongBar(userLikedSongsList[index]),
                 );
               },
             )

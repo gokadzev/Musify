@@ -22,7 +22,9 @@ class Musify extends StatefulWidget {
   }
 }
 
-ValueNotifier<int> activeTab = ValueNotifier<int>(0);
+ValueNotifier<int> activeTabIndex = ValueNotifier<int>(0);
+ValueNotifier<String> activeTab = ValueNotifier<String>('/');
+final _navigatorKey = GlobalKey<NavigatorState>();
 
 class AppState extends State<Musify> {
   @override
@@ -42,20 +44,35 @@ class AppState extends State<Musify> {
 
   @override
   Widget build(BuildContext context) {
-    final pages = [
-      HomePage(),
-      SearchPage(),
-      UserPlaylistsPage(),
-      MorePage(),
-    ];
     return Scaffold(
-      bottomNavigationBar: getFooter(),
-      body: ValueListenableBuilder<int>(
-        valueListenable: activeTab,
-        builder: (_, value, __) {
-          return pages[value];
+      body: Navigator(
+        key: _navigatorKey,
+        initialRoute: '/',
+        onGenerateRoute: (RouteSettings settings) {
+          WidgetBuilder builder;
+          switch (settings.name) {
+            case '/':
+              builder = (BuildContext context) => HomePage();
+              break;
+            case '/search':
+              builder = (BuildContext context) => SearchPage();
+              break;
+            case '/userPlaylists':
+              builder = (BuildContext context) => UserPlaylistsPage();
+              break;
+            case '/more':
+              builder = (BuildContext context) => MorePage();
+              break;
+            default:
+              throw Exception('Invalid route: ${settings.name}');
+          }
+          return MaterialPageRoute(
+            builder: builder,
+            settings: settings,
+          );
         },
       ),
+      bottomNavigationBar: getFooter(),
     );
   }
 
@@ -67,6 +84,7 @@ class AppState extends State<Musify> {
           AppLocalizations.of(context)!.home,
           maxLines: 1,
         ),
+        routeName: '/',
         activeColor: accent.primary,
         inactiveColor: Theme.of(context).hintColor,
       ),
@@ -76,6 +94,7 @@ class AppState extends State<Musify> {
           AppLocalizations.of(context)!.search,
           maxLines: 1,
         ),
+        routeName: '/search',
         activeColor: accent.primary,
         inactiveColor: Theme.of(context).hintColor,
       ),
@@ -85,6 +104,7 @@ class AppState extends State<Musify> {
           AppLocalizations.of(context)!.userPlaylists,
           maxLines: 1,
         ),
+        routeName: '/userPlaylists',
         activeColor: accent.primary,
         inactiveColor: Theme.of(context).hintColor,
       ),
@@ -94,6 +114,7 @@ class AppState extends State<Musify> {
           AppLocalizations.of(context)!.more,
           maxLines: 1,
         ),
+        routeName: '/more',
         activeColor: accent.primary,
         inactiveColor: Theme.of(context).hintColor,
       )
@@ -292,12 +313,16 @@ class AppState extends State<Musify> {
       height: 65,
       child: CustomAnimatedBottomBar(
         backgroundColor: Theme.of(context).bottomAppBarColor,
-        selectedIndex: activeTab.value,
+        selectedIndex: activeTabIndex.value,
         onItemSelected: (index) => setState(() {
-          activeTab.value = index;
+          activeTabIndex.value = index;
+          _navigatorKey.currentState!.pushReplacementNamed(activeTab.value);
         }),
         items: items,
       ),
     );
   }
 }
+
+//TODO: migrate all routing with this: _navigatorKey.currentState.pushNamed('/yourRouteName');
+

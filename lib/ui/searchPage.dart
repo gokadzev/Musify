@@ -174,10 +174,7 @@ class _SearchPageState extends State<SearchPage> {
                           itemBuilder: (BuildContext ctxt, int index) {
                             return Padding(
                               padding: const EdgeInsets.only(top: 5, bottom: 5),
-                              child: SongBar(
-                                (data as dynamic).data[index],
-                                false,
-                              ),
+                              child: SongBar((data as dynamic).data[index]),
                             );
                           },
                         )
