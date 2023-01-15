@@ -304,6 +304,7 @@ class SettingsCards extends StatelessWidget {
                   'Spanish',
                   'Turkish',
                   'Ukrainian',
+                  'Russian'
                 ];
                 return Center(
                   child: Container(
