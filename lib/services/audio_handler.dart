@@ -169,12 +169,9 @@ class MyAudioHandler extends BaseAudioHandler {
 
   @override
   Future<void> addQueueItem(MediaItem mediaItem, [start, end]) async {
-    final dynamic audioSource;
-    if (start != null || end != null) {
-      audioSource = _createClippingAudioSource(mediaItem, start, end);
-    } else {
-      audioSource = _createAudioSource(mediaItem);
-    }
+    final dynamic audioSource = start != null || end != null
+        ? _createClippingAudioSource(mediaItem, start, end)
+        : _createAudioSource(mediaItem);
 
     await _playlist.add(audioSource);
 
