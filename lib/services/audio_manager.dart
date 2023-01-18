@@ -23,12 +23,11 @@ AudioPlayer audioPlayer = AudioPlayer(
   ),
 );
 
-ValueNotifier<Duration?> duration = ValueNotifier<Duration?>(Duration.zero);
-ValueNotifier<Duration?> position = ValueNotifier<Duration?>(Duration.zero);
-
 final shuffleNotifier = ValueNotifier<bool>(false);
 final repeatNotifier = ValueNotifier<bool>(false);
 final playerState = ValueNotifier<PlayerState>(audioPlayer.playerState);
+final duration = ValueNotifier<Duration?>(Duration.zero);
+final position = ValueNotifier<Duration?>(Duration.zero);
 
 bool get hasNext => activePlaylist.isEmpty
     ? audioPlayer.hasNext
