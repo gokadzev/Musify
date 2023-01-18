@@ -49,29 +49,11 @@ Future<void> playSong(Map song) async {
       ? song['songUrl'].toString()
       : await getSong(song['ytid'], true);
 
-  if (sponsorBlockSupport.value && song['ytid'].length != 0) {
-    final segments = await getSkipSegments(song['ytid']);
-    if (segments.isNotEmpty) {
-      if (segments.length == 1) {
-        await MyAudioHandler().addQueueItem(
-          mapToMediaItem(song, songUrl),
-          Duration(seconds: segments[0]['end']!),
-        );
-      } else {
-        await MyAudioHandler().addQueueItem(
-          mapToMediaItem(song, songUrl),
-          Duration(seconds: segments[0]['end']!),
-          Duration(seconds: segments[1]['start']!),
-        );
-      }
-    } else {
-      await MyAudioHandler().addQueueItem(mapToMediaItem(song, songUrl));
-    }
-  } else {
+  if (await checkIfSponsorBlockIsAvailable(song, songUrl) == false) {
     await MyAudioHandler().addQueueItem(mapToMediaItem(song, songUrl));
   }
 
-  play();
+  await audioPlayer.play();
 }
 
 Future changeShuffleStatus() async {
@@ -100,6 +82,28 @@ Future changeLoopStatus() async {
     repeatNotifier.value = false;
     await audioPlayer.setLoopMode(LoopMode.off);
   }
+}
+
+Future<bool> checkIfSponsorBlockIsAvailable(song, songUrl) async {
+  if (sponsorBlockSupport.value && song['ytid'].length != 0) {
+    final segments = await getSkipSegments(song['ytid']);
+    if (segments.isNotEmpty) {
+      if (segments.length == 1) {
+        await MyAudioHandler().addQueueItem(
+          mapToMediaItem(song, songUrl),
+          Duration(seconds: segments[0]['end']!),
+        );
+      } else {
+        await MyAudioHandler().addQueueItem(
+          mapToMediaItem(song, songUrl),
+          Duration(seconds: segments[0]['end']!),
+          Duration(seconds: segments[1]['start']!),
+        );
+      }
+      return true;
+    }
+  }
+  return false;
 }
 
 void changeSponsorBlockStatus() {

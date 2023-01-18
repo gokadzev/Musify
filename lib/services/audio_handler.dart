@@ -36,12 +36,11 @@ class MyAudioHandler extends BaseAudioHandler {
 
   void _notifyAudioHandlerAboutPlaybackEvents() {
     audioPlayer.playbackEventStream.listen((PlaybackEvent event) {
-      final playing = audioPlayer.playing;
       playbackState.add(
         playbackState.value.copyWith(
           controls: [
             MediaControl.skipToPrevious,
-            if (playing) MediaControl.pause else MediaControl.play,
+            if (audioPlayer.playing) MediaControl.pause else MediaControl.play,
             MediaControl.skipToNext,
             MediaControl.stop
           ],
@@ -64,7 +63,7 @@ class MyAudioHandler extends BaseAudioHandler {
           shuffleMode: (audioPlayer.shuffleModeEnabled)
               ? AudioServiceShuffleMode.all
               : AudioServiceShuffleMode.none,
-          playing: playing,
+          playing: audioPlayer.playing,
           updatePosition: position.value ?? Duration.zero,
           bufferedPosition: position.value ?? Duration.zero,
           speed: audioPlayer.speed,
