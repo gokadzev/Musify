@@ -43,34 +43,51 @@ class AppState extends State<Musify> {
   }
 
   @override
+  void dispose() {
+    audioPlayer.stop();
+    audioPlayer.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Navigator(
-        key: _navigatorKey,
-        initialRoute: '/',
-        onGenerateRoute: (RouteSettings settings) {
-          WidgetBuilder builder;
-          switch (settings.name) {
-            case '/':
-              builder = (BuildContext context) => HomePage();
-              break;
-            case '/search':
-              builder = (BuildContext context) => SearchPage();
-              break;
-            case '/userPlaylists':
-              builder = (BuildContext context) => UserPlaylistsPage();
-              break;
-            case '/more':
-              builder = (BuildContext context) => MorePage();
-              break;
-            default:
-              throw Exception('Invalid route: ${settings.name}');
+      body: WillPopScope(
+        onWillPop: () async {
+          if (_navigatorKey.currentState!.canPop() &&
+              _navigatorKey.currentState != null) {
+            _navigatorKey.currentState?.pop();
+            return false;
           }
-          return MaterialPageRoute(
-            builder: builder,
-            settings: settings,
-          );
+          return true;
         },
+        child: Navigator(
+          key: _navigatorKey,
+          initialRoute: '/',
+          onGenerateRoute: (RouteSettings settings) {
+            WidgetBuilder builder;
+            switch (settings.name) {
+              case '/':
+                builder = (BuildContext context) => HomePage();
+                break;
+              case '/search':
+                builder = (BuildContext context) => SearchPage();
+                break;
+              case '/userPlaylists':
+                builder = (BuildContext context) => UserPlaylistsPage();
+                break;
+              case '/more':
+                builder = (BuildContext context) => MorePage();
+                break;
+              default:
+                throw Exception('Invalid route: ${settings.name}');
+            }
+            return MaterialPageRoute(
+              builder: builder,
+              settings: settings,
+            );
+          },
+        ),
       ),
       bottomNavigationBar: getFooter(),
     );
