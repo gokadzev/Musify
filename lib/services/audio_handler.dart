@@ -101,8 +101,6 @@ class MyAudioHandler extends BaseAudioHandler {
     });
   }
 
-  bool canBeSkipped = false;
-
   void _listenForPositionChanges() {
     audioPlayer.positionStream.listen((p) async {
       position.value = p;
@@ -119,19 +117,13 @@ class MyAudioHandler extends BaseAudioHandler {
         }
       } else if (isNotLoading &&
           durationIsNotNull &&
-          p.inSeconds == audioPlayer.duration!.inSeconds - 1) {
-        canBeSkipped = true;
-      } else if (isNotLoading &&
-          durationIsNotNull &&
           p.inSeconds == audioPlayer.duration!.inSeconds) {
-        if (canBeSkipped && hasNext) {
+        if (audioPlayer.playing && hasNext) {
           await skipToNext();
-          canBeSkipped = false;
-        } else if (canBeSkipped &&
+        } else if (audioPlayer.playing &&
             !hasNext &&
             playNextSongAutomatically.value) {
           await play();
-          canBeSkipped = false;
         }
       }
     });
