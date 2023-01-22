@@ -94,8 +94,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
                 children: [
                   Container(
                     margin: const EdgeInsets.only(left: 10, right: 26),
-                    height: 250,
-                    width: 250,
+                    height: MediaQuery.of(context).size.height * 0.3,
+                    width: MediaQuery.of(context).size.height * 0.3,
                     child: Card(
                       color: Colors.transparent,
                       child: widget.playlist['image'] != ''
