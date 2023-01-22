@@ -340,5 +340,3 @@ class AppState extends State<Musify> {
     );
   }
 }
-
-//TODO: migrate all routing with this: _navigatorKey.currentState.pushNamed('/yourRouteName');

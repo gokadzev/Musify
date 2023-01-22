@@ -63,8 +63,11 @@ class CustomAnimatedBottomBar extends StatelessWidget {
               return Expanded(
                 child: GestureDetector(
                   onTap: () => {
-                    activeTab.value = item.routeName,
-                    onItemSelected(index),
+                    if (item.routeName != activeTab.value)
+                      {
+                        activeTab.value = item.routeName,
+                        onItemSelected(index),
+                      }
                   },
                   child: _FlashTabBarItem(
                     item: item,
