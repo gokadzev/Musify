@@ -19,7 +19,6 @@ class PlaylistCube extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     return DelayedDisplay(
       delay: const Duration(milliseconds: 200),
       fadingDuration: const Duration(milliseconds: 400),
@@ -40,13 +39,13 @@ class PlaylistCube extends StatelessWidget {
           borderRadius: BorderRadius.circular(15),
           child: image != ''
               ? CachedNetworkImage(
-                  width: size.width / 1.9,
-                  height: size.height / 4.15,
+                  height: MediaQuery.of(context).size.height * 0.3,
+                  width: MediaQuery.of(context).size.height * 0.3,
                   imageUrl: image.toString(),
                   fit: BoxFit.cover,
                   errorWidget: (context, url, error) => SizedBox(
-                    width: size.width / 1.9,
-                    height: size.height / 4.15,
+                    height: MediaQuery.of(context).size.height * 0.3,
+                    width: MediaQuery.of(context).size.height * 0.3,
                     child: Icon(
                       MdiIcons.musicNoteOutline,
                       size: 30,
@@ -55,8 +54,8 @@ class PlaylistCube extends StatelessWidget {
                   ),
                 )
               : Container(
-                  width: 200,
-                  height: 200,
+                  height: MediaQuery.of(context).size.height * 0.3,
+                  width: MediaQuery.of(context).size.height * 0.3,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     color: Theme.of(context).backgroundColor,
