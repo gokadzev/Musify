@@ -33,23 +33,6 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Align(
-              alignment: Alignment.centerRight,
-              child: IconButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PlaylistsPage(),
-                    ),
-                  );
-                },
-                icon: Icon(
-                  MdiIcons.dotsHorizontal,
-                  color: accent.primary,
-                ),
-              ),
-            ),
             FutureBuilder(
               future: getPlaylists(5),
               builder: (context, data) {
@@ -63,13 +46,33 @@ class _HomePageState extends State<HomePage> {
                               left: 20,
                               right: 20,
                             ),
-                            child: Text(
-                              AppLocalizations.of(context)!.suggestedPlaylists,
-                              style: TextStyle(
-                                color: accent.primary,
-                                fontSize: 20,
-                                fontWeight: FontWeight.w700,
-                              ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  AppLocalizations.of(context)!
+                                      .suggestedPlaylists,
+                                  style: TextStyle(
+                                    color: accent.primary,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                IconButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => PlaylistsPage(),
+                                      ),
+                                    );
+                                  },
+                                  icon: Icon(
+                                    MdiIcons.dotsHorizontal,
+                                    color: accent.primary,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                           SizedBox(
@@ -82,14 +85,18 @@ class _HomePageState extends State<HomePage> {
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 15,
                                   ),
-                                  child: PlaylistCube(
-                                    id: (data as dynamic).data[index]['ytid'],
-                                    image: (data as dynamic)
-                                        .data[index]['image']
-                                        .toString(),
-                                    title: (data as dynamic)
-                                        .data[index]['title']
-                                        .toString(),
+                                  child: SizedBox(
+                                    width: 230,
+                                    height: 230,
+                                    child: PlaylistCube(
+                                      id: (data as dynamic).data[index]['ytid'],
+                                      image: (data as dynamic)
+                                          .data[index]['image']
+                                          .toString(),
+                                      title: (data as dynamic)
+                                          .data[index]['title']
+                                          .toString(),
+                                    ),
                                   ),
                                 );
                               },

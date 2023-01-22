@@ -18,7 +18,7 @@ class SongBar extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.only(left: 12, right: 12, bottom: 15),
       child: InkWell(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(15),
         onTap: () {
           playSong(song);
           if (activePlaylist.isNotEmpty) {
