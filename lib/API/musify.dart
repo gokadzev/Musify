@@ -150,6 +150,29 @@ Future<List> searchPlaylist(String query) async {
       .toList();
 }
 
+Future<List> getSearchSuggestions(String query) async {
+  const baseUrl =
+      'https://suggestqueries.google.com/complete/search?client=firefox&ds=yt&q=';
+  final link = Uri.parse(baseUrl + query);
+  try {
+    final response = await http.get(
+      link,
+      headers: {
+        'User-Agent':
+            'Mozilla/5.0 (Windows NT 10.0; rv:96.0) Gecko/20100101 Firefox/96.0'
+      },
+    );
+    if (response.statusCode != 200) {
+      return [];
+    }
+    final res = jsonDecode(response.body)[1] as List;
+    return res;
+  } catch (e) {
+    debugPrint('Error in getSearchSuggestions: $e');
+    return [];
+  }
+}
+
 Future<Map> getRandomSong() async {
   const playlistId = 'PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx';
   final List playlistSongs = await getSongsFromPlaylist(playlistId);

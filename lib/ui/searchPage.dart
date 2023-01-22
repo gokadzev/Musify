@@ -13,6 +13,7 @@ class SearchPage extends StatefulWidget {
 }
 
 List searchHistory = Hive.box('user').get('searchHistory', defaultValue: []);
+List suggestionsList = [];
 
 class _SearchPageState extends State<SearchPage> {
   final TextEditingController _searchBar = TextEditingController();
@@ -23,12 +24,12 @@ class _SearchPageState extends State<SearchPage> {
   Future<void> search() async {
     _searchQuery = _searchBar.text;
     if (_searchQuery.isNotEmpty) {
-      _fetchingSongs.value = true;
+      if (_fetchingSongs.value != true) _fetchingSongs.value = true;
       if (!searchHistory.contains(_searchQuery)) {
         searchHistory.insert(0, _searchQuery);
         addOrUpdateData('user', 'searchHistory', searchHistory);
       }
-      _fetchingSongs.value = false;
+      if (_fetchingSongs.value != false) _fetchingSongs.value = false;
     }
     setState(() {});
   }
@@ -61,7 +62,18 @@ class _SearchPageState extends State<SearchPage> {
               child: TextField(
                 onSubmitted: (String value) {
                   search();
+                  suggestionsList = [];
                   FocusManager.instance.primaryFocus?.unfocus();
+                },
+                onChanged: (value) {
+                  setState(() {
+                    if (value != '') {
+                      getSearchSuggestions(value)
+                          .then((value) => suggestionsList = value);
+                    } else {
+                      suggestionsList = [];
+                    }
+                  });
                 },
                 controller: _searchBar,
                 focusNode: _inputNode,
@@ -139,23 +151,34 @@ class _SearchPageState extends State<SearchPage> {
                 addAutomaticKeepAlives: false,
                 addRepaintBoundaries: false,
                 physics: const NeverScrollableScrollPhysics(),
-                itemCount: searchHistory.length,
+                itemCount: suggestionsList.isEmpty
+                    ? searchHistory.length
+                    : suggestionsList.length,
                 itemBuilder: (BuildContext ctxt, int index) {
+                  final suggestionsNotAvailable = suggestionsList.isEmpty;
                   return Padding(
                     padding: const EdgeInsets.only(top: 8, bottom: 6),
                     child: Card(
                       child: ListTile(
                         leading: Icon(Icons.search, color: accent.primary),
                         title: Text(
-                          searchHistory[index],
+                          suggestionsNotAvailable
+                              ? searchHistory[index]
+                              : suggestionsList[index],
                           style: TextStyle(color: accent.primary),
                         ),
                         onTap: () async {
                           _fetchingSongs.value = true;
-                          _searchQuery = searchHistory[index];
-                          await fetchSongsList(searchHistory[index]);
+                          _searchQuery = suggestionsNotAvailable
+                              ? searchHistory[index]
+                              : suggestionsList[index];
+                          await fetchSongsList(
+                            suggestionsNotAvailable
+                                ? searchHistory[index]
+                                : suggestionsList[index],
+                          );
                           _fetchingSongs.value = false;
-                          setState(() {});
+                          await search();
                         },
                       ),
                     ),
