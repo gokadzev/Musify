@@ -11,6 +11,10 @@
 </p>
 
 
+<h3 align="center">Don't forget to :star: the repository</h3>
+
+---
+
 
   <h3 align="center">Features</h3>
   <p align="center">
@@ -42,6 +46,24 @@
   <h3 align="center">Download</h3>
      <p align="center" style="align-items:center"><a href="https://github.com/gokadzev/Musify/releases" rel="GitHub Releases"><img width="100" height="100" src="https://telegra.ph/file/21bb2cc648561f192cea4.png"></a><a href="https://apt.izzysoft.de/fdroid/index/apk/com.gokadzev.musify" rel="IzzySoft"><img width="250" src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png"></a></p>
 
+---
+
+<h3 align="center">Building from source</h3>
+
+
+1. If you don't have Flutter SDK installed, please visit official [Flutter](https://flutter.dev/) site.
+2. Fetch latest source code from master branch.
+
+```
+git clone https://github.com/gokadzev/Musify.git
+```
+
+3. Run the app with Android Studio or VS Code. Or the command line:
+
+```
+flutter pub get
+flutter run
+```
 
 ---
   <h3 align="center">Credits</h3>
