@@ -23,7 +23,7 @@ late PackageInfo packageInfo;
 bool _interrupted = false;
 ThemeMode themeMode = ThemeMode.system;
 
-final codes = <String, String>{
+final appLanguages = <String, String>{
   'English': 'en',
   'Georgian': 'ka',
   'Chinese': 'zh',
@@ -103,7 +103,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     _locale = Locale(
-      codes[Hive.box('settings').get('language', defaultValue: 'English')
+      appLanguages[Hive.box('settings').get('language', defaultValue: 'English')
           as String]!,
     );
     themeMode = Hive.box('settings').get('themeMode', defaultValue: 'system') ==

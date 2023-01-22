@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/API/musify.dart';
+import 'package:musify/customWidgets/marque.dart';
 import 'package:musify/customWidgets/playlist_cube.dart';
 import 'package:musify/customWidgets/song_bar.dart';
 import 'package:musify/customWidgets/spinner.dart';
@@ -49,13 +50,20 @@ class _HomePageState extends State<HomePage> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  AppLocalizations.of(context)!
-                                      .suggestedPlaylists,
-                                  style: TextStyle(
-                                    color: accent.primary,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w700,
+                                SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width / 1.4,
+                                  child: MarqueeWidget(
+                                    direction: Axis.horizontal,
+                                    child: Text(
+                                      AppLocalizations.of(context)!
+                                          .suggestedPlaylists,
+                                      style: TextStyle(
+                                        color: accent.primary,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
                                   ),
                                 ),
                                 IconButton(

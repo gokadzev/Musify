@@ -289,23 +289,7 @@ class SettingsCards extends StatelessWidget {
               backgroundColor: Colors.transparent,
               context: context,
               builder: (BuildContext context) {
-                final availableLanguages = <String>[
-                  'English',
-                  'French',
-                  'Georgian',
-                  'Chinese',
-                  'Traditional Chinese Taiwan',
-                  'Dutch',
-                  'German',
-                  'Indonesian',
-                  'Italian',
-                  'Polish',
-                  'Portuguese',
-                  'Spanish',
-                  'Turkish',
-                  'Ukrainian',
-                  'Russian'
-                ];
+                final availableLanguages = appLanguages.keys.toList();
                 return Center(
                   child: Container(
                     decoration: BoxDecoration(
@@ -339,7 +323,7 @@ class SettingsCards extends StatelessWidget {
                                 MyApp.setLocale(
                                   context,
                                   Locale(
-                                    codes[availableLanguages[index]]!,
+                                    appLanguages[availableLanguages[index]]!,
                                   ),
                                 );
 
