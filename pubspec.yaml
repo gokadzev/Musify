@@ -18,7 +18,7 @@ dependencies:
   dynamic_color: ^1.5.4
   flutter:
     sdk: flutter
-  flutter_downloader: ^1.9.1
+  flutter_downloader: ^1.10.1+2
   flutter_localizations: 
     sdk: flutter
   fluttertoast: ^8.1.2
