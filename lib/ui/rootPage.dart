@@ -43,13 +43,6 @@ class AppState extends State<Musify> {
   }
 
   @override
-  void dispose() {
-    audioPlayer.stop();
-    audioPlayer.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: WillPopScope(
