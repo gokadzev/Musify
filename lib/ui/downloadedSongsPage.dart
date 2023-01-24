@@ -166,7 +166,6 @@ class _DownloadedSongsPageState extends State<DownloadedSongsPage> {
                         borderRadius: BorderRadius.circular(20),
                         onTap: () {
                           playSong(lsong);
-                          Navigator.pushReplacementNamed(context, '/');
                         },
                         splashColor: accent.primary.withOpacity(0.4),
                         hoverColor: accent.primary.withOpacity(0.4),
