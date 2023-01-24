@@ -44,8 +44,7 @@ class AudioAppState extends State<AudioApp> {
             hoverColor: Colors.transparent,
             highlightColor: Colors.transparent,
             icon: Icon(
-              Icons.keyboard_arrow_down,
-              size: 32,
+              FluentIcons.chevron_down_20_regular,
               color: accent.primary,
             ),
             onPressed: () => Navigator.pop(context, false),

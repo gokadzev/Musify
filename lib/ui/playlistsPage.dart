@@ -1,3 +1,4 @@
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:musify/API/musify.dart';
@@ -75,7 +76,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                   ),
                   suffixIcon: IconButton(
                     icon: Icon(
-                      Icons.search,
+                      FluentIcons.search_24_regular,
                       color: accent.primary,
                     ),
                     color: accent.primary,

@@ -1,3 +1,4 @@
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -120,7 +121,7 @@ class _SearchPageState extends State<SearchPage> {
                       } else {
                         return IconButton(
                           icon: Icon(
-                            Icons.search,
+                            FluentIcons.search_20_regular,
                             color: accent.primary,
                           ),
                           color: accent.primary,
@@ -160,7 +161,10 @@ class _SearchPageState extends State<SearchPage> {
                     padding: const EdgeInsets.only(top: 8, bottom: 6),
                     child: Card(
                       child: ListTile(
-                        leading: Icon(Icons.search, color: accent.primary),
+                        leading: Icon(
+                          FluentIcons.search_24_regular,
+                          color: accent.primary,
+                        ),
                         title: Text(
                           suggestionsNotAvailable
                               ? searchHistory[index]
