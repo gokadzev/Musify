@@ -8,6 +8,7 @@ import 'package:musify/helper/url_launcher.dart';
 import 'package:musify/helper/version.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/data_manager.dart';
+import 'package:musify/style/appColors.dart';
 import 'package:musify/style/appTheme.dart';
 import 'package:musify/ui/aboutPage.dart';
 import 'package:musify/ui/downloadedSongsPage.dart';
@@ -131,28 +132,6 @@ class SettingsCards extends StatelessWidget {
               backgroundColor: Colors.transparent,
               context: context,
               builder: (BuildContext context) {
-                final colors = <Color>[
-                  const Color(0xFF9ACD32),
-                  const Color(0xFF00FA9A),
-                  const Color(0xFFF08080),
-                  const Color(0xFF6495ED),
-                  const Color(0xFFFFAFCC),
-                  const Color(0xFFC8B6FF),
-                  Colors.blue,
-                  Colors.red,
-                  Colors.green,
-                  Colors.orange,
-                  Colors.purple,
-                  Colors.pink,
-                  Colors.teal,
-                  Colors.lime,
-                  Colors.indigo,
-                  Colors.cyan,
-                  Colors.brown,
-                  Colors.amber,
-                  Colors.deepOrange,
-                  Colors.deepPurple,
-                ];
                 return Center(
                   child: Container(
                     decoration: BoxDecoration(
@@ -171,7 +150,7 @@ class SettingsCards extends StatelessWidget {
                       ),
                       shrinkWrap: true,
                       physics: const BouncingScrollPhysics(),
-                      itemCount: colors.length,
+                      itemCount: availableColors.length,
                       itemBuilder: (context, index) {
                         return Padding(
                           padding: const EdgeInsets.only(
@@ -181,17 +160,17 @@ class SettingsCards extends StatelessWidget {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              if (colors.length > index)
+                              if (availableColors.length > index)
                                 GestureDetector(
                                   onTap: () {
                                     addOrUpdateData(
                                       'settings',
                                       'accentColor',
-                                      colors[index].value,
+                                      availableColors[index].value,
                                     );
                                     MyApp.setAccentColor(
                                       context,
-                                      colors[index],
+                                      availableColors[index],
                                       false,
                                     );
                                     showToast(
@@ -207,8 +186,9 @@ class SettingsCards extends StatelessWidget {
                                       radius: 25,
                                       backgroundColor:
                                           themeMode == ThemeMode.light
-                                              ? colors[index].withAlpha(150)
-                                              : colors[index],
+                                              ? availableColors[index]
+                                                  .withAlpha(150)
+                                              : availableColors[index],
                                     ),
                                   ),
                                 )
