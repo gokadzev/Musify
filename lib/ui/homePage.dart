@@ -1,6 +1,6 @@
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/customWidgets/marque.dart';
 import 'package:musify/customWidgets/playlist_cube.dart';
@@ -76,7 +76,7 @@ class _HomePageState extends State<HomePage> {
                                     );
                                   },
                                   icon: Icon(
-                                    MdiIcons.dotsHorizontal,
+                                    FluentIcons.more_horizontal_24_regular,
                                     color: accent.primary,
                                   ),
                                 ),

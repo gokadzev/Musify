@@ -1,8 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/customWidgets/custom_animated_bottom_bar.dart';
 import 'package:musify/helper/flutter_toast.dart';
 import 'package:musify/helper/version.dart';
@@ -96,7 +96,7 @@ class AppState extends State<Musify> {
   Widget getFooter() {
     final items = <BottomNavBarItem>[
       BottomNavBarItem(
-        icon: const Icon(MdiIcons.home),
+        icon: const Icon(FluentIcons.home_24_regular),
         title: Text(
           AppLocalizations.of(context)!.home,
           maxLines: 1,
@@ -106,7 +106,7 @@ class AppState extends State<Musify> {
         inactiveColor: Theme.of(context).hintColor,
       ),
       BottomNavBarItem(
-        icon: const Icon(MdiIcons.magnify),
+        icon: const Icon(FluentIcons.search_24_regular),
         title: Text(
           AppLocalizations.of(context)!.search,
           maxLines: 1,
@@ -116,7 +116,7 @@ class AppState extends State<Musify> {
         inactiveColor: Theme.of(context).hintColor,
       ),
       BottomNavBarItem(
-        icon: const Icon(MdiIcons.book),
+        icon: const Icon(FluentIcons.book_24_regular),
         title: Text(
           AppLocalizations.of(context)!.userPlaylists,
           maxLines: 1,
@@ -126,7 +126,7 @@ class AppState extends State<Musify> {
         inactiveColor: Theme.of(context).hintColor,
       ),
       BottomNavBarItem(
-        icon: const Icon(MdiIcons.dotsHorizontal),
+        icon: const Icon(FluentIcons.more_horizontal_24_regular),
         title: Text(
           AppLocalizations.of(context)!.more,
           maxLines: 1,
@@ -171,7 +171,7 @@ class AppState extends State<Musify> {
                     children: <Widget>[
                       IconButton(
                         icon: const Icon(
-                          MdiIcons.appleKeyboardControl,
+                          FluentIcons.arrow_up_24_filled,
                           size: 22,
                         ),
                         onPressed: null,
@@ -192,7 +192,7 @@ class AppState extends State<Musify> {
                                 artworkHeight: 60,
                                 artworkFit: BoxFit.cover,
                                 nullArtworkWidget: Icon(
-                                  MdiIcons.musicNoteOutline,
+                                  FluentIcons.music_note_1_24_regular,
                                   size: 30,
                                   color: accent.primary,
                                 ),
@@ -222,7 +222,7 @@ class AppState extends State<Musify> {
                                           MainAxisAlignment.center,
                                       children: <Widget>[
                                         Icon(
-                                          MdiIcons.musicNoteOutline,
+                                          FluentIcons.music_note_1_24_regular,
                                           size: 30,
                                           color: accent.primary,
                                         ),
@@ -280,8 +280,10 @@ class AppState extends State<Musify> {
                               );
                             } else if (value.playing != true) {
                               return IconButton(
-                                icon:
-                                    Icon(MdiIcons.play, color: accent.primary),
+                                icon: Icon(
+                                  FluentIcons.play_24_filled,
+                                  color: accent.primary,
+                                ),
                                 iconSize: 45,
                                 onPressed: play,
                                 splashColor: Colors.transparent,
@@ -289,8 +291,10 @@ class AppState extends State<Musify> {
                             } else if (value.processingState !=
                                 ProcessingState.completed) {
                               return IconButton(
-                                icon:
-                                    Icon(MdiIcons.pause, color: accent.primary),
+                                icon: Icon(
+                                  FluentIcons.pause_24_filled,
+                                  color: accent.primary,
+                                ),
                                 iconSize: 45,
                                 onPressed: pause,
                                 splashColor: Colors.transparent,
@@ -298,7 +302,7 @@ class AppState extends State<Musify> {
                             } else {
                               return IconButton(
                                 icon: Icon(
-                                  MdiIcons.replay,
+                                  FluentIcons.replay_20_filled,
                                   color: accent.primary,
                                 ),
                                 iconSize: 45,

@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/customWidgets/delayed_display.dart';
 import 'package:musify/style/appTheme.dart';
@@ -47,7 +47,7 @@ class PlaylistCube extends StatelessWidget {
                     height: MediaQuery.of(context).size.height * 0.3,
                     width: MediaQuery.of(context).size.height * 0.3,
                     child: Icon(
-                      MdiIcons.musicNoteOutline,
+                      FluentIcons.music_note_1_24_regular,
                       size: 30,
                       color: accent.primary,
                     ),
@@ -65,7 +65,7 @@ class PlaylistCube extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Icon(
-                          MdiIcons.musicNoteOutline,
+                          FluentIcons.music_note_1_24_regular,
                           size: 30,
                           color: accent.primary,
                         ),

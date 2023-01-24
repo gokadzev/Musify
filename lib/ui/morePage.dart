@@ -1,7 +1,7 @@
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hive/hive.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/customWidgets/setting_bar.dart';
 import 'package:musify/helper/flutter_toast.dart';
 import 'package:musify/helper/url_launcher.dart';
@@ -71,7 +71,7 @@ class SettingsCards extends StatelessWidget {
         ),
         SettingBar(
           AppLocalizations.of(context)!.playlists,
-          MdiIcons.account,
+          FluentIcons.list_24_filled,
           () => {
             Navigator.push(
               context,
@@ -83,7 +83,7 @@ class SettingsCards extends StatelessWidget {
         ),
         SettingBar(
           AppLocalizations.of(context)!.userLikedSongs,
-          MdiIcons.star,
+          FluentIcons.star_24_filled,
           () => {
             Navigator.push(
               context,
@@ -93,7 +93,7 @@ class SettingsCards extends StatelessWidget {
         ),
         SettingBar(
           AppLocalizations.of(context)!.localSongs,
-          MdiIcons.download,
+          FluentIcons.arrow_download_24_filled,
           () => {
             Navigator.push(
               context,
@@ -113,7 +113,7 @@ class SettingsCards extends StatelessWidget {
         ),
         SettingBar(
           AppLocalizations.of(context)!.accentColor,
-          MdiIcons.shapeOutline,
+          FluentIcons.color_24_filled,
           () => {
             showModalBottomSheet(
               isDismissible: true,
@@ -216,7 +216,7 @@ class SettingsCards extends StatelessWidget {
         ),
         SettingBar(
           AppLocalizations.of(context)!.themeMode,
-          MdiIcons.whiteBalanceSunny,
+          FluentIcons.weather_sunny_28_filled,
           () => {
             showModalBottomSheet(
               isDismissible: true,
@@ -282,7 +282,7 @@ class SettingsCards extends StatelessWidget {
         ),
         SettingBar(
           AppLocalizations.of(context)!.language,
-          MdiIcons.translate,
+          FluentIcons.translate_24_filled,
           () => {
             showModalBottomSheet(
               isDismissible: true,
@@ -345,7 +345,7 @@ class SettingsCards extends StatelessWidget {
         ),
         SettingBar(
           AppLocalizations.of(context)!.useSystemColor,
-          MdiIcons.toggleSwitch,
+          FluentIcons.toggle_left_24_filled,
           () => {
             showModalBottomSheet(
               isDismissible: true,
@@ -434,7 +434,7 @@ class SettingsCards extends StatelessWidget {
 
         SettingBar(
           AppLocalizations.of(context)!.audioFileType,
-          MdiIcons.file,
+          FluentIcons.multiselect_ltr_24_filled,
           () => {
             showModalBottomSheet(
               isDismissible: true,
@@ -503,7 +503,7 @@ class SettingsCards extends StatelessWidget {
         ),
         SettingBar(
           AppLocalizations.of(context)!.clearCache,
-          MdiIcons.broom,
+          FluentIcons.broom_24_filled,
           () => {
             clearCache(),
             showToast(
@@ -513,7 +513,7 @@ class SettingsCards extends StatelessWidget {
         ),
         SettingBar(
           AppLocalizations.of(context)!.clearSearchHistory,
-          MdiIcons.history,
+          FluentIcons.history_24_filled,
           () => {
             searchHistory = [],
             deleteData('user', 'searchHistory'),
@@ -522,7 +522,7 @@ class SettingsCards extends StatelessWidget {
         ),
         SettingBar(
           AppLocalizations.of(context)!.backupUserData,
-          MdiIcons.cloudUpload,
+          FluentIcons.cloud_sync_24_filled,
           () => {
             backupData().then(
               (value) => showToast(value.toString()),
@@ -531,7 +531,7 @@ class SettingsCards extends StatelessWidget {
         ),
         SettingBar(
           AppLocalizations.of(context)!.restoreUserData,
-          MdiIcons.cloudDownload,
+          FluentIcons.cloud_add_24_filled,
           () => {
             restoreData().then(
               (value) => showToast(value.toString()),
@@ -540,7 +540,7 @@ class SettingsCards extends StatelessWidget {
         ),
         SettingBar(
           AppLocalizations.of(context)!.downloadAppUpdate,
-          MdiIcons.download,
+          FluentIcons.arrow_download_24_filled,
           () => {
             checkAppUpdates().then(
               (available) => {
@@ -572,7 +572,7 @@ class SettingsCards extends StatelessWidget {
         ),
         SettingBar(
           AppLocalizations.of(context)!.supportDonate,
-          MdiIcons.heart,
+          FluentIcons.heart_24_filled,
           () => {
             launchURL(
               Uri.parse('https://www.buymeacoffee.com/gokadzev18'),
@@ -581,7 +581,7 @@ class SettingsCards extends StatelessWidget {
         ),
         SettingBar(
           AppLocalizations.of(context)!.about,
-          MdiIcons.information,
+          FluentIcons.book_information_24_filled,
           () => {
             Navigator.of(context).push(
               MaterialPageRoute(builder: (context) => const AboutPage()),

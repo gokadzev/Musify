@@ -16,6 +16,7 @@ dependencies:
   audio_session: ^0.1.13
   cached_network_image: ^3.2.3
   dynamic_color: ^1.5.4
+  fluentui_system_icons: ^1.1.190
   flutter:
     sdk: flutter
   flutter_downloader: ^1.9.1
@@ -28,7 +29,6 @@ dependencies:
   http: ^0.13.5
   intl: ^0.17.0 
   just_audio: ^0.9.31
-  material_design_icons_flutter: ^6.0.7096
   on_audio_query: ^2.6.1
   package_info_plus: ^3.0.2
   path_provider: ^2.0.11

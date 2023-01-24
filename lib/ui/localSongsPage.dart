@@ -1,6 +1,6 @@
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/customWidgets/spinner.dart';
 import 'package:musify/services/audio_manager.dart';
@@ -60,7 +60,7 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Icon(
-                            MdiIcons.download,
+                            FluentIcons.arrow_download_24_filled,
                             size: 30,
                             color: accent.primary,
                           ),
@@ -190,7 +190,7 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Icon(
-                                  MdiIcons.musicNoteOutline,
+                                  FluentIcons.music_note_1_24_regular,
                                   size: 25,
                                   color:
                                       accent.primary != const Color(0xFFFFFFFF)

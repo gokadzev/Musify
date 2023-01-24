@@ -1,9 +1,9 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/customWidgets/spinner.dart';
 import 'package:musify/helper/mediaitem.dart';
@@ -88,7 +88,7 @@ class AudioAppState extends State<AudioApp> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Icon(
-                            MdiIcons.musicNoteOutline,
+                            FluentIcons.music_note_1_24_regular,
                             size: size.width / 8,
                             color: accent.primary,
                           ),
@@ -122,7 +122,7 @@ class AudioAppState extends State<AudioApp> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             Icon(
-                              MdiIcons.musicNoteOutline,
+                              FluentIcons.music_note_1_24_regular,
                               size: size.width / 8,
                               color: accent.primary,
                             ),
@@ -271,7 +271,7 @@ class AudioAppState extends State<AudioApp> {
                               IconButton(
                                 padding: EdgeInsets.zero,
                                 icon: Icon(
-                                  MdiIcons.download,
+                                  FluentIcons.arrow_download_24_filled,
                                   color: Theme.of(context).hintColor,
                                 ),
                                 iconSize: size.width * 0.056,
@@ -287,8 +287,8 @@ class AudioAppState extends State<AudioApp> {
                                 padding: EdgeInsets.zero,
                                 icon: Icon(
                                   sponsorBlockSupport.value
-                                      ? MdiIcons.playCircle
-                                      : MdiIcons.playCircleOutline,
+                                      ? FluentIcons.play_circle_24_filled
+                                      : FluentIcons.play_circle_24_regular,
                                   color: Theme.of(context).hintColor,
                                 ),
                                 iconSize: size.width * 0.056,
@@ -301,7 +301,7 @@ class AudioAppState extends State<AudioApp> {
                         IconButton(
                           padding: EdgeInsets.zero,
                           icon: Icon(
-                            MdiIcons.shuffle,
+                            FluentIcons.arrow_shuffle_24_filled,
                             color: shuffleNotifier.value
                                 ? accent.primary
                                 : Theme.of(context).hintColor,
@@ -313,7 +313,7 @@ class AudioAppState extends State<AudioApp> {
                         IconButton(
                           padding: EdgeInsets.zero,
                           icon: Icon(
-                            Icons.skip_previous,
+                            FluentIcons.previous_24_filled,
                             color: hasPrevious
                                 ? Theme.of(context).hintColor
                                 : Colors.grey,
@@ -348,7 +348,7 @@ class AudioAppState extends State<AudioApp> {
                               } else if (value.playing != true) {
                                 return IconButton(
                                   icon: Icon(
-                                    MdiIcons.play,
+                                    FluentIcons.play_24_filled,
                                     color: Theme.of(context).hintColor,
                                   ),
                                   iconSize: size.width * 0.1,
@@ -359,7 +359,7 @@ class AudioAppState extends State<AudioApp> {
                                   ProcessingState.completed) {
                                 return IconButton(
                                   icon: Icon(
-                                    MdiIcons.pause,
+                                    FluentIcons.pause_24_filled,
                                     color: Theme.of(context).hintColor,
                                   ),
                                   iconSize: size.width * 0.1,
@@ -369,7 +369,7 @@ class AudioAppState extends State<AudioApp> {
                               } else {
                                 return IconButton(
                                   icon: Icon(
-                                    MdiIcons.replay,
+                                    FluentIcons.replay_20_filled,
                                     color: Theme.of(context).hintColor,
                                   ),
                                   iconSize: size.width * 0.056,
@@ -385,7 +385,7 @@ class AudioAppState extends State<AudioApp> {
                         IconButton(
                           padding: EdgeInsets.zero,
                           icon: Icon(
-                            Icons.skip_next,
+                            FluentIcons.next_24_filled,
                             color: hasNext
                                 ? Theme.of(context).hintColor
                                 : Colors.grey,
@@ -398,7 +398,7 @@ class AudioAppState extends State<AudioApp> {
                         IconButton(
                           padding: EdgeInsets.zero,
                           icon: Icon(
-                            MdiIcons.repeat,
+                            FluentIcons.arrow_repeat_1_24_filled,
                             color: repeatNotifier.value
                                 ? accent.primary
                                 : Theme.of(context).hintColor,
@@ -416,7 +416,9 @@ class AudioAppState extends State<AudioApp> {
                                   if (value == true) {
                                     return IconButton(
                                       color: accent.primary,
-                                      icon: const Icon(MdiIcons.star),
+                                      icon: const Icon(
+                                        FluentIcons.star_24_filled,
+                                      ),
                                       iconSize: size.width * 0.056,
                                       splashColor: Colors.transparent,
                                       onPressed: () => {
@@ -427,7 +429,9 @@ class AudioAppState extends State<AudioApp> {
                                   } else {
                                     return IconButton(
                                       color: Theme.of(context).hintColor,
-                                      icon: const Icon(MdiIcons.starOutline),
+                                      icon: const Icon(
+                                        FluentIcons.star_24_regular,
+                                      ),
                                       iconSize: size.width * 0.056,
                                       splashColor: Colors.transparent,
                                       onPressed: () => {
@@ -445,8 +449,10 @@ class AudioAppState extends State<AudioApp> {
                                     padding: EdgeInsets.zero,
                                     icon: Icon(
                                       value
-                                          ? MdiIcons.skipNextCircle
-                                          : MdiIcons.skipNextCircleOutline,
+                                          ? FluentIcons
+                                              .music_note_2_play_20_filled
+                                          : FluentIcons
+                                              .music_note_2_play_20_regular,
                                       color: value
                                           ? accent.primary
                                           : Theme.of(context).hintColor,
@@ -494,7 +500,8 @@ class AudioAppState extends State<AudioApp> {
                                           children: <Widget>[
                                             IconButton(
                                               icon: Icon(
-                                                Icons.arrow_back_ios,
+                                                FluentIcons
+                                                    .arrow_between_down_24_filled,
                                                 color: accent.primary,
                                                 size: 20,
                                               ),
