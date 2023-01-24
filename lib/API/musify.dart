@@ -259,12 +259,28 @@ Future getSongDetails(dynamic songIndex, dynamic songId) async {
   );
 }
 
-Future<List<SongModel>> getLocalSongs() async {
+Future<List<SongModel>> getDownloadedSongs() async {
   var localSongs = <SongModel>[];
   if (await ExtStorageProvider.requestPermission(Permission.storage)) {
     localSongs = await _audioQuery.querySongs(
       path: await ExtStorageProvider.getExtStorage(dirName: 'Music'),
     );
+  }
+
+  return localSongs;
+}
+
+Future<List<SongModel>> getLocalSongs() async {
+  final localSongs = <SongModel>[];
+  if (await ExtStorageProvider.requestPermission(Permission.storage)) {
+    final allSongs = await _audioQuery.querySongs();
+    for (var song in allSongs) {
+      if (song.isAlarm == false &&
+          song.isNotification == false &&
+          song.isRingtone == false) {
+        localSongs.add(song);
+      }
+    }
   }
 
   return localSongs;

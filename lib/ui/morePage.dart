@@ -10,6 +10,7 @@ import 'package:musify/main.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/style/appTheme.dart';
 import 'package:musify/ui/aboutPage.dart';
+import 'package:musify/ui/downloadedSongsPage.dart';
 import 'package:musify/ui/localSongsPage.dart';
 import 'package:musify/ui/playlistsPage.dart';
 import 'package:musify/ui/searchPage.dart';
@@ -98,6 +99,16 @@ class SettingsCards extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => LocalSongsPage()),
+            ),
+          },
+        ),
+        SettingBar(
+          AppLocalizations.of(context)!.downloadedSongs,
+          FluentIcons.save_24_filled,
+          () => {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => DownloadedSongsPage()),
             ),
           },
         ),
