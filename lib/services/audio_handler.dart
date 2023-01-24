@@ -54,9 +54,7 @@ class MyAudioHandler extends BaseAudioHandler {
             ProcessingState.buffering: AudioProcessingState.buffering,
             ProcessingState.ready: AudioProcessingState.ready,
             ProcessingState.completed: AudioProcessingState.completed,
-          }[audioPlayer.processingState == ProcessingState.idle
-              ? ProcessingState.loading
-              : audioPlayer.processingState]!,
+          }[audioPlayer.processingState]!,
           repeatMode: const {
             LoopMode.off: AudioServiceRepeatMode.none,
             LoopMode.one: AudioServiceRepeatMode.one,
