@@ -271,16 +271,17 @@ Future<List<SongModel>> getDownloadedSongs() async {
 }
 
 Future<List<SongModel>> getLocalSongs() async {
-  final localSongs = <SongModel>[];
+  var localSongs = <SongModel>[];
   if (await ExtStorageProvider.requestPermission(Permission.storage)) {
     final allSongs = await _audioQuery.querySongs();
-    for (var song in allSongs) {
-      if (song.isAlarm == false &&
-          song.isNotification == false &&
-          song.isRingtone == false) {
-        localSongs.add(song);
-      }
-    }
+    localSongs = allSongs
+        .where(
+          (song) =>
+              song.isAlarm == false &&
+              song.isNotification == false &&
+              song.isRingtone == false,
+        )
+        .toList();
   }
 
   return localSongs;

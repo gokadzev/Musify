@@ -65,7 +65,7 @@ class _DownloadedSongsPageState extends State<DownloadedSongsPage> {
                             color: accent.primary,
                           ),
                           Text(
-                            AppLocalizations.of(context)!.localSongs,
+                            AppLocalizations.of(context)!.downloadedSongs,
                             style: TextStyle(color: accent.primary),
                             textAlign: TextAlign.center,
                           ),
