@@ -281,7 +281,7 @@ class AppState extends State<Musify> {
                             } else if (value.playing != true) {
                               return IconButton(
                                 icon: Icon(
-                                  FluentIcons.play_24_filled,
+                                  FluentIcons.play_12_filled,
                                   color: accent.primary,
                                 ),
                                 iconSize: 45,
@@ -292,7 +292,7 @@ class AppState extends State<Musify> {
                                 ProcessingState.completed) {
                               return IconButton(
                                 icon: Icon(
-                                  FluentIcons.pause_24_filled,
+                                  FluentIcons.pause_12_filled,
                                   color: accent.primary,
                                 ),
                                 iconSize: 45,

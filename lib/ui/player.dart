@@ -274,7 +274,7 @@ class AudioAppState extends State<AudioApp> {
                                   FluentIcons.arrow_download_24_filled,
                                   color: Theme.of(context).hintColor,
                                 ),
-                                iconSize: size.width * 0.056,
+                                iconSize: 20,
                                 splashColor: Colors.transparent,
                                 onPressed: () {
                                   downloadSong(
@@ -291,7 +291,7 @@ class AudioAppState extends State<AudioApp> {
                                       : FluentIcons.play_circle_24_regular,
                                   color: Theme.of(context).hintColor,
                                 ),
-                                iconSize: size.width * 0.056,
+                                iconSize: 20,
                                 splashColor: Colors.transparent,
                                 onPressed: () =>
                                     setState(changeSponsorBlockStatus),
@@ -306,7 +306,7 @@ class AudioAppState extends State<AudioApp> {
                                 ? accent.primary
                                 : Theme.of(context).hintColor,
                           ),
-                          iconSize: size.width * 0.056,
+                          iconSize: 20,
                           onPressed: changeShuffleStatus,
                           splashColor: Colors.transparent,
                         ),
@@ -317,9 +317,8 @@ class AudioAppState extends State<AudioApp> {
                             color: hasPrevious
                                 ? Theme.of(context).hintColor
                                 : Colors.grey,
-                            size: size.width * 0.1,
                           ),
-                          iconSize: size.width * 0.056,
+                          iconSize: 40,
                           onPressed: playPrevious,
                           splashColor: Colors.transparent,
                         ),
@@ -337,8 +336,8 @@ class AudioAppState extends State<AudioApp> {
                                       ProcessingState.buffering) {
                                 return Container(
                                   margin: const EdgeInsets.all(8),
-                                  width: size.width * 0.08,
-                                  height: size.width * 0.08,
+                                  width: 30,
+                                  height: 30,
                                   child: CircularProgressIndicator(
                                     valueColor: AlwaysStoppedAnimation<Color>(
                                       Theme.of(context).hintColor,
@@ -348,10 +347,10 @@ class AudioAppState extends State<AudioApp> {
                               } else if (value.playing != true) {
                                 return IconButton(
                                   icon: Icon(
-                                    FluentIcons.play_24_filled,
+                                    FluentIcons.play_12_filled,
                                     color: Theme.of(context).hintColor,
                                   ),
-                                  iconSize: size.width * 0.1,
+                                  iconSize: 40,
                                   onPressed: play,
                                   splashColor: Colors.transparent,
                                 );
@@ -359,10 +358,10 @@ class AudioAppState extends State<AudioApp> {
                                   ProcessingState.completed) {
                                 return IconButton(
                                   icon: Icon(
-                                    FluentIcons.pause_24_filled,
+                                    FluentIcons.pause_12_filled,
                                     color: Theme.of(context).hintColor,
                                   ),
-                                  iconSize: size.width * 0.1,
+                                  iconSize: 40,
                                   onPressed: pause,
                                   splashColor: Colors.transparent,
                                 );
@@ -372,7 +371,7 @@ class AudioAppState extends State<AudioApp> {
                                     FluentIcons.replay_20_filled,
                                     color: Theme.of(context).hintColor,
                                   ),
-                                  iconSize: size.width * 0.056,
+                                  iconSize: 30,
                                   onPressed: () => audioPlayer.seek(
                                     Duration.zero,
                                     index: audioPlayer.effectiveIndices!.first,
@@ -389,9 +388,8 @@ class AudioAppState extends State<AudioApp> {
                             color: hasNext
                                 ? Theme.of(context).hintColor
                                 : Colors.grey,
-                            size: size.width * 0.1,
                           ),
-                          iconSize: size.width * 0.08,
+                          iconSize: 40,
                           onPressed: playNext,
                           splashColor: Colors.transparent,
                         ),
@@ -403,7 +401,7 @@ class AudioAppState extends State<AudioApp> {
                                 ? accent.primary
                                 : Theme.of(context).hintColor,
                           ),
-                          iconSize: size.width * 0.056,
+                          iconSize: 20,
                           onPressed: changeLoopStatus,
                           splashColor: Colors.transparent,
                         ),
@@ -419,7 +417,7 @@ class AudioAppState extends State<AudioApp> {
                                       icon: const Icon(
                                         FluentIcons.star_24_filled,
                                       ),
-                                      iconSize: size.width * 0.056,
+                                      iconSize: 20,
                                       splashColor: Colors.transparent,
                                       onPressed: () => {
                                         removeUserLikedSong(ytid),
@@ -432,7 +430,7 @@ class AudioAppState extends State<AudioApp> {
                                       icon: const Icon(
                                         FluentIcons.star_24_regular,
                                       ),
-                                      iconSize: size.width * 0.056,
+                                      iconSize: 20,
                                       splashColor: Colors.transparent,
                                       onPressed: () => {
                                         addUserLikedSong(ytid),
@@ -457,7 +455,7 @@ class AudioAppState extends State<AudioApp> {
                                           ? accent.primary
                                           : Theme.of(context).hintColor,
                                     ),
-                                    iconSize: size.width * 0.056,
+                                    iconSize: 20,
                                     splashColor: Colors.transparent,
                                     onPressed: changeAutoPlayNextStatus,
                                   );
