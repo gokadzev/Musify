@@ -31,7 +31,7 @@ dependencies:
   material_design_icons_flutter: ^6.0.7096
   on_audio_query: ^2.6.1
   package_info_plus: ^3.0.2
-  path_provider: ^2.0.11
+  path_provider: ^2.0.12
   permission_handler: ^10.2.0
   url_launcher: ^6.1.7
   youtube_explode_dart: ^1.12.3
