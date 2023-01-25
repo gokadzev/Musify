@@ -60,17 +60,22 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                 cursorColor: Colors.green[50],
                 decoration: InputDecoration(
                   filled: true,
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(100),
+                  isDense: true,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.background,
                     ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15.0),
                     borderSide: BorderSide(
                       color: Theme.of(context).colorScheme.background,
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: const BorderRadius.all(
-                      Radius.circular(100),
+                      Radius.circular(15),
                     ),
                     borderSide: BorderSide(color: accent.primary),
                   ),
@@ -85,7 +90,6 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                       FocusManager.instance.primaryFocus?.unfocus();
                     },
                   ),
-                  border: InputBorder.none,
                   hintText: '${AppLocalizations.of(context)!.search}...',
                   hintStyle: TextStyle(
                     color: accent.primary,
