@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hive/hive.dart';
 import 'package:musify/customWidgets/setting_bar.dart';
+import 'package:musify/customWidgets/setting_switch_bar.dart';
 import 'package:musify/helper/flutter_toast.dart';
 import 'package:musify/helper/url_launcher.dart';
 import 'package:musify/helper/version.dart';
@@ -334,92 +335,25 @@ class SettingsCards extends StatelessWidget {
             ),
           },
         ),
-        SettingBar(
+        SettingSwitchBar(
           AppLocalizations.of(context)!.useSystemColor,
           FluentIcons.toggle_left_24_filled,
-          () => {
-            showModalBottomSheet(
-              isDismissible: true,
-              backgroundColor: Colors.transparent,
-              context: context,
-              builder: (BuildContext context) {
-                return Center(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: accent.primary,
-                      ),
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(20),
-                      ),
-                    ),
-                    width: MediaQuery.of(context).copyWith().size.width * 0.90,
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Card(
-                            child: ListTile(
-                              title: Text(
-                                AppLocalizations.of(context)!.trueMSG,
-                                style: TextStyle(color: accent.primary),
-                              ),
-                              onTap: () {
-                                addOrUpdateData(
-                                  'settings',
-                                  'useSystemColor',
-                                  true,
-                                );
-                                useSystemColor.value = true;
-                                MyApp.setAccentColor(
-                                  context,
-                                  accent.primary,
-                                  true,
-                                );
-                                showToast(
-                                  AppLocalizations.of(context)!
-                                      .settingChangedMsg,
-                                );
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Card(
-                            child: ListTile(
-                              title: Text(
-                                AppLocalizations.of(context)!.falseMSG,
-                                style: TextStyle(color: accent.primary),
-                              ),
-                              onTap: () {
-                                addOrUpdateData(
-                                  'settings',
-                                  'useSystemColor',
-                                  false,
-                                );
-                                useSystemColor.value = false;
-                                MyApp.setAccentColor(
-                                  context,
-                                  accent.primary,
-                                  false,
-                                );
-                                showToast(
-                                  AppLocalizations.of(context)!
-                                      .settingChangedMsg,
-                                );
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
+          useSystemColor.value,
+          (value) {
+            addOrUpdateData(
+              'settings',
+              'useSystemColor',
+              value,
+            );
+            useSystemColor.value = value;
+            MyApp.setAccentColor(
+              context,
+              accent.primary,
+              value,
+            );
+            showToast(
+              AppLocalizations.of(context)!.settingChangedMsg,
+            );
           },
         ),
 

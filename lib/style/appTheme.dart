@@ -41,6 +41,9 @@ ThemeData getAppDarkTheme() {
       elevation: 2.3,
     ),
     listTileTheme: const ListTileThemeData(textColor: Colors.white),
+    switchTheme: SwitchThemeData(
+      trackColor: MaterialStateProperty.all(accent.primary),
+    ),
     iconTheme: const IconThemeData(color: Colors.white),
     hintColor: Colors.white,
     textTheme: const TextTheme(
@@ -80,6 +83,9 @@ ThemeData getAppLightTheme() {
     ),
     listTileTheme: ListTileThemeData(
       selectedColor: accent.primary.withOpacity(0.4),
+    ),
+    switchTheme: SwitchThemeData(
+      trackColor: MaterialStateProperty.all(accent.primary),
     ),
     iconTheme: const IconThemeData(color: Color(0xFF151515)),
     hintColor: const Color(0xFF151515),
