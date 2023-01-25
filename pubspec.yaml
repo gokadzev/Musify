@@ -9,7 +9,7 @@ version: 3.9.0+38
 
 environment:
   sdk: '>=2.18.6 <3.0.0'
-  flutter: ^3.3.10
+  flutter: ^3.7.0
 
 dependencies:
   audio_service: ^0.18.9
