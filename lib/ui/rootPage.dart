@@ -326,7 +326,7 @@ class AppState extends State<Musify> {
       duration: const Duration(milliseconds: 100),
       height: 65,
       child: CustomAnimatedBottomBar(
-        backgroundColor: Theme.of(context).bottomAppBarColor,
+        backgroundColor: Theme.of(context).bottomAppBarTheme.color,
         selectedIndex: activeTabIndex.value,
         onItemSelected: (index) => setState(() {
           activeTabIndex.value = index;

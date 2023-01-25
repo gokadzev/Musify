@@ -65,7 +65,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                       Radius.circular(100),
                     ),
                     borderSide: BorderSide(
-                      color: Theme.of(context).backgroundColor,
+                      color: Theme.of(context).colorScheme.background,
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(

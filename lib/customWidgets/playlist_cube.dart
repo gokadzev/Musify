@@ -58,7 +58,7 @@ class PlaylistCube extends StatelessWidget {
                   width: MediaQuery.of(context).size.height * 0.3,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    color: Theme.of(context).backgroundColor,
+                    color: Theme.of(context).colorScheme.background,
                   ),
                   child: Center(
                     child: Column(

@@ -89,13 +89,13 @@ class _SearchPageState extends State<SearchPage> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15.0),
                     borderSide: BorderSide(
-                      color: Theme.of(context).backgroundColor,
+                      color: Theme.of(context).colorScheme.background,
                     ),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15.0),
                     borderSide: BorderSide(
-                      color: Theme.of(context).backgroundColor,
+                      color: Theme.of(context).colorScheme.background,
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(

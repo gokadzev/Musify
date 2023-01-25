@@ -15,7 +15,6 @@ ThemeData getAppDarkTheme() {
     scaffoldBackgroundColor: const Color(0xFF121212),
     canvasColor: const Color(0xFF121212),
     appBarTheme: const AppBarTheme(backgroundColor: Color(0xFF121212)),
-    bottomAppBarColor: const Color(0xFF151515),
     colorScheme: accent,
     visualDensity: VisualDensity.adaptivePlatformDensity,
     fontFamily: 'Ubuntu',
@@ -45,8 +44,9 @@ ThemeData getAppDarkTheme() {
     iconTheme: const IconThemeData(color: Colors.white),
     hintColor: Colors.white,
     textTheme: const TextTheme(
-      bodyText2: TextStyle(color: Colors.white),
+      bodyMedium: TextStyle(color: Colors.white),
     ),
+    bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFF151515)),
   );
 }
 

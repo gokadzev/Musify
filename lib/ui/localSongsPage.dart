@@ -54,7 +54,10 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
                       height: 200,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color: Theme.of(context).backgroundColor.withAlpha(30),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .background
+                            .withAlpha(30),
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
