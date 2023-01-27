@@ -18,15 +18,18 @@
 
   <h3 align="center">Features</h3>
   <p align="center">
-    Online Song Search :mag:<br>
+    Online Song Search With Suggestions :mag:<br>
     Streaming Support :musical_note:<br>
     Download Support :arrow_down:<br>
+    Import & Export Your Data And Never Lose It :floppy_disk:<br>
+    Add Custom Playlists With Link :cool:<br>
     Play Local / Downloaded Songs Support :open_file_folder: <br>
     High Quality mp3 / m4a / flac Format :fire:<br>
     Lyrics Support :pencil:<br>
     SponsorBlock Support :scissors: <br>
     No Ads :no_entry_sign:<br>
     No Subscriptions :dollar:<br> 
+    Inbuilt Updater :new:<br>
     14 Supported Languages :us:<br>
     Material UI & Accent Colors & Dynamic Colors (Android 12+) :art: <br>
  
@@ -45,6 +48,38 @@
 
   <h3 align="center">Download</h3>
      <p align="center" style="align-items:center"><a href="https://github.com/gokadzev/Musify/releases" rel="GitHub Releases"><img width="100" height="100" src="https://telegra.ph/file/21bb2cc648561f192cea4.png"></a><a href="https://apt.izzysoft.de/fdroid/index/apk/com.gokadzev.musify" rel="IzzySoft"><img width="250" src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png"></a></p>
+     
+     
+    
+---
+<h3 align="center">License</h3>
+
+```
+Copyright © 2023 Valeri Gokadze
+
+Musify is a free software licensed under GPL v3.0
+It is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+```
+
+```
+Being Open Source doesn't mean you can just make a copy of the app and upload it on playstore or sell
+a closed source copy of the same.
+Read the following carefully:
+1. Any copy of a software under GPL must be under same license. So you can't upload the app on a closed source
+  app repository like PlayStore/AppStore without distributing the source code.
+2. You can't sell any copied/modified version of the app under any "non-free" license.
+   You must provide the copy with the original software or with instructions on how to obtain original software,
+   should clearly state all changes, should clearly disclose full source code, should include same license
+   and all copyrights should be retained.
+
+In simple words, You can ONLY use the source code of this app for `Open Source` Project under `GPL v3.0` or later
+with all your source code CLEARLY DISCLOSED on any code hosting platform like GitHub, with clear INSTRUCTIONS on
+how to obtain the original software, should clearly STATE ALL CHANGES made and should RETAIN all copyrights.
+Use of this software under any "non-free" license is NOT permitted.
+```
+
+See the [GNU General Public License](https://github.com/gokadzev/Musify/blob/main/LICENSE) for more details.
 
 ---
 
