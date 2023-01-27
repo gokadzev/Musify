@@ -12,6 +12,7 @@ import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:musify/services/audio_handler.dart';
 import 'package:musify/services/audio_manager.dart';
+import 'package:musify/services/download_manager.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:musify/style/appTheme.dart';
 import 'package:musify/ui/morePage.dart';
@@ -244,6 +245,8 @@ Future<void> initialisation() async {
       print(e);
     }
   }
+
+  await checkAudioPerms();
 }
 
 @pragma('vm:entry-point')

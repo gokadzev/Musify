@@ -10,24 +10,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 Future<void> downloadSong(BuildContext context, dynamic song) async {
-  if (await Permission.audio.status.isDenied) {
-    await Permission.audio.request();
-    if (await Permission.audio.status.isPermanentlyDenied) {
-      await openAppSettings();
-    }
-  }
-
-  if (await Permission.storage.status.isDenied) {
-    await [
-      Permission.storage,
-      Permission.accessMediaLocation,
-      Permission.mediaLibrary,
-    ].request();
-
-    if (await Permission.storage.status.isPermanentlyDenied) {
-      await openAppSettings();
-    }
-  }
+  await checkAudioPerms();
 
   final filename = song['more_info']['singers'] +
       ' - ' +
@@ -82,4 +65,29 @@ Future<void> downloadFileFromYT(
   await yt.videos.streamsClient.get(audioStream as StreamInfo).pipe(fileStream);
   await fileStream.flush();
   await fileStream.close();
+}
+
+Future<void> checkAudioPerms() async {
+  if (await Permission.storage.status.isDenied) {
+    await Permission.storage.request();
+
+    if (await Permission.storage.status.isPermanentlyDenied) {
+      await openAppSettings();
+    }
+  }
+
+  if (await Permission.accessMediaLocation.status.isDenied) {
+    await Permission.accessMediaLocation.request();
+  }
+
+  if (await Permission.manageExternalStorage.status.isDenied) {
+    await Permission.manageExternalStorage.request();
+  }
+
+  if (await Permission.audio.status.isDenied) {
+    await Permission.audio.request();
+    if (await Permission.audio.status.isPermanentlyDenied) {
+      await openAppSettings();
+    }
+  }
 }

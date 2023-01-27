@@ -15,7 +15,6 @@ import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/ext_storage.dart';
 import 'package:musify/services/lyrics_service.dart';
 import 'package:on_audio_query/on_audio_query.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 final yt = YoutubeExplode();
@@ -260,29 +259,24 @@ Future getSongDetails(dynamic songIndex, dynamic songId) async {
 }
 
 Future<List<SongModel>> getDownloadedSongs() async {
-  var localSongs = <SongModel>[];
-  if (await ExtStorageProvider.requestPermission(Permission.storage)) {
-    localSongs = await _audioQuery.querySongs(
-      path: await ExtStorageProvider.getExtStorage(dirName: 'Music'),
-    );
-  }
+  final localSongs = await _audioQuery.querySongs(
+    path: await ExtStorageProvider.getExtStorage(dirName: 'Music'),
+  );
 
   return localSongs;
 }
 
 Future<List<SongModel>> getLocalSongs() async {
   var localSongs = <SongModel>[];
-  if (await ExtStorageProvider.requestPermission(Permission.storage)) {
-    final allSongs = await _audioQuery.querySongs();
-    localSongs = allSongs
-        .where(
-          (song) =>
-              song.isAlarm == false &&
-              song.isNotification == false &&
-              song.isRingtone == false,
-        )
-        .toList();
-  }
+  final allSongs = await _audioQuery.querySongs();
+  localSongs = allSongs
+      .where(
+        (song) =>
+            song.isAlarm == false &&
+            song.isNotification == false &&
+            song.isRingtone == false,
+      )
+      .toList();
 
   return localSongs;
 }
