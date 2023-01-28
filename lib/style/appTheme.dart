@@ -18,6 +18,9 @@ ThemeData getAppDarkTheme() {
       backgroundColor: const Color(0xFF121212),
       iconTheme: IconThemeData(color: accent.primary),
     ),
+    bottomSheetTheme: const BottomSheetThemeData(
+      backgroundColor: Color(0xFF121212),
+    ),
     colorScheme: accent,
     visualDensity: VisualDensity.adaptivePlatformDensity,
     fontFamily: 'Ubuntu',
@@ -61,7 +64,9 @@ ThemeData getAppLightTheme() {
     scaffoldBackgroundColor: Colors.white,
     canvasColor: Colors.white,
     colorScheme: accent,
+    bottomSheetTheme: const BottomSheetThemeData(backgroundColor: Colors.white),
     appBarTheme: AppBarTheme(
+      backgroundColor: Colors.white,
       iconTheme: IconThemeData(color: accent.primary),
     ),
     visualDensity: VisualDensity.adaptivePlatformDensity,
