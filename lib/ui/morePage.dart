@@ -1,15 +1,18 @@
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hive/hive.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/customWidgets/setting_bar.dart';
+import 'package:musify/customWidgets/setting_switch_bar.dart';
 import 'package:musify/helper/flutter_toast.dart';
 import 'package:musify/helper/url_launcher.dart';
 import 'package:musify/helper/version.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/data_manager.dart';
+import 'package:musify/style/appColors.dart';
 import 'package:musify/style/appTheme.dart';
 import 'package:musify/ui/aboutPage.dart';
+import 'package:musify/ui/downloadedSongsPage.dart';
 import 'package:musify/ui/localSongsPage.dart';
 import 'package:musify/ui/playlistsPage.dart';
 import 'package:musify/ui/searchPage.dart';
@@ -27,6 +30,10 @@ final sponsorBlockSupport = ValueNotifier<bool>(
 
 final useSystemColor = ValueNotifier<bool>(
   Hive.box('settings').get('useSystemColor', defaultValue: true),
+);
+
+final foregroundService = ValueNotifier<bool>(
+  Hive.box('settings').get('foregroundService', defaultValue: false) as bool,
 );
 
 class MorePage extends StatefulWidget {
@@ -71,7 +78,7 @@ class SettingsCards extends StatelessWidget {
         ),
         SettingBar(
           AppLocalizations.of(context)!.playlists,
-          MdiIcons.account,
+          FluentIcons.list_24_filled,
           () => {
             Navigator.push(
               context,
@@ -83,7 +90,7 @@ class SettingsCards extends StatelessWidget {
         ),
         SettingBar(
           AppLocalizations.of(context)!.userLikedSongs,
-          MdiIcons.star,
+          FluentIcons.star_24_filled,
           () => {
             Navigator.push(
               context,
@@ -93,11 +100,21 @@ class SettingsCards extends StatelessWidget {
         ),
         SettingBar(
           AppLocalizations.of(context)!.localSongs,
-          MdiIcons.download,
+          FluentIcons.arrow_download_24_filled,
           () => {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => LocalSongsPage()),
+            ),
+          },
+        ),
+        SettingBar(
+          AppLocalizations.of(context)!.downloadedSongs,
+          FluentIcons.save_24_filled,
+          () => {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => DownloadedSongsPage()),
             ),
           },
         ),
@@ -113,35 +130,13 @@ class SettingsCards extends StatelessWidget {
         ),
         SettingBar(
           AppLocalizations.of(context)!.accentColor,
-          MdiIcons.shapeOutline,
+          FluentIcons.color_24_filled,
           () => {
             showModalBottomSheet(
               isDismissible: true,
               backgroundColor: Colors.transparent,
               context: context,
               builder: (BuildContext context) {
-                final colors = <Color>[
-                  const Color(0xFF9ACD32),
-                  const Color(0xFF00FA9A),
-                  const Color(0xFFF08080),
-                  const Color(0xFF6495ED),
-                  const Color(0xFFFFAFCC),
-                  const Color(0xFFC8B6FF),
-                  Colors.blue,
-                  Colors.red,
-                  Colors.green,
-                  Colors.orange,
-                  Colors.purple,
-                  Colors.pink,
-                  Colors.teal,
-                  Colors.lime,
-                  Colors.indigo,
-                  Colors.cyan,
-                  Colors.brown,
-                  Colors.amber,
-                  Colors.deepOrange,
-                  Colors.deepPurple,
-                ];
                 return Center(
                   child: Container(
                     decoration: BoxDecoration(
@@ -160,7 +155,7 @@ class SettingsCards extends StatelessWidget {
                       ),
                       shrinkWrap: true,
                       physics: const BouncingScrollPhysics(),
-                      itemCount: colors.length,
+                      itemCount: availableColors.length,
                       itemBuilder: (context, index) {
                         return Padding(
                           padding: const EdgeInsets.only(
@@ -170,17 +165,17 @@ class SettingsCards extends StatelessWidget {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              if (colors.length > index)
+                              if (availableColors.length > index)
                                 GestureDetector(
                                   onTap: () {
                                     addOrUpdateData(
                                       'settings',
                                       'accentColor',
-                                      colors[index].value,
+                                      availableColors[index].value,
                                     );
                                     MyApp.setAccentColor(
                                       context,
-                                      colors[index],
+                                      availableColors[index],
                                       false,
                                     );
                                     showToast(
@@ -196,8 +191,9 @@ class SettingsCards extends StatelessWidget {
                                       radius: 25,
                                       backgroundColor:
                                           themeMode == ThemeMode.light
-                                              ? colors[index].withAlpha(150)
-                                              : colors[index],
+                                              ? availableColors[index]
+                                                  .withAlpha(150)
+                                              : availableColors[index],
                                     ),
                                   ),
                                 )
@@ -216,7 +212,7 @@ class SettingsCards extends StatelessWidget {
         ),
         SettingBar(
           AppLocalizations.of(context)!.themeMode,
-          MdiIcons.whiteBalanceSunny,
+          FluentIcons.weather_sunny_28_filled,
           () => {
             showModalBottomSheet(
               isDismissible: true,
@@ -282,30 +278,14 @@ class SettingsCards extends StatelessWidget {
         ),
         SettingBar(
           AppLocalizations.of(context)!.language,
-          MdiIcons.translate,
+          FluentIcons.translate_24_filled,
           () => {
             showModalBottomSheet(
               isDismissible: true,
               backgroundColor: Colors.transparent,
               context: context,
               builder: (BuildContext context) {
-                final availableLanguages = <String>[
-                  'English',
-                  'French',
-                  'Georgian',
-                  'Chinese',
-                  'Traditional Chinese Taiwan',
-                  'Dutch',
-                  'German',
-                  'Indonesian',
-                  'Italian',
-                  'Polish',
-                  'Portuguese',
-                  'Spanish',
-                  'Turkish',
-                  'Ukrainian',
-                  'Russian'
-                ];
+                final availableLanguages = appLanguages.keys.toList();
                 return Center(
                   child: Container(
                     decoration: BoxDecoration(
@@ -339,7 +319,7 @@ class SettingsCards extends StatelessWidget {
                                 MyApp.setLocale(
                                   context,
                                   Locale(
-                                    codes[availableLanguages[index]]!,
+                                    appLanguages[availableLanguages[index]]!,
                                   ),
                                 );
 
@@ -359,98 +339,53 @@ class SettingsCards extends StatelessWidget {
             ),
           },
         ),
-        SettingBar(
+        SettingSwitchBar(
           AppLocalizations.of(context)!.useSystemColor,
-          MdiIcons.toggleSwitch,
-          () => {
-            showModalBottomSheet(
-              isDismissible: true,
-              backgroundColor: Colors.transparent,
-              context: context,
-              builder: (BuildContext context) {
-                return Center(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: accent.primary,
-                      ),
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(20),
-                      ),
-                    ),
-                    width: MediaQuery.of(context).copyWith().size.width * 0.90,
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Card(
-                            child: ListTile(
-                              title: Text(
-                                AppLocalizations.of(context)!.trueMSG,
-                                style: TextStyle(color: accent.primary),
-                              ),
-                              onTap: () {
-                                addOrUpdateData(
-                                  'settings',
-                                  'useSystemColor',
-                                  true,
-                                );
-                                useSystemColor.value = true;
-                                MyApp.setAccentColor(
-                                  context,
-                                  accent.primary,
-                                  true,
-                                );
-                                showToast(
-                                  AppLocalizations.of(context)!
-                                      .settingChangedMsg,
-                                );
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Card(
-                            child: ListTile(
-                              title: Text(
-                                AppLocalizations.of(context)!.falseMSG,
-                                style: TextStyle(color: accent.primary),
-                              ),
-                              onTap: () {
-                                addOrUpdateData(
-                                  'settings',
-                                  'useSystemColor',
-                                  false,
-                                );
-                                useSystemColor.value = false;
-                                MyApp.setAccentColor(
-                                  context,
-                                  accent.primary,
-                                  false,
-                                );
-                                showToast(
-                                  AppLocalizations.of(context)!
-                                      .settingChangedMsg,
-                                );
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
+          FluentIcons.toggle_left_24_filled,
+          useSystemColor.value,
+          (value) {
+            addOrUpdateData(
+              'settings',
+              'useSystemColor',
+              value,
+            );
+            useSystemColor.value = value;
+            MyApp.setAccentColor(
+              context,
+              accent.primary,
+              value,
+            );
+            showToast(
+              AppLocalizations.of(context)!.settingChangedMsg,
+            );
           },
         ),
+        ValueListenableBuilder<bool>(
+          valueListenable: foregroundService,
+          builder: (_, foregroundValue, __) {
+            return SettingSwitchBar(
+              'Foreground Service',
+              FluentIcons.eye_24_filled,
+              foregroundValue,
+              (value) {
+                addOrUpdateData(
+                  'settings',
+                  'foregroundService',
+                  value,
+                );
 
+                foregroundService.value = value;
+
+                showToast(
+                  AppLocalizations.of(context)!.settingChangedMsg,
+                );
+              },
+            );
+          },
+        ),
         SettingBar(
           AppLocalizations.of(context)!.audioFileType,
-          MdiIcons.file,
+          FluentIcons.multiselect_ltr_24_filled,
           () => {
             showModalBottomSheet(
               isDismissible: true,
@@ -519,7 +454,7 @@ class SettingsCards extends StatelessWidget {
         ),
         SettingBar(
           AppLocalizations.of(context)!.clearCache,
-          MdiIcons.broom,
+          FluentIcons.broom_24_filled,
           () => {
             clearCache(),
             showToast(
@@ -529,7 +464,7 @@ class SettingsCards extends StatelessWidget {
         ),
         SettingBar(
           AppLocalizations.of(context)!.clearSearchHistory,
-          MdiIcons.history,
+          FluentIcons.history_24_filled,
           () => {
             searchHistory = [],
             deleteData('user', 'searchHistory'),
@@ -538,25 +473,25 @@ class SettingsCards extends StatelessWidget {
         ),
         SettingBar(
           AppLocalizations.of(context)!.backupUserData,
-          MdiIcons.cloudUpload,
+          FluentIcons.cloud_sync_24_filled,
           () => {
-            backupData().then(
+            backupData(context).then(
               (value) => showToast(value.toString()),
             ),
           },
         ),
         SettingBar(
           AppLocalizations.of(context)!.restoreUserData,
-          MdiIcons.cloudDownload,
+          FluentIcons.cloud_add_24_filled,
           () => {
-            restoreData().then(
+            restoreData(context).then(
               (value) => showToast(value.toString()),
             ),
           },
         ),
         SettingBar(
           AppLocalizations.of(context)!.downloadAppUpdate,
-          MdiIcons.download,
+          FluentIcons.arrow_download_24_filled,
           () => {
             checkAppUpdates().then(
               (available) => {
@@ -588,7 +523,7 @@ class SettingsCards extends StatelessWidget {
         ),
         SettingBar(
           AppLocalizations.of(context)!.supportDonate,
-          MdiIcons.heart,
+          FluentIcons.heart_24_filled,
           () => {
             launchURL(
               Uri.parse('https://www.buymeacoffee.com/gokadzev18'),
@@ -597,7 +532,7 @@ class SettingsCards extends StatelessWidget {
         ),
         SettingBar(
           AppLocalizations.of(context)!.about,
-          MdiIcons.information,
+          FluentIcons.book_information_24_filled,
           () => {
             Navigator.of(context).push(
               MaterialPageRoute(builder: (context) => const AboutPage()),

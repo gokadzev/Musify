@@ -1,6 +1,6 @@
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/customWidgets/song_bar.dart';
 import 'package:musify/style/appColors.dart';
@@ -44,13 +44,16 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
                       height: 200,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color: Theme.of(context).backgroundColor.withAlpha(30),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .background
+                            .withAlpha(30),
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Icon(
-                            MdiIcons.musicNoteOutline,
+                            FluentIcons.music_note_1_24_regular,
                             size: 30,
                             color: accent.primary,
                           ),

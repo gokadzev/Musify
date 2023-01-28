@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hive/hive.dart';
-import 'package:musify/services/ext_storage.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 void addOrUpdateData(
@@ -36,9 +38,13 @@ void clearCache() async {
   await Hive.box('cache').clear();
 }
 
-Future backupData() async {
+Future backupData(BuildContext context) async {
   final boxNames = ['user', 'settings'];
-  final dlPath = await ExtStorageProvider.getExtStorage(dirName: 'Musify/Data');
+  final dlPath = await FilePicker.platform.getDirectoryPath();
+
+  if (dlPath == null) {
+    return '${AppLocalizations.of(context)!.chooseBackupDir}!';
+  }
 
   for (var i = 0; i < boxNames.length; i++) {
     await Hive.openBox(boxNames[i]);
@@ -51,30 +57,33 @@ Future backupData() async {
       ].request();
       await File(Hive.box(boxNames[i]).path!)
           .copy('$dlPath/${boxNames[i]}Data.hive');
-      return 'Permissions problem, if you already gave requested permission, Backup data again!';
+      return '${AppLocalizations.of(context)!.backupPermsProblem}!';
     }
   }
-  return 'Backuped Successfully!';
+  return '${AppLocalizations.of(context)!.backupedSuccess}!';
 }
 
-Future restoreData() async {
+Future restoreData(context) async {
   final boxNames = ['user', 'settings'];
-  final uplPath =
-      await ExtStorageProvider.getExtStorage(dirName: 'Musify/Data');
+  final uplPath = await FilePicker.platform.getDirectoryPath();
+
+  if (uplPath == null) {
+    return '${AppLocalizations.of(context)!.chooseRestoreDir}!';
+  }
 
   for (var i = 0; i < boxNames.length; i++) {
     await Hive.openBox(boxNames[i]);
     try {
       final box = await Hive.openBox(boxNames[i]);
       final boxPath = box.path;
-      await File('${uplPath!}/${boxNames[i]}Data.hive').copy(boxPath!);
+      await File('$uplPath/${boxNames[i]}Data.hive').copy(boxPath!);
     } catch (e) {
       await [
         Permission.manageExternalStorage,
       ].request();
-      return 'Permissions problem, if you already gave requested permission, Restore data again!';
+      return '${AppLocalizations.of(context)!.restorePermsProblem}!';
     }
   }
 
-  return 'Restored Successfully!';
+  return '${AppLocalizations.of(context)!.restoredSuccess}!';
 }

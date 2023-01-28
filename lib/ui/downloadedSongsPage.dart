@@ -8,12 +8,12 @@ import 'package:musify/style/appColors.dart';
 import 'package:musify/style/appTheme.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
-class LocalSongsPage extends StatefulWidget {
+class DownloadedSongsPage extends StatefulWidget {
   @override
-  State<LocalSongsPage> createState() => _LocalSongsPageState();
+  State<DownloadedSongsPage> createState() => _DownloadedSongsPageState();
 }
 
-class _LocalSongsPageState extends State<LocalSongsPage> {
+class _DownloadedSongsPageState extends State<DownloadedSongsPage> {
   @override
   void initState() {
     super.initState();
@@ -30,7 +30,7 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          AppLocalizations.of(context)!.localSongs,
+          AppLocalizations.of(context)!.downloadedSongs,
           style: TextStyle(
             color: accent.primary,
             fontSize: 25,
@@ -63,12 +63,12 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Icon(
-                            FluentIcons.save_24_filled,
+                            FluentIcons.arrow_download_24_filled,
                             size: 30,
                             color: accent.primary,
                           ),
                           Text(
-                            AppLocalizations.of(context)!.localSongs,
+                            AppLocalizations.of(context)!.downloadedSongs,
                             style: TextStyle(color: accent.primary),
                             textAlign: TextAlign.center,
                           ),
@@ -83,10 +83,19 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
                     children: [
                       const SizedBox(height: 12),
                       Text(
-                        AppLocalizations.of(context)!.localSongs,
+                        AppLocalizations.of(context)!.downloadedSongs,
                         style: TextStyle(
                           color: accent.primary,
                           fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        '${AppLocalizations.of(context)!.yourDownloadedSongsHere}!',
+                        style: TextStyle(
+                          color: accent.primary,
+                          fontSize: 10,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -95,7 +104,7 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
                       ),
                       ElevatedButton(
                         onPressed: () async => {
-                          setActivePlaylist(await getLocalSongs()),
+                          setActivePlaylist(await getDownloadedSongs()),
                           Navigator.pushReplacementNamed(context, '/'),
                         },
                         style: ButtonStyle(
@@ -116,7 +125,7 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
             ),
             const Padding(padding: EdgeInsets.only(top: 40)),
             FutureBuilder(
-              future: getLocalSongs(),
+              future: getDownloadedSongs(),
               builder: (context, data) {
                 if (data.connectionState != ConnectionState.done) {
                   return const Center(

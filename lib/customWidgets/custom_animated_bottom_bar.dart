@@ -42,9 +42,7 @@ class CustomAnimatedBottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bg = (backgroundColor == null)
-        ? Theme.of(context).bottomAppBarColor
-        : backgroundColor;
+    final bg = Theme.of(context).bottomAppBarTheme.color ?? backgroundColor;
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -63,8 +61,11 @@ class CustomAnimatedBottomBar extends StatelessWidget {
               return Expanded(
                 child: GestureDetector(
                   onTap: () => {
-                    activeTab.value = item.routeName,
-                    onItemSelected(index),
+                    if (item.routeName != activeTab.value)
+                      {
+                        activeTab.value = item.routeName,
+                        onItemSelected(index),
+                      }
                   },
                   child: _FlashTabBarItem(
                     item: item,

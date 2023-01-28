@@ -1,11 +1,12 @@
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:musify/API/musify.dart';
+import 'package:musify/customWidgets/playlist_cube.dart';
 import 'package:musify/customWidgets/spinner.dart';
 import 'package:musify/helper/flutter_toast.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:musify/style/appTheme.dart';
-import 'package:musify/ui/playlistsPage.dart';
 
 class UserPlaylistsPage extends StatefulWidget {
   @override
@@ -73,7 +74,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
         },
         backgroundColor: accent.primary,
         child: Icon(
-          Icons.add,
+          FluentIcons.add_24_filled,
           color: isAccentWhite(),
         ),
       ),
@@ -112,13 +113,12 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                                 );
                                 setState(() {});
                               },
-                              child: GetPlaylist(
-                                index: index,
+                              child: PlaylistCube(
+                                id: (data as dynamic).data[index]['ytid'],
                                 image: (data as dynamic).data[index]['image'],
                                 title: (data as dynamic)
                                     .data[index]['title']
                                     .toString(),
-                                id: (data as dynamic).data[index]['ytid'],
                               ),
                             ),
                           );

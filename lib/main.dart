@@ -12,6 +12,7 @@ import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:musify/services/audio_handler.dart';
 import 'package:musify/services/audio_manager.dart';
+import 'package:musify/services/download_manager.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:musify/style/appTheme.dart';
 import 'package:musify/ui/morePage.dart';
@@ -23,7 +24,7 @@ late PackageInfo packageInfo;
 bool _interrupted = false;
 ThemeMode themeMode = ThemeMode.system;
 
-final codes = <String, String>{
+final appLanguages = <String, String>{
   'English': 'en',
   'Georgian': 'ka',
   'Chinese': 'zh',
@@ -103,7 +104,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     _locale = Locale(
-      codes[Hive.box('settings').get('language', defaultValue: 'English')
+      appLanguages[Hive.box('settings').get('language', defaultValue: 'English')
           as String]!,
     );
     themeMode = Hive.box('settings').get('themeMode', defaultValue: 'system') ==
@@ -199,9 +200,9 @@ Future<void> initialisation() async {
       config: const AudioServiceConfig(
         androidNotificationChannelId: 'com.gokadzev.musify',
         androidNotificationChannelName: 'Musify',
-        androidNotificationOngoing: true,
         androidNotificationIcon: 'mipmap/launcher_icon',
         androidShowNotificationBadge: true,
+        androidStopForegroundOnPause: false,
       ),
     ),
   );
@@ -244,6 +245,8 @@ Future<void> initialisation() async {
       print(e);
     }
   }
+
+  await checkAudioPerms();
 }
 
 @pragma('vm:entry-point')

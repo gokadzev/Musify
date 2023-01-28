@@ -1,12 +1,10 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/API/musify.dart';
-import 'package:musify/customWidgets/delayed_display.dart';
+import 'package:musify/customWidgets/playlist_cube.dart';
 import 'package:musify/customWidgets/spinner.dart';
 import 'package:musify/style/appTheme.dart';
-import 'package:musify/ui/playlistPage.dart';
 
 class PlaylistsPage extends StatefulWidget {
   @override
@@ -62,23 +60,28 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                 cursorColor: Colors.green[50],
                 decoration: InputDecoration(
                   filled: true,
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(100),
-                    ),
+                  isDense: true,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15.0),
                     borderSide: BorderSide(
-                      color: Theme.of(context).backgroundColor,
+                      color: Theme.of(context).colorScheme.background,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.background,
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: const BorderRadius.all(
-                      Radius.circular(100),
+                      Radius.circular(15),
                     ),
                     borderSide: BorderSide(color: accent.primary),
                   ),
                   suffixIcon: IconButton(
                     icon: Icon(
-                      Icons.search,
+                      FluentIcons.search_24_regular,
                       color: accent.primary,
                     ),
                     color: accent.primary,
@@ -87,7 +90,6 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                       FocusManager.instance.primaryFocus?.unfocus();
                     },
                   ),
-                  border: InputBorder.none,
                   hintText: '${AppLocalizations.of(context)!.search}...',
                   hintStyle: TextStyle(
                     color: accent.primary,
@@ -126,13 +128,12 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                           ),
                           itemBuilder: (BuildContext context, index) {
                             return Center(
-                              child: GetPlaylist(
-                                index: index,
+                              child: PlaylistCube(
+                                id: (data as dynamic).data[index]['ytid'],
                                 image: (data as dynamic).data[index]['image'],
                                 title: (data as dynamic)
                                     .data[index]['title']
                                     .toString(),
-                                id: (data as dynamic).data[index]['ytid'],
                               ),
                             );
                           },
@@ -165,13 +166,12 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                           ),
                           itemBuilder: (BuildContext context, index) {
                             return Center(
-                              child: GetPlaylist(
-                                index: index,
+                              child: PlaylistCube(
+                                id: (data as dynamic).data[index]['ytid'],
                                 image: (data as dynamic).data[index]['image'],
                                 title: (data as dynamic)
                                     .data[index]['title']
                                     .toString(),
-                                id: (data as dynamic).data[index]['ytid'],
                               ),
                             );
                           },
@@ -180,109 +180,6 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                 },
               )
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class GetPlaylist extends StatelessWidget {
-  const GetPlaylist({
-    super.key,
-    required this.index,
-    required this.image,
-    required this.title,
-    required this.id,
-  });
-  final int index;
-  final dynamic image;
-  final String title;
-  final dynamic id;
-
-  @override
-  Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    return DelayedDisplay(
-      delay: const Duration(milliseconds: 200),
-      fadingDuration: const Duration(milliseconds: 400),
-      child: GestureDetector(
-        onTap: () {
-          getPlaylistInfoForWidget(id).then(
-            (value) => {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => PlaylistPage(playlist: value),
-                ),
-              )
-            },
-          );
-        },
-        child: Padding(
-          padding: const EdgeInsets.only(right: 15),
-          child: SizedBox(
-            width: size.width * 0.4,
-            height: size.height * 0.18,
-            child: Stack(
-              alignment: Alignment.bottomLeft,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
-                  child: image != ''
-                      ? CachedNetworkImage(
-                          width: size.width * 0.4,
-                          height: size.height * 0.18,
-                          imageUrl: image.toString(),
-                          fit: BoxFit.cover,
-                          errorWidget: (context, url, error) => SizedBox(
-                            width: size.width * 0.4,
-                            height: size.height * 0.18,
-                            child: Icon(
-                              MdiIcons.musicNoteOutline,
-                              size: 30,
-                              color: accent.primary,
-                            ),
-                          ),
-                        )
-                      : Container(
-                          width: 200,
-                          height: 200,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Theme.of(context).backgroundColor,
-                          ),
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Icon(
-                                  MdiIcons.musicNoteOutline,
-                                  size: 30,
-                                  color: accent.primary,
-                                ),
-                                Text(
-                                  title,
-                                  style: TextStyle(color: accent.primary),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                ),
-                Positioned.fill(
-                  child: Container(
-                    width: size.width * 0.4,
-                    height: size.height * 0.18,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      color: const Color.fromARGB(30, 255, 255, 255),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
         ),
       ),
     );

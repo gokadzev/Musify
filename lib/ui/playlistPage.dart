@@ -1,9 +1,9 @@
 import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/customWidgets/song_bar.dart';
 import 'package:musify/customWidgets/spinner.dart';
@@ -94,8 +94,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
                 children: [
                   Container(
                     margin: const EdgeInsets.only(left: 10, right: 26),
-                    height: 250,
-                    width: 250,
+                    height: MediaQuery.of(context).size.height * 0.3,
+                    width: MediaQuery.of(context).size.height * 0.3,
                     child: Card(
                       color: Colors.transparent,
                       child: widget.playlist['image'] != ''
@@ -121,7 +121,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
                                   Icon(
-                                    MdiIcons.musicNoteOutline,
+                                    FluentIcons.music_note_1_24_regular,
                                     size: 30,
                                     color: accent.primary,
                                   ),

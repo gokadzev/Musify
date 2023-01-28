@@ -19,7 +19,10 @@ class MyAudioHandler extends BaseAudioHandler {
 
   @override
   Future<void> onTaskRemoved() async {
-    await audioPlayer.stop().then((_) => audioPlayer.dispose());
+    final isForegroundServiceEnabled = foregroundService.value;
+    if (!isForegroundServiceEnabled) {
+      await audioPlayer.stop().then((_) => audioPlayer.dispose());
+    }
     await super.onTaskRemoved();
   }
 
@@ -46,6 +49,8 @@ class MyAudioHandler extends BaseAudioHandler {
           ],
           systemActions: const {
             MediaAction.seek,
+            MediaAction.seekForward,
+            MediaAction.seekBackward
           },
           androidCompactActionIndices: const [0, 1, 3],
           processingState: const {
@@ -64,8 +69,8 @@ class MyAudioHandler extends BaseAudioHandler {
               ? AudioServiceShuffleMode.all
               : AudioServiceShuffleMode.none,
           playing: audioPlayer.playing,
-          updatePosition: position.value ?? Duration.zero,
-          bufferedPosition: position.value ?? Duration.zero,
+          updatePosition: audioPlayer.position,
+          bufferedPosition: audioPlayer.bufferedPosition,
           speed: audioPlayer.speed,
           queueIndex: event.currentIndex,
         ),
@@ -85,9 +90,9 @@ class MyAudioHandler extends BaseAudioHandler {
 
   void _listenForDurationChanges() {
     audioPlayer.durationStream.listen((d) {
-      duration.value = d;
       var index = audioPlayer.currentIndex;
       final newQueue = queue.value;
+      duration.value = d;
       if (index == null || newQueue.isEmpty) return;
       if (audioPlayer.shuffleModeEnabled) {
         index = audioPlayer.shuffleIndices![index];

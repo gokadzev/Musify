@@ -15,7 +15,6 @@ import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/ext_storage.dart';
 import 'package:musify/services/lyrics_service.dart';
 import 'package:on_audio_query/on_audio_query.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 final yt = YoutubeExplode();
@@ -119,9 +118,7 @@ bool isSongAlreadyLiked(dynamic songId) {
 
 Future<List> getPlaylists([int? playlistsNum]) async {
   if (playlists.isEmpty) {
-    playlists =
-        json.decode(await rootBundle.loadString('assets/db/playlists.db.json'))
-            as List;
+    await readPlaylistsFromFile();
   }
 
   if (playlistsNum != null) {
@@ -135,11 +132,15 @@ Future<List> getPlaylists([int? playlistsNum]) async {
   }
 }
 
+Future<void> readPlaylistsFromFile() async {
+  playlists =
+      json.decode(await rootBundle.loadString('assets/db/playlists.db.json'))
+          as List;
+}
+
 Future<List> searchPlaylist(String query) async {
   if (playlists.isEmpty) {
-    playlists =
-        json.decode(await rootBundle.loadString('assets/db/playlists.db.json'))
-            as List;
+    await readPlaylistsFromFile();
   }
 
   return playlists
@@ -148,6 +149,29 @@ Future<List> searchPlaylist(String query) async {
             playlist['title'].toLowerCase().contains(query.toLowerCase()),
       )
       .toList();
+}
+
+Future<List> getSearchSuggestions(String query) async {
+  const baseUrl =
+      'https://suggestqueries.google.com/complete/search?client=firefox&ds=yt&q=';
+  final link = Uri.parse(baseUrl + query);
+  try {
+    final response = await http.get(
+      link,
+      headers: {
+        'User-Agent':
+            'Mozilla/5.0 (Windows NT 10.0; rv:96.0) Gecko/20100101 Firefox/96.0'
+      },
+    );
+    if (response.statusCode != 200) {
+      return [];
+    }
+    final res = jsonDecode(response.body)[1] as List;
+    return res;
+  } catch (e) {
+    debugPrint('Error in getSearchSuggestions: $e');
+    return [];
+  }
 }
 
 Future<Map> getRandomSong() async {
@@ -236,13 +260,29 @@ Future getSongDetails(dynamic songIndex, dynamic songId) async {
   );
 }
 
-Future<List<SongModel>> getLocalSongs() async {
-  var localSongs = <SongModel>[];
-  if (await ExtStorageProvider.requestPermission(Permission.storage)) {
-    localSongs = await _audioQuery.querySongs(
+Future<List<SongModel>> getDownloadedSongs() async {
+  try {
+    final localSongs = await _audioQuery.querySongs(
       path: await ExtStorageProvider.getExtStorage(dirName: 'Music'),
     );
+    return localSongs;
+  } catch (e, stack) {
+    debugPrint('$e $stack');
+    return [];
   }
+}
+
+Future<List<SongModel>> getLocalSongs() async {
+  var localSongs = <SongModel>[];
+  final allSongs = await _audioQuery.querySongs();
+  localSongs = allSongs
+      .where(
+        (song) =>
+            song.isAlarm == false &&
+            song.isNotification == false &&
+            song.isRingtone == false,
+      )
+      .toList();
 
   return localSongs;
 }

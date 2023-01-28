@@ -14,15 +14,20 @@ ThemeData getAppDarkTheme() {
   return ThemeData(
     scaffoldBackgroundColor: const Color(0xFF121212),
     canvasColor: const Color(0xFF121212),
-    appBarTheme: const AppBarTheme(backgroundColor: Color(0xFF121212)),
-    bottomAppBarColor: const Color(0xFF151515),
+    appBarTheme: AppBarTheme(
+      backgroundColor: const Color(0xFF121212),
+      iconTheme: IconThemeData(color: accent.primary),
+    ),
+    bottomSheetTheme: const BottomSheetThemeData(
+      backgroundColor: Color(0xFF121212),
+    ),
     colorScheme: accent,
     visualDensity: VisualDensity.adaptivePlatformDensity,
     fontFamily: 'Ubuntu',
     useMaterial3: true,
     pageTransitionsTheme: const PageTransitionsTheme(
       builders: {
-        TargetPlatform.android: ZoomPageTransitionsBuilder(),
+        TargetPlatform.android: CupertinoPageTransitionsBuilder(),
       },
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
@@ -42,11 +47,15 @@ ThemeData getAppDarkTheme() {
       elevation: 2.3,
     ),
     listTileTheme: const ListTileThemeData(textColor: Colors.white),
+    switchTheme: SwitchThemeData(
+      trackColor: MaterialStateProperty.all(accent.primary),
+    ),
     iconTheme: const IconThemeData(color: Colors.white),
     hintColor: Colors.white,
     textTheme: const TextTheme(
-      bodyText2: TextStyle(color: Colors.white),
+      bodyMedium: TextStyle(color: Colors.white),
     ),
+    bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFF151515)),
   );
 }
 
@@ -55,12 +64,17 @@ ThemeData getAppLightTheme() {
     scaffoldBackgroundColor: Colors.white,
     canvasColor: Colors.white,
     colorScheme: accent,
+    bottomSheetTheme: const BottomSheetThemeData(backgroundColor: Colors.white),
+    appBarTheme: AppBarTheme(
+      backgroundColor: Colors.white,
+      iconTheme: IconThemeData(color: accent.primary),
+    ),
     visualDensity: VisualDensity.adaptivePlatformDensity,
     fontFamily: 'Ubuntu',
     useMaterial3: true,
     pageTransitionsTheme: const PageTransitionsTheme(
       builders: {
-        TargetPlatform.android: ZoomPageTransitionsBuilder(),
+        TargetPlatform.android: CupertinoPageTransitionsBuilder(),
       },
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
@@ -81,7 +95,11 @@ ThemeData getAppLightTheme() {
     listTileTheme: ListTileThemeData(
       selectedColor: accent.primary.withOpacity(0.4),
     ),
+    switchTheme: SwitchThemeData(
+      trackColor: MaterialStateProperty.all(accent.primary),
+    ),
     iconTheme: const IconThemeData(color: Color(0xFF151515)),
     hintColor: const Color(0xFF151515),
+    bottomAppBarTheme: const BottomAppBarTheme(color: Colors.white),
   );
 }
