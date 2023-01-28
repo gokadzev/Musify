@@ -24,7 +24,7 @@ ThemeData getAppDarkTheme() {
     useMaterial3: true,
     pageTransitionsTheme: const PageTransitionsTheme(
       builders: {
-        TargetPlatform.android: ZoomPageTransitionsBuilder(),
+        TargetPlatform.android: CupertinoPageTransitionsBuilder(),
       },
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
@@ -69,7 +69,7 @@ ThemeData getAppLightTheme() {
     useMaterial3: true,
     pageTransitionsTheme: const PageTransitionsTheme(
       builders: {
-        TargetPlatform.android: ZoomPageTransitionsBuilder(),
+        TargetPlatform.android: CupertinoPageTransitionsBuilder(),
       },
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
