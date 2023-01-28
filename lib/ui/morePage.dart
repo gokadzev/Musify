@@ -32,6 +32,10 @@ final useSystemColor = ValueNotifier<bool>(
   Hive.box('settings').get('useSystemColor', defaultValue: true),
 );
 
+final foregroundService = ValueNotifier<bool>(
+  Hive.box('settings').get('foregroundService', defaultValue: false) as bool,
+);
+
 class MorePage extends StatefulWidget {
   @override
   _MorePageState createState() => _MorePageState();
@@ -356,23 +360,29 @@ class SettingsCards extends StatelessWidget {
             );
           },
         ),
-        SettingSwitchBar(
-          'Foreground Service',
-          FluentIcons.eye_24_filled,
-          Hive.box('settings').get('foregroundService', defaultValue: false)
-              as bool,
-          (value) {
-            addOrUpdateData(
-              'settings',
-              'foregroundService',
-              value,
-            );
-            showToast(
-              AppLocalizations.of(context)!.settingChangedMsg,
+        ValueListenableBuilder<bool>(
+          valueListenable: foregroundService,
+          builder: (_, foregroundValue, __) {
+            return SettingSwitchBar(
+              'Foreground Service',
+              FluentIcons.eye_24_filled,
+              foregroundValue,
+              (value) {
+                addOrUpdateData(
+                  'settings',
+                  'foregroundService',
+                  value,
+                );
+
+                foregroundService.value = value;
+
+                showToast(
+                  AppLocalizations.of(context)!.settingChangedMsg,
+                );
+              },
             );
           },
         ),
-
         SettingBar(
           AppLocalizations.of(context)!.audioFileType,
           FluentIcons.multiselect_ltr_24_filled,
