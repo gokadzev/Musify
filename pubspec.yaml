@@ -5,7 +5,7 @@ repository: https://github.com/gokadzev/Musify
 issue_tracker: https://github.com/gokadzev/Musify/issues
 
 publish_to: 'none'
-version: 4.0.0+39
+version: 4.0.1+39
 
 environment:
   sdk: '>=2.18.6 <4.0.0'
