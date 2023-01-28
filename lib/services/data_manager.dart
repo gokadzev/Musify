@@ -1,7 +1,8 @@
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:hive/hive.dart';
-import 'package:musify/services/ext_storage.dart';
+import 'package:musify/helper/flutter_toast.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 void addOrUpdateData(
@@ -38,7 +39,12 @@ void clearCache() async {
 
 Future backupData() async {
   final boxNames = ['user', 'settings'];
-  final dlPath = await ExtStorageProvider.getExtStorage(dirName: 'Musify/Data');
+  final dlPath = await FilePicker.platform.getDirectoryPath();
+
+  if (dlPath == null) {
+    showToast('Choose Backup Directory!');
+    return false;
+  }
 
   for (var i = 0; i < boxNames.length; i++) {
     await Hive.openBox(boxNames[i]);
@@ -59,15 +65,19 @@ Future backupData() async {
 
 Future restoreData() async {
   final boxNames = ['user', 'settings'];
-  final uplPath =
-      await ExtStorageProvider.getExtStorage(dirName: 'Musify/Data');
+  final uplPath = await FilePicker.platform.getDirectoryPath();
+
+  if (uplPath == null) {
+    showToast('Choose Restore File Directory!');
+    return false;
+  }
 
   for (var i = 0; i < boxNames.length; i++) {
     await Hive.openBox(boxNames[i]);
     try {
       final box = await Hive.openBox(boxNames[i]);
       final boxPath = box.path;
-      await File('${uplPath!}/${boxNames[i]}Data.hive').copy(boxPath!);
+      await File('$uplPath/${boxNames[i]}Data.hive').copy(boxPath!);
     } catch (e) {
       await [
         Permission.manageExternalStorage,

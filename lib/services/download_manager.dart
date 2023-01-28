@@ -1,16 +1,23 @@
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/helper/flutter_toast.dart';
-import 'package:musify/services/ext_storage.dart';
+import 'package:musify/services/data_manager.dart';
 import 'package:musify/ui/morePage.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
+String? selectedDirectory = Hive.box('settings').get('downloadPath');
+
 Future<void> downloadSong(BuildContext context, dynamic song) async {
   await checkAudioPerms();
+  if (!await checkDownloadDirectory()) {
+    return;
+  }
 
   final filename = song['more_info']['singers'] +
       ' - ' +
@@ -27,25 +34,26 @@ Future<void> downloadSong(BuildContext context, dynamic song) async {
       prefferedFileExtension.value;
 
   var filepath = '';
-  final dlPath = await ExtStorageProvider.getExtStorage(dirName: 'Music');
   try {
     showToast(
       AppLocalizations.of(context)!.downloadStarted,
     );
-    await File('${dlPath!}/$filename')
+    await File('${selectedDirectory!}/$filename')
         .create(recursive: true)
         .then((value) => filepath = value.path);
-    await downloadFileFromYT(filename, filepath, dlPath, song).whenComplete(
+    await downloadFileFromYT(filename, filepath, selectedDirectory!, song)
+        .whenComplete(
       () => showToast(
         AppLocalizations.of(context)!.downloadCompleted,
       ),
     );
   } catch (e) {
     await [Permission.manageExternalStorage].request();
-    await File('${dlPath!}/$filename')
+    await File('${selectedDirectory!}/$filename')
         .create(recursive: true)
         .then((value) => filepath = value.path);
-    await downloadFileFromYT(filename, filepath, dlPath, song).whenComplete(
+    await downloadFileFromYT(filename, filepath, selectedDirectory!, song)
+        .whenComplete(
       () => showToast(
         AppLocalizations.of(context)!.downloadCompleted,
       ),
@@ -90,4 +98,20 @@ Future<void> checkAudioPerms() async {
       await openAppSettings();
     }
   }
+}
+
+Future<bool> checkDownloadDirectory() async {
+  if (selectedDirectory == null) {
+    selectedDirectory = await FilePicker.platform.getDirectoryPath();
+
+    if (selectedDirectory == null) {
+      showToast('Choose Download Directory!');
+      return false;
+    }
+
+    addOrUpdateData('settings', 'downloadPath', selectedDirectory);
+
+    return true;
+  }
+  return true;
 }
