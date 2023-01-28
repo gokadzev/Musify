@@ -197,10 +197,9 @@ Future<void> initialisation() async {
   getIt.registerSingleton<AudioHandler>(
     await AudioService.init(
       builder: MyAudioHandler.new,
-      config: AudioServiceConfig(
+      config: const AudioServiceConfig(
         androidNotificationChannelId: 'com.gokadzev.musify',
         androidNotificationChannelName: 'Musify',
-        androidNotificationOngoing: true,
         androidNotificationIcon: 'mipmap/launcher_icon',
         androidShowNotificationBadge: true,
         androidStopForegroundOnPause: false,
