@@ -449,7 +449,7 @@ class SettingsCards extends StatelessWidget {
           AppLocalizations.of(context)!.backupUserData,
           FluentIcons.cloud_sync_24_filled,
           () => {
-            backupData().then(
+            backupData(context).then(
               (value) => showToast(value.toString()),
             ),
           },
@@ -458,7 +458,7 @@ class SettingsCards extends StatelessWidget {
           AppLocalizations.of(context)!.restoreUserData,
           FluentIcons.cloud_add_24_filled,
           () => {
-            restoreData().then(
+            restoreData(context).then(
               (value) => showToast(value.toString()),
             ),
           },

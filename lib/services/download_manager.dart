@@ -15,7 +15,7 @@ String? selectedDirectory = Hive.box('settings').get('downloadPath');
 
 Future<void> downloadSong(BuildContext context, dynamic song) async {
   await checkAudioPerms();
-  if (!await checkDownloadDirectory()) {
+  if (!await checkDownloadDirectory(context)) {
     return;
   }
 
@@ -100,12 +100,12 @@ Future<void> checkAudioPerms() async {
   }
 }
 
-Future<bool> checkDownloadDirectory() async {
+Future<bool> checkDownloadDirectory(context) async {
   if (selectedDirectory == null) {
     selectedDirectory = await FilePicker.platform.getDirectoryPath();
 
     if (selectedDirectory == null) {
-      showToast('Choose Download Directory!');
+      showToast('${AppLocalizations.of(context)!.chooseDownloadDir}!');
       return false;
     }
 
