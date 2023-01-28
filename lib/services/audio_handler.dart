@@ -1,5 +1,6 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/widgets.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/helper/mediaitem.dart';
@@ -19,7 +20,11 @@ class MyAudioHandler extends BaseAudioHandler {
 
   @override
   Future<void> onTaskRemoved() async {
-    await audioPlayer.stop().then((_) => audioPlayer.dispose());
+    final isForegroundServiceEnabled = Hive.box('settings')
+        .get('foregroundService', defaultValue: false) as bool;
+    if (!isForegroundServiceEnabled) {
+      await audioPlayer.stop().then((_) => audioPlayer.dispose());
+    }
     await super.onTaskRemoved();
   }
 

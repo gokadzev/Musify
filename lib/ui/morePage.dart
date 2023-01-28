@@ -356,6 +356,22 @@ class SettingsCards extends StatelessWidget {
             );
           },
         ),
+        SettingSwitchBar(
+          'Foreground Service',
+          FluentIcons.eye_24_filled,
+          Hive.box('settings').get('foregroundService', defaultValue: false)
+              as bool,
+          (value) {
+            addOrUpdateData(
+              'settings',
+              'foregroundService',
+              value,
+            );
+            showToast(
+              AppLocalizations.of(context)!.settingChangedMsg,
+            );
+          },
+        ),
 
         SettingBar(
           AppLocalizations.of(context)!.audioFileType,
