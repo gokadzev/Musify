@@ -86,6 +86,7 @@ class _SearchPageState extends State<SearchPage> {
                 decoration: InputDecoration(
                   filled: true,
                   isDense: true,
+                  fillColor: Theme.of(context).shadowColor,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15.0),
                     borderSide: BorderSide(
