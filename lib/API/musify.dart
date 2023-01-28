@@ -118,9 +118,7 @@ bool isSongAlreadyLiked(dynamic songId) {
 
 Future<List> getPlaylists([int? playlistsNum]) async {
   if (playlists.isEmpty) {
-    playlists =
-        json.decode(await rootBundle.loadString('assets/db/playlists.db.json'))
-            as List;
+    await readPlaylistsFromFile();
   }
 
   if (playlistsNum != null) {
@@ -134,11 +132,15 @@ Future<List> getPlaylists([int? playlistsNum]) async {
   }
 }
 
+Future<void> readPlaylistsFromFile() async {
+  playlists =
+      json.decode(await rootBundle.loadString('assets/db/playlists.db.json'))
+          as List;
+}
+
 Future<List> searchPlaylist(String query) async {
   if (playlists.isEmpty) {
-    playlists =
-        json.decode(await rootBundle.loadString('assets/db/playlists.db.json'))
-            as List;
+    await readPlaylistsFromFile();
   }
 
   return playlists
@@ -259,11 +261,15 @@ Future getSongDetails(dynamic songIndex, dynamic songId) async {
 }
 
 Future<List<SongModel>> getDownloadedSongs() async {
-  final localSongs = await _audioQuery.querySongs(
-    path: await ExtStorageProvider.getExtStorage(dirName: 'Music'),
-  );
-
-  return localSongs;
+  try {
+    final localSongs = await _audioQuery.querySongs(
+      path: await ExtStorageProvider.getExtStorage(dirName: 'Music'),
+    );
+    return localSongs;
+  } catch (e, stack) {
+    debugPrint('$e $stack');
+    return [];
+  }
 }
 
 Future<List<SongModel>> getLocalSongs() async {
