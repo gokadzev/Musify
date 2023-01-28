@@ -49,6 +49,8 @@ class MyAudioHandler extends BaseAudioHandler {
           ],
           systemActions: const {
             MediaAction.seek,
+            MediaAction.seekForward,
+            MediaAction.seekBackward
           },
           androidCompactActionIndices: const [0, 1, 3],
           processingState: const {
@@ -67,8 +69,8 @@ class MyAudioHandler extends BaseAudioHandler {
               ? AudioServiceShuffleMode.all
               : AudioServiceShuffleMode.none,
           playing: audioPlayer.playing,
-          updatePosition: position.value ?? Duration.zero,
-          bufferedPosition: position.value ?? Duration.zero,
+          updatePosition: audioPlayer.position,
+          bufferedPosition: audioPlayer.bufferedPosition,
           speed: audioPlayer.speed,
           queueIndex: event.currentIndex,
         ),
