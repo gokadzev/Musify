@@ -90,7 +90,18 @@ class MyAudioHandler extends BaseAudioHandler {
 
   void _listenForDurationChanges() {
     audioPlayer.durationStream.listen((d) {
+      var index = audioPlayer.currentIndex;
+      final newQueue = queue.value;
       duration.value = d;
+      if (index == null || newQueue.isEmpty) return;
+      if (audioPlayer.shuffleModeEnabled) {
+        index = audioPlayer.shuffleIndices![index];
+      }
+      final oldMediaItem = newQueue[index];
+      final newMediaItem = oldMediaItem.copyWith(duration: d);
+      newQueue[index] = newMediaItem;
+      queue.add(newQueue);
+      mediaItem.add(newMediaItem);
     });
   }
 
