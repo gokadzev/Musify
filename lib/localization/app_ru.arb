@@ -45,6 +45,7 @@
   "restoredSuccess": "Успешно восстановлено",
   "search": "Поиск",
   "searchHistoryMsg": "История поиска очищена",
+  "settingChangedAndRestartMsg": "Setting changed, please restart the app",
   "settingChangedMsg": "Настройка изменена",
   "settings": "Настройки",
   "suggestedPlaylists": "Предлагаемые плейлисты",

@@ -45,6 +45,7 @@
   "restoredSuccess": "Restaurado com sucesso",
   "search": "Procurar",
   "searchHistoryMsg": "Histórico de pesquisa limpo",
+  "settingChangedAndRestartMsg": "Setting changed, please restart the app",
   "settingChangedMsg": "Setting changed",
   "settings": "Configurações",
   "suggestedPlaylists": "Listas de reprodução sugeridas",

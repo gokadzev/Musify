@@ -45,6 +45,7 @@
   "restoredSuccess": "Başarıyla Geri Yüklendi",
   "search": "arama",
   "searchHistoryMsg": "Arama geçmişi temizlendi",
+  "settingChangedAndRestartMsg": "Setting changed, please restart the app",
   "settingChangedMsg": "Setting changed",
   "settings": "ayarlar",
   "suggestedPlaylists": "Önerilen oynatma listeleri",

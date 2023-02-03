@@ -377,7 +377,7 @@ class SettingsCards extends StatelessWidget {
                 foregroundService.value = value;
 
                 showToast(
-                  AppLocalizations.of(context)!.settingChangedMsg,
+                  AppLocalizations.of(context)!.settingChangedAndRestartMsg,
                 );
               },
             );

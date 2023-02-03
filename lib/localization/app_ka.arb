@@ -45,6 +45,7 @@
   "restoredSuccess": "წარმატებით დაბრუნდა",
   "search": "ძიება",
   "searchHistoryMsg": "საძიებო ისტორია გასუფთავდა",
+  "settingChangedAndRestartMsg": "Setting changed, please restart the app",
   "settingChangedMsg": "პარამეტრი შეიცვალა",
   "settings": "პარამეტრები",
   "suggestedPlaylists": "შემოთავაზებული ფლეილისთები",

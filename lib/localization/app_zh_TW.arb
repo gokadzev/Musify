@@ -45,6 +45,7 @@
   "restoredSuccess": "恢復成功",
   "search": "搜尋",
   "searchHistoryMsg": "搜尋記錄已清除",
+  "settingChangedAndRestartMsg": "Setting changed, please restart the app",
   "settingChangedMsg": "設定已更改",
   "settings": "設定",
   "suggestedPlaylists": "推薦的播放清單",
