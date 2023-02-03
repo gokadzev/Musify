@@ -15,20 +15,20 @@ dependencies:
   audio_service: ^0.18.9
   audio_session: ^0.1.13
   cached_network_image: ^3.2.3
-  dynamic_color: ^1.5.4
+  dynamic_color: ^1.6.0
   file_picker: ^5.2.5
   fluentui_system_icons: ^1.1.190
   flutter:
     sdk: flutter
   flutter_downloader: ^1.9.1
-  flutter_localizations: 
+  flutter_localizations:
     sdk: flutter
   fluttertoast: ^8.1.2
   get_it: ^7.2.0
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   http: ^0.13.5
-  intl: ^0.17.0 
+  intl: ^0.17.0
   just_audio: ^0.9.31
   on_audio_query: ^2.6.1
   package_info_plus: ^3.0.2
@@ -57,25 +57,22 @@ flutter:
   assets:
     - assets/db/playlists.db.json
 
-
 flutter_native_splash:
-  color: "#ffffff"
+  color: '#ffffff'
   image: assets/images/splash.png
-  color_dark: "#151515"
+  color_dark: '#151515'
   image_dark: assets/images/splash.png
 
   android_12:
     image: assets/images/splash.png
-    icon_background_color: "#ffffff"
+    icon_background_color: '#ffffff'
     image_dark: assets/images/splash.png
-    icon_background_color_dark: "#151515"
-
+    icon_background_color_dark: '#151515'
 
 flutter_icons:
-  android: "launcher_icon"
-  adaptive_icon_background: "#191919"
-  adaptive_icon_foreground: "assets/images/ic_launcher_foreground.png"
-  adaptive_icon_round: "assets/images/ic_launcher_round.png"
-  image_path: "assets/images/ic_launcher.png"
+  android: 'launcher_icon'
+  adaptive_icon_background: '#191919'
+  adaptive_icon_foreground: 'assets/images/ic_launcher_foreground.png'
+  adaptive_icon_round: 'assets/images/ic_launcher_round.png'
+  image_path: 'assets/images/ic_launcher.png'
   ios: true
-

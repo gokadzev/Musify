@@ -5,10 +5,10 @@ packages:
     dependency: transitive
     description:
       name: archive
-      sha256: ed7cc591a948744994714375caf9a2ce89e1d82e8243997c8a2994d57181c212
+      sha256: d6347d54a2d8028e0437e3c099f66fdb8ae02c4720c1e7534c9f24c10351f85d
       url: "https://pub.dev"
     source: hosted
-    version: "3.3.5"
+    version: "3.3.6"
   args:
     dependency: transitive
     description:
@@ -157,10 +157,10 @@ packages:
     dependency: "direct main"
     description:
       name: dynamic_color
-      sha256: "37a15576f5a0bfd5555b613cf20ea3bd379607cf88d457374a16032f4e942174"
+      sha256: "0ff251e8a31f54adde9ab4d4b301c94df46dcd34e4fbd6d7623631ed174b205e"
       url: "https://pub.dev"
     source: hosted
-    version: "1.5.4"
+    version: "1.6.0"
   fake_async:
     dependency: transitive
     description:
