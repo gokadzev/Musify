@@ -1,7 +1,10 @@
-const apiUrl =
+const checkApiUrl =
   'https://raw.githubusercontent.com/gokadzev/Musify/update/check.json'
+const changelogApiUrl =
+  'https://raw.githubusercontent.com/gokadzev/Musify/update/changelog.json'
 let versionElement = document.getElementById('version')
 let downloadElement = document.getElementById('download')
+let changelogElement = document.getElementById('changelogContent')
 
 function getUpdateInfo(callback) {
   var xmlHttp = new XMLHttpRequest()
@@ -9,7 +12,17 @@ function getUpdateInfo(callback) {
     if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
       callback(xmlHttp.responseText)
   }
-  xmlHttp.open('GET', apiUrl, true)
+  xmlHttp.open('GET', checkApiUrl, true)
+  xmlHttp.send(null)
+}
+
+function getUpdateChangelog(callback) {
+  var xmlHttp = new XMLHttpRequest()
+  xmlHttp.onreadystatechange = function () {
+    if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+      callback(xmlHttp.responseText)
+  }
+  xmlHttp.open('GET', changelogApiUrl, true)
   xmlHttp.send(null)
 }
 
@@ -146,5 +159,9 @@ window.onload = function () {
     const response = JSON.parse(res)
     versionElement.textContent += 'Current Version: ' + response['version']
     downloadElement.setAttribute('href', response['url'])
+  })
+  getUpdateChangelog((res) => {
+    const response = JSON.parse(res)
+    changelogElement.innerHTML = response['changelog']
   })
 }

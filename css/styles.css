@@ -216,6 +216,11 @@ section {
   [data-aos-delay] {
     transition-delay: 0 !important;
   }
+
+  .screenshots-area .screenshot {
+    width: 95% !important;
+    margin: 10px auto;
+  }
 }
 
 .topbar {
@@ -714,4 +719,22 @@ section {
 .start .icon-box:hover .title a,
 .start .icon-box:hover .icon {
   color: #fff;
+}
+
+.title {
+  text-align: center;
+}
+
+.screenshots-area {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.screenshots-area .screenshot {
+  width: 33%;
+}
+
+.changelogContent {
+  font-weight: 600;
 }
