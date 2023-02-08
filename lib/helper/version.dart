@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:musify/main.dart';
-import 'package:musify/services/ext_storage.dart';
 
 String? version;
 late String dlUrl;
@@ -35,7 +35,7 @@ Future<void> downloadAppUpdates() async {
   } else {
     dlUrl = map['url'].toString();
   }
-  final dlPath = await ExtStorageProvider.getExtStorage(dirName: 'Download');
+  final dlPath = await FilePicker.platform.getDirectoryPath();
   final file = File('${dlPath!}/Musify.apk');
   if (await file.exists()) {
     await file.delete();

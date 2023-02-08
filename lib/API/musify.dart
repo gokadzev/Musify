@@ -12,8 +12,8 @@ import 'package:musify/helper/mediaitem.dart';
 import 'package:musify/services/audio_handler.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/data_manager.dart';
-import 'package:musify/services/ext_storage.dart';
 import 'package:musify/services/lyrics_service.dart';
+import 'package:musify/services/settings_manager.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
@@ -272,7 +272,7 @@ Future getSongDetails(dynamic songIndex, dynamic songId) async {
 Future<List<SongModel>> getDownloadedSongs() async {
   try {
     final localSongs = await _audioQuery.querySongs(
-      path: await ExtStorageProvider.getExtStorage(dirName: 'Music'),
+      path: downloadDirectory,
     );
     return localSongs;
   } catch (e, stack) {
@@ -282,8 +282,10 @@ Future<List<SongModel>> getDownloadedSongs() async {
 }
 
 Future<List<SongModel>> getLocalSongs() async {
+  final allSongs = <SongModel>[
+    for (final p in localSongsFolders) ...await _audioQuery.querySongs(path: p)
+  ];
   var localSongs = <SongModel>[];
-  final allSongs = await _audioQuery.querySongs();
   localSongs = allSongs
       .where(
         (song) =>

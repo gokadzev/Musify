@@ -16,6 +16,7 @@ import 'package:musify/ui/downloadedSongsPage.dart';
 import 'package:musify/ui/localSongsPage.dart';
 import 'package:musify/ui/playlistsPage.dart';
 import 'package:musify/ui/searchPage.dart';
+import 'package:musify/ui/setupPage.dart';
 import 'package:musify/ui/userLikedSongsPage.dart';
 
 final prefferedFileExtension = ValueNotifier<String>(
@@ -439,6 +440,16 @@ class SettingsCards extends StatelessWidget {
                   ),
                 );
               },
+            ),
+          },
+        ),
+        SettingBar(
+          AppLocalizations.of(context)!.setup,
+          FluentIcons.settings_24_filled,
+          () => {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => SetupPage()),
             ),
           },
         ),

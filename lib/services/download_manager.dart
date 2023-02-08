@@ -3,15 +3,13 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/helper/flutter_toast.dart';
 import 'package:musify/services/data_manager.dart';
+import 'package:musify/services/settings_manager.dart';
 import 'package:musify/ui/morePage.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
-
-String? selectedDirectory = Hive.box('settings').get('downloadPath');
 
 Future<void> downloadSong(BuildContext context, dynamic song) async {
   await checkAudioPerms();
@@ -38,10 +36,10 @@ Future<void> downloadSong(BuildContext context, dynamic song) async {
     showToast(
       AppLocalizations.of(context)!.downloadStarted,
     );
-    await File('${selectedDirectory!}/$filename')
+    await File('${downloadDirectory!}/$filename')
         .create(recursive: true)
         .then((value) => filepath = value.path);
-    await downloadFileFromYT(filename, filepath, selectedDirectory!, song)
+    await downloadFileFromYT(filename, filepath, downloadDirectory!, song)
         .whenComplete(
       () => showToast(
         AppLocalizations.of(context)!.downloadCompleted,
@@ -49,10 +47,10 @@ Future<void> downloadSong(BuildContext context, dynamic song) async {
     );
   } catch (e) {
     await [Permission.manageExternalStorage].request();
-    await File('${selectedDirectory!}/$filename')
+    await File('${downloadDirectory!}/$filename')
         .create(recursive: true)
         .then((value) => filepath = value.path);
-    await downloadFileFromYT(filename, filepath, selectedDirectory!, song)
+    await downloadFileFromYT(filename, filepath, downloadDirectory!, song)
         .whenComplete(
       () => showToast(
         AppLocalizations.of(context)!.downloadCompleted,
@@ -101,15 +99,15 @@ Future<void> checkAudioPerms() async {
 }
 
 Future<bool> checkDownloadDirectory(context) async {
-  if (selectedDirectory == null) {
-    selectedDirectory = await FilePicker.platform.getDirectoryPath();
+  if (downloadDirectory == null) {
+    downloadDirectory = await FilePicker.platform.getDirectoryPath();
 
-    if (selectedDirectory == null) {
+    if (downloadDirectory == null) {
       showToast('${AppLocalizations.of(context)!.chooseDownloadDir}!');
       return false;
     }
 
-    addOrUpdateData('settings', 'downloadPath', selectedDirectory);
+    addOrUpdateData('settings', 'downloadPath', downloadDirectory);
 
     return true;
   }
