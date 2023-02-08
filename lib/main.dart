@@ -184,12 +184,12 @@ class _MyAppState extends State<MyApp> {
 }
 
 void main() async {
+  await initialisation();
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   await Hive.openBox('settings');
   await Hive.openBox('user');
   await Hive.openBox('cache');
-  await initialisation();
   runApp(const MyApp());
 }
 
