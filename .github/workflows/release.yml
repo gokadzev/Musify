@@ -4,7 +4,7 @@ on:
       - master
 name: Test, Build and Release apk
 env:
-  PROPERTIES_PATH: "./android/key.properties"
+  PROPERTIES_PATH: './android/key.properties'
 jobs:
   build:
     name: Build APK
@@ -12,54 +12,53 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    # Setup Java environment in order to build the Android app.
-    - uses: actions/setup-java@v3
-      with:
-        distribution: "zulu"
-        java-version: "12.x"
+      # Setup Java environment in order to build the Android app.
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '12.x'
 
+      # Gradle cache for faster builds
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      # Setup the flutter environment.
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
 
-    # Gradle cache for faster builds
-    - uses: actions/cache@v3
-      with:
-        path: |
-          ~/.gradle/caches
-          ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-        restore-keys: |
-          ${{ runner.os }}-gradle-
-    # Setup the flutter environment.
-    - uses: subosito/flutter-action@v2
-      with:
-        channel: "stable"
-
-    # 
-    - run: |
+      #
+      - run: |
           echo keyPassword=\${{ secrets.KEY_STORE }} > ${{env.PROPERTIES_PATH}}
           echo storePassword=\${{ secrets.KEY_PASSWORD }} >> ${{env.PROPERTIES_PATH}}
           echo keyAlias=\${{ secrets.KEY_ALIAS }} >> ${{env.PROPERTIES_PATH}}
-    #
-    - run: echo "${{ secrets.KEYSTORE2 }}" | base64 --decode > android/app/key.jks
+      #
+      - run: echo "${{ secrets.KEYSTORE2 }}" | base64 --decode > android/app/key.jks
 
-    # Get flutter dependencies.
-    - run: flutter pub get
-    # Check for any formatting issues in the code.
-    - run: flutter format --set-exit-if-changed .
-    # Statically analyze the Dart code for any errors.
-    - run: flutter analyze .
-    # Build arch apks.
-    - run: flutter build apk --release --split-per-abi
-    # Upload arm64 generated apk to the artifacts.
-    - uses: actions/upload-artifact@v3
-      with:
-        name: Musify_arm64-v8a.apk
-        path: build/app/outputs/apk/release/app-arm64-v8a-release.apk
-    # Build universal apk.
-    - run: flutter build apk --release
-    # Upload universal generated apk to the artifacts.
-    - uses: actions/upload-artifact@v3
-      with:
-        name: Musify.apk
-        path: build/app/outputs/apk/release/app-release.apk
+      # Get flutter dependencies.
+      - run: flutter pub get
+      # Check for any formatting issues in the code.
+      - run: dart format --set-exit-if-changed .
+      # Statically analyze the Dart code for any errors.
+      - run: flutter analyze .
+      # Build arch apks.
+      - run: flutter build apk --release --split-per-abi
+      # Upload arm64 generated apk to the artifacts.
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Musify_arm64-v8a.apk
+          path: build/app/outputs/apk/release/app-arm64-v8a-release.apk
+      # Build universal apk.
+      - run: flutter build apk --release
+      # Upload universal generated apk to the artifacts.
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Musify.apk
+          path: build/app/outputs/apk/release/app-release.apk
