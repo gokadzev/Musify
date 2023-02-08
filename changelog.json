@@ -1,4 +1,4 @@
 {
-    "version": "4.0.1",
-    "changelog": "UI improvements </br> improved routing </br> added search suggestions </br> new icons </br> new page transitions </br> added foreground service </br> added local songs support (not only downloaded ones will be available) </br> since now you're choosing backup/restore/download locations </br> fixed various other UI and UX problems"
+    "version": "4.1.0",
+    "changelog": "Added active playlist bar on the player page </br> Added custom folders feature (see More > Setup for more information) </br> Don't go back after clicking a 'Play all' button"
 }
