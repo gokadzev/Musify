@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:musify/API/musify.dart';
+import 'package:musify/customWidgets/marque.dart';
+import 'package:musify/customWidgets/song_bar.dart';
 import 'package:musify/customWidgets/spinner.dart';
 import 'package:musify/helper/mediaitem.dart';
 import 'package:musify/services/audio_manager.dart';
@@ -468,127 +470,238 @@ class AudioAppState extends State<AudioApp> {
                   if (metadata.extras['ytid'].toString().isNotEmpty)
                     Padding(
                       padding: EdgeInsets.only(top: size.height * 0.047),
-                      child: Builder(
-                        builder: (context) {
-                          return TextButton(
-                            onPressed: () {
-                              getSongLyrics(
-                                metadata.artist.toString(),
-                                metadata.title.toString(),
-                              );
-
-                              showBottomSheet(
-                                context: context,
-                                builder: (context) => Container(
-                                  decoration: const BoxDecoration(
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(18),
-                                      topRight: Radius.circular(18),
-                                    ),
-                                  ),
-                                  height: size.height / 2.14,
-                                  child: Column(
-                                    children: <Widget>[
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                          top: size.height * 0.012,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Builder(
+                            builder: (context) {
+                              return TextButton(
+                                onPressed: () {
+                                  showBottomSheet(
+                                    context: context,
+                                    builder: (context) => Container(
+                                      decoration: const BoxDecoration(
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(18),
+                                          topRight: Radius.circular(18),
                                         ),
-                                        child: Row(
+                                      ),
+                                      height: size.height / 2.14,
+                                      child: SingleChildScrollView(
+                                        child: Column(
                                           children: <Widget>[
-                                            IconButton(
-                                              icon: Icon(
-                                                FluentIcons
-                                                    .arrow_between_down_24_filled,
-                                                color: accent.primary,
-                                                size: 20,
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                top: size.height * 0.012,
                                               ),
-                                              onPressed: () =>
-                                                  {Navigator.pop(context)},
-                                            ),
-                                            Expanded(
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(
-                                                  right: 42,
-                                                ),
-                                                child: Center(
-                                                  child: Text(
-                                                    AppLocalizations.of(
-                                                      context,
-                                                    )!
-                                                        .lyrics,
-                                                    style: TextStyle(
+                                              child: Row(
+                                                children: <Widget>[
+                                                  IconButton(
+                                                    icon: Icon(
+                                                      FluentIcons
+                                                          .arrow_between_down_24_filled,
                                                       color: accent.primary,
-                                                      fontSize: 30,
-                                                      fontWeight:
-                                                          FontWeight.w500,
+                                                      size: 20,
+                                                    ),
+                                                    onPressed: () => {
+                                                      Navigator.pop(context)
+                                                    },
+                                                  ),
+                                                  Expanded(
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                        right: 42,
+                                                        bottom: 42,
+                                                      ),
+                                                      child: Center(
+                                                        child: MarqueeWidget(
+                                                          child: Text(
+                                                            activePlaylist[
+                                                                'title'],
+                                                            style: TextStyle(
+                                                              color: accent
+                                                                  .primary,
+                                                              fontSize: 30,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
+                                                ],
                                               ),
                                             ),
+                                            ListView.builder(
+                                              shrinkWrap: true,
+                                              physics:
+                                                  const BouncingScrollPhysics(),
+                                              addAutomaticKeepAlives: false,
+                                              addRepaintBoundaries: false,
+                                              itemCount:
+                                                  activePlaylist['list'].length,
+                                              itemBuilder: (
+                                                BuildContext context,
+                                                int index,
+                                              ) {
+                                                return Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                    top: 5,
+                                                    bottom: 5,
+                                                  ),
+                                                  child: SongBar(
+                                                    activePlaylist['list']
+                                                        [index],
+                                                    false,
+                                                  ),
+                                                );
+                                              },
+                                            )
                                           ],
                                         ),
                                       ),
-                                      ValueListenableBuilder<String>(
-                                        valueListenable: lyrics,
-                                        builder: (_, value, __) {
-                                          if (value != 'null' &&
-                                              value != 'not found') {
-                                            return Expanded(
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(6),
-                                                child: Center(
-                                                  child: SingleChildScrollView(
-                                                    child: Text(
-                                                      value,
-                                                      style: const TextStyle(
-                                                        fontSize: 16,
-                                                      ),
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            );
-                                          } else if (value == 'null') {
-                                            return const SizedBox(
-                                              child: Spinner(),
-                                            );
-                                          } else {
-                                            return Padding(
-                                              padding: const EdgeInsets.only(
-                                                top: 120,
-                                              ),
-                                              child: Center(
-                                                child: Text(
-                                                  AppLocalizations.of(
-                                                    context,
-                                                  )!
-                                                      .lyricsNotAvailable,
-                                                  style: const TextStyle(
-                                                    fontSize: 25,
-                                                  ),
-                                                ),
-                                              ),
-                                            );
-                                          }
-                                        },
-                                      )
-                                    ],
-                                  ),
+                                    ),
+                                  );
+                                },
+                                child: Text(
+                                  AppLocalizations.of(context)!.playlist,
+                                  style: TextStyle(color: accent.primary),
                                 ),
                               );
                             },
-                            child: Text(
-                              AppLocalizations.of(context)!.lyrics,
-                              style: TextStyle(color: accent.primary),
-                            ),
-                          );
-                        },
+                          ),
+                          const Text(' | '),
+                          Builder(
+                            builder: (context) {
+                              return TextButton(
+                                onPressed: () {
+                                  getSongLyrics(
+                                    metadata.artist.toString(),
+                                    metadata.title.toString(),
+                                  );
+
+                                  showBottomSheet(
+                                    context: context,
+                                    builder: (context) => Container(
+                                      decoration: const BoxDecoration(
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(18),
+                                          topRight: Radius.circular(18),
+                                        ),
+                                      ),
+                                      height: size.height / 2.14,
+                                      child: Column(
+                                        children: <Widget>[
+                                          Padding(
+                                            padding: EdgeInsets.only(
+                                              top: size.height * 0.012,
+                                            ),
+                                            child: Row(
+                                              children: <Widget>[
+                                                IconButton(
+                                                  icon: Icon(
+                                                    FluentIcons
+                                                        .arrow_between_down_24_filled,
+                                                    color: accent.primary,
+                                                    size: 20,
+                                                  ),
+                                                  onPressed: () =>
+                                                      {Navigator.pop(context)},
+                                                ),
+                                                Expanded(
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                      right: 42,
+                                                    ),
+                                                    child: Center(
+                                                      child: Text(
+                                                        AppLocalizations.of(
+                                                          context,
+                                                        )!
+                                                            .lyrics,
+                                                        style: TextStyle(
+                                                          color: accent.primary,
+                                                          fontSize: 30,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          ValueListenableBuilder<String>(
+                                            valueListenable: lyrics,
+                                            builder: (_, value, __) {
+                                              if (value != 'null' &&
+                                                  value != 'not found') {
+                                                return Expanded(
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(6),
+                                                    child: Center(
+                                                      child:
+                                                          SingleChildScrollView(
+                                                        child: Text(
+                                                          value,
+                                                          style:
+                                                              const TextStyle(
+                                                            fontSize: 16,
+                                                          ),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                              } else if (value == 'null') {
+                                                return const SizedBox(
+                                                  child: Spinner(),
+                                                );
+                                              } else {
+                                                return Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                    top: 120,
+                                                  ),
+                                                  child: Center(
+                                                    child: Text(
+                                                      AppLocalizations.of(
+                                                        context,
+                                                      )!
+                                                          .lyricsNotAvailable,
+                                                      style: const TextStyle(
+                                                        fontSize: 25,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                              }
+                                            },
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Text(
+                                  AppLocalizations.of(context)!.lyrics,
+                                  style: TextStyle(color: accent.primary),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
                       ),
-                    )
+                    ),
                 ],
               ),
             ),

@@ -7,9 +7,10 @@ import 'package:musify/services/download_manager.dart';
 import 'package:musify/style/appTheme.dart';
 
 class SongBar extends StatelessWidget {
-  SongBar(this.song, {super.key});
+  SongBar(this.song, this.clearPlaylist, {super.key});
 
   late final dynamic song;
+  late final bool clearPlaylist;
   late final songLikeStatus =
       ValueNotifier<bool>(isSongAlreadyLiked(song['ytid']));
 
@@ -21,8 +22,16 @@ class SongBar extends StatelessWidget {
         borderRadius: BorderRadius.circular(15),
         onTap: () {
           playSong(song);
-          if (activePlaylist.isNotEmpty) {
-            activePlaylist = [];
+          if (activePlaylist.isNotEmpty && clearPlaylist) {
+            activePlaylist = {
+              'ytid': '',
+              'title': 'No Playlist',
+              'subtitle': 'Just Updated',
+              'header_desc': '',
+              'type': 'playlist',
+              'image': '',
+              'list': [],
+            };
             id = 0;
           }
         },

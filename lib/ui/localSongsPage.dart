@@ -95,7 +95,17 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
                       ),
                       ElevatedButton(
                         onPressed: () async => {
-                          setActivePlaylist(await getLocalSongs()),
+                          setActivePlaylist(
+                            {
+                              'ytid': '',
+                              'title': AppLocalizations.of(context)!.localSongs,
+                              'subtitle': 'Just Updated',
+                              'header_desc': '',
+                              'type': 'playlist',
+                              'image': '',
+                              'list': await getLocalSongs()
+                            },
+                          ),
                           Navigator.pushReplacementNamed(context, '/'),
                         },
                         style: ButtonStyle(

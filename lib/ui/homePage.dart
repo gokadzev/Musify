@@ -176,7 +176,7 @@ class _HomePageState extends State<HomePage> {
                         physics: const BouncingScrollPhysics(),
                         itemCount: (data as dynamic).data.length as int,
                         itemBuilder: (context, index) {
-                          return SongBar((data as dynamic).data[index]);
+                          return SongBar((data as dynamic).data[index], true);
                         },
                       ),
                     )

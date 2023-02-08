@@ -162,7 +162,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                       ElevatedButton(
                         onPressed: () => {
                           setActivePlaylist(
-                            widget.playlist['list'] as List,
+                            widget.playlist,
                           ),
                           showToast(
                             AppLocalizations.of(context)!.queueInitText,
@@ -199,7 +199,10 @@ class _PlaylistPageState extends State<PlaylistPage> {
                         }
                         return Padding(
                           padding: const EdgeInsets.only(top: 5, bottom: 5),
-                          child: SongBar(_songsList[index]),
+                          child: SongBar(
+                            _songsList[index],
+                            true,
+                          ),
                         );
                       },
                     )

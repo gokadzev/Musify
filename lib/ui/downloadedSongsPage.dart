@@ -104,7 +104,18 @@ class _DownloadedSongsPageState extends State<DownloadedSongsPage> {
                       ),
                       ElevatedButton(
                         onPressed: () async => {
-                          setActivePlaylist(await getDownloadedSongs()),
+                          setActivePlaylist(
+                            {
+                              'ytid': '',
+                              'title':
+                                  AppLocalizations.of(context)!.downloadedSongs,
+                              'subtitle': 'Just Updated',
+                              'header_desc': '',
+                              'type': 'playlist',
+                              'image': '',
+                              'list': await getDownloadedSongs()
+                            },
+                          ),
                           Navigator.pushReplacementNamed(context, '/'),
                         },
                         style: ButtonStyle(

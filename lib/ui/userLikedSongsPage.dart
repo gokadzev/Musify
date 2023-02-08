@@ -95,7 +95,18 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
                       ),
                       ElevatedButton(
                         onPressed: () => {
-                          setActivePlaylist(userLikedSongsList),
+                          setActivePlaylist(
+                            {
+                              'ytid': '',
+                              'title':
+                                  AppLocalizations.of(context)!.userLikedSongs,
+                              'subtitle': 'Just Updated',
+                              'header_desc': '',
+                              'type': 'playlist',
+                              'image': '',
+                              'list': userLikedSongsList
+                            },
+                          ),
                           Navigator.pop(context, false)
                         },
                         style: ButtonStyle(
@@ -124,7 +135,10 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
               itemBuilder: (BuildContext context, int index) {
                 return Padding(
                   padding: const EdgeInsets.only(top: 5, bottom: 5),
-                  child: SongBar(userLikedSongsList[index]),
+                  child: SongBar(
+                    userLikedSongsList[index],
+                    true,
+                  ),
                 );
               },
             )

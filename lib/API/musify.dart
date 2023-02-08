@@ -26,7 +26,15 @@ List playlists = [];
 List userPlaylists = Hive.box('user').get('playlists', defaultValue: []);
 List userLikedSongsList = Hive.box('user').get('likedSongs', defaultValue: []);
 List suggestedPlaylists = [];
-List activePlaylist = [];
+Map activePlaylist = {
+  'ytid': '',
+  'title': 'No Playlist',
+  'subtitle': 'Just Updated',
+  'header_desc': '',
+  'type': 'playlist',
+  'image': '',
+  'list': [],
+};
 
 final lyrics = ValueNotifier<String>('null');
 String lastFetchedLyrics = 'null';
@@ -201,9 +209,11 @@ Future getSongsFromPlaylist(dynamic playlistid) async {
   return playlistSongs;
 }
 
-Future<void> setActivePlaylist(List plist) async {
+Future<void> setActivePlaylist(Map info) async {
+  final plist = info['list'] as List;
+  activePlaylist = info;
   if (plist is List<SongModel>) {
-    activePlaylist = [];
+    activePlaylist['list'] = [];
     id = 0;
     final activeTempPlaylist = <MediaItem>[
       for (final song in plist) songModelToMediaItem(song, song.data)
@@ -213,9 +223,8 @@ Future<void> setActivePlaylist(List plist) async {
 
     play();
   } else {
-    activePlaylist = plist;
     id = 0;
-    await playSong(activePlaylist[id]);
+    await playSong(activePlaylist['list'][id]);
   }
 }
 
