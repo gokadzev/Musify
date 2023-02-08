@@ -116,7 +116,6 @@ class _DownloadedSongsPageState extends State<DownloadedSongsPage> {
                               'list': await getDownloadedSongs()
                             },
                           ),
-                          Navigator.pushReplacementNamed(context, '/'),
                         },
                         style: ButtonStyle(
                           backgroundColor:

@@ -107,7 +107,6 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
                               'list': userLikedSongsList
                             },
                           ),
-                          Navigator.pop(context, false)
                         },
                         style: ButtonStyle(
                           backgroundColor:

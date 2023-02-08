@@ -106,7 +106,6 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
                               'list': await getLocalSongs()
                             },
                           ),
-                          Navigator.pushReplacementNamed(context, '/'),
                         },
                         style: ButtonStyle(
                           backgroundColor:
