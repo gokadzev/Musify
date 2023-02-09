@@ -1,5 +1,5 @@
 {
-    "version": "4.1.0",
-    "changelog": "Added active playlist bar on the player page </br> Added custom folders feature (see More > Setup for more information) </br> Don't go back after clicking a 'Play all' button"
+    "version": "4.2.0",
+    "changelog": "Changed the submit icon on keyboard for search fields </br> Added a default path for local songs </br> Changed the download implementation and added progress circle </br> Added search field on the local songs page"
 }
 
