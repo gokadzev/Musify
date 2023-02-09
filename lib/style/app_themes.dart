@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:musify/style/appColors.dart';
+import 'package:musify/style/app_colors.dart';
 
 ColorScheme accent = ColorScheme.fromSwatch(
   primarySwatch: getMaterialColorFromColor(

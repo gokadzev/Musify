@@ -1,6 +1,6 @@
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:musify/style/appColors.dart';
-import 'package:musify/style/appTheme.dart';
+import 'package:musify/style/app_colors.dart';
+import 'package:musify/style/app_themes.dart';
 
 void showToast(String text) {
   Fluttertoast.showToast(

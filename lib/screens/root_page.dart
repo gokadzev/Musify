@@ -11,7 +11,7 @@ import 'package:musify/screens/setup_page.dart';
 import 'package:musify/screens/user_playlists_page.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/update_manager.dart';
-import 'package:musify/style/appTheme.dart';
+import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/widgets/custom_animated_bottom_bar.dart';
 import 'package:on_audio_query/on_audio_query.dart';

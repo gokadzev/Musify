@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:musify/style/appTheme.dart';
+import 'package:musify/style/app_themes.dart';
 
 class Spinner extends StatelessWidget {
   const Spinner({super.key});

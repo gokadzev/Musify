@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/settings_manager.dart';
-import 'package:musify/style/appColors.dart';
-import 'package:musify/style/appTheme.dart';
+import 'package:musify/style/app_colors.dart';
+import 'package:musify/style/app_themes.dart';
 import 'package:musify/widgets/marque.dart';
 
 class SetupPage extends StatefulWidget {

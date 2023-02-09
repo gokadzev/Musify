@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:musify/style/appTheme.dart';
+import 'package:musify/style/app_themes.dart';
 
 class SettingSwitchBar extends StatelessWidget {
   SettingSwitchBar(this.tileName, this.tileIcon, this.value, this.onChanged);
