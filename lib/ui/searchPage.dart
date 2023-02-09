@@ -76,6 +76,7 @@ class _SearchPageState extends State<SearchPage> {
                     }
                   });
                 },
+                textInputAction: TextInputAction.search,
                 controller: _searchBar,
                 focusNode: _inputNode,
                 style: TextStyle(

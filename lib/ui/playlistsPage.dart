@@ -51,6 +51,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                   search();
                   FocusManager.instance.primaryFocus?.unfocus();
                 },
+                textInputAction: TextInputAction.search,
                 controller: _searchBar,
                 focusNode: _inputNode,
                 style: TextStyle(
