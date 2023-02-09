@@ -159,6 +159,16 @@ Future<List> searchPlaylist(String query) async {
       .toList();
 }
 
+Future<List> searchLocalSong(String query) async {
+  final _localSongs = await getLocalSongs();
+
+  return _localSongs
+      .where(
+        (song) => song.displayName.toLowerCase().contains(query.toLowerCase()),
+      )
+      .toList();
+}
+
 Future<List> getSearchSuggestions(String query) async {
   const baseUrl =
       'https://suggestqueries.google.com/complete/search?client=firefox&ds=yt&q=';
