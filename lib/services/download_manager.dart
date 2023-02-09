@@ -8,6 +8,7 @@ import 'package:musify/screens/more_page.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
+import 'package:musify/widgets/download_button.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
@@ -17,9 +18,22 @@ Future<void> downloadSong(BuildContext context, dynamic song) async {
     return;
   }
 
-  final filename = song['more_info']['singers'] +
+  lastDownloadedSongIdListener.value = song['ytid'];
+
+  final tempFileName = song['more_info']['singers'] +
       ' - ' +
       song['title']
+          .replaceAll(r'\', '')
+          .replaceAll('/', '')
+          .replaceAll('*', '')
+          .replaceAll('?', '')
+          .replaceAll('"', '')
+          .replaceAll('<', '')
+          .replaceAll('>', '')
+          .replaceAll('|', '')
+          .replaceAll(' ', '');
+
+  final filename = tempFileName
           .replaceAll(r'\', '')
           .replaceAll('/', '')
           .replaceAll('*', '')
@@ -31,46 +45,66 @@ Future<void> downloadSong(BuildContext context, dynamic song) async {
       '.' +
       prefferedFileExtension.value;
 
-  var filepath = '';
+  final filepath = '${downloadDirectory!}/$filename';
   try {
-    showToast(
-      AppLocalizations.of(context)!.downloadStarted,
-    );
-    await File('${downloadDirectory!}/$filename')
-        .create(recursive: true)
-        .then((value) => filepath = value.path);
-    await downloadFileFromYT(filename, filepath, downloadDirectory!, song)
-        .whenComplete(
-      () => showToast(
-        AppLocalizations.of(context)!.downloadCompleted,
-      ),
+    await downloadFileFromYT(
+      context,
+      filename,
+      filepath,
+      downloadDirectory!,
+      song,
     );
   } catch (e) {
     await [Permission.manageExternalStorage].request();
-    await File('${downloadDirectory!}/$filename')
-        .create(recursive: true)
-        .then((value) => filepath = value.path);
-    await downloadFileFromYT(filename, filepath, downloadDirectory!, song)
-        .whenComplete(
-      () => showToast(
-        AppLocalizations.of(context)!.downloadCompleted,
-      ),
+
+    await downloadFileFromYT(
+      context,
+      filename,
+      filepath,
+      downloadDirectory!,
+      song,
     );
   }
 }
 
 Future<void> downloadFileFromYT(
+  BuildContext context,
   String filename,
   String filepath,
   String dlPath,
   dynamic song,
 ) async {
-  final audioStream = await getSong(song['ytid'].toString(), false);
+  final manifest =
+      await yt.videos.streamsClient.getManifest(song['ytid'].toString());
+  final audio = manifest.audioOnly.withHighestBitrate();
+  final audioStream = yt.videos.streamsClient.get(audio);
   final file = File(filepath);
-  final fileStream = file.openWrite();
-  await yt.videos.streamsClient.get(audioStream as StreamInfo).pipe(fileStream);
-  await fileStream.flush();
-  await fileStream.close();
+
+  if (file.existsSync()) {
+    file.deleteSync();
+  }
+
+  final output = file.openWrite(mode: FileMode.writeOnlyAppend);
+
+  final len = audio.size.totalBytes;
+  var count = 0;
+
+  showToast(
+    AppLocalizations.of(context)!.downloadStarted,
+  );
+
+  await for (final data in audioStream) {
+    count += data.length;
+
+    downloadListenerNotifier.value = ((count / len) * 100).ceil();
+
+    output.add(data);
+  }
+  showToast(
+    AppLocalizations.of(context)!.downloadCompleted,
+  );
+  downloadListenerNotifier.value = 0;
+  await output.close();
 }
 
 Future<void> checkAudioPerms() async {

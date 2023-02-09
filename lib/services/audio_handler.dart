@@ -116,7 +116,7 @@ class MyAudioHandler extends BaseAudioHandler {
           p.inSeconds == audioPlayer.duration!.inSeconds - 5) {
         if (!hasNext && playNextSongAutomatically.value) {
           final randomSong = await getRandomSong();
-          final randomSongUrl = await getSong(randomSong['ytid'], true);
+          final randomSongUrl = await getSong(randomSong['ytid']);
           await addQueueItem(mapToMediaItem(randomSong, randomSongUrl));
         }
       } else if (isNotLoading &&

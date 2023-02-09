@@ -47,7 +47,7 @@ bool isMuted = false;
 Future<void> playSong(Map song) async {
   final String songUrl = song['ytid'].length == 0
       ? song['songUrl'].toString()
-      : await getSong(song['ytid'], true);
+      : await getSong(song['ytid']);
 
   if (await checkIfSponsorBlockIsAvailable(song, songUrl) == false) {
     await MyAudioHandler().addQueueItem(mapToMediaItem(song, songUrl));

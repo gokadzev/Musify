@@ -3,8 +3,8 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/services/audio_manager.dart';
-import 'package:musify/services/download_manager.dart';
 import 'package:musify/style/app_themes.dart';
+import 'package:musify/widgets/download_button.dart';
 
 class SongBar extends StatelessWidget {
   SongBar(this.song, this.clearPlaylist, {super.key});
@@ -122,11 +122,9 @@ class SongBar extends StatelessWidget {
                     }
                   },
                 ),
-                IconButton(
-                  color: accent.primary,
-                  icon: const Icon(FluentIcons.arrow_download_24_regular),
-                  onPressed: () => downloadSong(context, song),
-                ),
+                DownloadButton(
+                  song: song,
+                )
               ],
             ),
           ],
