@@ -5,11 +5,11 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:musify/API/musify.dart';
-import 'package:musify/customWidgets/song_bar.dart';
-import 'package:musify/customWidgets/spinner.dart';
-import 'package:musify/helper/flutter_toast.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:musify/style/appTheme.dart';
+import 'package:musify/utilities/flutter_toast.dart';
+import 'package:musify/widgets/song_bar.dart';
+import 'package:musify/widgets/spinner.dart';
 
 class PlaylistPage extends StatefulWidget {
   const PlaylistPage({super.key, required this.playlist});

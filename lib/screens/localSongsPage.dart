@@ -2,18 +2,18 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:musify/API/musify.dart';
-import 'package:musify/customWidgets/spinner.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:musify/style/appTheme.dart';
+import 'package:musify/widgets/spinner.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
-class DownloadedSongsPage extends StatefulWidget {
+class LocalSongsPage extends StatefulWidget {
   @override
-  State<DownloadedSongsPage> createState() => _DownloadedSongsPageState();
+  State<LocalSongsPage> createState() => _LocalSongsPageState();
 }
 
-class _DownloadedSongsPageState extends State<DownloadedSongsPage> {
+class _LocalSongsPageState extends State<LocalSongsPage> {
   @override
   void initState() {
     super.initState();
@@ -30,7 +30,7 @@ class _DownloadedSongsPageState extends State<DownloadedSongsPage> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          AppLocalizations.of(context)!.downloadedSongs,
+          AppLocalizations.of(context)!.localSongs,
           style: TextStyle(
             color: accent.primary,
             fontSize: 25,
@@ -63,12 +63,12 @@ class _DownloadedSongsPageState extends State<DownloadedSongsPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Icon(
-                            FluentIcons.arrow_download_24_filled,
+                            FluentIcons.save_24_filled,
                             size: 30,
                             color: accent.primary,
                           ),
                           Text(
-                            AppLocalizations.of(context)!.downloadedSongs,
+                            AppLocalizations.of(context)!.localSongs,
                             style: TextStyle(color: accent.primary),
                             textAlign: TextAlign.center,
                           ),
@@ -83,19 +83,10 @@ class _DownloadedSongsPageState extends State<DownloadedSongsPage> {
                     children: [
                       const SizedBox(height: 12),
                       Text(
-                        AppLocalizations.of(context)!.downloadedSongs,
+                        AppLocalizations.of(context)!.localSongs,
                         style: TextStyle(
                           color: accent.primary,
                           fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        '${AppLocalizations.of(context)!.yourDownloadedSongsHere}!',
-                        style: TextStyle(
-                          color: accent.primary,
-                          fontSize: 10,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -107,13 +98,12 @@ class _DownloadedSongsPageState extends State<DownloadedSongsPage> {
                           setActivePlaylist(
                             {
                               'ytid': '',
-                              'title':
-                                  AppLocalizations.of(context)!.downloadedSongs,
+                              'title': AppLocalizations.of(context)!.localSongs,
                               'subtitle': 'Just Updated',
                               'header_desc': '',
                               'type': 'playlist',
                               'image': '',
-                              'list': await getDownloadedSongs()
+                              'list': await getLocalSongs()
                             },
                           ),
                         },
@@ -135,7 +125,7 @@ class _DownloadedSongsPageState extends State<DownloadedSongsPage> {
             ),
             const Padding(padding: EdgeInsets.only(top: 40)),
             FutureBuilder(
-              future: getDownloadedSongs(),
+              future: getLocalSongs(),
               builder: (context, data) {
                 if (data.connectionState != ConnectionState.done) {
                   return const Center(

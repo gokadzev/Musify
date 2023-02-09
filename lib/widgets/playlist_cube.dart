@@ -2,9 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
-import 'package:musify/customWidgets/delayed_display.dart';
+import 'package:musify/screens/playlistPage.dart';
 import 'package:musify/style/appTheme.dart';
-import 'package:musify/ui/playlistPage.dart';
+import 'package:musify/widgets/delayed_display.dart';
 
 class PlaylistCube extends StatelessWidget {
   const PlaylistCube({

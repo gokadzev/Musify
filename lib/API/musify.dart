@@ -7,13 +7,13 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
-import 'package:musify/helper/formatter.dart';
-import 'package:musify/helper/mediaitem.dart';
 import 'package:musify/services/audio_handler.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/lyrics_service.dart';
 import 'package:musify/services/settings_manager.dart';
+import 'package:musify/utilities/formatter.dart';
+import 'package:musify/utilities/mediaitem.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 

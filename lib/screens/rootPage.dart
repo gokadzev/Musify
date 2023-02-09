@@ -3,17 +3,17 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:musify/customWidgets/custom_animated_bottom_bar.dart';
-import 'package:musify/helper/flutter_toast.dart';
-import 'package:musify/helper/version.dart';
+import 'package:musify/screens/homePage.dart';
+import 'package:musify/screens/morePage.dart';
+import 'package:musify/screens/player.dart';
+import 'package:musify/screens/searchPage.dart';
+import 'package:musify/screens/setupPage.dart';
+import 'package:musify/screens/userPlaylistsPage.dart';
 import 'package:musify/services/audio_manager.dart';
+import 'package:musify/services/update_manager.dart';
 import 'package:musify/style/appTheme.dart';
-import 'package:musify/ui/homePage.dart';
-import 'package:musify/ui/morePage.dart';
-import 'package:musify/ui/player.dart';
-import 'package:musify/ui/searchPage.dart';
-import 'package:musify/ui/setupPage.dart';
-import 'package:musify/ui/userPlaylistsPage.dart';
+import 'package:musify/utilities/flutter_toast.dart';
+import 'package:musify/widgets/custom_animated_bottom_bar.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 class Musify extends StatefulWidget {

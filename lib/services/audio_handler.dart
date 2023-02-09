@@ -2,9 +2,9 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter/widgets.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:musify/API/musify.dart';
-import 'package:musify/helper/mediaitem.dart';
+import 'package:musify/screens/morePage.dart';
 import 'package:musify/services/audio_manager.dart';
-import 'package:musify/ui/morePage.dart';
+import 'package:musify/utilities/mediaitem.dart';
 
 class MyAudioHandler extends BaseAudioHandler {
   MyAudioHandler() {

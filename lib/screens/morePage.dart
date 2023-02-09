@@ -2,22 +2,22 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hive/hive.dart';
-import 'package:musify/customWidgets/setting_bar.dart';
-import 'package:musify/customWidgets/setting_switch_bar.dart';
-import 'package:musify/helper/flutter_toast.dart';
-import 'package:musify/helper/url_launcher.dart';
-import 'package:musify/helper/version.dart';
 import 'package:musify/main.dart';
+import 'package:musify/screens/aboutPage.dart';
+import 'package:musify/screens/downloadedSongsPage.dart';
+import 'package:musify/screens/localSongsPage.dart';
+import 'package:musify/screens/playlistsPage.dart';
+import 'package:musify/screens/searchPage.dart';
+import 'package:musify/screens/setupPage.dart';
+import 'package:musify/screens/userLikedSongsPage.dart';
 import 'package:musify/services/data_manager.dart';
+import 'package:musify/services/update_manager.dart';
 import 'package:musify/style/appColors.dart';
 import 'package:musify/style/appTheme.dart';
-import 'package:musify/ui/aboutPage.dart';
-import 'package:musify/ui/downloadedSongsPage.dart';
-import 'package:musify/ui/localSongsPage.dart';
-import 'package:musify/ui/playlistsPage.dart';
-import 'package:musify/ui/searchPage.dart';
-import 'package:musify/ui/setupPage.dart';
-import 'package:musify/ui/userLikedSongsPage.dart';
+import 'package:musify/utilities/flutter_toast.dart';
+import 'package:musify/utilities/url_launcher.dart';
+import 'package:musify/widgets/setting_bar.dart';
+import 'package:musify/widgets/setting_switch_bar.dart';
 
 final prefferedFileExtension = ValueNotifier<String>(
   Hive.box('settings').get('audioFileType', defaultValue: 'mp3') as String,

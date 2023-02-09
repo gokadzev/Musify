@@ -5,14 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:musify/API/musify.dart';
-import 'package:musify/customWidgets/marque.dart';
-import 'package:musify/customWidgets/song_bar.dart';
-import 'package:musify/customWidgets/spinner.dart';
-import 'package:musify/helper/mediaitem.dart';
+import 'package:musify/screens/morePage.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/download_manager.dart';
 import 'package:musify/style/appTheme.dart';
-import 'package:musify/ui/morePage.dart';
+import 'package:musify/utilities/mediaitem.dart';
+import 'package:musify/widgets/marque.dart';
+import 'package:musify/widgets/song_bar.dart';
+import 'package:musify/widgets/spinner.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 class AudioApp extends StatefulWidget {

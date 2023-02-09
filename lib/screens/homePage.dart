@@ -2,12 +2,12 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:musify/API/musify.dart';
-import 'package:musify/customWidgets/marque.dart';
-import 'package:musify/customWidgets/playlist_cube.dart';
-import 'package:musify/customWidgets/song_bar.dart';
-import 'package:musify/customWidgets/spinner.dart';
+import 'package:musify/screens/playlistsPage.dart';
 import 'package:musify/style/appTheme.dart';
-import 'package:musify/ui/playlistsPage.dart';
+import 'package:musify/widgets/marque.dart';
+import 'package:musify/widgets/playlist_cube.dart';
+import 'package:musify/widgets/song_bar.dart';
+import 'package:musify/widgets/spinner.dart';
 
 class HomePage extends StatefulWidget {
   @override
