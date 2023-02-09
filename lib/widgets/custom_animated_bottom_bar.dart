@@ -3,7 +3,7 @@
 // remade (not original)
 
 import 'package:flutter/material.dart';
-import 'package:musify/screens/rootPage.dart';
+import 'package:musify/screens/root_page.dart';
 import 'package:musify/widgets/marque.dart';
 
 class CustomAnimatedBottomBar extends StatelessWidget {
