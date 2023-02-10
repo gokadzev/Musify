@@ -365,7 +365,7 @@ class SettingsCards extends StatelessWidget {
           valueListenable: foregroundService,
           builder: (_, foregroundValue, __) {
             return SettingSwitchBar(
-              'Foreground Service',
+              AppLocalizations.of(context)!.foregroundService,
               FluentIcons.eye_24_filled,
               foregroundValue,
               (value) {

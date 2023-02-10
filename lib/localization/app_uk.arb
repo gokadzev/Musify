@@ -26,6 +26,7 @@
   "downloadStarted": "Завантаження розпочато",
   "downloadedSongs": "Downloaded songs",
   "falseMSG": "Хиба",
+  "foregroundService": "Foreground Service",
   "home": "Головна",
   "language": "Мова",
   "languageMsg": "Мову змiнено",

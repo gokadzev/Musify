@@ -26,6 +26,7 @@
   "downloadStarted": "Скачивание начато",
   "downloadedSongs": "Downloaded songs",
   "falseMSG": "Ложь",
+  "foregroundService": "Foreground Service",
   "home": "Главная",
   "language": "Язык",
   "languageMsg": "Язык изменён",
