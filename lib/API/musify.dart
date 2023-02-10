@@ -80,7 +80,7 @@ Future<List<dynamic>> getUserPlaylists() async {
   for (final playlistID in userPlaylists) {
     final plist = await yt.playlists.get(playlistID);
     playlistsByUser.add({
-      'ytid': plist.id,
+      'ytid': plist.id.toString(),
       'title': plist.title,
       'subtitle': 'Just Updated',
       'header_desc': plist.description.length < 120
