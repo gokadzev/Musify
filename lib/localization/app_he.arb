@@ -26,6 +26,7 @@
   "downloadStarted": "Download Started",
   "downloadedSongs": "Downloaded songs",
   "falseMSG": "False",
+  "foregroundService": "Foreground Service",
   "home": "Home",
   "language": "Language",
   "languageMsg": "Language has been changed",
