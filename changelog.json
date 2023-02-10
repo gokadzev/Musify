@@ -1,5 +1,5 @@
 {
-    "version": "4.2.0",
-    "changelog": "Changed the submit icon on keyboard for search fields </br> Added a default path for local songs </br> Changed the download implementation and added progress circle </br> Added search field on the local songs page"
+    "version": "4.3.0",
+    "changelog": "Set targetSdkVersion to 30 </br> Fixed the user playlists error </br> Miscellaneous other performance and code improvements"
 }
 
