@@ -81,7 +81,6 @@ Future changeLoopStatus() async {
   } else {
     repeatNotifier.value = false;
     await _audioHandler.setRepeatMode(AudioServiceRepeatMode.none);
-    await audioPlayer.setLoopMode(LoopMode.off);
   }
 }
 
