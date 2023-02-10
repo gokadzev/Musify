@@ -8,8 +8,8 @@ publish_to: 'none'
 version: 4.2.0+41
 
 environment:
-  sdk: '>=2.18.6 <3.0.0'
-  flutter: ^3.7.1
+  sdk: '>=2.19.2 <3.0.0'
+  flutter: ^3.7.3
 
 dependencies:
   audio_service: ^0.18.9
