@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
-import 'package:audio_session/audio_session.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -13,15 +12,12 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:musify/screens/more_page.dart';
 import 'package:musify/screens/root_page.dart';
 import 'package:musify/services/audio_handler.dart';
-import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/download_manager.dart';
 import 'package:musify/style/app_colors.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-GetIt getIt = GetIt.instance;
 late PackageInfo packageInfo;
-bool _interrupted = false;
 ThemeMode themeMode = ThemeMode.system;
 
 final appLanguages = <String, String>{
@@ -194,42 +190,17 @@ void main() async {
 }
 
 Future<void> initialisation() async {
-  getIt.registerSingleton<AudioHandler>(
-    await AudioService.init(
-      builder: MyAudioHandler.new,
-      config: const AudioServiceConfig(
-        androidNotificationChannelId: 'com.gokadzev.musify',
-        androidNotificationChannelName: 'Musify',
-        androidNotificationIcon: 'mipmap/launcher_icon',
-        androidShowNotificationBadge: true,
-        androidStopForegroundOnPause: false,
-      ),
+  final audioHandler = await AudioService.init(
+    builder: MyAudioHandler.new,
+    config: const AudioServiceConfig(
+      androidNotificationChannelId: 'com.gokadzev.musify',
+      androidNotificationChannelName: 'Musify',
+      androidNotificationIcon: 'mipmap/launcher_icon',
+      androidShowNotificationBadge: true,
+      androidStopForegroundOnPause: false,
     ),
   );
-
-  final session = await AudioSession.instance;
-  await session.configure(const AudioSessionConfiguration.music());
-  session.interruptionEventStream.listen((event) {
-    if (event.begin) {
-      if (audioPlayer.playing) {
-        pause();
-        _interrupted = true;
-      }
-    } else {
-      switch (event.type) {
-        case AudioInterruptionType.pause:
-        case AudioInterruptionType.duck:
-          if (!audioPlayer.playing && _interrupted) {
-            play();
-          }
-          break;
-        case AudioInterruptionType.unknown:
-          break;
-      }
-      _interrupted = false;
-    }
-  });
-  await enableBooster();
+  GetIt.I.registerSingleton<AudioHandler>(audioHandler);
 
   packageInfo = await PackageInfo.fromPlatform();
 

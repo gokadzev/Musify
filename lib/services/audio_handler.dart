@@ -1,4 +1,5 @@
 import 'package:audio_service/audio_service.dart';
+import 'package:audio_session/audio_session.dart';
 import 'package:flutter/widgets.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:musify/API/musify.dart';
@@ -6,8 +7,9 @@ import 'package:musify/screens/more_page.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/utilities/mediaitem.dart';
 
-class MyAudioHandler extends BaseAudioHandler {
+class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   MyAudioHandler() {
+    _initAudioSession();
     _loadEmptyPlaylist();
     _notifyAudioHandlerAboutPlaybackEvents();
     _listenForDurationChanges();
@@ -16,6 +18,8 @@ class MyAudioHandler extends BaseAudioHandler {
     _listenForPositionChanges();
     _listenProcessingStates();
   }
+
+  bool _interrupted = false;
 
   @override
   Future<void> onTaskRemoved() async {
@@ -35,6 +39,32 @@ class MyAudioHandler extends BaseAudioHandler {
     } catch (e) {
       debugPrint('Error: $e');
     }
+  }
+
+  Future _initAudioSession() async {
+    final session = await AudioSession.instance;
+    await session.configure(const AudioSessionConfiguration.music());
+    session.interruptionEventStream.listen((event) {
+      if (event.begin) {
+        if (audioPlayer.playing) {
+          pause();
+          _interrupted = true;
+        }
+      } else {
+        switch (event.type) {
+          case AudioInterruptionType.pause:
+          case AudioInterruptionType.duck:
+            if (!audioPlayer.playing && _interrupted) {
+              play();
+            }
+            break;
+          case AudioInterruptionType.unknown:
+            break;
+        }
+        _interrupted = false;
+      }
+    });
+    await enableBooster();
   }
 
   void _notifyAudioHandlerAboutPlaybackEvents() {

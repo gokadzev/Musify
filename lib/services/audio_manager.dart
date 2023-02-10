@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:musify/API/musify.dart';
-import 'package:musify/main.dart';
 import 'package:musify/screens/more_page.dart';
 import 'package:musify/services/audio_handler.dart';
 import 'package:musify/services/data_manager.dart';
@@ -12,7 +12,7 @@ import 'package:musify/utilities/mediaitem.dart';
 
 final _equalizer = AndroidEqualizer();
 final _loudnessEnhancer = AndroidLoudnessEnhancer();
-final _audioHandler = getIt<AudioHandler>();
+final _audioHandler = GetIt.I<AudioHandler>();
 
 AudioPlayer audioPlayer = AudioPlayer(
   audioPipeline: AudioPipeline(
@@ -50,17 +50,17 @@ Future<void> playSong(Map song) async {
       : await getSong(song['ytid']);
 
   if (await checkIfSponsorBlockIsAvailable(song, songUrl) == false) {
-    await MyAudioHandler().addQueueItem(mapToMediaItem(song, songUrl));
+    await _audioHandler.addQueueItem(mapToMediaItem(song, songUrl));
   }
 
-  await audioPlayer.play();
+  await _audioHandler.play();
 }
 
 Future changeShuffleStatus() async {
   if (shuffleNotifier.value == true) {
-    await audioPlayer.setShuffleModeEnabled(false);
+    await _audioHandler.setShuffleMode(AudioServiceShuffleMode.none);
   } else {
-    await audioPlayer.setShuffleModeEnabled(true);
+    await _audioHandler.setShuffleMode(AudioServiceShuffleMode.all);
   }
 }
 
@@ -77,9 +77,10 @@ void changeAutoPlayNextStatus() {
 Future changeLoopStatus() async {
   if (repeatNotifier.value == false) {
     repeatNotifier.value = true;
-    await audioPlayer.setLoopMode(LoopMode.one);
+    await _audioHandler.setRepeatMode(AudioServiceRepeatMode.one);
   } else {
     repeatNotifier.value = false;
+    await _audioHandler.setRepeatMode(AudioServiceRepeatMode.none);
     await audioPlayer.setLoopMode(LoopMode.off);
   }
 }
