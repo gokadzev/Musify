@@ -12,7 +12,7 @@ const apiUrl =
     'https://raw.githubusercontent.com/gokadzev/Musify/update/check.json';
 
 Future<bool> checkAppUpdates() async {
-  final version = packageInfo.version;
+  version ??= packageInfo.version;
   final response = await http.get(Uri.parse(apiUrl));
   if (response.statusCode != 200) {
     throw Exception('Failed to fetch app updates');
