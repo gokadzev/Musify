@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:http/http.dart' as http;
 import 'package:musify/main.dart';
 
 String? version;
@@ -11,39 +12,34 @@ const apiUrl =
     'https://raw.githubusercontent.com/gokadzev/Musify/update/check.json';
 
 Future<bool> checkAppUpdates() async {
-  version ??= packageInfo.version;
-  final client = HttpClient();
-  final request = await client.getUrl(Uri.parse(apiUrl));
-  final response = await request.close();
-  final contentAsString = await utf8.decodeStream(response);
-  final map = json.decode(contentAsString);
-  if (map['version'].toString() != version) {
-    return true;
-  } else {
-    return false;
+  final version = packageInfo.version;
+  final response = await http.get(Uri.parse(apiUrl));
+  if (response.statusCode != 200) {
+    throw Exception('Failed to fetch app updates');
   }
+  final map = json.decode(response.body) as Map<String, dynamic>;
+  return map['version'].toString() != version;
 }
 
 Future<void> downloadAppUpdates() async {
-  final client = HttpClient();
-  final request = await client.getUrl(Uri.parse(apiUrl));
-  final response = await request.close();
-  final contentAsString = await utf8.decodeStream(response);
-  final map = json.decode(contentAsString);
-  if (await getCPUArchitecture() == 'aarch64') {
-    dlUrl = map['arm64url'].toString();
-  } else {
-    dlUrl = map['url'].toString();
+  final response = await http.get(Uri.parse(apiUrl));
+  if (response.statusCode != 200) {
+    throw Exception('Failed to fetch app updates');
   }
+  final map = json.decode(response.body) as Map<String, dynamic>;
+  final dlUrl = await getCPUArchitecture() == 'aarch64'
+      ? map['arm64url'].toString()
+      : map['url'].toString();
   final dlPath = await FilePicker.platform.getDirectoryPath();
-  final file = File('${dlPath!}/Musify.apk');
+  final file = File('$dlPath/Musify.apk');
   if (await file.exists()) {
     await file.delete();
   }
   await FlutterDownloader.enqueue(
     url: dlUrl,
-    savedDir: dlPath,
-    saveInPublicStorage: true,
+    savedDir: dlPath!,
+    fileName: 'Musify.apk',
+    showNotification: true,
   );
 }
 
