@@ -8,7 +8,6 @@
 * Play Local / Downloaded Songs Support
 * High Quality mp3 / m4a / flac Format
 * Lyrics Support
-* SponsorBlock Support
 * No Ads
 * No Subscriptions
 * Inbuilt Updater

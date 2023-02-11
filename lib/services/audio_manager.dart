@@ -1,24 +1,28 @@
 import 'dart:async';
 
-import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:musify/API/musify.dart';
-import 'package:musify/main.dart';
 import 'package:musify/screens/more_page.dart';
-import 'package:musify/services/audio_handler.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/utilities/mediaitem.dart';
+import 'package:rxdart/rxdart.dart';
 
-final _equalizer = AndroidEqualizer();
+Stream<PositionData> get positionDataStream =>
+    Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
+      audioPlayer.positionStream,
+      audioPlayer.bufferedPositionStream,
+      audioPlayer.durationStream,
+      (position, bufferedPosition, duration) =>
+          PositionData(position, bufferedPosition, duration ?? Duration.zero),
+    );
+
 final _loudnessEnhancer = AndroidLoudnessEnhancer();
-final _audioHandler = getIt<AudioHandler>();
 
 AudioPlayer audioPlayer = AudioPlayer(
   audioPipeline: AudioPipeline(
     androidAudioEffects: [
       _loudnessEnhancer,
-      _equalizer,
     ],
   ),
 );
@@ -26,8 +30,8 @@ AudioPlayer audioPlayer = AudioPlayer(
 final shuffleNotifier = ValueNotifier<bool>(false);
 final repeatNotifier = ValueNotifier<bool>(false);
 final playerState = ValueNotifier<PlayerState>(audioPlayer.playerState);
-final duration = ValueNotifier<Duration?>(Duration.zero);
-final position = ValueNotifier<Duration?>(Duration.zero);
+
+final _playlist = ConcatenatingAudioSource(children: []);
 
 bool get hasNext => activePlaylist.isEmpty
     ? audioPlayer.hasNext
@@ -36,12 +40,6 @@ bool get hasNext => activePlaylist.isEmpty
 bool get hasPrevious =>
     activePlaylist.isEmpty ? audioPlayer.hasPrevious : id - 1 >= 0;
 
-String get durationText =>
-    duration.value != null ? duration.value.toString().split('.').first : '';
-
-String get positionText =>
-    position.value != null ? position.value.toString().split('.').first : '';
-
 bool isMuted = false;
 
 Future<void> playSong(Map song) async {
@@ -49,11 +47,32 @@ Future<void> playSong(Map song) async {
       ? song['songUrl'].toString()
       : await getSong(song['ytid']);
 
-  if (await checkIfSponsorBlockIsAvailable(song, songUrl) == false) {
-    await MyAudioHandler().addQueueItem(mapToMediaItem(song, songUrl));
-  }
+  await audioPlayer.setAudioSource(
+    AudioSource.uri(
+      Uri.parse(songUrl),
+      tag: mapToMediaItem(song, songUrl),
+    ),
+  );
 
   await audioPlayer.play();
+}
+
+Future playNext() async {
+  if (activePlaylist.isEmpty || activePlaylist['list'][id + 1] == null)
+    await audioPlayer.seekToPrevious();
+  else {
+    await playSong(activePlaylist['list'][id + 1]);
+    id = id + 1;
+  }
+}
+
+Future playPrevious() async {
+  if (activePlaylist.isEmpty || activePlaylist['list'][id - 1] == null)
+    await audioPlayer.seekToNext();
+  else {
+    await playSong(activePlaylist['list'][id - 1]);
+    id = id - 1;
+  }
 }
 
 Future changeShuffleStatus() async {
@@ -84,52 +103,10 @@ Future changeLoopStatus() async {
   }
 }
 
-Future<bool> checkIfSponsorBlockIsAvailable(song, songUrl) async {
-  if (sponsorBlockSupport.value && song['ytid'].length != 0) {
-    final segments = await getSkipSegments(song['ytid']);
-    if (segments.isNotEmpty) {
-      if (segments.length == 1) {
-        await MyAudioHandler().addQueueItem(
-          mapToMediaItem(song, songUrl),
-          Duration(seconds: segments[0]['end']!),
-        );
-      } else {
-        await MyAudioHandler().addQueueItem(
-          mapToMediaItem(song, songUrl),
-          Duration(seconds: segments[0]['end']!),
-          Duration(seconds: segments[1]['start']!),
-        );
-      }
-      return true;
-    }
-  }
-  return false;
-}
-
-void changeSponsorBlockStatus() {
-  if (sponsorBlockSupport.value == false) {
-    sponsorBlockSupport.value = true;
-    addOrUpdateData('settings', 'sponsorBlockSupport', true);
-  } else {
-    sponsorBlockSupport.value = false;
-    addOrUpdateData('settings', 'sponsorBlockSupport', false);
-  }
-}
-
 Future enableBooster() async {
   await _loudnessEnhancer.setEnabled(true);
   await _loudnessEnhancer.setTargetGain(1);
 }
-
-void play() => _audioHandler.play();
-
-void pause() => _audioHandler.pause();
-
-void stop() => _audioHandler.stop();
-
-void playNext() => _audioHandler.skipToNext();
-
-void playPrevious() => _audioHandler.skipToPrevious();
 
 Future mute(bool muted) async {
   if (muted) {
@@ -137,4 +114,48 @@ Future mute(bool muted) async {
   } else {
     await audioPlayer.setVolume(1);
   }
+}
+
+Future<void> setNewPlaylist() async {
+  try {
+    await audioPlayer.setAudioSource(_playlist);
+  } catch (e) {
+    debugPrint('Error: $e');
+  }
+}
+
+Future<void> addSongs(List<AudioSource> songs) async {
+  await _playlist.addAll(songs);
+}
+
+class PositionData {
+  PositionData(this.position, this.bufferedPosition, this.duration);
+  final Duration position;
+  final Duration bufferedPosition;
+  final Duration duration;
+}
+
+void activateListeners() {
+  audioPlayer.playerStateStream.listen((state) async {
+    playerState.value = state;
+    if (state.processingState == ProcessingState.completed) {
+      await audioPlayer.pause();
+      await audioPlayer.seek(audioPlayer.duration);
+      if (!hasNext) {
+        await audioPlayer.seek(Duration.zero);
+      } else if (hasNext) {
+        await playNext();
+      }
+    }
+  });
+
+  audioPlayer.positionStream.listen((p) async {
+    final durationIsNotNull = audioPlayer.duration != null;
+    if (durationIsNotNull && p.inSeconds == audioPlayer.duration!.inSeconds) {
+      if (!hasNext && playNextSongAutomatically.value) {
+        final randomSong = await getRandomSong();
+        await playSong(randomSong);
+      }
+    }
+  });
 }

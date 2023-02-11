@@ -1,13 +1,12 @@
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:audio_service/audio_service.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
-import 'package:musify/services/audio_handler.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/lyrics_service.dart';
@@ -225,13 +224,15 @@ Future<void> setActivePlaylist(Map info) async {
   if (plist is List<SongModel>) {
     activePlaylist['list'] = [];
     id = 0;
-    final activeTempPlaylist = <MediaItem>[
-      for (final song in plist) songModelToMediaItem(song, song.data)
+    final activeTempPlaylist = <AudioSource>[
+      for (final song in plist)
+        createAudioSource(songModelToMediaItem(song, song.data))
     ];
 
-    await MyAudioHandler().addQueueItems(activeTempPlaylist);
+    await addSongs(activeTempPlaylist);
+    await setNewPlaylist();
 
-    play();
+    await audioPlayer.play();
   } else {
     id = 0;
     await playSong(activePlaylist['list'][id]);
@@ -302,45 +303,6 @@ Future<List<SongModel>> getLocalSongs() async {
       .toList();
 
   return localSongs;
-}
-
-Future<List<Map<String, int>>> getSkipSegments(String id) async {
-  try {
-    final res = await http.get(
-      Uri(
-        scheme: 'https',
-        host: 'sponsor.ajay.app',
-        path: '/api/skipSegments',
-        queryParameters: {
-          'videoID': id,
-          'category': [
-            'sponsor',
-            'selfpromo',
-            'interaction',
-            'intro',
-            'outro',
-            'music_offtopic'
-          ],
-          'actionType': 'skip'
-        },
-      ),
-    );
-    if (res.body != 'Not Found') {
-      final data = jsonDecode(res.body);
-      final segments = data.map((obj) {
-        return Map.castFrom<String, dynamic, String, int>({
-          'start': obj['segment'].first.toInt(),
-          'end': obj['segment'].last.toInt(),
-        });
-      }).toList();
-      return List.castFrom<dynamic, Map<String, int>>(segments);
-    } else {
-      return [];
-    }
-  } catch (e, stack) {
-    debugPrint('$e $stack');
-    return [];
-  }
 }
 
 Future getSongLyrics(String artist, String title) async {

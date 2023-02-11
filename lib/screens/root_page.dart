@@ -257,13 +257,15 @@ class AppState extends State<Musify> {
                       const Spacer(),
                       Padding(
                         padding: const EdgeInsets.only(right: 8),
-                        child: ValueListenableBuilder<PlayerState>(
-                          valueListenable: playerState,
-                          builder: (_, value, __) {
-                            if (value.processingState ==
-                                    ProcessingState.loading ||
-                                value.processingState ==
-                                    ProcessingState.buffering) {
+                        child: StreamBuilder<PlayerState>(
+                          stream: audioPlayer.playerStateStream,
+                          builder: (context, snapshot) {
+                            final playerState = snapshot.data;
+                            final processingState =
+                                playerState?.processingState;
+                            final playing = playerState?.playing;
+                            if (processingState == ProcessingState.loading ||
+                                processingState == ProcessingState.buffering) {
                               return Container(
                                 margin: const EdgeInsets.all(8),
                                 width: MediaQuery.of(context).size.width * 0.08,
@@ -275,17 +277,17 @@ class AppState extends State<Musify> {
                                   ),
                                 ),
                               );
-                            } else if (value.playing != true) {
+                            } else if (playing != true) {
                               return IconButton(
                                 icon: Icon(
                                   FluentIcons.play_12_filled,
                                   color: accent.primary,
                                 ),
                                 iconSize: 45,
-                                onPressed: play,
+                                onPressed: audioPlayer.play,
                                 splashColor: Colors.transparent,
                               );
-                            } else if (value.processingState !=
+                            } else if (processingState !=
                                 ProcessingState.completed) {
                               return IconButton(
                                 icon: Icon(
@@ -293,7 +295,7 @@ class AppState extends State<Musify> {
                                   color: accent.primary,
                                 ),
                                 iconSize: 45,
-                                onPressed: pause,
+                                onPressed: audioPlayer.pause,
                                 splashColor: Colors.transparent,
                               );
                             } else {

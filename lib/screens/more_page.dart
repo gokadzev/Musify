@@ -25,9 +25,6 @@ final prefferedFileExtension = ValueNotifier<String>(
 final playNextSongAutomatically = ValueNotifier<bool>(
   Hive.box('settings').get('playNextSongAutomatically', defaultValue: false),
 );
-final sponsorBlockSupport = ValueNotifier<bool>(
-  Hive.box('settings').get('sponsorBlockSupport', defaultValue: false),
-);
 
 final useSystemColor = ValueNotifier<bool>(
   Hive.box('settings').get('useSystemColor', defaultValue: true),

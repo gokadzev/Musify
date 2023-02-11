@@ -7,9 +7,9 @@ import 'package:just_audio/just_audio.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/screens/more_page.dart';
 import 'package:musify/services/audio_manager.dart';
-import 'package:musify/services/download_manager.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/mediaitem.dart';
+import 'package:musify/widgets/download_button.dart';
 import 'package:musify/widgets/marque.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/spinner.dart';
@@ -201,59 +201,62 @@ class AudioAppState extends State<AudioApp> {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ValueListenableBuilder<Duration?>(
-              valueListenable: position,
-              builder: (_, positionvalue, __) {
-                return ValueListenableBuilder<Duration?>(
-                  valueListenable: duration,
-                  builder: (_, durationvalue, __) {
-                    return Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        if (durationvalue != null)
-                          Slider(
-                            activeColor: accent.primary,
-                            inactiveColor: Colors.green[50],
-                            value:
-                                positionvalue?.inMilliseconds.toDouble() ?? 0.0,
-                            onChanged: (double? value) {
-                              setState(() {
-                                audioPlayer.seek(
-                                  Duration(
-                                    milliseconds: value!.round(),
-                                  ),
-                                );
-                                value = value;
-                              });
-                            },
-                            max: durationvalue.inMilliseconds.toDouble(),
-                          ),
-                        Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            if (positionvalue != null)
-                              Text(
-                                '$positionText '.replaceFirst('0:0', '0'),
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  color: Theme.of(context).hintColor,
-                                ),
+            StreamBuilder<PositionData>(
+              stream: positionDataStream,
+              builder: (context, snapshot) {
+                final positionData = snapshot.data;
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (positionData != null)
+                      Slider(
+                        activeColor: accent.primary,
+                        inactiveColor: Colors.green[50],
+                        value: positionData.position.inMilliseconds.toDouble(),
+                        onChanged: (double? value) {
+                          setState(() {
+                            audioPlayer.seek(
+                              Duration(
+                                milliseconds: value!.round(),
                               ),
-                            if (positionvalue != null)
-                              Text(
-                                durationText.replaceAll('0:', ''),
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  color: Theme.of(context).hintColor,
-                                ),
-                              )
-                          ],
-                        )
+                            );
+                            value = value;
+                          });
+                        },
+                        max: positionData.duration.inMilliseconds.toDouble(),
+                      ),
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        if (positionData != null)
+                          Text(
+                            positionData.position
+                                .toString()
+                                .split('.')
+                                .first
+                                .replaceFirst('0:0', '0'),
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Theme.of(context).hintColor,
+                            ),
+                          ),
+                        if (positionData != null)
+                          Text(
+                            positionData.duration
+                                .toString()
+                                .split('.')
+                                .first
+                                .replaceAll('0:', ''),
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Theme.of(context).hintColor,
+                            ),
+                          )
                       ],
-                    );
-                  },
+                    )
+                  ],
                 );
               },
             ),
@@ -269,34 +272,9 @@ class AudioAppState extends State<AudioApp> {
                         if (metadata.extras['ytid'].toString().isNotEmpty)
                           Column(
                             children: [
-                              IconButton(
-                                padding: EdgeInsets.zero,
-                                icon: Icon(
-                                  FluentIcons.arrow_download_24_filled,
-                                  color: Theme.of(context).hintColor,
-                                ),
-                                iconSize: 20,
-                                splashColor: Colors.transparent,
-                                onPressed: () {
-                                  downloadSong(
-                                    context,
-                                    mediaItemToMap(metadata as MediaItem),
-                                  );
-                                },
-                              ),
-                              IconButton(
-                                padding: EdgeInsets.zero,
-                                icon: Icon(
-                                  sponsorBlockSupport.value
-                                      ? FluentIcons.play_circle_24_filled
-                                      : FluentIcons.play_circle_24_regular,
-                                  color: Theme.of(context).hintColor,
-                                ),
-                                iconSize: 20,
-                                splashColor: Colors.transparent,
-                                onPressed: () =>
-                                    setState(changeSponsorBlockStatus),
-                              ),
+                              DownloadButton(
+                                song: mediaItemToMap(metadata as MediaItem),
+                              )
                             ],
                           ),
                         IconButton(
@@ -320,7 +298,9 @@ class AudioAppState extends State<AudioApp> {
                                 : Colors.grey,
                           ),
                           iconSize: 40,
-                          onPressed: playPrevious,
+                          onPressed: () async => {
+                            await playPrevious(),
+                          },
                           splashColor: Colors.transparent,
                         ),
                         DecoratedBox(
@@ -328,12 +308,15 @@ class AudioAppState extends State<AudioApp> {
                             color: accent.primary,
                             borderRadius: BorderRadius.circular(100),
                           ),
-                          child: ValueListenableBuilder<PlayerState>(
-                            valueListenable: playerState,
-                            builder: (_, value, __) {
-                              if (value.processingState ==
-                                      ProcessingState.loading ||
-                                  value.processingState ==
+                          child: StreamBuilder<PlayerState>(
+                            stream: audioPlayer.playerStateStream,
+                            builder: (context, snapshot) {
+                              final playerState = snapshot.data;
+                              final processingState =
+                                  playerState?.processingState;
+                              final playing = playerState?.playing;
+                              if (processingState == ProcessingState.loading ||
+                                  processingState ==
                                       ProcessingState.buffering) {
                                 return Container(
                                   margin: const EdgeInsets.all(8),
@@ -345,17 +328,17 @@ class AudioAppState extends State<AudioApp> {
                                     ),
                                   ),
                                 );
-                              } else if (value.playing != true) {
+                              } else if (playing != true) {
                                 return IconButton(
                                   icon: Icon(
                                     FluentIcons.play_12_filled,
                                     color: Theme.of(context).hintColor,
                                   ),
                                   iconSize: 40,
-                                  onPressed: play,
+                                  onPressed: audioPlayer.play,
                                   splashColor: Colors.transparent,
                                 );
-                              } else if (value.processingState !=
+                              } else if (processingState !=
                                   ProcessingState.completed) {
                                 return IconButton(
                                   icon: Icon(
@@ -363,7 +346,7 @@ class AudioAppState extends State<AudioApp> {
                                     color: Theme.of(context).hintColor,
                                   ),
                                   iconSize: 40,
-                                  onPressed: pause,
+                                  onPressed: audioPlayer.pause,
                                   splashColor: Colors.transparent,
                                 );
                               } else {
@@ -391,7 +374,9 @@ class AudioAppState extends State<AudioApp> {
                                 : Colors.grey,
                           ),
                           iconSize: 40,
-                          onPressed: playNext,
+                          onPressed: () async => {
+                            await playNext(),
+                          },
                           splashColor: Colors.transparent,
                         ),
                         IconButton(
