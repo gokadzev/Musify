@@ -40,8 +40,6 @@ bool get hasNext => activePlaylist['list'].isEmpty
 bool get hasPrevious =>
     activePlaylist['list'].isEmpty ? audioPlayer.hasPrevious : id - 1 >= 0;
 
-bool isMuted = false;
-
 Future<void> playSong(Map song) async {
   final String songUrl = song['ytid'].length == 0
       ? song['songUrl'].toString()
@@ -100,11 +98,11 @@ Future enableBooster() async {
   await _loudnessEnhancer.setTargetGain(1);
 }
 
-Future mute(bool muted) async {
-  if (muted) {
-    await audioPlayer.setVolume(0);
-  } else {
+Future mute() async {
+  if (audioPlayer.volume == 0) {
     await audioPlayer.setVolume(1);
+  } else {
+    await audioPlayer.setVolume(0);
   }
 }
 
