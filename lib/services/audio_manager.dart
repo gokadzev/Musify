@@ -76,33 +76,23 @@ Future playPrevious() async {
 }
 
 Future changeShuffleStatus() async {
-  if (shuffleNotifier.value == true) {
-    await audioPlayer.setShuffleModeEnabled(false);
-    shuffleNotifier.value = false;
-  } else {
-    await audioPlayer.setShuffleModeEnabled(true);
-    shuffleNotifier.value = true;
-  }
+  await audioPlayer.setShuffleModeEnabled(!shuffleNotifier.value);
+  shuffleNotifier.value = !shuffleNotifier.value;
 }
 
 void changeAutoPlayNextStatus() {
-  if (playNextSongAutomatically.value == false) {
-    playNextSongAutomatically.value = true;
-    addOrUpdateData('settings', 'playNextSongAutomatically', true);
-  } else {
-    playNextSongAutomatically.value = false;
-    addOrUpdateData('settings', 'playNextSongAutomatically', false);
-  }
+  playNextSongAutomatically.value = !playNextSongAutomatically.value;
+  addOrUpdateData(
+    'settings',
+    'playNextSongAutomatically',
+    playNextSongAutomatically.value,
+  );
 }
 
 Future changeLoopStatus() async {
-  if (repeatNotifier.value == false) {
-    repeatNotifier.value = true;
-    await audioPlayer.setLoopMode(LoopMode.one);
-  } else {
-    repeatNotifier.value = false;
-    await audioPlayer.setLoopMode(LoopMode.off);
-  }
+  repeatNotifier.value = !repeatNotifier.value;
+  await audioPlayer
+      .setLoopMode(repeatNotifier.value ? LoopMode.one : LoopMode.off);
 }
 
 Future enableBooster() async {
