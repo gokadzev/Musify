@@ -96,6 +96,12 @@ flutter run
 
 ---
 
+<h3 align="center">Contribute</h3>
+
+Contributions are always welcome. Please read our [contributing guidelines](https://github.com/gokadzev/Musify/blob/master/CONTRIBUTING.md) before contributing.
+
+---
+
   <h3 align="center">Credits</h3>
    <p align="center">
    <a href="https://github.com/Harsh-23/Musify">https://github.com/Harsh-23/Musify</a>: <br>
