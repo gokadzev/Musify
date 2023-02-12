@@ -1,5 +1,5 @@
 {
-    "version": "4.3.0",
-    "changelog": "Set targetSdkVersion to 30 </br> Fixed the user playlists error </br> Miscellaneous other performance and code improvements"
+    "version": "4.4.0",
+    "changelog": "Fixed the player buttons </br> Fixed issues connected to media notification </br> Removed SponsorBlock support </br> Added mute button on player page </br> Miscellaneous other performance and code improvements"
 }
 
