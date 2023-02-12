@@ -33,12 +33,12 @@ final playerState = ValueNotifier<PlayerState>(audioPlayer.playerState);
 
 final _playlist = ConcatenatingAudioSource(children: []);
 
-bool get hasNext => activePlaylist.isEmpty
+bool get hasNext => activePlaylist['list'].isEmpty
     ? audioPlayer.hasNext
-    : id + 1 <= activePlaylist.length;
+    : id + 1 <= activePlaylist['list'].length;
 
 bool get hasPrevious =>
-    activePlaylist.isEmpty ? audioPlayer.hasPrevious : id - 1 >= 0;
+    activePlaylist['list'].isEmpty ? audioPlayer.hasPrevious : id - 1 >= 0;
 
 bool isMuted = false;
 
