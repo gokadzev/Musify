@@ -278,10 +278,10 @@ Future getSongDetails(dynamic songIndex, dynamic songId) async {
 
 Future<List<SongModel>> getDownloadedSongs() async {
   try {
-    final localSongs = await _audioQuery.querySongs(
+    final downloadedSongs = await _audioQuery.querySongs(
       path: downloadDirectory,
     );
-    return localSongs;
+    return downloadedSongs;
   } catch (e, stack) {
     debugPrint('$e $stack');
     return [];
