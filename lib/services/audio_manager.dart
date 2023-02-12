@@ -78,8 +78,10 @@ Future playPrevious() async {
 Future changeShuffleStatus() async {
   if (shuffleNotifier.value == true) {
     await audioPlayer.setShuffleModeEnabled(false);
+    shuffleNotifier.value = false;
   } else {
     await audioPlayer.setShuffleModeEnabled(true);
+    shuffleNotifier.value = true;
   }
 }
 
