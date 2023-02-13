@@ -1,10 +1,6 @@
-const checkApiUrl =
-  'https://raw.githubusercontent.com/gokadzev/Musify/update/check.json'
-const changelogApiUrl =
-  'https://raw.githubusercontent.com/gokadzev/Musify/update/changelog.json'
+const checkApiUrl = 'https://api.github.com/repos/gokadzev/Musify/releases'
 let versionElement = document.getElementById('version')
 let downloadElement = document.getElementById('download')
-let changelogElement = document.getElementById('changelogContent')
 
 function getUpdateInfo(callback) {
   var xmlHttp = new XMLHttpRequest()
@@ -13,16 +9,6 @@ function getUpdateInfo(callback) {
       callback(xmlHttp.responseText)
   }
   xmlHttp.open('GET', checkApiUrl, true)
-  xmlHttp.send(null)
-}
-
-function getUpdateChangelog(callback) {
-  var xmlHttp = new XMLHttpRequest()
-  xmlHttp.onreadystatechange = function () {
-    if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
-      callback(xmlHttp.responseText)
-  }
-  xmlHttp.open('GET', changelogApiUrl, true)
   xmlHttp.send(null)
 }
 
@@ -157,11 +143,11 @@ document.addEventListener('DOMContentLoaded', () => {
 window.onload = function () {
   getUpdateInfo((res) => {
     const response = JSON.parse(res)
-    versionElement.textContent += 'Current Version: ' + response['version']
-    downloadElement.setAttribute('href', response['url'])
-  })
-  getUpdateChangelog((res) => {
-    const response = JSON.parse(res)
-    changelogElement.innerHTML = response['changelog']
+    const appUrl = response[0]['assets'].find((r) => r['name'] == 'Musify.apk')[
+      'browser_download_url'
+    ]
+    const appVersion = response[0]['tag_name']
+    versionElement.textContent += 'Current Version: ' + appVersion
+    downloadElement.setAttribute('href', appUrl)
   })
 }
