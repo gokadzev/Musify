@@ -44,16 +44,12 @@ class _MorePageState extends State<MorePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
         title: Text(
           AppLocalizations.of(context)!.more,
           style: TextStyle(
             color: accent.primary,
-            fontSize: 25,
-            fontWeight: FontWeight.w700,
           ),
         ),
-        elevation: 0,
       ),
       body: SingleChildScrollView(child: SettingsCards()),
     );

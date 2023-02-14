@@ -19,16 +19,12 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
         title: Text(
           'Musify.',
           style: TextStyle(
             color: accent.primary,
-            fontSize: 35,
-            fontWeight: FontWeight.w800,
           ),
         ),
-        elevation: 0,
       ),
       body: SingleChildScrollView(
         child: Column(

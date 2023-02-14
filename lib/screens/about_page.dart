@@ -17,12 +17,8 @@ class AboutPage extends StatelessWidget {
           AppLocalizations.of(context)!.about,
           style: TextStyle(
             color: accent.primary,
-            fontSize: 25,
-            fontWeight: FontWeight.w700,
           ),
         ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
       ),
       body: const SingleChildScrollView(child: AboutCards()),
     );

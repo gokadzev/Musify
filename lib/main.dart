@@ -135,11 +135,43 @@ class _MyAppState extends State<MyApp> {
           darkTheme: darkColorScheme != null && useSystemColor.value == true
               ? getAppDarkTheme().copyWith(
                   colorScheme: darkColorScheme,
+                  inputDecorationTheme: InputDecorationTheme(
+                    filled: true,
+                    isDense: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    contentPadding: const EdgeInsets.only(
+                      left: 18,
+                      right: 20,
+                      top: 14,
+                      bottom: 14,
+                    ),
+                  ),
                 )
               : getAppDarkTheme(),
           theme: lightColorScheme != null && useSystemColor.value == true
               ? getAppLightTheme().copyWith(
                   colorScheme: lightColorScheme,
+                  inputDecorationTheme: InputDecorationTheme(
+                    filled: true,
+                    isDense: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    contentPadding: const EdgeInsets.only(
+                      left: 18,
+                      right: 20,
+                      top: 14,
+                      bottom: 14,
+                    ),
+                  ),
                 )
               : getAppLightTheme(),
           localizationsDelegates: const [

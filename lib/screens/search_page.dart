@@ -39,16 +39,12 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
         title: Text(
           AppLocalizations.of(context)!.search,
           style: TextStyle(
             color: accent.primary,
-            fontSize: 30,
-            fontWeight: FontWeight.w700,
           ),
         ),
-        elevation: 0,
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -85,21 +81,6 @@ class _SearchPageState extends State<SearchPage> {
                 ),
                 cursorColor: Colors.green[50],
                 decoration: InputDecoration(
-                  filled: true,
-                  isDense: true,
-                  fillColor: Theme.of(context).shadowColor,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15.0),
-                    borderSide: BorderSide(
-                      color: Theme.of(context).colorScheme.background,
-                    ),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15.0),
-                    borderSide: BorderSide(
-                      color: Theme.of(context).colorScheme.background,
-                    ),
-                  ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: const BorderRadius.all(
                       Radius.circular(15),
@@ -140,12 +121,6 @@ class _SearchPageState extends State<SearchPage> {
                   hintText: '${AppLocalizations.of(context)!.search}...',
                   hintStyle: TextStyle(
                     color: accent.primary,
-                  ),
-                  contentPadding: const EdgeInsets.only(
-                    left: 18,
-                    right: 20,
-                    top: 14,
-                    bottom: 14,
                   ),
                 ),
               ),

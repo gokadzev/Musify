@@ -77,16 +77,12 @@ class _PlaylistPageState extends State<PlaylistPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
         title: Text(
           AppLocalizations.of(context)!.playlist,
           style: TextStyle(
             color: accent.primary,
-            fontSize: 25,
-            fontWeight: FontWeight.w700,
           ),
         ),
-        elevation: 0,
       ),
       body: SingleChildScrollView(
         child: widget.playlist != null

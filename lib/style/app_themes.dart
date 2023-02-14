@@ -17,6 +17,12 @@ ThemeData getAppDarkTheme() {
     appBarTheme: AppBarTheme(
       backgroundColor: const Color(0xFF121212),
       iconTheme: IconThemeData(color: accent.primary),
+      centerTitle: true,
+      titleTextStyle: const TextStyle(
+        fontSize: 27,
+        fontWeight: FontWeight.w700,
+      ),
+      elevation: 0,
     ),
     bottomSheetTheme: const BottomSheetThemeData(
       backgroundColor: Color(0xFF121212),
@@ -56,6 +62,23 @@ ThemeData getAppDarkTheme() {
       bodyMedium: TextStyle(color: Colors.white),
     ),
     bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFF151515)),
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: accent.background.withAlpha(50),
+      isDense: true,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      contentPadding: const EdgeInsets.only(
+        left: 18,
+        right: 20,
+        top: 14,
+        bottom: 14,
+      ),
+    ),
   );
 }
 
@@ -68,6 +91,12 @@ ThemeData getAppLightTheme() {
     appBarTheme: AppBarTheme(
       backgroundColor: Colors.white,
       iconTheme: IconThemeData(color: accent.primary),
+      centerTitle: true,
+      titleTextStyle: const TextStyle(
+        fontSize: 27,
+        fontWeight: FontWeight.w700,
+      ),
+      elevation: 0,
     ),
     visualDensity: VisualDensity.adaptivePlatformDensity,
     fontFamily: 'Ubuntu',
@@ -101,5 +130,22 @@ ThemeData getAppLightTheme() {
     iconTheme: const IconThemeData(color: Color(0xFF151515)),
     hintColor: const Color(0xFF151515),
     bottomAppBarTheme: const BottomAppBarTheme(color: Colors.white),
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: accent.background.withAlpha(50),
+      isDense: true,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      contentPadding: const EdgeInsets.only(
+        left: 18,
+        right: 20,
+        top: 14,
+        bottom: 14,
+      ),
+    ),
   );
 }

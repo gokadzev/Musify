@@ -18,16 +18,12 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
         title: Text(
           AppLocalizations.of(context)!.userLikedSongs,
           style: TextStyle(
             color: accent.primary,
-            fontSize: 25,
-            fontWeight: FontWeight.w700,
           ),
         ),
-        elevation: 0,
       ),
       body: SingleChildScrollView(
         child: Column(

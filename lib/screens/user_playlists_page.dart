@@ -18,16 +18,12 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
         title: Text(
           AppLocalizations.of(context)!.userPlaylists,
           style: TextStyle(
             color: accent.primary,
-            fontSize: 25,
-            fontWeight: FontWeight.w700,
           ),
         ),
-        elevation: 0,
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
