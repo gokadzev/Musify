@@ -30,9 +30,6 @@ class _DownloadedSongsPageState extends State<DownloadedSongsPage> {
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.downloadedSongs,
-          style: TextStyle(
-            color: accent.primary,
-          ),
         ),
       ),
       body: SingleChildScrollView(
@@ -65,7 +62,6 @@ class _DownloadedSongsPageState extends State<DownloadedSongsPage> {
                           ),
                           Text(
                             AppLocalizations.of(context)!.downloadedSongs,
-                            style: TextStyle(color: accent.primary),
                             textAlign: TextAlign.center,
                           ),
                         ],

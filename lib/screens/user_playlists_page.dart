@@ -20,9 +20,6 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.userPlaylists,
-          style: TextStyle(
-            color: accent.primary,
-          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -54,7 +51,6 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                   TextButton(
                     child: Text(
                       AppLocalizations.of(context)!.add.toUpperCase(),
-                      style: TextStyle(color: accent.primary),
                     ),
                     onPressed: () {
                       showToast(addUserPlaylist(id, context));

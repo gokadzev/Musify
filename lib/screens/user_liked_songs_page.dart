@@ -20,9 +20,6 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.userLikedSongs,
-          style: TextStyle(
-            color: accent.primary,
-          ),
         ),
       ),
       body: SingleChildScrollView(
@@ -55,7 +52,6 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
                           ),
                           Text(
                             AppLocalizations.of(context)!.userLikedSongs,
-                            style: TextStyle(color: accent.primary),
                             textAlign: TextAlign.center,
                           ),
                         ],

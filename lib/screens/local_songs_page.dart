@@ -39,9 +39,6 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.localSongs,
-          style: TextStyle(
-            color: accent.primary,
-          ),
         ),
       ),
       body: SingleChildScrollView(
@@ -74,7 +71,6 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
                           ),
                           Text(
                             AppLocalizations.of(context)!.localSongs,
-                            style: TextStyle(color: accent.primary),
                             textAlign: TextAlign.center,
                           ),
                         ],

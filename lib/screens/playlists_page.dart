@@ -27,9 +27,6 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.playlists,
-          style: TextStyle(
-            color: accent.primary,
-          ),
         ),
       ),
       body: SingleChildScrollView(

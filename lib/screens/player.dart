@@ -31,7 +31,6 @@ class AudioAppState extends State<AudioApp> {
         title: Text(
           AppLocalizations.of(context)!.nowPlaying,
           style: TextStyle(
-            color: accent.primary,
             fontSize: size.height * 0.036,
             fontWeight: FontWeight.w700,
           ),
@@ -562,7 +561,6 @@ class AudioAppState extends State<AudioApp> {
                                 },
                                 child: Text(
                                   AppLocalizations.of(context)!.playlist,
-                                  style: TextStyle(color: accent.primary),
                                 ),
                               );
                             },
@@ -687,7 +685,6 @@ class AudioAppState extends State<AudioApp> {
                                 },
                                 child: Text(
                                   AppLocalizations.of(context)!.lyrics,
-                                  style: TextStyle(color: accent.primary),
                                 ),
                               );
                             },

@@ -19,9 +19,6 @@ class _SetupPageState extends State<SetupPage> {
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.setup,
-          style: TextStyle(
-            color: accent.primary,
-          ),
         ),
       ),
       body: SingleChildScrollView(

@@ -71,7 +71,6 @@ class PlaylistCube extends StatelessWidget {
                         ),
                         Text(
                           title,
-                          style: TextStyle(color: accent.primary),
                           textAlign: TextAlign.center,
                         ),
                       ],

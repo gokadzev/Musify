@@ -41,9 +41,6 @@ class _SearchPageState extends State<SearchPage> {
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.search,
-          style: TextStyle(
-            color: accent.primary,
-          ),
         ),
       ),
       body: SingleChildScrollView(
@@ -148,7 +145,6 @@ class _SearchPageState extends State<SearchPage> {
                           suggestionsNotAvailable
                               ? searchHistory[index]
                               : suggestionsList[index],
-                          style: TextStyle(color: accent.primary),
                         ),
                         onTap: () async {
                           _fetchingSongs.value = true;

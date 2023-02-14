@@ -46,9 +46,6 @@ class _MorePageState extends State<MorePage> {
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.more,
-          style: TextStyle(
-            color: accent.primary,
-          ),
         ),
       ),
       body: SingleChildScrollView(child: SettingsCards()),
@@ -240,7 +237,6 @@ class SettingsCards extends StatelessWidget {
                             child: ListTile(
                               title: Text(
                                 availableModes[index].name,
-                                style: TextStyle(color: accent.primary),
                               ),
                               onTap: () {
                                 addOrUpdateData(
@@ -302,7 +298,6 @@ class SettingsCards extends StatelessWidget {
                             child: ListTile(
                               title: Text(
                                 availableLanguages[index],
-                                style: TextStyle(color: accent.primary),
                               ),
                               onTap: () {
                                 addOrUpdateData(
@@ -409,7 +404,6 @@ class SettingsCards extends StatelessWidget {
                             child: ListTile(
                               title: Text(
                                 availableFileTypes[index],
-                                style: TextStyle(color: accent.primary),
                               ),
                               onTap: () {
                                 addOrUpdateData(

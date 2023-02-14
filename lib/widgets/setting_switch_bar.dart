@@ -18,7 +18,6 @@ class SettingSwitchBar extends StatelessWidget {
           secondary: Icon(tileIcon, color: accent.primary),
           title: Text(
             tileName,
-            style: TextStyle(color: accent.primary),
           ),
           value: value,
           onChanged: onChanged,

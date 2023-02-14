@@ -17,7 +17,6 @@ class SettingBar extends StatelessWidget {
           leading: Icon(tileIcon, color: accent.primary),
           title: Text(
             tileName,
-            style: TextStyle(color: accent.primary),
           ),
           onTap: onTap,
         ),

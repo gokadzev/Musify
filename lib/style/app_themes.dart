@@ -18,9 +18,10 @@ ThemeData getAppDarkTheme() {
       backgroundColor: const Color(0xFF121212),
       iconTheme: IconThemeData(color: accent.primary),
       centerTitle: true,
-      titleTextStyle: const TextStyle(
+      titleTextStyle: TextStyle(
         fontSize: 27,
         fontWeight: FontWeight.w700,
+        color: accent.primary,
       ),
       elevation: 0,
     ),
@@ -52,7 +53,7 @@ ThemeData getAppDarkTheme() {
       ),
       elevation: 2.3,
     ),
-    listTileTheme: const ListTileThemeData(textColor: Colors.white),
+    listTileTheme: ListTileThemeData(textColor: accent.primary),
     switchTheme: SwitchThemeData(
       trackColor: MaterialStateProperty.all(accent.primary),
     ),
@@ -92,9 +93,10 @@ ThemeData getAppLightTheme() {
       backgroundColor: Colors.white,
       iconTheme: IconThemeData(color: accent.primary),
       centerTitle: true,
-      titleTextStyle: const TextStyle(
+      titleTextStyle: TextStyle(
         fontSize: 27,
         fontWeight: FontWeight.w700,
+        color: accent.primary,
       ),
       elevation: 0,
     ),
@@ -123,6 +125,7 @@ ThemeData getAppLightTheme() {
     ),
     listTileTheme: ListTileThemeData(
       selectedColor: accent.primary.withOpacity(0.4),
+      textColor: accent.primary,
     ),
     switchTheme: SwitchThemeData(
       trackColor: MaterialStateProperty.all(accent.primary),

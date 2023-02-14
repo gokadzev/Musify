@@ -79,9 +79,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.playlist,
-          style: TextStyle(
-            color: accent.primary,
-          ),
         ),
       ),
       body: SingleChildScrollView(
@@ -123,7 +120,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
                                   ),
                                   Text(
                                     widget.playlist['title'].toString(),
-                                    style: TextStyle(color: accent.primary),
                                     textAlign: TextAlign.center,
                                   ),
                                 ],
