@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.gokadzev.musify">
-    
+
      <queries>
         <intent>
             <action android:name="android.intent.action.VIEW" />
@@ -66,8 +66,8 @@
 
     <!-- Permissions  -->
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="29"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission
           android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
           android:minSdkVersion="30"
