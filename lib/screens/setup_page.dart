@@ -26,7 +26,7 @@ class _SetupPageState extends State<SetupPage> {
           child: Column(
             children: <Widget>[
               Text(
-                AppLocalizations.of(context)!.localSongsFolders,
+                AppLocalizations.of(context)!.localMusicFolders,
                 style: TextStyle(
                   color: accent.primary,
                   fontSize: 15,

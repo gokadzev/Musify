@@ -5,7 +5,7 @@ import 'package:hive/hive.dart';
 import 'package:musify/main.dart';
 import 'package:musify/screens/about_page.dart';
 import 'package:musify/screens/downloaded_songs_page.dart';
-import 'package:musify/screens/local_songs_page.dart';
+import 'package:musify/screens/local_music_page.dart';
 import 'package:musify/screens/playlists_page.dart';
 import 'package:musify/screens/search_page.dart';
 import 'package:musify/screens/setup_page.dart';
@@ -90,7 +90,7 @@ class SettingsCards extends StatelessWidget {
           },
         ),
         SettingBar(
-          AppLocalizations.of(context)!.localSongs,
+          AppLocalizations.of(context)!.localMusic,
           FluentIcons.arrow_download_24_filled,
           () => {
             Navigator.push(

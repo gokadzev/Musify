@@ -38,7 +38,7 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          AppLocalizations.of(context)!.localSongs,
+          AppLocalizations.of(context)!.localMusic,
         ),
       ),
       body: SingleChildScrollView(
@@ -70,7 +70,7 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
                             color: accent.primary,
                           ),
                           Text(
-                            AppLocalizations.of(context)!.localSongs,
+                            AppLocalizations.of(context)!.localMusic,
                             textAlign: TextAlign.center,
                           ),
                         ],
@@ -84,7 +84,7 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
                     children: [
                       const SizedBox(height: 12),
                       Text(
-                        AppLocalizations.of(context)!.localSongs,
+                        AppLocalizations.of(context)!.localMusic,
                         style: TextStyle(
                           color: accent.primary,
                           fontSize: 18,
@@ -99,7 +99,7 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
                           setActivePlaylist(
                             {
                               'ytid': '',
-                              'title': AppLocalizations.of(context)!.localSongs,
+                              'title': AppLocalizations.of(context)!.localMusic,
                               'subtitle': 'Just Updated',
                               'header_desc': '',
                               'type': 'playlist',
