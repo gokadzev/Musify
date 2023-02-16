@@ -16,10 +16,8 @@ import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/download_manager.dart';
 import 'package:musify/style/app_colors.dart';
 import 'package:musify/style/app_themes.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 
 GetIt getIt = GetIt.instance;
-late PackageInfo packageInfo;
 bool _interrupted = false;
 ThemeMode themeMode = ThemeMode.system;
 
@@ -257,8 +255,6 @@ Future<void> initialisation() async {
   });
   activateListeners();
   await enableBooster();
-
-  packageInfo = await PackageInfo.fromPlatform();
 
   try {
     await FlutterDownloader.initialize(

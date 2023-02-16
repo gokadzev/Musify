@@ -5,6 +5,9 @@ repository: https://github.com/gokadzev/Musify
 issue_tracker: https://github.com/gokadzev/Musify/issues
 
 publish_to: 'none'
+
+# run update.sh after changing the version
+
 version: 4.4.0+43
 
 environment:
@@ -31,7 +34,6 @@ dependencies:
   just_audio: ^0.9.31
   just_audio_background: ^0.0.1-beta.9
   on_audio_query: ^2.6.1
-  package_info_plus: ^3.0.2
   permission_handler: ^10.2.0
   rxdart: ^0.27.7
   url_launcher: ^6.1.9

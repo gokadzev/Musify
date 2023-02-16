@@ -4,21 +4,19 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:http/http.dart' as http;
-import 'package:musify/main.dart';
+import 'package:musify/API/version.dart';
 
-String? version;
 late String dlUrl;
 const apiUrl =
     'https://raw.githubusercontent.com/gokadzev/Musify/update/check.json';
 
 Future<bool> checkAppUpdates() async {
-  version ??= packageInfo.version;
   final response = await http.get(Uri.parse(apiUrl));
   if (response.statusCode != 200) {
     throw Exception('Failed to fetch app updates');
   }
   final map = json.decode(response.body) as Map<String, dynamic>;
-  return map['version'].toString() != version;
+  return map['version'].toString() != appVersion;
 }
 
 Future<void> downloadAppUpdates() async {
