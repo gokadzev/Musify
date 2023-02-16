@@ -29,6 +29,7 @@ AudioPlayer audioPlayer = AudioPlayer(
 
 final shuffleNotifier = ValueNotifier<bool>(false);
 final repeatNotifier = ValueNotifier<bool>(false);
+final muteNotifier = ValueNotifier<bool>(false);
 final playerState = ValueNotifier<PlayerState>(audioPlayer.playerState);
 
 final _playlist = ConcatenatingAudioSource(children: []);
@@ -104,6 +105,7 @@ Future mute() async {
   } else {
     await audioPlayer.setVolume(0);
   }
+  muteNotifier.value = audioPlayer.volume == 0;
 }
 
 Future<void> setNewPlaylist() async {

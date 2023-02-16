@@ -272,15 +272,22 @@ class AudioAppState extends State<AudioApp> {
                               DownloadButton(
                                 song: mediaItemToMap(metadata as MediaItem),
                               ),
-                              IconButton(
-                                padding: EdgeInsets.zero,
-                                icon: Icon(
-                                  FluentIcons.speaker_mute_24_filled,
-                                  color: Theme.of(context).hintColor,
-                                ),
-                                iconSize: 20,
-                                onPressed: mute,
-                                splashColor: Colors.transparent,
+                              ValueListenableBuilder<bool>(
+                                valueListenable: muteNotifier,
+                                builder: (_, value, __) {
+                                  return IconButton(
+                                    padding: EdgeInsets.zero,
+                                    icon: Icon(
+                                      FluentIcons.speaker_mute_24_filled,
+                                      color: value
+                                          ? accent.primary
+                                          : Theme.of(context).hintColor,
+                                    ),
+                                    iconSize: 20,
+                                    onPressed: mute,
+                                    splashColor: Colors.transparent,
+                                  );
+                                },
                               ),
                             ],
                           ),
