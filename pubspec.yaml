@@ -22,7 +22,7 @@ dependencies:
   fluentui_system_icons: ^1.1.190
   flutter:
     sdk: flutter
-  flutter_downloader: ^1.9.1
+  flutter_downloader: ^1.10.2
   flutter_localizations:
     sdk: flutter
   fluttertoast: ^8.1.2
