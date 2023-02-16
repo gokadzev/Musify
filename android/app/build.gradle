@@ -54,11 +54,12 @@ android {
         checkReleaseBuilds false
         abortOnError false
     }
-
+    
     defaultConfig {
+        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.gokadzev.musify"
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 33
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         multiDexEnabled true
@@ -68,7 +69,7 @@ android {
         release {
             //From decoded key
             storeFile = file('key.jks')
-
+            
             //From key.properties
             keyAlias keystoreProperties['keyAlias']
             keyPassword keystoreProperties['keyPassword']
@@ -84,7 +85,7 @@ android {
             shrinkResources false
         }
     }
-
+    
 }
 
 flutter {
