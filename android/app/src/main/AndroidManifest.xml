@@ -12,7 +12,9 @@
    <application
         android:label="Musify"
         android:name="${applicationName}"
-        android:icon="@mipmap/launcher_icon">
+        android:icon="@mipmap/launcher_icon"
+        android:requestLegacyExternalStorage="true"
+        android:hasFragileUserData="true">
 
         <provider
         android:name="vn.hunghd.flutterdownloader.DownloadedFileProvider"
@@ -78,4 +80,5 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 </manifest>
