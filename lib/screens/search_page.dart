@@ -14,23 +14,26 @@ class SearchPage extends StatefulWidget {
 }
 
 List searchHistory = Hive.box('user').get('searchHistory', defaultValue: []);
-List suggestionsList = [];
 
 class _SearchPageState extends State<SearchPage> {
   final TextEditingController _searchBar = TextEditingController();
   final ValueNotifier<bool> _fetchingSongs = ValueNotifier(false);
   final FocusNode _inputNode = FocusNode();
-  String _searchQuery = '';
+  List _searchResult = [];
+  List _suggestionsList = [];
 
   Future<void> search() async {
-    _searchQuery = _searchBar.text;
-    if (_searchQuery.isNotEmpty) {
+    if (_searchBar.text.isNotEmpty) {
       if (_fetchingSongs.value != true) _fetchingSongs.value = true;
-      if (!searchHistory.contains(_searchQuery)) {
-        searchHistory.insert(0, _searchQuery);
+      if (!searchHistory.contains(_searchBar.text)) {
+        searchHistory.insert(0, _searchBar.text);
         addOrUpdateData('user', 'searchHistory', searchHistory);
       }
+      _searchResult = await fetchSongsList(_searchBar.text);
       if (_fetchingSongs.value != false) _fetchingSongs.value = false;
+    } else {
+      _searchResult = [];
+      _suggestionsList = [];
     }
     setState(() {});
   }
@@ -56,16 +59,16 @@ class _SearchPageState extends State<SearchPage> {
               child: TextField(
                 onSubmitted: (String value) {
                   search();
-                  suggestionsList = [];
+                  _suggestionsList = [];
                   FocusManager.instance.primaryFocus?.unfocus();
                 },
                 onChanged: (value) {
                   setState(() {
                     if (value != '') {
                       getSearchSuggestions(value)
-                          .then((value) => suggestionsList = value);
+                          .then((value) => _suggestionsList = value);
                     } else {
-                      suggestionsList = [];
+                      _suggestionsList = [];
                     }
                   });
                 },
@@ -122,17 +125,17 @@ class _SearchPageState extends State<SearchPage> {
                 ),
               ),
             ),
-            if (_searchQuery.isEmpty)
+            if (_searchResult.isEmpty)
               ListView.builder(
                 shrinkWrap: true,
                 addAutomaticKeepAlives: false,
                 addRepaintBoundaries: false,
                 physics: const NeverScrollableScrollPhysics(),
-                itemCount: suggestionsList.isEmpty
+                itemCount: _suggestionsList.isEmpty
                     ? searchHistory.length
-                    : suggestionsList.length,
+                    : _suggestionsList.length,
                 itemBuilder: (BuildContext ctxt, int index) {
-                  final suggestionsNotAvailable = suggestionsList.isEmpty;
+                  final suggestionsNotAvailable = _suggestionsList.isEmpty;
                   return Padding(
                     padding: const EdgeInsets.only(top: 8, bottom: 6),
                     child: Card(
@@ -144,19 +147,12 @@ class _SearchPageState extends State<SearchPage> {
                         title: Text(
                           suggestionsNotAvailable
                               ? searchHistory[index]
-                              : suggestionsList[index],
+                              : _suggestionsList[index],
                         ),
                         onTap: () async {
-                          _fetchingSongs.value = true;
-                          _searchQuery = suggestionsNotAvailable
+                          _searchBar.text = suggestionsNotAvailable
                               ? searchHistory[index]
-                              : suggestionsList[index];
-                          await fetchSongsList(
-                            suggestionsNotAvailable
-                                ? searchHistory[index]
-                                : suggestionsList[index],
-                          );
-                          _fetchingSongs.value = false;
+                              : _suggestionsList[index];
                           await search();
                         },
                       ),
@@ -165,27 +161,20 @@ class _SearchPageState extends State<SearchPage> {
                 },
               )
             else
-              FutureBuilder(
-                future: fetchSongsList(_searchQuery),
-                builder: (context, data) {
-                  return (data as dynamic).data != null
-                      ? ListView.builder(
-                          shrinkWrap: true,
-                          addAutomaticKeepAlives: false,
-                          addRepaintBoundaries: false,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: (data as dynamic).data.length,
-                          itemBuilder: (BuildContext ctxt, int index) {
-                            return Padding(
-                              padding: const EdgeInsets.only(top: 5, bottom: 5),
-                              child: SongBar(
-                                (data as dynamic).data[index],
-                                true,
-                              ),
-                            );
-                          },
-                        )
-                      : const Spinner();
+              ListView.builder(
+                shrinkWrap: true,
+                addAutomaticKeepAlives: false,
+                addRepaintBoundaries: false,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: _searchResult.length,
+                itemBuilder: (BuildContext ctxt, int index) {
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 5, bottom: 5),
+                    child: SongBar(
+                      _searchResult[index],
+                      true,
+                    ),
+                  );
                 },
               )
           ],
