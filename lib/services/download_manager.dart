@@ -118,10 +118,9 @@ Future<void> checkAudioPerms() async {
 
   if (await Permission.accessMediaLocation.status.isDenied) {
     await Permission.accessMediaLocation.request();
-  }
-
-  if (await Permission.manageExternalStorage.status.isDenied) {
-    await Permission.manageExternalStorage.request();
+    if (await Permission.accessMediaLocation.status.isPermanentlyDenied) {
+      await openAppSettings();
+    }
   }
 
   if (await Permission.audio.status.isDenied) {
