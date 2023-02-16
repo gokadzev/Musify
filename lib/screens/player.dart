@@ -30,10 +30,6 @@ class AudioAppState extends State<AudioApp> {
         toolbarHeight: size.height * 0.09,
         title: Text(
           AppLocalizations.of(context)!.nowPlaying,
-          style: TextStyle(
-            fontSize: size.height * 0.036,
-            fontWeight: FontWeight.w700,
-          ),
         ),
         leading: Padding(
           padding: const EdgeInsets.only(left: 14),
