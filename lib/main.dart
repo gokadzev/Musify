@@ -132,7 +132,21 @@ class _MyAppState extends State<MyApp> {
           debugShowCheckedModeBanner: false,
           darkTheme: darkColorScheme != null && useSystemColor.value == true
               ? getAppDarkTheme().copyWith(
-                  colorScheme: darkColorScheme,
+                  scaffoldBackgroundColor: darkColorScheme.surface,
+                  colorScheme: darkColorScheme.harmonized(),
+                  canvasColor: darkColorScheme.surface,
+                  bottomAppBarTheme:
+                      BottomAppBarTheme(color: darkColorScheme.surface),
+                  appBarTheme: AppBarTheme(
+                    backgroundColor: darkColorScheme.surface,
+                    centerTitle: true,
+                    titleTextStyle: TextStyle(
+                      fontSize: 27,
+                      fontWeight: FontWeight.w700,
+                      color: accent.primary,
+                    ),
+                    elevation: 0,
+                  ),
                   inputDecorationTheme: InputDecorationTheme(
                     filled: true,
                     isDense: true,
@@ -153,7 +167,21 @@ class _MyAppState extends State<MyApp> {
               : getAppDarkTheme(),
           theme: lightColorScheme != null && useSystemColor.value == true
               ? getAppLightTheme().copyWith(
-                  colorScheme: lightColorScheme,
+                  scaffoldBackgroundColor: lightColorScheme.surface,
+                  colorScheme: lightColorScheme.harmonized(),
+                  canvasColor: lightColorScheme.surface,
+                  bottomAppBarTheme:
+                      BottomAppBarTheme(color: lightColorScheme.surface),
+                  appBarTheme: AppBarTheme(
+                    backgroundColor: lightColorScheme.surface,
+                    centerTitle: true,
+                    titleTextStyle: TextStyle(
+                      fontSize: 27,
+                      fontWeight: FontWeight.w700,
+                      color: accent.primary,
+                    ),
+                    elevation: 0,
+                  ),
                   inputDecorationTheme: InputDecorationTheme(
                     filled: true,
                     isDense: true,
