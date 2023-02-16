@@ -95,7 +95,7 @@ class SettingsCards extends StatelessWidget {
           () => {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => LocalSongsPage()),
+              MaterialPageRoute(builder: (context) => LocalMusicPage()),
             ),
           },
         ),

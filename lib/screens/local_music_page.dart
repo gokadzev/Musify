@@ -8,12 +8,12 @@ import 'package:musify/style/app_themes.dart';
 import 'package:musify/widgets/spinner.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
-class LocalSongsPage extends StatefulWidget {
+class LocalMusicPage extends StatefulWidget {
   @override
-  State<LocalSongsPage> createState() => _LocalSongsPageState();
+  State<LocalMusicPage> createState() => _LocalMusicPageState();
 }
 
-class _LocalSongsPageState extends State<LocalSongsPage> {
+class _LocalMusicPageState extends State<LocalMusicPage> {
   final TextEditingController _searchBar = TextEditingController();
   final FocusNode _inputNode = FocusNode();
   String _searchQuery = '';
@@ -104,7 +104,7 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
                               'header_desc': '',
                               'type': 'playlist',
                               'image': '',
-                              'list': await getLocalSongs()
+                              'list': await getLocalMusic()
                             },
                           ),
                         },
@@ -172,7 +172,7 @@ class _LocalSongsPageState extends State<LocalSongsPage> {
             const Padding(padding: EdgeInsets.only(top: 40)),
             if (_searchQuery.isEmpty)
               FutureBuilder(
-                future: getLocalSongs(),
+                future: getLocalMusic(),
                 builder: (context, data) {
                   if (data.connectionState != ConnectionState.done) {
                     return const Center(

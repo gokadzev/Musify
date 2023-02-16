@@ -159,7 +159,7 @@ Future<List> searchPlaylist(String query) async {
 }
 
 Future<List> searchLocalSong(String query) async {
-  final _localSongs = await getLocalSongs();
+  final _localSongs = await getLocalMusic();
 
   return _localSongs
       .where(
@@ -288,12 +288,11 @@ Future<List<SongModel>> getDownloadedSongs() async {
   }
 }
 
-Future<List<SongModel>> getLocalSongs() async {
+Future<List<SongModel>> getLocalMusic() async {
   final allSongs = <SongModel>[
     for (final p in localSongsFolders) ...await _audioQuery.querySongs(path: p)
   ];
-  var localSongs = <SongModel>[];
-  localSongs = allSongs
+  final localSongs = allSongs
       .where(
         (song) =>
             song.isAlarm == false &&
