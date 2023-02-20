@@ -10,14 +10,12 @@ import 'package:just_audio/just_audio.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/lyrics_service.dart';
-import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/formatter.dart';
 import 'package:musify/utilities/mediaitem.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 final yt = YoutubeExplode();
-final OnAudioQuery _audioQuery = OnAudioQuery();
 
 final random = Random();
 
@@ -158,16 +156,6 @@ Future<List> searchPlaylist(String query) async {
       .toList();
 }
 
-Future<List> searchLocalSong(String query) async {
-  final _localSongs = await getLocalMusic();
-
-  return _localSongs
-      .where(
-        (song) => song.displayName.toLowerCase().contains(query.toLowerCase()),
-      )
-      .toList();
-}
-
 Future<List> getSearchSuggestions(String query) async {
   const baseUrl =
       'https://suggestqueries.google.com/complete/search?client=firefox&ds=yt&q=';
@@ -274,34 +262,6 @@ Future getSongDetails(dynamic songIndex, dynamic songId) async {
     songIndex,
     song,
   );
-}
-
-Future<List<SongModel>> getDownloadedSongs() async {
-  try {
-    final downloadedSongs = await _audioQuery.querySongs(
-      path: downloadDirectory,
-    );
-    return downloadedSongs;
-  } catch (e, stack) {
-    debugPrint('$e $stack');
-    return [];
-  }
-}
-
-Future<List<SongModel>> getLocalMusic() async {
-  final allSongs = <SongModel>[
-    for (final p in localSongsFolders) ...await _audioQuery.querySongs(path: p)
-  ];
-  final localSongs = allSongs
-      .where(
-        (song) =>
-            song.isAlarm == false &&
-            song.isNotification == false &&
-            song.isRingtone == false,
-      )
-      .toList();
-
-  return localSongs;
 }
 
 Future getSongLyrics(String artist, String title) async {
