@@ -22,7 +22,7 @@ dependencies:
   flutter_downloader: ^1.10.2
   flutter_localizations:
     sdk: flutter
-  fluttertoast: ^8.1.2
+  fluttertoast: ^8.2.1
   get_it: ^7.2.0
   hive: ^2.2.3
   hive_flutter: ^1.1.0
