@@ -179,29 +179,23 @@ Future<List> getSearchSuggestions(String query) async {
 
 Future<Map> getRandomSong() async {
   const playlistId = 'PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx';
-  final List playlistSongs = await getSongsFromPlaylist(playlistId);
+  final playlistSongs = await getSongsFromPlaylist(playlistId);
 
   return playlistSongs[random.nextInt(playlistSongs.length)];
 }
 
-Future getSongsFromPlaylist(dynamic playlistid) async {
-  final List playlistSongs =
-      await getData('cache', 'playlistSongs$playlistid') ?? [];
-  if (playlistSongs.isEmpty) {
-    var index = 0;
-    await for (final song in yt.playlists.getVideos(playlistid)) {
-      playlistSongs.add(
-        returnSongLayout(
-          index,
-          song,
-        ),
-      );
-      index += 1;
+Future<List> getSongsFromPlaylist(dynamic playlistId) async {
+  final songList = await getData('cache', 'playlistSongs$playlistId') ?? [];
+
+  if (songList.isEmpty) {
+    await for (final song in yt.playlists.getVideos(playlistId)) {
+      songList.add(returnSongLayout(songList.length, song));
     }
-    addOrUpdateData('cache', 'playlistSongs$playlistid', playlistSongs);
+
+    addOrUpdateData('cache', 'playlistSongs$playlistId', songList);
   }
 
-  return playlistSongs;
+  return songList;
 }
 
 Future<void> setActivePlaylist(Map info) async {
