@@ -106,7 +106,7 @@ class SongBar extends StatelessWidget {
                         color: accent.primary,
                         icon: const Icon(FluentIcons.star_24_filled),
                         onPressed: () => {
-                          removeUserLikedSong(song['ytid']),
+                          updateLikeStatus(song['ytid'], false),
                           songLikeStatus.value = false
                         },
                       );
@@ -115,7 +115,7 @@ class SongBar extends StatelessWidget {
                         color: accent.primary,
                         icon: const Icon(FluentIcons.star_24_regular),
                         onPressed: () => {
-                          addUserLikedSong(song['ytid']),
+                          updateLikeStatus(song['ytid'], true),
                           songLikeStatus.value = true
                         },
                       );

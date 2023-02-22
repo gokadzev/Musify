@@ -416,7 +416,7 @@ class AudioAppState extends State<AudioApp> {
                                       iconSize: 20,
                                       splashColor: Colors.transparent,
                                       onPressed: () => {
-                                        removeUserLikedSong(ytid),
+                                        updateLikeStatus(ytid, false),
                                         songLikeStatus.value = false
                                       },
                                     );
@@ -429,7 +429,7 @@ class AudioAppState extends State<AudioApp> {
                                       iconSize: 20,
                                       splashColor: Colors.transparent,
                                       onPressed: () => {
-                                        addUserLikedSong(ytid),
+                                        updateLikeStatus(ytid, true),
                                         songLikeStatus.value = true
                                       },
                                     );

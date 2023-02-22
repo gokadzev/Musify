@@ -106,20 +106,18 @@ void removeUserPlaylist(String playlistId) {
   addOrUpdateData('user', 'playlists', userPlaylists);
 }
 
-Future<void> addUserLikedSong(dynamic songId) async {
-  userLikedSongsList
-      .add(await getSongDetails(userLikedSongsList.length, songId));
+Future<void> updateLikeStatus(dynamic songId, bool add) async {
+  if (add) {
+    userLikedSongsList
+        .add(await getSongDetails(userLikedSongsList.length, songId));
+  } else {
+    userLikedSongsList.removeWhere((song) => song['ytid'] == songId);
+  }
   addOrUpdateData('user', 'likedSongs', userLikedSongsList);
 }
 
-void removeUserLikedSong(dynamic songId) {
-  userLikedSongsList.removeWhere((song) => song['ytid'] == songId);
-  addOrUpdateData('user', 'likedSongs', userLikedSongsList);
-}
-
-bool isSongAlreadyLiked(dynamic songId) {
-  return userLikedSongsList.where((song) => song['ytid'] == songId).isNotEmpty;
-}
+bool isSongAlreadyLiked(songIdToCheck) =>
+    userLikedSongsList.any((song) => song['ytid'] == songIdToCheck);
 
 Future<List> getPlaylists([int? playlistsNum]) async {
   if (playlists.isEmpty) {
