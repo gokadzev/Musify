@@ -280,7 +280,7 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
               )
             else
               FutureBuilder(
-                future: searchLocalSong(_searchQuery),
+                future: getLocalMusic(searchQuery: _searchQuery),
                 builder: (context, data) {
                   if (data.connectionState != ConnectionState.done) {
                     return const Center(

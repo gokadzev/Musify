@@ -16,34 +16,35 @@ Future<List<SongModel>> getDownloadedSongs() async {
   }
 }
 
-Future<List<SongModel>> getLocalMusic() async {
+Future<List<SongModel>> getLocalMusic({searchQuery}) async {
   final allSongs = <SongModel>[
     for (final p in localSongsFolders) ...await _audioQuery.querySongs(path: p)
   ];
-  final localSongs = allSongs
-      .where(
-        (song) =>
-            song.isAlarm == false &&
-            song.isNotification == false &&
-            song.isRingtone == false,
-      )
-      .toList();
-
-  return localSongs;
-}
-
-Future<List> searchLocalSong(String query) async {
-  final _localSongs = await getLocalMusic();
-
-  return _localSongs
-      .where(
-        (song) => song.displayName.toLowerCase().contains(query.toLowerCase()),
-      )
-      .toList();
+  if (searchQuery != null) {
+    return allSongs
+        .where(
+          (song) =>
+              song.isAlarm == false &&
+              song.isNotification == false &&
+              song.isRingtone == false &&
+              song.displayName
+                  .toLowerCase()
+                  .contains(searchQuery.toLowerCase()),
+        )
+        .toList();
+  } else {
+    return allSongs
+        .where(
+          (song) =>
+              song.isAlarm == false &&
+              song.isNotification == false &&
+              song.isRingtone == false,
+        )
+        .toList();
+  }
 }
 
 Future<List<ArtistModel>> getArtists() async {
   final _artists = await _audioQuery.queryArtists();
   return _artists;
 }
-
