@@ -100,14 +100,18 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    _locale = Locale(
-      appLanguages[Hive.box('settings').get('language', defaultValue: 'English')
-          as String]!,
-    );
-    themeMode = Hive.box('settings').get('themeMode', defaultValue: 'system') ==
-            'system'
+
+    final settingsBox = Hive.box('settings');
+
+    final language =
+        settingsBox.get('language', defaultValue: 'English') as String;
+    _locale = Locale(appLanguages[language] ?? 'en');
+
+    final themeModeSetting =
+        settingsBox.get('themeMode', defaultValue: 'system') as String;
+    themeMode = themeModeSetting == 'system'
         ? ThemeMode.system
-        : Hive.box('settings').get('themeMode') == 'light'
+        : themeModeSetting == 'light'
             ? ThemeMode.light
             : ThemeMode.dark;
   }
