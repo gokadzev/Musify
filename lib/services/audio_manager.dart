@@ -46,14 +46,18 @@ Future<void> playSong(Map song) async {
       ? song['songUrl'].toString()
       : await getSong(song['ytid']);
 
-  await audioPlayer.setAudioSource(
-    AudioSource.uri(
-      Uri.parse(songUrl),
-      tag: mapToMediaItem(song, songUrl),
-    ),
-  );
+  try {
+    await audioPlayer.setAudioSource(
+      AudioSource.uri(
+        Uri.parse(songUrl),
+        tag: mapToMediaItem(song, songUrl),
+      ),
+    );
 
-  await audioPlayer.play();
+    await audioPlayer.play();
+  } catch (e) {
+    debugPrint('Error playing song: $e');
+  }
 }
 
 Future playNext() async {
