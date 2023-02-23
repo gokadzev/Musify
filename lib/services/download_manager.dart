@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:musify/API/musify.dart';
+import 'package:musify/screens/more_page.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
@@ -23,7 +24,8 @@ Future<void> downloadSong(BuildContext context, dynamic song) async {
     final filename = song['more_info']['singers'] +
         ' - ' +
         song['title'].replaceAll(invalidCharacters, '').replaceAll(' ', '');
-    final filepath = '$downloadDirectory/$filename';
+    final filepath =
+        '$downloadDirectory/$filename.${prefferedFileExtension.value}';
 
     lastDownloadedSongIdListener.value = song['ytid'];
 
@@ -100,8 +102,11 @@ Future<void> checkAudioPerms() async {
   final storageStatus = await Permission.storage.request();
   final mediaLocationStatus = await Permission.accessMediaLocation.request();
   final audioStatus = await Permission.audio.request();
+  final externalStorageStatus =
+      await Permission.manageExternalStorage.request();
 
   if (storageStatus.isPermanentlyDenied ||
+      externalStorageStatus.isPermanentlyDenied ||
       mediaLocationStatus.isPermanentlyDenied ||
       audioStatus.isPermanentlyDenied) {
     await openAppSettings();
