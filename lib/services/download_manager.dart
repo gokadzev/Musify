@@ -55,15 +55,7 @@ Future<void> downloadSong(BuildContext context, dynamic song) async {
       song,
     );
   } catch (e) {
-    await [Permission.manageExternalStorage].request();
-
-    await downloadFileFromYT(
-      context,
-      filename,
-      filepath,
-      downloadDirectory!,
-      song,
-    );
+    debugPrint('error while downloading song: $e');
   }
 }
 
