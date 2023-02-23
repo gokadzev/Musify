@@ -296,9 +296,7 @@ Future<void> initialisation() async {
 
     await FlutterDownloader.registerCallback(downloadCallback);
   } catch (e) {
-    if (kDebugMode) {
-      print(e);
-    }
+    debugPrint('error while initializing Flutter Downloader plugin $e');
   }
 
   await checkAudioPerms();
