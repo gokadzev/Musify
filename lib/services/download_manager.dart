@@ -4,7 +4,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:musify/API/musify.dart';
-import 'package:musify/screens/more_page.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
@@ -13,49 +12,25 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 Future<void> downloadSong(BuildContext context, dynamic song) async {
-  await checkAudioPerms();
-  if (!await checkDownloadDirectory(context)) {
-    return;
-  }
-
-  lastDownloadedSongIdListener.value = song['ytid'];
-
-  final tempFileName = song['more_info']['singers'] +
-      ' - ' +
-      song['title']
-          .replaceAll(r'\', '')
-          .replaceAll('/', '')
-          .replaceAll('*', '')
-          .replaceAll('?', '')
-          .replaceAll('"', '')
-          .replaceAll('<', '')
-          .replaceAll('>', '')
-          .replaceAll('|', '')
-          .replaceAll(' ', '');
-
-  final filename = tempFileName
-          .replaceAll(r'\', '')
-          .replaceAll('/', '')
-          .replaceAll('*', '')
-          .replaceAll('?', '')
-          .replaceAll('"', '')
-          .replaceAll('<', '')
-          .replaceAll('>', '')
-          .replaceAll('|', '') +
-      '.' +
-      prefferedFileExtension.value;
-
-  final filepath = '${downloadDirectory!}/$filename';
   try {
+    await checkAudioPerms();
+    if (!await checkDownloadDirectory(context)) {
+      return;
+    }
+
+    final invalidCharacters = RegExp(r'[\\/*?:"<>|]');
+
+    final filename = song['more_info']['singers'] +
+        ' - ' +
+        song['title'].replaceAll(invalidCharacters, '').replaceAll(' ', '');
+    final filepath = '$downloadDirectory/$filename';
+
+    lastDownloadedSongIdListener.value = song['ytid'];
+
     await downloadFileFromYT(
-      context,
-      filename,
-      filepath,
-      downloadDirectory!,
-      song,
-    );
+        context, filename, filepath, downloadDirectory!, song);
   } catch (e) {
-    debugPrint('error while downloading song: $e');
+    debugPrint('Error while downloading song: $e');
   }
 }
 
