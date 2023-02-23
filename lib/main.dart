@@ -260,7 +260,7 @@ Future<void> initialisation() async {
     androidNotificationChannelName: 'Musify',
     androidNotificationIcon: 'mipmap/launcher_icon',
     androidShowNotificationBadge: true,
-    androidStopForegroundOnPause: false,
+    androidStopForegroundOnPause: !foregroundService.value,
   );
 
   final session = await AudioSession.instance;
