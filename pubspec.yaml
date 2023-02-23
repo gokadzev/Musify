@@ -33,7 +33,7 @@ dependencies:
   on_audio_query: ^2.6.1
   permission_handler: ^10.2.0
   rxdart: ^0.27.7
-  url_launcher: ^6.1.9
+  url_launcher: ^6.1.10
   youtube_explode_dart: ^1.12.3
 
 dev_dependencies:
