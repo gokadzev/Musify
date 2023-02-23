@@ -247,14 +247,15 @@ class _MyAppState extends State<MyApp> {
 void main() async {
   await initialisation();
   WidgetsFlutterBinding.ensureInitialized();
-  await Hive.initFlutter();
-  await Hive.openBox('settings');
-  await Hive.openBox('user');
-  await Hive.openBox('cache');
   runApp(const MyApp());
 }
 
 Future<void> initialisation() async {
+  await Hive.initFlutter();
+  await Hive.openBox('settings');
+  await Hive.openBox('user');
+  await Hive.openBox('cache');
+
   await JustAudioBackground.init(
     androidNotificationChannelId: 'com.gokadzev.musify',
     androidNotificationChannelName: 'Musify',
