@@ -108,26 +108,14 @@ Future<void> downloadFileFromYT(
 }
 
 Future<void> checkAudioPerms() async {
-  if (await Permission.storage.status.isDenied) {
-    await Permission.storage.request();
+  final storageStatus = await Permission.storage.request();
+  final mediaLocationStatus = await Permission.accessMediaLocation.request();
+  final audioStatus = await Permission.audio.request();
 
-    if (await Permission.storage.status.isPermanentlyDenied) {
-      await openAppSettings();
-    }
-  }
-
-  if (await Permission.accessMediaLocation.status.isDenied) {
-    await Permission.accessMediaLocation.request();
-    if (await Permission.accessMediaLocation.status.isPermanentlyDenied) {
-      await openAppSettings();
-    }
-  }
-
-  if (await Permission.audio.status.isDenied) {
-    await Permission.audio.request();
-    if (await Permission.audio.status.isPermanentlyDenied) {
-      await openAppSettings();
-    }
+  if (storageStatus.isPermanentlyDenied ||
+      mediaLocationStatus.isPermanentlyDenied ||
+      audioStatus.isPermanentlyDenied) {
+    await openAppSettings();
   }
 }
 
