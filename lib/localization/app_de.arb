@@ -22,6 +22,7 @@
   "clearSearchHistory": "Suchverlauf löschen",
   "downloadAppUpdate": "Update herunterladen",
   "downloadCompleted": "Download abgeschlossen",
+  "downloadFailed": "Download failed",
   "downloadSongsFolder": "Download Songs Folder",
   "downloadStarted": "Download gestartet",
   "downloadedSongs": "Heruntergeladene Lieder",

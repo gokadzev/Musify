@@ -22,6 +22,7 @@
   "clearSearchHistory": "Limpiar historial de búsqueda",
   "downloadAppUpdate": "Descargar actualización de la aplicación",
   "downloadCompleted": "Descarga completada",
+  "downloadFailed": "Download failed",
   "downloadSongsFolder": "Carpeta de canciones descargadas",
   "downloadStarted": "La descarga ha empezado",
   "downloadedSongs": "Se an descargado las canciones",

@@ -22,6 +22,7 @@
   "clearSearchHistory": "Cancella cronologia delle ricerche",
   "downloadAppUpdate": "Scaricata l'aggiornamento dell'app",
   "downloadCompleted": "Download Completed",
+  "downloadFailed": "Download failed",
   "downloadSongsFolder": "Download Songs Folder",
   "downloadStarted": "Download Started",
   "downloadedSongs": "Downloaded songs",

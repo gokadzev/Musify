@@ -28,9 +28,17 @@ Future<void> downloadSong(BuildContext context, dynamic song) async {
     lastDownloadedSongIdListener.value = song['ytid'];
 
     await downloadFileFromYT(
-        context, filename, filepath, downloadDirectory!, song);
+      context,
+      filename,
+      filepath,
+      downloadDirectory!,
+      song,
+    );
   } catch (e) {
     debugPrint('Error while downloading song: $e');
+    showToast(
+      AppLocalizations.of(context)!.downloadFailed,
+    );
   }
 }
 
@@ -41,37 +49,51 @@ Future<void> downloadFileFromYT(
   String dlPath,
   dynamic song,
 ) async {
-  final manifest =
-      await yt.videos.streamsClient.getManifest(song['ytid'].toString());
-  final audio = manifest.audioOnly.withHighestBitrate();
-  final audioStream = yt.videos.streamsClient.get(audio);
-  final file = File(filepath);
+  try {
+    final manifest =
+        await yt.videos.streamsClient.getManifest(song['ytid'].toString());
+    final audio = manifest.audioOnly.withHighestBitrate();
+    final audioStream = yt.videos.streamsClient.get(audio);
+    final file = File(filepath);
 
-  if (file.existsSync()) {
-    file.deleteSync();
+    if (file.existsSync()) {
+      await file.delete();
+    }
+
+    final output = file.openWrite(mode: FileMode.writeOnlyAppend);
+
+    final len = audio.size.totalBytes;
+    var count = 0;
+    var prevProgress = 0;
+
+    showToast(
+      AppLocalizations.of(context)!.downloadStarted,
+    );
+
+    await for (final data in audioStream) {
+      count += data.length;
+
+      final progress = ((count / len) * 100).ceil();
+      if (progress - prevProgress >= 1) {
+        prevProgress = progress;
+        downloadListenerNotifier.value = progress;
+      }
+
+      output.add(data);
+    }
+    downloadListenerNotifier.value = 0;
+
+    await output.close();
+
+    showToast(
+      AppLocalizations.of(context)!.downloadCompleted,
+    );
+  } catch (e) {
+    debugPrint('Error while downloading song: $e');
+    showToast(
+      AppLocalizations.of(context)!.downloadFailed,
+    );
   }
-
-  final output = file.openWrite(mode: FileMode.writeOnlyAppend);
-
-  final len = audio.size.totalBytes;
-  var count = 0;
-
-  showToast(
-    AppLocalizations.of(context)!.downloadStarted,
-  );
-
-  await for (final data in audioStream) {
-    count += data.length;
-
-    downloadListenerNotifier.value = ((count / len) * 100).ceil();
-
-    output.add(data);
-  }
-  showToast(
-    AppLocalizations.of(context)!.downloadCompleted,
-  );
-  downloadListenerNotifier.value = 0;
-  await output.close();
 }
 
 Future<void> checkAudioPerms() async {

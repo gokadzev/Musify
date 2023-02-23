@@ -22,6 +22,7 @@
   "clearSearchHistory": "საძიებო ისტორიის გასუფთავება",
   "downloadAppUpdate": "აპლიკაციის განახლების ჩამოტვირთვა",
   "downloadCompleted": "ჩამოტვირთვა დასრულდა",
+  "downloadFailed": "Download failed",
   "downloadSongsFolder": "ჩამოტვირთული სიმღერების საქაღალდე",
   "downloadStarted": "ჩამოტვირთვა დაიწყო",
   "downloadedSongs": "ჩამოტვირთული სიმღერები",

@@ -22,6 +22,7 @@
   "clearSearchHistory": "Очистити iсторiю пошуку",
   "downloadAppUpdate": "Завантажити оновлення програми",
   "downloadCompleted": "Завантаження завершено",
+  "downloadFailed": "Download failed",
   "downloadSongsFolder": "Каталог завантажених пісень",
   "downloadStarted": "Завантаження розпочато",
   "downloadedSongs": "Завантажені пісні",

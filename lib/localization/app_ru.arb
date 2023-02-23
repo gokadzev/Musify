@@ -22,6 +22,7 @@
   "clearSearchHistory": "Очистить историю поиска",
   "downloadAppUpdate": "Скачать обновление",
   "downloadCompleted": "Скачивание завершено",
+  "downloadFailed": "Download failed",
   "downloadSongsFolder": "Download Songs Folder",
   "downloadStarted": "Скачивание начато",
   "downloadedSongs": "Downloaded songs",

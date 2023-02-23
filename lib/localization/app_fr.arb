@@ -22,6 +22,7 @@
   "clearSearchHistory": "Effacer l'historique",
   "downloadAppUpdate": "Télécharger la mise à jour de l'application",
   "downloadCompleted": "Download Completed",
+  "downloadFailed": "Download failed",
   "downloadSongsFolder": "Download Songs Folder",
   "downloadStarted": "Download Started",
   "downloadedSongs": "Downloaded songs",
