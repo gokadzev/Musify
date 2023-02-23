@@ -119,18 +119,15 @@ Future<void> checkAudioPerms() async {
   }
 }
 
-Future<bool> checkDownloadDirectory(context) async {
+Future<bool> checkDownloadDirectory(BuildContext context) async {
+  downloadDirectory ??= await FilePicker.platform.getDirectoryPath();
+
   if (downloadDirectory == null) {
-    downloadDirectory = await FilePicker.platform.getDirectoryPath();
-
-    if (downloadDirectory == null) {
-      showToast('${AppLocalizations.of(context)!.chooseDownloadDir}!');
-      return false;
-    }
-
-    addOrUpdateData('settings', 'downloadPath', downloadDirectory);
-
-    return true;
+    showToast('${AppLocalizations.of(context)!.chooseDownloadDir}!');
+    return false;
   }
+
+  addOrUpdateData('settings', 'downloadPath', downloadDirectory);
+
   return true;
 }
