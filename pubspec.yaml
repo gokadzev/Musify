@@ -74,4 +74,3 @@ flutter_icons:
   adaptive_icon_foreground: 'assets/images/ic_launcher_foreground.png'
   adaptive_icon_round: 'assets/images/ic_launcher_round.png'
   image_path: 'assets/images/ic_launcher.png'
-  ios: true
