@@ -37,8 +37,8 @@ dependencies:
   youtube_explode_dart: ^1.12.3
 
 dev_dependencies:
-  flutter_launcher_icons: ^0.11.0
-  flutter_native_splash: ^2.2.16
+  flutter_launcher_icons: ^0.12.0
+  flutter_native_splash: ^2.2.18
   flutter_test:
     sdk: flutter
 
