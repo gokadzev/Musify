@@ -98,11 +98,11 @@ Future<void> downloadFileFromYT(
 }
 
 Future<void> checkNecessaryPermissions(BuildContext context) async {
+  await Permission.audio.request();
   try {
     final statuses = await [
       Permission.storage,
       Permission.accessMediaLocation,
-      Permission.audio,
       Permission.manageExternalStorage,
     ].request();
 
