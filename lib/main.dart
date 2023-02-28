@@ -126,7 +126,8 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return DynamicColorBuilder(
       builder: (lightColorScheme, darkColorScheme) {
-        if (lightColorScheme != null && useSystemColor.value == true) {
+        if (lightColorScheme != null ||
+            darkColorScheme != null && useSystemColor.value == true) {
           accent = (themeMode == ThemeMode.light
               ? lightColorScheme
               : darkColorScheme)!;
