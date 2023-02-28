@@ -23,18 +23,34 @@ class _SearchPageState extends State<SearchPage> {
   List _suggestionsList = [];
 
   Future<void> search() async {
-    if (_searchBar.text.isNotEmpty) {
-      if (_fetchingSongs.value != true) _fetchingSongs.value = true;
-      if (!searchHistory.contains(_searchBar.text)) {
-        searchHistory.insert(0, _searchBar.text);
-        addOrUpdateData('user', 'searchHistory', searchHistory);
-      }
-      _searchResult = await fetchSongsList(_searchBar.text);
-      if (_fetchingSongs.value != false) _fetchingSongs.value = false;
-    } else {
+    final query = _searchBar.text;
+
+    if (query.isEmpty) {
       _searchResult = [];
       _suggestionsList = [];
+      setState(() {});
+      return;
     }
+
+    if (!_fetchingSongs.value) {
+      _fetchingSongs.value = true;
+    }
+
+    if (!searchHistory.contains(query)) {
+      searchHistory.insert(0, query);
+      addOrUpdateData('user', 'searchHistory', searchHistory);
+    }
+
+    try {
+      _searchResult = await fetchSongsList(query);
+    } catch (e) {
+      debugPrint('Error while searching online songs: $e');
+    }
+
+    if (_fetchingSongs.value) {
+      _fetchingSongs.value = false;
+    }
+
     setState(() {});
   }
 
