@@ -14,7 +14,6 @@ import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 Future<void> downloadSong(BuildContext context, dynamic song) async {
   try {
-    await checkAudioPerms();
     if (!await checkDownloadDirectory(context)) {
       return;
     }
@@ -98,18 +97,25 @@ Future<void> downloadFileFromYT(
   }
 }
 
-Future<void> checkAudioPerms() async {
-  final storageStatus = await Permission.storage.request();
-  final mediaLocationStatus = await Permission.accessMediaLocation.request();
-  final audioStatus = await Permission.audio.request();
-  final externalStorageStatus =
-      await Permission.manageExternalStorage.request();
+Future<void> checkNecessaryPermissions(BuildContext context) async {
+  try {
+    final statuses = await [
+      Permission.storage,
+      Permission.accessMediaLocation,
+      Permission.audio,
+      Permission.manageExternalStorage,
+    ].request();
 
-  if (storageStatus.isPermanentlyDenied ||
-      externalStorageStatus.isPermanentlyDenied ||
-      mediaLocationStatus.isPermanentlyDenied ||
-      audioStatus.isPermanentlyDenied) {
-    await openAppSettings();
+    final allGranted = statuses.values.every((status) => status.isGranted);
+    if (allGranted) {
+      showToast(AppLocalizations.of(context)!.allPermsAreGranted);
+    } else {
+      showToast(AppLocalizations.of(context)!.somePermsAreDenied);
+    }
+  } catch (e) {
+    showToast(
+      '${AppLocalizations.of(context)!.errorWhileRequestingPerms} + $e',
+    );
   }
 }
 

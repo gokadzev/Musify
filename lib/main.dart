@@ -299,8 +299,6 @@ Future<void> initialisation() async {
   } catch (e) {
     debugPrint('error while initializing Flutter Downloader plugin $e');
   }
-
-  await checkAudioPerms();
 }
 
 @pragma('vm:entry-point')

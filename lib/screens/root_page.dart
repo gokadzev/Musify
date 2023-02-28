@@ -10,6 +10,7 @@ import 'package:musify/screens/search_page.dart';
 import 'package:musify/screens/setup_page.dart';
 import 'package:musify/screens/user_playlists_page.dart';
 import 'package:musify/services/audio_manager.dart';
+import 'package:musify/services/download_manager.dart';
 import 'package:musify/services/update_manager.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/flutter_toast.dart';
@@ -41,6 +42,7 @@ class AppState extends State<Musify> {
           }
       },
     );
+    checkNecessaryPermissions(context);
   }
 
   @override
