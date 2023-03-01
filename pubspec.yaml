@@ -9,7 +9,7 @@ version: 4.6.1+46 # run update.sh after changing the version
 
 environment:
   sdk: '>=2.19.2 <3.0.0'
-  flutter: ^3.7.4
+  flutter: ^3.7.5
 
 dependencies:
   audio_session: ^0.1.13
