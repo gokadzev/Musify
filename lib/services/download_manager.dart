@@ -7,7 +7,6 @@ import 'package:musify/screens/more_page.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
-import 'package:musify/widgets/download_button.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
@@ -24,8 +23,6 @@ Future<void> downloadSong(BuildContext context, dynamic song) async {
         song['title'].replaceAll(invalidCharacters, '').replaceAll(' ', '') +
         '.${prefferedFileExtension.value}';
     final filepath = '$downloadDirectory/$filename';
-
-    lastDownloadedSongIdListener.value = song['ytid'];
 
     await downloadFileFromYT(
       context,
