@@ -82,17 +82,19 @@ Future<void> downloadFileFromYT(
 Future<void> checkNecessaryPermissions(BuildContext context) async {
   await Permission.audio.request();
   try {
-    final statuses = await [
+    await [
       Permission.storage,
       Permission.manageExternalStorage,
     ].request();
 
-    final allGranted = statuses.values.every((status) => status.isGranted);
-    if (allGranted) {
-      showToast(AppLocalizations.of(context)!.allPermsAreGranted);
-    } else {
-      showToast(AppLocalizations.of(context)!.somePermsAreDenied);
-    }
+    // ...
+
+    // final allGranted = statuses.values.every((status) => status.isGranted);
+    // if (allGranted) {
+    //   showToast(AppLocalizations.of(context)!.allPermsAreGranted);
+    // } else {
+    //   showToast(AppLocalizations.of(context)!.somePermsAreDenied);
+    // }
   } catch (e) {
     showToast(
       '${AppLocalizations.of(context)!.errorWhileRequestingPerms} + $e',
