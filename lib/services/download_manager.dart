@@ -1,7 +1,6 @@
-import 'dart:io';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/screens/more_page.dart';
@@ -54,37 +53,13 @@ Future<void> downloadFileFromYT(
     final manifest =
         await yt.videos.streamsClient.getManifest(song['ytid'].toString());
     final audio = manifest.audioOnly.withHighestBitrate();
-    final audioStream = yt.videos.streamsClient.get(audio);
-    final file = File(filepath);
-
-    if (file.existsSync()) {
-      await file.delete();
-    }
-
-    final output = file.openWrite(mode: FileMode.writeOnlyAppend);
-
-    final len = audio.size.totalBytes;
-    var count = 0;
-    var prevProgress = 0;
-
-    showToast(
-      AppLocalizations.of(context)!.downloadStarted,
+    await FlutterDownloader.enqueue(
+      url: audio.url.toString(),
+      savedDir: dlPath,
+      fileName: filename,
+      showNotification: true,
+      openFileFromNotification: true,
     );
-
-    await for (final data in audioStream) {
-      count += data.length;
-
-      final progress = ((count / len) * 100).ceil();
-      if (progress - prevProgress >= 1) {
-        prevProgress = progress;
-        downloadListenerNotifier.value = progress;
-      }
-
-      output.add(data);
-    }
-    downloadListenerNotifier.value = 0;
-
-    await output.close();
 
     showToast(
       AppLocalizations.of(context)!.downloadCompleted,
