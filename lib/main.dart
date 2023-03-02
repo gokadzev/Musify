@@ -13,7 +13,6 @@ import 'package:just_audio_background/just_audio_background.dart';
 import 'package:musify/screens/more_page.dart';
 import 'package:musify/screens/root_page.dart';
 import 'package:musify/services/audio_manager.dart';
-import 'package:musify/services/download_manager.dart';
 import 'package:musify/style/app_colors.dart';
 import 'package:musify/style/app_themes.dart';
 
