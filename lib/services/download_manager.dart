@@ -102,7 +102,6 @@ Future<void> checkNecessaryPermissions(BuildContext context) async {
   try {
     final statuses = await [
       Permission.storage,
-      Permission.accessMediaLocation,
       Permission.manageExternalStorage,
     ].request();
 
