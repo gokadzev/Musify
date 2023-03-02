@@ -21,9 +21,9 @@ Future<void> downloadSong(BuildContext context, dynamic song) async {
 
     final filename = song['more_info']['singers'] +
         ' - ' +
-        song['title'].replaceAll(invalidCharacters, '').replaceAll(' ', '');
-    final filepath =
-        '$downloadDirectory/$filename.${prefferedFileExtension.value}';
+        song['title'].replaceAll(invalidCharacters, '').replaceAll(' ', '') +
+        '.${prefferedFileExtension.value}';
+    final filepath = '$downloadDirectory/$filename';
 
     lastDownloadedSongIdListener.value = song['ytid'];
 
@@ -59,10 +59,6 @@ Future<void> downloadFileFromYT(
       fileName: filename,
       showNotification: true,
       openFileFromNotification: true,
-    );
-
-    showToast(
-      AppLocalizations.of(context)!.downloadCompleted,
     );
   } catch (e) {
     debugPrint('Error while downloading song: $e');
