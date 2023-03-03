@@ -201,7 +201,7 @@ Future<List> getSongsFromPlaylist(dynamic playlistId) async {
 Future<void> setActivePlaylist(Map info) async {
   final plist = info['list'] as List;
   activePlaylist = info;
-  if (plist is List<SongModel>) {
+  if (plist is List<AudioModel>) {
     activePlaylist['list'] = [];
     id = 0;
     final activeTempPlaylist = <AudioSource>[

@@ -24,7 +24,6 @@
   "downloadAppUpdate": "Скачать обновление",
   "downloadFailed": "Download failed",
   "downloadSongsFolder": "Download Songs Folder",
-  "downloadedSongs": "Downloaded songs",
   "errorWhileRequestingPerms": "Error while requesting permissions",
   "falseMSG": "Ложь",
   "foregroundService": "Foreground Service",
@@ -65,7 +64,6 @@
   "useSystemColor": "Использовать системный цвет (новая функция Android 12)",
   "userLikedSongs": "Избранное пользователя",
   "userPlaylists": "Плейлисты пользователя",
-  "yourDownloadedSongsHere": "Ваши скачанные песни здесь",
   "yourFavoriteSongsHere": "Ваши любимые песни здесь",
   "youtubePlaylistID": "Идентификатор плейлиста Youtube"
 }

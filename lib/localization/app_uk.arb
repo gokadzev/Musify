@@ -24,7 +24,6 @@
   "downloadAppUpdate": "Завантажити оновлення програми",
   "downloadFailed": "Download failed",
   "downloadSongsFolder": "Каталог завантажених пісень",
-  "downloadedSongs": "Завантажені пісні",
   "errorWhileRequestingPerms": "Error while requesting permissions",
   "falseMSG": "Хиба",
   "foregroundService": "Служба переднього плану",
@@ -65,7 +64,6 @@
   "useSystemColor": "Використовувати системний колiр (нова функцiя Android 12)",
   "userLikedSongs": "Обране",
   "userPlaylists": "Плейлисти користувача",
-  "yourDownloadedSongsHere": "Вашi завантаженi пiснi тут",
   "yourFavoriteSongsHere": "Вашi улюбленi пiснi тут",
   "youtubePlaylistID": "Iдентифiкатор списку вiдтворення YouTube"
 }

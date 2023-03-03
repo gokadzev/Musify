@@ -24,7 +24,6 @@
   "downloadAppUpdate": "Download app update",
   "downloadFailed": "Download failed",
   "downloadSongsFolder": "Download Songs Folder",
-  "downloadedSongs": "Downloaded songs",
   "errorWhileRequestingPerms": "Error while requesting permissions",
   "falseMSG": "False",
   "foregroundService": "Foreground Service",
@@ -65,7 +64,6 @@
   "useSystemColor": "Use System Color (Android 12 New Feature)",
   "userLikedSongs": "User liked songs",
   "userPlaylists": "User playlists",
-  "yourDownloadedSongsHere": "Your downloaded songs here",
   "yourFavoriteSongsHere": "Your favorite songs here",
   "youtubePlaylistID": "Youtube playlist ID"
 }

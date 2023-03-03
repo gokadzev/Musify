@@ -1,0 +1,37 @@
+name: on_audio_query_platform_interface
+description: A common platform interface for the [on_audio_query] plugin.
+# NOTE: We strongly prefer non-breaking changes, even at the expense of a
+# less-clean API. See https://flutter.dev/go/platform-interface-breaking-changes
+version: 2.0.0-beta.0
+homepage: https://github.com/LucJosin/on_audio_query/tree/master/on_audio_query_platform_interface
+# pub.dev: https://pub.dev/packages/on_audio_query
+# pub.dev (Platform): https://pub.dev/packages/on_audio_query_platform_interface
+# ========
+# author: Lucas Josino
+# github: https://github.com/LucJosin
+# website: https://www.lucasjosino.com/
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+  flutter: ">=2.0.0"
+
+dependencies:
+  # on_audio_query
+  plugin_platform_interface: ^2.1.3
+
+  # ID3 Reader
+  id3: ^1.0.2
+
+  # Path controllers
+  path: ^1.8.2
+  path_provider: ^2.0.12
+
+  # Flutter
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  # Flutter
+  flutter_lints: ^2.0.1
+  flutter_test:
+    sdk: flutter

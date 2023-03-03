@@ -4,7 +4,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hive/hive.dart';
 import 'package:musify/main.dart';
 import 'package:musify/screens/about_page.dart';
-import 'package:musify/screens/downloaded_songs_page.dart';
 import 'package:musify/screens/local_music_page.dart';
 import 'package:musify/screens/playlists_page.dart';
 import 'package:musify/screens/search_page.dart';
@@ -96,16 +95,6 @@ class SettingsCards extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => LocalMusicPage()),
-            ),
-          },
-        ),
-        SettingBar(
-          AppLocalizations.of(context)!.downloadedSongs,
-          FluentIcons.save_24_filled,
-          () => {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => DownloadedSongsPage()),
             ),
           },
         ),

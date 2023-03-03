@@ -24,7 +24,6 @@
   "downloadAppUpdate": "Descargar actualización de la aplicación",
   "downloadFailed": "Download failed",
   "downloadSongsFolder": "Carpeta de canciones descargadas",
-  "downloadedSongs": "Se an descargado las canciones",
   "errorWhileRequestingPerms": "Error while requesting permissions",
   "falseMSG": "False",
   "foregroundService": "Foreground Service",
@@ -65,7 +64,6 @@
   "useSystemColor": "Utilizar colores del sistema (Android 12+)",
   "userLikedSongs": "Canciones favoritas",
   "userPlaylists": "Listas de reproducción de usuario",
-  "yourDownloadedSongsHere": "¡Tus canciones descargadas estan aquí!",
   "yourFavoriteSongsHere": "¡Tus canciones favoritas estan aquí!",
   "youtubePlaylistID": "ID de lista de reproducción de youtube"
 }

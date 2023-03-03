@@ -30,7 +30,8 @@ dependencies:
   intl: ^0.17.0
   just_audio: ^0.9.31
   just_audio_background: ^0.0.1-beta.9
-  on_audio_query: ^2.6.1
+  on_audio_query:
+    path: ./packages/on_audio_query/on_audio_query
   permission_handler: ^10.2.0
   rxdart: ^0.27.7
   url_launcher: ^6.1.10

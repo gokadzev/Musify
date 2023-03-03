@@ -15,7 +15,7 @@ import 'package:musify/services/update_manager.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/widgets/custom_animated_bottom_bar.dart';
-import 'package:on_audio_query/on_audio_query.dart';
+import 'package:on_audio_query/on_audio_query.dart' hide context;
 
 class Musify extends StatefulWidget {
   @override

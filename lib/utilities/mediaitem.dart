@@ -19,7 +19,7 @@ Map mediaItemToMap(MediaItem mediaItem) {
   };
 }
 
-MediaItem songModelToMediaItem(SongModel song, String songUrl) {
+MediaItem songModelToMediaItem(AudioModel song, String songUrl) {
   return MediaItem(
     id: song.id.toString(),
     album: '',

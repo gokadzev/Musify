@@ -24,7 +24,6 @@
   "downloadAppUpdate": "下載應用程式更新",
   "downloadFailed": "Download failed",
   "downloadSongsFolder": "Download Songs Folder",
-  "downloadedSongs": "Downloaded songs",
   "errorWhileRequestingPerms": "Error while requesting permissions",
   "falseMSG": "否",
   "foregroundService": "Foreground Service",
@@ -65,7 +64,6 @@
   "useSystemColor": "使用系統主題色 (Android 12 新功能)",
   "userLikedSongs": "使用者喜歡的歌曲",
   "userPlaylists": "使用者播放清單",
-  "yourDownloadedSongsHere": "你下載的歌曲在這裡",
   "yourFavoriteSongsHere": "你喜歡的歌曲在這裡",
   "youtubePlaylistID": "YouTube 播放清單 ID"
 }
