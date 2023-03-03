@@ -26,9 +26,7 @@ class SongBar extends StatelessWidget {
             activePlaylist = {
               'ytid': '',
               'title': 'No Playlist',
-              'subtitle': 'Just Updated',
               'header_desc': '',
-              'type': 'playlist',
               'image': '',
               'list': [],
             };

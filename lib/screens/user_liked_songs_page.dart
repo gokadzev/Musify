@@ -92,9 +92,7 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
                               'ytid': '',
                               'title':
                                   AppLocalizations.of(context)!.userLikedSongs,
-                              'subtitle': 'Just Updated',
                               'header_desc': '',
-                              'type': 'playlist',
                               'image': '',
                               'list': userLikedSongsList
                             },

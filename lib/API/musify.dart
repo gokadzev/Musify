@@ -26,9 +26,7 @@ List suggestedPlaylists = [];
 Map activePlaylist = {
   'ytid': '',
   'title': 'No Playlist',
-  'subtitle': 'Just Updated',
   'header_desc': '',
-  'type': 'playlist',
   'image': '',
   'list': [],
 };
@@ -79,11 +77,9 @@ Future<List<dynamic>> getUserPlaylists() async {
     playlistsByUser.add({
       'ytid': plist.id.toString(),
       'title': plist.title,
-      'subtitle': 'Just Updated',
       'header_desc': plist.description.length < 120
           ? plist.description
           : plist.description.substring(0, 120),
-      'type': 'playlist',
       'image': '',
       'list': []
     });

@@ -101,9 +101,7 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                             {
                               'ytid': '',
                               'title': AppLocalizations.of(context)!.localMusic,
-                              'subtitle': 'Just Updated',
                               'header_desc': '',
-                              'type': 'playlist',
                               'image': '',
                               'list': await getMusic()
                             },
@@ -199,8 +197,6 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                         'lowResImage': '',
                         'highResImage': '',
                         'songUrl': snapshot.data![index].data,
-                        'album': '',
-                        'type': 'song',
                         'localSongId': snapshot.data![index].id,
                         'more_info': {
                           'primary_artists': '',
@@ -309,8 +305,6 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                         'lowResImage': '',
                         'highResImage': '',
                         'songUrl': snapshot.data![index].data,
-                        'album': '',
-                        'type': 'song',
                         'localSongId': snapshot.data![index].id,
                         'more_info': {
                           'primary_artists': '',

@@ -28,8 +28,6 @@ Map<String, dynamic> returnSongLayout(dynamic index, Video song) {
     'image': song.thumbnails.standardResUrl,
     'lowResImage': song.thumbnails.lowResUrl,
     'highResImage': song.thumbnails.maxResUrl,
-    'album': '',
-    'type': 'song',
     'more_info': {
       'primary_artists': song.title.split('-')[0],
       'singers': song.title.split('-')[0],
