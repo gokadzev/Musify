@@ -8,7 +8,8 @@ import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:youtube_explode_dart/youtube_explode_dart.dart';
+
+final invalidCharacters = RegExp(r'[\\/*?:"<>|]');
 
 Future<void> downloadSong(BuildContext context, dynamic song) async {
   try {
@@ -16,43 +17,15 @@ Future<void> downloadSong(BuildContext context, dynamic song) async {
       return;
     }
 
-    final invalidCharacters = RegExp(r'[\\/*?:"<>|]');
-
     final filename = song['more_info']['singers'] +
         ' - ' +
         song['title'].replaceAll(invalidCharacters, '').replaceAll(' ', '') +
         '.${prefferedFileExtension.value}';
-    final filepath = '$downloadDirectory/$filename';
 
-    await downloadFileFromYT(
-      context,
-      filename,
-      filepath,
-      downloadDirectory!,
-      song,
-    );
-  } catch (e) {
-    debugPrint('Error while downloading song: $e');
-    showToast(
-      AppLocalizations.of(context)!.downloadFailed,
-    );
-  }
-}
-
-Future<void> downloadFileFromYT(
-  BuildContext context,
-  String filename,
-  String filepath,
-  String dlPath,
-  dynamic song,
-) async {
-  try {
-    final manifest =
-        await yt.videos.streamsClient.getManifest(song['ytid'].toString());
-    final audio = manifest.audioOnly.withHighestBitrate();
+    final audio = await getSong(song['ytid'].toString());
     await FlutterDownloader.enqueue(
-      url: audio.url.toString(),
-      savedDir: dlPath,
+      url: audio,
+      savedDir: downloadDirectory!,
       fileName: filename,
       showNotification: true,
       openFileFromNotification: true,
@@ -74,7 +47,7 @@ Future<void> downloadFileFromYT(
   } catch (e) {
     debugPrint('Error while downloading song: $e');
     showToast(
-      AppLocalizations.of(context)!.downloadFailed,
+      '${AppLocalizations.of(context)!.downloadFailed}, $e',
     );
   }
 }
