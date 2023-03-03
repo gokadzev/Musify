@@ -4,7 +4,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hive/hive.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 void addOrUpdateData(
   String category,
@@ -52,9 +51,6 @@ Future backupData(BuildContext context) async {
       await File(Hive.box(boxNames[i]).path!)
           .copy('$dlPath/${boxNames[i]}Data.hive');
     } catch (e) {
-      await [
-        Permission.manageExternalStorage,
-      ].request();
       await File(Hive.box(boxNames[i]).path!)
           .copy('$dlPath/${boxNames[i]}Data.hive');
       return '${AppLocalizations.of(context)!.backupPermsProblem}!';
@@ -78,9 +74,6 @@ Future restoreData(context) async {
       final boxPath = box.path;
       await File('$uplPath/${boxNames[i]}Data.hive').copy(boxPath!);
     } catch (e) {
-      await [
-        Permission.manageExternalStorage,
-      ].request();
       return '${AppLocalizations.of(context)!.restorePermsProblem}!';
     }
   }
