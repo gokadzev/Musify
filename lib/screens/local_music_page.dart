@@ -172,10 +172,11 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
             ),
             const Padding(padding: EdgeInsets.only(top: 40)),
             if (_searchQuery.isEmpty)
-              FutureBuilder(
-                future: getMusic(),
-                builder: (context, data) {
-                  if (data.connectionState != ConnectionState.done) {
+              FutureBuilder<List<dynamic>>(
+                future:
+                    Future.delayed(const Duration(milliseconds: 500), getMusic),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState != ConnectionState.done) {
                     return const Center(
                       child: Padding(
                         padding: EdgeInsets.all(35),
@@ -188,19 +189,19 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                     physics: const BouncingScrollPhysics(),
                     addAutomaticKeepAlives: false,
                     addRepaintBoundaries: false,
-                    itemCount: (data as dynamic).data.length as int,
+                    itemCount: snapshot.data!.length,
                     itemBuilder: (BuildContext context, int index) {
                       final lsong = {
                         'id': index,
                         'ytid': '',
-                        'title': (data as dynamic).data[index].displayName,
+                        'title': snapshot.data![index].displayName,
                         'image': '',
                         'lowResImage': '',
                         'highResImage': '',
-                        'songUrl': (data as dynamic).data[index].data,
+                        'songUrl': snapshot.data![index].data,
                         'album': '',
                         'type': 'song',
-                        'localSongId': (data as dynamic).data[index].id,
+                        'localSongId': snapshot.data![index].id,
                         'more_info': {
                           'primary_artists': '',
                           'singers': '',
@@ -279,10 +280,13 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                 },
               )
             else
-              FutureBuilder(
-                future: getMusic(searchQuery: _searchQuery),
-                builder: (context, data) {
-                  if (data.connectionState != ConnectionState.done) {
+              FutureBuilder<List<dynamic>>(
+                future: Future.delayed(
+                  const Duration(milliseconds: 500),
+                  () => getMusic(searchQuery: _searchQuery),
+                ),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState != ConnectionState.done) {
                     return const Center(
                       child: Padding(
                         padding: EdgeInsets.all(35),
@@ -295,19 +299,19 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                     physics: const BouncingScrollPhysics(),
                     addAutomaticKeepAlives: false,
                     addRepaintBoundaries: false,
-                    itemCount: (data as dynamic).data.length as int,
+                    itemCount: snapshot.data!.length,
                     itemBuilder: (BuildContext context, int index) {
                       final lsong = {
                         'id': index,
                         'ytid': '',
-                        'title': (data as dynamic).data[index].displayName,
+                        'title': snapshot.data![index].displayName,
                         'image': '',
                         'lowResImage': '',
                         'highResImage': '',
-                        'songUrl': (data as dynamic).data[index].data,
+                        'songUrl': snapshot.data![index].data,
                         'album': '',
                         'type': 'song',
-                        'localSongId': (data as dynamic).data[index].id,
+                        'localSongId': snapshot.data![index].id,
                         'more_info': {
                           'primary_artists': '',
                           'singers': '',
