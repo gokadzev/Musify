@@ -10,8 +10,8 @@
 /* Colors */
 :root {
   --color-default: #222222;
-  --color-primary: #2c2d41;
-  --color-secondary: #515370;
+  --color-primary: #1c1c1e;
+  --color-secondary: #872f2f;
 }
 
 /* Smooth scroll behavior */
@@ -522,7 +522,7 @@ section {
 
 .faq .content p {
   font-size: 15px;
-  color: #6c757d;
+  color: #943d3d;
 }
 
 .faq .accordion-item {
@@ -616,13 +616,13 @@ section {
   border-radius: 50px;
   transition: 0.3s;
   color: #fff;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(211, 112, 112, 0.1);
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.08);
-  border: 2px solid rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(211, 112, 112, 0.1);
 }
 
 .start .btn-download:hover {
-  border-color: rgba(255, 255, 255, 0.5);
+  border-color: #c55858;
 }
 
 .start .btn-version {
@@ -713,7 +713,7 @@ section {
 }
 
 .start .icon-box:hover {
-  background: #696c8f;
+  background: #9b4545;
 }
 
 .start .icon-box:hover .title a,
