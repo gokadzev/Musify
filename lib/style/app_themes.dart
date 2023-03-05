@@ -1,71 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:musify/style/app_colors.dart';
 
 Color primaryColor =
     Color(Hive.box('settings').get('accentColor', defaultValue: 0xFFF08080));
 
-MaterialColor primarySwatch = MaterialColor(primaryColor.value, {
-  50: Color.fromRGBO(
-    primaryColor.red,
-    primaryColor.green,
-    primaryColor.blue,
-    0.1,
-  ),
-  100: Color.fromRGBO(
-    primaryColor.red,
-    primaryColor.green,
-    primaryColor.blue,
-    0.2,
-  ),
-  200: Color.fromRGBO(
-    primaryColor.red,
-    primaryColor.green,
-    primaryColor.blue,
-    0.3,
-  ),
-  300: Color.fromRGBO(
-    primaryColor.red,
-    primaryColor.green,
-    primaryColor.blue,
-    0.4,
-  ),
-  400: Color.fromRGBO(
-    primaryColor.red,
-    primaryColor.green,
-    primaryColor.blue,
-    0.5,
-  ),
-  500: Color.fromRGBO(
-    primaryColor.red,
-    primaryColor.green,
-    primaryColor.blue,
-    0.6,
-  ),
-  600: Color.fromRGBO(
-    primaryColor.red,
-    primaryColor.green,
-    primaryColor.blue,
-    0.7,
-  ),
-  700: Color.fromRGBO(
-    primaryColor.red,
-    primaryColor.green,
-    primaryColor.blue,
-    0.8,
-  ),
-  800: Color.fromRGBO(
-    primaryColor.red,
-    primaryColor.green,
-    primaryColor.blue,
-    0.9,
-  ),
-  900: Color.fromRGBO(
-    primaryColor.red,
-    primaryColor.green,
-    primaryColor.blue,
-    1,
-  ),
-});
+MaterialColor primarySwatch = getPrimarySwatch(primaryColor);
 
 ColorScheme colorScheme = ColorScheme.fromSwatch(primarySwatch: primarySwatch);
 
