@@ -93,48 +93,42 @@ class AppState extends State<Musify> {
   }
 
   Widget getFooter() {
-    final items = <BottomNavBarItem>[
-      BottomNavBarItem(
-        icon: const Icon(FluentIcons.home_24_regular),
-        title: Text(
+    final items = List.generate(
+      4,
+      (index) {
+        final iconData = [
+          FluentIcons.home_24_regular,
+          FluentIcons.search_24_regular,
+          FluentIcons.book_24_regular,
+          FluentIcons.more_horizontal_24_regular,
+        ][index];
+
+        final title = [
           AppLocalizations.of(context)!.home,
-          maxLines: 1,
-        ),
-        routeName: '/',
-        activeColor: colorScheme.primary,
-        inactiveColor: Theme.of(context).hintColor,
-      ),
-      BottomNavBarItem(
-        icon: const Icon(FluentIcons.search_24_regular),
-        title: Text(
           AppLocalizations.of(context)!.search,
-          maxLines: 1,
-        ),
-        routeName: '/search',
-        activeColor: colorScheme.primary,
-        inactiveColor: Theme.of(context).hintColor,
-      ),
-      BottomNavBarItem(
-        icon: const Icon(FluentIcons.book_24_regular),
-        title: Text(
           AppLocalizations.of(context)!.userPlaylists,
-          maxLines: 1,
-        ),
-        routeName: '/userPlaylists',
-        activeColor: colorScheme.primary,
-        inactiveColor: Theme.of(context).hintColor,
-      ),
-      BottomNavBarItem(
-        icon: const Icon(FluentIcons.more_horizontal_24_regular),
-        title: Text(
           AppLocalizations.of(context)!.more,
-          maxLines: 1,
-        ),
-        routeName: '/more',
-        activeColor: colorScheme.primary,
-        inactiveColor: Theme.of(context).hintColor,
-      )
-    ];
+        ][index];
+
+        final routeName = [
+          '/',
+          '/search',
+          '/userPlaylists',
+          '/more',
+        ][index];
+
+        return BottomNavBarItem(
+          icon: Icon(iconData),
+          title: Text(
+            title,
+            maxLines: 1,
+          ),
+          routeName: routeName,
+          activeColor: colorScheme.primary,
+          inactiveColor: Theme.of(context).hintColor,
+        );
+      },
+    );
 
     return Column(
       mainAxisSize: MainAxisSize.min,
