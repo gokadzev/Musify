@@ -4,6 +4,7 @@ import 'package:audio_session/audio_session.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -256,6 +257,8 @@ Future<void> initialisation() async {
   await Hive.openBox('settings');
   await Hive.openBox('user');
   await Hive.openBox('cache');
+
+  await FlutterDisplayMode.setHighRefreshRate();
 
   await JustAudioBackground.init(
     androidNotificationChannelId: 'com.gokadzev.musify',
