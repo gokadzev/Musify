@@ -40,7 +40,7 @@ class AudioAppState extends State<AudioApp> {
             highlightColor: Colors.transparent,
             icon: Icon(
               FluentIcons.chevron_down_20_regular,
-              color: accent.primary,
+              color: colorScheme.primary,
             ),
             onPressed: () => Navigator.pop(context, false),
           ),
@@ -84,7 +84,7 @@ class AudioAppState extends State<AudioApp> {
                           Icon(
                             FluentIcons.music_note_1_24_regular,
                             size: size.width / 8,
-                            color: accent.primary,
+                            color: colorScheme.primary,
                           ),
                         ],
                       ),
@@ -118,7 +118,7 @@ class AudioAppState extends State<AudioApp> {
                             Icon(
                               FluentIcons.music_note_1_24_regular,
                               size: size.width / 8,
-                              color: accent.primary,
+                              color: colorScheme.primary,
                             ),
                           ],
                         ),
@@ -143,7 +143,7 @@ class AudioAppState extends State<AudioApp> {
                         style: TextStyle(
                           fontSize: size.height * 0.035,
                           fontWeight: FontWeight.w700,
-                          color: accent.primary,
+                          color: colorScheme.primary,
                         ),
                       ),
                       Padding(
@@ -204,7 +204,7 @@ class AudioAppState extends State<AudioApp> {
                   children: [
                     if (positionData != null)
                       Slider(
-                        activeColor: accent.primary,
+                        activeColor: colorScheme.primary,
                         inactiveColor: Colors.green[50],
                         value: positionData.position.inMilliseconds.toDouble(),
                         onChanged: (double? value) {
@@ -266,7 +266,7 @@ class AudioAppState extends State<AudioApp> {
                           Column(
                             children: [
                               IconButton(
-                                color: accent.primary,
+                                color: colorScheme.primary,
                                 icon: const Icon(
                                   FluentIcons.arrow_download_24_regular,
                                 ),
@@ -283,7 +283,7 @@ class AudioAppState extends State<AudioApp> {
                                     icon: Icon(
                                       FluentIcons.speaker_mute_24_filled,
                                       color: value
-                                          ? accent.primary
+                                          ? colorScheme.primary
                                           : Theme.of(context).hintColor,
                                     ),
                                     iconSize: 20,
@@ -299,7 +299,7 @@ class AudioAppState extends State<AudioApp> {
                           icon: Icon(
                             FluentIcons.arrow_shuffle_24_filled,
                             color: shuffleNotifier.value
-                                ? accent.primary
+                                ? colorScheme.primary
                                 : Theme.of(context).hintColor,
                           ),
                           iconSize: 20,
@@ -322,7 +322,7 @@ class AudioAppState extends State<AudioApp> {
                         ),
                         DecoratedBox(
                           decoration: BoxDecoration(
-                            color: accent.primary,
+                            color: colorScheme.primary,
                             borderRadius: BorderRadius.circular(100),
                           ),
                           child: StreamBuilder<PlayerState>(
@@ -401,7 +401,7 @@ class AudioAppState extends State<AudioApp> {
                           icon: Icon(
                             FluentIcons.arrow_repeat_1_24_filled,
                             color: repeatNotifier.value
-                                ? accent.primary
+                                ? colorScheme.primary
                                 : Theme.of(context).hintColor,
                           ),
                           iconSize: 20,
@@ -416,7 +416,7 @@ class AudioAppState extends State<AudioApp> {
                                 builder: (_, value, __) {
                                   if (value == true) {
                                     return IconButton(
-                                      color: accent.primary,
+                                      color: colorScheme.primary,
                                       icon: const Icon(
                                         FluentIcons.star_24_filled,
                                       ),
@@ -455,7 +455,7 @@ class AudioAppState extends State<AudioApp> {
                                           : FluentIcons
                                               .music_note_2_play_20_regular,
                                       color: value
-                                          ? accent.primary
+                                          ? colorScheme.primary
                                           : Theme.of(context).hintColor,
                                     ),
                                     iconSize: 20,
@@ -502,7 +502,8 @@ class AudioAppState extends State<AudioApp> {
                                                     icon: Icon(
                                                       FluentIcons
                                                           .arrow_between_down_24_filled,
-                                                      color: accent.primary,
+                                                      color:
+                                                          colorScheme.primary,
                                                       size: 20,
                                                     ),
                                                     onPressed: () => {
@@ -522,7 +523,7 @@ class AudioAppState extends State<AudioApp> {
                                                             activePlaylist[
                                                                 'title'],
                                                             style: TextStyle(
-                                                              color: accent
+                                                              color: colorScheme
                                                                   .primary,
                                                               fontSize: 30,
                                                               fontWeight:
@@ -607,7 +608,7 @@ class AudioAppState extends State<AudioApp> {
                                                   icon: Icon(
                                                     FluentIcons
                                                         .arrow_between_down_24_filled,
-                                                    color: accent.primary,
+                                                    color: colorScheme.primary,
                                                     size: 20,
                                                   ),
                                                   onPressed: () =>
@@ -626,7 +627,8 @@ class AudioAppState extends State<AudioApp> {
                                                         )!
                                                             .lyrics,
                                                         style: TextStyle(
-                                                          color: accent.primary,
+                                                          color: colorScheme
+                                                              .primary,
                                                           fontSize: 30,
                                                           fontWeight:
                                                               FontWeight.w500,

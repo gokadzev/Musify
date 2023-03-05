@@ -49,7 +49,7 @@ class PlaylistCube extends StatelessWidget {
                     child: Icon(
                       FluentIcons.music_note_1_24_regular,
                       size: 30,
-                      color: accent.primary,
+                      color: colorScheme.primary,
                     ),
                   ),
                 )
@@ -67,7 +67,7 @@ class PlaylistCube extends StatelessWidget {
                         Icon(
                           FluentIcons.music_note_1_24_regular,
                           size: 30,
-                          color: accent.primary,
+                          color: colorScheme.primary,
                         ),
                         Text(
                           title,

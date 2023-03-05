@@ -61,7 +61,7 @@ class SettingsCards extends StatelessWidget {
         Text(
           AppLocalizations.of(context)!.pages,
           style: TextStyle(
-            color: accent.primary,
+            color: colorScheme.primary,
             fontSize: 15,
             fontWeight: FontWeight.w400,
           ),
@@ -103,7 +103,7 @@ class SettingsCards extends StatelessWidget {
         Text(
           AppLocalizations.of(context)!.settings,
           style: TextStyle(
-            color: accent.primary,
+            color: colorScheme.primary,
             fontSize: 15,
             fontWeight: FontWeight.w400,
           ),
@@ -121,7 +121,7 @@ class SettingsCards extends StatelessWidget {
                   child: Container(
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: accent.primary,
+                        color: colorScheme.primary,
                       ),
                       borderRadius: const BorderRadius.all(
                         Radius.circular(20),
@@ -208,7 +208,7 @@ class SettingsCards extends StatelessWidget {
                   child: Container(
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: accent.primary,
+                        color: colorScheme.primary,
                       ),
                       borderRadius: const BorderRadius.all(
                         Radius.circular(20),
@@ -269,7 +269,7 @@ class SettingsCards extends StatelessWidget {
                   child: Container(
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: accent.primary,
+                        color: colorScheme.primary,
                       ),
                       borderRadius: const BorderRadius.all(
                         Radius.circular(20),
@@ -330,7 +330,7 @@ class SettingsCards extends StatelessWidget {
             useSystemColor.value = value;
             MyApp.setAccentColor(
               context,
-              accent.primary,
+              colorScheme.primary,
               value,
             );
             showToast(
@@ -375,7 +375,7 @@ class SettingsCards extends StatelessWidget {
                   child: Container(
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: accent.primary,
+                        color: colorScheme.primary,
                       ),
                       borderRadius: const BorderRadius.all(
                         Radius.circular(20),
@@ -434,7 +434,7 @@ class SettingsCards extends StatelessWidget {
         Text(
           AppLocalizations.of(context)!.tools,
           style: TextStyle(
-            color: accent.primary,
+            color: colorScheme.primary,
             fontSize: 15,
             fontWeight: FontWeight.w400,
           ),
@@ -503,7 +503,7 @@ class SettingsCards extends StatelessWidget {
         Text(
           AppLocalizations.of(context)!.others,
           style: TextStyle(
-            color: accent.primary,
+            color: colorScheme.primary,
             fontSize: 15,
             fontWeight: FontWeight.w400,
           ),

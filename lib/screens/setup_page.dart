@@ -28,7 +28,7 @@ class _SetupPageState extends State<SetupPage> {
               Text(
                 AppLocalizations.of(context)!.downloadSongsFolder,
                 style: TextStyle(
-                  color: accent.primary,
+                  color: colorScheme.primary,
                   fontSize: 15,
                   fontWeight: FontWeight.w400,
                 ),
@@ -50,7 +50,7 @@ class _SetupPageState extends State<SetupPage> {
                     },
                     style: ButtonStyle(
                       backgroundColor:
-                          MaterialStateProperty.all<Color>(accent.primary),
+                          MaterialStateProperty.all<Color>(colorScheme.primary),
                     ),
                     child: Text(
                       AppLocalizations.of(context)!.add.toUpperCase(),

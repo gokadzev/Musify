@@ -68,7 +68,7 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                           Icon(
                             FluentIcons.save_24_filled,
                             size: 30,
-                            color: accent.primary,
+                            color: colorScheme.primary,
                           ),
                           Text(
                             AppLocalizations.of(context)!.localMusic,
@@ -87,7 +87,7 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                       Text(
                         AppLocalizations.of(context)!.localMusic,
                         style: TextStyle(
-                          color: accent.primary,
+                          color: colorScheme.primary,
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
                         ),
@@ -108,8 +108,9 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                           ),
                         },
                         style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all<Color>(accent.primary),
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                            colorScheme.primary,
+                          ),
                         ),
                         child: Text(
                           AppLocalizations.of(context)!.playAll.toUpperCase(),
@@ -140,7 +141,7 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                 focusNode: _inputNode,
                 style: TextStyle(
                   fontSize: 16,
-                  color: accent.primary,
+                  color: colorScheme.primary,
                 ),
                 cursorColor: Colors.green[50],
                 decoration: InputDecoration(
@@ -148,14 +149,14 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                     borderRadius: const BorderRadius.all(
                       Radius.circular(15),
                     ),
-                    borderSide: BorderSide(color: accent.primary),
+                    borderSide: BorderSide(color: colorScheme.primary),
                   ),
                   suffixIcon: IconButton(
                     icon: Icon(
                       FluentIcons.search_24_regular,
-                      color: accent.primary,
+                      color: colorScheme.primary,
                     ),
-                    color: accent.primary,
+                    color: colorScheme.primary,
                     onPressed: () {
                       search();
                       FocusManager.instance.primaryFocus?.unfocus();
@@ -163,7 +164,7 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                   ),
                   hintText: '${AppLocalizations.of(context)!.search}...',
                   hintStyle: TextStyle(
-                    color: accent.primary,
+                    color: colorScheme.primary,
                   ),
                 ),
               ),
@@ -215,10 +216,10 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                           onTap: () {
                             playSong(lsong);
                           },
-                          splashColor: accent.primary.withOpacity(0.4),
-                          hoverColor: accent.primary.withOpacity(0.4),
-                          focusColor: accent.primary.withOpacity(0.4),
-                          highlightColor: accent.primary.withOpacity(0.4),
+                          splashColor: colorScheme.primary.withOpacity(0.4),
+                          hoverColor: colorScheme.primary.withOpacity(0.4),
+                          focusColor: colorScheme.primary.withOpacity(0.4),
+                          highlightColor: colorScheme.primary.withOpacity(0.4),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
@@ -233,13 +234,13 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                                   width: 60,
                                   height: 60,
                                   decoration: BoxDecoration(
-                                    color: accent.primary,
+                                    color: colorScheme.primary,
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Icon(
                                     FluentIcons.music_note_1_24_regular,
                                     size: 25,
-                                    color: accent.primary !=
+                                    color: colorScheme.primary !=
                                             const Color(0xFFFFFFFF)
                                         ? Colors.white
                                         : Colors.black,
@@ -260,7 +261,7 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                                         overflow: TextOverflow.ellipsis,
                                         lsong['title'].toString(),
                                         style: TextStyle(
-                                          color: accent.primary,
+                                          color: colorScheme.primary,
                                         ),
                                       ),
                                     ),
@@ -323,10 +324,10 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                           onTap: () {
                             playSong(lsong);
                           },
-                          splashColor: accent.primary.withOpacity(0.4),
-                          hoverColor: accent.primary.withOpacity(0.4),
-                          focusColor: accent.primary.withOpacity(0.4),
-                          highlightColor: accent.primary.withOpacity(0.4),
+                          splashColor: colorScheme.primary.withOpacity(0.4),
+                          hoverColor: colorScheme.primary.withOpacity(0.4),
+                          focusColor: colorScheme.primary.withOpacity(0.4),
+                          highlightColor: colorScheme.primary.withOpacity(0.4),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
@@ -341,13 +342,13 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                                   width: 60,
                                   height: 60,
                                   decoration: BoxDecoration(
-                                    color: accent.primary,
+                                    color: colorScheme.primary,
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Icon(
                                     FluentIcons.music_note_1_24_regular,
                                     size: 25,
-                                    color: accent.primary !=
+                                    color: colorScheme.primary !=
                                             const Color(0xFFFFFFFF)
                                         ? Colors.white
                                         : Colors.black,
@@ -368,7 +369,7 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                                         overflow: TextOverflow.ellipsis,
                                         lsong['title'].toString(),
                                         style: TextStyle(
-                                          color: accent.primary,
+                                          color: colorScheme.primary,
                                         ),
                                       ),
                                     ),

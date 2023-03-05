@@ -33,10 +33,10 @@ class SongBar extends StatelessWidget {
             id = 0;
           }
         },
-        splashColor: accent.primary.withOpacity(0.4),
-        hoverColor: accent.primary.withOpacity(0.4),
-        focusColor: accent.primary.withOpacity(0.4),
-        highlightColor: accent.primary.withOpacity(0.4),
+        splashColor: colorScheme.primary.withOpacity(0.4),
+        hoverColor: colorScheme.primary.withOpacity(0.4),
+        focusColor: colorScheme.primary.withOpacity(0.4),
+        highlightColor: colorScheme.primary.withOpacity(0.4),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
@@ -69,7 +69,7 @@ class SongBar extends StatelessWidget {
                           .replaceAll('&quot;', '"')
                           .replaceAll('&amp;', '&'),
                       style: TextStyle(
-                        color: accent.primary,
+                        color: colorScheme.primary,
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                       ),
@@ -101,7 +101,7 @@ class SongBar extends StatelessWidget {
                   builder: (_, value, __) {
                     if (value == true) {
                       return IconButton(
-                        color: accent.primary,
+                        color: colorScheme.primary,
                         icon: const Icon(FluentIcons.star_24_filled),
                         onPressed: () => {
                           updateLikeStatus(song['ytid'], false),
@@ -110,7 +110,7 @@ class SongBar extends StatelessWidget {
                       );
                     } else {
                       return IconButton(
-                        color: accent.primary,
+                        color: colorScheme.primary,
                         icon: const Icon(FluentIcons.star_24_regular),
                         onPressed: () => {
                           updateLikeStatus(song['ytid'], true),
@@ -121,7 +121,7 @@ class SongBar extends StatelessWidget {
                   },
                 ),
                 IconButton(
-                  color: accent.primary,
+                  color: colorScheme.primary,
                   icon: const Icon(FluentIcons.arrow_download_24_regular),
                   onPressed: () => downloadSong(context, song),
                 ),

@@ -53,7 +53,7 @@ MaterialColor getMaterialColorFromColor(Color color) {
 }
 
 Color isAccentWhite() {
-  return accent.primary != const Color(0xFFFFFFFF)
+  return colorScheme.primary != const Color(0xFFFFFFFF)
       ? Colors.white
       : Colors.black;
 }

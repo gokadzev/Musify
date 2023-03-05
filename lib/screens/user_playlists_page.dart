@@ -64,7 +64,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
             },
           );
         },
-        backgroundColor: accent.primary,
+        backgroundColor: colorScheme.primary,
         child: Icon(
           FluentIcons.add_24_filled,
           color: isAccentWhite(),

@@ -49,7 +49,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                 focusNode: _inputNode,
                 style: TextStyle(
                   fontSize: 16,
-                  color: accent.primary,
+                  color: colorScheme.primary,
                 ),
                 cursorColor: Colors.green[50],
                 decoration: InputDecoration(
@@ -57,14 +57,14 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                     borderRadius: const BorderRadius.all(
                       Radius.circular(15),
                     ),
-                    borderSide: BorderSide(color: accent.primary),
+                    borderSide: BorderSide(color: colorScheme.primary),
                   ),
                   suffixIcon: IconButton(
                     icon: Icon(
                       FluentIcons.search_24_regular,
-                      color: accent.primary,
+                      color: colorScheme.primary,
                     ),
-                    color: accent.primary,
+                    color: colorScheme.primary,
                     onPressed: () {
                       search();
                       FocusManager.instance.primaryFocus?.unfocus();
@@ -72,7 +72,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                   ),
                   hintText: '${AppLocalizations.of(context)!.search}...',
                   hintStyle: TextStyle(
-                    color: accent.primary,
+                    color: colorScheme.primary,
                   ),
                 ),
               ),

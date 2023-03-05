@@ -93,7 +93,7 @@ class _SearchPageState extends State<SearchPage> {
                 focusNode: _inputNode,
                 style: TextStyle(
                   fontSize: 16,
-                  color: accent.primary,
+                  color: colorScheme.primary,
                 ),
                 cursorColor: Colors.green[50],
                 decoration: InputDecoration(
@@ -101,7 +101,7 @@ class _SearchPageState extends State<SearchPage> {
                     borderRadius: const BorderRadius.all(
                       Radius.circular(15),
                     ),
-                    borderSide: BorderSide(color: accent.primary),
+                    borderSide: BorderSide(color: colorScheme.primary),
                   ),
                   suffixIcon: ValueListenableBuilder<bool>(
                     valueListenable: _fetchingSongs,
@@ -113,7 +113,7 @@ class _SearchPageState extends State<SearchPage> {
                             width: 18,
                             child: Spinner(),
                           ),
-                          color: accent.primary,
+                          color: colorScheme.primary,
                           onPressed: () {
                             search();
                             FocusManager.instance.primaryFocus?.unfocus();
@@ -123,9 +123,9 @@ class _SearchPageState extends State<SearchPage> {
                         return IconButton(
                           icon: Icon(
                             FluentIcons.search_20_regular,
-                            color: accent.primary,
+                            color: colorScheme.primary,
                           ),
-                          color: accent.primary,
+                          color: colorScheme.primary,
                           onPressed: () {
                             search();
                             FocusManager.instance.primaryFocus?.unfocus();
@@ -136,7 +136,7 @@ class _SearchPageState extends State<SearchPage> {
                   ),
                   hintText: '${AppLocalizations.of(context)!.search}...',
                   hintStyle: TextStyle(
-                    color: accent.primary,
+                    color: colorScheme.primary,
                   ),
                 ),
               ),
@@ -158,7 +158,7 @@ class _SearchPageState extends State<SearchPage> {
                       child: ListTile(
                         leading: Icon(
                           FluentIcons.search_24_regular,
-                          color: accent.primary,
+                          color: colorScheme.primary,
                         ),
                         title: Text(
                           suggestionsNotAvailable

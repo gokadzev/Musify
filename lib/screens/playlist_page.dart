@@ -116,7 +116,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                                   Icon(
                                     FluentIcons.music_note_1_24_regular,
                                     size: 30,
-                                    color: accent.primary,
+                                    color: colorScheme.primary,
                                   ),
                                   Text(
                                     widget.playlist['title'].toString(),
@@ -135,7 +135,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                         widget.playlist['title'].toString(),
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: accent.primary,
+                          color: colorScheme.primary,
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
                         ),
@@ -145,7 +145,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                         widget.playlist['header_desc'].toString(),
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: accent.primary,
+                          color: colorScheme.primary,
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
                         ),
@@ -161,8 +161,9 @@ class _PlaylistPageState extends State<PlaylistPage> {
                           )
                         },
                         style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all<Color>(accent.primary),
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                            colorScheme.primary,
+                          ),
                         ),
                         child: Text(
                           AppLocalizations.of(context)!.playAll.toUpperCase(),

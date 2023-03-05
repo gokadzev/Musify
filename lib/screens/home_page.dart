@@ -52,7 +52,7 @@ class _HomePageState extends State<HomePage> {
                                       AppLocalizations.of(context)!
                                           .suggestedPlaylists,
                                       style: TextStyle(
-                                        color: accent.primary,
+                                        color: colorScheme.primary,
                                         fontSize: 20,
                                         fontWeight: FontWeight.w700,
                                       ),
@@ -70,7 +70,7 @@ class _HomePageState extends State<HomePage> {
                                   },
                                   icon: Icon(
                                     FluentIcons.more_horizontal_24_regular,
-                                    color: accent.primary,
+                                    color: colorScheme.primary,
                                   ),
                                 ),
                               ],
@@ -128,7 +128,8 @@ class _HomePageState extends State<HomePage> {
                   return Center(
                     child: Text(
                       'Error!',
-                      style: TextStyle(color: accent.primary, fontSize: 18),
+                      style:
+                          TextStyle(color: colorScheme.primary, fontSize: 18),
                     ),
                   );
                 }
@@ -136,7 +137,8 @@ class _HomePageState extends State<HomePage> {
                   return Center(
                     child: Text(
                       'Nothing Found!',
-                      style: TextStyle(color: accent.primary, fontSize: 18),
+                      style:
+                          TextStyle(color: colorScheme.primary, fontSize: 18),
                     ),
                   );
                 }
@@ -152,7 +154,7 @@ class _HomePageState extends State<HomePage> {
                       child: Text(
                         AppLocalizations.of(context)!.recommendedForYou,
                         style: TextStyle(
-                          color: accent.primary,
+                          color: colorScheme.primary,
                           fontSize: 20,
                           fontWeight: FontWeight.w700,
                         ),

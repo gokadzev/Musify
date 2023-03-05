@@ -39,7 +39,7 @@ class AboutCards extends StatelessWidget {
                     child: Text(
                       'Musify  | $appVersion',
                       style: TextStyle(
-                        color: accent.primary,
+                        color: colorScheme.primary,
                         fontSize: 24,
                         fontWeight: FontWeight.w600,
                       ),
@@ -85,7 +85,7 @@ class AboutCards extends StatelessWidget {
                   IconButton(
                     icon: Icon(
                       FluentIcons.code_24_filled,
-                      color: accent.primary,
+                      color: colorScheme.primary,
                     ),
                     tooltip: 'Github',
                     onPressed: () {

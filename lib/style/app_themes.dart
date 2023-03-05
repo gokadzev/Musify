@@ -1,10 +1,73 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
-ColorScheme accent = ColorScheme.fromSeed(
-  seedColor:
-      Color(Hive.box('settings').get('accentColor', defaultValue: 0xFFF08080)),
-);
+Color primaryColor =
+    Color(Hive.box('settings').get('accentColor', defaultValue: 0xFFF08080));
+
+MaterialColor primarySwatch = MaterialColor(primaryColor.value, {
+  50: Color.fromRGBO(
+    primaryColor.red,
+    primaryColor.green,
+    primaryColor.blue,
+    0.1,
+  ),
+  100: Color.fromRGBO(
+    primaryColor.red,
+    primaryColor.green,
+    primaryColor.blue,
+    0.2,
+  ),
+  200: Color.fromRGBO(
+    primaryColor.red,
+    primaryColor.green,
+    primaryColor.blue,
+    0.3,
+  ),
+  300: Color.fromRGBO(
+    primaryColor.red,
+    primaryColor.green,
+    primaryColor.blue,
+    0.4,
+  ),
+  400: Color.fromRGBO(
+    primaryColor.red,
+    primaryColor.green,
+    primaryColor.blue,
+    0.5,
+  ),
+  500: Color.fromRGBO(
+    primaryColor.red,
+    primaryColor.green,
+    primaryColor.blue,
+    0.6,
+  ),
+  600: Color.fromRGBO(
+    primaryColor.red,
+    primaryColor.green,
+    primaryColor.blue,
+    0.7,
+  ),
+  700: Color.fromRGBO(
+    primaryColor.red,
+    primaryColor.green,
+    primaryColor.blue,
+    0.8,
+  ),
+  800: Color.fromRGBO(
+    primaryColor.red,
+    primaryColor.green,
+    primaryColor.blue,
+    0.9,
+  ),
+  900: Color.fromRGBO(
+    primaryColor.red,
+    primaryColor.green,
+    primaryColor.blue,
+    1,
+  ),
+});
+
+ColorScheme colorScheme = ColorScheme.fromSwatch(primarySwatch: primarySwatch);
 
 ThemeData getAppDarkTheme() {
   return ThemeData(
@@ -12,19 +75,19 @@ ThemeData getAppDarkTheme() {
     canvasColor: const Color(0xFF121212),
     appBarTheme: AppBarTheme(
       backgroundColor: const Color(0xFF121212),
-      iconTheme: IconThemeData(color: accent.primary),
+      iconTheme: IconThemeData(color: colorScheme.primary),
       centerTitle: true,
       titleTextStyle: TextStyle(
         fontSize: 27,
         fontWeight: FontWeight.w700,
-        color: accent.primary,
+        color: colorScheme.primary,
       ),
       elevation: 0,
     ),
     bottomSheetTheme: const BottomSheetThemeData(
       backgroundColor: Color(0xFF121212),
     ),
-    colorScheme: accent,
+    colorScheme: colorScheme,
     visualDensity: VisualDensity.adaptivePlatformDensity,
     fontFamily: 'Ubuntu',
     useMaterial3: true,
@@ -49,9 +112,9 @@ ThemeData getAppDarkTheme() {
       ),
       elevation: 2.3,
     ),
-    listTileTheme: ListTileThemeData(textColor: accent.primary),
+    listTileTheme: ListTileThemeData(textColor: colorScheme.primary),
     switchTheme: SwitchThemeData(
-      trackColor: MaterialStateProperty.all(accent.primary),
+      trackColor: MaterialStateProperty.all(colorScheme.primary),
     ),
     iconTheme: const IconThemeData(color: Colors.white),
     hintColor: Colors.white,
@@ -61,7 +124,7 @@ ThemeData getAppDarkTheme() {
     bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFF151515)),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: accent.background.withAlpha(50),
+      fillColor: colorScheme.background.withAlpha(50),
       isDense: true,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(15.0),
@@ -83,16 +146,16 @@ ThemeData getAppLightTheme() {
   return ThemeData(
     scaffoldBackgroundColor: Colors.white,
     canvasColor: Colors.white,
-    colorScheme: accent,
+    colorScheme: colorScheme,
     bottomSheetTheme: const BottomSheetThemeData(backgroundColor: Colors.white),
     appBarTheme: AppBarTheme(
       backgroundColor: Colors.white,
-      iconTheme: IconThemeData(color: accent.primary),
+      iconTheme: IconThemeData(color: colorScheme.primary),
       centerTitle: true,
       titleTextStyle: TextStyle(
         fontSize: 27,
         fontWeight: FontWeight.w700,
-        color: accent.primary,
+        color: colorScheme.primary,
       ),
       elevation: 0,
     ),
@@ -120,18 +183,18 @@ ThemeData getAppLightTheme() {
       elevation: 2.3,
     ),
     listTileTheme: ListTileThemeData(
-      selectedColor: accent.primary.withOpacity(0.4),
-      textColor: accent.primary,
+      selectedColor: colorScheme.primary.withOpacity(0.4),
+      textColor: colorScheme.primary,
     ),
     switchTheme: SwitchThemeData(
-      trackColor: MaterialStateProperty.all(accent.primary),
+      trackColor: MaterialStateProperty.all(colorScheme.primary),
     ),
     iconTheme: const IconThemeData(color: Color(0xFF151515)),
     hintColor: const Color(0xFF151515),
     bottomAppBarTheme: const BottomAppBarTheme(color: Colors.white),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: accent.background.withAlpha(50),
+      fillColor: colorScheme.background.withAlpha(50),
       isDense: true,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(15.0),

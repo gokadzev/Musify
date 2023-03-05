@@ -48,7 +48,7 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
                           Icon(
                             FluentIcons.music_note_1_24_regular,
                             size: 30,
-                            color: accent.primary,
+                            color: colorScheme.primary,
                           ),
                           Text(
                             AppLocalizations.of(context)!.userLikedSongs,
@@ -68,7 +68,7 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
                       Text(
                         AppLocalizations.of(context)!.userLikedSongs,
                         style: TextStyle(
-                          color: accent.primary,
+                          color: colorScheme.primary,
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
                         ),
@@ -77,7 +77,7 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
                       Text(
                         '${AppLocalizations.of(context)!.yourFavoriteSongsHere}!',
                         style: TextStyle(
-                          color: accent.primary,
+                          color: colorScheme.primary,
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
                         ),
@@ -99,8 +99,9 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
                           ),
                         },
                         style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all<Color>(accent.primary),
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                            colorScheme.primary,
+                          ),
                         ),
                         child: Text(
                           AppLocalizations.of(context)!.playAll.toUpperCase(),

@@ -101,7 +101,7 @@ class AppState extends State<Musify> {
           maxLines: 1,
         ),
         routeName: '/',
-        activeColor: accent.primary,
+        activeColor: colorScheme.primary,
         inactiveColor: Theme.of(context).hintColor,
       ),
       BottomNavBarItem(
@@ -111,7 +111,7 @@ class AppState extends State<Musify> {
           maxLines: 1,
         ),
         routeName: '/search',
-        activeColor: accent.primary,
+        activeColor: colorScheme.primary,
         inactiveColor: Theme.of(context).hintColor,
       ),
       BottomNavBarItem(
@@ -121,7 +121,7 @@ class AppState extends State<Musify> {
           maxLines: 1,
         ),
         routeName: '/userPlaylists',
-        activeColor: accent.primary,
+        activeColor: colorScheme.primary,
         inactiveColor: Theme.of(context).hintColor,
       ),
       BottomNavBarItem(
@@ -131,7 +131,7 @@ class AppState extends State<Musify> {
           maxLines: 1,
         ),
         routeName: '/more',
-        activeColor: accent.primary,
+        activeColor: colorScheme.primary,
         inactiveColor: Theme.of(context).hintColor,
       )
     ];
@@ -174,7 +174,7 @@ class AppState extends State<Musify> {
                           size: 22,
                         ),
                         onPressed: null,
-                        disabledColor: accent.primary,
+                        disabledColor: colorScheme.primary,
                       ),
                       Padding(
                         padding: const EdgeInsets.only(
@@ -193,7 +193,7 @@ class AppState extends State<Musify> {
                                 nullArtworkWidget: Icon(
                                   FluentIcons.music_note_1_24_regular,
                                   size: 30,
-                                  color: accent.primary,
+                                  color: colorScheme.primary,
                                 ),
                                 keepOldArtwork: true,
                               )
@@ -223,7 +223,7 @@ class AppState extends State<Musify> {
                                         Icon(
                                           FluentIcons.music_note_1_24_regular,
                                           size: 30,
-                                          color: accent.primary,
+                                          color: colorScheme.primary,
                                         ),
                                       ],
                                     ),
@@ -240,7 +240,7 @@ class AppState extends State<Musify> {
                                 ? '${metadata!.title.toString().substring(0, 15)}...'
                                 : metadata!.title.toString(),
                             style: TextStyle(
-                              color: accent.primary,
+                              color: colorScheme.primary,
                               fontSize: 17,
                               fontWeight: FontWeight.w600,
                             ),
@@ -250,7 +250,7 @@ class AppState extends State<Musify> {
                                 ? '${metadata!.artist.toString().substring(0, 15)}...'
                                 : metadata!.artist.toString(),
                             style: TextStyle(
-                              color: accent.primary,
+                              color: colorScheme.primary,
                               fontSize: 15,
                             ),
                           )
@@ -275,7 +275,7 @@ class AppState extends State<Musify> {
                                     MediaQuery.of(context).size.width * 0.08,
                                 child: CircularProgressIndicator(
                                   valueColor: AlwaysStoppedAnimation<Color>(
-                                    accent.primary,
+                                    colorScheme.primary,
                                   ),
                                 ),
                               );
@@ -283,7 +283,7 @@ class AppState extends State<Musify> {
                               return IconButton(
                                 icon: Icon(
                                   FluentIcons.play_12_filled,
-                                  color: accent.primary,
+                                  color: colorScheme.primary,
                                 ),
                                 iconSize: 45,
                                 onPressed: audioPlayer.play,
@@ -294,7 +294,7 @@ class AppState extends State<Musify> {
                               return IconButton(
                                 icon: Icon(
                                   FluentIcons.pause_12_filled,
-                                  color: accent.primary,
+                                  color: colorScheme.primary,
                                 ),
                                 iconSize: 45,
                                 onPressed: audioPlayer.pause,
@@ -304,7 +304,7 @@ class AppState extends State<Musify> {
                               return IconButton(
                                 icon: Icon(
                                   FluentIcons.replay_20_filled,
-                                  color: accent.primary,
+                                  color: colorScheme.primary,
                                 ),
                                 iconSize: 45,
                                 onPressed: () => audioPlayer.seek(
