@@ -78,11 +78,6 @@ section {
   margin: auto;
 }
 
-.section-header p {
-  margin-bottom: 0;
-  color: #6f6f6f;
-}
-
 .breadcrumbs .page-header {
   padding: 60px 0 60px 0;
   min-height: 20vh;
@@ -304,10 +299,6 @@ section {
 
 .header .logo h1 span {
   color: var(--color-secondary);
-}
-
-.sticked-header-offset {
-  margin-top: 70px;
 }
 
 section {
