@@ -104,13 +104,10 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-
     final settingsBox = Hive.box('settings');
-
     final language =
         settingsBox.get('language', defaultValue: 'English') as String;
     _locale = Locale(appLanguages[language] ?? 'en');
-
     final themeModeSetting =
         settingsBox.get('themeMode', defaultValue: 'system') as String;
     themeMode = themeModeSetting == 'system'
@@ -128,25 +125,30 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    final kBorderRadius = BorderRadius.circular(15.0);
+    final kContentPadding =
+        const EdgeInsets.only(left: 18, right: 20, top: 14, bottom: 14);
+
     return DynamicColorBuilder(
       builder: (lightColorScheme, darkColorScheme) {
-        if ((lightColorScheme != null || darkColorScheme != null) &&
+        if (lightColorScheme != null &&
+            darkColorScheme != null &&
             useSystemColor.value) {
-          accent = (themeMode == ThemeMode.light
-              ? lightColorScheme
-              : darkColorScheme)!;
+          accent =
+              themeMode == ThemeMode.light ? lightColorScheme : darkColorScheme;
         }
 
         return MaterialApp(
           themeMode: themeMode,
           debugShowCheckedModeBanner: false,
-          darkTheme: darkColorScheme != null && useSystemColor.value == true
+          darkTheme: darkColorScheme != null && useSystemColor.value
               ? getAppDarkTheme().copyWith(
                   scaffoldBackgroundColor: darkColorScheme.surface,
                   colorScheme: darkColorScheme.harmonized(),
                   canvasColor: darkColorScheme.surface,
-                  bottomAppBarTheme:
-                      BottomAppBarTheme(color: darkColorScheme.surface),
+                  bottomAppBarTheme: BottomAppBarTheme(
+                    color: darkColorScheme.surface,
+                  ),
                   appBarTheme: AppBarTheme(
                     backgroundColor: darkColorScheme.surface,
                     centerTitle: true,
@@ -161,27 +163,23 @@ class _MyAppState extends State<MyApp> {
                     filled: true,
                     isDense: true,
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15.0),
+                      borderRadius: kBorderRadius,
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15.0),
+                      borderRadius: kBorderRadius,
                     ),
-                    contentPadding: const EdgeInsets.only(
-                      left: 18,
-                      right: 20,
-                      top: 14,
-                      bottom: 14,
-                    ),
+                    contentPadding: kContentPadding,
                   ),
                 )
               : getAppDarkTheme(),
-          theme: lightColorScheme != null && useSystemColor.value == true
+          theme: lightColorScheme != null && useSystemColor.value
               ? getAppLightTheme().copyWith(
                   scaffoldBackgroundColor: lightColorScheme.surface,
                   colorScheme: lightColorScheme.harmonized(),
                   canvasColor: lightColorScheme.surface,
-                  bottomAppBarTheme:
-                      BottomAppBarTheme(color: lightColorScheme.surface),
+                  bottomAppBarTheme: BottomAppBarTheme(
+                    color: lightColorScheme.surface,
+                  ),
                   appBarTheme: AppBarTheme(
                     backgroundColor: lightColorScheme.surface,
                     centerTitle: true,
@@ -196,17 +194,12 @@ class _MyAppState extends State<MyApp> {
                     filled: true,
                     isDense: true,
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15.0),
+                      borderRadius: kBorderRadius,
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15.0),
+                      borderRadius: kBorderRadius,
                     ),
-                    contentPadding: const EdgeInsets.only(
-                      left: 18,
-                      right: 20,
-                      top: 14,
-                      bottom: 14,
-                    ),
+                    contentPadding: kContentPadding,
                   ),
                 )
               : getAppLightTheme(),
