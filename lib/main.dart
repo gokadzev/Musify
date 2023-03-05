@@ -38,6 +38,10 @@ final appLanguages = <String, String>{
   'Russian': 'ru',
 };
 
+final appSupportedLocales = appLanguages.values
+    .map((languageCode) => Locale.fromSubtags(languageCode: languageCode))
+    .toList();
+
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
@@ -212,32 +216,7 @@ class _MyAppState extends State<MyApp> {
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          supportedLocales: const [
-            Locale('en', ''),
-            Locale('ka', ''),
-            Locale.fromSubtags(languageCode: 'zh'),
-            Locale.fromSubtags(
-              languageCode: 'zh',
-              scriptCode: 'Hant',
-              countryCode: 'TW',
-            ),
-            Locale('nl', ''),
-            Locale('fr', ''),
-            Locale('de', ''),
-            Locale('he', ''),
-            Locale('hi', ''),
-            Locale('hu', ''),
-            Locale('id', ''),
-            Locale('it', ''),
-            Locale('pl', ''),
-            Locale('pt', ''),
-            Locale('es', ''),
-            Locale('ta', ''),
-            Locale('tr', ''),
-            Locale('uk', ''),
-            Locale('ur', ''),
-            Locale('ru', '')
-          ],
+          supportedLocales: appSupportedLocales,
           locale: _locale,
           home: Musify(),
         );
