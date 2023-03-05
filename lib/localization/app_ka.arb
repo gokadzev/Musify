@@ -21,9 +21,9 @@
   "clearCache": "ქეშის გასუფთავება",
   "clearSearchHistory": "საძიებო ისტორიის გასუფთავება",
   "downloadAppUpdate": "აპლიკაციის განახლების ჩამოტვირთვა",
-  "downloadFailed": "Download failed",
+  "downloadFailed": "ჩამოტვირთვა ვერ შესრულდა",
   "downloadSongsFolder": "ჩამოტვირთული სიმღერების საქაღალდე",
-  "errorWhileRequestingPerms": "Error while requesting permissions",
+  "errorWhileRequestingPerms": "შეცდომა უფლებების მოთხოვნისას",
   "falseMSG": "მცდარი",
   "foregroundService": "წინა პლანის სერვისი",
   "home": "მთავარი",
@@ -36,7 +36,7 @@
   "more": "მეტი",
   "noDirectories": "საქაღალდეები არ არის",
   "noDirectory": "საქაღალდე არ არის",
-  "notYTlist": "ეს არ არის Youtube ფლეილისთ ID",
+  "notYTlist": "ეს არ არის Youtube ფლეილისთ აიდი",
   "nowPlaying": "ახლა ჩართულია",
   "others": "სხვა",
   "pages": "გვერდები",
@@ -63,5 +63,5 @@
   "userLikedSongs": "მომხმარებლის მოწონებული სიმღერები",
   "userPlaylists": "მომხმარებლის ფლეილისთები",
   "yourFavoriteSongsHere": "შენი ფავორიტი სიმღერები აქ",
-  "youtubePlaylistID": "Youtube ფლეილისთის ID"
+  "youtubePlaylistID": "Youtube ფლეილისთის აიდი"
 }
