@@ -12,30 +12,34 @@ class PlaylistCube extends StatelessWidget {
     required this.id,
     required this.image,
     required this.title,
+    required this.onClickOpen,
   });
   final String id;
   final dynamic image;
   final String title;
+  final bool onClickOpen;
 
   @override
   Widget build(BuildContext context) {
-    final calculatedSize = MediaQuery.of(context).size.height * 0.3;
+    final calculatedSize = MediaQuery.of(context).size.height * 0.25;
     return DelayedDisplay(
       delay: const Duration(milliseconds: 200),
       fadingDuration: const Duration(milliseconds: 400),
       child: GestureDetector(
-        onTap: () {
-          getPlaylistInfoForWidget(id).then(
-            (value) => {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => PlaylistPage(playlist: value),
-                ),
-              )
-            },
-          );
-        },
+        onTap: onClickOpen
+            ? () {
+                getPlaylistInfoForWidget(id).then(
+                  (value) => {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PlaylistPage(playlist: value),
+                      ),
+                    )
+                  },
+                );
+              }
+            : () => {},
         child: ClipRRect(
           borderRadius: BorderRadius.circular(15),
           child: image != ''
@@ -59,7 +63,7 @@ class PlaylistCube extends StatelessWidget {
                   width: calculatedSize,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    color: Theme.of(context).colorScheme.background,
+                    color: const Color.fromARGB(30, 255, 255, 255),
                   ),
                   child: Center(
                     child: Column(
@@ -70,9 +74,15 @@ class PlaylistCube extends StatelessWidget {
                           size: 30,
                           color: colorScheme.primary,
                         ),
-                        Text(
-                          title,
-                          textAlign: TextAlign.center,
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: 10,
+                            right: 10,
+                          ),
+                          child: Text(
+                            title,
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                       ],
                     ),

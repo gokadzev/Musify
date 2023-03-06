@@ -111,6 +111,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                                 title: (data as dynamic)
                                     .data[index]['title']
                                     .toString(),
+                                onClickOpen: true,
                               ),
                             ),
                           );
