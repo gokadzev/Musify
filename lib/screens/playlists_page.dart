@@ -108,7 +108,6 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                                 title: (data as dynamic)
                                     .data[index]['title']
                                     .toString(),
-                                onClickOpen: true,
                               ),
                             );
                           },
@@ -147,7 +146,6 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                                 title: (data as dynamic)
                                     .data[index]['title']
                                     .toString(),
-                                onClickOpen: true,
                               ),
                             );
                           },

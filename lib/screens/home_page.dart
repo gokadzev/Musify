@@ -97,7 +97,6 @@ class _HomePageState extends State<HomePage> {
                                       title: (data as dynamic)
                                           .data[index]['title']
                                           .toString(),
-                                      onClickOpen: true,
                                     ),
                                   ),
                                 );

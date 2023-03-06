@@ -12,7 +12,7 @@ class PlaylistCube extends StatelessWidget {
     required this.id,
     required this.image,
     required this.title,
-    required this.onClickOpen,
+    this.onClickOpen = true,
   });
   final String id;
   final dynamic image;
