@@ -4,7 +4,7 @@ import 'package:musify/style/app_themes.dart';
 
 void showToast(String text) {
   Fluttertoast.showToast(
-    backgroundColor: getMaterialColorFromColor(colorScheme.primary),
+    backgroundColor: colorScheme.primary,
     textColor: isAccentWhite(),
     msg: text,
     toastLength: Toast.LENGTH_SHORT,
