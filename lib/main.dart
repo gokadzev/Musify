@@ -45,29 +45,23 @@ final appSupportedLocales = appLanguages.values
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
-  static Future<void> setThemeMode(
-    BuildContext context,
-    ThemeMode newThemeMode,
-  ) async {
+  static Future<void> updateAppState(
+    BuildContext context, {
+    ThemeMode? newThemeMode,
+    Locale? newLocale,
+    Color? newAccentColor,
+    bool? useSystemColor,
+  }) async {
     final state = context.findAncestorStateOfType<_MyAppState>()!;
-    state.changeTheme(newThemeMode);
-  }
-
-  static Future<void> setLocale(
-    BuildContext context,
-    Locale newLocale,
-  ) async {
-    final state = context.findAncestorStateOfType<_MyAppState>()!;
-    state.changeLanguage(newLocale);
-  }
-
-  static Future<void> setAccentColor(
-    BuildContext context,
-    Color newAccentColor,
-    bool systemColorStatus,
-  ) async {
-    final state = context.findAncestorStateOfType<_MyAppState>()!;
-    state.changeAccentColor(newAccentColor, systemColorStatus);
+    if (newThemeMode != null) {
+      state.changeTheme(newThemeMode);
+    }
+    if (newLocale != null) {
+      state.changeLanguage(newLocale);
+    }
+    if (newAccentColor != null && useSystemColor != null) {
+      state.changeAccentColor(newAccentColor, useSystemColor);
+    }
   }
 
   @override

@@ -153,10 +153,10 @@ class SettingsCards extends StatelessWidget {
                                       'accentColor',
                                       availableColors[index].value,
                                     );
-                                    MyApp.setAccentColor(
+                                    MyApp.updateAppState(
                                       context,
-                                      availableColors[index],
-                                      false,
+                                      newAccentColor: availableColors[index],
+                                      useSystemColor: false,
                                     );
                                     showToast(
                                       AppLocalizations.of(context)!
@@ -237,9 +237,9 @@ class SettingsCards extends StatelessWidget {
                                           ? 'light'
                                           : 'dark',
                                 );
-                                MyApp.setThemeMode(
+                                MyApp.updateAppState(
                                   context,
-                                  availableModes[index],
+                                  newThemeMode: availableModes[index],
                                 );
 
                                 Navigator.pop(context);
@@ -294,9 +294,9 @@ class SettingsCards extends StatelessWidget {
                                   'language',
                                   availableLanguages[index],
                                 );
-                                MyApp.setLocale(
+                                MyApp.updateAppState(
                                   context,
-                                  Locale(
+                                  newLocale: Locale(
                                     appLanguages[availableLanguages[index]]!,
                                   ),
                                 );
@@ -328,10 +328,10 @@ class SettingsCards extends StatelessWidget {
               value,
             );
             useSystemColor.value = value;
-            MyApp.setAccentColor(
+            MyApp.updateAppState(
               context,
-              colorScheme.primary,
-              value,
+              newAccentColor: colorScheme.primary,
+              useSystemColor: value,
             );
             showToast(
               AppLocalizations.of(context)!.settingChangedMsg,
