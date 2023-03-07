@@ -45,13 +45,10 @@ Future backupData(BuildContext context) async {
   }
 
   for (var i = 0; i < boxNames.length; i++) {
-    await Hive.openBox(boxNames[i]);
     try {
-      await File(Hive.box(boxNames[i]).path!)
-          .copy('$dlPath/${boxNames[i]}Data.hive');
+      final _box = await _openBox(boxNames[i]);
+      await File(_box.path!).copy('$dlPath/${boxNames[i]}Data.hive');
     } catch (e) {
-      await File(Hive.box(boxNames[i]).path!)
-          .copy('$dlPath/${boxNames[i]}Data.hive');
       return '${AppLocalizations.of(context)!.backupPermsProblem}!';
     }
   }
@@ -67,10 +64,9 @@ Future restoreData(context) async {
   }
 
   for (var i = 0; i < boxNames.length; i++) {
-    await Hive.openBox(boxNames[i]);
     try {
-      final box = await Hive.openBox(boxNames[i]);
-      final boxPath = box.path;
+      final _box = await _openBox(boxNames[i]);
+      final boxPath = _box.path;
       await File('$uplPath/${boxNames[i]}Data.hive').copy(boxPath!);
     } catch (e) {
       return '${AppLocalizations.of(context)!.restorePermsProblem}!';
