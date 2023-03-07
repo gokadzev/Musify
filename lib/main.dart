@@ -131,7 +131,7 @@ class _MyAppState extends State<MyApp> {
 
         return MaterialApp(
           themeMode: themeMode,
-          debugShowCheckedModeBanner: false,
+          debugShowCheckedModeBanner: kDebugMode,
           darkTheme: darkColorScheme != null && useSystemColor.value
               ? getAppDarkTheme().copyWith(
                   scaffoldBackgroundColor: darkColorScheme.surface,
