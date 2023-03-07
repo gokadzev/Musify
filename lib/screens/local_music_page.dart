@@ -170,220 +170,115 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
               ),
             ),
             const Padding(padding: EdgeInsets.only(top: 40)),
-            if (_searchQuery.isEmpty)
-              FutureBuilder<List<dynamic>>(
-                future:
-                    Future.delayed(const Duration(milliseconds: 500), getMusic),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState != ConnectionState.done) {
-                    return const Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(35),
-                        child: Spinner(),
-                      ),
-                    );
-                  }
-                  return ListView.builder(
-                    shrinkWrap: true,
-                    physics: const BouncingScrollPhysics(),
-                    addAutomaticKeepAlives: false,
-                    addRepaintBoundaries: false,
-                    itemCount: snapshot.data!.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      final lsong = {
-                        'id': index,
-                        'ytid': '',
-                        'title': snapshot.data![index].displayName,
-                        'image': '',
-                        'lowResImage': '',
-                        'highResImage': '',
-                        'songUrl': snapshot.data![index].data,
-                        'localSongId': snapshot.data![index].id,
-                        'more_info': {
-                          'primary_artists': '',
-                          'singers': '',
-                        }
-                      };
+            FutureBuilder<List<dynamic>>(
+              future: _searchQuery.isEmpty
+                  ? Future.delayed(const Duration(milliseconds: 500), getMusic)
+                  : Future.delayed(
+                      const Duration(milliseconds: 500),
+                      () => getMusic(searchQuery: _searchQuery),
+                    ),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState != ConnectionState.done) {
+                  return const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(35),
+                      child: Spinner(),
+                    ),
+                  );
+                }
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: const BouncingScrollPhysics(),
+                  addAutomaticKeepAlives: false,
+                  addRepaintBoundaries: false,
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final lsong = {
+                      'id': index,
+                      'ytid': '',
+                      'title': snapshot.data![index].displayName,
+                      'image': '',
+                      'lowResImage': '',
+                      'highResImage': '',
+                      'songUrl': snapshot.data![index].data,
+                      'localSongId': snapshot.data![index].id,
+                      'more_info': {
+                        'primary_artists': '',
+                        'singers': '',
+                      }
+                    };
 
-                      return Container(
-                        padding: const EdgeInsets.only(
-                          left: 12,
-                          right: 12,
-                          bottom: 15,
-                        ),
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(20),
-                          onTap: () {
-                            playSong(lsong);
-                          },
-                          splashColor: colorScheme.primary.withOpacity(0.4),
-                          hoverColor: colorScheme.primary.withOpacity(0.4),
-                          focusColor: colorScheme.primary.withOpacity(0.4),
-                          highlightColor: colorScheme.primary.withOpacity(0.4),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              QueryArtworkWidget(
-                                id: lsong['localSongId'] as int,
-                                type: ArtworkType.AUDIO,
-                                artworkWidth: 60,
-                                artworkHeight: 60,
-                                artworkFit: BoxFit.cover,
-                                artworkBorder: BorderRadius.circular(8),
-                                nullArtworkWidget: Container(
-                                  width: 60,
-                                  height: 60,
-                                  decoration: BoxDecoration(
-                                    color: colorScheme.primary,
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Icon(
-                                    FluentIcons.music_note_1_24_regular,
-                                    size: 25,
-                                    color: colorScheme.primary !=
-                                            const Color(0xFFFFFFFF)
-                                        ? Colors.white
-                                        : Colors.black,
-                                  ),
+                    return Container(
+                      padding: const EdgeInsets.only(
+                        left: 12,
+                        right: 12,
+                        bottom: 15,
+                      ),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(20),
+                        onTap: () {
+                          playSong(lsong);
+                        },
+                        splashColor: colorScheme.primary.withOpacity(0.4),
+                        hoverColor: colorScheme.primary.withOpacity(0.4),
+                        focusColor: colorScheme.primary.withOpacity(0.4),
+                        highlightColor: colorScheme.primary.withOpacity(0.4),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            QueryArtworkWidget(
+                              id: lsong['localSongId'] as int,
+                              type: ArtworkType.AUDIO,
+                              artworkWidth: 60,
+                              artworkHeight: 60,
+                              artworkFit: BoxFit.cover,
+                              artworkBorder: BorderRadius.circular(8),
+                              nullArtworkWidget: Container(
+                                width: 60,
+                                height: 60,
+                                decoration: BoxDecoration(
+                                  color: colorScheme.primary,
+                                  borderRadius: BorderRadius.circular(8),
                                 ),
-                                keepOldArtwork: true,
+                                child: Icon(
+                                  FluentIcons.music_note_1_24_regular,
+                                  size: 25,
+                                  color: colorScheme.primary !=
+                                          const Color(0xFFFFFFFF)
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
                               ),
-                              Flexible(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Container(
-                                      alignment: Alignment.centerLeft,
-                                      padding: const EdgeInsets.only(
-                                        left: 15,
-                                      ),
-                                      child: Text(
-                                        overflow: TextOverflow.ellipsis,
-                                        lsong['title'].toString(),
-                                        style: TextStyle(
-                                          color: colorScheme.primary,
-                                        ),
+                              keepOldArtwork: true,
+                            ),
+                            Flexible(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Container(
+                                    alignment: Alignment.centerLeft,
+                                    padding: const EdgeInsets.only(
+                                      left: 15,
+                                    ),
+                                    child: Text(
+                                      overflow: TextOverflow.ellipsis,
+                                      lsong['title'].toString(),
+                                      style: TextStyle(
+                                        color: colorScheme.primary,
                                       ),
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      );
-                    },
-                  );
-                },
-              )
-            else
-              FutureBuilder<List<dynamic>>(
-                future: Future.delayed(
-                  const Duration(milliseconds: 500),
-                  () => getMusic(searchQuery: _searchQuery),
-                ),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState != ConnectionState.done) {
-                    return const Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(35),
-                        child: Spinner(),
                       ),
                     );
-                  }
-                  return ListView.builder(
-                    shrinkWrap: true,
-                    physics: const BouncingScrollPhysics(),
-                    addAutomaticKeepAlives: false,
-                    addRepaintBoundaries: false,
-                    itemCount: snapshot.data!.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      final lsong = {
-                        'id': index,
-                        'ytid': '',
-                        'title': snapshot.data![index].displayName,
-                        'image': '',
-                        'lowResImage': '',
-                        'highResImage': '',
-                        'songUrl': snapshot.data![index].data,
-                        'localSongId': snapshot.data![index].id,
-                        'more_info': {
-                          'primary_artists': '',
-                          'singers': '',
-                        }
-                      };
-
-                      return Container(
-                        padding: const EdgeInsets.only(
-                          left: 12,
-                          right: 12,
-                          bottom: 15,
-                        ),
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(20),
-                          onTap: () {
-                            playSong(lsong);
-                          },
-                          splashColor: colorScheme.primary.withOpacity(0.4),
-                          hoverColor: colorScheme.primary.withOpacity(0.4),
-                          focusColor: colorScheme.primary.withOpacity(0.4),
-                          highlightColor: colorScheme.primary.withOpacity(0.4),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              QueryArtworkWidget(
-                                id: lsong['localSongId'] as int,
-                                type: ArtworkType.AUDIO,
-                                artworkWidth: 60,
-                                artworkHeight: 60,
-                                artworkFit: BoxFit.cover,
-                                artworkBorder: BorderRadius.circular(8),
-                                nullArtworkWidget: Container(
-                                  width: 60,
-                                  height: 60,
-                                  decoration: BoxDecoration(
-                                    color: colorScheme.primary,
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Icon(
-                                    FluentIcons.music_note_1_24_regular,
-                                    size: 25,
-                                    color: colorScheme.primary !=
-                                            const Color(0xFFFFFFFF)
-                                        ? Colors.white
-                                        : Colors.black,
-                                  ),
-                                ),
-                                keepOldArtwork: true,
-                              ),
-                              Flexible(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Container(
-                                      alignment: Alignment.centerLeft,
-                                      padding: const EdgeInsets.only(
-                                        left: 15,
-                                      ),
-                                      child: Text(
-                                        overflow: TextOverflow.ellipsis,
-                                        lsong['title'].toString(),
-                                        style: TextStyle(
-                                          color: colorScheme.primary,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                },
-              )
+                  },
+                );
+              },
+            )
           ],
         ),
       ),

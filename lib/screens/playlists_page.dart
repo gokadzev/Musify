@@ -77,82 +77,45 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                 ),
               ),
             ),
-            if (_searchQuery.isEmpty)
-              FutureBuilder(
-                future: getPlaylists(),
-                builder: (context, data) {
-                  return (data as dynamic).data != null
-                      ? GridView.builder(
-                          addAutomaticKeepAlives: false,
-                          addRepaintBoundaries: false,
-                          gridDelegate:
-                              const SliverGridDelegateWithMaxCrossAxisExtent(
-                            maxCrossAxisExtent: 200,
-                            crossAxisSpacing: 20,
-                            mainAxisSpacing: 20,
-                          ),
-                          shrinkWrap: true,
-                          physics: const ScrollPhysics(),
-                          itemCount: (data as dynamic).data.length as int,
-                          padding: const EdgeInsets.only(
-                            left: 16,
-                            right: 16,
-                            top: 16,
-                            bottom: 20,
-                          ),
-                          itemBuilder: (BuildContext context, index) {
-                            return Center(
-                              child: PlaylistCube(
-                                id: (data as dynamic).data[index]['ytid'],
-                                image: (data as dynamic).data[index]['image'],
-                                title: (data as dynamic)
-                                    .data[index]['title']
-                                    .toString(),
-                              ),
-                            );
-                          },
-                        )
-                      : const Spinner();
-                },
-              )
-            else
-              FutureBuilder(
-                future: searchPlaylist(_searchQuery),
-                builder: (context, data) {
-                  return (data as dynamic).data != null
-                      ? GridView.builder(
-                          addAutomaticKeepAlives: false,
-                          addRepaintBoundaries: false,
-                          gridDelegate:
-                              const SliverGridDelegateWithMaxCrossAxisExtent(
-                            maxCrossAxisExtent: 200,
-                            crossAxisSpacing: 20,
-                            mainAxisSpacing: 20,
-                          ),
-                          shrinkWrap: true,
-                          physics: const ScrollPhysics(),
-                          itemCount: (data as dynamic).data.length as int,
-                          padding: const EdgeInsets.only(
-                            left: 16,
-                            right: 16,
-                            top: 16,
-                            bottom: 20,
-                          ),
-                          itemBuilder: (BuildContext context, index) {
-                            return Center(
-                              child: PlaylistCube(
-                                id: (data as dynamic).data[index]['ytid'],
-                                image: (data as dynamic).data[index]['image'],
-                                title: (data as dynamic)
-                                    .data[index]['title']
-                                    .toString(),
-                              ),
-                            );
-                          },
-                        )
-                      : const Spinner();
-                },
-              )
+            FutureBuilder(
+              future: _searchQuery.isEmpty
+                  ? getPlaylists()
+                  : searchPlaylist(_searchQuery),
+              builder: (context, data) {
+                return (data as dynamic).data != null
+                    ? GridView.builder(
+                        addAutomaticKeepAlives: false,
+                        addRepaintBoundaries: false,
+                        gridDelegate:
+                            const SliverGridDelegateWithMaxCrossAxisExtent(
+                          maxCrossAxisExtent: 200,
+                          crossAxisSpacing: 20,
+                          mainAxisSpacing: 20,
+                        ),
+                        shrinkWrap: true,
+                        physics: const ScrollPhysics(),
+                        itemCount: (data as dynamic).data.length as int,
+                        padding: const EdgeInsets.only(
+                          left: 16,
+                          right: 16,
+                          top: 16,
+                          bottom: 20,
+                        ),
+                        itemBuilder: (BuildContext context, index) {
+                          return Center(
+                            child: PlaylistCube(
+                              id: (data as dynamic).data[index]['ytid'],
+                              image: (data as dynamic).data[index]['image'],
+                              title: (data as dynamic)
+                                  .data[index]['title']
+                                  .toString(),
+                            ),
+                          );
+                        },
+                      )
+                    : const Spinner();
+              },
+            )
           ],
         ),
       ),
