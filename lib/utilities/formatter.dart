@@ -25,12 +25,9 @@ Map<String, dynamic> returnSongLayout(dynamic index, Video song) {
     'title': formatSongTitle(
       song.title.split('-')[song.title.split('-').length - 1],
     ),
+    'artist': song.title.split('-')[0],
     'image': song.thumbnails.standardResUrl,
     'lowResImage': song.thumbnails.lowResUrl,
     'highResImage': song.thumbnails.maxResUrl,
-    'more_info': {
-      'primary_artists': song.title.split('-')[0],
-      'singers': song.title.split('-')[0],
-    }
   };
 }

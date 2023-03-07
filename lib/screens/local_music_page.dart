@@ -198,14 +198,11 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                       'ytid': '',
                       'title': snapshot.data![index].displayName,
                       'image': '',
+                      'artist': '',
                       'lowResImage': '',
                       'highResImage': '',
                       'songUrl': snapshot.data![index].data,
                       'localSongId': snapshot.data![index].id,
-                      'more_info': {
-                        'primary_artists': '',
-                        'singers': '',
-                      }
                     };
 
                     return Container(

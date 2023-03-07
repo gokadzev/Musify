@@ -12,10 +12,6 @@ Map mediaItemToMap(MediaItem mediaItem) {
     'highResImage': mediaItem.artUri.toString(),
     'lowResImage': mediaItem.extras!['lowResImage'],
     'url': mediaItem.extras!['url'].toString(),
-    'more_info': {
-      'primary_artists': mediaItem.artist.toString(),
-      'singers': mediaItem.artist.toString()
-    }
   };
 }
 
@@ -40,7 +36,7 @@ MediaItem mapToMediaItem(Map song, String songUrl) {
   return MediaItem(
     id: song['id'].toString(),
     album: '',
-    artist: song['more_info']['singers'].toString(),
+    artist: song['artist'].toString(),
     title: song['title'].toString(),
     artUri: Uri.parse(
       song['highResImage'].toString(),
