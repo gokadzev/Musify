@@ -1,5 +1,5 @@
 on: workflow_dispatch
-name: Test, Build and Pre Release apk
+name: Test, Build and Release debug apk
 
 jobs:
   build:
