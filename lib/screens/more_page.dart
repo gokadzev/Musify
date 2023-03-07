@@ -463,7 +463,7 @@ class SettingsCards extends StatelessWidget {
           FluentIcons.cloud_sync_24_filled,
           () => {
             backupData(context).then(
-              (value) => showToast(value.toString()),
+              showToast,
             ),
           },
         ),
@@ -472,7 +472,7 @@ class SettingsCards extends StatelessWidget {
           FluentIcons.cloud_add_24_filled,
           () => {
             restoreData(context).then(
-              (value) => showToast(value.toString()),
+              showToast,
             ),
           },
         ),
@@ -480,22 +480,8 @@ class SettingsCards extends StatelessWidget {
           AppLocalizations.of(context)!.downloadAppUpdate,
           FluentIcons.arrow_download_24_filled,
           () => {
-            checkAppUpdates().then(
-              (available) => {
-                if (available == true)
-                  {
-                    showToast(
-                      '${AppLocalizations.of(context)!.appUpdateAvailableAndDownloading}!',
-                    ),
-                    downloadAppUpdates()
-                  }
-                else
-                  {
-                    showToast(
-                      '${AppLocalizations.of(context)!.appUpdateIsNotAvailable}!',
-                    )
-                  }
-              },
+            checkAppUpdates(context).then(
+              showToast,
             ),
           },
         ),

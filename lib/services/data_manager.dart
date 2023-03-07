@@ -36,7 +36,7 @@ Future<Box> _openBox(String category) async {
   return Hive.box(category);
 }
 
-Future backupData(BuildContext context) async {
+Future<String> backupData(BuildContext context) async {
   final boxNames = ['user', 'settings'];
   final dlPath = await FilePicker.platform.getDirectoryPath();
 
@@ -55,7 +55,7 @@ Future backupData(BuildContext context) async {
   return '${AppLocalizations.of(context)!.backupedSuccess}!';
 }
 
-Future restoreData(context) async {
+Future<String> restoreData(context) async {
   final boxNames = ['user', 'settings'];
   final uplPath = await FilePicker.platform.getDirectoryPath();
 

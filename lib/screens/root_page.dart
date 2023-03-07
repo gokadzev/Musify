@@ -32,15 +32,8 @@ class AppState extends State<Musify> {
   @override
   void initState() {
     super.initState();
-    checkAppUpdates().then(
-      (value) => {
-        if (value == true)
-          {
-            showToast(
-              '${AppLocalizations.of(context)!.appUpdateIsAvailable}!',
-            ),
-          }
-      },
+    checkAppUpdates(context).then(
+      showToast,
     );
     checkNecessaryPermissions(context);
   }

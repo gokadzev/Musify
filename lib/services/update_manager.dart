@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:http/http.dart' as http;
 import 'package:musify/API/version.dart';
 
@@ -10,13 +12,18 @@ late String dlUrl;
 const apiUrl =
     'https://raw.githubusercontent.com/gokadzev/Musify/update/check.json';
 
-Future<bool> checkAppUpdates() async {
+Future<String> checkAppUpdates(BuildContext context) async {
   final response = await http.get(Uri.parse(apiUrl));
   if (response.statusCode != 200) {
     throw Exception('Failed to fetch app updates');
   }
   final map = json.decode(response.body) as Map<String, dynamic>;
-  return map['version'].toString() != appVersion;
+  if (map['version'].toString() != appVersion) {
+    await downloadAppUpdates();
+    return '${AppLocalizations.of(context)!.appUpdateAvailableAndDownloading}!';
+  } else {
+    return '${AppLocalizations.of(context)!.appUpdateIsNotAvailable}!';
+  }
 }
 
 Future<void> downloadAppUpdates() async {
