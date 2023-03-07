@@ -2,13 +2,13 @@ import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 String formatSongTitle(String title) {
   final patterns = {
-    r'\[.*\]': '',
-    r'\(.*': '',
-    r'\|.*': '',
+    RegExp(r'\[.*\]'): '',
+    RegExp(r'\(.*'): '',
+    RegExp(r'\|.*'): '',
   };
 
   for (var pattern in patterns.keys) {
-    title = title.replaceFirst(RegExp(pattern), patterns[pattern]!);
+    title = title.replaceFirst(pattern, patterns[pattern]!);
   }
 
   return title

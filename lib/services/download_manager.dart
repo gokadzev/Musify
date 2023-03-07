@@ -9,7 +9,7 @@ import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-final invalidCharacters = RegExp(r'[\\/*?:"<>|]');
+final invalidCharacters = RegExp(r'[\\/*?:"<>|^:]');
 
 Future<void> downloadSong(BuildContext context, dynamic song) async {
   try {
