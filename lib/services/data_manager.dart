@@ -49,7 +49,7 @@ Future<String> backupData(BuildContext context) async {
       final _box = await _openBox(boxNames[i]);
       await File(_box.path!).copy('$dlPath/${boxNames[i]}Data.hive');
     } catch (e) {
-      return '${AppLocalizations.of(context)!.backupPermsProblem}!';
+      return '${AppLocalizations.of(context)!.backupError}: $e';
     }
   }
   return '${AppLocalizations.of(context)!.backupedSuccess}!';
@@ -69,7 +69,7 @@ Future<String> restoreData(context) async {
       final boxPath = _box.path;
       await File('$uplPath/${boxNames[i]}Data.hive').copy(boxPath!);
     } catch (e) {
-      return '${AppLocalizations.of(context)!.restorePermsProblem}!';
+      return '${AppLocalizations.of(context)!.restoreError}: $e';
     }
   }
 
