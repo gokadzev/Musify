@@ -9,32 +9,31 @@ void addOrUpdateData(
   String category,
   dynamic key,
   dynamic value,
-) {
-  if (!Hive.isBoxOpen(category)) {
-    Hive.openBox(category);
-  }
-  Hive.box(category).put(key, value);
+) async {
+  final _box = await _openBox(category);
+  await _box.put(key, value);
 }
 
 Future getData(String category, dynamic key) async {
-  if (!Hive.isBoxOpen(category)) {
-    await Hive.openBox(category);
-  }
-  return Hive.box(category).get(key);
+  final _box = await _openBox(category);
+  return await _box.get(key);
 }
 
-void deleteData(String category, dynamic key) {
-  if (!Hive.isBoxOpen(category)) {
-    Hive.openBox(category);
-  }
-  Hive.box(category).delete(key);
+void deleteData(String category, dynamic key) async {
+  final _box = await _openBox(category);
+  await _box.delete(key);
 }
 
 void clearCache() async {
-  if (!Hive.isBoxOpen('cache')) {
-    await Hive.openBox('cache');
+  final _cacheBox = await _openBox('cache');
+  await _cacheBox.clear();
+}
+
+Future<Box> _openBox(String category) async {
+  if (!Hive.isBoxOpen(category)) {
+    await Hive.openBox(category);
   }
-  await Hive.box('cache').clear();
+  return Hive.box(category);
 }
 
 Future backupData(BuildContext context) async {
