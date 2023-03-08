@@ -10,8 +10,6 @@ import 'package:musify/utilities/flutter_toast.dart';
 import 'package:path/path.dart' as path;
 import 'package:permission_handler/permission_handler.dart';
 
-final invalidCharacters = RegExp(r'[\\/*?:"<>|^]');
-
 Future<void> downloadSong(BuildContext context, dynamic song) async {
   try {
     if (!await checkDownloadDirectory(context)) {
@@ -20,7 +18,7 @@ Future<void> downloadSong(BuildContext context, dynamic song) async {
 
     final songName = path
         .basenameWithoutExtension(
-          song['artist'] + ' - ' + song['title'],
+          song['artist'] + ' ' + song['title'],
         )
         .replaceAll(
           RegExp(r'[^\w\s-]'),
