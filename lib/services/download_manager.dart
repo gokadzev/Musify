@@ -7,6 +7,7 @@ import 'package:musify/screens/more_page.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
+import 'package:path/path.dart' as path;
 import 'package:permission_handler/permission_handler.dart';
 
 final invalidCharacters = RegExp(r'[\\/*?:"<>|^]');
@@ -17,10 +18,18 @@ Future<void> downloadSong(BuildContext context, dynamic song) async {
       return;
     }
 
-    final filename = song['artist'] +
-        ' - ' +
-        song['title'].replaceAll(invalidCharacters, '').replaceAll(' ', '') +
-        '.${prefferedFileExtension.value}';
+    final songName = path
+        .basenameWithoutExtension(
+          song['artist'] + ' - ' + song['title'],
+        )
+        .replaceAll(
+          RegExp(r'[^\w\s-]'),
+          '',
+        ) // remove non-alphanumeric characters except for hyphens and spaces
+        .replaceAll(RegExp(r'(\s)+'), '-') // replace spaces with hyphens
+        .toLowerCase();
+
+    final filename = '$songName.${prefferedFileExtension.value}';
 
     final audio = await getSong(song['ytid'].toString());
     await FlutterDownloader.enqueue(
