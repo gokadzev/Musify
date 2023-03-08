@@ -42,7 +42,7 @@ bool get hasPrevious =>
     activePlaylist['list'].isEmpty ? audioPlayer.hasPrevious : id - 1 >= 0;
 
 Future<void> playSong(Map song) async {
-  final String songUrl = song['ytid'].length == 0
+  final songUrl = song['ytid'].length == 0
       ? song['songUrl'].toString()
       : await getSong(song['ytid']);
 
