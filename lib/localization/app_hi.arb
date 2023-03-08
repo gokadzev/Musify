@@ -6,7 +6,6 @@
   "addedSuccess": "Added successfully",
   "appUpdateAvailableAndDownloading": "App update is available and downloading",
   "appUpdateIsAvailable": "App update is available",
-  "appUpdateIsNotAvailable": "App update is not available",
   "audioFileType": "Audio File Extension",
   "audioFileTypeMsg": "Audio File Type has been changed",
   "backupError": "Error while data backup",

@@ -6,7 +6,6 @@
   "addedSuccess": "Added successfully",
   "appUpdateAvailableAndDownloading": "Aktualizacja aplikacji jest dostępna i pobierana",
   "appUpdateIsAvailable": "Aktualizacja aplikacji jest dostępna",
-  "appUpdateIsNotAvailable": "Aktualizacja aplikacji nie jest dostępna",
   "audioFileType": "Rozszerzenie pliku audio",
   "audioFileTypeMsg": "Typ pliku audio został zmieniony",
   "backupError": "Error while data backup",

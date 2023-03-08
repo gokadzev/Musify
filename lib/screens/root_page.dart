@@ -13,7 +13,6 @@ import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/download_manager.dart';
 import 'package:musify/services/update_manager.dart';
 import 'package:musify/style/app_themes.dart';
-import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/widgets/custom_animated_bottom_bar.dart';
 import 'package:on_audio_query/on_audio_query.dart' hide context;
 
@@ -32,9 +31,7 @@ class AppState extends State<Musify> {
   @override
   void initState() {
     super.initState();
-    checkAppUpdates(context).then(
-      showToast,
-    );
+    checkAppUpdates(context);
     checkNecessaryPermissions(context);
   }
 

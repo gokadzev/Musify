@@ -6,7 +6,6 @@
   "addedSuccess": "Added successfully",
   "appUpdateAvailableAndDownloading": "应用程序更新可用并正在下载",
   "appUpdateIsAvailable": "应用程序更新可用",
-  "appUpdateIsNotAvailable": "应用程序更新不可用",
   "audioFileType": "音频文件扩展名",
   "audioFileTypeMsg": "音频文件类型已更改",
   "backupError": "Error while data backup",

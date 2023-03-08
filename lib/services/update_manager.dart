@@ -7,12 +7,13 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:http/http.dart' as http;
 import 'package:musify/API/version.dart';
+import 'package:musify/utilities/flutter_toast.dart';
 
 late String dlUrl;
 const apiUrl =
     'https://raw.githubusercontent.com/gokadzev/Musify/update/check.json';
 
-Future<String> checkAppUpdates(BuildContext context) async {
+Future<void> checkAppUpdates(BuildContext context) async {
   final response = await http.get(Uri.parse(apiUrl));
   if (response.statusCode != 200) {
     throw Exception('Failed to fetch app updates');
@@ -20,9 +21,9 @@ Future<String> checkAppUpdates(BuildContext context) async {
   final map = json.decode(response.body) as Map<String, dynamic>;
   if (map['version'].toString() != appVersion) {
     await downloadAppUpdates();
-    return '${AppLocalizations.of(context)!.appUpdateAvailableAndDownloading}!';
-  } else {
-    return '${AppLocalizations.of(context)!.appUpdateIsNotAvailable}!';
+    showToast(
+      '${AppLocalizations.of(context)!.appUpdateAvailableAndDownloading}!',
+    );
   }
 }
 

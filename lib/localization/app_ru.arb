@@ -6,7 +6,6 @@
   "addedSuccess": "Успешно добавлено",
   "appUpdateAvailableAndDownloading": "Обновление приложения доступно и загружается",
   "appUpdateIsAvailable": "Доступно обновление приложения",
-  "appUpdateIsNotAvailable": "Обновление приложения не доступно",
   "audioFileType": "Расширение аудиофайла",
   "audioFileTypeMsg": "Расширение аудиофайла было изменено",
   "backupError": "Error while data backup",

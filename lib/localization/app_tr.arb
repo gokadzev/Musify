@@ -6,7 +6,6 @@
   "addedSuccess": "Added successfully",
   "appUpdateAvailableAndDownloading": "Uygulama güncellemesi mevcut ve indiriliyor",
   "appUpdateIsAvailable": "Uygulama güncellemesi mevcut",
-  "appUpdateIsNotAvailable": "Uygulama güncellemesi mevcut değil",
   "audioFileType": "Ses Dosyası Uzantısı",
   "audioFileTypeMsg": "Ses Dosyası Türü değiştirildi",
   "backupError": "Error while data backup",

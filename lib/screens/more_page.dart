@@ -480,9 +480,7 @@ class SettingsCards extends StatelessWidget {
           AppLocalizations.of(context)!.downloadAppUpdate,
           FluentIcons.arrow_download_24_filled,
           () => {
-            checkAppUpdates(context).then(
-              showToast,
-            ),
+            checkAppUpdates(context),
           },
         ),
         // CATEGORY: OTHERS
