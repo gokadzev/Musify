@@ -29,13 +29,14 @@ class _HomePageState extends State<HomePage> {
           children: <Widget>[
             FutureBuilder(
               future: getPlaylists(5),
-              builder: (context, data) {
+              builder: (context, AsyncSnapshot<List<dynamic>> data) {
                 return data.hasData
-                    ? Wrap(
-                        children: <Widget>[
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
                           Padding(
-                            padding: EdgeInsets.only(
-                              top: MediaQuery.of(context).size.height / 55,
+                            padding: const EdgeInsets.only(
+                              top: 16,
                               bottom: 10,
                               left: 20,
                               right: 20,
@@ -78,31 +79,27 @@ class _HomePageState extends State<HomePage> {
                           ),
                           SizedBox(
                             height: 230,
-                            child: ListView.builder(
+                            child: ListView.separated(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 15),
                               scrollDirection: Axis.horizontal,
-                              itemCount: (data as dynamic).data.length as int,
+                              separatorBuilder: (_, __) =>
+                                  const SizedBox(width: 15),
+                              itemCount: data.data!.length,
                               itemBuilder: (context, index) {
-                                return Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 15,
-                                  ),
-                                  child: SizedBox(
-                                    width: 230,
-                                    height: 230,
-                                    child: PlaylistCube(
-                                      id: (data as dynamic).data[index]['ytid'],
-                                      image: (data as dynamic)
-                                          .data[index]['image']
-                                          .toString(),
-                                      title: (data as dynamic)
-                                          .data[index]['title']
-                                          .toString(),
-                                    ),
+                                final playlist = data.data![index];
+                                return SizedBox(
+                                  width: 230,
+                                  height: 230,
+                                  child: PlaylistCube(
+                                    id: playlist['ytid'],
+                                    image: playlist['image'].toString(),
+                                    title: playlist['title'].toString(),
                                   ),
                                 );
                               },
                             ),
-                          )
+                          ),
                         ],
                       )
                     : const Center(
@@ -115,70 +112,73 @@ class _HomePageState extends State<HomePage> {
             ),
             FutureBuilder(
               future: get10Music('PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx'),
-              builder: (context, data) {
-                if (data.connectionState != ConnectionState.done) {
-                  return const Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(35),
-                      child: Spinner(),
-                    ),
-                  );
-                }
-                if (data.hasError) {
-                  return Center(
-                    child: Text(
-                      'Error!',
-                      style:
-                          TextStyle(color: colorScheme.primary, fontSize: 18),
-                    ),
-                  );
-                }
-                if (!data.hasData) {
-                  return Center(
-                    child: Text(
-                      'Nothing Found!',
-                      style:
-                          TextStyle(color: colorScheme.primary, fontSize: 18),
-                    ),
-                  );
-                }
-                return Wrap(
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(
-                        top: MediaQuery.of(context).size.height / 55,
-                        bottom: 10,
-                        left: 20,
-                        right: 20,
+              builder: (context, AsyncSnapshot<dynamic> snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.waiting:
+                    return const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(35),
+                        child: Spinner(),
                       ),
-                      child: Text(
-                        AppLocalizations.of(context)!.recommendedForYou,
-                        style: TextStyle(
-                          color: colorScheme.primary,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
+                    );
+                  case ConnectionState.done:
+                    if (snapshot.hasError) {
+                      return Center(
+                        child: Text(
+                          'Error!',
+                          style: TextStyle(
+                            color: colorScheme.primary,
+                            fontSize: 18,
+                          ),
                         ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 7,
-                      ),
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        addAutomaticKeepAlives: false,
-                        addRepaintBoundaries: false,
-                        physics: const BouncingScrollPhysics(),
-                        itemCount: (data as dynamic).data.length as int,
-                        itemBuilder: (context, index) {
-                          return SongBar((data as dynamic).data[index], true);
-                        },
-                      ),
-                    )
-                  ],
-                );
+                      );
+                    }
+                    if (!snapshot.hasData) {
+                      return Center(
+                        child: Text(
+                          'Nothing Found!',
+                          style: TextStyle(
+                            color: colorScheme.primary,
+                            fontSize: 18,
+                          ),
+                        ),
+                      );
+                    }
+                    return Wrap(
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.only(
+                            top: MediaQuery.of(context).size.height / 55,
+                            bottom: 10,
+                            left: 20,
+                            right: 20,
+                          ),
+                          child: Text(
+                            AppLocalizations.of(context)!.recommendedForYou,
+                            style: TextStyle(
+                              color: colorScheme.primary,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                        ListView.builder(
+                          shrinkWrap: true,
+                          addAutomaticKeepAlives: false,
+                          addRepaintBoundaries: false,
+                          physics: const BouncingScrollPhysics(),
+                          itemCount: snapshot.data.length as int,
+                          itemBuilder: (context, index) {
+                            return SongBar(snapshot.data[index], true);
+                          },
+                        )
+                      ],
+                    );
+                  default:
+                    return const SizedBox.shrink();
+                }
               },
-            ),
+            )
           ],
         ),
       ),
