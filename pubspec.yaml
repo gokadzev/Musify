@@ -29,7 +29,7 @@ dependencies:
   hive_flutter: ^1.1.0
   http: ^0.13.5
   intl: ^0.17.0
-  just_audio: ^0.9.31
+  just_audio: ^0.9.32
   just_audio_background: ^0.0.1-beta.9
   on_audio_query:
     path: ./packages/on_audio_query/on_audio_query
