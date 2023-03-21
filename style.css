@@ -731,7 +731,7 @@ fieldset[disabled] a.btn {
   margin: 0 auto;
 }
 .section-title {
-  font-size: 10vw;
+  font-size: 5vw;
   font-weight: 900;
 }
 h3.block-title {
@@ -1227,6 +1227,9 @@ blockquote cite {
 }
 
 @media only screen and (max-width: 768px) {
+  .section-title {
+    font-size: 10vw;
+  }
   .navbar .hamburger {
     right: 10px;
   }
