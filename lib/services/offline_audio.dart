@@ -15,7 +15,13 @@ Future<List<AudioModel>> getMusic({searchQuery}) async {
   );
 
   if (searchQuery != null) {
-    return allSongs.toList();
+    return allSongs
+        .where(
+          (song) => song.displayName
+              .toLowerCase()
+              .contains(searchQuery.toLowerCase()),
+        )
+        .toList();
   } else {
     return allSongs.toList();
   }
