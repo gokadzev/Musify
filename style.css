@@ -1150,6 +1150,7 @@ blockquote cite {
     padding: 0;
     display: flex;
     justify-content: space-between;
+    text-align: left;
   }
   .navbar ul.menu-list.responsive a:after {
     content: '\e90b';
