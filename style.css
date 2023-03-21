@@ -1152,11 +1152,7 @@ blockquote cite {
     justify-content: space-between;
     text-align: left;
   }
-  .navbar ul.menu-list.responsive a:after {
-    content: '\e90b';
-    font-size: 25px;
-    font-family: 'icomoon';
-  }
+
   .navbar .hamburger {
     display: block;
     position: absolute;
@@ -1231,6 +1227,14 @@ blockquote cite {
 }
 
 @media only screen and (max-width: 768px) {
+  .navbar .hamburger {
+    right: 10px;
+  }
+
+  .navbar ul.menu-list a {
+    font-size: 1.5em;
+  }
+
   .m-banner .container {
     width: 700px;
   }
