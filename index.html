@@ -1,410 +1,251 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
     <title>Musify - Music Streaming and Downloading app!</title>
-    <meta content="" name="description" />
-    <meta content="" name="keywords" />
-
-    <!-- Favicons -->
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="author" content="Valeri Gokadze" />
+    <meta
+      name="keywords"
+      content="music app, android app, offline-music-player, audio streaming, online song search, download support, custom playlists, ad-free, subscriptions, lyrics support"
+    />
+    <meta
+      name="description"
+      content="Enjoy high-quality audio, online song search, streaming and download support, lyrics, custom playlists, and more with our app - all ad-free and without any subscriptions. Try it today!"
+    />
+    <meta
+      property="og:title"
+      content="Discover the Ultimate Music Listening Experience with Our App"
+    />
+    <meta
+      property="og:description"
+      content="Enjoy high-quality audio, online song search, streaming and download support, lyrics, custom playlists, and more with our app - all ad-free and without any subscriptions. Try it today!"
+    />
     <link href="assets/favicon.ico" rel="icon" />
-
-    <!-- Google Fonts -->
+    <link rel="stylesheet" type="text/css" href="css/vendor.css" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css"
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600;1,700&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Raleway:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700;800;900&display=swap"
       rel="stylesheet"
     />
-
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
-      crossorigin="anonymous"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css"
-    />
-    <link href="css/aos.css" rel="stylesheet" />
-    <link href="css/styles.css" rel="stylesheet" />
   </head>
-
-  <body>
-    <section id="topbar" class="topbar d-flex align-items-center">
-      <div
-        class="container d-flex justify-content-center justify-content-md-between"
-      >
-        <div class="contact-info d-flex align-items-center"></div>
-        <div class="social-links d-none d-md-flex align-items-center">
-          <a href="https://github.com/gokadzev/Musify" class="github"
-            ><i class="bi bi-github"></i
-          ></a>
-        </div>
-      </div>
-    </section>
-
-    <header id="header" class="header d-flex align-items-center">
-      <div
-        class="container-fluid container-xl d-flex align-items-center justify-content-between"
-      >
-        <a href="index.html" class="logo d-flex align-items-center">
-          <img
-            src="https://github.com/gokadzev/Musify/raw/master/android/app/src/main/res/mipmap-xxxhdpi/launcher_icon.png"
-            alt=""
-          />
-          <h1>Musify<span>.</span></h1>
-        </a>
-        <nav id="navbar" class="navbar">
-          <ul>
-            <li><a href="#start">Home</a></li>
-            <li><a href="#screenshots">Screenshots</a></li>
-            <li><a href="#faq">F.A.Q</a></li>
-          </ul>
-        </nav>
-
-        <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
-        <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
-      </div>
-    </header>
-
-    <section id="start" class="start">
-      <div class="container position-relative">
-        <div class="row gy-5" data-aos="fade-in">
-          <div
-            class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center text-center text-lg-start"
-          >
-            <h2>Best Music Streaming and Downloading app.</h2>
-            <div class="d-flex justify-content-center justify-content-lg-start">
-              <a id="download" href="" class="btn-download">Download</a>
-              <div class="btn-version d-flex align-items-center">
-                <span id="version"></span>
+  <body class="bg-dark">
+    <header id="header">
+      <nav class="primary-nav padding-small">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-3">
+              <div class="main-logo">
+                <a href="index.html">
+                  <img
+                    class="logo"
+                    src="https://github.com/gokadzev/Musify/raw/master/android/app/src/main/res/mipmap-xxxhdpi/launcher_icon.png"
+                    alt="logo"
+                  />
+                </a>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="icon-boxes position-relative">
-        <div class="container position-relative">
-          <div class="row gy-4 mt-5">
-            <div
-              class="col-xl-3 col-md-6"
-              data-aos="fade-up"
-              data-aos-delay="100"
-            >
-              <div class="icon-box">
-                <div class="icon">
-                  <svg
-                    class="feature-icon"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 512 512"
-                  >
-                    <path
-                      d="M500.3 443.7l-119.7-119.7c27.22-40.41 40.65-90.9 33.46-144.7C401.8 87.79 326.8 13.32 235.2 1.723C99.01-15.51-15.51 99.01 1.724 235.2c11.6 91.64 86.08 166.7 177.6 178.9c53.8 7.189 104.3-6.236 144.7-33.46l119.7 119.7c15.62 15.62 40.95 15.62 56.57 0C515.9 484.7 515.9 459.3 500.3 443.7zM79.1 208c0-70.58 57.42-128 128-128s128 57.42 128 128c0 70.58-57.42 128-128 128S79.1 278.6 79.1 208z"
-                    />
-                  </svg>
-                </div>
-                <h4 class="title">
-                  <a href="" class="stretched-link">Offline Download Support</a>
-                </h4>
-              </div>
-            </div>
-
-            <div
-              class="col-xl-3 col-md-6"
-              data-aos="fade-up"
-              data-aos-delay="200"
-            >
-              <div class="icon-box">
-                <div class="icon">
-                  <svg
-                    class="feature-icon"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 448 512"
-                  >
-                    <path
-                      d="M96 224C84.72 224 74.05 226.3 64 229.9V224c0-35.3 28.7-64 64-64c17.67 0 32-14.33 32-32S145.7 96 128 96C57.42 96 0 153.4 0 224v96c0 53.02 42.98 96 96 96s96-42.98 96-96S149 224 96 224zM352 224c-11.28 0-21.95 2.305-32 5.879V224c0-35.3 28.7-64 64-64c17.67 0 32-14.33 32-32s-14.33-32-32-32c-70.58 0-128 57.42-128 128v96c0 53.02 42.98 96 96 96s96-42.98 96-96S405 224 352 224z"
-                    />
-                  </svg>
-                </div>
-                <h4 class="title">
-                  <a href="" class="stretched-link">Lyrics Support</a>
-                </h4>
-              </div>
-            </div>
-
-            <div
-              class="col-xl-3 col-md-6"
-              data-aos="fade-up"
-              data-aos-delay="300"
-            >
-              <div class="icon-box">
-                <div class="icon">
-                  <svg
-                    class="feature-icon"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 640 512"
-                  >
-                    <path
-                      d="M412.6 182c-10.28-8.334-25.41-6.867-33.75 3.402c-8.406 10.24-6.906 25.35 3.375 33.74C393.5 228.4 400 241.8 400 255.1c0 14.17-6.5 27.59-17.81 36.83c-10.28 8.396-11.78 23.5-3.375 33.74c4.719 5.806 11.62 8.802 18.56 8.802c5.344 0 10.75-1.779 15.19-5.399C435.1 311.5 448 284.6 448 255.1S435.1 200.4 412.6 182zM473.1 108.2c-10.22-8.334-25.34-6.898-33.78 3.34c-8.406 10.24-6.906 25.35 3.344 33.74C476.6 172.1 496 213.3 496 255.1s-19.44 82.1-53.31 110.7c-10.25 8.396-11.75 23.5-3.344 33.74c4.75 5.775 11.62 8.771 18.56 8.771c5.375 0 10.75-1.779 15.22-5.431C518.2 366.9 544 313 544 255.1S518.2 145 473.1 108.2zM534.4 33.4c-10.22-8.334-25.34-6.867-33.78 3.34c-8.406 10.24-6.906 25.35 3.344 33.74C559.9 116.3 592 183.9 592 255.1s-32.09 139.7-88.06 185.5c-10.25 8.396-11.75 23.5-3.344 33.74C505.3 481 512.2 484 519.2 484c5.375 0 10.75-1.779 15.22-5.431C601.5 423.6 640 342.5 640 255.1S601.5 88.34 534.4 33.4zM301.2 34.98c-11.5-5.181-25.01-3.076-34.43 5.29L131.8 160.1H48c-26.51 0-48 21.48-48 47.96v95.92c0 26.48 21.49 47.96 48 47.96h83.84l134.9 119.8C272.7 477 280.3 479.8 288 479.8c4.438 0 8.959-.9314 13.16-2.835C312.7 471.8 320 460.4 320 447.9V64.12C320 51.55 312.7 40.13 301.2 34.98z"
-                    />
-                  </svg>
-                </div>
-                <h4 class="title">
-                  <a href="" class="stretched-link">High Quality Songs</a>
-                </h4>
-              </div>
-            </div>
-
-            <div
-              class="col-xl-3 col-md-6"
-              data-aos="fade-up"
-              data-aos-delay="500"
-            >
-              <div class="icon-box">
-                <div class="icon">
-                  <svg
-                    class="feature-icon"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 512 512"
-                  >
-                    <path
-                      d="M512 256C512 397.4 397.4 512 256 512C114.6 512 0 397.4 0 256C0 114.6 114.6 0 256 0C397.4 0 512 114.6 512 256zM99.5 144.8C77.15 176.1 64 214.5 64 256C64 362 149.1 448 256 448C297.5 448 335.9 434.9 367.2 412.5L99.5 144.8zM448 256C448 149.1 362 64 256 64C214.5 64 176.1 77.15 144.8 99.5L412.5 367.2C434.9 335.9 448 297.5 448 256V256z"
-                    />
-                  </svg>
-                </div>
-                <h4 class="title">
-                  <a href="" class="stretched-link">No Ads</a>
-                </h4>
-              </div>
-            </div>
-            <div
-              class="col-xl-3 col-md-6"
-              data-aos="fade-up"
-              data-aos-delay="500"
-            >
-              <div class="icon-box">
-                <div class="icon">
-                  <svg
-                    class="feature-icon"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 496 512"
-                  >
-                    <path
-                      d="M247.6 8C387.4 8 496 115.9 496 256c0 147.2-118.5 248-248.4 248C113.1 504 0 393.2 0 256 0 123.1 104.7 8 247.6 8zM55.8 189.1c-7.4 20.4-11.1 42.7-11.1 66.9 0 110.9 92.1 202.4 203.7 202.4 122.4 0 177.2-101.8 178.5-104.1l-93.4-41.6c-7.7 37.1-41.2 53-68.2 55.4v38.1h-28.8V368c-27.5-.3-52.6-10.2-75.3-29.7l34.1-34.5c31.7 29.4 86.4 31.8 86.4-2.2 0-6.2-2.2-11.2-6.6-15.1-14.2-6-1.8-.1-219.3-97.4zM248.4 52.3c-38.4 0-112.4 8.7-170.5 93l94.8 42.5c10-31.3 40.4-42.9 63.8-44.3v-38.1h28.8v38.1c22.7 1.2 43.4 8.9 62 23L295 199.7c-42.7-29.9-83.5-8-70 11.1 53.4 24.1 43.8 19.8 93 41.6l127.1 56.7c4.1-17.4 6.2-35.1 6.2-53.1 0-57-19.8-105-59.3-143.9-39.3-39.9-87.2-59.8-143.6-59.8z"
-                    />
-                  </svg>
-                </div>
-                <h4 class="title">
-                  <a href="" class="stretched-link">No Subscriptions</a>
-                </h4>
-              </div>
-            </div>
-            <div
-              class="col-xl-3 col-md-6"
-              data-aos="fade-up"
-              data-aos-delay="500"
-            >
-              <div class="icon-box">
-                <div class="icon">
-                  <svg
-                    class="feature-icon"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M14.4,6L14,4H5V21H7V14H12.6L13,16H20V6H14.4Z" />
-                  </svg>
-                </div>
-                <h4 class="title">
-                  <a href="" class="stretched-link">14 Supported Languages</a>
-                </h4>
-              </div>
-            </div>
-            <div
-              class="col-xl-3 col-md-6"
-              data-aos="fade-up"
-              data-aos-delay="500"
-            >
-              <div class="icon-box">
-                <div class="icon">
-                  <svg
-                    class="feature-icon"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M17.5,12A1.5,1.5 0 0,1 16,10.5A1.5,1.5 0 0,1 17.5,9A1.5,1.5 0 0,1 19,10.5A1.5,1.5 0 0,1 17.5,12M14.5,8A1.5,1.5 0 0,1 13,6.5A1.5,1.5 0 0,1 14.5,5A1.5,1.5 0 0,1 16,6.5A1.5,1.5 0 0,1 14.5,8M9.5,8A1.5,1.5 0 0,1 8,6.5A1.5,1.5 0 0,1 9.5,5A1.5,1.5 0 0,1 11,6.5A1.5,1.5 0 0,1 9.5,8M6.5,12A1.5,1.5 0 0,1 5,10.5A1.5,1.5 0 0,1 6.5,9A1.5,1.5 0 0,1 8,10.5A1.5,1.5 0 0,1 6.5,12M12,3A9,9 0 0,0 3,12A9,9 0 0,0 12,21A1.5,1.5 0 0,0 13.5,19.5C13.5,19.11 13.35,18.76 13.11,18.5C12.88,18.23 12.73,17.88 12.73,17.5A1.5,1.5 0 0,1 14.23,16H16A5,5 0 0,0 21,11C21,6.58 16.97,3 12,3Z"
-                    />
-                  </svg>
-                </div>
-                <h4 class="title">
-                  <a href="" class="stretched-link">Material Design UI</a>
-                </h4>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <main id="main">
-      <section id="screenshots" class="screenshots">
-        <b class="title"><h3>Screenshots</h3></b>
-        <div class="container screenshots-area" data-aos="zoom-out">
-          <img
-            class="screenshot"
-            src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/01.jpg"
-            alt="screenshot1"
-          />
-          <img
-            class="screenshot"
-            src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/02.jpg"
-            alt="screenshot2"
-          />
-          <img
-            class="screenshot"
-            src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/03.jpg"
-            alt="screenshot3"
-          />
-        </div>
-      </section>
-
-      <section id="faq" class="faq">
-        <div class="container" data-aos="fade-up">
-          <div class="row gy-4">
-            <div class="col-lg-4">
-              <div class="content px-xl-5">
-                <h3>Frequently Asked <strong>Questions</strong></h3>
-              </div>
-            </div>
-
-            <div class="col-lg-8">
-              <div
-                class="accordion accordion-flush"
-                id="faqlist"
-                data-aos="fade-up"
-                data-aos-delay="100"
-              >
-                <div class="accordion-item">
-                  <h3 class="accordion-header">
-                    <button
-                      class="accordion-button collapsed"
-                      type="button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#faq-content-1"
-                    >
-                      <span class="num">1.</span>
-                      Does the developer get any benefits from the app?
-                    </button>
-                  </h3>
-                  <div
-                    id="faq-content-1"
-                    class="accordion-collapse collapse"
-                    data-bs-parent="#faqlist"
-                  >
-                    <div class="accordion-body">No, absolutely nothing.</div>
-                  </div>
-                </div>
-
-                <div class="accordion-item">
-                  <h3 class="accordion-header">
-                    <button
-                      class="accordion-button collapsed"
-                      type="button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#faq-content-2"
-                    >
-                      <span class="num">2.</span>
-                      Does the app really support FLAC?
-                    </button>
-                  </h3>
-                  <div
-                    id="faq-content-2"
-                    class="accordion-collapse collapse"
-                    data-bs-parent="#faqlist"
-                  >
-                    <div class="accordion-body">
-                      No, there are just added various file extensions for
-                      supporting different devices, the quality is the same.
-                    </div>
-                  </div>
-                </div>
-
-                <div class="accordion-item">
-                  <h3 class="accordion-header">
-                    <button
-                      class="accordion-button collapsed"
-                      type="button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#faq-content-3"
-                    >
-                      <span class="num">3.</span>
-                      Can I make contributions or translate the app?
-                    </button>
-                  </h3>
-                  <div
-                    id="faq-content-3"
-                    class="accordion-collapse collapse"
-                    data-bs-parent="#faqlist"
-                  >
-                    <div class="accordion-body">
-                      Yes, you can with pull request on Github.
-                    </div>
-                  </div>
-                </div>
-
-                <div class="accordion-item">
-                  <h3 class="accordion-header">
-                    <button
-                      class="accordion-button collapsed"
-                      type="button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#faq-content-4"
-                    >
-                      <span class="num">4.</span>
-                      Donation link?
-                    </button>
-                  </h3>
-                  <div
-                    id="faq-content-4"
-                    class="accordion-collapse collapse"
-                    data-bs-parent="#faqlist"
-                  >
-                    <div class="accordion-body">
-                      Sure.
-                      <b
-                        ><a href="https://www.buymeacoffee.com/gokadzev18"
-                          >Donate</a
-                        ></b
+            <div class="col-md-9">
+              <div class="navbar">
+                <div class="main-menu d-flex justify-content-between">
+                  <ul class="menu-list col-md-6 list-unstyled d-flex">
+                    <li class="menu-item">
+                      <a href="#" class="item-anchor active" data-effect="Home"
+                        >Home</a
                       >
-                    </div>
+                    </li>
+                    <li class="menu-item">
+                      <a
+                        href="https://github.com/gokadzev/Musify"
+                        class="item-anchor"
+                        data-effect="Source"
+                        >Source Code</a
+                      >
+                    </li>
+                    <li class="menu-item">
+                      <a
+                        href="https://www.buymeacoffee.com/gokadzev18"
+                        class="item-anchor"
+                        data-effect="Donation"
+                        >Donation Link</a
+                      >
+                    </li>
+                    <li class="menu-item">
+                      <a
+                        href="https://github.com/gokadzev/Musify/discussions/112"
+                        class="item-anchor"
+                        data-effect="FAQ"
+                        >F.A.Q</a
+                      >
+                    </li>
+                    <li class="menu-item">
+                      <a href="https://github.com/gokadzev/Musify/discussions"
+                        >Discussions</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+                <div class="hamburger">
+                  <span class="bar"></span>
+                  <span class="bar"></span>
+                  <span class="bar"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <div class="overflow-hidden m-banner" style="padding-bottom: 4em">
+      <div class="container">
+        <div class="row d-flex flex-wrap">
+          <div class="col-md9 col-sm-8">
+            <div class="banner-content content-light">
+              <h1 class="banner-title">
+                Best Music Streaming and Downloading app.
+              </h1>
+              <p class="grey">
+                Discover the ultimate music listening experience with our app.
+                With online song search, streaming and download support, custom
+                playlists, high-quality audio, lyrics support, and much more,
+                you'll never need another music app. Plus, enjoy it all ad-free
+                and without any subscriptions. Try it out today!
+              </p>
+              <div class="btn-wrap d-flex flex-wrap">
+                <a id="download" href="" class="btn btn-linear btn-medium"
+                  >Download</a
+                >
+                <a href="#" class="btn btn-linear btn-medium"
+                  ><span id="version"></span
+                ></a>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-sm-8"></div>
+        </div>
+      </div>
+    </div>
+
+    <section id="screenshots" class="padding-large no-padding-top">
+      <div class="container">
+        <div class="row">
+          <div class="section-header text-center">
+            <h2 class="section-title light">Screenshots</h2>
+          </div>
+          <div class="swiper product-swiper">
+            <div class="swiper-wrapper">
+              <div class="swiper-slide">
+                <div class="product-item">
+                  <div class="image-holder">
+                    <img
+                      src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/01.jpg"
+                      alt="collection"
+                      class="rounded-shape"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="swiper-slide">
+                <div class="product-item">
+                  <div class="image-holder">
+                    <img
+                      src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/02.jpg"
+                      alt="collection"
+                      class="rounded-shape"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="swiper-slide">
+                <div class="product-item">
+                  <div class="image-holder">
+                    <img
+                      src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/03.jpg"
+                      alt="collection"
+                      class="rounded-shape"
+                    />
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </section>
-    </main>
-
-    <a
-      href="#"
-      class="scroll-top d-flex align-items-center justify-content-center"
-      ><i class="bi bi-arrow-up-short"></i
-    ></a>
-
-    <div id="preloader"></div>
-
+        <!-- <div class="swiper-pagination"></div> -->
+      </div>
+    </section>
+    <hr />
+    <footer id="footer" class="padding-medium">
+      <div class="container">
+        <div class="row d-flex flex-wrap justify-content-between">
+          <div class="col-lg-4 col-md-6">
+            <div class="footer-item item-001">
+              <div class="social-media">
+                <ul class="d-flex list-unstyled">
+                  <li class="bg-blue-trans border-rounded-circle">
+                    <a href="https://github.com/gokadzev/Musify">
+                      <img
+                        src="./svg/github.svg"
+                        alt=""
+                        class="icon"
+                        style="filter: invert(1)"
+                      />
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-2 col-md-6">
+            <div class="footer-item item-002 content-light">
+              <h4>Info</h4>
+              <ul class="footer-menu list-unstyled">
+                <li>
+                  <a href="https://github.com/gokadzev/Musify">Source Code</a>
+                </li>
+                <li>
+                  <a href="https://www.buymeacoffee.com/gokadzev18"
+                    >Donation Link</a
+                  >
+                </li>
+                <li>
+                  <a href="https://github.com/gokadzev/Musify/discussions/112"
+                    >F.A.Q</a
+                  >
+                </li>
+                <li>
+                  <a href="https://github.com/gokadzev/Musify/discussions"
+                    >Discussions</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <script src="js/jquery-1.11.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+    <script type="text/javascript" src="js/script.js"></script>
     <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
-      crossorigin="anonymous"
+      data-name="BMC-Widget"
+      data-cfasync="false"
+      src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js"
+      data-id="gokadzev18"
+      data-description="Support me on Buy me a coffee!"
+      data-message=""
+      data-color="#9cd0ff"
+      data-position="Right"
+      data-x_margin="18"
+      data-y_margin="18"
     ></script>
-    <script src="js/aos.js"></script>
-    <script src="js/main.js"></script>
   </body>
 </html>
