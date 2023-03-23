@@ -239,9 +239,15 @@ Future getPlaylistInfoForWidget(dynamic id) async {
   return playlist;
 }
 
-Future<String> getSong(dynamic songId) async {
-  final manifest = await yt.videos.streamsClient.getManifest(songId);
-  return manifest.audioOnly.withHighestBitrate().url.toString();
+Future<String> getSong(dynamic songId, bool isLive) async {
+  final url = isLive
+      ? await yt.videos.streamsClient.getHttpLiveStreamUrl(VideoId(songId))
+      : (await yt.videos.streamsClient.getManifest(songId))
+          .audioOnly
+          .withHighestBitrate()
+          .url
+          .toString();
+  return url;
 }
 
 Future getSongDetails(dynamic songIndex, dynamic songId) async {

@@ -44,7 +44,7 @@ bool get hasPrevious =>
 Future<void> playSong(Map song) async {
   final songUrl = song['ytid'].length == 0
       ? song['songUrl'].toString()
-      : await getSong(song['ytid']);
+      : await getSong(song['ytid'], song['isLive']);
 
   try {
     await audioPlayer.setAudioSource(

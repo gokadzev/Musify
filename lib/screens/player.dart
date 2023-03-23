@@ -161,14 +161,80 @@ class AudioAppState extends State<AudioApp> {
                     ],
                   ),
                 ),
-                Material(
-                  child: _buildPlayer(
-                    size,
-                    songLikeStatus,
-                    metadata.extras['ytid'],
-                    metadata,
-                  ),
-                ),
+                metadata.extras['isLive']
+                    ? Padding(
+                        padding: const EdgeInsets.only(top: 50),
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: colorScheme.primary,
+                            borderRadius: BorderRadius.circular(100),
+                          ),
+                          child: StreamBuilder<PlayerState>(
+                            stream: audioPlayer.playerStateStream,
+                            builder: (context, snapshot) {
+                              final playerState = snapshot.data;
+                              final processingState =
+                                  playerState?.processingState;
+                              final playing = playerState?.playing;
+                              if (processingState == ProcessingState.loading ||
+                                  processingState ==
+                                      ProcessingState.buffering) {
+                                return Container(
+                                  margin: const EdgeInsets.all(8),
+                                  width: 30,
+                                  height: 30,
+                                  child: CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Theme.of(context).hintColor,
+                                    ),
+                                  ),
+                                );
+                              } else if (playing != true) {
+                                return IconButton(
+                                  icon: Icon(
+                                    FluentIcons.play_12_filled,
+                                    color: Theme.of(context).hintColor,
+                                  ),
+                                  iconSize: 40,
+                                  onPressed: audioPlayer.play,
+                                  splashColor: Colors.transparent,
+                                );
+                              } else if (processingState !=
+                                  ProcessingState.completed) {
+                                return IconButton(
+                                  icon: Icon(
+                                    FluentIcons.pause_12_filled,
+                                    color: Theme.of(context).hintColor,
+                                  ),
+                                  iconSize: 40,
+                                  onPressed: audioPlayer.pause,
+                                  splashColor: Colors.transparent,
+                                );
+                              } else {
+                                return IconButton(
+                                  icon: Icon(
+                                    FluentIcons.replay_20_filled,
+                                    color: Theme.of(context).hintColor,
+                                  ),
+                                  iconSize: 30,
+                                  onPressed: () => audioPlayer.seek(
+                                    Duration.zero,
+                                    index: audioPlayer.effectiveIndices!.first,
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                        ),
+                      )
+                    : Material(
+                        child: _buildPlayer(
+                          size,
+                          songLikeStatus,
+                          metadata.extras['ytid'],
+                          metadata,
+                        ),
+                      ),
               ],
             );
           },

@@ -12,6 +12,7 @@ Map mediaItemToMap(MediaItem mediaItem) {
     'highResImage': mediaItem.artUri.toString(),
     'lowResImage': mediaItem.extras!['lowResImage'],
     'url': mediaItem.extras!['url'].toString(),
+    'isLive': mediaItem.extras!['isLive'].toString(),
   };
 }
 
@@ -27,7 +28,7 @@ MediaItem songModelToMediaItem(AudioModel song, String songUrl) {
       'lowResImage': '',
       'ytid': '',
       'localSongId': song.id,
-      'ogid': song.id
+      'ogid': song.id,
     },
   );
 }
@@ -45,7 +46,8 @@ MediaItem mapToMediaItem(Map song, String songUrl) {
       'url': songUrl,
       'lowResImage': song['lowResImage'],
       'ytid': song['ytid'],
-      'localSongId': song['localSongId']
+      'localSongId': song['localSongId'],
+      'isLive': song['isLive'],
     },
   );
 }

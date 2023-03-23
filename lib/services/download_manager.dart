@@ -29,7 +29,7 @@ Future<void> downloadSong(BuildContext context, dynamic song) async {
 
     final filename = '$songName.${prefferedFileExtension.value}';
 
-    final audio = await getSong(song['ytid'].toString());
+    final audio = await getSong(song['ytid'].toString(), song['isLive']);
     await FlutterDownloader.enqueue(
       url: audio,
       savedDir: downloadDirectory!,
