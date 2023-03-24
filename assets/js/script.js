@@ -1,6 +1,7 @@
 const checkApiUrl = 'https://api.github.com/repos/gokadzev/Musify/releases'
 let versionElement = document.getElementById('version')
 let downloadElement = document.getElementById('download')
+let downloadsCount = document.getElementById('downloads_count_element')
 
 function getUpdateInfo(callback) {
   var xmlHttp = new XMLHttpRequest()
@@ -9,6 +10,20 @@ function getUpdateInfo(callback) {
       callback(xmlHttp.responseText)
   }
   xmlHttp.open('GET', checkApiUrl, true)
+  xmlHttp.send(null)
+}
+
+function getDownloadsInfo(callback) {
+  var xmlHttp = new XMLHttpRequest()
+  xmlHttp.onreadystatechange = function () {
+    if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+      callback(xmlHttp.responseText)
+  }
+  xmlHttp.open(
+    'GET',
+    'https://raw.githubusercontent.com/gokadzev/Musify/update/downloads_count.json',
+    true
+  )
   xmlHttp.send(null)
 }
 
@@ -89,5 +104,9 @@ window.onload = function () {
     const appVersion = response[0]['tag_name']
     versionElement.textContent += 'Current Version: ' + appVersion
     downloadElement.setAttribute('href', appUrl)
+  })
+  getDownloadsInfo((res) => {
+    const response = JSON.parse(res)
+    downloadsCount.textContent = response['downloads_count']
   })
 }
