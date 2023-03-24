@@ -124,6 +124,18 @@ img {
   max-width: 80px;
 }
 
+.numofdownloads {
+  background: -webkit-linear-gradient(
+    297deg,
+    var(--blue-color),
+    var(--secondary-color),
+    var(--blue-color)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 h1,
 .h1,
 h2,
