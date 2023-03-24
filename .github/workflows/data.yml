@@ -1,4 +1,4 @@
-name: Commit Changes
+name: Update Downloads Data
 
 on:
   schedule:
@@ -6,14 +6,14 @@ on:
   workflow_dispatch:
 
 jobs:
-  commit_changes:
+  downloads_data:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
       with:
-        ref: website # Use the website branch instead of master
+        ref: update # Use the update branch instead of master
 
     - name: Set up Python
       uses: actions/setup-python@v2
@@ -36,4 +36,4 @@ jobs:
       run: |
         git add .
         git diff-index --quiet HEAD || git commit -m "Update Downloads data"
-        git push origin website
+        git push origin update
