@@ -5,12 +5,19 @@ import 'package:musify/API/musify.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/download_manager.dart';
 import 'package:musify/style/app_themes.dart';
+late final currentLikedSongsLength =
+ValueNotifier<int>(userLikedSongsList.length);
 
 class SongBar extends StatelessWidget {
   SongBar(this.song, this.clearPlaylist, {super.key});
-
   late final dynamic song;
   late final bool clearPlaylist;
+
+  final likeStatusToIconMapper = {
+    true: FluentIcons.star_24_filled,
+    false: FluentIcons.star_24_regular
+  };
+
   late final songLikeStatus =
       ValueNotifier<bool>(isSongAlreadyLiked(song['ytid']));
 
@@ -99,25 +106,19 @@ class SongBar extends StatelessWidget {
                 ValueListenableBuilder<bool>(
                   valueListenable: songLikeStatus,
                   builder: (_, value, __) {
-                    if (value == true) {
-                      return IconButton(
-                        color: colorScheme.primary,
-                        icon: const Icon(FluentIcons.star_24_filled),
-                        onPressed: () => {
-                          updateLikeStatus(song['ytid'], false),
-                          songLikeStatus.value = false
-                        },
-                      );
-                    } else {
-                      return IconButton(
-                        color: colorScheme.primary,
-                        icon: const Icon(FluentIcons.star_24_regular),
-                        onPressed: () => {
-                          updateLikeStatus(song['ytid'], true),
-                          songLikeStatus.value = true
-                        },
-                      );
-                    }
+                    return IconButton(
+                      onPressed: () => {
+                        songLikeStatus.value = !songLikeStatus.value,
+                        updateLikeStatus(
+                          song['ytid'],
+                          songLikeStatus.value,
+                        ),
+                        currentLikedSongsLength.value = value
+                            ? currentLikedSongsLength.value + 1
+                            : currentLikedSongsLength.value - 1
+                      },
+                      icon: Icon(likeStatusToIconMapper[value]),
+                    );
                   },
                 ),
                 IconButton(
