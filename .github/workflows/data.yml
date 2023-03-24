@@ -1,0 +1,33 @@
+name: Commit Changes
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Run every day at midnight UTC
+  workflow_dispatch:
+
+jobs:
+  commit_changes:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        ref: website # Use the website branch instead of master
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: pip install requests
+
+    - name: Run Python script
+      run: python downloads.py
+
+    - name: Commit changes
+      run: |
+        git add .
+        git diff-index --quiet HEAD || git commit -m "Update Downloads data"
+        git push origin website
