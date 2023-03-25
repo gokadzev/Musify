@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:musify/API/musify.dart';
@@ -84,107 +83,14 @@ class _PlaylistPageState extends State<PlaylistPage> {
       body: SingleChildScrollView(
         child: widget.playlist != null
             ? Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Container(
-                    margin: const EdgeInsets.only(left: 10, right: 26),
-                    height: MediaQuery.of(context).size.height * 0.3,
-                    width: MediaQuery.of(context).size.height * 0.3,
-                    child: Card(
-                      color: Colors.transparent,
-                      child: widget.playlist['image'] != ''
-                          ? DecoratedBox(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                image: DecorationImage(
-                                  fit: BoxFit.cover,
-                                  image: CachedNetworkImageProvider(
-                                    widget.playlist['image'].toString(),
-                                  ),
-                                ),
-                              ),
-                            )
-                          : PlaylistCube(
-                              id: widget.playlist['ytid'],
-                              image: widget.playlist['image'],
-                              title: widget.playlist['title'],
-                              onClickOpen: false,
-                            ),
-                    ),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const SizedBox(height: 12),
-                      Text(
-                        widget.playlist['title'].toString(),
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: colorScheme.primary,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        widget.playlist['header_desc'].toString(),
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: colorScheme.primary,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      ElevatedButton(
-                        onPressed: () => {
-                          setActivePlaylist(
-                            widget.playlist,
-                          ),
-                          showToast(
-                            AppLocalizations.of(context)!.queueInitText,
-                          )
-                        },
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                            colorScheme.primary,
-                          ),
-                        ),
-                        child: Text(
-                          AppLocalizations.of(context)!.playAll.toUpperCase(),
-                          style: TextStyle(
-                            color: isAccentWhite(),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  _buildPlaylistImage(),
+                  _buildPlaylistTitle(),
+                  _buildPlaylistDescription(),
+                  _buildPlayAllButton(),
                   const SizedBox(height: 30),
-                  if (_songsList.isNotEmpty)
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const BouncingScrollPhysics(),
-                      addAutomaticKeepAlives: false,
-                      addRepaintBoundaries: false,
-                      itemCount:
-                          _hasMore ? _songsList.length + 1 : _songsList.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        if (index >= _songsList.length) {
-                          if (!_isLoading) {
-                            _loadMore();
-                          }
-                          return const Spinner();
-                        }
-                        return Padding(
-                          padding: const EdgeInsets.only(top: 5, bottom: 5),
-                          child: SongBar(
-                            _songsList[index],
-                            true,
-                          ),
-                        );
-                      },
-                    )
-                  else
-                    const Spinner()
+                  _songsList.isNotEmpty ? _buildSongList() : const Spinner()
                 ],
               )
             : SizedBox(
@@ -193,5 +99,101 @@ class _PlaylistPageState extends State<PlaylistPage> {
               ),
       ),
     );
+  }
+
+  Widget _buildPlaylistImage() {
+    return Card(
+      color: Colors.transparent,
+      child: PlaylistCube(
+        id: widget.playlist['ytid'],
+        image: widget.playlist['image'],
+        title: widget.playlist['title'],
+        onClickOpen: false,
+      ),
+    );
+  }
+
+  Widget _buildPlaylistTitle() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: Text(
+        widget.playlist['title'].toString(),
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          color: colorScheme.primary,
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPlaylistDescription() {
+    return Text(
+      widget.playlist['header_desc'].toString(),
+      textAlign: TextAlign.center,
+      style: TextStyle(
+        color: colorScheme.primary,
+        fontSize: 10,
+        fontWeight: FontWeight.w600,
+      ),
+    );
+  }
+
+  Widget _buildPlayAllButton() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: ElevatedButton(
+        onPressed: () {
+          setActivePlaylist(widget.playlist);
+          showToast(
+            AppLocalizations.of(context)!.queueInitText,
+          );
+        },
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all<Color>(
+            colorScheme.primary,
+          ),
+        ),
+        child: Text(
+          AppLocalizations.of(context)!.playAll.toUpperCase(),
+          style: TextStyle(
+            color: isAccentWhite(),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSongList() {
+    if (_songsList.isNotEmpty)
+      return Column(
+        children: [
+          ListView.separated(
+            shrinkWrap: true,
+            physics: const BouncingScrollPhysics(),
+            separatorBuilder: (BuildContext context, int index) =>
+                const SizedBox(height: 7),
+            itemCount: _hasMore ? _songsList.length + 1 : _songsList.length,
+            itemBuilder: (BuildContext context, int index) {
+              if (index >= _songsList.length) {
+                if (!_isLoading) {
+                  _loadMore();
+                }
+                return const Spinner();
+              }
+              return SongBar(
+                _songsList[index],
+                true,
+              );
+            },
+          ),
+        ],
+      );
+    else
+      return SizedBox(
+        height: MediaQuery.of(context).size.height - 100,
+        child: const Spinner(),
+      );
   }
 }
