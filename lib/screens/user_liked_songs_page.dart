@@ -117,25 +117,26 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
             ),
             const Padding(padding: EdgeInsets.only(top: 20)),
             ValueListenableBuilder(
-                valueListenable: currentLikedSongsLength,
-                builder: (_, value, __) {
-                  return ListView.builder(
-                    shrinkWrap: true,
-                    physics: const BouncingScrollPhysics(),
-                    addAutomaticKeepAlives: false,
-                    addRepaintBoundaries: false,
-                    itemCount: userLikedSongsList.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(top: 5, bottom: 5),
-                        child: SongBar(
-                          userLikedSongsList[index],
-                          true,
-                        ),
-                      );
-                    },
-                  );
-                })
+              valueListenable: currentLikedSongsLength,
+              builder: (_, value, __) {
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: const BouncingScrollPhysics(),
+                  addAutomaticKeepAlives: false,
+                  addRepaintBoundaries: false,
+                  itemCount: userLikedSongsList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 5, bottom: 5),
+                      child: SongBar(
+                        userLikedSongsList[index],
+                        true,
+                      ),
+                    );
+                  },
+                );
+              },
+            )
           ],
         ),
       ),
