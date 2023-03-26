@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:musify/style/app_themes.dart';
 
 final availableColors = <Color>[
   const Color(0xFF9ACD32),
@@ -87,10 +86,4 @@ MaterialColor getPrimarySwatch(Color color) {
       1,
     ),
   });
-}
-
-Color isAccentWhite() {
-  return colorScheme.primary != const Color(0xFFFFFFFF)
-      ? Colors.white
-      : Colors.black;
 }

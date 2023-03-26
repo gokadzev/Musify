@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:musify/API/musify.dart';
-import 'package:musify/style/app_colors.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/widgets/playlist_cube.dart';
@@ -119,11 +118,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
       child: Text(
         widget.playlist['title'].toString(),
         textAlign: TextAlign.center,
-        style: TextStyle(
-          color: colorScheme.primary,
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-        ),
+        style: Theme.of(context).textTheme.bodyMedium,
       ),
     );
   }
@@ -132,35 +127,26 @@ class _PlaylistPageState extends State<PlaylistPage> {
     return Text(
       widget.playlist['header_desc'].toString(),
       textAlign: TextAlign.center,
-      style: TextStyle(
-        color: colorScheme.primary,
-        fontSize: 10,
-        fontWeight: FontWeight.w600,
-      ),
+      style: Theme.of(context).textTheme.bodySmall,
     );
   }
 
   Widget _buildPlayAllButton() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: ElevatedButton(
-        onPressed: () {
-          setActivePlaylist(widget.playlist);
-          showToast(
-            AppLocalizations.of(context)!.queueInitText,
-          );
-        },
-        style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all<Color>(
-            colorScheme.primary,
-          ),
+    return ElevatedButton(
+      onPressed: () {
+        setActivePlaylist(widget.playlist);
+        showToast(
+          AppLocalizations.of(context)!.queueInitText,
+        );
+      },
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all<Color>(
+          colorScheme.primary,
         ),
-        child: Text(
-          AppLocalizations.of(context)!.playAll.toUpperCase(),
-          style: TextStyle(
-            color: isAccentWhite(),
-          ),
-        ),
+      ),
+      child: Text(
+        AppLocalizations.of(context)!.playAll.toUpperCase(),
+        style: Theme.of(context).textTheme.bodyMedium,
       ),
     );
   }

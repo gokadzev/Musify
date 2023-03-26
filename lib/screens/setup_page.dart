@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/settings_manager.dart';
-import 'package:musify/style/app_colors.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/widgets/marque.dart';
 
@@ -54,9 +53,7 @@ class _SetupPageState extends State<SetupPage> {
                     ),
                     child: Text(
                       AppLocalizations.of(context)!.add.toUpperCase(),
-                      style: TextStyle(
-                        color: isAccentWhite(),
-                      ),
+                      style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ),
                 ),

@@ -1,3 +1,4 @@
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:musify/style/app_colors.dart';
@@ -27,7 +28,7 @@ ThemeData getAppDarkTheme() {
     bottomSheetTheme: const BottomSheetThemeData(
       backgroundColor: Color(0xFF121212),
     ),
-    colorScheme: colorScheme,
+    colorScheme: colorScheme.harmonized(),
     visualDensity: VisualDensity.adaptivePlatformDensity,
     fontFamily: 'Ubuntu',
     useMaterial3: true,
@@ -86,7 +87,7 @@ ThemeData getAppLightTheme() {
   return ThemeData(
     scaffoldBackgroundColor: Colors.white,
     canvasColor: Colors.white,
-    colorScheme: colorScheme,
+    colorScheme: colorScheme.harmonized(),
     bottomSheetTheme: const BottomSheetThemeData(backgroundColor: Colors.white),
     appBarTheme: AppBarTheme(
       backgroundColor: Colors.white,

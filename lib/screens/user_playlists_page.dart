@@ -2,7 +2,6 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:musify/API/musify.dart';
-import 'package:musify/style/app_colors.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/widgets/playlist_cube.dart';
@@ -67,7 +66,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
         backgroundColor: colorScheme.primary,
         child: Icon(
           FluentIcons.add_24_filled,
-          color: isAccentWhite(),
+          color: Theme.of(context).textTheme.bodyMedium!.color,
         ),
       ),
       body: SingleChildScrollView(

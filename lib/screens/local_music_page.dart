@@ -4,7 +4,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/offline_audio.dart';
-import 'package:musify/style/app_colors.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/widgets/spinner.dart';
 import 'package:on_audio_query/on_audio_query.dart';
@@ -114,9 +113,7 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                         ),
                         child: Text(
                           AppLocalizations.of(context)!.playAll.toUpperCase(),
-                          style: TextStyle(
-                            color: isAccentWhite(),
-                          ),
+                          style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ),
                     ],
