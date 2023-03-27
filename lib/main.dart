@@ -23,20 +23,20 @@ ThemeMode themeMode = ThemeMode.system;
 
 final appLanguages = <String, String>{
   'English': 'en',
-  'Georgian': 'ka',
+  'Arabic': 'ar',
   'Chinese': 'zh',
-  'Traditional Chinese Taiwan': 'zh_TW',
   'Dutch': 'nl',
+  'Georgian': 'ka',
   'German': 'de',
   'Indonesian': 'id',
   'Italian': 'it',
   'Polish': 'pl',
   'Portuguese': 'pt',
+  'Russian': 'ru',
   'Spanish': 'es',
+  'Traditional Chinese Taiwan': 'zh_TW',
   'Turkish': 'tr',
   'Ukrainian': 'uk',
-  'Russian': 'ru',
-  'Arabic': 'ar'
 };
 
 final appSupportedLocales = appLanguages.values
