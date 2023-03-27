@@ -36,6 +36,7 @@ final appLanguages = <String, String>{
   'Turkish': 'tr',
   'Ukrainian': 'uk',
   'Russian': 'ru',
+  'Arabic': 'ar'
 };
 
 final appSupportedLocales = appLanguages.values
