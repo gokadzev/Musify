@@ -138,6 +138,12 @@ class _MyAppState extends State<MyApp> {
                   scaffoldBackgroundColor: darkColorScheme.surface,
                   colorScheme: darkColorScheme.harmonized(),
                   canvasColor: darkColorScheme.surface,
+                  cardTheme: CardTheme(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    elevation: 2.3,
+                  ),
                   bottomAppBarTheme: BottomAppBarTheme(
                     color: darkColorScheme.surface,
                   ),
@@ -169,6 +175,12 @@ class _MyAppState extends State<MyApp> {
                   scaffoldBackgroundColor: lightColorScheme.surface,
                   colorScheme: lightColorScheme.harmonized(),
                   canvasColor: lightColorScheme.surface,
+                  cardTheme: CardTheme(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    elevation: 2.3,
+                  ),
                   bottomAppBarTheme: BottomAppBarTheme(
                     color: lightColorScheme.surface,
                   ),
