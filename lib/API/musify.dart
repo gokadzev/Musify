@@ -32,7 +32,7 @@ Map activePlaylist = {
 };
 
 late final currentLikedSongsLength =
-ValueNotifier<int>(userLikedSongsList.length);
+    ValueNotifier<int>(userLikedSongsList.length);
 
 final lyrics = ValueNotifier<String>('null');
 String lastFetchedLyrics = 'null';
