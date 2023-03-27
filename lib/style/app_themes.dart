@@ -10,8 +10,37 @@ MaterialColor primarySwatch = getPrimarySwatch(primaryColor);
 
 ColorScheme colorScheme = ColorScheme.fromSwatch(primarySwatch: primarySwatch);
 
+final commonProperties = ThemeData(
+  colorScheme: colorScheme.harmonized(),
+  visualDensity: VisualDensity.adaptivePlatformDensity,
+  fontFamily: 'Ubuntu',
+  useMaterial3: true,
+  pageTransitionsTheme: const PageTransitionsTheme(
+    builders: {
+      TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+    },
+  ),
+  inputDecorationTheme: InputDecorationTheme(
+    filled: true,
+    fillColor: colorScheme.background.withAlpha(50),
+    isDense: true,
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(15.0),
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(15.0),
+    ),
+    contentPadding: const EdgeInsets.only(
+      left: 18,
+      right: 20,
+      top: 14,
+      bottom: 14,
+    ),
+  ),
+);
+
 ThemeData getAppDarkTheme() {
-  return ThemeData(
+  return commonProperties.copyWith(
     scaffoldBackgroundColor: const Color(0xFF121212),
     canvasColor: const Color(0xFF121212),
     appBarTheme: AppBarTheme(
@@ -27,15 +56,6 @@ ThemeData getAppDarkTheme() {
     ),
     bottomSheetTheme: const BottomSheetThemeData(
       backgroundColor: Color(0xFF121212),
-    ),
-    colorScheme: colorScheme.harmonized(),
-    visualDensity: VisualDensity.adaptivePlatformDensity,
-    fontFamily: 'Ubuntu',
-    useMaterial3: true,
-    pageTransitionsTheme: const PageTransitionsTheme(
-      builders: {
-        TargetPlatform.android: CupertinoPageTransitionsBuilder(),
-      },
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
@@ -63,31 +83,13 @@ ThemeData getAppDarkTheme() {
       bodyMedium: TextStyle(color: Colors.white),
     ),
     bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFF151515)),
-    inputDecorationTheme: InputDecorationTheme(
-      filled: true,
-      fillColor: colorScheme.background.withAlpha(50),
-      isDense: true,
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(15.0),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(15.0),
-      ),
-      contentPadding: const EdgeInsets.only(
-        left: 18,
-        right: 20,
-        top: 14,
-        bottom: 14,
-      ),
-    ),
   );
 }
 
 ThemeData getAppLightTheme() {
-  return ThemeData(
+  return commonProperties.copyWith(
     scaffoldBackgroundColor: Colors.white,
     canvasColor: Colors.white,
-    colorScheme: colorScheme.harmonized(),
     bottomSheetTheme: const BottomSheetThemeData(backgroundColor: Colors.white),
     appBarTheme: AppBarTheme(
       backgroundColor: Colors.white,
@@ -99,14 +101,6 @@ ThemeData getAppLightTheme() {
         color: colorScheme.primary,
       ),
       elevation: 0,
-    ),
-    visualDensity: VisualDensity.adaptivePlatformDensity,
-    fontFamily: 'Ubuntu',
-    useMaterial3: true,
-    pageTransitionsTheme: const PageTransitionsTheme(
-      builders: {
-        TargetPlatform.android: CupertinoPageTransitionsBuilder(),
-      },
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
@@ -133,22 +127,5 @@ ThemeData getAppLightTheme() {
     iconTheme: const IconThemeData(color: Color(0xFF151515)),
     hintColor: const Color(0xFF151515),
     bottomAppBarTheme: const BottomAppBarTheme(color: Colors.white),
-    inputDecorationTheme: InputDecorationTheme(
-      filled: true,
-      fillColor: colorScheme.background.withAlpha(50),
-      isDense: true,
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(15.0),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(15.0),
-      ),
-      contentPadding: const EdgeInsets.only(
-        left: 18,
-        right: 20,
-        top: 14,
-        bottom: 14,
-      ),
-    ),
   );
 }
