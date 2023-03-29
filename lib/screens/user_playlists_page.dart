@@ -28,7 +28,8 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
             builder: (BuildContext context) {
               var id = '';
               return AlertDialog(
-                backgroundColor: Theme.of(context).splashColor,
+                backgroundColor:
+                    Theme.of(context).dialogBackgroundColor.withOpacity(0.5),
                 content: Stack(
                   children: <Widget>[
                     TextField(
