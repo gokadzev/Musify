@@ -200,6 +200,7 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                       'highResImage': '',
                       'songUrl': snapshot.data![index].data,
                       'localSongId': snapshot.data![index].id,
+                      'isLive': false,
                     };
 
                     return Container(
