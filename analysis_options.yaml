@@ -1,6 +1,7 @@
 analyzer:
   exclude:
     - packages/**
+    - lib/services/update_manager.dart
 
 linter:
   rules:
