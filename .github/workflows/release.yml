@@ -48,6 +48,8 @@ jobs:
       - run: dart format --set-exit-if-changed .
       # Statically analyze the Dart code for any errors.
       - run: flutter analyze .
+      # Add updater
+      - run: bash add_updater.sh
       # Build arch apks.
       - run: flutter build apk --release --split-per-abi --target-platform="android-arm64"
       # Upload arm64 generated apk to the artifacts.
