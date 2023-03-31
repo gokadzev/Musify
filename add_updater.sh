@@ -47,7 +47,7 @@ Future<void> downloadAppUpdates() async {
   await FlutterDownloader.enqueue(
     url: dlUrl,
     savedDir: dlPath!,
-    fileName: "app.apk",
+    fileName: "Musify.apk",
     showNotification: true,
   );
 }
