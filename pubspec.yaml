@@ -8,8 +8,8 @@ publish_to: 'none'
 version: 4.8.0+48 # run update.sh after changing the version
 
 environment:
-  sdk: '>=2.19.4 <3.0.0'
-  flutter: ^3.7.7
+  sdk: '>=2.19.6 <3.0.0'
+  flutter: ^3.7.9
 
 dependencies:
   audio_session: ^0.1.13
