@@ -34,6 +34,8 @@ dependencies:
   on_audio_query:
     path: ./packages/on_audio_query/on_audio_query
   permission_handler: ^10.2.0
+  receive_sharing_intent:
+    path: ./packages/receive_sharing_intent
   rxdart: ^0.27.7
   url_launcher: ^6.1.10
   youtube_explode_dart: ^1.12.4
