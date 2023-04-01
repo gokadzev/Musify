@@ -75,10 +75,7 @@ class PlaylistCube extends StatelessWidget {
                           color: colorScheme.primary,
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(
-                            left: 10,
-                            right: 10,
-                          ),
+                          padding: const EdgeInsets.all(10),
                           child: Text(
                             title,
                             textAlign: TextAlign.center,
