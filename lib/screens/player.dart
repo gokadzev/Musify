@@ -68,7 +68,6 @@ class AudioAppState extends State<AudioApp> {
                     type: ArtworkType.AUDIO,
                     artworkBorder: BorderRadius.circular(8),
                     artworkQuality: FilterQuality.high,
-                    quality: 100,
                     artworkWidth: size.width - 100,
                     artworkHeight: size.width - 100,
                     nullArtworkWidget: Container(
@@ -161,7 +160,7 @@ class AudioAppState extends State<AudioApp> {
                     ],
                   ),
                 ),
-                metadata.extras['isLive']
+                metadata.extras['isLive'] != null && metadata.extras['isLive']
                     ? Padding(
                         padding: const EdgeInsets.only(top: 50),
                         child: DecoratedBox(

@@ -2,6 +2,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:musify/API/musify.dart';
+import 'package:musify/screens/artist_page.dart';
 import 'package:musify/screens/playlists_page.dart';
 import 'package:musify/services/offline_audio.dart';
 import 'package:musify/style/app_themes.dart';
@@ -138,27 +139,14 @@ class _HomePageState extends State<HomePage> {
                                   child: MarqueeWidget(
                                     direction: Axis.horizontal,
                                     child: Text(
-                                      'Suggested artists',
+                                      AppLocalizations.of(context)!
+                                          .suggestedArtists,
                                       style: TextStyle(
                                         color: colorScheme.primary,
                                         fontSize: 20,
                                         fontWeight: FontWeight.w700,
                                       ),
                                     ),
-                                  ),
-                                ),
-                                IconButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => PlaylistsPage(),
-                                      ),
-                                    );
-                                  },
-                                  icon: Icon(
-                                    FluentIcons.more_horizontal_24_regular,
-                                    color: colorScheme.primary,
                                   ),
                                 ),
                               ],
@@ -174,7 +162,7 @@ class _HomePageState extends State<HomePage> {
                                   const SizedBox(width: 15),
                               itemCount: 10,
                               itemBuilder: (context, index) {
-                                final artist = data.data![index];
+                                final artist = data.data![index].artist;
                                 return SizedBox(
                                   width: 230,
                                   height: 230,
@@ -184,16 +172,27 @@ class _HomePageState extends State<HomePage> {
                                         const Duration(milliseconds: 400),
                                     child: GestureDetector(
                                       onTap: () {
-                                        // getPlaylistInfoForWidget(id).then(
-                                        //   (value) => {
-                                        //     Navigator.push(
-                                        //       context,
-                                        //       MaterialPageRoute(
-                                        //         builder: (context) => PlaylistPage(playlist: value),
-                                        //       ),
-                                        //     )
-                                        //   },
-                                        // );
+                                        getMusic(
+                                          searchQuery: artist.split('~')[0],
+                                        ).then(
+                                          (songs) => {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ArtistPage(
+                                                  playlist: {
+                                                    'ytid': '',
+                                                    'title': artist,
+                                                    'header_desc': '',
+                                                    'image': '',
+                                                    'list': songs,
+                                                  },
+                                                ),
+                                              ),
+                                            )
+                                          },
+                                        );
                                       },
                                       child: ClipRRect(
                                         borderRadius:
@@ -225,7 +224,7 @@ class _HomePageState extends State<HomePage> {
                                                   padding:
                                                       const EdgeInsets.all(10),
                                                   child: Text(
-                                                    artist.artist,
+                                                    artist,
                                                     textAlign: TextAlign.center,
                                                   ),
                                                 ),
