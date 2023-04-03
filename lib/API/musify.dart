@@ -118,7 +118,7 @@ Future<void> updateLikeStatus(dynamic songId, bool add) async {
 bool isSongAlreadyLiked(songIdToCheck) =>
     userLikedSongsList.any((song) => song['ytid'] == songIdToCheck);
 
-Future<List> getPlaylists([int? playlistsNum]) async {
+Future<List> getPlaylists({String? query, int? playlistsNum}) async {
   if (playlists.isEmpty) {
     await readPlaylistsFromFile();
   }
@@ -129,6 +129,13 @@ Future<List> getPlaylists([int? playlistsNum]) async {
           (playlists.toList()..shuffle()).take(playlistsNum).toList();
     }
     return suggestedPlaylists;
+  } else if (query != null) {
+    return playlists
+        .where(
+          (playlist) =>
+              playlist['title'].toLowerCase().contains(query.toLowerCase()),
+        )
+        .toList();
   } else {
     return playlists;
   }
@@ -138,19 +145,6 @@ Future<void> readPlaylistsFromFile() async {
   playlists =
       json.decode(await rootBundle.loadString('assets/db/playlists.db.json'))
           as List;
-}
-
-Future<List> searchPlaylist(String query) async {
-  if (playlists.isEmpty) {
-    await readPlaylistsFromFile();
-  }
-
-  return playlists
-      .where(
-        (playlist) =>
-            playlist['title'].toLowerCase().contains(query.toLowerCase()),
-      )
-      .toList();
 }
 
 Future<List> getSearchSuggestions(String query) async {

@@ -32,7 +32,7 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             FutureBuilder(
-              future: getPlaylists(5),
+              future: getPlaylists(playlistsNum: 5),
               builder: (context, AsyncSnapshot<List<dynamic>> data) {
                 return data.hasData
                     ? Column(
