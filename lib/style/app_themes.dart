@@ -1,5 +1,6 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 import 'package:musify/style/app_colors.dart';
 
@@ -13,7 +14,6 @@ ColorScheme colorScheme = ColorScheme.fromSwatch(primarySwatch: primarySwatch);
 final commonProperties = ThemeData(
   colorScheme: colorScheme.harmonized(),
   visualDensity: VisualDensity.adaptivePlatformDensity,
-  fontFamily: 'Ubuntu',
   useMaterial3: true,
   pageTransitionsTheme: const PageTransitionsTheme(
     builders: {
@@ -43,6 +43,7 @@ ThemeData getAppDarkTheme() {
   return commonProperties.copyWith(
     scaffoldBackgroundColor: const Color(0xFF121212),
     canvasColor: const Color(0xFF121212),
+    textTheme: GoogleFonts.robotoTextTheme(ThemeData.dark().textTheme),
     appBarTheme: AppBarTheme(
       backgroundColor: const Color(0xFF121212),
       iconTheme: IconThemeData(color: colorScheme.primary),
@@ -79,9 +80,6 @@ ThemeData getAppDarkTheme() {
     ),
     iconTheme: const IconThemeData(color: Colors.white),
     hintColor: Colors.white,
-    textTheme: const TextTheme(
-      bodyMedium: TextStyle(color: Colors.white),
-    ),
     bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFF151515)),
   );
 }
@@ -90,6 +88,7 @@ ThemeData getAppLightTheme() {
   return commonProperties.copyWith(
     scaffoldBackgroundColor: Colors.white,
     canvasColor: Colors.white,
+    textTheme: GoogleFonts.robotoTextTheme(ThemeData.light().textTheme),
     bottomSheetTheme: const BottomSheetThemeData(backgroundColor: Colors.white),
     appBarTheme: AppBarTheme(
       backgroundColor: Colors.white,

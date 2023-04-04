@@ -25,6 +25,7 @@ dependencies:
     sdk: flutter
   fluttertoast: ^8.2.1
   get_it: ^7.2.0
+  google_fonts: ^4.0.3
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   http: ^0.13.5
@@ -51,10 +52,6 @@ dev_dependencies:
 flutter:
   generate: true
   uses-material-design: true
-  fonts:
-    - family: Ubuntu
-      fonts:
-        - asset: fonts/ubuntu.ttf
 
   # To add assets to your application, add an assets section, like this:
   assets:
