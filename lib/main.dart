@@ -15,7 +15,6 @@ import 'package:musify/API/musify.dart';
 import 'package:musify/screens/more_page.dart';
 import 'package:musify/screens/root_page.dart';
 import 'package:musify/services/audio_manager.dart';
-import 'package:musify/style/app_colors.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/formatter.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
@@ -90,9 +89,11 @@ class _MyAppState extends State<MyApp> {
   void changeAccentColor(Color newAccentColor, bool systemColorStatus) {
     setState(() {
       useSystemColor.value = systemColorStatus;
-      primarySwatch = getPrimarySwatch(newAccentColor);
 
-      colorScheme = ColorScheme.fromSwatch(primarySwatch: primarySwatch);
+      colorScheme = ColorScheme.fromSeed(
+        seedColor: newAccentColor,
+        primary: newAccentColor,
+      ).harmonized();
     });
   }
 
