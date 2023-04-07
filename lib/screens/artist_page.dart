@@ -7,6 +7,7 @@ import 'package:musify/API/musify.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/flutter_toast.dart';
+import 'package:musify/utilities/formatter.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/spinner.dart';
 import 'package:on_audio_query/on_audio_query.dart' hide context;
@@ -194,7 +195,10 @@ class _ArtistPagePageState extends State<ArtistPage> {
               final lsong = {
                 'id': index,
                 'ytid': '',
-                'title': _songsList[index].displayName,
+                'title': formatSongTitle(
+                  _songsList[index].displayName,
+                  removeFileExtension: true,
+                ),
                 'image': '',
                 'artist': '',
                 'lowResImage': '',
