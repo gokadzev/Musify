@@ -335,12 +335,14 @@ class _ArtistPagePageState extends State<ArtistPage> {
                     ),
                   ),
                 ),
-                ListView.builder(
+                ListView.separated(
                   shrinkWrap: true,
                   addAutomaticKeepAlives: false,
                   addRepaintBoundaries: false,
                   physics: const BouncingScrollPhysics(),
                   itemCount: snapshot.data.length as int,
+                  separatorBuilder: (BuildContext context, int index) =>
+                      const SizedBox(height: 7),
                   itemBuilder: (context, index) {
                     return SongBar(snapshot.data[index], true);
                   },
