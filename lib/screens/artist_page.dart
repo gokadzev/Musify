@@ -7,6 +7,7 @@ import 'package:musify/API/musify.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/flutter_toast.dart';
+import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/spinner.dart';
 import 'package:on_audio_query/on_audio_query.dart' hide context;
 
@@ -90,7 +91,8 @@ class _ArtistPagePageState extends State<ArtistPage> {
                   _buildPlaylistDescription(),
                   _buildPlayAllButton(),
                   const SizedBox(height: 30),
-                  _songsList.isNotEmpty ? _buildSongList() : const Spinner()
+                  _songsList.isNotEmpty ? _buildSongList() : const Spinner(),
+                  _buildOnlineSongList(),
                 ],
               )
             : SizedBox(
@@ -278,5 +280,77 @@ class _ArtistPagePageState extends State<ArtistPage> {
         height: MediaQuery.of(context).size.height - 100,
         child: const Spinner(),
       );
+  }
+
+  Widget _buildOnlineSongList() {
+    return FutureBuilder(
+      future: fetchSongsList(widget.playlist['title'].toString()),
+      builder: (context, AsyncSnapshot<dynamic> snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting:
+            return const Center(
+              child: Padding(
+                padding: EdgeInsets.all(35),
+                child: Spinner(),
+              ),
+            );
+          case ConnectionState.done:
+            if (snapshot.hasError) {
+              return Center(
+                child: Text(
+                  'Error!',
+                  style: TextStyle(
+                    color: colorScheme.primary,
+                    fontSize: 18,
+                  ),
+                ),
+              );
+            }
+            if (!snapshot.hasData) {
+              return Center(
+                child: Text(
+                  'Nothing Found!',
+                  style: TextStyle(
+                    color: colorScheme.primary,
+                    fontSize: 18,
+                  ),
+                ),
+              );
+            }
+            return Wrap(
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height / 55,
+                    bottom: 10,
+                    left: 20,
+                    right: 20,
+                  ),
+                  child: Text(
+                    'Online Results',
+                    style: TextStyle(
+                      color: colorScheme.primary,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+                ListView.builder(
+                  shrinkWrap: true,
+                  addAutomaticKeepAlives: false,
+                  addRepaintBoundaries: false,
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: snapshot.data.length as int,
+                  itemBuilder: (context, index) {
+                    return SongBar(snapshot.data[index], true);
+                  },
+                )
+              ],
+            );
+          default:
+            return const SizedBox.shrink();
+        }
+      },
+    );
   }
 }
