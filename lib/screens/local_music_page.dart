@@ -168,7 +168,7 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
               ),
             ),
             const Padding(padding: EdgeInsets.only(top: 40)),
-            FutureBuilder<List<dynamic>>(
+            FutureBuilder<List<AudioModel>>(
               future: _searchQuery.isEmpty
                   ? Future.delayed(const Duration(milliseconds: 500), getMusic)
                   : Future.delayed(
@@ -264,6 +264,8 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                                       lsong['title'].toString(),
                                       style: TextStyle(
                                         color: colorScheme.primary,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w700,
                                       ),
                                     ),
                                   ),

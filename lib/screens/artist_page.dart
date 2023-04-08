@@ -265,6 +265,8 @@ class _ArtistPagePageState extends State<ArtistPage> {
                                 lsong['title'].toString(),
                                 style: TextStyle(
                                   color: colorScheme.primary,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
                                 ),
                               ),
                             ),
