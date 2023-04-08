@@ -203,22 +203,16 @@ class _HomePageState extends State<HomePage> {
                                           decoration: BoxDecoration(
                                             borderRadius:
                                                 BorderRadius.circular(10),
-                                            color: const Color.fromARGB(
-                                              30,
-                                              255,
-                                              255,
-                                              255,
-                                            ),
+                                            color: colorScheme.secondary,
                                           ),
                                           child: Center(
                                             child: Column(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.center,
                                               children: <Widget>[
-                                                Icon(
+                                                const Icon(
                                                   FluentIcons.person_24_regular,
                                                   size: 30,
-                                                  color: colorScheme.primary,
                                                 ),
                                                 Padding(
                                                   padding:

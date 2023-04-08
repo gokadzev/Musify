@@ -76,6 +76,7 @@ class AboutCards extends StatelessWidget {
               ),
               title: const Text(
                 'Valeri Gokadze',
+                style: TextStyle(fontWeight: FontWeight.w600),
               ),
               subtitle: const Text(
                 'Web/APP Developer',
