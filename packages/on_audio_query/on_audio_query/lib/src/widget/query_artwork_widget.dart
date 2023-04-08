@@ -46,22 +46,22 @@ class QueryArtworkWidget extends StatelessWidget {
   /// Important:
   ///
   /// * If [formatType] is null, will be set to [JPEG].
-  final ArtworkFormatType? formatType;
+  final ArtworkFormatType formatType;
 
   /// Used to define artwork [size].
   ///
   /// Important:
   ///
-  /// * If [size] is null, will be set to [200].
+  /// * If [size] is not defined, will be set to [200].
   /// * This value have a directly influence to image quality.
-  final int? size;
+  final int size;
 
   /// Used to define artwork [quality].
   ///
   /// Important:
   ///
   /// * If [quality] is null, will be set to [100].
-  final int? quality;
+  final int quality;
 
   /// Used to define the artwork [border radius].
   ///
@@ -294,9 +294,9 @@ class QueryArtworkWidget extends StatelessWidget {
     required this.id,
     required this.type,
     this.format, // Deprecated
-    this.formatType,
-    this.size,
-    this.quality,
+    this.formatType = ArtworkFormatType.JPEG,
+    this.size = 200,
+    this.quality = 50,
     this.artworkQuality,
     this.artworkBorder,
     this.artworkWidth,
@@ -337,9 +337,9 @@ class QueryArtworkWidget extends StatelessWidget {
         id,
         type,
         filter: MediaFilter.forArtwork(
-          artworkFormat: formatType ?? ArtworkFormatType.JPEG,
-          artworkSize: size ?? 100,
-          artworkQuality: quality ?? 50,
+          artworkFormat: formatType,
+          artworkSize: size,
+          artworkQuality: quality,
           cacheArtwork: cacheArtwork ?? true,
           cacheTemporarily: cacheTemporarily ?? true,
           overrideCache: overrideCache ?? false,

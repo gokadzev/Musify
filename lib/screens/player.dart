@@ -68,6 +68,7 @@ class AudioAppState extends State<AudioApp> {
                     type: ArtworkType.AUDIO,
                     artworkBorder: BorderRadius.circular(8),
                     artworkQuality: FilterQuality.high,
+                    size: (size.width - 100).toInt(),
                     artworkWidth: size.width - 100,
                     artworkHeight: size.width - 100,
                     nullArtworkWidget: Container(
