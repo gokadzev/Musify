@@ -76,49 +76,49 @@ class QueryArtworkWidget extends StatelessWidget {
   ///
   /// * If [artworkQuality] is null, will be set to [low].
   /// * This value [don't] have a directly influence to image quality.
-  final FilterQuality? artworkQuality;
+  final FilterQuality artworkQuality;
 
   /// Used to define artwork [width].
   ///
   /// Important:
   ///
   /// * If [artworkWidth] is null, will be set to [50].
-  final double? artworkWidth;
+  final double artworkWidth;
 
   /// Used to define artwork [height].
   ///
   /// Important:
   ///
   /// * If [artworkHeight] is null, will be set to [50].
-  final double? artworkHeight;
+  final double artworkHeight;
 
   /// Used to define artwork [fit].
   ///
   /// Important:
   ///
   /// * If [artworkFit] is null, will be set to [cover].
-  final BoxFit? artworkFit;
+  final BoxFit artworkFit;
 
   /// Used to define artwork [clip].
   ///
   /// Important:
   ///
   /// * If [artworkClipBehavior] is null, will be set to [antiAlias].
-  final Clip? artworkClipBehavior;
+  final Clip artworkClipBehavior;
 
   /// Used to define artwork [scale].
   ///
   /// Important:
   ///
   /// * If [artworkScale] is null, will be set to [1.0].
-  final double? artworkScale;
+  final double artworkScale;
 
   /// Used to define if artwork should [repeat].
   ///
   /// Important:
   ///
   /// * If [artworkRepeat] is null, will be set to [false].
-  final ImageRepeat? artworkRepeat;
+  final ImageRepeat artworkRepeat;
 
   /// Used to define artwork [color].
   ///
@@ -159,7 +159,7 @@ class QueryArtworkWidget extends StatelessWidget {
   /// Important:
   ///
   /// * If [keepOldArtwork] is null, will be set to [false].
-  final bool? keepOldArtwork;
+  final bool keepOldArtwork;
 
   /// Used to define if artwork should be cached inside the app support directory.
   ///
@@ -168,7 +168,7 @@ class QueryArtworkWidget extends StatelessWidget {
   /// Important:
   ///
   /// * [cacheArtwork] default value is [true].
-  final bool? cacheArtwork;
+  final bool cacheArtwork;
 
   /// Used to define if artwork should be cached **temporarily** inside the
   /// app temp directory.
@@ -180,7 +180,7 @@ class QueryArtworkWidget extends StatelessWidget {
   /// Important:
   ///
   /// * [cacheTemporarily] default value is [true].
-  final bool? cacheTemporarily;
+  final bool cacheTemporarily;
 
   /// Used to define if artwork should be overridden if already exists. This will
   /// replace the current artwork with a new one.
@@ -192,7 +192,7 @@ class QueryArtworkWidget extends StatelessWidget {
   /// Important:
   ///
   /// * [overrideCache] default value is [false].
-  final bool? overrideCache;
+  final bool overrideCache;
 
   /// Used to define a Widget when audio/song don't return any artwork.
   ///
@@ -297,20 +297,20 @@ class QueryArtworkWidget extends StatelessWidget {
     this.formatType = ArtworkFormatType.JPEG,
     this.size = 200,
     this.quality = 50,
-    this.artworkQuality,
+    this.artworkQuality = FilterQuality.low,
     this.artworkBorder,
-    this.artworkWidth,
-    this.artworkHeight,
-    this.artworkFit,
-    this.artworkClipBehavior,
-    this.artworkScale,
-    this.artworkRepeat,
+    this.artworkWidth = 50,
+    this.artworkHeight = 50,
+    this.artworkFit = BoxFit.cover,
+    this.artworkClipBehavior = Clip.antiAlias,
+    this.artworkScale = 1.0,
+    this.artworkRepeat = ImageRepeat.noRepeat,
     this.artworkColor,
     this.artworkBlendMode,
-    this.keepOldArtwork,
-    this.cacheArtwork,
-    this.cacheTemporarily,
-    this.overrideCache,
+    this.keepOldArtwork = false,
+    this.cacheArtwork = true,
+    this.cacheTemporarily = true,
+    this.overrideCache = false,
     this.nullArtworkWidget,
     this.errorBuilder,
     this.frameBuilder,
@@ -340,9 +340,9 @@ class QueryArtworkWidget extends StatelessWidget {
           artworkFormat: formatType,
           artworkSize: size,
           artworkQuality: quality,
-          cacheArtwork: cacheArtwork ?? true,
-          cacheTemporarily: cacheTemporarily ?? true,
-          overrideCache: overrideCache ?? false,
+          cacheArtwork: cacheArtwork,
+          cacheTemporarily: cacheTemporarily,
+          overrideCache: overrideCache,
         ),
       ),
       builder: (context, item) {
@@ -379,18 +379,18 @@ class QueryArtworkWidget extends StatelessWidget {
         // No errors found, the data(image) is valid. Build the image widget.
         return ClipRRect(
           borderRadius: artworkBorder ?? BorderRadius.circular(50),
-          clipBehavior: artworkClipBehavior ?? Clip.antiAlias,
+          clipBehavior: artworkClipBehavior,
           child: Image.memory(
             item.data!.artwork!,
-            gaplessPlayback: keepOldArtwork ?? false,
-            repeat: artworkRepeat ?? ImageRepeat.noRepeat,
-            scale: artworkScale ?? 1.0,
-            width: artworkWidth ?? 50,
-            height: artworkHeight ?? 50,
-            fit: artworkFit ?? BoxFit.cover,
+            gaplessPlayback: keepOldArtwork,
+            repeat: artworkRepeat,
+            scale: artworkScale,
+            width: artworkWidth,
+            height: artworkHeight,
+            fit: artworkFit,
             color: artworkColor,
             colorBlendMode: artworkBlendMode,
-            filterQuality: artworkQuality ?? FilterQuality.low,
+            filterQuality: artworkQuality,
             frameBuilder: frameBuilder,
             errorBuilder: errorBuilder ?? _handleImageError(),
           ),
