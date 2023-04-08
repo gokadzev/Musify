@@ -133,15 +133,11 @@ class AudioAppState extends State<AudioApp> {
                   child: Column(
                     children: <Widget>[
                       Text(
-                        metadata!.title
-                            .toString()
-                            .split(' (')[0]
-                            .split('|')[0]
-                            .trim(),
+                        metadata!.title,
                         maxLines: 1,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize: size.height * 0.035,
+                          fontSize: size.height * 0.030,
                           fontWeight: FontWeight.w700,
                           color: colorScheme.primary,
                         ),
@@ -153,7 +149,7 @@ class AudioAppState extends State<AudioApp> {
                           maxLines: 1,
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: size.height * 0.015,
+                            fontSize: size.height * 0.020,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
