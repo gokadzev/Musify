@@ -27,9 +27,6 @@ AudioPlayer audioPlayer = AudioPlayer(
   ),
 );
 
-final shuffleNotifier = ValueNotifier<bool>(false);
-final repeatNotifier = ValueNotifier<bool>(false);
-final muteNotifier = ValueNotifier<bool>(false);
 final playerState = ValueNotifier<PlayerState>(audioPlayer.playerState);
 
 final _playlist = ConcatenatingAudioSource(children: []);
