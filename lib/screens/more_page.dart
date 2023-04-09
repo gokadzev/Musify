@@ -1,7 +1,6 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:hive/hive.dart';
 import 'package:musify/main.dart';
 import 'package:musify/screens/about_page.dart';
 import 'package:musify/screens/local_music_page.dart';
@@ -10,6 +9,7 @@ import 'package:musify/screens/search_page.dart';
 import 'package:musify/screens/setup_page.dart';
 import 'package:musify/screens/user_liked_songs_page.dart';
 import 'package:musify/services/data_manager.dart';
+import 'package:musify/services/settings_manager.dart';
 import 'package:musify/services/update_manager.dart';
 import 'package:musify/style/app_colors.dart';
 import 'package:musify/style/app_themes.dart';
@@ -17,21 +17,6 @@ import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/url_launcher.dart';
 import 'package:musify/widgets/setting_bar.dart';
 import 'package:musify/widgets/setting_switch_bar.dart';
-
-final prefferedFileExtension = ValueNotifier<String>(
-  Hive.box('settings').get('audioFileType', defaultValue: 'mp3') as String,
-);
-final playNextSongAutomatically = ValueNotifier<bool>(
-  Hive.box('settings').get('playNextSongAutomatically', defaultValue: false),
-);
-
-final useSystemColor = ValueNotifier<bool>(
-  Hive.box('settings').get('useSystemColor', defaultValue: true),
-);
-
-final foregroundService = ValueNotifier<bool>(
-  Hive.box('settings').get('foregroundService', defaultValue: false) as bool,
-);
 
 class MorePage extends StatefulWidget {
   @override
