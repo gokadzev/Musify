@@ -48,42 +48,39 @@ class PlaylistCube extends StatelessWidget {
                   width: calculatedSize,
                   imageUrl: image.toString(),
                   fit: BoxFit.cover,
-                  errorWidget: (context, url, error) => SizedBox(
-                    height: calculatedSize,
-                    width: calculatedSize,
-                    child: Icon(
-                      FluentIcons.music_note_1_24_regular,
-                      size: 30,
-                      color: colorScheme.primary,
-                    ),
-                  ),
+                  errorWidget: (context, url, error) =>
+                      noImageCube(calculatedSize),
                 )
-              : Container(
-                  height: calculatedSize,
-                  width: calculatedSize,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: colorScheme.secondary,
-                  ),
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        const Icon(
-                          FluentIcons.music_note_1_24_regular,
-                          size: 30,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Text(
-                            title,
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+              : noImageCube(calculatedSize),
+        ),
+      ),
+    );
+  }
+
+  Widget noImageCube(double calculatedSize) {
+    return Container(
+      height: calculatedSize,
+      width: calculatedSize,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: colorScheme.secondary,
+      ),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            const Icon(
+              FluentIcons.music_note_1_24_regular,
+              size: 30,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Text(
+                title,
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
         ),
       ),
     );
