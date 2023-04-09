@@ -232,23 +232,27 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                               artworkHeight: 60,
                               artworkFit: BoxFit.cover,
                               artworkBorder: BorderRadius.circular(8),
-                              nullArtworkWidget: Container(
-                                width: 60,
-                                height: 60,
-                                decoration: BoxDecoration(
-                                  color: colorScheme.primary,
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Icon(
-                                  FluentIcons.music_note_1_24_regular,
-                                  size: 25,
-                                  color: colorScheme.primary !=
-                                          const Color(0xFFFFFFFF)
-                                      ? Colors.white
-                                      : Colors.black,
+                              keepOldArtwork: true,
+                              nullArtworkWidget: ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Container(
+                                  width: 60,
+                                  height: 60,
+                                  decoration: BoxDecoration(
+                                    color: colorScheme.secondary,
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      const Icon(
+                                        FluentIcons.music_note_1_24_regular,
+                                        size: 30,
+                                        color: Colors.white,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
-                              keepOldArtwork: true,
                             ),
                             Flexible(
                               child: Column(

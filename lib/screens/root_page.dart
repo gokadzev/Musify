@@ -171,43 +171,54 @@ class AppState extends State<Musify> {
                                 id: metadata.extras['localSongId'] as int,
                                 type: ArtworkType.AUDIO,
                                 artworkBorder: BorderRadius.circular(8),
-                                artworkWidth: 60,
-                                artworkHeight: 60,
+                                artworkWidth: 55,
+                                artworkHeight: 55,
                                 artworkFit: BoxFit.cover,
-                                nullArtworkWidget: Icon(
-                                  FluentIcons.music_note_1_24_regular,
-                                  size: 30,
-                                  color: colorScheme.primary,
-                                ),
                                 keepOldArtwork: true,
+                                nullArtworkWidget: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Container(
+                                    width: 55,
+                                    height: 55,
+                                    decoration: BoxDecoration(
+                                      color: colorScheme.secondary,
+                                    ),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        const Icon(
+                                          FluentIcons.music_note_1_24_regular,
+                                          size: 30,
+                                          color: Colors.white,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
                               )
                             : ClipRRect(
                                 borderRadius: BorderRadius.circular(8),
                                 child: CachedNetworkImage(
                                   imageUrl: metadata!.artUri.toString(),
                                   fit: BoxFit.cover,
-                                  width: 60,
-                                  height: 60,
+                                  width: 55,
+                                  height: 55,
                                   errorWidget: (context, url, error) =>
                                       Container(
                                     width: 50,
                                     height: 50,
-                                    decoration: const BoxDecoration(
-                                      color: Color.fromARGB(
-                                        30,
-                                        255,
-                                        255,
-                                        255,
-                                      ),
+                                    decoration: BoxDecoration(
+                                      color: colorScheme.secondary,
                                     ),
                                     child: Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: <Widget>[
-                                        Icon(
+                                        const Icon(
                                           FluentIcons.music_note_1_24_regular,
                                           size: 30,
-                                          color: colorScheme.primary,
+                                          color: Colors.white,
                                         ),
                                       ],
                                     ),
