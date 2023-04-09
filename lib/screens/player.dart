@@ -68,12 +68,12 @@ class AudioAppState extends State<AudioApp> {
                     type: ArtworkType.AUDIO,
                     artworkBorder: BorderRadius.circular(8),
                     artworkQuality: FilterQuality.high,
-                    size: (size.width - 100).toInt(),
-                    artworkWidth: size.width - 100,
-                    artworkHeight: size.width - 100,
+                    size: (size.width - 70).toInt(),
+                    artworkWidth: size.width - 70,
+                    artworkHeight: size.width - 70,
                     nullArtworkWidget: Container(
-                      width: size.width - 100,
-                      height: size.width - 100,
+                      width: size.width - 70,
+                      height: size.width - 70,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
                         color: const Color.fromARGB(30, 255, 255, 255),
@@ -93,8 +93,8 @@ class AudioAppState extends State<AudioApp> {
                   )
                 else
                   SizedBox(
-                    width: size.width - 100,
-                    height: size.width - 100,
+                    width: size.width - 70,
+                    height: size.width - 70,
                     child: CachedNetworkImage(
                       imageUrl: metadata.artUri.toString(),
                       imageBuilder: (context, imageProvider) => DecoratedBox(
