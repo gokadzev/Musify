@@ -302,15 +302,7 @@ class _ArtistPagePageState extends State<ArtistPage> {
             );
           case ConnectionState.done:
             if (snapshot.hasError) {
-              return Center(
-                child: Text(
-                  'Error!',
-                  style: TextStyle(
-                    color: colorScheme.primary,
-                    fontSize: 18,
-                  ),
-                ),
-              );
+              return const SizedBox();
             }
             if (!snapshot.hasData) {
               return Center(
