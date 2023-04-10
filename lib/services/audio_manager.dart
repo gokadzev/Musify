@@ -59,7 +59,7 @@ Future<void> playSong(Map song) async {
 
 Future playNext() async {
   if (activePlaylist.isEmpty || activePlaylist['list'][id + 1] == null)
-    await audioPlayer.seekToPrevious();
+    await audioPlayer.seekToNext();
   else {
     await playSong(activePlaylist['list'][id + 1]);
     id = id + 1;
@@ -68,7 +68,7 @@ Future playNext() async {
 
 Future playPrevious() async {
   if (activePlaylist.isEmpty || activePlaylist['list'][id - 1] == null)
-    await audioPlayer.seekToNext();
+    await audioPlayer.seekToPrevious();
   else {
     await playSong(activePlaylist['list'][id - 1]);
     id = id - 1;
