@@ -282,7 +282,7 @@ class AudioAppState extends State<AudioApp> {
                                   return IconButton(
                                     padding: EdgeInsets.zero,
                                     icon: Icon(
-                                      FluentIcons.speaker_mute_24_filled,
+                                      FluentIcons.speaker_mute_24_regular,
                                       color: value
                                           ? colorScheme.primary
                                           : Theme.of(context).hintColor,
@@ -727,7 +727,7 @@ class AudioAppState extends State<AudioApp> {
                 return IconButton(
                   padding: EdgeInsets.zero,
                   icon: Icon(
-                    FluentIcons.speaker_mute_24_filled,
+                    FluentIcons.speaker_mute_24_regular,
                     color: value
                         ? colorScheme.primary
                         : Theme.of(context).hintColor,
