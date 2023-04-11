@@ -328,7 +328,7 @@ class AudioAppState extends State<AudioApp> {
                           Column(
                             children: [
                               IconButton(
-                                color: colorScheme.primary,
+                                color: Theme.of(context).hintColor,
                                 icon: const Icon(
                                   FluentIcons.arrow_download_24_regular,
                                 ),
@@ -369,14 +369,14 @@ class AudioAppState extends State<AudioApp> {
                           splashColor: Colors.transparent,
                         ),
                         IconButton(
-                          padding: EdgeInsets.zero,
+                          padding: const EdgeInsets.only(right: 10),
                           icon: Icon(
                             FluentIcons.previous_24_filled,
                             color: hasPrevious
                                 ? Theme.of(context).hintColor
                                 : Colors.grey,
                           ),
-                          iconSize: 40,
+                          iconSize: 30,
                           onPressed: () async => {
                             await playPrevious(),
                           },
@@ -385,7 +385,7 @@ class AudioAppState extends State<AudioApp> {
                         DecoratedBox(
                           decoration: BoxDecoration(
                             color: colorScheme.primary,
-                            borderRadius: BorderRadius.circular(100),
+                            borderRadius: BorderRadius.circular(15),
                           ),
                           child: StreamBuilder<PlayerState>(
                             stream: audioPlayer.playerStateStream,
@@ -445,14 +445,14 @@ class AudioAppState extends State<AudioApp> {
                           ),
                         ),
                         IconButton(
-                          padding: EdgeInsets.zero,
+                          padding: const EdgeInsets.only(left: 10),
                           icon: Icon(
                             FluentIcons.next_24_filled,
                             color: hasNext
                                 ? Theme.of(context).hintColor
                                 : Colors.grey,
                           ),
-                          iconSize: 40,
+                          iconSize: 30,
                           onPressed: () async => {
                             await playNext(),
                           },
