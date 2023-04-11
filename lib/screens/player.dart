@@ -158,70 +158,9 @@ class AudioAppState extends State<AudioApp> {
                   ),
                 ),
                 metadata.extras['isLive'] != null && metadata.extras['isLive']
-                    ? Padding(
-                        padding: const EdgeInsets.only(top: 50),
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            color: colorScheme.primary,
-                            borderRadius: BorderRadius.circular(100),
-                          ),
-                          child: StreamBuilder<PlayerState>(
-                            stream: audioPlayer.playerStateStream,
-                            builder: (context, snapshot) {
-                              final playerState = snapshot.data;
-                              final processingState =
-                                  playerState?.processingState;
-                              final playing = playerState?.playing;
-                              if (processingState == ProcessingState.loading ||
-                                  processingState ==
-                                      ProcessingState.buffering) {
-                                return Container(
-                                  margin: const EdgeInsets.all(8),
-                                  width: 30,
-                                  height: 30,
-                                  child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      Theme.of(context).hintColor,
-                                    ),
-                                  ),
-                                );
-                              } else if (playing != true) {
-                                return IconButton(
-                                  icon: Icon(
-                                    FluentIcons.play_12_filled,
-                                    color: Theme.of(context).hintColor,
-                                  ),
-                                  iconSize: 40,
-                                  onPressed: audioPlayer.play,
-                                  splashColor: Colors.transparent,
-                                );
-                              } else if (processingState !=
-                                  ProcessingState.completed) {
-                                return IconButton(
-                                  icon: Icon(
-                                    FluentIcons.pause_12_filled,
-                                    color: Theme.of(context).hintColor,
-                                  ),
-                                  iconSize: 40,
-                                  onPressed: audioPlayer.pause,
-                                  splashColor: Colors.transparent,
-                                );
-                              } else {
-                                return IconButton(
-                                  icon: Icon(
-                                    FluentIcons.replay_20_filled,
-                                    color: Theme.of(context).hintColor,
-                                  ),
-                                  iconSize: 30,
-                                  onPressed: () => audioPlayer.seek(
-                                    Duration.zero,
-                                    index: audioPlayer.effectiveIndices!.first,
-                                  ),
-                                );
-                              }
-                            },
-                          ),
-                        ),
+                    ? controlButtonsForLive(
+                        songLikeStatus,
+                        metadata.extras['ytid'],
                       )
                     : Material(
                         child: _buildPlayer(
@@ -768,6 +707,127 @@ class AudioAppState extends State<AudioApp> {
                     ),
                 ],
               ),
+            ),
+          ],
+        ),
+      );
+
+  Widget controlButtonsForLive(
+    ValueNotifier<bool> songLikeStatus,
+    dynamic ytid,
+  ) =>
+      Padding(
+        padding: const EdgeInsets.only(top: 50, left: 20, right: 20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            ValueListenableBuilder<bool>(
+              valueListenable: muteNotifier,
+              builder: (_, value, __) {
+                return IconButton(
+                  padding: EdgeInsets.zero,
+                  icon: Icon(
+                    FluentIcons.speaker_mute_24_filled,
+                    color: value
+                        ? colorScheme.primary
+                        : Theme.of(context).hintColor,
+                  ),
+                  iconSize: 20,
+                  onPressed: mute,
+                  splashColor: Colors.transparent,
+                );
+              },
+            ),
+            DecoratedBox(
+              decoration: BoxDecoration(
+                color: colorScheme.primary,
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: StreamBuilder<PlayerState>(
+                stream: audioPlayer.playerStateStream,
+                builder: (context, snapshot) {
+                  final playerState = snapshot.data;
+                  final processingState = playerState?.processingState;
+                  final playing = playerState?.playing;
+                  if (processingState == ProcessingState.loading ||
+                      processingState == ProcessingState.buffering) {
+                    return Container(
+                      margin: const EdgeInsets.all(8),
+                      width: 30,
+                      height: 30,
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Theme.of(context).hintColor,
+                        ),
+                      ),
+                    );
+                  } else if (playing != true) {
+                    return IconButton(
+                      icon: Icon(
+                        FluentIcons.play_12_filled,
+                        color: Theme.of(context).hintColor,
+                      ),
+                      iconSize: 40,
+                      onPressed: audioPlayer.play,
+                      splashColor: Colors.transparent,
+                    );
+                  } else if (processingState != ProcessingState.completed) {
+                    return IconButton(
+                      icon: Icon(
+                        FluentIcons.pause_12_filled,
+                        color: Theme.of(context).hintColor,
+                      ),
+                      iconSize: 40,
+                      onPressed: audioPlayer.pause,
+                      splashColor: Colors.transparent,
+                    );
+                  } else {
+                    return IconButton(
+                      icon: Icon(
+                        FluentIcons.replay_20_filled,
+                        color: Theme.of(context).hintColor,
+                      ),
+                      iconSize: 30,
+                      onPressed: () => audioPlayer.seek(
+                        Duration.zero,
+                        index: audioPlayer.effectiveIndices!.first,
+                      ),
+                    );
+                  }
+                },
+              ),
+            ),
+            ValueListenableBuilder<bool>(
+              valueListenable: songLikeStatus,
+              builder: (_, value, __) {
+                if (value == true) {
+                  return IconButton(
+                    color: colorScheme.primary,
+                    icon: const Icon(
+                      FluentIcons.star_24_filled,
+                    ),
+                    iconSize: 20,
+                    splashColor: Colors.transparent,
+                    onPressed: () => {
+                      updateLikeStatus(ytid, false),
+                      songLikeStatus.value = false
+                    },
+                  );
+                } else {
+                  return IconButton(
+                    color: Theme.of(context).hintColor,
+                    icon: const Icon(
+                      FluentIcons.star_24_regular,
+                    ),
+                    iconSize: 20,
+                    splashColor: Colors.transparent,
+                    onPressed: () => {
+                      updateLikeStatus(ytid, true),
+                      songLikeStatus.value = true
+                    },
+                  );
+                }
+              },
             ),
           ],
         ),
