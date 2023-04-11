@@ -25,21 +25,17 @@ String formatSongTitle(String title, {bool removeFileExtension = false}) {
       .replaceAll('&quot;', '"');
 }
 
-Map<String, dynamic> returnSongLayout(dynamic index, Video song) {
-  return {
-    'id': index,
-    'ytid': song.id.toString(),
-    'title': formatSongTitle(
-      song.title.split('-')[song.title.split('-').length - 1],
-    ),
-    'artist': song.title.split('-')[0],
-    'image': song.thumbnails.standardResUrl,
-    'lowResImage': song.thumbnails.lowResUrl,
-    'highResImage': song.thumbnails.maxResUrl,
-    'isLive': song.isLive,
-  };
-}
+Map<String, dynamic> returnSongLayout(dynamic index, Video song) => {
+      'id': index,
+      'ytid': song.id.toString(),
+      'title': formatSongTitle(
+        song.title.split('-')[song.title.split('-').length - 1],
+      ),
+      'artist': song.title.split('-')[0],
+      'image': song.thumbnails.standardResUrl,
+      'lowResImage': song.thumbnails.lowResUrl,
+      'highResImage': song.thumbnails.maxResUrl,
+      'isLive': song.isLive,
+    };
 
-String getSongId(String url) {
-  return VideoId.parseVideoId(url)!;
-}
+String getSongId(String url) => VideoId.parseVideoId(url)!;
