@@ -27,7 +27,7 @@ class AudioAppState extends State<AudioApp> {
     final size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: size.height * 0.09,
+        toolbarHeight: size.height * 0.07,
         title: Text(
           AppLocalizations.of(context)!.nowPlaying,
         ),
