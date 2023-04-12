@@ -145,10 +145,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    final kBorderRadius = BorderRadius.circular(15.0);
-    final kContentPadding =
-        const EdgeInsets.only(left: 18, right: 20, top: 14, bottom: 14);
-
     return DynamicColorBuilder(
       builder: (lightColorScheme, darkColorScheme) {
         if (lightColorScheme != null &&
@@ -158,25 +154,6 @@ class _MyAppState extends State<MyApp> {
               themeMode == ThemeMode.light ? lightColorScheme : darkColorScheme;
         }
 
-        final _cardTheme = CardTheme(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          elevation: 2.3,
-        );
-
-        final _inputDecorationTheme = InputDecorationTheme(
-          filled: true,
-          isDense: true,
-          border: OutlineInputBorder(
-            borderRadius: kBorderRadius,
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: kBorderRadius,
-          ),
-          contentPadding: kContentPadding,
-        );
-
         return MaterialApp(
           themeMode: themeMode,
           debugShowCheckedModeBanner: kDebugMode,
@@ -185,21 +162,14 @@ class _MyAppState extends State<MyApp> {
                   scaffoldBackgroundColor: darkColorScheme.surface,
                   colorScheme: darkColorScheme.harmonized(),
                   canvasColor: darkColorScheme.surface,
-                  cardTheme: _cardTheme,
+                  cardTheme: mCardTheme,
                   bottomAppBarTheme: BottomAppBarTheme(
                     color: darkColorScheme.surface,
                   ),
-                  appBarTheme: AppBarTheme(
+                  appBarTheme: mAppBarTheme.copyWith(
                     backgroundColor: darkColorScheme.surface,
-                    centerTitle: true,
-                    titleTextStyle: TextStyle(
-                      fontSize: 27,
-                      fontWeight: FontWeight.w700,
-                      color: colorScheme.primary,
-                    ),
-                    elevation: 0,
                   ),
-                  inputDecorationTheme: _inputDecorationTheme,
+                  inputDecorationTheme: mInputDecorationTheme,
                 )
               : getAppDarkTheme(),
           theme: lightColorScheme != null && useSystemColor.value
@@ -207,21 +177,14 @@ class _MyAppState extends State<MyApp> {
                   scaffoldBackgroundColor: lightColorScheme.surface,
                   colorScheme: lightColorScheme.harmonized(),
                   canvasColor: lightColorScheme.surface,
-                  cardTheme: _cardTheme,
+                  cardTheme: mCardTheme,
                   bottomAppBarTheme: BottomAppBarTheme(
                     color: lightColorScheme.surface,
                   ),
-                  appBarTheme: AppBarTheme(
+                  appBarTheme: mAppBarTheme.copyWith(
                     backgroundColor: lightColorScheme.surface,
-                    centerTitle: true,
-                    titleTextStyle: TextStyle(
-                      fontSize: 27,
-                      fontWeight: FontWeight.w700,
-                      color: colorScheme.primary,
-                    ),
-                    elevation: 0,
                   ),
-                  inputDecorationTheme: _inputDecorationTheme,
+                  inputDecorationTheme: mInputDecorationTheme,
                 )
               : getAppLightTheme(),
           localizationsDelegates: const [

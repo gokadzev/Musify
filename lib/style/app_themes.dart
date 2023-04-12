@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 
+final kBorderRadius = BorderRadius.circular(15.0);
+final kContentPadding =
+    const EdgeInsets.only(left: 18, right: 20, top: 14, bottom: 14);
+
 Color primaryColor =
     Color(Hive.box('settings').get('accentColor', defaultValue: 0xFFF08080));
 
@@ -25,17 +29,12 @@ final commonProperties = ThemeData(
     fillColor: colorScheme.background.withAlpha(50),
     isDense: true,
     border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(15.0),
+      borderRadius: kBorderRadius,
     ),
     enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(15.0),
+      borderRadius: kBorderRadius,
     ),
-    contentPadding: const EdgeInsets.only(
-      left: 18,
-      right: 20,
-      top: 14,
-      bottom: 14,
-    ),
+    contentPadding: kContentPadding,
   ),
 );
 
@@ -135,3 +134,34 @@ ThemeData getAppLightTheme() {
         ThemeData.light().bottomAppBarTheme.copyWith(color: Colors.white),
   );
 }
+
+// Components
+
+final mCardTheme = CardTheme(
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(10),
+  ),
+  elevation: 2.3,
+);
+
+final mAppBarTheme = AppBarTheme(
+  centerTitle: true,
+  titleTextStyle: TextStyle(
+    fontSize: 27,
+    fontWeight: FontWeight.w700,
+    color: colorScheme.primary,
+  ),
+  elevation: 0,
+);
+
+final mInputDecorationTheme = InputDecorationTheme(
+  filled: true,
+  isDense: true,
+  border: OutlineInputBorder(
+    borderRadius: kBorderRadius,
+  ),
+  enabledBorder: OutlineInputBorder(
+    borderRadius: kBorderRadius,
+  ),
+  contentPadding: kContentPadding,
+);
