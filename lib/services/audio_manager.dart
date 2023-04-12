@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:musify/API/musify.dart';
@@ -16,6 +17,8 @@ Stream<PositionData> get positionDataStream =>
       (position, bufferedPosition, duration) =>
           PositionData(position, bufferedPosition, duration ?? Duration.zero),
     );
+
+late AudioHandler audioHandler;
 
 final _loudnessEnhancer = AndroidLoudnessEnhancer();
 

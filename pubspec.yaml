@@ -12,6 +12,8 @@ environment:
   flutter: ^3.7.10
 
 dependencies:
+  audio_service:
+    path: ./packages/audio_service/audio_service
   audio_session: ^0.1.13
   cached_network_image: ^3.2.3
   dynamic_color: ^1.6.3
@@ -31,7 +33,6 @@ dependencies:
   http: ^0.13.5
   intl: ^0.17.0
   just_audio: ^0.9.32
-  just_audio_background: ^0.0.1-beta.9
   on_audio_query:
     path: ./packages/on_audio_query/on_audio_query
   permission_handler: ^10.2.0

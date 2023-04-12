@@ -1,0 +1,42 @@
+name: audio_service_web
+description: Web platform implementation of audio_service. This implementation is endorsed and therefore doesn't require a direct dependency.
+version: 0.1.1
+homepage: https://github.com/ryanheise/audio_service/tree/master/audio_service_web
+
+environment:
+  sdk: '>=2.12.0 <3.0.0'
+  flutter: ">=2.0.0"
+
+dependencies:
+  # Use these deps for local development
+  # audio_service_platform_interface:
+  #   path: ../audio_service_platform_interface
+
+  # Use these deps when pushing to origin (for the benefit of testers)
+  # audio_service_platform_interface:
+  #   git:
+  #     url: https://github.com/ryanheise/audio_service.git
+  #     ref: one-isolate
+  #     path: audio_service_platform_interface
+
+  # Use these deps when publishing.
+  audio_service_platform_interface: ^0.1.0
+
+  rxdart: '>=0.26.0 <0.28.0'
+  js: ^0.6.3
+  flutter:
+    sdk: flutter
+  flutter_web_plugins:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^1.0.4
+
+flutter:
+  plugin:
+    platforms:
+      web:
+        pluginClass: AudioServiceWeb
+        fileName: audio_service_web.dart

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/foundation.dart';
@@ -10,10 +11,10 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:just_audio_background/just_audio_background.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/screens/root_page.dart';
 import 'package:musify/services/audio_manager.dart';
+import 'package:musify/services/audio_service.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/style/app_themes.dart';
@@ -252,12 +253,15 @@ Future<void> initialisation() async {
 
   await FlutterDisplayMode.setHighRefreshRate();
 
-  await JustAudioBackground.init(
-    androidNotificationChannelId: 'com.gokadzev.musify',
-    androidNotificationChannelName: 'Musify',
-    androidNotificationIcon: 'mipmap/launcher_icon',
-    androidShowNotificationBadge: true,
-    androidStopForegroundOnPause: !foregroundService.value,
+  audioHandler = await AudioService.init(
+    builder: MyAudioHandler.new,
+    config: AudioServiceConfig(
+      androidNotificationChannelId: 'com.gokadzev.musify',
+      androidNotificationChannelName: 'Musify',
+      androidNotificationIcon: 'mipmap/launcher_icon',
+      androidShowNotificationBadge: true,
+      androidStopForegroundOnPause: !foregroundService.value,
+    ),
   );
 
   final session = await AudioSession.instance;
@@ -265,7 +269,7 @@ Future<void> initialisation() async {
   session.interruptionEventStream.listen((event) {
     if (event.begin) {
       if (audioPlayer.playing) {
-        audioPlayer.pause();
+        audioHandler.pause();
         _interrupted = true;
       }
     } else {
@@ -273,7 +277,7 @@ Future<void> initialisation() async {
         case AudioInterruptionType.pause:
         case AudioInterruptionType.duck:
           if (!audioPlayer.playing && _interrupted) {
-            audioPlayer.play();
+            audioHandler.play();
           }
           break;
         case AudioInterruptionType.unknown:

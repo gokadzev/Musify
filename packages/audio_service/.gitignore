@@ -1,0 +1,99 @@
+# General
+build/
+
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Visual Studio Code related
+.project
+.classpath
+.settings/
+.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+coverage/
+pubspec.lock
+
+# Web related
+generated_plugin_registrant.dart
+
+# Android related
+**/gradle-wrapper.jar
+.gradle
+captures/
+gradlew
+gradlew.bat
+local.properties
+**/GeneratedPluginRegistrant.java
+
+# Android Studio will place build artifacts here
+**/android/app/debug
+**/android/app/profile
+**/android/app/release
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# iOS/macOS/XCode related
+*.mode1v3
+*.mode2v3
+*.moved-aside
+*.pbxuser
+*.perspectivev3
+*sync/
+.sconsign.dblite
+.tags*
+.vagrant/
+DerivedData/
+**/ios/**/Icon?
+Pods/
+.symlinks/
+profile
+xcuserdata
+.generated/
+**/Flutter/App.framework
+**/Flutter/Flutter.podspec
+**/Flutter/Flutter.framework
+**/Flutter/Generated.xcconfig
+**/Flutter/ephemeral
+**/Flutter/app.flx
+**/Flutter/app.zip
+**/Flutter/flutter_assets/
+**/Flutter/flutter_export_environment.sh
+ServiceDefinitions.json
+GeneratedPluginRegistrant.*
+
+# Exceptions
+!default.pbxuser
+!default.mode1v3
+!default.mode2v3
+!default.perspectivev3
+# Include only root vscode launch configurations
+/.vscode/**
+!/.vscode/
+!/.vscode/launch.json
