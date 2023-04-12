@@ -25,6 +25,7 @@ class AudioAppState extends State<AudioApp> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final w70 = size.width - 70;
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: size.height * 0.07,
@@ -68,12 +69,12 @@ class AudioAppState extends State<AudioApp> {
                     type: ArtworkType.AUDIO,
                     artworkBorder: BorderRadius.circular(8),
                     artworkQuality: FilterQuality.high,
-                    size: (size.width - 70).toInt(),
-                    artworkWidth: size.width - 70,
-                    artworkHeight: size.width - 70,
+                    size: w70.toInt(),
+                    artworkWidth: w70,
+                    artworkHeight: w70,
                     nullArtworkWidget: Container(
-                      width: size.width - 70,
-                      height: size.width - 70,
+                      width: w70,
+                      height: w70,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
                         color: const Color.fromARGB(30, 255, 255, 255),
@@ -93,8 +94,8 @@ class AudioAppState extends State<AudioApp> {
                   )
                 else
                   SizedBox(
-                    width: size.width - 70,
-                    height: size.width - 70,
+                    width: w70,
+                    height: w70,
                     child: CachedNetworkImage(
                       imageUrl: metadata.artUri.toString(),
                       imageBuilder: (context, imageProvider) => DecoratedBox(
@@ -129,24 +130,28 @@ class AudioAppState extends State<AudioApp> {
                   padding: EdgeInsets.only(
                     top: size.height * 0.04,
                     bottom: size.height * 0.01,
+                    left: size.width - (size.width - 30),
+                    right: size.width - (size.width - 30),
                   ),
                   child: Column(
                     children: <Widget>[
-                      Text(
-                        metadata!.title,
-                        maxLines: 1,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: size.height * 0.030,
-                          fontWeight: FontWeight.w700,
-                          color: colorScheme.primary,
+                      MarqueeWidget(
+                        backDuration: const Duration(seconds: 1),
+                        child: Text(
+                          metadata!.title,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: size.height * 0.030,
+                            fontWeight: FontWeight.w700,
+                            color: colorScheme.primary,
+                          ),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8),
+                      const SizedBox(height: 8),
+                      MarqueeWidget(
+                        backDuration: const Duration(seconds: 1),
                         child: Text(
                           '${metadata!.artist}',
-                          maxLines: 1,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: size.height * 0.020,
