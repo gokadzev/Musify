@@ -333,7 +333,10 @@ class AppState extends State<Musify> {
         selectedIndex: activeTabIndex.value,
         onItemSelected: (index) => setState(() {
           activeTabIndex.value = index;
-          _navigatorKey.currentState!.pushReplacementNamed(activeTab.value);
+          _navigatorKey.currentState!.pushNamedAndRemoveUntil(
+            activeTab.value,
+            ModalRoute.withName(activeTab.value),
+          );
         }),
         items: items,
       ),
