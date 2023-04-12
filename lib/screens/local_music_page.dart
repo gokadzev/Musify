@@ -6,6 +6,7 @@ import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/offline_audio.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/formatter.dart';
+import 'package:musify/utilities/mediaitem.dart';
 import 'package:musify/widgets/spinner.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
@@ -198,10 +199,10 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                         snapshot.data![index].displayName,
                         removeFileExtension: true,
                       ),
-                      'image': '',
+                      'image': noImageVar,
                       'artist': '',
-                      'lowResImage': '',
-                      'highResImage': '',
+                      'lowResImage': noImageVar,
+                      'highResImage': noImageVar,
                       'songUrl': snapshot.data![index].data,
                       'localSongId': snapshot.data![index].id,
                       'isLive': false,
