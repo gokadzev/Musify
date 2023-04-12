@@ -15,14 +15,15 @@ void addOrUpdateData(String category, dynamic key, dynamic value) async {
 
 Future getData(String category, dynamic key) async {
   final _box = await _openBox(category);
-  final cacheIsValid = await isCacheValid(_box, key);
-  if (category == 'cache' && !cacheIsValid) {
-    deleteData(category, key);
-    deleteData(category, '${key}_date');
-    return null;
-  } else {
-    return await _box.get(key);
+  if (category == 'cache') {
+    final cacheIsValid = await isCacheValid(_box, key);
+    if (!cacheIsValid) {
+      deleteData(category, key);
+      deleteData(category, '${key}_date');
+      return null;
+    }
   }
+  return await _box.get(key);
 }
 
 void deleteData(String category, dynamic key) async {

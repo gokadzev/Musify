@@ -39,12 +39,13 @@ final commonProperties = ThemeData(
 );
 
 ThemeData getAppDarkTheme() {
+  final _darkBlack = const Color(0xFF121212);
   return commonProperties.copyWith(
-    scaffoldBackgroundColor: const Color(0xFF121212),
-    canvasColor: const Color(0xFF121212),
+    scaffoldBackgroundColor: _darkBlack,
+    canvasColor: _darkBlack,
     textTheme: GoogleFonts.robotoTextTheme(ThemeData.dark().textTheme),
     appBarTheme: ThemeData.dark().appBarTheme.copyWith(
-          backgroundColor: const Color(0xFF121212),
+          backgroundColor: _darkBlack,
           iconTheme: IconThemeData(color: colorScheme.primary),
           centerTitle: true,
           titleTextStyle: TextStyle(
@@ -54,9 +55,8 @@ ThemeData getAppDarkTheme() {
           ),
           elevation: 0,
         ),
-    bottomSheetTheme: ThemeData.dark()
-        .bottomSheetTheme
-        .copyWith(backgroundColor: const Color(0xFF121212)),
+    bottomSheetTheme:
+        ThemeData.dark().bottomSheetTheme.copyWith(backgroundColor: _darkBlack),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
         shape: MaterialStateProperty.all(
