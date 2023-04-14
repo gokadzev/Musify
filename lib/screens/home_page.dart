@@ -149,7 +149,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                           SizedBox(
-                            height: 230,
+                            height: calculatedSize,
                             child: ListView.separated(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 15),
@@ -159,67 +159,61 @@ class _HomePageState extends State<HomePage> {
                               itemCount: 10,
                               itemBuilder: (context, index) {
                                 final artist = data.data![index].artist;
-                                return SizedBox(
-                                  width: 230,
-                                  height: 230,
-                                  child: DelayedDisplay(
-                                    delay: const Duration(milliseconds: 200),
-                                    fadingDuration:
-                                        const Duration(milliseconds: 400),
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        getMusic(
-                                          searchQuery: artist.split('~')[0],
-                                        ).then(
-                                          (songs) => {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    ArtistPage(
-                                                  playlist: {
-                                                    'ytid': '',
-                                                    'title': artist,
-                                                    'header_desc': '',
-                                                    'image': '',
-                                                    'list': songs,
-                                                  },
+                                return DelayedDisplay(
+                                  delay: const Duration(milliseconds: 200),
+                                  fadingDuration:
+                                      const Duration(milliseconds: 400),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      getMusic(
+                                        searchQuery: artist.split('~')[0],
+                                      ).then(
+                                        (songs) => {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => ArtistPage(
+                                                playlist: {
+                                                  'ytid': '',
+                                                  'title': artist,
+                                                  'header_desc': '',
+                                                  'image': '',
+                                                  'list': songs,
+                                                },
+                                              ),
+                                            ),
+                                          )
+                                        },
+                                      );
+                                    },
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(150),
+                                      child: Container(
+                                        height: calculatedSize,
+                                        width: calculatedSize,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          color: colorScheme.secondary,
+                                        ),
+                                        child: Center(
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: <Widget>[
+                                              const Icon(
+                                                FluentIcons.person_24_regular,
+                                                size: 30,
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(10),
+                                                child: Text(
+                                                  artist,
+                                                  textAlign: TextAlign.center,
                                                 ),
                                               ),
-                                            )
-                                          },
-                                        );
-                                      },
-                                      child: ClipRRect(
-                                        borderRadius:
-                                            BorderRadius.circular(150),
-                                        child: Container(
-                                          height: calculatedSize,
-                                          width: calculatedSize,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            color: colorScheme.secondary,
-                                          ),
-                                          child: Center(
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: <Widget>[
-                                                const Icon(
-                                                  FluentIcons.person_24_regular,
-                                                  size: 30,
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(10),
-                                                  child: Text(
-                                                    artist,
-                                                    textAlign: TextAlign.center,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
+                                            ],
                                           ),
                                         ),
                                       ),
