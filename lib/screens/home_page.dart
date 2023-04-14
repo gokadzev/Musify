@@ -88,6 +88,8 @@ class _HomePageState extends State<HomePage> {
                               separatorBuilder: (_, __) =>
                                   const SizedBox(width: 15),
                               itemCount: data.data!.length,
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 15),
                               itemBuilder: (context, index) {
                                 final playlist = data.data![index];
                                 return PlaylistCube(
