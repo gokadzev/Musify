@@ -7,7 +7,6 @@ import 'package:musify/screens/home_page.dart';
 import 'package:musify/screens/more_page.dart';
 import 'package:musify/screens/player.dart';
 import 'package:musify/screens/search_page.dart';
-import 'package:musify/screens/setup_page.dart';
 import 'package:musify/screens/user_playlists_page.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/download_manager.dart';
@@ -64,9 +63,6 @@ class AppState extends State<Musify> {
                 break;
               case '/more':
                 builder = (BuildContext context) => MorePage();
-                break;
-              case '/setup':
-                builder = (BuildContext context) => SetupPage();
                 break;
               default:
                 throw Exception('Invalid route: ${settings.name}');
