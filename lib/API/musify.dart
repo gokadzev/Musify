@@ -22,6 +22,8 @@ final random = Random();
 List playlists = [];
 List userPlaylists = Hive.box('user').get('playlists', defaultValue: []);
 List userLikedSongsList = Hive.box('user').get('likedSongs', defaultValue: []);
+List userLikedPlaylists =
+    Hive.box('user').get('likedPlaylists', defaultValue: []);
 List suggestedPlaylists = [];
 Map activePlaylist = {
   'ytid': '',
@@ -33,6 +35,8 @@ Map activePlaylist = {
 
 late final currentLikedSongsLength =
     ValueNotifier<int>(userLikedSongsList.length);
+late final currentLikedPlaylistsLength =
+    ValueNotifier<int>(userLikedPlaylists.length);
 
 final lyrics = ValueNotifier<String>('null');
 String lastFetchedLyrics = 'null';
@@ -105,7 +109,7 @@ void removeUserPlaylist(String playlistId) {
   addOrUpdateData('user', 'playlists', userPlaylists);
 }
 
-Future<void> updateLikeStatus(dynamic songId, bool add) async {
+Future<void> updateSongLikeStatus(dynamic songId, bool add) async {
   if (add) {
     userLikedSongsList
         .add(await getSongDetails(userLikedSongsList.length, songId));
@@ -115,27 +119,57 @@ Future<void> updateLikeStatus(dynamic songId, bool add) async {
   addOrUpdateData('user', 'likedSongs', userLikedSongsList);
 }
 
+Future<void> updatePlaylistLikeStatus(
+  dynamic playlistId,
+  String playlistImage,
+  String playlistTitle,
+  bool add,
+) async {
+  if (add) {
+    userLikedPlaylists.add({
+      'ytid': playlistId,
+      'title': playlistTitle,
+      'header_desc': '',
+      'image': playlistImage,
+      'list': [],
+    });
+  } else {
+    userLikedPlaylists
+        .removeWhere((playlist) => playlist['ytid'] == playlistId);
+  }
+  addOrUpdateData('user', 'likedPlaylists', userLikedPlaylists);
+}
+
 bool isSongAlreadyLiked(songIdToCheck) =>
     userLikedSongsList.any((song) => song['ytid'] == songIdToCheck);
 
-Future<List> getPlaylists({String? query, int? playlistsNum}) async {
+bool isPlaylistAlreadyLiked(playlistIdToCheck) =>
+    userLikedPlaylists.any((playlist) => playlist['ytid'] == playlistIdToCheck);
+
+Future<List> getPlaylists({
+  String? query,
+  int? playlistsNum,
+  bool onlyLiked = false,
+}) async {
   if (playlists.isEmpty) {
     await readPlaylistsFromFile();
   }
 
-  if (playlistsNum != null) {
+  if (playlistsNum != null && query == null) {
     if (suggestedPlaylists.isEmpty) {
       suggestedPlaylists =
           (playlists.toList()..shuffle()).take(playlistsNum).toList();
     }
     return suggestedPlaylists;
-  } else if (query != null) {
+  } else if (query != null && playlistsNum == null) {
     return playlists
         .where(
           (playlist) =>
               playlist['title'].toLowerCase().contains(query.toLowerCase()),
         )
         .toList();
+  } else if (onlyLiked && playlistsNum == null && query == null) {
+    return userLikedPlaylists;
   } else {
     return playlists;
   }

@@ -82,24 +82,18 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                           SizedBox(
-                            height: 230,
+                            height: MediaQuery.of(context).size.height * 0.25,
                             child: ListView.separated(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 15),
                               scrollDirection: Axis.horizontal,
                               separatorBuilder: (_, __) =>
                                   const SizedBox(width: 15),
                               itemCount: data.data!.length,
                               itemBuilder: (context, index) {
                                 final playlist = data.data![index];
-                                return SizedBox(
-                                  width: 230,
-                                  height: 230,
-                                  child: PlaylistCube(
-                                    id: playlist['ytid'],
-                                    image: playlist['image'].toString(),
-                                    title: playlist['title'].toString(),
-                                  ),
+                                return PlaylistCube(
+                                  id: playlist['ytid'],
+                                  image: playlist['image'].toString(),
+                                  title: playlist['title'].toString(),
                                 );
                               },
                             ),

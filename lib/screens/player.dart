@@ -429,7 +429,7 @@ class AudioAppState extends State<AudioApp> {
                                       iconSize: 20,
                                       splashColor: Colors.transparent,
                                       onPressed: () => {
-                                        updateLikeStatus(ytid, false),
+                                        updateSongLikeStatus(ytid, false),
                                         songLikeStatus.value = false
                                       },
                                     );
@@ -442,7 +442,7 @@ class AudioAppState extends State<AudioApp> {
                                       iconSize: 20,
                                       splashColor: Colors.transparent,
                                       onPressed: () => {
-                                        updateLikeStatus(ytid, true),
+                                        updateSongLikeStatus(ytid, true),
                                         songLikeStatus.value = true
                                       },
                                     );
@@ -814,7 +814,7 @@ class AudioAppState extends State<AudioApp> {
                     iconSize: 20,
                     splashColor: Colors.transparent,
                     onPressed: () => {
-                      updateLikeStatus(ytid, false),
+                      updateSongLikeStatus(ytid, false),
                       songLikeStatus.value = false
                     },
                   );
@@ -827,7 +827,7 @@ class AudioAppState extends State<AudioApp> {
                     iconSize: 20,
                     splashColor: Colors.transparent,
                     onPressed: () => {
-                      updateLikeStatus(ytid, true),
+                      updateSongLikeStatus(ytid, true),
                       songLikeStatus.value = true
                     },
                   );
