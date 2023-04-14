@@ -38,4 +38,4 @@ Map<String, dynamic> returnSongLayout(dynamic index, Video song) => {
       'isLive': song.isLive,
     };
 
-String getSongId(String url) => VideoId.parseVideoId(url)!;
+String? getSongId(String url) => VideoId.parseVideoId(url)!;

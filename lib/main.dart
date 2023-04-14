@@ -125,10 +125,13 @@ class _MyAppState extends State<MyApp> {
     ReceiveSharingIntent.getTextStream().listen(
       (String value) {
         if (value.contains('youtube.com') || value.contains('youtu.be')) {
-          getSongDetails(0, getSongId(value)).then(
-            // ignore: unnecessary_lambdas
-            (song) => playSong(song),
-          );
+          final _songId = getSongId(value);
+          if (_songId != null) {
+            getSongDetails(0, _songId).then(
+              // ignore: unnecessary_lambdas
+              (song) => playSong(song),
+            );
+          }
         }
       },
       onError: (err) {
