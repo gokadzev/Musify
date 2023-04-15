@@ -474,15 +474,13 @@ class SettingsCards extends StatelessWidget {
             ),
           },
         ),
-        isUpdaterEnabled
-            ? SettingBar(
-                AppLocalizations.of(context)!.downloadAppUpdate,
-                FluentIcons.arrow_download_24_filled,
-                () => {
-                  checkAppUpdates(context),
-                },
-              )
-            : const SizedBox(),
+        SettingBar(
+          AppLocalizations.of(context)!.downloadAppUpdate,
+          FluentIcons.arrow_download_24_filled,
+          () => {
+            checkAppUpdates(context),
+          },
+        ),
         // CATEGORY: OTHERS
         Text(
           AppLocalizations.of(context)!.others,
