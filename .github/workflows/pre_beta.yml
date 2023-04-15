@@ -42,7 +42,7 @@ jobs:
       with:
         repo_name: gokadzev/Musify
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: build/app/outputs/flutter-apk/app-debug.apk
+        file: build/app/outputs/flutter-apk/app-github-debug.apk
         asset_name: Musify-debug.apk
         tag: ${{ github.ref }}
         prerelease: true
