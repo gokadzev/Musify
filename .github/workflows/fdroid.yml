@@ -1,5 +1,5 @@
 on: workflow_dispatch
-name: Test, Build and Release apk
+name: Test, Build and Release Fdroid apk
 env:
   PROPERTIES_PATH: './android/key.properties'
 jobs:
@@ -30,7 +30,6 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-
       #
       - run: |
           echo keyPassword=\${{ secrets.KEY_STORE }} > ${{env.PROPERTIES_PATH}}
