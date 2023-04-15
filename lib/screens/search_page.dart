@@ -16,11 +16,19 @@ class SearchPage extends StatefulWidget {
 List searchHistory = Hive.box('user').get('searchHistory', defaultValue: []);
 
 class _SearchPageState extends State<SearchPage> {
-  final TextEditingController _searchBar = TextEditingController();
-  final ValueNotifier<bool> _fetchingSongs = ValueNotifier(false);
-  final FocusNode _inputNode = FocusNode();
+  late TextEditingController _searchBar;
+  late ValueNotifier<bool> _fetchingSongs;
+  late FocusNode _inputNode;
   List _searchResult = [];
   List _suggestionsList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _searchBar = TextEditingController();
+    _fetchingSongs = ValueNotifier(false);
+    _inputNode = FocusNode();
+  }
 
   Future<void> search() async {
     final query = _searchBar.text;
@@ -79,10 +87,9 @@ class _SearchPageState extends State<SearchPage> {
                   FocusManager.instance.primaryFocus?.unfocus();
                 },
                 onChanged: (value) {
-                  setState(() {
+                  setState(() async {
                     if (value != '') {
-                      getSearchSuggestions(value)
-                          .then((value) => _suggestionsList = value);
+                      _suggestionsList = await getSearchSuggestions(value);
                     } else {
                       _suggestionsList = [];
                     }
@@ -152,6 +159,9 @@ class _SearchPageState extends State<SearchPage> {
                     : _suggestionsList.length,
                 itemBuilder: (BuildContext ctxt, int index) {
                   final suggestionsNotAvailable = _suggestionsList.isEmpty;
+                  final _query = suggestionsNotAvailable
+                      ? searchHistory[index]
+                      : _suggestionsList[index];
                   return Padding(
                     padding: const EdgeInsets.only(top: 8, bottom: 6),
                     child: Card(
@@ -161,14 +171,10 @@ class _SearchPageState extends State<SearchPage> {
                           color: colorScheme.primary,
                         ),
                         title: Text(
-                          suggestionsNotAvailable
-                              ? searchHistory[index]
-                              : _suggestionsList[index],
+                          _query,
                         ),
                         onTap: () async {
-                          _searchBar.text = suggestionsNotAvailable
-                              ? searchHistory[index]
-                              : _suggestionsList[index];
+                          _searchBar.text = _query;
                           await search();
                         },
                       ),
