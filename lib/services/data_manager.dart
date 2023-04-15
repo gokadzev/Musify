@@ -5,17 +5,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hive/hive.dart';
 
-void addOrUpdateData(
-  String category,
-  dynamic key,
-  dynamic value,
-) async {
+void addOrUpdateData(String category, dynamic key, dynamic value) async {
   final _box = await _openBox(category);
   await _box.put(key, value);
+  if (category == 'cache') {
+    await _box.put(key + '_date', DateTime.now());
+  }
 }
 
 Future getData(String category, dynamic key) async {
   final _box = await _openBox(category);
+  if (category == 'cache') {
+    final cacheIsValid = await isCacheValid(_box, key);
+    if (!cacheIsValid) {
+      deleteData(category, key);
+      deleteData(category, '${key}_date');
+      return null;
+    }
+  }
   return await _box.get(key);
 }
 
@@ -27,6 +34,13 @@ void deleteData(String category, dynamic key) async {
 void clearCache() async {
   final _cacheBox = await _openBox('cache');
   await _cacheBox.clear();
+}
+
+Future<bool> isCacheValid(Box box, String key) async {
+  final maxAge = const Duration(days: 30);
+  final date = box.get('${key}_date', defaultValue: DateTime.now());
+  final age = DateTime.now().difference(date);
+  return age < maxAge;
 }
 
 Future<Box> _openBox(String category) async {

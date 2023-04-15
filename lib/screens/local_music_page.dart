@@ -5,6 +5,8 @@ import 'package:musify/API/musify.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/offline_audio.dart';
 import 'package:musify/style/app_themes.dart';
+import 'package:musify/utilities/formatter.dart';
+import 'package:musify/utilities/mediaitem.dart';
 import 'package:musify/widgets/spinner.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
@@ -167,7 +169,7 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
               ),
             ),
             const Padding(padding: EdgeInsets.only(top: 40)),
-            FutureBuilder<List<dynamic>>(
+            FutureBuilder<List<AudioModel>>(
               future: _searchQuery.isEmpty
                   ? Future.delayed(const Duration(milliseconds: 500), getMusic)
                   : Future.delayed(
@@ -193,11 +195,14 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                     final lsong = {
                       'id': index,
                       'ytid': '',
-                      'title': snapshot.data![index].displayName,
-                      'image': '',
+                      'title': formatSongTitle(
+                        snapshot.data![index].displayName,
+                        removeFileExtension: true,
+                      ),
+                      'image': noImageVar,
                       'artist': '',
-                      'lowResImage': '',
-                      'highResImage': '',
+                      'lowResImage': noImageVar,
+                      'highResImage': noImageVar,
                       'songUrl': snapshot.data![index].data,
                       'localSongId': snapshot.data![index].id,
                       'isLive': false,
@@ -228,23 +233,27 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                               artworkHeight: 60,
                               artworkFit: BoxFit.cover,
                               artworkBorder: BorderRadius.circular(8),
-                              nullArtworkWidget: Container(
-                                width: 60,
-                                height: 60,
-                                decoration: BoxDecoration(
-                                  color: colorScheme.primary,
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Icon(
-                                  FluentIcons.music_note_1_24_regular,
-                                  size: 25,
-                                  color: colorScheme.primary !=
-                                          const Color(0xFFFFFFFF)
-                                      ? Colors.white
-                                      : Colors.black,
+                              keepOldArtwork: true,
+                              nullArtworkWidget: ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Container(
+                                  width: 60,
+                                  height: 60,
+                                  decoration: BoxDecoration(
+                                    color: colorScheme.secondary,
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      const Icon(
+                                        FluentIcons.music_note_1_24_regular,
+                                        size: 30,
+                                        color: Colors.white,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
-                              keepOldArtwork: true,
                             ),
                             Flexible(
                               child: Column(
@@ -260,6 +269,8 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                                       lsong['title'].toString(),
                                       style: TextStyle(
                                         color: colorScheme.primary,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w700,
                                       ),
                                     ),
                                   ),

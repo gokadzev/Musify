@@ -1,0 +1,13 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  strong-mode:
+    implicit-casts: false
+    implicit-dynamic: false
+  exclude:
+    - '**/*.mocks.dart'
+
+linter:
+  rules:
+    prefer_single_quotes: false
+    unawaited_futures: false

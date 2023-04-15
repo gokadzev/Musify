@@ -80,7 +80,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
             FutureBuilder(
               future: _searchQuery.isEmpty
                   ? getPlaylists()
-                  : searchPlaylist(_searchQuery),
+                  : getPlaylists(query: _searchQuery),
               builder: (context, data) {
                 return (data as dynamic).data != null
                     ? GridView.builder(

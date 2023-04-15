@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/foundation.dart';
@@ -10,12 +11,15 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:just_audio_background/just_audio_background.dart';
-import 'package:musify/screens/more_page.dart';
+import 'package:musify/API/musify.dart';
 import 'package:musify/screens/root_page.dart';
 import 'package:musify/services/audio_manager.dart';
-import 'package:musify/style/app_colors.dart';
+import 'package:musify/services/audio_service.dart';
+import 'package:musify/services/data_manager.dart';
+import 'package:musify/services/settings_manager.dart';
 import 'package:musify/style/app_themes.dart';
+import 'package:musify/utilities/formatter.dart';
+import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
 GetIt getIt = GetIt.instance;
 bool _interrupted = false;
@@ -87,10 +91,20 @@ class _MyAppState extends State<MyApp> {
 
   void changeAccentColor(Color newAccentColor, bool systemColorStatus) {
     setState(() {
-      useSystemColor.value = systemColorStatus;
-      primarySwatch = getPrimarySwatch(newAccentColor);
+      if (useSystemColor.value != systemColorStatus) {
+        useSystemColor.value = systemColorStatus;
 
-      colorScheme = ColorScheme.fromSwatch(primarySwatch: primarySwatch);
+        addOrUpdateData(
+          'settings',
+          'useSystemColor',
+          systemColorStatus,
+        );
+      }
+
+      colorScheme = ColorScheme.fromSeed(
+        seedColor: newAccentColor,
+        primary: newAccentColor,
+      ).harmonized();
     });
   }
 
@@ -108,6 +122,23 @@ class _MyAppState extends State<MyApp> {
         : themeModeSetting == 'light'
             ? ThemeMode.light
             : ThemeMode.dark;
+
+    ReceiveSharingIntent.getTextStream().listen(
+      (String value) {
+        if (value.contains('youtube.com') || value.contains('youtu.be')) {
+          final _songId = getSongId(value);
+          if (_songId != null) {
+            getSongDetails(0, _songId).then(
+              // ignore: unnecessary_lambdas
+              (song) => playSong(song),
+            );
+          }
+        }
+      },
+      onError: (err) {
+        debugPrint('getLinkStream error: $err');
+      },
+    );
   }
 
   @override
@@ -118,10 +149,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    final kBorderRadius = BorderRadius.circular(15.0);
-    final kContentPadding =
-        const EdgeInsets.only(left: 18, right: 20, top: 14, bottom: 14);
-
     return DynamicColorBuilder(
       builder: (lightColorScheme, darkColorScheme) {
         if (lightColorScheme != null &&
@@ -139,36 +166,14 @@ class _MyAppState extends State<MyApp> {
                   scaffoldBackgroundColor: darkColorScheme.surface,
                   colorScheme: darkColorScheme.harmonized(),
                   canvasColor: darkColorScheme.surface,
-                  cardTheme: CardTheme(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    elevation: 2.3,
-                  ),
+                  cardTheme: mCardTheme,
                   bottomAppBarTheme: BottomAppBarTheme(
                     color: darkColorScheme.surface,
                   ),
-                  appBarTheme: AppBarTheme(
+                  appBarTheme: mAppBarTheme.copyWith(
                     backgroundColor: darkColorScheme.surface,
-                    centerTitle: true,
-                    titleTextStyle: TextStyle(
-                      fontSize: 27,
-                      fontWeight: FontWeight.w700,
-                      color: colorScheme.primary,
-                    ),
-                    elevation: 0,
                   ),
-                  inputDecorationTheme: InputDecorationTheme(
-                    filled: true,
-                    isDense: true,
-                    border: OutlineInputBorder(
-                      borderRadius: kBorderRadius,
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: kBorderRadius,
-                    ),
-                    contentPadding: kContentPadding,
-                  ),
+                  inputDecorationTheme: mInputDecorationTheme,
                 )
               : getAppDarkTheme(),
           theme: lightColorScheme != null && useSystemColor.value
@@ -176,36 +181,14 @@ class _MyAppState extends State<MyApp> {
                   scaffoldBackgroundColor: lightColorScheme.surface,
                   colorScheme: lightColorScheme.harmonized(),
                   canvasColor: lightColorScheme.surface,
-                  cardTheme: CardTheme(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    elevation: 2.3,
-                  ),
+                  cardTheme: mCardTheme,
                   bottomAppBarTheme: BottomAppBarTheme(
                     color: lightColorScheme.surface,
                   ),
-                  appBarTheme: AppBarTheme(
+                  appBarTheme: mAppBarTheme.copyWith(
                     backgroundColor: lightColorScheme.surface,
-                    centerTitle: true,
-                    titleTextStyle: TextStyle(
-                      fontSize: 27,
-                      fontWeight: FontWeight.w700,
-                      color: colorScheme.primary,
-                    ),
-                    elevation: 0,
                   ),
-                  inputDecorationTheme: InputDecorationTheme(
-                    filled: true,
-                    isDense: true,
-                    border: OutlineInputBorder(
-                      borderRadius: kBorderRadius,
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: kBorderRadius,
-                    ),
-                    contentPadding: kContentPadding,
-                  ),
+                  inputDecorationTheme: mInputDecorationTheme,
                 )
               : getAppLightTheme(),
           localizationsDelegates: const [
@@ -237,12 +220,15 @@ Future<void> initialisation() async {
 
   await FlutterDisplayMode.setHighRefreshRate();
 
-  await JustAudioBackground.init(
-    androidNotificationChannelId: 'com.gokadzev.musify',
-    androidNotificationChannelName: 'Musify',
-    androidNotificationIcon: 'mipmap/launcher_icon',
-    androidShowNotificationBadge: true,
-    androidStopForegroundOnPause: !foregroundService.value,
+  audioHandler = await AudioService.init(
+    builder: MyAudioHandler.new,
+    config: AudioServiceConfig(
+      androidNotificationChannelId: 'com.gokadzev.musify',
+      androidNotificationChannelName: 'Musify',
+      androidNotificationIcon: 'mipmap/launcher_icon',
+      androidShowNotificationBadge: true,
+      androidStopForegroundOnPause: !foregroundService.value,
+    ),
   );
 
   final session = await AudioSession.instance;
@@ -250,7 +236,7 @@ Future<void> initialisation() async {
   session.interruptionEventStream.listen((event) {
     if (event.begin) {
       if (audioPlayer.playing) {
-        audioPlayer.pause();
+        audioHandler.pause();
         _interrupted = true;
       }
     } else {
@@ -258,7 +244,7 @@ Future<void> initialisation() async {
         case AudioInterruptionType.pause:
         case AudioInterruptionType.duck:
           if (!audioPlayer.playing && _interrupted) {
-            audioPlayer.play();
+            audioHandler.play();
           }
           break;
         case AudioInterruptionType.unknown:

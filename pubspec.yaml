@@ -5,17 +5,19 @@ repository: https://github.com/gokadzev/Musify
 issue_tracker: https://github.com/gokadzev/Musify/issues
 
 publish_to: 'none'
-version: 4.9.1+50 # run update.sh after changing the version
+version: 5.0.0+51 # run update.sh after changing the version
 
 environment:
   sdk: '>=2.19.6 <3.0.0'
-  flutter: ^3.7.9
+  flutter: ^3.7.10
 
 dependencies:
+  audio_service:
+    path: ./packages/audio_service/audio_service
   audio_session: ^0.1.13
   cached_network_image: ^3.2.3
-  dynamic_color: ^1.6.2
-  file_picker: ^5.2.6
+  dynamic_color: ^1.6.3
+  file_picker: ^5.2.9
   fluentui_system_icons: ^1.1.198
   flutter:
     sdk: flutter
@@ -25,21 +27,23 @@ dependencies:
     sdk: flutter
   fluttertoast: ^8.2.1
   get_it: ^7.2.0
+  google_fonts: ^4.0.3
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   http: ^0.13.5
   intl: ^0.17.0
   just_audio: ^0.9.32
-  just_audio_background: ^0.0.1-beta.9
   on_audio_query:
     path: ./packages/on_audio_query/on_audio_query
   permission_handler: ^10.2.0
+  receive_sharing_intent:
+    path: ./packages/receive_sharing_intent
   rxdart: ^0.27.7
   url_launcher: ^6.1.10
   youtube_explode_dart: ^1.12.4
 
 dev_dependencies:
-  flutter_launcher_icons: ^0.12.0
+  flutter_launcher_icons: ^0.13.0
   flutter_native_splash: ^2.2.19
   flutter_test:
     sdk: flutter
@@ -49,10 +53,6 @@ dev_dependencies:
 flutter:
   generate: true
   uses-material-design: true
-  fonts:
-    - family: Ubuntu
-      fonts:
-        - asset: fonts/ubuntu.ttf
 
   # To add assets to your application, add an assets section, like this:
   assets:

@@ -107,7 +107,7 @@ class SongBar extends StatelessWidget {
                     return IconButton(
                       onPressed: () => {
                         songLikeStatus.value = !songLikeStatus.value,
-                        updateLikeStatus(
+                        updateSongLikeStatus(
                           song['ytid'],
                           songLikeStatus.value,
                         ),
