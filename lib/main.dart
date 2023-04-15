@@ -125,15 +125,22 @@ class _MyAppState extends State<MyApp> {
             : ThemeMode.dark;
 
     ReceiveSharingIntent.getTextStream().listen(
-      (String value) {
-        if (value.contains('youtube.com') || value.contains('youtu.be')) {
-          final _songId = getSongId(value);
-          if (_songId != null) {
-            getSongDetails(0, _songId).then(
-              // ignore: unnecessary_lambdas
-              (song) => playSong(song),
-            );
-          }
+      (String? value) async {
+        if (value == null) return;
+
+        final regex = RegExp(r'(youtube\.com|youtu\.be)');
+        if (!regex.hasMatch(value)) return;
+
+        final songId = getSongId(value);
+        if (songId == null) return;
+
+        try {
+          final song = await getSongDetails(0, songId);
+          if (song == null) return;
+
+          await playSong(song);
+        } catch (e) {
+          debugPrint('Error: $e');
         }
       },
       onError: (err) {
