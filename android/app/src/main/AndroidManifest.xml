@@ -45,6 +45,23 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
 
+            <intent-filter>
+               <action android:name="android.intent.action.SEND" />
+               <category android:name="android.intent.category.DEFAULT" />
+               <data android:mimeType="text/*" />
+            </intent-filter>
+
+            <intent-filter>
+               <action android:name="android.intent.action.VIEW" />
+               <category android:name="android.intent.category.DEFAULT" />
+               <category android:name="android.intent.category.BROWSABLE" />
+               <data android:scheme="http" android:host="www.youtube.com" />
+               <data android:scheme="https" android:host="www.youtube.com" />
+               <data android:scheme="http" android:host="m.youtube.com" />
+               <data android:scheme="https" android:host="m.youtube.com" />
+               <data android:scheme="https" android:host="youtu.be" />
+            </intent-filter>
+
         </activity>
 
         <meta-data

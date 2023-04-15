@@ -1,10 +1,11 @@
 import 'dart:async';
 
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:musify/API/musify.dart';
-import 'package:musify/screens/more_page.dart';
 import 'package:musify/services/data_manager.dart';
+import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/mediaitem.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -17,6 +18,8 @@ Stream<PositionData> get positionDataStream =>
           PositionData(position, bufferedPosition, duration ?? Duration.zero),
     );
 
+late AudioHandler audioHandler;
+
 final _loudnessEnhancer = AndroidLoudnessEnhancer();
 
 AudioPlayer audioPlayer = AudioPlayer(
@@ -27,9 +30,6 @@ AudioPlayer audioPlayer = AudioPlayer(
   ),
 );
 
-final shuffleNotifier = ValueNotifier<bool>(false);
-final repeatNotifier = ValueNotifier<bool>(false);
-final muteNotifier = ValueNotifier<bool>(false);
 final playerState = ValueNotifier<PlayerState>(audioPlayer.playerState);
 
 final _playlist = ConcatenatingAudioSource(children: []);
@@ -61,8 +61,8 @@ Future<void> playSong(Map song) async {
 }
 
 Future playNext() async {
-  if (activePlaylist.isEmpty || activePlaylist['list'][id + 1] == null)
-    await audioPlayer.seekToPrevious();
+  if (activePlaylist.isEmpty || id + 1 >= activePlaylist['list'].length)
+    await audioPlayer.seekToNext();
   else {
     await playSong(activePlaylist['list'][id + 1]);
     id = id + 1;
@@ -70,8 +70,8 @@ Future playNext() async {
 }
 
 Future playPrevious() async {
-  if (activePlaylist.isEmpty || activePlaylist['list'][id - 1] == null)
-    await audioPlayer.seekToNext();
+  if (activePlaylist.isEmpty || id - 1 <= activePlaylist['list'].length)
+    await audioPlayer.seekToPrevious();
   else {
     await playSong(activePlaylist['list'][id - 1]);
     id = id - 1;
