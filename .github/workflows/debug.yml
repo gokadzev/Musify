@@ -34,10 +34,8 @@ jobs:
       - run: dart format --set-exit-if-changed .
       # Statically analyze the Dart code for any errors.
       - run: flutter analyze .
-      # Add updater
-      - run: bash add_updater.sh
       # Build universal apk.
-      - run: flutter build apk --debug
+      - run: flutter build apk --debug --flavor github
       # Upload universal generated apk to the artifacts.
       - uses: actions/upload-artifact@v3
         with:

@@ -1,7 +1,4 @@
-on:
-  push:
-    branches:
-      - master
+on: workflow_dispatch
 name: Test, Build and Release apk
 env:
   PROPERTIES_PATH: './android/key.properties'
@@ -49,14 +46,14 @@ jobs:
       # Statically analyze the Dart code for any errors.
       - run: flutter analyze .
       # Build arch apks.
-      - run: flutter build apk --release --split-per-abi --target-platform="android-arm64" --flavor github
+      - run: flutter build apk --release --split-per-abi --target-platform="android-arm64" --flavor fdroid -t lib/main_fdroid.dart
       # Upload arm64 generated apk to the artifacts.
       - uses: actions/upload-artifact@v3
         with:
           name: Musify_arm64-v8a.apk
           path: build/app/outputs/apk/release/app-arm64-v8a-release.apk
       # Build universal apk.
-      - run: flutter build apk --release --flavor github
+      - run: flutter build apk --release --flavor fdroid -t lib/main_fdroid.dart
       # Upload universal generated apk to the artifacts.
       - uses: actions/upload-artifact@v3
         with:

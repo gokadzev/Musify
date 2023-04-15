@@ -3,6 +3,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:musify/main.dart';
 import 'package:musify/screens/home_page.dart';
 import 'package:musify/screens/more_page.dart';
 import 'package:musify/screens/player.dart';
@@ -30,7 +31,10 @@ class AppState extends State<Musify> {
   @override
   void initState() {
     super.initState();
-    checkAppUpdates(context);
+    if (!isFdroidBuild) {
+      checkAppUpdates(context);
+    }
+
     checkNecessaryPermissions(context);
   }
 

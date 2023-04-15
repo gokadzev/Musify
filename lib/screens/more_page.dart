@@ -474,13 +474,15 @@ class SettingsCards extends StatelessWidget {
             ),
           },
         ),
-        SettingBar(
-          AppLocalizations.of(context)!.downloadAppUpdate,
-          FluentIcons.arrow_download_24_filled,
-          () => {
-            checkAppUpdates(context),
-          },
-        ),
+        !isFdroidBuild
+            ? SettingBar(
+                AppLocalizations.of(context)!.downloadAppUpdate,
+                FluentIcons.arrow_download_24_filled,
+                () => {
+                  checkAppUpdates(context),
+                },
+              )
+            : const SizedBox(),
         // CATEGORY: OTHERS
         Text(
           AppLocalizations.of(context)!.others,

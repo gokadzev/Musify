@@ -44,7 +44,7 @@ jobs:
     # Add updater
     - run: bash add_updater.sh
     # Build universal apk.
-    - run: flutter build apk --release
+    - run: flutter build apk --release --flavor github
     - uses: svenstaro/upload-release-action@v2
       with:
         repo_name: gokadzev/Musify
