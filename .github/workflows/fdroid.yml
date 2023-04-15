@@ -5,7 +5,6 @@ env:
 jobs:
   build:
     name: Build APK
-    if: "contains(github.event.head_commit.message, 'Update:')"
     runs-on: ubuntu-latest
 
     steps:

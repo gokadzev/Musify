@@ -36,10 +36,8 @@ jobs:
     - run: dart format --set-exit-if-changed .
     # Statically analyze the Dart code for any errors.
     - run: flutter analyze .
-    # Add updater
-    - run: bash add_updater.sh
     # Build universal apk.
-    - run: flutter build apk --debug
+    - run: flutter build apk --debug --flavor github
     - uses: svenstaro/upload-release-action@v2
       with:
         repo_name: gokadzev/Musify
