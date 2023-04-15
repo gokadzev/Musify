@@ -37,6 +37,7 @@ final appLanguages = <String, String>{
   'Traditional Chinese Taiwan': 'zh_TW',
   'Turkish': 'tr',
   'Ukrainian': 'uk',
+  'Tiếng Việt': 'vi',
 };
 
 final appSupportedLocales = appLanguages.values
