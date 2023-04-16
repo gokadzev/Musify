@@ -1,0 +1,7 @@
+Bug Fixes
+
+- Fixed no image for artist page music.
+
+Enhancements
+
+- Added Vietnamese Language
