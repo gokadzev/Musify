@@ -1,0 +1,29 @@
+Bug Fixes
+
+- Fixed low quality artwork for local music.
+
+- Fixed custom color resetting but after resetting.
+
+- Fixed Play next & Play previous song functions
+
+- Fixed Router and back button
+
+Enhancements
+
+- You can use share button from YouTube to play song in Musify (it only works for videos and if you already have opened the app)
+
+- Added artists section (which appears according to your local songs)
+
+- Added expiration date for caches
+
+- Added more accent colors
+
+- Added playlist like function
+
+- Improved themes, they look better now
+
+- Improved UI including: Home page, Now playing page...
+
+- Improved media notification, more control - more beautiful.
+
+- Updated playlists artwork
