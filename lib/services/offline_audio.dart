@@ -5,7 +5,8 @@ final OnAudioQuery _audioQuery = OnAudioQuery();
 Future<List<AudioModel>> getMusic({searchQuery}) async {
   final allSongs = await _audioQuery.querySongs(
     filter: MediaFilter.forSongs(
-      audioSortType: AudioSortType.TITLE,
+      audioSortType: AudioSortType.DATE_ADDED,
+      orderType: OrderType.DESC_OR_GREATER,
       type: const {AudioType.IS_MUSIC: true},
     ),
   );
