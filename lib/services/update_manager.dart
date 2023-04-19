@@ -13,17 +13,26 @@ late String dlUrl;
 const apiUrl =
     'https://raw.githubusercontent.com/gokadzev/Musify/update/check.json';
 
-Future<void> checkAppUpdates(BuildContext context) async {
+Future<void> checkAppUpdates(
+  BuildContext context, {
+  bool downloadUpdateAutomatically = false,
+}) async {
   final response = await http.get(Uri.parse(apiUrl));
   if (response.statusCode != 200) {
     throw Exception('Failed to fetch app updates');
   }
   final map = json.decode(response.body) as Map<String, dynamic>;
   if (map['version'].toString() != appVersion) {
-    await downloadAppUpdates();
-    showToast(
-      '${AppLocalizations.of(context)!.appUpdateAvailableAndDownloading}!',
-    );
+    if (downloadUpdateAutomatically) {
+      await downloadAppUpdates();
+      showToast(
+        '${AppLocalizations.of(context)!.appUpdateAvailableAndDownloading}!',
+      );
+    } else {
+      showToast(
+        '${AppLocalizations.of(context)!.appUpdateIsAvailable}!',
+      );
+    }
   }
 }
 
