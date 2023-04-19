@@ -6,7 +6,6 @@ import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/offline_audio.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/formatter.dart';
-import 'package:musify/utilities/mediaitem.dart';
 import 'package:musify/widgets/spinner.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
@@ -192,21 +191,10 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                   addRepaintBoundaries: false,
                   itemCount: snapshot.data!.length,
                   itemBuilder: (BuildContext context, int index) {
-                    final lsong = {
-                      'id': index,
-                      'ytid': '',
-                      'title': formatSongTitle(
-                        snapshot.data![index].displayName,
-                        removeFileExtension: true,
-                      ),
-                      'image': noImageVar,
-                      'artist': '',
-                      'lowResImage': noImageVar,
-                      'highResImage': noImageVar,
-                      'songUrl': snapshot.data![index].data,
-                      'localSongId': snapshot.data![index].id,
-                      'isLive': false,
-                    };
+                    final lsong = returnSongLayoutFromAudioModel(
+                      index,
+                      snapshot.data![index],
+                    );
 
                     return Container(
                       padding: const EdgeInsets.only(
@@ -266,7 +254,9 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                                     ),
                                     child: Text(
                                       overflow: TextOverflow.ellipsis,
-                                      lsong['title'].toString(),
+                                      lsong['artist'].toString() == ''
+                                          ? lsong['title'].toString()
+                                          : '${lsong['artist']} - ${lsong['title']}',
                                       style: TextStyle(
                                         color: colorScheme.primary,
                                         fontSize: 16,

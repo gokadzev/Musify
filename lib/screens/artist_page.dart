@@ -8,7 +8,6 @@ import 'package:musify/services/audio_manager.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/formatter.dart';
-import 'package:musify/utilities/mediaitem.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/spinner.dart';
 import 'package:on_audio_query/on_audio_query.dart' hide context;
@@ -193,21 +192,8 @@ class _ArtistPagePageState extends State<ArtistPage> {
                 return const Spinner();
               }
 
-              final lsong = {
-                'id': index,
-                'ytid': '',
-                'title': formatSongTitle(
-                  _songsList[index].displayName,
-                  removeFileExtension: true,
-                ),
-                'image': noImageVar,
-                'artist': '',
-                'lowResImage': noImageVar,
-                'highResImage': noImageVar,
-                'songUrl': _songsList[index].data,
-                'localSongId': _songsList[index].id,
-                'isLive': false,
-              };
+              final lsong =
+                  returnSongLayoutFromAudioModel(index, _songsList[index]);
 
               return Container(
                 padding: const EdgeInsets.only(
@@ -263,7 +249,9 @@ class _ArtistPagePageState extends State<ArtistPage> {
                               ),
                               child: Text(
                                 overflow: TextOverflow.ellipsis,
-                                lsong['title'].toString(),
+                                lsong['artist'].toString() == ''
+                                    ? lsong['title'].toString()
+                                    : '${lsong['artist']} - ${lsong['title']}',
                                 style: TextStyle(
                                   color: colorScheme.primary,
                                   fontSize: 16,
