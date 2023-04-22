@@ -22,7 +22,7 @@ Future<void> checkAppUpdates(
     throw Exception('Failed to fetch app updates');
   }
   final map = json.decode(response.body) as Map<String, dynamic>;
-  if (map['version'].toString() != appVersion) {
+  if (isLatestVersionHigher(appVersion, map['version'].toString())) {
     if (downloadUpdateAutomatically) {
       await downloadAppUpdates();
       showToast(
@@ -56,6 +56,27 @@ Future<void> downloadAppUpdates() async {
     fileName: 'Musify.apk',
     showNotification: true,
   );
+}
+
+bool isLatestVersionHigher(String appVersion, String latestVersion) {
+  final parsedAppVersion = appVersion.split('.');
+  final parsedAppLatestVersion = latestVersion.split('.');
+  final length = parsedAppVersion.length > parsedAppLatestVersion.length
+      ? parsedAppVersion.length
+      : parsedAppLatestVersion.length;
+  for (var i = 0; i < length; i++) {
+    final value1 =
+        i < parsedAppVersion.length ? int.parse(parsedAppVersion[i]) : 0;
+    final value2 = i < parsedAppLatestVersion.length
+        ? int.parse(parsedAppLatestVersion[i])
+        : 0;
+    if (value2 > value1) {
+      return true;
+    } else if (value2 < value1) {
+      return false;
+    }
+  }
+  return false;
 }
 
 Future<String> getCPUArchitecture() async {
