@@ -60,20 +60,21 @@ Future get10Music(dynamic playlistid) async {
   final List playlistSongs =
       await getData('cache', 'playlist10Songs$playlistid') ?? [];
   if (playlistSongs.isEmpty) {
-    var index = 0;
-    await for (final song in yt.playlists.getVideos(playlistid).take(10)) {
-      playlistSongs.add(
-        returnSongLayout(
-          index,
-          song,
-        ),
+    try {
+      final List<dynamic> ytSongs =
+          await yt.playlists.getVideos(playlistid).take(10).toList();
+      final tenSongs = List<dynamic>.generate(
+        ytSongs.length,
+        (index) => returnSongLayout(index, ytSongs[index]),
       );
-      index += 1;
+      playlistSongs.addAll(tenSongs);
+
+      addOrUpdateData('cache', 'playlist10Songs$playlistid', playlistSongs);
+    } catch (e) {
+      debugPrint('Error retrieving playlist songs: $e');
+      return null;
     }
-
-    addOrUpdateData('cache', 'playlist10Songs$playlistid', playlistSongs);
   }
-
   return playlistSongs;
 }
 
