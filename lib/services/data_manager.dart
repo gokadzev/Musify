@@ -69,7 +69,7 @@ Future<String> backupData(BuildContext context) async {
   return '${context.l10n()!.backupedSuccess}!';
 }
 
-Future<String> restoreData(context) async {
+Future<String> restoreData(BuildContext context) async {
   final boxNames = ['user', 'settings'];
   final uplPath = await FilePicker.platform.getDirectoryPath();
 
