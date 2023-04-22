@@ -104,11 +104,7 @@ Future enableBooster() async {
 }
 
 Future mute() async {
-  if (audioPlayer.volume == 0) {
-    await audioPlayer.setVolume(1);
-  } else {
-    await audioPlayer.setVolume(0);
-  }
+  await audioPlayer.setVolume(audioPlayer.volume == 0 ? 1 : 0);
   muteNotifier.value = audioPlayer.volume == 0;
 }
 
