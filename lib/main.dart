@@ -23,7 +23,7 @@ import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
 GetIt getIt = GetIt.instance;
 bool _interrupted = false;
-ThemeMode themeMode = ThemeMode.system;
+ThemeMode themeMode = ThemeMode.dark;
 var isFdroidBuild = false;
 
 final appLanguages = <String, String>{
