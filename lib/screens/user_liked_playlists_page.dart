@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:musify/API/musify.dart';
+import 'package:musify/extensions/l10n.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 
 class UserLikedPlaylistsPage extends StatefulWidget {
@@ -14,7 +14,7 @@ class _UserLikedPlaylistsPageState extends State<UserLikedPlaylistsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          AppLocalizations.of(context)!.userLikedPlaylists,
+          context.l10n()!.userLikedPlaylists,
         ),
       ),
       body: SingleChildScrollView(

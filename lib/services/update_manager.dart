@@ -4,9 +4,9 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:http/http.dart' as http;
 import 'package:musify/API/version.dart';
+import 'package:musify/extensions/l10n.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 
 late String dlUrl;
@@ -26,11 +26,11 @@ Future<void> checkAppUpdates(
     if (downloadUpdateAutomatically) {
       await downloadAppUpdates();
       showToast(
-        '${AppLocalizations.of(context)!.appUpdateAvailableAndDownloading}!',
+        '${context.l10n()!.appUpdateAvailableAndDownloading}!',
       );
     } else {
       showToast(
-        '${AppLocalizations.of(context)!.appUpdateIsAvailable}!',
+        '${context.l10n()!.appUpdateIsAvailable}!',
       );
     }
   }

@@ -3,10 +3,10 @@ import 'dart:math';
 
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:just_audio/just_audio.dart';
+import 'package:musify/extensions/l10n.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/lyrics_service.dart';
@@ -96,11 +96,11 @@ Future<List<dynamic>> getUserPlaylists() async {
 
 String addUserPlaylist(String playlistId, BuildContext context) {
   if (playlistId.length != 34) {
-    return '${AppLocalizations.of(context)!.notYTlist}!';
+    return '${context.l10n()!.notYTlist}!';
   } else {
     userPlaylists.add(playlistId);
     addOrUpdateData('user', 'playlists', userPlaylists);
-    return '${AppLocalizations.of(context)!.addedSuccess}!';
+    return '${context.l10n()!.addedSuccess}!';
   }
 }
 

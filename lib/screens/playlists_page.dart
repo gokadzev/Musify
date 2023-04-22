@@ -1,7 +1,7 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:musify/API/musify.dart';
+import 'package:musify/extensions/l10n.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/spinner.dart';
@@ -26,7 +26,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          AppLocalizations.of(context)!.playlists,
+          context.l10n()!.playlists,
         ),
       ),
       body: SingleChildScrollView(
@@ -70,7 +70,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                       FocusManager.instance.primaryFocus?.unfocus();
                     },
                   ),
-                  hintText: '${AppLocalizations.of(context)!.search}...',
+                  hintText: '${context.l10n()!.search}...',
                   hintStyle: TextStyle(
                     color: colorScheme.primary,
                   ),

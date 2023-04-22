@@ -2,6 +2,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:musify/API/musify.dart';
+import 'package:musify/extensions/l10n.dart';
 import 'package:musify/screens/artist_page.dart';
 import 'package:musify/screens/playlists_page.dart';
 import 'package:musify/services/offline_audio.dart';
@@ -277,7 +278,7 @@ class _HomePageState extends State<HomePage> {
                             right: 20,
                           ),
                           child: Text(
-                            AppLocalizations.of(context)!.recommendedForYou,
+                            context.l10n()!.recommendedForYou,
                             style: TextStyle(
                               color: colorScheme.primary,
                               fontSize: 20,

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:musify/API/musify.dart';
+import 'package:musify/extensions/l10n.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/download_manager.dart';
 import 'package:musify/services/settings_manager.dart';
@@ -30,7 +31,7 @@ class AudioAppState extends State<AudioApp> {
       appBar: AppBar(
         toolbarHeight: size.height * 0.07,
         title: Text(
-          AppLocalizations.of(context)!.nowPlaying,
+          context.l10n()!.nowPlaying,
         ),
         leading: Padding(
           padding: const EdgeInsets.only(left: 14),
@@ -577,7 +578,7 @@ class AudioAppState extends State<AudioApp> {
                                   );
                                 },
                                 child: Text(
-                                  AppLocalizations.of(context)!.playlist,
+                                  context.l10n()!.playlist,
                                 ),
                               );
                             },
@@ -702,7 +703,7 @@ class AudioAppState extends State<AudioApp> {
                                   );
                                 },
                                 child: Text(
-                                  AppLocalizations.of(context)!.lyrics,
+                                  context.l10n()!.lyrics,
                                 ),
                               );
                             },

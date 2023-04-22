@@ -1,6 +1,7 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/screens/about_page.dart';
 import 'package:musify/screens/local_music_page.dart';
@@ -30,7 +31,7 @@ class _MorePageState extends State<MorePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          AppLocalizations.of(context)!.more,
+          context.l10n()!.more,
         ),
       ),
       body: SingleChildScrollView(child: SettingsCards()),
@@ -45,7 +46,7 @@ class SettingsCards extends StatelessWidget {
       children: <Widget>[
         // CATEGORY: PAGES
         Text(
-          AppLocalizations.of(context)!.pages,
+          context.l10n()!.pages,
           style: TextStyle(
             color: colorScheme.primary,
             fontSize: 15,
@@ -53,7 +54,7 @@ class SettingsCards extends StatelessWidget {
           ),
         ),
         SettingBar(
-          AppLocalizations.of(context)!.playlists,
+          context.l10n()!.playlists,
           FluentIcons.list_24_filled,
           () => {
             Navigator.push(
@@ -65,7 +66,7 @@ class SettingsCards extends StatelessWidget {
           },
         ),
         SettingBar(
-          AppLocalizations.of(context)!.userLikedSongs,
+          context.l10n()!.userLikedSongs,
           FluentIcons.heart_24_filled,
           () => {
             Navigator.push(
@@ -75,7 +76,7 @@ class SettingsCards extends StatelessWidget {
           },
         ),
         SettingBar(
-          AppLocalizations.of(context)!.userLikedPlaylists,
+          context.l10n()!.userLikedPlaylists,
           FluentIcons.star_24_filled,
           () => {
             Navigator.push(
@@ -87,7 +88,7 @@ class SettingsCards extends StatelessWidget {
           },
         ),
         SettingBar(
-          AppLocalizations.of(context)!.localMusic,
+          context.l10n()!.localMusic,
           FluentIcons.arrow_download_24_filled,
           () => {
             Navigator.push(
@@ -99,7 +100,7 @@ class SettingsCards extends StatelessWidget {
 
         // CATEGORY: SETTINGS
         Text(
-          AppLocalizations.of(context)!.settings,
+          context.l10n()!.settings,
           style: TextStyle(
             color: colorScheme.primary,
             fontSize: 15,
@@ -107,7 +108,7 @@ class SettingsCards extends StatelessWidget {
           ),
         ),
         SettingBar(
-          AppLocalizations.of(context)!.accentColor,
+          context.l10n()!.accentColor,
           FluentIcons.color_24_filled,
           () => {
             showModalBottomSheet(
@@ -189,7 +190,7 @@ class SettingsCards extends StatelessWidget {
           },
         ),
         SettingBar(
-          AppLocalizations.of(context)!.themeMode,
+          context.l10n()!.themeMode,
           FluentIcons.weather_sunny_28_filled,
           () => {
             showModalBottomSheet(
@@ -254,7 +255,7 @@ class SettingsCards extends StatelessWidget {
           },
         ),
         SettingBar(
-          AppLocalizations.of(context)!.language,
+          context.l10n()!.language,
           FluentIcons.translate_24_filled,
           () => {
             showModalBottomSheet(
@@ -300,7 +301,7 @@ class SettingsCards extends StatelessWidget {
                                 );
 
                                 showToast(
-                                  AppLocalizations.of(context)!.languageMsg,
+                                  context.l10n()!.languageMsg,
                                 );
                                 Navigator.pop(context);
                               },
@@ -316,7 +317,7 @@ class SettingsCards extends StatelessWidget {
           },
         ),
         SettingSwitchBar(
-          AppLocalizations.of(context)!.useSystemColor,
+          context.l10n()!.useSystemColor,
           FluentIcons.toggle_left_24_filled,
           useSystemColor.value,
           (value) {
@@ -332,7 +333,7 @@ class SettingsCards extends StatelessWidget {
               useSystemColor: value,
             );
             showToast(
-              AppLocalizations.of(context)!.settingChangedMsg,
+              context.l10n()!.settingChangedMsg,
             );
           },
         ),
@@ -340,7 +341,7 @@ class SettingsCards extends StatelessWidget {
           valueListenable: foregroundService,
           builder: (_, foregroundValue, __) {
             return SettingSwitchBar(
-              AppLocalizations.of(context)!.foregroundService,
+              context.l10n()!.foregroundService,
               FluentIcons.eye_24_filled,
               foregroundValue,
               (value) {
@@ -353,14 +354,14 @@ class SettingsCards extends StatelessWidget {
                 foregroundService.value = value;
 
                 showToast(
-                  AppLocalizations.of(context)!.settingChangedAndRestartMsg,
+                  context.l10n()!.settingChangedAndRestartMsg,
                 );
               },
             );
           },
         ),
         SettingBar(
-          AppLocalizations.of(context)!.audioFileType,
+          context.l10n()!.audioFileType,
           FluentIcons.multiselect_ltr_24_filled,
           () => {
             showModalBottomSheet(
@@ -418,7 +419,7 @@ class SettingsCards extends StatelessWidget {
           },
         ),
         SettingBar(
-          AppLocalizations.of(context)!.setup,
+          context.l10n()!.setup,
           FluentIcons.settings_24_filled,
           () => {
             Navigator.push(
@@ -430,7 +431,7 @@ class SettingsCards extends StatelessWidget {
 
         // CATEGORY: TOOLS
         Text(
-          AppLocalizations.of(context)!.tools,
+          context.l10n()!.tools,
           style: TextStyle(
             color: colorScheme.primary,
             fontSize: 15,
@@ -438,26 +439,26 @@ class SettingsCards extends StatelessWidget {
           ),
         ),
         SettingBar(
-          AppLocalizations.of(context)!.clearCache,
+          context.l10n()!.clearCache,
           FluentIcons.broom_24_filled,
           () => {
             clearCache(),
             showToast(
-              '${AppLocalizations.of(context)!.cacheMsg}!',
+              '${context.l10n()!.cacheMsg}!',
             )
           },
         ),
         SettingBar(
-          AppLocalizations.of(context)!.clearSearchHistory,
+          context.l10n()!.clearSearchHistory,
           FluentIcons.history_24_filled,
           () => {
             searchHistory = [],
             deleteData('user', 'searchHistory'),
-            showToast('${AppLocalizations.of(context)!.searchHistoryMsg}!'),
+            showToast('${context.l10n()!.searchHistoryMsg}!'),
           },
         ),
         SettingBar(
-          AppLocalizations.of(context)!.backupUserData,
+          context.l10n()!.backupUserData,
           FluentIcons.cloud_sync_24_filled,
           () => {
             backupData(context).then(
@@ -466,7 +467,7 @@ class SettingsCards extends StatelessWidget {
           },
         ),
         SettingBar(
-          AppLocalizations.of(context)!.restoreUserData,
+          context.l10n()!.restoreUserData,
           FluentIcons.cloud_add_24_filled,
           () => {
             restoreData(context).then(
@@ -476,7 +477,7 @@ class SettingsCards extends StatelessWidget {
         ),
         !isFdroidBuild
             ? SettingBar(
-                AppLocalizations.of(context)!.downloadAppUpdate,
+                context.l10n()!.downloadAppUpdate,
                 FluentIcons.arrow_download_24_filled,
                 () => {
                   checkAppUpdates(context, downloadUpdateAutomatically: true),
@@ -485,7 +486,7 @@ class SettingsCards extends StatelessWidget {
             : const SizedBox(),
         // CATEGORY: OTHERS
         Text(
-          AppLocalizations.of(context)!.others,
+          context.l10n()!.others,
           style: TextStyle(
             color: colorScheme.primary,
             fontSize: 15,
@@ -493,7 +494,7 @@ class SettingsCards extends StatelessWidget {
           ),
         ),
         SettingBar(
-          AppLocalizations.of(context)!.supportDonate,
+          context.l10n()!.supportDonate,
           FluentIcons.heart_24_filled,
           () => {
             launchURL(
@@ -502,7 +503,7 @@ class SettingsCards extends StatelessWidget {
           },
         ),
         SettingBar(
-          AppLocalizations.of(context)!.about,
+          context.l10n()!.about,
           FluentIcons.book_information_24_filled,
           () => {
             Navigator.of(context).push(

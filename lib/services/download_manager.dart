@@ -1,8 +1,8 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:musify/API/musify.dart';
+import 'package:musify/extensions/l10n.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
@@ -53,7 +53,7 @@ Future<void> downloadSong(BuildContext context, dynamic song) async {
   } catch (e) {
     debugPrint('Error while downloading song: $e');
     showToast(
-      '${AppLocalizations.of(context)!.downloadFailed}, $e',
+      '${context.l10n()!.downloadFailed}, $e',
     );
   }
 }
@@ -65,7 +65,7 @@ Future<void> checkNecessaryPermissions(BuildContext context) async {
     await Permission.storage.request();
   } catch (e) {
     showToast(
-      '${AppLocalizations.of(context)!.errorWhileRequestingPerms} + $e',
+      '${context.l10n()!.errorWhileRequestingPerms} + $e',
     );
   }
 }
@@ -74,7 +74,7 @@ Future<bool> checkDownloadDirectory(BuildContext context) async {
   downloadDirectory ??= await FilePicker.platform.getDirectoryPath();
 
   if (downloadDirectory == null) {
-    showToast('${AppLocalizations.of(context)!.chooseDownloadDir}!');
+    showToast('${context.l10n()!.chooseDownloadDir}!');
     return false;
   }
 

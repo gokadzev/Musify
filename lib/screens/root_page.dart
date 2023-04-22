@@ -1,8 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/screens/home_page.dart';
 import 'package:musify/screens/more_page.dart';
@@ -94,10 +94,10 @@ class AppState extends State<Musify> {
         ][index];
 
         final title = [
-          AppLocalizations.of(context)!.home,
-          AppLocalizations.of(context)!.search,
-          AppLocalizations.of(context)!.userPlaylists,
-          AppLocalizations.of(context)!.more,
+          context.l10n()!.home,
+          context.l10n()!.search,
+          context.l10n()!.userPlaylists,
+          context.l10n()!.more,
         ][index];
 
         final routeName = [

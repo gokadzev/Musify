@@ -1,6 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:musify/extensions/l10n.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/style/app_themes.dart';
@@ -17,7 +17,7 @@ class _SetupPageState extends State<SetupPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          AppLocalizations.of(context)!.setup,
+          context.l10n()!.setup,
         ),
       ),
       body: SingleChildScrollView(
@@ -25,7 +25,7 @@ class _SetupPageState extends State<SetupPage> {
           child: Column(
             children: <Widget>[
               Text(
-                AppLocalizations.of(context)!.downloadSongsFolder,
+                context.l10n()!.downloadSongsFolder,
                 style: TextStyle(
                   color: colorScheme.primary,
                   fontSize: 15,
@@ -52,7 +52,7 @@ class _SetupPageState extends State<SetupPage> {
                           MaterialStateProperty.all<Color>(colorScheme.primary),
                     ),
                     child: Text(
-                      AppLocalizations.of(context)!.add.toUpperCase(),
+                      context.l10n()!.add.toUpperCase(),
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ),
@@ -64,8 +64,7 @@ class _SetupPageState extends State<SetupPage> {
                   child: ListTile(
                     title: MarqueeWidget(
                       child: Text(
-                        downloadDirectory ??
-                            AppLocalizations.of(context)!.noDirectory,
+                        downloadDirectory ?? context.l10n()!.noDirectory,
                       ),
                     ),
                   ),

@@ -1,7 +1,7 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:musify/API/musify.dart';
+import 'package:musify/extensions/l10n.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/widgets/song_bar.dart';
 
@@ -18,7 +18,7 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          AppLocalizations.of(context)!.userLikedSongs,
+          context.l10n()!.userLikedSongs,
         ),
       ),
       body: SingleChildScrollView(
@@ -50,7 +50,7 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
                             color: colorScheme.primary,
                           ),
                           Text(
-                            AppLocalizations.of(context)!.userLikedSongs,
+                            context.l10n()!.userLikedSongs,
                             textAlign: TextAlign.center,
                           ),
                         ],
@@ -65,7 +65,7 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
                     children: [
                       const SizedBox(height: 12),
                       Text(
-                        AppLocalizations.of(context)!.userLikedSongs,
+                        context.l10n()!.userLikedSongs,
                         style: TextStyle(
                           color: colorScheme.primary,
                           fontSize: 18,
@@ -74,7 +74,7 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        '${AppLocalizations.of(context)!.yourFavoriteSongsHere}!',
+                        '${context.l10n()!.yourFavoriteSongsHere}!',
                         style: TextStyle(
                           color: colorScheme.primary,
                           fontSize: 10,
@@ -89,8 +89,7 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
                           setActivePlaylist(
                             {
                               'ytid': '',
-                              'title':
-                                  AppLocalizations.of(context)!.userLikedSongs,
+                              'title': context.l10n()!.userLikedSongs,
                               'header_desc': '',
                               'image': '',
                               'list': userLikedSongsList
@@ -103,7 +102,7 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
                           ),
                         ),
                         child: Text(
-                          AppLocalizations.of(context)!.playAll.toUpperCase(),
+                          context.l10n()!.playAll.toUpperCase(),
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ),

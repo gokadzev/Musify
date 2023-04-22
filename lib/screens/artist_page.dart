@@ -2,8 +2,8 @@ import 'dart:math';
 
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:musify/API/musify.dart';
+import 'package:musify/extensions/l10n.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/flutter_toast.dart';
@@ -159,7 +159,7 @@ class _ArtistPagePageState extends State<ArtistPage> {
       onPressed: () {
         setActivePlaylist(widget.playlist);
         showToast(
-          AppLocalizations.of(context)!.queueInitText,
+          context.l10n()!.queueInitText,
         );
       },
       style: ButtonStyle(
@@ -168,7 +168,7 @@ class _ArtistPagePageState extends State<ArtistPage> {
         ),
       ),
       child: Text(
-        AppLocalizations.of(context)!.playAll.toUpperCase(),
+        context.l10n()!.playAll.toUpperCase(),
         style: Theme.of(context).textTheme.bodyMedium,
       ),
     );

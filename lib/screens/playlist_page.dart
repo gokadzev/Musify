@@ -1,8 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:musify/API/musify.dart';
+import 'package:musify/extensions/l10n.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/widgets/playlist_cube.dart';
@@ -76,7 +76,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          AppLocalizations.of(context)!.playlist,
+          context.l10n()!.playlist,
         ),
       ),
       body: SingleChildScrollView(
@@ -136,7 +136,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
       onPressed: () {
         setActivePlaylist(widget.playlist);
         showToast(
-          AppLocalizations.of(context)!.queueInitText,
+          context.l10n()!.queueInitText,
         );
       },
       style: ButtonStyle(
@@ -145,7 +145,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
         ),
       ),
       child: Text(
-        AppLocalizations.of(context)!.playAll.toUpperCase(),
+        context.l10n()!.playAll.toUpperCase(),
         style: Theme.of(context).textTheme.bodyMedium,
       ),
     );

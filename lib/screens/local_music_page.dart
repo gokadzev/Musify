@@ -1,7 +1,7 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:musify/API/musify.dart';
+import 'package:musify/extensions/l10n.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/offline_audio.dart';
 import 'package:musify/style/app_themes.dart';
@@ -39,7 +39,7 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          AppLocalizations.of(context)!.localMusic,
+          context.l10n()!.localMusic,
         ),
       ),
       body: SingleChildScrollView(
@@ -71,7 +71,7 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                             color: colorScheme.primary,
                           ),
                           Text(
-                            AppLocalizations.of(context)!.localMusic,
+                            context.l10n()!.localMusic,
                             textAlign: TextAlign.center,
                           ),
                         ],
@@ -85,7 +85,7 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                     children: [
                       const SizedBox(height: 12),
                       Text(
-                        AppLocalizations.of(context)!.localMusic,
+                        context.l10n()!.localMusic,
                         style: TextStyle(
                           color: colorScheme.primary,
                           fontSize: 18,
@@ -100,7 +100,7 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                           setActivePlaylist(
                             {
                               'ytid': '',
-                              'title': AppLocalizations.of(context)!.localMusic,
+                              'title': context.l10n()!.localMusic,
                               'header_desc': '',
                               'image': '',
                               'list': await getMusic()
@@ -113,7 +113,7 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                           ),
                         ),
                         child: Text(
-                          AppLocalizations.of(context)!.playAll.toUpperCase(),
+                          context.l10n()!.playAll.toUpperCase(),
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ),
@@ -160,7 +160,7 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                       FocusManager.instance.primaryFocus?.unfocus();
                     },
                   ),
-                  hintText: '${AppLocalizations.of(context)!.search}...',
+                  hintText: '${context.l10n()!.search}...',
                   hintStyle: TextStyle(
                     color: colorScheme.primary,
                   ),
