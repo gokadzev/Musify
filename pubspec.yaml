@@ -21,7 +21,7 @@ dependencies:
   fluentui_system_icons: ^1.1.199
   flutter:
     sdk: flutter
-  flutter_displaymode: ^0.5.0
+  flutter_displaymode: ^0.6.0
   flutter_downloader: ^1.10.2
   flutter_localizations:
     sdk: flutter
