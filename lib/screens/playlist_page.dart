@@ -87,6 +87,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                   _buildPlaylistImage(),
                   _buildPlaylistTitle(),
                   _buildPlaylistDescription(),
+                  const SizedBox(height: 10),
                   _buildPlayAllButton(),
                   const SizedBox(height: 30),
                   _songsList.isNotEmpty ? _buildSongList() : const Spinner()
@@ -118,7 +119,10 @@ class _PlaylistPageState extends State<PlaylistPage> {
       child: Text(
         widget.playlist['title'].toString(),
         textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.bodyMedium,
+        style: Theme.of(context)
+            .textTheme
+            .bodyLarge!
+            .copyWith(color: colorScheme.primary, fontWeight: FontWeight.bold),
       ),
     );
   }
