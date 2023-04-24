@@ -338,6 +338,28 @@ class SettingsCards extends StatelessWidget {
           },
         ),
         ValueListenableBuilder<bool>(
+          valueListenable: sponsorBlockSupport,
+          builder: (_, value, __) {
+            return SettingSwitchBar(
+              'SponsorBlock',
+              FluentIcons.presence_blocked_24_regular,
+              value,
+              (value) {
+                addOrUpdateData(
+                  'settings',
+                  'SponsorBlockSupport',
+                  value,
+                );
+                sponsorBlockSupport.value = value;
+                showToast(
+                  context.l10n()!.settingChangedMsg,
+                );
+              },
+            );
+          },
+        ),
+
+        ValueListenableBuilder<bool>(
           valueListenable: foregroundService,
           builder: (_, foregroundValue, __) {
             return SettingSwitchBar(

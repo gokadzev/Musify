@@ -47,13 +47,7 @@ Future<void> playSong(Map song) async {
       : await getSong(song['ytid'], song['isLive']);
 
   try {
-    await audioPlayer.setAudioSource(
-      AudioSource.uri(
-        Uri.parse(songUrl),
-        tag: mapToMediaItem(song, songUrl),
-      ),
-    );
-
+    await checkIfSponsorBlockIsAvailable(song, songUrl);
     await audioPlayer.play();
   } catch (e) {
     debugPrint('Error playing song: $e');
@@ -75,6 +69,49 @@ Future playPrevious() async {
   else {
     await playSong(activePlaylist['list'][id - 1]);
     id = id - 1;
+  }
+}
+
+Future<void> checkIfSponsorBlockIsAvailable(song, songUrl) async {
+  final _audioSource = AudioSource.uri(
+    Uri.parse(songUrl),
+    tag: mapToMediaItem(song, songUrl),
+  );
+  if (sponsorBlockSupport.value && song['ytid'].length != 0) {
+    final segments = await getSkipSegments(song['ytid']);
+    if (segments.isNotEmpty) {
+      if (segments.length == 1) {
+        await audioPlayer.setAudioSource(
+          ClippingAudioSource(
+            child: _audioSource,
+            start: Duration(seconds: segments[0]['end']!),
+            tag: _audioSource.tag,
+          ),
+        );
+        return;
+      } else {
+        await audioPlayer.setAudioSource(
+          ClippingAudioSource(
+            child: _audioSource,
+            start: Duration(seconds: segments[0]['end']!),
+            end: Duration(seconds: segments[1]['start']!),
+            tag: _audioSource.tag,
+          ),
+        );
+        return;
+      }
+    }
+  }
+  await audioPlayer.setAudioSource(_audioSource);
+}
+
+void changeSponsorBlockStatus() {
+  if (sponsorBlockSupport.value == false) {
+    sponsorBlockSupport.value = true;
+    addOrUpdateData('settings', 'sponsorBlockSupport', true);
+  } else {
+    sponsorBlockSupport.value = false;
+    addOrUpdateData('settings', 'sponsorBlockSupport', false);
   }
 }
 
