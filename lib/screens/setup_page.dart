@@ -1,7 +1,6 @@
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/extensions/l10n.dart';
-import 'package:musify/services/data_manager.dart';
+import 'package:musify/services/download_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/widgets/marque.dart';
@@ -37,16 +36,8 @@ class _SetupPageState extends State<SetupPage> {
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: ElevatedButton(
-                    onPressed: () async => {
-                      downloadDirectory =
-                          await FilePicker.platform.getDirectoryPath(),
-                      addOrUpdateData(
-                        'settings',
-                        'downloadPath',
-                        downloadDirectory,
-                      ),
-                      setState(() {})
-                    },
+                    onPressed: () async =>
+                        {chooseDownloadDirectory(context), setState(() {})},
                     style: ButtonStyle(
                       backgroundColor:
                           MaterialStateProperty.all<Color>(colorScheme.primary),
@@ -63,9 +54,7 @@ class _SetupPageState extends State<SetupPage> {
                 child: Card(
                   child: ListTile(
                     title: MarqueeWidget(
-                      child: Text(
-                        downloadDirectory ?? context.l10n()!.noDirectory,
-                      ),
+                      child: Text(downloadDirectory),
                     ),
                   ),
                 ),

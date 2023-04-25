@@ -33,7 +33,7 @@ Future<void> downloadSong(BuildContext context, dynamic song) async {
     final audio = await getSong(song['ytid'].toString(), song['isLive']);
     await FlutterDownloader.enqueue(
       url: audio,
-      savedDir: downloadDirectory!,
+      savedDir: downloadDirectory,
       fileName: filename,
       showNotification: true,
       openFileFromNotification: true,
@@ -73,23 +73,7 @@ Future<void> checkNecessaryPermissions(BuildContext context) async {
 }
 
 Future<bool> checkDownloadDirectory(BuildContext context) async {
-  if (downloadDirectory == null) {
-    downloadDirectory = await FilePicker.platform.getDirectoryPath();
-    if (downloadDirectory == null) {
-      showToast('${context.l10n()!.chooseDownloadDir}!');
-      return false;
-    } else {
-      addOrUpdateData('settings', 'downloadPath', downloadDirectory);
-      return true;
-    }
-  }
-
-  if (downloadDirectory == null) {
-    showToast('${context.l10n()!.chooseDownloadDir}!');
-    return false;
-  }
-
-  final _localDir = Directory(downloadDirectory!);
+  final _localDir = Directory(downloadDirectory);
 
   try {
     if (!await _localDir.exists()) {
@@ -99,5 +83,19 @@ Future<bool> checkDownloadDirectory(BuildContext context) async {
   } catch (e) {
     showToast('${context.l10n()!.error}: $e');
     return false;
+  }
+}
+
+Future<void> chooseDownloadDirectory(BuildContext context) async {
+  final _downloadDirectory = await FilePicker.platform.getDirectoryPath();
+  if (_downloadDirectory != null) {
+    downloadDirectory = _downloadDirectory;
+    addOrUpdateData(
+      'settings',
+      'downloadPath',
+      downloadDirectory,
+    );
+  } else {
+    showToast('${context.l10n()!.chooseDownloadDir}!');
   }
 }
