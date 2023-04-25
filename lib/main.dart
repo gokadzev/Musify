@@ -9,7 +9,6 @@ import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/screens/root_page.dart';
@@ -21,7 +20,6 @@ import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/formatter.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
-GetIt getIt = GetIt.instance;
 bool _interrupted = false;
 ThemeMode themeMode = ThemeMode.dark;
 var isFdroidBuild = false;
