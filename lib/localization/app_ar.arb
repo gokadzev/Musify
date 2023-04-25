@@ -22,6 +22,7 @@
   "downloadAppUpdate": "تنزيل تحديث التطبيق",
   "downloadFailed": "فشل التنزيل",
   "downloadSongsFolder": "مجلد تنزيل الأغاني",
+  "error": "Something went wrong",
   "errorWhileRequestingPerms": "خطأ أثناء طلب الصلاحيات",
   "falseMSG": "خطأ",
   "foregroundService": "خدمة المقدمة",

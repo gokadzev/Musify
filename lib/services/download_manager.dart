@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
@@ -71,14 +73,31 @@ Future<void> checkNecessaryPermissions(BuildContext context) async {
 }
 
 Future<bool> checkDownloadDirectory(BuildContext context) async {
-  downloadDirectory ??= await FilePicker.platform.getDirectoryPath();
+  if (downloadDirectory == null) {
+    downloadDirectory = await FilePicker.platform.getDirectoryPath();
+    if (downloadDirectory == null) {
+      showToast('${context.l10n()!.chooseDownloadDir}!');
+      return false;
+    } else {
+      addOrUpdateData('settings', 'downloadPath', downloadDirectory);
+      return true;
+    }
+  }
 
   if (downloadDirectory == null) {
     showToast('${context.l10n()!.chooseDownloadDir}!');
     return false;
   }
 
-  addOrUpdateData('settings', 'downloadPath', downloadDirectory);
+  final _localDir = Directory(downloadDirectory!);
 
-  return true;
+  try {
+    if (!await _localDir.exists()) {
+      await _localDir.create(recursive: true);
+    }
+    return true;
+  } catch (e) {
+    showToast('${context.l10n()!.error}: $e');
+    return false;
+  }
 }

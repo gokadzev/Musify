@@ -22,6 +22,7 @@
   "downloadAppUpdate": "Unduh pembaruan aplikasi",
   "downloadFailed": "Download failed",
   "downloadSongsFolder": "Download Songs Folder",
+  "error": "Something went wrong",
   "errorWhileRequestingPerms": "Error while requesting permissions",
   "falseMSG": "False",
   "foregroundService": "Foreground Service",

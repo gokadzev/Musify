@@ -22,6 +22,7 @@
   "downloadAppUpdate": "Update herunterladen",
   "downloadFailed": "Download fehlgeschlagen",
   "downloadSongsFolder": "Ordner 'Lieder herunterladen'",
+  "error": "Something went wrong",
   "errorWhileRequestingPerms": "Fehler bei der Anforderung von Berechtigungen",
   "falseMSG": "Falsch",
   "foregroundService": "Vordergrunddienst",

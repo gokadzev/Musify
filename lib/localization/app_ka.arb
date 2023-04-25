@@ -22,6 +22,7 @@
   "downloadAppUpdate": "აპლიკაციის განახლების ჩამოტვირთვა",
   "downloadFailed": "ჩამოტვირთვა ვერ შესრულდა",
   "downloadSongsFolder": "ჩამოტვირთული სიმღერების საქაღალდე",
+  "error": "Something went wrong",
   "errorWhileRequestingPerms": "შეცდომა უფლებების მოთხოვნისას",
   "falseMSG": "მცდარი",
   "foregroundService": "წინა პლანის სერვისი",

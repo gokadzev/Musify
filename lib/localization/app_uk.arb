@@ -22,6 +22,7 @@
   "downloadAppUpdate": "Завантажити оновлення програми",
   "downloadFailed": "Download failed",
   "downloadSongsFolder": "Каталог завантажених пісень",
+  "error": "Something went wrong",
   "errorWhileRequestingPerms": "Error while requesting permissions",
   "falseMSG": "Хиба",
   "foregroundService": "Служба переднього плану",

@@ -22,6 +22,7 @@
   "downloadAppUpdate": "Tải xuống bản cập nhật ứng dụng",
   "downloadFailed": "Tải xuống không thành công",
   "downloadSongsFolder": "Thư mục tải xuống bài hát",
+  "error": "Something went wrong",
   "errorWhileRequestingPerms": "Lỗi khi yêu cầu cấp quyền",
   "falseMSG": "Sai",
   "foregroundService": "Chạy nền",

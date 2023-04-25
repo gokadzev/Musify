@@ -22,6 +22,7 @@
   "downloadAppUpdate": "下載應用程式更新",
   "downloadFailed": "Download failed",
   "downloadSongsFolder": "Download Songs Folder",
+  "error": "Something went wrong",
   "errorWhileRequestingPerms": "Error while requesting permissions",
   "falseMSG": "否",
   "foregroundService": "Foreground Service",

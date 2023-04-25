@@ -22,6 +22,7 @@
   "downloadAppUpdate": "Baixar atualização do aplicativo",
   "downloadFailed": "Download failed",
   "downloadSongsFolder": "Pasta de Músicas Baixadas",
+  "error": "Something went wrong",
   "errorWhileRequestingPerms": "Error while requesting permissions",
   "falseMSG": "False",
   "foregroundService": "Serviço em Primeiro Plano",
