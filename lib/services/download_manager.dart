@@ -66,6 +66,7 @@ Future<void> checkNecessaryPermissions(BuildContext context) async {
   try {
     await Permission.storage.request();
   } catch (e) {
+    debugPrint('Error while requesting permissions: $e');
     showToast(
       '${context.l10n()!.errorWhileRequestingPerms} + $e',
     );
@@ -81,6 +82,7 @@ Future<bool> checkDownloadDirectory(BuildContext context) async {
     }
     return true;
   } catch (e) {
+    debugPrint('Error while checking the download folder: $e');
     showToast('${context.l10n()!.error}: $e');
     return false;
   }
