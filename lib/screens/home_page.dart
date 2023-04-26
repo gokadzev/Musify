@@ -212,6 +212,9 @@ class _HomePageState extends State<HomePage> {
                                                 child: Text(
                                                   artist,
                                                   textAlign: TextAlign.center,
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                  ),
                                                 ),
                                               ),
                                             ],
