@@ -15,32 +15,32 @@ ColorScheme colorScheme = ColorScheme.fromSeed(
   primary: primaryColor,
 ).harmonized();
 
-final commonProperties = ThemeData(
-  colorScheme: colorScheme.harmonized(),
-  visualDensity: VisualDensity.adaptivePlatformDensity,
-  useMaterial3: true,
-  pageTransitionsTheme: const PageTransitionsTheme(
-    builders: {
-      TargetPlatform.android: CupertinoPageTransitionsBuilder(),
-    },
-  ),
-  inputDecorationTheme: InputDecorationTheme(
-    filled: true,
-    fillColor: colorScheme.background.withAlpha(50),
-    isDense: true,
-    border: OutlineInputBorder(
-      borderRadius: kBorderRadius,
-    ),
-    enabledBorder: OutlineInputBorder(
-      borderRadius: kBorderRadius,
-    ),
-    contentPadding: kContentPadding,
-  ),
-);
+ThemeData commonProperties() => ThemeData(
+      colorScheme: colorScheme.harmonized(),
+      visualDensity: VisualDensity.adaptivePlatformDensity,
+      useMaterial3: true,
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+        },
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: colorScheme.background.withAlpha(50),
+        isDense: true,
+        border: OutlineInputBorder(
+          borderRadius: kBorderRadius,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: kBorderRadius,
+        ),
+        contentPadding: kContentPadding,
+      ),
+    );
 
 ThemeData getAppDarkTheme() {
   final _darkBlack = const Color(0xFF121212);
-  return commonProperties.copyWith(
+  return commonProperties().copyWith(
     scaffoldBackgroundColor: _darkBlack,
     canvasColor: _darkBlack,
     textTheme: GoogleFonts.robotoTextTheme(ThemeData.dark().textTheme),
@@ -87,7 +87,7 @@ ThemeData getAppDarkTheme() {
 }
 
 ThemeData getAppLightTheme() {
-  return commonProperties.copyWith(
+  return commonProperties().copyWith(
     scaffoldBackgroundColor: Colors.white,
     canvasColor: Colors.white,
     textTheme: GoogleFonts.robotoTextTheme(ThemeData.light().textTheme),
@@ -137,21 +137,21 @@ ThemeData getAppLightTheme() {
 
 // Components
 
+AppBarTheme mAppBarTheme() => AppBarTheme(
+      centerTitle: true,
+      titleTextStyle: TextStyle(
+        fontSize: 27,
+        fontWeight: FontWeight.w700,
+        color: colorScheme.primary,
+      ),
+      elevation: 0,
+    );
+
 final mCardTheme = CardTheme(
   shape: RoundedRectangleBorder(
     borderRadius: BorderRadius.circular(10),
   ),
   elevation: 2.3,
-);
-
-final mAppBarTheme = AppBarTheme(
-  centerTitle: true,
-  titleTextStyle: TextStyle(
-    fontSize: 27,
-    fontWeight: FontWeight.w700,
-    color: colorScheme.primary,
-  ),
-  elevation: 0,
 );
 
 final mInputDecorationTheme = InputDecorationTheme(

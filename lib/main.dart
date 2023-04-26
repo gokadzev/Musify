@@ -176,7 +176,7 @@ class _MyAppState extends State<MyApp> {
                   bottomAppBarTheme: BottomAppBarTheme(
                     color: darkColorScheme.surface,
                   ),
-                  appBarTheme: mAppBarTheme.copyWith(
+                  appBarTheme: mAppBarTheme().copyWith(
                     backgroundColor: darkColorScheme.surface,
                   ),
                   inputDecorationTheme: mInputDecorationTheme,
@@ -191,7 +191,7 @@ class _MyAppState extends State<MyApp> {
                   bottomAppBarTheme: BottomAppBarTheme(
                     color: lightColorScheme.surface,
                   ),
-                  appBarTheme: mAppBarTheme.copyWith(
+                  appBarTheme: mAppBarTheme().copyWith(
                     backgroundColor: lightColorScheme.surface,
                   ),
                   inputDecorationTheme: mInputDecorationTheme,
