@@ -106,13 +106,8 @@ Future<void> checkIfSponsorBlockIsAvailable(song, songUrl) async {
 }
 
 void changeSponsorBlockStatus() {
-  if (sponsorBlockSupport.value == false) {
-    sponsorBlockSupport.value = true;
-    addOrUpdateData('settings', 'sponsorBlockSupport', true);
-  } else {
-    sponsorBlockSupport.value = false;
-    addOrUpdateData('settings', 'sponsorBlockSupport', false);
-  }
+  sponsorBlockSupport.value = !sponsorBlockSupport.value;
+  addOrUpdateData('settings', 'sponsorBlockSupport', sponsorBlockSupport.value);
 }
 
 Future changeShuffleStatus() async {
