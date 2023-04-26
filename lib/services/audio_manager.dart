@@ -167,7 +167,7 @@ void activateListeners() {
       await audioPlayer.seek(audioPlayer.duration);
       if (!hasNext) {
         await audioPlayer.seek(Duration.zero);
-      } else if (hasNext) {
+      } else {
         await playNext();
       }
     }
