@@ -38,15 +38,11 @@ class PlaylistCube extends StatelessWidget {
           child: GestureDetector(
             onTap: onClickOpen
                 ? () {
-                    getPlaylistInfoForWidget(id).then(
-                      (value) => {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => PlaylistPage(playlist: value),
-                          ),
-                        )
-                      },
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PlaylistPage(playlistId: id),
+                      ),
                     );
                   }
                 : () => {},

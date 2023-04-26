@@ -10,8 +10,8 @@ import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/spinner.dart';
 
 class PlaylistPage extends StatefulWidget {
-  const PlaylistPage({super.key, required this.playlist});
-  final dynamic playlist;
+  const PlaylistPage({super.key, required this.playlistId});
+  final dynamic playlistId;
 
   @override
   _PlaylistPageState createState() => _PlaylistPageState();
@@ -19,6 +19,7 @@ class PlaylistPage extends StatefulWidget {
 
 class _PlaylistPageState extends State<PlaylistPage> {
   final _songsList = [];
+  dynamic _playlist;
 
   bool _isLoading = true;
   bool _hasMore = true;
@@ -30,8 +31,13 @@ class _PlaylistPageState extends State<PlaylistPage> {
   void initState() {
     super.initState();
     _isLoading = true;
-    _hasMore = true;
-    _loadMore();
+    getPlaylistInfoForWidget(widget.playlistId).then(
+      (value) => {
+        _playlist = value,
+        _hasMore = true,
+        _loadMore(),
+      },
+    );
   }
 
   @override
@@ -59,11 +65,11 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
   Future<List> fetch() async {
     final list = [];
-    final _count = widget.playlist['list'].length as int;
+    final _count = _playlist['list'].length as int;
     final n = min(_itemsPerPage, _count - _currentPage * _itemsPerPage);
     await Future.delayed(const Duration(seconds: 1), () {
       for (var i = 0; i < n; i++) {
-        list.add(widget.playlist['list'][_currentLastLoadedId]);
+        list.add(_playlist['list'][_currentLastLoadedId]);
         _currentLastLoadedId++;
       }
     });
@@ -80,7 +86,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
         ),
       ),
       body: SingleChildScrollView(
-        child: widget.playlist != null
+        child: _playlist != null
             ? Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -105,9 +111,9 @@ class _PlaylistPageState extends State<PlaylistPage> {
     return Card(
       color: Colors.transparent,
       child: PlaylistCube(
-        id: widget.playlist['ytid'],
-        image: widget.playlist['image'],
-        title: widget.playlist['title'],
+        id: _playlist['ytid'],
+        image: _playlist['image'],
+        title: _playlist['title'],
         onClickOpen: false,
       ),
     );
@@ -117,7 +123,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12),
       child: Text(
-        widget.playlist['title'].toString(),
+        _playlist['title'].toString(),
         textAlign: TextAlign.center,
         style: Theme.of(context)
             .textTheme
@@ -129,7 +135,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
   Widget _buildPlaylistDescription() {
     return Text(
-      widget.playlist['header_desc'].toString(),
+      _playlist['header_desc'].toString(),
       textAlign: TextAlign.center,
       style: Theme.of(context).textTheme.bodySmall,
     );
@@ -138,7 +144,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
   Widget _buildPlayAllButton() {
     return ElevatedButton(
       onPressed: () {
-        setActivePlaylist(widget.playlist);
+        setActivePlaylist(_playlist);
         showToast(
           context.l10n()!.queueInitText,
         );
