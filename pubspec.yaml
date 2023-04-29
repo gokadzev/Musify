@@ -17,16 +17,16 @@ dependencies:
   audio_session: ^0.1.13
   cached_network_image: ^3.2.3
   dynamic_color: ^1.6.3
-  file_picker: ^5.2.10
-  fluentui_system_icons: ^1.1.199
+  file_picker: ^5.2.11
+  fluentui_system_icons: ^1.1.200
   flutter:
     sdk: flutter
-  flutter_displaymode: ^0.5.0
+  flutter_displaymode: ^0.6.0
   flutter_downloader: ^1.10.2
   flutter_localizations:
     sdk: flutter
   fluttertoast: ^8.2.1
-  google_fonts: ^4.0.3
+  google_fonts: ^4.0.4
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   http: ^0.13.5
