@@ -32,6 +32,7 @@ dependencies:
   http: ^0.13.5
   intl: ^0.17.0
   just_audio: ^0.9.32
+  logger: ^1.3.0
   on_audio_query:
     path: ./packages/on_audio_query/on_audio_query
   permission_handler: ^10.2.0

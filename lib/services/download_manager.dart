@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
+import 'package:musify/main.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
@@ -53,7 +54,7 @@ Future<void> downloadSong(BuildContext context, dynamic song) async {
       },
     );
   } catch (e) {
-    debugPrint('Error while downloading song: $e');
+    logger.e('Error while downloading song: $e');
     showToast(
       '${context.l10n()!.downloadFailed}, $e',
     );
@@ -66,7 +67,7 @@ Future<void> checkNecessaryPermissions(BuildContext context) async {
   try {
     await Permission.storage.request();
   } catch (e) {
-    debugPrint('Error while requesting permissions: $e');
+    logger.e('Error while requesting permissions: $e');
     showToast(
       '${context.l10n()!.errorWhileRequestingPerms} + $e',
     );
@@ -82,7 +83,7 @@ Future<bool> checkDownloadDirectory(BuildContext context) async {
     }
     return true;
   } catch (e) {
-    debugPrint('Error while checking the download folder: $e');
+    logger.e('Error while checking the download folder: $e');
     showToast('${context.l10n()!.error}: $e');
     return false;
   }

@@ -10,6 +10,7 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:logger/logger.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/screens/root_page.dart';
 import 'package:musify/services/audio_manager.dart';
@@ -23,6 +24,7 @@ import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 bool _interrupted = false;
 ThemeMode themeMode = ThemeMode.dark;
 var isFdroidBuild = false;
+var logger = Logger();
 
 final appLanguages = <String, String>{
   'English': 'en',
@@ -138,11 +140,11 @@ class _MyAppState extends State<MyApp> {
 
           await playSong(song);
         } catch (e) {
-          debugPrint('Error: $e');
+          logger.e('Error: $e');
         }
       },
       onError: (err) {
-        debugPrint('getLinkStream error: $err');
+        logger.e('getLinkStream error: $err');
       },
     );
   }
@@ -270,7 +272,7 @@ Future<void> initialisation() async {
 
     await FlutterDownloader.registerCallback(downloadCallback);
   } catch (e) {
-    debugPrint('error while initializing Flutter Downloader plugin $e');
+    logger.e('error while initializing Flutter Downloader plugin $e');
   }
 }
 

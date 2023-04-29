@@ -7,6 +7,7 @@ import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:just_audio/just_audio.dart';
 import 'package:musify/extensions/l10n.dart';
+import 'package:musify/main.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/lyrics_service.dart';
@@ -71,7 +72,7 @@ Future get10Music(dynamic playlistid) async {
 
       addOrUpdateData('cache', 'playlist10Songs$playlistid', playlistSongs);
     } catch (e) {
-      debugPrint('Error retrieving playlist songs: $e');
+      logger.e('Error retrieving playlist songs: $e');
       return null;
     }
   }
@@ -200,7 +201,7 @@ Future<List> getSearchSuggestions(String query) async {
     final res = jsonDecode(response.body)[1] as List;
     return res;
   } catch (e) {
-    debugPrint('Error in getSearchSuggestions: $e');
+    logger.e('Error in getSearchSuggestions: $e');
     return [];
   }
 }
@@ -239,7 +240,7 @@ Future<List<Map<String, int>>> getSkipSegments(String id) async {
       return [];
     }
   } catch (e, stack) {
-    debugPrint('$e $stack');
+    logger.e('$e $stack');
     return [];
   }
 }
