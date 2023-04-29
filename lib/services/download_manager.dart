@@ -90,15 +90,20 @@ Future<bool> checkDownloadDirectory(BuildContext context) async {
 }
 
 Future<void> chooseDownloadDirectory(BuildContext context) async {
-  final _downloadDirectory = await FilePicker.platform.getDirectoryPath();
-  if (_downloadDirectory != null) {
-    downloadDirectory = _downloadDirectory;
-    addOrUpdateData(
-      'settings',
-      'downloadPath',
-      downloadDirectory,
-    );
-  } else {
-    showToast('${context.l10n()!.chooseDownloadDir}!');
+  try {
+    final _downloadDirectory = await FilePicker.platform.getDirectoryPath();
+    if (_downloadDirectory != null) {
+      downloadDirectory = _downloadDirectory;
+      addOrUpdateData(
+        'settings',
+        'downloadPath',
+        downloadDirectory,
+      );
+    } else {
+      showToast('${context.l10n()!.chooseDownloadDir}!');
+    }
+  } catch (e) {
+    logger.e('Error while choosing the download directory: $e');
+    showToast('Error while choosing the download directory: $e');
   }
 }
