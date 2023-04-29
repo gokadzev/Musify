@@ -64,4 +64,4 @@ Map<String, dynamic> returnSongLayoutFromAudioModel(
   };
 }
 
-String? getSongId(String url) => VideoId.parseVideoId(url)!;
+String? getSongId(String url) => VideoId.parseVideoId(url);
