@@ -14,20 +14,19 @@ import 'package:permission_handler/permission_handler.dart';
 
 Future<void> downloadSong(BuildContext context, dynamic song) async {
   try {
-    if (!await checkDownloadDirectory(context)) {
+    final isDirectoryValid = await checkDownloadDirectory(context);
+    if (!isDirectoryValid) {
+      showToast('${context.l10n()!.chooseDownloadDir}!');
       return;
     }
 
     final songName = path
-        .basenameWithoutExtension(
-          song['artist'] + ' ' + song['title'],
-        )
+        .basenameWithoutExtension('${song['artist']} ${song['title']}')
         .replaceAll(
           RegExp(r'[^\w\s-]'),
           '',
         ) // remove non-alphanumeric characters except for hyphens and spaces
-        .replaceAll(RegExp(r'(\s)+'), '-') // replace spaces with hyphens
-        .toLowerCase();
+        .replaceAll(RegExp(r'(\s)+'), '-'); // replace spaces with hyphens
 
     final filename = '$songName.${prefferedFileExtension.value}';
 
@@ -55,9 +54,7 @@ Future<void> downloadSong(BuildContext context, dynamic song) async {
     );
   } catch (e) {
     logger.e('Error while downloading song: $e');
-    showToast(
-      '${context.l10n()!.downloadFailed}, $e',
-    );
+    showToast('${context.l10n()!.downloadFailed}, $e');
   }
 }
 
