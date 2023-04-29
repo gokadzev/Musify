@@ -8,6 +8,7 @@ import 'package:musify/services/audio_manager.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/formatter.dart';
+import 'package:musify/widgets/artist_cube.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/spinner.dart';
 import 'package:on_audio_query/on_audio_query.dart' hide context;
@@ -87,7 +88,7 @@ class _ArtistPagePageState extends State<ArtistPage> {
             ? Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  _buildPlaylistImage(),
+                  ArtistCube(artist: widget.playlist['title']),
                   _buildPlaylistTitle(),
                   _buildPlaylistDescription(),
                   _buildPlayAllButton(),
@@ -100,39 +101,6 @@ class _ArtistPagePageState extends State<ArtistPage> {
                 height: MediaQuery.of(context).size.height - 100,
                 child: const Spinner(),
               ),
-      ),
-    );
-  }
-
-  Widget _buildPlaylistImage() {
-    final calculatedSize = MediaQuery.of(context).size.height * 0.25;
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(150),
-      child: Container(
-        height: calculatedSize,
-        width: calculatedSize,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: colorScheme.secondary,
-        ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              const Icon(
-                FluentIcons.person_24_regular,
-                size: 30,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: Text(
-                  widget.playlist['title'],
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

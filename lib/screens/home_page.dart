@@ -7,6 +7,7 @@ import 'package:musify/screens/artist_page.dart';
 import 'package:musify/screens/playlists_page.dart';
 import 'package:musify/services/offline_audio.dart';
 import 'package:musify/style/app_themes.dart';
+import 'package:musify/widgets/artist_cube.dart';
 import 'package:musify/widgets/delayed_display.dart';
 import 'package:musify/widgets/marque.dart';
 import 'package:musify/widgets/playlist_cube.dart';
@@ -187,41 +188,7 @@ class _HomePageState extends State<HomePage> {
                                         },
                                       );
                                     },
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(150),
-                                      child: Container(
-                                        height: calculatedSize,
-                                        width: calculatedSize,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          color: colorScheme.secondary,
-                                        ),
-                                        child: Center(
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: <Widget>[
-                                              const Icon(
-                                                FluentIcons.person_24_regular,
-                                                size: 30,
-                                              ),
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.all(10),
-                                                child: Text(
-                                                  artist,
-                                                  textAlign: TextAlign.center,
-                                                  style: const TextStyle(
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
+                                    child: ArtistCube(artist: artist),
                                   ),
                                 );
                               },
