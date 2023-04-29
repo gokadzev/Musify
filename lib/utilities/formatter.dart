@@ -9,13 +9,13 @@ String formatSongTitle(String title, {bool removeFileExtension = false}) {
     RegExp(r'\|.*'): '',
   };
 
-  for (var pattern in patterns.keys) {
+  for (final pattern in patterns.keys) {
     title = title.replaceFirst(pattern, patterns[pattern]!);
   }
 
   if (removeFileExtension) {
     final fileExtensions = ['.mp3', '.flac', '.m4a'];
-    for (var ext in fileExtensions) {
+    for (final ext in fileExtensions) {
       title = title.replaceFirst(ext, '');
     }
   }

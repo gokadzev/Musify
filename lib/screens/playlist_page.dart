@@ -96,7 +96,10 @@ class _PlaylistPageState extends State<PlaylistPage> {
                   const SizedBox(height: 10),
                   _buildPlayAllButton(),
                   const SizedBox(height: 30),
-                  _songsList.isNotEmpty ? _buildSongList() : const Spinner()
+                  if (_songsList.isNotEmpty)
+                    _buildSongList()
+                  else
+                    const Spinner()
                 ],
               )
             : SizedBox(

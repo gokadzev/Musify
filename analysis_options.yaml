@@ -59,8 +59,10 @@ linter:
     - prefer_contains
     - prefer_equal_for_default_values
     - prefer_final_fields
+    - prefer_final_in_for_each
     - prefer_final_locals
     - prefer_generic_function_type_aliases
+    - prefer_if_elements_to_conditional_expressions
     - prefer_initializing_formals
     - prefer_interpolation_to_compose_strings
     - prefer_is_empty
@@ -83,13 +85,24 @@ linter:
     - unnecessary_await_in_return
     - unnecessary_brace_in_string_interps
     - unnecessary_const
+    - unnecessary_constructor_name
     - unnecessary_getters_setters
     - unnecessary_lambdas
+    - unnecessary_late
+    - unnecessary_library_directive
     - unnecessary_new
     - unnecessary_null_aware_assignments
+    - unnecessary_null_aware_operator_on_extension_on_nullable
+    - unnecessary_null_checks
+    - unnecessary_null_in_if_null_operators
+    - unnecessary_nullable_for_final_variable_declarations
+    - unnecessary_overrides
     - unnecessary_parenthesis
     - unnecessary_statements
+    - unnecessary_string_escapes
+    - unnecessary_string_interpolations
     - unnecessary_this
+    - unnecessary_to_list_in_spreads
     - unrelated_type_equality_checks
     - use_colored_box
     - use_decorated_box

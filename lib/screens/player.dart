@@ -163,19 +163,21 @@ class AudioAppState extends State<AudioApp> {
                     ],
                   ),
                 ),
-                metadata.extras['isLive'] != null && metadata.extras['isLive']
-                    ? controlButtonsForLive(
-                        songLikeStatus,
-                        metadata.extras['ytid'],
-                      )
-                    : Material(
-                        child: _buildPlayer(
-                          size,
-                          songLikeStatus,
-                          metadata.extras['ytid'],
-                          metadata,
-                        ),
-                      ),
+                if (metadata.extras['isLive'] != null &&
+                    metadata.extras['isLive'])
+                  controlButtonsForLive(
+                    songLikeStatus,
+                    metadata.extras['ytid'],
+                  )
+                else
+                  Material(
+                    child: _buildPlayer(
+                      size,
+                      songLikeStatus,
+                      metadata.extras['ytid'],
+                      metadata,
+                    ),
+                  ),
               ],
             );
           },
