@@ -303,17 +303,22 @@ class AudioAppState extends State<AudioApp> {
                               ),
                             ],
                           ),
-                        IconButton(
-                          padding: EdgeInsets.zero,
-                          icon: Icon(
-                            FluentIcons.arrow_shuffle_24_filled,
-                            color: shuffleNotifier.value
-                                ? colorScheme.primary
-                                : Theme.of(context).hintColor,
-                          ),
-                          iconSize: 20,
-                          onPressed: changeShuffleStatus,
-                          splashColor: Colors.transparent,
+                        ValueListenableBuilder<bool>(
+                          valueListenable: shuffleNotifier,
+                          builder: (_, value, __) {
+                            return IconButton(
+                              padding: EdgeInsets.zero,
+                              icon: Icon(
+                                FluentIcons.arrow_shuffle_24_filled,
+                                color: value
+                                    ? colorScheme.primary
+                                    : Theme.of(context).hintColor,
+                              ),
+                              iconSize: 20,
+                              onPressed: changeShuffleStatus,
+                              splashColor: Colors.transparent,
+                            );
+                          },
                         ),
                         IconButton(
                           padding: const EdgeInsets.only(right: 10),
