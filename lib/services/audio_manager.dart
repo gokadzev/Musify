@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
@@ -34,6 +35,7 @@ AudioPlayer audioPlayer = AudioPlayer(
 final playerState = ValueNotifier<PlayerState>(audioPlayer.playerState);
 
 final _playlist = ConcatenatingAudioSource(children: []);
+final Random _random = Random();
 
 bool get hasNext => activePlaylist['list'].isEmpty
     ? audioPlayer.hasNext
@@ -59,17 +61,47 @@ Future playNext() async {
   if (activePlaylist.isEmpty || id + 1 >= activePlaylist['list'].length)
     await audioPlayer.seekToNext();
   else {
-    await playSong(activePlaylist['list'][id + 1]);
-    id = id + 1;
+    if (shuffleNotifier.value) {
+      var randomIndex = _random.nextInt(activePlaylist['list'].length);
+
+      while (randomIndex == id) {
+        randomIndex = _random.nextInt(activePlaylist['list'].length);
+      }
+
+      await playSong(activePlaylist['list'][randomIndex]);
+      id = randomIndex;
+    } else {
+      if (id + 1 >= activePlaylist['list'].length) {
+        await audioPlayer.seekToNext();
+      } else {
+        await playSong(activePlaylist['list'][id + 1]);
+        id = id + 1;
+      }
+    }
   }
 }
 
 Future playPrevious() async {
-  if (activePlaylist.isEmpty || id - 1 <= activePlaylist['list'].length)
+  if (activePlaylist.isEmpty || activePlaylist['list'].isEmpty) {
     await audioPlayer.seekToPrevious();
-  else {
-    await playSong(activePlaylist['list'][id - 1]);
-    id = id - 1;
+  } else {
+    if (shuffleNotifier.value) {
+      var randomIndex = -random.nextInt(activePlaylist['list'].length);
+
+      while (randomIndex == id) {
+        randomIndex = -random.nextInt(activePlaylist['list'].length);
+      }
+
+      await playSong(activePlaylist['list'][randomIndex]);
+      id = randomIndex;
+    } else {
+      if (id - 1 < 0) {
+        await audioPlayer.seekToPrevious();
+      } else {
+        await playSong(activePlaylist['list'][id - 1]);
+        id = id - 1;
+      }
+    }
   }
 }
 
