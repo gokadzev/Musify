@@ -68,14 +68,14 @@ Future playNext() async {
         randomIndex = _random.nextInt(activePlaylist['list'].length);
       }
 
-      await playSong(activePlaylist['list'][randomIndex]);
       id = randomIndex;
+      await playSong(activePlaylist['list'][id]);
     } else {
       if (id + 1 >= activePlaylist['list'].length) {
         await audioPlayer.seekToNext();
       } else {
-        await playSong(activePlaylist['list'][id + 1]);
         id = id + 1;
+        await playSong(activePlaylist['list'][id]);
       }
     }
   }
@@ -86,20 +86,20 @@ Future playPrevious() async {
     await audioPlayer.seekToPrevious();
   } else {
     if (shuffleNotifier.value) {
-      var randomIndex = -random.nextInt(activePlaylist['list'].length);
+      var randomIndex = _random.nextInt(activePlaylist['list'].length);
 
       while (randomIndex == id) {
-        randomIndex = -random.nextInt(activePlaylist['list'].length);
+        randomIndex = _random.nextInt(activePlaylist['list'].length);
       }
 
-      await playSong(activePlaylist['list'][randomIndex]);
       id = randomIndex;
+      await playSong(activePlaylist['list'][id]);
     } else {
       if (id - 1 < 0) {
         await audioPlayer.seekToPrevious();
       } else {
-        await playSong(activePlaylist['list'][id - 1]);
         id = id - 1;
+        await playSong(activePlaylist['list'][id]);
       }
     }
   }
