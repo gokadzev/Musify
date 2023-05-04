@@ -58,25 +58,17 @@ Future<void> playSong(Map song) async {
 }
 
 Future playNext() async {
-  if (activePlaylist.isEmpty || id + 1 >= activePlaylist['list'].length)
+  if (activePlaylist.isEmpty || id + 1 >= activePlaylist['list'].length) {
     await audioPlayer.seekToNext();
-  else {
+  } else {
     if (shuffleNotifier.value) {
-      var randomIndex = _random.nextInt(activePlaylist['list'].length);
-
-      while (randomIndex == id) {
-        randomIndex = _random.nextInt(activePlaylist['list'].length);
-      }
+      final randomIndex = _generateRandomIndex(activePlaylist['list'].length);
 
       id = randomIndex;
       await playSong(activePlaylist['list'][id]);
     } else {
-      if (id + 1 >= activePlaylist['list'].length) {
-        await audioPlayer.seekToNext();
-      } else {
-        id = id + 1;
-        await playSong(activePlaylist['list'][id]);
-      }
+      id = id + 1;
+      await playSong(activePlaylist['list'][id]);
     }
   }
 }
@@ -86,11 +78,7 @@ Future playPrevious() async {
     await audioPlayer.seekToPrevious();
   } else {
     if (shuffleNotifier.value) {
-      var randomIndex = _random.nextInt(activePlaylist['list'].length);
-
-      while (randomIndex == id) {
-        randomIndex = _random.nextInt(activePlaylist['list'].length);
-      }
+      final randomIndex = _generateRandomIndex(activePlaylist['list'].length);
 
       id = randomIndex;
       await playSong(activePlaylist['list'][id]);
@@ -103,6 +91,16 @@ Future playPrevious() async {
       }
     }
   }
+}
+
+int _generateRandomIndex(int length) {
+  var randomIndex = _random.nextInt(length);
+
+  while (randomIndex == id) {
+    randomIndex = _random.nextInt(length);
+  }
+
+  return randomIndex;
 }
 
 Future<void> checkIfSponsorBlockIsAvailable(song, songUrl) async {
