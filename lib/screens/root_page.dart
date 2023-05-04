@@ -43,8 +43,7 @@ class AppState extends State<Musify> {
     return Scaffold(
       body: WillPopScope(
         onWillPop: () async {
-          if (_navigatorKey.currentState!.canPop() &&
-              _navigatorKey.currentState != null) {
+          if (_navigatorKey.currentState?.canPop() == true) {
             _navigatorKey.currentState?.pop();
             return false;
           }
@@ -54,26 +53,22 @@ class AppState extends State<Musify> {
           key: _navigatorKey,
           initialRoute: '/',
           onGenerateRoute: (RouteSettings settings) {
-            WidgetBuilder builder;
-            switch (settings.name) {
-              case '/':
-                builder = (BuildContext context) => HomePage();
-                break;
-              case '/search':
-                builder = (BuildContext context) => SearchPage();
-                break;
-              case '/userPlaylists':
-                builder = (BuildContext context) => UserPlaylistsPage();
-                break;
-              case '/more':
-                builder = (BuildContext context) => MorePage();
-                break;
-              default:
-                throw Exception('Invalid route: ${settings.name}');
-            }
             return MaterialPageRoute(
-              builder: builder,
               settings: settings,
+              builder: (BuildContext context) {
+                switch (settings.name) {
+                  case '/':
+                    return HomePage();
+                  case '/search':
+                    return SearchPage();
+                  case '/userPlaylists':
+                    return UserPlaylistsPage();
+                  case '/more':
+                    return MorePage();
+                  default:
+                    throw Exception('Invalid route: ${settings.name}');
+                }
+              },
             );
           },
         ),
