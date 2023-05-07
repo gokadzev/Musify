@@ -27,6 +27,19 @@ function getDownloadsInfo(callback) {
   xmlHttp.send(null)
 }
 
+function nFormatter(num) {
+  if (num >= 1000000000) {
+    return (num / 1000000000).toFixed(1).replace(/\.0$/, '') + 'G'
+  }
+  if (num >= 1000000) {
+    return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M'
+  }
+  if (num >= 1000) {
+    return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K'
+  }
+  return num
+}
+
 // Tab Section
 var initTabs = function () {
   const tabs = document.querySelectorAll('[data-tab-target]')
@@ -106,7 +119,8 @@ window.onload = function () {
     downloadElement.setAttribute('href', appUrl)
   })
   getDownloadsInfo((res) => {
-    const response = JSON.parse(res)
-    downloadsCount.textContent = response['downloads_count']
+    var response = JSON.parse(res)
+    response = nFormatter(response['downloads_count'])
+    downloadsCount.textContent = response
   })
 }
