@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
+import 'package:musify/extensions/screen_size.dart';
 import 'package:musify/screens/playlist_page.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/widgets/delayed_display.dart';
@@ -29,7 +30,7 @@ class PlaylistCube extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final calculatedSize = MediaQuery.of(context).size.height * 0.25;
+    final calculatedSize = context.screenSize.height * 0.25;
     return Stack(
       children: <Widget>[
         DelayedDisplay(

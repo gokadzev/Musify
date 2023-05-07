@@ -4,6 +4,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
+import 'package:musify/extensions/screen_size.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/flutter_toast.dart';
@@ -101,7 +102,7 @@ class _ArtistPagePageState extends State<ArtistPage> {
                 ],
               )
             : SizedBox(
-                height: MediaQuery.of(context).size.height - 100,
+                height: context.screenSize.height - 100,
                 child: const Spinner(),
               ),
       ),
@@ -245,7 +246,7 @@ class _ArtistPagePageState extends State<ArtistPage> {
       );
     else
       return SizedBox(
-        height: MediaQuery.of(context).size.height - 100,
+        height: context.screenSize.height - 100,
         child: const Spinner(),
       );
   }
@@ -281,7 +282,7 @@ class _ArtistPagePageState extends State<ArtistPage> {
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height / 55,
+                    top: context.screenSize.height / 55,
                     bottom: 10,
                     left: 20,
                     right: 20,

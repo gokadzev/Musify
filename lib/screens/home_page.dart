@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
+import 'package:musify/extensions/screen_size.dart';
 import 'package:musify/screens/artist_page.dart';
 import 'package:musify/screens/playlists_page.dart';
 import 'package:musify/services/offline_audio.dart';
@@ -51,8 +52,7 @@ class _HomePageState extends State<HomePage> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width / 1.4,
+                                  width: context.screenSize.width / 1.4,
                                   child: MarqueeWidget(
                                     direction: Axis.horizontal,
                                     child: Text(
@@ -84,7 +84,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                           SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.25,
+                            height: context.screenSize.height * 0.25,
                             child: ListView.separated(
                               scrollDirection: Axis.horizontal,
                               separatorBuilder: (_, __) =>
@@ -115,8 +115,7 @@ class _HomePageState extends State<HomePage> {
             FutureBuilder(
               future: getArtists(),
               builder: (context, AsyncSnapshot<List<ArtistModel>> data) {
-                final calculatedSize =
-                    MediaQuery.of(context).size.height * 0.25;
+                final calculatedSize = context.screenSize.height * 0.25;
                 return data.hasData
                     ? Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -132,8 +131,7 @@ class _HomePageState extends State<HomePage> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width / 1.4,
+                                  width: context.screenSize.width / 1.4,
                                   child: MarqueeWidget(
                                     direction: Axis.horizontal,
                                     child: Text(
@@ -242,7 +240,7 @@ class _HomePageState extends State<HomePage> {
                       children: <Widget>[
                         Padding(
                           padding: EdgeInsets.only(
-                            top: MediaQuery.of(context).size.height / 55,
+                            top: context.screenSize.height / 55,
                             bottom: 10,
                             left: 20,
                             right: 20,

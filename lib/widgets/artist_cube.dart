@@ -1,5 +1,6 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:musify/extensions/screen_size.dart';
 import 'package:musify/style/app_themes.dart';
 
 class ArtistCube extends StatelessWidget {
@@ -12,7 +13,7 @@ class ArtistCube extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final calculatedSize = MediaQuery.of(context).size.height * 0.25;
+    final calculatedSize = context.screenSize.height * 0.25;
     return ClipRRect(
       borderRadius: BorderRadius.circular(150),
       child: Container(

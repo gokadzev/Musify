@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
+import 'package:musify/extensions/screen_size.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/widgets/playlist_cube.dart';
@@ -103,7 +104,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                 ],
               )
             : SizedBox(
-                height: MediaQuery.of(context).size.height - 100,
+                height: context.screenSize.height - 100,
                 child: const Spinner(),
               ),
       ),
@@ -191,7 +192,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
       );
     else
       return SizedBox(
-        height: MediaQuery.of(context).size.height - 100,
+        height: context.screenSize.height - 100,
         child: const Spinner(),
       );
   }

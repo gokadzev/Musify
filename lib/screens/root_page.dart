@@ -5,6 +5,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:musify/extensions/l10n.dart';
+import 'package:musify/extensions/screen_size.dart';
 import 'package:musify/main.dart';
 import 'package:musify/screens/home_page.dart';
 import 'package:musify/screens/more_page.dart';
@@ -262,9 +263,8 @@ class AppState extends State<Musify> {
                                 processingState == ProcessingState.buffering) {
                               return Container(
                                 margin: const EdgeInsets.all(8),
-                                width: MediaQuery.of(context).size.width * 0.08,
-                                height:
-                                    MediaQuery.of(context).size.width * 0.08,
+                                width: context.screenSize.width * 0.08,
+                                height: context.screenSize.width * 0.08,
                                 child: CircularProgressIndicator(
                                   valueColor: AlwaysStoppedAnimation<Color>(
                                     colorScheme.primary,
