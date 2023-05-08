@@ -1,0 +1,16 @@
+Bug Fixes
+
+- Play previous and play next functions work correctly now
+
+
+Enhancements
+
+- Added SponsorBlock support [BETA]
+
+- Improved playlist page UI
+
+- Music artist for local songs is mostly available on now playing page
+
+- Added translations for various languages
+
+- Improved the app performance
