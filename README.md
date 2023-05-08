@@ -1,7 +1,11 @@
+<p align="center"><img width="200" src="https://github.com/gokadzev/Musify/raw/master/android/app/src/main/res/mipmap-xxxhdpi/launcher_icon.png"></p>
+<h1 align="center">Musify</h1>
+
 <p align="center">
- <img width="150px" src="https://github.com/gokadzev/Musify/raw/master/android/app/src/main/res/mipmap-xxxhdpi/launcher_icon.png" align="center" alt="GitHub Readme Stats" />
- <h2 align="center"><b>Musify</b></h2>
- <p align="center"><b>Music Streaming and Downloading app made in Flutter!</b></p>
+    Music Streaming and Downloading app made in Flutter!
+</p>
+
+<p align="center">
  <p align="center">
     <a href="https://github.com/gokadzev/Musify/stargazers"><img alt="Stars" src="https://img.shields.io/github/stars/gokadzev/Musify?style=flat-square&color=blue"/></a>
     <a href="https://github.com/gokadzev/Musify/fork"><img alt="Forks" src="https://img.shields.io/github/forks/gokadzev/Musify?style=flat-square&color=blue"/></a>
@@ -14,7 +18,7 @@
 
 ---
 
-  <h3 align="center">Features</h3>
+  <h3 align="center">Features :rocket:</h3>
   <p align="center">
     Online Song Search With Suggestions :mag:<br>
     Streaming Support :musical_note:<br>
@@ -32,7 +36,7 @@
 
 ---
 
-<h3 align="center">Screenshots</h3>
+<h3 align="center">Screenshots :camera:</h3>
 
 <div align="center" style="width:100%;display:flex;justify-content:space-between;">
 <img width="32%" src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/01.jpg" align="center" alt="screenshot" />
@@ -42,12 +46,12 @@
 
 ---
 
-  <h3 align="center">Download</h3>
+  <h3 align="center">Download :floppy_disk:</h3>
      <p align="center" style="align-items:center"><a href="https://github.com/gokadzev/Musify/releases" rel="GitHub Releases"><img width="100" height="100" src="https://telegra.ph/file/21bb2cc648561f192cea4.png"></a><a href="https://apt.izzysoft.de/fdroid/index/apk/com.gokadzev.musify" rel="IzzySoft"><img width="250" src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png"></a></p>
 
 ---
 
-<h3 align="center">License</h3>
+<h3 align="center">License :scroll:</h3>
 
 ```
 Copyright © 2023 Valeri Gokadze
@@ -78,7 +82,7 @@ See the [GNU General Public License](https://github.com/gokadzev/Musify/blob/mas
 
 ---
 
-<h3 align="center">Building from source</h3>
+<h3 align="center">Building from source :hammer_and_wrench:</h3>
 
 1. If you don't have Flutter SDK installed, please visit official [Flutter](https://flutter.dev/) site.
 2. Fetch latest source code from master branch.
@@ -96,21 +100,16 @@ flutter run
 
 ---
 
-<h3 align="center">Contribute</h3>
+<h3 align="center">Contribute :pencil2:</h3>
 
 Contributions are always welcome. Please read our [contributing guidelines](https://github.com/gokadzev/Musify/blob/master/CONTRIBUTING.md) before contributing.
 
 ---
 
-  <h3 align="center">Credits</h3>
-   <p align="center">
-   <a href="https://github.com/Harsh-23/Musify">https://github.com/Harsh-23/Musify</a>: <br>
-   <b>Initial code (now code is fully rebased/changed)<br>
-      App name<br>
-      App logo (which is remade as well)<b><br>
-   </p>
+<h3 align="center">Credits :pushpin:	</h3>
+<a href="https://github.com/Harsh-23/Musify">Musify (Base)</a> - The original code has been completely reworked or replaced, and the app's logo being updated while the name remained the same<b><br>
 
 ---
 
-<h3 align="center">Do you like project?</h3>
+<h3 align="center">Do you like project? :heartpulse:	</h3>
 <p align="center" ><a href="https://www.buymeacoffee.com/gokadzev18" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a> </p>
