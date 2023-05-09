@@ -310,15 +310,23 @@ Future getPlaylistInfoForWidget(dynamic id) async {
   return playlist;
 }
 
-Future<String> getSong(dynamic songId, bool isLive) async {
-  final url = isLive
-      ? await yt.videos.streamsClient.getHttpLiveStreamUrl(VideoId(songId))
-      : (await yt.videos.streamsClient.getManifest(songId))
-          .audioOnly
-          .withHighestBitrate()
-          .url
-          .toString();
-  return url;
+Future<String> getSong(String songId, bool isLive) async {
+  late final String songUrl;
+
+  try {
+    if (isLive) {
+      final streamInfo =
+          await yt.videos.streamsClient.getHttpLiveStreamUrl(VideoId(songId));
+      songUrl = streamInfo;
+    } else {
+      final manifest = await yt.videos.streamsClient.getManifest(songId);
+      songUrl = manifest.audioOnly.withHighestBitrate().url.toString();
+    }
+  } catch (e) {
+    logger.e('Error while getting song streaming url: $e');
+  }
+
+  return songUrl;
 }
 
 Future getSongDetails(dynamic songIndex, dynamic songId) async {
