@@ -13,8 +13,7 @@
         android:label="Musify"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon"
-        android:requestLegacyExternalStorage="true"
-        android:hasFragileUserData="true">
+        android:requestLegacyExternalStorage="true">
 
         <provider
         android:name="vn.hunghd.flutterdownloader.DownloadedFileProvider"
