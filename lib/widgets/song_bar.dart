@@ -68,7 +68,7 @@ class SongBar extends StatelessWidget {
                     padding: const EdgeInsets.only(left: 15),
                     child: Text(
                       overflow: TextOverflow.ellipsis,
-                      (song['title'])
+                      song['title']
                           .toString()
                           .split('(')[0]
                           .replaceAll('&quot;', '"')

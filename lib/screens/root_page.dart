@@ -181,11 +181,11 @@ class AppState extends State<Musify> {
                                     decoration: BoxDecoration(
                                       color: colorScheme.secondary,
                                     ),
-                                    child: Column(
+                                    child: const Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: <Widget>[
-                                        const Icon(
+                                        Icon(
                                           FluentIcons.music_note_1_24_regular,
                                           size: 30,
                                           color: Colors.white,
@@ -209,11 +209,11 @@ class AppState extends State<Musify> {
                                     decoration: BoxDecoration(
                                       color: colorScheme.secondary,
                                     ),
-                                    child: Column(
+                                    child: const Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: <Widget>[
-                                        const Icon(
+                                        Icon(
                                           FluentIcons.music_note_1_24_regular,
                                           size: 30,
                                           color: Colors.white,
