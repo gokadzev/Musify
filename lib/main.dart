@@ -166,38 +166,42 @@ class _MyAppState extends State<MyApp> {
               themeMode == ThemeMode.light ? lightColorScheme : darkColorScheme;
         }
 
+        final lightTheme = getAppLightTheme().copyWith(
+          scaffoldBackgroundColor: lightColorScheme?.surface,
+          colorScheme: lightColorScheme?.harmonized(),
+          canvasColor: lightColorScheme?.surface,
+          cardTheme: mCardTheme,
+          bottomAppBarTheme: BottomAppBarTheme(
+            color: lightColorScheme?.surface,
+          ),
+          appBarTheme: mAppBarTheme().copyWith(
+            backgroundColor: lightColorScheme?.surface,
+          ),
+          inputDecorationTheme: mInputDecorationTheme,
+        );
+
+        final darkTheme = getAppDarkTheme().copyWith(
+          scaffoldBackgroundColor: darkColorScheme?.surface,
+          colorScheme: darkColorScheme?.harmonized(),
+          canvasColor: darkColorScheme?.surface,
+          cardTheme: mCardTheme,
+          bottomAppBarTheme: BottomAppBarTheme(
+            color: darkColorScheme?.surface,
+          ),
+          appBarTheme: mAppBarTheme().copyWith(
+            backgroundColor: darkColorScheme?.surface,
+          ),
+          inputDecorationTheme: mInputDecorationTheme,
+        );
+
         return MaterialApp(
           themeMode: themeMode,
           debugShowCheckedModeBanner: kDebugMode,
           darkTheme: darkColorScheme != null && useSystemColor.value
-              ? getAppDarkTheme().copyWith(
-                  scaffoldBackgroundColor: darkColorScheme.surface,
-                  colorScheme: darkColorScheme.harmonized(),
-                  canvasColor: darkColorScheme.surface,
-                  cardTheme: mCardTheme,
-                  bottomAppBarTheme: BottomAppBarTheme(
-                    color: darkColorScheme.surface,
-                  ),
-                  appBarTheme: mAppBarTheme().copyWith(
-                    backgroundColor: darkColorScheme.surface,
-                  ),
-                  inputDecorationTheme: mInputDecorationTheme,
-                )
+              ? darkTheme
               : getAppDarkTheme(),
           theme: lightColorScheme != null && useSystemColor.value
-              ? getAppLightTheme().copyWith(
-                  scaffoldBackgroundColor: lightColorScheme.surface,
-                  colorScheme: lightColorScheme.harmonized(),
-                  canvasColor: lightColorScheme.surface,
-                  cardTheme: mCardTheme,
-                  bottomAppBarTheme: BottomAppBarTheme(
-                    color: lightColorScheme.surface,
-                  ),
-                  appBarTheme: mAppBarTheme().copyWith(
-                    backgroundColor: lightColorScheme.surface,
-                  ),
-                  inputDecorationTheme: mInputDecorationTheme,
-                )
+              ? lightTheme
               : getAppLightTheme(),
           localizationsDelegates: const [
             AppLocalizations.delegate,
