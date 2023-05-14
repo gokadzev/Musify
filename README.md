@@ -95,7 +95,7 @@ git clone https://github.com/gokadzev/Musify.git
 
 ```
 flutter pub get
-flutter run
+flutter run --flavor github
 ```
 
 ---
