@@ -90,12 +90,19 @@ Future<void> chooseDownloadDirectory(BuildContext context) async {
   try {
     final _downloadDirectory = await FilePicker.platform.getDirectoryPath();
     if (_downloadDirectory != null) {
-      downloadDirectory = _downloadDirectory;
-      addOrUpdateData(
-        'settings',
-        'downloadPath',
-        downloadDirectory,
-      );
+      final folderName = path.basename(_downloadDirectory);
+      if (folderName == 'Music' ||
+          folderName == 'Documents' ||
+          folderName == 'Downloads') {
+        downloadDirectory = _downloadDirectory;
+        addOrUpdateData(
+          'settings',
+          'downloadPath',
+          downloadDirectory,
+        );
+      } else {
+        showToast('You can only choose Music, Documents or Downloads folder!');
+      }
     } else {
       showToast('${context.l10n()!.chooseDownloadDir}!');
     }
