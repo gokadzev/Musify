@@ -14,7 +14,7 @@ Map mediaItemToMap(MediaItem mediaItem) => {
       'highResImage': mediaItem.artUri.toString(),
       'lowResImage': mediaItem.extras!['lowResImage'],
       'url': mediaItem.extras!['url'].toString(),
-      'isLive': mediaItem.extras!['isLive'].toString(),
+      'isLive': mediaItem.extras!['isLive'],
     };
 
 MediaItem songModelToMediaItem(AudioModel song, String songUrl) => MediaItem(
