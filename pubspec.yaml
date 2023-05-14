@@ -38,7 +38,7 @@ dependencies:
   receive_sharing_intent:
     path: ./packages/receive_sharing_intent
   rxdart: ^0.27.7
-  url_launcher: ^6.1.10
+  url_launcher: ^6.1.11
   youtube_explode_dart: ^1.12.4
 
 dev_dependencies:
