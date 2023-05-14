@@ -158,6 +158,7 @@ class SettingsCards extends StatelessWidget {
                                       useSystemColor: false,
                                     );
                                     showToast(
+                                      context,
                                       AppLocalizations.of(context)!
                                           .accentChangeMsg,
                                     );
@@ -301,6 +302,7 @@ class SettingsCards extends StatelessWidget {
                                 );
 
                                 showToast(
+                                  context,
                                   context.l10n()!.languageMsg,
                                 );
                                 Navigator.pop(context);
@@ -333,6 +335,7 @@ class SettingsCards extends StatelessWidget {
               useSystemColor: value,
             );
             showToast(
+              context,
               context.l10n()!.settingChangedMsg,
             );
           },
@@ -352,6 +355,7 @@ class SettingsCards extends StatelessWidget {
                 );
                 sponsorBlockSupport.value = value;
                 showToast(
+                  context,
                   context.l10n()!.settingChangedMsg,
                 );
               },
@@ -376,6 +380,7 @@ class SettingsCards extends StatelessWidget {
                 foregroundService.value = value;
 
                 showToast(
+                  context,
                   context.l10n()!.settingChangedAndRestartMsg,
                 );
               },
@@ -424,6 +429,7 @@ class SettingsCards extends StatelessWidget {
                                 prefferedFileExtension.value =
                                     availableFileTypes[index];
                                 showToast(
+                                  context,
                                   AppLocalizations.of(context)!
                                       .audioFileTypeMsg,
                                 );
@@ -466,6 +472,7 @@ class SettingsCards extends StatelessWidget {
           () => {
             clearCache(),
             showToast(
+              context,
               '${context.l10n()!.cacheMsg}!',
             )
           },
@@ -476,7 +483,7 @@ class SettingsCards extends StatelessWidget {
           () => {
             searchHistory = [],
             deleteData('user', 'searchHistory'),
-            showToast('${context.l10n()!.searchHistoryMsg}!'),
+            showToast(context, '${context.l10n()!.searchHistoryMsg}!'),
           },
         ),
         SettingBar(
@@ -484,7 +491,7 @@ class SettingsCards extends StatelessWidget {
           FluentIcons.cloud_sync_24_filled,
           () => {
             backupData(context).then(
-              showToast,
+              (response) => showToast(context, response),
             ),
           },
         ),
@@ -493,7 +500,7 @@ class SettingsCards extends StatelessWidget {
           FluentIcons.cloud_add_24_filled,
           () => {
             restoreData(context).then(
-              showToast,
+              (response) => showToast(context, response),
             ),
           },
         ),

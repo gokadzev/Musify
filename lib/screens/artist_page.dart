@@ -133,6 +133,7 @@ class _ArtistPagePageState extends State<ArtistPage> {
       onPressed: () {
         setActivePlaylist(widget.playlist);
         showToast(
+          context,
           context.l10n()!.queueInitText,
         );
       },

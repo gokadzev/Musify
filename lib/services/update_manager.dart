@@ -26,10 +26,12 @@ Future<void> checkAppUpdates(
     if (downloadUpdateAutomatically) {
       await downloadAppUpdates();
       showToast(
+        context,
         '${context.l10n()!.appUpdateAvailableAndDownloading}!',
       );
     } else {
       showToast(
+        context,
         '${context.l10n()!.appUpdateIsAvailable}!',
       );
     }

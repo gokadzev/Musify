@@ -25,7 +25,6 @@ dependencies:
   flutter_downloader: ^1.10.2
   flutter_localizations:
     sdk: flutter
-  fluttertoast: ^8.2.1
   google_fonts: ^4.0.4
   hive: ^2.2.3
   hive_flutter: ^1.1.0

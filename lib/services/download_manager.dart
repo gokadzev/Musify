@@ -16,7 +16,7 @@ Future<void> downloadSong(BuildContext context, dynamic song) async {
   try {
     final isDirectoryValid = await checkDownloadDirectory(context);
     if (!isDirectoryValid) {
-      showToast('${context.l10n()!.chooseDownloadDir}!');
+      showToast(context, '${context.l10n()!.chooseDownloadDir}!');
       return;
     }
 
@@ -54,7 +54,7 @@ Future<void> downloadSong(BuildContext context, dynamic song) async {
     );
   } catch (e) {
     logger.e('Error while downloading song: $e');
-    showToast('${context.l10n()!.downloadFailed}, $e');
+    showToast(context, '${context.l10n()!.downloadFailed}, $e');
   }
 }
 
@@ -66,6 +66,7 @@ Future<void> checkNecessaryPermissions(BuildContext context) async {
   } catch (e) {
     logger.e('Error while requesting permissions: $e');
     showToast(
+      context,
       '${context.l10n()!.errorWhileRequestingPerms} + $e',
     );
   }
@@ -81,7 +82,7 @@ Future<bool> checkDownloadDirectory(BuildContext context) async {
     return true;
   } catch (e) {
     logger.e('Error while checking the download folder: $e');
-    showToast('${context.l10n()!.error}: $e');
+    showToast(context, '${context.l10n()!.error}: $e');
     return false;
   }
 }
@@ -101,13 +102,16 @@ Future<void> chooseDownloadDirectory(BuildContext context) async {
           downloadDirectory,
         );
       } else {
-        showToast('You can only choose Music, Documents or Downloads folder!');
+        showToast(
+          context,
+          'You can only choose Music, Documents or Downloads folder!',
+        );
       }
     } else {
-      showToast('${context.l10n()!.chooseDownloadDir}!');
+      showToast(context, '${context.l10n()!.chooseDownloadDir}!');
     }
   } catch (e) {
     logger.e('Error while choosing the download directory: $e');
-    showToast('Error while choosing the download directory: $e');
+    showToast(context, 'Error while choosing the download directory: $e');
   }
 }

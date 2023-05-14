@@ -150,6 +150,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
       onPressed: () {
         setActivePlaylist(_playlist);
         showToast(
+          context,
           context.l10n()!.queueInitText,
         );
       },

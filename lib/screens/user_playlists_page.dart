@@ -52,7 +52,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                       context.l10n()!.add.toUpperCase(),
                     ),
                     onPressed: () {
-                      showToast(addUserPlaylist(id, context));
+                      showToast(context, addUserPlaylist(id, context));
                       setState(() {
                         Navigator.pop(context);
                       });
