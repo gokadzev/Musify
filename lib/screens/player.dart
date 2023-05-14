@@ -265,278 +265,395 @@ class AudioAppState extends State<AudioApp> {
             ),
             Padding(
               padding: EdgeInsets.only(top: size.height * 0.03),
-              child: Column(
-                children: <Widget>[
-                  SizedBox(
-                    width: double.infinity,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        if (metadata.extras['ytid'].toString().isNotEmpty)
-                          Column(
-                            children: [
-                              IconButton(
-                                color: Theme.of(context).hintColor,
-                                icon: const Icon(
-                                  FluentIcons.arrow_download_24_regular,
-                                ),
-                                onPressed: () => downloadSong(
-                                  context,
-                                  mediaItemToMap(metadata as MediaItem),
-                                ),
-                              ),
-                              ValueListenableBuilder<bool>(
-                                valueListenable: muteNotifier,
-                                builder: (_, value, __) {
-                                  return IconButton(
-                                    padding: EdgeInsets.zero,
-                                    icon: Icon(
-                                      FluentIcons.speaker_mute_24_regular,
-                                      color: value
-                                          ? colorScheme.primary
-                                          : Theme.of(context).hintColor,
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final iconSize = constraints.maxWidth * 0.05;
+                  return Column(
+                    children: <Widget>[
+                      SizedBox(
+                        width: double.infinity,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            if (metadata.extras['ytid'].toString().isNotEmpty)
+                              Column(
+                                children: [
+                                  IconButton(
+                                    color: Theme.of(context).hintColor,
+                                    icon: const Icon(
+                                      FluentIcons.arrow_download_24_regular,
                                     ),
-                                    iconSize: 20,
-                                    onPressed: mute,
-                                    splashColor: Colors.transparent,
-                                  );
-                                },
+                                    onPressed: () => downloadSong(
+                                      context,
+                                      mediaItemToMap(metadata as MediaItem),
+                                    ),
+                                  ),
+                                  ValueListenableBuilder<bool>(
+                                    valueListenable: muteNotifier,
+                                    builder: (_, value, __) {
+                                      return IconButton(
+                                        padding: EdgeInsets.zero,
+                                        icon: Icon(
+                                          FluentIcons.speaker_mute_24_regular,
+                                          color: value
+                                              ? colorScheme.primary
+                                              : Theme.of(context).hintColor,
+                                        ),
+                                        iconSize: iconSize,
+                                        onPressed: mute,
+                                        splashColor: Colors.transparent,
+                                      );
+                                    },
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                        ValueListenableBuilder<bool>(
-                          valueListenable: shuffleNotifier,
-                          builder: (_, value, __) {
-                            return IconButton(
-                              padding: EdgeInsets.zero,
+                            ValueListenableBuilder<bool>(
+                              valueListenable: shuffleNotifier,
+                              builder: (_, value, __) {
+                                return IconButton(
+                                  padding: EdgeInsets.zero,
+                                  icon: Icon(
+                                    FluentIcons.arrow_shuffle_24_filled,
+                                    color: value
+                                        ? colorScheme.primary
+                                        : Theme.of(context).hintColor,
+                                  ),
+                                  iconSize: iconSize,
+                                  onPressed: changeShuffleStatus,
+                                  splashColor: Colors.transparent,
+                                );
+                              },
+                            ),
+                            IconButton(
+                              padding: const EdgeInsets.only(right: 10),
                               icon: Icon(
-                                FluentIcons.arrow_shuffle_24_filled,
-                                color: value
-                                    ? colorScheme.primary
-                                    : Theme.of(context).hintColor,
+                                FluentIcons.previous_24_filled,
+                                color: hasPrevious
+                                    ? Theme.of(context).hintColor
+                                    : Colors.grey,
                               ),
-                              iconSize: 20,
-                              onPressed: changeShuffleStatus,
+                              iconSize: iconSize * 1.5,
+                              onPressed: () async => {
+                                await playPrevious(),
+                              },
                               splashColor: Colors.transparent,
-                            );
-                          },
-                        ),
-                        IconButton(
-                          padding: const EdgeInsets.only(right: 10),
-                          icon: Icon(
-                            FluentIcons.previous_24_filled,
-                            color: hasPrevious
-                                ? Theme.of(context).hintColor
-                                : Colors.grey,
-                          ),
-                          iconSize: 30,
-                          onPressed: () async => {
-                            await playPrevious(),
-                          },
-                          splashColor: Colors.transparent,
-                        ),
-                        DecoratedBox(
-                          decoration: BoxDecoration(
-                            color: colorScheme.primary,
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: StreamBuilder<PlayerState>(
-                            stream: audioPlayer.playerStateStream,
-                            builder: (context, snapshot) {
-                              final playerState = snapshot.data;
-                              final processingState =
-                                  playerState?.processingState;
-                              final playing = playerState?.playing;
-                              if (processingState == ProcessingState.loading ||
-                                  processingState ==
-                                      ProcessingState.buffering) {
-                                return Container(
-                                  margin: const EdgeInsets.all(8),
-                                  width: 30,
-                                  height: 30,
-                                  child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      Theme.of(context).hintColor,
-                                    ),
-                                  ),
-                                );
-                              } else if (playing != true) {
-                                return IconButton(
-                                  icon: Icon(
-                                    FluentIcons.play_12_filled,
-                                    color: Theme.of(context).hintColor,
-                                  ),
-                                  iconSize: 40,
-                                  onPressed: audioPlayer.play,
-                                  splashColor: Colors.transparent,
-                                );
-                              } else if (processingState !=
-                                  ProcessingState.completed) {
-                                return IconButton(
-                                  icon: Icon(
-                                    FluentIcons.pause_12_filled,
-                                    color: Theme.of(context).hintColor,
-                                  ),
-                                  iconSize: 40,
-                                  onPressed: audioPlayer.pause,
-                                  splashColor: Colors.transparent,
-                                );
-                              } else {
-                                return IconButton(
-                                  icon: Icon(
-                                    FluentIcons.replay_20_filled,
-                                    color: Theme.of(context).hintColor,
-                                  ),
-                                  iconSize: 30,
-                                  onPressed: () => audioPlayer.seek(
-                                    Duration.zero,
-                                    index: audioPlayer.effectiveIndices!.first,
-                                  ),
-                                );
-                              }
-                            },
-                          ),
-                        ),
-                        IconButton(
-                          padding: const EdgeInsets.only(left: 10),
-                          icon: Icon(
-                            FluentIcons.next_24_filled,
-                            color: hasNext
-                                ? Theme.of(context).hintColor
-                                : Colors.grey,
-                          ),
-                          iconSize: 30,
-                          onPressed: () async => {
-                            await playNext(),
-                          },
-                          splashColor: Colors.transparent,
-                        ),
-                        IconButton(
-                          padding: EdgeInsets.zero,
-                          icon: Icon(
-                            FluentIcons.arrow_repeat_1_24_filled,
-                            color: repeatNotifier.value
-                                ? colorScheme.primary
-                                : Theme.of(context).hintColor,
-                          ),
-                          iconSize: 20,
-                          onPressed: changeLoopStatus,
-                          splashColor: Colors.transparent,
-                        ),
-                        if (metadata.extras['ytid'].toString().isNotEmpty)
-                          Column(
-                            children: [
-                              ValueListenableBuilder<bool>(
-                                valueListenable: songLikeStatus,
-                                builder: (_, value, __) {
-                                  if (value == true) {
-                                    return IconButton(
-                                      color: colorScheme.primary,
-                                      icon: const Icon(
-                                        FluentIcons.star_24_filled,
+                            ),
+                            DecoratedBox(
+                              decoration: BoxDecoration(
+                                color: colorScheme.primary,
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: StreamBuilder<PlayerState>(
+                                stream: audioPlayer.playerStateStream,
+                                builder: (context, snapshot) {
+                                  final playerState = snapshot.data;
+                                  final processingState =
+                                      playerState?.processingState;
+                                  final playing = playerState?.playing;
+                                  if (processingState ==
+                                          ProcessingState.loading ||
+                                      processingState ==
+                                          ProcessingState.buffering) {
+                                    return Container(
+                                      margin: const EdgeInsets.all(8),
+                                      width: iconSize * 1.5,
+                                      height: iconSize * 1.5,
+                                      child: CircularProgressIndicator(
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                          Theme.of(context).hintColor,
+                                        ),
                                       ),
-                                      iconSize: 20,
+                                    );
+                                  } else if (playing != true) {
+                                    return IconButton(
+                                      icon: Icon(
+                                        FluentIcons.play_12_filled,
+                                        color: Theme.of(context).hintColor,
+                                      ),
+                                      iconSize: 40,
+                                      onPressed: audioPlayer.play,
                                       splashColor: Colors.transparent,
-                                      onPressed: () => {
-                                        updateSongLikeStatus(ytid, false),
-                                        songLikeStatus.value = false
-                                      },
+                                    );
+                                  } else if (processingState !=
+                                      ProcessingState.completed) {
+                                    return IconButton(
+                                      icon: Icon(
+                                        FluentIcons.pause_12_filled,
+                                        color: Theme.of(context).hintColor,
+                                      ),
+                                      iconSize: 40,
+                                      onPressed: audioPlayer.pause,
+                                      splashColor: Colors.transparent,
                                     );
                                   } else {
                                     return IconButton(
-                                      color: Theme.of(context).hintColor,
-                                      icon: const Icon(
-                                        FluentIcons.star_24_regular,
+                                      icon: Icon(
+                                        FluentIcons.replay_20_filled,
+                                        color: Theme.of(context).hintColor,
                                       ),
-                                      iconSize: 20,
-                                      splashColor: Colors.transparent,
-                                      onPressed: () => {
-                                        updateSongLikeStatus(ytid, true),
-                                        songLikeStatus.value = true
-                                      },
+                                      iconSize: iconSize * 1.5,
+                                      onPressed: () => audioPlayer.seek(
+                                        Duration.zero,
+                                        index:
+                                            audioPlayer.effectiveIndices!.first,
+                                      ),
                                     );
                                   }
                                 },
                               ),
-                              ValueListenableBuilder<bool>(
-                                valueListenable: playNextSongAutomatically,
-                                builder: (_, value, __) {
-                                  return IconButton(
-                                    padding: EdgeInsets.zero,
-                                    icon: Icon(
-                                      value
-                                          ? FluentIcons
-                                              .music_note_2_play_20_filled
-                                          : FluentIcons
-                                              .music_note_2_play_20_regular,
-                                      color: value
-                                          ? colorScheme.primary
-                                          : Theme.of(context).hintColor,
+                            ),
+                            IconButton(
+                              padding: const EdgeInsets.only(left: 10),
+                              icon: Icon(
+                                FluentIcons.next_24_filled,
+                                color: hasNext
+                                    ? Theme.of(context).hintColor
+                                    : Colors.grey,
+                              ),
+                              iconSize: iconSize * 1.5,
+                              onPressed: () async => {
+                                await playNext(),
+                              },
+                              splashColor: Colors.transparent,
+                            ),
+                            IconButton(
+                              padding: EdgeInsets.zero,
+                              icon: Icon(
+                                FluentIcons.arrow_repeat_1_24_filled,
+                                color: repeatNotifier.value
+                                    ? colorScheme.primary
+                                    : Theme.of(context).hintColor,
+                              ),
+                              iconSize: iconSize,
+                              onPressed: changeLoopStatus,
+                              splashColor: Colors.transparent,
+                            ),
+                            if (metadata.extras['ytid'].toString().isNotEmpty)
+                              Column(
+                                children: [
+                                  ValueListenableBuilder<bool>(
+                                    valueListenable: songLikeStatus,
+                                    builder: (_, value, __) {
+                                      if (value == true) {
+                                        return IconButton(
+                                          color: colorScheme.primary,
+                                          icon: const Icon(
+                                            FluentIcons.star_24_filled,
+                                          ),
+                                          iconSize: iconSize,
+                                          splashColor: Colors.transparent,
+                                          onPressed: () => {
+                                            updateSongLikeStatus(ytid, false),
+                                            songLikeStatus.value = false
+                                          },
+                                        );
+                                      } else {
+                                        return IconButton(
+                                          color: Theme.of(context).hintColor,
+                                          icon: const Icon(
+                                            FluentIcons.star_24_regular,
+                                          ),
+                                          iconSize: iconSize,
+                                          splashColor: Colors.transparent,
+                                          onPressed: () => {
+                                            updateSongLikeStatus(ytid, true),
+                                            songLikeStatus.value = true
+                                          },
+                                        );
+                                      }
+                                    },
+                                  ),
+                                  ValueListenableBuilder<bool>(
+                                    valueListenable: playNextSongAutomatically,
+                                    builder: (_, value, __) {
+                                      return IconButton(
+                                        padding: EdgeInsets.zero,
+                                        icon: Icon(
+                                          value
+                                              ? FluentIcons
+                                                  .music_note_2_play_20_filled
+                                              : FluentIcons
+                                                  .music_note_2_play_20_regular,
+                                          color: value
+                                              ? colorScheme.primary
+                                              : Theme.of(context).hintColor,
+                                        ),
+                                        iconSize: iconSize,
+                                        splashColor: Colors.transparent,
+                                        onPressed: changeAutoPlayNextStatus,
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
+                          ],
+                        ),
+                      ),
+                      if (metadata.extras['ytid'].toString().isNotEmpty)
+                        Padding(
+                          padding: EdgeInsets.only(top: size.height * 0.047),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Builder(
+                                builder: (context) {
+                                  return TextButton(
+                                    onPressed: () {
+                                      showBottomSheet(
+                                        context: context,
+                                        builder: (context) => Container(
+                                          decoration: const BoxDecoration(
+                                            borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(18),
+                                              topRight: Radius.circular(18),
+                                            ),
+                                          ),
+                                          height: size.height / 2.14,
+                                          child: SingleChildScrollView(
+                                            child: Column(
+                                              children: <Widget>[
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                    top: size.height * 0.012,
+                                                  ),
+                                                  child: Row(
+                                                    children: <Widget>[
+                                                      IconButton(
+                                                        icon: Icon(
+                                                          FluentIcons
+                                                              .arrow_between_down_24_filled,
+                                                          color: colorScheme
+                                                              .primary,
+                                                          size: 20,
+                                                        ),
+                                                        onPressed: () => {
+                                                          Navigator.pop(context)
+                                                        },
+                                                      ),
+                                                      Expanded(
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                            right: 42,
+                                                            bottom: 42,
+                                                          ),
+                                                          child: Center(
+                                                            child:
+                                                                MarqueeWidget(
+                                                              child: Text(
+                                                                activePlaylist[
+                                                                    'title'],
+                                                                style:
+                                                                    TextStyle(
+                                                                  color: colorScheme
+                                                                      .primary,
+                                                                  fontSize: 30,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                ListView.builder(
+                                                  shrinkWrap: true,
+                                                  physics:
+                                                      const BouncingScrollPhysics(),
+                                                  addAutomaticKeepAlives: false,
+                                                  addRepaintBoundaries: false,
+                                                  itemCount:
+                                                      activePlaylist['list']
+                                                          .length,
+                                                  itemBuilder: (
+                                                    BuildContext context,
+                                                    int index,
+                                                  ) {
+                                                    return Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                        top: 5,
+                                                        bottom: 5,
+                                                      ),
+                                                      child: SongBar(
+                                                        activePlaylist['list']
+                                                            [index],
+                                                        false,
+                                                      ),
+                                                    );
+                                                  },
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    child: Text(
+                                      context.l10n()!.playlist,
                                     ),
-                                    iconSize: 20,
-                                    splashColor: Colors.transparent,
-                                    onPressed: changeAutoPlayNextStatus,
                                   );
                                 },
                               ),
-                            ],
-                          ),
-                      ],
-                    ),
-                  ),
-                  if (metadata.extras['ytid'].toString().isNotEmpty)
-                    Padding(
-                      padding: EdgeInsets.only(top: size.height * 0.047),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Builder(
-                            builder: (context) {
-                              return TextButton(
-                                onPressed: () {
-                                  showBottomSheet(
-                                    context: context,
-                                    builder: (context) => Container(
-                                      decoration: const BoxDecoration(
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(18),
-                                          topRight: Radius.circular(18),
-                                        ),
-                                      ),
-                                      height: size.height / 2.14,
-                                      child: SingleChildScrollView(
-                                        child: Column(
-                                          children: <Widget>[
-                                            Padding(
-                                              padding: EdgeInsets.only(
-                                                top: size.height * 0.012,
-                                              ),
-                                              child: Row(
-                                                children: <Widget>[
-                                                  IconButton(
-                                                    icon: Icon(
-                                                      FluentIcons
-                                                          .arrow_between_down_24_filled,
-                                                      color:
-                                                          colorScheme.primary,
-                                                      size: 20,
-                                                    ),
-                                                    onPressed: () => {
-                                                      Navigator.pop(context)
-                                                    },
-                                                  ),
-                                                  Expanded(
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                        right: 42,
-                                                        bottom: 42,
+                              const Text(' | '),
+                              Builder(
+                                builder: (context) {
+                                  return TextButton(
+                                    onPressed: () {
+                                      getSongLyrics(
+                                        metadata.artist.toString(),
+                                        metadata.title.toString(),
+                                      );
+
+                                      showBottomSheet(
+                                        context: context,
+                                        builder: (context) => Container(
+                                          decoration: const BoxDecoration(
+                                            borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(18),
+                                              topRight: Radius.circular(18),
+                                            ),
+                                          ),
+                                          height: size.height / 2.14,
+                                          child: Column(
+                                            children: <Widget>[
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                  top: size.height * 0.012,
+                                                ),
+                                                child: Row(
+                                                  children: <Widget>[
+                                                    IconButton(
+                                                      icon: Icon(
+                                                        FluentIcons
+                                                            .arrow_between_down_24_filled,
+                                                        color:
+                                                            colorScheme.primary,
+                                                        size: 20,
                                                       ),
-                                                      child: Center(
-                                                        child: MarqueeWidget(
+                                                      onPressed: () => {
+                                                        Navigator.pop(context)
+                                                      },
+                                                    ),
+                                                    Expanded(
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(
+                                                          right: 42,
+                                                        ),
+                                                        child: Center(
                                                           child: Text(
-                                                            activePlaylist[
-                                                                'title'],
+                                                            AppLocalizations.of(
+                                                              context,
+                                                            )!
+                                                                .lyrics,
                                                             style: TextStyle(
                                                               color: colorScheme
                                                                   .primary,
@@ -549,177 +666,79 @@ class AudioAppState extends State<AudioApp> {
                                                         ),
                                                       ),
                                                     ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            ListView.builder(
-                                              shrinkWrap: true,
-                                              physics:
-                                                  const BouncingScrollPhysics(),
-                                              addAutomaticKeepAlives: false,
-                                              addRepaintBoundaries: false,
-                                              itemCount:
-                                                  activePlaylist['list'].length,
-                                              itemBuilder: (
-                                                BuildContext context,
-                                                int index,
-                                              ) {
-                                                return Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                    top: 5,
-                                                    bottom: 5,
-                                                  ),
-                                                  child: SongBar(
-                                                    activePlaylist['list']
-                                                        [index],
-                                                    false,
-                                                  ),
-                                                );
-                                              },
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                                child: Text(
-                                  context.l10n()!.playlist,
-                                ),
-                              );
-                            },
-                          ),
-                          const Text(' | '),
-                          Builder(
-                            builder: (context) {
-                              return TextButton(
-                                onPressed: () {
-                                  getSongLyrics(
-                                    metadata.artist.toString(),
-                                    metadata.title.toString(),
-                                  );
-
-                                  showBottomSheet(
-                                    context: context,
-                                    builder: (context) => Container(
-                                      decoration: const BoxDecoration(
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(18),
-                                          topRight: Radius.circular(18),
-                                        ),
-                                      ),
-                                      height: size.height / 2.14,
-                                      child: Column(
-                                        children: <Widget>[
-                                          Padding(
-                                            padding: EdgeInsets.only(
-                                              top: size.height * 0.012,
-                                            ),
-                                            child: Row(
-                                              children: <Widget>[
-                                                IconButton(
-                                                  icon: Icon(
-                                                    FluentIcons
-                                                        .arrow_between_down_24_filled,
-                                                    color: colorScheme.primary,
-                                                    size: 20,
-                                                  ),
-                                                  onPressed: () =>
-                                                      {Navigator.pop(context)},
+                                                  ],
                                                 ),
-                                                Expanded(
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                      right: 42,
-                                                    ),
-                                                    child: Center(
-                                                      child: Text(
-                                                        AppLocalizations.of(
-                                                          context,
-                                                        )!
-                                                            .lyrics,
-                                                        style: TextStyle(
-                                                          color: colorScheme
-                                                              .primary,
-                                                          fontSize: 30,
-                                                          fontWeight:
-                                                              FontWeight.w500,
+                                              ),
+                                              ValueListenableBuilder<String>(
+                                                valueListenable: lyrics,
+                                                builder: (_, value, __) {
+                                                  if (value != 'null' &&
+                                                      value != 'not found') {
+                                                    return Expanded(
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(6),
+                                                        child: Center(
+                                                          child:
+                                                              SingleChildScrollView(
+                                                            child: Text(
+                                                              value,
+                                                              style:
+                                                                  const TextStyle(
+                                                                fontSize: 16,
+                                                              ),
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
+                                                            ),
+                                                          ),
                                                         ),
                                                       ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          ValueListenableBuilder<String>(
-                                            valueListenable: lyrics,
-                                            builder: (_, value, __) {
-                                              if (value != 'null' &&
-                                                  value != 'not found') {
-                                                return Expanded(
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(6),
-                                                    child: Center(
-                                                      child:
-                                                          SingleChildScrollView(
+                                                    );
+                                                  } else if (value == 'null') {
+                                                    return const SizedBox(
+                                                      child: Spinner(),
+                                                    );
+                                                  } else {
+                                                    return Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                        top: 120,
+                                                      ),
+                                                      child: Center(
                                                         child: Text(
-                                                          value,
+                                                          AppLocalizations.of(
+                                                            context,
+                                                          )!
+                                                              .lyricsNotAvailable,
                                                           style:
                                                               const TextStyle(
-                                                            fontSize: 16,
+                                                            fontSize: 25,
                                                           ),
-                                                          textAlign:
-                                                              TextAlign.center,
                                                         ),
                                                       ),
-                                                    ),
-                                                  ),
-                                                );
-                                              } else if (value == 'null') {
-                                                return const SizedBox(
-                                                  child: Spinner(),
-                                                );
-                                              } else {
-                                                return Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                    top: 120,
-                                                  ),
-                                                  child: Center(
-                                                    child: Text(
-                                                      AppLocalizations.of(
-                                                        context,
-                                                      )!
-                                                          .lyricsNotAvailable,
-                                                      style: const TextStyle(
-                                                        fontSize: 25,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                );
-                                              }
-                                            },
-                                          )
-                                        ],
-                                      ),
+                                                    );
+                                                  }
+                                                },
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    child: Text(
+                                      context.l10n()!.lyrics,
                                     ),
                                   );
                                 },
-                                child: Text(
-                                  context.l10n()!.lyrics,
-                                ),
-                              );
-                            },
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
-                ],
+                        ),
+                    ],
+                  );
+                },
               ),
             ),
           ],
