@@ -1,3 +1,4 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/download_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/style/app_themes.dart';
+import 'package:musify/utilities/mediaitem.dart';
 import 'package:musify/widgets/marque.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/spinner.dart';
@@ -283,10 +285,7 @@ class AudioAppState extends State<AudioApp> {
                                     ),
                                     onPressed: () => downloadSong(
                                       context,
-                                      getSongDetails(
-                                        0,
-                                        metadata.extras['ytid'].toString(),
-                                      ),
+                                      mediaItemToMap(metadata as MediaItem),
                                     ),
                                   ),
                                   ValueListenableBuilder<bool>(
