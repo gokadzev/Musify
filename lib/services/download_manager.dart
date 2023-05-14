@@ -33,7 +33,7 @@ Future<void> downloadSong(BuildContext context, dynamic song) async {
     final audio = await getSong(song['ytid'].toString(), song['isLive']);
     await FlutterDownloader.enqueue(
       url: audio,
-      savedDir: downloadDirectory,
+      savedDir: downloadDirectory.value,
       fileName: filename,
       showNotification: true,
       openFileFromNotification: true,
@@ -73,7 +73,7 @@ Future<void> checkNecessaryPermissions(BuildContext context) async {
 }
 
 Future<bool> checkDownloadDirectory(BuildContext context) async {
-  final _localDir = Directory(downloadDirectory);
+  final _localDir = Directory(downloadDirectory.value);
 
   try {
     if (!await _localDir.exists()) {
@@ -95,7 +95,7 @@ Future<void> chooseDownloadDirectory(BuildContext context) async {
       if (folderName == 'Music' ||
           folderName == 'Documents' ||
           folderName == 'Downloads') {
-        downloadDirectory = _downloadDirectory;
+        downloadDirectory.value = _downloadDirectory;
         addOrUpdateData(
           'settings',
           'downloadPath',

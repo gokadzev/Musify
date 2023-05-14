@@ -3,8 +3,12 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 // Paths
 
-String downloadDirectory = Hive.box('settings')
-    .get('downloadPath', defaultValue: '/storage/emulated/0/Music/');
+final downloadDirectory = ValueNotifier<String>(
+  Hive.box('settings').get(
+    'downloadPath',
+    defaultValue: '/storage/emulated/0/Music/',
+  ) as String,
+);
 
 // Preferences
 

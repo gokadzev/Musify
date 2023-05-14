@@ -54,7 +54,12 @@ class _SetupPageState extends State<SetupPage> {
                 child: Card(
                   child: ListTile(
                     title: MarqueeWidget(
-                      child: Text(downloadDirectory),
+                      child: ValueListenableBuilder(
+                        valueListenable: downloadDirectory,
+                        builder: (_, value, __) {
+                          return Text(value);
+                        },
+                      ),
                     ),
                   ),
                 ),
