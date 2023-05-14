@@ -1,6 +1,5 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/extensions/screen_size.dart';
@@ -56,8 +55,7 @@ class _HomePageState extends State<HomePage> {
                                   child: MarqueeWidget(
                                     direction: Axis.horizontal,
                                     child: Text(
-                                      AppLocalizations.of(context)!
-                                          .suggestedPlaylists,
+                                      context.l10n()!.suggestedPlaylists,
                                       style: TextStyle(
                                         color: colorScheme.primary,
                                         fontSize: 20,
@@ -135,8 +133,7 @@ class _HomePageState extends State<HomePage> {
                                   child: MarqueeWidget(
                                     direction: Axis.horizontal,
                                     child: Text(
-                                      AppLocalizations.of(context)!
-                                          .suggestedArtists,
+                                      context.l10n()!.suggestedArtists,
                                       style: TextStyle(
                                         color: colorScheme.primary,
                                         fontSize: 20,

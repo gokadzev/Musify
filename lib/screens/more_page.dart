@@ -1,6 +1,5 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/screens/about_page.dart';
@@ -159,8 +158,7 @@ class SettingsCards extends StatelessWidget {
                                     );
                                     showToast(
                                       context,
-                                      AppLocalizations.of(context)!
-                                          .accentChangeMsg,
+                                      context.l10n()!.accentChangeMsg,
                                     );
                                     Navigator.pop(context);
                                   },
@@ -430,8 +428,7 @@ class SettingsCards extends StatelessWidget {
                                     availableFileTypes[index];
                                 showToast(
                                   context,
-                                  AppLocalizations.of(context)!
-                                      .audioFileTypeMsg,
+                                  context.l10n()!.audioFileTypeMsg,
                                 );
                                 Navigator.pop(context);
                               },
