@@ -12,8 +12,8 @@ homepage: https://github.com/LucJosin/on_audio_query/tree/master/on_audio_query_
 # website: https://www.lucasjosino.com/
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
-  flutter: ">=2.0.0"
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: '>=3.0.0'
 
 dependencies:
   # on_audio_query

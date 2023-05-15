@@ -4,8 +4,8 @@ version: 1.4.5
 homepage: https://github.com/KasemJaffer/receive_sharing_intent
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
-  flutter: ">=1.10.0"
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: '>=3.0.0'
 
 dependencies:
   flutter:
