@@ -12,8 +12,8 @@ homepage: https://github.com/LucJosin/on_audio_query/tree/main/on_audio_query_we
 publish_to: none
 
 environment:
-  sdk: ">=2.17.0 <3.0.0"
-  flutter: ">=2.5.0"
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: '>=3.0.0'
 
 dependencies:
   # on_audio_query
