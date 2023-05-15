@@ -281,4 +281,4 @@ Future<void> initialisation() async {
 }
 
 @pragma('vm:entry-point')
-void downloadCallback(String id, DownloadTaskStatus status, int progress) {}
+void downloadCallback(String id, int status, int progress) {}

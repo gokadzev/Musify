@@ -52,10 +52,10 @@ packages:
     dependency: "direct main"
     description:
       name: audio_session
-      sha256: e4acc4e9eaa32436dfc5d7aed7f0a370f2d7bb27ee27de30d6c4f220c2a05c73
+      sha256: "97317505460ab705e8e186e87a3924d67c74d8c8a07cbc087e3b988bbce7cfaa"
       url: "https://pub.dev"
     source: hosted
-    version: "0.1.13"
+    version: "0.1.14"
   boolean_selector:
     dependency: transitive
     description:
@@ -156,10 +156,10 @@ packages:
     dependency: "direct main"
     description:
       name: dynamic_color
-      sha256: bbebb1b7ebed819e0ec83d4abdc2a8482d934f6a85289ffc1c6acf7589fa2aad
+      sha256: "74dff1435a695887ca64899b8990004f8d1232b0e84bfc4faa1fdda7c6f57cc1"
       url: "https://pub.dev"
     source: hosted
-    version: "1.6.3"
+    version: "1.6.5"
   fake_async:
     dependency: transitive
     description:
@@ -233,10 +233,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_downloader
-      sha256: "6f2836668f33d0cd3ed275c3198d30967c42af53fa9b18c6b0edbf5fc12b599a"
+      sha256: ff5cb37482329018ba313f44cfa60aa68a779a70ecaa731a40d931d73b49acf2
       url: "https://pub.dev"
     source: hosted
-    version: "1.10.2"
+    version: "1.10.3"
   flutter_launcher_icons:
     dependency: "direct dev"
     description:
@@ -376,26 +376,26 @@ packages:
     dependency: "direct main"
     description:
       name: just_audio
-      sha256: "7e6d31508dacd01a066e3889caf6282e5f1eb60707c230203b21a83af5c55586"
+      sha256: d7ff71169927a2237c902aef6baf2f69d063d4c427590dee479d279d4d57c984
       url: "https://pub.dev"
     source: hosted
-    version: "0.9.32"
+    version: "0.9.33"
   just_audio_platform_interface:
     dependency: transitive
     description:
       name: just_audio_platform_interface
-      sha256: eff112d5138bea3ba544b6338b1e0537a32b5e1425e4d0dc38f732771cda7c84
+      sha256: d8409da198bbc59426cd45d4c92fca522a2ec269b576ce29459d6d6fcaeb44df
       url: "https://pub.dev"
     source: hosted
-    version: "4.2.0"
+    version: "4.2.1"
   just_audio_web:
     dependency: transitive
     description:
       name: just_audio_web
-      sha256: "89d8db6f19f3821bb6bf908c4bfb846079afb2ab575b783d781a6bf119e3abaf"
+      sha256: ff62f733f437b25a0ff590f0e295fa5441dcb465f1edbdb33b3dea264705bc13
       url: "https://pub.dev"
     source: hosted
-    version: "0.4.7"
+    version: "0.4.8"
   logger:
     dependency: "direct main"
     description:
