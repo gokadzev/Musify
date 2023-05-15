@@ -28,9 +28,9 @@ class ArtistsObserver implements ObserverInterface {
   @override
   Stream<List<ArtistModel>> get stream {
     // If [isRunning] is false or the method [startObserver] was never called
-    // throw a [NullThrownError].
+    // throw a [TypeError].
     if (!_isRunning || _controller == null) {
-      throw NullThrownError();
+      throw TypeError();
     }
 
     //
@@ -66,7 +66,7 @@ class ArtistsObserver implements ObserverInterface {
       // Check if this path exists.
       if (!await dirToWatch.exists()) {
         // If null, throw a error.
-        _controller?.addError(NullThrownError());
+        _controller?.addError(TypeError());
 
         // After the error, stop the observer.
         stopObserver();

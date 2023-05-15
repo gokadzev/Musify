@@ -26,9 +26,9 @@ class AudiosObserver implements ObserverInterface {
   @override
   Stream<List<AudioModel>> get stream {
     // If [isRunning] is false or the method [startObserver] was never called
-    // throw a [NullThrownError].
+    // throw a [TypeError].
     if (!_isRunning || _controller == null) {
-      throw NullThrownError();
+      throw TypeError();
     }
 
     //
@@ -64,7 +64,7 @@ class AudiosObserver implements ObserverInterface {
       // Check if this path exists.
       if (!await dirToWatch.exists()) {
         // If null, throw a error.
-        _controller?.addError(NullThrownError());
+        _controller?.addError(TypeError());
 
         // After the error, stop the observer.
         stopObserver();
