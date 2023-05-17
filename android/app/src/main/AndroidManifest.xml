@@ -16,15 +16,19 @@
         android:requestLegacyExternalStorage="true">
 
         <provider
-        android:name="vn.hunghd.flutterdownloader.DownloadedFileProvider"
-        android:authorities="${applicationId}.flutter_downloader.provider"
-        android:exported="false"
-        android:grantUriPermissions="true">
+            android:name="vn.hunghd.flutterdownloader.DownloadedFileProvider"
+            android:authorities="${applicationId}.flutter_downloader.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+
+             <meta-data
+                 android:name="android.support.FILE_PROVIDER_PATHS"
+                 android:resource="@xml/provider_paths"/>
+        </provider>
 
         <meta-data
-            android:name="android.support.FILE_PROVIDER_PATHS"
-            android:resource="@xml/provider_paths"/>
-        </provider>
+            android:name="com.google.android.gms.car.application"
+            android:resource="@xml/automotive_app_desc" />
 
         <activity
             android:name="com.ryanheise.audioservice.AudioServiceActivity"
