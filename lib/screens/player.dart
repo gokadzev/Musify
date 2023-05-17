@@ -2,7 +2,6 @@ import 'package:audio_service/audio_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
@@ -637,9 +636,10 @@ class AudioAppState extends State<AudioApp> {
                                                             colorScheme.primary,
                                                         size: 20,
                                                       ),
-                                                      onPressed: () => {
-                                                        Navigator.pop(context)
-                                                      },
+                                                      onPressed: () =>
+                                                          Navigator.pop(
+                                                        context,
+                                                      ),
                                                     ),
                                                     Expanded(
                                                       child: Padding(
@@ -650,9 +650,8 @@ class AudioAppState extends State<AudioApp> {
                                                         ),
                                                         child: Center(
                                                           child: Text(
-                                                            AppLocalizations.of(
-                                                              context,
-                                                            )!
+                                                            context
+                                                                .l10n()!
                                                                 .lyrics,
                                                             style: TextStyle(
                                                               color: colorScheme
@@ -708,9 +707,8 @@ class AudioAppState extends State<AudioApp> {
                                                       ),
                                                       child: Center(
                                                         child: Text(
-                                                          AppLocalizations.of(
-                                                            context,
-                                                          )!
+                                                          context
+                                                              .l10n()!
                                                               .lyricsNotAvailable,
                                                           style:
                                                               const TextStyle(
@@ -721,15 +719,13 @@ class AudioAppState extends State<AudioApp> {
                                                     );
                                                   }
                                                 },
-                                              )
+                                              ),
                                             ],
                                           ),
                                         ),
                                       );
                                     },
-                                    child: Text(
-                                      context.l10n()!.lyrics,
-                                    ),
+                                    child: Text(context.l10n()!.lyrics),
                                   );
                                 },
                               ),
