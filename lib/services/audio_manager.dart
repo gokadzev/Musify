@@ -205,12 +205,14 @@ void activateListeners() {
   });
 
   audioPlayer.positionStream.listen((p) async {
-    final durationIsNotNull = audioPlayer.duration != null;
-    if (durationIsNotNull && p.inSeconds == audioPlayer.duration!.inSeconds) {
-      if (!hasNext && playNextSongAutomatically.value) {
-        final randomSong = await getRandomSong();
-        await playSong(randomSong);
-      }
+    if (audioPlayer.duration == null ||
+        p.inSeconds != audioPlayer.duration!.inSeconds) {
+      return;
+    }
+
+    if (!hasNext && playNextSongAutomatically.value) {
+      final randomSong = await getRandomSong();
+      await playSong(randomSong);
     }
   });
 }
