@@ -191,16 +191,20 @@ class PositionData {
 }
 
 void activateListeners() {
-  audioPlayer.playerStateStream.listen((state) async {
+  audioPlayer.playerStateStream.listen((state) {
     playerState.value = state;
-    if (state.processingState == ProcessingState.completed) {
-      await audioPlayer.pause();
-      await audioPlayer.seek(audioPlayer.duration);
-      if (!hasNext) {
-        await audioPlayer.seek(Duration.zero);
-      } else {
-        await playNext();
-      }
+
+    if (state.processingState != ProcessingState.completed) {
+      return;
+    }
+
+    audioPlayer.pause();
+    audioPlayer.seek(audioPlayer.duration);
+
+    if (!hasNext) {
+      audioPlayer.seek(Duration.zero);
+    } else {
+      playNext();
     }
   });
 
