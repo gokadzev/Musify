@@ -173,27 +173,7 @@ class AppState extends State<Musify> {
                                 artworkHeight: 55,
                                 artworkFit: BoxFit.cover,
                                 keepOldArtwork: true,
-                                nullArtworkWidget: ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: Container(
-                                    width: 55,
-                                    height: 55,
-                                    decoration: BoxDecoration(
-                                      color: colorScheme.secondary,
-                                    ),
-                                    child: const Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: <Widget>[
-                                        Icon(
-                                          FluentIcons.music_note_1_24_regular,
-                                          size: 30,
-                                          color: Colors.white,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
+                                nullArtworkWidget: _buildNullArtworkWidget(),
                               )
                             : ClipRRect(
                                 borderRadius: BorderRadius.circular(8),
@@ -203,24 +183,7 @@ class AppState extends State<Musify> {
                                   width: 55,
                                   height: 55,
                                   errorWidget: (context, url, error) =>
-                                      Container(
-                                    width: 50,
-                                    height: 50,
-                                    decoration: BoxDecoration(
-                                      color: colorScheme.secondary,
-                                    ),
-                                    child: const Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: <Widget>[
-                                        Icon(
-                                          FluentIcons.music_note_1_24_regular,
-                                          size: 30,
-                                          color: Colors.white,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
+                                      _buildNullArtworkWidget(),
                                 ),
                               ),
                       ),
@@ -320,6 +283,24 @@ class AppState extends State<Musify> {
       ],
     );
   }
+
+  Widget _buildNullArtworkWidget() => ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          width: 55,
+          height: 55,
+          decoration: BoxDecoration(
+            color: colorScheme.secondary,
+          ),
+          child: const Center(
+            child: Icon(
+              FluentIcons.music_note_1_24_regular,
+              size: 30,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      );
 
   Widget _buildBottomBar(BuildContext context, List<BottomNavBarItem> items) {
     return AnimatedContainer(
