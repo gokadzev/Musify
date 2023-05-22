@@ -130,16 +130,15 @@ class OnAudioQuery {
     bool fromAsset = false,
     bool fromAppDir = false,
     @Deprecated("Deprecated after [3.0.0]. Use [filter] instead")
-        // ignore: deprecated_member_use
-        SongSortType? sortType,
+    // ignore: deprecated_member_use
+    SongSortType? sortType,
     @Deprecated("Deprecated after [3.0.0]. Use [filter] instead")
-        OrderType? orderType,
+    OrderType? orderType,
     @Deprecated("Deprecated after [3.0.0]. Use [filter] instead")
-        UriType? uriType,
+    UriType? uriType,
     @Deprecated("Deprecated after [3.0.0]. Use [filter] instead")
-        bool? ignoreCase,
-    @Deprecated("Deprecated after [3.0.0]. Use [filter] instead")
-        String? path,
+    bool? ignoreCase,
+    @Deprecated("Deprecated after [3.0.0]. Use [filter] instead") String? path,
   }) async {
     return queryAudios(
       filter: filter,
@@ -236,13 +235,13 @@ class OnAudioQuery {
     bool fromAsset = false,
     bool fromAppDir = false,
     @Deprecated("Deprecated after [3.0.0]. Use [filter] instead")
-        AlbumSortType? sortType,
+    AlbumSortType? sortType,
     @Deprecated("Deprecated after [3.0.0]. Use [filter] instead")
-        OrderType? orderType,
+    OrderType? orderType,
     @Deprecated("Deprecated after [3.0.0]. Use [filter] instead")
-        UriType? uriType,
+    UriType? uriType,
     @Deprecated("Deprecated after [3.0.0]. Use [filter] instead")
-        bool? ignoreCase,
+    bool? ignoreCase,
   }) async {
     //
     // if (fromAsset || fromAppDir) {
@@ -292,13 +291,13 @@ class OnAudioQuery {
     bool fromAsset = false,
     bool fromAppDir = false,
     @Deprecated("Deprecated after [3.0.0]. Use [filter] instead")
-        ArtistSortType? sortType,
+    ArtistSortType? sortType,
     @Deprecated("Deprecated after [3.0.0]. Use [filter] instead")
-        OrderType? orderType,
+    OrderType? orderType,
     @Deprecated("Deprecated after [3.0.0]. Use [filter] instead")
-        UriType? uriType,
+    UriType? uriType,
     @Deprecated("Deprecated after [3.0.0]. Use [filter] instead")
-        bool? ignoreCase,
+    bool? ignoreCase,
   }) async {
     //
     // if (fromAsset || fromAppDir) {
@@ -345,13 +344,13 @@ class OnAudioQuery {
   Future<List<PlaylistModel>> queryPlaylists({
     MediaFilter? filter,
     @Deprecated("Deprecated after [3.0.0]. Use [filter] instead")
-        PlaylistSortType? sortType,
+    PlaylistSortType? sortType,
     @Deprecated("Deprecated after [3.0.0]. Use [filter] instead")
-        OrderType? orderType,
+    OrderType? orderType,
     @Deprecated("Deprecated after [3.0.0]. Use [filter] instead")
-        UriType? uriType,
+    UriType? uriType,
     @Deprecated("Deprecated after [3.0.0]. Use [filter] instead")
-        bool? ignoreCase,
+    bool? ignoreCase,
   }) async {
     return platform.queryPlaylists(filter: filter);
   }
@@ -390,13 +389,13 @@ class OnAudioQuery {
     bool fromAsset = false,
     bool fromAppDir = false,
     @Deprecated("Deprecated after [3.0.0]. Use [filter] instead")
-        GenreSortType? sortType,
+    GenreSortType? sortType,
     @Deprecated("Deprecated after [3.0.0]. Use [filter] instead")
-        OrderType? orderType,
+    OrderType? orderType,
     @Deprecated("Deprecated after [3.0.0]. Use [filter] instead")
-        UriType? uriType,
+    UriType? uriType,
     @Deprecated("Deprecated after [3.0.0]. Use [filter] instead")
-        bool? ignoreCase,
+    bool? ignoreCase,
   }) async {
     //
     // if (fromAsset || fromAppDir) {
@@ -459,12 +458,10 @@ class OnAudioQuery {
     ArtworkType type, {
     MediaFilter? filter,
     @Deprecated("Deprecated after [3.0.0]. Use [filter] instead")
-        // ignore: deprecated_member_use
-        ArtworkFormat? format,
-    @Deprecated("Deprecated after [3.0.0]. Use [filter] instead")
-        int? size,
-    @Deprecated("Deprecated after [3.0.0]. Use [filter] instead")
-        int? quality,
+    // ignore: deprecated_member_use
+    ArtworkFormat? format,
+    @Deprecated("Deprecated after [3.0.0]. Use [filter] instead") int? size,
+    @Deprecated("Deprecated after [3.0.0]. Use [filter] instead") int? quality,
   }) async {
     return platform.queryArtwork(
       id,
