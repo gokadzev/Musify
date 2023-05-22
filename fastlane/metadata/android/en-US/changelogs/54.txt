@@ -1,0 +1,16 @@
+Bug Fixes
+
+- Fixed error while trying to download song from "Now Playing" page
+
+
+Enhancements
+
+- Improved listening experience
+
+- Improved notifiers (Errors,Warnings,Statuses)
+
+- Added support for monochrome/themed icon
+
+- Improved "Now Playing" page responsivity
+
+- Improved the app performance
