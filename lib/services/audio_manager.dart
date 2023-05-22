@@ -163,7 +163,7 @@ Future changeLoopStatus() async {
 
 Future enableBooster() async {
   await _loudnessEnhancer.setEnabled(true);
-  await _loudnessEnhancer.setTargetGain(1);
+  await _loudnessEnhancer.setTargetGain(0.5);
 }
 
 Future mute() async {
