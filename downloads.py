@@ -19,21 +19,28 @@ def handle_rate_limit(response):
         sleep_time = reset_time - time.time()
         print(f"Rate limit exceeded. Waiting {sleep_time} seconds...")
         time.sleep(sleep_time)
+        return True
+    return False
 
 # Make the initial request to the API endpoint
 response = requests.get(api_url)
-handle_rate_limit(response)
+if handle_rate_limit(response):
+    response = requests.get(api_url)  # Retry after rate limit
 
 # Loop through each release and get the download count
-while "next" in response.links:
+while True:
     # Get the download count for each asset in the release
     for release in response.json():
         download_count = sum(asset["download_count"] for asset in release["assets"])
         download_counts[release["tag_name"]] = download_count
 
-    # Make the next request to the API endpoint
-    response = requests.get(response.links["next"]["url"])
-    handle_rate_limit(response)
+    if "next" in response.links:
+        # Make the next request to the API endpoint
+        response = requests.get(response.links["next"]["url"])
+        if handle_rate_limit(response):
+            continue  # Retry after rate limit
+    else:
+        break  # No more pages, exit the loop
 
 total_downloads = sum(download_counts.values())
 json_obj = {"downloads_count": total_downloads}
