@@ -24,7 +24,7 @@ def handle_rate_limit(response):
 
 # Make the initial request to the API endpoint
 response = requests.get(api_url)
-if handle_rate_limit(response):
+while handle_rate_limit(response):
     response = requests.get(api_url)  # Retry after rate limit
 
 # Loop through each release and get the download count
@@ -37,8 +37,8 @@ while True:
     if "next" in response.links:
         # Make the next request to the API endpoint
         response = requests.get(response.links["next"]["url"])
-        if handle_rate_limit(response):
-            continue  # Retry after rate limit
+        while handle_rate_limit(response):
+            response = requests.get(response.links["next"]["url"])  # Retry after rate limit
     else:
         break  # No more pages, exit the loop
 
