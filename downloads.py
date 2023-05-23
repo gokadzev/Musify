@@ -28,19 +28,16 @@ while handle_rate_limit(response):
     response = requests.get(api_url)  # Retry after rate limit
 
 # Loop through each release and get the download count
-while True:
+for release in response.json():
     # Get the download count for each asset in the release
-    for release in response.json():
-        download_count = sum(asset["download_count"] for asset in release["assets"])
-        download_counts[release["tag_name"]] = download_count
+    download_count = sum(asset["download_count"] for asset in release["assets"])
+    download_counts[release["tag_name"]] = download_count
 
-    if "next" in response.links:
-        # Make the next request to the API endpoint
-        response = requests.get(response.links["next"]["url"])
-        while handle_rate_limit(response):
-            response = requests.get(response.links["next"]["url"])  # Retry after rate limit
-    else:
-        break  # No more pages, exit the loop
+if "next" in response.links:
+    # Make the next request to the API endpoint
+    response = requests.get(response.links["next"]["url"])
+    while handle_rate_limit(response):
+        response = requests.get(response.links["next"]["url"])  # Retry after rate limit
 
 total_downloads = sum(download_counts.values())
 json_obj = {"downloads_count": total_downloads}
