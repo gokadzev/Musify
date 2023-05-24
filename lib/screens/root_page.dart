@@ -9,9 +9,9 @@ import 'package:musify/extensions/screen_size.dart';
 import 'package:musify/main.dart';
 import 'package:musify/screens/home_page.dart';
 import 'package:musify/screens/more_page.dart';
-import 'package:musify/screens/player.dart';
+import 'package:musify/screens/now_playing_page.dart';
 import 'package:musify/screens/search_page.dart';
-import 'package:musify/screens/user_playlists_page.dart';
+import 'package:musify/screens/user_added_playlists_page.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/download_manager.dart';
 import 'package:musify/services/update_manager.dart';
@@ -144,7 +144,7 @@ class AppState extends State<Musify> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => AudioApp(),
+                        builder: (context) => NowPlayingPage(),
                       ),
                     );
                   },

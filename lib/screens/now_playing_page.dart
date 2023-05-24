@@ -16,13 +16,13 @@ import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/spinner.dart';
 import 'package:on_audio_query/on_audio_query.dart' hide context;
 
-class AudioApp extends StatefulWidget {
+class NowPlayingPage extends StatefulWidget {
   @override
-  AudioAppState createState() => AudioAppState();
+  _NowPlayingPageState createState() => _NowPlayingPageState();
 }
 
 @override
-class AudioAppState extends State<AudioApp> {
+class _NowPlayingPageState extends State<NowPlayingPage> {
   @override
   Widget build(BuildContext context) {
     final size = context.screenSize;
