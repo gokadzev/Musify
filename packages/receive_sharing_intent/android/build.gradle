@@ -37,6 +37,10 @@ android {
     lintOptions {
         disable 'InvalidPackage'
     }
+
+    if (project.android.hasProperty("namespace")) {
+        namespace 'com.kasem.receive_sharing_intent'
+    }
 }
 
 dependencies {

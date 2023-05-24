@@ -43,6 +43,10 @@ android {
     defaultConfig {
         minSdkVersion 16
     }
+
+    if (project.android.hasProperty("namespace")) {
+        namespace 'com.lucasjosino.on_audio_query'
+    }
 }
 
 dependencies {
