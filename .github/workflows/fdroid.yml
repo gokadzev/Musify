@@ -1,4 +1,7 @@
-on: workflow_dispatch
+on:
+  create:
+    tags:
+      - '*'
 name: Test, Build and Release Fdroid apk
 env:
   PROPERTIES_PATH: './android/key.properties'
@@ -47,17 +50,15 @@ jobs:
       - run: dart format --set-exit-if-changed .
       # Statically analyze the Dart code for any errors.
       - run: flutter analyze .
-      # Build arch apks.
-      - run: flutter build apk --release --split-per-abi --target-platform="android-arm64" --flavor fdroid -t lib/main_fdroid.dart
-      # Upload arm64 generated apk to the artifacts.
-      - uses: actions/upload-artifact@v3
-        with:
-          name: Musify_arm64-v8a.apk
-          path: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
       # Build universal apk.
       - run: flutter build apk --release --flavor fdroid -t lib/main_fdroid.dart
-      # Upload universal generated apk to the artifacts.
-      - uses: actions/upload-artifact@v3
+      # Release universal Fdroid apk.
+      - uses: svenstaro/upload-release-action@v2
         with:
-          name: Musify.apk
-          path: build/app/outputs/flutter-apk/app-fdroid-release.apk
+          repo_name: gokadzev/Musify
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: build/app/outputs/flutter-apk/app-fdroid-release.apk
+          asset_name: Musify-fdroid.apk
+          tag: ${{ github.ref }}
+          prerelease: false
+          overwrite: false
