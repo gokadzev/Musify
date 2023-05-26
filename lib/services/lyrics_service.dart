@@ -31,7 +31,10 @@ class Lyrics {
           .body;
       lyrics = lyrics.split(_delimiter1).last;
       lyrics = lyrics.split(_delimiter2).first;
-      if (lyrics.contains('<meta charset="UTF-8">')) throw Error();
+      if (lyrics.contains('<meta charset="UTF-8">') ||
+          lyrics.contains('Our systems have detected unusual traffic')) {
+        throw Error();
+      }
     } catch (_) {
       try {
         lyrics = (await http.get(
@@ -42,7 +45,10 @@ class Lyrics {
             .body;
         lyrics = lyrics.split(_delimiter1).last;
         lyrics = lyrics.split(_delimiter2).first;
-        if (lyrics.contains('<meta charset="UTF-8">')) throw Error();
+        if (lyrics.contains('<meta charset="UTF-8">') ||
+            lyrics.contains('Our systems have detected unusual traffic')) {
+          throw Error();
+        }
       } catch (_) {
         try {
           lyrics = (await http.get(
@@ -55,7 +61,10 @@ class Lyrics {
               .body;
           lyrics = lyrics.split(_delimiter1).last;
           lyrics = lyrics.split(_delimiter2).first;
-          if (lyrics.contains('<meta charset="UTF-8">')) throw Error();
+          if (lyrics.contains('<meta charset="UTF-8">') ||
+              lyrics.contains('Our systems have detected unusual traffic')) {
+            throw Error();
+          }
         } catch (_) {
           // give up
           return 'not found';
