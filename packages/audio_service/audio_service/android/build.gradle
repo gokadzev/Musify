@@ -27,7 +27,10 @@ project.getTasks().withType(JavaCompile) {
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 31
+    if (project.android.hasProperty("namespace")) {
+        namespace 'com.ryanheise.audioservice'
+    }
+    compileSdkVersion 33
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -39,9 +42,6 @@ android {
     }
     lintOptions {
         disable 'InvalidPackage'
-    }
-    if (project.android.hasProperty("namespace")) {
-        namespace 'com.ryanheise.audioservice'
     }
 }
 
