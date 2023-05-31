@@ -25,6 +25,8 @@ List userPlaylists = Hive.box('user').get('playlists', defaultValue: []);
 List userLikedSongsList = Hive.box('user').get('likedSongs', defaultValue: []);
 List userLikedPlaylists =
     Hive.box('user').get('likedPlaylists', defaultValue: []);
+List userRecentlyPlayed =
+    Hive.box('user').get('recentlyPlayedSongs', defaultValue: []);
 List suggestedPlaylists = [];
 Map activePlaylist = {
   'ytid': '',
@@ -37,6 +39,9 @@ Map activePlaylist = {
 final currentLikedSongsLength = ValueNotifier<int>(userLikedSongsList.length);
 final currentLikedPlaylistsLength =
     ValueNotifier<int>(userLikedPlaylists.length);
+
+final currentRecentlyPlayedLength =
+    ValueNotifier<int>(userRecentlyPlayed.length);
 
 final lyrics = ValueNotifier<String>('null');
 String lastFetchedLyrics = 'null';
@@ -322,6 +327,7 @@ Future<String> getSong(String songId, bool isLive) async {
       final manifest = await yt.videos.streamsClient.getManifest(songId);
       songUrl = manifest.audioOnly.withHighestBitrate().url.toString();
     }
+    await updateRecentlyPlayed(songId);
   } catch (e) {
     logger.e('Error while getting song streaming url: $e');
   }
@@ -331,6 +337,7 @@ Future<String> getSong(String songId, bool isLive) async {
 
 Future getSongDetails(dynamic songIndex, dynamic songId) async {
   final song = await yt.videos.get(songId);
+
   return returnSongLayout(
     songIndex,
     song,
@@ -347,4 +354,15 @@ Future getSongLyrics(String artist, String title) async {
   }
 
   return lyrics.value;
+}
+
+Future<void> updateRecentlyPlayed(dynamic songId) async {
+  if (userRecentlyPlayed.length >= 20) {
+    userRecentlyPlayed.removeAt(0);
+  }
+  userRecentlyPlayed.removeWhere((song) => song['ytid'] == songId);
+
+  userRecentlyPlayed
+      .add(await getSongDetails(userRecentlyPlayed.length, songId));
+  addOrUpdateData('user', 'recentlyPlayedSongs', userRecentlyPlayed);
 }
