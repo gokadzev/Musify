@@ -14,7 +14,7 @@ environment:
 dependencies:
   audio_service:
     path: ./packages/audio_service/audio_service
-  audio_session: ^0.1.14
+  audio_session: ^0.1.15
   cached_network_image: ^3.2.3
   dynamic_color: ^1.6.5
   file_picker: ^5.3.0
@@ -30,7 +30,7 @@ dependencies:
   hive_flutter: ^1.1.0
   http: ^0.13.5
   intl: ^0.18.0
-  just_audio: ^0.9.33
+  just_audio: ^0.9.34
   logger: ^1.3.0
   on_audio_query:
     path: ./packages/on_audio_query/on_audio_query

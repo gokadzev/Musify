@@ -52,10 +52,10 @@ packages:
     dependency: "direct main"
     description:
       name: audio_session
-      sha256: "97317505460ab705e8e186e87a3924d67c74d8c8a07cbc087e3b988bbce7cfaa"
+      sha256: "655343841a723646f74932215c5785ef7156b76d2de4b99bcd3205476f08dc61"
       url: "https://pub.dev"
     source: hosted
-    version: "0.1.14"
+    version: "0.1.15"
   boolean_selector:
     dependency: transitive
     description:
@@ -376,10 +376,10 @@ packages:
     dependency: "direct main"
     description:
       name: just_audio
-      sha256: d7ff71169927a2237c902aef6baf2f69d063d4c427590dee479d279d4d57c984
+      sha256: "890cd0fc41a1a4530c171e375a2a3fb6a09d84e9d508c5195f40bcff54330327"
       url: "https://pub.dev"
     source: hosted
-    version: "0.9.33"
+    version: "0.9.34"
   just_audio_platform_interface:
     dependency: transitive
     description:
