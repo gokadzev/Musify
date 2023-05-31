@@ -104,6 +104,9 @@ flutter run --flavor github
 
 Contributions are always welcome. Please read our [contributing guidelines](https://github.com/gokadzev/Musify/blob/master/CONTRIBUTING.md) before contributing.
 
+You can check out our [To-Do](https://github.com/users/gokadzev/projects/1) list to see what we're currently working on and what tasks are planned for future releases. Feel free to contribute by picking up a task or suggesting new ones!
+
+
 ---
 
 <h3 align="center">Credits :pushpin:	</h3>
