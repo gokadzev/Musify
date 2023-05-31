@@ -65,5 +65,6 @@
   "userLikedSongs": "Kullanıcının beğendiği şarkılar",
   "userPlaylists": "Kullanıcı oynatma listeleri",
   "yourFavoriteSongsHere": "En sevdiğin şarkılar burada",
-  "youtubePlaylistID": "Youtube oynatma listesi ID"
+  "youtubePlaylistID": "Youtube oynatma listesi ID",
+  "recentlyPlayed": "Son Oynatılanlar"
 }

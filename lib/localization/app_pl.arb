@@ -65,5 +65,6 @@
   "userLikedSongs": "Utwory lubiane przez użytkowników",
   "userPlaylists": "Playlisty użytkownika",
   "yourFavoriteSongsHere": "Twoje ulubione piosenki tutaj",
-  "youtubePlaylistID": "Identyfikator playlisty YouTube"
+  "youtubePlaylistID": "Identyfikator playlisty YouTube",
+  "recentlyPlayed": "Recently Played"
 }

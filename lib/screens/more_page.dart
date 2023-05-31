@@ -5,6 +5,7 @@ import 'package:musify/main.dart';
 import 'package:musify/screens/about_page.dart';
 import 'package:musify/screens/local_music_page.dart';
 import 'package:musify/screens/playlists_page.dart';
+import 'package:musify/screens/recently_played_page.dart';
 import 'package:musify/screens/search_page.dart';
 import 'package:musify/screens/setup_page.dart';
 import 'package:musify/screens/user_liked_playlists_page.dart';
@@ -53,6 +54,18 @@ class SettingsCards extends StatelessWidget {
           ),
         ),
         SettingBar(
+          context.l10n()!.recentlyPlayed,
+          FluentIcons.history_24_filled,
+          () => {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const RecentlyPlayed(),
+              ),
+            ),
+          },
+        ),
+        SettingBar(
           context.l10n()!.playlists,
           FluentIcons.list_24_filled,
           () => {
@@ -86,6 +99,7 @@ class SettingsCards extends StatelessWidget {
             ),
           },
         ),
+
         SettingBar(
           context.l10n()!.localMusic,
           FluentIcons.arrow_download_24_filled,
