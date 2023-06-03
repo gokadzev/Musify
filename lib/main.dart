@@ -136,7 +136,6 @@ class _MyAppState extends State<MyApp> {
 
         try {
           final song = await getSongDetails(0, songId);
-          if (song == null) return;
 
           await playSong(song);
         } catch (e) {

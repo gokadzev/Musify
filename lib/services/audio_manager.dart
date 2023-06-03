@@ -57,7 +57,7 @@ Future<void> playSong(Map song) async {
   }
 }
 
-Future playNext() async {
+Future<void> playNext() async {
   if (activePlaylist.isEmpty || id + 1 >= activePlaylist['list'].length) {
     await audioPlayer.seekToNext();
   } else {
@@ -73,7 +73,7 @@ Future playNext() async {
   }
 }
 
-Future playPrevious() async {
+Future<void> playPrevious() async {
   if (activePlaylist.isEmpty || activePlaylist['list'].isEmpty) {
     await audioPlayer.seekToPrevious();
   } else {

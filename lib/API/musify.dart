@@ -163,22 +163,24 @@ Future<List> getPlaylists({
 
   if (playlistsNum != null && query == null) {
     if (suggestedPlaylists.isEmpty) {
-      suggestedPlaylists =
-          (playlists.toList()..shuffle()).take(playlistsNum).toList();
+      suggestedPlaylists = playlists.toList()..shuffle();
     }
-    return suggestedPlaylists;
-  } else if (query != null && playlistsNum == null) {
-    return playlists
-        .where(
-          (playlist) =>
-              playlist['title'].toLowerCase().contains(query.toLowerCase()),
-        )
-        .toList();
-  } else if (onlyLiked && playlistsNum == null && query == null) {
-    return userLikedPlaylists;
-  } else {
-    return playlists;
+    return suggestedPlaylists.take(playlistsNum).toList();
   }
+
+  if (query != null && playlistsNum == null) {
+    final lowercaseQuery = query.toLowerCase();
+    return playlists.where((playlist) {
+      final lowercaseTitle = playlist['title'].toLowerCase();
+      return lowercaseTitle.contains(lowercaseQuery);
+    }).toList();
+  }
+
+  if (onlyLiked && playlistsNum == null && query == null) {
+    return userLikedPlaylists;
+  }
+
+  return playlists;
 }
 
 Future<void> readPlaylistsFromFile() async {
@@ -316,32 +318,33 @@ Future getPlaylistInfoForWidget(dynamic id) async {
 }
 
 Future<String> getSong(String songId, bool isLive) async {
-  late final String songUrl;
-
   try {
     if (isLive) {
       final streamInfo =
           await yt.videos.streamsClient.getHttpLiveStreamUrl(VideoId(songId));
-      songUrl = streamInfo;
+      return streamInfo;
     } else {
       final manifest = await yt.videos.streamsClient.getManifest(songId);
-      songUrl = manifest.audioOnly.withHighestBitrate().url.toString();
+      final audioStream = manifest.audioOnly.withHighestBitrate();
+      return audioStream.url.toString();
     }
-    await updateRecentlyPlayed(songId);
   } catch (e) {
-    logger.e('Error while getting song streaming url: $e');
+    logger.e('Error while getting song streaming URL: $e');
+    rethrow; // Rethrow the exception to allow the caller to handle it
   }
-
-  return songUrl;
 }
 
-Future getSongDetails(dynamic songIndex, dynamic songId) async {
-  final song = await yt.videos.get(songId);
-
-  return returnSongLayout(
-    songIndex,
-    song,
-  );
+Future<Map<String, dynamic>> getSongDetails(
+  dynamic songIndex,
+  dynamic songId,
+) async {
+  try {
+    final song = await yt.videos.get(songId);
+    return returnSongLayout(songIndex, song);
+  } catch (e) {
+    logger.e('Error while getting song details: $e');
+    rethrow;
+  }
 }
 
 Future getSongLyrics(String artist, String title) async {
