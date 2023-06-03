@@ -12,6 +12,8 @@ import 'package:musify/utilities/flutter_toast.dart';
 import 'package:path/path.dart' as path;
 import 'package:permission_handler/permission_handler.dart';
 
+final supportedFolderNames = ['Music', 'Documents', 'Downloads'];
+
 Future<void> downloadSong(BuildContext context, dynamic song) async {
   try {
     final isDirectoryValid = await checkDownloadDirectory(context);
@@ -92,9 +94,7 @@ Future<void> chooseDownloadDirectory(BuildContext context) async {
     final _downloadDirectory = await FilePicker.platform.getDirectoryPath();
     if (_downloadDirectory != null) {
       final folderName = path.basename(_downloadDirectory);
-      if (folderName == 'Music' ||
-          folderName == 'Documents' ||
-          folderName == 'Downloads') {
+      if (supportedFolderNames.contains(folderName)) {
         downloadDirectory.value = _downloadDirectory;
         addOrUpdateData(
           'settings',
