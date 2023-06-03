@@ -23,6 +23,8 @@
   "downloadFailed": "Download failed",
   "downloadSongsFolder": "Каталог завантажених пісень",
   "error": "Something went wrong",
+  "errorChoosingFolder": "Error while choosing the download directory",
+  "errorFolderLimitation": "You can only choose Music, Documents or Downloads folder",
   "errorWhileRequestingPerms": "Error while requesting permissions",
   "falseMSG": "Хиба",
   "foregroundService": "Служба переднього плану",
@@ -44,6 +46,7 @@
   "playlist": "Плейлист",
   "playlists": "Плейлисти",
   "queueInitText": "Iнiцiалiзацiя черги... ",
+  "recentlyPlayed": "Recently Played",
   "recommendedForYou": "Рекомендовано вам",
   "restoreError": "Error while data restore",
   "restoreUserData": "Вiдновити данi користувача",
@@ -65,6 +68,5 @@
   "userLikedSongs": "Обране",
   "userPlaylists": "Плейлисти користувача",
   "yourFavoriteSongsHere": "Вашi улюбленi пiснi тут",
-  "youtubePlaylistID": "Iдентифiкатор списку вiдтворення YouTube",
-  "recentlyPlayed": "Recently Played"
+  "youtubePlaylistID": "Iдентифiкатор списку вiдтворення YouTube"
 }

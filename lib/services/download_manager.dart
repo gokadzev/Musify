@@ -104,7 +104,7 @@ Future<void> chooseDownloadDirectory(BuildContext context) async {
       } else {
         showToast(
           context,
-          'You can only choose Music, Documents or Downloads folder!',
+          '${context.l10n()!.errorFolderLimitation}!',
         );
       }
     } else {
@@ -112,6 +112,6 @@ Future<void> chooseDownloadDirectory(BuildContext context) async {
     }
   } catch (e) {
     logger.e('Error while choosing the download directory: $e');
-    showToast(context, 'Error while choosing the download directory: $e');
+    showToast(context, '${context.l10n()!.errorChoosingFolder}: $e');
   }
 }

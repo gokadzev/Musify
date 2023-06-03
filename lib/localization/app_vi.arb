@@ -23,6 +23,8 @@
   "downloadFailed": "Tải xuống không thành công",
   "downloadSongsFolder": "Thư mục tải xuống bài hát",
   "error": "Something went wrong",
+  "errorChoosingFolder": "Error while choosing the download directory",
+  "errorFolderLimitation": "You can only choose Music, Documents or Downloads folder",
   "errorWhileRequestingPerms": "Lỗi khi yêu cầu cấp quyền",
   "falseMSG": "Sai",
   "foregroundService": "Chạy nền",
@@ -44,6 +46,7 @@
   "playlist": "Danh sách phát",
   "playlists": "Danh sách phát",
   "queueInitText": "Khởi tạo danh sách đợi...",
+  "recentlyPlayed": "Recently Played",
   "recommendedForYou": "Dành cho bạn",
   "restoreError": "Lỗi khi khôi phục dữ liệu",
   "restoreUserData": "Khôi phục dữ liệu người dùng",
@@ -65,6 +68,5 @@
   "userLikedSongs": "Bài hát yêu thích của tôi",
   "userPlaylists": "Danh sách phát của tôi",
   "yourFavoriteSongsHere": "Bài hát yêu thích của bạn ở đây",
-  "youtubePlaylistID": "ID danh sách phát Youtube",
-  "recentlyPlayed": "Recently Played"
+  "youtubePlaylistID": "ID danh sách phát Youtube"
 }

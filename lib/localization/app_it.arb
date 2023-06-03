@@ -23,6 +23,8 @@
   "downloadFailed": "Download failed",
   "downloadSongsFolder": "Download Songs Folder",
   "error": "Something went wrong",
+  "errorChoosingFolder": "Error while choosing the download directory",
+  "errorFolderLimitation": "You can only choose Music, Documents or Downloads folder",
   "errorWhileRequestingPerms": "Error while requesting permissions",
   "falseMSG": "False",
   "foregroundService": "Foreground Service",
@@ -44,6 +46,7 @@
   "playlist": "Playlist",
   "playlists": "Playlist",
   "queueInitText": "Inizializzando la coda... ",
+  "recentlyPlayed": "Recently Played",
   "recommendedForYou": "Consigliati per te",
   "restoreError": "Error while data restore",
   "restoreUserData": "Ripristina dati utente",
@@ -65,6 +68,5 @@
   "userLikedSongs": "Le tue canzoni preferite",
   "userPlaylists": "Le tue playlist",
   "yourFavoriteSongsHere": "Qui le tue canzoni preferite",
-  "youtubePlaylistID": "ID playlist di Youtube",
-  "recentlyPlayed": "Recently Played"
+  "youtubePlaylistID": "ID playlist di Youtube"
 }
