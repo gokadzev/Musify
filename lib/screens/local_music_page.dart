@@ -103,7 +103,7 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                               'title': context.l10n()!.localMusic,
                               'header_desc': '',
                               'image': '',
-                              'list': await getMusic()
+                              'list': await getMusic(null),
                             },
                           ),
                         },
@@ -169,12 +169,10 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
             ),
             const Padding(padding: EdgeInsets.only(top: 40)),
             FutureBuilder<List<AudioModel>>(
-              future: _searchQuery.isEmpty
-                  ? Future.delayed(const Duration(milliseconds: 500), getMusic)
-                  : Future.delayed(
-                      const Duration(milliseconds: 500),
-                      () => getMusic(searchQuery: _searchQuery),
-                    ),
+              future: Future.delayed(
+                const Duration(milliseconds: 500),
+                () => getMusic(_searchQuery),
+              ),
               builder: (context, snapshot) {
                 if (snapshot.connectionState != ConnectionState.done) {
                   return const Center(

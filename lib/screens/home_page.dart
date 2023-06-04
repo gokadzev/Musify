@@ -163,7 +163,7 @@ class _HomePageState extends State<HomePage> {
                                   child: GestureDetector(
                                     onTap: () {
                                       getMusic(
-                                        searchQuery: artist.split('~')[0],
+                                        artist.split('~')[0],
                                       ).then(
                                         (songs) => {
                                           Navigator.push(

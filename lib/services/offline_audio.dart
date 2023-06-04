@@ -2,7 +2,7 @@ import 'package:on_audio_query/on_audio_query.dart' hide context;
 
 final OnAudioQuery _audioQuery = OnAudioQuery();
 
-Future<List<AudioModel>> getMusic({searchQuery}) async {
+Future<List<AudioModel>> getMusic(String? searchQuery) async {
   final allSongs = await _audioQuery.querySongs(
     filter: MediaFilter.forSongs(
       audioSortType: AudioSortType.DATE_ADDED,
@@ -11,7 +11,7 @@ Future<List<AudioModel>> getMusic({searchQuery}) async {
     ),
   );
 
-  if (searchQuery != null) {
+  if (searchQuery != null && searchQuery.isNotEmpty) {
     return allSongs
         .where(
           (song) => song.displayName
