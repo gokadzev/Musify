@@ -195,29 +195,25 @@ void activateListeners() {
   audioPlayer.playerStateStream.listen((state) {
     playerState.value = state;
 
-    if (state.processingState != ProcessingState.completed) {
-      return;
-    }
+    if (state.processingState == ProcessingState.completed) {
+      audioPlayer.pause();
+      audioPlayer.seek(audioPlayer.duration);
 
-    audioPlayer.pause();
-    audioPlayer.seek(audioPlayer.duration);
-
-    if (!hasNext) {
-      audioPlayer.seek(Duration.zero);
-    } else {
-      playNext();
+      if (!hasNext) {
+        audioPlayer.seek(Duration.zero);
+      } else {
+        playNext();
+      }
     }
   });
 
   audioPlayer.positionStream.listen((p) async {
-    if (audioPlayer.duration == null ||
-        p.inSeconds != audioPlayer.duration!.inSeconds) {
-      return;
-    }
-
-    if (!hasNext && playNextSongAutomatically.value) {
-      final randomSong = await getRandomSong();
-      await playSong(randomSong);
+    if (audioPlayer.duration != null &&
+        p.inSeconds == audioPlayer.duration!.inSeconds) {
+      if (!hasNext && playNextSongAutomatically.value) {
+        final randomSong = await getRandomSong();
+        await playSong(randomSong);
+      }
     }
   });
 }
