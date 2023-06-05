@@ -18,16 +18,14 @@ import 'package:on_audio_query/on_audio_query.dart' hide context;
 
 class Musify extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() {
-    return AppState();
-  }
+  _MusifyState createState() => _MusifyState();
 }
 
 ValueNotifier<int> activeTabIndex = ValueNotifier<int>(0);
 ValueNotifier<String> activeTab = ValueNotifier<String>(RoutePaths.home);
 final _navigatorKey = GlobalKey<NavigatorState>();
 
-class AppState extends State<Musify> {
+class _MusifyState extends State<Musify> {
   @override
   void initState() {
     super.initState();
