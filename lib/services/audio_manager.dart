@@ -50,7 +50,6 @@ Future<void> playSong(Map song) async {
       : await getSong(song['ytid'], song['isLive']);
 
   try {
-    unawaited(updateRecentlyPlayed(song['ytid']));
     await checkIfSponsorBlockIsAvailable(song, songUrl);
     await audioPlayer.play();
   } catch (e) {

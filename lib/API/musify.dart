@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
@@ -326,6 +327,11 @@ Future<String> getSong(String songId, bool isLive) async {
     } else {
       final manifest = await yt.videos.streamsClient.getManifest(songId);
       final audioStream = manifest.audioOnly.withHighestBitrate();
+      unawaited(
+        updateRecentlyPlayed(
+          songId,
+        ),
+      ); // It's better if we save only normal audios in "Recently played" and not live ones
       return audioStream.url.toString();
     }
   } catch (e) {
