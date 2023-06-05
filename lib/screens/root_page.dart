@@ -127,13 +127,9 @@ class _MusifyState extends State<Musify> {
                   },
                   child: Row(
                     children: <Widget>[
-                      IconButton(
-                        icon: const Icon(
-                          FluentIcons.arrow_up_24_filled,
-                          size: 22,
-                        ),
-                        onPressed: null,
-                        disabledColor: colorScheme.primary,
+                      const Icon(
+                        FluentIcons.arrow_up_24_filled,
+                        size: 22,
                       ),
                       Padding(
                         padding: const EdgeInsets.only(
