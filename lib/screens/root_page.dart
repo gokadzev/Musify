@@ -7,13 +7,10 @@ import 'package:just_audio/just_audio.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/extensions/screen_size.dart';
 import 'package:musify/main.dart';
-import 'package:musify/screens/home_page.dart';
-import 'package:musify/screens/more_page.dart';
 import 'package:musify/screens/now_playing_page.dart';
-import 'package:musify/screens/search_page.dart';
-import 'package:musify/screens/user_added_playlists_page.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/download_manager.dart';
+import 'package:musify/services/router_service.dart';
 import 'package:musify/services/update_manager.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/widgets/custom_animated_bottom_bar.dart';
@@ -27,7 +24,7 @@ class Musify extends StatefulWidget {
 }
 
 ValueNotifier<int> activeTabIndex = ValueNotifier<int>(0);
-ValueNotifier<String> activeTab = ValueNotifier<String>('/');
+ValueNotifier<String> activeTab = ValueNotifier<String>(RoutePaths.home);
 final _navigatorKey = GlobalKey<NavigatorState>();
 
 class AppState extends State<Musify> {
@@ -54,26 +51,8 @@ class AppState extends State<Musify> {
         },
         child: Navigator(
           key: _navigatorKey,
-          initialRoute: '/',
-          onGenerateRoute: (RouteSettings settings) {
-            return MaterialPageRoute(
-              settings: settings,
-              builder: (BuildContext context) {
-                switch (settings.name) {
-                  case '/':
-                    return HomePage();
-                  case '/search':
-                    return SearchPage();
-                  case '/userPlaylists':
-                    return UserPlaylistsPage();
-                  case '/more':
-                    return MorePage();
-                  default:
-                    throw Exception('Invalid route: ${settings.name}');
-                }
-              },
-            );
-          },
+          initialRoute: RoutePaths.home,
+          onGenerateRoute: RouterService.generateRoute,
         ),
       ),
       bottomNavigationBar: getFooter(),
@@ -99,10 +78,10 @@ class AppState extends State<Musify> {
         ][index];
 
         final routeName = [
-          '/',
-          '/search',
-          '/userPlaylists',
-          '/more',
+          RoutePaths.home,
+          RoutePaths.search,
+          RoutePaths.userPlaylists,
+          RoutePaths.more,
         ][index];
 
         return BottomNavBarItem(
