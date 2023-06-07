@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 
-import '../widgets/song_bar.dart';
+import 'package:musify/widgets/song_bar.dart';
 
 class RecentlyPlayed extends StatefulWidget {
   const RecentlyPlayed({super.key});

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-final availableColors = const <Color>[
+const availableColors = <Color>[
   Color.fromARGB(255, 154, 205, 50),
   Color.fromARGB(255, 0, 250, 154),
   Color.fromARGB(255, 240, 128, 128),

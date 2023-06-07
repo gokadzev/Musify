@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 
-final kBorderRadius = BorderRadius.circular(15.0);
-final kContentPadding =
-    const EdgeInsets.only(left: 18, right: 20, top: 14, bottom: 14);
+final kBorderRadius = BorderRadius.circular(15);
+const kContentPadding =
+    EdgeInsets.only(left: 18, right: 20, top: 14, bottom: 14);
 
 Color primaryColor =
     Color(Hive.box('settings').get('accentColor', defaultValue: 0xFFF08080));
@@ -39,7 +39,7 @@ ThemeData commonProperties() => ThemeData(
     );
 
 ThemeData getAppDarkTheme() {
-  final _darkBlack = const Color(0xFF121212);
+  const _darkBlack = Color(0xFF121212);
   return commonProperties().copyWith(
     scaffoldBackgroundColor: _darkBlack,
     canvasColor: _darkBlack,

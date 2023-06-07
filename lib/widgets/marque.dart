@@ -22,7 +22,7 @@ class _MarqueeWidgetState extends State<MarqueeWidget> {
 
   @override
   void initState() {
-    scrollController = ScrollController(initialScrollOffset: 50.0);
+    scrollController = ScrollController(initialScrollOffset: 50);
     WidgetsBinding.instance.addPostFrameCallback(scroll);
     super.initState();
   }
@@ -55,7 +55,7 @@ class _MarqueeWidgetState extends State<MarqueeWidget> {
       await Future.delayed(widget.pauseDuration);
       if (scrollController.hasClients) {
         await scrollController.animateTo(
-          0.0,
+          0,
           duration: widget.backDuration,
           curve: Curves.easeOut,
         );
