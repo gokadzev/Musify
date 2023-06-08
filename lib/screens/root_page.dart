@@ -127,9 +127,12 @@ class _MusifyState extends State<Musify> {
                   },
                   child: Row(
                     children: <Widget>[
-                      const Icon(
-                        FluentIcons.arrow_up_24_filled,
-                        size: 22,
+                      const Padding(
+                        padding: EdgeInsets.only(left: 15, right: 15),
+                        child: Icon(
+                          FluentIcons.arrow_up_24_filled,
+                          size: 22,
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(
