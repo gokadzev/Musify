@@ -1,0 +1,11 @@
+Enhancements
+
+- If lyrics API requests CAPTCHA, throw an error for better user experience.
+
+- Added recently played feature, allowing users to easily access their most listened songs.
+
+- Added 2 new playlists.
+
+- Removed invalid playlist images.
+
+- Miscellaneous quality and performance improvements to enhance app stability and speed.
