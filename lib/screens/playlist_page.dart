@@ -93,7 +93,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
                 children: [
                   _buildPlaylistImage(),
                   _buildPlaylistTitle(),
-                  _buildPlaylistDescription(),
+                  if (_playlist['header_desc'] != null)
+                    _buildPlaylistDescription(),
                   const SizedBox(height: 10),
                   _buildPlayAllButton(),
                   const SizedBox(height: 30),
