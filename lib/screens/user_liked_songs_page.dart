@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/style/app_themes.dart';
+import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/song_bar.dart';
 
 class UserLikedSongs extends StatefulWidget {
@@ -26,36 +27,17 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
           children: [
             Row(
               children: [
-                Container(
-                  margin: const EdgeInsets.only(left: 10, right: 10),
-                  height: 200,
-                  width: 200,
-                  child: Card(
-                    child: Container(
-                      width: 200,
-                      height: 200,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Theme.of(context)
-                            .colorScheme
-                            .background
-                            .withAlpha(30),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Icon(
-                            FluentIcons.music_note_1_24_regular,
-                            size: 30,
-                            color: colorScheme.primary,
-                          ),
-                          Text(
-                            context.l10n()!.userLikedSongs,
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      ),
-                    ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: 10,
+                    right: 20,
+                    left: 10,
+                    bottom: 10,
+                  ),
+                  child: PlaylistCube(
+                    title: context.l10n()!.userLikedSongs,
+                    cubeIcon: FluentIcons.music_note_1_24_regular,
+                    onClickOpen: false,
                   ),
                 ),
                 const SizedBox(width: 16),

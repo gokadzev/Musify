@@ -120,6 +120,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
         image: _playlist['image'],
         title: _playlist['title'],
         onClickOpen: false,
+        zoomNumber: 0.55,
       ),
     );
   }

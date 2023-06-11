@@ -6,6 +6,7 @@ import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/offline_audio.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/formatter.dart';
+import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/spinner.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
@@ -47,36 +48,17 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
           children: [
             Row(
               children: [
-                Container(
-                  margin: const EdgeInsets.only(left: 10, right: 26),
-                  height: 200,
-                  width: 200,
-                  child: Card(
-                    child: Container(
-                      width: 200,
-                      height: 200,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Theme.of(context)
-                            .colorScheme
-                            .background
-                            .withAlpha(30),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Icon(
-                            FluentIcons.save_24_filled,
-                            size: 30,
-                            color: colorScheme.primary,
-                          ),
-                          Text(
-                            context.l10n()!.localMusic,
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      ),
-                    ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: 10,
+                    right: 20,
+                    left: 10,
+                    bottom: 10,
+                  ),
+                  child: PlaylistCube(
+                    title: context.l10n()!.localMusic,
+                    cubeIcon: FluentIcons.save_24_filled,
+                    onClickOpen: false,
                   ),
                 ),
                 Expanded(
