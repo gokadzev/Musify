@@ -114,89 +114,88 @@ class _HomePageState extends State<HomePage> {
               future: getArtists(),
               builder: (context, AsyncSnapshot<List<ArtistModel>> data) {
                 final calculatedSize = context.screenSize.height * 0.25;
-                return data.hasData
-                    ? Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              top: 16,
-                              bottom: 10,
-                              left: 20,
-                              right: 20,
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                SizedBox(
-                                  width: context.screenSize.width / 1.4,
-                                  child: MarqueeWidget(
-                                    direction: Axis.horizontal,
-                                    child: Text(
-                                      context.l10n()!.suggestedArtists,
-                                      style: TextStyle(
-                                        color: colorScheme.primary,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
+
+                if (data.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(35),
+                      child: Spinner(),
+                    ),
+                  );
+                } else if (data.hasData && data.data!.isNotEmpty) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 16,
+                          bottom: 10,
+                          left: 20,
+                          right: 20,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SizedBox(
+                              width: context.screenSize.width / 1.4,
+                              child: MarqueeWidget(
+                                direction: Axis.horizontal,
+                                child: Text(
+                                  context.l10n()!.suggestedArtists,
+                                  style: TextStyle(
+                                    color: colorScheme.primary,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w700,
                                   ),
                                 ),
-                              ],
+                              ),
                             ),
-                          ),
-                          SizedBox(
-                            height: calculatedSize,
-                            child: ListView.separated(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 15),
-                              scrollDirection: Axis.horizontal,
-                              separatorBuilder: (_, __) =>
-                                  const SizedBox(width: 15),
-                              itemCount: 10,
-                              itemBuilder: (context, index) {
-                                final artist = data.data![index].artist;
-                                return DelayedDisplay(
-                                  delay: const Duration(milliseconds: 200),
-                                  fadingDuration:
-                                      const Duration(milliseconds: 400),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      getMusic(
-                                        artist.split('~')[0],
-                                      ).then(
-                                        (songs) => {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => ArtistPage(
-                                                playlist: {
-                                                  'ytid': '',
-                                                  'title': artist,
-                                                  'header_desc': '',
-                                                  'image': '',
-                                                  'list': songs,
-                                                },
-                                              ),
-                                            ),
-                                          )
-                                        },
-                                      );
-                                    },
-                                    child: ArtistCube(artist: artist),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        ],
-                      )
-                    : const Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(35),
-                          child: Spinner(),
+                          ],
                         ),
-                      );
+                      ),
+                      SizedBox(
+                        height: calculatedSize,
+                        child: ListView.separated(
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          scrollDirection: Axis.horizontal,
+                          separatorBuilder: (_, __) =>
+                              const SizedBox(width: 15),
+                          itemCount: 10,
+                          itemBuilder: (context, index) {
+                            final artist = data.data![index].artist;
+                            return DelayedDisplay(
+                              delay: const Duration(milliseconds: 200),
+                              fadingDuration: const Duration(milliseconds: 400),
+                              child: GestureDetector(
+                                onTap: () {
+                                  getMusic(artist.split('~')[0]).then((songs) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ArtistPage(
+                                          playlist: {
+                                            'ytid': '',
+                                            'title': artist,
+                                            'header_desc': '',
+                                            'image': '',
+                                            'list': songs,
+                                          },
+                                        ),
+                                      ),
+                                    );
+                                  });
+                                },
+                                child: ArtistCube(artist: artist),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  );
+                } else {
+                  return const SizedBox.shrink();
+                }
               },
             ),
             FutureBuilder(
