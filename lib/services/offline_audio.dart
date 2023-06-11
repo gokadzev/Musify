@@ -24,7 +24,8 @@ Future<List<AudioModel>> getMusic(String? searchQuery) async {
   }
 }
 
-Future<List<ArtistModel>> getArtists() async {
+Future<List<ArtistModel>> getRandomArtists() async {
   final _artists = await _audioQuery.queryArtists();
-  return _artists;
+  final randomArtists = _artists.toList()..shuffle();
+  return randomArtists.take(10).toList();
 }

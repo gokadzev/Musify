@@ -111,7 +111,7 @@ class _HomePageState extends State<HomePage> {
               },
             ),
             FutureBuilder(
-              future: getArtists(),
+              future: getRandomArtists(),
               builder: (context, AsyncSnapshot<List<ArtistModel>> data) {
                 final calculatedSize = context.screenSize.height * 0.25;
 
@@ -160,7 +160,7 @@ class _HomePageState extends State<HomePage> {
                           scrollDirection: Axis.horizontal,
                           separatorBuilder: (_, __) =>
                               const SizedBox(width: 15),
-                          itemCount: 10,
+                          itemCount: data.data!.length,
                           itemBuilder: (context, index) {
                             final artist = data.data![index].artist;
                             return DelayedDisplay(
