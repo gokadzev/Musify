@@ -8,7 +8,6 @@ import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:just_audio/just_audio.dart';
 import 'package:musify/extensions/l10n.dart';
-import 'package:musify/main.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/lyrics_service.dart';
@@ -77,7 +76,7 @@ Future get10Music(dynamic playlistid) async {
 
       addOrUpdateData('cache', 'playlist10Songs$playlistid', playlistSongs);
     } catch (e) {
-      logger.e('Error retrieving playlist songs: $e');
+      debugPrint('Error retrieving playlist songs: $e');
       return null;
     }
   }
@@ -208,7 +207,7 @@ Future<List> getSearchSuggestions(String query) async {
     final res = jsonDecode(response.body)[1] as List;
     return res;
   } catch (e) {
-    logger.e('Error in getSearchSuggestions: $e');
+    debugPrint('Error in getSearchSuggestions: $e');
     return [];
   }
 }
@@ -247,7 +246,7 @@ Future<List<Map<String, int>>> getSkipSegments(String id) async {
       return [];
     }
   } catch (e, stack) {
-    logger.e('$e $stack');
+    debugPrint('$e $stack');
     return [];
   }
 }
@@ -335,7 +334,7 @@ Future<String> getSong(String songId, bool isLive) async {
       return audioStream.url.toString();
     }
   } catch (e) {
-    logger.e('Error while getting song streaming URL: $e');
+    debugPrint('Error while getting song streaming URL: $e');
     rethrow; // Rethrow the exception to allow the caller to handle it
   }
 }
@@ -348,7 +347,7 @@ Future<Map<String, dynamic>> getSongDetails(
     final song = await yt.videos.get(songId);
     return returnSongLayout(songIndex, song);
   } catch (e) {
-    logger.e('Error while getting song details: $e');
+    debugPrint('Error while getting song details: $e');
     rethrow;
   }
 }
