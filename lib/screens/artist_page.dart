@@ -91,7 +91,6 @@ class _ArtistPagePageState extends State<ArtistPage> {
                 children: [
                   ArtistCube(artist: widget.playlist['title']),
                   _buildPlaylistTitle(),
-                  _buildPlaylistDescription(),
                   _buildPlayAllButton(),
                   const SizedBox(height: 30),
                   if (_songsList.isNotEmpty)
@@ -117,14 +116,6 @@ class _ArtistPagePageState extends State<ArtistPage> {
         textAlign: TextAlign.center,
         style: Theme.of(context).textTheme.bodyMedium,
       ),
-    );
-  }
-
-  Widget _buildPlaylistDescription() {
-    return Text(
-      widget.playlist['header_desc'].toString(),
-      textAlign: TextAlign.center,
-      style: Theme.of(context).textTheme.bodySmall,
     );
   }
 

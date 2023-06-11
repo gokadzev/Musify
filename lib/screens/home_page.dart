@@ -174,10 +174,7 @@ class _HomePageState extends State<HomePage> {
                                       MaterialPageRoute(
                                         builder: (context) => ArtistPage(
                                           playlist: {
-                                            'ytid': '',
                                             'title': artist,
-                                            'header_desc': '',
-                                            'image': '',
                                             'list': songs,
                                           },
                                         ),
