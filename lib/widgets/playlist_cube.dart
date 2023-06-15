@@ -50,7 +50,7 @@ class PlaylistCube extends StatelessWidget {
                       ),
                     );
                   }
-                : () => {},
+                : null,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(15),
               child: image != null

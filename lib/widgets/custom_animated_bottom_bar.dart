@@ -7,7 +7,7 @@ import 'package:musify/screens/root_page.dart';
 import 'package:musify/widgets/marque.dart';
 
 class CustomAnimatedBottomBar extends StatelessWidget {
-  CustomAnimatedBottomBar({
+  const CustomAnimatedBottomBar({
     super.key,
     this.selectedIndex = 0,
     this.height = 60,
@@ -24,10 +24,7 @@ class CustomAnimatedBottomBar extends StatelessWidget {
     ],
     required this.items,
     required this.onItemSelected,
-  }) {
-    assert(height >= 55 && height <= 100);
-    assert(items.length >= 2 && items.length <= 5);
-  }
+  });
 
   final Curve animationCurve;
   final Duration animationDuration;
@@ -47,7 +44,7 @@ class CustomAnimatedBottomBar extends StatelessWidget {
     return DecoratedBox(
       decoration: BoxDecoration(
         color: bg,
-        boxShadow: showElevation ? shadows : [],
+        boxShadow: showElevation ? shadows : null,
       ),
       child: SafeArea(
         child: Container(
@@ -60,12 +57,11 @@ class CustomAnimatedBottomBar extends StatelessWidget {
               final index = items.indexOf(item);
               return Expanded(
                 child: GestureDetector(
-                  onTap: () => {
-                    if (item.routeName != activeTab.value)
-                      {
-                        activeTab.value = item.routeName,
-                        onItemSelected(index),
-                      }
+                  onTap: () {
+                    if (item.routeName != activeTab.value) {
+                      activeTab.value = item.routeName;
+                      onItemSelected(index);
+                    }
                   },
                   child: _FlashTabBarItem(
                     item: item,
@@ -87,7 +83,7 @@ class CustomAnimatedBottomBar extends StatelessWidget {
 }
 
 class BottomNavBarItem {
-  BottomNavBarItem({
+  const BottomNavBarItem({
     required this.icon,
     required this.title,
     required this.routeName,
@@ -95,9 +91,9 @@ class BottomNavBarItem {
     this.inactiveColor = const Color(0xff9496c1),
   });
 
-  Color activeColor;
+  final Color activeColor;
   final Icon icon;
-  Color inactiveColor;
+  final Color inactiveColor;
   final Text title;
   final String routeName;
 }
@@ -125,7 +121,7 @@ class _FlashTabBarItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: backgroundColor,
-      height: double.maxFinite,
+      height: double.infinity,
       child: Stack(
         clipBehavior: Clip.hardEdge,
         alignment: Alignment.center,
@@ -134,7 +130,7 @@ class _FlashTabBarItem extends StatelessWidget {
             duration: animationDuration,
             alignment: isSelected ? Alignment.topCenter : Alignment.center,
             child: AnimatedOpacity(
-              opacity: isSelected ? 1.0 : 1.0,
+              opacity: 1,
               duration: animationDuration,
               child: IconTheme(
                 data: IconThemeData(
