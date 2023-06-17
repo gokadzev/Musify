@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
+import 'package:background_downloader/background_downloader.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -265,16 +265,11 @@ Future<void> initialisation() async {
   activateListeners();
   await enableBooster();
 
-  try {
-    await FlutterDownloader.initialize(
-      debug: kDebugMode,
-      ignoreSsl: true,
-    );
-
-    await FlutterDownloader.registerCallback(downloadCallback);
-  } catch (e) {
-    debugPrint('error while initializing Flutter Downloader plugin $e');
-  }
+  FileDownloader().configureNotification(
+    running: const TaskNotification('Downloading', 'file: {filename}'),
+    complete: const TaskNotification('Download finished', 'file: {filename}'),
+    progressBar: true,
+  );
 }
 
 @pragma('vm:entry-point')

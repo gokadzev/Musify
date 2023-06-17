@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:background_downloader/background_downloader.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:http/http.dart' as http;
 import 'package:musify/API/version.dart';
 import 'package:musify/extensions/l10n.dart';
@@ -52,12 +52,13 @@ Future<void> downloadAppUpdates() async {
   if (await file.exists()) {
     await file.delete();
   }
-  await FlutterDownloader.enqueue(
+  final task = DownloadTask(
     url: dlUrl,
-    savedDir: dlPath!,
-    fileName: 'Musify.apk',
-    showNotification: true,
+    filename: 'Musify.apk',
   );
+
+  await FileDownloader().download(task);
+  await FileDownloader().moveToSharedStorage(task, SharedStorage.downloads);
 }
 
 bool isLatestVersionHigher(String appVersion, String latestVersion) {

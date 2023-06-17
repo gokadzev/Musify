@@ -15,6 +15,7 @@ dependencies:
   audio_service:
     path: ./packages/audio_service/audio_service
   audio_session: ^0.1.16
+  background_downloader: ^7.4.1
   cached_network_image: ^3.2.3
   dynamic_color: ^1.6.5
   file_picker: ^5.3.2
@@ -22,7 +23,6 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_displaymode: ^0.6.0
-  flutter_downloader: ^1.10.4
   flutter_localizations:
     sdk: flutter
   google_fonts: ^4.0.4

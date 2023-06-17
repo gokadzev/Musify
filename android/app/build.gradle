@@ -57,7 +57,7 @@ android {
 
     defaultConfig {
         applicationId "com.gokadzev.musify"
-        minSdkVersion 21
+        minSdkVersion 24
         targetSdkVersion 33
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName

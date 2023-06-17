@@ -56,6 +56,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.1.16"
+  background_downloader:
+    dependency: "direct main"
+    description:
+      name: background_downloader
+      sha256: "3cf9a9defa91c04a7b770976283191b6ae7c83ae77a35ad58ce9411481cb4884"
+      url: "https://pub.dev"
+    source: hosted
+    version: "7.4.1"
   boolean_selector:
     dependency: transitive
     description:
@@ -229,14 +237,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.6.0"
-  flutter_downloader:
-    dependency: "direct main"
-    description:
-      name: flutter_downloader
-      sha256: "79e05335471e23593f2e22483d2c909a03f19000293cbc7f39c8c2fd4d5d9c3d"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.10.4"
   flutter_launcher_icons:
     dependency: "direct dev"
     description:
@@ -396,6 +396,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.4.8"
+  logging:
+    dependency: transitive
+    description:
+      name: logging
+      sha256: "623a88c9594aa774443aa3eb2d41807a48486b5613e67599fb4c41c0ad47c340"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.0"
   matcher:
     dependency: transitive
     description:
@@ -420,6 +428,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.9.1"
+  mime:
+    dependency: transitive
+    description:
+      name: mime
+      sha256: e4ff8e8564c03f255408decd16e7899da1733852a9110a58fe6d1b817684a63e
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.4"
   octo_image:
     dependency: transitive
     description:

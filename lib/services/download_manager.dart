@@ -1,11 +1,7 @@
-import 'dart:io';
-
-import 'package:file_picker/file_picker.dart';
+import 'package:background_downloader/background_downloader.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
-import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:path/path.dart' as path;
@@ -15,12 +11,6 @@ final supportedFolderNames = ['Music', 'Documents', 'Downloads'];
 
 Future<void> downloadSong(BuildContext context, dynamic song) async {
   try {
-    final isDirectoryValid = await checkDownloadDirectory(context);
-    if (!isDirectoryValid) {
-      showToast(context, '${context.l10n()!.chooseDownloadDir}!');
-      return;
-    }
-
     final songName = path
         .basenameWithoutExtension('${song['artist']} ${song['title']}')
         .replaceAll(
@@ -32,12 +22,9 @@ Future<void> downloadSong(BuildContext context, dynamic song) async {
     final filename = '$songName.${prefferedFileExtension.value}';
 
     final audio = await getSong(song['ytid'].toString(), song['isLive']);
-    await FlutterDownloader.enqueue(
+    final task = DownloadTask(
       url: audio,
-      savedDir: downloadDirectory.value,
-      fileName: filename,
-      showNotification: true,
-      openFileFromNotification: true,
+      filename: filename,
       headers: {
         'user-agent':
             'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Safari/537.36',
@@ -53,6 +40,9 @@ Future<void> downloadSong(BuildContext context, dynamic song) async {
         'upgrade-insecure-requests': '1'
       },
     );
+
+    await FileDownloader().download(task);
+    await FileDownloader().moveToSharedStorage(task, SharedStorage.audio);
   } catch (e) {
     debugPrint('Error while downloading song: $e');
     showToast(context, '${context.l10n()!.downloadFailed}, $e');
@@ -70,47 +60,5 @@ Future<void> checkNecessaryPermissions(BuildContext context) async {
       context,
       '${context.l10n()!.errorWhileRequestingPerms} + $e',
     );
-  }
-}
-
-Future<bool> checkDownloadDirectory(BuildContext context) async {
-  final _localDir = Directory(downloadDirectory.value);
-
-  try {
-    if (!await _localDir.exists()) {
-      await _localDir.create(recursive: true);
-    }
-    return true;
-  } catch (e) {
-    debugPrint('Error while checking the download folder: $e');
-    showToast(context, '${context.l10n()!.error}: $e');
-    return false;
-  }
-}
-
-Future<void> chooseDownloadDirectory(BuildContext context) async {
-  try {
-    final _downloadDirectory = await FilePicker.platform.getDirectoryPath();
-    if (_downloadDirectory != null) {
-      final folderName = path.basename(_downloadDirectory);
-      if (supportedFolderNames.contains(folderName)) {
-        downloadDirectory.value = _downloadDirectory;
-        addOrUpdateData(
-          'settings',
-          'downloadPath',
-          downloadDirectory,
-        );
-      } else {
-        showToast(
-          context,
-          '${context.l10n()!.errorFolderLimitation}!',
-        );
-      }
-    } else {
-      showToast(context, '${context.l10n()!.chooseDownloadDir}!');
-    }
-  } catch (e) {
-    debugPrint('Error while choosing the download directory: $e');
-    showToast(context, '${context.l10n()!.errorChoosingFolder}: $e');
   }
 }

@@ -1,15 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-// Paths
-
-final downloadDirectory = ValueNotifier<String>(
-  Hive.box('settings').get(
-    'downloadPath',
-    defaultValue: '/storage/emulated/0/Music/',
-  ) as String,
-);
-
 // Preferences
 
 final prefferedFileExtension = ValueNotifier<String>(
