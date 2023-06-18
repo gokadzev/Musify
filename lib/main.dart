@@ -271,6 +271,3 @@ Future<void> initialisation() async {
     progressBar: true,
   );
 }
-
-@pragma('vm:entry-point')
-void downloadCallback(String id, int status, int progress) {}
