@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
-import 'package:musify/extensions/screen_size.dart';
 import 'package:musify/screens/playlist_page.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/widgets/delayed_display.dart';
@@ -15,13 +14,16 @@ class PlaylistCube extends StatelessWidget {
     required this.title,
     this.onClickOpen = true,
     this.cubeIcon = FluentIcons.music_note_1_24_regular,
+    this.size = 220,
     this.zoomNumber = 0.5,
   });
+
   final String? id;
   final dynamic image;
   final String title;
   final bool onClickOpen;
   final IconData cubeIcon;
+  final double size;
   final double zoomNumber;
 
   final likeStatusToIconMapper = {
@@ -34,7 +36,6 @@ class PlaylistCube extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final calculatedSize = context.screenSize.width * zoomNumber;
     return Stack(
       children: <Widget>[
         DelayedDisplay(
@@ -55,14 +56,13 @@ class PlaylistCube extends StatelessWidget {
               borderRadius: BorderRadius.circular(15),
               child: image != null
                   ? CachedNetworkImage(
-                      height: calculatedSize,
-                      width: calculatedSize,
+                      height: size,
+                      width: size,
                       imageUrl: image.toString(),
                       fit: BoxFit.cover,
-                      errorWidget: (context, url, error) =>
-                          noImageCube(calculatedSize),
+                      errorWidget: (context, url, error) => noImageCube(size),
                     )
-                  : noImageCube(calculatedSize),
+                  : noImageCube(size),
             ),
           ),
         ),
