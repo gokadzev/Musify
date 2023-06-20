@@ -317,6 +317,17 @@ Future getPlaylistInfoForWidget(dynamic id) async {
   return playlist;
 }
 
+Future<AudioOnlyStreamInfo> getSongManifest(String songId) async {
+  try {
+    final manifest = await yt.videos.streamsClient.getManifest(songId);
+    final audioStream = manifest.audioOnly.withHighestBitrate();
+    return audioStream;
+  } catch (e) {
+    debugPrint('Error while getting song streaming manifest: $e');
+    rethrow; // Rethrow the exception to allow the caller to handle it
+  }
+}
+
 Future<String> getSong(String songId, bool isLive) async {
   try {
     if (isLive) {
