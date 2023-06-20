@@ -282,10 +282,20 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                                     icon: const Icon(
                                       FluentIcons.arrow_download_24_regular,
                                     ),
-                                    onPressed: () => downloadSong(
-                                      context,
-                                      mediaItemToMap(metadata as MediaItem),
-                                    ),
+                                    onPressed: () =>
+                                        prefferedDownloadMode.value == 'normal'
+                                            ? downloadSong(
+                                                context,
+                                                mediaItemToMap(
+                                                  metadata as MediaItem,
+                                                ),
+                                              )
+                                            : downloadSongFaster(
+                                                context,
+                                                mediaItemToMap(
+                                                  metadata as MediaItem,
+                                                ),
+                                              ),
                                   ),
                                   ValueListenableBuilder<bool>(
                                     valueListenable: muteNotifier,

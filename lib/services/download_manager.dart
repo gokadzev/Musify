@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:background_downloader/background_downloader.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
@@ -5,6 +7,7 @@ import 'package:musify/extensions/l10n.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 final supportedFolderNames = ['Music', 'Documents', 'Downloads'];
@@ -43,6 +46,37 @@ Future<void> downloadSong(BuildContext context, dynamic song) async {
 
     await FileDownloader().download(task);
     await FileDownloader().moveToSharedStorage(task, SharedStorage.audio);
+  } catch (e) {
+    debugPrint('Error while downloading song: $e');
+    showToast(context, '${context.l10n()!.downloadFailed}, $e');
+  }
+}
+
+Future<void> downloadSongFaster(BuildContext context, dynamic song) async {
+  try {
+    final songName = path
+        .basenameWithoutExtension('${song['artist']} ${song['title']}')
+        .replaceAll(
+          RegExp(r'[^\w\s-]'),
+          '',
+        ) // remove non-alphanumeric characters except for hyphens and spaces
+        .replaceAll(RegExp(r'(\s)+'), '-'); // replace spaces with hyphens
+
+    final filename = '$songName.${prefferedFileExtension.value}';
+    final documentsDir = await getApplicationDocumentsDirectory();
+
+    final audioManifest = await getSongManifest(song['ytid'].toString());
+    final stream = yt.videos.streamsClient.get(audioManifest);
+    final file = File('${documentsDir.path}/$filename');
+    final fileStream = file.openWrite();
+    await stream.pipe(fileStream);
+
+    await fileStream.flush();
+    await fileStream.close();
+
+    await FileDownloader()
+        .moveFileToSharedStorage(file.path, SharedStorage.audio);
+    showToast(context, context.l10n()!.downloadCompleted);
   } catch (e) {
     debugPrint('Error while downloading song: $e');
     showToast(context, '${context.l10n()!.downloadFailed}, $e');

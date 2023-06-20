@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/download_manager.dart';
+import 'package:musify/services/settings_manager.dart';
 import 'package:musify/style/app_themes.dart';
 
 class SongBar extends StatelessWidget {
@@ -122,7 +123,9 @@ class SongBar extends StatelessWidget {
                 IconButton(
                   color: colorScheme.primary,
                   icon: const Icon(FluentIcons.arrow_download_24_regular),
-                  onPressed: () => downloadSong(context, song),
+                  onPressed: () => prefferedDownloadMode.value == 'normal'
+                      ? downloadSong(context, song)
+                      : downloadSongFaster(context, song),
                 ),
               ],
             ),

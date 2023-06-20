@@ -456,6 +456,81 @@ class SettingsCards extends StatelessWidget {
             ),
           },
         ),
+        SettingBar(
+          context.l10n()!.downloadMode,
+          FluentIcons.clock_arrow_download_24_filled,
+          () {
+            showModalBottomSheet(
+              isDismissible: true,
+              backgroundColor: Colors.transparent,
+              context: context,
+              builder: (BuildContext context) {
+                final availableModes = ['normal', 'faster'];
+                return Center(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: colorScheme.primary,
+                      ),
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(20),
+                      ),
+                    ),
+                    width: MediaQuery.of(context).copyWith().size.width * 0.90,
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(25),
+                          child: Text(
+                            context.l10n()!.fasterDownloadMsg,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              color: colorScheme.primary,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            physics: const BouncingScrollPhysics(),
+                            itemCount: availableModes.length,
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: Card(
+                                  child: ListTile(
+                                    title: Text(
+                                      availableModes[index],
+                                    ),
+                                    onTap: () {
+                                      addOrUpdateData(
+                                        'settings',
+                                        'downloadMode',
+                                        availableModes[index],
+                                      );
+                                      prefferedDownloadMode.value =
+                                          availableModes[index];
+                                      showToast(
+                                        context,
+                                        context.l10n()!.downloadModeMsg,
+                                      );
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+        ),
 
         // CATEGORY: TOOLS
         Text(
