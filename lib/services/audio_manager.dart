@@ -36,12 +36,19 @@ final playerState = ValueNotifier<PlayerState>(audioPlayer.playerState);
 final _playlist = ConcatenatingAudioSource(children: []);
 final Random _random = Random();
 
-bool get hasNext => activePlaylist['list'].isEmpty
-    ? audioPlayer.hasNext
-    : id + 1 <= activePlaylist['list'].length;
+bool get hasNext {
+  if (activePlaylist['list'].isEmpty) {
+    return audioPlayer.hasNext;
+  }
+  return id + 1 < activePlaylist['list'].length;
+}
 
-bool get hasPrevious =>
-    activePlaylist['list'].isEmpty ? audioPlayer.hasPrevious : id - 1 >= 0;
+bool get hasPrevious {
+  if (activePlaylist['list'].isEmpty) {
+    return audioPlayer.hasPrevious;
+  }
+  return id > 0;
+}
 
 Future<void> playSong(Map song) async {
   final songUrl = song['ytid'].length == 0
