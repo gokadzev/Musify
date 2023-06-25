@@ -5,7 +5,7 @@ repository: https://github.com/gokadzev/Musify
 issue_tracker: https://github.com/gokadzev/Musify/issues
 
 publish_to: 'none'
-version: 5.4.0+55 # run update.sh after changing the version
+version: 5.5.0+56 # run update.sh after changing the version
 
 environment:
   sdk: '>=3.0.0 <4.0.0'

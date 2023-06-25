@@ -1,0 +1,15 @@
+Bug Fixes
+
+- The Artists section will no longer show an infinite loading animation.
+
+Enhancements
+
+- Avoid showing the same artists consistently in the "Suggested artists" section.
+
+- The setup page has been removed as the download and update folders are now chosen automatically.
+
+- A new feature, Download Mode, has been added
+
+- The Play next and previous song functions have been improved.
+
+- Miscellaneous quality and performance improvements to enhance app stability and speed.
