@@ -603,7 +603,7 @@ class SettingsCards extends StatelessWidget {
           FluentIcons.heart_24_filled,
           () => {
             launchURL(
-              Uri.parse('https://www.buymeacoffee.com/gokadzev18'),
+              Uri.parse('https://ko-fi.com/gokadzev'),
             ),
           },
         ),
