@@ -36,6 +36,11 @@ final playerState = ValueNotifier<PlayerState>(audioPlayer.playerState);
 final _playlist = ConcatenatingAudioSource(children: []);
 final Random _random = Random();
 
+bool get currentModeIsLocal {
+  final tag = audioPlayer.sequenceState!.currentSource!.tag;
+  return tag.extras['localSongId'] is int;
+}
+
 bool get hasNext {
   if (activePlaylist['list'].isEmpty) {
     return audioPlayer.hasNext;
@@ -69,20 +74,22 @@ Future<void> playSong(Map song) async {
 }
 
 Future<void> playNext() async {
-  if (!hasNext) {
+  if (currentModeIsLocal) {
     await audioPlayer.seekToNext();
-  } else if (shuffleNotifier.value) {
-    final randomIndex = _generateRandomIndex(activePlaylist['list'].length);
-    id = randomIndex;
-    await playSong(activePlaylist['list'][id]);
   } else {
-    id++;
-    await playSong(activePlaylist['list'][id]);
+    if (shuffleNotifier.value) {
+      final randomIndex = _generateRandomIndex(activePlaylist['list'].length);
+      id = randomIndex;
+      await playSong(activePlaylist['list'][id]);
+    } else {
+      id++;
+      await playSong(activePlaylist['list'][id]);
+    }
   }
 }
 
 Future<void> playPrevious() async {
-  if (!hasPrevious) {
+  if (currentModeIsLocal) {
     await audioPlayer.seekToPrevious();
   } else {
     if (shuffleNotifier.value) {
