@@ -201,19 +201,26 @@ class PositionData {
   final Duration duration;
 }
 
+bool isPlaybackComplete = false;
+
 void activateListeners() {
   audioPlayer.playerStateStream.listen((state) {
     playerState.value = state;
 
     if (state.processingState == ProcessingState.completed) {
-      audioPlayer.pause();
-      audioPlayer.seek(audioPlayer.duration);
+      if (!isPlaybackComplete) {
+        isPlaybackComplete = true;
+        audioPlayer.pause();
+        audioPlayer.seek(audioPlayer.duration);
 
-      if (!hasNext) {
-        audioPlayer.seek(Duration.zero);
-      } else {
-        playNext();
+        if (!hasNext) {
+          audioPlayer.seek(Duration.zero);
+        } else {
+          playNext();
+        }
       }
+    } else {
+      isPlaybackComplete = false;
     }
   });
 
