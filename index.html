@@ -73,7 +73,7 @@
                     </li>
                     <li class="menu-item">
                       <a
-                        href="https://www.buymeacoffee.com/gokadzev18"
+                        href="https://ko-fi.com/gokadzev"
                         class="item-anchor"
                         data-effect="Donation"
                         >Donation Link</a
@@ -223,9 +223,7 @@
                   <a href="https://github.com/gokadzev/Musify">Source Code</a>
                 </li>
                 <li>
-                  <a href="https://www.buymeacoffee.com/gokadzev18"
-                    >Donation Link</a
-                  >
+                  <a href="https://ko-fi.com/gokadzev">Donation Link</a>
                 </li>
                 <li>
                   <a href="https://github.com/gokadzev/Musify/discussions/112"
@@ -246,17 +244,14 @@
     <script src="assets/js/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
     <script type="text/javascript" src="assets/js/script.js"></script>
-    <script
-      data-name="BMC-Widget"
-      data-cfasync="false"
-      src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js"
-      data-id="gokadzev18"
-      data-description="Support me on Buy me a coffee!"
-      data-message=""
-      data-color="#5F7FFF"
-      data-position="Right"
-      data-x_margin="18"
-      data-y_margin="18"
-    ></script>
+    <script src="https://storage.ko-fi.com/cdn/scripts/overlay-widget.js"></script>
+    <script>
+      kofiWidgetOverlay.draw('gokadzev', {
+        type: 'floating-chat',
+        'floating-chat.donateButton.text': 'Support me',
+        'floating-chat.donateButton.background-color': '#00bfa5',
+        'floating-chat.donateButton.text-color': '#fff',
+      })
+    </script>
   </body>
 </html>
