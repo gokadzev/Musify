@@ -64,23 +64,20 @@ Future<void> playSong(Map song) async {
 }
 
 Future<void> playNext() async {
-  if (activePlaylist.isEmpty || id + 1 >= activePlaylist['list'].length) {
+  if (!hasNext) {
     await audioPlayer.seekToNext();
+  } else if (shuffleNotifier.value) {
+    final randomIndex = _generateRandomIndex(activePlaylist['list'].length);
+    id = randomIndex;
+    await playSong(activePlaylist['list'][id]);
   } else {
-    if (shuffleNotifier.value) {
-      final randomIndex = _generateRandomIndex(activePlaylist['list'].length);
-
-      id = randomIndex;
-      await playSong(activePlaylist['list'][id]);
-    } else {
-      id = id + 1;
-      await playSong(activePlaylist['list'][id]);
-    }
+    id++;
+    await playSong(activePlaylist['list'][id]);
   }
 }
 
 Future<void> playPrevious() async {
-  if (activePlaylist.isEmpty || activePlaylist['list'].isEmpty) {
+  if (!hasPrevious) {
     await audioPlayer.seekToPrevious();
   } else {
     if (shuffleNotifier.value) {
@@ -89,12 +86,8 @@ Future<void> playPrevious() async {
       id = randomIndex;
       await playSong(activePlaylist['list'][id]);
     } else {
-      if (id - 1 < 0) {
-        await audioPlayer.seekToPrevious();
-      } else {
-        id = id - 1;
-        await playSong(activePlaylist['list'][id]);
-      }
+      id--;
+      await playSong(activePlaylist['list'][id]);
     }
   }
 }
