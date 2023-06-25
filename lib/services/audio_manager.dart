@@ -51,9 +51,14 @@ bool get hasPrevious {
 }
 
 Future<void> playSong(Map song) async {
-  final songUrl = song['ytid'].length == 0
-      ? song['songUrl'].toString()
-      : await getSong(song['ytid'], song['isLive']);
+  final isYoutubeSong = song['ytid'].length != 0;
+  final songUrl = isYoutubeSong
+      ? await getSong(song['ytid'], song['isLive'])
+      : song['songUrl'].toString();
+
+  if (!isYoutubeSong && activePlaylist['list'].length != 0) {
+    activePlaylist['list'].length = 0;
+  }
 
   try {
     await checkIfSponsorBlockIsAvailable(song, songUrl);
