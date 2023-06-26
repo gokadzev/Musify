@@ -12,23 +12,29 @@ api_url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/releases"
 # Define a dictionary to hold the total download counts for each release
 download_counts = {}
 
+
 def handle_rate_limit(response):
     if response.status_code == 403:
         # If we get a rate limit error, we need to wait and try again
         reset_time = int(response.headers["X-RateLimit-Reset"])
-        sleep_time = reset_time - time.time()
-        print(f"Rate limit exceeded. Waiting {sleep_time} seconds...")
-        time.sleep(sleep_time)
-        return True
+        remaining_limit = int(response.headers["X-RateLimit-Remaining"])
+        if remaining_limit == 0:
+            sleep_time = reset_time - time.time()
+            print(f"Rate limit exceeded. Waiting {sleep_time} seconds...")
+            time.sleep(sleep_time)
+            return True
     return False
 
-# Make the initial request to the API endpoint
-response = requests.get(api_url)
 
-while handle_rate_limit(response):
-    response = requests.get(api_url)  # Retry after rate limit
+def make_request(url):
+    response = requests.get(url)
+    while handle_rate_limit(response):
+        response = requests.get(url)  # Retry after rate limit
+    return response
+
 
 try:
+    response = make_request(api_url)
     response.raise_for_status()  # Raise an exception for any HTTP errors
     releases = response.json()
 except requests.exceptions.HTTPError as e:
@@ -48,10 +54,7 @@ if "next" in response.links:
     # Make the next request to the API endpoint
     next_url = response.links["next"]["url"]
     while next_url:
-        response = requests.get(next_url)
-        while handle_rate_limit(response):
-            response = requests.get(next_url)  # Retry after rate limit
-
+        response = make_request(next_url)
         try:
             response.raise_for_status()
             releases = response.json()
