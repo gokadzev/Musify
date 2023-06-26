@@ -1,4 +1,4 @@
-name: ⭐ Feature request
+name: ⭐ Feature Request
 assignees:
   - gokadzev
 description: Suggest a feature to improve the app
@@ -10,14 +10,15 @@ body:
   - type: checkboxes
     attributes:
       label: Is there an existing issue for this?
-      description: Please search to see if an issue already exists for the bug you encountered.
+      description: Please search to see if an issue already exists for the feature you're requesting.
       options:
-        - label: I have searched the existing issues
+        - label: I have searched the existing issues and confirmed that this feature is not already requested.
           required: true
+
   - type: dropdown
     attributes:
       label: Category of the Feature
-      description: In which category you think your feature belongs to.
+      description: Select the category to which your feature belongs.
       multiple: true
       options:
         - UI Improvements
@@ -27,26 +28,32 @@ body:
         - UX Improvements
         - Code Refactor
         - Unable to categorize
+
   - type: input
     attributes:
       label: Credits
-      description: Who've contributed to this idea of this feature?
+      description: Who contributed to the idea of this feature?
     validations:
       required: true
+
   - type: textarea
     attributes:
       label: Pain
-      description: Explain the pain you're experiencing.
-      placeholder: e.g. I don't like that I've to do this...
+      description: Describe the pain or problem you're experiencing that this feature would address.
+      placeholder: e.g., I don't like that I have to do...
     validations:
       required: true
+
   - type: textarea
     attributes:
       label: Suggested Solution
-      description: Tell us about your solution
+      description: Describe your suggested solution for the feature.
     validations:
       required: true
+
   - type: textarea
     attributes:
-      label: Useful resources/references
-      description: Provide us with some useful resources/references which will help us implement your solution.
+      label: Useful Resources/References
+      description: Provide any useful resources or references that can help in implementing your suggested solution.
+    validations:
+      required: false

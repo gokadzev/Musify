@@ -1,63 +1,72 @@
 name: 🐞 Issue Report
-description: Report a issue in Musify
+description: Report an issue in Musify
 title: "[Bug] <title>"
 labels:
   - bug
 assignees:
   - gokadzev
+
 body:
   - type: checkboxes
     id: acknowledgements
     attributes:
       label: Acknowledgements
-      description: Your issue will be closed if you haven't done these steps.
+      description: Please make sure you have completed these steps before submitting the issue.
       options:
-        - label: I have searched the existing issues and this is a new ticket, **NOT** a duplicate or related to another open issue.
+        - label: I have searched the existing issues and confirmed that this is a new issue, not a duplicate or related to another open issue.
           required: true
         - label: I have written a short but informative title.
           required: true
-        - label: I have updated the app to latest version **[Latest](https://github.com/gokadzev/Musify/releases)**.
+        - label: I have updated the app to the latest version. You can find the latest version [here](https://github.com/gokadzev/Musify/releases).
           required: true
-        - label: I will fill out all
+        - label: I will fill out all the sections in this issue report.
           required: true
+
   - type: textarea
     attributes:
       label: Current Behavior
-      description: Tell us what you're experiencing concisely.
+      description: Provide a concise description of what you're experiencing.
     validations:
       required: true
+
   - type: textarea
     attributes:
       label: Expected Behavior
-      description: Let us know what you expected to happen concisely.
+      description: Provide a concise description of what you expected to happen.
     validations:
       required: true
+
   - type: textarea
     attributes:
       label: Steps To Reproduce
-      description: Steps to reproduce the behavior.
+      description: Describe the steps to reproduce the behavior. Please provide clear instructions.
       placeholder: |
         Example:
           1. First step
           2. Second step
-          3. Issue here
+          3. Issue occurs here
     validations:
       required: false
+
   - type: input
     attributes:
       label: Musify Version
-      description: In which version of Musify did you encounter this bug?
-      placeholder: e.g. v3.0.0
+      description: Mention the version of Musify in which you encountered this bug.
+      placeholder: e.g., v3.0.0
+    validations:
+      required: true
+
   - type: input
     attributes:
       label: Operating System Version
-      description: In which version of your OS you're experiencing the bug?
-      placeholder: e.g. Android 12
+      description: Mention the version of your operating system where you're experiencing the bug.
+      placeholder: e.g., Android 12
     validations:
       required: true
+
   - type: textarea
     attributes:
-      label: Additional information
-      description: Anything else you'd like to add?
+      label: Additional Information
+      description: Add any additional information or context that may be helpful in resolving the issue.
     validations:
       required: false
