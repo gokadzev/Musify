@@ -201,15 +201,16 @@ class PositionData {
   final Duration duration;
 }
 
-bool isPlaybackComplete = false;
+bool _isPlaybackComplete = false;
+bool _isAudioFinished = false;
 
 void activateListeners() {
   audioPlayer.playerStateStream.listen((state) {
     playerState.value = state;
 
     if (state.processingState == ProcessingState.completed) {
-      if (!isPlaybackComplete) {
-        isPlaybackComplete = true;
+      if (!_isPlaybackComplete) {
+        _isPlaybackComplete = true;
         audioPlayer.pause();
         audioPlayer.seek(audioPlayer.duration);
 
@@ -220,16 +221,21 @@ void activateListeners() {
         }
       }
     } else {
-      isPlaybackComplete = false;
+      _isPlaybackComplete = false;
     }
   });
 
   audioPlayer.positionStream.listen((p) async {
-    if (audioPlayer.duration != null &&
+    if (!_isAudioFinished &&
+        audioPlayer.duration != null &&
         p.inSeconds == audioPlayer.duration!.inSeconds) {
+      _isAudioFinished = true;
+
       if (!hasNext && playNextSongAutomatically.value) {
         final randomSong = await getRandomSong();
-        await playSong(randomSong);
+        await playSong(randomSong).then(
+          (v) => {_isAudioFinished = false},
+        );
       }
     }
   });
