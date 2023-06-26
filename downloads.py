@@ -6,7 +6,7 @@ import time
 repo_owner = "gokadzev"
 repo_name = "Musify"
 
-# Define the URL of the Github API endpoint for releases
+# Define the URL of the GitHub API endpoint for releases
 api_url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/releases"
 
 # Define a dictionary to hold the total download counts for each release
@@ -24,20 +24,52 @@ def handle_rate_limit(response):
 
 # Make the initial request to the API endpoint
 response = requests.get(api_url)
+
 while handle_rate_limit(response):
     response = requests.get(api_url)  # Retry after rate limit
 
+try:
+    response.raise_for_status()  # Raise an exception for any HTTP errors
+    releases = response.json()
+except requests.exceptions.HTTPError as e:
+    print(f"Error occurred while retrieving releases: {e}")
+    exit(1)
+except json.JSONDecodeError as e:
+    print(f"Error occurred while parsing response JSON: {e}")
+    exit(1)
+
 # Loop through each release and get the download count
-for release in response.json():
+for release in releases:
     # Get the download count for each asset in the release
     download_count = sum(asset["download_count"] for asset in release["assets"])
     download_counts[release["tag_name"]] = download_count
 
 if "next" in response.links:
     # Make the next request to the API endpoint
-    response = requests.get(response.links["next"]["url"])
-    while handle_rate_limit(response):
-        response = requests.get(response.links["next"]["url"])  # Retry after rate limit
+    next_url = response.links["next"]["url"]
+    while next_url:
+        response = requests.get(next_url)
+        while handle_rate_limit(response):
+            response = requests.get(next_url)  # Retry after rate limit
+
+        try:
+            response.raise_for_status()
+            releases = response.json()
+        except requests.exceptions.HTTPError as e:
+            print(f"Error occurred while retrieving releases: {e}")
+            exit(1)
+        except json.JSONDecodeError as e:
+            print(f"Error occurred while parsing response JSON: {e}")
+            exit(1)
+
+        for release in releases:
+            download_count = sum(asset["download_count"] for asset in release["assets"])
+            download_counts[release["tag_name"]] = download_count
+
+        if "next" in response.links:
+            next_url = response.links["next"]["url"]
+        else:
+            next_url = None
 
 total_downloads = sum(download_counts.values())
 json_obj = {"downloads_count": total_downloads}
