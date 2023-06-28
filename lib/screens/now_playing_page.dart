@@ -26,7 +26,7 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
   @override
   Widget build(BuildContext context) {
     final size = context.screenSize;
-    final w70 = size.width - 70;
+    final calculatedSize = size.height / 3;
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: size.height * 0.07,
@@ -70,12 +70,12 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                     type: ArtworkType.AUDIO,
                     artworkBorder: BorderRadius.circular(8),
                     artworkQuality: FilterQuality.high,
-                    size: w70.toInt(),
-                    artworkWidth: w70,
-                    artworkHeight: w70,
+                    size: calculatedSize.toInt(),
+                    artworkWidth: calculatedSize,
+                    artworkHeight: calculatedSize,
                     nullArtworkWidget: Container(
-                      width: w70,
-                      height: w70,
+                      width: calculatedSize,
+                      height: calculatedSize,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
                         color: const Color.fromARGB(30, 255, 255, 255),
@@ -95,8 +95,8 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                   )
                 else
                   SizedBox(
-                    width: w70,
-                    height: w70,
+                    width: calculatedSize,
+                    height: calculatedSize,
                     child: CachedNetworkImage(
                       imageUrl: metadata.artUri.toString(),
                       imageBuilder: (context, imageProvider) => DecoratedBox(
