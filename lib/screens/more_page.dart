@@ -242,11 +242,7 @@ class SettingsCards extends StatelessWidget {
                                 addOrUpdateData(
                                   'settings',
                                   'themeMode',
-                                  availableModes[index] == ThemeMode.system
-                                      ? 'system'
-                                      : availableModes[index] == ThemeMode.light
-                                          ? 'light'
-                                          : 'dark',
+                                  availableModes[index].name,
                                 );
                                 MyApp.updateAppState(
                                   context,
