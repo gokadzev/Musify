@@ -15,6 +15,19 @@ ColorScheme colorScheme = ColorScheme.fromSeed(
   primary: primaryColor,
 ).harmonized();
 
+ThemeMode getThemeMode(String themeModeString) {
+  switch (themeModeString) {
+    case 'system':
+      return ThemeMode.system;
+    case 'light':
+      return ThemeMode.light;
+    case 'dark':
+      return ThemeMode.dark;
+    default:
+      return ThemeMode.system;
+  }
+}
+
 ThemeData commonProperties() => ThemeData(
       colorScheme: colorScheme.harmonized(),
       visualDensity: VisualDensity.adaptivePlatformDensity,

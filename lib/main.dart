@@ -115,12 +115,9 @@ class _MyAppState extends State<MyApp> {
         settingsBox.get('language', defaultValue: 'English') as String;
     _locale = Locale(appLanguages[language] ?? 'en');
     final themeModeSetting = settingsBox.get('themeMode') as String?;
-    if (themeModeSetting != null) {
-      themeMode = themeModeSetting == 'system'
-          ? ThemeMode.system
-          : themeModeSetting == 'light'
-              ? ThemeMode.light
-              : ThemeMode.dark;
+
+    if (themeModeSetting != null && themeModeSetting != themeMode.name) {
+      themeMode = getThemeMode(themeModeSetting);
     }
 
     ReceiveSharingIntent.getTextStream().listen(
