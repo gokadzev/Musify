@@ -34,7 +34,7 @@ dependencies:
   on_audio_query:
     path: ./packages/on_audio_query/on_audio_query
   path_provider: ^2.0.15
-  permission_handler: ^10.3.0
+  permission_handler: ^10.4.1
   receive_sharing_intent:
     path: ./packages/receive_sharing_intent
   rxdart: ^0.27.7
