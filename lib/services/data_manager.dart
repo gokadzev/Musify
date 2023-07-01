@@ -66,7 +66,7 @@ Future<String> backupData(BuildContext context) async {
       return '${context.l10n()!.backupError}: $e';
     }
   }
-  return '${context.l10n()!.backupedSuccess}!';
+  return '${context.l10n()!.backedupSuccess}!';
 }
 
 Future<String> restoreData(BuildContext context) async {
