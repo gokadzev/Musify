@@ -64,6 +64,7 @@ Future<String> backupData(BuildContext context) async {
       final _box = await _openBox(boxNames[i]);
       await _box.compact();
       await File(_box.path!).copy('$dlPath/${boxNames[i]}Data.hive');
+      await _box.close();
     } catch (e) {
       return '${context.l10n()!.backupError}: $e';
     }
@@ -84,6 +85,7 @@ Future<String> restoreData(BuildContext context) async {
       final _box = await _openBox(boxNames[i]);
       final boxPath = _box.path;
       await File('$uplPath/${boxNames[i]}Data.hive').copy(boxPath!);
+      await _box.close();
     } catch (e) {
       return '${context.l10n()!.restoreError}: $e';
     }
