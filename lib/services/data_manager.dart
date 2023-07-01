@@ -62,6 +62,7 @@ Future<String> backupData(BuildContext context) async {
   for (var i = 0; i < boxNames.length; i++) {
     try {
       final _box = await _openBox(boxNames[i]);
+      await _box.compact();
       await File(_box.path!).copy('$dlPath/${boxNames[i]}Data.hive');
     } catch (e) {
       return '${context.l10n()!.backupError}: $e';
