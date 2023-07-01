@@ -44,10 +44,11 @@ Future<bool> isCacheValid(Box box, String key) async {
 }
 
 Future<Box> _openBox(String category) async {
-  if (!Hive.isBoxOpen(category)) {
-    await Hive.openBox(category);
+  if (Hive.isBoxOpen(category)) {
+    return Hive.box(category);
+  } else {
+    return Hive.openBox(category);
   }
-  return Hive.box(category);
 }
 
 Future<String> backupData(BuildContext context) async {
