@@ -342,8 +342,8 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                                     : Colors.grey,
                               ),
                               iconSize: iconSize * 1.5,
-                              onPressed: () async => {
-                                await playPrevious(),
+                              onPressed: () async {
+                                await playPrevious();
                               },
                               splashColor: Colors.transparent,
                             ),
@@ -421,8 +421,8 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                                     : Colors.grey,
                               ),
                               iconSize: iconSize * 1.5,
-                              onPressed: () async => {
-                                await playNext(),
+                              onPressed: () async {
+                                await playNext();
                               },
                               splashColor: Colors.transparent,
                             ),
@@ -452,9 +452,9 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                                           ),
                                           iconSize: iconSize,
                                           splashColor: Colors.transparent,
-                                          onPressed: () => {
-                                            updateSongLikeStatus(ytid, false),
-                                            songLikeStatus.value = false
+                                          onPressed: () {
+                                            updateSongLikeStatus(ytid, false);
+                                            songLikeStatus.value = false;
                                           },
                                         );
                                       } else {
@@ -465,9 +465,9 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                                           ),
                                           iconSize: iconSize,
                                           splashColor: Colors.transparent,
-                                          onPressed: () => {
-                                            updateSongLikeStatus(ytid, true),
-                                            songLikeStatus.value = true
+                                          onPressed: () {
+                                            updateSongLikeStatus(ytid, true);
+                                            songLikeStatus.value = true;
                                           },
                                         );
                                       }
@@ -536,9 +536,10 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                                                               .primary,
                                                           size: 20,
                                                         ),
-                                                        onPressed: () => {
-                                                          Navigator.pop(context)
-                                                        },
+                                                        onPressed: () =>
+                                                            Navigator.pop(
+                                                          context,
+                                                        ),
                                                       ),
                                                       Expanded(
                                                         child: Padding(
