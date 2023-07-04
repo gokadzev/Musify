@@ -27,7 +27,6 @@
     Add Custom Playlists With Link :cool:<br>
     Play Local / Downloaded Songs Support :open_file_folder: <br>
     High Quality mp3 / m4a / flac Format :fire:<br>
-    Lyrics Support :pencil:<br>
     No Ads :no_entry_sign:<br>
     No Subscriptions :dollar:<br>
     Inbuilt Updater :new:<br>

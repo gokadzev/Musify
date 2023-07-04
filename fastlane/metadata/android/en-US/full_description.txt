@@ -7,7 +7,6 @@
 * Add Custom Playlists With Link
 * Play Local / Downloaded Songs Support
 * High Quality mp3 / m4a / flac Format
-* Lyrics Support
 * No Ads
 * No Subscriptions
 * 14 Supported Languages
