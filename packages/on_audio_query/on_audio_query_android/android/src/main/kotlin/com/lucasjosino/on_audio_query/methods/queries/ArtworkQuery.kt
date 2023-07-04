@@ -34,7 +34,7 @@ class ArtworkQuery : ViewModel() {
     private var size: Int = 100
 
     //
-    private lateinit var query: Uri
+    private var query: Uri = Uri.EMPTY
 
     // None of this methods can be null.
     private lateinit var uri: Uri
