@@ -193,13 +193,10 @@ class _ArtistPagePageState extends State<ArtistPage> {
                             color: colorScheme.primary,
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: Icon(
+                          child: const Icon(
                             FluentIcons.music_note_1_24_regular,
                             size: 25,
-                            color:
-                                colorScheme.primary != const Color(0xFFFFFFFF)
-                                    ? Colors.white
-                                    : Colors.black,
+                            color: Colors.white,
                           ),
                         ),
                         keepOldArtwork: true,

@@ -9,10 +9,8 @@ void showToast(BuildContext context, String text) {
       content: Text(
         text,
         maxLines: null,
-        style: TextStyle(
-          color: colorScheme.primary != const Color(0xFFFFFFFF)
-              ? Colors.white
-              : Colors.black,
+        style: const TextStyle(
+          color: Colors.white,
         ),
       ),
       duration: const Duration(seconds: 3), // Adjust the duration as needed
