@@ -34,7 +34,7 @@ if (keystorePropertiesFile.exists()) {
 def lifecycle_version = "2.4.0"
 
 android {
-    compileSdkVersion 33
+    compileSdk 33
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -57,8 +57,8 @@ android {
 
     defaultConfig {
         applicationId "com.gokadzev.musify"
-        minSdkVersion 24
-        targetSdkVersion 33
+        minSdk 24
+        targetSdk 33
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }

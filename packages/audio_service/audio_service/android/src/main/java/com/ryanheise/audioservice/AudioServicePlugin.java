@@ -924,7 +924,7 @@ public class AudioServicePlugin implements FlutterPlugin, ActivityAware {
                 // See: https://issuetracker.google.com/issues/65344811
                 if (silenceAudioTrack == null) {
                     byte[] silence = new byte[2048];
-                    // TODO: Uncomment this after moving to a minSdkVersion of 21.
+                    // TODO: Uncomment this after moving to a minSdk of 21.
                     /* AudioAttributes audioAttributes = new AudioAttributes.Builder() */
                     /*     .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC) */
                     /*     .setUsage(AudioAttributes.USAGE_MEDIA) */

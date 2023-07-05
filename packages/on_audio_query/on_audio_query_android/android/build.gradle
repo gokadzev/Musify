@@ -25,7 +25,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 33
+    compileSdk 33
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -41,7 +41,7 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 16
+        minSdk 16
     }
 
     if (project.android.hasProperty("namespace")) {
