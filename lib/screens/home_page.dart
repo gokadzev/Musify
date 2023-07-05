@@ -169,7 +169,8 @@ class _HomePageState extends State<HomePage> {
                               fadingDuration: const Duration(milliseconds: 400),
                               child: GestureDetector(
                                 onTap: () {
-                                  getMusic(artist.split('~')[0]).then((songs) {
+                                  getMusic(searchQuery: artist.split('~')[0])
+                                      .then((songs) {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(

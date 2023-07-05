@@ -2,7 +2,7 @@ import 'package:on_audio_query/on_audio_query.dart' hide context;
 
 final OnAudioQuery _audioQuery = OnAudioQuery();
 
-Future<List<AudioModel>> getMusic(String? searchQuery) async {
+Future<List<AudioModel>> getMusic({String? searchQuery}) async {
   final allSongs = await _audioQuery.querySongs(
     filter: MediaFilter.forSongs(
       audioSortType: AudioSortType.DATE_ADDED,
