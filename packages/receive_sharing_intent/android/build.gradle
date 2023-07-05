@@ -2,7 +2,7 @@ group 'com.kasem.receive_sharing_intent'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '1.7.10'
+    ext.kotlin_version = '1.8.22'
     repositories {
         google()
         jcenter()
@@ -26,6 +26,15 @@ apply plugin: 'kotlin-android'
 
 android {
     compileSdk 33
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    kotlinOptions {
+        jvmTarget = '11'
+    }
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'

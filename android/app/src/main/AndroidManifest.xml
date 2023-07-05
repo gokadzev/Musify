@@ -13,7 +13,8 @@
         android:label="Musify"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon"
-        android:requestLegacyExternalStorage="true">
+        android:requestLegacyExternalStorage="true"
+        android:extractNativeLibs="true">
 
         <meta-data
             android:name="com.google.android.gms.car.application"
