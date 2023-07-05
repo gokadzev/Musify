@@ -149,7 +149,67 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                 ),
               ),
             ),
-            const Padding(padding: EdgeInsets.only(top: 40)),
+            const Padding(padding: EdgeInsets.only(top: 10)),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButton(
+                    onPressed: () => {
+                      showModalBottomSheet(
+                        isDismissible: true,
+                        backgroundColor: Colors.transparent,
+                        context: context,
+                        builder: (BuildContext context) {
+                          final _sortTypes = AudioSortType.values.toList();
+
+                          return Center(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: colorScheme.primary,
+                                ),
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(20),
+                                ),
+                              ),
+                              width:
+                                  MediaQuery.of(context).copyWith().size.width *
+                                      0.90,
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                physics: const BouncingScrollPhysics(),
+                                itemCount: _sortTypes.length,
+                                itemBuilder: (context, index) {
+                                  return Padding(
+                                    padding: const EdgeInsets.all(10),
+                                    child: Card(
+                                      child: ListTile(
+                                        title: Text(
+                                          _sortTypes[index].name,
+                                        ),
+                                        onTap: () {
+                                          setState(() {
+                                            upadateSortType(_sortTypes[index]);
+                                            Navigator.pop(context);
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    },
+                    icon: const Icon(FluentIcons.arrow_sort_24_filled),
+                  )
+                ],
+              ),
+            ),
             FutureBuilder<List<AudioModel>>(
               future: Future.delayed(
                 const Duration(milliseconds: 500),
