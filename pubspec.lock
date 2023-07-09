@@ -60,10 +60,10 @@ packages:
     dependency: "direct main"
     description:
       name: background_downloader
-      sha256: "3cf9a9defa91c04a7b770976283191b6ae7c83ae77a35ad58ce9411481cb4884"
+      sha256: "06d9869a27defbb04811961bf96346b53c9807dd49bd84e644dfbd071593cd13"
       url: "https://pub.dev"
     source: hosted
-    version: "7.4.1"
+    version: "7.5.0"
   boolean_selector:
     dependency: transitive
     description:
@@ -204,10 +204,10 @@ packages:
     dependency: "direct main"
     description:
       name: fluentui_system_icons
-      sha256: d37474571868c0ed14bab79dfc757d52fc99327442cac40fc723a8cd9fda333a
+      sha256: "8f7a374e71618c101d631bdfded01f0764c882634534e1966046fd7278fec4d0"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.203"
+    version: "1.1.205"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -532,10 +532,10 @@ packages:
     dependency: "direct main"
     description:
       name: permission_handler
-      sha256: "37fcc3c3182ac0bf8856f3e973e11c7bef5556d69f1a0d8fb908f51019c2912d"
+      sha256: "415af30ba76a84faccfe1eb251fe1e4fdc790f876924c65ad7d6ed7a1404bcd6"
       url: "https://pub.dev"
     source: hosted
-    version: "10.4.1"
+    version: "10.4.2"
   permission_handler_android:
     dependency: transitive
     description:
@@ -720,10 +720,10 @@ packages:
     dependency: "direct main"
     description:
       name: url_launcher
-      sha256: eb1e00ab44303d50dd487aab67ebc575456c146c6af44422f9c13889984c00f3
+      sha256: "781bd58a1eb16069412365c98597726cd8810ae27435f04b3b4d3a470bacd61e"
       url: "https://pub.dev"
     source: hosted
-    version: "6.1.11"
+    version: "6.1.12"
   url_launcher_android:
     dependency: transitive
     description:

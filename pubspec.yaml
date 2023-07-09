@@ -15,11 +15,11 @@ dependencies:
   audio_service:
     path: ./packages/audio_service/audio_service
   audio_session: ^0.1.16
-  background_downloader: ^7.4.1
+  background_downloader: ^7.5.0
   cached_network_image: ^3.2.3
   dynamic_color: ^1.6.5
   file_picker: ^5.3.2
-  fluentui_system_icons: ^1.1.203
+  fluentui_system_icons: ^1.1.205
   flutter:
     sdk: flutter
   flutter_displaymode: ^0.6.0
@@ -34,11 +34,11 @@ dependencies:
   on_audio_query:
     path: ./packages/on_audio_query/on_audio_query
   path_provider: ^2.0.15
-  permission_handler: ^10.4.1
+  permission_handler: ^10.4.2
   receive_sharing_intent:
     path: ./packages/receive_sharing_intent
   rxdart: ^0.27.7
-  url_launcher: ^6.1.11
+  url_launcher: ^6.1.12
   youtube_explode_dart: ^1.12.4
 
 dev_dependencies:
