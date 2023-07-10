@@ -11,6 +11,13 @@ class RoutePaths {
   static const String more = '/more';
 }
 
+final destinations = [
+  RoutePaths.home,
+  RoutePaths.search,
+  RoutePaths.userPlaylists,
+  RoutePaths.more
+];
+
 // ignore: avoid_classes_with_only_static_members
 class RouterService {
   static Route<dynamic> generateRoute(RouteSettings settings) {

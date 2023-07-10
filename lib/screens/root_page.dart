@@ -22,7 +22,6 @@ class Musify extends StatefulWidget {
 }
 
 ValueNotifier<int> activeTabIndex = ValueNotifier<int>(0);
-ValueNotifier<String> activeTab = ValueNotifier<String>(RoutePaths.home);
 final _navigatorKey = GlobalKey<NavigatorState>();
 
 class _MusifyState extends State<Musify> {
@@ -288,8 +287,8 @@ class _MusifyState extends State<Musify> {
         onItemSelected: (index) => setState(() {
           activeTabIndex.value = index;
           _navigatorKey.currentState!.pushNamedAndRemoveUntil(
-            activeTab.value,
-            ModalRoute.withName(activeTab.value),
+            destinations[index],
+            ModalRoute.withName(destinations[index]),
           );
         }),
         items: items,

@@ -58,8 +58,7 @@ class CustomAnimatedBottomBar extends StatelessWidget {
               return Expanded(
                 child: GestureDetector(
                   onTap: () {
-                    if (item.routeName != activeTab.value) {
-                      activeTab.value = item.routeName;
+                    if (activeTabIndex.value != index) {
                       onItemSelected(index);
                     }
                   },
