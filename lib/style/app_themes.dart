@@ -7,6 +7,9 @@ final kBorderRadius = BorderRadius.circular(15);
 const kContentPadding =
     EdgeInsets.only(left: 18, right: 20, top: 14, bottom: 14);
 
+const darkModeBGColor = Color(0xFF121212);
+const lightModeBGColor = Color(0xFFE5E5E5);
+
 Color primaryColor =
     Color(Hive.box('settings').get('accentColor', defaultValue: 0xFFF08080));
 
@@ -52,13 +55,12 @@ ThemeData commonProperties() => ThemeData(
     );
 
 ThemeData getAppDarkTheme() {
-  const _darkBlack = Color(0xFF121212);
   return commonProperties().copyWith(
-    scaffoldBackgroundColor: _darkBlack,
-    canvasColor: _darkBlack,
+    scaffoldBackgroundColor: darkModeBGColor,
+    canvasColor: darkModeBGColor,
     textTheme: GoogleFonts.robotoTextTheme(ThemeData.dark().textTheme),
     appBarTheme: ThemeData.dark().appBarTheme.copyWith(
-          backgroundColor: _darkBlack,
+          backgroundColor: darkModeBGColor,
           iconTheme: IconThemeData(color: colorScheme.primary),
           centerTitle: true,
           titleTextStyle: TextStyle(
@@ -68,8 +70,9 @@ ThemeData getAppDarkTheme() {
           ),
           elevation: 0,
         ),
-    bottomSheetTheme:
-        ThemeData.dark().bottomSheetTheme.copyWith(backgroundColor: _darkBlack),
+    bottomSheetTheme: ThemeData.dark()
+        .bottomSheetTheme
+        .copyWith(backgroundColor: darkModeBGColor),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
         shape: MaterialStateProperty.all(
@@ -101,14 +104,14 @@ ThemeData getAppDarkTheme() {
 
 ThemeData getAppLightTheme() {
   return commonProperties().copyWith(
-    scaffoldBackgroundColor: Colors.white,
-    canvasColor: Colors.white,
+    scaffoldBackgroundColor: lightModeBGColor,
+    canvasColor: lightModeBGColor,
     textTheme: GoogleFonts.robotoTextTheme(ThemeData.light().textTheme),
     bottomSheetTheme: ThemeData.light()
         .bottomSheetTheme
-        .copyWith(backgroundColor: Colors.white),
+        .copyWith(backgroundColor: lightModeBGColor),
     appBarTheme: ThemeData.light().appBarTheme.copyWith(
-          backgroundColor: Colors.white,
+          backgroundColor: lightModeBGColor,
           iconTheme: IconThemeData(color: colorScheme.primary),
           centerTitle: true,
           titleTextStyle: TextStyle(
@@ -144,7 +147,7 @@ ThemeData getAppLightTheme() {
         ThemeData.light().iconTheme.copyWith(color: const Color(0xFF151515)),
     hintColor: const Color(0xFF151515),
     bottomAppBarTheme:
-        ThemeData.light().bottomAppBarTheme.copyWith(color: Colors.white),
+        ThemeData.light().bottomAppBarTheme.copyWith(color: lightModeBGColor),
   );
 }
 
