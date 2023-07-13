@@ -57,12 +57,12 @@ Future<List> fetchSongsList(String searchQuery) async {
   return searchedList;
 }
 
-Future<List<dynamic>> getRecommendedSongs() async {
+Future<List> getRecommendedSongs() async {
   final playlistId = 'PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx';
-  var playlistSongs = <dynamic>[...userLikedSongsList, ...userRecentlyPlayed];
+  var playlistSongs = [...userLikedSongsList, ...userRecentlyPlayed];
 
   try {
-    final List<dynamic> ytSongs =
+    final List ytSongs =
         await yt.playlists.getVideos(playlistId).take(10).toList();
     playlistSongs += List.generate(
       ytSongs.length,
