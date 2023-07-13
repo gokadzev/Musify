@@ -198,7 +198,7 @@ class _HomePageState extends State<HomePage> {
               },
             ),
             FutureBuilder(
-              future: get10Music('PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx'),
+              future: getRecommendedSongs(),
               builder: (context, AsyncSnapshot<dynamic> snapshot) {
                 switch (snapshot.connectionState) {
                   case ConnectionState.waiting:
@@ -221,15 +221,7 @@ class _HomePageState extends State<HomePage> {
                       );
                     }
                     if (!snapshot.hasData) {
-                      return Center(
-                        child: Text(
-                          'Nothing Found!',
-                          style: TextStyle(
-                            color: colorScheme.primary,
-                            fontSize: 18,
-                          ),
-                        ),
-                      );
+                      return const SizedBox.shrink();
                     }
                     return Wrap(
                       children: <Widget>[

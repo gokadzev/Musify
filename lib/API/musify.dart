@@ -57,25 +57,26 @@ Future<List> fetchSongsList(String searchQuery) async {
   return searchedList;
 }
 
-Future get10Music(dynamic playlistid) async {
-  final List playlistSongs =
-      await getData('cache', 'playlist10Songs$playlistid') ?? [];
-  if (playlistSongs.isEmpty) {
-    try {
-      final List<dynamic> ytSongs =
-          await yt.playlists.getVideos(playlistid).take(10).toList();
-      final tenSongs = List<dynamic>.generate(
-        ytSongs.length,
-        (index) => returnSongLayout(index, ytSongs[index]),
-      );
-      playlistSongs.addAll(tenSongs);
+Future<List<dynamic>> getRecommendedSongs() async {
+  final playlistId = 'PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx';
+  var playlistSongs = <dynamic>[...userLikedSongsList, ...userRecentlyPlayed];
 
-      addOrUpdateData('cache', 'playlist10Songs$playlistid', playlistSongs);
-    } catch (e) {
-      debugPrint('Error retrieving playlist songs: $e');
-      return null;
-    }
+  try {
+    final List<dynamic> ytSongs =
+        await yt.playlists.getVideos(playlistId).take(10).toList();
+    playlistSongs += List.generate(
+      ytSongs.length,
+      (index) => returnSongLayout(index, ytSongs[index]),
+    );
+  } catch (e) {
+    debugPrint('Error retrieving playlist songs: $e');
   }
+
+  playlistSongs.shuffle();
+
+  final seenYtIds = <String>{};
+  playlistSongs.removeWhere((song) => !seenYtIds.add(song['ytid']));
+
   return playlistSongs;
 }
 
