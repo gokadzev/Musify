@@ -61,16 +61,8 @@ Future<List> getRecommendedSongs() async {
   final playlistId = 'PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx';
   var playlistSongs = [...userLikedSongsList, ...userRecentlyPlayed];
 
-  try {
-    final List ytSongs =
-        await yt.playlists.getVideos(playlistId).take(10).toList();
-    playlistSongs += List.generate(
-      ytSongs.length,
-      (index) => returnSongLayout(index, ytSongs[index]),
-    );
-  } catch (e) {
-    debugPrint('Error retrieving playlist songs: $e');
-  }
+  final ytSongs = await getSongsFromPlaylist(playlistId);
+  playlistSongs += ytSongs.take(10).toList();
 
   playlistSongs.shuffle();
 
