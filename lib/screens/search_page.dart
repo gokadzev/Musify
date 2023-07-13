@@ -74,17 +74,12 @@ class _SearchPageState extends State<SearchPage> {
         child: Column(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(
-                top: 12,
-                bottom: 20,
-                left: 12,
-                right: 12,
-              ),
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
               child: TextField(
                 onSubmitted: (String value) {
                   search();
                   _suggestionsList = [];
-                  FocusManager.instance.primaryFocus?.unfocus();
+                  _inputNode.unfocus();
                 },
                 onChanged: (value) async {
                   if (value != '') {
@@ -104,15 +99,13 @@ class _SearchPageState extends State<SearchPage> {
                 cursorColor: Colors.green[50],
                 decoration: InputDecoration(
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(15),
-                    ),
+                    borderRadius: BorderRadius.circular(15),
                     borderSide: BorderSide(color: colorScheme.primary),
                   ),
                   suffixIcon: ValueListenableBuilder<bool>(
                     valueListenable: _fetchingSongs,
                     builder: (_, value, __) {
-                      if (value == true) {
+                      if (value) {
                         return IconButton(
                           icon: const SizedBox(
                             height: 18,
@@ -122,7 +115,7 @@ class _SearchPageState extends State<SearchPage> {
                           color: colorScheme.primary,
                           onPressed: () {
                             search();
-                            FocusManager.instance.primaryFocus?.unfocus();
+                            _inputNode.unfocus();
                           },
                         );
                       } else {
@@ -134,7 +127,7 @@ class _SearchPageState extends State<SearchPage> {
                           color: colorScheme.primary,
                           onPressed: () {
                             search();
-                            FocusManager.instance.primaryFocus?.unfocus();
+                            _inputNode.unfocus();
                           },
                         );
                       }
@@ -150,31 +143,29 @@ class _SearchPageState extends State<SearchPage> {
             if (_searchResult.isEmpty)
               ListView.builder(
                 shrinkWrap: true,
-                addAutomaticKeepAlives: false,
-                addRepaintBoundaries: false,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: _suggestionsList.isEmpty
                     ? searchHistory.length
                     : _suggestionsList.length,
-                itemBuilder: (BuildContext ctxt, int index) {
+                itemBuilder: (BuildContext context, int index) {
                   final suggestionsNotAvailable = _suggestionsList.isEmpty;
-                  final _query = suggestionsNotAvailable
+                  final query = suggestionsNotAvailable
                       ? searchHistory[index]
                       : _suggestionsList[index];
+
                   return Padding(
-                    padding: const EdgeInsets.only(top: 8, bottom: 6),
+                    padding: const EdgeInsets.symmetric(vertical: 8),
                     child: Card(
                       child: ListTile(
                         leading: Icon(
                           FluentIcons.search_24_regular,
                           color: colorScheme.primary,
                         ),
-                        title: Text(
-                          _query,
-                        ),
+                        title: Text(query),
                         onTap: () async {
-                          _searchBar.text = _query;
+                          _searchBar.text = query;
                           await search();
+                          _inputNode.unfocus();
                         },
                       ),
                     ),
@@ -184,13 +175,11 @@ class _SearchPageState extends State<SearchPage> {
             else
               ListView.builder(
                 shrinkWrap: true,
-                addAutomaticKeepAlives: false,
-                addRepaintBoundaries: false,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: _searchResult.length,
-                itemBuilder: (BuildContext ctxt, int index) {
+                itemBuilder: (BuildContext context, int index) {
                   return Padding(
-                    padding: const EdgeInsets.only(top: 5, bottom: 5),
+                    padding: const EdgeInsets.symmetric(vertical: 5),
                     child: SongBar(
                       _searchResult[index],
                       true,
