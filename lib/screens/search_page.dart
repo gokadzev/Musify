@@ -86,14 +86,13 @@ class _SearchPageState extends State<SearchPage> {
                   _suggestionsList = [];
                   FocusManager.instance.primaryFocus?.unfocus();
                 },
-                onChanged: (value) {
-                  setState(() async {
-                    if (value != '') {
-                      _suggestionsList = await getSearchSuggestions(value);
-                    } else {
-                      _suggestionsList = [];
-                    }
-                  });
+                onChanged: (value) async {
+                  if (value != '') {
+                    _suggestionsList = await getSearchSuggestions(value);
+                  } else {
+                    _suggestionsList = [];
+                  }
+                  setState(() {});
                 },
                 textInputAction: TextInputAction.search,
                 controller: _searchBar,
