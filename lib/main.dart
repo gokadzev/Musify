@@ -4,7 +4,6 @@ import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:background_downloader/background_downloader.dart';
 import 'package:dynamic_color/dynamic_color.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -191,7 +190,6 @@ class _MyAppState extends State<MyApp> {
 
         return MaterialApp(
           themeMode: themeMode,
-          debugShowCheckedModeBanner: kDebugMode,
           darkTheme: darkColorScheme != null && useSystemColor.value
               ? darkTheme
               : getAppDarkTheme(),

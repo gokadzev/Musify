@@ -87,7 +87,6 @@ class _ArtistPagePageState extends State<ArtistPage> {
       body: SingleChildScrollView(
         child: widget.playlist != null
             ? Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   ArtistCube(artist: widget.playlist['title']),
                   _buildPlaylistTitle(),
@@ -184,7 +183,6 @@ class _ArtistPagePageState extends State<ArtistPage> {
                         type: ArtworkType.AUDIO,
                         artworkWidth: 60,
                         artworkHeight: 60,
-                        artworkFit: BoxFit.cover,
                         artworkBorder: BorderRadius.circular(8),
                         nullArtworkWidget: Container(
                           width: 60,

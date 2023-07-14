@@ -33,6 +33,7 @@ dependencies:
   just_audio: ^0.9.34
   on_audio_query:
     path: ./packages/on_audio_query/on_audio_query
+  path: ^1.8.3
   path_provider: ^2.0.15
   permission_handler: ^10.4.2
   receive_sharing_intent:

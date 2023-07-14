@@ -1,4 +1,3 @@
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
@@ -36,7 +35,6 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
                   ),
                   child: PlaylistCube(
                     title: context.l10n()!.userLikedSongs,
-                    cubeIcon: FluentIcons.music_note_1_24_regular,
                     onClickOpen: false,
                   ),
                 ),

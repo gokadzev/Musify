@@ -13,8 +13,6 @@ Future<List<AudioModel>> getMusic({
   final allSongs = await _audioQuery.querySongs(
     filter: MediaFilter.forSongs(
       audioSortType: sortBy ?? _sortBy,
-      orderType: OrderType.ASC_OR_SMALLER,
-      type: const {AudioType.IS_MUSIC: true},
     ),
   );
 

@@ -13,6 +13,7 @@ linter:
     - avoid_init_to_null
     - avoid_null_checks_in_equality_operators
     - avoid_print
+    - avoid_redundant_argument_values
     - avoid_relative_lib_imports
     - avoid_renaming_method_parameters
     - avoid_return_types_on_setters
@@ -29,6 +30,7 @@ linter:
     - comment_references
     - constant_identifier_names
     - control_flow_in_finally
+    - depend_on_referenced_packages
     - directives_ordering
     - empty_catches
     - empty_constructor_bodies
@@ -41,6 +43,7 @@ linter:
     - list_remove_unrelated_type
     - no_adjacent_strings_in_list
     - no_duplicate_case_values
+    - no_literal_bool_comparisons
     - no_logic_in_create_state
     - non_constant_identifier_names
     - noop_primitive_operations
@@ -54,6 +57,7 @@ linter:
     - prefer_collection_literals
     - prefer_conditional_assignment
     - prefer_const_constructors
+    - prefer_const_declarations
     - prefer_contains
     - prefer_final_fields
     - prefer_final_in_for_each

@@ -58,7 +58,7 @@ Future<List> fetchSongsList(String searchQuery) async {
 }
 
 Future<List> getRecommendedSongs() async {
-  final playlistId = 'PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx';
+  const playlistId = 'PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx';
   var playlistSongs = [...userLikedSongsList, ...userRecentlyPlayed];
 
   final ytSongs = await getSongsFromPlaylist(playlistId);

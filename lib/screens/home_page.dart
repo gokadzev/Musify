@@ -53,7 +53,6 @@ class _HomePageState extends State<HomePage> {
                                 SizedBox(
                                   width: context.screenSize.width / 1.4,
                                   child: MarqueeWidget(
-                                    direction: Axis.horizontal,
                                     child: Text(
                                       context.l10n()!.suggestedPlaylists,
                                       style: TextStyle(
@@ -140,7 +139,6 @@ class _HomePageState extends State<HomePage> {
                             SizedBox(
                               width: context.screenSize.width / 1.4,
                               child: MarqueeWidget(
-                                direction: Axis.horizontal,
                                 child: Text(
                                   context.l10n()!.suggestedArtists,
                                   style: TextStyle(

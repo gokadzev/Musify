@@ -146,7 +146,6 @@ class _MusifyState extends State<Musify> {
                                 artworkBorder: BorderRadius.circular(8),
                                 artworkWidth: 55,
                                 artworkHeight: 55,
-                                artworkFit: BoxFit.cover,
                                 keepOldArtwork: true,
                                 nullArtworkWidget: _buildNullArtworkWidget(),
                               )

@@ -8,7 +8,6 @@ void showToast(BuildContext context, String text) {
 
       content: Text(
         text,
-        maxLines: null,
         style: const TextStyle(
           color: Colors.white,
         ),

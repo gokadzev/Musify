@@ -229,7 +229,6 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                         max: positionData.duration.inMilliseconds.toDouble(),
                       ),
                     Row(
-                      mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         if (positionData != null)
@@ -444,7 +443,7 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                                   ValueListenableBuilder<bool>(
                                     valueListenable: songLikeStatus,
                                     builder: (_, value, __) {
-                                      if (value == true) {
+                                      if (value) {
                                         return IconButton(
                                           color: colorScheme.primary,
                                           icon: const Icon(
@@ -711,7 +710,7 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
             ValueListenableBuilder<bool>(
               valueListenable: songLikeStatus,
               builder: (_, value, __) {
-                if (value == true) {
+                if (value) {
                   return IconButton(
                     color: colorScheme.primary,
                     icon: const Icon(

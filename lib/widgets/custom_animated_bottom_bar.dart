@@ -122,7 +122,6 @@ class _FlashTabBarItem extends StatelessWidget {
       color: backgroundColor,
       height: double.infinity,
       child: Stack(
-        clipBehavior: Clip.hardEdge,
         alignment: Alignment.center,
         children: <Widget>[
           AnimatedAlign(
@@ -171,7 +170,6 @@ class _FlashTabBarItem extends StatelessWidget {
               opacity: isSelected ? 1.0 : 0.0,
               duration: animationDuration,
               child: MarqueeWidget(
-                direction: Axis.horizontal,
                 child: DefaultTextStyle.merge(
                   style: TextStyle(
                     color: item.activeColor,

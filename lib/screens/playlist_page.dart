@@ -89,7 +89,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
       body: SingleChildScrollView(
         child: _playlist != null
             ? Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   _buildPlaylistImage(),
                   _buildPlaylistTitle(),

@@ -259,7 +259,6 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                               type: ArtworkType.AUDIO,
                               artworkWidth: 60,
                               artworkHeight: 60,
-                              artworkFit: BoxFit.cover,
                               artworkBorder: BorderRadius.circular(8),
                               keepOldArtwork: true,
                               nullArtworkWidget: ClipRRect(

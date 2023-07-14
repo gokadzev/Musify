@@ -37,7 +37,7 @@ void clearCache() async {
 }
 
 Future<bool> isCacheValid(Box box, String key) async {
-  final maxAge = const Duration(days: 30);
+  const maxAge = Duration(days: 30);
   final date = box.get('${key}_date', defaultValue: DateTime.now());
   final age = DateTime.now().difference(date);
   return age < maxAge;
