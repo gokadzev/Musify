@@ -1,0 +1,15 @@
+Bug Fixes
+
+- Resolved issues with Search Suggestions, ensuring they now function flawlessly.
+
+Enhancements
+
+- Updated the Portuguese translation to improve language accuracy.
+
+- Revamped the light mode, providing a more visually pleasing and comfortable user interface.
+
+- Added sort feature for local music.
+
+- Upgraded the recommendations list, providing more relevant and personalized suggestions to users.
+
+- Implemented miscellaneous quality and performance improvements to enhance app stability and speed.
