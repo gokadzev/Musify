@@ -8,6 +8,8 @@ final OnAudioQuery audioQuery = OnAudioQuery();
 AudioSortType _sortBy = AudioSortType.DATE_ADDED;
 
 final List<String> cachedAudioArtworkPaths = [];
+int _lastKnownSongCount = 0;
+List<AudioModelWithArtwork>? _cachedSongsWithArtwork;
 
 void upadateSortType(AudioSortType sort) => _sortBy = sort;
 
@@ -47,10 +49,27 @@ Future<List<AudioModelWithArtwork>> getMusic({
   AudioSortType? sortBy,
 }) async {
   final allSongs = await audioQuery.querySongs(
-    filter: MediaFilter.forSongs(
-      audioSortType: sortBy ?? _sortBy,
-    ),
+    filter: MediaFilter.forSongs(audioSortType: sortBy ?? _sortBy),
   );
+
+  if (_lastKnownSongCount != allSongs.length) {
+    _lastKnownSongCount = allSongs.length;
+    _cachedSongsWithArtwork = null;
+  }
+
+  if (_cachedSongsWithArtwork != null) {
+    if (searchQuery != null && searchQuery.isNotEmpty) {
+      return _cachedSongsWithArtwork!
+          .where(
+            (song) => song.displayName
+                .toLowerCase()
+                .contains(searchQuery.toLowerCase()),
+          )
+          .toList();
+    } else {
+      return _cachedSongsWithArtwork!;
+    }
+  }
 
   final songsWithArtwork = <AudioModelWithArtwork>[];
 
@@ -64,6 +83,8 @@ Future<List<AudioModelWithArtwork>> getMusic({
       ),
     );
   }
+
+  _cachedSongsWithArtwork = songsWithArtwork;
 
   if (searchQuery != null && searchQuery.isNotEmpty) {
     return songsWithArtwork
