@@ -13,7 +13,7 @@ void addOrUpdateData(String category, dynamic key, dynamic value) async {
   }
 }
 
-Future getData(String category, dynamic key) async {
+Future getData(String category, dynamic key, {dynamic defaultValue}) async {
   final _box = await _openBox(category);
   if (category == 'cache') {
     final cacheIsValid = await isCacheValid(_box, key);
@@ -23,7 +23,7 @@ Future getData(String category, dynamic key) async {
       return null;
     }
   }
-  return await _box.get(key);
+  return await _box.get(key, defaultValue: defaultValue);
 }
 
 void deleteData(String category, dynamic key) async {
