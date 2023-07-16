@@ -282,24 +282,22 @@ Future<void> setActivePlaylist(Map info) async {
   }
 }
 
-Future getPlaylistInfoForWidget(dynamic id) async {
-  var searchPlaylist = playlists.where((list) => list['ytid'] == id).toList();
-  var isUserPlaylist = false;
+Future<Map<String, dynamic>?> getPlaylistInfoForWidget(dynamic id) async {
+  Map<String, dynamic>? playlist =
+      playlists.firstWhere((list) => list['ytid'] == id, orElse: () => null);
 
-  if (searchPlaylist.isEmpty) {
+  if (playlist == null) {
     final usPlaylists = await getUserPlaylists();
-    searchPlaylist = usPlaylists.where((list) => list['ytid'] == id).toList();
-    isUserPlaylist = true;
+    playlist = usPlaylists.firstWhere(
+      (list) => list['ytid'] == id,
+      orElse: () => null,
+    );
   }
 
-  final playlist = searchPlaylist[0];
-
-  if (playlist['list'].length == 0) {
-    searchPlaylist[searchPlaylist.indexOf(playlist)]['list'] =
-        await getSongsFromPlaylist(playlist['ytid']);
-    if (!isUserPlaylist) {
-      playlists[playlists.indexOf(playlist)]['list'] =
-          searchPlaylist[searchPlaylist.indexOf(playlist)]['list'];
+  if (playlist != null && playlist['list'].isEmpty) {
+    playlist['list'] = await getSongsFromPlaylist(playlist['ytid']);
+    if (!playlists.contains(playlist)) {
+      playlists.add(playlist);
     }
   }
 

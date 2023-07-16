@@ -35,9 +35,12 @@ class _PlaylistPageState extends State<PlaylistPage> {
     _isLoading = true;
     getPlaylistInfoForWidget(widget.playlistId).then(
       (value) => {
-        _playlist = value,
-        _hasMore = true,
-        _loadMore(),
+        if (value != null)
+          {
+            _playlist = value,
+            _hasMore = true,
+            _loadMore(),
+          }
       },
     );
   }
