@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:musify/models/custom_audio_model.dart';
@@ -36,7 +37,7 @@ Future<String> saveArtworkImageToSupportDirectory(int songId) async {
 
     final imageBytes = _artwork?.artwork;
     if (!await imageFile.exists() && imageBytes != null) {
-      await imageFile.writeAsBytes(imageBytes.toList());
+      unawaited(imageFile.writeAsBytes(imageBytes.toList()));
     }
     cachedAudioArtworkPaths.add(imagePath);
   }
