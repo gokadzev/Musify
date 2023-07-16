@@ -58,17 +58,9 @@ Future<List<AudioModelWithArtwork>> getMusic({
   }
 
   if (_cachedSongsWithArtwork != null) {
-    if (searchQuery != null && searchQuery.isNotEmpty) {
-      return _cachedSongsWithArtwork!
-          .where(
-            (song) => song.displayName
-                .toLowerCase()
-                .contains(searchQuery.toLowerCase()),
-          )
-          .toList();
-    } else {
-      return _cachedSongsWithArtwork!;
-    }
+    final filteredCachedSongs =
+        _filterSongs(_cachedSongsWithArtwork!, searchQuery);
+    return filteredCachedSongs;
   }
 
   final songsWithArtwork = <AudioModelWithArtwork>[];
@@ -86,16 +78,24 @@ Future<List<AudioModelWithArtwork>> getMusic({
 
   _cachedSongsWithArtwork = songsWithArtwork;
 
+  final filteredSongs = _filterSongs(songsWithArtwork, searchQuery);
+  return filteredSongs;
+}
+
+List<AudioModelWithArtwork> _filterSongs(
+  List<AudioModelWithArtwork> songs,
+  String? searchQuery,
+) {
   if (searchQuery != null && searchQuery.isNotEmpty) {
-    return songsWithArtwork
+    final lowerCaseSearchQuery = searchQuery.toLowerCase();
+    return songs
         .where(
-          (song) => song.displayName
-              .toLowerCase()
-              .contains(searchQuery.toLowerCase()),
+          (song) =>
+              song.displayName.toLowerCase().contains(lowerCaseSearchQuery),
         )
         .toList();
   } else {
-    return songsWithArtwork.toList();
+    return songs.toList();
   }
 }
 
