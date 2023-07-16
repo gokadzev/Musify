@@ -17,7 +17,7 @@ abstract class AudioServicePlatform extends PlatformInterface {
   static final Object _token = Object();
 
   static AudioServicePlatform _instance =
-      (!kIsWeb && (Platform.isWindows || Platform.isLinux))
+      (kIsWeb || Platform.isWindows || Platform.isLinux)
           ? NoOpAudioService()
           : MethodChannelAudioService();
 
