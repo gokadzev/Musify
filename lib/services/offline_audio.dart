@@ -1,12 +1,46 @@
+import 'dart:io';
+
 import 'package:musify/models/custom_audio_model.dart';
-import 'package:musify/services/download_manager.dart';
 import 'package:on_audio_query/on_audio_query.dart' hide context;
 
 final OnAudioQuery audioQuery = OnAudioQuery();
 
 AudioSortType _sortBy = AudioSortType.DATE_ADDED;
 
+final List<String> cachedAudioArtworkPaths = [];
+
 void upadateSortType(AudioSortType sort) => _sortBy = sort;
+
+class SupportDirectoryManager {
+  static String? _appSupportFolder;
+
+  static Future<String> getAppSupportFolder() async {
+    _appSupportFolder ??= (await getApplicationSupportDirectory()).path;
+    return _appSupportFolder!;
+  }
+}
+
+Future<String> saveArtworkImageToSupportDirectory(int songId) async {
+  final imagePath =
+      '${await SupportDirectoryManager.getAppSupportFolder()}/${songId}_cached_image.jpg';
+
+  if (!cachedAudioArtworkPaths.contains(imagePath)) {
+    final imageFile = File(imagePath);
+    final _artwork = await audioQuery.queryArtwork(
+      songId,
+      ArtworkType.AUDIO,
+      filter: MediaFilter.forArtwork(artworkQuality: 100, artworkSize: 350),
+    );
+
+    final imageBytes = _artwork?.artwork;
+    if (!await imageFile.exists() && imageBytes != null) {
+      await imageFile.writeAsBytes(imageBytes.toList());
+    }
+    cachedAudioArtworkPaths.add(imagePath);
+  }
+
+  return imagePath;
+}
 
 Future<List<AudioModelWithArtwork>> getMusic({
   String? searchQuery,
@@ -21,17 +55,7 @@ Future<List<AudioModelWithArtwork>> getMusic({
   final songsWithArtwork = <AudioModelWithArtwork>[];
 
   for (final song in allSongs) {
-    final _artwork = await audioQuery.queryArtwork(
-      song.id,
-      ArtworkType.AUDIO,
-      filter: MediaFilter.forArtwork(artworkQuality: 100, artworkSize: 350),
-    );
-
-    final _artworkImage = _artwork?.artwork;
-
-    final _artworkPath = _artwork != null && _artworkImage != null
-        ? await saveImageToSupportDirectory(song.id, _artworkImage)
-        : null;
+    final _artworkPath = await saveArtworkImageToSupportDirectory(song.id);
 
     songsWithArtwork.add(
       AudioModelWithArtwork(
