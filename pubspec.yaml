@@ -19,7 +19,7 @@ dependencies:
   cached_network_image: ^3.2.3
   dynamic_color: ^1.6.5
   file_picker: ^5.3.2
-  fluentui_system_icons: ^1.1.205
+  fluentui_system_icons: ^1.1.206
   flutter:
     sdk: flutter
   flutter_displaymode: ^0.6.0
@@ -35,7 +35,7 @@ dependencies:
     path: ./packages/on_audio_query/on_audio_query
   path: ^1.8.3
   path_provider: ^2.0.15
-  permission_handler: ^10.4.2
+  permission_handler: ^10.4.3
   receive_sharing_intent:
     path: ./packages/receive_sharing_intent
   rxdart: ^0.27.7
