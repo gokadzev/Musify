@@ -199,10 +199,7 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
               ),
             ),
             FutureBuilder<List<AudioModelWithArtwork>>(
-              future: Future.delayed(
-                const Duration(milliseconds: 500),
-                () => getMusic(searchQuery: _searchQuery),
-              ),
+              future: getMusic(searchQuery: _searchQuery),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(
