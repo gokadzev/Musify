@@ -21,17 +21,17 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
   String _searchQuery = '';
 
   Future<void> search() async {
-    _searchQuery = _searchBar.text;
-    setState(() {});
-  }
-
-  @override
-  void initState() {
-    super.initState();
+    final newSearchQuery = _searchBar.text;
+    if (_searchQuery != newSearchQuery) {
+      _searchQuery = newSearchQuery;
+      setState(() {});
+    }
   }
 
   @override
   void dispose() {
+    _searchBar.dispose();
+    _inputNode.dispose();
     super.dispose();
   }
 
@@ -49,12 +49,7 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
             Row(
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(
-                    top: 10,
-                    right: 20,
-                    left: 10,
-                    bottom: 10,
-                  ),
+                  padding: const EdgeInsets.all(10),
                   child: PlaylistCube(
                     title: context.l10n()!.localMusic,
                     cubeIcon: FluentIcons.save_24_filled,
@@ -78,16 +73,14 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                         padding: EdgeInsets.only(top: 5, bottom: 5),
                       ),
                       ElevatedButton(
-                        onPressed: () async => {
-                          setActivePlaylist(
-                            {
-                              'ytid': '',
-                              'title': context.l10n()!.localMusic,
-                              'header_desc': '',
-                              'image': '',
-                              'list': await getMusic(),
-                            },
-                          ),
+                        onPressed: () async {
+                          await setActivePlaylist({
+                            'ytid': '',
+                            'title': context.l10n()!.localMusic,
+                            'header_desc': '',
+                            'image': '',
+                            'list': await getMusic(),
+                          });
                         },
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all<Color>(
@@ -101,18 +94,13 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                       ),
                     ],
                   ),
-                )
+                ),
               ],
             ),
             Padding(
-              padding: const EdgeInsets.only(
-                top: 12,
-                bottom: 20,
-                left: 12,
-                right: 12,
-              ),
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
               child: TextField(
-                onSubmitted: (String value) {
+                onSubmitted: (_) {
                   search();
                   FocusManager.instance.primaryFocus?.unfocus();
                 },
@@ -151,7 +139,7 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
             ),
             const Padding(padding: EdgeInsets.only(top: 10)),
             Padding(
-              padding: const EdgeInsets.only(bottom: 10),
+              padding: const EdgeInsets.only(bottom: 10, right: 12),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -216,26 +204,34 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                 () => getMusic(searchQuery: _searchQuery),
               ),
               builder: (context, snapshot) {
-                if (snapshot.connectionState != ConnectionState.done) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(
                     child: Padding(
                       padding: EdgeInsets.all(35),
                       child: Spinner(),
                     ),
                   );
+                } else if (snapshot.hasError) {
+                  return Center(
+                    child: Text(
+                      context.l10n()!.error,
+                      style: TextStyle(color: colorScheme.primary),
+                    ),
+                  );
+                } else {
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    physics: const BouncingScrollPhysics(),
+                    addAutomaticKeepAlives: false,
+                    addRepaintBoundaries: false,
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return LocalSongBar(index, snapshot.data![index]);
+                    },
+                  );
                 }
-                return ListView.builder(
-                  shrinkWrap: true,
-                  physics: const BouncingScrollPhysics(),
-                  addAutomaticKeepAlives: false,
-                  addRepaintBoundaries: false,
-                  itemCount: snapshot.data!.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return LocalSongBar(index, snapshot.data![index]);
-                  },
-                );
               },
-            )
+            ),
           ],
         ),
       ),
