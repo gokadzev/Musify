@@ -1,34 +1,32 @@
 import 'package:flutter/material.dart';
 
 const availableColors = <Color>[
-  Color.fromARGB(255, 154, 205, 50),
-  Color.fromARGB(255, 0, 250, 154),
-  Color.fromARGB(255, 240, 128, 128),
-  Color.fromARGB(255, 100, 149, 237),
-  Color.fromARGB(255, 255, 175, 204),
-  Color.fromARGB(255, 200, 182, 255),
-  Color.fromARGB(255, 254, 220, 186),
-  Color.fromARGB(255, 170, 187, 204),
-  Color.fromARGB(255, 221, 221, 221),
-  Color.fromARGB(255, 255, 192, 203),
-  Color.fromARGB(255, 255, 215, 0),
-  Color.fromARGB(255, 0, 128, 128),
-  Color.fromARGB(255, 153, 50, 204),
-  Color.fromARGB(255, 0, 206, 209),
-  Color.fromARGB(255, 233, 150, 122),
-  Color.fromARGB(255, 250, 128, 114),
-  Color.fromARGB(255, 189, 183, 107),
-  Color.fromARGB(255, 230, 230, 250),
-  Color.fromARGB(255, 93, 108, 194),
-  Color.fromARGB(255, 248, 199, 51),
-  Color.fromARGB(255, 33, 150, 243),
-  Color.fromARGB(255, 244, 67, 54),
-  Color.fromARGB(255, 76, 175, 80),
-  Color.fromARGB(255, 255, 152, 0),
-  Color.fromARGB(255, 233, 30, 99),
-  Color.fromARGB(255, 0, 150, 136),
-  Color.fromARGB(255, 205, 220, 57),
-  Color.fromARGB(255, 0, 188, 212),
-  Color.fromARGB(255, 121, 85, 72),
-  Color.fromARGB(255, 158, 158, 158),
+  Color(0xFF9ACD32), // Yellow Green
+  Color(0xFF00FA9A), // Medium Spring Green
+  Color(0xFFF08080), // Light Coral
+  Color(0xFF6495ED), // Cornflower Blue
+  Color(0xFFFFAFCF), // Pink Lavender
+  Color(0xFFC8B6FF), // Lavender Blue
+  Color.fromARGB(255, 226, 192, 159), // Pale Peach
+  Color(0xFFAABBCC), // Light Steel Blue
+  Color(0xFFFFC0CB), // Pink
+  Color(0xFFFFD700), // Gold
+  Color(0xFF008080), // Teal
+  Color(0xFF9932CC), // Dark Orchid
+  Color(0xFF00CED1), // Dark Turquoise
+  Color(0xFFE9967A), // Dark Salmon
+  Color(0xFFFA8072), // Salmon
+  Color(0xFFBDB76B), // Dark Khaki
+  Color(0xFF5D6CC2), // Slate Blue
+  Color(0xFFF8C733), // Cadmium Yellow
+  Color(0xFF2196F3), // Material Blue
+  Color(0xFFF44336), // Red
+  Color(0xFF4CAF50), // Green
+  Color(0xFFFF9800), // Orange
+  Color(0xFFE91E63), // Material Pink
+  Color(0xFF009688), // Material Teal
+  Color(0xFFCDDC39), // Lime
+  Color(0xFF00BCD4), // Material Cyan
+  Color(0xFF795548), // Material Brown
+  Color(0xFF9E9E9E), // Material Grey
 ];
