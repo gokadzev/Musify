@@ -93,9 +93,10 @@ class _PlaylistPageState extends State<PlaylistPage> {
                 children: [
                   _buildPlaylistImage(),
                   _buildPlaylistTitle(),
+                  _buildPlaylistSongsNumber(_playlist['list'].length),
                   if (_playlist['header_desc'] != null)
                     _buildPlaylistDescription(),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 20),
                   _buildPlaylistButtons(),
                   const SizedBox(height: 30),
                   if (_songsList.isNotEmpty)
@@ -134,6 +135,20 @@ class _PlaylistPageState extends State<PlaylistPage> {
         style: Theme.of(context)
             .textTheme
             .bodyLarge!
+            .copyWith(color: colorScheme.primary, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
+  Widget _buildPlaylistSongsNumber(int number) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Text(
+        '[ $number ${context.l10n()!.songs} ]'.toUpperCase(),
+        textAlign: TextAlign.center,
+        style: Theme.of(context)
+            .textTheme
+            .bodyMedium!
             .copyWith(color: colorScheme.primary, fontWeight: FontWeight.bold),
       ),
     );
