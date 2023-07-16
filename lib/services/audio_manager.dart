@@ -56,17 +56,26 @@ bool get hasPrevious {
 }
 
 Future<void> playSong(Map song) async {
-  final isYoutubeSong = song['ytid'].length != 0;
-  final songUrl = isYoutubeSong
-      ? await getSong(song['ytid'], song['isLive'])
-      : song['songUrl'].toString();
-
-  if (!isYoutubeSong && activePlaylist['list'].length != 0) {
-    activePlaylist['list'].length = 0;
-  }
+  final songUrl = await getSong(song['ytid'], song['isLive']);
 
   try {
     await checkIfSponsorBlockIsAvailable(song, songUrl);
+    await audioPlayer.play();
+  } catch (e) {
+    debugPrint('Error playing song: $e');
+  }
+}
+
+Future<void> playLocalSong(Map song) async {
+  final songUrl = song['songUrl'].toString();
+
+  try {
+    final audioSource = AudioSource.uri(
+      Uri.parse(songUrl),
+      tag: mapToMediaItem(song, songUrl),
+    );
+
+    await audioPlayer.setAudioSource(audioSource);
     await audioPlayer.play();
   } catch (e) {
     debugPrint('Error playing song: $e');
@@ -119,7 +128,7 @@ Future<void> checkIfSponsorBlockIsAvailable(song, songUrl) async {
     Uri.parse(songUrl),
     tag: mapToMediaItem(song, songUrl),
   );
-  if (sponsorBlockSupport.value && song['ytid'].length != 0) {
+  if (sponsorBlockSupport.value) {
     final segments = await getSkipSegments(song['ytid']);
     if (segments.isNotEmpty) {
       if (segments.length == 1) {

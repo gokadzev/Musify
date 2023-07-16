@@ -2,10 +2,9 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
-import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/offline_audio.dart';
 import 'package:musify/style/app_themes.dart';
-import 'package:musify/utilities/formatter.dart';
+import 'package:musify/widgets/local_song_bar.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/spinner.dart';
 import 'package:on_audio_query/on_audio_query.dart';
@@ -231,85 +230,7 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                   addRepaintBoundaries: false,
                   itemCount: snapshot.data!.length,
                   itemBuilder: (BuildContext context, int index) {
-                    final lsong = returnSongLayoutFromAudioModel(
-                      index,
-                      snapshot.data![index],
-                    );
-
-                    return Container(
-                      padding: const EdgeInsets.only(
-                        left: 12,
-                        right: 12,
-                        bottom: 15,
-                      ),
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(20),
-                        onTap: () {
-                          playSong(lsong);
-                        },
-                        splashColor: colorScheme.primary.withOpacity(0.4),
-                        hoverColor: colorScheme.primary.withOpacity(0.4),
-                        focusColor: colorScheme.primary.withOpacity(0.4),
-                        highlightColor: colorScheme.primary.withOpacity(0.4),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            QueryArtworkWidget(
-                              id: lsong['localSongId'] as int,
-                              type: ArtworkType.AUDIO,
-                              artworkWidth: 60,
-                              artworkHeight: 60,
-                              artworkBorder: BorderRadius.circular(8),
-                              keepOldArtwork: true,
-                              nullArtworkWidget: ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: Container(
-                                  width: 60,
-                                  height: 60,
-                                  decoration: BoxDecoration(
-                                    color: colorScheme.secondary,
-                                  ),
-                                  child: const Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Icon(
-                                        FluentIcons.music_note_1_24_regular,
-                                        size: 30,
-                                        color: Colors.white,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Flexible(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Container(
-                                    alignment: Alignment.centerLeft,
-                                    padding: const EdgeInsets.only(
-                                      left: 15,
-                                    ),
-                                    child: Text(
-                                      overflow: TextOverflow.ellipsis,
-                                      lsong['artist'].toString() == ''
-                                          ? lsong['title'].toString()
-                                          : '${lsong['artist']} - ${lsong['title']}',
-                                      style: TextStyle(
-                                        color: colorScheme.primary,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
+                    return LocalSongBar(index, snapshot.data![index]);
                   },
                 );
               },

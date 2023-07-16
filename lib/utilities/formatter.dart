@@ -44,18 +44,12 @@ Map<String, dynamic> returnSongLayoutFromAudioModel(
   dynamic index,
   AudioModel song,
 ) {
-  final _isArtistInTags = song.artist != null;
   return {
     'id': index,
     'ytid': '',
-    'title': _isArtistInTags
-        ? song.title
-        : formatSongTitle(
-            song.displayName,
-            removeFileExtension: true,
-          ),
+    'title': song.displayNameWOExt,
     'image': noImageVar,
-    'artist': _isArtistInTags ? song.artist : '',
+    'artist': song.artist ?? '',
     'lowResImage': noImageVar,
     'highResImage': noImageVar,
     'songUrl': song.data,
@@ -65,3 +59,9 @@ Map<String, dynamic> returnSongLayoutFromAudioModel(
 }
 
 String? getSongId(String url) => VideoId.parseVideoId(url);
+
+String formatDuration(int durationInMillis) {
+  final minutes = (durationInMillis / (1000 * 60)).truncate();
+  final seconds = ((durationInMillis / 1000) % 60).truncate();
+  return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+}
