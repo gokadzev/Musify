@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
-import 'package:just_audio/just_audio.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/data_manager.dart';
@@ -264,20 +263,19 @@ Future<List> getSongsFromPlaylist(dynamic playlistId) async {
 Future<void> setActivePlaylist(Map info) async {
   final plist = info['list'] as List;
   activePlaylist = info;
+  id = 0;
+
   if (plist is List<AudioModel>) {
     activePlaylist['list'] = [];
-    id = 0;
-    final activeTempPlaylist = <AudioSource>[
-      for (final song in plist)
-        createAudioSource(songModelToMediaItem(song, song.data))
-    ];
+    final activeTempPlaylist = plist
+        .map((song) => createAudioSource(songModelToMediaItem(song, song.data)))
+        .toList();
 
     await addSongs(activeTempPlaylist);
     await setNewPlaylist();
 
     await audioPlayer.play();
   } else {
-    id = 0;
     await playSong(activePlaylist['list'][id]);
   }
 }
