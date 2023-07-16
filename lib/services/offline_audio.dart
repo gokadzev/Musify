@@ -1,3 +1,5 @@
+import 'package:musify/models/custom_audio_model.dart';
+import 'package:musify/services/download_manager.dart';
 import 'package:on_audio_query/on_audio_query.dart' hide context;
 
 final OnAudioQuery audioQuery = OnAudioQuery();
@@ -6,7 +8,7 @@ AudioSortType _sortBy = AudioSortType.DATE_ADDED;
 
 void upadateSortType(AudioSortType sort) => _sortBy = sort;
 
-Future<List<AudioModel>> getMusic({
+Future<List<AudioModelWithArtwork>> getMusic({
   String? searchQuery,
   AudioSortType? sortBy,
 }) async {
@@ -16,8 +18,31 @@ Future<List<AudioModel>> getMusic({
     ),
   );
 
+  final songsWithArtwork = <AudioModelWithArtwork>[];
+
+  for (final song in allSongs) {
+    final _artwork = await audioQuery.queryArtwork(
+      song.id,
+      ArtworkType.AUDIO,
+      filter: MediaFilter.forArtwork(artworkQuality: 100, artworkSize: 350),
+    );
+
+    final _artworkImage = _artwork?.artwork;
+
+    final _artworkPath = _artwork != null && _artworkImage != null
+        ? await saveImageToSupportDirectory(song.id, _artworkImage)
+        : null;
+
+    songsWithArtwork.add(
+      AudioModelWithArtwork(
+        info: song.getMap,
+        albumArtwork: _artworkPath,
+      ),
+    );
+  }
+
   if (searchQuery != null && searchQuery.isNotEmpty) {
-    return allSongs
+    return songsWithArtwork
         .where(
           (song) => song.displayName
               .toLowerCase()
@@ -25,7 +50,7 @@ Future<List<AudioModel>> getMusic({
         )
         .toList();
   } else {
-    return allSongs.toList();
+    return songsWithArtwork.toList();
   }
 }
 

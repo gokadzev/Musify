@@ -1,6 +1,6 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:on_audio_query/on_audio_query.dart';
+import 'package:musify/models/custom_audio_model.dart';
 
 const noImageVar =
     'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8bXVzaWN8ZW58MHx8MHx8&w=500&q=80';
@@ -18,16 +18,17 @@ Map mediaItemToMap(MediaItem mediaItem) => {
     };
 
 MediaItem songModelToMediaItem(
-  AudioModel song,
-  String songUrl, {
-  String? artWork,
-}) =>
+  AudioModelWithArtwork song,
+  String songUrl,
+) =>
     MediaItem(
       id: song.id.toString(),
       album: song.album ?? '',
       artist: song.artist ?? '',
       title: song.displayNameWOExt,
-      artUri: artWork != null ? Uri.file(artWork) : Uri.parse(noImageVar),
+      artUri: song.albumArtwork != null
+          ? Uri.file(song.albumArtwork!)
+          : Uri.parse(noImageVar),
       extras: {
         'url': songUrl,
         'lowResImage': '',

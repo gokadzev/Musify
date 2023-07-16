@@ -2,6 +2,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
+import 'package:musify/models/custom_audio_model.dart';
 import 'package:musify/services/offline_audio.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/widgets/local_song_bar.dart';
@@ -209,7 +210,7 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                 ],
               ),
             ),
-            FutureBuilder<List<AudioModel>>(
+            FutureBuilder<List<AudioModelWithArtwork>>(
               future: Future.delayed(
                 const Duration(milliseconds: 500),
                 () => getMusic(searchQuery: _searchQuery),

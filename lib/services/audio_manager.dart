@@ -5,12 +5,10 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:musify/API/musify.dart';
+import 'package:musify/models/custom_audio_model.dart';
 import 'package:musify/services/data_manager.dart';
-import 'package:musify/services/download_manager.dart';
-import 'package:musify/services/offline_audio.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/mediaitem.dart';
-import 'package:on_audio_query/on_audio_query.dart';
 import 'package:rxdart/rxdart.dart';
 
 Stream<PositionData> get positionDataStream =>
@@ -69,19 +67,8 @@ Future<void> playSong(Map song) async {
   }
 }
 
-Future<void> playLocalSong(AudioModel song) async {
+Future<void> playLocalSong(AudioModelWithArtwork song) async {
   final songUrl = song.data;
-  final _artwork = await audioQuery.queryArtwork(
-    song.id,
-    ArtworkType.AUDIO,
-    filter: MediaFilter.forArtwork(artworkQuality: 100, artworkSize: 350),
-  );
-
-  final _artworkImage = _artwork?.artwork;
-
-  final _artworkPath = _artwork != null && _artworkImage != null
-      ? await saveImageToSupportDirectory(song.id, _artworkImage)
-      : null;
 
   try {
     final audioSource = AudioSource.uri(
@@ -89,7 +76,6 @@ Future<void> playLocalSong(AudioModel song) async {
       tag: songModelToMediaItem(
         song,
         songUrl,
-        artWork: _artworkPath,
       ),
     );
 

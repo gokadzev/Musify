@@ -1,5 +1,6 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:musify/models/custom_audio_model.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/formatter.dart';
@@ -8,7 +9,7 @@ import 'package:on_audio_query/on_audio_query.dart';
 
 class LocalSongBar extends StatelessWidget {
   LocalSongBar(this.index, this.song, {super.key});
-  late final AudioModel song;
+  late final AudioModelWithArtwork song;
   late final int index;
 
   @override

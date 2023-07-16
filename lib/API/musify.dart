@@ -7,11 +7,11 @@ import 'package:flutter/widgets.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:musify/extensions/l10n.dart';
+import 'package:musify/models/custom_audio_model.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/utilities/formatter.dart';
 import 'package:musify/utilities/mediaitem.dart';
-import 'package:on_audio_query/on_audio_query.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 final yt = YoutubeExplode();
@@ -265,7 +265,7 @@ Future<void> setActivePlaylist(Map info) async {
   activePlaylist = info;
   id = 0;
 
-  if (plist is List<AudioModel>) {
+  if (plist is List<AudioModelWithArtwork>) {
     activePlaylist['list'] = [];
     final activeTempPlaylist = plist
         .map((song) => createAudioSource(songModelToMediaItem(song, song.data)))
