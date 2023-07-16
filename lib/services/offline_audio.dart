@@ -1,6 +1,6 @@
 import 'package:on_audio_query/on_audio_query.dart' hide context;
 
-final OnAudioQuery _audioQuery = OnAudioQuery();
+final OnAudioQuery audioQuery = OnAudioQuery();
 
 AudioSortType _sortBy = AudioSortType.DATE_ADDED;
 
@@ -10,7 +10,7 @@ Future<List<AudioModel>> getMusic({
   String? searchQuery,
   AudioSortType? sortBy,
 }) async {
-  final allSongs = await _audioQuery.querySongs(
+  final allSongs = await audioQuery.querySongs(
     filter: MediaFilter.forSongs(
       audioSortType: sortBy ?? _sortBy,
     ),
@@ -30,7 +30,7 @@ Future<List<AudioModel>> getMusic({
 }
 
 Future<List<ArtistModel>> getRandomArtists() async {
-  final _artists = await _audioQuery.queryArtists();
+  final _artists = await audioQuery.queryArtists();
   final randomArtists = _artists.toList()..shuffle();
   return randomArtists.take(10).toList();
 }

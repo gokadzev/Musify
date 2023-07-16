@@ -17,12 +17,17 @@ Map mediaItemToMap(MediaItem mediaItem) => {
       'isLive': mediaItem.extras!['isLive'],
     };
 
-MediaItem songModelToMediaItem(AudioModel song, String songUrl) => MediaItem(
+MediaItem songModelToMediaItem(
+  AudioModel song,
+  String songUrl, {
+  String? artWork,
+}) =>
+    MediaItem(
       id: song.id.toString(),
       album: song.album ?? '',
       artist: song.artist ?? '',
       title: song.displayNameWOExt,
-      artUri: Uri.parse(noImageVar),
+      artUri: artWork != null ? Uri.file(artWork) : Uri.parse(noImageVar),
       extras: {
         'url': songUrl,
         'lowResImage': '',

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:background_downloader/background_downloader.dart';
 import 'package:flutter/material.dart';
@@ -95,4 +96,19 @@ Future<void> checkNecessaryPermissions(BuildContext context) async {
       '${context.l10n()!.errorWhileRequestingPerms} + $e',
     );
   }
+}
+
+Future<String> saveImageToSupportDirectory(
+  int songId,
+  Uint8List imageBytes,
+) async {
+  final supportDir = await getApplicationSupportDirectory();
+  final imagePath = '${supportDir.path}/${songId}_cached_image.jpg';
+
+  final imageFile = File(imagePath);
+  if (!await imageFile.exists()) {
+    await imageFile.writeAsBytes(imageBytes);
+  }
+
+  return imagePath;
 }

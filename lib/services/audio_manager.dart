@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/services/data_manager.dart';
+import 'package:musify/services/download_manager.dart';
+import 'package:musify/services/offline_audio.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/mediaitem.dart';
 import 'package:on_audio_query/on_audio_query.dart';
@@ -69,11 +71,26 @@ Future<void> playSong(Map song) async {
 
 Future<void> playLocalSong(AudioModel song) async {
   final songUrl = song.data;
+  final _artwork = await audioQuery.queryArtwork(
+    song.id,
+    ArtworkType.AUDIO,
+    filter: MediaFilter.forArtwork(artworkQuality: 100, artworkSize: 350),
+  );
+
+  final _artworkImage = _artwork?.artwork;
+
+  final _artworkPath = _artwork != null && _artworkImage != null
+      ? await saveImageToSupportDirectory(song.id, _artworkImage)
+      : null;
 
   try {
     final audioSource = AudioSource.uri(
       Uri.parse(songUrl),
-      tag: songModelToMediaItem(song, songUrl),
+      tag: songModelToMediaItem(
+        song,
+        songUrl,
+        artWork: _artworkPath,
+      ),
     );
 
     await audioPlayer.setAudioSource(audioSource);
