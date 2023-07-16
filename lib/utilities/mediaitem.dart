@@ -19,9 +19,9 @@ Map mediaItemToMap(MediaItem mediaItem) => {
 
 MediaItem songModelToMediaItem(AudioModel song, String songUrl) => MediaItem(
       id: song.id.toString(),
-      album: '',
-      artist: '',
-      title: song.displayName,
+      album: song.album ?? '',
+      artist: song.artist ?? '',
+      title: song.displayNameWOExt,
       artUri: Uri.parse(noImageVar),
       extras: {
         'url': songUrl,

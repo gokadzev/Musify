@@ -8,6 +8,7 @@ import 'package:musify/API/musify.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/mediaitem.dart';
+import 'package:on_audio_query/on_audio_query.dart';
 import 'package:rxdart/rxdart.dart';
 
 Stream<PositionData> get positionDataStream =>
@@ -66,13 +67,13 @@ Future<void> playSong(Map song) async {
   }
 }
 
-Future<void> playLocalSong(Map song) async {
-  final songUrl = song['songUrl'].toString();
+Future<void> playLocalSong(AudioModel song) async {
+  final songUrl = song.data;
 
   try {
     final audioSource = AudioSource.uri(
       Uri.parse(songUrl),
-      tag: mapToMediaItem(song, songUrl),
+      tag: songModelToMediaItem(song, songUrl),
     );
 
     await audioPlayer.setAudioSource(audioSource);

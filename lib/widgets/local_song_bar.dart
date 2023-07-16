@@ -13,11 +13,6 @@ class LocalSongBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final lsong = returnSongLayoutFromAudioModel(
-      index,
-      song,
-    );
-
     return Container(
       padding: const EdgeInsets.only(
         left: 12,
@@ -27,7 +22,7 @@ class LocalSongBar extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(20),
         onTap: () {
-          playLocalSong(lsong);
+          playLocalSong(song);
         },
         splashColor: colorScheme.primary.withOpacity(0.4),
         hoverColor: colorScheme.primary.withOpacity(0.4),
