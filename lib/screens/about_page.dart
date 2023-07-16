@@ -1,5 +1,6 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:musify/API/version.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/style/app_themes.dart';
@@ -38,7 +39,7 @@ class AboutCards extends StatelessWidget {
                   child: Center(
                     child: Text(
                       'Musify  | $appVersion',
-                      style: TextStyle(
+                      style: GoogleFonts.paytoneOne(
                         color: colorScheme.primary,
                         fontSize: 24,
                         fontWeight: FontWeight.w600,
