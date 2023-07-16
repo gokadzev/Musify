@@ -26,7 +26,6 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
   @override
   Widget build(BuildContext context) {
     final size = context.screenSize;
-    final calculatedSize = size.height / 3;
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: size.height * 0.07,
@@ -65,64 +64,68 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (metadata.extras['localSongId'] is int)
-                  QueryArtworkWidget(
-                    id: metadata.extras['localSongId'] as int,
-                    type: ArtworkType.AUDIO,
-                    artworkBorder: BorderRadius.circular(8),
-                    artworkQuality: FilterQuality.high,
-                    size: calculatedSize.toInt(),
-                    artworkWidth: calculatedSize,
-                    artworkHeight: calculatedSize,
-                    nullArtworkWidget: Container(
-                      width: calculatedSize,
-                      height: calculatedSize,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: const Color.fromARGB(30, 255, 255, 255),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Icon(
-                            FluentIcons.music_note_1_24_regular,
-                            size: size.width / 8,
-                            color: colorScheme.primary,
+                  FractionallySizedBox(
+                    widthFactor: 0.75,
+                    child: AspectRatio(
+                      aspectRatio: 1,
+                      child: QueryArtworkWidget(
+                        id: metadata.extras['localSongId'] as int,
+                        type: ArtworkType.AUDIO,
+                        artworkBorder: BorderRadius.circular(8),
+                        artworkQuality: FilterQuality.high,
+                        size: size.width.toInt() - 100,
+                        nullArtworkWidget: DecoratedBox(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: const Color.fromARGB(30, 255, 255, 255),
                           ),
-                        ],
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Icon(
+                                FluentIcons.music_note_1_24_regular,
+                                size: size.width / 8,
+                                color: colorScheme.primary,
+                              ),
+                            ],
+                          ),
+                        ),
+                        keepOldArtwork: true,
                       ),
                     ),
-                    keepOldArtwork: true,
                   )
                 else
-                  SizedBox(
-                    width: calculatedSize,
-                    height: calculatedSize,
-                    child: CachedNetworkImage(
-                      imageUrl: metadata.artUri.toString(),
-                      imageBuilder: (context, imageProvider) => DecoratedBox(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          image: DecorationImage(
-                            image: imageProvider,
-                            fit: BoxFit.cover,
+                  FractionallySizedBox(
+                    widthFactor: 0.75,
+                    child: AspectRatio(
+                      aspectRatio: 1,
+                      child: CachedNetworkImage(
+                        imageUrl: metadata.artUri.toString(),
+                        imageBuilder: (context, imageProvider) => DecoratedBox(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            image: DecorationImage(
+                              image: imageProvider,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
-                      ),
-                      placeholder: (context, url) => const Spinner(),
-                      errorWidget: (context, url, error) => DecoratedBox(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: const Color.fromARGB(30, 255, 255, 255),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Icon(
-                              FluentIcons.music_note_1_24_regular,
-                              size: size.width / 8,
-                              color: colorScheme.primary,
-                            ),
-                          ],
+                        placeholder: (context, url) => const Spinner(),
+                        errorWidget: (context, url, error) => DecoratedBox(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: const Color.fromARGB(30, 255, 255, 255),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Icon(
+                                FluentIcons.music_note_1_24_regular,
+                                size: size.width / 8,
+                                color: colorScheme.primary,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -193,11 +196,9 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
     dynamic metadata,
   ) =>
       Container(
-        padding: EdgeInsets.only(
-          top: size.height * 0.01,
-          left: 16,
-          right: 16,
-          bottom: size.height * 0.03,
+        padding: EdgeInsets.symmetric(
+          vertical: size.height * 0.01,
+          horizontal: size.width * 0.05,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -265,7 +266,6 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
               padding: EdgeInsets.only(top: size.height * 0.03),
               child: LayoutBuilder(
                 builder: (context, constraints) {
-                  final iconSize = constraints.maxWidth * 0.05;
                   return Column(
                     children: <Widget>[
                       SizedBox(
@@ -307,7 +307,7 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                                               ? colorScheme.primary
                                               : Theme.of(context).hintColor,
                                         ),
-                                        iconSize: iconSize,
+                                        iconSize: constraints.maxWidth * 0.05,
                                         onPressed: mute,
                                         splashColor: Colors.transparent,
                                       );
@@ -326,7 +326,7 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                                         ? colorScheme.primary
                                         : Theme.of(context).hintColor,
                                   ),
-                                  iconSize: iconSize,
+                                  iconSize: constraints.maxWidth * 0.05,
                                   onPressed: changeShuffleStatus,
                                   splashColor: Colors.transparent,
                                 );
@@ -340,7 +340,7 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                                     ? Theme.of(context).hintColor
                                     : Colors.grey,
                               ),
-                              iconSize: iconSize * 1.5,
+                              iconSize: constraints.maxWidth * 0.09,
                               onPressed: () async {
                                 await playPrevious();
                               },
@@ -364,8 +364,8 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                                           ProcessingState.buffering) {
                                     return Container(
                                       margin: const EdgeInsets.all(8),
-                                      width: iconSize * 1.5,
-                                      height: iconSize * 1.5,
+                                      width: constraints.maxWidth * 0.09,
+                                      height: constraints.maxWidth * 0.09,
                                       child: CircularProgressIndicator(
                                         valueColor:
                                             AlwaysStoppedAnimation<Color>(
@@ -400,7 +400,7 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                                         FluentIcons.replay_20_filled,
                                         color: Theme.of(context).hintColor,
                                       ),
-                                      iconSize: iconSize * 1.5,
+                                      iconSize: constraints.maxWidth * 0.09,
                                       onPressed: () => audioPlayer.seek(
                                         Duration.zero,
                                         index:
@@ -419,7 +419,7 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                                     ? Theme.of(context).hintColor
                                     : Colors.grey,
                               ),
-                              iconSize: iconSize * 1.5,
+                              iconSize: constraints.maxWidth * 0.09,
                               onPressed: () async {
                                 await playNext();
                               },
@@ -433,7 +433,7 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                                     ? colorScheme.primary
                                     : Theme.of(context).hintColor,
                               ),
-                              iconSize: iconSize,
+                              iconSize: constraints.maxWidth * 0.05,
                               onPressed: changeLoopStatus,
                               splashColor: Colors.transparent,
                             ),
@@ -449,7 +449,7 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                                           icon: const Icon(
                                             FluentIcons.star_24_filled,
                                           ),
-                                          iconSize: iconSize,
+                                          iconSize: constraints.maxWidth * 0.05,
                                           splashColor: Colors.transparent,
                                           onPressed: () {
                                             updateSongLikeStatus(ytid, false);
@@ -462,7 +462,7 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                                           icon: const Icon(
                                             FluentIcons.star_24_regular,
                                           ),
-                                          iconSize: iconSize,
+                                          iconSize: constraints.maxWidth * 0.05,
                                           splashColor: Colors.transparent,
                                           onPressed: () {
                                             updateSongLikeStatus(ytid, true);
@@ -487,7 +487,7 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                                               ? colorScheme.primary
                                               : Theme.of(context).hintColor,
                                         ),
-                                        iconSize: iconSize,
+                                        iconSize: constraints.maxWidth * 0.05,
                                         splashColor: Colors.transparent,
                                         onPressed: changeAutoPlayNextStatus,
                                       );
