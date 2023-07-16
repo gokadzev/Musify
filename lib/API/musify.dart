@@ -356,7 +356,8 @@ Future<void> updateRecentlyPlayed(dynamic songId) async {
   }
   userRecentlyPlayed.removeWhere((song) => song['ytid'] == songId);
 
-  userRecentlyPlayed
-      .add(await getSongDetails(userRecentlyPlayed.length, songId));
+  final newSongDetails =
+      await getSongDetails(userRecentlyPlayed.length, songId);
+  userRecentlyPlayed.add(newSongDetails);
   addOrUpdateData('user', 'recentlyPlayedSongs', userRecentlyPlayed);
 }
