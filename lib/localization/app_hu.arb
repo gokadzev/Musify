@@ -17,6 +17,7 @@
   "clear": "Clear",
   "clearCache": "Clear cache",
   "clearSearchHistory": "Clear Search History",
+  "downloadAll": "download all",
   "downloadAppUpdate": "Download app update",
   "downloadCompleted": "Download completed",
   "downloadFailed": "Download failed",

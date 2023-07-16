@@ -17,6 +17,7 @@
   "clear": "Clear",
   "clearCache": "清除缓存",
   "clearSearchHistory": "清除搜索历史",
+  "downloadAll": "download all",
   "downloadAppUpdate": "下载应用更新",
   "downloadCompleted": "Download completed",
   "downloadFailed": "Download failed",

@@ -77,9 +77,25 @@ Future<void> downloadSongFaster(BuildContext context, dynamic song) async {
 
     await FileDownloader()
         .moveFileToSharedStorage(file.path, SharedStorage.audio);
-    showToast(context, context.l10n()!.downloadCompleted);
+    showToast(context, '${context.l10n()!.downloadCompleted} - $songName');
   } catch (e) {
     debugPrint('Error while downloading song: $e');
+    showToast(context, '${context.l10n()!.downloadFailed}, $e');
+  }
+}
+
+Future<void> downloadSongsFromPlaylist(
+  BuildContext context,
+  List list,
+) async {
+  try {
+    showToast(context, context.l10n()!.fasterDownloadMsg);
+    for (final song in list) {
+      await downloadSongFaster(context, song);
+      await Future.delayed(const Duration(seconds: 10));
+    }
+  } catch (e) {
+    debugPrint('Error while downloading playlist songs: $e');
     showToast(context, '${context.l10n()!.downloadFailed}, $e');
   }
 }

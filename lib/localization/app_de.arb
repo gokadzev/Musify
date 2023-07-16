@@ -17,6 +17,7 @@
   "clear": "Löschen",
   "clearCache": "Cache leeren",
   "clearSearchHistory": "Suchverlauf löschen",
+  "downloadAll": "download all",
   "downloadAppUpdate": "Update herunterladen",
   "downloadCompleted": "Download completed",
   "downloadFailed": "Download fehlgeschlagen",

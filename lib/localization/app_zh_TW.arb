@@ -17,6 +17,7 @@
   "clear": "Clear",
   "clearCache": "清除快取",
   "clearSearchHistory": "清除搜尋記錄",
+  "downloadAll": "download all",
   "downloadAppUpdate": "下載應用程式更新",
   "downloadCompleted": "Download completed",
   "downloadFailed": "Download failed",
