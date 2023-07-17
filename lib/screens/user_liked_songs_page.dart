@@ -19,6 +19,7 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
       appBar: AppBar(
         title: Text(
           context.l10n()!.userLikedSongs,
+          style: paytoneOneStyle,
         ),
       ),
       body: SingleChildScrollView(

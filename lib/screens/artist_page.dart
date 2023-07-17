@@ -74,6 +74,7 @@ class _ArtistPagePageState extends State<ArtistPage> {
       appBar: AppBar(
         title: Text(
           widget.playlist['title'],
+          style: paytoneOneStyle,
         ),
       ),
       body: SingleChildScrollView(

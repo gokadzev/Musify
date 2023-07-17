@@ -31,6 +31,7 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
         toolbarHeight: size.height * 0.07,
         title: Text(
           context.l10n()!.nowPlaying,
+          style: paytoneOneStyle,
         ),
         leading: Padding(
           padding: const EdgeInsets.only(left: 14),

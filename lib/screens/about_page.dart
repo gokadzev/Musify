@@ -15,6 +15,7 @@ class AboutPage extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           context.l10n()!.about,
+          style: paytoneOneStyle,
         ),
       ),
       body: const SingleChildScrollView(child: AboutCards()),
