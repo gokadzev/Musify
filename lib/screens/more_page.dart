@@ -1,5 +1,6 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:musify/API/version.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/screens/about_page.dart';
@@ -600,6 +601,20 @@ class SettingsCards extends StatelessWidget {
           () => {
             launchURL(
               Uri.parse('https://ko-fi.com/gokadzev'),
+            ),
+          },
+        ),
+        SettingBar(
+          'Licenses',
+          FluentIcons.document_24_filled,
+          () => {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const LicensePage(
+                  applicationName: 'Musify',
+                  applicationVersion: appVersion,
+                ),
+              ),
             ),
           },
         ),
