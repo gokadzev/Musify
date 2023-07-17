@@ -605,7 +605,7 @@ class SettingsCards extends StatelessWidget {
           },
         ),
         SettingBar(
-          'Licenses',
+          context.l10n()!.licenses,
           FluentIcons.document_24_filled,
           () => {
             Navigator.of(context).push(
