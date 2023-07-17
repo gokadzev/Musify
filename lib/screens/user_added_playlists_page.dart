@@ -65,9 +65,9 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
           );
         },
         backgroundColor: colorScheme.primary,
-        child: Icon(
+        child: const Icon(
           FluentIcons.add_24_filled,
-          color: Theme.of(context).textTheme.bodyMedium!.color,
+          color: Colors.white,
         ),
       ),
       body: SingleChildScrollView(
