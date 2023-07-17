@@ -58,6 +58,7 @@ flutter:
   assets:
     - assets/db/playlists.db.json
     - assets/fonts/roboto/
+    - assets/fonts/paytone/
 
 flutter_native_splash:
   color: '#ffffff'
