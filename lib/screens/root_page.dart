@@ -115,139 +115,136 @@ class _MusifyState extends State<Musify> {
               ),
               child: Padding(
                 padding: const EdgeInsets.only(top: 5, bottom: 2),
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => NowPlayingPage(),
+                child: Row(
+                  children: <Widget>[
+                    IconButton(
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      icon: const Icon(
+                        FluentIcons.arrow_up_24_filled,
+                        size: 22,
                       ),
-                    );
-                  },
-                  child: Row(
-                    children: <Widget>[
-                      const Padding(
-                        padding: EdgeInsets.only(left: 15, right: 15),
-                        child: Icon(
-                          FluentIcons.arrow_up_24_filled,
-                          size: 22,
-                        ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => NowPlayingPage(),
+                          ),
+                        );
+                      },
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: 7,
+                        bottom: 7,
+                        right: 15,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          top: 7,
-                          bottom: 7,
-                          right: 15,
+                      child: metadata.extras['localSongId'] is int
+                          ? QueryArtworkWidget(
+                              id: metadata.extras['localSongId'] as int,
+                              type: ArtworkType.AUDIO,
+                              artworkBorder: BorderRadius.circular(8),
+                              artworkWidth: 55,
+                              artworkHeight: 55,
+                              keepOldArtwork: true,
+                              nullArtworkWidget: _buildNullArtworkWidget(),
+                            )
+                          : ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: CachedNetworkImage(
+                                imageUrl: metadata!.artUri.toString(),
+                                fit: BoxFit.cover,
+                                width: 55,
+                                height: 55,
+                                errorWidget: (context, url, error) =>
+                                    _buildNullArtworkWidget(),
+                              ),
+                            ),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          metadata!.title.toString().length > 15
+                              ? '${metadata!.title.toString().substring(0, 15)}...'
+                              : metadata!.title.toString(),
+                          style: TextStyle(
+                            color: colorScheme.primary,
+                            fontSize: 17,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
-                        child: metadata.extras['localSongId'] is int
-                            ? QueryArtworkWidget(
-                                id: metadata.extras['localSongId'] as int,
-                                type: ArtworkType.AUDIO,
-                                artworkBorder: BorderRadius.circular(8),
-                                artworkWidth: 55,
-                                artworkHeight: 55,
-                                keepOldArtwork: true,
-                                nullArtworkWidget: _buildNullArtworkWidget(),
-                              )
-                            : ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: CachedNetworkImage(
-                                  imageUrl: metadata!.artUri.toString(),
-                                  fit: BoxFit.cover,
-                                  width: 55,
-                                  height: 55,
-                                  errorWidget: (context, url, error) =>
-                                      _buildNullArtworkWidget(),
+                        Text(
+                          metadata!.artist.toString().length > 15
+                              ? '${metadata!.artist.toString().substring(0, 15)}...'
+                              : metadata!.artist.toString(),
+                          style: TextStyle(
+                            color: colorScheme.primary,
+                            fontSize: 15,
+                          ),
+                        )
+                      ],
+                    ),
+                    const Spacer(),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: StreamBuilder<PlayerState>(
+                        stream: audioPlayer.playerStateStream,
+                        builder: (context, snapshot) {
+                          final playerState = snapshot.data;
+                          final processingState = playerState?.processingState;
+                          final playing = playerState?.playing;
+                          if (processingState == ProcessingState.loading ||
+                              processingState == ProcessingState.buffering) {
+                            return Container(
+                              margin: const EdgeInsets.all(8),
+                              width: context.screenSize.width * 0.08,
+                              height: context.screenSize.width * 0.08,
+                              child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  colorScheme.primary,
                                 ),
                               ),
+                            );
+                          } else if (playing != true) {
+                            return IconButton(
+                              icon: Icon(
+                                FluentIcons.play_12_filled,
+                                color: colorScheme.primary,
+                              ),
+                              iconSize: 45,
+                              onPressed: audioPlayer.play,
+                              splashColor: Colors.transparent,
+                            );
+                          } else if (processingState !=
+                              ProcessingState.completed) {
+                            return IconButton(
+                              icon: Icon(
+                                FluentIcons.pause_12_filled,
+                                color: colorScheme.primary,
+                              ),
+                              iconSize: 45,
+                              onPressed: audioPlayer.pause,
+                              splashColor: Colors.transparent,
+                            );
+                          } else {
+                            return IconButton(
+                              icon: Icon(
+                                FluentIcons.replay_20_filled,
+                                color: colorScheme.primary,
+                              ),
+                              iconSize: 45,
+                              onPressed: () => audioPlayer.seek(
+                                Duration.zero,
+                                index: audioPlayer.effectiveIndices!.first,
+                              ),
+                              splashColor: Colors.transparent,
+                            );
+                          }
+                        },
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            metadata!.title.toString().length > 15
-                                ? '${metadata!.title.toString().substring(0, 15)}...'
-                                : metadata!.title.toString(),
-                            style: TextStyle(
-                              color: colorScheme.primary,
-                              fontSize: 17,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          Text(
-                            metadata!.artist.toString().length > 15
-                                ? '${metadata!.artist.toString().substring(0, 15)}...'
-                                : metadata!.artist.toString(),
-                            style: TextStyle(
-                              color: colorScheme.primary,
-                              fontSize: 15,
-                            ),
-                          )
-                        ],
-                      ),
-                      const Spacer(),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: StreamBuilder<PlayerState>(
-                          stream: audioPlayer.playerStateStream,
-                          builder: (context, snapshot) {
-                            final playerState = snapshot.data;
-                            final processingState =
-                                playerState?.processingState;
-                            final playing = playerState?.playing;
-                            if (processingState == ProcessingState.loading ||
-                                processingState == ProcessingState.buffering) {
-                              return Container(
-                                margin: const EdgeInsets.all(8),
-                                width: context.screenSize.width * 0.08,
-                                height: context.screenSize.width * 0.08,
-                                child: CircularProgressIndicator(
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    colorScheme.primary,
-                                  ),
-                                ),
-                              );
-                            } else if (playing != true) {
-                              return IconButton(
-                                icon: Icon(
-                                  FluentIcons.play_12_filled,
-                                  color: colorScheme.primary,
-                                ),
-                                iconSize: 45,
-                                onPressed: audioPlayer.play,
-                                splashColor: Colors.transparent,
-                              );
-                            } else if (processingState !=
-                                ProcessingState.completed) {
-                              return IconButton(
-                                icon: Icon(
-                                  FluentIcons.pause_12_filled,
-                                  color: colorScheme.primary,
-                                ),
-                                iconSize: 45,
-                                onPressed: audioPlayer.pause,
-                                splashColor: Colors.transparent,
-                              );
-                            } else {
-                              return IconButton(
-                                icon: Icon(
-                                  FluentIcons.replay_20_filled,
-                                  color: colorScheme.primary,
-                                ),
-                                iconSize: 45,
-                                onPressed: () => audioPlayer.seek(
-                                  Duration.zero,
-                                  index: audioPlayer.effectiveIndices!.first,
-                                ),
-                                splashColor: Colors.transparent,
-                              );
-                            }
-                          },
-                        ),
-                      )
-                    ],
-                  ),
+                    )
+                  ],
                 ),
               ),
             );
