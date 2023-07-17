@@ -179,7 +179,7 @@ h6 {
 }
 h1,
 .h1 {
-  font-size: 3em;
+  font-size: 3.5rem;
   line-height: 1.4;
 }
 h2,
@@ -743,7 +743,7 @@ fieldset[disabled] a.btn {
   margin: 0 auto;
 }
 .section-title {
-  font-size: 5vw;
+  font-size: 3rem;
   font-weight: 900;
 }
 h3.block-title {
@@ -1219,7 +1219,7 @@ blockquote cite {
 }
 .m-banner .banner-content p {
   width: 85%;
-  font-size: 19px;
+  font-size: 1.2rem;
   line-height: 2;
 }
 
@@ -1228,7 +1228,7 @@ blockquote cite {
     width: 1360px;
   }
   .m-banner .banner-content h1.banner-title {
-    font-size: 3.8em;
+    font-size: 3.3rem;
   }
 }
 
@@ -1239,9 +1239,6 @@ blockquote cite {
 }
 
 @media only screen and (max-width: 768px) {
-  .section-title {
-    font-size: 10vw;
-  }
   .navbar .hamburger {
     right: 10px;
   }
@@ -1272,6 +1269,12 @@ blockquote cite {
   .m-banner .banner-content p,
   .m-banner .btn-wrap a.btn {
     width: 100%;
+  }
+}
+
+@media only screen and (max-width: 400px) {
+  .section-title {
+    font-size: 2rem;
   }
 }
 
