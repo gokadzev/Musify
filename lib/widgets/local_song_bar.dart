@@ -23,7 +23,7 @@ class LocalSongBar extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(20),
         onTap: () {
-          playLocalSong(song);
+          playLocalSong(index);
         },
         splashColor: colorScheme.primary.withOpacity(0.4),
         hoverColor: colorScheme.primary.withOpacity(0.4),

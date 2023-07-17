@@ -5,8 +5,8 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:musify/API/musify.dart';
-import 'package:musify/models/custom_audio_model.dart';
 import 'package:musify/services/data_manager.dart';
+import 'package:musify/services/offline_audio.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/mediaitem.dart';
 import 'package:rxdart/rxdart.dart';
@@ -38,8 +38,8 @@ final _playlist = ConcatenatingAudioSource(children: []);
 final Random _random = Random();
 
 bool get currentModeIsLocal {
-  final tag = audioPlayer.sequenceState!.currentSource!.tag;
-  return tag.extras['localSongId'] is int;
+  final tag = audioPlayer.sequenceState?.currentSource?.tag;
+  return tag?.extras?['localSongId'] is int;
 }
 
 bool get hasNext {
@@ -67,23 +67,18 @@ Future<void> playSong(Map song) async {
   }
 }
 
-Future<void> playLocalSong(AudioModelWithArtwork song) async {
-  final songUrl = song.data;
-
-  try {
-    final audioSource = AudioSource.uri(
-      Uri.parse(songUrl),
-      tag: songModelToMediaItem(
-        song,
-        songUrl,
-      ),
-    );
-
-    await audioPlayer.setAudioSource(audioSource);
-    await audioPlayer.play();
-  } catch (e) {
-    debugPrint('Error playing song: $e');
+Future<void> playLocalSong(int index) async {
+  if (!currentModeIsLocal) {
+    await _playlist.clear();
+    await moveAudiosToQueue();
+    await setNewPlaylist();
   }
+
+  if (index < 0 || index >= _playlist.children.length) return;
+
+  await audioHandler.skipToQueueItem(index);
+
+  await audioPlayer.play();
 }
 
 Future<void> playNext() async {

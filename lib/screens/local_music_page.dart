@@ -1,6 +1,5 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/models/custom_audio_model.dart';
 import 'package:musify/services/offline_audio.dart';
@@ -8,7 +7,6 @@ import 'package:musify/style/app_themes.dart';
 import 'package:musify/widgets/local_song_bar.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/spinner.dart';
-import 'package:on_audio_query/on_audio_query.dart';
 
 class LocalMusicPage extends StatefulWidget {
   @override
@@ -46,56 +44,15 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: PlaylistCube(
-                    title: context.l10n()!.localMusic,
-                    cubeIcon: FluentIcons.save_24_filled,
-                    onClickOpen: false,
-                  ),
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: PlaylistCube(
+                  title: context.l10n()!.localMusic,
+                  cubeIcon: FluentIcons.save_24_filled,
+                  onClickOpen: false,
                 ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 12),
-                      Text(
-                        context.l10n()!.localMusic,
-                        style: TextStyle(
-                          color: colorScheme.primary,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.only(top: 5, bottom: 5),
-                      ),
-                      ElevatedButton(
-                        onPressed: () async {
-                          await setActivePlaylist({
-                            'ytid': '',
-                            'title': context.l10n()!.localMusic,
-                            'header_desc': '',
-                            'image': '',
-                            'list': await getMusic(),
-                          });
-                        },
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                            colorScheme.primary,
-                          ),
-                        ),
-                        child: Text(
-                          context.l10n()!.playAll.toUpperCase(),
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+              ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
@@ -138,66 +95,6 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
               ),
             ),
             const Padding(padding: EdgeInsets.only(top: 10)),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10, right: 12),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  IconButton(
-                    onPressed: () => {
-                      showModalBottomSheet(
-                        isDismissible: true,
-                        backgroundColor: Colors.transparent,
-                        context: context,
-                        builder: (BuildContext context) {
-                          final _sortTypes = AudioSortType.values.toList();
-
-                          return Center(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: colorScheme.primary,
-                                ),
-                                borderRadius: const BorderRadius.all(
-                                  Radius.circular(20),
-                                ),
-                              ),
-                              width:
-                                  MediaQuery.of(context).copyWith().size.width *
-                                      0.90,
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                physics: const BouncingScrollPhysics(),
-                                itemCount: _sortTypes.length,
-                                itemBuilder: (context, index) {
-                                  return Padding(
-                                    padding: const EdgeInsets.all(10),
-                                    child: Card(
-                                      child: ListTile(
-                                        title: Text(
-                                          _sortTypes[index].name,
-                                        ),
-                                        onTap: () {
-                                          setState(() {
-                                            upadateSortType(_sortTypes[index]);
-                                            Navigator.pop(context);
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    },
-                    icon: const Icon(FluentIcons.arrow_sort_24_filled),
-                  )
-                ],
-              ),
-            ),
             FutureBuilder<List<AudioModelWithArtwork>>(
               future: getMusic(searchQuery: _searchQuery),
               builder: (context, snapshot) {

@@ -2,20 +2,19 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:hive/hive.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:musify/models/custom_audio_model.dart';
+import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/data_manager.dart';
+import 'package:musify/utilities/mediaitem.dart';
 import 'package:on_audio_query/on_audio_query.dart' hide context;
 
 final OnAudioQuery audioQuery = OnAudioQuery();
-
-AudioSortType _sortBy = AudioSortType.DATE_ADDED;
 
 final List cachedAudioArtworkPaths =
     Hive.box('cache').get('cachedAudioArtworks', defaultValue: []);
 int _lastKnownSongCount = 0;
 List<AudioModelWithArtwork>? _cachedSongsWithArtwork;
-
-void upadateSortType(AudioSortType sort) => _sortBy = sort;
 
 class SupportDirectoryManager {
   static String? _appSupportFolder;
@@ -50,10 +49,12 @@ Future<String> saveArtworkImageToSupportDirectory(int songId) async {
 
 Future<List<AudioModelWithArtwork>> getMusic({
   String? searchQuery,
-  AudioSortType? sortBy,
 }) async {
   final allSongs = await audioQuery.querySongs(
-    filter: MediaFilter.forSongs(audioSortType: sortBy ?? _sortBy),
+    filter: MediaFilter.forSongs(
+      audioSortType: AudioSortType.DATE_ADDED,
+      orderType: OrderType.DESC_OR_GREATER,
+    ),
   );
 
   if (_lastKnownSongCount != allSongs.length) {
@@ -113,4 +114,21 @@ Future<List<ArtistModel>> getRandomArtists() async {
   final _artists = await audioQuery.queryArtists();
   final randomArtists = _artists.toList()..shuffle();
   return randomArtists.take(10).toList();
+}
+
+Future<void> moveAudiosToQueue() async {
+  if (_cachedSongsWithArtwork != null) {
+    final audioSources = <AudioSource>[];
+
+    for (final song in _cachedSongsWithArtwork!) {
+      final AudioSource source = AudioSource.uri(
+        Uri.parse(song.data),
+        tag: songModelToMediaItem(song, song.data),
+      );
+
+      audioSources.add(source);
+    }
+
+    await addSongs(audioSources);
+  }
 }

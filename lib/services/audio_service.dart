@@ -109,4 +109,13 @@ class MyAudioHandler extends BaseAudioHandler {
   Future<void> skipToNext() async => playNext();
   @override
   Future<void> skipToPrevious() async => playPrevious();
+  @override
+  Future<void> skipToQueueItem(int index) async {
+    await audioPlayer.seek(
+      Duration.zero,
+      index: audioPlayer.shuffleModeEnabled
+          ? audioPlayer.shuffleIndices![index]
+          : index,
+    );
+  }
 }
