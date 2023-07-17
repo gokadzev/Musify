@@ -57,6 +57,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/db/playlists.db.json
+    - assets/fonts/roboto/
 
 flutter_native_splash:
   color: '#ffffff'

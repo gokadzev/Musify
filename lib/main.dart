@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/screens/root_page.dart';
@@ -118,6 +119,8 @@ class _MyAppState extends State<MyApp> {
     if (themeModeSetting != null && themeModeSetting != themeMode.name) {
       themeMode = getThemeMode(themeModeSetting);
     }
+
+    GoogleFonts.config.allowRuntimeFetching = false;
 
     ReceiveSharingIntent.getTextStream().listen(
       (String? value) async {
