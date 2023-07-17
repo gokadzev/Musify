@@ -88,10 +88,14 @@ Future<void> downloadSongsFromPlaylist(
   List list,
 ) async {
   try {
+    final _isHeavyProcess = list.length > 50;
+    final _pauseDuration = _isHeavyProcess
+        ? const Duration(seconds: 10)
+        : const Duration(seconds: 5);
     showToast(context, context.l10n()!.fasterDownloadMsg);
     for (final song in list) {
       await downloadSongFaster(context, song);
-      await Future.delayed(const Duration(seconds: 10));
+      await Future.delayed(_pauseDuration);
     }
   } catch (e) {
     debugPrint('Error while downloading playlist songs: $e');
