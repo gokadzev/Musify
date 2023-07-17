@@ -14,7 +14,8 @@
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon"
         android:requestLegacyExternalStorage="true"
-        android:extractNativeLibs="true">
+        android:extractNativeLibs="true"
+        tools:replace="android:extractNativeLibs">
 
         <meta-data
             android:name="com.google.android.gms.car.application"
