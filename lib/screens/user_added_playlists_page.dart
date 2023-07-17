@@ -19,7 +19,6 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
       appBar: AppBar(
         title: Text(
           context.l10n()!.userPlaylists,
-          style: paytoneOneStyle,
         ),
       ),
       floatingActionButton: FloatingActionButton(

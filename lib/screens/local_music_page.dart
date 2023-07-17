@@ -39,7 +39,6 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
       appBar: AppBar(
         title: Text(
           context.l10n()!.localMusic,
-          style: paytoneOneStyle,
         ),
       ),
       body: SingleChildScrollView(

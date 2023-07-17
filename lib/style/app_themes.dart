@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 
-final paytoneOneStyle = GoogleFonts.paytoneOne(color: colorScheme.primary);
-
 final kBorderRadius = BorderRadius.circular(15);
 const kContentPadding =
     EdgeInsets.only(left: 18, right: 20, top: 14, bottom: 14);

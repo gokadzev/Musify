@@ -88,7 +88,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
       appBar: AppBar(
         title: Text(
           context.l10n()!.playlist,
-          style: paytoneOneStyle,
         ),
       ),
       body: SingleChildScrollView(

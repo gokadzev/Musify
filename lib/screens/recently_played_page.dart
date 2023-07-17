@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
-import 'package:musify/style/app_themes.dart';
 
 import 'package:musify/widgets/song_bar.dart';
 
@@ -19,7 +18,6 @@ class _RecentlyPlayedState extends State<RecentlyPlayed> {
       appBar: AppBar(
         title: Text(
           context.l10n()!.recentlyPlayed,
-          style: paytoneOneStyle,
         ),
       ),
       body: ValueListenableBuilder(

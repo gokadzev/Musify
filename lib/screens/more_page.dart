@@ -32,7 +32,6 @@ class _MorePageState extends State<MorePage> {
       appBar: AppBar(
         title: Text(
           context.l10n()!.more,
-          style: paytoneOneStyle,
         ),
       ),
       body: SingleChildScrollView(child: SettingsCards()),

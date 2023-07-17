@@ -11,7 +11,6 @@ class UserLikedPlaylistsPage extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           context.l10n()!.userLikedPlaylists,
-          style: paytoneOneStyle,
         ),
       ),
       body: ValueListenableBuilder(
