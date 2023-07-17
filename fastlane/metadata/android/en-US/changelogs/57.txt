@@ -1,25 +1,14 @@
 Bug Fixes
-
-- Fixed an issue where multiple random songs would play consecutively after one finishes.
-
-- If the user has not chosen an app theme, the default theme will now be applied.
-
-- Corrected the past form of the verb "backup" in localizations.
-
-- Resolved a crash occurring on Android devices running below version 10 when opening local music.
+- Fixed random song playback.
+- Applied default theme.
+- Fixed localizations.
+- Resolved Android crash below version 10.
 
 Enhancements
+- Smoother "Now Playing" page.
+- Improved Portuguese translation.
+- Enhanced backup and restore functions.
+- Updated playlists and added three new ones.
+- Removed non-functional lyrics feature.
+- Miscellaneous quality and performance improvements.
 
-- Enhanced the responsiveness of the "Now Playing" page for a smoother user experience.
-
-- Updated the Portuguese translation to improve language accuracy.
-
-- Improved the backup and restore functions for better reliability and ease of use.
-
-- Updated existing playlists to ensure they are up to date and relevant.
-
-- Added three new playlists to expand the music selection.
-
-- Removed the lyrics feature, as the current implementation is no longer functional.
-
-- Implemented miscellaneous quality and performance improvements to enhance app stability and speed.
