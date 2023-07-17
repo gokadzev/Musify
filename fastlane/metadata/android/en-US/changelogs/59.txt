@@ -1,0 +1,10 @@
+Enhancements
+
+- You no longer need to use the "play all" button while playing.
+- Added licenses.
+- Use local fonts rather than fetching them from the server.
+- Added more app colors.
+- Added songs number in playlists.
+- Added a 'Download all' function to playlists.
+- Added artwork support for local music.
+- Miscellaneous Other Improvements And Features: Implemented quality and performance enhancements for app stability and speed.
