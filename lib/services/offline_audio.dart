@@ -1,14 +1,17 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:hive/hive.dart';
 import 'package:musify/models/custom_audio_model.dart';
+import 'package:musify/services/data_manager.dart';
 import 'package:on_audio_query/on_audio_query.dart' hide context;
 
 final OnAudioQuery audioQuery = OnAudioQuery();
 
 AudioSortType _sortBy = AudioSortType.DATE_ADDED;
 
-final List<String> cachedAudioArtworkPaths = [];
+final List cachedAudioArtworkPaths =
+    Hive.box('cache').get('cachedAudioArtworks', defaultValue: []);
 int _lastKnownSongCount = 0;
 List<AudioModelWithArtwork>? _cachedSongsWithArtwork;
 
@@ -36,7 +39,7 @@ Future<String> saveArtworkImageToSupportDirectory(int songId) async {
     );
 
     final imageBytes = _artwork?.artwork;
-    if (!await imageFile.exists() && imageBytes != null) {
+    if (imageBytes != null && !(await imageFile.exists())) {
       unawaited(imageFile.writeAsBytes(imageBytes.toList()));
     }
     cachedAudioArtworkPaths.add(imagePath);
@@ -58,7 +61,7 @@ Future<List<AudioModelWithArtwork>> getMusic({
     _cachedSongsWithArtwork = null;
   }
 
-  if (_cachedSongsWithArtwork != null) {
+  if (_cachedSongsWithArtwork?.length == allSongs.length) {
     final filteredCachedSongs =
         _filterSongs(_cachedSongsWithArtwork!, searchQuery);
     return filteredCachedSongs;
@@ -78,17 +81,23 @@ Future<List<AudioModelWithArtwork>> getMusic({
   }
 
   _cachedSongsWithArtwork = songsWithArtwork;
+  addOrUpdateData('cache', 'cachedAudioArtworks', cachedAudioArtworkPaths);
 
-  final filteredSongs = _filterSongs(songsWithArtwork, searchQuery);
-  return filteredSongs;
+  if (searchQuery != null) {
+    final filteredSongs = _filterSongs(songsWithArtwork, searchQuery);
+    return filteredSongs;
+  } else {
+    return songsWithArtwork;
+  }
 }
 
 List<AudioModelWithArtwork> _filterSongs(
   List<AudioModelWithArtwork> songs,
   String? searchQuery,
 ) {
-  if (searchQuery != null && searchQuery.isNotEmpty) {
-    final lowerCaseSearchQuery = searchQuery.toLowerCase();
+  final lowerCaseSearchQuery = searchQuery?.toLowerCase();
+
+  if (lowerCaseSearchQuery != null && lowerCaseSearchQuery.isNotEmpty) {
     return songs
         .where(
           (song) =>
@@ -96,7 +105,7 @@ List<AudioModelWithArtwork> _filterSongs(
         )
         .toList();
   } else {
-    return songs.toList();
+    return songs;
   }
 }
 
