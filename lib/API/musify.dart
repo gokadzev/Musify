@@ -10,6 +10,7 @@ import 'package:musify/extensions/l10n.dart';
 import 'package:musify/models/custom_audio_model.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/data_manager.dart';
+import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/formatter.dart';
 import 'package:musify/utilities/mediaitem.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
@@ -258,6 +259,33 @@ Future<List> getSongsFromPlaylist(dynamic playlistId) async {
   }
 
   return songList;
+}
+
+Future updatePlaylistList(
+  BuildContext context,
+  dynamic playlistId,
+) async {
+  final index = findPlaylistIndexByYtId(playlistId);
+  if (index != -1) {
+    final songList = [];
+    await for (final song in yt.playlists.getVideos(playlistId)) {
+      songList.add(returnSongLayout(songList.length, song));
+    }
+
+    playlists[index]['list'] = songList;
+    addOrUpdateData('cache', 'playlistSongs$playlistId', songList);
+    showToast(context, context.l10n()!.playlistUpdated);
+  }
+  return playlists[index];
+}
+
+int findPlaylistIndexByYtId(String ytid) {
+  for (var i = 0; i < playlists.length; i++) {
+    if (playlists[i]['ytid'] == ytid) {
+      return i;
+    }
+  }
+  return -1;
 }
 
 Future<void> setActivePlaylist(Map info) async {

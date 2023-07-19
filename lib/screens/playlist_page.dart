@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
@@ -166,28 +167,52 @@ class _PlaylistPageState extends State<PlaylistPage> {
   }
 
   Widget _buildPlaylistButtons() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Column(
       children: [
-        PlaylistButton(
-          label: context.l10n()!.playAll,
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          onPressed: () {
-            setActivePlaylist(_playlist);
-            showToast(
-              context,
-              context.l10n()!.queueInitText,
-            );
-          },
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            PlaylistButton(
+              label: context.l10n()!.playAll,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              onPressed: () {
+                setActivePlaylist(_playlist);
+                showToast(
+                  context,
+                  context.l10n()!.queueInitText,
+                );
+              },
+            ),
+            const SizedBox(width: 10),
+            PlaylistButton(
+              label: context.l10n()!.downloadAll,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              onPressed: () {
+                downloadSongsFromPlaylist(context, _playlist['list']);
+              },
+            ),
+          ],
         ),
-        const SizedBox(width: 10),
-        PlaylistButton(
-          label: context.l10n()!.downloadAll,
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          onPressed: () {
-            downloadSongsFromPlaylist(context, _playlist['list']);
+        const SizedBox(height: 10),
+        IconButton(
+          iconSize: 30,
+          onPressed: () async {
+            _playlist = await updatePlaylistList(context, _playlist['ytid']);
+
+            _hasMore = true;
+            _songsList.clear();
+
+            setState(() {
+              _currentPage = 0;
+              _currentLastLoadedId = 0;
+            });
+
+            _loadMore();
+
+            setState(() {});
           },
-        ),
+          icon: const Icon(FluentIcons.arrow_sync_24_filled),
+        )
       ],
     );
   }

@@ -41,6 +41,7 @@
   "pages": "頁面",
   "playAll": "全部播放",
   "playlist": "播放清單",
+  "playlistUpdated": "Playlist Updated Successfully",
   "playlists": "播放清單",
   "queueInitText": "正在初始化佇列",
   "recentlyPlayed": "Recently Played",
