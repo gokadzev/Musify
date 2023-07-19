@@ -68,7 +68,7 @@ Future<List> getRecommendedSongs() async {
   final seenYtIds = <String>{};
   playlistSongs.removeWhere((song) => !seenYtIds.add(song['ytid']));
 
-  return playlistSongs;
+  return playlistSongs.take(15).toList();
 }
 
 Future<List<dynamic>> getUserPlaylists() async {
