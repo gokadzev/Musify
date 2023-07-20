@@ -15,7 +15,7 @@ dependencies:
   audio_service:
     path: ./packages/audio_service/audio_service
   audio_session: ^0.1.16
-  background_downloader: ^7.5.0
+  background_downloader: ^7.6.0
   cached_network_image: ^3.2.3
   dynamic_color: ^1.6.5
   file_picker: ^5.3.2
