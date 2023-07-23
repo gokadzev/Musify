@@ -104,15 +104,14 @@ flutter run --flavor github
 
 Contributions are always welcome. Please read our [contributing guidelines](https://github.com/gokadzev/Musify/blob/master/CONTRIBUTING.md) before contributing.
 
-You can check out our [To-Do](https://github.com/users/gokadzev/projects/1) list to see what we're currently working on and what tasks are planned for future releases. Feel free to contribute by picking up a task or suggesting new ones!
-
 
 ---
 
 <h3 align="center">Credits :pushpin:	</h3>
-<a href="https://github.com/Harsh-23/Musify">Musify (Base)</a> - The original code has been completely reworked or replaced, and the app's logo being updated while the name remained the same<b><br>
+
+- [Musify](https://github.com/Harsh-23/Musify): Original inspiration for the concept and app name, while our implementation took a different direction with a complete rewrite, a rebranded logo, and a redesigned layout and UI.
 
 ---
 
 <h3 align="center">Do you like the project? :heartpulse:	</h3>
-<p align="center" ><a href="https://ko-fi.com/gokadzev" target="_blank"><img src="https://az743702.vo.msecnd.net/cdn/kofi3.png?v=0" alt="Buy Me A Coffee" style="height: 46px !important;width: 170px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a> </p>
+<p align="center" ><a href="https://ko-fi.com/gokadzev" target="_blank"><img src="https://storage.ko-fi.com/cdn/brandasset/kofi_button_dark.png" style="width: 30%;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a> </p>
