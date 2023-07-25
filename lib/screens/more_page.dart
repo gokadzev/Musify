@@ -11,6 +11,7 @@ import 'package:musify/screens/search_page.dart';
 import 'package:musify/screens/user_liked_playlists_page.dart';
 import 'package:musify/screens/user_liked_songs_page.dart';
 import 'package:musify/services/data_manager.dart';
+import 'package:musify/services/logger.service.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/services/update_manager.dart';
 import 'package:musify/style/app_colors.dart';
@@ -617,6 +618,11 @@ class SettingsCards extends StatelessWidget {
               ),
             ),
           },
+        ),
+        SettingBar(
+          context.l10n()!.exportLogs,
+          FluentIcons.error_circle_24_filled,
+          () async => {showToast(context, await Logger.exportLogs(context))},
         ),
         SettingBar(
           context.l10n()!.about,

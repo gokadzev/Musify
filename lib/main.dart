@@ -17,6 +17,7 @@ import 'package:musify/screens/root_page.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/audio_service.dart';
 import 'package:musify/services/data_manager.dart';
+import 'package:musify/services/logger.service.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/formatter.dart';
@@ -140,11 +141,11 @@ class _MyAppState extends State<MyApp> {
 
           await playSong(song);
         } catch (e) {
-          debugPrint('Error: $e');
+          Logger.log('Error: $e');
         }
       },
       onError: (err) {
-        debugPrint('getLinkStream error: $err');
+        Logger.log('getLinkStream error: $err');
       },
     );
 

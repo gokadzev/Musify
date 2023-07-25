@@ -1,7 +1,7 @@
 import 'package:audio_service/audio_service.dart';
-import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:musify/services/audio_manager.dart';
+import 'package:musify/services/logger.service.dart';
 import 'package:musify/services/settings_manager.dart';
 
 class MyAudioHandler extends BaseAudioHandler {
@@ -64,7 +64,7 @@ class MyAudioHandler extends BaseAudioHandler {
         );
       });
     } catch (e) {
-      debugPrint('Error in playbackEventStream: $e');
+      Logger.log('Error in playbackEventStream: $e');
     }
   }
 
@@ -84,7 +84,7 @@ class MyAudioHandler extends BaseAudioHandler {
         mediaItem.add(newMediaItem);
       });
     } catch (e) {
-      debugPrint('Error in durationStream: $e');
+      Logger.log('Error in durationStream: $e');
     }
   }
 
@@ -99,7 +99,7 @@ class MyAudioHandler extends BaseAudioHandler {
         mediaItem.add(playlist[index]);
       });
     } catch (e) {
-      debugPrint('Error in currentIndexStream: $e');
+      Logger.log('Error in currentIndexStream: $e');
     }
   }
 
@@ -113,7 +113,7 @@ class MyAudioHandler extends BaseAudioHandler {
         shuffleNotifier.value = sequenceState!.shuffleModeEnabled;
       });
     } catch (e) {
-      debugPrint('Error in sequenceStateStream: $e');
+      Logger.log('Error in sequenceStateStream: $e');
     }
   }
 

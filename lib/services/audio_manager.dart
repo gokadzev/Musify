@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/services/data_manager.dart';
+import 'package:musify/services/logger.service.dart';
 import 'package:musify/services/offline_audio.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/mediaitem.dart';
@@ -62,7 +63,7 @@ Future<void> playSong(Map song) async {
     await checkIfSponsorBlockIsAvailable(song, songUrl);
     await audioPlayer.play();
   } catch (e) {
-    debugPrint('Error playing song: $e');
+    Logger.log('Error playing song: $e');
   }
 }
 
@@ -193,7 +194,7 @@ Future<void> setNewPlaylist() async {
   try {
     await audioPlayer.setAudioSource(_playlist);
   } catch (e) {
-    debugPrint('Error in setNewPlaylist: $e');
+    Logger.log('Error in setNewPlaylist: $e');
   }
 }
 
@@ -201,7 +202,7 @@ Future<void> addSongs(List<AudioSource> songs) async {
   try {
     await _playlist.addAll(songs);
   } catch (e) {
-    debugPrint('Error adding songs to the playlist: $e');
+    Logger.log('Error adding songs to the playlist: $e');
   }
 }
 

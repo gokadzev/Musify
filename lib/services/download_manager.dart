@@ -4,6 +4,7 @@ import 'package:background_downloader/background_downloader.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
+import 'package:musify/services/logger.service.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:on_audio_query/on_audio_query.dart';
@@ -47,7 +48,7 @@ Future<void> downloadSong(BuildContext context, dynamic song) async {
     await FileDownloader().download(task);
     await FileDownloader().moveToSharedStorage(task, SharedStorage.audio);
   } catch (e) {
-    debugPrint('Error while downloading song: $e');
+    Logger.log('Error while downloading song: $e');
     showToast(context, '${context.l10n()!.downloadFailed}, $e');
   }
 }
@@ -78,7 +79,7 @@ Future<void> downloadSongFaster(BuildContext context, dynamic song) async {
         .moveFileToSharedStorage(file.path, SharedStorage.audio);
     showToast(context, '${context.l10n()!.downloadCompleted} - $songName');
   } catch (e) {
-    debugPrint('Error while downloading song: $e');
+    Logger.log('Error while downloading song: $e');
     showToast(context, '${context.l10n()!.downloadFailed}, $e');
   }
 }
@@ -98,7 +99,7 @@ Future<void> downloadSongsFromPlaylist(
       await Future.delayed(_pauseDuration);
     }
   } catch (e) {
-    debugPrint('Error while downloading playlist songs: $e');
+    Logger.log('Error while downloading playlist songs: $e');
     showToast(context, '${context.l10n()!.downloadFailed}, $e');
   }
 }
@@ -109,7 +110,7 @@ Future<void> checkNecessaryPermissions(BuildContext context) async {
   try {
     await Permission.storage.request();
   } catch (e) {
-    debugPrint('Error while requesting permissions: $e');
+    Logger.log('Error while requesting permissions: $e');
     showToast(
       context,
       '${context.l10n()!.errorWhileRequestingPerms} + $e',

@@ -4,6 +4,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/services/data_manager.dart';
+import 'package:musify/services/logger.service.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/spinner.dart';
@@ -52,7 +53,7 @@ class _SearchPageState extends State<SearchPage> {
     try {
       _searchResult = await fetchSongsList(query);
     } catch (e) {
-      debugPrint('Error while searching online songs: $e');
+      Logger.log('Error while searching online songs: $e');
     }
 
     if (_fetchingSongs.value) {
