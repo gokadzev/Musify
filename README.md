@@ -114,5 +114,10 @@ Contributions are always welcome. Please read our [contributing guidelines](http
 
 ---
 
-<h3 align="center">Do you like the project? :heartpulse:	</h3>
-<p align="center" ><a href="https://ko-fi.com/gokadzev" target="_blank"><img src="https://storage.ko-fi.com/cdn/brandasset/kofi_button_dark.png" style="width: 30%;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a> </p>
+<h3 align="center">Do you like the project? Sponsor it! :heartpulse:	</h3>
+
+<div align="center">
+  <a href="https://ko-fi.com/gokadzev">
+    <img width="32%" src="https://storage.ko-fi.com/cdn/brandasset/logo_white_stroke.png" alt="ko-fi">
+  </a>
+</div>
