@@ -45,31 +45,41 @@ final currentRecentlyPlayedLength =
 int id = 0;
 
 Future<List> fetchSongsList(String searchQuery) async {
-  final List list = await yt.search.search(searchQuery);
-  final searchedList = [
-    for (final s in list)
-      returnSongLayout(
-        0,
-        s,
-      )
-  ];
+  try {
+    final List list = await yt.search.search(searchQuery);
+    final searchedList = [
+      for (final s in list)
+        returnSongLayout(
+          0,
+          s,
+        )
+    ];
 
-  return searchedList;
+    return searchedList;
+  } catch (e) {
+    debugPrint('Error in fetchSongsList: $e');
+    return [];
+  }
 }
 
 Future<List> getRecommendedSongs() async {
-  const playlistId = 'PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx';
-  var playlistSongs = [...userLikedSongsList, ...userRecentlyPlayed];
+  try {
+    const playlistId = 'PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx';
+    var playlistSongs = [...userLikedSongsList, ...userRecentlyPlayed];
 
-  final ytSongs = await getSongsFromPlaylist(playlistId);
-  playlistSongs += ytSongs.take(10).toList();
+    final ytSongs = await getSongsFromPlaylist(playlistId);
+    playlistSongs += ytSongs.take(10).toList();
 
-  playlistSongs.shuffle();
+    playlistSongs.shuffle();
 
-  final seenYtIds = <String>{};
-  playlistSongs.removeWhere((song) => !seenYtIds.add(song['ytid']));
+    final seenYtIds = <String>{};
+    playlistSongs.removeWhere((song) => !seenYtIds.add(song['ytid']));
 
-  return playlistSongs.take(15).toList();
+    return playlistSongs.take(15).toList();
+  } catch (e) {
+    debugPrint('Error in getRecommendedSongs: $e');
+    return [];
+  }
 }
 
 Future<List<dynamic>> getUserPlaylists() async {
@@ -235,7 +245,7 @@ Future<List<Map<String, int>>> getSkipSegments(String id) async {
       return [];
     }
   } catch (e, stack) {
-    debugPrint('$e $stack');
+    debugPrint('Error in getSkipSegments: $e $stack');
     return [];
   }
 }

@@ -57,9 +57,8 @@ bool get hasPrevious {
 }
 
 Future<void> playSong(Map song) async {
-  final songUrl = await getSong(song['ytid'], song['isLive']);
-
   try {
+    final songUrl = await getSong(song['ytid'], song['isLive']);
     await checkIfSponsorBlockIsAvailable(song, songUrl);
     await audioPlayer.play();
   } catch (e) {
@@ -194,12 +193,16 @@ Future<void> setNewPlaylist() async {
   try {
     await audioPlayer.setAudioSource(_playlist);
   } catch (e) {
-    debugPrint('Error: $e');
+    debugPrint('Error in setNewPlaylist: $e');
   }
 }
 
 Future<void> addSongs(List<AudioSource> songs) async {
-  await _playlist.addAll(songs);
+  try {
+    await _playlist.addAll(songs);
+  } catch (e) {
+    debugPrint('Error adding songs to the playlist: $e');
+  }
 }
 
 class PositionData {
