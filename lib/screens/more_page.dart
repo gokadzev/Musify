@@ -597,7 +597,7 @@ class SettingsCards extends StatelessWidget {
           ),
         ),
         SettingBar(
-          context.l10n()!.supportDonate,
+          context.l10n()!.sponsorProject,
           FluentIcons.heart_24_filled,
           () => {
             launchURL(
