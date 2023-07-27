@@ -10,6 +10,7 @@ import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/download_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/style/app_themes.dart';
+import 'package:musify/utilities/formatter.dart';
 import 'package:musify/utilities/mediaitem.dart';
 import 'package:musify/widgets/marque.dart';
 import 'package:musify/widgets/song_bar.dart';
@@ -206,16 +207,10 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
               final positionData = snapshot.data;
               if (positionData == null) return const SizedBox.shrink();
 
-              final positionText = positionData.position
-                  .toString()
-                  .split('.')
-                  .first
-                  .replaceFirst('0:0', '0');
-              final durationText = positionData.duration
-                  .toString()
-                  .split('.')
-                  .first
-                  .replaceAll('0:', '');
+              final positionText =
+                  formatDuration(positionData.position.inMilliseconds);
+              final durationText =
+                  formatDuration(positionData.duration.inMilliseconds);
 
               return Column(
                 mainAxisSize: MainAxisSize.min,

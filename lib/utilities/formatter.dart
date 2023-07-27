@@ -53,8 +53,21 @@ Map<String, dynamic> returnSongLayoutFromAudioModel(
 
 String? getSongId(String url) => VideoId.parseVideoId(url);
 
-String formatDuration(int durationInMillis) {
-  final minutes = (durationInMillis / (1000 * 60)).truncate();
-  final seconds = ((durationInMillis / 1000) % 60).truncate();
-  return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+String formatDuration(int milliseconds) {
+  final duration = Duration(milliseconds: milliseconds);
+
+  final hours = duration.inHours;
+  final minutes = duration.inMinutes.remainder(60);
+  final seconds = duration.inSeconds.remainder(60);
+
+  var formattedDuration = '';
+
+  if (hours > 0) {
+    formattedDuration += '${hours.toString().padLeft(2, '0')}:';
+  }
+
+  formattedDuration += '${minutes.toString().padLeft(2, '0')}:';
+  formattedDuration += seconds.toString().padLeft(2, '0');
+
+  return formattedDuration;
 }
