@@ -46,7 +46,12 @@ Future<void> downloadSong(BuildContext context, dynamic song) async {
     );
 
     await FileDownloader().download(task);
-    await FileDownloader().moveToSharedStorage(task, SharedStorage.audio);
+    final newFileLocation =
+        await FileDownloader().moveToSharedStorage(task, SharedStorage.audio);
+
+    if (newFileLocation == null) {
+      await FileDownloader().moveToSharedStorage(task, SharedStorage.downloads);
+    }
   } catch (e) {
     Logger.log('Error while downloading song: $e');
     showToast(context, '${context.l10n()!.downloadFailed}, $e');
@@ -75,8 +80,12 @@ Future<void> downloadSongFaster(BuildContext context, dynamic song) async {
     await fileStream.flush();
     await fileStream.close();
 
-    await FileDownloader()
+    final newFileLocation = await FileDownloader()
         .moveFileToSharedStorage(file.path, SharedStorage.audio);
+    if (newFileLocation == null) {
+      await FileDownloader()
+          .moveFileToSharedStorage(file.path, SharedStorage.downloads);
+    }
     showToast(context, '${context.l10n()!.downloadCompleted} - $songName');
   } catch (e) {
     Logger.log('Error while downloading song: $e');
