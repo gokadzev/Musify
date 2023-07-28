@@ -4,7 +4,7 @@ import 'package:musify/extensions/l10n.dart';
 import 'package:musify/models/custom_audio_model.dart';
 import 'package:musify/services/offline_audio.dart';
 import 'package:musify/style/app_themes.dart';
-import 'package:musify/widgets/local_song_bar.dart';
+import 'package:musify/widgets/local_music_bar.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/spinner.dart';
 
@@ -120,7 +120,7 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                     addRepaintBoundaries: false,
                     itemCount: snapshot.data!.length,
                     itemBuilder: (BuildContext context, int index) {
-                      return LocalSongBar(index, snapshot.data![index]);
+                      return LocalMusicBar(index, snapshot.data![index]);
                     },
                   );
                 }

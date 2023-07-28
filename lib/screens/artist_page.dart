@@ -7,7 +7,7 @@ import 'package:musify/extensions/screen_size.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/widgets/artist_cube.dart';
-import 'package:musify/widgets/local_song_bar.dart';
+import 'package:musify/widgets/local_music_bar.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/spinner.dart';
 
@@ -122,7 +122,7 @@ class _ArtistPagePageState extends State<ArtistPage> {
                           return const Spinner();
                         }
 
-                        return LocalSongBar(index, _songsList[index]);
+                        return LocalMusicBar(index, _songsList[index]);
                       },
                     ),
                   ] else
