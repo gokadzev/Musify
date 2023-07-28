@@ -9,5 +9,5 @@
 * High Quality mp3 / m4a / flac Format
 * No Ads
 * No Subscriptions
-* 17 Supported Languages
+* 18 Supported Languages
 * Material UI & Accent Colors & Dynamic Colors (Android 12+)
