@@ -10,7 +10,7 @@ import 'package:musify/extensions/l10n.dart';
 import 'package:musify/models/custom_audio_model.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/data_manager.dart';
-import 'package:musify/services/logger.service.dart';
+import 'package:musify/services/logger_service.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/formatter.dart';
 import 'package:musify/utilities/mediaitem.dart';

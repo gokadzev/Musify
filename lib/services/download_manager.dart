@@ -4,7 +4,7 @@ import 'package:background_downloader/background_downloader.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
-import 'package:musify/services/logger.service.dart';
+import 'package:musify/services/logger_service.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:on_audio_query/on_audio_query.dart';

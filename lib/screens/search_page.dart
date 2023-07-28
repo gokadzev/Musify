@@ -4,7 +4,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/services/data_manager.dart';
-import 'package:musify/services/logger.service.dart';
+import 'package:musify/services/logger_service.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/spinner.dart';

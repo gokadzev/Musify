@@ -1,7 +1,7 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:musify/services/audio_manager.dart';
-import 'package:musify/services/logger.service.dart';
+import 'package:musify/services/logger_service.dart';
 import 'package:musify/services/settings_manager.dart';
 
 class MyAudioHandler extends BaseAudioHandler {
