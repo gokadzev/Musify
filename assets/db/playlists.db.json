@@ -295,12 +295,6 @@
     "list": []
   },
   {
-    "ytid": "PL-_a53M3g7u0JR9RsDO5vUuT9uxtb-xjK",
-    "title": "US Open Songs 2023",
-    "image": "https://i.scdn.co/image/ab67706c0000da840cadc31526c6ffffa87bbc70",
-    "list": []
-  },
-  {
     "ytid": "PL-_a53M3g7u3Zlv6NkqlVPNZcdfCgC6dM",
     "title": "Top French Songs March 2023",
     "image": "https://i.scdn.co/image/ab67616d0000b273662542e4480ed1f32c744534",
@@ -487,6 +481,13 @@
     "ytid": "RDCLAK5uy_kWiJXUNLZM9EyS3GBGznl1ku8_cOos97U",
     "title": "Huge Dance Hits",
     "image": "https://i.scdn.co/image/ab67616d0000b27360d92fb6bff281e01bb35101",
+    "list": []
+  },
+  {
+    "ytid": "PLZhMSEOdAKDj0MCF_HTXB8bKBLywN_rnc",
+    "title": "Warehouse Party",
+    "header_desc": "Classic party anthems from the club to your ears!",
+    "image": "https://i.scdn.co/image/ab67706f0000000244a93914cbb4ec7ebbf8b802",
     "list": []
   }
 ]
