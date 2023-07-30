@@ -132,3 +132,7 @@ Future<void> moveAudiosToQueue() async {
     await addSongs(audioSources);
   }
 }
+
+int? getMusicIndex(AudioModelWithArtwork music) {
+  return _cachedSongsWithArtwork?.indexOf(music);
+}
