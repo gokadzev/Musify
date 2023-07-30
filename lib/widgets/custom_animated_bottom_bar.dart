@@ -58,15 +58,18 @@ class CustomAnimatedBottomBar extends StatelessWidget {
               return Expanded(
                 child: GestureDetector(
                   onTap: () {
-                    if (activeTabIndex.value != index) {
-                      onItemSelected(index);
+                    if (activeTabIndex.value == index) {
+                      activeTabIndex.value = -1;
+                    } else {
+                      activeTabIndex.value = index;
                     }
+                    onItemSelected(index);
                   },
                   child: _FlashTabBarItem(
                     item: item,
                     tabBarHeight: height,
                     iconSize: iconSize,
-                    isSelected: index == selectedIndex,
+                    isSelected: index == activeTabIndex.value,
                     backgroundColor: bg!,
                     animationDuration: animationDuration,
                     animationCurve: animationCurve,
