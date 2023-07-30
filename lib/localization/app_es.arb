@@ -40,6 +40,8 @@
   "noLikedPlaylists": "You haven't liked any playlists yet",
   "notYTlist": "¡Esto no es un ID de una lista de reproducción de Youtube!",
   "nowPlaying": "Reproduciendo ahora",
+  "offlineResults": "Offline results",
+  "onlineResults": "Online results",
   "others": "Others",
   "pages": "Páginas",
   "playAll": "Reproducir todo",

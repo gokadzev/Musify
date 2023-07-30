@@ -22,8 +22,8 @@ class ArtistPage extends StatefulWidget {
 class _ArtistPagePageState extends State<ArtistPage> {
   final _songsList = [];
 
-  bool _isLoading = true;
-  bool _hasMore = true;
+  late bool _isLoading = true;
+  late bool _hasMore = true;
   final _itemsPerPage = 35;
   var _currentPage = 0;
   var _currentLastLoadedId = 0;
@@ -107,9 +107,10 @@ class _ArtistPagePageState extends State<ArtistPage> {
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ),
-                  const SizedBox(height: 30),
-                  if (_songsList.isNotEmpty) ...[
-                    ListView.builder(
+                  MaterialBarSwitcher(
+                    firstBarTitle: context.l10n()!.offlineResults,
+                    secondBarTitle: context.l10n()!.onlineResults,
+                    firstBarChild: ListView.builder(
                       shrinkWrap: true,
                       physics: const BouncingScrollPhysics(),
                       itemCount:
@@ -125,67 +126,50 @@ class _ArtistPagePageState extends State<ArtistPage> {
                         return LocalMusicBar(index, _songsList[index]);
                       },
                     ),
-                  ] else
-                    const Spinner(),
-                  FutureBuilder(
-                    future: fetchSongsList(widget.playlist['title'].toString()),
-                    builder: (context, AsyncSnapshot<dynamic> snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(
-                          child: Padding(
-                            padding: EdgeInsets.all(35),
-                            child: Spinner(),
-                          ),
-                        );
-                      } else if (snapshot.connectionState ==
-                          ConnectionState.done) {
-                        if (snapshot.hasError ||
-                            !snapshot.hasData ||
-                            snapshot.data.isEmpty) {
-                          return Center(
-                            child: Text(
-                              'Nothing Found!',
-                              style: TextStyle(
-                                color: colorScheme.primary,
-                                fontSize: 18,
-                              ),
+                    secondBarChild: FutureBuilder(
+                      future:
+                          fetchSongsList(widget.playlist['title'].toString()),
+                      builder: (context, AsyncSnapshot<dynamic> snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(35),
+                              child: Spinner(),
                             ),
                           );
-                        }
-                        return Wrap(
-                          children: <Widget>[
-                            Padding(
-                              padding: EdgeInsets.only(
-                                top: context.screenSize.height / 55,
-                                bottom: 10,
-                                left: 20,
-                                right: 20,
-                              ),
+                        } else if (snapshot.connectionState ==
+                            ConnectionState.done) {
+                          if (snapshot.hasError || snapshot.data.isEmpty) {
+                            return Center(
                               child: Text(
-                                'Online Results',
+                                'Nothing Found!',
                                 style: TextStyle(
                                   color: colorScheme.primary,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w700,
+                                  fontSize: 18,
                                 ),
                               ),
-                            ),
-                            ListView.builder(
-                              shrinkWrap: true,
-                              addAutomaticKeepAlives: false,
-                              addRepaintBoundaries: false,
-                              physics: const BouncingScrollPhysics(),
-                              itemCount: snapshot.data.length as int,
-                              itemBuilder: (context, index) {
-                                return SongBar(snapshot.data[index], true);
-                              },
-                            )
-                          ],
-                        );
-                      } else {
-                        return const SizedBox.shrink();
-                      }
-                    },
+                            );
+                          }
+                          return Wrap(
+                            children: <Widget>[
+                              ListView.builder(
+                                shrinkWrap: true,
+                                addAutomaticKeepAlives: false,
+                                addRepaintBoundaries: false,
+                                physics: const BouncingScrollPhysics(),
+                                itemCount: snapshot.data.length as int,
+                                itemBuilder: (context, index) {
+                                  return SongBar(snapshot.data[index], true);
+                                },
+                              )
+                            ],
+                          );
+                        } else {
+                          return const SizedBox.shrink();
+                        }
+                      },
+                    ),
                   ),
                 ],
               )
@@ -194,6 +178,77 @@ class _ArtistPagePageState extends State<ArtistPage> {
                 child: const Spinner(),
               ),
       ),
+    );
+  }
+}
+
+class MaterialBarSwitcher extends StatefulWidget {
+  const MaterialBarSwitcher({
+    super.key,
+    required this.firstBarTitle,
+    required this.secondBarTitle,
+    required this.firstBarChild,
+    required this.secondBarChild,
+  });
+  final String firstBarTitle;
+  final String secondBarTitle;
+  final Widget firstBarChild;
+  final Widget secondBarChild;
+
+  @override
+  _MaterialBarSwitcherState createState() => _MaterialBarSwitcherState();
+}
+
+class _MaterialBarSwitcherState extends State<MaterialBarSwitcher> {
+  bool _showFirstBar = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  _showFirstBar = true;
+                });
+              },
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 30, horizontal: 10),
+                child: Text(
+                  widget.firstBarTitle,
+                  style: TextStyle(
+                    color: _showFirstBar ? colorScheme.primary : Colors.grey,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  _showFirstBar = false;
+                });
+              },
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 30, horizontal: 10),
+                child: Text(
+                  widget.secondBarTitle,
+                  style: TextStyle(
+                    color: _showFirstBar ? Colors.grey : colorScheme.primary,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        if (_showFirstBar) widget.firstBarChild else widget.secondBarChild,
+      ],
     );
   }
 }
