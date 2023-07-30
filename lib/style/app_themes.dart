@@ -11,7 +11,7 @@ const darkModeBGColor = Color(0xFF121212);
 const lightModeBGColor = Color(0xFFE5E5E5);
 
 Color primaryColor =
-    Color(Hive.box('settings').get('accentColor', defaultValue: 0xFF08AFAF));
+    Color(Hive.box('settings').get('accentColor', defaultValue: 0xFFE9967A));
 
 ColorScheme colorScheme = ColorScheme.fromSeed(
   seedColor: primaryColor,
