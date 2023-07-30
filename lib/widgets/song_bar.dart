@@ -9,12 +9,13 @@ import 'package:musify/style/app_themes.dart';
 
 class SongBar extends StatelessWidget {
   SongBar(this.song, this.clearPlaylist, {super.key});
-  late final dynamic song;
-  late final bool clearPlaylist;
 
-  final likeStatusToIconMapper = {
+  final dynamic song;
+  final bool clearPlaylist;
+
+  static const likeStatusToIconMapper = {
     true: FluentIcons.star_24_filled,
-    false: FluentIcons.star_24_regular
+    false: FluentIcons.star_24_regular,
   };
 
   late final songLikeStatus =
@@ -47,6 +48,9 @@ class SongBar extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             CachedNetworkImage(
+              key: Key(
+                song['ytid'].toString(),
+              ),
               width: 60,
               height: 60,
               imageUrl: song['lowResImage'].toString(),
@@ -106,15 +110,15 @@ class SongBar extends StatelessWidget {
                   valueListenable: songLikeStatus,
                   builder: (_, value, __) {
                     return IconButton(
-                      onPressed: () => {
-                        songLikeStatus.value = !songLikeStatus.value,
+                      onPressed: () {
+                        songLikeStatus.value = !songLikeStatus.value;
                         updateSongLikeStatus(
                           song['ytid'],
                           songLikeStatus.value,
-                        ),
-                        currentLikedSongsLength.value = value
-                            ? currentLikedSongsLength.value + 1
-                            : currentLikedSongsLength.value - 1
+                        );
+                        final likedSongsLength = currentLikedSongsLength.value;
+                        currentLikedSongsLength.value =
+                            value ? likedSongsLength + 1 : likedSongsLength - 1;
                       },
                       icon: Icon(likeStatusToIconMapper[value]),
                     );
