@@ -1,0 +1,11 @@
+Bug Fixes
+
+- Fixed the wrong song duration formatting
+- Fixed the wrong music play problem when we play it from artist page
+
+Enhancements
+
+- Added Greek and French languages
+- Added the custom logger [BETA]
+- Added the refresh button in playlists to update caches
+- Miscellaneous Other Improvements And Features: Implemented quality and performance enhancements for app stability and speed.
