@@ -338,16 +338,7 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
 
                             if (processingState == ProcessingState.loading ||
                                 processingState == ProcessingState.buffering) {
-                              return Container(
-                                margin: const EdgeInsets.all(8),
-                                width: constraints.maxWidth * 0.09,
-                                height: constraints.maxWidth * 0.09,
-                                child: CircularProgressIndicator(
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    Theme.of(context).hintColor,
-                                  ),
-                                ),
-                              );
+                              return const Spinner();
                             }
 
                             return GestureDetector(
