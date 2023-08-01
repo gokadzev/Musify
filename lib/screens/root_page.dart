@@ -5,7 +5,6 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:musify/extensions/l10n.dart';
-import 'package:musify/extensions/screen_size.dart';
 import 'package:musify/main.dart';
 import 'package:musify/screens/now_playing_page.dart';
 import 'package:musify/services/audio_manager.dart';
@@ -195,53 +194,35 @@ class _MusifyState extends State<Musify> {
                           final playerState = snapshot.data;
                           final processingState = playerState?.processingState;
                           final playing = playerState?.playing;
+
+                          IconData icon;
+                          VoidCallback? onPressed;
+
                           if (processingState == ProcessingState.loading ||
                               processingState == ProcessingState.buffering) {
-                            return Container(
-                              margin: const EdgeInsets.all(8),
-                              width: context.screenSize.width * 0.08,
-                              height: context.screenSize.width * 0.08,
-                              child: CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  colorScheme.primary,
-                                ),
-                              ),
-                            );
+                            icon = FluentIcons.spinner_ios_16_filled;
+                            onPressed = null;
                           } else if (playing != true) {
-                            return IconButton(
-                              icon: Icon(
-                                FluentIcons.play_12_filled,
-                                color: colorScheme.primary,
-                              ),
-                              iconSize: 45,
-                              onPressed: audioPlayer.play,
-                              splashColor: Colors.transparent,
-                            );
+                            icon = FluentIcons.play_12_filled;
+                            onPressed = audioPlayer.play;
                           } else if (processingState !=
                               ProcessingState.completed) {
-                            return IconButton(
-                              icon: Icon(
-                                FluentIcons.pause_12_filled,
-                                color: colorScheme.primary,
-                              ),
-                              iconSize: 45,
-                              onPressed: audioPlayer.pause,
-                              splashColor: Colors.transparent,
-                            );
+                            icon = FluentIcons.pause_12_filled;
+                            onPressed = audioPlayer.pause;
                           } else {
-                            return IconButton(
-                              icon: Icon(
-                                FluentIcons.replay_20_filled,
-                                color: colorScheme.primary,
-                              ),
-                              iconSize: 45,
-                              onPressed: () => audioPlayer.seek(
-                                Duration.zero,
-                                index: audioPlayer.effectiveIndices!.first,
-                              ),
-                              splashColor: Colors.transparent,
-                            );
+                            icon = FluentIcons.replay_20_filled;
+                            onPressed = () => audioPlayer.seek(
+                                  Duration.zero,
+                                  index: audioPlayer.effectiveIndices!.first,
+                                );
                           }
+
+                          return IconButton(
+                            icon: Icon(icon, color: colorScheme.primary),
+                            iconSize: 45,
+                            onPressed: onPressed,
+                            splashColor: Colors.transparent,
+                          );
                         },
                       ),
                     )
