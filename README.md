@@ -108,6 +108,13 @@ Contributions are always welcome. Please read our [contributing guidelines](http
 
 ---
 
+<h3 align="center">F.A.Q :question: </h3>
+
+You can see frequently asked questions and their answers [here](https://github.com/gokadzev/Musify/discussions/112).
+
+
+---
+
 <h3 align="center">Credits :pushpin:	</h3>
 
 - [Musify](https://github.com/Harsh-23/Musify): Original inspiration for the concept and app name, while our implementation took a different direction with a complete rewrite, a rebranded logo, and a redesigned layout and UI.
