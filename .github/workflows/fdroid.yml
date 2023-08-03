@@ -1,14 +1,18 @@
+name: Test, Build and Release Fdroid apk
+
 on:
   create:
     tags:
-      - '*'
-name: Test, Build and Release Fdroid apk
+      - '*.*.*'
+
 env:
   PROPERTIES_PATH: './android/key.properties'
+
 jobs:
   build:
     name: Build APK
     runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/') && contains(github.ref, '.')
 
     steps:
       - uses: actions/checkout@v3
@@ -28,6 +32,7 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+
       # Setup the flutter environment.
       - run: |
           pip install -U yq
@@ -36,6 +41,7 @@ jobs:
         with:
           channel: 'stable'
           flutter-version: "${{ env.FLUTTER_VERSION }}"
+
       #
       - run: |
           echo keyPassword=\${{ secrets.KEY_STORE }} > ${{env.PROPERTIES_PATH}}
