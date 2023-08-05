@@ -8,6 +8,7 @@ import 'package:musify/extensions/screen_size.dart';
 import 'package:musify/services/download_manager.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/flutter_toast.dart';
+import 'package:musify/widgets/marque.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/spinner.dart';
@@ -29,6 +30,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
   final _itemsPerPage = 35;
   var _currentPage = 0;
   var _currentLastLoadedId = 0;
+  late final playlistLikeStatus =
+      ValueNotifier<bool>(isPlaylistAlreadyLiked(widget.playlistId));
 
   @override
   void initState() {
@@ -87,33 +90,22 @@ class _PlaylistPageState extends State<PlaylistPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          context.l10n()!.playlist,
+        title: MarqueeWidget(
+          child: Text(
+            _playlist != null ? _playlist['title'] : context.l10n()!.playlist,
+          ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: _playlist != null
-            ? Column(
-                children: [
-                  _buildPlaylistImage(),
-                  _buildPlaylistTitle(),
-                  _buildPlaylistSongsNumber(_playlist['list'].length),
-                  if (_playlist['header_desc'] != null)
-                    _buildPlaylistDescription(),
-                  const SizedBox(height: 20),
-                  _buildPlaylistButtons(),
-                  const SizedBox(height: 30),
-                  if (_songsList.isNotEmpty)
-                    _buildSongList()
-                  else
-                    const Spinner()
-                ],
-              )
-            : SizedBox(
-                height: context.screenSize.height - 100,
-                child: const Spinner(),
-              ),
-      ),
+      body: _playlist != null
+          ? CustomScrollView(
+              slivers: [
+                buildSongList(),
+              ],
+            )
+          : SizedBox(
+              height: context.screenSize.height - 100,
+              child: const Spinner(),
+            ),
     );
   }
 
@@ -125,99 +117,177 @@ class _PlaylistPageState extends State<PlaylistPage> {
         image: _playlist['image'],
         title: _playlist['title'],
         onClickOpen: false,
+        showFavoriteButton: false,
         zoomNumber: 0.55,
       ),
     );
   }
 
-  Widget _buildPlaylistTitle() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12),
-      child: Text(
-        _playlist['title'].toString(),
-        textAlign: TextAlign.center,
-        style: Theme.of(context)
-            .textTheme
-            .bodyLarge!
-            .copyWith(color: colorScheme.primary, fontWeight: FontWeight.bold),
-      ),
-    );
-  }
-
-  Widget _buildPlaylistSongsNumber(int number) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Text(
-        '[ $number ${context.l10n()!.songs} ]'.toUpperCase(),
-        textAlign: TextAlign.center,
-        style: Theme.of(context)
-            .textTheme
-            .bodyMedium!
-            .copyWith(color: colorScheme.primary, fontWeight: FontWeight.bold),
-      ),
-    );
-  }
-
-  Widget _buildPlaylistDescription() {
-    return Text(
-      _playlist['header_desc'].toString(),
-      textAlign: TextAlign.center,
-      style: Theme.of(context).textTheme.bodySmall,
-    );
-  }
-
-  Widget _buildPlaylistButtons() {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+  Widget buildSongList() {
+    return SliverList(
+      delegate: SliverChildListDelegate([
+        Stack(
           children: [
-            PlaylistButton(
-              label: context.l10n()!.playAll,
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              onPressed: () {
-                setActivePlaylist(_playlist);
-                showToast(
-                  context,
-                  context.l10n()!.queueInitText,
-                );
-              },
-            ),
-            const SizedBox(width: 10),
-            PlaylistButton(
-              label: context.l10n()!.downloadAll,
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              onPressed: () {
-                downloadSongsFromPlaylist(context, _playlist['list']);
-              },
+            buildPlaylistHeader(),
+            Positioned(
+              bottom: 10,
+              right: 0,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 20),
+                child: buildPlayButton(),
+              ),
             ),
           ],
         ),
-        const SizedBox(height: 10),
-        IconButton(
-          iconSize: 30,
-          onPressed: () async {
-            _playlist = await updatePlaylistList(context, _playlist['ytid']);
+        const SizedBox(
+          height: 30,
+        ),
+        _buildSongListView(),
+      ]),
+    );
+  }
 
-            _hasMore = true;
-            _songsList.clear();
+  Widget buildPlaylistHeader() {
+    final screenHeight = context.screenSize.height;
+    final playlistLength = _playlist['list'].length;
 
-            setState(() {
-              _currentPage = 0;
-              _currentLastLoadedId = 0;
-            });
-
-            _loadMore();
-
-            setState(() {});
-          },
-          icon: const Icon(FluentIcons.arrow_sync_24_filled),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
+          child: Column(
+            children: [
+              _buildPlaylistImage(),
+              if (_playlist['header_desc'] != null)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: Text(
+                    _playlist['header_desc'],
+                    style: const TextStyle(
+                      color: Colors.white70,
+                      fontWeight: FontWeight.w300,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              SizedBox(height: screenHeight * 0.01),
+              Row(
+                children: [
+                  SizedBox(height: screenHeight * 0.03),
+                  Text(
+                    '[ $playlistLength ${context.l10n()!.songs} ]'
+                        .toUpperCase(),
+                    style: const TextStyle(
+                      color: Colors.white70,
+                      fontWeight: FontWeight.w300,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: screenHeight * 0.01),
+            ],
+          ),
+        ),
+        Row(
+          children: [
+            _buildLikeButton(),
+            _buildDownloadButton(),
+            _buildSyncButton(),
+          ],
         )
       ],
     );
   }
 
-  Widget _buildSongList() {
+  Widget _buildLikeButton() {
+    return ValueListenableBuilder<bool>(
+      valueListenable: playlistLikeStatus,
+      builder: (_, value, __) {
+        return IconButton(
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          icon: value
+              ? const Icon(FluentIcons.heart_24_filled)
+              : const Icon(FluentIcons.heart_24_regular),
+          padding: const EdgeInsets.only(left: 20),
+          iconSize: 26,
+          onPressed: () {
+            playlistLikeStatus.value = !playlistLikeStatus.value;
+            updatePlaylistLikeStatus(
+              _playlist['ytid'],
+              _playlist['image'],
+              _playlist['title'],
+              playlistLikeStatus.value,
+            );
+            currentLikedPlaylistsLength.value = value
+                ? currentLikedPlaylistsLength.value + 1
+                : currentLikedPlaylistsLength.value - 1;
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildDownloadButton() {
+    return IconButton(
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      icon: const Icon(FluentIcons.arrow_download_24_regular),
+      padding: const EdgeInsets.only(left: 20, top: 5),
+      iconSize: 26,
+      onPressed: () {
+        downloadSongsFromPlaylist(context, _playlist['list']);
+      },
+    );
+  }
+
+  Widget _buildSyncButton() {
+    return IconButton(
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      icon: const Icon(FluentIcons.arrow_sync_24_filled),
+      padding: const EdgeInsets.only(left: 20, top: 5),
+      iconSize: 26,
+      onPressed: _handleSyncPlaylist,
+    );
+  }
+
+  void _handleSyncPlaylist() async {
+    _playlist = await updatePlaylistList(context, _playlist['ytid']);
+    _hasMore = true;
+    _songsList.clear();
+    setState(() {
+      _currentPage = 0;
+      _currentLastLoadedId = 0;
+    });
+    _loadMore();
+    setState(() {});
+  }
+
+  Widget buildPlayButton() {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: colorScheme.primary,
+        shape: BoxShape.circle,
+      ),
+      child: IconButton(
+        icon: const Icon(FluentIcons.play_20_filled),
+        padding: const EdgeInsets.all(15),
+        color: Colors.black,
+        iconSize: 26,
+        onPressed: () {
+          setActivePlaylist(_playlist);
+          showToast(
+            context,
+            context.l10n()!.queueInitText,
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildSongListView() {
     if (_songsList.isNotEmpty)
       return Column(
         children: [
@@ -247,36 +317,5 @@ class _PlaylistPageState extends State<PlaylistPage> {
         height: context.screenSize.height - 100,
         child: const Spinner(),
       );
-  }
-}
-
-class PlaylistButton extends StatelessWidget {
-  const PlaylistButton({
-    required this.label,
-    required this.backgroundColor,
-    required this.onPressed,
-  });
-  final String label;
-  final Color backgroundColor;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onPressed,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        decoration: BoxDecoration(
-          color: backgroundColor,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Text(
-          label.toUpperCase(),
-          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                color: Colors.white,
-              ),
-        ),
-      ),
-    );
   }
 }
