@@ -163,14 +163,14 @@ class _HomePageState extends State<HomePage> {
                               const SizedBox(width: 15),
                           itemCount: data.data!.length,
                           itemBuilder: (context, index) {
-                            final artist = data.data![index].artist;
+                            final artist =
+                                data.data![index].artist.split('~')[0];
                             return DelayedDisplay(
                               delay: const Duration(milliseconds: 200),
                               fadingDuration: const Duration(milliseconds: 400),
                               child: GestureDetector(
                                 onTap: () {
-                                  getMusic(searchQuery: artist.split('~')[0])
-                                      .then((songs) {
+                                  getMusic(searchQuery: artist).then((songs) {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
