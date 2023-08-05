@@ -205,6 +205,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
       valueListenable: playlistLikeStatus,
       builder: (_, value, __) {
         return IconButton(
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
           icon: value
               ? const Icon(FluentIcons.heart_24_filled)
               : const Icon(FluentIcons.heart_24_regular),
@@ -229,6 +231,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
   Widget _buildDownloadButton() {
     return IconButton(
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
       icon: const Icon(FluentIcons.arrow_download_24_regular),
       padding: const EdgeInsets.only(left: 20, top: 5),
       iconSize: 26,
@@ -240,6 +244,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
   Widget _buildSyncButton() {
     return IconButton(
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
       icon: const Icon(FluentIcons.arrow_sync_24_filled),
       padding: const EdgeInsets.only(left: 20, top: 5),
       iconSize: 26,
