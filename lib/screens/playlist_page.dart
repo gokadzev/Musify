@@ -149,6 +149,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
   Widget buildPlaylistHeader() {
     final screenHeight = context.screenSize.height;
+    final playlistLength = _playlist['list'].length;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -175,7 +176,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                 children: [
                   SizedBox(height: screenHeight * 0.03),
                   Text(
-                    '[ ${_playlist['list'].length} ${context.l10n()!.songs} ]'
+                    '[ $playlistLength ${context.l10n()!.songs} ]'
                         .toUpperCase(),
                     style: const TextStyle(
                       color: Colors.white70,
@@ -190,63 +191,72 @@ class _PlaylistPageState extends State<PlaylistPage> {
         ),
         Row(
           children: [
-            ValueListenableBuilder<bool>(
-              valueListenable: playlistLikeStatus,
-              builder: (_, value, __) {
-                return IconButton(
-                  icon: value
-                      ? const Icon(FluentIcons.heart_24_filled)
-                      : const Icon(FluentIcons.heart_24_regular),
-                  padding: const EdgeInsets.only(left: 20),
-                  iconSize: 26,
-                  onPressed: () {
-                    playlistLikeStatus.value = !playlistLikeStatus.value;
-                    updatePlaylistLikeStatus(
-                      _playlist['ytid'],
-                      _playlist['image'],
-                      _playlist['title'],
-                      playlistLikeStatus.value,
-                    );
-                    currentLikedPlaylistsLength.value = value
-                        ? currentLikedPlaylistsLength.value + 1
-                        : currentLikedPlaylistsLength.value - 1;
-                  },
-                );
-              },
-            ),
-            IconButton(
-              icon: const Icon(FluentIcons.arrow_download_24_regular),
-              padding: const EdgeInsets.only(left: 20, top: 5),
-              iconSize: 26,
-              onPressed: () {
-                downloadSongsFromPlaylist(context, _playlist['list']);
-              },
-            ),
-            IconButton(
-              icon: const Icon(FluentIcons.arrow_sync_24_filled),
-              padding: const EdgeInsets.only(left: 20, top: 5),
-              iconSize: 26,
-              onPressed: () async {
-                _playlist =
-                    await updatePlaylistList(context, _playlist['ytid']);
-
-                _hasMore = true;
-                _songsList.clear();
-
-                setState(() {
-                  _currentPage = 0;
-                  _currentLastLoadedId = 0;
-                });
-
-                _loadMore();
-
-                setState(() {});
-              },
-            )
+            _buildLikeButton(),
+            _buildDownloadButton(),
+            _buildSyncButton(),
           ],
         )
       ],
     );
+  }
+
+  Widget _buildLikeButton() {
+    return ValueListenableBuilder<bool>(
+      valueListenable: playlistLikeStatus,
+      builder: (_, value, __) {
+        return IconButton(
+          icon: value
+              ? const Icon(FluentIcons.heart_24_filled)
+              : const Icon(FluentIcons.heart_24_regular),
+          padding: const EdgeInsets.only(left: 20),
+          iconSize: 26,
+          onPressed: () {
+            playlistLikeStatus.value = !playlistLikeStatus.value;
+            updatePlaylistLikeStatus(
+              _playlist['ytid'],
+              _playlist['image'],
+              _playlist['title'],
+              playlistLikeStatus.value,
+            );
+            currentLikedPlaylistsLength.value = value
+                ? currentLikedPlaylistsLength.value + 1
+                : currentLikedPlaylistsLength.value - 1;
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildDownloadButton() {
+    return IconButton(
+      icon: const Icon(FluentIcons.arrow_download_24_regular),
+      padding: const EdgeInsets.only(left: 20, top: 5),
+      iconSize: 26,
+      onPressed: () {
+        downloadSongsFromPlaylist(context, _playlist['list']);
+      },
+    );
+  }
+
+  Widget _buildSyncButton() {
+    return IconButton(
+      icon: const Icon(FluentIcons.arrow_sync_24_filled),
+      padding: const EdgeInsets.only(left: 20, top: 5),
+      iconSize: 26,
+      onPressed: _handleSyncPlaylist,
+    );
+  }
+
+  void _handleSyncPlaylist() async {
+    _playlist = await updatePlaylistList(context, _playlist['ytid']);
+    _hasMore = true;
+    _songsList.clear();
+    setState(() {
+      _currentPage = 0;
+      _currentLastLoadedId = 0;
+    });
+    _loadMore();
+    setState(() {});
   }
 
   Widget buildPlayButton() {
