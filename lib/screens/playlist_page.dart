@@ -96,19 +96,16 @@ class _PlaylistPageState extends State<PlaylistPage> {
           ),
         ),
       ),
-      body: ColoredBox(
-        color: const Color.fromARGB(255, 22, 22, 22),
-        child: _playlist != null
-            ? CustomScrollView(
-                slivers: [
-                  buildSongList(),
-                ],
-              )
-            : SizedBox(
-                height: context.screenSize.height - 100,
-                child: const Spinner(),
-              ),
-      ),
+      body: _playlist != null
+          ? CustomScrollView(
+              slivers: [
+                buildSongList(),
+              ],
+            )
+          : SizedBox(
+              height: context.screenSize.height - 100,
+              child: const Spinner(),
+            ),
     );
   }
 
