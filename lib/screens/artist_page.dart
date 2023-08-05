@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
@@ -90,24 +91,7 @@ class _ArtistPagePageState extends State<ArtistPage> {
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      setActivePlaylist(widget.playlist);
-                      showToast(
-                        context,
-                        context.l10n()!.queueInitText,
-                      );
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                        colorScheme.primary,
-                      ),
-                    ),
-                    child: Text(
-                      context.l10n()!.playAll.toUpperCase(),
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  ),
+                  buildPlayButton(),
                   MaterialBarSwitcher(
                     firstBarTitle: context.l10n()!.offlineResults,
                     secondBarTitle: context.l10n()!.onlineResults,
@@ -181,6 +165,28 @@ class _ArtistPagePageState extends State<ArtistPage> {
                 height: context.screenSize.height - 100,
                 child: const Spinner(),
               ),
+      ),
+    );
+  }
+
+  Widget buildPlayButton() {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: colorScheme.primary,
+        shape: BoxShape.circle,
+      ),
+      child: IconButton(
+        icon: const Icon(FluentIcons.play_20_filled),
+        padding: const EdgeInsets.all(15),
+        color: Colors.black,
+        iconSize: 26,
+        onPressed: () {
+          setActivePlaylist(widget.playlist);
+          showToast(
+            context,
+            context.l10n()!.queueInitText,
+          );
+        },
       ),
     );
   }
