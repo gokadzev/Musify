@@ -20,7 +20,6 @@
   "copyLogs": "Copy logs",
   "copyLogsNoLogs": "No logs found to copy",
   "copyLogsSuccess": "Logs copied successfully. ",
-  "downloadAll": "download all",
   "downloadAppUpdate": "Download app update",
   "downloadCompleted": "Download completed",
   "downloadFailed": "Download failed",
