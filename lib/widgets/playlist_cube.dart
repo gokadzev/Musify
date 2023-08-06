@@ -3,7 +3,6 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/screens/playlist_page.dart';
-import 'package:musify/services/settings_manager.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/widgets/delayed_display.dart';
 
@@ -123,9 +122,7 @@ class PlaylistCube extends StatelessWidget {
             Icon(
               cubeIcon,
               size: 30,
-              color: useSystemColor.value
-                  ? colorScheme.surface
-                  : colorScheme.primary,
+              color: colorScheme.surface,
             ),
             Padding(
               padding: const EdgeInsets.all(10),
