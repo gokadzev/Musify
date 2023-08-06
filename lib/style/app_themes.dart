@@ -8,7 +8,6 @@ const kContentPadding =
     EdgeInsets.only(left: 18, right: 20, top: 14, bottom: 14);
 
 const darkModeBGColor = Color(0xFF121212);
-const lightModeBGColor = Colors.white;
 
 Color primaryColor =
     Color(Hive.box('settings').get('accentColor', defaultValue: 0xFFE9967A));
@@ -104,14 +103,14 @@ ThemeData getAppDarkTheme() {
 
 ThemeData getAppLightTheme() {
   return commonProperties().copyWith(
-    scaffoldBackgroundColor: lightModeBGColor,
-    canvasColor: lightModeBGColor,
+    scaffoldBackgroundColor: colorScheme.surface,
+    canvasColor: colorScheme.surface,
     textTheme: GoogleFonts.robotoTextTheme(ThemeData.light().textTheme),
     bottomSheetTheme: ThemeData.light()
         .bottomSheetTheme
-        .copyWith(backgroundColor: lightModeBGColor),
+        .copyWith(backgroundColor: colorScheme.surface),
     appBarTheme: ThemeData.light().appBarTheme.copyWith(
-          backgroundColor: lightModeBGColor,
+          backgroundColor: colorScheme.surface,
           iconTheme: IconThemeData(color: colorScheme.primary),
           centerTitle: true,
           titleTextStyle: TextStyle(
@@ -146,8 +145,9 @@ ThemeData getAppLightTheme() {
     iconTheme:
         ThemeData.light().iconTheme.copyWith(color: const Color(0xFF151515)),
     hintColor: const Color(0xFF151515),
-    bottomAppBarTheme:
-        ThemeData.light().bottomAppBarTheme.copyWith(color: lightModeBGColor),
+    bottomAppBarTheme: ThemeData.light()
+        .bottomAppBarTheme
+        .copyWith(color: colorScheme.surface),
   );
 }
 
