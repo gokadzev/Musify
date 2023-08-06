@@ -181,3 +181,33 @@ final mInputDecorationTheme = InputDecorationTheme(
   ),
   contentPadding: kContentPadding,
 );
+
+// builders
+
+ThemeData buildLightTheme(ColorScheme lightColorScheme) {
+  return getAppLightTheme().copyWith(
+    scaffoldBackgroundColor: lightColorScheme.surface,
+    colorScheme: lightColorScheme.harmonized(),
+    canvasColor: lightColorScheme.surface,
+    cardTheme: mCardTheme,
+    bottomAppBarTheme: BottomAppBarTheme(color: lightColorScheme.surface),
+    appBarTheme: mAppBarTheme().copyWith(
+      backgroundColor: lightColorScheme.surface,
+    ),
+    inputDecorationTheme: mInputDecorationTheme,
+  );
+}
+
+ThemeData buildDarkTheme(ColorScheme darkColorScheme) {
+  return getAppDarkTheme().copyWith(
+    scaffoldBackgroundColor: darkColorScheme.surface,
+    colorScheme: darkColorScheme.harmonized(),
+    canvasColor: darkColorScheme.surface,
+    cardTheme: mCardTheme,
+    bottomAppBarTheme: BottomAppBarTheme(color: darkColorScheme.surface),
+    appBarTheme: mAppBarTheme().copyWith(
+      backgroundColor: darkColorScheme.surface,
+    ),
+    inputDecorationTheme: mInputDecorationTheme,
+  );
+}

@@ -176,43 +176,18 @@ class _MyAppState extends State<MyApp> {
           colorScheme =
               themeMode == ThemeMode.light ? lightColorScheme : darkColorScheme;
         }
+        final lightTheme = lightColorScheme != null && useSystemColor.value
+            ? buildLightTheme(lightColorScheme)
+            : getAppLightTheme();
 
-        final lightTheme = getAppLightTheme().copyWith(
-          scaffoldBackgroundColor: lightColorScheme?.surface,
-          colorScheme: lightColorScheme?.harmonized(),
-          canvasColor: lightColorScheme?.surface,
-          cardTheme: mCardTheme,
-          bottomAppBarTheme: BottomAppBarTheme(
-            color: lightColorScheme?.surface,
-          ),
-          appBarTheme: mAppBarTheme().copyWith(
-            backgroundColor: lightColorScheme?.surface,
-          ),
-          inputDecorationTheme: mInputDecorationTheme,
-        );
-
-        final darkTheme = getAppDarkTheme().copyWith(
-          scaffoldBackgroundColor: darkColorScheme?.surface,
-          colorScheme: darkColorScheme?.harmonized(),
-          canvasColor: darkColorScheme?.surface,
-          cardTheme: mCardTheme,
-          bottomAppBarTheme: BottomAppBarTheme(
-            color: darkColorScheme?.surface,
-          ),
-          appBarTheme: mAppBarTheme().copyWith(
-            backgroundColor: darkColorScheme?.surface,
-          ),
-          inputDecorationTheme: mInputDecorationTheme,
-        );
+        final darkTheme = darkColorScheme != null && useSystemColor.value
+            ? buildDarkTheme(darkColorScheme)
+            : getAppDarkTheme();
 
         return MaterialApp(
           themeMode: themeMode,
-          darkTheme: darkColorScheme != null && useSystemColor.value
-              ? darkTheme
-              : getAppDarkTheme(),
-          theme: lightColorScheme != null && useSystemColor.value
-              ? lightTheme
-              : getAppLightTheme(),
+          darkTheme: darkTheme,
+          theme: lightTheme,
           localizationsDelegates: const [
             AppLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,
