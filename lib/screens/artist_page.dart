@@ -170,23 +170,18 @@ class _ArtistPagePageState extends State<ArtistPage> {
   }
 
   Widget buildPlayButton() {
-    return DecoratedBox(
-      decoration: BoxDecoration(
+    return GestureDetector(
+      onTap: () {
+        setActivePlaylist(widget.playlist);
+        showToast(
+          context,
+          context.l10n()!.queueInitText,
+        );
+      },
+      child: Icon(
+        FluentIcons.play_circle_48_filled,
         color: colorScheme.primary,
-        shape: BoxShape.circle,
-      ),
-      child: IconButton(
-        icon: const Icon(FluentIcons.play_20_filled),
-        padding: const EdgeInsets.all(15),
-        color: Colors.black,
-        iconSize: 26,
-        onPressed: () {
-          setActivePlaylist(widget.playlist);
-          showToast(
-            context,
-            context.l10n()!.queueInitText,
-          );
-        },
+        size: 60,
       ),
     );
   }

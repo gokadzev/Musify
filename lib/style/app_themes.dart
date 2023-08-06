@@ -142,9 +142,8 @@ ThemeData getAppLightTheme() {
     switchTheme: ThemeData.light().switchTheme.copyWith(
           trackColor: MaterialStateProperty.all(colorScheme.primary),
         ),
-    iconTheme:
-        ThemeData.light().iconTheme.copyWith(color: const Color(0xFF151515)),
-    hintColor: const Color(0xFF151515),
+    iconTheme: ThemeData.light().iconTheme.copyWith(color: colorScheme.primary),
+    hintColor: colorScheme.primary.withOpacity(0.7),
     bottomAppBarTheme: ThemeData.light()
         .bottomAppBarTheme
         .copyWith(color: colorScheme.surface),

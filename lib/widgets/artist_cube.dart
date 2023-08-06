@@ -1,6 +1,7 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/extensions/screen_size.dart';
+import 'package:musify/services/settings_manager.dart';
 import 'package:musify/style/app_themes.dart';
 
 class ArtistCube extends StatelessWidget {
@@ -35,6 +36,9 @@ class ArtistCube extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Icon(
+                color: useSystemColor.value
+                    ? colorScheme.surface
+                    : colorScheme.primary,
                 FluentIcons.person_24_regular,
                 size: iconSize,
               ),

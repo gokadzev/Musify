@@ -89,7 +89,6 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
           child: Text(
             '${context.l10n()!.yourFavoriteSongsHere}!',
             style: const TextStyle(
-              color: Colors.white70,
               fontWeight: FontWeight.w300,
             ),
             textAlign: TextAlign.center,
@@ -113,31 +112,26 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
   }
 
   Widget buildPlayButton() {
-    return DecoratedBox(
-      decoration: BoxDecoration(
+    return GestureDetector(
+      onTap: () {
+        setActivePlaylist(
+          {
+            'ytid': '',
+            'title': context.l10n()!.userLikedSongs,
+            'header_desc': '',
+            'image': '',
+            'list': userLikedSongsList
+          },
+        );
+        showToast(
+          context,
+          context.l10n()!.queueInitText,
+        );
+      },
+      child: Icon(
+        FluentIcons.play_circle_48_filled,
         color: colorScheme.primary,
-        shape: BoxShape.circle,
-      ),
-      child: IconButton(
-        icon: const Icon(FluentIcons.play_20_filled),
-        padding: const EdgeInsets.all(15),
-        color: Colors.black,
-        iconSize: 26,
-        onPressed: () {
-          setActivePlaylist(
-            {
-              'ytid': '',
-              'title': context.l10n()!.userLikedSongs,
-              'header_desc': '',
-              'image': '',
-              'list': userLikedSongsList
-            },
-          );
-          showToast(
-            context,
-            context.l10n()!.queueInitText,
-          );
-        },
+        size: 60,
       ),
     );
   }

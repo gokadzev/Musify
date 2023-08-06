@@ -89,7 +89,7 @@ class _MusifyState extends State<Musify> {
           ),
           routeName: routeName,
           activeColor: colorScheme.primary,
-          inactiveColor: Theme.of(context).hintColor,
+          inactiveColor: colorScheme.primary.withOpacity(0.8),
         );
       },
     );
@@ -119,9 +119,10 @@ class _MusifyState extends State<Musify> {
                   children: <Widget>[
                     IconButton(
                       padding: const EdgeInsets.symmetric(horizontal: 15),
-                      icon: const Icon(
+                      icon: Icon(
                         FluentIcons.arrow_up_24_filled,
                         size: 22,
+                        color: colorScheme.primary,
                       ),
                       onPressed: () {
                         Navigator.push(

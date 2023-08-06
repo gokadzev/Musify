@@ -234,7 +234,7 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                         positionText,
                         style: TextStyle(
                           fontSize: 17,
-                          color: Theme.of(context).hintColor,
+                          color: colorScheme.primary,
                         ),
                       ),
                       const Spacer(),
@@ -242,7 +242,7 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                         durationText,
                         style: TextStyle(
                           fontSize: 17,
-                          color: Theme.of(context).hintColor,
+                          color: colorScheme.primary,
                         ),
                       ),
                     ],
@@ -264,7 +264,7 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                           Column(
                             children: [
                               IconButton(
-                                color: Theme.of(context).hintColor,
+                                color: colorScheme.primary,
                                 icon: const Icon(
                                   FluentIcons.arrow_download_24_regular,
                                 ),
@@ -284,10 +284,10 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                                 builder: (_, value, __) {
                                   return IconButton(
                                     icon: Icon(
-                                      FluentIcons.speaker_mute_24_regular,
-                                      color: value
-                                          ? colorScheme.primary
-                                          : Theme.of(context).hintColor,
+                                      value
+                                          ? FluentIcons.speaker_mute_24_filled
+                                          : FluentIcons.speaker_mute_24_regular,
+                                      color: colorScheme.primary,
                                     ),
                                     iconSize: constraints.maxWidth * 0.05,
                                     onPressed: mute,
@@ -305,7 +305,7 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                                 FluentIcons.arrow_shuffle_24_filled,
                                 color: value
                                     ? colorScheme.primary
-                                    : Theme.of(context).hintColor,
+                                    : colorScheme.primary,
                               ),
                               iconSize: constraints.maxWidth * 0.05,
                               onPressed: changeShuffleStatus,
@@ -317,8 +317,8 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                           icon: Icon(
                             FluentIcons.previous_24_filled,
                             color: hasPrevious
-                                ? Theme.of(context).hintColor
-                                : Colors.grey,
+                                ? colorScheme.primary
+                                : colorScheme.primary.withOpacity(0.5),
                           ),
                           iconSize: constraints.maxWidth * 0.09,
                           onPressed: () async {
@@ -359,8 +359,8 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                           icon: Icon(
                             FluentIcons.next_24_filled,
                             color: hasNext
-                                ? Theme.of(context).hintColor
-                                : Colors.grey,
+                                ? colorScheme.primary
+                                : colorScheme.primary.withOpacity(0.5),
                           ),
                           iconSize: constraints.maxWidth * 0.09,
                           onPressed: () async {
@@ -373,7 +373,7 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                             FluentIcons.arrow_repeat_1_24_filled,
                             color: repeatNotifier.value
                                 ? colorScheme.primary
-                                : Theme.of(context).hintColor,
+                                : colorScheme.primary,
                           ),
                           iconSize: constraints.maxWidth * 0.05,
                           onPressed: changeLoopStatus,
@@ -391,7 +391,7 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                                   return IconButton(
                                     color: value
                                         ? colorScheme.primary
-                                        : Theme.of(context).hintColor,
+                                        : colorScheme.primary,
                                     icon: Icon(iconData),
                                     iconSize: constraints.maxWidth * 0.05,
                                     splashColor: Colors.transparent,
@@ -414,7 +414,7 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                                       iconData,
                                       color: value
                                           ? colorScheme.primary
-                                          : Theme.of(context).hintColor,
+                                          : colorScheme.primary,
                                     ),
                                     iconSize: constraints.maxWidth * 0.05,
                                     splashColor: Colors.transparent,

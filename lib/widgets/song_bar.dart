@@ -110,6 +110,8 @@ class SongBar extends StatelessWidget {
                   valueListenable: songLikeStatus,
                   builder: (_, value, __) {
                     return IconButton(
+                      color: colorScheme.primary,
+                      icon: Icon(likeStatusToIconMapper[value]),
                       onPressed: () {
                         songLikeStatus.value = !songLikeStatus.value;
                         updateSongLikeStatus(
@@ -120,7 +122,6 @@ class SongBar extends StatelessWidget {
                         currentLikedSongsLength.value =
                             value ? likedSongsLength + 1 : likedSongsLength - 1;
                       },
-                      icon: Icon(likeStatusToIconMapper[value]),
                     );
                   },
                 ),
