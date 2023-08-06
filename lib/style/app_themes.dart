@@ -8,7 +8,7 @@ const kContentPadding =
     EdgeInsets.only(left: 18, right: 20, top: 14, bottom: 14);
 
 const darkModeBGColor = Color(0xFF121212);
-const lightModeBGColor = Color(0xFFE5E5E5);
+const lightModeBGColor = Colors.white;
 
 Color primaryColor =
     Color(Hive.box('settings').get('accentColor', defaultValue: 0xFFE9967A));
