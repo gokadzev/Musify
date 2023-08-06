@@ -29,29 +29,22 @@ Future<void> downloadSong(BuildContext context, dynamic song) async {
     final task = DownloadTask(
       url: audio,
       filename: filename,
-      headers: {
-        'user-agent':
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Safari/537.36',
-        'cookie': 'CONSENT=YES+cb',
-        'accept':
-            'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-        'accept-language': 'en-US,en;q=0.9',
-        'sec-fetch-dest': 'document',
-        'sec-fetch-mode': 'navigate',
-        'sec-fetch-site': 'none',
-        'sec-fetch-user': '?1',
-        'sec-gpc': '1',
-        'upgrade-insecure-requests': '1'
-      },
     );
 
-    await FileDownloader().download(task);
-    final newFileLocation =
-        await FileDownloader().moveToSharedStorage(task, SharedStorage.audio);
+    await FileDownloader().download(
+      task,
+      onStatus: (status) async {
+        if (status == TaskStatus.complete) {
+          final newFileLocation = await FileDownloader()
+              .moveToSharedStorage(task, SharedStorage.audio);
 
-    if (newFileLocation == null) {
-      await FileDownloader().moveToSharedStorage(task, SharedStorage.downloads);
-    }
+          if (newFileLocation == null) {
+            await FileDownloader()
+                .moveToSharedStorage(task, SharedStorage.downloads);
+          }
+        }
+      },
+    );
   } catch (e) {
     Logger.log('Error while downloading song: $e');
     showToast(context, '${context.l10n()!.downloadFailed}, $e');
