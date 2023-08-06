@@ -105,6 +105,8 @@ class _MyAppState extends State<MyApp> {
         );
       }
 
+      primaryColor = newAccentColor;
+
       colorScheme = ColorScheme.fromSeed(
         seedColor: newAccentColor,
         primary: newAccentColor,

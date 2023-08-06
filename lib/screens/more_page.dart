@@ -340,7 +340,7 @@ class SettingsCards extends StatelessWidget {
             useSystemColor.value = value;
             MyApp.updateAppState(
               context,
-              newAccentColor: colorScheme.primary,
+              newAccentColor: primaryColor,
               useSystemColor: value,
             );
             showToast(
