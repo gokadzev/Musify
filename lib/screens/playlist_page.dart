@@ -165,7 +165,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
                   child: Text(
                     _playlist['header_desc'],
                     style: const TextStyle(
-                      color: Colors.white70,
                       fontWeight: FontWeight.w300,
                     ),
                     textAlign: TextAlign.center,
