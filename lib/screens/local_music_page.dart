@@ -113,7 +113,7 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                     ),
                   );
                 } else {
-                  return ListView.builder(
+                  return ListView.separated(
                     shrinkWrap: true,
                     physics: const BouncingScrollPhysics(),
                     addAutomaticKeepAlives: false,
@@ -121,6 +121,9 @@ class _LocalMusicPageState extends State<LocalMusicPage> {
                     itemCount: snapshot.data!.length,
                     itemBuilder: (BuildContext context, int index) {
                       return LocalMusicBar(index, snapshot.data![index]);
+                    },
+                    separatorBuilder: (BuildContext context, int index) {
+                      return const SizedBox(height: 15);
                     },
                   );
                 }

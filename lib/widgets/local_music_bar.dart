@@ -7,40 +7,39 @@ import 'package:musify/utilities/formatter.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 class LocalMusicBar extends StatelessWidget {
-  LocalMusicBar(this.index, this.music, {super.key});
+  LocalMusicBar(this.index, this.music);
+
   final AudioModelWithArtwork music;
   final int index;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.only(left: 12, right: 12, bottom: 15),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(20),
-        onTap: () {
-          playLocalSong(index);
-        },
-        splashColor: colorScheme.primary.withOpacity(0.4),
-        hoverColor: colorScheme.primary.withOpacity(0.4),
-        focusColor: colorScheme.primary.withOpacity(0.4),
-        highlightColor: colorScheme.primary.withOpacity(0.4),
-        child: buildContent(context),
+    return ListTile(
+      onTap: () {
+        playLocalSong(index);
+      },
+      leading: buildArtworkWidget(),
+      title: Text(
+        music.displayNameWOExt,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(
+          color: colorScheme.primary,
+          fontSize: 16,
+          fontWeight: FontWeight.w700,
+        ),
       ),
-    );
-  }
-
-  Widget buildContent(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        buildArtworkWidget(),
-        const SizedBox(
-          width: 8,
+      trailing: Text(
+        formatDuration(music.duration!),
+        style: TextStyle(
+          color: colorScheme.primary,
+          fontSize: 14,
+          fontWeight: FontWeight.w400,
         ),
-        Expanded(
-          child: buildSongDetails(),
-        ),
-      ],
+      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      splashColor: colorScheme.primary.withOpacity(0.4),
+      hoverColor: colorScheme.primary.withOpacity(0.4),
+      focusColor: colorScheme.primary.withOpacity(0.4),
     );
   }
 
@@ -64,41 +63,6 @@ class LocalMusicBar extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-
-  Widget buildSongDetails() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Expanded(
-          child: Container(
-            alignment: Alignment.centerLeft,
-            padding: const EdgeInsets.only(left: 10),
-            child: Text(
-              music.displayNameWOExt,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: colorScheme.primary,
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ),
-        Container(
-          alignment: Alignment.centerRight,
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Text(
-            formatDuration(music.duration!),
-            style: TextStyle(
-              color: colorScheme.primary,
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

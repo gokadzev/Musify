@@ -52,20 +52,20 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
                     ValueListenableBuilder(
                       valueListenable: currentLikedSongsLength,
                       builder: (_, value, __) {
-                        return ListView.builder(
+                        return ListView.separated(
                           shrinkWrap: true,
                           physics: const BouncingScrollPhysics(),
                           addAutomaticKeepAlives: false,
                           addRepaintBoundaries: false,
                           itemCount: userLikedSongsList.length,
                           itemBuilder: (BuildContext context, int index) {
-                            return Padding(
-                              padding: const EdgeInsets.only(top: 5, bottom: 5),
-                              child: SongBar(
-                                userLikedSongsList[index],
-                                true,
-                              ),
+                            return SongBar(
+                              userLikedSongsList[index],
+                              true,
                             );
+                          },
+                          separatorBuilder: (BuildContext context, int index) {
+                            return const SizedBox(height: 15);
                           },
                         );
                       },

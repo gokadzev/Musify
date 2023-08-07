@@ -95,7 +95,7 @@ class _ArtistPagePageState extends State<ArtistPage> {
                   MaterialBarSwitcher(
                     firstBarTitle: context.l10n()!.offlineResults,
                     secondBarTitle: context.l10n()!.onlineResults,
-                    firstBarChild: ListView.builder(
+                    firstBarChild: ListView.separated(
                       shrinkWrap: true,
                       physics: const BouncingScrollPhysics(),
                       itemCount:
@@ -112,6 +112,9 @@ class _ArtistPagePageState extends State<ArtistPage> {
                           getMusicIndex(_songsList[index]) ?? index,
                           _songsList[index],
                         );
+                      },
+                      separatorBuilder: (BuildContext context, int index) {
+                        return const SizedBox(height: 15);
                       },
                     ),
                     secondBarChild: FutureBuilder(
@@ -141,7 +144,7 @@ class _ArtistPagePageState extends State<ArtistPage> {
                           }
                           return Wrap(
                             children: <Widget>[
-                              ListView.builder(
+                              ListView.separated(
                                 shrinkWrap: true,
                                 addAutomaticKeepAlives: false,
                                 addRepaintBoundaries: false,
@@ -149,6 +152,10 @@ class _ArtistPagePageState extends State<ArtistPage> {
                                 itemCount: snapshot.data.length as int,
                                 itemBuilder: (context, index) {
                                   return SongBar(snapshot.data[index], true);
+                                },
+                                separatorBuilder:
+                                    (BuildContext context, int index) {
+                                  return const SizedBox(height: 15);
                                 },
                               )
                             ],

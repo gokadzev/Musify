@@ -23,20 +23,20 @@ class _RecentlyPlayedState extends State<RecentlyPlayed> {
       body: ValueListenableBuilder(
         valueListenable: currentRecentlyPlayedLength,
         builder: (_, value, __) {
-          return ListView.builder(
+          return ListView.separated(
             shrinkWrap: true,
             physics: const BouncingScrollPhysics(),
             addAutomaticKeepAlives: false,
             addRepaintBoundaries: false,
             itemCount: userRecentlyPlayed.length,
             itemBuilder: (BuildContext context, int index) {
-              return Padding(
-                padding: const EdgeInsets.only(top: 5, bottom: 5),
-                child: SongBar(
-                  userRecentlyPlayed[(userRecentlyPlayed.length - 1) - index],
-                  true,
-                ),
+              return SongBar(
+                userRecentlyPlayed[(userRecentlyPlayed.length - 1) - index],
+                true,
               );
+            },
+            separatorBuilder: (BuildContext context, int index) {
+              return const SizedBox(height: 15);
             },
           );
         },

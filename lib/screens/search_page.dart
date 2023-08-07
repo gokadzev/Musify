@@ -177,18 +177,18 @@ class _SearchPageState extends State<SearchPage> {
                 },
               )
             else
-              ListView.builder(
+              ListView.separated(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: _searchResult.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 5),
-                    child: SongBar(
-                      _searchResult[index],
-                      true,
-                    ),
+                  return SongBar(
+                    _searchResult[index],
+                    true,
                   );
+                },
+                separatorBuilder: (BuildContext context, int index) {
+                  return const SizedBox(height: 15);
                 },
               )
           ],
