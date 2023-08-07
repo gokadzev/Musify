@@ -10,7 +10,7 @@ const kContentPadding =
 const darkModeBGColor = Color(0xFF121212);
 
 Color primaryColor =
-    Color(Hive.box('settings').get('accentColor', defaultValue: 0xFF9E9E9E));
+    Color(Hive.box('settings').get('accentColor', defaultValue: 0xFFC4A092));
 
 ColorScheme colorScheme = ColorScheme.fromSeed(
   seedColor: primaryColor,

@@ -27,6 +27,6 @@ const availableColors = <Color>[
   Color(0xFF009688), // Material Teal
   Color(0xFFCDDC39), // Lime
   Color(0xFF00BCD4), // Material Cyan
-  Color(0xFF795548), // Material Brown
+  Color(0xFFC4A092), // Material Brown
   Color(0xFF9E9E9E), // Material Grey
 ];
