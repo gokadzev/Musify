@@ -68,18 +68,16 @@ Future<List<AudioModelWithArtwork>> getMusic({
     return filteredCachedSongs;
   }
 
-  final songsWithArtwork = <AudioModelWithArtwork>[];
+  final songsWithArtwork = await Future.wait(
+    allSongs.map((song) async {
+      final artworkPath = await saveArtworkImageToSupportDirectory(song.id);
 
-  for (final song in allSongs) {
-    final _artworkPath = await saveArtworkImageToSupportDirectory(song.id);
-
-    songsWithArtwork.add(
-      AudioModelWithArtwork(
+      return AudioModelWithArtwork(
         info: song.getMap,
-        albumArtwork: _artworkPath,
-      ),
-    );
-  }
+        albumArtwork: artworkPath,
+      );
+    }),
+  );
 
   _cachedSongsWithArtwork = songsWithArtwork;
   addOrUpdateData('cache', 'cachedAudioArtworks', cachedAudioArtworkPaths);
