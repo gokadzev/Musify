@@ -38,11 +38,25 @@
 
 <h3 align="center">Screenshots :camera:</h3>
 
-<div align="center" style="width:100%;display:flex;justify-content:space-between;">
-<img width="32%" src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/01.jpg" align="center" alt="screenshot" />
-<img width="32%" src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/02.jpg" align="center" alt="screenshot" />
-<img width="32%" src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/03.jpg" align="center" alt="screenshot" />
+<div align="center">
+  <table>
+    <tr>
+      <td align="center">
+        <img width="100%" src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/01.jpg" alt="screenshot 1">
+      </td>
+      <td align="center">
+        <img width="100%" src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/02.jpg" alt="screenshot 2">
+      </td>
+      <td align="center">
+        <img width="100%" src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/03.jpg" alt="screenshot 3">
+      </td>
+      <td align="center">
+        <img width="100%" src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/04.jpg" alt="screenshot 4">
+      </td>
+    </tr>
+  </table>
 </div>
+
 
 ---
 
