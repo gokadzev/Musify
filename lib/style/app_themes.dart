@@ -31,7 +31,7 @@ ThemeMode getThemeMode(String themeModeString) {
 }
 
 ThemeData commonProperties() => ThemeData(
-      colorScheme: colorScheme.harmonized(),
+      colorScheme: colorScheme,
       visualDensity: VisualDensity.adaptivePlatformDensity,
       useMaterial3: true,
       pageTransitionsTheme: const PageTransitionsTheme(
@@ -186,7 +186,7 @@ final mInputDecorationTheme = InputDecorationTheme(
 ThemeData buildLightTheme(ColorScheme lightColorScheme) {
   return getAppLightTheme().copyWith(
     scaffoldBackgroundColor: lightColorScheme.surface,
-    colorScheme: lightColorScheme.harmonized(),
+    colorScheme: lightColorScheme,
     canvasColor: lightColorScheme.surface,
     cardTheme: mCardTheme,
     bottomAppBarTheme: BottomAppBarTheme(color: lightColorScheme.surface),
@@ -200,7 +200,7 @@ ThemeData buildLightTheme(ColorScheme lightColorScheme) {
 ThemeData buildDarkTheme(ColorScheme darkColorScheme) {
   return getAppDarkTheme().copyWith(
     scaffoldBackgroundColor: darkColorScheme.surface,
-    colorScheme: darkColorScheme.harmonized(),
+    colorScheme: darkColorScheme,
     canvasColor: darkColorScheme.surface,
     cardTheme: mCardTheme,
     bottomAppBarTheme: BottomAppBarTheme(color: darkColorScheme.surface),
