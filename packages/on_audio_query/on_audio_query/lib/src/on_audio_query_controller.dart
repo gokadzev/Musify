@@ -590,7 +590,7 @@ class OnAudioQuery {
   ///
   /// See more about [platforms support](https://github.com/LucJosin/on_audio_query/blob/main/PLATFORMS.md)
   Future<bool> renamePlaylist(int playlistId, String newName) async {
-    return renamePlaylist(playlistId, newName);
+    return platform.renamePlaylist(playlistId, newName);
   }
 
   // Permissions methods
