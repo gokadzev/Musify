@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
 import 'package:on_audio_query_platform_interface/on_audio_query_platform_interface.dart';

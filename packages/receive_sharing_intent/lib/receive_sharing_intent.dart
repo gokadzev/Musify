@@ -5,11 +5,11 @@ import 'package:flutter/services.dart';
 
 class ReceiveSharingIntent {
   static const MethodChannel _mChannel =
-      const MethodChannel('receive_sharing_intent/messages');
+      MethodChannel('receive_sharing_intent/messages');
   static const EventChannel _eChannelMedia =
-      const EventChannel("receive_sharing_intent/events-media");
+      EventChannel('receive_sharing_intent/events-media');
   static const EventChannel _eChannelLink =
-      const EventChannel("receive_sharing_intent/events-text");
+      EventChannel('receive_sharing_intent/events-text');
 
   static Stream<List<SharedMediaFile>>? _streamMedia;
   static Stream<String>? _streamLink;
@@ -25,9 +25,7 @@ class ReceiveSharingIntent {
     final json = await _mChannel.invokeMethod('getInitialMedia');
     if (json == null) return [];
     final encoded = jsonDecode(json);
-    return encoded
-        .map<SharedMediaFile>((file) => SharedMediaFile.fromJson(file))
-        .toList();
+    return encoded.map<SharedMediaFile>(SharedMediaFile.fromJson).toList();
   }
 
   /// Returns a [Future], which completes to one of the following:
@@ -35,7 +33,7 @@ class ReceiveSharingIntent {
   ///   * the initially stored link (possibly null), on successful invocation;
   ///   * a [PlatformException], if the invocation failed in the platform plugin.
   static Future<String?> getInitialText() async {
-    return await _mChannel.invokeMethod('getInitialText');
+    return _mChannel.invokeMethod('getInitialText');
   }
 
   /// A convenience method that returns the initially stored link
@@ -68,18 +66,21 @@ class ReceiveSharingIntent {
   static Stream<List<SharedMediaFile>> getMediaStream() {
     if (_streamMedia == null) {
       final stream =
-          _eChannelMedia.receiveBroadcastStream("media").cast<String?>();
+          _eChannelMedia.receiveBroadcastStream('media').cast<String?>();
       _streamMedia = stream.transform<List<SharedMediaFile>>(
-        new StreamTransformer<String?, List<SharedMediaFile>>.fromHandlers(
+        StreamTransformer<String?, List<SharedMediaFile>>.fromHandlers(
           handleData: (String? data, EventSink<List<SharedMediaFile>> sink) {
             if (data == null) {
               sink.add([]);
             } else {
               final encoded = jsonDecode(data);
-              sink.add(encoded
-                  .map<SharedMediaFile>(
-                      (file) => SharedMediaFile.fromJson(file))
-                  .toList());
+              sink.add(
+                encoded
+                    .map<SharedMediaFile>(
+                      SharedMediaFile.fromJson,
+                    )
+                    .toList(),
+              );
             }
           },
         ),
@@ -105,9 +106,7 @@ class ReceiveSharingIntent {
   /// If the app was started by a link intent or user activity the stream will
   /// not emit that initial one - query either the `getInitialText` instead.
   static Stream<String> getTextStream() {
-    if (_streamLink == null) {
-      _streamLink = _eChannelLink.receiveBroadcastStream("text").cast<String>();
-    }
+    _streamLink ??= _eChannelLink.receiveBroadcastStream('text').cast<String>();
     return _streamLink!;
   }
 
@@ -122,7 +121,7 @@ class ReceiveSharingIntent {
   /// not emit that initial uri - query either the `getInitialTextAsUri` instead.
   static Stream<Uri> getTextStreamAsUri() {
     return getTextStream().transform<Uri>(
-      new StreamTransformer<String, Uri>.fromHandlers(
+      StreamTransformer<String, Uri>.fromHandlers(
         handleData: (String data, EventSink<Uri> sink) {
           sink.add(Uri.parse(data));
         },
@@ -138,6 +137,14 @@ class ReceiveSharingIntent {
 }
 
 class SharedMediaFile {
+  SharedMediaFile(this.path, this.thumbnail, this.duration, this.type);
+
+  SharedMediaFile.fromJson(Map<String, dynamic> json)
+      : path = json['path'],
+        thumbnail = json['thumbnail'],
+        duration = json['duration'],
+        type = SharedMediaType.values[json['type']];
+
   /// Image or Video path.
   /// NOTE. for iOS only the file is always copied
   final String path;
@@ -150,14 +157,6 @@ class SharedMediaFile {
 
   /// Whether its a video or image or file
   final SharedMediaType type;
-
-  SharedMediaFile(this.path, this.thumbnail, this.duration, this.type);
-
-  SharedMediaFile.fromJson(Map<String, dynamic> json)
-      : path = json['path'],
-        thumbnail = json['thumbnail'],
-        duration = json['duration'],
-        type = SharedMediaType.values[json['type']];
 }
 
 enum SharedMediaType { IMAGE, VIDEO, FILE }

@@ -12,8 +12,6 @@ Copyright: © 2021, Lucas Josino. All rights reserved.
 =============
 */
 
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:on_audio_query_platform_interface/on_audio_query_platform_interface.dart';
@@ -60,7 +58,7 @@ class QueryArtworkWidget extends StatelessWidget {
   ///
   /// Important:
   ///
-  /// * If [quality] is null, will be set to [100].
+  /// * If [quality] is null, will be set to [50].
   final int quality;
 
   /// Used to define the artwork [border radius].
@@ -327,7 +325,7 @@ class QueryArtworkWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (quality != null && quality! > 100) {
+    if (quality > 100) {
       throw Exception(
         '[quality] value cannot be greater than [100]',
       );
