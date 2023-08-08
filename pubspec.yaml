@@ -15,7 +15,7 @@ dependencies:
   audio_service:
     path: ./packages/audio_service/audio_service
   audio_session: ^0.1.16
-  background_downloader: ^7.8.1
+  background_downloader: ^7.9.0
   cached_network_image: ^3.2.3
   dynamic_color: ^1.6.6
   file_picker: ^5.3.3
@@ -34,7 +34,7 @@ dependencies:
   on_audio_query:
     path: ./packages/on_audio_query/on_audio_query
   path: ^1.8.3
-  path_provider: ^2.0.15
+  path_provider: ^2.1.0
   permission_handler: ^10.4.3
   receive_sharing_intent:
     path: ./packages/receive_sharing_intent
