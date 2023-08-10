@@ -39,8 +39,26 @@
 <h3 align="center">Translations :airplane:</h3>
 
 <!-- START_TRANSLATION_STATS -->
-
-
+| Language       | Language Code | Translated Texts | Total Texts | Translation Percentage |
+|----------------|---------------|------------------|-------------|------------------------|
+| Chinese | zh | 31 | 71 | 43.66% |
+| Greek | el | 65 | 71 | 91.55% |
+| Italian | it | 30 | 71 | 42.25% |
+| Arabic | ar | 55 | 71 | 77.46% |
+| Vietnamese | vi | 53 | 71 | 74.65% |
+| Russian | ru | 62 | 71 | 87.32% |
+| Portuguese | pt | 71 | 71 | 100.00% |
+| Turkish | tr | 44 | 71 | 61.97% |
+| Traditional Chinese Taiwan | zh_TW | 43 | 71 | 60.56% |
+| French | fr | 66 | 71 | 92.96% |
+| Indonesian | id | 31 | 71 | 43.66% |
+| Georgian | ka | 64 | 71 | 90.14% |
+| Dutch | nl | 31 | 71 | 43.66% |
+| Ukrainian | uk | 48 | 71 | 67.61% |
+| Polish | pl | 31 | 71 | 43.66% |
+| Spanish | es | 60 | 71 | 84.51% |
+| German | de | 55 | 71 | 77.46% |
+| Overall        | - | 840 | 1207 | 69.59% |
 <!-- END_TRANSLATION_STATS -->
 
 
