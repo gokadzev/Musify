@@ -36,6 +36,16 @@
 
 ---
 
+<h3 align="center">Translations :airplane:</h3>
+
+<!-- START_TRANSLATION_STATS -->
+
+
+<!-- END_TRANSLATION_STATS -->
+
+
+---
+
 <h3 align="center">Screenshots :camera:</h3>
 
 <div align="center">

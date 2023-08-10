@@ -1,0 +1,42 @@
+name: Update Translations Data
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  translations_data:
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Check Repository
+      run: |
+        if [ "$GITHUB_REPOSITORY" != "gokadzev/Musify" ]; then
+          echo "Workflow will not run on this repository."
+          exit 0
+        fi
+
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Run Python script
+      run: python3 translated.py
+
+    - name: Set up Git
+      run: |
+        git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+        git config --global user.name "${GITHUB_ACTOR}"
+
+
+    - name: Commit changes
+      run: |
+        git add .
+        git diff-index --quiet HEAD || git commit -m "README: Update Translations data"
+        git push
