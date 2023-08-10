@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-    Music Streaming and Downloading app made in Flutter!
+    Unlock Music's Full Potential: Stream, Download, and Play with Ease, All in One App!
 </p>
 
 <p align="center">
