@@ -1,8 +1,9 @@
 name: Update Translations Data
 
 on:
-  schedule:
-    - cron: '0 0 * * *'
+  push:
+    paths:
+      - 'lib/localization/**'
   workflow_dispatch:
 
 jobs:
