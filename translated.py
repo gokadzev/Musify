@@ -34,6 +34,7 @@ def count_translated_texts(english_data, translation_data):
     translated_texts = sum(1 for key, value in translation_data.items() if value and not are_translations_equal(value, english_data.get(key, '')))
 
     return translated_texts, total_texts
+
 def calculate_percentage(translated_count, total_count):
     if total_count == 0:
         return 0.0
@@ -74,6 +75,7 @@ def main():
             translated_percentage = calculate_percentage(translated_texts, total)
             statistics_rows.append((language_name, language_code, translated_texts, total, translated_percentage))
 
+    statistics_rows.sort(key=lambda x: x[4], reverse=True)
 
     overall_translated_texts = sum(row[2] for row in statistics_rows)
     overall_total_texts = sum(row[3] for row in statistics_rows)
