@@ -52,13 +52,13 @@
 | Traditional Chinese Taiwan | zh_TW | 43 | 71 | 60.56% |
 | French | fr | 66 | 71 | 92.96% |
 | Indonesian | id | 31 | 71 | 43.66% |
-| Georgian | ka | 64 | 71 | 90.14% |
+| Georgian | ka | 71 | 71 | 100.00% |
 | Dutch | nl | 31 | 71 | 43.66% |
 | Ukrainian | uk | 48 | 71 | 67.61% |
 | Polish | pl | 31 | 71 | 43.66% |
 | Spanish | es | 60 | 71 | 84.51% |
 | German | de | 55 | 71 | 77.46% |
-| Overall        | - | 840 | 1207 | 69.59% |
+| Overall        | - | 847 | 1207 | 70.17% |
 <!-- END_TRANSLATION_STATS -->
 
 
