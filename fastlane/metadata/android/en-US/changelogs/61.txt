@@ -1,0 +1,12 @@
+Bug Fixes
+
+- Streaming problem should be fixed in this release
+
+Enhancements
+
+- Updated Portuguese and Polish Translations
+- Updated the playlist page UI
+- Themes look better now
+- Added the 3 playlists
+- Miscellaneous Other Improvements And Features: Implemented quality and performance enhancements for app stability and speed.
+
