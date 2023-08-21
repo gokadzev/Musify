@@ -5,12 +5,15 @@ import 'package:musify/API/musify.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/download_manager.dart';
 import 'package:musify/services/settings_manager.dart';
+import 'package:musify/utilities/formatter.dart';
 
 class SongBar extends StatelessWidget {
-  SongBar(this.song, this.clearPlaylist);
+  SongBar(this.song, this.clearPlaylist, {this.showMusicDuration = false});
 
   final dynamic song;
   final bool clearPlaylist;
+
+  final bool showMusicDuration;
 
   static const likeStatusToIconMapper = {
     true: FluentIcons.star_24_filled,
@@ -110,6 +113,8 @@ class SongBar extends StatelessWidget {
                 ? downloadSong(context, song)
                 : downloadSongFaster(context, song),
           ),
+          if (showMusicDuration && song['duration'] != null)
+            Text('(${formatDuration(song['duration'])})'),
         ],
       ),
     );

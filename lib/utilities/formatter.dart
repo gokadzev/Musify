@@ -30,6 +30,7 @@ Map<String, dynamic> returnSongLayout(dynamic index, Video song) => {
       'image': song.thumbnails.standardResUrl,
       'lowResImage': song.thumbnails.lowResUrl,
       'highResImage': song.thumbnails.maxResUrl,
+      'duration': song.duration?.inMilliseconds,
       'isLive': song.isLive,
     };
 

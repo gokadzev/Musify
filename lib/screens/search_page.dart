@@ -185,6 +185,7 @@ class _SearchPageState extends State<SearchPage> {
                   return SongBar(
                     _searchResult[index],
                     true,
+                    showMusicDuration: true,
                   );
                 },
                 separatorBuilder: (BuildContext context, int index) {
