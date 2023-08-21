@@ -53,7 +53,7 @@ Future<List> fetchSongsList(String searchQuery) async {
         returnSongLayout(
           0,
           s,
-        )
+        ),
     ];
 
     return searchedList;
@@ -94,7 +94,7 @@ Future<List<dynamic>> getUserPlaylists() async {
           ? plist.description
           : plist.description.substring(0, 120),
       'image': '',
-      'list': []
+      'list': [],
     });
   }
   return playlistsByUser;
@@ -198,7 +198,7 @@ Future<List> getSearchSuggestions(String query) async {
       link,
       headers: {
         'User-Agent':
-            'Mozilla/5.0 (Windows NT 10.0; rv:96.0) Gecko/20100101 Firefox/96.0'
+            'Mozilla/5.0 (Windows NT 10.0; rv:96.0) Gecko/20100101 Firefox/96.0',
       },
     );
     if (response.statusCode != 200) {
@@ -227,9 +227,9 @@ Future<List<Map<String, int>>> getSkipSegments(String id) async {
             'interaction',
             'intro',
             'outro',
-            'music_offtopic'
+            'music_offtopic',
           ],
-          'actionType': 'skip'
+          'actionType': 'skip',
         },
       ),
     );

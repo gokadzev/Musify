@@ -252,14 +252,14 @@ class _HomePageState extends State<HomePage> {
                           itemBuilder: (context, index) {
                             return SongBar(snapshot.data[index], true);
                           },
-                        )
+                        ),
                       ],
                     );
                   default:
                     return const SizedBox.shrink();
                 }
               },
-            )
+            ),
           ],
         ),
       ),

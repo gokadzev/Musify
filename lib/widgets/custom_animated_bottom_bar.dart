@@ -161,7 +161,7 @@ class _FlashTabBarItem extends StatelessWidget {
                     width: 80,
                     height: iconSize,
                   ),
-                )
+                ),
               ],
             ),
           ),
@@ -209,7 +209,7 @@ class _FlashTabBarItem extends StatelessWidget {
                 ),
               ),
             ),
-          )
+          ),
         ],
       ),
     );

@@ -43,7 +43,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                           id = value;
                         });
                       },
-                    )
+                    ),
                   ],
                 ),
                 actions: <Widget>[

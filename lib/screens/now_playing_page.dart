@@ -246,7 +246,7 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                         ),
                       ),
                     ],
-                  )
+                  ),
                 ],
               );
             },
@@ -524,7 +524,7 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                                                     ),
                                                   );
                                                 },
-                                              )
+                                              ),
                                             ],
                                           ),
                                         ),

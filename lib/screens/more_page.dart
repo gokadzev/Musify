@@ -191,7 +191,7 @@ class SettingsCards extends StatelessWidget {
                                   ),
                                 )
                               else
-                                const SizedBox.shrink()
+                                const SizedBox.shrink(),
                             ],
                           ),
                         );
@@ -215,7 +215,7 @@ class SettingsCards extends StatelessWidget {
                 final availableModes = [
                   ThemeMode.system,
                   ThemeMode.light,
-                  ThemeMode.dark
+                  ThemeMode.dark,
                 ];
                 return Center(
                   child: Container(
@@ -547,7 +547,7 @@ class SettingsCards extends StatelessWidget {
             showToast(
               context,
               '${context.l10n()!.cacheMsg}!',
-            )
+            ),
           },
         ),
         SettingBar(
@@ -635,7 +635,7 @@ class SettingsCards extends StatelessWidget {
         ),
         const SizedBox(
           height: 20,
-        )
+        ),
       ],
     );
   }

@@ -190,7 +190,7 @@ class _SearchPageState extends State<SearchPage> {
                 separatorBuilder: (BuildContext context, int index) {
                   return const SizedBox(height: 15);
                 },
-              )
+              ),
           ],
         ),
       ),

@@ -157,7 +157,7 @@ class _ArtistPagePageState extends State<ArtistPage> {
                                     (BuildContext context, int index) {
                                   return const SizedBox(height: 15);
                                 },
-                              )
+                              ),
                             ],
                           );
                         } else {

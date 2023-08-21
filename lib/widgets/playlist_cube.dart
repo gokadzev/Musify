@@ -30,7 +30,7 @@ class PlaylistCube extends StatelessWidget {
 
   final likeStatusToIconMapper = {
     true: FluentIcons.star_24_filled,
-    false: FluentIcons.star_24_regular
+    false: FluentIcons.star_24_regular,
   };
 
   late final playlistLikeStatus =

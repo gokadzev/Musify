@@ -15,7 +15,7 @@ final destinations = [
   RoutePaths.home,
   RoutePaths.search,
   RoutePaths.userPlaylists,
-  RoutePaths.more
+  RoutePaths.more,
 ];
 
 // ignore: avoid_classes_with_only_static_members

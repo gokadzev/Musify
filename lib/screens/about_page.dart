@@ -100,7 +100,7 @@ class AboutCards extends StatelessWidget {
               ),
             ),
           ),
-        )
+        ),
       ],
     );
   }

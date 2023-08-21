@@ -115,7 +115,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                       )
                     : const Spinner();
               },
-            )
+            ),
           ],
         ),
       ),

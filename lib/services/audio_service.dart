@@ -32,12 +32,12 @@ class MyAudioHandler extends BaseAudioHandler {
               else
                 MediaControl.play,
               MediaControl.skipToNext,
-              MediaControl.stop
+              MediaControl.stop,
             ],
             systemActions: const {
               MediaAction.seek,
               MediaAction.seekForward,
-              MediaAction.seekBackward
+              MediaAction.seekBackward,
             },
             androidCompactActionIndices: const [0, 1, 3],
             processingState: const {

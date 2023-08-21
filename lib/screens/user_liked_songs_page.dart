@@ -69,7 +69,7 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
                           },
                         );
                       },
-                    )
+                    ),
                   ],
                 ),
               ],
@@ -120,7 +120,7 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
             'title': context.l10n()!.userLikedSongs,
             'header_desc': '',
             'image': '',
-            'list': userLikedSongsList
+            'list': userLikedSongsList,
           },
         );
         showToast(
