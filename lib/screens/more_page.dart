@@ -328,7 +328,7 @@ class SettingsCards extends StatelessWidget {
           },
         ),
         SettingSwitchBar(
-          context.l10n()!.useSystemColor,
+          context.l10n()!.dynamicColor,
           FluentIcons.toggle_left_24_filled,
           useSystemColor.value,
           (value) {
@@ -353,7 +353,7 @@ class SettingsCards extends StatelessWidget {
           valueListenable: sponsorBlockSupport,
           builder: (_, value, __) {
             return SettingSwitchBar(
-              'SponsorBlock',
+              'SponsorBlock [BETA]',
               FluentIcons.presence_blocked_24_regular,
               value,
               (value) {
