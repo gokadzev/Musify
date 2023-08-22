@@ -41,9 +41,10 @@
 <!-- START_TRANSLATION_STATS -->
 | Language       | Language Code | Translated Texts | Total Texts | Translation Percentage |
 |----------------|---------------|------------------|-------------|------------------------|
-| Georgian | ka | 70 | 71 | 98.59% |
-| Polish | pl | 70 | 71 | 98.59% |
-| Portuguese | pt | 70 | 71 | 98.59% |
+| Georgian | ka | 71 | 71 | 100.00% |
+| Polish | pl | 71 | 71 | 100.00% |
+| Portuguese | pt | 71 | 71 | 100.00% |
+| Ukrainian | uk | 66 | 71 | 92.96% |
 | French | fr | 65 | 71 | 91.55% |
 | Greek | el | 64 | 71 | 90.14% |
 | Russian | ru | 61 | 71 | 85.92% |
@@ -51,14 +52,13 @@
 | German | de | 54 | 71 | 76.06% |
 | Arabic | ar | 54 | 71 | 76.06% |
 | Vietnamese | vi | 52 | 71 | 73.24% |
-| Ukrainian | uk | 47 | 71 | 66.20% |
 | Turkish | tr | 43 | 71 | 60.56% |
 | Traditional Chinese Taiwan | zh_TW | 42 | 71 | 59.15% |
 | Chinese | zh | 31 | 71 | 43.66% |
 | Dutch | nl | 31 | 71 | 43.66% |
 | Indonesian | id | 31 | 71 | 43.66% |
 | Italian | it | 30 | 71 | 42.25% |
-| Overall        | - | 874 | 1207 | 72.41% |
+| Overall        | - | 896 | 1207 | 74.23% |
 <!-- END_TRANSLATION_STATS -->
 
 
