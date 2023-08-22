@@ -41,24 +41,24 @@
 <!-- START_TRANSLATION_STATS -->
 | Language       | Language Code | Translated Texts | Total Texts | Translation Percentage |
 |----------------|---------------|------------------|-------------|------------------------|
-| Portuguese | pt | 71 | 71 | 100.00% |
-| Georgian | ka | 71 | 71 | 100.00% |
-| Polish | pl | 71 | 71 | 100.00% |
-| French | fr | 66 | 71 | 92.96% |
-| Greek | el | 65 | 71 | 91.55% |
-| Russian | ru | 62 | 71 | 87.32% |
-| Spanish | es | 60 | 71 | 84.51% |
-| Arabic | ar | 55 | 71 | 77.46% |
-| German | de | 55 | 71 | 77.46% |
-| Vietnamese | vi | 53 | 71 | 74.65% |
-| Ukrainian | uk | 48 | 71 | 67.61% |
-| Turkish | tr | 44 | 71 | 61.97% |
-| Traditional Chinese Taiwan | zh_TW | 43 | 71 | 60.56% |
+| Georgian | ka | 70 | 71 | 98.59% |
+| Polish | pl | 70 | 71 | 98.59% |
+| Portuguese | pt | 70 | 71 | 98.59% |
+| French | fr | 65 | 71 | 91.55% |
+| Greek | el | 64 | 71 | 90.14% |
+| Russian | ru | 61 | 71 | 85.92% |
+| Spanish | es | 59 | 71 | 83.10% |
+| German | de | 54 | 71 | 76.06% |
+| Arabic | ar | 54 | 71 | 76.06% |
+| Vietnamese | vi | 52 | 71 | 73.24% |
+| Ukrainian | uk | 47 | 71 | 66.20% |
+| Turkish | tr | 43 | 71 | 60.56% |
+| Traditional Chinese Taiwan | zh_TW | 42 | 71 | 59.15% |
 | Chinese | zh | 31 | 71 | 43.66% |
-| Indonesian | id | 31 | 71 | 43.66% |
 | Dutch | nl | 31 | 71 | 43.66% |
+| Indonesian | id | 31 | 71 | 43.66% |
 | Italian | it | 30 | 71 | 42.25% |
-| Overall        | - | 887 | 1207 | 73.49% |
+| Overall        | - | 874 | 1207 | 72.41% |
 <!-- END_TRANSLATION_STATS -->
 
 
