@@ -25,7 +25,7 @@
   "downloadFailed": "Błąd pobierania",
   "downloadMode": "Tryb pobierania",
   "downloadModeMsg": "Zmieniono tryb pobierania",
-  "dynamicColor": "Dynamic accent color (Android 12+)",
+  "dynamicColor": "Dynamiczny kolor akcentu (Android 12+)",
   "error": "Coś poszło nie tak",
   "errorWhileRequestingPerms": "Błąd podczas prośby o uprawnienia",
   "falseMSG": "Fałsz",

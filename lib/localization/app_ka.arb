@@ -25,7 +25,7 @@
   "downloadFailed": "ჩამოტვირთვა ვერ შესრულდა",
   "downloadMode": "ჩამოტვირთვის რეჟიმი",
   "downloadModeMsg": "ჩამოტვირთვის რეჟიმი შეიცვალა",
-  "dynamicColor": "Dynamic accent color (Android 12+)",
+  "dynamicColor": "დინამიური აქცენტის ფერი (Android 12+)",
   "error": "დაფიქსირდა შეცდომა",
   "errorWhileRequestingPerms": "შეცდომა უფლებების მოთხოვნისას",
   "falseMSG": "მცდარი",

@@ -25,7 +25,7 @@
   "downloadFailed": "Falha no download",
   "downloadMode": "Modo de download",
   "downloadModeMsg": "Modo de download alterado",
-  "dynamicColor": "Dynamic accent color (Android 12+)",
+  "dynamicColor": "A cor de destaque dinâmica (Android 12+)",
   "error": "Algo deu errado",
   "errorWhileRequestingPerms": "Erro ao solicitar permissões",
   "falseMSG": "Falso",
