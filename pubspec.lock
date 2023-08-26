@@ -52,10 +52,10 @@ packages:
     dependency: "direct main"
     description:
       name: background_downloader
-      sha256: "3a2ddf08eeaa20723b5ddbb6a85c2568a9ba641e34cae5fc6a0300808a28581e"
+      sha256: "71bb38d3977ccad2dfd96ed8ff93d36a5a9c57ed71e9223403ace3490efd6f05"
       url: "https://pub.dev"
     source: hosted
-    version: "7.9.2"
+    version: "7.9.3"
   boolean_selector:
     dependency: transitive
     description:
@@ -188,18 +188,18 @@ packages:
     dependency: "direct main"
     description:
       name: file_picker
-      sha256: "21145c9c268d54b1f771d8380c195d2d6f655e0567dc1ca2f9c134c02c819e0a"
+      sha256: bdfa035a974a0c080576c4c8ed01cdf9d1b406a04c7daa05443ef0383a97bedc
       url: "https://pub.dev"
     source: hosted
-    version: "5.3.3"
+    version: "5.3.4"
   fluentui_system_icons:
     dependency: "direct main"
     description:
       name: fluentui_system_icons
-      sha256: ade8a693ed9e01e26697d6bc24cd679a401c3189b4f590ef5674547c46d4b418
+      sha256: ba5fceca4d53c12dbcbbe065504987727e2ede1e36d5abb593b434644e6dcad6
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.210"
+    version: "1.1.211"
   flutter:
     dependency: "direct main"
     description: flutter
