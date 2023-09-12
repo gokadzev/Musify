@@ -1,0 +1,11 @@
+Enhancements
+
+- Add song duration next to the music in search results
+- Updated translations
+- Changed some components interface little bit
+- Miscellaneous Other Improvements: Implemented quality and performance enhancements for app stability and speed.
+
+Other
+
+- Support for 6 languages has been discontinued
+- Removed foreground service option from the app
