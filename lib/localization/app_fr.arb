@@ -11,6 +11,7 @@
   "backedupSuccess": "Enregistrement réussi",
   "backupError": "Erreur pendant l'enregistrement",
   "backupUserData": "Sauvegarder les données utilisateur",
+  "becomeSponsor": "Become a sponsor",
   "cacheMsg": "Cache vidé",
   "chooseBackupDir": "Choisir un dossier de sauvegarde",
   "chooseRestoreDir": "Choisir un dossier de restauration",

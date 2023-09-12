@@ -11,6 +11,7 @@
   "backedupSuccess": "დარეზერვდა წარმატებით",
   "backupError": "შეცდომა ინფორმაციის დარეზერვებისას",
   "backupUserData": "მომხმარებლის ინფორმაციის დარეზერვება",
+  "becomeSponsor": "Become a sponsor",
   "cacheMsg": "ქეში გასუფთავდა",
   "chooseBackupDir": "აირჩიეთ რეზერვის საქაღალდე",
   "chooseRestoreDir": "აირჩიეთ რეზერვის დაბრუნების საქაღალდე",

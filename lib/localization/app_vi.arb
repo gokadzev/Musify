@@ -11,6 +11,7 @@
   "backedupSuccess": "Sao lưu thành công",
   "backupError": "Lỗi khi sao lưu dữ liệu",
   "backupUserData": "Sao lưu dữ liệu người dùng",
+  "becomeSponsor": "Become a sponsor",
   "cacheMsg": "Đã xóa bộ nhớ đệm",
   "chooseBackupDir": "Chọn thư mục sao lưu",
   "chooseRestoreDir": "Chọn thư mục khôi phục tệp",

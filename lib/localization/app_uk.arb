@@ -11,6 +11,7 @@
   "backedupSuccess": "Резервне копiювання виконано успiшно",
   "backupError": "Помилка під час резервного копіювання даних",
   "backupUserData": "Резервне копiювання даних користувача",
+  "becomeSponsor": "Become a sponsor",
   "cacheMsg": "Кеш очищений",
   "chooseBackupDir": "Виберіть каталог для резервного копіювання",
   "chooseRestoreDir": "Виберіть каталог для відновлення файлів",

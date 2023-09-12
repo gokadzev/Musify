@@ -11,6 +11,7 @@
   "backedupSuccess": "Başarıyla Yedeklendi",
   "backupError": "Error while data backup",
   "backupUserData": "Yedekleme kullanıcı verileri",
+  "becomeSponsor": "Become a sponsor",
   "cacheMsg": "önbellek temizlendi",
   "chooseBackupDir": "Yedekleme Dizinini Seç",
   "chooseRestoreDir": "Geri Yükleme Dosyası Dizinini Seç",

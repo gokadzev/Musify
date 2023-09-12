@@ -11,6 +11,7 @@
   "backedupSuccess": "Backed up successfully",
   "backupError": "Error while data backup",
   "backupUserData": "Backup user data",
+  "becomeSponsor": "Become a sponsor",
   "cacheMsg": "Cache cleared",
   "chooseBackupDir": "Choose Backup Directory",
   "chooseRestoreDir": "Choose Restore File Directory",

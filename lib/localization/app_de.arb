@@ -11,6 +11,7 @@
   "backedupSuccess": "Erfolgreich gesichert",
   "backupError": "Fehler bei der Datensicherung",
   "backupUserData": "Sicherung von Benutzerdaten",
+  "becomeSponsor": "Become a sponsor",
   "cacheMsg": "Cache gelöscht",
   "chooseBackupDir": "Wähle Backup-Verzeichnis",
   "chooseRestoreDir": "Wähle Verzeichnis zur Wiederherstellung der Datei",

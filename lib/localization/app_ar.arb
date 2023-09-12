@@ -11,6 +11,7 @@
   "backedupSuccess": "تم النسخ الاحتياطي بنجاح",
   "backupError": "خطأ أثناء النسخ الاحتياطي للبيانات",
   "backupUserData": "نسخ إحتياطي لبيانات المستخدم",
+  "becomeSponsor": "Become a sponsor",
   "cacheMsg": "تم مسح ذاكرة التخزين المؤقت",
   "chooseBackupDir": "اختر دليل النسخ الاحتياطي",
   "chooseRestoreDir": "اختر مسار الاستعادة",

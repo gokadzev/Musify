@@ -11,6 +11,7 @@
   "backedupSuccess": "Backup realizado com sucesso",
   "backupError": "Erro ao fazer backup dos dados",
   "backupUserData": "Fazer backup dos dados",
+  "becomeSponsor": "Become a sponsor",
   "cacheMsg": "Cache limpo",
   "chooseBackupDir": "Escolher diretório de backup",
   "chooseRestoreDir": "Escolher diretório do arquivo de restauração",

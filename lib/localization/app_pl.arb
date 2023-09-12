@@ -11,6 +11,7 @@
   "backedupSuccess": "Utworzono kopię zapasową pomyślnie",
   "backupError": "Wystąpił błąd podczas tworzenia kopii zapasowej",
   "backupUserData": "Kopia zapasowa danych użytkownika",
+  "becomeSponsor": "Become a sponsor",
   "cacheMsg": "Pamięć wyczyszczona",
   "chooseBackupDir": "Wybierz ścieżkę do pliku kopii",
   "chooseRestoreDir": "Wybierz ścieżkę do pliku kopii",
