@@ -212,6 +212,65 @@ Future<List> getSearchSuggestions(String query) async {
   }
 }
 
+Future<String?> getArtistArtwork(String artistName) async {
+  if (artistName.contains(',')) {
+    artistName = artistName.replaceRange(
+      artistName.indexOf(','),
+      artistName.length,
+      '',
+    );
+  }
+  if (artistName.contains(' FEAT')) {
+    artistName = artistName.replaceRange(
+      artistName.indexOf(' FEAT'),
+      artistName.length,
+      '',
+    );
+  }
+  if (artistName.contains(' &')) {
+    artistName = artistName.replaceRange(
+      artistName.indexOf(' &'),
+      artistName.length,
+      '',
+    );
+  }
+  if (artistName.contains(' FT')) {
+    artistName = artistName.replaceRange(
+      artistName.indexOf(' FT'),
+      artistName.length,
+      '',
+    );
+  }
+  try {
+    final elements = (await http.get(
+      Uri.parse(
+        Uri.encodeFull('https://genius.com/artists/$artistName'),
+      ),
+    ))
+        .body;
+    var short = elements.replaceRange(
+      0,
+      elements.indexOf(
+        '<div class="user_avatar profile_header-avatar clipped_background_image',
+      ),
+      '',
+    );
+    short = short.replaceRange(
+      0,
+      short.indexOf('background-image: url(') + 23,
+      '',
+    );
+    final finalLink = short.replaceRange(short.indexOf("'"), short.length, '');
+    if (finalLink.startsWith('https')) {
+      return finalLink;
+    } else {
+      return null;
+    }
+  } catch (e) {
+    return null;
+  }
+}
+
 Future<List<Map<String, int>>> getSkipSegments(String id) async {
   try {
     final res = await http.get(

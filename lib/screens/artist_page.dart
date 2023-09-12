@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
@@ -22,52 +20,9 @@ class ArtistPage extends StatefulWidget {
 }
 
 class _ArtistPagePageState extends State<ArtistPage> {
-  final _songsList = [];
-
-  late bool _isLoading = true;
-  late bool _hasMore = true;
-  final _itemsPerPage = 35;
-  var _currentPage = 0;
-  var _currentLastLoadedId = 0;
-
   @override
   void initState() {
     super.initState();
-    _isLoading = true;
-    _hasMore = true;
-    _loadMore();
-  }
-
-  void _loadMore() {
-    _isLoading = true;
-    fetch().then((List fetchedList) {
-      if (!mounted) return;
-      if (fetchedList.isEmpty) {
-        setState(() {
-          _isLoading = false;
-          _hasMore = false;
-        });
-      } else {
-        setState(() {
-          _isLoading = false;
-          _songsList.addAll(fetchedList);
-        });
-      }
-    });
-  }
-
-  Future<List> fetch() async {
-    final list = [];
-    final _count = widget.playlist['list'].length as int;
-    final n = min(_itemsPerPage, _count - _currentPage * _itemsPerPage);
-    await Future.delayed(const Duration(seconds: 1), () {
-      for (var i = 0; i < n; i++) {
-        list.add(widget.playlist['list'][_currentLastLoadedId]);
-        _currentLastLoadedId++;
-      }
-    });
-    _currentPage++;
-    return list;
   }
 
   @override
@@ -82,7 +37,7 @@ class _ArtistPagePageState extends State<ArtistPage> {
         child: widget.playlist != null
             ? Column(
                 children: [
-                  ArtistCube(artist: widget.playlist['title']),
+                  ArtistCube(widget.playlist['title']),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     child: Text(
@@ -98,19 +53,12 @@ class _ArtistPagePageState extends State<ArtistPage> {
                     firstBarChild: ListView.separated(
                       shrinkWrap: true,
                       physics: const BouncingScrollPhysics(),
-                      itemCount:
-                          _hasMore ? _songsList.length + 1 : _songsList.length,
+                      itemCount: widget.playlist['list'].length,
                       itemBuilder: (BuildContext context, int index) {
-                        if (index >= _songsList.length) {
-                          if (!_isLoading) {
-                            _loadMore();
-                          }
-                          return const Spinner();
-                        }
-
                         return LocalMusicBar(
-                          getMusicIndex(_songsList[index]) ?? index,
-                          _songsList[index],
+                          getMusicIndex(widget.playlist['list'][index]) ??
+                              index,
+                          widget.playlist['list'][index],
                         );
                       },
                       separatorBuilder: (BuildContext context, int index) {

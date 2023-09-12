@@ -1,15 +1,16 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:musify/extensions/screen_size.dart';
+import 'package:musify/API/musify.dart';
 import 'package:musify/style/app_themes.dart';
+import 'package:musify/widgets/spinner.dart';
 
-class ArtistCube extends StatelessWidget {
-  const ArtistCube({
-    super.key,
-    required this.artist,
-    this.borderRadius = 150.0,
-    this.borderRadiusInner = 10.0,
-    this.iconSize = 30.0,
+class ArtistCube extends StatefulWidget {
+  const ArtistCube(
+    this.artist, {
+    this.borderRadius = 150,
+    this.borderRadiusInner = 10,
+    this.iconSize = 30,
   });
 
   final String artist;
@@ -18,41 +19,76 @@ class ArtistCube extends StatelessWidget {
   final double iconSize;
 
   @override
-  Widget build(BuildContext context) {
-    final calculatedSize = context.screenSize.height * 0.25;
+  _ArtistCubeState createState() => _ArtistCubeState();
+}
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(borderRadius),
-      child: Container(
-        height: calculatedSize,
-        width: calculatedSize,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(borderRadiusInner),
-          color: colorScheme.secondary,
-        ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Icon(
-                color: colorScheme.surface,
-                FluentIcons.person_24_regular,
-                size: iconSize,
+class _ArtistCubeState extends State<ArtistCube>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    final calculatedSize = MediaQuery.of(context).size.height * 0.25;
+
+    return FutureBuilder<String?>(
+      future: getArtistArtwork(widget.artist),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Spinner();
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          final artworkUrl = snapshot.data;
+
+          if (artworkUrl != null) {
+            return ClipRRect(
+              borderRadius: BorderRadius.circular(widget.borderRadius),
+              child: CachedNetworkImage(
+                imageUrl: artworkUrl,
+                width: calculatedSize,
+                height: calculatedSize,
+                fit: BoxFit.cover,
               ),
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: Text(
-                  artist,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Colors.white,
+            );
+          } else {
+            return ClipRRect(
+              borderRadius: BorderRadius.circular(widget.borderRadius),
+              child: Container(
+                height: calculatedSize,
+                width: calculatedSize,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(widget.borderRadius),
+                  color: colorScheme.secondary,
+                ),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(
+                        FluentIcons.person_24_regular,
+                        size: widget.iconSize,
+                        color: colorScheme.surface,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Text(
+                          widget.artist,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
+            );
+          }
+        }
+      },
     );
   }
 }
