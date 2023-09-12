@@ -31,7 +31,6 @@
   "errorWhileRequestingPerms": "Fehler bei der Anforderung von Berechtigungen",
   "falseMSG": "Falsch",
   "fasterDownloadMsg": "Der schnellere Download-Modus befindet sich in der BETA-Phase und hat keine Benachrichtigung für den Download-Status.",
-  "foregroundService": "Vordergrunddienst",
   "home": "Startseite",
   "language": "Sprache",
   "languageMsg": "Sprache wurde geändert",

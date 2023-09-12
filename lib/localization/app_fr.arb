@@ -31,7 +31,6 @@
   "errorWhileRequestingPerms": "Erreur lors de la demande de permission",
   "falseMSG": "Faux",
   "fasterDownloadMsg": "Le mode de téléchargement rapide est en mode BETA et le téléchargement n'apparaît pas en notification",
-  "foregroundService": "Service en premier plan",
   "home": "Accueil",
   "language": "Langue",
   "languageMsg": "Langue modifiée",

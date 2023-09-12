@@ -31,7 +31,6 @@
   "errorWhileRequestingPerms": "Error al solicitar permisos",
   "falseMSG": "Falso",
   "fasterDownloadMsg": "El modo de descarga más rápido está en etapa BETA y no tiene una notificación para el estado de descarga.",
-  "foregroundService": "Servicio en primer plano",
   "home": "Inicio",
   "language": "Idioma",
   "languageMsg": "Se ha cambiado el idioma",

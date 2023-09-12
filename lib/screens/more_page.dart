@@ -372,30 +372,6 @@ class SettingsCards extends StatelessWidget {
           },
         ),
 
-        ValueListenableBuilder<bool>(
-          valueListenable: foregroundService,
-          builder: (_, foregroundValue, __) {
-            return SettingSwitchBar(
-              context.l10n()!.foregroundService,
-              FluentIcons.eye_24_filled,
-              foregroundValue,
-              (value) {
-                addOrUpdateData(
-                  'settings',
-                  'foregroundService',
-                  value,
-                );
-
-                foregroundService.value = value;
-
-                showToast(
-                  context,
-                  context.l10n()!.settingChangedAndRestartMsg,
-                );
-              },
-            );
-          },
-        ),
         SettingBar(
           context.l10n()!.audioFileType,
           FluentIcons.multiselect_ltr_24_filled,

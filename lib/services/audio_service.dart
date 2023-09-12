@@ -14,9 +14,8 @@ class MyAudioHandler extends BaseAudioHandler {
 
   @override
   Future<void> onTaskRemoved() async {
-    if (!foregroundService.value) {
-      await audioPlayer.stop().then((_) => audioPlayer.dispose());
-    }
+    await audioPlayer.stop().then((_) => audioPlayer.dispose());
+
     await super.onTaskRemoved();
   }
 

@@ -19,10 +19,6 @@ final useSystemColor = ValueNotifier<bool>(
   Hive.box('settings').get('useSystemColor', defaultValue: true),
 );
 
-final foregroundService = ValueNotifier<bool>(
-  Hive.box('settings').get('foregroundService', defaultValue: false) as bool,
-);
-
 final sponsorBlockSupport = ValueNotifier<bool>(
   Hive.box('settings').get('SponsorBlockSupport', defaultValue: false),
 );

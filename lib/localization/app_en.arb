@@ -31,7 +31,6 @@
   "errorWhileRequestingPerms": "Error while requesting permissions",
   "falseMSG": "False",
   "fasterDownloadMsg": "The faster download mode is in the BETA stage and doesn't have a notification for the downloading status.",
-  "foregroundService": "Foreground Service",
   "home": "Home",
   "language": "Language",
   "languageMsg": "Language has been changed",
