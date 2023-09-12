@@ -3,7 +3,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/style/app_themes.dart';
-import 'package:musify/widgets/spinner.dart';
+import 'package:musify/widgets/shimmer.dart';
 
 class ArtistCube extends StatefulWidget {
   const ArtistCube(
@@ -36,7 +36,18 @@ class _ArtistCubeState extends State<ArtistCube>
       future: getArtistArtwork(widget.artist),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Spinner();
+          return Shimmer.fromColors(
+            baseColor: Colors.grey[300] ?? Colors.grey,
+            highlightColor: Colors.grey[100] ?? Colors.grey,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(widget.borderRadius),
+              child: Container(
+                color: colorScheme.primary,
+                width: calculatedSize,
+                height: calculatedSize,
+              ),
+            ),
+          );
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
