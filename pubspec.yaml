@@ -12,8 +12,7 @@ environment:
   flutter: ^3.13.1
 
 dependencies:
-  audio_service:
-    path: ./packages/audio_service/audio_service
+  audio_service: ^0.18.12
   audio_session: ^0.1.16
   background_downloader: ^7.9.4
   cached_network_image: ^3.2.3
