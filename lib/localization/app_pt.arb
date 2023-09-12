@@ -11,7 +11,7 @@
   "backedupSuccess": "Backup realizado com sucesso",
   "backupError": "Erro ao fazer backup dos dados",
   "backupUserData": "Fazer backup dos dados",
-  "becomeSponsor": "Become a sponsor",
+  "becomeSponsor": "Torne-se um patrocinador",
   "cacheMsg": "Cache limpo",
   "chooseBackupDir": "Escolher diretório de backup",
   "chooseRestoreDir": "Escolher diretório do arquivo de restauração",
@@ -69,6 +69,6 @@
   "userLikedPlaylists": "Listas de reprodução curtidas",
   "userLikedSongs": "Músicas curtidas",
   "userPlaylists": "Listas de reprodução",
-  "yourFavoriteSongsHere": "Suas músicas favoritas estaram aqui",
+  "yourFavoriteSongsHere": "Suas músicas favoritas estarão aqui",
   "youtubePlaylistID": "ID da lista de reprodução do YouTube"
 }
