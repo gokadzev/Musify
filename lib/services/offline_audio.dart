@@ -111,7 +111,7 @@ List<AudioModelWithArtwork> _filterSongs(
 Future<List<ArtistModel>> getRandomArtists() async {
   final _artists = await audioQuery.queryArtists();
   final randomArtists = _artists.toList()..shuffle();
-  return randomArtists.take(10).toList();
+  return randomArtists.take(5).toList();
 }
 
 Future<void> moveAudiosToQueue() async {
