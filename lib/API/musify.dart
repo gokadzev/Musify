@@ -213,62 +213,36 @@ Future<List> getSearchSuggestions(String query) async {
 }
 
 Future<String?> getArtistArtwork(String artistName) async {
-  if (artistName.contains(',')) {
-    artistName = artistName.replaceRange(
-      artistName.indexOf(','),
-      artistName.length,
-      '',
-    );
-  }
-  if (artistName.contains(' FEAT')) {
-    artistName = artistName.replaceRange(
-      artistName.indexOf(' FEAT'),
-      artistName.length,
-      '',
-    );
-  }
-  if (artistName.contains(' &')) {
-    artistName = artistName.replaceRange(
-      artistName.indexOf(' &'),
-      artistName.length,
-      '',
-    );
-  }
-  if (artistName.contains(' FT')) {
-    artistName = artistName.replaceRange(
-      artistName.indexOf(' FT'),
-      artistName.length,
-      '',
-    );
-  }
+  artistName = artistName.replaceAll(RegExp(r',| FEAT| &| FT'), '').trim();
+
   try {
-    final elements = (await http.get(
-      Uri.parse(
-        Uri.encodeFull('https://genius.com/artists/$artistName'),
-      ),
-    ))
-        .body;
-    var short = elements.replaceRange(
-      0,
-      elements.indexOf(
-        '<div class="user_avatar profile_header-avatar clipped_background_image',
-      ),
-      '',
+    final response = await http.get(
+      Uri.parse('https://genius.com/artists/$artistName'),
     );
-    short = short.replaceRange(
-      0,
-      short.indexOf('background-image: url(') + 23,
-      '',
-    );
-    final finalLink = short.replaceRange(short.indexOf("'"), short.length, '');
-    if (finalLink.startsWith('https')) {
-      return finalLink;
-    } else {
-      return null;
+
+    if (response.statusCode == 200) {
+      final body = response.body;
+      const startToken =
+          '<div class="user_avatar profile_header-avatar clipped_background_image';
+      final start = body.indexOf(startToken);
+      if (start != -1) {
+        final urlStart = body.indexOf('background-image: url(', start);
+        if (urlStart != -1) {
+          final urlEnd = body.indexOf("'", urlStart + 23);
+          if (urlEnd != -1) {
+            final finalLink = body.substring(urlStart + 23, urlEnd);
+            if (finalLink.startsWith('https')) {
+              return finalLink;
+            }
+          }
+        }
+      }
     }
   } catch (e) {
     return null;
   }
+
+  return null;
 }
 
 Future<List<Map<String, int>>> getSkipSegments(String id) async {
