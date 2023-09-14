@@ -189,27 +189,35 @@ Future<void> readPlaylistsFromFile() async {
           as List;
 }
 
-Future<List> getSearchSuggestions(String query) async {
-  const baseUrl =
-      'https://suggestqueries.google.com/complete/search?client=firefox&ds=yt&q=';
-  final link = Uri.parse(baseUrl + query);
+Future<List<String>> getSearchSuggestions(String query) async {
+  const baseUrl = 'https://suggestqueries.google.com/complete/search';
+  final parameters = {
+    'client': 'firefox',
+    'ds': 'yt',
+    'q': query,
+  };
+
+  final uri = Uri.parse(baseUrl).replace(queryParameters: parameters);
+
   try {
     final response = await http.get(
-      link,
+      uri,
       headers: {
         'User-Agent':
             'Mozilla/5.0 (Windows NT 10.0; rv:96.0) Gecko/20100101 Firefox/96.0',
       },
     );
-    if (response.statusCode != 200) {
-      return [];
+
+    if (response.statusCode == 200) {
+      final suggestions = jsonDecode(response.body)[1] as List<dynamic>;
+      final suggestionStrings = suggestions.cast<String>().toList();
+      return suggestionStrings;
     }
-    final res = jsonDecode(response.body)[1] as List;
-    return res;
   } catch (e) {
     Logger.log('Error in getSearchSuggestions: $e');
-    return [];
   }
+
+  return <String>[];
 }
 
 Future<String?> getArtistArtwork(String artistName) async {
