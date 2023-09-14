@@ -232,7 +232,7 @@ Future<String?> getArtistArtwork(String artistName) async {
           if (urlEnd != -1) {
             final finalLink = body.substring(urlStart + 23, urlEnd);
             if (finalLink.startsWith('https')) {
-              return finalLink;
+              return finalLink.replaceFirst('.1000x1000x1', '.300x300x1');
             }
           }
         }
