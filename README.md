@@ -140,8 +140,10 @@ You can see frequently asked questions and their answers [here](https://github.c
 - [audio_session](https://pub.dev/packages/audio_session): A plugin for managing audio sessions in Flutter.
 - [background_downloader](https://pub.dev/packages/background_downloader): A Flutter plugin for downloading files in the background.
 - [cached_network_image](https://pub.dev/packages/cached_network_image): A Flutter library to load and cache network images.
+- [delayed_display](https://pub.dev/packages/delayed_display): A Flutter package for adding delayed display animations.
 - [dynamic_color](https://pub.dev/packages/dynamic_color): A package for working with dynamic colors in Flutter.
 - [file_picker](https://pub.dev/packages/file_picker): A Flutter plugin for selecting files from the device.
+- [flashy_tab_bar2](https://pub.dev/packages/flashy_tab_bar2): A Flutter package for a flashy tab bar.
 - [fluentui_system_icons](https://pub.dev/packages/fluentui_system_icons): A package that provides Fluent System Icons for Flutter.
 - [flutter](https://flutter.dev/): The Flutter SDK.
 - [flutter_displaymode](https://pub.dev/packages/flutter_displaymode): A Flutter plugin for managing the display mode on mobile devices.
@@ -152,12 +154,13 @@ You can see frequently asked questions and their answers [here](https://github.c
 - [http](https://pub.dev/packages/http): A package for making HTTP requests in Flutter.
 - [intl](https://pub.dev/packages/intl): Internationalization and localization support for Flutter.
 - [just_audio](https://pub.dev/packages/just_audio): A Flutter plugin for audio playback.
-- [on_audio_query](https://github.com/LucJosin/on_audio_query): Flutter Plugin used to query audios/songs infos [title, artist, album, etc..] from device storage.
+- [on_audio_query](https://github.com/LucJosin/on_audio_query): Flutter Plugin used to query audios/songs infos (title, artist, album, etc..) from device storage.
 - [path](https://pub.dev/packages/path): A package for working with file system paths in Dart.
 - [path_provider](https://pub.dev/packages/path_provider): A Flutter plugin for getting the application's directories and paths.
 - [permission_handler](https://pub.dev/packages/permission_handler): A Flutter plugin for requesting permissions.
 - [receive_sharing_intent](https://pub.dev/packages/receive_sharing_intent): A flutter plugin that enables flutter apps to receive sharing photos, videos, text, urls or any other file types from another app.
 - [rxdart](https://pub.dev/packages/rxdart): Reactive Extensions for Dart.
+- [shimmer](https://pub.dev/packages/shimmer): A Flutter package for creating shimmering effects.
 - [url_launcher](https://pub.dev/packages/url_launcher): A Flutter plugin for launching URLs.
 - [youtube_explode_dart](https://pub.dev/packages/youtube_explode_dart): A Dart library for interacting with YouTube.
 
