@@ -36,6 +36,8 @@
   "languageMsg": "O idioma foi alterado",
   "licenses": "Licenças",
   "localMusic": "Música local",
+  "lyrics": "Letra da música",
+  "lyricsNotAvailable": "Nenhuma letra disponível ;(",
   "more": "Mais",
   "noLikedPlaylists": "Você ainda não marcou como gostei nenhuma playlist",
   "notYTlist": "Isso não é um ID de lista de reprodução do YouTube",

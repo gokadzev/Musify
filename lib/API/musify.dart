@@ -11,6 +11,7 @@ import 'package:musify/models/custom_audio_model.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/logger_service.dart';
+import 'package:musify/services/lyrics_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/formatter.dart';
 import 'package:musify/utilities/mediaitem.dart';
@@ -42,6 +43,9 @@ final currentLikedPlaylistsLength =
 
 final currentRecentlyPlayedLength =
     ValueNotifier<int>(userRecentlyPlayed.length);
+
+final lyrics = ValueNotifier<String?>(null);
+String? lastFetchedLyrics;
 
 int id = 0;
 
@@ -426,6 +430,23 @@ Future<Map<String, dynamic>> getSongDetails(
     Logger.log('Error while getting song details: $e');
     rethrow;
   }
+}
+
+Future getSongLyrics(String artist, String title) async {
+  if (lastFetchedLyrics != '$artist - $title') {
+    lyrics.value = null;
+    final _lyrics = await LyricsManager().fetchLyrics(artist, title);
+    if (_lyrics != null) {
+      lyrics.value = _lyrics;
+    } else {
+      lyrics.value = 'not found';
+    }
+
+    lastFetchedLyrics = '$artist - $title';
+    return _lyrics;
+  }
+
+  return lyrics.value;
 }
 
 Future<void> updateRecentlyPlayed(dynamic songId) async {

@@ -36,6 +36,8 @@
   "languageMsg": "Ngôn ngữ đã được thay đổi",
   "licenses": "Giấy phép",
   "localMusic": "Nhạc cục bộ",
+  "lyrics": "Lời bài hát",
+  "lyricsNotAvailable": "Không tìm thấy lời bài hát ;(",
   "more": "Khác",
   "noLikedPlaylists": "Bạn chưa thích bất kỳ danh sách phát nào",
   "notYTlist": "Đây không phải là ID của danh sách phát Youtube",

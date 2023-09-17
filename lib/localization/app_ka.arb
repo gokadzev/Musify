@@ -36,6 +36,8 @@
   "languageMsg": "ენა შეიცვალა",
   "licenses": "ლიცენზიები",
   "localMusic": "ადგილობრივი მუსიკა",
+  "lyrics": "ტექსტი",
+  "lyricsNotAvailable": "ტექსტი არაა ხელმისაწვდომი ;(",
   "more": "მეტი",
   "noLikedPlaylists": "ჯერჯერობით არ გაქვს მოწონებული ფლეილისთები",
   "notYTlist": "ეს არ არის Youtube ფლეილისთის აიდი",

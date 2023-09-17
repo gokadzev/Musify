@@ -36,6 +36,8 @@
   "languageMsg": "Dil Değiştirildi",
   "licenses": "Lisanslar",
   "localMusic": "Yerel Müzik",
+  "lyrics": "şarkı sözleri",
+  "lyricsNotAvailable": "Şarkı sözü yok ;(",
   "more": "Daha Fazla",
   "noLikedPlaylists": "Henüz hiçbir çalma listesini beğenmediniz",
   "notYTlist": "Bu bir YouTube çalma listesi kimliği değil",

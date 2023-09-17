@@ -36,6 +36,8 @@
   "languageMsg": "تم تغيير اللغة",
   "licenses": "التراخيص",
   "localMusic": "موسيقى محلية",
+  "lyrics": "كلمات",
+  "lyricsNotAvailable": "لا توجد كلمات متاحة ;(",
   "more": "المزيد",
   "noLikedPlaylists": "لم تعجب بأي قوائم تشغيل بعد",
   "notYTlist": "هذا ليس معرف قائمة تشغيل YouTube",
