@@ -1,6 +1,8 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/version.dart';
+import 'package:musify/enums/quality_enum.dart';
+import 'package:musify/extensions/audio_quality.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/screens/about_page.dart';
@@ -488,6 +490,88 @@ class SettingsCards extends StatelessWidget {
                                       showToast(
                                         context,
                                         context.l10n()!.downloadModeMsg,
+                                      );
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+        ),
+        SettingBar(
+          context.l10n()!.audioQuality,
+          Icons.music_note,
+          () {
+            showModalBottomSheet(
+              isDismissible: true,
+              backgroundColor: Colors.transparent,
+              context: context,
+              builder: (BuildContext context) {
+                final availableQualities = [
+                  AudioQuality.lowQuality,
+                  AudioQuality.mediumQuality,
+                  AudioQuality.bestQuality,
+                ];
+
+                return Center(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: colorScheme.primary,
+                      ),
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(20),
+                      ),
+                    ),
+                    width: MediaQuery.of(context).copyWith().size.width * 0.90,
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(25),
+                          child: Text(
+                            context.l10n()!.audioQuality,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              color: colorScheme.primary,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            physics: const BouncingScrollPhysics(),
+                            itemCount: availableQualities.length,
+                            itemBuilder: (context, index) {
+                              final quality = availableQualities[index];
+                              return Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: Card(
+                                  child: ListTile(
+                                    title: Text(
+                                      quality.stringValue,
+                                    ),
+                                    onTap: () {
+                                      addOrUpdateData(
+                                        'settings',
+                                        'audioQuality',
+                                        quality.stringValue,
+                                      );
+
+                                      audioQualitySetting.value = quality;
+
+                                      showToast(
+                                        context,
+                                        context.l10n()!.audioQualityMsg,
                                       );
                                       Navigator.pop(context);
                                     },

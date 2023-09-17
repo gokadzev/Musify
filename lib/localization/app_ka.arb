@@ -8,6 +8,8 @@
   "appUpdateIsAvailable": "აპლიკაციის განახლება ხელმისაწვდომია",
   "audioFileType": "სიმღერის ფაილის დაბოლოვება",
   "audioFileTypeMsg": "სიმღერის ფაილის დაბოლოვება შეიცვალა",
+  "audioQuality": "Audio quality",
+  "audioQualityMsg": "Audio quality has been changed",
   "backedupSuccess": "დარეზერვდა წარმატებით",
   "backupError": "შეცდომა ინფორმაციის დარეზერვებისას",
   "backupUserData": "მომხმარებლის ინფორმაციის დარეზერვება",

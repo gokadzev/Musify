@@ -59,7 +59,8 @@ bool get hasPrevious {
 
 Future<void> playSong(Map song) async {
   try {
-    final songUrl = await getSong(song['ytid'], song['isLive']);
+    final songUrl =
+        await getSong(song['ytid'], song['isLive'], audioQualitySetting.value);
     await checkIfSponsorBlockIsAvailable(song, songUrl);
     await audioPlayer.play();
   } catch (e) {

@@ -8,6 +8,8 @@
   "appUpdateIsAvailable": "Доступне оновлення додатку",
   "audioFileType": "Розширення аудіофайлу",
   "audioFileTypeMsg": "Розширення аудіофайлу змінено",
+  "audioQuality": "Audio quality",
+  "audioQualityMsg": "Audio quality has been changed",
   "backedupSuccess": "Резервне копіювання виконано успішно",
   "backupError": "Помилка під час резервного копіювання даних",
   "backupUserData": "Резервне копіювання даних користувача",

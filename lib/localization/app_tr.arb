@@ -8,6 +8,8 @@
   "appUpdateIsAvailable": "Uygulama güncellemesi mevcut",
   "audioFileType": "Ses Dosyası Uzantısı",
   "audioFileTypeMsg": "Ses Dosyası Türü değiştirildi",
+  "audioQuality": "Audio quality",
+  "audioQualityMsg": "Audio quality has been changed",
   "backedupSuccess": "Başarıyla Yedeklendi",
   "backupError": "Veri yedekleme sırasında hata oluştu",
   "backupUserData": "Kullanıcı verilerini yedekle",

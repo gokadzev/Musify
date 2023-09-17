@@ -8,6 +8,8 @@
   "appUpdateIsAvailable": "Đã có bản cập nhật ứng dụng",
   "audioFileType": "Định dạng tệp âm thanh",
   "audioFileTypeMsg": "Loại tệp âm thanh đã được thay đổi",
+  "audioQuality": "Audio quality",
+  "audioQualityMsg": "Audio quality has been changed",
   "backedupSuccess": "Sao lưu thành công",
   "backupError": "Lỗi khi sao lưu dữ liệu",
   "backupUserData": "Sao lưu dữ liệu người dùng",

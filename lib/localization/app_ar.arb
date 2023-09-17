@@ -8,6 +8,8 @@
   "appUpdateIsAvailable": "تحديث التطبيق متاح",
   "audioFileType": "ملحق ملف الصوت",
   "audioFileTypeMsg": "تم تغيير نوع ملف الصوت",
+  "audioQuality": "Audio quality",
+  "audioQualityMsg": "Audio quality has been changed",
   "backedupSuccess": "تم النسخ الاحتياطي بنجاح",
   "backupError": "خطأ أثناء النسخ الاحتياطي للبيانات",
   "backupUserData": "نسخ إحتياطي لبيانات المستخدم",

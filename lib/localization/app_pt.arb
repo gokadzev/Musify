@@ -8,6 +8,8 @@
   "appUpdateIsAvailable": "A atualização do aplicativo está disponível",
   "audioFileType": "Extensão do arquivo de áudio",
   "audioFileTypeMsg": "A extensão do arquivo de áudio foi alterado",
+  "audioQuality": "Audio quality",
+  "audioQualityMsg": "Audio quality has been changed",
   "backedupSuccess": "Backup realizado com sucesso",
   "backupError": "Erro ao fazer backup dos dados",
   "backupUserData": "Fazer backup dos dados",
