@@ -165,10 +165,10 @@ packages:
     dependency: "direct main"
     description:
       name: dynamic_color
-      sha256: de4798a7069121aee12d5895315680258415de9b00e717723a1bd73d58f0126d
+      sha256: "96bff3df72e3d428bda2b874c7a521e8c86f592cae626ea594922fcc8d166e0c"
       url: "https://pub.dev"
     source: hosted
-    version: "1.6.6"
+    version: "1.6.7"
   fake_async:
     dependency: transitive
     description:
@@ -205,10 +205,10 @@ packages:
     dependency: "direct main"
     description:
       name: fluentui_system_icons
-      sha256: "7637cab80bd8d1ba762144cd85df79a7318c12ed5a66d166a9e4acbf24a4c412"
+      sha256: "88d7fc325d500a4d22ab23ffa5dde493fe840e24e36c23a3eb57d8f6fc5c11b8"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.214"
+    version: "1.1.215"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -289,10 +289,10 @@ packages:
     dependency: "direct main"
     description:
       name: google_fonts
-      sha256: e20ff62b158b96f392bfc8afe29dee1503c94fbea2cbe8186fd59b756b8ae982
+      sha256: "0833bfcc1c32560ee51d381fcf1d6d6b35921e89afe852c12f83dc8c00b2e6bc"
       url: "https://pub.dev"
     source: hosted
-    version: "5.1.0"
+    version: "6.0.0"
   hive:
     dependency: "direct main"
     description:
