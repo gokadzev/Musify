@@ -13,6 +13,7 @@ import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/logger_service.dart';
 import 'package:musify/services/lyrics_manager.dart';
+import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/formatter.dart';
 import 'package:musify/utilities/mediaitem.dart';
@@ -400,9 +401,21 @@ Future<AudioOnlyStreamInfo> getSongManifest(String songId) async {
 
 Future<String> getSong(String songId, bool isLive, AudioQuality quality) async {
   try {
+    final cacheKey = 'song_${songId}_${audioQualitySetting.value}_url';
+    final cachedUrl = await getData(
+      'cache',
+      cacheKey,
+      cachingDuration: const Duration(hours: 12),
+    );
+
+    if (cachedUrl != null) {
+      return cachedUrl;
+    }
+
     if (isLive) {
       final streamInfo =
           await yt.videos.streamsClient.getHttpLiveStreamUrl(VideoId(songId));
+
       return streamInfo;
     } else {
       final manifest = await yt.videos.streamsClient.getManifest(songId);
@@ -426,6 +439,13 @@ Future<String> getSong(String songId, bool isLive, AudioQuality quality) async {
           songId,
         ),
       ); // It's better if we save only normal audios in "Recently played" and not live ones
+
+      addOrUpdateData(
+        'cache',
+        cacheKey,
+        audioStream.url.toString(),
+      );
+
       return audioStream.url.toString();
     }
   } catch (e) {
