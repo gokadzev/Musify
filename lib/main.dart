@@ -22,6 +22,7 @@ import 'package:musify/utilities/formatter.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
 late MusifyAudioHandler audioHandler;
+final logger = Logger();
 
 ThemeMode themeMode = ThemeMode.dark;
 var isFdroidBuild = false;
@@ -137,11 +138,11 @@ class _MyAppState extends State<MyApp> {
 
           await audioHandler.playSong(song);
         } catch (e) {
-          Logger.log('Error: $e');
+          logger.log('Error: $e');
         }
       },
       onError: (err) {
-        Logger.log('getLinkStream error: $err');
+        logger.log('getLinkStream error: $err');
       },
     );
 

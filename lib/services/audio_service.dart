@@ -4,9 +4,9 @@ import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:musify/API/musify.dart';
+import 'package:musify/main.dart';
 import 'package:musify/models/position_data.dart';
 import 'package:musify/services/data_manager.dart';
-import 'package:musify/services/logger_service.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/mediaitem.dart';
 import 'package:rxdart/rxdart.dart';
@@ -30,7 +30,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
     try {
       audioPlayer.setAudioSource(_playlist);
     } catch (e) {
-      Logger.log('Error in setNewPlaylist: $e');
+      logger.log('Error in setNewPlaylist: $e');
     }
 
     _initialize();
@@ -161,7 +161,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
         }
       });
     } catch (e) {
-      Logger.log('Error initializing audio session: $e');
+      logger.log('Error initializing audio session: $e');
     }
   }
 
@@ -201,7 +201,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       await checkIfSponsorBlockIsAvailable(song, songUrl);
       await audioPlayer.play();
     } catch (e) {
-      Logger.log('Error playing song: $e');
+      logger.log('Error playing song: $e');
     }
   }
 
@@ -294,7 +294,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       }
       await audioPlayer.setAudioSource(_audioSource);
     } catch (e) {
-      Logger.log('Error checking sponsor block: $e');
+      logger.log('Error checking sponsor block: $e');
     }
   }
 

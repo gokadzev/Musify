@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:musify/API/version.dart';
 import 'package:musify/extensions/l10n.dart';
-import 'package:musify/services/logger_service.dart';
+import 'package:musify/main.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 
 const String checkUrl =
@@ -39,12 +39,12 @@ Future<void> checkAppUpdates(
         }
       }
     } else {
-      Logger.log(
+      logger.log(
         'Fetch update API call returned status code ${response.statusCode}',
       );
     }
   } catch (e) {
-    Logger.log('Error in checkAppUpdates: $e');
+    logger.log('Error in checkAppUpdates: $e');
   }
 }
 
@@ -58,7 +58,7 @@ Future<void> downloadAppUpdates(Map<String, dynamic> map) async {
     await FileDownloader().download(task);
     await FileDownloader().moveToSharedStorage(task, SharedStorage.downloads);
   } catch (e) {
-    Logger.log('Error in downloadAppUpdates: $e');
+    logger.log('Error in downloadAppUpdates: $e');
   }
 }
 
