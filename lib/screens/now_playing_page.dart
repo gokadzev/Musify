@@ -266,10 +266,10 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                           builder: (_, value, __) {
                             return IconButton(
                               icon: Icon(
-                                FluentIcons.arrow_shuffle_24_filled,
-                                color: value
-                                    ? colorScheme.primary
-                                    : colorScheme.primary,
+                                value
+                                    ? FluentIcons.arrow_shuffle_24_filled
+                                    : FluentIcons.arrow_shuffle_off_24_filled,
+                                color: colorScheme.primary,
                               ),
                               iconSize: constraints.maxWidth * 0.05,
                               onPressed: () => audioHandler.setShuffleMode(
@@ -350,20 +350,26 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                           },
                           splashColor: Colors.transparent,
                         ),
-                        IconButton(
-                          icon: Icon(
-                            FluentIcons.arrow_repeat_1_24_filled,
-                            color: repeatNotifier.value
-                                ? colorScheme.primary
-                                : colorScheme.primary,
-                          ),
-                          iconSize: constraints.maxWidth * 0.05,
-                          onPressed: () => audioHandler.setRepeatMode(
-                            repeatNotifier.value
-                                ? AudioServiceRepeatMode.none
-                                : AudioServiceRepeatMode.all,
-                          ),
-                          splashColor: Colors.transparent,
+                        ValueListenableBuilder<bool>(
+                          valueListenable: repeatNotifier,
+                          builder: (_, value, __) {
+                            return IconButton(
+                              icon: Icon(
+                                value
+                                    ? FluentIcons.arrow_repeat_1_24_filled
+                                    : FluentIcons
+                                        .arrow_repeat_all_off_24_filled,
+                                color: colorScheme.primary,
+                              ),
+                              iconSize: constraints.maxWidth * 0.05,
+                              onPressed: () => audioHandler.setRepeatMode(
+                                value
+                                    ? AudioServiceRepeatMode.none
+                                    : AudioServiceRepeatMode.all,
+                              ),
+                              splashColor: Colors.transparent,
+                            );
+                          },
                         ),
                         Column(
                           children: [
