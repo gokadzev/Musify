@@ -48,16 +48,9 @@ int id = 0;
 
 Future<List> fetchSongsList(String searchQuery) async {
   try {
-    final List list = await yt.search.search(searchQuery);
-    final searchedList = [
-      for (final s in list)
-        returnSongLayout(
-          0,
-          s,
-        ),
-    ];
+    final List<Video> searchResults = await yt.search.search(searchQuery);
 
-    return searchedList;
+    return searchResults.map((video) => returnSongLayout(0, video)).toList();
   } catch (e) {
     logger.log('Error in fetchSongsList: $e');
     return [];
