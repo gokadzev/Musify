@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:background_downloader/background_downloader.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:musify/API/version.dart';
@@ -59,11 +58,7 @@ Future<void> downloadAppUpdates() async {
     final dlUrl = await getCPUArchitecture() == 'aarch64'
         ? map['arm64url'].toString()
         : map['url'].toString();
-    final dlPath = await FilePicker.platform.getDirectoryPath();
-    final file = File('$dlPath/Musify.apk');
-    if (await file.exists()) {
-      await file.delete();
-    }
+
     final task = DownloadTask(
       url: dlUrl,
       filename: 'Musify.apk',
