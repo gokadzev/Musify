@@ -134,31 +134,35 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   Future<void> _initialize() async {
     final session = await AudioSession.instance;
-    await session.configure(const AudioSessionConfiguration.music());
-    session.interruptionEventStream.listen((event) async {
-      if (event.begin) {
-        switch (event.type) {
-          case AudioInterruptionType.duck:
-            await audioPlayer.setVolume(0.5);
-            break;
-          case AudioInterruptionType.pause:
-          case AudioInterruptionType.unknown:
-            await audioPlayer.pause();
-            break;
+    try {
+      await session.configure(const AudioSessionConfiguration.music());
+      session.interruptionEventStream.listen((event) async {
+        if (event.begin) {
+          switch (event.type) {
+            case AudioInterruptionType.duck:
+              await audioPlayer.setVolume(0.5);
+              break;
+            case AudioInterruptionType.pause:
+            case AudioInterruptionType.unknown:
+              await audioPlayer.pause();
+              break;
+          }
+        } else {
+          switch (event.type) {
+            case AudioInterruptionType.duck:
+              await audioPlayer.setVolume(1);
+              break;
+            case AudioInterruptionType.pause:
+              await audioPlayer.play();
+              break;
+            case AudioInterruptionType.unknown:
+              break;
+          }
         }
-      } else {
-        switch (event.type) {
-          case AudioInterruptionType.duck:
-            await audioPlayer.setVolume(1);
-            break;
-          case AudioInterruptionType.pause:
-            await audioPlayer.play();
-            break;
-          case AudioInterruptionType.unknown:
-            break;
-        }
-      }
-    });
+      });
+    } catch (e) {
+      Logger.log('Error initializing audio session: $e');
+    }
   }
 
   @override
@@ -258,36 +262,40 @@ class MusifyAudioHandler extends BaseAudioHandler {
   }
 
   Future<void> checkIfSponsorBlockIsAvailable(song, songUrl) async {
-    final _audioSource = AudioSource.uri(
-      Uri.parse(songUrl),
-      tag: mapToMediaItem(song, songUrl),
-    );
-    if (sponsorBlockSupport.value) {
-      final segments = await getSkipSegments(song['ytid']);
-      if (segments.isNotEmpty) {
-        if (segments.length == 1) {
-          await audioPlayer.setAudioSource(
-            ClippingAudioSource(
-              child: _audioSource,
-              start: Duration(seconds: segments[0]['end']!),
-              tag: _audioSource.tag,
-            ),
-          );
-          return;
-        } else {
-          await audioPlayer.setAudioSource(
-            ClippingAudioSource(
-              child: _audioSource,
-              start: Duration(seconds: segments[0]['end']!),
-              end: Duration(seconds: segments[1]['start']!),
-              tag: _audioSource.tag,
-            ),
-          );
-          return;
+    try {
+      final _audioSource = AudioSource.uri(
+        Uri.parse(songUrl),
+        tag: mapToMediaItem(song, songUrl),
+      );
+      if (sponsorBlockSupport.value) {
+        final segments = await getSkipSegments(song['ytid']);
+        if (segments.isNotEmpty) {
+          if (segments.length == 1) {
+            await audioPlayer.setAudioSource(
+              ClippingAudioSource(
+                child: _audioSource,
+                start: Duration(seconds: segments[0]['end']!),
+                tag: _audioSource.tag,
+              ),
+            );
+            return;
+          } else {
+            await audioPlayer.setAudioSource(
+              ClippingAudioSource(
+                child: _audioSource,
+                start: Duration(seconds: segments[0]['end']!),
+                end: Duration(seconds: segments[1]['start']!),
+                tag: _audioSource.tag,
+              ),
+            );
+            return;
+          }
         }
       }
+      await audioPlayer.setAudioSource(_audioSource);
+    } catch (e) {
+      Logger.log('Error checking sponsor block: $e');
     }
-    await audioPlayer.setAudioSource(_audioSource);
   }
 
   void changeSponsorBlockStatus() {
