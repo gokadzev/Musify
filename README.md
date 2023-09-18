@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-    Unlock Music's Full Potential: Stream, Download, and Play with Ease, All in One App!
+    Unlock Music's Full Potential: Stream and Download with Ease, All in One App!
 </p>
 
 <p align="center">
@@ -26,7 +26,6 @@
     Download Support :arrow_down:<br>
     Import & Export Your Data And Never Lose It :floppy_disk:<br>
     Add Custom Playlists With Link :cool:<br>
-    Play Local / Downloaded Songs Support :open_file_folder: <br>
     High Quality mp3 / m4a / flac Format :fire:<br>
     Lyrics Support :pencil:<br>
     No Ads :no_entry_sign:<br>

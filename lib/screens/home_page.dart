@@ -6,7 +6,6 @@ import 'package:musify/extensions/l10n.dart';
 import 'package:musify/extensions/screen_size.dart';
 import 'package:musify/screens/artist_page.dart';
 import 'package:musify/screens/playlists_page.dart';
-import 'package:musify/services/offline_audio.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/widgets/artist_cube.dart';
 import 'package:musify/widgets/delayed_display.dart';
@@ -14,7 +13,6 @@ import 'package:musify/widgets/marque.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/spinner.dart';
-import 'package:on_audio_query/on_audio_query.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -113,93 +111,9 @@ class _HomePageState extends State<HomePage> {
               },
             ),
             FutureBuilder(
-              future: getRandomArtists(),
-              builder: (context, AsyncSnapshot<List<ArtistModel>> data) {
-                final calculatedSize = context.screenSize.height * 0.25;
-
-                if (data.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(35),
-                      child: Spinner(),
-                    ),
-                  );
-                } else if (data.hasData && data.data!.isNotEmpty) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          top: 16,
-                          bottom: 10,
-                          left: 20,
-                          right: 20,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            SizedBox(
-                              width: context.screenSize.width / 1.4,
-                              child: MarqueeWidget(
-                                child: Text(
-                                  context.l10n()!.suggestedArtists,
-                                  style: TextStyle(
-                                    color: colorScheme.primary,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: calculatedSize,
-                        child: ListView.separated(
-                          padding: const EdgeInsets.symmetric(horizontal: 15),
-                          scrollDirection: Axis.horizontal,
-                          separatorBuilder: (_, __) =>
-                              const SizedBox(width: 15),
-                          itemCount: data.data!.length,
-                          itemBuilder: (context, index) {
-                            final artist =
-                                data.data![index].artist.split('~')[0];
-                            return DelayedDisplay(
-                              delay: const Duration(milliseconds: 200),
-                              fadingDuration: const Duration(milliseconds: 400),
-                              child: GestureDetector(
-                                onTap: () {
-                                  getMusic(searchQuery: artist).then((songs) {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => ArtistPage(
-                                          playlist: {
-                                            'title': artist,
-                                            'list': songs,
-                                          },
-                                        ),
-                                      ),
-                                    );
-                                  });
-                                },
-                                child: ArtistCube(artist),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  );
-                } else {
-                  return const SizedBox.shrink();
-                }
-              },
-            ),
-            FutureBuilder(
               future: getRecommendedSongs(),
               builder: (context, AsyncSnapshot<dynamic> snapshot) {
+                final calculatedSize = context.screenSize.height * 0.25;
                 switch (snapshot.connectionState) {
                   case ConnectionState.waiting:
                     return const Center(
@@ -225,6 +139,73 @@ class _HomePageState extends State<HomePage> {
                     }
                     return Wrap(
                       children: <Widget>[
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                top: 16,
+                                bottom: 10,
+                                left: 20,
+                                right: 20,
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  SizedBox(
+                                    width: context.screenSize.width / 1.4,
+                                    child: MarqueeWidget(
+                                      child: Text(
+                                        context.l10n()!.suggestedArtists,
+                                        style: TextStyle(
+                                          color: colorScheme.primary,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              height: calculatedSize,
+                              child: ListView.separated(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 15),
+                                scrollDirection: Axis.horizontal,
+                                separatorBuilder: (_, __) =>
+                                    const SizedBox(width: 15),
+                                itemCount: 5,
+                                itemBuilder: (context, index) {
+                                  final artist = snapshot.data[index]['artist']
+                                      .split('~')[0];
+                                  return DelayedDisplay(
+                                    delay: const Duration(milliseconds: 200),
+                                    fadingDuration:
+                                        const Duration(milliseconds: 400),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => ArtistPage(
+                                              playlist: {
+                                                'title': artist,
+                                              },
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: ArtistCube(artist),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
                         Padding(
                           padding: EdgeInsets.only(
                             top: context.screenSize.height / 55,

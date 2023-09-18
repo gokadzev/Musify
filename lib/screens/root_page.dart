@@ -13,7 +13,6 @@ import 'package:musify/services/router_service.dart';
 import 'package:musify/services/update_manager.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/widgets/custom_animated_bottom_bar.dart';
-import 'package:on_audio_query/on_audio_query.dart' hide context;
 
 class Musify extends StatefulWidget {
   @override
@@ -139,27 +138,17 @@ class _MusifyState extends State<Musify> {
                         bottom: 7,
                         right: 15,
                       ),
-                      child: metadata.extras['localSongId'] is int
-                          ? QueryArtworkWidget(
-                              id: metadata.extras['localSongId'] as int,
-                              type: ArtworkType.AUDIO,
-                              artworkBorder: BorderRadius.circular(8),
-                              artworkWidth: 55,
-                              artworkHeight: 55,
-                              keepOldArtwork: true,
-                              nullArtworkWidget: _buildNullArtworkWidget(),
-                            )
-                          : ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: CachedNetworkImage(
-                                imageUrl: metadata!.artUri.toString(),
-                                fit: BoxFit.cover,
-                                width: 55,
-                                height: 55,
-                                errorWidget: (context, url, error) =>
-                                    _buildNullArtworkWidget(),
-                              ),
-                            ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: CachedNetworkImage(
+                          imageUrl: metadata!.artUri.toString(),
+                          fit: BoxFit.cover,
+                          width: 55,
+                          height: 55,
+                          errorWidget: (context, url, error) =>
+                              _buildNullArtworkWidget(),
+                        ),
+                      ),
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

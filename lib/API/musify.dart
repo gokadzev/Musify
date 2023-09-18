@@ -7,14 +7,12 @@ import 'package:flutter/widgets.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:musify/extensions/l10n.dart';
-import 'package:musify/models/custom_audio_model.dart';
 import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/logger_service.dart';
 import 'package:musify/services/lyrics_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/formatter.dart';
-import 'package:musify/utilities/mediaitem.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 final yt = YoutubeExplode();
@@ -345,23 +343,10 @@ int findPlaylistIndexByYtId(String ytid) {
 }
 
 Future<void> setActivePlaylist(Map info) async {
-  final plist = info['list'] as List;
   activePlaylist = info;
   id = 0;
 
-  if (plist is List<AudioModelWithArtwork>) {
-    activePlaylist['list'] = [];
-    final activeTempPlaylist = plist
-        .map((song) => createAudioSource(songModelToMediaItem(song, song.data)))
-        .toList();
-
-    await addSongs(activeTempPlaylist);
-    await setNewPlaylist();
-
-    await audioPlayer.play();
-  } else {
-    await playSong(activePlaylist['list'][id]);
-  }
+  await playSong(activePlaylist['list'][id]);
 }
 
 Future<Map<String, dynamic>?> getPlaylistInfoForWidget(dynamic id) async {

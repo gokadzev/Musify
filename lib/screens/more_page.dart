@@ -4,7 +4,6 @@ import 'package:musify/API/version.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/screens/about_page.dart';
-import 'package:musify/screens/local_music_page.dart';
 import 'package:musify/screens/playlists_page.dart';
 import 'package:musify/screens/recently_played_page.dart';
 import 'package:musify/screens/search_page.dart';
@@ -97,17 +96,6 @@ class SettingsCards extends StatelessWidget {
               MaterialPageRoute(
                 builder: (context) => UserLikedPlaylistsPage(),
               ),
-            ),
-          },
-        ),
-
-        SettingBar(
-          context.l10n()!.localMusic,
-          FluentIcons.arrow_download_24_filled,
-          () => {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => LocalMusicPage()),
             ),
           },
         ),

@@ -333,14 +333,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.2"
-  id3:
-    dependency: transitive
-    description:
-      name: id3
-      sha256: "24176a6e08db6297c8450079e94569cd8387f913c817e5e3d862be7dc191e0b8"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.2"
   image:
     dependency: transitive
     description:
@@ -445,34 +437,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.2"
-  on_audio_query:
-    dependency: "direct main"
-    description:
-      path: "packages/on_audio_query/on_audio_query"
-      relative: true
-    source: path
-    version: "3.0.0-beta.0"
-  on_audio_query_android:
-    dependency: transitive
-    description:
-      path: "packages/on_audio_query/on_audio_query_android"
-      relative: true
-    source: path
-    version: "1.0.0-prerelease.0"
-  on_audio_query_ios:
-    dependency: transitive
-    description:
-      path: "packages/on_audio_query/on_audio_query_ios"
-      relative: true
-    source: path
-    version: "1.0.0-prerelease.0"
-  on_audio_query_platform_interface:
-    dependency: transitive
-    description:
-      path: "packages/on_audio_query/on_audio_query_platform_interface"
-      relative: true
-    source: path
-    version: "2.0.0-beta.0"
   path:
     dependency: "direct main"
     description:

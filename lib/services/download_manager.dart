@@ -7,8 +7,8 @@ import 'package:musify/extensions/l10n.dart';
 import 'package:musify/services/logger_service.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
-import 'package:on_audio_query/on_audio_query.dart';
 import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 final supportedFolderNames = ['Music', 'Documents', 'Downloads'];

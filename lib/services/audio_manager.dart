@@ -7,7 +7,6 @@ import 'package:just_audio/just_audio.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/logger_service.dart';
-import 'package:musify/services/offline_audio.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/mediaitem.dart';
 import 'package:rxdart/rxdart.dart';
@@ -38,11 +37,6 @@ final playerState = ValueNotifier<PlayerState>(audioPlayer.playerState);
 final _playlist = ConcatenatingAudioSource(children: []);
 final Random _random = Random();
 
-bool get currentModeIsLocal {
-  final tag = audioPlayer.sequenceState?.currentSource?.tag;
-  return tag?.extras?['localSongId'] is int;
-}
-
 bool get hasNext {
   if (activePlaylist['list'].isEmpty) {
     return audioPlayer.hasNext;
@@ -67,48 +61,26 @@ Future<void> playSong(Map song) async {
   }
 }
 
-Future<void> playLocalSong(int index) async {
-  if (!currentModeIsLocal) {
-    await _playlist.clear();
-    await moveAudiosToQueue();
-    await setNewPlaylist();
-  }
-
-  if (index < 0 || index >= _playlist.children.length) return;
-
-  await audioHandler.skipToQueueItem(index);
-
-  await audioPlayer.play();
-}
-
 Future<void> playNext() async {
-  if (currentModeIsLocal) {
-    await audioPlayer.seekToNext();
+  if (shuffleNotifier.value) {
+    final randomIndex = _generateRandomIndex(activePlaylist['list'].length);
+    id = randomIndex;
+    await playSong(activePlaylist['list'][id]);
   } else {
-    if (shuffleNotifier.value) {
-      final randomIndex = _generateRandomIndex(activePlaylist['list'].length);
-      id = randomIndex;
-      await playSong(activePlaylist['list'][id]);
-    } else {
-      id++;
-      await playSong(activePlaylist['list'][id]);
-    }
+    id++;
+    await playSong(activePlaylist['list'][id]);
   }
 }
 
 Future<void> playPrevious() async {
-  if (currentModeIsLocal) {
-    await audioPlayer.seekToPrevious();
-  } else {
-    if (shuffleNotifier.value) {
-      final randomIndex = _generateRandomIndex(activePlaylist['list'].length);
+  if (shuffleNotifier.value) {
+    final randomIndex = _generateRandomIndex(activePlaylist['list'].length);
 
-      id = randomIndex;
-      await playSong(activePlaylist['list'][id]);
-    } else {
-      id--;
-      await playSong(activePlaylist['list'][id]);
-    }
+    id = randomIndex;
+    await playSong(activePlaylist['list'][id]);
+  } else {
+    id--;
+    await playSong(activePlaylist['list'][id]);
   }
 }
 
