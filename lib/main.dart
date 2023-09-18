@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
-import 'package:audio_session/audio_session.dart';
 import 'package:background_downloader/background_downloader.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/foundation.dart';
@@ -14,7 +13,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/screens/root_page.dart';
-import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/audio_service.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/logger_service.dart';
@@ -23,7 +21,8 @@ import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/formatter.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
-bool _interrupted = false;
+late MusifyAudioHandler audioHandler;
+
 ThemeMode themeMode = ThemeMode.dark;
 var isFdroidBuild = false;
 
@@ -136,7 +135,7 @@ class _MyAppState extends State<MyApp> {
         try {
           final song = await getSongDetails(0, songId);
 
-          await playSong(song);
+          await audioHandler.playSong(song);
         } catch (e) {
           Logger.log('Error: $e');
         }
@@ -214,7 +213,7 @@ Future<void> initialisation() async {
   await FlutterDisplayMode.setHighRefreshRate();
 
   audioHandler = await AudioService.init(
-    builder: MyAudioHandler.new,
+    builder: MusifyAudioHandler.new,
     config: const AudioServiceConfig(
       androidNotificationChannelId: 'com.gokadzev.musify',
       androidNotificationChannelName: 'Musify',
@@ -222,31 +221,6 @@ Future<void> initialisation() async {
       androidShowNotificationBadge: true,
     ),
   );
-
-  final session = await AudioSession.instance;
-  await session.configure(const AudioSessionConfiguration.music());
-  session.interruptionEventStream.listen((event) {
-    if (event.begin) {
-      if (audioPlayer.playing) {
-        audioHandler.pause();
-        _interrupted = true;
-      }
-    } else {
-      switch (event.type) {
-        case AudioInterruptionType.pause:
-        case AudioInterruptionType.duck:
-          if (!audioPlayer.playing && _interrupted) {
-            audioHandler.play();
-          }
-          break;
-        case AudioInterruptionType.unknown:
-          break;
-      }
-      _interrupted = false;
-    }
-  });
-  activateListeners();
-  await enableBooster();
 
   FileDownloader().configureNotification(
     running: const TaskNotification('Downloading', 'file: {filename}'),

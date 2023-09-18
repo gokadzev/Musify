@@ -154,7 +154,6 @@ You can see frequently asked questions and their answers [here](https://github.c
 - [http](https://pub.dev/packages/http): A package for making HTTP requests in Flutter.
 - [intl](https://pub.dev/packages/intl): Internationalization and localization support for Flutter.
 - [just_audio](https://pub.dev/packages/just_audio): A Flutter plugin for audio playback.
-- [on_audio_query](https://github.com/LucJosin/on_audio_query): Flutter Plugin used to query audios/songs infos (title, artist, album, etc..) from device storage.
 - [path](https://pub.dev/packages/path): A package for working with file system paths in Dart.
 - [path_provider](https://pub.dev/packages/path_provider): A Flutter plugin for getting the application's directories and paths.
 - [permission_handler](https://pub.dev/packages/permission_handler): A Flutter plugin for requesting permissions.

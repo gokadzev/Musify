@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
-import 'package:musify/services/audio_manager.dart';
+import 'package:musify/main.dart';
 import 'package:musify/services/download_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/formatter.dart';
@@ -27,7 +27,7 @@ class SongBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () {
-        playSong(song);
+        audioHandler.playSong(song);
         if (activePlaylist.isNotEmpty && clearPlaylist) {
           activePlaylist = {
             'ytid': '',

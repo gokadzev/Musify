@@ -2,11 +2,11 @@ import 'package:audio_service/audio_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/extensions/screen_size.dart';
-import 'package:musify/services/audio_manager.dart';
+import 'package:musify/main.dart';
+import 'package:musify/models/position_data.dart';
 import 'package:musify/services/download_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/style/app_themes.dart';
@@ -48,105 +48,105 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
         ),
       ),
       body: SingleChildScrollView(
-        child: StreamBuilder<SequenceState?>(
-          stream: audioPlayer.sequenceStateStream,
+        child: StreamBuilder<MediaItem?>(
+          stream: audioHandler.mediaItem,
           builder: (context, snapshot) {
-            final state = snapshot.data;
-            if (state?.sequence.isEmpty ?? true) {
+            final metadata = snapshot.data;
+            if (metadata == null) {
               return const SizedBox();
-            }
-            final metadata = state!.currentSource!.tag;
-            final songLikeStatus = ValueNotifier<bool>(
-              isSongAlreadyLiked(metadata.extras['ytid']),
-            );
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                FractionallySizedBox(
-                  widthFactor: 0.80,
-                  child: AspectRatio(
-                    aspectRatio: 1,
-                    child: CachedNetworkImage(
-                      imageUrl: metadata.artUri.toString(),
-                      imageBuilder: (context, imageProvider) => DecoratedBox(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          image: DecorationImage(
-                            image: imageProvider,
-                            fit: BoxFit.cover,
+            } else {
+              final songLikeStatus = ValueNotifier<bool>(
+                isSongAlreadyLiked(metadata.extras?['ytid']),
+              );
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  FractionallySizedBox(
+                    widthFactor: 0.80,
+                    child: AspectRatio(
+                      aspectRatio: 1,
+                      child: CachedNetworkImage(
+                        imageUrl: metadata.artUri.toString(),
+                        imageBuilder: (context, imageProvider) => DecoratedBox(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            image: DecorationImage(
+                              image: imageProvider,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        placeholder: (context, url) => const Spinner(),
+                        errorWidget: (context, url, error) => DecoratedBox(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: const Color.fromARGB(30, 255, 255, 255),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Icon(
+                                FluentIcons.music_note_1_24_regular,
+                                size: size.width / 8,
+                                color: colorScheme.primary,
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                      placeholder: (context, url) => const Spinner(),
-                      errorWidget: (context, url, error) => DecoratedBox(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: const Color.fromARGB(30, 255, 255, 255),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Icon(
-                              FluentIcons.music_note_1_24_regular,
-                              size: size.width / 8,
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(
+                      top: size.height * 0.03,
+                      left: 20,
+                      right: 20,
+                    ),
+                    child: Column(
+                      children: <Widget>[
+                        MarqueeWidget(
+                          backDuration: const Duration(seconds: 1),
+                          child: Text(
+                            metadata.title,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: size.height * 0.030,
+                              fontWeight: FontWeight.w700,
                               color: colorScheme.primary,
                             ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(
-                    top: size.height * 0.03,
-                    left: 20,
-                    right: 20,
-                  ),
-                  child: Column(
-                    children: <Widget>[
-                      MarqueeWidget(
-                        backDuration: const Duration(seconds: 1),
-                        child: Text(
-                          metadata!.title,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: size.height * 0.030,
-                            fontWeight: FontWeight.w700,
-                            color: colorScheme.primary,
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 4),
-                      MarqueeWidget(
-                        backDuration: const Duration(seconds: 1),
-                        child: Text(
-                          '${metadata!.artist}',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: size.height * 0.018,
-                            fontWeight: FontWeight.w500,
+                        const SizedBox(height: 4),
+                        MarqueeWidget(
+                          backDuration: const Duration(seconds: 1),
+                          child: Text(
+                            '${metadata.artist}',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: size.height * 0.018,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-                if (metadata.extras['isLive'] != null &&
-                    metadata.extras['isLive'])
-                  const SizedBox()
-                else
-                  Material(
-                    child: _buildPlayer(
-                      size,
-                      songLikeStatus,
-                      metadata.extras['ytid'],
-                      metadata,
+                      ],
                     ),
                   ),
-              ],
-            );
+                  if (metadata.extras?['isLive'] != null &&
+                      metadata.extras?['isLive'])
+                    const SizedBox()
+                  else
+                    Material(
+                      child: _buildPlayer(
+                        size,
+                        songLikeStatus,
+                        metadata.extras?['ytid'],
+                        metadata,
+                      ),
+                    ),
+                ],
+              );
+            }
           },
         ),
       ),
@@ -169,7 +169,7 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           StreamBuilder<PositionData>(
-            stream: positionDataStream,
+            stream: audioHandler.positionDataStream,
             builder: (context, snapshot) {
               final positionData = snapshot.data;
               if (positionData == null) return const SizedBox.shrink();
@@ -188,11 +188,9 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                     inactiveColor: Colors.green[50],
                     value: positionData.position.inMilliseconds.toDouble(),
                     onChanged: (value) {
-                      setState(() {
-                        audioPlayer.seek(Duration(milliseconds: value.round()));
-                      });
+                      audioHandler.seek(Duration(milliseconds: value.toInt()));
                     },
-                    max: positionData.duration.inMilliseconds.toDouble(),
+                    max: positionData.duration.inMilliseconds.toDouble() + 5000,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -256,7 +254,7 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                                     color: colorScheme.primary,
                                   ),
                                   iconSize: constraints.maxWidth * 0.05,
-                                  onPressed: mute,
+                                  onPressed: audioHandler.mute,
                                   splashColor: Colors.transparent,
                                 );
                               },
@@ -274,7 +272,11 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                                     : colorScheme.primary,
                               ),
                               iconSize: constraints.maxWidth * 0.05,
-                              onPressed: changeShuffleStatus,
+                              onPressed: () => audioHandler.setShuffleMode(
+                                value
+                                    ? AudioServiceShuffleMode.none
+                                    : AudioServiceShuffleMode.all,
+                              ),
                               splashColor: Colors.transparent,
                             );
                           },
@@ -282,18 +284,18 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                         IconButton(
                           icon: Icon(
                             FluentIcons.previous_24_filled,
-                            color: hasPrevious
+                            color: audioHandler.hasPrevious
                                 ? colorScheme.primary
                                 : colorScheme.primary.withOpacity(0.5),
                           ),
                           iconSize: constraints.maxWidth * 0.09,
                           onPressed: () async {
-                            await playPrevious();
+                            await audioHandler.skipToPrevious();
                           },
                           splashColor: Colors.transparent,
                         ),
-                        StreamBuilder<PlayerState>(
-                          stream: audioPlayer.playerStateStream,
+                        StreamBuilder<PlaybackState>(
+                          stream: audioHandler.playbackState,
                           builder: (context, snapshot) {
                             final playerState = snapshot.data;
                             if (playerState == null)
@@ -302,19 +304,33 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                             final processingState = playerState.processingState;
                             final playing = playerState.playing;
 
-                            if (processingState == ProcessingState.loading ||
-                                processingState == ProcessingState.buffering) {
-                              return const Spinner();
+                            IconData icon;
+                            VoidCallback? onPressed;
+
+                            if (processingState ==
+                                    AudioProcessingState.loading ||
+                                processingState ==
+                                    AudioProcessingState.buffering) {
+                              icon = FluentIcons.spinner_ios_20_filled;
+                              onPressed = null;
+                            } else if (!playing) {
+                              icon = FluentIcons.play_circle_48_filled;
+                              onPressed = audioHandler.play;
+                            } else if (processingState !=
+                                AudioProcessingState.completed) {
+                              icon = FluentIcons.pause_circle_48_filled;
+                              onPressed = audioHandler.pause;
+                            } else {
+                              icon = FluentIcons.replay_20_filled;
+                              onPressed = () => audioHandler.seek(
+                                    Duration.zero,
+                                  );
                             }
 
                             return GestureDetector(
-                              onTap: playing
-                                  ? audioPlayer.pause
-                                  : audioPlayer.play,
+                              onTap: onPressed,
                               child: Icon(
-                                playing
-                                    ? FluentIcons.pause_circle_48_filled
-                                    : FluentIcons.play_circle_48_filled,
+                                icon,
                                 color: colorScheme.primary,
                                 size: 60,
                               ),
@@ -324,13 +340,13 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                         IconButton(
                           icon: Icon(
                             FluentIcons.next_24_filled,
-                            color: hasNext
+                            color: audioHandler.hasNext
                                 ? colorScheme.primary
                                 : colorScheme.primary.withOpacity(0.5),
                           ),
                           iconSize: constraints.maxWidth * 0.09,
                           onPressed: () async {
-                            await playNext();
+                            await audioHandler.skipToNext();
                           },
                           splashColor: Colors.transparent,
                         ),
@@ -342,7 +358,11 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                                 : colorScheme.primary,
                           ),
                           iconSize: constraints.maxWidth * 0.05,
-                          onPressed: changeLoopStatus,
+                          onPressed: () => audioHandler.setRepeatMode(
+                            repeatNotifier.value
+                                ? AudioServiceRepeatMode.none
+                                : AudioServiceRepeatMode.all,
+                          ),
                           splashColor: Colors.transparent,
                         ),
                         Column(
@@ -382,7 +402,8 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                                   ),
                                   iconSize: constraints.maxWidth * 0.05,
                                   splashColor: Colors.transparent,
-                                  onPressed: changeAutoPlayNextStatus,
+                                  onPressed:
+                                      audioHandler.changeAutoPlayNextStatus,
                                 );
                               },
                             ),

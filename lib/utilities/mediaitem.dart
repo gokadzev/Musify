@@ -36,3 +36,14 @@ UriAudioSource createAudioSource(MediaItem mediaItem) => AudioSource.uri(
       Uri.parse(mediaItem.extras!['url'].toString()),
       tag: mediaItem,
     );
+
+List<UriAudioSource> createAudioSources(List<MediaItem> mediaItems) {
+  return mediaItems
+      .map(
+        (mediaItem) => AudioSource.uri(
+          Uri.parse(mediaItem.extras!['url'].toString()),
+          tag: mediaItem,
+        ),
+      )
+      .toList();
+}

@@ -7,7 +7,7 @@ import 'package:flutter/widgets.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:musify/extensions/l10n.dart';
-import 'package:musify/services/audio_manager.dart';
+import 'package:musify/main.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/logger_service.dart';
 import 'package:musify/services/lyrics_manager.dart';
@@ -346,7 +346,7 @@ Future<void> setActivePlaylist(Map info) async {
   activePlaylist = info;
   id = 0;
 
-  await playSong(activePlaylist['list'][id]);
+  await audioHandler.playSong(activePlaylist['list'][id]);
 }
 
 Future<Map<String, dynamic>?> getPlaylistInfoForWidget(dynamic id) async {
