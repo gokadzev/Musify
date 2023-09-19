@@ -521,50 +521,45 @@ class SettingsCards extends StatelessWidget {
                     width: MediaQuery.of(context).copyWith().size.width * 0.90,
                     child: Column(
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.all(25),
-                          child: Text(
-                            context.l10n()!.audioQuality,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                              color: colorScheme.primary,
-                            ),
-                          ),
-                        ),
                         Expanded(
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            physics: const BouncingScrollPhysics(),
-                            itemCount: availableQualities.length,
-                            itemBuilder: (context, index) {
-                              final quality = availableQualities[index];
-                              return Padding(
-                                padding: const EdgeInsets.all(10),
-                                child: Card(
-                                  child: ListTile(
-                                    title: Text(
-                                      quality.name,
+                          child: Center(
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              physics: const BouncingScrollPhysics(),
+                              itemCount: availableQualities.length,
+                              itemBuilder: (context, index) {
+                                final quality = availableQualities[index];
+                                return Padding(
+                                  padding: const EdgeInsets.all(10),
+                                  child: Card(
+                                    elevation:
+                                        audioQualitySetting.value == quality
+                                            ? 0
+                                            : 4,
+                                    child: ListTile(
+                                      title: Text(
+                                        quality.name,
+                                      ),
+                                      onTap: () {
+                                        addOrUpdateData(
+                                          'settings',
+                                          'audioQuality',
+                                          quality,
+                                        );
+
+                                        audioQualitySetting.value = quality;
+
+                                        showToast(
+                                          context,
+                                          context.l10n()!.audioQualityMsg,
+                                        );
+                                        Navigator.pop(context);
+                                      },
                                     ),
-                                    onTap: () {
-                                      addOrUpdateData(
-                                        'settings',
-                                        'audioQuality',
-                                        quality,
-                                      );
-
-                                      audioQualitySetting.value = quality;
-
-                                      showToast(
-                                        context,
-                                        context.l10n()!.audioQualityMsg,
-                                      );
-                                      Navigator.pop(context);
-                                    },
                                   ),
-                                ),
-                              );
-                            },
+                                );
+                              },
+                            ),
                           ),
                         ),
                       ],
