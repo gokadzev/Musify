@@ -1,0 +1,16 @@
+Bug fixes
+
+- Fixed repeat and shuffle buttons on now playing page
+- Fixed logger
+
+Enhancements
+
+- Optimized artist images
+- Reintroduced lyrics feature
+- Added quality selection option
+- Introduced custom user playlists [BETA]
+- Made various quality and performance improvements for app stability and speed
+
+Other
+
+- Removed local music feature (check EchoZ on GitHub)
