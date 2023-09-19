@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
+import 'package:musify/enums/quality_enum.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/data_manager.dart';
@@ -418,21 +419,45 @@ Future<AudioOnlyStreamInfo> getSongManifest(String songId) async {
   }
 }
 
-Future<String> getSong(String songId, bool isLive) async {
+Future<String> getSong(String songId, bool isLive, AudioQuality quality) async {
   try {
+    final cacheKey = 'song_${songId}_${quality.name}_url';
+
+    final cachedUrl = await getData(
+      'cache',
+      cacheKey,
+      cachingDuration: const Duration(hours: 12),
+    );
+
+    if (cachedUrl != null) {
+      return cachedUrl;
+    }
+
     if (isLive) {
       final streamInfo =
           await yt.videos.streamsClient.getHttpLiveStreamUrl(VideoId(songId));
       return streamInfo;
     } else {
       final manifest = await yt.videos.streamsClient.getManifest(songId);
-      final audioStream = manifest.audioOnly.withHighestBitrate();
-      unawaited(
-        updateRecentlyPlayed(
-          songId,
-        ),
-      ); // It's better if we save only normal audios in "Recently played" and not live ones
-      return audioStream.url.toString();
+      final availableSources = manifest.audioOnly.sortByBitrate();
+      AudioOnlyStreamInfo audioStream;
+      switch (quality) {
+        case AudioQuality.lowQuality:
+          audioStream = availableSources.last;
+          break;
+        case AudioQuality.mediumQuality:
+          audioStream = availableSources[availableSources.length ~/ 2];
+          break;
+        case AudioQuality.bestQuality:
+          audioStream = availableSources.first;
+          break;
+      }
+
+      unawaited(updateRecentlyPlayed(songId));
+
+      final audioUrl = audioStream.url.toString();
+      addOrUpdateData('cache', cacheKey, audioUrl);
+      return audioUrl;
     }
   } catch (e) {
     logger.log('Error while getting song streaming URL: $e');

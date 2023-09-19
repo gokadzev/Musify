@@ -8,6 +8,8 @@
   "appUpdateIsAvailable": "Υπάρχει διαθέσιμη ενημέρωση για την εφαρμογή",
   "audioFileType": "Επέκταση αρχείου ήχου",
   "audioFileTypeMsg": "Ο τύπος αρχείου ήχου άλλαξε",
+  "audioQuality": "Audio quality",
+  "audioQualityMsg": "Audio quality has been changed",
   "backedupSuccess": "Επιτυχής δημιουργία αντιγράφου ασφαλείας",
   "backupError": "Σφάλμα κατά τη δημιουργία αντιγράφου ασφαλείας δεδομένων",
   "backupUserData": "Δημιουργία αντιγράφων ασφαλείας δεδομένων χρήστη",

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:musify/enums/quality_enum.dart';
 
 // Preferences
 
@@ -21,6 +22,11 @@ final useSystemColor = ValueNotifier<bool>(
 
 final sponsorBlockSupport = ValueNotifier<bool>(
   Hive.box('settings').get('SponsorBlockSupport', defaultValue: false),
+);
+
+final audioQualitySetting = ValueNotifier<AudioQuality>(
+  Hive.box('settings')
+      .get('AudioQuality', defaultValue: AudioQuality.bestQuality),
 );
 
 // Non-Storage Notifiers

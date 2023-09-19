@@ -13,10 +13,15 @@ void addOrUpdateData(String category, dynamic key, dynamic value) async {
   }
 }
 
-Future getData(String category, dynamic key, {dynamic defaultValue}) async {
+Future getData(
+  String category,
+  dynamic key, {
+  dynamic defaultValue,
+  Duration cachingDuration = const Duration(days: 30),
+}) async {
   final _box = await _openBox(category);
   if (category == 'cache') {
-    final cacheIsValid = await isCacheValid(_box, key);
+    final cacheIsValid = await isCacheValid(_box, key, cachingDuration);
     if (!cacheIsValid) {
       deleteData(category, key);
       deleteData(category, '${key}_date');
@@ -36,11 +41,14 @@ void clearCache() async {
   await _cacheBox.clear();
 }
 
-Future<bool> isCacheValid(Box box, String key) async {
-  const maxAge = Duration(days: 30);
+Future<bool> isCacheValid(
+  Box box,
+  String key,
+  Duration cachingDuration,
+) async {
   final date = box.get('${key}_date', defaultValue: DateTime.now());
   final age = DateTime.now().difference(date);
-  return age < maxAge;
+  return age < cachingDuration;
 }
 
 Future<Box> _openBox(String category) async {
