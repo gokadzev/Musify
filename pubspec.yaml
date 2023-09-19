@@ -45,6 +45,7 @@ dev_dependencies:
   flutter_native_splash: ^2.3.2
   flutter_test:
     sdk: flutter
+  translations_cleaner: ^0.0.5
 
   # flutter_lints: ^2.0.0
 
