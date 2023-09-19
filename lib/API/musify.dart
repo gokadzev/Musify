@@ -21,6 +21,8 @@ final random = Random();
 
 List playlists = [];
 List userPlaylists = Hive.box('user').get('playlists', defaultValue: []);
+List userCustomPlaylists =
+    Hive.box('user').get('customPlaylists', defaultValue: []);
 List userLikedSongsList = Hive.box('user').get('likedSongs', defaultValue: []);
 List userLikedPlaylists =
     Hive.box('user').get('likedPlaylists', defaultValue: []);
@@ -79,7 +81,7 @@ Future<List> getRecommendedSongs() async {
 }
 
 Future<List<dynamic>> getUserPlaylists() async {
-  final playlistsByUser = [];
+  final playlistsByUser = [...userCustomPlaylists];
   for (final playlistID in userPlaylists) {
     final plist = await yt.playlists.get(playlistID);
     playlistsByUser.add({
@@ -102,6 +104,48 @@ String addUserPlaylist(String playlistId, BuildContext context) {
     userPlaylists.add(playlistId);
     addOrUpdateData('user', 'playlists', userPlaylists);
     return '${context.l10n()!.addedSuccess}!';
+  }
+}
+
+String createCustomPlaylist(
+  String playlistName,
+  String? image,
+  String? description,
+  BuildContext context,
+) {
+  final customPlaylist = {
+    'title': playlistName,
+    'isCustom': true,
+    if (image != null) 'image': image,
+    if (description != null) 'header_desc': description,
+    'list': [],
+  };
+  userCustomPlaylists.add(customPlaylist);
+  addOrUpdateData('user', 'customPlaylists', userCustomPlaylists);
+  return '${context.l10n()!.addedSuccess}!';
+}
+
+String addSongInCustomPlaylist(String playlistName, dynamic song) {
+  final customPlaylist = userCustomPlaylists.firstWhere(
+    (playlist) => playlist['title'] == playlistName,
+    orElse: () => null,
+  );
+
+  if (customPlaylist != null) {
+    final List<dynamic> playlistSongs = customPlaylist['list'];
+    playlistSongs.add(song);
+    addOrUpdateData('user', 'customPlaylists', userCustomPlaylists);
+    return 'Song added to custom playlist: $playlistName';
+  } else {
+    return 'Custom playlist not found: $playlistName';
+  }
+}
+
+void removeSongFromPlaylist(dynamic playlist, dynamic songToRemove) {
+  if (playlist != null && playlist['list'] != null) {
+    final playlistSongs = List<dynamic>.from(playlist['list']);
+    playlistSongs.removeWhere((song) => song['ytid'] == songToRemove['ytid']);
+    playlist['list'] = playlistSongs;
   }
 }
 

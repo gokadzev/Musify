@@ -8,12 +8,18 @@ import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/formatter.dart';
 
 class SongBar extends StatelessWidget {
-  SongBar(this.song, this.clearPlaylist, {this.showMusicDuration = false});
+  SongBar(
+    this.song,
+    this.clearPlaylist, {
+    this.showMusicDuration = false,
+    this.isFromPlaylist = false,
+  });
 
   final dynamic song;
   final bool clearPlaylist;
 
   final bool showMusicDuration;
+  final bool isFromPlaylist;
 
   static const likeStatusToIconMapper = {
     true: FluentIcons.star_24_filled,
@@ -108,6 +114,15 @@ class SongBar extends StatelessWidget {
           ),
           IconButton(
             color: Theme.of(context).colorScheme.primary,
+            icon: isFromPlaylist
+                ? const Icon(FluentIcons.delete_24_filled)
+                : const Icon(FluentIcons.add_24_regular),
+            onPressed: () => isFromPlaylist
+                ? _showRemoveToPlaylistDialog(context, song)
+                : _showAddToPlaylistDialog(context, song),
+          ),
+          IconButton(
+            color: Theme.of(context).colorScheme.primary,
             icon: const Icon(FluentIcons.arrow_download_24_regular),
             onPressed: () => prefferedDownloadMode.value == 'normal'
                 ? downloadSong(context, song)
@@ -117,6 +132,54 @@ class SongBar extends StatelessWidget {
             Text('(${formatDuration(song['duration'])})'),
         ],
       ),
+    );
+  }
+
+  void _showAddToPlaylistDialog(BuildContext context, dynamic song) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Add to Playlist'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (final playlist in userCustomPlaylists)
+                ListTile(
+                  title: Text(playlist['title']),
+                  onTap: () {
+                    addSongInCustomPlaylist(playlist['title'], song);
+                    Navigator.pop(context);
+                  },
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showRemoveToPlaylistDialog(BuildContext context, dynamic song) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Remove from Playlist'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (final playlist in userCustomPlaylists)
+                ListTile(
+                  title: Text(playlist['title']),
+                  onTap: () {
+                    removeSongFromPlaylist(playlist['title'], song);
+                    Navigator.pop(context);
+                  },
+                ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

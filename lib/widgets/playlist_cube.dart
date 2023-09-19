@@ -10,6 +10,7 @@ class PlaylistCube extends StatelessWidget {
   PlaylistCube({
     super.key,
     this.id,
+    this.playlistData,
     this.image,
     required this.title,
     this.onClickOpen = true,
@@ -20,6 +21,7 @@ class PlaylistCube extends StatelessWidget {
   });
 
   final String? id;
+  final dynamic playlistData;
   final dynamic image;
   final String title;
   final bool onClickOpen;
@@ -44,14 +46,24 @@ class PlaylistCube extends StatelessWidget {
           delay: const Duration(milliseconds: 200),
           fadingDuration: const Duration(milliseconds: 400),
           child: GestureDetector(
-            onTap: onClickOpen && id != null
+            onTap: onClickOpen && (id != null || playlistData != null)
                 ? () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PlaylistPage(playlistId: id),
-                      ),
-                    );
+                    if (id != null) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PlaylistPage(playlistId: id),
+                        ),
+                      );
+                    } else if (playlistData != null) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              PlaylistPage(playlistData: playlistData),
+                        ),
+                      );
+                    }
                   }
                 : null,
             child: ClipRRect(

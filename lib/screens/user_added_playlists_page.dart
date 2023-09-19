@@ -27,24 +27,76 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
             context: context,
             builder: (BuildContext context) {
               var id = '';
+              var customPlaylistName = '';
+              var imageUrl = '';
+              var description = '';
+
               return AlertDialog(
                 backgroundColor:
                     Theme.of(context).dialogBackgroundColor.withOpacity(0.5),
-                content: Stack(
-                  children: <Widget>[
-                    TextField(
-                      decoration: InputDecoration(
-                        hintText: context.l10n()!.youtubePlaylistID,
-                        hintStyle:
-                            TextStyle(color: Theme.of(context).hintColor),
+                content: SingleChildScrollView(
+                  child: Column(
+                    children: <Widget>[
+                      const Text(
+                        'If you add YouTube playlist, fill only Youtube playlist ID field, if you create your own playlist leave YouTube playlist ID empty and fill only: Name, Image URL (optional), Description (optional)',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                      onChanged: (value) {
-                        setState(() {
-                          id = value;
-                        });
-                      },
-                    ),
-                  ],
+                      const SizedBox(height: 20),
+                      TextField(
+                        decoration: InputDecoration(
+                          hintText: context.l10n()!.youtubePlaylistID,
+                          hintStyle:
+                              TextStyle(color: Theme.of(context).hintColor),
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            id = value;
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 7),
+                      TextField(
+                        decoration: InputDecoration(
+                          hintText: 'Custom playlist name',
+                          hintStyle:
+                              TextStyle(color: Theme.of(context).hintColor),
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            customPlaylistName = value;
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 7),
+                      TextField(
+                        decoration: InputDecoration(
+                          hintText: 'Custom playlist image URL',
+                          hintStyle:
+                              TextStyle(color: Theme.of(context).hintColor),
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            imageUrl = value;
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 7),
+                      TextField(
+                        decoration: InputDecoration(
+                          hintText: 'Custom playlist description',
+                          hintStyle:
+                              TextStyle(color: Theme.of(context).hintColor),
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            description = value;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
                 ),
                 actions: <Widget>[
                   TextButton(
@@ -52,7 +104,24 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                       context.l10n()!.add.toUpperCase(),
                     ),
                     onPressed: () {
-                      showToast(context, addUserPlaylist(id, context));
+                      if (id.isNotEmpty) {
+                        showToast(context, addUserPlaylist(id, context));
+                      } else if (customPlaylistName.isNotEmpty) {
+                        showToast(
+                          context,
+                          createCustomPlaylist(
+                            customPlaylistName,
+                            imageUrl,
+                            description,
+                            context,
+                          ),
+                        );
+                      } else {
+                        showToast(
+                          context,
+                          'Please provide either a YouTube ID or a custom playlist name.',
+                        );
+                      }
                       setState(() {
                         Navigator.pop(context);
                       });
@@ -110,6 +179,10 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                                 title: (data as dynamic)
                                     .data[index]['title']
                                     .toString(),
+                                playlistData: (data as dynamic).data[index]
+                                        ['isCustom']
+                                    ? (data as dynamic).data[index]
+                                    : null,
                               ),
                             ),
                           );

@@ -14,8 +14,10 @@ import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/spinner.dart';
 
 class PlaylistPage extends StatefulWidget {
-  const PlaylistPage({super.key, required this.playlistId});
+  const PlaylistPage({super.key, this.playlistId, this.playlistData});
+
   final dynamic playlistId;
+  final dynamic playlistData;
 
   @override
   _PlaylistPageState createState() => _PlaylistPageState();
@@ -37,16 +39,24 @@ class _PlaylistPageState extends State<PlaylistPage> {
   void initState() {
     super.initState();
     _isLoading = true;
-    getPlaylistInfoForWidget(widget.playlistId).then(
-      (value) => {
-        if (value != null)
-          {
-            _playlist = value,
-            _hasMore = true,
-            _loadMore(),
-          },
-      },
-    );
+    if (widget.playlistId != null) {
+      getPlaylistInfoForWidget(widget.playlistId).then(
+        (value) => {
+          if (value != null)
+            {
+              _playlist = value,
+              _hasMore = true,
+              _loadMore(),
+            },
+        },
+      );
+    } else if (widget.playlistData != null) {
+      setState(() {
+        _playlist = widget.playlistData;
+        _hasMore = true;
+        _loadMore();
+      });
+    }
   }
 
   @override
@@ -189,7 +199,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
         ),
         Row(
           children: [
-            _buildLikeButton(),
+            if (widget.playlistId != null) _buildLikeButton(),
             _buildDownloadButton(),
             _buildSyncButton(),
           ],
@@ -300,6 +310,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
               return SongBar(
                 _songsList[index],
                 true,
+                isFromPlaylist: widget.playlistData != null,
               );
             },
           ),
