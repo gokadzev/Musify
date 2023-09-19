@@ -2,77 +2,63 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:background_downloader/background_downloader.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:musify/API/version.dart';
 import 'package:musify/extensions/l10n.dart';
-import 'package:musify/services/logger_service.dart';
+import 'package:musify/main.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 
-late String dlUrl;
-const apiUrl =
+const String checkUrl =
     'https://raw.githubusercontent.com/gokadzev/Musify/update/check.json';
+const String downloadUrlKey = 'url';
+const String downloadUrlArm64Key = 'arm64url';
+const String downloadFilename = 'Musify.apk';
 
 Future<void> checkAppUpdates(
   BuildContext context, {
   bool downloadUpdateAutomatically = false,
 }) async {
   try {
-    final response = await http.get(Uri.parse(apiUrl));
-    if (response.statusCode != 200) {
-      Logger.log(
+    final response = await http.get(Uri.parse(checkUrl));
+    if (response.statusCode == 200) {
+      final map = json.decode(response.body) as Map<String, dynamic>;
+      final latestVersion = map['version'].toString();
+      if (isLatestVersionHigher(appVersion, latestVersion)) {
+        if (downloadUpdateAutomatically) {
+          await downloadAppUpdates(map);
+          showToast(
+            context,
+            '${context.l10n()!.appUpdateAvailableAndDownloading}!',
+          );
+        } else {
+          showToast(
+            context,
+            '${context.l10n()!.appUpdateIsAvailable}!',
+          );
+        }
+      }
+    } else {
+      logger.log(
         'Fetch update API call returned status code ${response.statusCode}',
       );
-      throw Exception('Failed to fetch app updates');
-    }
-    final map = json.decode(response.body) as Map<String, dynamic>;
-    if (isLatestVersionHigher(appVersion, map['version'].toString())) {
-      if (downloadUpdateAutomatically) {
-        await downloadAppUpdates();
-        showToast(
-          context,
-          '${context.l10n()!.appUpdateAvailableAndDownloading}!',
-        );
-      } else {
-        showToast(
-          context,
-          '${context.l10n()!.appUpdateIsAvailable}!',
-        );
-      }
     }
   } catch (e) {
-    Logger.log('Error in checkAppUpdates: $e');
+    logger.log('Error in checkAppUpdates: $e');
   }
 }
 
-Future<void> downloadAppUpdates() async {
+Future<void> downloadAppUpdates(Map<String, dynamic> map) async {
   try {
-    final response = await http.get(Uri.parse(apiUrl));
-    if (response.statusCode != 200) {
-      Logger.log(
-        'Download update API call returned status code ${response.statusCode}',
-      );
-      throw Exception('Failed to fetch app updates');
-    }
-    final map = json.decode(response.body) as Map<String, dynamic>;
-    final dlUrl = await getCPUArchitecture() == 'aarch64'
-        ? map['arm64url'].toString()
-        : map['url'].toString();
-    final dlPath = await FilePicker.platform.getDirectoryPath();
-    final file = File('$dlPath/Musify.apk');
-    if (await file.exists()) {
-      await file.delete();
-    }
+    final dlUrl = await getDownloadUrl(map);
     final task = DownloadTask(
       url: dlUrl,
-      filename: 'Musify.apk',
+      filename: downloadFilename,
     );
-
     await FileDownloader().download(task);
     await FileDownloader().moveToSharedStorage(task, SharedStorage.downloads);
   } catch (e) {
-    Logger.log('Error in downloadAppUpdates: $e');
+    logger.log('Error in downloadAppUpdates: $e');
   }
 }
 
@@ -101,4 +87,12 @@ Future<String> getCPUArchitecture() async {
   final info = await Process.run('uname', ['-m']);
   final cpu = info.stdout.toString().replaceAll('\n', '');
   return cpu;
+}
+
+Future<String> getDownloadUrl(Map<String, dynamic> map) async {
+  final cpuArchitecture = await getCPUArchitecture();
+  final url = cpuArchitecture == 'aarch64'
+      ? map[downloadUrlArm64Key].toString()
+      : map[downloadUrlKey].toString();
+  return url;
 }

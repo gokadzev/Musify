@@ -1,5 +1,3 @@
-import 'package:musify/utilities/mediaitem.dart';
-import 'package:on_audio_query/on_audio_query.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 String formatSongTitle(String title) {
@@ -33,24 +31,6 @@ Map<String, dynamic> returnSongLayout(dynamic index, Video song) => {
       'duration': song.duration?.inMilliseconds,
       'isLive': song.isLive,
     };
-
-Map<String, dynamic> returnSongLayoutFromAudioModel(
-  dynamic index,
-  AudioModel song,
-) {
-  return {
-    'id': index,
-    'ytid': '',
-    'title': song.displayNameWOExt,
-    'image': noImageVar,
-    'artist': song.artist ?? '',
-    'lowResImage': noImageVar,
-    'highResImage': noImageVar,
-    'songUrl': song.data,
-    'localSongId': song.id,
-    'isLive': false,
-  };
-}
 
 String? getSongId(String url) => VideoId.parseVideoId(url);
 

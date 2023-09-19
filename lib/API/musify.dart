@@ -8,14 +8,11 @@ import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:musify/enums/quality_enum.dart';
 import 'package:musify/extensions/l10n.dart';
-import 'package:musify/models/custom_audio_model.dart';
-import 'package:musify/services/audio_manager.dart';
+import 'package:musify/main.dart';
 import 'package:musify/services/data_manager.dart';
-import 'package:musify/services/logger_service.dart';
 import 'package:musify/services/lyrics_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/formatter.dart';
-import 'package:musify/utilities/mediaitem.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 final yt = YoutubeExplode();
@@ -52,18 +49,11 @@ int id = 0;
 
 Future<List> fetchSongsList(String searchQuery) async {
   try {
-    final List list = await yt.search.search(searchQuery);
-    final searchedList = [
-      for (final s in list)
-        returnSongLayout(
-          0,
-          s,
-        ),
-    ];
+    final List<Video> searchResults = await yt.search.search(searchQuery);
 
-    return searchedList;
+    return searchResults.map((video) => returnSongLayout(0, video)).toList();
   } catch (e) {
-    Logger.log('Error in fetchSongsList: $e');
+    logger.log('Error in fetchSongsList: $e');
     return [];
   }
 }
@@ -83,7 +73,7 @@ Future<List> getRecommendedSongs() async {
 
     return playlistSongs.take(15).toList();
   } catch (e) {
-    Logger.log('Error in getRecommendedSongs: $e');
+    logger.log('Error in getRecommendedSongs: $e');
     return [];
   }
 }
@@ -219,7 +209,7 @@ Future<List<String>> getSearchSuggestions(String query) async {
       return suggestionStrings;
     }
   } catch (e) {
-    Logger.log('Error in getSearchSuggestions: $e');
+    logger.log('Error in getSearchSuggestions: $e');
   }
 
   return <String>[];
@@ -292,7 +282,7 @@ Future<List<Map<String, int>>> getSkipSegments(String id) async {
       return [];
     }
   } catch (e, stack) {
-    Logger.log('Error in getSkipSegments: $e $stack');
+    logger.log('Error in getSkipSegments: $e $stack');
     return [];
   }
 }
@@ -346,23 +336,10 @@ int findPlaylistIndexByYtId(String ytid) {
 }
 
 Future<void> setActivePlaylist(Map info) async {
-  final plist = info['list'] as List;
   activePlaylist = info;
   id = 0;
 
-  if (plist is List<AudioModelWithArtwork>) {
-    activePlaylist['list'] = [];
-    final activeTempPlaylist = plist
-        .map((song) => createAudioSource(songModelToMediaItem(song, song.data)))
-        .toList();
-
-    await addSongs(activeTempPlaylist);
-    await setNewPlaylist();
-
-    await audioPlayer.play();
-  } else {
-    await playSong(activePlaylist['list'][id]);
-  }
+  await audioHandler.playSong(activePlaylist['list'][id]);
 }
 
 Future<Map<String, dynamic>?> getPlaylistInfoForWidget(dynamic id) async {
@@ -393,7 +370,7 @@ Future<AudioOnlyStreamInfo> getSongManifest(String songId) async {
     final audioStream = manifest.audioOnly.withHighestBitrate();
     return audioStream;
   } catch (e) {
-    Logger.log('Error while getting song streaming manifest: $e');
+    logger.log('Error while getting song streaming manifest: $e');
     rethrow; // Rethrow the exception to allow the caller to handle it
   }
 }
@@ -439,7 +416,7 @@ Future<String> getSong(String songId, bool isLive, AudioQuality quality) async {
       return audioUrl;
     }
   } catch (e) {
-    Logger.log('Error while getting song streaming URL: $e');
+    logger.log('Error while getting song streaming URL: $e');
     rethrow; // Rethrow the exception to allow the caller to handle it
   }
 }
@@ -452,7 +429,7 @@ Future<Map<String, dynamic>> getSongDetails(
     final song = await yt.videos.get(songId);
     return returnSongLayout(songIndex, song);
   } catch (e) {
-    Logger.log('Error while getting song details: $e');
+    logger.log('Error while getting song details: $e');
     rethrow;
   }
 }

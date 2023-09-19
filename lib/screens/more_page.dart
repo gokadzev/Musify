@@ -5,14 +5,12 @@ import 'package:musify/enums/quality_enum.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/screens/about_page.dart';
-import 'package:musify/screens/local_music_page.dart';
 import 'package:musify/screens/playlists_page.dart';
 import 'package:musify/screens/recently_played_page.dart';
 import 'package:musify/screens/search_page.dart';
 import 'package:musify/screens/user_liked_playlists_page.dart';
 import 'package:musify/screens/user_liked_songs_page.dart';
 import 'package:musify/services/data_manager.dart';
-import 'package:musify/services/logger_service.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/services/update_manager.dart';
 import 'package:musify/style/app_colors.dart';
@@ -98,17 +96,6 @@ class SettingsCards extends StatelessWidget {
               MaterialPageRoute(
                 builder: (context) => UserLikedPlaylistsPage(),
               ),
-            ),
-          },
-        ),
-
-        SettingBar(
-          context.l10n()!.localMusic,
-          FluentIcons.arrow_download_24_filled,
-          () => {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => LocalMusicPage()),
             ),
           },
         ),
@@ -703,7 +690,7 @@ class SettingsCards extends StatelessWidget {
         SettingBar(
           context.l10n()!.copyLogs,
           FluentIcons.error_circle_24_filled,
-          () async => {showToast(context, await Logger.copyLogs(context))},
+          () async => {showToast(context, await logger.copyLogs(context))},
         ),
         SettingBar(
           context.l10n()!.about,

@@ -3,15 +3,15 @@ import 'package:flutter/services.dart';
 import 'package:musify/extensions/l10n.dart';
 
 class Logger {
-  static String _logs = '';
+  String _logs = '';
 
-  static void log(String message) {
+  void log(String message) {
     final timestamp = DateTime.now().toString();
     final logMessage = '[$timestamp] $message';
     _logs += '$logMessage\n';
   }
 
-  static Future<String> copyLogs(BuildContext context) async {
+  Future<String> copyLogs(BuildContext context) async {
     try {
       if (_logs != '') {
         await Clipboard.setData(ClipboardData(text: _logs));
