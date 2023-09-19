@@ -140,7 +140,6 @@ You can see frequently asked questions and their answers [here](https://github.c
 - [audio_session](https://pub.dev/packages/audio_session): A plugin for managing audio sessions in Flutter.
 - [background_downloader](https://pub.dev/packages/background_downloader): A Flutter plugin for downloading files in the background.
 - [cached_network_image](https://pub.dev/packages/cached_network_image): A Flutter library to load and cache network images.
-- [delayed_display](https://pub.dev/packages/delayed_display): A Flutter package for adding delayed display animations.
 - [dynamic_color](https://pub.dev/packages/dynamic_color): A package for working with dynamic colors in Flutter.
 - [file_picker](https://pub.dev/packages/file_picker): A Flutter plugin for selecting files from the device.
 - [flashy_tab_bar2](https://pub.dev/packages/flashy_tab_bar2): A Flutter package for a flashy tab bar.

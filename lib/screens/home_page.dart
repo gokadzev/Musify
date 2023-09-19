@@ -8,7 +8,6 @@ import 'package:musify/screens/artist_page.dart';
 import 'package:musify/screens/playlists_page.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/widgets/artist_cube.dart';
-import 'package:musify/widgets/delayed_display.dart';
 import 'package:musify/widgets/marque.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/song_bar.dart';
@@ -181,25 +180,20 @@ class _HomePageState extends State<HomePage> {
                                 itemBuilder: (context, index) {
                                   final artist = snapshot.data[index]['artist']
                                       .split('~')[0];
-                                  return DelayedDisplay(
-                                    delay: const Duration(milliseconds: 200),
-                                    fadingDuration:
-                                        const Duration(milliseconds: 400),
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => ArtistPage(
-                                              playlist: {
-                                                'title': artist,
-                                              },
-                                            ),
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => ArtistPage(
+                                            playlist: {
+                                              'title': artist,
+                                            },
                                           ),
-                                        );
-                                      },
-                                      child: ArtistCube(artist),
-                                    ),
+                                        ),
+                                      );
+                                    },
+                                    child: ArtistCube(artist),
                                   );
                                 },
                               ),
