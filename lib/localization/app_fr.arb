@@ -8,8 +8,8 @@
     "appUpdateIsAvailable": "Mise à jour disponible",
     "audioFileType": "Extension de fichier audio",
     "audioFileTypeMsg": "Format de fichier audio modifié",
-    "audioQuality": "Audio quality",
-    "audioQualityMsg": "Audio quality has been changed",
+    "audioQuality": "Qualité audio",
+    "audioQualityMsg": "La qualité audio a été modifiée",
     "backedupSuccess": "Enregistrement réussi",
     "backupError": "Erreur pendant l'enregistrement",
     "backupUserData": "Sauvegarder les données utilisateur",
@@ -40,7 +40,7 @@
     "lyricsNotAvailable": "Pas de paroles disponibles ;(",
     "more": "Suite",
     "noLikedPlaylists": "Pas de liste de lecteur favorite",
-    "notYTlist": "Ceci n'est pas un playlist ID Youtube",
+    "notYTlist": "Ceci n'est pas un ID de playlist YouTube",
     "nowPlaying": "Lecture en cours",
     "others": "Autres",
     "pages": "Pages",
@@ -57,7 +57,7 @@
     "searchHistoryMsg": "Historique de recherche effacé",
     "settingChangedMsg": "Paramètre modifié",
     "settings": "Paramètres",
-    "songs": "chansons",
+    "songs": "Chansons",
     "sponsorProject": "Financer le projet",
     "suggestedArtists": "Artistes recommandés",
     "suggestedPlaylists": "Listes de lectures recommandées",
@@ -67,5 +67,5 @@
     "userLikedSongs": "Chansons favorites",
     "userPlaylists": "Listes de lectures des utilisateurs",
     "yourFavoriteSongsHere": "Vos chansons préférées ici",
-    "youtubePlaylistID": "ID de playlist Youtube"
+    "youtubePlaylistID": "ID de playlist YouTube"
 }
