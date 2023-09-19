@@ -1,5 +1,1 @@
-enum AudioQuality {
-  lowQuality,
-  mediumQuality,
-  bestQuality,
-}
+enum AudioQuality { lowQuality, mediumQuality, bestQuality }

@@ -2,7 +2,6 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/version.dart';
 import 'package:musify/enums/quality_enum.dart';
-import 'package:musify/extensions/audio_quality.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/screens/about_page.dart';
@@ -558,13 +557,13 @@ class SettingsCards extends StatelessWidget {
                                 child: Card(
                                   child: ListTile(
                                     title: Text(
-                                      quality.stringValue,
+                                      quality.name,
                                     ),
                                     onTap: () {
                                       addOrUpdateData(
                                         'settings',
                                         'audioQuality',
-                                        quality.stringValue,
+                                        quality,
                                       );
 
                                       audioQualitySetting.value = quality;

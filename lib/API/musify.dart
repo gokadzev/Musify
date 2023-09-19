@@ -13,7 +13,6 @@ import 'package:musify/services/audio_manager.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/logger_service.dart';
 import 'package:musify/services/lyrics_manager.dart';
-import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/formatter.dart';
 import 'package:musify/utilities/mediaitem.dart';
@@ -401,7 +400,8 @@ Future<AudioOnlyStreamInfo> getSongManifest(String songId) async {
 
 Future<String> getSong(String songId, bool isLive, AudioQuality quality) async {
   try {
-    final cacheKey = 'song_${songId}_${audioQualitySetting.value}_url';
+    final cacheKey = 'song_${songId}_${quality.name}_url';
+
     final cachedUrl = await getData(
       'cache',
       cacheKey,
@@ -415,13 +415,11 @@ Future<String> getSong(String songId, bool isLive, AudioQuality quality) async {
     if (isLive) {
       final streamInfo =
           await yt.videos.streamsClient.getHttpLiveStreamUrl(VideoId(songId));
-
       return streamInfo;
     } else {
       final manifest = await yt.videos.streamsClient.getManifest(songId);
       final availableSources = manifest.audioOnly.sortByBitrate();
       AudioOnlyStreamInfo audioStream;
-
       switch (quality) {
         case AudioQuality.lowQuality:
           audioStream = availableSources.last;
@@ -430,23 +428,15 @@ Future<String> getSong(String songId, bool isLive, AudioQuality quality) async {
           audioStream = availableSources[availableSources.length ~/ 2];
           break;
         case AudioQuality.bestQuality:
-          audioStream = manifest.audioOnly.withHighestBitrate();
+          audioStream = availableSources.first;
           break;
       }
 
-      unawaited(
-        updateRecentlyPlayed(
-          songId,
-        ),
-      ); // It's better if we save only normal audios in "Recently played" and not live ones
+      unawaited(updateRecentlyPlayed(songId));
 
-      addOrUpdateData(
-        'cache',
-        cacheKey,
-        audioStream.url.toString(),
-      );
-
-      return audioStream.url.toString();
+      final audioUrl = audioStream.url.toString();
+      addOrUpdateData('cache', cacheKey, audioUrl);
+      return audioUrl;
     }
   } catch (e) {
     Logger.log('Error while getting song streaming URL: $e');
