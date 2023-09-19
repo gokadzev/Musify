@@ -389,6 +389,10 @@ class SettingsCards extends StatelessWidget {
                         return Padding(
                           padding: const EdgeInsets.all(10),
                           child: Card(
+                            elevation: prefferedFileExtension.value ==
+                                    availableFileTypes[index]
+                                ? 0
+                                : 4,
                             child: ListTile(
                               title: Text(
                                 availableFileTypes[index],
@@ -461,6 +465,10 @@ class SettingsCards extends StatelessWidget {
                               return Padding(
                                 padding: const EdgeInsets.all(10),
                                 child: Card(
+                                  elevation: prefferedDownloadMode.value ==
+                                          availableModes[index]
+                                      ? 0
+                                      : 4,
                                   child: ListTile(
                                     title: Text(
                                       availableModes[index],
