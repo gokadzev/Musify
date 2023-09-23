@@ -33,6 +33,16 @@ class _MusifyState extends State<Musify> {
     unawaited(checkNecessaryPermissions(context));
   }
 
+  void onTabSelected(int index) {
+    setState(() {
+      activeTabIndex.value = index;
+    });
+    _navigatorKey.currentState?.pushNamedAndRemoveUntil(
+      destinations[index],
+      ModalRoute.withName(destinations[index]),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -174,48 +184,7 @@ class _MusifyState extends State<Musify> {
                         ],
                       ),
                       const Spacer(),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: StreamBuilder<PlaybackState>(
-                          stream: audioHandler.playbackState,
-                          builder: (context, snapshot) {
-                            final playerState = snapshot.data;
-                            final processingState =
-                                playerState?.processingState;
-                            final playing = playerState?.playing;
-
-                            IconData icon;
-                            VoidCallback? onPressed;
-
-                            if (processingState ==
-                                    AudioProcessingState.loading ||
-                                processingState ==
-                                    AudioProcessingState.buffering) {
-                              icon = FluentIcons.spinner_ios_16_filled;
-                              onPressed = null;
-                            } else if (playing != true) {
-                              icon = FluentIcons.play_12_filled;
-                              onPressed = audioHandler.play;
-                            } else if (processingState !=
-                                AudioProcessingState.completed) {
-                              icon = FluentIcons.pause_12_filled;
-                              onPressed = audioHandler.pause;
-                            } else {
-                              icon = FluentIcons.replay_20_filled;
-                              onPressed = () => audioHandler.seek(
-                                    Duration.zero,
-                                  );
-                            }
-
-                            return IconButton(
-                              icon: Icon(icon, color: colorScheme.primary),
-                              iconSize: 45,
-                              onPressed: onPressed,
-                              splashColor: Colors.transparent,
-                            );
-                          },
-                        ),
-                      ),
+                      PlaybackControls(),
                     ],
                   ),
                 ),
@@ -223,7 +192,12 @@ class _MusifyState extends State<Musify> {
             }
           },
         ),
-        _buildBottomBar(context, items),
+        CustomAnimatedBottomBar(
+          backgroundColor: Theme.of(context).bottomAppBarTheme.color,
+          selectedIndex: activeTabIndex.value,
+          onItemSelected: onTabSelected,
+          items: items,
+        ),
       ],
     );
   }
@@ -245,23 +219,53 @@ class _MusifyState extends State<Musify> {
           ),
         ),
       );
+}
 
-  Widget _buildBottomBar(BuildContext context, List<BottomNavBarItem> items) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 100),
-      height: 65,
-      child: CustomAnimatedBottomBar(
-        backgroundColor: Theme.of(context).bottomAppBarTheme.color,
-        selectedIndex: activeTabIndex.value,
-        onItemSelected: (index) => setState(() {
-          activeTabIndex.value = index;
-          _navigatorKey.currentState!.pushNamedAndRemoveUntil(
-            destinations[index],
-            ModalRoute.withName(destinations[index]),
-          );
-        }),
-        items: items,
-      ),
+class PlaybackControls extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<PlaybackState>(
+      stream: audioHandler.playbackState,
+      builder: (context, snapshot) {
+        return Padding(
+          padding: const EdgeInsets.only(right: 8),
+          child: StreamBuilder<PlaybackState>(
+            stream: audioHandler.playbackState,
+            builder: (context, snapshot) {
+              final playerState = snapshot.data;
+              final processingState = playerState?.processingState;
+              final playing = playerState?.playing;
+
+              IconData icon;
+              VoidCallback? onPressed;
+
+              if (processingState == AudioProcessingState.loading ||
+                  processingState == AudioProcessingState.buffering) {
+                icon = FluentIcons.spinner_ios_16_filled;
+                onPressed = null;
+              } else if (playing != true) {
+                icon = FluentIcons.play_12_filled;
+                onPressed = audioHandler.play;
+              } else if (processingState != AudioProcessingState.completed) {
+                icon = FluentIcons.pause_12_filled;
+                onPressed = audioHandler.pause;
+              } else {
+                icon = FluentIcons.replay_20_filled;
+                onPressed = () => audioHandler.seek(
+                      Duration.zero,
+                    );
+              }
+
+              return IconButton(
+                icon: Icon(icon, color: colorScheme.primary),
+                iconSize: 45,
+                onPressed: onPressed,
+                splashColor: Colors.transparent,
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }
