@@ -147,14 +147,18 @@ class _MyAppState extends State<MyApp> {
       },
     );
 
-    LicenseRegistry.addLicense(() async* {
-      final license =
-          await rootBundle.loadString('assets/fonts/roboto/LICENSE.txt');
-      yield LicenseEntryWithLineBreaks(['google_fonts'], license);
-      final license1 =
-          await rootBundle.loadString('assets/fonts/paytone/OFL.txt');
-      yield LicenseEntryWithLineBreaks(['google_fonts'], license1);
-    });
+    try {
+      LicenseRegistry.addLicense(() async* {
+        final license =
+            await rootBundle.loadString('assets/fonts/roboto/LICENSE.txt');
+        yield LicenseEntryWithLineBreaks(['google_fonts'], license);
+        final license1 =
+            await rootBundle.loadString('assets/fonts/paytone/OFL.txt');
+        yield LicenseEntryWithLineBreaks(['google_fonts'], license1);
+      });
+    } catch (e) {
+      logger.log('License Registration Error: $e');
+    }
   }
 
   @override
@@ -207,28 +211,32 @@ void main() async {
 }
 
 Future<void> initialisation() async {
-  await setDisplayMode();
-  await Hive.initFlutter();
-  Hive.registerAdapter(AudioQualityAdapter());
-  await Hive.openBox('settings');
-  await Hive.openBox('user');
-  await Hive.openBox('cache');
+  try {
+    await setDisplayMode();
+    await Hive.initFlutter();
+    Hive.registerAdapter(AudioQualityAdapter());
+    await Hive.openBox('settings');
+    await Hive.openBox('user');
+    await Hive.openBox('cache');
 
-  audioHandler = await AudioService.init(
-    builder: MusifyAudioHandler.new,
-    config: const AudioServiceConfig(
-      androidNotificationChannelId: 'com.gokadzev.musify',
-      androidNotificationChannelName: 'Musify',
-      androidNotificationIcon: 'mipmap/launcher_icon',
-      androidShowNotificationBadge: true,
-    ),
-  );
+    audioHandler = await AudioService.init(
+      builder: MusifyAudioHandler.new,
+      config: const AudioServiceConfig(
+        androidNotificationChannelId: 'com.gokadzev.musify',
+        androidNotificationChannelName: 'Musify',
+        androidNotificationIcon: 'mipmap/launcher_icon',
+        androidShowNotificationBadge: true,
+      ),
+    );
 
-  FileDownloader().configureNotification(
-    running: const TaskNotification('Downloading', 'file: {filename}'),
-    complete: const TaskNotification('Download finished', 'file: {filename}'),
-    progressBar: true,
-  );
+    FileDownloader().configureNotification(
+      running: const TaskNotification('Downloading', 'file: {filename}'),
+      complete: const TaskNotification('Download finished', 'file: {filename}'),
+      progressBar: true,
+    );
+  } catch (e) {
+    logger.log('Initialization Error: $e');
+  }
 }
 
 Future<void> setDisplayMode() async {

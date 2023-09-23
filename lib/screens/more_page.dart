@@ -691,7 +691,7 @@ class SettingsCards extends StatelessWidget {
           },
         ),
         SettingBar(
-          context.l10n()!.copyLogs,
+          '${context.l10n()!.copyLogs} (${logger.getLogCount()})',
           FluentIcons.error_circle_24_filled,
           () async => {showToast(context, await logger.copyLogs(context))},
         ),
