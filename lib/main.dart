@@ -201,19 +201,18 @@ class _MyAppState extends State<MyApp> {
 }
 
 void main() async {
-  await initialisation();
   WidgetsFlutterBinding.ensureInitialized();
+  await initialisation();
   runApp(const MyApp());
 }
 
 Future<void> initialisation() async {
+  await setDisplayMode();
   await Hive.initFlutter();
   Hive.registerAdapter(AudioQualityAdapter());
   await Hive.openBox('settings');
   await Hive.openBox('user');
   await Hive.openBox('cache');
-
-  await FlutterDisplayMode.setHighRefreshRate();
 
   audioHandler = await AudioService.init(
     builder: MusifyAudioHandler.new,
@@ -230,4 +229,21 @@ Future<void> initialisation() async {
     complete: const TaskNotification('Download finished', 'file: {filename}'),
     progressBar: true,
   );
+}
+
+Future<void> setDisplayMode() async {
+  final supportedDisplay = await FlutterDisplayMode.supported;
+  final activeDisplay = await FlutterDisplayMode.active;
+  final sameResolution = supportedDisplay
+      .where(
+        (DisplayMode m) =>
+            m.width == activeDisplay.width && m.height == activeDisplay.height,
+      )
+      .toList()
+    ..sort(
+      (DisplayMode a, DisplayMode b) => b.refreshRate.compareTo(a.refreshRate),
+    );
+  final mostOptimalMode =
+      sameResolution.isNotEmpty ? sameResolution.first : activeDisplay;
+  await FlutterDisplayMode.setPreferredMode(mostOptimalMode);
 }
