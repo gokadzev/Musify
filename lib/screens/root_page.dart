@@ -54,13 +54,19 @@ class _MusifyState extends State<Musify> {
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
         onDestinationSelected: (int index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-          _navigatorKey.currentState?.pushNamedAndRemoveUntil(
-            destinations[index],
-            ModalRoute.withName(destinations[index]),
-          );
+          if (_selectedIndex == index) {
+            if (_navigatorKey.currentState?.canPop() == true) {
+              _navigatorKey.currentState?.pop();
+            }
+          } else {
+            setState(() {
+              _selectedIndex = index;
+            });
+            _navigatorKey.currentState?.pushNamedAndRemoveUntil(
+              destinations[index],
+              ModalRoute.withName(destinations[index]),
+            );
+          }
         },
         destinations: [
           NavigationDestination(
