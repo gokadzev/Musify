@@ -124,9 +124,7 @@ class SettingsCards extends StatelessWidget {
                       border: Border.all(
                         color: colorScheme.primary,
                       ),
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(20),
-                      ),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     width: MediaQuery.of(context).copyWith().size.width * 0.90,
                     child: GridView.builder(
@@ -211,9 +209,7 @@ class SettingsCards extends StatelessWidget {
                       border: Border.all(
                         color: colorScheme.primary,
                       ),
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(20),
-                      ),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     width: MediaQuery.of(context).copyWith().size.width * 0.90,
                     child: ListView.builder(
@@ -268,9 +264,7 @@ class SettingsCards extends StatelessWidget {
                       border: Border.all(
                         color: colorScheme.primary,
                       ),
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(20),
-                      ),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     width: MediaQuery.of(context).copyWith().size.width * 0.90,
                     child: ListView.builder(
@@ -376,9 +370,7 @@ class SettingsCards extends StatelessWidget {
                       border: Border.all(
                         color: colorScheme.primary,
                       ),
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(20),
-                      ),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     width: MediaQuery.of(context).copyWith().size.width * 0.90,
                     child: ListView.builder(
@@ -438,9 +430,7 @@ class SettingsCards extends StatelessWidget {
                       border: Border.all(
                         color: colorScheme.primary,
                       ),
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(20),
-                      ),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     width: MediaQuery.of(context).copyWith().size.width * 0.90,
                     child: Column(
@@ -522,9 +512,7 @@ class SettingsCards extends StatelessWidget {
                       border: Border.all(
                         color: colorScheme.primary,
                       ),
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(20),
-                      ),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     width: MediaQuery.of(context).copyWith().size.width * 0.90,
                     child: Column(
