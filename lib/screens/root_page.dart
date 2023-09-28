@@ -17,8 +17,6 @@ class Musify extends StatefulWidget {
   _MusifyState createState() => _MusifyState();
 }
 
-final ValueNotifier<int> activeTabIndex = ValueNotifier<int>(-1);
-
 final _navigatorKey = GlobalKey<NavigatorState>();
 
 class _MusifyState extends State<Musify> {
