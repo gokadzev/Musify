@@ -142,7 +142,6 @@ You can see frequently asked questions and their answers [here](https://github.c
 - [cached_network_image](https://pub.dev/packages/cached_network_image): A Flutter library to load and cache network images.
 - [dynamic_color](https://pub.dev/packages/dynamic_color): A package for working with dynamic colors in Flutter.
 - [file_picker](https://pub.dev/packages/file_picker): A Flutter plugin for selecting files from the device.
-- [flashy_tab_bar2](https://pub.dev/packages/flashy_tab_bar2): A Flutter package for a flashy tab bar.
 - [fluentui_system_icons](https://pub.dev/packages/fluentui_system_icons): A package that provides Fluent System Icons for Flutter.
 - [flutter](https://flutter.dev/): The Flutter SDK.
 - [flutter_displaymode](https://pub.dev/packages/flutter_displaymode): A Flutter plugin for managing the display mode on mobile devices.

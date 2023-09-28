@@ -11,7 +11,6 @@ import 'package:musify/services/download_manager.dart';
 import 'package:musify/services/router_service.dart';
 import 'package:musify/services/update_manager.dart';
 import 'package:musify/style/app_themes.dart';
-import 'package:musify/widgets/custom_animated_bottom_bar.dart';
 
 class Musify extends StatefulWidget {
   @override
@@ -33,15 +32,7 @@ class _MusifyState extends State<Musify> {
     unawaited(checkNecessaryPermissions(context));
   }
 
-  void onTabSelected(int index) {
-    setState(() {
-      activeTabIndex.value = index;
-    });
-    _navigatorKey.currentState?.pushNamedAndRemoveUntil(
-      destinations[index],
-      ModalRoute.withName(destinations[index]),
-    );
-  }
+  int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -60,145 +51,123 @@ class _MusifyState extends State<Musify> {
           onGenerateRoute: RouterService.generateRoute,
         ),
       ),
-      bottomNavigationBar: getFooter(),
-    );
-  }
-
-  Widget getFooter() {
-    final items = List.generate(
-      4,
-      (index) {
-        final iconData = [
-          FluentIcons.home_24_regular,
-          FluentIcons.search_24_regular,
-          FluentIcons.book_24_regular,
-          FluentIcons.more_horizontal_24_regular,
-        ][index];
-
-        final title = [
-          context.l10n()!.home,
-          context.l10n()!.search,
-          context.l10n()!.userPlaylists,
-          context.l10n()!.more,
-        ][index];
-
-        final routeName = [
-          RoutePaths.home,
-          RoutePaths.search,
-          RoutePaths.userPlaylists,
-          RoutePaths.more,
-        ][index];
-
-        return BottomNavBarItem(
-          icon: Icon(iconData),
-          title: Text(
-            title,
-            maxLines: 1,
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _selectedIndex,
+        onDestinationSelected: (int index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+          _navigatorKey.currentState?.pushNamedAndRemoveUntil(
+            destinations[index],
+            ModalRoute.withName(destinations[index]),
+          );
+        },
+        destinations: [
+          NavigationDestination(
+            icon: const Icon(FluentIcons.home_24_regular),
+            label: context.l10n()!.home,
           ),
-          routeName: routeName,
-          activeColor: colorScheme.primary,
-          inactiveColor: colorScheme.primary.withOpacity(0.8),
-        );
-      },
-    );
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        StreamBuilder<MediaItem?>(
-          stream: audioHandler.mediaItem,
-          builder: (context, snapshot) {
-            final metadata = snapshot.data;
-            if (metadata == null) {
-              return const SizedBox();
-            } else {
-              return Container(
-                height: 75,
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(18),
-                    topRight: Radius.circular(18),
-                  ),
+          NavigationDestination(
+            icon: const Icon(FluentIcons.search_24_regular),
+            label: context.l10n()!.search,
+          ),
+          NavigationDestination(
+            icon: const Icon(FluentIcons.book_24_regular),
+            label: context.l10n()!.userPlaylists,
+          ),
+          NavigationDestination(
+            icon: const Icon(FluentIcons.more_horizontal_24_regular),
+            label: context.l10n()!.more,
+          ),
+        ],
+      ),
+      bottomSheet: StreamBuilder<MediaItem?>(
+        stream: audioHandler.mediaItem,
+        builder: (context, snapshot) {
+          final metadata = snapshot.data;
+          if (metadata == null) {
+            return const SizedBox();
+          } else {
+            return Container(
+              height: 75,
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(18),
+                  topRight: Radius.circular(18),
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 5, bottom: 2),
-                  child: Row(
-                    children: <Widget>[
-                      IconButton(
-                        padding: const EdgeInsets.symmetric(horizontal: 15),
-                        icon: Icon(
-                          FluentIcons.arrow_up_24_filled,
-                          size: 22,
-                          color: colorScheme.primary,
-                        ),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => NowPlayingPage(),
-                            ),
-                          );
-                        },
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(top: 5, bottom: 2),
+                child: Row(
+                  children: <Widget>[
+                    IconButton(
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      icon: Icon(
+                        FluentIcons.arrow_up_24_filled,
+                        size: 22,
+                        color: colorScheme.primary,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          top: 7,
-                          bottom: 7,
-                          right: 15,
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => NowPlayingPage(),
+                          ),
+                        );
+                      },
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: 7,
+                        bottom: 7,
+                        right: 15,
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: CachedNetworkImage(
+                          imageUrl: metadata.artUri.toString(),
+                          fit: BoxFit.cover,
+                          width: 55,
+                          height: 55,
+                          errorWidget: (context, url, error) =>
+                              _buildNullArtworkWidget(),
                         ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: CachedNetworkImage(
-                            imageUrl: metadata.artUri.toString(),
-                            fit: BoxFit.cover,
-                            width: 55,
-                            height: 55,
-                            errorWidget: (context, url, error) =>
-                                _buildNullArtworkWidget(),
+                      ),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          metadata.title.length > 15
+                              ? '${metadata.title.substring(0, 15)}...'
+                              : metadata.title,
+                          style: TextStyle(
+                            color: colorScheme.primary,
+                            fontSize: 17,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            metadata.title.length > 15
-                                ? '${metadata.title.substring(0, 15)}...'
-                                : metadata.title,
-                            style: TextStyle(
-                              color: colorScheme.primary,
-                              fontSize: 17,
-                              fontWeight: FontWeight.w600,
-                            ),
+                        Text(
+                          metadata.artist.toString().length > 15
+                              ? '${metadata.artist.toString().substring(0, 15)}...'
+                              : metadata.artist.toString(),
+                          style: TextStyle(
+                            color: colorScheme.primary,
+                            fontSize: 15,
                           ),
-                          Text(
-                            metadata.artist.toString().length > 15
-                                ? '${metadata.artist.toString().substring(0, 15)}...'
-                                : metadata.artist.toString(),
-                            style: TextStyle(
-                              color: colorScheme.primary,
-                              fontSize: 15,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const Spacer(),
-                      PlaybackControls(),
-                    ],
-                  ),
+                        ),
+                      ],
+                    ),
+                    const Spacer(),
+                    PlaybackControls(),
+                  ],
                 ),
-              );
-            }
-          },
-        ),
-        CustomAnimatedBottomBar(
-          backgroundColor: Theme.of(context).bottomAppBarTheme.color,
-          selectedIndex: activeTabIndex.value,
-          onItemSelected: onTabSelected,
-          items: items,
-        ),
-      ],
+              ),
+            );
+          }
+        },
+      ),
     );
   }
 
