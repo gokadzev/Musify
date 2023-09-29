@@ -23,7 +23,7 @@
   "copyLogs": "Copy logs",
   "copyLogsNoLogs": "No logs found to copy",
   "copyLogsSuccess": "Logs copied successfully. ",
-  "customPlaylistAddInstruction": "If you add YouTube playlist, fill only Youtube playlist ID field, if you create your own playlist leave YouTube playlist ID empty and fill only: Name, Image link (optional), Description (optional)",
+  "customPlaylistAddInstruction": "If you add YouTube playlist, fill only YouTube playlist ID field, if you create your own playlist leave YouTube playlist ID empty and fill only: Name, Image link (optional), Description (optional)",
   "customPlaylistDesc": "Custom playlist description",
   "customPlaylistImgUrl": "Custom playlist image link",
   "customPlaylistName": "Custom playlist name",
@@ -44,7 +44,7 @@
   "lyricsNotAvailable": "No lyrics available ;(",
   "more": "More",
   "noLikedPlaylists": "You haven't liked any playlists yet",
-  "notYTlist": "This is not a Youtube playlist ID",
+  "notYTlist": "This is not a YouTube playlist ID",
   "nothingFound": "Nothing Found",
   "nowPlaying": "Now playing",
   "others": "Others",
@@ -73,5 +73,5 @@
   "userLikedSongs": "User liked songs",
   "userPlaylists": "User playlists",
   "yourFavoriteSongsHere": "Your favorite songs here",
-  "youtubePlaylistID": "Youtube playlist ID"
+  "youtubePlaylistID": "YouTube playlist ID"
 }

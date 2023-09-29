@@ -23,7 +23,7 @@
   "copyLogs": "Sao chép logs",
   "copyLogsNoLogs": "Không tìm thấy logs để sao chép",
   "copyLogsSuccess": "Sao chép logs thành công.",
-  "customPlaylistAddInstruction": "If you add YouTube playlist, fill only Youtube playlist ID field, if you create your own playlist leave YouTube playlist ID empty and fill only: Name, Image link (optional), Description (optional)",
+  "customPlaylistAddInstruction": "If you add YouTube playlist, fill only YouTube playlist ID field, if you create your own playlist leave YouTube playlist ID empty and fill only: Name, Image link (optional), Description (optional)",
   "customPlaylistDesc": "Custom playlist description",
   "customPlaylistImgUrl": "Custom playlist image link",
   "customPlaylistName": "Custom playlist name",
@@ -44,7 +44,7 @@
   "lyricsNotAvailable": "Không tìm thấy lời bài hát ;(",
   "more": "Khác",
   "noLikedPlaylists": "Bạn chưa thích bất kỳ danh sách phát nào",
-  "notYTlist": "Đây không phải là ID của danh sách phát Youtube",
+  "notYTlist": "Đây không phải là ID của danh sách phát YouTube",
   "nothingFound": "Nothing Found",
   "nowPlaying": "Đang phát",
   "others": "Khác",
@@ -73,5 +73,5 @@
   "userLikedSongs": "Bài hát bạn đã thích",
   "userPlaylists": "Danh sách phát của bạn",
   "yourFavoriteSongsHere": "Bài hát yêu thích của bạn ở đây",
-  "youtubePlaylistID": "ID danh sách phát Youtube"
+  "youtubePlaylistID": "ID danh sách phát YouTube"
 }
