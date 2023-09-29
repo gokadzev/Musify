@@ -144,7 +144,7 @@ class _HomePageState extends State<HomePage> {
                 if (snapshot.hasError) {
                   return Center(
                     child: Text(
-                      'Error!',
+                      '${context.l10n()!.error}!',
                       style: TextStyle(
                         color: colorScheme.primary,
                         fontSize: 18,

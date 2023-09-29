@@ -37,9 +37,9 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                 content: SingleChildScrollView(
                   child: Column(
                     children: <Widget>[
-                      const Text(
-                        'If you add YouTube playlist, fill only Youtube playlist ID field, if you create your own playlist leave YouTube playlist ID empty and fill only: Name, Image URL (optional), Description (optional)',
-                        style: TextStyle(
+                      Text(
+                        context.l10n()!.customPlaylistAddInstruction,
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -59,7 +59,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                       const SizedBox(height: 7),
                       TextField(
                         decoration: InputDecoration(
-                          hintText: 'Custom playlist name',
+                          hintText: context.l10n()!.customPlaylistName,
                           hintStyle:
                               TextStyle(color: Theme.of(context).hintColor),
                         ),
@@ -72,7 +72,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                       const SizedBox(height: 7),
                       TextField(
                         decoration: InputDecoration(
-                          hintText: 'Custom playlist image URL',
+                          hintText: context.l10n()!.customPlaylistImgUrl,
                           hintStyle:
                               TextStyle(color: Theme.of(context).hintColor),
                         ),
@@ -85,7 +85,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                       const SizedBox(height: 7),
                       TextField(
                         decoration: InputDecoration(
-                          hintText: 'Custom playlist description',
+                          hintText: context.l10n()!.customPlaylistDesc,
                           hintStyle:
                               TextStyle(color: Theme.of(context).hintColor),
                         ),
@@ -119,7 +119,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                       } else {
                         showToast(
                           context,
-                          'Please provide either a YouTube ID or a custom playlist name.',
+                          '${context.l10n()!.provideIdOrNameError}.',
                         );
                       }
                       setState(() {

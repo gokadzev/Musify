@@ -60,7 +60,7 @@ class _ArtistPagePageState extends State<ArtistPage> {
                         if (snapshot.hasError || snapshot.data.isEmpty) {
                           return Center(
                             child: Text(
-                              'Nothing Found!',
+                              '${context.l10n()!.nothingFound}!',
                               style: TextStyle(
                                 color: colorScheme.primary,
                                 fontSize: 18,
