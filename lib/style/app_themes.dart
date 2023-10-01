@@ -4,12 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 import 'package:musify/main.dart';
 
-final kBorderRadius = BorderRadius.circular(15);
-const kContentPadding =
-    EdgeInsets.only(left: 18, right: 20, top: 14, bottom: 14);
-
-const darkModeBGColor = Color(0xFF121212);
-
 Color primaryColor =
     Color(Hive.box('settings').get('accentColor', defaultValue: 0xFFC4A092));
 
@@ -57,15 +51,15 @@ ThemeData commonProperties() => ThemeData(
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: colorScheme.background.withAlpha(50),
         isDense: true,
         border: OutlineInputBorder(
-          borderRadius: kBorderRadius,
+          borderRadius: BorderRadius.circular(15),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: kBorderRadius,
+          borderRadius: BorderRadius.circular(15),
         ),
-        contentPadding: kContentPadding,
+        contentPadding:
+            const EdgeInsets.only(left: 18, right: 20, top: 14, bottom: 14),
       ),
     );
 
@@ -73,11 +67,8 @@ ThemeData getAppDarkTheme() {
   final base = ThemeData.dark();
 
   return commonProperties().copyWith(
-    scaffoldBackgroundColor: darkModeBGColor,
-    canvasColor: darkModeBGColor,
     textTheme: GoogleFonts.robotoTextTheme(base.textTheme),
     appBarTheme: base.appBarTheme.copyWith(
-      backgroundColor: darkModeBGColor,
       iconTheme: IconThemeData(color: colorScheme.primary),
       centerTitle: true,
       titleTextStyle: TextStyle(
@@ -87,49 +78,17 @@ ThemeData getAppDarkTheme() {
       ),
       elevation: 0,
     ),
-    bottomSheetTheme: base.bottomSheetTheme.copyWith(
-      backgroundColor: darkModeBGColor,
-    ),
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-      ),
-    ),
-    cardTheme: base.cardTheme.copyWith(
-      color: const Color(0xFF151515),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      elevation: 2.3,
-    ),
-    listTileTheme: base.listTileTheme.copyWith(
-      textColor: colorScheme.primary,
-    ),
-    switchTheme: base.switchTheme.copyWith(
-      trackColor: MaterialStateProperty.all(colorScheme.primary),
-    ),
-    iconTheme: base.iconTheme.copyWith(
-      color: Colors.white,
-    ),
     hintColor: Colors.white,
-    bottomAppBarTheme: base.bottomAppBarTheme.copyWith(
-      color: const Color(0xFF151515),
-    ),
   );
 }
 
 ThemeData getAppLightTheme() {
   final base = ThemeData.light();
   return commonProperties().copyWith(
-    scaffoldBackgroundColor: colorScheme.surface,
-    canvasColor: colorScheme.surface,
     textTheme: GoogleFonts.robotoTextTheme(base.textTheme),
     bottomSheetTheme:
         base.bottomSheetTheme.copyWith(backgroundColor: colorScheme.surface),
     appBarTheme: base.appBarTheme.copyWith(
-      backgroundColor: colorScheme.surface,
       iconTheme: IconThemeData(color: colorScheme.primary),
       centerTitle: true,
       titleTextStyle: TextStyle(
@@ -139,92 +98,10 @@ ThemeData getAppLightTheme() {
       ),
       elevation: 0,
     ),
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ButtonStyle(
-        shape: MaterialStateProperty.all(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-        ),
-      ),
-    ),
-    cardTheme: base.cardTheme.copyWith(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      elevation: 2.3,
-    ),
     listTileTheme: base.listTileTheme.copyWith(
       selectedColor: colorScheme.primary.withOpacity(0.4),
       textColor: colorScheme.primary,
     ),
-    switchTheme: base.switchTheme.copyWith(
-      trackColor: MaterialStateProperty.all(colorScheme.primary),
-    ),
-    iconTheme: base.iconTheme.copyWith(color: colorScheme.primary),
     hintColor: colorScheme.primary.withOpacity(0.7),
-    bottomAppBarTheme:
-        base.bottomAppBarTheme.copyWith(color: colorScheme.surface),
-  );
-}
-
-// Components
-
-AppBarTheme mAppBarTheme() => AppBarTheme(
-      centerTitle: true,
-      titleTextStyle: TextStyle(
-        fontSize: 27,
-        fontWeight: FontWeight.w700,
-        color: colorScheme.primary,
-      ),
-      elevation: 0,
-    );
-
-final mCardTheme = CardTheme(
-  shape: RoundedRectangleBorder(
-    borderRadius: BorderRadius.circular(10),
-  ),
-  elevation: 2.3,
-);
-
-final mInputDecorationTheme = InputDecorationTheme(
-  filled: true,
-  isDense: true,
-  border: OutlineInputBorder(
-    borderRadius: kBorderRadius,
-  ),
-  enabledBorder: OutlineInputBorder(
-    borderRadius: kBorderRadius,
-  ),
-  contentPadding: kContentPadding,
-);
-
-// builders
-
-ThemeData buildLightTheme(ColorScheme lightColorScheme) {
-  return getAppLightTheme().copyWith(
-    scaffoldBackgroundColor: lightColorScheme.surface,
-    colorScheme: lightColorScheme,
-    canvasColor: lightColorScheme.surface,
-    cardTheme: mCardTheme,
-    bottomAppBarTheme: BottomAppBarTheme(color: lightColorScheme.surface),
-    appBarTheme: mAppBarTheme().copyWith(
-      backgroundColor: lightColorScheme.surface,
-    ),
-    inputDecorationTheme: mInputDecorationTheme,
-  );
-}
-
-ThemeData buildDarkTheme(ColorScheme darkColorScheme) {
-  return getAppDarkTheme().copyWith(
-    scaffoldBackgroundColor: darkColorScheme.surface,
-    colorScheme: darkColorScheme,
-    canvasColor: darkColorScheme.surface,
-    cardTheme: mCardTheme,
-    bottomAppBarTheme: BottomAppBarTheme(color: darkColorScheme.surface),
-    appBarTheme: mAppBarTheme().copyWith(
-      backgroundColor: darkColorScheme.surface,
-    ),
-    inputDecorationTheme: mInputDecorationTheme,
   );
 }

@@ -186,13 +186,9 @@ class _MyAppState extends State<MyApp> {
           colorScheme =
               themeMode == ThemeMode.light ? lightColorScheme : darkColorScheme;
         }
-        final lightTheme = lightColorScheme != null && useSystemColor.value
-            ? buildLightTheme(lightColorScheme)
-            : getAppLightTheme();
+        final lightTheme = getAppLightTheme();
 
-        final darkTheme = darkColorScheme != null && useSystemColor.value
-            ? buildDarkTheme(darkColorScheme)
-            : getAppDarkTheme();
+        final darkTheme = getAppDarkTheme();
 
         return MaterialApp(
           themeMode: themeMode,
