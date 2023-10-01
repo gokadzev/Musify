@@ -1,0 +1,12 @@
+Bug fixes
+
+- Fixed some display issues
+- Fixed the user playlists problem
+
+Enhancements
+
+- Improved logging
+- Replaced custom navigation bar with Material 3 navigation bar
+- Updated translations
+- Made UI improvements
+- Made various quality and performance improvements for app stability and speed
