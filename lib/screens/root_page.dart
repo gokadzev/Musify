@@ -49,132 +49,134 @@ class _MusifyState extends State<Musify> {
           onGenerateRoute: RouterService.generateRoute,
         ),
       ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _selectedIndex,
-        onDestinationSelected: (int index) {
-          if (_selectedIndex == index) {
-            if (_navigatorKey.currentState?.canPop() == true) {
-              _navigatorKey.currentState?.pop();
-            }
-          } else {
-            setState(() {
-              _selectedIndex = index;
-            });
-            _navigatorKey.currentState?.pushNamedAndRemoveUntil(
-              destinations[index],
-              ModalRoute.withName(destinations[index]),
-            );
-          }
-        },
-        destinations: [
-          NavigationDestination(
-            icon: const Icon(FluentIcons.home_24_regular),
-            selectedIcon: const Icon(FluentIcons.home_24_filled),
-            label: context.l10n()!.home,
+      bottomNavigationBar: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          StreamBuilder<MediaItem?>(
+            stream: audioHandler.mediaItem,
+            builder: (context, snapshot) {
+              final metadata = snapshot.data;
+              if (metadata == null) {
+                return const SizedBox();
+              } else {
+                return Container(
+                  height: 75,
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(18),
+                      topRight: Radius.circular(18),
+                    ),
+                  ),
+                  child: Row(
+                    children: <Widget>[
+                      IconButton(
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        icon: Icon(
+                          FluentIcons.arrow_up_24_filled,
+                          size: 22,
+                          color: colorScheme.primary,
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => NowPlayingPage(),
+                            ),
+                          );
+                        },
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 7,
+                          bottom: 7,
+                          right: 15,
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: CachedNetworkImage(
+                            imageUrl: metadata.artUri.toString(),
+                            fit: BoxFit.cover,
+                            width: 55,
+                            height: 55,
+                            errorWidget: (context, url, error) =>
+                                _buildNullArtworkWidget(),
+                          ),
+                        ),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            metadata.title.length > 15
+                                ? '${metadata.title.substring(0, 15)}...'
+                                : metadata.title,
+                            style: TextStyle(
+                              color: colorScheme.primary,
+                              fontSize: 17,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Text(
+                            metadata.artist.toString().length > 15
+                                ? '${metadata.artist.toString().substring(0, 15)}...'
+                                : metadata.artist.toString(),
+                            style: TextStyle(
+                              color: colorScheme.primary,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const Spacer(),
+                      PlaybackControls(),
+                    ],
+                  ),
+                );
+              }
+            },
           ),
-          NavigationDestination(
-            icon: const Icon(FluentIcons.search_24_regular),
-            selectedIcon: const Icon(FluentIcons.search_24_filled),
-            label: context.l10n()!.search,
-          ),
-          NavigationDestination(
-            icon: const Icon(FluentIcons.book_24_regular),
-            selectedIcon: const Icon(FluentIcons.book_24_filled),
-            label: context.l10n()!.userPlaylists,
-          ),
-          NavigationDestination(
-            icon: const Icon(FluentIcons.more_horizontal_24_regular),
-            selectedIcon: const Icon(FluentIcons.more_horizontal_24_filled),
-            label: context.l10n()!.more,
+          NavigationBar(
+            selectedIndex: _selectedIndex,
+            onDestinationSelected: (int index) {
+              if (_selectedIndex == index) {
+                if (_navigatorKey.currentState?.canPop() == true) {
+                  _navigatorKey.currentState?.pop();
+                }
+              } else {
+                setState(() {
+                  _selectedIndex = index;
+                });
+                _navigatorKey.currentState?.pushNamedAndRemoveUntil(
+                  destinations[index],
+                  ModalRoute.withName(destinations[index]),
+                );
+              }
+            },
+            destinations: [
+              NavigationDestination(
+                icon: const Icon(FluentIcons.home_24_regular),
+                selectedIcon: const Icon(FluentIcons.home_24_filled),
+                label: context.l10n()!.home,
+              ),
+              NavigationDestination(
+                icon: const Icon(FluentIcons.search_24_regular),
+                selectedIcon: const Icon(FluentIcons.search_24_filled),
+                label: context.l10n()!.search,
+              ),
+              NavigationDestination(
+                icon: const Icon(FluentIcons.book_24_regular),
+                selectedIcon: const Icon(FluentIcons.book_24_filled),
+                label: context.l10n()!.userPlaylists,
+              ),
+              NavigationDestination(
+                icon: const Icon(FluentIcons.more_horizontal_24_regular),
+                selectedIcon: const Icon(FluentIcons.more_horizontal_24_filled),
+                label: context.l10n()!.more,
+              ),
+            ],
           ),
         ],
-      ),
-      bottomSheet: StreamBuilder<MediaItem?>(
-        stream: audioHandler.mediaItem,
-        builder: (context, snapshot) {
-          final metadata = snapshot.data;
-          if (metadata == null) {
-            return const SizedBox();
-          } else {
-            return Container(
-              height: 75,
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(18),
-                  topRight: Radius.circular(18),
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.only(top: 5, bottom: 2),
-                child: Row(
-                  children: <Widget>[
-                    IconButton(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      icon: Icon(
-                        FluentIcons.arrow_up_24_filled,
-                        size: 22,
-                        color: colorScheme.primary,
-                      ),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => NowPlayingPage(),
-                          ),
-                        );
-                      },
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        top: 7,
-                        bottom: 7,
-                        right: 15,
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: CachedNetworkImage(
-                          imageUrl: metadata.artUri.toString(),
-                          fit: BoxFit.cover,
-                          width: 55,
-                          height: 55,
-                          errorWidget: (context, url, error) =>
-                              _buildNullArtworkWidget(),
-                        ),
-                      ),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          metadata.title.length > 15
-                              ? '${metadata.title.substring(0, 15)}...'
-                              : metadata.title,
-                          style: TextStyle(
-                            color: colorScheme.primary,
-                            fontSize: 17,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        Text(
-                          metadata.artist.toString().length > 15
-                              ? '${metadata.artist.toString().substring(0, 15)}...'
-                              : metadata.artist.toString(),
-                          style: TextStyle(
-                            color: colorScheme.primary,
-                            fontSize: 15,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const Spacer(),
-                    PlaybackControls(),
-                  ],
-                ),
-              ),
-            );
-          }
-        },
       ),
     );
   }
