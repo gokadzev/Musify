@@ -139,7 +139,7 @@ class _MyAppState extends State<MyApp> {
 
           await audioHandler.playSong(song);
         } catch (e) {
-          logger.log('Error: $e');
+          logger.log('Error while playing shared song: $e');
         }
       },
       onError: (err) {
