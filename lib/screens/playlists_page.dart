@@ -71,10 +71,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                       FocusManager.instance.primaryFocus?.unfocus();
                     },
                   ),
-                  hintText: '${context.l10n()!.search}...',
-                  hintStyle: TextStyle(
-                    color: colorScheme.primary,
-                  ),
+                  labelText: '${context.l10n()!.search}...',
                 ),
               ),
             ),

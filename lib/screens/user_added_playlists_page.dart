@@ -40,16 +40,16 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                     children: <Widget>[
                       Text(
                         context.l10n()!.customPlaylistAddInstruction,
-                        style: const TextStyle(
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
                           fontWeight: FontWeight.bold,
+                          color: colorScheme.primary,
                         ),
                       ),
                       const SizedBox(height: 20),
                       TextField(
                         decoration: InputDecoration(
-                          hintText: context.l10n()!.youtubePlaylistID,
-                          hintStyle:
-                              TextStyle(color: Theme.of(context).hintColor),
+                          labelText: context.l10n()!.youtubePlaylistID,
                         ),
                         onChanged: (value) {
                           setState(() {
@@ -60,9 +60,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                       const SizedBox(height: 7),
                       TextField(
                         decoration: InputDecoration(
-                          hintText: context.l10n()!.customPlaylistName,
-                          hintStyle:
-                              TextStyle(color: Theme.of(context).hintColor),
+                          labelText: context.l10n()!.customPlaylistName,
                         ),
                         onChanged: (value) {
                           setState(() {
@@ -73,9 +71,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                       const SizedBox(height: 7),
                       TextField(
                         decoration: InputDecoration(
-                          hintText: context.l10n()!.customPlaylistImgUrl,
-                          hintStyle:
-                              TextStyle(color: Theme.of(context).hintColor),
+                          labelText: context.l10n()!.customPlaylistImgUrl,
                         ),
                         onChanged: (value) {
                           setState(() {
@@ -86,9 +82,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                       const SizedBox(height: 7),
                       TextField(
                         decoration: InputDecoration(
-                          hintText: context.l10n()!.customPlaylistDesc,
-                          hintStyle:
-                              TextStyle(color: Theme.of(context).hintColor),
+                          labelText: context.l10n()!.customPlaylistDesc,
                         ),
                         onChanged: (value) {
                           setState(() {
@@ -123,9 +117,8 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                           '${context.l10n()!.provideIdOrNameError}.',
                         );
                       }
-                      setState(() {
-                        Navigator.pop(context);
-                      });
+
+                      Navigator.pop(context);
                     },
                   ),
                 ],
