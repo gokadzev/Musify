@@ -180,7 +180,10 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                                     .data[index]['title']
                                     .toString(),
                                 playlistData: (data as dynamic).data[index]
-                                        ['isCustom']
+                                                ['isCustom'] !=
+                                            null &&
+                                        (data as dynamic).data[index]
+                                            ['isCustom']
                                     ? (data as dynamic).data[index]
                                     : null,
                               ),
