@@ -200,7 +200,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
       final songUrl = await getSong(
         song['ytid'],
         song['isLive'],
-        audioQualitySetting.value,
       );
       await checkIfSponsorBlockIsAvailable(song, songUrl);
       await audioPlayer.play();

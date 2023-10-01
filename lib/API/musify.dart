@@ -11,6 +11,7 @@ import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/lyrics_manager.dart';
+import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/formatter.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
@@ -419,9 +420,9 @@ Future<AudioOnlyStreamInfo> getSongManifest(String songId) async {
   }
 }
 
-Future<String> getSong(String songId, bool isLive, AudioQuality quality) async {
+Future<String> getSong(String songId, bool isLive) async {
   try {
-    final cacheKey = 'song_${songId}_${quality.name}_url';
+    final cacheKey = 'song_${songId}_${audioQualitySetting.value.name}_url';
 
     final cachedUrl = await getData(
       'cache',
@@ -440,18 +441,19 @@ Future<String> getSong(String songId, bool isLive, AudioQuality quality) async {
     } else {
       final manifest = await yt.videos.streamsClient.getManifest(songId);
       final availableSources = manifest.audioOnly.sortByBitrate();
-      AudioOnlyStreamInfo audioStream;
-      switch (quality) {
-        case AudioQuality.lowQuality:
-          audioStream = availableSources.last;
-          break;
-        case AudioQuality.mediumQuality:
-          audioStream = availableSources[availableSources.length ~/ 2];
-          break;
-        case AudioQuality.bestQuality:
-          audioStream = availableSources.first;
-          break;
-      }
+
+      final audioStream = () {
+        switch (audioQualitySetting.value) {
+          case AudioQuality.lowQuality:
+            return availableSources.last;
+          case AudioQuality.mediumQuality:
+            return availableSources[availableSources.length ~/ 2];
+          case AudioQuality.bestQuality:
+            return availableSources.first;
+          default:
+            return availableSources.first;
+        }
+      }();
 
       unawaited(updateRecentlyPlayed(songId));
 
@@ -461,7 +463,7 @@ Future<String> getSong(String songId, bool isLive, AudioQuality quality) async {
     }
   } catch (e) {
     logger.log('Error while getting song streaming URL: $e');
-    rethrow; // Rethrow the exception to allow the caller to handle it
+    rethrow;
   }
 }
 

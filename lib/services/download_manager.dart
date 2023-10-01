@@ -26,7 +26,6 @@ Future<void> downloadSong(BuildContext context, dynamic song) async {
     final audio = await getSong(
       song['ytid'].toString(),
       song['isLive'],
-      audioQualitySetting.value,
     );
     final task = DownloadTask(
       url: audio,
