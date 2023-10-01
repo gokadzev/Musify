@@ -78,6 +78,10 @@ ThemeData getAppDarkTheme() {
       ),
       elevation: 0,
     ),
+    listTileTheme: base.listTileTheme.copyWith(
+      selectedColor: colorScheme.primary.withOpacity(0.4),
+      textColor: colorScheme.primary,
+    ),
     hintColor: Colors.white,
   );
 }
