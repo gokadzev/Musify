@@ -54,72 +54,75 @@ ThemeData commonProperties() => ThemeData(
     );
 
 ThemeData getAppDarkTheme() {
+  final base = ThemeData.dark();
+
   return commonProperties().copyWith(
     scaffoldBackgroundColor: darkModeBGColor,
     canvasColor: darkModeBGColor,
-    textTheme: GoogleFonts.robotoTextTheme(ThemeData.dark().textTheme),
-    appBarTheme: ThemeData.dark().appBarTheme.copyWith(
-          backgroundColor: darkModeBGColor,
-          iconTheme: IconThemeData(color: colorScheme.primary),
-          centerTitle: true,
-          titleTextStyle: TextStyle(
-            fontSize: 27,
-            fontWeight: FontWeight.w700,
-            color: colorScheme.primary,
-          ),
-          elevation: 0,
-        ),
-    bottomSheetTheme: ThemeData.dark()
-        .bottomSheetTheme
-        .copyWith(backgroundColor: darkModeBGColor),
+    textTheme: GoogleFonts.robotoTextTheme(base.textTheme),
+    appBarTheme: base.appBarTheme.copyWith(
+      backgroundColor: darkModeBGColor,
+      iconTheme: IconThemeData(color: colorScheme.primary),
+      centerTitle: true,
+      titleTextStyle: TextStyle(
+        fontSize: 27,
+        fontWeight: FontWeight.w700,
+        color: colorScheme.primary,
+      ),
+      elevation: 0,
+    ),
+    bottomSheetTheme: base.bottomSheetTheme.copyWith(
+      backgroundColor: darkModeBGColor,
+    ),
     elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ButtonStyle(
-        shape: MaterialStateProperty.all(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+      style: ElevatedButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
         ),
       ),
     ),
-    cardTheme: ThemeData.dark().cardTheme.copyWith(
-          color: const Color(0xFF151515),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          elevation: 2.3,
-        ),
-    listTileTheme:
-        ThemeData.dark().listTileTheme.copyWith(textColor: colorScheme.primary),
-    switchTheme: ThemeData.dark()
-        .switchTheme
-        .copyWith(trackColor: MaterialStateProperty.all(colorScheme.primary)),
-    iconTheme: ThemeData.dark().iconTheme.copyWith(color: Colors.white),
+    cardTheme: base.cardTheme.copyWith(
+      color: const Color(0xFF151515),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      elevation: 2.3,
+    ),
+    listTileTheme: base.listTileTheme.copyWith(
+      textColor: colorScheme.primary,
+    ),
+    switchTheme: base.switchTheme.copyWith(
+      trackColor: MaterialStateProperty.all(colorScheme.primary),
+    ),
+    iconTheme: base.iconTheme.copyWith(
+      color: Colors.white,
+    ),
     hintColor: Colors.white,
-    bottomAppBarTheme: ThemeData.dark()
-        .bottomAppBarTheme
-        .copyWith(color: const Color(0xFF151515)),
+    bottomAppBarTheme: base.bottomAppBarTheme.copyWith(
+      color: const Color(0xFF151515),
+    ),
   );
 }
 
 ThemeData getAppLightTheme() {
+  final base = ThemeData.light();
   return commonProperties().copyWith(
     scaffoldBackgroundColor: colorScheme.surface,
     canvasColor: colorScheme.surface,
-    textTheme: GoogleFonts.robotoTextTheme(ThemeData.light().textTheme),
-    bottomSheetTheme: ThemeData.light()
-        .bottomSheetTheme
-        .copyWith(backgroundColor: colorScheme.surface),
-    appBarTheme: ThemeData.light().appBarTheme.copyWith(
-          backgroundColor: colorScheme.surface,
-          iconTheme: IconThemeData(color: colorScheme.primary),
-          centerTitle: true,
-          titleTextStyle: TextStyle(
-            fontSize: 27,
-            fontWeight: FontWeight.w700,
-            color: colorScheme.primary,
-          ),
-          elevation: 0,
-        ),
+    textTheme: GoogleFonts.robotoTextTheme(base.textTheme),
+    bottomSheetTheme:
+        base.bottomSheetTheme.copyWith(backgroundColor: colorScheme.surface),
+    appBarTheme: base.appBarTheme.copyWith(
+      backgroundColor: colorScheme.surface,
+      iconTheme: IconThemeData(color: colorScheme.primary),
+      centerTitle: true,
+      titleTextStyle: TextStyle(
+        fontSize: 27,
+        fontWeight: FontWeight.w700,
+        color: colorScheme.primary,
+      ),
+      elevation: 0,
+    ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
         shape: MaterialStateProperty.all(
@@ -129,24 +132,23 @@ ThemeData getAppLightTheme() {
         ),
       ),
     ),
-    cardTheme: ThemeData.light().cardTheme.copyWith(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          elevation: 2.3,
-        ),
-    listTileTheme: ThemeData.light().listTileTheme.copyWith(
-          selectedColor: colorScheme.primary.withOpacity(0.4),
-          textColor: colorScheme.primary,
-        ),
-    switchTheme: ThemeData.light().switchTheme.copyWith(
-          trackColor: MaterialStateProperty.all(colorScheme.primary),
-        ),
-    iconTheme: ThemeData.light().iconTheme.copyWith(color: colorScheme.primary),
+    cardTheme: base.cardTheme.copyWith(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      elevation: 2.3,
+    ),
+    listTileTheme: base.listTileTheme.copyWith(
+      selectedColor: colorScheme.primary.withOpacity(0.4),
+      textColor: colorScheme.primary,
+    ),
+    switchTheme: base.switchTheme.copyWith(
+      trackColor: MaterialStateProperty.all(colorScheme.primary),
+    ),
+    iconTheme: base.iconTheme.copyWith(color: colorScheme.primary),
     hintColor: colorScheme.primary.withOpacity(0.7),
-    bottomAppBarTheme: ThemeData.light()
-        .bottomAppBarTheme
-        .copyWith(color: colorScheme.surface),
+    bottomAppBarTheme:
+        base.bottomAppBarTheme.copyWith(color: colorScheme.surface),
   );
 }
 
