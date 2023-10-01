@@ -171,12 +171,13 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                   ),
                   itemBuilder: (BuildContext context, index) {
                     final playlist = playlists[index];
-                    final ytid = playlist['ytid'].toString();
+                    final ytid = playlist['ytid'];
 
                     return Center(
                       child: GestureDetector(
                         onLongPress: () {
-                          removeUserPlaylist(ytid);
+                          if(ytid == null && playlist['isCustom']) removeUserCustomPlaylist(playlist);
+                          else removeUserPlaylist(ytid);
                           setState(() {});
                         },
                         child: PlaylistCube(
