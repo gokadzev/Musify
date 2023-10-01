@@ -2,6 +2,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
+import 'package:musify/main.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/widgets/playlist_cube.dart';
@@ -144,54 +145,59 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
             const Padding(padding: EdgeInsets.only(top: 20)),
             FutureBuilder(
               future: getUserPlaylists(),
-              builder: (context, data) {
-                return (data as dynamic).data != null
-                    ? GridView.builder(
-                        gridDelegate:
-                            const SliverGridDelegateWithMaxCrossAxisExtent(
-                          maxCrossAxisExtent: 200,
-                          crossAxisSpacing: 20,
-                          mainAxisSpacing: 20,
-                        ),
-                        shrinkWrap: true,
-                        physics: const ScrollPhysics(),
-                        itemCount: (data as dynamic).data.length as int,
-                        padding: const EdgeInsets.only(
-                          left: 16,
-                          right: 16,
-                          top: 16,
-                          bottom: 20,
-                        ),
-                        itemBuilder: (BuildContext context, index) {
-                          return Center(
-                            child: GestureDetector(
-                              onLongPress: () {
-                                removeUserPlaylist(
-                                  (data as dynamic)
-                                      .data[index]['ytid']
-                                      .toString(),
-                                );
-                                setState(() {});
-                              },
-                              child: PlaylistCube(
-                                id: (data as dynamic).data[index]['ytid'],
-                                image: (data as dynamic).data[index]['image'],
-                                title: (data as dynamic)
-                                    .data[index]['title']
-                                    .toString(),
-                                playlistData: (data as dynamic).data[index]
-                                                ['isCustom'] !=
-                                            null &&
-                                        (data as dynamic).data[index]
-                                            ['isCustom']
-                                    ? (data as dynamic).data[index]
-                                    : null,
-                              ),
-                            ),
-                          );
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Spinner();
+                } else if (snapshot.hasError) {
+                  logger.log(snapshot.error.toString());
+                  return Center(
+                    child: Text(context.l10n()!.error),
+                  );
+                } else if (!snapshot.hasData ||
+                    (snapshot.data as List).isEmpty) {
+                  return const SizedBox();
+                }
+
+                final playlists = snapshot.data as List;
+
+                return GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 200,
+                    crossAxisSpacing: 20,
+                    mainAxisSpacing: 20,
+                  ),
+                  shrinkWrap: true,
+                  physics: const ScrollPhysics(),
+                  itemCount: playlists.length,
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    top: 16,
+                    bottom: 20,
+                  ),
+                  itemBuilder: (BuildContext context, index) {
+                    final playlist = playlists[index];
+                    final ytid = playlist['ytid'].toString();
+
+                    return Center(
+                      child: GestureDetector(
+                        onLongPress: () {
+                          removeUserPlaylist(ytid);
+                          setState(() {});
                         },
-                      )
-                    : const Spinner();
+                        child: PlaylistCube(
+                          id: ytid,
+                          image: playlist['image'],
+                          title: playlist['title'].toString(),
+                          playlistData: playlist['isCustom'] != null &&
+                                  playlist['isCustom']
+                              ? playlist
+                              : null,
+                        ),
+                      ),
+                    );
+                  },
+                );
               },
             ),
           ],
