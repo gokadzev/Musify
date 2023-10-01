@@ -26,6 +26,7 @@ late MusifyAudioHandler audioHandler;
 final logger = Logger();
 
 ThemeMode themeMode = ThemeMode.dark;
+Brightness brightness = Brightness.dark;
 var isFdroidBuild = false;
 
 final appLanguages = <String, String>{
@@ -79,6 +80,12 @@ class _MyAppState extends State<MyApp> {
   void changeTheme(ThemeMode newThemeMode) {
     setState(() {
       themeMode = newThemeMode;
+      brightness = getBrightnessFromThemeMode(context, newThemeMode);
+      colorScheme = ColorScheme.fromSeed(
+        seedColor: primaryColor,
+        primary: primaryColor,
+        brightness: brightness,
+      ).harmonized();
     });
   }
 
@@ -105,6 +112,7 @@ class _MyAppState extends State<MyApp> {
       colorScheme = ColorScheme.fromSeed(
         seedColor: newAccentColor,
         primary: newAccentColor,
+        brightness: brightness,
       ).harmonized();
     });
   }
@@ -120,6 +128,7 @@ class _MyAppState extends State<MyApp> {
 
     if (themeModeSetting != null && themeModeSetting != themeMode.name) {
       themeMode = getThemeMode(themeModeSetting);
+      brightness = getBrightnessFromThemeMode(context, themeMode);
     }
 
     GoogleFonts.config.allowRuntimeFetching = false;

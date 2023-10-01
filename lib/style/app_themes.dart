@@ -2,6 +2,7 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
+import 'package:musify/main.dart';
 
 final kBorderRadius = BorderRadius.circular(15);
 const kContentPadding =
@@ -15,7 +16,22 @@ Color primaryColor =
 ColorScheme colorScheme = ColorScheme.fromSeed(
   seedColor: primaryColor,
   primary: primaryColor,
+  brightness: brightness,
 ).harmonized();
+
+Brightness getBrightnessFromThemeMode(
+  BuildContext context,
+  ThemeMode themeMode,
+) {
+  switch (themeMode) {
+    case ThemeMode.light:
+      return Brightness.light;
+    case ThemeMode.dark:
+      return Brightness.dark;
+    case ThemeMode.system:
+      return MediaQuery.platformBrightnessOf(context);
+  }
+}
 
 ThemeMode getThemeMode(String themeModeString) {
   switch (themeModeString) {
