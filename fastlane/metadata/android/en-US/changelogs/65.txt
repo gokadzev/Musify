@@ -1,0 +1,9 @@
+Bug fixes
+
+- Fixed user playlists issues
+
+Enhancements
+
+- Improved user playlists page
+- Added confirmation dialog before removing playlist
+- Made various quality and performance improvements for app stability and speed
