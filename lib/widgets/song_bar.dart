@@ -172,7 +172,7 @@ class SongBar extends StatelessWidget {
                 ListTile(
                   title: Text(playlist['title']),
                   onTap: () {
-                    removeSongFromPlaylist(playlist['title'], song);
+                    removeSongFromPlaylist(playlist, song);
                     Navigator.pop(context);
                   },
                 ),
