@@ -13,10 +13,15 @@ class SongBar extends StatelessWidget {
     this.clearPlaylist, {
     this.showMusicDuration = false,
     this.isFromPlaylist = false,
+    this.updateOnRemove,
+    this.passingPlaylist,
   });
 
   final dynamic song;
   final bool clearPlaylist;
+
+  final Function? updateOnRemove;
+  final dynamic passingPlaylist;
 
   final bool showMusicDuration;
   final bool isFromPlaylist;
@@ -118,7 +123,7 @@ class SongBar extends StatelessWidget {
                 ? const Icon(FluentIcons.delete_24_filled)
                 : const Icon(FluentIcons.add_24_regular),
             onPressed: () => isFromPlaylist
-                ? _showRemoveToPlaylistDialog(context, song)
+                ? _removeFromPlaylist(context, song)
                 : _showAddToPlaylistDialog(context, song),
           ),
           IconButton(
@@ -173,6 +178,7 @@ class SongBar extends StatelessWidget {
                   title: Text(playlist['title']),
                   onTap: () {
                     removeSongFromPlaylist(playlist, song);
+                    if(updateOnRemove != null) updateOnRemove!();
                     Navigator.pop(context);
                   },
                 ),
@@ -181,5 +187,14 @@ class SongBar extends StatelessWidget {
         );
       },
     );
+  }
+
+  void _removeFromPlaylist(BuildContext context, dynamic song){
+    if (passingPlaylist == null){
+      _showRemoveToPlaylistDialog(context, song);
+      return;
+    } 
+    removeSongFromPlaylist(passingPlaylist, song);
+    if(updateOnRemove != null) updateOnRemove!();
   }
 }
