@@ -155,6 +155,11 @@ void removeUserPlaylist(String playlistId) {
   addOrUpdateData('user', 'playlists', userPlaylists);
 }
 
+void removeUserCustomPlaylist(dynamic playlist){
+  userCustomPlaylists.remove(playlist);
+  addOrUpdateData('user', 'customPlaylists', userCustomPlaylists);
+}
+
 Future<void> updateSongLikeStatus(dynamic songId, bool add) async {
   if (add) {
     userLikedSongsList
