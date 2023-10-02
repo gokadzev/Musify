@@ -126,7 +126,7 @@ String createCustomPlaylist(
   return '${context.l10n()!.addedSuccess}!';
 }
 
-String addSongInCustomPlaylist(String playlistName, dynamic song) {
+String addSongInCustomPlaylist(String playlistName, dynamic song, {int? indexToInsert}) {
   final customPlaylist = userCustomPlaylists.firstWhere(
     (playlist) => playlist['title'] == playlistName,
     orElse: () => null,
@@ -134,7 +134,8 @@ String addSongInCustomPlaylist(String playlistName, dynamic song) {
 
   if (customPlaylist != null) {
     final List<dynamic> playlistSongs = customPlaylist['list'];
-    playlistSongs.add(song);
+    indexToInsert != null ? playlistSongs.insert(indexToInsert, song) :
+                            playlistSongs.add(song);
     addOrUpdateData('user', 'customPlaylists', userCustomPlaylists);
     return 'Song added to custom playlist: $playlistName';
   } else {
