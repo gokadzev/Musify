@@ -262,7 +262,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
   }
 
   void _handleSyncPlaylist() async {
-    _playlist = await updatePlaylistList(context, _playlist['ytid']);
+    if (_playlist['ytid'] != null && (_playlist['isCustom'] == null || !_playlist['isCustom']))
+      _playlist = await updatePlaylistList(context, _playlist['ytid']);
     _hasMore = true;
     _songsList.clear();
     setState(() {
@@ -270,6 +271,11 @@ class _PlaylistPageState extends State<PlaylistPage> {
       _currentLastLoadedId = 0;
     });
     _loadMore();
+    setState(() {});
+  }
+
+  void _updateSongsListonRemove(int indexOfRemovedSong) {
+    _songsList.removeAt(indexOfRemovedSong);
     setState(() {});
   }
 
@@ -311,6 +317,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
                 _songsList[index],
                 true,
                 isFromPlaylist: widget.playlistData != null,
+                updateOnRemove: () => _updateSongsListonRemove(index),
+                passingPlaylist: _playlist,
               );
             },
           ),
