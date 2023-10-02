@@ -52,9 +52,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                           labelText: context.l10n()!.youtubePlaylistID,
                         ),
                         onChanged: (value) {
-                          setState(() {
-                            id = value;
-                          });
+                          id = value;
                         },
                       ),
                       const SizedBox(height: 7),
@@ -63,9 +61,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                           labelText: context.l10n()!.customPlaylistName,
                         ),
                         onChanged: (value) {
-                          setState(() {
-                            customPlaylistName = value;
-                          });
+                          customPlaylistName = value;
                         },
                       ),
                       const SizedBox(height: 7),
@@ -74,9 +70,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                           labelText: context.l10n()!.customPlaylistImgUrl,
                         ),
                         onChanged: (value) {
-                          setState(() {
-                            imageUrl = value;
-                          });
+                          imageUrl = value;
                         },
                       ),
                       const SizedBox(height: 7),
@@ -85,9 +79,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                           labelText: context.l10n()!.customPlaylistDesc,
                         ),
                         onChanged: (value) {
-                          setState(() {
-                            description = value;
-                          });
+                          description = value;
                         },
                       ),
                     ],
@@ -118,7 +110,9 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                         );
                       }
 
-                      Navigator.pop(context);
+                      setState(() {
+                        Navigator.pop(context);
+                      });
                     },
                   ),
                 ],
