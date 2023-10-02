@@ -12,7 +12,6 @@ api_url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/releases"
 # Define a dictionary to hold the total download counts for each release
 download_counts = {}
 
-
 def handle_rate_limit(response):
     if response.status_code == 403:
         # If we get a rate limit error, we need to wait and try again
@@ -25,13 +24,11 @@ def handle_rate_limit(response):
             return True
     return False
 
-
 def make_request(url):
     response = requests.get(url)
     while handle_rate_limit(response):
         response = requests.get(url)  # Retry after rate limit
     return response
-
 
 try:
     response = make_request(api_url)
@@ -44,16 +41,18 @@ except json.JSONDecodeError as e:
     print(f"Error occurred while parsing response JSON: {e}")
     exit(1)
 
+# Function to get the download count for a release
+def get_download_count(release):
+    return sum(asset["download_count"] for asset in release["assets"])
+
 # Loop through each release and get the download count
 for release in releases:
-    # Get the download count for each asset in the release
-    download_count = sum(asset["download_count"] for asset in release["assets"])
-    download_counts[release["tag_name"]] = download_count
+    download_counts[release["tag_name"]] = get_download_count(release)
 
 if "next" in response.links:
-    # Make the next request to the API endpoint
-    next_url = response.links["next"]["url"]
-    while next_url:
+    # Make additional requests to retrieve all releases
+    while "next" in response.links:
+        next_url = response.links["next"]["url"]
         response = make_request(next_url)
         try:
             response.raise_for_status()
@@ -66,14 +65,9 @@ if "next" in response.links:
             exit(1)
 
         for release in releases:
-            download_count = sum(asset["download_count"] for asset in release["assets"])
-            download_counts[release["tag_name"]] = download_count
+            download_counts[release["tag_name"]] = get_download_count(release)
 
-        if "next" in response.links:
-            next_url = response.links["next"]["url"]
-        else:
-            next_url = None
-
+# Calculate the total download count
 total_downloads = sum(download_counts.values())
 json_obj = {"downloads_count": total_downloads}
 
