@@ -275,6 +275,14 @@ class _PlaylistPageState extends State<PlaylistPage> {
   }
 
   void _updateSongsListonRemove(int indexOfRemovedSong) {
+    final dynamic songToRemove = _songsList.elementAt(indexOfRemovedSong);
+    showToastwithButton(context,
+    context.l10n()!.songRemoved,
+    context.l10n()!.undo,
+    () => {addSongInCustomPlaylist(_playlist['title'], songToRemove, indexToInsert: indexOfRemovedSong),
+      _songsList.insert(indexOfRemovedSong, songToRemove),
+      setState(() {})
+    });
     _songsList.removeAt(indexOfRemovedSong);
     setState(() {});
   }
