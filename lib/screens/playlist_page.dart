@@ -262,7 +262,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
   }
 
   void _handleSyncPlaylist() async {
-    if (_playlist['ytid'] != null && (_playlist['isCustom'] == null || !_playlist['isCustom']))
+    if (_playlist['ytid'] != null &&
+        (_playlist['isCustom'] == null || !_playlist['isCustom']))
       _playlist = await updatePlaylistList(context, _playlist['ytid']);
     _hasMore = true;
     _songsList.clear();
@@ -276,13 +277,20 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
   void _updateSongsListonRemove(int indexOfRemovedSong) {
     final dynamic songToRemove = _songsList.elementAt(indexOfRemovedSong);
-    showToastwithButton(context,
-    context.l10n()!.songRemoved,
-    context.l10n()!.undo,
-    () => {addSongInCustomPlaylist(_playlist['title'], songToRemove, indexToInsert: indexOfRemovedSong),
-      _songsList.insert(indexOfRemovedSong, songToRemove),
-      setState(() {})
-    });
+    showToastwithButton(
+      context,
+      context.l10n()!.songRemoved,
+      context.l10n()!.undo,
+      () => {
+        addSongInCustomPlaylist(
+          _playlist['title'],
+          songToRemove,
+          indexToInsert: indexOfRemovedSong,
+        ),
+        _songsList.insert(indexOfRemovedSong, songToRemove),
+        setState(() {}),
+      },
+    );
     _songsList.removeAt(indexOfRemovedSong);
     setState(() {});
   }
