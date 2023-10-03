@@ -143,10 +143,11 @@ String addSongInCustomPlaylist(String playlistName, dynamic song, {int? indexToI
   }
 }
 
-void removeSongFromPlaylist(dynamic playlist, dynamic songToRemove) {
+void removeSongFromPlaylist(dynamic playlist, dynamic songToRemove, {int? removeOneAtIndex}) {
   if (playlist == null || playlist['list'] == null) return;
   final playlistSongs = List<dynamic>.from(playlist['list']);
-  playlistSongs.removeWhere((song) => song['ytid'] == songToRemove['ytid']);
+  removeOneAtIndex != null? playlistSongs.removeAt(removeOneAtIndex):
+    playlistSongs.removeWhere((song) => song['ytid'] == songToRemove['ytid']);
   playlist['list'] = playlistSongs;
   if(playlist['isCustom']) addOrUpdateData('user', 'customPlaylists', userCustomPlaylists);
   else  addOrUpdateData('user', 'playlists', userPlaylists);

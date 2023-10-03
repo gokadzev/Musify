@@ -15,6 +15,7 @@ class SongBar extends StatelessWidget {
     this.isFromPlaylist = false,
     this.updateOnRemove,
     this.passingPlaylist,
+    this.songIndexInPlaylist
   });
 
   final dynamic song;
@@ -22,6 +23,7 @@ class SongBar extends StatelessWidget {
 
   final Function? updateOnRemove;
   final dynamic passingPlaylist;
+  final int? songIndexInPlaylist;
 
   final bool showMusicDuration;
   final bool isFromPlaylist;
@@ -177,7 +179,7 @@ class SongBar extends StatelessWidget {
                 ListTile(
                   title: Text(playlist['title']),
                   onTap: () {
-                    removeSongFromPlaylist(playlist, song);
+                    removeSongFromPlaylist(playlist, song, removeOneAtIndex: songIndexInPlaylist);
                     if(updateOnRemove != null) updateOnRemove!();
                     Navigator.pop(context);
                   },
@@ -194,7 +196,7 @@ class SongBar extends StatelessWidget {
       _showRemoveToPlaylistDialog(context, song);
       return;
     } 
-    removeSongFromPlaylist(passingPlaylist, song);
+    removeSongFromPlaylist(passingPlaylist, song, removeOneAtIndex: songIndexInPlaylist);
     if(updateOnRemove != null) updateOnRemove!();
   }
 }

@@ -327,6 +327,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                 isFromPlaylist: widget.playlistData != null,
                 updateOnRemove: () => _updateSongsListonRemove(index),
                 passingPlaylist: _playlist,
+                songIndexInPlaylist: index,
               );
             },
           ),
