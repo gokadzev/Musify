@@ -51,10 +51,6 @@ android {
         main.java.srcDirs += 'src/main/kotlin'
     }
 
-    lintOptions {
-        checkReleaseBuilds false
-        abortOnError false
-    }
 
     defaultConfig {
         applicationId "com.gokadzev.musify"
@@ -94,6 +90,15 @@ android {
             signingConfig signingConfigs.release
             shrinkResources false
         }
+    }
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging true
+        }
+    }
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
     }
 
 }
