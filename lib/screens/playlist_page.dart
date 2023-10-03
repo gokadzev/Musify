@@ -280,7 +280,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
     showToastwithButton(
       context,
       context.l10n()!.songRemoved,
-      context.l10n()!.undo,
+      context.l10n()!.undo.toUpperCase(),
       () => {
         addSongInCustomPlaylist(
           _playlist['title'],
