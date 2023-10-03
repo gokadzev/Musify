@@ -275,9 +275,9 @@ class _PlaylistPageState extends State<PlaylistPage> {
     setState(() {});
   }
 
-  void _updateSongsListonRemove(int indexOfRemovedSong) {
+  void _updateSongsListOnRemove(int indexOfRemovedSong) {
     final dynamic songToRemove = _songsList.elementAt(indexOfRemovedSong);
-    showToastwithButton(
+    showToastWithButton(
       context,
       context.l10n()!.songRemoved,
       context.l10n()!.undo.toUpperCase(),
@@ -333,7 +333,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                 _songsList[index],
                 true,
                 isFromPlaylist: widget.playlistData != null,
-                updateOnRemove: () => _updateSongsListonRemove(index),
+                updateOnRemove: () => _updateSongsListOnRemove(index),
                 passingPlaylist: _playlist,
                 songIndexInPlaylist: index,
               );

@@ -20,11 +20,9 @@ class SongBar extends StatelessWidget {
 
   final dynamic song;
   final bool clearPlaylist;
-
   final Function? updateOnRemove;
   final dynamic passingPlaylist;
   final int? songIndexInPlaylist;
-
   final bool showMusicDuration;
   final bool isFromPlaylist;
 
@@ -53,9 +51,7 @@ class SongBar extends StatelessWidget {
         }
       },
       leading: CachedNetworkImage(
-        key: Key(
-          song['ytid'].toString(),
-        ),
+        key: Key(song['ytid'].toString()),
         width: 60,
         height: 60,
         imageUrl: song['lowResImage'].toString(),
@@ -73,12 +69,12 @@ class SongBar extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
-            overflow: TextOverflow.ellipsis,
             song['title']
                 .toString()
                 .split('(')[0]
                 .replaceAll('&quot;', '"')
                 .replaceAll('&amp;', '&'),
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: Theme.of(context).colorScheme.primary,
               fontSize: 16,
@@ -87,8 +83,8 @@ class SongBar extends StatelessWidget {
           ),
           const SizedBox(height: 5),
           Text(
-            overflow: TextOverflow.ellipsis,
             song['artist'].toString(),
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: Theme.of(context).hintColor,
               fontWeight: FontWeight.w400,

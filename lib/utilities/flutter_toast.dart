@@ -17,7 +17,12 @@ void showToast(BuildContext context, String text) {
   );
 }
 
-void showToastwithButton(BuildContext context, String text, String buttonName, Function onPressedToast) {
+void showToastWithButton(
+  BuildContext context,
+  String text,
+  String buttonName,
+  Function onPressedToast,
+) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       backgroundColor: colorScheme.primary,
@@ -28,7 +33,8 @@ void showToastwithButton(BuildContext context, String text, String buttonName, F
           color: Colors.white,
         ),
       ),
-      action: SnackBarAction(label: buttonName, onPressed: () => onPressedToast()),
+      action:
+          SnackBarAction(label: buttonName, onPressed: () => onPressedToast()),
       duration: const Duration(seconds: 3), // Adjust the duration as needed
     ),
   );
