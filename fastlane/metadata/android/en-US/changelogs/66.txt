@@ -1,0 +1,8 @@
+Bug fixes
+
+- Fixed remove feature in custom playlists
+
+Enhancements
+
+- Added undo dialog after removing song from custom playlists
+- Made various quality and performance improvements for app stability and speed

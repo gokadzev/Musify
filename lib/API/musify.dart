@@ -126,7 +126,11 @@ String createCustomPlaylist(
   return '${context.l10n()!.addedSuccess}!';
 }
 
-String addSongInCustomPlaylist(String playlistName, dynamic song, {int? indexToInsert}) {
+String addSongInCustomPlaylist(
+  String playlistName,
+  dynamic song, {
+  int? indexToInsert,
+}) {
   final customPlaylist = userCustomPlaylists.firstWhere(
     (playlist) => playlist['title'] == playlistName,
     orElse: () => null,
@@ -134,8 +138,9 @@ String addSongInCustomPlaylist(String playlistName, dynamic song, {int? indexToI
 
   if (customPlaylist != null) {
     final List<dynamic> playlistSongs = customPlaylist['list'];
-    indexToInsert != null ? playlistSongs.insert(indexToInsert, song) :
-                            playlistSongs.add(song);
+    indexToInsert != null
+        ? playlistSongs.insert(indexToInsert, song)
+        : playlistSongs.add(song);
     addOrUpdateData('user', 'customPlaylists', userCustomPlaylists);
     return 'Song added to custom playlist: $playlistName';
   } else {
@@ -143,14 +148,22 @@ String addSongInCustomPlaylist(String playlistName, dynamic song, {int? indexToI
   }
 }
 
-void removeSongFromPlaylist(dynamic playlist, dynamic songToRemove, {int? removeOneAtIndex}) {
+void removeSongFromPlaylist(
+  dynamic playlist,
+  dynamic songToRemove, {
+  int? removeOneAtIndex,
+}) {
   if (playlist == null || playlist['list'] == null) return;
   final playlistSongs = List<dynamic>.from(playlist['list']);
-  removeOneAtIndex != null? playlistSongs.removeAt(removeOneAtIndex):
-    playlistSongs.removeWhere((song) => song['ytid'] == songToRemove['ytid']);
+  removeOneAtIndex != null
+      ? playlistSongs.removeAt(removeOneAtIndex)
+      : playlistSongs
+          .removeWhere((song) => song['ytid'] == songToRemove['ytid']);
   playlist['list'] = playlistSongs;
-  if(playlist['isCustom']) addOrUpdateData('user', 'customPlaylists', userCustomPlaylists);
-  else  addOrUpdateData('user', 'playlists', userPlaylists);
+  if (playlist['isCustom'])
+    addOrUpdateData('user', 'customPlaylists', userCustomPlaylists);
+  else
+    addOrUpdateData('user', 'playlists', userPlaylists);
 }
 
 void removeUserPlaylist(String playlistId) {
