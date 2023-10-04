@@ -9,6 +9,7 @@ class Logger {
   void log(String message) {
     final timestamp = DateTime.now().toString();
     final logMessage = '[$timestamp] $message';
+    debugPrint(logMessage);
     _logs += '$logMessage\n';
     _logCount++;
   }
