@@ -17,18 +17,17 @@ class SearchPage extends StatefulWidget {
 List searchHistory = Hive.box('user').get('searchHistory', defaultValue: []);
 
 class _SearchPageState extends State<SearchPage> {
-  late TextEditingController _searchBar;
-  late ValueNotifier<bool> _fetchingSongs;
-  late FocusNode _inputNode;
+  final TextEditingController _searchBar = TextEditingController();
+  final FocusNode _inputNode = FocusNode();
+  final ValueNotifier<bool> _fetchingSongs = ValueNotifier(false);
   List _searchResult = [];
   List _suggestionsList = [];
 
   @override
-  void initState() {
-    super.initState();
-    _searchBar = TextEditingController();
-    _fetchingSongs = ValueNotifier(false);
-    _inputNode = FocusNode();
+  void dispose() {
+    _searchBar.dispose();
+    _inputNode.dispose();
+    super.dispose();
   }
 
   Future<void> search() async {

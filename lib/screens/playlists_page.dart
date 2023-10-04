@@ -23,6 +23,13 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
   }
 
   @override
+  void dispose() {
+    _searchBar.dispose();
+    _inputNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
