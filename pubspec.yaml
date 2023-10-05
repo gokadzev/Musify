@@ -14,7 +14,7 @@ environment:
 dependencies:
   audio_service: ^0.18.12
   audio_session: ^0.1.16
-  background_downloader: ^7.9.4
+  background_downloader: ^7.10.0
   cached_network_image: ^3.3.0
   dynamic_color: ^1.6.7
   file_picker: ^5.5.0
@@ -33,7 +33,7 @@ dependencies:
   just_audio: ^0.9.35
   path: ^1.8.3
   path_provider: ^2.1.1
-  permission_handler: ^11.0.0
+  permission_handler: ^11.0.1
   receive_sharing_intent:
     path: ./packages/receive_sharing_intent
   rxdart: ^0.27.7
@@ -42,7 +42,7 @@ dependencies:
 
 dev_dependencies:
   flutter_launcher_icons: ^0.13.1
-  flutter_native_splash: ^2.3.2
+  flutter_native_splash: ^2.3.3
   flutter_test:
     sdk: flutter
   translations_cleaner: ^0.0.5
