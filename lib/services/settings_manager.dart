@@ -24,9 +24,8 @@ final sponsorBlockSupport = ValueNotifier<bool>(
   Hive.box('settings').get('SponsorBlockSupport', defaultValue: false),
 );
 
-final audioQualitySetting = ValueNotifier<AudioQuality>(
-  Hive.box('settings')
-      .get('AudioQuality', defaultValue: AudioQuality.bestQuality),
+final audioQualitySetting = ValueNotifier<AudioQuality?>(
+  Hive.box('settings').get('AudioQuality', defaultValue: null),
 );
 
 // Non-Storage Notifiers

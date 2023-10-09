@@ -443,7 +443,10 @@ Future<AudioOnlyStreamInfo> getSongManifest(String songId) async {
 
 Future<String> getSong(String songId, bool isLive) async {
   try {
-    final cacheKey = 'song_${songId}_${audioQualitySetting.value.name}_url';
+    final isQualityChanged = audioQualitySetting.value != null;
+    final cacheKey = isQualityChanged
+        ? 'song_${songId}_${audioQualitySetting.value!.name}_url'
+        : 'song_${songId}__url';
 
     final cachedUrl = await getData(
       'cache',
@@ -461,20 +464,25 @@ Future<String> getSong(String songId, bool isLive) async {
       return streamInfo;
     } else {
       final manifest = await yt.videos.streamsClient.getManifest(songId);
-      final availableSources = manifest.audioOnly.sortByBitrate();
+      AudioOnlyStreamInfo? audioStream;
+      if (isQualityChanged) {
+        final availableSources = manifest.audioOnly.sortByBitrate();
 
-      final audioStream = () {
-        switch (audioQualitySetting.value) {
-          case AudioQuality.lowQuality:
-            return availableSources.last;
-          case AudioQuality.mediumQuality:
-            return availableSources[availableSources.length ~/ 2];
-          case AudioQuality.bestQuality:
-            return availableSources.first;
-          default:
-            return availableSources.first;
-        }
-      }();
+        audioStream = () {
+          switch (audioQualitySetting.value) {
+            case AudioQuality.lowQuality:
+              return availableSources.last;
+            case AudioQuality.mediumQuality:
+              return availableSources[availableSources.length ~/ 2];
+            case AudioQuality.bestQuality:
+              return availableSources.first;
+            default:
+              return availableSources.first;
+          }
+        }();
+      } else {
+        audioStream = manifest.audioOnly.withHighestBitrate();
+      }
 
       unawaited(updateRecentlyPlayed(songId));
 
