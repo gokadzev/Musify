@@ -27,6 +27,7 @@ final logger = Logger();
 
 ThemeMode themeMode = ThemeMode.dark;
 Brightness brightness = Brightness.dark;
+Locale locale = const Locale('en', '');
 var isFdroidBuild = false;
 
 final appLanguages = <String, String>{
@@ -75,8 +76,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  Locale _locale = const Locale('en', '');
-
   void changeTheme(ThemeMode newThemeMode) {
     setState(() {
       themeMode = newThemeMode;
@@ -89,9 +88,9 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  void changeLanguage(Locale locale) {
+  void changeLanguage(Locale newLocale) {
     setState(() {
-      _locale = locale;
+      locale = newLocale;
     });
   }
 
@@ -123,7 +122,7 @@ class _MyAppState extends State<MyApp> {
     final settingsBox = Hive.box('settings');
     final language =
         settingsBox.get('language', defaultValue: 'English') as String;
-    _locale = Locale(appLanguages[language] ?? 'en');
+    locale = Locale(appLanguages[language] ?? 'en');
     final themeModeSetting = settingsBox.get('themeMode') as String?;
 
     if (themeModeSetting != null && themeModeSetting != themeMode.name) {
@@ -202,7 +201,7 @@ class _MyAppState extends State<MyApp> {
             GlobalCupertinoLocalizations.delegate,
           ],
           supportedLocales: appSupportedLocales,
-          locale: _locale,
+          locale: locale,
           home: Musify(),
         );
       },

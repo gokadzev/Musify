@@ -138,6 +138,9 @@ class _MusifyState extends State<Musify> {
           ),
           NavigationBar(
             selectedIndex: _selectedIndex,
+            labelBehavior: locale == const Locale('en', '')
+                ? NavigationDestinationLabelBehavior.onlyShowSelected
+                : NavigationDestinationLabelBehavior.alwaysHide,
             onDestinationSelected: (int index) {
               if (_selectedIndex == index) {
                 if (_navigatorKey.currentState?.canPop() == true) {
