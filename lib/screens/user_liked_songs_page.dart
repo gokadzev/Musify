@@ -36,9 +36,6 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
                         Center(
                           child: buildPlaylistHeader(),
                         ),
-                        const SizedBox(
-                          height: 20,
-                        ),
                         buildPlayButton(),
                       ],
                     ),
