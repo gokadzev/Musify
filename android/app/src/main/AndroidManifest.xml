@@ -2,14 +2,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.gokadzev.musify">
 
-     <queries>
+    <!-- Queries for Android 11+ -->
+    <queries>
         <intent>
             <action android:name="android.intent.action.VIEW" />
             <data android:scheme="https" />
         </intent>
     </queries>
 
-   <application
+    <application
         android:label="Musify"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon"
@@ -17,6 +18,7 @@
         android:extractNativeLibs="true"
         tools:replace="android:extractNativeLibs">
 
+        <!-- AudioServiceActivity -->
         <activity
             android:name="com.ryanheise.audioservice.AudioServiceActivity"
             android:launchMode="singleInstance"
@@ -26,62 +28,61 @@
             android:exported="true"
             android:windowSoftInputMode="adjustResize">
 
+            <!-- Flutter theme -->
             <meta-data
-              android:name="io.flutter.embedding.android.NormalTheme"
-              android:resource="@style/NormalTheme"/>
+                android:name="io.flutter.embedding.android.NormalTheme"
+                android:resource="@style/NormalTheme" />
 
+            <!-- Main activity intent filter -->
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
+            <!-- Intent filter for handling text sharing -->
             <intent-filter>
-               <action android:name="android.intent.action.SEND" />
-               <category android:name="android.intent.category.DEFAULT" />
-               <data android:mimeType="text/*" />
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/*" />
             </intent-filter>
 
+            <!-- Intent filter for handling YouTube links -->
             <intent-filter>
-               <action android:name="android.intent.action.VIEW" />
-               <category android:name="android.intent.category.DEFAULT" />
-               <category android:name="android.intent.category.BROWSABLE" />
-               <data android:scheme="http" android:host="www.youtube.com" />
-               <data android:scheme="https" android:host="www.youtube.com" />
-               <data android:scheme="http" android:host="m.youtube.com" />
-               <data android:scheme="https" android:host="m.youtube.com" />
-               <data android:scheme="http" android:host="youtube.com" />
-               <data android:scheme="https" android:host="youtube.com" />
-               <data android:scheme="http" android:host="youtu.be" />
-               <data android:scheme="https" android:host="youtu.be" />
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="http" android:host="www.youtube.com|m.youtube.com|youtube.com|youtu.be" />
+                <data android:scheme="https" android:host="www.youtube.com|m.youtube.com|youtube.com|youtu.be" />
             </intent-filter>
-
         </activity>
 
+        <!-- Flutter embedding meta-data -->
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
 
-
-        <service android:name="com.ryanheise.audioservice.AudioService" android:foregroundServiceType="mediaPlayback" android:exported="true">
+        <!-- AudioService -->
+        <service android:name="com.ryanheise.audioservice.AudioService"
+            android:foregroundServiceType="mediaPlayback"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.media.browse.MediaBrowserService" />
             </intent-filter>
         </service>
 
-        <receiver android:name="com.ryanheise.audioservice.MediaButtonReceiver" android:exported="true">
+        <!-- MediaButtonReceiver -->
+        <receiver android:name="com.ryanheise.audioservice.MediaButtonReceiver"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </receiver>
-
     </application>
 
-    <!-- Permissions  -->
-
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        tools:ignore="ScopedStorage" android:maxSdkVersion="32"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32"/>
-    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO"/>
+    <!-- Permissions -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" tools:ignore="ScopedStorage" android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
