@@ -1,5 +1,6 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 import 'package:musify/main.dart';
@@ -14,17 +15,16 @@ ColorScheme colorScheme = ColorScheme.fromSeed(
 ).harmonized();
 
 Brightness getBrightnessFromThemeMode(
-  BuildContext context,
   ThemeMode themeMode,
 ) {
-  switch (themeMode) {
-    case ThemeMode.light:
-      return Brightness.light;
-    case ThemeMode.dark:
-      return Brightness.dark;
-    case ThemeMode.system:
-      return MediaQuery.platformBrightnessOf(context);
-  }
+  final themeBrightnessMapping = {
+    ThemeMode.light: Brightness.light,
+    ThemeMode.dark: Brightness.dark,
+    ThemeMode.system:
+        SchedulerBinding.instance.platformDispatcher.platformBrightness,
+  };
+
+  return themeBrightnessMapping[themeMode] ?? Brightness.dark;
 }
 
 ThemeMode getThemeMode(String themeModeString) {

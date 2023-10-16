@@ -80,7 +80,7 @@ class _MyAppState extends State<MyApp> {
   void changeTheme(ThemeMode newThemeMode) {
     setState(() {
       themeMode = newThemeMode;
-      brightness = getBrightnessFromThemeMode(context, newThemeMode);
+      brightness = getBrightnessFromThemeMode(newThemeMode);
       colorScheme = ColorScheme.fromSeed(
         seedColor: primaryColor,
         primary: primaryColor,
@@ -128,7 +128,7 @@ class _MyAppState extends State<MyApp> {
 
     if (themeModeSetting != null && themeModeSetting != themeMode.name) {
       themeMode = getThemeMode(themeModeSetting);
-      brightness = getBrightnessFromThemeMode(context, themeMode);
+      brightness = getBrightnessFromThemeMode(themeMode);
     }
 
     GoogleFonts.config.allowRuntimeFetching = false;
@@ -183,8 +183,9 @@ class _MyAppState extends State<MyApp> {
         if (lightColorScheme != null &&
             darkColorScheme != null &&
             useSystemColor.value) {
-          colorScheme =
-              themeMode == ThemeMode.light ? lightColorScheme : darkColorScheme;
+          colorScheme = brightness == Brightness.light
+              ? lightColorScheme
+              : darkColorScheme;
         }
         final lightTheme = getAppLightTheme();
 
