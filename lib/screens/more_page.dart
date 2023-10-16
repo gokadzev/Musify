@@ -514,51 +514,41 @@ class SettingsCards extends StatelessWidget {
                       ),
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    width: MediaQuery.of(context).copyWith().size.width * 0.90,
-                    child: Column(
-                      children: [
-                        Expanded(
-                          child: Center(
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              physics: const BouncingScrollPhysics(),
-                              itemCount: availableQualities.length,
-                              itemBuilder: (context, index) {
-                                final quality = availableQualities[index];
-                                return Padding(
-                                  padding: const EdgeInsets.all(10),
-                                  child: Card(
-                                    elevation:
-                                        audioQualitySetting.value == quality
-                                            ? 0
-                                            : 4,
-                                    child: ListTile(
-                                      title: Text(
-                                        quality.name,
-                                      ),
-                                      onTap: () {
-                                        addOrUpdateData(
-                                          'settings',
-                                          'audioQuality',
-                                          quality,
-                                        );
+                    width: MediaQuery.of(context).size.width * 0.90,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: availableQualities.length,
+                      itemBuilder: (context, index) {
+                        final quality = availableQualities[index];
+                        final isDefault = audioQualitySetting.value == null &&
+                            quality == AudioQuality.bestQuality;
+                        final isCurrentQuality =
+                            audioQualitySetting.value == quality;
 
-                                        audioQualitySetting.value = quality;
-
-                                        showToast(
-                                          context,
-                                          context.l10n()!.audioQualityMsg,
-                                        );
-                                        Navigator.pop(context);
-                                      },
-                                    ),
-                                  ),
+                        return Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Card(
+                            elevation: isCurrentQuality || isDefault ? 0 : 4,
+                            child: ListTile(
+                              title: Text(quality.name),
+                              onTap: () {
+                                addOrUpdateData(
+                                  'settings',
+                                  'audioQuality',
+                                  quality,
                                 );
+                                audioQualitySetting.value = quality;
+                                showToast(
+                                  context,
+                                  context.l10n()!.audioQualityMsg,
+                                );
+                                Navigator.pop(context);
                               },
                             ),
                           ),
-                        ),
-                      ],
+                        );
+                      },
                     ),
                   ),
                 );
