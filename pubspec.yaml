@@ -14,11 +14,11 @@ environment:
 dependencies:
   audio_service: ^0.18.12
   audio_session: ^0.1.16
-  background_downloader: ^7.10.0
+  background_downloader: ^7.10.1
   cached_network_image: ^3.3.0
   dynamic_color: ^1.6.7
-  file_picker: ^5.5.0
-  fluentui_system_icons: ^1.1.217
+  file_picker: ^6.0.0
+  fluentui_system_icons: ^1.1.219
   flutter:
     sdk: flutter
   flutter_displaymode: ^0.6.0
