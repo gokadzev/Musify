@@ -20,6 +20,7 @@ class UserLikedPlaylistsPage extends StatelessWidget {
               ? Center(
                   child: Text(
                     context.l10n()!.noLikedPlaylists,
+                    textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
