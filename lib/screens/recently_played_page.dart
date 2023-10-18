@@ -17,7 +17,7 @@ class _RecentlyPlayedState extends State<RecentlyPlayed> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          context.l10n()!.recentlyPlayed,
+          context.l10n!.recentlyPlayed,
         ),
       ),
       body: ValueListenableBuilder(

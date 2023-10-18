@@ -48,7 +48,7 @@ Future<void> downloadSong(BuildContext context, dynamic song) async {
     );
   } catch (e) {
     logger.log('Error while downloading song: $e');
-    showToast(context, '${context.l10n()!.downloadFailed}, $e');
+    showToast(context, '${context.l10n!.downloadFailed}, $e');
   }
 }
 
@@ -80,10 +80,10 @@ Future<void> downloadSongFaster(BuildContext context, dynamic song) async {
       await FileDownloader()
           .moveFileToSharedStorage(file.path, SharedStorage.downloads);
     }
-    showToast(context, '${context.l10n()!.downloadCompleted} - $songName');
+    showToast(context, '${context.l10n!.downloadCompleted} - $songName');
   } catch (e) {
     logger.log('Error while downloading song: $e');
-    showToast(context, '${context.l10n()!.downloadFailed}, $e');
+    showToast(context, '${context.l10n!.downloadFailed}, $e');
   }
 }
 
@@ -96,14 +96,14 @@ Future<void> downloadSongsFromPlaylist(
     final _pauseDuration = _isHeavyProcess
         ? const Duration(seconds: 10)
         : const Duration(seconds: 5);
-    showToast(context, context.l10n()!.fasterDownloadMsg);
+    showToast(context, context.l10n!.fasterDownloadMsg);
     for (final song in list) {
       await downloadSongFaster(context, song);
       await Future.delayed(_pauseDuration);
     }
   } catch (e) {
     logger.log('Error while downloading playlist songs: $e');
-    showToast(context, '${context.l10n()!.downloadFailed}, $e');
+    showToast(context, '${context.l10n!.downloadFailed}, $e');
   }
 }
 
@@ -116,7 +116,7 @@ Future<void> checkNecessaryPermissions(BuildContext context) async {
     logger.log('Error while requesting permissions: $e');
     showToast(
       context,
-      '${context.l10n()!.errorWhileRequestingPerms} + $e',
+      '${context.l10n!.errorWhileRequestingPerms} + $e',
     );
   }
 }

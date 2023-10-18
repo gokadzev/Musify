@@ -21,7 +21,7 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          context.l10n()!.userLikedSongs,
+          context.l10n!.userLikedSongs,
         ),
       ),
       body: CustomScrollView(
@@ -84,7 +84,7 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 20),
           child: Text(
-            '${context.l10n()!.yourFavoriteSongsHere}!',
+            '${context.l10n!.yourFavoriteSongsHere}!',
             style: const TextStyle(
               fontWeight: FontWeight.w300,
             ),
@@ -100,7 +100,7 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
     return Card(
       color: Colors.transparent,
       child: PlaylistCube(
-        title: context.l10n()!.userLikedSongs,
+        title: context.l10n!.userLikedSongs,
         onClickOpen: false,
         showFavoriteButton: false,
         zoomNumber: 0.55,
@@ -114,7 +114,7 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
         setActivePlaylist(
           {
             'ytid': '',
-            'title': context.l10n()!.userLikedSongs,
+            'title': context.l10n!.userLikedSongs,
             'header_desc': '',
             'image': '',
             'list': userLikedSongsList,
@@ -122,7 +122,7 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
         );
         showToast(
           context,
-          context.l10n()!.queueInitText,
+          context.l10n!.queueInitText,
         );
       },
       child: Icon(

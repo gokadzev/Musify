@@ -102,7 +102,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
       appBar: AppBar(
         title: MarqueeWidget(
           child: Text(
-            _playlist != null ? _playlist['title'] : context.l10n()!.playlist,
+            _playlist != null ? _playlist['title'] : context.l10n!.playlist,
           ),
         ),
       ),
@@ -185,8 +185,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                 children: [
                   SizedBox(height: screenHeight * 0.03),
                   Text(
-                    '[ $playlistLength ${context.l10n()!.songs} ]'
-                        .toUpperCase(),
+                    '[ $playlistLength ${context.l10n!.songs} ]'.toUpperCase(),
                     style: const TextStyle(
                       fontWeight: FontWeight.w300,
                     ),
@@ -279,8 +278,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
     final dynamic songToRemove = _songsList.elementAt(indexOfRemovedSong);
     showToastWithButton(
       context,
-      context.l10n()!.songRemoved,
-      context.l10n()!.undo.toUpperCase(),
+      context.l10n!.songRemoved,
+      context.l10n!.undo.toUpperCase(),
       () => {
         addSongInCustomPlaylist(
           _playlist['title'],
@@ -301,7 +300,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
         setActivePlaylist(_playlist);
         showToast(
           context,
-          context.l10n()!.queueInitText,
+          context.l10n!.queueInitText,
         );
       },
       child: Icon(

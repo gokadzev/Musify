@@ -100,11 +100,11 @@ Future<List<dynamic>> getUserPlaylists() async {
 
 String addUserPlaylist(String playlistId, BuildContext context) {
   if (playlistId.length != 34) {
-    return '${context.l10n()!.notYTlist}!';
+    return '${context.l10n!.notYTlist}!';
   } else {
     userPlaylists.add(playlistId);
     addOrUpdateData('user', 'playlists', userPlaylists);
-    return '${context.l10n()!.addedSuccess}!';
+    return '${context.l10n!.addedSuccess}!';
   }
 }
 
@@ -123,7 +123,7 @@ String createCustomPlaylist(
   };
   userCustomPlaylists.add(customPlaylist);
   addOrUpdateData('user', 'customPlaylists', userCustomPlaylists);
-  return '${context.l10n()!.addedSuccess}!';
+  return '${context.l10n!.addedSuccess}!';
 }
 
 String addSongInCustomPlaylist(
@@ -387,7 +387,7 @@ Future updatePlaylistList(
 
     playlists[index]['list'] = songList;
     addOrUpdateData('cache', 'playlistSongs$playlistId', songList);
-    showToast(context, context.l10n()!.playlistUpdated);
+    showToast(context, context.l10n!.playlistUpdated);
   }
   return playlists[index];
 }

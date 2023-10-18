@@ -34,7 +34,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          context.l10n()!.playlists,
+          context.l10n!.playlists,
         ),
       ),
       body: SingleChildScrollView(
@@ -73,7 +73,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                       FocusManager.instance.primaryFocus?.unfocus();
                     },
                   ),
-                  labelText: '${context.l10n()!.search}...',
+                  labelText: '${context.l10n!.search}...',
                 ),
               ),
             ),
@@ -87,7 +87,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                 } else if (snapshot.hasError) {
                   logger.log('Error on playlists page:  ${snapshot.error}');
                   return Center(
-                    child: Text(context.l10n()!.error),
+                    child: Text(context.l10n!.error),
                   );
                 } else if (!snapshot.hasData ||
                     (snapshot.data as List).isEmpty) {

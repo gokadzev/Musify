@@ -29,12 +29,12 @@ Future<void> checkAppUpdates(
           await downloadAppUpdates(map);
           showToast(
             context,
-            '${context.l10n()!.appUpdateAvailableAndDownloading}!',
+            '${context.l10n!.appUpdateAvailableAndDownloading}!',
           );
         } else {
           showToast(
             context,
-            '${context.l10n()!.appUpdateIsAvailable}!',
+            '${context.l10n!.appUpdateIsAvailable}!',
           );
         }
       }

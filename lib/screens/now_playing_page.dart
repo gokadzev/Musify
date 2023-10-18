@@ -30,7 +30,7 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
       appBar: AppBar(
         toolbarHeight: size.height * 0.07,
         title: Text(
-          context.l10n()!.nowPlaying,
+          context.l10n!.nowPlaying,
         ),
         leading: Padding(
           padding: const EdgeInsets.only(left: 14),
@@ -518,7 +518,7 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                                     ),
                                   );
                                 },
-                                child: Text(context.l10n()!.playlist),
+                                child: Text(context.l10n!.playlist),
                               );
                             },
                           ),
@@ -570,7 +570,7 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                                                     ),
                                                     child: Center(
                                                       child: Text(
-                                                        context.l10n()!.lyrics,
+                                                        context.l10n!.lyrics,
                                                         style: TextStyle(
                                                           color: colorScheme
                                                               .primary,
@@ -624,8 +624,7 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                                                   ),
                                                   child: Center(
                                                     child: Text(
-                                                      context
-                                                          .l10n()!
+                                                      context.l10n!
                                                           .lyricsNotAvailable,
                                                       style: const TextStyle(
                                                         fontSize: 25,
@@ -641,7 +640,7 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                                     ),
                                   );
                                 },
-                                child: Text(context.l10n()!.lyrics),
+                                child: Text(context.l10n!.lyrics),
                               );
                             },
                           ),

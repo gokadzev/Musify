@@ -60,7 +60,7 @@ class _ArtistPagePageState extends State<ArtistPage> {
                         if (snapshot.hasError || snapshot.data.isEmpty) {
                           return Center(
                             child: Text(
-                              '${context.l10n()!.nothingFound}!',
+                              '${context.l10n!.nothingFound}!',
                               style: TextStyle(
                                 color: colorScheme.primary,
                                 fontSize: 18,
@@ -107,7 +107,7 @@ class _ArtistPagePageState extends State<ArtistPage> {
         setActivePlaylist(widget.playlist);
         showToast(
           context,
-          context.l10n()!.queueInitText,
+          context.l10n!.queueInitText,
         );
       },
       child: Icon(

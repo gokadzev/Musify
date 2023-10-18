@@ -67,7 +67,7 @@ class _SearchPageState extends State<SearchPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          context.l10n()!.search,
+          context.l10n!.search,
         ),
       ),
       body: SingleChildScrollView(
@@ -133,7 +133,7 @@ class _SearchPageState extends State<SearchPage> {
                       }
                     },
                   ),
-                  labelText: '${context.l10n()!.search}...',
+                  labelText: '${context.l10n!.search}...',
                 ),
               ),
             ),

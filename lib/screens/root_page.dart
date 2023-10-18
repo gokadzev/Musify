@@ -160,22 +160,22 @@ class _MusifyState extends State<Musify> {
               NavigationDestination(
                 icon: const Icon(FluentIcons.home_24_regular),
                 selectedIcon: const Icon(FluentIcons.home_24_filled),
-                label: context.l10n()!.home,
+                label: context.l10n!.home,
               ),
               NavigationDestination(
                 icon: const Icon(FluentIcons.search_24_regular),
                 selectedIcon: const Icon(FluentIcons.search_24_filled),
-                label: context.l10n()!.search,
+                label: context.l10n!.search,
               ),
               NavigationDestination(
                 icon: const Icon(FluentIcons.book_24_regular),
                 selectedIcon: const Icon(FluentIcons.book_24_filled),
-                label: context.l10n()!.userPlaylists,
+                label: context.l10n!.userPlaylists,
               ),
               NavigationDestination(
                 icon: const Icon(FluentIcons.more_horizontal_24_regular),
                 selectedIcon: const Icon(FluentIcons.more_horizontal_24_filled),
-                label: context.l10n()!.more,
+                label: context.l10n!.more,
               ),
             ],
           ),

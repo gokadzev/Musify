@@ -10,7 +10,7 @@ class UserLikedPlaylistsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          context.l10n()!.userLikedPlaylists,
+          context.l10n!.userLikedPlaylists,
         ),
       ),
       body: ValueListenableBuilder(
@@ -19,7 +19,7 @@ class UserLikedPlaylistsPage extends StatelessWidget {
           return userLikedPlaylists.isEmpty
               ? Center(
                   child: Text(
-                    context.l10n()!.noLikedPlaylists,
+                    context.l10n!.noLikedPlaylists,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 16,

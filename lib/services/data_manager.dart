@@ -64,7 +64,7 @@ Future<String> backupData(BuildContext context) async {
   final dlPath = await FilePicker.platform.getDirectoryPath();
 
   if (dlPath == null) {
-    return '${context.l10n()!.chooseBackupDir}!';
+    return '${context.l10n!.chooseBackupDir}!';
   }
 
   for (var i = 0; i < boxNames.length; i++) {
@@ -74,10 +74,10 @@ Future<String> backupData(BuildContext context) async {
       await File(_box.path!).copy('$dlPath/${boxNames[i]}Data.hive');
       await _box.close();
     } catch (e) {
-      return '${context.l10n()!.backupError}: $e';
+      return '${context.l10n!.backupError}: $e';
     }
   }
-  return '${context.l10n()!.backedupSuccess}!';
+  return '${context.l10n!.backedupSuccess}!';
 }
 
 Future<String> restoreData(BuildContext context) async {
@@ -85,7 +85,7 @@ Future<String> restoreData(BuildContext context) async {
   final uplPath = await FilePicker.platform.getDirectoryPath();
 
   if (uplPath == null) {
-    return '${context.l10n()!.chooseRestoreDir}!';
+    return '${context.l10n!.chooseRestoreDir}!';
   }
 
   for (var i = 0; i < boxNames.length; i++) {
@@ -95,9 +95,9 @@ Future<String> restoreData(BuildContext context) async {
       await File('$uplPath/${boxNames[i]}Data.hive').copy(boxPath!);
       await _box.close();
     } catch (e) {
-      return '${context.l10n()!.restoreError}: $e';
+      return '${context.l10n!.restoreError}: $e';
     }
   }
 
-  return '${context.l10n()!.restoredSuccess}!';
+  return '${context.l10n!.restoredSuccess}!';
 }

@@ -14,7 +14,7 @@ class AboutPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          context.l10n()!.about,
+          context.l10n!.about,
         ),
       ),
       body: const SingleChildScrollView(child: AboutCards()),

@@ -19,7 +19,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          context.l10n()!.userPlaylists,
+          context.l10n!.userPlaylists,
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -39,7 +39,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                   child: Column(
                     children: <Widget>[
                       Text(
-                        context.l10n()!.customPlaylistAddInstruction,
+                        context.l10n!.customPlaylistAddInstruction,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
@@ -49,7 +49,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                       const SizedBox(height: 20),
                       TextField(
                         decoration: InputDecoration(
-                          labelText: context.l10n()!.youtubePlaylistID,
+                          labelText: context.l10n!.youtubePlaylistID,
                         ),
                         onChanged: (value) {
                           id = value;
@@ -58,7 +58,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                       const SizedBox(height: 7),
                       TextField(
                         decoration: InputDecoration(
-                          labelText: context.l10n()!.customPlaylistName,
+                          labelText: context.l10n!.customPlaylistName,
                         ),
                         onChanged: (value) {
                           customPlaylistName = value;
@@ -67,7 +67,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                       const SizedBox(height: 7),
                       TextField(
                         decoration: InputDecoration(
-                          labelText: context.l10n()!.customPlaylistImgUrl,
+                          labelText: context.l10n!.customPlaylistImgUrl,
                         ),
                         onChanged: (value) {
                           imageUrl = value;
@@ -76,7 +76,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                       const SizedBox(height: 7),
                       TextField(
                         decoration: InputDecoration(
-                          labelText: context.l10n()!.customPlaylistDesc,
+                          labelText: context.l10n!.customPlaylistDesc,
                         ),
                         onChanged: (value) {
                           description = value;
@@ -88,7 +88,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                 actions: <Widget>[
                   TextButton(
                     child: Text(
-                      context.l10n()!.add.toUpperCase(),
+                      context.l10n!.add.toUpperCase(),
                     ),
                     onPressed: () {
                       if (id.isNotEmpty) {
@@ -106,7 +106,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                       } else {
                         showToast(
                           context,
-                          '${context.l10n()!.provideIdOrNameError}.',
+                          '${context.l10n!.provideIdOrNameError}.',
                         );
                       }
 
@@ -139,7 +139,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                   logger
                       .log('Error on user playlists page:  ${snapshot.error}');
                   return Center(
-                    child: Text(context.l10n()!.error),
+                    child: Text(context.l10n!.error),
                   );
                 } else if (!snapshot.hasData ||
                     (snapshot.data as List).isEmpty) {
@@ -169,19 +169,19 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
-                                title: Text(context.l10n()!.confirmation),
+                                title: Text(context.l10n!.confirmation),
                                 content: Text(
-                                  context.l10n()!.removePlaylistQuestion,
+                                  context.l10n!.removePlaylistQuestion,
                                 ),
                                 actions: <Widget>[
                                   TextButton(
-                                    child: Text(context.l10n()!.cancel),
+                                    child: Text(context.l10n!.cancel),
                                     onPressed: () {
                                       Navigator.of(context).pop();
                                     },
                                   ),
                                   TextButton(
-                                    child: Text(context.l10n()!.remove),
+                                    child: Text(context.l10n!.remove),
                                     onPressed: () {
                                       Navigator.of(context).pop();
 

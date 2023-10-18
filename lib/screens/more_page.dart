@@ -31,7 +31,7 @@ class _MorePageState extends State<MorePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          context.l10n()!.more,
+          context.l10n!.more,
         ),
       ),
       body: SingleChildScrollView(child: SettingsCards()),
@@ -46,7 +46,7 @@ class SettingsCards extends StatelessWidget {
       children: <Widget>[
         // CATEGORY: PAGES
         Text(
-          context.l10n()!.pages,
+          context.l10n!.pages,
           style: TextStyle(
             color: colorScheme.primary,
             fontSize: 15,
@@ -54,7 +54,7 @@ class SettingsCards extends StatelessWidget {
           ),
         ),
         SettingBar(
-          context.l10n()!.recentlyPlayed,
+          context.l10n!.recentlyPlayed,
           FluentIcons.history_24_filled,
           () => {
             Navigator.push(
@@ -66,7 +66,7 @@ class SettingsCards extends StatelessWidget {
           },
         ),
         SettingBar(
-          context.l10n()!.playlists,
+          context.l10n!.playlists,
           FluentIcons.list_24_filled,
           () => {
             Navigator.push(
@@ -78,7 +78,7 @@ class SettingsCards extends StatelessWidget {
           },
         ),
         SettingBar(
-          context.l10n()!.userLikedSongs,
+          context.l10n!.userLikedSongs,
           FluentIcons.heart_24_filled,
           () => {
             Navigator.push(
@@ -88,7 +88,7 @@ class SettingsCards extends StatelessWidget {
           },
         ),
         SettingBar(
-          context.l10n()!.userLikedPlaylists,
+          context.l10n!.userLikedPlaylists,
           FluentIcons.star_24_filled,
           () => {
             Navigator.push(
@@ -102,7 +102,7 @@ class SettingsCards extends StatelessWidget {
 
         // CATEGORY: SETTINGS
         Text(
-          context.l10n()!.settings,
+          context.l10n!.settings,
           style: TextStyle(
             color: colorScheme.primary,
             fontSize: 15,
@@ -110,7 +110,7 @@ class SettingsCards extends StatelessWidget {
           ),
         ),
         SettingBar(
-          context.l10n()!.accentColor,
+          context.l10n!.accentColor,
           FluentIcons.color_24_filled,
           () => {
             showModalBottomSheet(
@@ -156,7 +156,7 @@ class SettingsCards extends StatelessWidget {
                                     );
                                     showToast(
                                       context,
-                                      context.l10n()!.accentChangeMsg,
+                                      context.l10n!.accentChangeMsg,
                                     );
                                     Navigator.pop(context);
                                   },
@@ -187,7 +187,7 @@ class SettingsCards extends StatelessWidget {
           },
         ),
         SettingBar(
-          context.l10n()!.themeMode,
+          context.l10n!.themeMode,
           FluentIcons.weather_sunny_28_filled,
           () => {
             showModalBottomSheet(
@@ -246,7 +246,7 @@ class SettingsCards extends StatelessWidget {
           },
         ),
         SettingBar(
-          context.l10n()!.language,
+          context.l10n!.language,
           FluentIcons.translate_24_filled,
           () => {
             showModalBottomSheet(
@@ -291,7 +291,7 @@ class SettingsCards extends StatelessWidget {
 
                                 showToast(
                                   context,
-                                  context.l10n()!.languageMsg,
+                                  context.l10n!.languageMsg,
                                 );
                                 Navigator.pop(context);
                               },
@@ -307,7 +307,7 @@ class SettingsCards extends StatelessWidget {
           },
         ),
         SettingSwitchBar(
-          context.l10n()!.dynamicColor,
+          context.l10n!.dynamicColor,
           FluentIcons.toggle_left_24_filled,
           useSystemColor.value,
           (value) {
@@ -324,7 +324,7 @@ class SettingsCards extends StatelessWidget {
             );
             showToast(
               context,
-              context.l10n()!.settingChangedMsg,
+              context.l10n!.settingChangedMsg,
             );
           },
         ),
@@ -344,7 +344,7 @@ class SettingsCards extends StatelessWidget {
                 sponsorBlockSupport.value = value;
                 showToast(
                   context,
-                  context.l10n()!.settingChangedMsg,
+                  context.l10n!.settingChangedMsg,
                 );
               },
             );
@@ -352,7 +352,7 @@ class SettingsCards extends StatelessWidget {
         ),
 
         SettingBar(
-          context.l10n()!.audioFileType,
+          context.l10n!.audioFileType,
           FluentIcons.multiselect_ltr_24_filled,
           () => {
             showModalBottomSheet(
@@ -396,7 +396,7 @@ class SettingsCards extends StatelessWidget {
                                     availableFileTypes[index];
                                 showToast(
                                   context,
-                                  context.l10n()!.audioFileTypeMsg,
+                                  context.l10n!.audioFileTypeMsg,
                                 );
                                 Navigator.pop(context);
                               },
@@ -412,7 +412,7 @@ class SettingsCards extends StatelessWidget {
           },
         ),
         SettingBar(
-          context.l10n()!.downloadMode,
+          context.l10n!.downloadMode,
           FluentIcons.clock_arrow_download_24_filled,
           () {
             showModalBottomSheet(
@@ -435,7 +435,7 @@ class SettingsCards extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.all(25),
                           child: Text(
-                            context.l10n()!.fasterDownloadMsg,
+                            context.l10n!.fasterDownloadMsg,
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
@@ -470,7 +470,7 @@ class SettingsCards extends StatelessWidget {
                                           availableModes[index];
                                       showToast(
                                         context,
-                                        context.l10n()!.downloadModeMsg,
+                                        context.l10n!.downloadModeMsg,
                                       );
                                       Navigator.pop(context);
                                     },
@@ -489,7 +489,7 @@ class SettingsCards extends StatelessWidget {
           },
         ),
         SettingBar(
-          context.l10n()!.audioQuality,
+          context.l10n!.audioQuality,
           Icons.music_note,
           () {
             showModalBottomSheet(
@@ -538,7 +538,7 @@ class SettingsCards extends StatelessWidget {
                                 audioQualitySetting.value = quality;
                                 showToast(
                                   context,
-                                  context.l10n()!.audioQualityMsg,
+                                  context.l10n!.audioQualityMsg,
                                 );
                                 Navigator.pop(context);
                               },
@@ -556,7 +556,7 @@ class SettingsCards extends StatelessWidget {
 
         // CATEGORY: TOOLS
         Text(
-          context.l10n()!.tools,
+          context.l10n!.tools,
           style: TextStyle(
             color: colorScheme.primary,
             fontSize: 15,
@@ -564,27 +564,27 @@ class SettingsCards extends StatelessWidget {
           ),
         ),
         SettingBar(
-          context.l10n()!.clearCache,
+          context.l10n!.clearCache,
           FluentIcons.broom_24_filled,
           () => {
             clearCache(),
             showToast(
               context,
-              '${context.l10n()!.cacheMsg}!',
+              '${context.l10n!.cacheMsg}!',
             ),
           },
         ),
         SettingBar(
-          context.l10n()!.clearSearchHistory,
+          context.l10n!.clearSearchHistory,
           FluentIcons.history_24_filled,
           () => {
             searchHistory = [],
             deleteData('user', 'searchHistory'),
-            showToast(context, '${context.l10n()!.searchHistoryMsg}!'),
+            showToast(context, '${context.l10n!.searchHistoryMsg}!'),
           },
         ),
         SettingBar(
-          context.l10n()!.backupUserData,
+          context.l10n!.backupUserData,
           FluentIcons.cloud_sync_24_filled,
           () => {
             backupData(context).then(
@@ -593,7 +593,7 @@ class SettingsCards extends StatelessWidget {
           },
         ),
         SettingBar(
-          context.l10n()!.restoreUserData,
+          context.l10n!.restoreUserData,
           FluentIcons.cloud_add_24_filled,
           () => {
             restoreData(context).then(
@@ -603,7 +603,7 @@ class SettingsCards extends StatelessWidget {
         ),
         if (!isFdroidBuild)
           SettingBar(
-            context.l10n()!.downloadAppUpdate,
+            context.l10n!.downloadAppUpdate,
             FluentIcons.arrow_download_24_filled,
             () => {
               checkAppUpdates(context, downloadUpdateAutomatically: true),
@@ -613,7 +613,7 @@ class SettingsCards extends StatelessWidget {
           const SizedBox(),
         // CATEGORY: BECOME A SPONSOR
         Text(
-          context.l10n()!.becomeSponsor,
+          context.l10n!.becomeSponsor,
           style: TextStyle(
             color: colorScheme.primary,
             fontSize: 15,
@@ -628,7 +628,7 @@ class SettingsCards extends StatelessWidget {
               leading:
                   const Icon(FluentIcons.heart_24_filled, color: Colors.white),
               title: Text(
-                context.l10n()!.sponsorProject,
+                context.l10n!.sponsorProject,
                 style: const TextStyle(
                   fontWeight: FontWeight.w600,
                   color: Colors.white,
@@ -644,7 +644,7 @@ class SettingsCards extends StatelessWidget {
         ),
         // CATEGORY: OTHERS
         Text(
-          context.l10n()!.others,
+          context.l10n!.others,
           style: TextStyle(
             color: colorScheme.primary,
             fontSize: 15,
@@ -652,7 +652,7 @@ class SettingsCards extends StatelessWidget {
           ),
         ),
         SettingBar(
-          context.l10n()!.licenses,
+          context.l10n!.licenses,
           FluentIcons.document_24_filled,
           () => {
             Navigator.of(context).push(
@@ -666,12 +666,12 @@ class SettingsCards extends StatelessWidget {
           },
         ),
         SettingBar(
-          '${context.l10n()!.copyLogs} (${logger.getLogCount()})',
+          '${context.l10n!.copyLogs} (${logger.getLogCount()})',
           FluentIcons.error_circle_24_filled,
           () async => {showToast(context, await logger.copyLogs(context))},
         ),
         SettingBar(
-          context.l10n()!.about,
+          context.l10n!.about,
           FluentIcons.book_information_24_filled,
           () => {
             Navigator.of(context).push(

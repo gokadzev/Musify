@@ -75,7 +75,7 @@ class _HomePageState extends State<HomePage> {
                 width: context.screenSize.width / 1.4,
                 child: MarqueeWidget(
                   child: Text(
-                    context.l10n()!.suggestedPlaylists,
+                    context.l10n!.suggestedPlaylists,
                     style: TextStyle(
                       color: colorScheme.primary,
                       fontSize: 20,
@@ -165,7 +165,7 @@ class _HomePageState extends State<HomePage> {
   Widget _buildErrorWidget(BuildContext context) {
     return Center(
       child: Text(
-        '${context.l10n()!.error}!',
+        '${context.l10n!.error}!',
         style: TextStyle(
           color: colorScheme.primary,
           fontSize: 18,
@@ -190,7 +190,7 @@ class _HomePageState extends State<HomePage> {
                 width: context.screenSize.width / 1.4,
                 child: MarqueeWidget(
                   child: Text(
-                    context.l10n()!.suggestedArtists,
+                    context.l10n!.suggestedArtists,
                     style: TextStyle(
                       color: colorScheme.primary,
                       fontSize: 20,
@@ -232,7 +232,7 @@ class _HomePageState extends State<HomePage> {
         Padding(
           padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
           child: Text(
-            context.l10n()!.recommendedForYou,
+            context.l10n!.recommendedForYou,
             style: TextStyle(
               color: colorScheme.primary,
               fontSize: 20,
