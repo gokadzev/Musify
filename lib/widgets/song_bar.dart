@@ -69,11 +69,7 @@ class SongBar extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
-            song['title']
-                .toString()
-                .split('(')[0]
-                .replaceAll('&quot;', '"')
-                .replaceAll('&amp;', '&'),
+            song['title'],
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: Theme.of(context).colorScheme.primary,
