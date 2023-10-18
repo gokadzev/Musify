@@ -30,7 +30,7 @@ class AboutCards extends StatelessWidget {
     return Column(
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.only(top: 17, left: 8, right: 8, bottom: 6),
+          padding: const EdgeInsets.fromLTRB(8, 17, 8, 6),
           child: Column(
             children: <Widget>[
               ListTile(
@@ -59,7 +59,7 @@ class AboutCards extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(top: 8, left: 8, right: 8, bottom: 6),
+          padding: const EdgeInsets.fromLTRB(8, 8, 8, 6),
           child: Card(
             child: ListTile(
               leading: Container(

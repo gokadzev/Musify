@@ -58,8 +58,7 @@ ThemeData commonProperties() => ThemeData(
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
         ),
-        contentPadding:
-            const EdgeInsets.only(left: 18, right: 20, top: 14, bottom: 14),
+        contentPadding: const EdgeInsets.fromLTRB(18, 14, 20, 14),
       ),
     );
 

@@ -137,10 +137,7 @@ class SettingsCards extends StatelessWidget {
                       itemCount: availableColors.length,
                       itemBuilder: (context, index) {
                         return Padding(
-                          padding: const EdgeInsets.only(
-                            top: 15,
-                            bottom: 15,
-                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 15),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
@@ -624,7 +621,7 @@ class SettingsCards extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(top: 8, left: 8, right: 8, bottom: 6),
+          padding: const EdgeInsets.all(8),
           child: Card(
             color: const Color(0xffFF5E5B),
             child: ListTile(

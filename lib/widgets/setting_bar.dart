@@ -11,7 +11,7 @@ class SettingBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 8, left: 8, right: 8, bottom: 6),
+      padding: const EdgeInsets.all(8),
       child: Card(
         child: ListTile(
           leading: Icon(tileIcon, color: colorScheme.primary),

@@ -41,12 +41,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
         child: Column(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(
-                top: 12,
-                bottom: 20,
-                left: 12,
-                right: 12,
-              ),
+              padding: const EdgeInsets.fromLTRB(12, 12, 12, 20),
               child: TextField(
                 onSubmitted: (String value) {
                   search();
@@ -112,12 +107,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                   shrinkWrap: true,
                   physics: const ScrollPhysics(),
                   itemCount: playlists.length,
-                  padding: const EdgeInsets.only(
-                    left: 16,
-                    right: 16,
-                    top: 16,
-                    bottom: 20,
-                  ),
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 20),
                   itemBuilder: (BuildContext context, index) {
                     final playlist = playlists[index];
 
