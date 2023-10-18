@@ -181,76 +181,61 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildRecommendedContent(
     BuildContext context,
-    dynamic data,
+    List<dynamic> data,
     double calculatedSize,
   ) {
     return Wrap(
       children: <Widget>[
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(
-                top: 16,
-                bottom: 10,
-                left: 20,
-                right: 20,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SizedBox(
-                    width: context.screenSize.width / 1.4,
-                    child: MarqueeWidget(
-                      child: Text(
-                        context.l10n()!.suggestedArtists,
-                        style: TextStyle(
-                          color: colorScheme.primary,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SizedBox(
+                width: context.screenSize.width / 1.4,
+                child: MarqueeWidget(
+                  child: Text(
+                    context.l10n()!.suggestedArtists,
+                    style: TextStyle(
+                      color: colorScheme.primary,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
-                ],
+                ),
               ),
-            ),
-            SizedBox(
-              height: calculatedSize,
-              child: ListView.separated(
-                padding: const EdgeInsets.symmetric(horizontal: 15),
-                scrollDirection: Axis.horizontal,
-                separatorBuilder: (_, __) => const SizedBox(width: 15),
-                itemCount: 5,
-                itemBuilder: (context, index) {
-                  final artist = data[index]['artist'].split('~')[0];
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ArtistPage(
-                            playlist: {
-                              'title': artist,
-                            },
-                          ),
-                        ),
-                      );
-                    },
-                    child: ArtistCube(artist),
+            ],
+          ),
+        ),
+        SizedBox(
+          height: calculatedSize,
+          child: ListView.separated(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            scrollDirection: Axis.horizontal,
+            separatorBuilder: (_, __) => const SizedBox(width: 15),
+            itemCount: 5,
+            itemBuilder: (context, index) {
+              final artist = data[index]['artist'].split('~')[0];
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ArtistPage(
+                        playlist: {
+                          'title': artist,
+                        },
+                      ),
+                    ),
                   );
                 },
-              ),
-            ),
-          ],
+                child: ArtistCube(artist),
+              );
+            },
+          ),
         ),
         Padding(
-          padding: EdgeInsets.only(
-            top: context.screenSize.height / 55,
-            bottom: 10,
-            left: 20,
-            right: 20,
-          ),
+          padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
           child: Text(
             context.l10n()!.recommendedForYou,
             style: TextStyle(
@@ -265,7 +250,7 @@ class _HomePageState extends State<HomePage> {
           addAutomaticKeepAlives: false,
           addRepaintBoundaries: false,
           physics: const BouncingScrollPhysics(),
-          itemCount: data.length as int,
+          itemCount: data.length,
           separatorBuilder: (BuildContext context, int index) =>
               const SizedBox(height: 7),
           itemBuilder: (context, index) {
