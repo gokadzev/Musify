@@ -623,7 +623,7 @@ class SettingsCards extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(8),
           child: Card(
-            color: const Color(0xffFF5E5B),
+            color: colorScheme.primary,
             child: ListTile(
               leading:
                   const Icon(FluentIcons.heart_24_filled, color: Colors.white),
