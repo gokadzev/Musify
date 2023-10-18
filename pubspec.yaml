@@ -42,7 +42,7 @@ dependencies:
 
 dev_dependencies:
   flutter_launcher_icons: ^0.13.1
-  flutter_native_splash: ^2.3.3
+  flutter_native_splash: ^2.3.4
   flutter_test:
     sdk: flutter
   translations_cleaner: ^0.0.5
