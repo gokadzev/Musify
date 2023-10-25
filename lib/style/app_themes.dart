@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
-import 'package:musify/main.dart';
 
 Color primaryColor =
     Color(Hive.box('settings').get('accentColor', defaultValue: 0xFFC4A092));
@@ -13,6 +12,9 @@ ColorScheme colorScheme = ColorScheme.fromSeed(
   primary: primaryColor,
   brightness: brightness,
 ).harmonized();
+
+ThemeMode themeMode = ThemeMode.dark;
+Brightness brightness = Brightness.dark;
 
 Brightness getBrightnessFromThemeMode(
   ThemeMode themeMode,

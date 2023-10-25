@@ -25,8 +25,6 @@ import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 late MusifyAudioHandler audioHandler;
 final logger = Logger();
 
-ThemeMode themeMode = ThemeMode.dark;
-Brightness brightness = Brightness.dark;
 Locale locale = const Locale('en', '');
 var isFdroidBuild = false;
 
