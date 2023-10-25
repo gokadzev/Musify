@@ -110,7 +110,7 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: size.height * 0.030,
-                              fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.bold,
                               color: colorScheme.primary,
                             ),
                           ),
