@@ -229,7 +229,7 @@ Future<void> initialisation() async {
       config: const AudioServiceConfig(
         androidNotificationChannelId: 'com.gokadzev.musify',
         androidNotificationChannelName: 'Musify',
-        androidNotificationIcon: 'mipmap/launcher_icon',
+        androidNotificationIcon: 'drawable/ic_launcher_foreground',
         androidShowNotificationBadge: true,
       ),
     );
