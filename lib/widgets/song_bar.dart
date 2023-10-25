@@ -2,9 +2,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
+import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/download_manager.dart';
 import 'package:musify/services/settings_manager.dart';
+import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/formatter.dart';
 
 class SongBar extends StatelessWidget {
@@ -139,46 +141,21 @@ class SongBar extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Add to Playlist'),
+          title: Text(context.l10n!.addToPlaylist),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               for (final playlist in userCustomPlaylists)
-                ListTile(
-                  title: Text(playlist['title']),
-                  onTap: () {
-                    addSongInCustomPlaylist(playlist['title'], song);
-                    Navigator.pop(context);
-                  },
-                ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  void _showRemoveToPlaylistDialog(BuildContext context, dynamic song) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Remove from Playlist'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              for (final playlist in userCustomPlaylists)
-                ListTile(
-                  title: Text(playlist['title']),
-                  onTap: () {
-                    removeSongFromPlaylist(
-                      playlist,
-                      song,
-                      removeOneAtIndex: songIndexInPlaylist,
-                    );
-                    if (updateOnRemove != null) updateOnRemove!();
-                    Navigator.pop(context);
-                  },
+                Card(
+                  color: colorScheme.secondary,
+                  child: ListTile(
+                    title: Text(playlist['title']),
+                    onTap: () {
+                      addSongInCustomPlaylist(playlist['title'], song);
+                      Navigator.pop(context);
+                    },
+                    textColor: Colors.white,
+                  ),
                 ),
             ],
           ),
@@ -189,7 +166,6 @@ class SongBar extends StatelessWidget {
 
   void _removeFromPlaylist(BuildContext context, dynamic song) {
     if (passingPlaylist == null) {
-      _showRemoveToPlaylistDialog(context, song);
       return;
     }
     removeSongFromPlaylist(
