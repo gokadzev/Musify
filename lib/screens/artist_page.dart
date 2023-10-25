@@ -2,51 +2,42 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
-import 'package:musify/extensions/screen_size.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/widgets/artist_cube.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/spinner.dart';
 
-class ArtistPage extends StatefulWidget {
+class ArtistPage extends StatelessWidget {
   const ArtistPage({super.key, required this.playlist});
+
   final dynamic playlist;
-
-  @override
-  _ArtistPagePageState createState() => _ArtistPagePageState();
-}
-
-class _ArtistPagePageState extends State<ArtistPage> {
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          widget.playlist['title'],
-        ),
+        title: Text(playlist['title']),
       ),
       body: SingleChildScrollView(
-        child: widget.playlist != null
+        child: playlist != null
             ? Column(
-                children: [
-                  ArtistCube(widget.playlist['title']),
+                children: <Widget>[
+                  ArtistCube(playlist['title']),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     child: Text(
-                      widget.playlist['title'].toString(),
+                      playlist['title'].toString(),
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ),
-                  buildPlayButton(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: buildPlayButton(context),
+                  ),
                   FutureBuilder(
-                    future: fetchSongsList(widget.playlist['title'].toString()),
+                    future: fetchSongsList(playlist['title'].toString()),
                     builder: (context, AsyncSnapshot<dynamic> snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(
@@ -94,17 +85,17 @@ class _ArtistPagePageState extends State<ArtistPage> {
                 ],
               )
             : SizedBox(
-                height: context.screenSize.height - 100,
+                height: MediaQuery.of(context).size.height - 100,
                 child: const Spinner(),
               ),
       ),
     );
   }
 
-  Widget buildPlayButton() {
+  Widget buildPlayButton(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        setActivePlaylist(widget.playlist);
+        setActivePlaylist(playlist);
         showToast(
           context,
           context.l10n!.queueInitText,
