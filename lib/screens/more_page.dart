@@ -530,12 +530,22 @@ class MorePage extends StatelessWidget {
                                 child: ListTile(
                                   title: Text(quality.name),
                                   onTap: () {
-                                    addOrUpdateData(
-                                      'settings',
-                                      'audioQuality',
-                                      quality,
-                                    );
-                                    audioQualitySetting.value = quality;
+                                    if (quality == AudioQuality.bestQuality) {
+                                      // Save null when "Best Quality" is selected
+                                      addOrUpdateData(
+                                        'settings',
+                                        'audioQuality',
+                                        null,
+                                      );
+                                      audioQualitySetting.value = null;
+                                    } else {
+                                      addOrUpdateData(
+                                        'settings',
+                                        'audioQuality',
+                                        quality,
+                                      );
+                                      audioQualitySetting.value = quality;
+                                    }
                                     showToast(
                                       context,
                                       context.l10n!.audioQualityMsg,
