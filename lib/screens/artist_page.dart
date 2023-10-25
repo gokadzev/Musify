@@ -11,30 +11,24 @@ import 'package:musify/widgets/spinner.dart';
 
 class ArtistPage extends StatefulWidget {
   const ArtistPage({super.key, required this.playlist});
+
   final dynamic playlist;
 
   @override
-  _ArtistPagePageState createState() => _ArtistPagePageState();
+  _ArtistPageState createState() => _ArtistPageState();
 }
 
-class _ArtistPagePageState extends State<ArtistPage> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
+class _ArtistPageState extends State<ArtistPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          widget.playlist['title'],
-        ),
+        title: Text(widget.playlist['title']),
       ),
       body: SingleChildScrollView(
         child: widget.playlist != null
             ? Column(
-                children: [
+                children: <Widget>[
                   ArtistCube(widget.playlist['title']),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 12),
