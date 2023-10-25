@@ -37,47 +37,47 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
           context.l10n!.playlists,
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.fromLTRB(12, 12, 12, 20),
-              child: TextField(
-                onSubmitted: (String value) {
-                  search();
-                  FocusManager.instance.primaryFocus?.unfocus();
-                },
-                textInputAction: TextInputAction.search,
-                controller: _searchBar,
-                focusNode: _inputNode,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: colorScheme.primary,
-                ),
-                cursorColor: Colors.green[50],
-                decoration: InputDecoration(
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(15),
-                    ),
-                    borderSide: BorderSide(color: colorScheme.primary),
+      body: Column(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 12, 12, 20),
+            child: TextField(
+              onSubmitted: (String value) {
+                search();
+                FocusManager.instance.primaryFocus?.unfocus();
+              },
+              textInputAction: TextInputAction.search,
+              controller: _searchBar,
+              focusNode: _inputNode,
+              style: TextStyle(
+                fontSize: 16,
+                color: colorScheme.primary,
+              ),
+              cursorColor: Colors.green[50],
+              decoration: InputDecoration(
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(15),
                   ),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      FluentIcons.search_24_regular,
-                      color: colorScheme.primary,
-                    ),
+                  borderSide: BorderSide(color: colorScheme.primary),
+                ),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    FluentIcons.search_24_regular,
                     color: colorScheme.primary,
-                    onPressed: () {
-                      search();
-                      FocusManager.instance.primaryFocus?.unfocus();
-                    },
                   ),
-                  labelText: '${context.l10n!.search}...',
+                  color: colorScheme.primary,
+                  onPressed: () {
+                    search();
+                    FocusManager.instance.primaryFocus?.unfocus();
+                  },
                 ),
+                labelText: '${context.l10n!.search}...',
               ),
             ),
-            FutureBuilder(
+          ),
+          Expanded(
+            child: FutureBuilder(
               future: _searchQuery.isEmpty
                   ? getPlaylists()
                   : getPlaylists(query: _searchQuery),
@@ -97,15 +97,11 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                 final playlists = snapshot.data as List;
 
                 return GridView.builder(
-                  addAutomaticKeepAlives: false,
-                  addRepaintBoundaries: false,
                   gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                     maxCrossAxisExtent: 200,
                     crossAxisSpacing: 20,
                     mainAxisSpacing: 20,
                   ),
-                  shrinkWrap: true,
-                  physics: const ScrollPhysics(),
                   itemCount: playlists.length,
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 20),
                   itemBuilder: (BuildContext context, index) {
@@ -122,8 +118,8 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                 );
               },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
