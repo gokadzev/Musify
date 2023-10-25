@@ -32,7 +32,10 @@ class ArtistPage extends StatelessWidget {
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ),
-                  buildPlayButton(context),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: buildPlayButton(context),
+                  ),
                   FutureBuilder(
                     future: fetchSongsList(playlist['title'].toString()),
                     builder: (context, AsyncSnapshot<dynamic> snapshot) {
