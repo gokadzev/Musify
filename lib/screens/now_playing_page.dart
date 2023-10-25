@@ -34,16 +34,12 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
         ),
         leading: Padding(
           padding: const EdgeInsets.only(left: 14),
-          child: IconButton(
-            focusColor: Colors.transparent,
-            splashColor: Colors.transparent,
-            hoverColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-            icon: Icon(
+          child: GestureDetector(
+            child: Icon(
               FluentIcons.chevron_down_20_regular,
               color: colorScheme.primary,
             ),
-            onPressed: () => Navigator.pop(context, false),
+            onTap: () => Navigator.pop(context, false),
           ),
         ),
       ),
