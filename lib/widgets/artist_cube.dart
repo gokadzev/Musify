@@ -37,8 +37,8 @@ class _ArtistCubeState extends State<ArtistCube>
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Shimmer.fromColors(
-            baseColor: Colors.grey[300] ?? Colors.grey,
-            highlightColor: Colors.grey[100] ?? Colors.grey,
+            baseColor: colorScheme.primary.withOpacity(0.5),
+            highlightColor: colorScheme.primary.withOpacity(0.2),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(widget.borderRadius),
               child: Container(
