@@ -26,6 +26,7 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
   @override
   Widget build(BuildContext context) {
     final size = context.screenSize;
+
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: size.height * 0.07,
@@ -48,11 +49,12 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
           stream: audioHandler.mediaItem,
           builder: (context, snapshot) {
             final metadata = snapshot.data;
+            final audioId = metadata?.extras?['ytid'];
             if (metadata == null) {
               return const SizedBox();
             } else {
               final songLikeStatus = ValueNotifier<bool>(
-                isSongAlreadyLiked(metadata.extras?['ytid']),
+                isSongAlreadyLiked(audioId),
               );
               return Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -136,7 +138,7 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                       child: _buildPlayer(
                         size,
                         songLikeStatus,
-                        metadata.extras?['ytid'],
+                        audioId,
                         metadata,
                       ),
                     ),
@@ -152,8 +154,8 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
   Widget _buildPlayer(
     Size size,
     ValueNotifier<bool> songLikeStatus,
-    dynamic ytid,
-    dynamic metadata,
+    dynamic audioId,
+    dynamic mediaItem,
   ) {
     return Container(
       padding: EdgeInsets.symmetric(
@@ -223,35 +225,32 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                       children: <Widget>[
                         Column(
                           children: [
-                            IconButton(
-                              color: colorScheme.primary,
-                              icon: const Icon(
-                                FluentIcons.arrow_download_24_regular,
-                              ),
-                              onPressed: () =>
-                                  prefferedDownloadMode.value == 'normal'
-                                      ? downloadSong(
-                                          context,
-                                          mediaItemToMap(metadata as MediaItem),
-                                        )
-                                      : downloadSongFaster(
-                                          context,
-                                          mediaItemToMap(metadata as MediaItem),
-                                        ),
+                            customIconButton(
+                              FluentIcons.arrow_download_24_regular,
+                              colorScheme.primary,
+                              constraints.maxWidth * 0.05,
+                              () {
+                                prefferedDownloadMode.value == 'normal'
+                                    ? downloadSong(
+                                        context,
+                                        mediaItemToMap(mediaItem as MediaItem),
+                                      )
+                                    : downloadSongFaster(
+                                        context,
+                                        mediaItemToMap(mediaItem as MediaItem),
+                                      );
+                              },
                             ),
                             ValueListenableBuilder<bool>(
                               valueListenable: muteNotifier,
                               builder: (_, value, __) {
-                                return IconButton(
-                                  icon: Icon(
-                                    value
-                                        ? FluentIcons.speaker_mute_24_filled
-                                        : FluentIcons.speaker_mute_24_regular,
-                                    color: colorScheme.primary,
-                                  ),
-                                  iconSize: constraints.maxWidth * 0.05,
-                                  onPressed: audioHandler.mute,
-                                  splashColor: Colors.transparent,
+                                return customIconButton(
+                                  value
+                                      ? FluentIcons.speaker_mute_24_filled
+                                      : FluentIcons.speaker_mute_24_regular,
+                                  colorScheme.primary,
+                                  constraints.maxWidth * 0.05,
+                                  audioHandler.mute,
                                 );
                               },
                             ),
@@ -260,20 +259,19 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                         ValueListenableBuilder<bool>(
                           valueListenable: shuffleNotifier,
                           builder: (_, value, __) {
-                            return IconButton(
-                              icon: Icon(
-                                value
-                                    ? FluentIcons.arrow_shuffle_24_filled
-                                    : FluentIcons.arrow_shuffle_off_24_filled,
-                                color: colorScheme.primary,
-                              ),
-                              iconSize: constraints.maxWidth * 0.05,
-                              onPressed: () => audioHandler.setShuffleMode(
-                                value
-                                    ? AudioServiceShuffleMode.none
-                                    : AudioServiceShuffleMode.all,
-                              ),
-                              splashColor: Colors.transparent,
+                            return customIconButton(
+                              shuffleNotifier.value
+                                  ? FluentIcons.arrow_shuffle_24_filled
+                                  : FluentIcons.arrow_shuffle_off_24_filled,
+                              colorScheme.primary,
+                              constraints.maxWidth * 0.05,
+                              () {
+                                audioHandler.setShuffleMode(
+                                  shuffleNotifier.value
+                                      ? AudioServiceShuffleMode.none
+                                      : AudioServiceShuffleMode.all,
+                                );
+                              },
                             );
                           },
                         ),
@@ -318,9 +316,8 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                               onPressed = audioHandler.pause;
                             } else {
                               icon = FluentIcons.replay_20_filled;
-                              onPressed = () => audioHandler.seek(
-                                    Duration.zero,
-                                  );
+                              onPressed =
+                                  () => audioHandler.seek(Duration.zero);
                             }
 
                             return GestureDetector(
@@ -349,21 +346,17 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                         ValueListenableBuilder<bool>(
                           valueListenable: repeatNotifier,
                           builder: (_, value, __) {
-                            return IconButton(
-                              icon: Icon(
-                                value
-                                    ? FluentIcons.arrow_repeat_1_24_filled
-                                    : FluentIcons
-                                        .arrow_repeat_all_off_24_filled,
-                                color: colorScheme.primary,
-                              ),
-                              iconSize: constraints.maxWidth * 0.05,
-                              onPressed: () => audioHandler.setRepeatMode(
+                            return customIconButton(
+                              value
+                                  ? FluentIcons.arrow_repeat_1_24_filled
+                                  : FluentIcons.arrow_repeat_all_off_24_filled,
+                              colorScheme.primary,
+                              constraints.maxWidth * 0.05,
+                              () => audioHandler.setRepeatMode(
                                 value
                                     ? AudioServiceRepeatMode.none
                                     : AudioServiceRepeatMode.all,
                               ),
-                              splashColor: Colors.transparent,
                             );
                           },
                         ),
@@ -372,19 +365,21 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                             ValueListenableBuilder<bool>(
                               valueListenable: songLikeStatus,
                               builder: (_, value, __) {
-                                final iconData = value
-                                    ? FluentIcons.star_24_filled
-                                    : FluentIcons.star_24_regular;
-                                return IconButton(
-                                  color: value
+                                return customIconButton(
+                                  value
+                                      ? FluentIcons.star_24_filled
+                                      : FluentIcons.star_24_regular,
+                                  songLikeStatus.value
                                       ? colorScheme.primary
                                       : colorScheme.primary,
-                                  icon: Icon(iconData),
-                                  iconSize: constraints.maxWidth * 0.05,
-                                  splashColor: Colors.transparent,
-                                  onPressed: () {
-                                    updateSongLikeStatus(ytid, !value);
-                                    songLikeStatus.value = !value;
+                                  constraints.maxWidth * 0.05,
+                                  () {
+                                    updateSongLikeStatus(
+                                      audioId,
+                                      !songLikeStatus.value,
+                                    );
+                                    songLikeStatus.value =
+                                        !songLikeStatus.value;
                                   },
                                 );
                               },
@@ -392,20 +387,14 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                             ValueListenableBuilder<bool>(
                               valueListenable: playNextSongAutomatically,
                               builder: (_, value, __) {
-                                final iconData = value
-                                    ? FluentIcons.music_note_2_play_20_filled
-                                    : FluentIcons.music_note_2_play_20_regular;
-                                return IconButton(
-                                  icon: Icon(
-                                    iconData,
-                                    color: value
-                                        ? colorScheme.primary
-                                        : colorScheme.primary,
-                                  ),
-                                  iconSize: constraints.maxWidth * 0.05,
-                                  splashColor: Colors.transparent,
-                                  onPressed:
-                                      audioHandler.changeAutoPlayNextStatus,
+                                return customIconButton(
+                                  value
+                                      ? FluentIcons.music_note_2_play_20_filled
+                                      : FluentIcons
+                                          .music_note_2_play_20_regular,
+                                  colorScheme.primary,
+                                  constraints.maxWidth * 0.05,
+                                  audioHandler.changeAutoPlayNextStatus,
                                 );
                               },
                             ),
@@ -418,155 +407,48 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Builder(
-                            builder: (context) {
-                              return TextButton(
-                                onPressed: () {
-                                  showBottomSheet(
-                                    context: context,
-                                    builder: (context) => Container(
-                                      decoration: const BoxDecoration(
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(18),
-                                          topRight: Radius.circular(18),
-                                        ),
-                                      ),
-                                      height: size.height / 2.14,
-                                      child: SingleChildScrollView(
-                                        child: Column(
-                                          children: <Widget>[
-                                            Padding(
-                                              padding: EdgeInsets.only(
-                                                top: size.height * 0.012,
+                          TextButton(
+                            onPressed: () {
+                              showBottomSheet(
+                                context: context,
+                                builder: (context) => Container(
+                                  decoration: const BoxDecoration(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(18),
+                                      topRight: Radius.circular(18),
+                                    ),
+                                  ),
+                                  height: size.height / 2.14,
+                                  child: SingleChildScrollView(
+                                    child: Column(
+                                      children: <Widget>[
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                            top: size.height * 0.012,
+                                          ),
+                                          child: Row(
+                                            children: <Widget>[
+                                              IconButton(
+                                                icon: Icon(
+                                                  FluentIcons
+                                                      .arrow_between_down_24_filled,
+                                                  color: colorScheme.primary,
+                                                  size: 20,
+                                                ),
+                                                onPressed: () =>
+                                                    Navigator.pop(context),
                                               ),
-                                              child: Row(
-                                                children: <Widget>[
-                                                  IconButton(
-                                                    icon: Icon(
-                                                      FluentIcons
-                                                          .arrow_between_down_24_filled,
-                                                      color:
-                                                          colorScheme.primary,
-                                                      size: 20,
-                                                    ),
-                                                    onPressed: () =>
-                                                        Navigator.pop(
-                                                      context,
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                        right: 42,
-                                                        bottom: 42,
-                                                      ),
-                                                      child: Center(
-                                                        child: MarqueeWidget(
-                                                          child: Text(
-                                                            activePlaylist[
-                                                                'title'],
-                                                            style: TextStyle(
-                                                              color: colorScheme
-                                                                  .primary,
-                                                              fontSize: 30,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            ListView.builder(
-                                              shrinkWrap: true,
-                                              physics:
-                                                  const BouncingScrollPhysics(),
-                                              addAutomaticKeepAlives: false,
-                                              addRepaintBoundaries: false,
-                                              itemCount:
-                                                  activePlaylist['list'].length,
-                                              itemBuilder: (
-                                                BuildContext context,
-                                                int index,
-                                              ) {
-                                                return Padding(
+                                              Expanded(
+                                                child: Padding(
                                                   padding:
                                                       const EdgeInsets.only(
-                                                    top: 5,
-                                                    bottom: 5,
+                                                    right: 42,
+                                                    bottom: 42,
                                                   ),
-                                                  child: SongBar(
-                                                    activePlaylist['list']
-                                                        [index],
-                                                    false,
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                                child: Text(context.l10n!.playlist),
-                              );
-                            },
-                          ),
-                          const Text(' | '),
-                          Builder(
-                            builder: (context) {
-                              return TextButton(
-                                onPressed: () {
-                                  getSongLyrics(
-                                    metadata.artist.toString(),
-                                    metadata.title.toString(),
-                                  );
-
-                                  showBottomSheet(
-                                    context: context,
-                                    builder: (context) => Container(
-                                      decoration: const BoxDecoration(
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(18),
-                                          topRight: Radius.circular(18),
-                                        ),
-                                      ),
-                                      height: size.height / 2.14,
-                                      child: Column(
-                                        children: <Widget>[
-                                          Padding(
-                                            padding: EdgeInsets.only(
-                                              top: size.height * 0.012,
-                                            ),
-                                            child: Row(
-                                              children: <Widget>[
-                                                IconButton(
-                                                  icon: Icon(
-                                                    FluentIcons
-                                                        .arrow_between_down_24_filled,
-                                                    color: colorScheme.primary,
-                                                    size: 20,
-                                                  ),
-                                                  onPressed: () =>
-                                                      Navigator.pop(
-                                                    context,
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                      right: 42,
-                                                    ),
-                                                    child: Center(
+                                                  child: Center(
+                                                    child: MarqueeWidget(
                                                       child: Text(
-                                                        context.l10n!.lyrics,
+                                                        activePlaylist['title'],
                                                         style: TextStyle(
                                                           color: colorScheme
                                                               .primary,
@@ -578,67 +460,151 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                                                     ),
                                                   ),
                                                 ),
-                                              ],
-                                            ),
+                                              ),
+                                            ],
                                           ),
-                                          ValueListenableBuilder<String?>(
-                                            valueListenable: lyrics,
-                                            builder: (_, value, __) {
-                                              if (value != null &&
-                                                  value != 'not found') {
-                                                return Expanded(
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                      6,
-                                                    ),
-                                                    child: Center(
-                                                      child:
-                                                          SingleChildScrollView(
-                                                        child: Text(
-                                                          value,
-                                                          style:
-                                                              const TextStyle(
-                                                            fontSize: 16,
-                                                          ),
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                );
-                                              } else if (value == null) {
-                                                return const SizedBox(
-                                                  child: Spinner(),
-                                                );
-                                              } else {
-                                                return Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                    top: 120,
-                                                  ),
-                                                  child: Center(
-                                                    child: Text(
-                                                      context.l10n!
-                                                          .lyricsNotAvailable,
-                                                      style: const TextStyle(
-                                                        fontSize: 25,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                );
-                                              }
-                                            },
-                                          ),
-                                        ],
-                                      ),
+                                        ),
+                                        ListView.builder(
+                                          shrinkWrap: true,
+                                          physics:
+                                              const BouncingScrollPhysics(),
+                                          addAutomaticKeepAlives: false,
+                                          addRepaintBoundaries: false,
+                                          itemCount:
+                                              activePlaylist['list'].length,
+                                          itemBuilder: (
+                                            BuildContext context,
+                                            int index,
+                                          ) {
+                                            return Padding(
+                                              padding: const EdgeInsets.only(
+                                                top: 5,
+                                                bottom: 5,
+                                              ),
+                                              child: SongBar(
+                                                activePlaylist['list'][index],
+                                                false,
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ],
                                     ),
-                                  );
-                                },
-                                child: Text(context.l10n!.lyrics),
+                                  ),
+                                ),
                               );
                             },
+                            child: Text(context.l10n!.playlist),
+                          ),
+                          const Text(' | '),
+                          TextButton(
+                            onPressed: () {
+                              getSongLyrics(
+                                mediaItem.artist.toString(),
+                                mediaItem.title.toString(),
+                              );
+
+                              showBottomSheet(
+                                context: context,
+                                builder: (context) => Container(
+                                  decoration: const BoxDecoration(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(18),
+                                      topRight: Radius.circular(18),
+                                    ),
+                                  ),
+                                  height: size.height / 2.14,
+                                  child: Column(
+                                    children: <Widget>[
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                          top: size.height * 0.012,
+                                        ),
+                                        child: Row(
+                                          children: <Widget>[
+                                            IconButton(
+                                              icon: Icon(
+                                                FluentIcons
+                                                    .arrow_between_down_24_filled,
+                                                color: colorScheme.primary,
+                                                size: 20,
+                                              ),
+                                              onPressed: () =>
+                                                  Navigator.pop(context),
+                                            ),
+                                            Expanded(
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(
+                                                  right: 42,
+                                                ),
+                                                child: Center(
+                                                  child: Text(
+                                                    context.l10n!.lyrics,
+                                                    style: TextStyle(
+                                                      color:
+                                                          colorScheme.primary,
+                                                      fontSize: 30,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      ValueListenableBuilder<String?>(
+                                        valueListenable: lyrics,
+                                        builder: (_, value, __) {
+                                          if (value != null &&
+                                              value != 'not found') {
+                                            return Expanded(
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(6),
+                                                child: Center(
+                                                  child: SingleChildScrollView(
+                                                    child: Text(
+                                                      value,
+                                                      style: const TextStyle(
+                                                        fontSize: 16,
+                                                      ),
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          } else if (value == null) {
+                                            return const SizedBox(
+                                              child: Spinner(),
+                                            );
+                                          } else {
+                                            return Padding(
+                                              padding: const EdgeInsets.only(
+                                                top: 120,
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                  context
+                                                      .l10n!.lyricsNotAvailable,
+                                                  style: const TextStyle(
+                                                    fontSize: 25,
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Text(context.l10n!.lyrics),
                           ),
                         ],
                       ),
@@ -650,6 +616,20 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget customIconButton(
+    IconData iconData,
+    Color color,
+    double iconSize,
+    VoidCallback onPressed,
+  ) {
+    return IconButton(
+      icon: Icon(iconData, color: color),
+      iconSize: iconSize,
+      onPressed: onPressed,
+      splashColor: Colors.transparent,
     );
   }
 }
