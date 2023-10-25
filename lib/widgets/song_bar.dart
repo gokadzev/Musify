@@ -76,7 +76,7 @@ class SongBar extends StatelessWidget {
             style: TextStyle(
               color: Theme.of(context).colorScheme.primary,
               fontSize: 16,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 5),

@@ -74,7 +74,7 @@ ThemeData getAppDarkTheme() {
       centerTitle: true,
       titleTextStyle: TextStyle(
         fontSize: 27,
-        fontWeight: FontWeight.w700,
+        fontWeight: FontWeight.bold,
         color: colorScheme.primary,
       ),
       elevation: 0,
@@ -98,7 +98,7 @@ ThemeData getAppLightTheme() {
       centerTitle: true,
       titleTextStyle: TextStyle(
         fontSize: 27,
-        fontWeight: FontWeight.w700,
+        fontWeight: FontWeight.bold,
         color: colorScheme.primary,
       ),
       elevation: 0,

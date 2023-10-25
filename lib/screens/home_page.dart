@@ -79,7 +79,7 @@ class _HomePageState extends State<HomePage> {
                     style: TextStyle(
                       color: colorScheme.primary,
                       fontSize: 20,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
@@ -194,7 +194,7 @@ class _HomePageState extends State<HomePage> {
                     style: TextStyle(
                       color: colorScheme.primary,
                       fontSize: 20,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
@@ -236,7 +236,7 @@ class _HomePageState extends State<HomePage> {
             style: TextStyle(
               color: colorScheme.primary,
               fontSize: 20,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ),
