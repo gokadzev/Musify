@@ -1,0 +1,12 @@
+Bug fixes
+
+- Fixed the Dynamic Accent Color problem in Light Mode.
+- Fixed the position of the 'No liked playlists' text.
+- The Musify icon is now visible on media notifications.
+
+Enhancements
+
+- Reduced audio playback loading time.
+- The artist cube loader is now in the same color as the accent color.
+- The search bar is no longer hidden while scrolling playlists.
+- Made various quality and performance improvements for app stability and speed.
