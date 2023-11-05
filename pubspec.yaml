@@ -8,7 +8,7 @@ publish_to: 'none'
 version: 6.6.0+67 # run update.sh after changing the version
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: '>=3.1.0 <4.0.0'
   flutter: ^3.13.9
 
 dependencies:
@@ -21,7 +21,6 @@ dependencies:
   fluentui_system_icons: ^1.1.220
   flutter:
     sdk: flutter
-  flutter_displaymode: ^0.6.0
   flutter_localizations:
     sdk: flutter
   google_fonts: ^6.1.0

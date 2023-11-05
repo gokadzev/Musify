@@ -6,7 +6,6 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -215,7 +214,6 @@ void main() async {
 
 Future<void> initialisation() async {
   try {
-    await setDisplayMode();
     await Hive.initFlutter();
     Hive.registerAdapter(AudioQualityAdapter());
     await Hive.openBox('settings');
@@ -240,21 +238,4 @@ Future<void> initialisation() async {
   } catch (e) {
     logger.log('Initialization Error: $e');
   }
-}
-
-Future<void> setDisplayMode() async {
-  final supportedDisplay = await FlutterDisplayMode.supported;
-  final activeDisplay = await FlutterDisplayMode.active;
-  final sameResolution = supportedDisplay
-      .where(
-        (DisplayMode m) =>
-            m.width == activeDisplay.width && m.height == activeDisplay.height,
-      )
-      .toList()
-    ..sort(
-      (DisplayMode a, DisplayMode b) => b.refreshRate.compareTo(a.refreshRate),
-    );
-  final mostOptimalMode =
-      sameResolution.isNotEmpty ? sameResolution.first : activeDisplay;
-  await FlutterDisplayMode.setPreferredMode(mostOptimalMode);
 }
