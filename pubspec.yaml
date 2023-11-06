@@ -17,8 +17,8 @@ dependencies:
   background_downloader: ^7.12.2
   cached_network_image: ^3.3.0
   dynamic_color: ^1.6.8
-  file_picker: ^6.0.0
-  fluentui_system_icons: ^1.1.220
+  file_picker: ^6.1.1
+  fluentui_system_icons: ^1.1.221
   flutter:
     sdk: flutter
   flutter_localizations:
@@ -36,12 +36,12 @@ dependencies:
   receive_sharing_intent:
     path: ./packages/receive_sharing_intent
   rxdart: ^0.27.7
-  url_launcher: ^6.2.0
+  url_launcher: ^6.2.1
   youtube_explode_dart: ^2.0.2
 
 dev_dependencies:
   flutter_launcher_icons: ^0.13.1
-  flutter_native_splash: ^2.3.4
+  flutter_native_splash: ^2.3.5
   flutter_test:
     sdk: flutter
   translations_cleaner: ^0.0.5
