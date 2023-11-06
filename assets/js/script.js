@@ -1,33 +1,20 @@
 const checkApiUrl = 'https://api.github.com/repos/gokadzev/Musify/releases'
-let versionElement = document.getElementById('version')
-let downloadElement = document.getElementById('download')
-let downloadsCount = document.getElementById('downloads_count_element')
+const versionElement = document.getElementById('version')
+const downloadElement = document.getElementById('download')
+const downloadsCount = document.getElementById('downloads_count_element')
 
-function getUpdateInfo(callback) {
-  var xmlHttp = new XMLHttpRequest()
+function makeHttpRequest(url, callback) {
+  const xmlHttp = new XMLHttpRequest()
   xmlHttp.onreadystatechange = function () {
-    if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+    if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
       callback(xmlHttp.responseText)
+    }
   }
-  xmlHttp.open('GET', checkApiUrl, true)
+  xmlHttp.open('GET', url, true)
   xmlHttp.send(null)
 }
 
-function getDownloadsInfo(callback) {
-  var xmlHttp = new XMLHttpRequest()
-  xmlHttp.onreadystatechange = function () {
-    if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
-      callback(xmlHttp.responseText)
-  }
-  xmlHttp.open(
-    'GET',
-    'https://raw.githubusercontent.com/gokadzev/Musify/update/downloads_count.json',
-    true
-  )
-  xmlHttp.send(null)
-}
-
-function nFormatter(num) {
+function formatNumberAbbreviation(num) {
   if (num >= 1000000000) {
     return (num / 1000000000).toFixed(1).replace(/\.0$/, '') + 'G'
   }
@@ -40,8 +27,7 @@ function nFormatter(num) {
   return num
 }
 
-// Tab Section
-var initTabs = function () {
+function initializeTabs() {
   const tabs = document.querySelectorAll('[data-tab-target]')
   const tabContents = document.querySelectorAll('[data-tab-content]')
 
@@ -60,8 +46,7 @@ var initTabs = function () {
   })
 }
 
-// Responsive Navigation with Button
-var initHamburgerMenu = function () {
+function initializeHamburgerMenu() {
   const hamburger = document.querySelector('.hamburger')
   const navMenu = document.querySelector('.menu-list')
 
@@ -82,7 +67,7 @@ var initHamburgerMenu = function () {
   }
 }
 
-var swiper = new Swiper('.product-swiper', {
+const swiper = new Swiper('.product-swiper', {
   slidesPerView: 3,
   spaceBetween: 50,
   loop: true,
@@ -107,20 +92,27 @@ var swiper = new Swiper('.product-swiper', {
 })
 
 window.onload = function () {
-  initTabs()
-  initHamburgerMenu()
-  getUpdateInfo((res) => {
+  initializeTabs()
+  initializeHamburgerMenu()
+
+  makeHttpRequest(checkApiUrl, (res) => {
     const response = JSON.parse(res)
-    const appUrl = response[0]['assets'].find((r) => r['name'] == 'Musify.apk')[
-      'browser_download_url'
-    ]
+    const appUrl = response[0]['assets'].find(
+      (r) => r['name'] === 'Musify.apk'
+    )['browser_download_url']
     const appVersion = response[0]['tag_name']
     versionElement.textContent += 'Current Version: ' + appVersion
     downloadElement.setAttribute('href', appUrl)
   })
-  getDownloadsInfo((res) => {
-    var response = JSON.parse(res)
-    response = nFormatter(response['downloads_count'])
-    downloadsCount.textContent = response
-  })
+
+  makeHttpRequest(
+    'https://raw.githubusercontent.com/gokadzev/Musify/update/downloads_count.json',
+    (res) => {
+      const response = JSON.parse(res)
+      const formattedDownloads = formatNumberAbbreviation(
+        response['downloads_count']
+      )
+      downloadsCount.textContent = formattedDownloads
+    }
+  )
 }
