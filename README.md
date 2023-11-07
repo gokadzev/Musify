@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-    Unlock Music's Full Potential: Stream and Download with Ease, All in One App!
+    Unlock the full potential of music: Stream effortlessly with one app!
 </p>
 
 <p align="center">
