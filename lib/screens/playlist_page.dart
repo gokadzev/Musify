@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/extensions/screen_size.dart';
-import 'package:musify/services/download_manager.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/widgets/marque.dart';
@@ -199,7 +198,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
         Row(
           children: [
             if (widget.playlistId != null) _buildLikeButton(),
-            _buildDownloadButton(),
             _buildSyncButton(),
           ],
         ),
@@ -232,19 +230,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
                 : currentLikedPlaylistsLength.value - 1;
           },
         );
-      },
-    );
-  }
-
-  Widget _buildDownloadButton() {
-    return IconButton(
-      splashColor: Colors.transparent,
-      highlightColor: Colors.transparent,
-      icon: const Icon(FluentIcons.arrow_download_24_regular),
-      padding: const EdgeInsets.only(left: 20, top: 5),
-      iconSize: 26,
-      onPressed: () {
-        downloadSongsFromPlaylist(context, _playlist['list']);
       },
     );
   }

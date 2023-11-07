@@ -1,0 +1,11 @@
+Bug fixes
+
+
+Enhancements
+
+- Updated Portuguese translations
+- Made various quality and performance improvements for app stability and speed
+
+Other
+
+- Download feature has been removed

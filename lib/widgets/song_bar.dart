@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
-import 'package:musify/services/download_manager.dart';
-import 'package:musify/services/settings_manager.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/formatter.dart';
 
@@ -121,13 +119,6 @@ class SongBar extends StatelessWidget {
             onPressed: () => isFromPlaylist
                 ? _removeFromPlaylist(context, song)
                 : _showAddToPlaylistDialog(context, song),
-          ),
-          IconButton(
-            color: Theme.of(context).colorScheme.primary,
-            icon: const Icon(FluentIcons.arrow_download_24_regular),
-            onPressed: () => prefferedDownloadMode.value == 'normal'
-                ? downloadSong(context, song)
-                : downloadSongFaster(context, song),
           ),
           if (showMusicDuration && song['duration'] != null)
             Text('(${formatDuration(song['duration'])})'),

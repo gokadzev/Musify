@@ -7,11 +7,9 @@ import 'package:musify/extensions/l10n.dart';
 import 'package:musify/extensions/screen_size.dart';
 import 'package:musify/main.dart';
 import 'package:musify/models/position_data.dart';
-import 'package:musify/services/download_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/formatter.dart';
-import 'package:musify/utilities/mediaitem.dart';
 import 'package:musify/widgets/marque.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/spinner.dart';
@@ -225,22 +223,6 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                       children: <Widget>[
                         Column(
                           children: [
-                            customIconButton(
-                              FluentIcons.arrow_download_24_regular,
-                              colorScheme.primary,
-                              constraints.maxWidth * 0.05,
-                              () {
-                                prefferedDownloadMode.value == 'normal'
-                                    ? downloadSong(
-                                        context,
-                                        mediaItemToMap(mediaItem as MediaItem),
-                                      )
-                                    : downloadSongFaster(
-                                        context,
-                                        mediaItemToMap(mediaItem as MediaItem),
-                                      );
-                              },
-                            ),
                             ValueListenableBuilder<bool>(
                               valueListenable: muteNotifier,
                               builder: (_, value, __) {
