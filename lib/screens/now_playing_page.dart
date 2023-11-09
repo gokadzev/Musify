@@ -95,52 +95,42 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      top: size.height * 0.03,
-                      left: 20,
-                      right: 20,
+                  SizedBox(
+                    height: size.height * 0.03,
+                  ),
+                  MarqueeWidget(
+                    backDuration: const Duration(seconds: 1),
+                    child: Text(
+                      metadata.title,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: size.height * 0.030,
+                        fontWeight: FontWeight.bold,
+                        color: colorScheme.primary,
+                      ),
                     ),
-                    child: Column(
-                      children: <Widget>[
-                        MarqueeWidget(
-                          backDuration: const Duration(seconds: 1),
-                          child: Text(
-                            metadata.title,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: size.height * 0.030,
-                              fontWeight: FontWeight.bold,
-                              color: colorScheme.primary,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        MarqueeWidget(
-                          backDuration: const Duration(seconds: 1),
-                          child: Text(
-                            '${metadata.artist}',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: size.height * 0.018,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
+                  ),
+                  const SizedBox(height: 4),
+                  MarqueeWidget(
+                    backDuration: const Duration(seconds: 1),
+                    child: Text(
+                      '${metadata.artist}',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: size.height * 0.018,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
                   if (metadata.extras?['isLive'] != null &&
                       metadata.extras?['isLive'])
                     const SizedBox()
                   else
-                    Material(
-                      child: _buildPlayer(
-                        size,
-                        songLikeStatus,
-                        audioId,
-                        metadata,
-                      ),
+                    _buildPlayer(
+                      size,
+                      songLikeStatus,
+                      audioId,
+                      metadata,
                     ),
                 ],
               );
@@ -214,401 +204,372 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
               );
             },
           ),
-          Padding(
-            padding: EdgeInsets.only(top: size.height * 0.03),
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                return Column(
-                  children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        Column(
-                          children: [
-                            ValueListenableBuilder<bool>(
-                              valueListenable: muteNotifier,
-                              builder: (_, value, __) {
-                                return customIconButton(
-                                  value
-                                      ? FluentIcons.speaker_mute_24_filled
-                                      : FluentIcons.speaker_mute_24_regular,
-                                  colorScheme.primary,
-                                  constraints.maxWidth * 0.05,
-                                  audioHandler.mute,
-                                );
-                              },
-                            ),
-                            IconButton(
-                              icon: Icon(
-                                Icons.add,
-                                color: colorScheme.primary,
-                              ),
-                              onPressed: () {
-                                _showAddToPlaylistDialog(
-                                  context,
-                                  mediaItemToMap(mediaItem),
-                                );
-                              },
-                            ),
-                          ],
+          SizedBox(height: size.height * 0.03),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Column(
+                    children: [
+                      ValueListenableBuilder<bool>(
+                        valueListenable: muteNotifier,
+                        builder: (_, value, __) {
+                          return customIconButton(
+                            value
+                                ? FluentIcons.speaker_mute_24_filled
+                                : FluentIcons.speaker_mute_24_regular,
+                            colorScheme.primary,
+                            constraints.maxWidth * 0.05,
+                            audioHandler.mute,
+                          );
+                        },
+                      ),
+                      IconButton(
+                        icon: Icon(
+                          Icons.add,
+                          color: colorScheme.primary,
                         ),
-                        ValueListenableBuilder<bool>(
-                          valueListenable: shuffleNotifier,
-                          builder: (_, value, __) {
-                            return customIconButton(
-                              shuffleNotifier.value
-                                  ? FluentIcons.arrow_shuffle_24_filled
-                                  : FluentIcons.arrow_shuffle_off_24_filled,
-                              colorScheme.primary,
-                              constraints.maxWidth * 0.05,
-                              () {
-                                audioHandler.setShuffleMode(
-                                  shuffleNotifier.value
-                                      ? AudioServiceShuffleMode.none
-                                      : AudioServiceShuffleMode.all,
-                                );
-                              },
-                            );
-                          },
-                        ),
-                        IconButton(
-                          icon: Icon(
-                            FluentIcons.previous_24_filled,
-                            color: audioHandler.hasPrevious
-                                ? colorScheme.primary
-                                : colorScheme.primary.withOpacity(0.5),
-                          ),
-                          iconSize: constraints.maxWidth * 0.09,
-                          onPressed: () async {
-                            await audioHandler.skipToPrevious();
-                          },
-                          splashColor: Colors.transparent,
-                        ),
-                        StreamBuilder<PlaybackState>(
-                          stream: audioHandler.playbackState,
-                          builder: (context, snapshot) {
-                            final playerState = snapshot.data;
-                            if (playerState == null)
-                              return const SizedBox.shrink();
-
-                            final processingState = playerState.processingState;
-                            final playing = playerState.playing;
-
-                            IconData icon;
-                            VoidCallback? onPressed;
-
-                            if (processingState ==
-                                    AudioProcessingState.loading ||
-                                processingState ==
-                                    AudioProcessingState.buffering) {
-                              icon = FluentIcons.spinner_ios_20_filled;
-                              onPressed = null;
-                            } else if (!playing) {
-                              icon = FluentIcons.play_circle_48_filled;
-                              onPressed = audioHandler.play;
-                            } else if (processingState !=
-                                AudioProcessingState.completed) {
-                              icon = FluentIcons.pause_circle_48_filled;
-                              onPressed = audioHandler.pause;
-                            } else {
-                              icon = FluentIcons.replay_20_filled;
-                              onPressed =
-                                  () => audioHandler.seek(Duration.zero);
-                            }
-
-                            return GestureDetector(
-                              onTap: onPressed,
-                              child: Icon(
-                                icon,
-                                color: colorScheme.primary,
-                                size: 60,
-                              ),
-                            );
-                          },
-                        ),
-                        IconButton(
-                          icon: Icon(
-                            FluentIcons.next_24_filled,
-                            color: audioHandler.hasNext
-                                ? colorScheme.primary
-                                : colorScheme.primary.withOpacity(0.5),
-                          ),
-                          iconSize: constraints.maxWidth * 0.09,
-                          onPressed: () async {
-                            await audioHandler.skipToNext();
-                          },
-                          splashColor: Colors.transparent,
-                        ),
-                        ValueListenableBuilder<bool>(
-                          valueListenable: repeatNotifier,
-                          builder: (_, value, __) {
-                            return customIconButton(
-                              value
-                                  ? FluentIcons.arrow_repeat_1_24_filled
-                                  : FluentIcons.arrow_repeat_all_off_24_filled,
-                              colorScheme.primary,
-                              constraints.maxWidth * 0.05,
-                              () => audioHandler.setRepeatMode(
-                                value
-                                    ? AudioServiceRepeatMode.none
-                                    : AudioServiceRepeatMode.all,
-                              ),
-                            );
-                          },
-                        ),
-                        Column(
-                          children: [
-                            ValueListenableBuilder<bool>(
-                              valueListenable: songLikeStatus,
-                              builder: (_, value, __) {
-                                return customIconButton(
-                                  value
-                                      ? FluentIcons.star_24_filled
-                                      : FluentIcons.star_24_regular,
-                                  songLikeStatus.value
-                                      ? colorScheme.primary
-                                      : colorScheme.primary,
-                                  constraints.maxWidth * 0.05,
-                                  () {
-                                    updateSongLikeStatus(
-                                      audioId,
-                                      !songLikeStatus.value,
-                                    );
-                                    songLikeStatus.value =
-                                        !songLikeStatus.value;
-                                  },
-                                );
-                              },
-                            ),
-                            ValueListenableBuilder<bool>(
-                              valueListenable: playNextSongAutomatically,
-                              builder: (_, value, __) {
-                                return customIconButton(
-                                  value
-                                      ? FluentIcons.music_note_2_play_20_filled
-                                      : FluentIcons
-                                          .music_note_2_play_20_regular,
-                                  colorScheme.primary,
-                                  constraints.maxWidth * 0.05,
-                                  audioHandler.changeAutoPlayNextStatus,
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                      ],
+                        onPressed: () {
+                          _showAddToPlaylistDialog(
+                            context,
+                            mediaItemToMap(mediaItem),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                  ValueListenableBuilder<bool>(
+                    valueListenable: shuffleNotifier,
+                    builder: (_, value, __) {
+                      return customIconButton(
+                        shuffleNotifier.value
+                            ? FluentIcons.arrow_shuffle_24_filled
+                            : FluentIcons.arrow_shuffle_off_24_filled,
+                        colorScheme.primary,
+                        constraints.maxWidth * 0.05,
+                        () {
+                          audioHandler.setShuffleMode(
+                            shuffleNotifier.value
+                                ? AudioServiceShuffleMode.none
+                                : AudioServiceShuffleMode.all,
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      FluentIcons.previous_24_filled,
+                      color: audioHandler.hasPrevious
+                          ? colorScheme.primary
+                          : colorScheme.primary.withOpacity(0.5),
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(top: size.height * 0.047),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          TextButton(
-                            onPressed: () {
-                              showBottomSheet(
-                                context: context,
-                                builder: (context) => Container(
-                                  decoration: const BoxDecoration(
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(18),
-                                      topRight: Radius.circular(18),
-                                    ),
-                                  ),
-                                  height: size.height / 2.14,
-                                  child: SingleChildScrollView(
-                                    child: Column(
-                                      children: <Widget>[
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                            top: size.height * 0.012,
-                                          ),
-                                          child: Row(
-                                            children: <Widget>[
-                                              IconButton(
-                                                icon: Icon(
-                                                  FluentIcons
-                                                      .arrow_between_down_24_filled,
-                                                  color: colorScheme.primary,
-                                                  size: 20,
-                                                ),
-                                                onPressed: () =>
-                                                    Navigator.pop(context),
-                                              ),
-                                              Expanded(
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                    right: 42,
-                                                    bottom: 42,
-                                                  ),
-                                                  child: Center(
-                                                    child: MarqueeWidget(
-                                                      child: Text(
-                                                        activePlaylist['title'],
-                                                        style: TextStyle(
-                                                          color: colorScheme
-                                                              .primary,
-                                                          fontSize: 30,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        ListView.builder(
-                                          shrinkWrap: true,
-                                          physics:
-                                              const BouncingScrollPhysics(),
-                                          addAutomaticKeepAlives: false,
-                                          addRepaintBoundaries: false,
-                                          itemCount:
-                                              activePlaylist['list'].length,
-                                          itemBuilder: (
-                                            BuildContext context,
-                                            int index,
-                                          ) {
-                                            return Padding(
-                                              padding: const EdgeInsets.only(
-                                                top: 5,
-                                                bottom: 5,
-                                              ),
-                                              child: SongBar(
-                                                activePlaylist['list'][index],
-                                                false,
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                            child: Text(context.l10n!.playlist),
-                          ),
-                          const Text(' | '),
-                          TextButton(
-                            onPressed: () {
-                              getSongLyrics(
-                                mediaItem.artist.toString(),
-                                mediaItem.title.toString(),
-                              );
+                    iconSize: constraints.maxWidth * 0.09,
+                    onPressed: () async {
+                      await audioHandler.skipToPrevious();
+                    },
+                    splashColor: Colors.transparent,
+                  ),
+                  StreamBuilder<PlaybackState>(
+                    stream: audioHandler.playbackState,
+                    builder: (context, snapshot) {
+                      final playerState = snapshot.data;
+                      if (playerState == null) return const SizedBox.shrink();
 
-                              showBottomSheet(
-                                context: context,
-                                builder: (context) => Container(
-                                  decoration: const BoxDecoration(
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(18),
-                                      topRight: Radius.circular(18),
+                      final processingState = playerState.processingState;
+                      final playing = playerState.playing;
+
+                      IconData icon;
+                      VoidCallback? onPressed;
+
+                      if (processingState == AudioProcessingState.loading ||
+                          processingState == AudioProcessingState.buffering) {
+                        icon = FluentIcons.spinner_ios_20_filled;
+                        onPressed = null;
+                      } else if (!playing) {
+                        icon = FluentIcons.play_circle_48_filled;
+                        onPressed = audioHandler.play;
+                      } else if (processingState !=
+                          AudioProcessingState.completed) {
+                        icon = FluentIcons.pause_circle_48_filled;
+                        onPressed = audioHandler.pause;
+                      } else {
+                        icon = FluentIcons.replay_20_filled;
+                        onPressed = () => audioHandler.seek(Duration.zero);
+                      }
+
+                      return GestureDetector(
+                        onTap: onPressed,
+                        child: Icon(
+                          icon,
+                          color: colorScheme.primary,
+                          size: 60,
+                        ),
+                      );
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      FluentIcons.next_24_filled,
+                      color: audioHandler.hasNext
+                          ? colorScheme.primary
+                          : colorScheme.primary.withOpacity(0.5),
+                    ),
+                    iconSize: constraints.maxWidth * 0.09,
+                    onPressed: () async {
+                      await audioHandler.skipToNext();
+                    },
+                    splashColor: Colors.transparent,
+                  ),
+                  ValueListenableBuilder<bool>(
+                    valueListenable: repeatNotifier,
+                    builder: (_, value, __) {
+                      return customIconButton(
+                        value
+                            ? FluentIcons.arrow_repeat_1_24_filled
+                            : FluentIcons.arrow_repeat_all_off_24_filled,
+                        colorScheme.primary,
+                        constraints.maxWidth * 0.05,
+                        () => audioHandler.setRepeatMode(
+                          value
+                              ? AudioServiceRepeatMode.none
+                              : AudioServiceRepeatMode.all,
+                        ),
+                      );
+                    },
+                  ),
+                  Column(
+                    children: [
+                      ValueListenableBuilder<bool>(
+                        valueListenable: songLikeStatus,
+                        builder: (_, value, __) {
+                          return customIconButton(
+                            value
+                                ? FluentIcons.star_24_filled
+                                : FluentIcons.star_24_regular,
+                            songLikeStatus.value
+                                ? colorScheme.primary
+                                : colorScheme.primary,
+                            constraints.maxWidth * 0.05,
+                            () {
+                              updateSongLikeStatus(
+                                audioId,
+                                !songLikeStatus.value,
+                              );
+                              songLikeStatus.value = !songLikeStatus.value;
+                            },
+                          );
+                        },
+                      ),
+                      ValueListenableBuilder<bool>(
+                        valueListenable: playNextSongAutomatically,
+                        builder: (_, value, __) {
+                          return customIconButton(
+                            value
+                                ? FluentIcons.music_note_2_play_20_filled
+                                : FluentIcons.music_note_2_play_20_regular,
+                            colorScheme.primary,
+                            constraints.maxWidth * 0.05,
+                            audioHandler.changeAutoPlayNextStatus,
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              );
+            },
+          ),
+          SizedBox(height: size.height * 0.047),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextButton(
+                onPressed: () {
+                  showBottomSheet(
+                    context: context,
+                    builder: (context) => Container(
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(18),
+                          topRight: Radius.circular(18),
+                        ),
+                      ),
+                      height: size.height / 2.14,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.only(
+                                top: size.height * 0.012,
+                              ),
+                              child: Row(
+                                children: <Widget>[
+                                  IconButton(
+                                    icon: Icon(
+                                      FluentIcons.arrow_between_down_24_filled,
+                                      color: colorScheme.primary,
+                                      size: 20,
+                                    ),
+                                    onPressed: () => Navigator.pop(context),
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                        right: 42,
+                                        bottom: 42,
+                                      ),
+                                      child: Center(
+                                        child: MarqueeWidget(
+                                          child: Text(
+                                            activePlaylist['title'],
+                                            style: TextStyle(
+                                              color: colorScheme.primary,
+                                              fontSize: 30,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                  height: size.height / 2.14,
-                                  child: Column(
-                                    children: <Widget>[
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                          top: size.height * 0.012,
-                                        ),
-                                        child: Row(
-                                          children: <Widget>[
-                                            IconButton(
-                                              icon: Icon(
-                                                FluentIcons
-                                                    .arrow_between_down_24_filled,
-                                                color: colorScheme.primary,
-                                                size: 20,
-                                              ),
-                                              onPressed: () =>
-                                                  Navigator.pop(context),
-                                            ),
-                                            Expanded(
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(
-                                                  right: 42,
-                                                ),
-                                                child: Center(
-                                                  child: Text(
-                                                    context.l10n!.lyrics,
-                                                    style: TextStyle(
-                                                      color:
-                                                          colorScheme.primary,
-                                                      fontSize: 30,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
+                                ],
+                              ),
+                            ),
+                            ListView.builder(
+                              shrinkWrap: true,
+                              physics: const BouncingScrollPhysics(),
+                              addAutomaticKeepAlives: false,
+                              addRepaintBoundaries: false,
+                              itemCount: activePlaylist['list'].length,
+                              itemBuilder: (
+                                BuildContext context,
+                                int index,
+                              ) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: 5,
+                                    bottom: 5,
+                                  ),
+                                  child: SongBar(
+                                    activePlaylist['list'][index],
+                                    false,
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+                child: Text(context.l10n!.playlist),
+              ),
+              const Text(' | '),
+              TextButton(
+                onPressed: () {
+                  getSongLyrics(
+                    mediaItem.artist.toString(),
+                    mediaItem.title.toString(),
+                  );
+
+                  showBottomSheet(
+                    context: context,
+                    builder: (context) => Container(
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(18),
+                          topRight: Radius.circular(18),
+                        ),
+                      ),
+                      height: size.height / 2.14,
+                      child: Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.only(
+                              top: size.height * 0.012,
+                            ),
+                            child: Row(
+                              children: <Widget>[
+                                IconButton(
+                                  icon: Icon(
+                                    FluentIcons.arrow_between_down_24_filled,
+                                    color: colorScheme.primary,
+                                    size: 20,
+                                  ),
+                                  onPressed: () => Navigator.pop(context),
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                      right: 42,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        context.l10n!.lyrics,
+                                        style: TextStyle(
+                                          color: colorScheme.primary,
+                                          fontSize: 30,
+                                          fontWeight: FontWeight.w500,
                                         ),
                                       ),
-                                      ValueListenableBuilder<String?>(
-                                        valueListenable: lyrics,
-                                        builder: (_, value, __) {
-                                          if (value != null &&
-                                              value != 'not found') {
-                                            return Expanded(
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(6),
-                                                child: Center(
-                                                  child: SingleChildScrollView(
-                                                    child: Text(
-                                                      value,
-                                                      style: const TextStyle(
-                                                        fontSize: 16,
-                                                      ),
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            );
-                                          } else if (value == null) {
-                                            return const SizedBox(
-                                              child: Spinner(),
-                                            );
-                                          } else {
-                                            return Padding(
-                                              padding: const EdgeInsets.only(
-                                                top: 120,
-                                              ),
-                                              child: Center(
-                                                child: Text(
-                                                  context
-                                                      .l10n!.lyricsNotAvailable,
-                                                  style: const TextStyle(
-                                                    fontSize: 25,
-                                                  ),
-                                                ),
-                                              ),
-                                            );
-                                          }
-                                        },
-                                      ),
-                                    ],
+                                    ),
                                   ),
                                 ),
-                              );
+                              ],
+                            ),
+                          ),
+                          ValueListenableBuilder<String?>(
+                            valueListenable: lyrics,
+                            builder: (_, value, __) {
+                              if (value != null && value != 'not found') {
+                                return Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(6),
+                                    child: Center(
+                                      child: SingleChildScrollView(
+                                        child: Text(
+                                          value,
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              } else if (value == null) {
+                                return const SizedBox(
+                                  child: Spinner(),
+                                );
+                              } else {
+                                return Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: 120,
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      context.l10n!.lyricsNotAvailable,
+                                      style: const TextStyle(
+                                        fontSize: 25,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }
                             },
-                            child: Text(context.l10n!.lyrics),
                           ),
                         ],
                       ),
                     ),
-                  ],
-                );
-              },
-            ),
+                  );
+                },
+                child: Text(context.l10n!.lyrics),
+              ),
+            ],
           ),
         ],
       ),
