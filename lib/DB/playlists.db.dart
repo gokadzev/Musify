@@ -262,7 +262,7 @@ List<Map<String, dynamic>> playlistsDB = [
     'ytid': 'PL-_a53M3g7u2UQT5jfGpmhkMswdNJe-Gh',
     'title':
         'New NCS Song 2023 - New Electronic Dance Music 2023-2024 (NCS No Copyright Sounds 2023 New)',
-    'image': 'https://i.scdn.co/image/ab67706c0000da84fb7f425b5c2091e67e0d1923',
+    'image': 'https://i.scdn.co/image/ab6775700000ee85c6e4ec3bf05af4e1ceee098e',
     'list': [],
   },
   {
