@@ -16,10 +16,17 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
   final TextEditingController _searchBar = TextEditingController();
   final FocusNode _inputNode = FocusNode();
   String _searchQuery = '';
+  bool _showOnlyAlbums = false;
 
   Future<void> search() async {
     _searchQuery = _searchBar.text;
     setState(() {});
+  }
+
+  void toggleShowOnlyAlbums(bool value) {
+    setState(() {
+      _showOnlyAlbums = value;
+    });
   }
 
   @override
@@ -76,6 +83,27 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
               ),
             ),
           ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              Switch(
+                value: _showOnlyAlbums,
+                onChanged: toggleShowOnlyAlbums,
+                thumbIcon: MaterialStateProperty.resolveWith<Icon?>(
+                  (Set<MaterialState> states) {
+                    if (states.contains(MaterialState.selected)) {
+                      return const Icon(
+                        Icons.album,
+                      );
+                    }
+                    return const Icon(
+                      Icons.all_out,
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
           Expanded(
             child: FutureBuilder(
               future: _searchQuery.isEmpty
@@ -94,7 +122,15 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                   return const SizedBox();
                 }
 
-                final playlists = snapshot.data as List;
+                late List playlists;
+
+                if (_showOnlyAlbums) {
+                  playlists = (snapshot.data as List)
+                      .where((element) => element['isAlbum'] == true)
+                      .toList();
+                } else {
+                  playlists = snapshot.data as List;
+                }
 
                 return GridView.builder(
                   gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
