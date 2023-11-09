@@ -2,10 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
+import 'package:musify/DB/albums.db.dart';
+import 'package:musify/DB/playlists.db.dart';
 import 'package:musify/enums/quality_enum.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
@@ -253,14 +254,7 @@ Future<List> getPlaylists({
 }
 
 Future<void> readPlaylistsFromFile() async {
-  final playlistsDbJson =
-      await rootBundle.loadString('assets/db/playlists.db.json');
-  final albumsDbJson = await rootBundle.loadString('assets/db/albums.db.json');
-
-  final _playlists1 = json.decode(playlistsDbJson) as List<dynamic>;
-  final _playlists2 = json.decode(albumsDbJson) as List<dynamic>;
-
-  playlists = [..._playlists1, ..._playlists2];
+  playlists = [...playlistsDB, ...albumsDB];
 }
 
 Future<List<String>> getSearchSuggestions(String query) async {
