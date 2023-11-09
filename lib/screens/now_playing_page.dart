@@ -9,7 +9,9 @@ import 'package:musify/main.dart';
 import 'package:musify/models/position_data.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/style/app_themes.dart';
+import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/formatter.dart';
+import 'package:musify/utilities/mediaitem.dart';
 import 'package:musify/widgets/marque.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/spinner.dart';
@@ -233,6 +235,18 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                                   colorScheme.primary,
                                   constraints.maxWidth * 0.05,
                                   audioHandler.mute,
+                                );
+                              },
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                Icons.add,
+                                color: colorScheme.primary,
+                              ),
+                              onPressed: () {
+                                _showAddToPlaylistDialog(
+                                  context,
+                                  mediaItemToMap(mediaItem),
                                 );
                               },
                             ),
@@ -598,6 +612,35 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
           ),
         ],
       ),
+    );
+  }
+
+  void _showAddToPlaylistDialog(BuildContext context, dynamic song) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(context.l10n!.addToPlaylist),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (final playlist in userCustomPlaylists)
+                Card(
+                  color: colorScheme.secondary,
+                  child: ListTile(
+                    title: Text(playlist['title']),
+                    onTap: () {
+                      addSongInCustomPlaylist(playlist['title'], song);
+                      showToast(context, context.l10n!.addedSuccess);
+                      Navigator.pop(context);
+                    },
+                    textColor: Colors.white,
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
     );
   }
 
