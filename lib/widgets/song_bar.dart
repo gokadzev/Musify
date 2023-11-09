@@ -16,6 +16,7 @@ class SongBar extends StatelessWidget {
     this.updateOnRemove,
     this.passingPlaylist,
     this.songIndexInPlaylist,
+    super.key,
   });
 
   final dynamic song;

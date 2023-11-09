@@ -186,6 +186,14 @@ Future<void> updateSongLikeStatus(dynamic songId, bool add) async {
   addOrUpdateData('user', 'likedSongs', userLikedSongsList);
 }
 
+void moveLikedSong(int oldIndex, int newIndex) {
+  final _song = userLikedSongsList[oldIndex];
+  userLikedSongsList.removeAt(oldIndex);
+  userLikedSongsList.insert(newIndex, _song);
+  currentLikedSongsLength.value = userLikedSongsList.length;
+  addOrUpdateData('user', 'likedSongs', userLikedSongsList);
+}
+
 Future<void> updatePlaylistLikeStatus(
   dynamic playlistId,
   String playlistImage,

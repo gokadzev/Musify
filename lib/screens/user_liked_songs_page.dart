@@ -2,7 +2,6 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
-import 'package:musify/extensions/screen_size.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/widgets/playlist_cube.dart';
@@ -20,57 +19,14 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          context.l10n!.userLikedSongs,
-        ),
+        title: Text(context.l10n!.userLikedSongs),
       ),
-      body: CustomScrollView(
-        slivers: [
-          SliverList(
-            delegate: SliverChildListDelegate(
-              [
-                Stack(
-                  children: [
-                    Column(
-                      children: [
-                        Center(
-                          child: buildPlaylistHeader(),
-                        ),
-                        buildPlayButton(),
-                      ],
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-                Column(
-                  children: [
-                    ValueListenableBuilder(
-                      valueListenable: currentLikedSongsLength,
-                      builder: (_, value, __) {
-                        return ListView.separated(
-                          shrinkWrap: true,
-                          physics: const BouncingScrollPhysics(),
-                          addAutomaticKeepAlives: false,
-                          addRepaintBoundaries: false,
-                          itemCount: userLikedSongsList.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return SongBar(
-                              userLikedSongsList[index],
-                              true,
-                            );
-                          },
-                          separatorBuilder: (BuildContext context, int index) {
-                            return const SizedBox(height: 15);
-                          },
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ],
-            ),
+      body: Column(
+        children: [
+          buildPlaylistHeader(),
+          const SizedBox(height: 30),
+          Expanded(
+            child: buildSongList(),
           ),
         ],
       ),
@@ -78,20 +34,23 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
   }
 
   Widget buildPlaylistHeader() {
-    return Column(
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         _buildPlaylistImage(),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20),
-          child: Text(
-            '${context.l10n!.yourFavoriteSongsHere}!',
-            style: const TextStyle(
-              fontWeight: FontWeight.w300,
+        const SizedBox(width: 20),
+        Column(
+          children: [
+            Text(
+              context.l10n!.yourFavoriteSongsHere,
+              style: const TextStyle(
+                fontWeight: FontWeight.w300,
+              ),
             ),
-            textAlign: TextAlign.center,
-          ),
+            const SizedBox(height: 10),
+            buildPlayButton(),
+          ],
         ),
-        SizedBox(height: context.screenSize.height * 0.01),
       ],
     );
   }
@@ -103,6 +62,7 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
         title: context.l10n!.userLikedSongs,
         onClickOpen: false,
         showFavoriteButton: false,
+        size: 150,
         zoomNumber: 0.55,
       ),
     );
@@ -130,6 +90,37 @@ class _UserLikedSongsState extends State<UserLikedSongs> {
         color: colorScheme.primary,
         size: 60,
       ),
+    );
+  }
+
+  Widget buildSongList() {
+    return ValueListenableBuilder(
+      valueListenable: currentLikedSongsLength,
+      builder: (_, value, __) {
+        return ReorderableListView(
+          shrinkWrap: true,
+          onReorder: (oldIndex, newIndex) {
+            setState(() {
+              if (oldIndex < newIndex) {
+                newIndex -= 1;
+              }
+              moveLikedSong(oldIndex, newIndex);
+            });
+          },
+          children: userLikedSongsList
+              .asMap()
+              .entries
+              .map(
+                (entry) => SongBar(
+                  entry.value,
+                  true,
+                  key: Key(entry.value['ytid']),
+                  songIndexInPlaylist: entry.key,
+                ),
+              )
+              .toList(),
+        );
+      },
     );
   }
 }
