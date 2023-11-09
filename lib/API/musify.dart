@@ -253,9 +253,14 @@ Future<List> getPlaylists({
 }
 
 Future<void> readPlaylistsFromFile() async {
-  playlists =
-      json.decode(await rootBundle.loadString('assets/db/playlists.db.json'))
-          as List;
+  final playlistsDbJson =
+      await rootBundle.loadString('assets/db/playlists.db.json');
+  final albumsDbJson = await rootBundle.loadString('assets/db/albums.db.json');
+
+  final _playlists1 = json.decode(playlistsDbJson) as List<dynamic>;
+  final _playlists2 = json.decode(albumsDbJson) as List<dynamic>;
+
+  playlists = [..._playlists1, ..._playlists2];
 }
 
 Future<List<String>> getSearchSuggestions(String query) async {

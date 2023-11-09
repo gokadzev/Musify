@@ -112,6 +112,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                         id: playlist['ytid'],
                         image: playlist['image'],
                         title: playlist['title'].toString(),
+                        isAlbum: playlist['isAlbum'],
                       ),
                     );
                   },

@@ -17,6 +17,7 @@ class PlaylistCube extends StatelessWidget {
     this.cubeIcon = FluentIcons.music_note_1_24_regular,
     this.size = 220,
     this.zoomNumber = 0.5,
+    this.isAlbum = false,
   });
 
   final String? id;
@@ -28,6 +29,7 @@ class PlaylistCube extends StatelessWidget {
   final IconData cubeIcon;
   final double size;
   final double zoomNumber;
+  final bool? isAlbum;
 
   final likeStatusToIconMapper = {
     true: FluentIcons.star_24_filled,
@@ -109,6 +111,25 @@ class PlaylistCube extends StatelessWidget {
                 ),
               );
             },
+          ),
+        if (isAlbum != null && isAlbum == true)
+          Positioned(
+            top: 5,
+            right: 5,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.7),
+                borderRadius: BorderRadius.circular(5),
+              ),
+              padding: const EdgeInsets.all(4),
+              child: const Text(
+                'Album',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                ),
+              ),
+            ),
           ),
       ],
     );

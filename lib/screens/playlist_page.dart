@@ -125,6 +125,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
         id: _playlist['ytid'],
         image: _playlist['image'],
         title: _playlist['title'],
+        isAlbum: _playlist['isAlbum'],
         onClickOpen: false,
         showFavoriteButton: false,
         zoomNumber: 0.55,
