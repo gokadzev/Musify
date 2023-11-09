@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
+import 'package:musify/extensions/l10n.dart';
 import 'package:musify/screens/playlist_page.dart';
 import 'package:musify/style/app_themes.dart';
 
@@ -122,9 +123,9 @@ class PlaylistCube extends StatelessWidget {
                 borderRadius: BorderRadius.circular(5),
               ),
               padding: const EdgeInsets.all(4),
-              child: const Text(
-                'Album',
-                style: TextStyle(
+              child: Text(
+                context.l10n!.album,
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 12,
                 ),
