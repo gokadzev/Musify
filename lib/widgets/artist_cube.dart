@@ -57,6 +57,7 @@ class _ArtistCubeState extends State<ArtistCube>
             return ClipRRect(
               borderRadius: BorderRadius.circular(widget.borderRadius),
               child: CachedNetworkImage(
+                key: Key(artworkUrl),
                 imageUrl: artworkUrl,
                 width: calculatedSize,
                 height: calculatedSize,

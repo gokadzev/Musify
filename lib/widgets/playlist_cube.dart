@@ -69,6 +69,7 @@ class PlaylistCube extends StatelessWidget {
             borderRadius: BorderRadius.circular(15),
             child: image != null
                 ? CachedNetworkImage(
+                    key: Key(image.toString()),
                     height: size,
                     width: size,
                     imageUrl: image.toString(),
