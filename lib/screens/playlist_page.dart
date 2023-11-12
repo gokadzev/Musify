@@ -99,11 +99,10 @@ class _PlaylistPageState extends State<PlaylistPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: MarqueeWidget(
-          child: Text(
-            _playlist != null ? _playlist['title'] : context.l10n!.playlist,
-          ),
-        ),
+        actions: [
+          if (widget.playlistId != null) _buildLikeButton(),
+          _buildSyncButton(),
+        ],
       ),
       body: _playlist != null
           ? CustomScrollView(
@@ -136,22 +135,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
   Widget buildSongList() {
     return SliverList(
       delegate: SliverChildListDelegate([
-        Stack(
-          children: [
-            buildPlaylistHeader(),
-            Positioned(
-              bottom: 10,
-              right: 0,
-              child: Padding(
-                padding: const EdgeInsets.only(right: 20),
-                child: buildPlayButton(),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(
-          height: 30,
-        ),
+        buildPlaylistHeader(),
+        const SizedBox(height: 30),
         _buildSongListView(),
       ]),
     );
@@ -169,9 +154,22 @@ class _PlaylistPageState extends State<PlaylistPage> {
           child: Column(
             children: [
               _buildPlaylistImage(),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: MarqueeWidget(
+                  child: Text(
+                    _playlist['title'],
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
               if (_playlist['header_desc'] != null)
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  padding: const EdgeInsets.only(bottom: 20),
                   child: Text(
                     _playlist['header_desc'],
                     style: const TextStyle(
@@ -182,25 +180,20 @@ class _PlaylistPageState extends State<PlaylistPage> {
                 ),
               SizedBox(height: screenHeight * 0.01),
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  SizedBox(height: screenHeight * 0.03),
                   Text(
                     '[ $playlistLength ${context.l10n!.songs} ]'.toUpperCase(),
                     style: const TextStyle(
                       fontWeight: FontWeight.w300,
                     ),
                   ),
+                  buildPlayButton(),
                 ],
               ),
               SizedBox(height: screenHeight * 0.01),
             ],
           ),
-        ),
-        Row(
-          children: [
-            if (widget.playlistId != null) _buildLikeButton(),
-            _buildSyncButton(),
-          ],
         ),
       ],
     );
