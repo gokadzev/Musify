@@ -558,5 +558,12 @@ List<Map<String, dynamic>> playlistsDB = [
     'header_desc': 'Selection of the best phonk & aggressive drift phonk music',
     'image': 'https://i.scdn.co/image/ab67706c0000da84ad4c22bc29f8fa3e37a14b70',
     'list': [],
+  },
+  {
+    'ytid': 'PLw1Oi3cBR52TbfWJkV_bCg2K2_cOJVsBa',
+    'title': 'Dopamine Music',
+    'header_desc': 'Play something that is very very vibe-worthy',
+    'image': 'https://i.scdn.co/image/ab67706c0000da840419292b019d854be8ba381b',
+    'list': [],
   }
 ];
