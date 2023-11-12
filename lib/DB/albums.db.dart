@@ -96,5 +96,12 @@ List<Map<String, dynamic>> albumsDB = [
     'image': 'https://i.scdn.co/image/ab67616d0000b273cb76604d9c5963544cf5be64',
     'isAlbum': true,
     'list': <Map<String, dynamic>>[],
+  },
+  {
+    'ytid': 'PLu8BgVaWowIFIoeD8JZTuHZRGt5KcDmxR',
+    'title': 'Cry Baby - Melanie Martinez',
+    'image': 'https://i.scdn.co/image/ab67616d0000b273fba13f993c51c1985756c668',
+    'isAlbum': true,
+    'list': <Map<String, dynamic>>[],
   }
 ];
