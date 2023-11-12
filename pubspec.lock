@@ -53,18 +53,18 @@ packages:
     dependency: "direct main"
     description:
       name: audio_session
-      sha256: "8a2bc5e30520e18f3fb0e366793d78057fb64cd5287862c76af0c8771f2a52ad"
+      sha256: "768eadc8174b366b8b1b0b75e0518eea2bbd463d47a7938c54a2a0e6aa06946d"
       url: "https://pub.dev"
     source: hosted
-    version: "0.1.16"
+    version: "0.1.17"
   background_downloader:
     dependency: "direct main"
     description:
       name: background_downloader
-      sha256: f74abc807173daac213cd810769532c62755279936532311d994418079d16013
+      sha256: "0873a939f5a301872cb7614e12f759fbccef2e3ed0d0d37b540dde7611275b12"
       url: "https://pub.dev"
     source: hosted
-    version: "7.12.2"
+    version: "7.12.3"
   boolean_selector:
     dependency: transitive
     description:

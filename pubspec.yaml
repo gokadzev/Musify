@@ -13,8 +13,8 @@ environment:
 
 dependencies:
   audio_service: ^0.18.12
-  audio_session: ^0.1.16
-  background_downloader: ^7.12.2
+  audio_session: ^0.1.17
+  background_downloader: ^7.12.3
   cached_network_image: ^3.3.0
   dynamic_color: ^1.6.8
   file_picker: ^6.1.1
