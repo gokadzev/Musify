@@ -61,6 +61,7 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       mainAxisSize: MainAxisSize.min,
       children: [
+        SizedBox(height: size.height * 0.01),
         buildArtwork(size, metadata),
         SizedBox(height: size.height * 0.03),
         buildMarqueeText(metadata.title, size.height * 0.030, FontWeight.bold),
