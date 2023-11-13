@@ -129,7 +129,7 @@ String createCustomPlaylist(
 
 String addSongInCustomPlaylist(
   String playlistName,
-  dynamic song, {
+  Map song, {
   int? indexToInsert,
 }) {
   final customPlaylist = userCustomPlaylists.firstWhere(
@@ -150,11 +150,11 @@ String addSongInCustomPlaylist(
 }
 
 void removeSongFromPlaylist(
-  dynamic playlist,
-  dynamic songToRemove, {
+  Map playlist,
+  Map songToRemove, {
   int? removeOneAtIndex,
 }) {
-  if (playlist == null || playlist['list'] == null) return;
+  if (playlist['list'] == null) return;
   final playlistSongs = List<dynamic>.from(playlist['list']);
   removeOneAtIndex != null
       ? playlistSongs.removeAt(removeOneAtIndex)
@@ -196,7 +196,7 @@ void moveLikedSong(int oldIndex, int newIndex) {
 }
 
 Future<void> updatePlaylistLikeStatus(
-  dynamic playlistId,
+  String playlistId,
   String playlistImage,
   String playlistTitle,
   bool add,
@@ -383,7 +383,7 @@ Future<List> getSongsFromPlaylist(dynamic playlistId) async {
 
 Future updatePlaylistList(
   BuildContext context,
-  dynamic playlistId,
+  String playlistId,
 ) async {
   final index = findPlaylistIndexByYtId(playlistId);
   if (index != -1) {
@@ -518,8 +518,8 @@ AudioStreamInfo selectAudioQuality(
 }
 
 Future<Map<String, dynamic>> getSongDetails(
-  dynamic songIndex,
-  dynamic songId,
+  int songIndex,
+  String songId,
 ) async {
   try {
     final song = await yt.videos.get(songId);

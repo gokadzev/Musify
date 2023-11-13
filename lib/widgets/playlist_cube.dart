@@ -95,7 +95,7 @@ class PlaylistCube extends StatelessWidget {
                     onPressed: () {
                       playlistLikeStatus.value = !playlistLikeStatus.value;
                       updatePlaylistLikeStatus(
-                        id,
+                        id!,
                         image,
                         title,
                         playlistLikeStatus.value,

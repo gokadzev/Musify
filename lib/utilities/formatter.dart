@@ -18,7 +18,7 @@ String formatSongTitle(String title) {
       .replaceAll('&quot;', '"');
 }
 
-Map<String, dynamic> returnSongLayout(dynamic index, Video song) => {
+Map<String, dynamic> returnSongLayout(int index, Video song) => {
       'id': index,
       'ytid': song.id.toString(),
       'title': formatSongTitle(
