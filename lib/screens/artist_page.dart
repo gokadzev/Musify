@@ -59,6 +59,7 @@ class ArtistPage extends StatelessWidget {
                             ),
                           );
                         }
+                        playlist['list'] = snapshot.data;
                         return Wrap(
                           children: <Widget>[
                             ListView.separated(
