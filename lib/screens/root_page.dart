@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/screens/now_playing_page.dart';
-import 'package:musify/services/download_manager.dart';
 import 'package:musify/services/router_service.dart';
 import 'package:musify/services/update_manager.dart';
 import 'package:musify/style/app_themes.dart';

@@ -8,6 +8,7 @@ import 'package:musify/API/version.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/utilities/flutter_toast.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 const String checkUrl =
     'https://raw.githubusercontent.com/gokadzev/Musify/update/check.json';
@@ -95,4 +96,18 @@ Future<String> getDownloadUrl(Map<String, dynamic> map) async {
       ? map[downloadUrlArm64Key].toString()
       : map[downloadUrlKey].toString();
   return url;
+}
+
+Future<void> checkNecessaryPermissions(BuildContext context) async {
+  await Permission.audio.request();
+  await Permission.notification.request();
+  try {
+    await Permission.storage.request();
+  } catch (e) {
+    logger.log('Error while requesting permissions: $e');
+    showToast(
+      context,
+      '${context.l10n!.errorWhileRequestingPerms} + $e',
+    );
+  }
 }
