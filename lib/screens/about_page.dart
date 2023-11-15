@@ -17,91 +17,74 @@ class AboutPage extends StatelessWidget {
           context.l10n!.about,
         ),
       ),
-      body: const SingleChildScrollView(child: AboutCards()),
-    );
-  }
-}
-
-class AboutCards extends StatelessWidget {
-  const AboutCards({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.fromLTRB(8, 17, 8, 6),
-          child: Column(
-            children: <Widget>[
-              ListTile(
-                title: Padding(
-                  padding: const EdgeInsets.all(13),
-                  child: Center(
-                    child: Text(
-                      'Musify  | $appVersion',
-                      style: GoogleFonts.paytoneOne(
-                        color: colorScheme.primary,
-                        fontSize: 24,
-                        fontWeight: FontWeight.w600,
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 17, 8, 17),
+              child: Text(
+                'Musify  | $appVersion',
+                style: GoogleFonts.paytoneOne(
+                  color: colorScheme.primary,
+                  fontSize: 24,
+                  fontWeight: FontWeight.w600,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.only(bottom: 8, left: 10, right: 10),
+              child: Divider(
+                color: Colors.white24,
+                thickness: 0.8,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: Card(
+                child: ListTile(
+                  leading: Container(
+                    height: 50,
+                    width: 50,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                        fit: BoxFit.fill,
+                        image: NetworkImage(
+                          'https://avatars.githubusercontent.com/u/79704324?v=4',
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        const Padding(
-          padding: EdgeInsets.only(bottom: 8, left: 10, right: 10),
-          child: Divider(
-            color: Colors.white24,
-            thickness: 0.8,
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(8, 8, 8, 6),
-          child: Card(
-            child: ListTile(
-              leading: Container(
-                height: 50,
-                width: 50,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  image: DecorationImage(
-                    fit: BoxFit.fill,
-                    image: NetworkImage(
-                      'https://avatars.githubusercontent.com/u/79704324?v=4',
-                    ),
+                  title: const Text(
+                    'Valeri Gokadze',
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  subtitle: const Text(
+                    'WEB & APP Developer',
+                  ),
+                  trailing: Wrap(
+                    children: <Widget>[
+                      IconButton(
+                        icon: Icon(
+                          FluentIcons.code_24_filled,
+                          color: colorScheme.primary,
+                        ),
+                        tooltip: 'Github',
+                        onPressed: () {
+                          launchURL(
+                            Uri.parse('https://github.com/gokadzev'),
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ),
-              ),
-              title: const Text(
-                'Valeri Gokadze',
-                style: TextStyle(fontWeight: FontWeight.w600),
-              ),
-              subtitle: const Text(
-                'Web/APP Developer',
-              ),
-              trailing: Wrap(
-                children: <Widget>[
-                  IconButton(
-                    icon: Icon(
-                      FluentIcons.code_24_filled,
-                      color: colorScheme.primary,
-                    ),
-                    tooltip: 'Github',
-                    onPressed: () {
-                      launchURL(
-                        Uri.parse('https://github.com/gokadzev'),
-                      );
-                    },
-                  ),
-                ],
               ),
             ),
-          ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }
