@@ -63,17 +63,14 @@ class _PlaylistPageState extends State<PlaylistPage> {
     _isLoading = true;
     fetch().then((List fetchedList) {
       if (!mounted) return;
-      if (fetchedList.isEmpty) {
-        setState(() {
-          _isLoading = false;
+      setState(() {
+        _isLoading = false;
+        if (fetchedList.isEmpty) {
           _hasMore = false;
-        });
-      } else {
-        setState(() {
-          _isLoading = false;
+        } else {
           _songsList.addAll(fetchedList);
-        });
-      }
+        }
+      });
     });
   }
 
