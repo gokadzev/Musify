@@ -38,20 +38,16 @@ class _PlaylistPageState extends State<PlaylistPage> {
   void initState() {
     super.initState();
     _isLoading = true;
-    if (widget.playlistId != null) {
-      getPlaylistInfoForWidget(widget.playlistId).then(
-        (value) => {
-          if (value != null)
-            {
-              _playlist = value,
-              _hasMore = true,
-              _loadMore(),
-            },
-        },
-      );
-    } else if (widget.playlistData != null) {
+    _initializePlaylist();
+  }
+
+  void _initializePlaylist() async {
+    _playlist = (widget.playlistId != null)
+        ? await getPlaylistInfoForWidget(widget.playlistId)
+        : widget.playlistData;
+
+    if (_playlist != null) {
       setState(() {
-        _playlist = widget.playlistData;
         _hasMore = true;
         _loadMore();
       });
@@ -320,9 +316,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
         ],
       );
     else
-      return SizedBox(
-        height: context.screenSize.height - 100,
-        child: const Spinner(),
-      );
+      return const Spinner();
   }
 }
