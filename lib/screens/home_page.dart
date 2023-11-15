@@ -114,6 +114,7 @@ class _HomePageState extends State<HomePage> {
                 id: playlist['ytid'],
                 image: playlist['image'].toString(),
                 title: playlist['title'].toString(),
+                isAlbum: playlist['isAlbum'],
                 size: context.screenSize.height * 0.25,
               );
             },
