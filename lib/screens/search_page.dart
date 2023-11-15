@@ -82,7 +82,7 @@ class _SearchPageState extends State<SearchPage> {
                   _inputNode.unfocus();
                 },
                 onChanged: (value) async {
-                  if (value != '') {
+                  if (value.isNotEmpty) {
                     _suggestionsList = await getSearchSuggestions(value);
                   } else {
                     _suggestionsList = [];

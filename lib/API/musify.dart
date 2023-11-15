@@ -258,34 +258,40 @@ Future<void> readPlaylistsFromFile() async {
 }
 
 Future<List<String>> getSearchSuggestions(String query) async {
-  const baseUrl = 'https://suggestqueries.google.com/complete/search';
-  final parameters = {
-    'client': 'firefox',
-    'ds': 'yt',
-    'q': query,
-  };
+  // Custom implementation:
 
-  final uri = Uri.parse(baseUrl).replace(queryParameters: parameters);
+  // const baseUrl = 'https://suggestqueries.google.com/complete/search';
+  // final parameters = {
+  //   'client': 'firefox',
+  //   'ds': 'yt',
+  //   'q': query,
+  // };
 
-  try {
-    final response = await http.get(
-      uri,
-      headers: {
-        'User-Agent':
-            'Mozilla/5.0 (Windows NT 10.0; rv:96.0) Gecko/20100101 Firefox/96.0',
-      },
-    );
+  // final uri = Uri.parse(baseUrl).replace(queryParameters: parameters);
 
-    if (response.statusCode == 200) {
-      final suggestions = jsonDecode(response.body)[1] as List<dynamic>;
-      final suggestionStrings = suggestions.cast<String>().toList();
-      return suggestionStrings;
-    }
-  } catch (e) {
-    logger.log('Error in getSearchSuggestions: $e');
-  }
+  // try {
+  //   final response = await http.get(
+  //     uri,
+  //     headers: {
+  //       'User-Agent':
+  //           'Mozilla/5.0 (Windows NT 10.0; rv:96.0) Gecko/20100101 Firefox/96.0',
+  //     },
+  //   );
 
-  return <String>[];
+  //   if (response.statusCode == 200) {
+  //     final suggestions = jsonDecode(response.body)[1] as List<dynamic>;
+  //     final suggestionStrings = suggestions.cast<String>().toList();
+  //     return suggestionStrings;
+  //   }
+  // } catch (e) {
+  //   logger.log('Error in getSearchSuggestions: $e');
+  // }
+
+  // Built-in implementation:
+
+  final suggestions = await yt.search.getQuerySuggestions(query);
+
+  return suggestions;
 }
 
 Future<String?> getArtistArtwork(String artistName) async {
