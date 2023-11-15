@@ -103,5 +103,33 @@ List<Map<String, dynamic>> albumsDB = [
     'image': 'https://i.scdn.co/image/ab67616d0000b273fba13f993c51c1985756c668',
     'isAlbum': true,
     'list': <Map<String, dynamic>>[],
-  }
+  },
+  {
+    'ytid': 'PLnBDayR0gzwyD-F1nBgx3Gt4wO9h8pJSB',
+    'title': 'Night Visions - Imagine Dragons',
+    'image': 'https://i.scdn.co/image/ab67616d0000b273a8f95e7f840c11edfa6cc3bd',
+    'isAlbum': true,
+    'list': <Map<String, dynamic>>[],
+  },
+  {
+    'ytid': 'PLE3uncMq8x3wLUlOD9W0c8-A8ZIZHUj6L',
+    'title': 'Wasteland - Brent Faiyaz',
+    'image': 'https://i.scdn.co/image/ab67616d0000b27369f63a842ea91ca7c522593a',
+    'isAlbum': true,
+    'list': <Map<String, dynamic>>[],
+  },
+  {
+    'ytid': 'PL2BpnHM2wLCtglIEFILC9Z1jz7LdUOneO',
+    'title': "Emails I can't send - Sabrina Carpenter",
+    'image': 'https://i.scdn.co/image/ab67616d0000b273700f7bf79c9f063ad0362bdf',
+    'isAlbum': true,
+    'list': <Map<String, dynamic>>[],
+  },
+  {
+    'ytid': 'PL1z9R7TJXY8wQT8P-jsjgdRFvjkte_Akn',
+    'title': 'Planet Her - Doja Cat',
+    'image': 'https://i.scdn.co/image/ab67616d0000b273be841ba4bc24340152e3a79a',
+    'isAlbum': true,
+    'list': <Map<String, dynamic>>[],
+  },
 ];
