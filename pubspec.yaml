@@ -67,7 +67,7 @@ flutter_native_splash:
     image_dark: assets/images/splash.png
     icon_background_color_dark: '#151515'
 
-flutter_icons:
+flutter_launcher_icons:
   android: 'launcher_icon'
   adaptive_icon_background: '#191919'
   adaptive_icon_foreground: 'assets/images/ic_launcher_foreground.png'
