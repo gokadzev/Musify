@@ -226,7 +226,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
       icon: const Icon(FluentIcons.arrow_sync_24_filled),
-      padding: const EdgeInsets.only(left: 20, top: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       iconSize: 26,
       onPressed: _handleSyncPlaylist,
     );
