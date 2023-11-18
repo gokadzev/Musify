@@ -167,6 +167,19 @@ class _SearchPageState extends State<SearchPage> {
                           await search();
                           _inputNode.unfocus();
                         },
+                        onLongPress: () async {
+                          final confirm =
+                              await _showConfirmationDialog(context) ?? false;
+
+                          if (confirm) {
+                            setState(() {
+                              searchHistory.remove(query);
+                            });
+
+                            await Hive.box('user')
+                                .put('searchHistory', searchHistory);
+                          }
+                        },
                       ),
                     ),
                   );
@@ -191,6 +204,32 @@ class _SearchPageState extends State<SearchPage> {
           ],
         ),
       ),
+    );
+  }
+
+  Future<bool?> _showConfirmationDialog(BuildContext context) {
+    return showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(context.l10n!.confirmation),
+          content: Text(context.l10n!.removeSearchQueryQuestion),
+          actions: <Widget>[
+            TextButton(
+              child: Text(context.l10n!.cancel),
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+            ),
+            TextButton(
+              child: Text(context.l10n!.confirm),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }
