@@ -141,7 +141,7 @@ class MorePage extends StatelessWidget {
                                           'accentColor',
                                           availableColors[index].value,
                                         );
-                                        MyApp.updateAppState(
+                                        Musify.updateAppState(
                                           context,
                                           newAccentColor:
                                               availableColors[index],
@@ -221,7 +221,7 @@ class MorePage extends StatelessWidget {
                                       'themeMode',
                                       availableModes[index].name,
                                     );
-                                    MyApp.updateAppState(
+                                    Musify.updateAppState(
                                       context,
                                       newThemeMode: availableModes[index],
                                     );
@@ -277,7 +277,7 @@ class MorePage extends StatelessWidget {
                                       'language',
                                       availableLanguages[index],
                                     );
-                                    MyApp.updateAppState(
+                                    Musify.updateAppState(
                                       context,
                                       newLocale: Locale(
                                         appLanguages[
@@ -313,7 +313,7 @@ class MorePage extends StatelessWidget {
                   value,
                 );
                 useSystemColor.value = value;
-                MyApp.updateAppState(
+                Musify.updateAppState(
                   context,
                   newAccentColor: primaryColor,
                   useSystemColor: value,

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:audio_service/audio_service.dart';
 import 'package:background_downloader/background_downloader.dart';
 import 'package:dynamic_color/dynamic_color.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,13 +13,16 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/audio_quality.dart';
-import 'package:musify/screens/root_page.dart';
+import 'package:musify/extensions/l10n.dart';
 import 'package:musify/services/audio_service.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/logger_service.dart';
+import 'package:musify/services/router_service.dart';
 import 'package:musify/services/settings_manager.dart';
+import 'package:musify/services/update_manager.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/formatter.dart';
+import 'package:musify/widgets/mini_player.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
 late MusifyAudioHandler audioHandler;
@@ -26,6 +30,9 @@ final logger = Logger();
 
 Locale locale = const Locale('en', '');
 var isFdroidBuild = false;
+
+final _navigatorKey = GlobalKey<NavigatorState>();
+int _selectedIndex = 0;
 
 final appLanguages = <String, String>{
   'English': 'en',
@@ -46,8 +53,8 @@ final appSupportedLocales = appLanguages.values
     .map((languageCode) => Locale.fromSubtags(languageCode: languageCode))
     .toList();
 
-class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+class Musify extends StatefulWidget {
+  const Musify({super.key});
 
   static Future<void> updateAppState(
     BuildContext context, {
@@ -56,7 +63,7 @@ class MyApp extends StatefulWidget {
     Color? newAccentColor,
     bool? useSystemColor,
   }) async {
-    final state = context.findAncestorStateOfType<_MyAppState>()!;
+    final state = context.findAncestorStateOfType<_MusifyState>()!;
     if (newThemeMode != null) {
       state.changeTheme(newThemeMode);
     }
@@ -69,10 +76,10 @@ class MyApp extends StatefulWidget {
   }
 
   @override
-  _MyAppState createState() => _MyAppState();
+  _MusifyState createState() => _MusifyState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MusifyState extends State<Musify> {
   void changeTheme(ThemeMode newThemeMode) {
     setState(() {
       themeMode = newThemeMode;
@@ -164,6 +171,12 @@ class _MyAppState extends State<MyApp> {
     } catch (e) {
       logger.log('License Registration Error: $e');
     }
+
+    if (!isFdroidBuild) {
+      unawaited(checkAppUpdates(context));
+    }
+
+    unawaited(checkNecessaryPermissions(context));
   }
 
   @override
@@ -199,7 +212,76 @@ class _MyAppState extends State<MyApp> {
           ],
           supportedLocales: appSupportedLocales,
           locale: locale,
-          home: Musify(),
+          home: Scaffold(
+            body: PopScope(
+              canPop: _navigatorKey.currentState?.canPop() == true,
+              child: Navigator(
+                key: _navigatorKey,
+                initialRoute: RoutePaths.home,
+                onGenerateRoute: RouterService.generateRoute,
+              ),
+            ),
+            bottomNavigationBar: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                StreamBuilder<MediaItem?>(
+                  stream: audioHandler.mediaItem,
+                  builder: (context, snapshot) {
+                    final metadata = snapshot.data;
+                    if (metadata == null) {
+                      return const SizedBox();
+                    } else {
+                      return MiniPlayer(metadata: metadata);
+                    }
+                  },
+                ),
+                NavigationBar(
+                  selectedIndex: _selectedIndex,
+                  labelBehavior: locale == const Locale('en', '')
+                      ? NavigationDestinationLabelBehavior.onlyShowSelected
+                      : NavigationDestinationLabelBehavior.alwaysHide,
+                  onDestinationSelected: (int index) {
+                    if (_selectedIndex == index) {
+                      if (_navigatorKey.currentState?.canPop() == true) {
+                        _navigatorKey.currentState?.pop();
+                      }
+                    } else {
+                      setState(() {
+                        _selectedIndex = index;
+                      });
+                      _navigatorKey.currentState?.pushNamedAndRemoveUntil(
+                        destinations[index],
+                        ModalRoute.withName(destinations[index]),
+                      );
+                    }
+                  },
+                  destinations: [
+                    NavigationDestination(
+                      icon: const Icon(FluentIcons.home_24_regular),
+                      selectedIcon: const Icon(FluentIcons.home_24_filled),
+                      label: context.l10n?.home ?? 'Home',
+                    ),
+                    NavigationDestination(
+                      icon: const Icon(FluentIcons.search_24_regular),
+                      selectedIcon: const Icon(FluentIcons.search_24_filled),
+                      label: context.l10n?.search ?? 'Search',
+                    ),
+                    NavigationDestination(
+                      icon: const Icon(FluentIcons.book_24_regular),
+                      selectedIcon: const Icon(FluentIcons.book_24_filled),
+                      label: context.l10n?.userPlaylists ?? 'User Playlists',
+                    ),
+                    NavigationDestination(
+                      icon: const Icon(FluentIcons.more_horizontal_24_regular),
+                      selectedIcon:
+                          const Icon(FluentIcons.more_horizontal_24_filled),
+                      label: context.l10n?.more ?? 'More',
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
         );
       },
     );
@@ -209,7 +291,7 @@ class _MyAppState extends State<MyApp> {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initialisation();
-  runApp(const MyApp());
+  runApp(const Musify());
 }
 
 Future<void> initialisation() async {
