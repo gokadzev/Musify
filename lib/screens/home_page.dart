@@ -231,14 +231,28 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-          child: Text(
-            context.l10n!.recommendedForYou,
-            style: TextStyle(
-              color: colorScheme.primary,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
+          padding: const EdgeInsets.fromLTRB(20, 20, 10, 15),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                context.l10n!.recommendedForYou,
+                style: TextStyle(
+                  color: colorScheme.primary,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              IconButton(
+                onPressed: () => setActivePlaylist({
+                  'title': context.l10n!.recommendedForYou,
+                  'list': data,
+                }),
+                color: colorScheme.primary,
+                iconSize: 35,
+                icon: const Icon(FluentIcons.play_circle_24_filled),
+              ),
+            ],
           ),
         ),
         ListView.separated(
