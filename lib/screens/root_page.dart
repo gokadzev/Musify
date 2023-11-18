@@ -34,10 +34,13 @@ class _MusifyState extends State<Musify> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Navigator(
-        key: _navigatorKey,
-        initialRoute: RoutePaths.home,
-        onGenerateRoute: RouterService.generateRoute,
+      body: PopScope(
+        canPop: _navigatorKey.currentState?.canPop() == true,
+        child: Navigator(
+          key: _navigatorKey,
+          initialRoute: RoutePaths.home,
+          onGenerateRoute: RouterService.generateRoute,
+        ),
       ),
       bottomNavigationBar: Column(
         mainAxisSize: MainAxisSize.min,
