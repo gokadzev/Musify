@@ -218,7 +218,7 @@ class _MusifyState extends State<Musify> {
               child: Navigator(
                 key: _navigatorKey,
                 initialRoute: RoutePaths.home,
-                onGenerateRoute: RouterService.generateRoute,
+                onGenerateRoute: generateRoute,
               ),
             ),
             bottomNavigationBar: Column(

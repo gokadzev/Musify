@@ -18,20 +18,17 @@ final destinations = [
   RoutePaths.more,
 ];
 
-// ignore: avoid_classes_with_only_static_members
-class RouterService {
-  static Route<dynamic> generateRoute(RouteSettings settings) {
-    switch (settings.name) {
-      case RoutePaths.home:
-        return MaterialPageRoute(builder: (_) => HomePage());
-      case RoutePaths.search:
-        return MaterialPageRoute(builder: (_) => SearchPage());
-      case RoutePaths.userPlaylists:
-        return MaterialPageRoute(builder: (_) => UserPlaylistsPage());
-      case RoutePaths.more:
-        return MaterialPageRoute(builder: (_) => MorePage());
-      default:
-        throw Exception('Invalid route: ${settings.name}');
-    }
+Route<dynamic> generateRoute(RouteSettings settings) {
+  switch (settings.name) {
+    case RoutePaths.home:
+      return MaterialPageRoute(builder: (_) => HomePage());
+    case RoutePaths.search:
+      return MaterialPageRoute(builder: (_) => SearchPage());
+    case RoutePaths.userPlaylists:
+      return MaterialPageRoute(builder: (_) => UserPlaylistsPage());
+    case RoutePaths.more:
+      return MaterialPageRoute(builder: (_) => MorePage());
+    default:
+      throw Exception('Invalid route: ${settings.name}');
   }
 }
