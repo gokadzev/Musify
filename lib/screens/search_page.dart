@@ -176,8 +176,11 @@ class _SearchPageState extends State<SearchPage> {
                               searchHistory.remove(query);
                             });
 
-                            await Hive.box('user')
-                                .put('searchHistory', searchHistory);
+                            addOrUpdateData(
+                              'user',
+                              'searchHistory',
+                              searchHistory,
+                            );
                           }
                         },
                       ),
