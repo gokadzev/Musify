@@ -122,14 +122,14 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                   return const SizedBox();
                 }
 
-                late List playlists;
+                late List _playlists;
 
                 if (_showOnlyAlbums) {
-                  playlists = (snapshot.data as List)
+                  _playlists = (snapshot.data as List)
                       .where((element) => element['isAlbum'] == true)
                       .toList();
                 } else {
-                  playlists = snapshot.data as List;
+                  _playlists = snapshot.data as List;
                 }
 
                 return GridView.builder(
@@ -138,10 +138,10 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                     crossAxisSpacing: 20,
                     mainAxisSpacing: 20,
                   ),
-                  itemCount: playlists.length,
+                  itemCount: _playlists.length,
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 20),
                   itemBuilder: (BuildContext context, index) {
-                    final playlist = playlists[index];
+                    final playlist = _playlists[index];
 
                     return Center(
                       child: PlaylistCube(

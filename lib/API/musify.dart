@@ -21,7 +21,7 @@ final yt = YoutubeExplode();
 
 final random = Random();
 
-List playlists = [];
+List playlists = [...playlistsDB, ...albumsDB];
 List userPlaylists = Hive.box('user').get('playlists', defaultValue: []);
 List userCustomPlaylists =
     Hive.box('user').get('customPlaylists', defaultValue: []);
@@ -227,10 +227,6 @@ Future<List> getPlaylists({
   int? playlistsNum,
   bool onlyLiked = false,
 }) async {
-  if (playlists.isEmpty) {
-    await readPlaylistsFromFile();
-  }
-
   if (playlistsNum != null && query == null) {
     if (suggestedPlaylists.isEmpty) {
       suggestedPlaylists = playlists.toList()..shuffle();
@@ -251,10 +247,6 @@ Future<List> getPlaylists({
   }
 
   return playlists;
-}
-
-Future<void> readPlaylistsFromFile() async {
-  playlists = [...playlistsDB, ...albumsDB];
 }
 
 Future<List<String>> getSearchSuggestions(String query) async {

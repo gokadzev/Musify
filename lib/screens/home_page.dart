@@ -61,7 +61,7 @@ class _HomePageState extends State<HomePage> {
       return const SizedBox.shrink();
     }
 
-    final playlists = snapshot.data!;
+    final _suggestedPlaylists = snapshot.data!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,10 +106,10 @@ class _HomePageState extends State<HomePage> {
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             separatorBuilder: (_, __) => const SizedBox(width: 15),
-            itemCount: playlists.length,
+            itemCount: _suggestedPlaylists.length,
             padding: const EdgeInsets.symmetric(horizontal: 15),
             itemBuilder: (context, index) {
-              final playlist = playlists[index];
+              final playlist = _suggestedPlaylists[index];
               return PlaylistCube(
                 id: playlist['ytid'],
                 image: playlist['image'].toString(),

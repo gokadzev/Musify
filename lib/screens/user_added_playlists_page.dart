@@ -146,7 +146,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                   return const SizedBox();
                 }
 
-                final playlists = snapshot.data as List;
+                final _playlists = snapshot.data as List;
 
                 return GridView.builder(
                   gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
@@ -156,10 +156,10 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                   ),
                   shrinkWrap: true,
                   physics: const ScrollPhysics(),
-                  itemCount: playlists.length,
+                  itemCount: _playlists.length,
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 20),
                   itemBuilder: (BuildContext context, index) {
-                    final playlist = playlists[index];
+                    final playlist = _playlists[index];
                     final ytid = playlist['ytid'];
 
                     return Center(
