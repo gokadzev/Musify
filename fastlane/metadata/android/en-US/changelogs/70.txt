@@ -1,0 +1,12 @@
+Bug fixes
+
+- Fixed the play all button on the artist page
+- Added the missed Album badge for suggested playlists
+
+Enhancements
+
+- Added 12 albums
+- Improved playlist page UI
+- Added hold to remove search query
+- Added a play all button for recommended songs
+- Made various quality and performance improvements for app stability and speed
