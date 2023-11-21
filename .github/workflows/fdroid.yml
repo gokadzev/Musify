@@ -1,6 +1,7 @@
 name: Test, Build and Release Fdroid apk
 
 on:
+  workflow_dispatch:
   create:
     tags:
       - '*.*.*'
