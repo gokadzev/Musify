@@ -2,9 +2,12 @@ on:
   push:
     branches:
       - master
+
 name: Test, Build and Release apk
+
 env:
   PROPERTIES_PATH: './android/key.properties'
+
 jobs:
   build:
     name: Build APK
@@ -12,16 +15,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Extract version from commit message
+      - name: Extract version
+        id: extract_version
+        run: |
+          version=$(echo ${{ github.event.head_commit.message }} | grep -oP '(?<=Update: v)\d+\.\d+\.\d+')
+          echo "version=${version}" >> $GITHUB_OUTPUT
 
       # Setup Java environment in order to build the Android app.
-      - uses: actions/setup-java@v3
+      - name: Set up Java
+        uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
           java-version: '12.x'
 
       # Gradle cache for faster builds
-      - uses: actions/cache@v3
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v2
         with:
           path: |
             ~/.gradle/caches
@@ -29,8 +42,10 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      # Setup the flutter environment.
-      - uses: subosito/flutter-action@v2
+
+      # Setup the Flutter environment.
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
 
@@ -42,23 +57,46 @@ jobs:
       #
       - run: echo "${{ secrets.KEYSTORE2 }}" | base64 --decode > android/app/key.jks
 
-      # Get flutter dependencies.
-      - run: flutter pub get
+      # Get Flutter dependencies.
+      - name: Get Flutter dependencies
+        run: flutter pub get
+
       # Check for any formatting issues in the code.
-      - run: dart format --set-exit-if-changed .
+      - name: Check code formatting
+        run: dart format --set-exit-if-changed .
+
       # Statically analyze the Dart code for any errors.
-      - run: flutter analyze .
-      # Build arch apks.
-      - run: flutter build apk --release --split-per-abi --target-platform="android-arm64" --flavor github
-      # Upload arm64 generated apk to the artifacts.
-      - uses: actions/upload-artifact@v3
+      - name: Analyze Dart code
+        run: flutter analyze .
+
+      # Build arm64 APK for GitHub release
+      - name: Build arm64 APK
+        run: flutter build apk --release --split-per-abi --target-platform="android-arm64" --flavor github
+
+      # Release arm64 generated APK
+      - name: Release arm64 APK
+        uses: svenstaro/upload-release-action@v2
         with:
-          name: Musify_arm64-v8a.apk
-          path: build/app/outputs/flutter-apk/app-arm64-v8a-github-release.apk
-      # Build universal apk.
-      - run: flutter build apk --release --flavor github
-      # Upload universal generated apk to the artifacts.
-      - uses: actions/upload-artifact@v3
+          repo_name: gokadzev/Musify
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: build/app/outputs/flutter-apk/app-arm64-v8a-github-release.apk
+          asset_name: Musify_arm64-v8a.apk
+          tag: ${{ steps.extract_version.outputs.version }}
+          prerelease: false
+          overwrite: false
+
+      # Build universal APK
+      - name: Build universal APK
+        run: flutter build apk --release --flavor github
+
+      # Release universal generated APK
+      - name: Release universal APK
+        uses: svenstaro/upload-release-action@v2
         with:
-          name: Musify.apk
-          path: build/app/outputs/flutter-apk/app-github-release.apk
+          repo_name: gokadzev/Musify
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: build/app/outputs/flutter-apk/app-github-release.apk
+          asset_name: Musify.apk
+          tag: ${{ steps.extract_version.outputs.version }}
+          prerelease: false
+          overwrite: false
