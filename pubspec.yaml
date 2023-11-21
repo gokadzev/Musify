@@ -18,7 +18,7 @@ dependencies:
   cached_network_image: ^3.3.0
   dynamic_color: ^1.6.8
   file_picker: ^6.1.1
-  fluentui_system_icons: ^1.1.221
+  fluentui_system_icons: ^1.1.222
   flutter:
     sdk: flutter
   flutter_localizations:
@@ -39,7 +39,7 @@ dependencies:
 
 dev_dependencies:
   flutter_launcher_icons: ^0.13.1
-  flutter_native_splash: ^2.3.5
+  flutter_native_splash: ^2.3.6
   flutter_test:
     sdk: flutter
   translations_cleaner: ^0.0.5
