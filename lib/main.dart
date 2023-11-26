@@ -26,6 +26,8 @@ import 'package:musify/widgets/mini_player.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
 late MusifyAudioHandler audioHandler;
+late StreamSubscription<String?> sharingIntentSubscription;
+
 final logger = Logger();
 
 Locale locale = const Locale('en', '');
@@ -136,7 +138,7 @@ class _MusifyState extends State<Musify> {
 
     GoogleFonts.config.allowRuntimeFetching = false;
 
-    ReceiveSharingIntent.getTextStream().listen(
+    sharingIntentSubscription = ReceiveSharingIntent.getTextStream().listen(
       (String? value) async {
         if (value == null) return;
 
@@ -182,6 +184,7 @@ class _MusifyState extends State<Musify> {
   @override
   void dispose() {
     Hive.close();
+    sharingIntentSubscription.cancel();
     super.dispose();
   }
 
