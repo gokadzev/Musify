@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:audio_service/audio_service.dart';
@@ -21,10 +22,14 @@ class MusifyAudioHandler extends BaseAudioHandler {
       ),
     );
     enableBooster();
-    audioPlayer.playbackEventStream.listen(_handlePlaybackEvent);
-    audioPlayer.durationStream.listen(_handleDurationChange);
-    audioPlayer.currentIndexStream.listen(_handleCurrentSongIndexChanged);
-    audioPlayer.sequenceStateStream.listen(_handleSequenceStateChange);
+    _playbackEventSubscription =
+        audioPlayer.playbackEventStream.listen(_handlePlaybackEvent);
+    _durationSubscription =
+        audioPlayer.durationStream.listen(_handleDurationChange);
+    _currentIndexSubscription =
+        audioPlayer.currentIndexStream.listen(_handleCurrentSongIndexChanged);
+    _sequenceStateSubscription =
+        audioPlayer.sequenceStateStream.listen(_handleSequenceStateChange);
 
     _updatePlaybackState();
     try {
@@ -38,6 +43,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   final AndroidLoudnessEnhancer _loudnessEnhancer = AndroidLoudnessEnhancer();
   late AudioPlayer audioPlayer;
+
+  late StreamSubscription<PlaybackEvent> _playbackEventSubscription;
+  late StreamSubscription<Duration?> _durationSubscription;
+  late StreamSubscription<int?> _currentIndexSubscription;
+  late StreamSubscription<SequenceState?> _sequenceStateSubscription;
 
   final _playlist = ConcatenatingAudioSource(children: []);
   final Random _random = Random();
@@ -168,6 +178,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
   @override
   Future<void> onTaskRemoved() async {
     await audioPlayer.stop().then((_) => audioPlayer.dispose());
+
+    await _playbackEventSubscription.cancel();
+    await _durationSubscription.cancel();
+    await _currentIndexSubscription.cancel();
+    await _sequenceStateSubscription.cancel();
 
     await super.onTaskRemoved();
   }
