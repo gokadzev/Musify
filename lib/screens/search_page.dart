@@ -195,6 +195,7 @@ class _SearchPageState extends State<SearchPage> {
                 itemCount: _searchResult.length,
                 itemBuilder: (BuildContext context, int index) {
                   return SongBar(
+                    key: UniqueKey(),
                     _searchResult[index],
                     true,
                     showMusicDuration: true,

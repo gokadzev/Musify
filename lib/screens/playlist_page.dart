@@ -301,6 +301,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                 return const Spinner();
               }
               return SongBar(
+                key: UniqueKey(),
                 _songsList[index],
                 true,
                 isFromPlaylist: widget.playlistData != null,

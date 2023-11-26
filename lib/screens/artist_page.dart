@@ -67,7 +67,11 @@ class ArtistPage extends StatelessWidget {
                         physics: const BouncingScrollPhysics(),
                         itemCount: snapshot.data.length as int,
                         itemBuilder: (context, index) {
-                          return SongBar(snapshot.data[index], true);
+                          return SongBar(
+                            key: UniqueKey(),
+                            snapshot.data[index],
+                            true,
+                          );
                         },
                         separatorBuilder: (BuildContext context, int index) {
                           return const SizedBox(height: 15);

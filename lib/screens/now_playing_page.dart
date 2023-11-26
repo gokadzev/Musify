@@ -407,6 +407,7 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                               bottom: 5,
                             ),
                             child: SongBar(
+                              key: UniqueKey(),
                               activePlaylist['list'][index],
                               false,
                             ),
