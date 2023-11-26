@@ -213,8 +213,14 @@ class _MusifyState extends State<Musify> {
           supportedLocales: appSupportedLocales,
           locale: locale,
           home: Scaffold(
-            body: PopScope(
-              canPop: _navigatorKey.currentState?.canPop() == true,
+            body: WillPopScope(
+              onWillPop: () async {
+                if (_navigatorKey.currentState?.canPop() == true) {
+                  _navigatorKey.currentState?.pop();
+                  return false;
+                }
+                return true;
+              },
               child: Navigator(
                 key: _navigatorKey,
                 initialRoute: RoutePaths.home,
