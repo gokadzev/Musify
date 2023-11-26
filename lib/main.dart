@@ -34,7 +34,7 @@ Locale locale = const Locale('en', '');
 var isFdroidBuild = false;
 
 final _navigatorKey = GlobalKey<NavigatorState>();
-int _selectedIndex = 0;
+final _selectedIndex = ValueNotifier<int>(0);
 
 final appLanguages = <String, String>{
   'English': 'en',
@@ -243,50 +243,63 @@ class _MusifyState extends State<Musify> {
                       }
                     },
                   ),
-                  NavigationBar(
-                    selectedIndex: _selectedIndex,
-                    labelBehavior: locale == const Locale('en', '')
-                        ? NavigationDestinationLabelBehavior.onlyShowSelected
-                        : NavigationDestinationLabelBehavior.alwaysHide,
-                    onDestinationSelected: (int index) {
-                      if (_selectedIndex == index) {
-                        if (_navigatorKey.currentState?.canPop() == true) {
-                          _navigatorKey.currentState?.pop();
+                  ValueListenableBuilder(
+                    valueListenable: _selectedIndex,
+                    builder: (_, value, __) {
+                      void onDestinationSelected(int index) {
+                        if (_selectedIndex.value == index) {
+                          if (_navigatorKey.currentState?.canPop() == true) {
+                            _navigatorKey.currentState?.pop();
+                          }
+                        } else {
+                          _selectedIndex.value = index;
+
+                          _navigatorKey.currentState?.pushNamedAndRemoveUntil(
+                            destinations[index],
+                            ModalRoute.withName(destinations[index]),
+                          );
                         }
-                      } else {
-                        setState(() {
-                          _selectedIndex = index;
-                        });
-                        _navigatorKey.currentState?.pushNamedAndRemoveUntil(
-                          destinations[index],
-                          ModalRoute.withName(destinations[index]),
-                        );
                       }
+
+                      return NavigationBar(
+                        selectedIndex: value,
+                        labelBehavior: locale == const Locale('en', '')
+                            ? NavigationDestinationLabelBehavior
+                                .onlyShowSelected
+                            : NavigationDestinationLabelBehavior.alwaysHide,
+                        onDestinationSelected: onDestinationSelected,
+                        destinations: [
+                          NavigationDestination(
+                            icon: const Icon(FluentIcons.home_24_regular),
+                            selectedIcon:
+                                const Icon(FluentIcons.home_24_filled),
+                            label: context.l10n?.home ?? 'Home',
+                          ),
+                          NavigationDestination(
+                            icon: const Icon(FluentIcons.search_24_regular),
+                            selectedIcon:
+                                const Icon(FluentIcons.search_24_filled),
+                            label: context.l10n?.search ?? 'Search',
+                          ),
+                          NavigationDestination(
+                            icon: const Icon(FluentIcons.book_24_regular),
+                            selectedIcon:
+                                const Icon(FluentIcons.book_24_filled),
+                            label:
+                                context.l10n?.userPlaylists ?? 'User Playlists',
+                          ),
+                          NavigationDestination(
+                            icon: const Icon(
+                              FluentIcons.more_horizontal_24_regular,
+                            ),
+                            selectedIcon: const Icon(
+                              FluentIcons.more_horizontal_24_filled,
+                            ),
+                            label: context.l10n?.more ?? 'More',
+                          ),
+                        ],
+                      );
                     },
-                    destinations: [
-                      NavigationDestination(
-                        icon: const Icon(FluentIcons.home_24_regular),
-                        selectedIcon: const Icon(FluentIcons.home_24_filled),
-                        label: context.l10n?.home ?? 'Home',
-                      ),
-                      NavigationDestination(
-                        icon: const Icon(FluentIcons.search_24_regular),
-                        selectedIcon: const Icon(FluentIcons.search_24_filled),
-                        label: context.l10n?.search ?? 'Search',
-                      ),
-                      NavigationDestination(
-                        icon: const Icon(FluentIcons.book_24_regular),
-                        selectedIcon: const Icon(FluentIcons.book_24_filled),
-                        label: context.l10n?.userPlaylists ?? 'User Playlists',
-                      ),
-                      NavigationDestination(
-                        icon:
-                            const Icon(FluentIcons.more_horizontal_24_regular),
-                        selectedIcon:
-                            const Icon(FluentIcons.more_horizontal_24_filled),
-                        label: context.l10n?.more ?? 'More',
-                      ),
-                    ],
                   ),
                 ],
               ),
