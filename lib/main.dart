@@ -339,6 +339,7 @@ Future<void> initialisation() async {
       running: const TaskNotification('Downloading', 'file: {filename}'),
       complete: const TaskNotification('Download finished', 'file: {filename}'),
       progressBar: true,
+      tapOpensFile: true,
     );
   } catch (e) {
     logger.log('Initialization Error: $e');
