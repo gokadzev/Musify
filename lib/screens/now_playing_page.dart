@@ -71,9 +71,7 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
           size.height * 0.018,
           FontWeight.w500,
         ),
-        if (metadata.extras?['isLive'] != null && metadata.extras?['isLive'])
-          const SizedBox()
-        else
+        if (!(metadata.extras?['isLive'] ?? false))
           _buildPlayer(size, audioId, metadata),
       ],
     );
