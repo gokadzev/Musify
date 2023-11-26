@@ -528,7 +528,8 @@ class MorePage extends StatelessWidget {
               context.l10n!.licenses,
               FluentIcons.document_24_filled,
               () => {
-                Navigator.of(context).push(
+                Navigator.push(
+                  context,
                   MaterialPageRoute(
                     builder: (context) => const LicensePage(
                       applicationName: 'Musify',
@@ -547,7 +548,8 @@ class MorePage extends StatelessWidget {
               context.l10n!.about,
               FluentIcons.book_information_24_filled,
               () => {
-                Navigator.of(context).push(
+                Navigator.push(
+                  context,
                   MaterialPageRoute(builder: (context) => const AboutPage()),
                 ),
               },
