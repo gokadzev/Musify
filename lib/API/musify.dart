@@ -448,10 +448,11 @@ Future<AudioOnlyStreamInfo> getSongManifest(String songId) async {
 
 Future<String> getSong(String songId, bool isLive) async {
   try {
-    final isQualityChanged = audioQualitySetting.value != null;
+    final qualitySetting = audioQualitySetting.value;
+    final isQualityChanged = qualitySetting != null;
 
     final cacheKey = isQualityChanged
-        ? 'song_${songId}_${audioQualitySetting.value!.name}_url'
+        ? 'song_${songId}_${qualitySetting.name}_url'
         : 'song_${songId}__url';
 
     final cachedUrl = await getData(
