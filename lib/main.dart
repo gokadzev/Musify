@@ -212,80 +212,81 @@ class _MusifyState extends State<Musify> {
           ],
           supportedLocales: appSupportedLocales,
           locale: locale,
-          home: Scaffold(
-            body: WillPopScope(
-              onWillPop: () async {
-                if (_navigatorKey.currentState?.canPop() == true) {
-                  _navigatorKey.currentState?.pop();
-                  return false;
-                }
-                return true;
-              },
-              child: Navigator(
+          home: WillPopScope(
+            onWillPop: () async {
+              if (_navigatorKey.currentState?.canPop() == true) {
+                _navigatorKey.currentState?.pop();
+                return false;
+              }
+              return true;
+            },
+            child: Scaffold(
+              body: Navigator(
                 key: _navigatorKey,
                 initialRoute: RoutePaths.home,
                 onGenerateRoute: generateRoute,
               ),
-            ),
-            bottomNavigationBar: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                StreamBuilder<MediaItem?>(
-                  stream: audioHandler.mediaItem,
-                  builder: (context, snapshot) {
-                    final metadata = snapshot.data;
-                    if (metadata == null) {
-                      return const SizedBox();
-                    } else {
-                      return MiniPlayer(metadata: metadata);
-                    }
-                  },
-                ),
-                NavigationBar(
-                  selectedIndex: _selectedIndex,
-                  labelBehavior: locale == const Locale('en', '')
-                      ? NavigationDestinationLabelBehavior.onlyShowSelected
-                      : NavigationDestinationLabelBehavior.alwaysHide,
-                  onDestinationSelected: (int index) {
-                    if (_selectedIndex == index) {
-                      if (_navigatorKey.currentState?.canPop() == true) {
-                        _navigatorKey.currentState?.pop();
+              bottomNavigationBar: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  StreamBuilder<MediaItem?>(
+                    stream: audioHandler.mediaItem,
+                    builder: (context, snapshot) {
+                      final metadata = snapshot.data;
+                      if (metadata == null) {
+                        return const SizedBox();
+                      } else {
+                        return MiniPlayer(metadata: metadata);
                       }
-                    } else {
-                      setState(() {
-                        _selectedIndex = index;
-                      });
-                      _navigatorKey.currentState?.pushNamedAndRemoveUntil(
-                        destinations[index],
-                        ModalRoute.withName(destinations[index]),
-                      );
-                    }
-                  },
-                  destinations: [
-                    NavigationDestination(
-                      icon: const Icon(FluentIcons.home_24_regular),
-                      selectedIcon: const Icon(FluentIcons.home_24_filled),
-                      label: context.l10n?.home ?? 'Home',
-                    ),
-                    NavigationDestination(
-                      icon: const Icon(FluentIcons.search_24_regular),
-                      selectedIcon: const Icon(FluentIcons.search_24_filled),
-                      label: context.l10n?.search ?? 'Search',
-                    ),
-                    NavigationDestination(
-                      icon: const Icon(FluentIcons.book_24_regular),
-                      selectedIcon: const Icon(FluentIcons.book_24_filled),
-                      label: context.l10n?.userPlaylists ?? 'User Playlists',
-                    ),
-                    NavigationDestination(
-                      icon: const Icon(FluentIcons.more_horizontal_24_regular),
-                      selectedIcon:
-                          const Icon(FluentIcons.more_horizontal_24_filled),
-                      label: context.l10n?.more ?? 'More',
-                    ),
-                  ],
-                ),
-              ],
+                    },
+                  ),
+                  NavigationBar(
+                    selectedIndex: _selectedIndex,
+                    labelBehavior: locale == const Locale('en', '')
+                        ? NavigationDestinationLabelBehavior.onlyShowSelected
+                        : NavigationDestinationLabelBehavior.alwaysHide,
+                    onDestinationSelected: (int index) {
+                      if (_selectedIndex == index) {
+                        if (_navigatorKey.currentState?.canPop() == true) {
+                          _navigatorKey.currentState?.pop();
+                        }
+                      } else {
+                        setState(() {
+                          _selectedIndex = index;
+                        });
+                        _navigatorKey.currentState?.pushNamedAndRemoveUntil(
+                          destinations[index],
+                          ModalRoute.withName(destinations[index]),
+                        );
+                      }
+                    },
+                    destinations: [
+                      NavigationDestination(
+                        icon: const Icon(FluentIcons.home_24_regular),
+                        selectedIcon: const Icon(FluentIcons.home_24_filled),
+                        label: context.l10n?.home ?? 'Home',
+                      ),
+                      NavigationDestination(
+                        icon: const Icon(FluentIcons.search_24_regular),
+                        selectedIcon: const Icon(FluentIcons.search_24_filled),
+                        label: context.l10n?.search ?? 'Search',
+                      ),
+                      NavigationDestination(
+                        icon: const Icon(FluentIcons.book_24_regular),
+                        selectedIcon: const Icon(FluentIcons.book_24_filled),
+                        label: context.l10n?.userPlaylists ?? 'User Playlists',
+                      ),
+                      NavigationDestination(
+                        icon:
+                            const Icon(FluentIcons.more_horizontal_24_regular),
+                        selectedIcon:
+                            const Icon(FluentIcons.more_horizontal_24_filled),
+                        label: context.l10n?.more ?? 'More',
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         );
