@@ -209,13 +209,13 @@ class MusifyAudioHandler extends BaseAudioHandler {
   }
 
   @override
-  Future<void> play() async => audioPlayer.play();
+  Future<void> play() => audioPlayer.play();
   @override
-  Future<void> pause() async => audioPlayer.pause();
+  Future<void> pause() => audioPlayer.pause();
   @override
-  Future<void> stop() async => audioPlayer.stop();
+  Future<void> stop() => audioPlayer.stop();
   @override
-  Future<void> seek(Duration position) async => audioPlayer.seek(position);
+  Future<void> seek(Duration position) => audioPlayer.seek(position);
 
   Future<void> playSong(Map song) async {
     try {
