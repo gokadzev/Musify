@@ -10,16 +10,17 @@
 }
 :root {
   --accent-color: #f0f0f0;
-  --dark-color: #04040c;
-  --light-color: #f2f2f2;
-  --dim-light-color: rgba(203, 207, 218, 0.8);
-  --primary-color: #f15a4b;
-  --secondary-color: #ffac81;
+  --dark-color: #081c15;
+  --light-color: #e3f1e4;
+  --dim-light-color: rgba(137, 195, 150, 0.8);
+  --primary-color: #4caf50;
+  --secondary-color: #81c784;
   --blue-color: #00a8e8;
   --swiper-pagination: #d9d8e2;
   --body-font: 'Montserrat', sans-serif;
   --heading-font: 'Montserrat', sans-serif;
 }
+
 *,
 ::after,
 ::before {
