@@ -28,4 +28,5 @@ const availableColors = <Color>[
   Color(0xFF00BCD4), // Material Cyan
   Color(0xFFC4A092), // Material Brown
   Color(0xFF9E9E9E), // Material Grey
+  Color(0xff91cef4), // Material Skycolor
 ];
