@@ -475,6 +475,7 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
             topRight: Radius.circular(18),
           ),
         ),
+        width: MediaQuery.of(context).size.width - 15,
         height: MediaQuery.of(context).size.height / 2.14,
         child: Column(
           children: <Widget>[
