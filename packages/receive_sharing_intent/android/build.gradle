@@ -2,7 +2,7 @@ group 'com.kasem.receive_sharing_intent'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '1.9.20'
+    ext.kotlin_version = '1.9.21'
     repositories {
         google()
         jcenter()
