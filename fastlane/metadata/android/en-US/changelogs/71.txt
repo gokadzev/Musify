@@ -4,6 +4,7 @@ Bug fixes
 
 Enhancements
 
+- New mini player design
 - Improved accent colors
 - Improved recommendations algorithm
 - Made various quality and performance improvements for app stability and speed

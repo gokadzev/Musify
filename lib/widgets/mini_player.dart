@@ -14,8 +14,9 @@ class MiniPlayer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 75,
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.only(
+      decoration: BoxDecoration(
+        color: colorScheme.onSecondary,
+        borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(18),
           topRight: Radius.circular(18),
         ),
