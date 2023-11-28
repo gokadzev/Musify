@@ -1,0 +1,9 @@
+Bug fixes
+
+- Fixed lyrics bar size
+
+Enhancements
+
+- Improved accent colors
+- Improved recommendations algorithm
+- Made various quality and performance improvements for app stability and speed
