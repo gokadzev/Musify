@@ -21,6 +21,8 @@ final yt = YoutubeExplode();
 
 final random = Random();
 
+List globalSongs = [];
+
 List playlists = [...playlistsDB, ...albumsDB];
 List userPlaylists = Hive.box('user').get('playlists', defaultValue: []);
 List userCustomPlaylists =
@@ -64,11 +66,14 @@ Future<List> fetchSongsList(String searchQuery) async {
 
 Future<List> getRecommendedSongs() async {
   try {
-    const playlistId = 'PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx';
     final playlistSongs = [...userLikedSongsList, ...userRecentlyPlayed];
 
-    final ytSongs = await getSongsFromPlaylist(playlistId);
-    playlistSongs.addAll(ytSongs.take(10));
+    if (globalSongs.isEmpty) {
+      const playlistId = 'PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx';
+      globalSongs = await getSongsFromPlaylist(playlistId);
+    }
+
+    playlistSongs.addAll(globalSongs.take(10));
 
     if (userCustomPlaylists.isNotEmpty) {
       for (final userPlaylist in userCustomPlaylists) {
