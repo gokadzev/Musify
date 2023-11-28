@@ -215,14 +215,8 @@ class _MusifyState extends State<Musify> {
           ],
           supportedLocales: appSupportedLocales,
           locale: locale,
-          home: WillPopScope(
-            onWillPop: () async {
-              if (_navigatorKey.currentState?.canPop() == true) {
-                _navigatorKey.currentState?.pop();
-                return false;
-              }
-              return true;
-            },
+          home: NavigatorPopHandler(
+            onPop: () => _navigatorKey.currentState!.pop(),
             child: Scaffold(
               body: Navigator(
                 key: _navigatorKey,
