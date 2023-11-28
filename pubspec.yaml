@@ -27,10 +27,10 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   html: ^0.15.4
-  http: ^1.1.0
+  http: ^1.1.2
   intl: ^0.18.0
   just_audio: ^0.9.36
-  permission_handler: ^11.0.1
+  permission_handler: ^11.1.0
   receive_sharing_intent:
     path: ./packages/receive_sharing_intent
   rxdart: ^0.27.7
