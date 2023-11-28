@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 
 Color primaryColor =
-    Color(Hive.box('settings').get('accentColor', defaultValue: 0xFFC4A092));
+    Color(Hive.box('settings').get('accentColor', defaultValue: 0xff91cef4));
 
 ColorScheme colorScheme = ColorScheme.fromSeed(
   seedColor: primaryColor,
