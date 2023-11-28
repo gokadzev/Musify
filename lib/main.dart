@@ -232,9 +232,10 @@ class _MusifyState extends State<Musify> {
               bottomNavigationBar: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  ValueListenableBuilder<MediaItem?>(
-                    valueListenable: mediaItemNotifier,
-                    builder: (context, metadata, _) {
+                  StreamBuilder<MediaItem?>(
+                    stream: audioHandler.mediaItem,
+                    builder: (context, snapshot) {
+                      final metadata = snapshot.data;
                       if (metadata == null) {
                         return const SizedBox();
                       } else {

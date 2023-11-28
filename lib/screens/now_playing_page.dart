@@ -7,7 +7,6 @@ import 'package:musify/extensions/l10n.dart';
 import 'package:musify/extensions/screen_size.dart';
 import 'package:musify/main.dart';
 import 'package:musify/models/position_data.dart';
-import 'package:musify/services/audio_service.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/flutter_toast.dart';
@@ -33,9 +32,11 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
         title: Text(context.l10n!.nowPlaying),
       ),
       body: SingleChildScrollView(
-        child: ValueListenableBuilder<MediaItem?>(
-          valueListenable: mediaItemNotifier,
-          builder: (context, metadata, _) {
+        child: StreamBuilder<MediaItem?>(
+          stream: audioHandler.mediaItem,
+          builder: (context, snapshot) {
+            final metadata = snapshot.data;
+
             if (metadata == null) {
               return const SizedBox();
             } else {
