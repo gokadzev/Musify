@@ -116,8 +116,7 @@ class MorePage extends StatelessWidget {
                           ),
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        width:
-                            MediaQuery.of(context).copyWith().size.width * 0.90,
+                        width: MediaQuery.of(context).size.width * 0.90,
                         child: GridView.builder(
                           gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(
@@ -201,8 +200,7 @@ class MorePage extends StatelessWidget {
                           ),
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        width:
-                            MediaQuery.of(context).copyWith().size.width * 0.90,
+                        width: MediaQuery.of(context).size.width * 0.90,
                         child: ListView.builder(
                           shrinkWrap: true,
                           physics: const BouncingScrollPhysics(),
@@ -257,8 +255,7 @@ class MorePage extends StatelessWidget {
                           ),
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        width:
-                            MediaQuery.of(context).copyWith().size.width * 0.90,
+                        width: MediaQuery.of(context).size.width * 0.90,
                         child: ListView.builder(
                           shrinkWrap: true,
                           physics: const BouncingScrollPhysics(),
