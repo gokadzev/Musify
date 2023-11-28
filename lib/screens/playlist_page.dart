@@ -23,12 +23,12 @@ class PlaylistPage extends StatefulWidget {
 }
 
 class _PlaylistPageState extends State<PlaylistPage> {
-  final _songsList = [];
+  final List<dynamic> _songsList = [];
   dynamic _playlist;
 
   bool _isLoading = true;
   bool _hasMore = true;
-  final _itemsPerPage = 35;
+  final int _itemsPerPage = 35;
   var _currentPage = 0;
   var _currentLastLoadedId = 0;
   late final playlistLikeStatus =
@@ -41,27 +41,19 @@ class _PlaylistPageState extends State<PlaylistPage> {
     _initializePlaylist();
   }
 
-  void _initializePlaylist() async {
+  Future<void> _initializePlaylist() async {
     _playlist = (widget.playlistId != null)
         ? await getPlaylistInfoForWidget(widget.playlistId)
         : widget.playlistData;
 
     if (_playlist != null) {
-      setState(() {
-        _hasMore = true;
-        _loadMore();
-      });
+      _loadMore();
     }
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   void _loadMore() {
     _isLoading = true;
-    fetch().then((List fetchedList) {
+    fetch().then((List<dynamic> fetchedList) {
       if (!mounted) return;
       setState(() {
         _isLoading = false;
@@ -74,8 +66,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
     });
   }
 
-  Future<List> fetch() async {
-    final list = [];
+  Future<List<dynamic>> fetch() async {
+    final list = <dynamic>[];
     final _count = _playlist['list'].length as int;
     final n = min(_itemsPerPage, _count - _currentPage * _itemsPerPage);
     await Future.delayed(const Duration(seconds: 1), () {
