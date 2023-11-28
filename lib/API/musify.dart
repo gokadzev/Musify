@@ -65,10 +65,18 @@ Future<List> fetchSongsList(String searchQuery) async {
 Future<List> getRecommendedSongs() async {
   try {
     const playlistId = 'PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx';
-    var playlistSongs = [...userLikedSongsList, ...userRecentlyPlayed];
+    final playlistSongs = [...userLikedSongsList, ...userRecentlyPlayed];
 
     final ytSongs = await getSongsFromPlaylist(playlistId);
-    playlistSongs += ytSongs.take(10).toList();
+    playlistSongs.addAll(ytSongs.take(10));
+
+    if (userCustomPlaylists.isNotEmpty) {
+      for (final userPlaylist in userCustomPlaylists) {
+        final _list = userPlaylist['list'] as List;
+        _list.shuffle();
+        playlistSongs.addAll(_list.take(5));
+      }
+    }
 
     playlistSongs.shuffle();
 
