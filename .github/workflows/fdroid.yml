@@ -2,9 +2,9 @@ name: Test, Build and Release Fdroid apk
 
 on:
   workflow_dispatch:
-  create:
-    tags:
-      - '*.*.*'
+  push:
+    branches:
+      - master
 
 env:
   PROPERTIES_PATH: './android/key.properties'
@@ -13,7 +13,7 @@ jobs:
   build:
     name: Build APK
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/') && contains(github.ref, '.')
+    if: "contains(github.event.head_commit.message, 'Update:')"
 
     steps:
       - uses: actions/checkout@v3
