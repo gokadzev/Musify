@@ -17,12 +17,9 @@ import 'package:musify/widgets/marque.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/spinner.dart';
 
-class NowPlayingPage extends StatefulWidget {
-  @override
-  _NowPlayingPageState createState() => _NowPlayingPageState();
-}
+class NowPlayingPage extends StatelessWidget {
+  const NowPlayingPage({super.key});
 
-class _NowPlayingPageState extends State<NowPlayingPage> {
   @override
   Widget build(BuildContext context) {
     final size = context.screenSize;

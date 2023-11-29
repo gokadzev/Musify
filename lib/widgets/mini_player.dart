@@ -53,7 +53,7 @@ class MiniPlayer extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => NowPlayingPage(),
+            builder: (context) => const NowPlayingPage(),
           ),
         );
       },
