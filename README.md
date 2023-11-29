@@ -154,7 +154,6 @@ You can see frequently asked questions and their answers [here](https://github.c
 - [permission_handler](https://pub.dev/packages/permission_handler): A Flutter plugin for requesting permissions.
 - [receive_sharing_intent](https://pub.dev/packages/receive_sharing_intent): A flutter plugin that enables flutter apps to receive sharing photos, videos, text, urls or any other file types from another app.
 - [rxdart](https://pub.dev/packages/rxdart): Reactive Extensions for Dart.
-- [shimmer](https://pub.dev/packages/shimmer): A Flutter package for creating shimmering effects.
 - [url_launcher](https://pub.dev/packages/url_launcher): A Flutter plugin for launching URLs.
 - [youtube_explode_dart](https://pub.dev/packages/youtube_explode_dart): A Dart library for interacting with YouTube.
 

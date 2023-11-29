@@ -299,39 +299,6 @@ Future<List<String>> getSearchSuggestions(String query) async {
   return suggestions;
 }
 
-Future<String?> getArtistArtwork(String artistName) async {
-  artistName = artistName.replaceAll(RegExp(r',| FEAT| &| FT'), '').trim();
-
-  try {
-    final response = await http.get(
-      Uri.parse('https://genius.com/artists/$artistName'),
-    );
-
-    if (response.statusCode == 200) {
-      final body = response.body;
-      const startToken =
-          '<div class="user_avatar profile_header-avatar clipped_background_image';
-      final start = body.indexOf(startToken);
-      if (start != -1) {
-        final urlStart = body.indexOf('background-image: url(', start);
-        if (urlStart != -1) {
-          final urlEnd = body.indexOf("'", urlStart + 23);
-          if (urlEnd != -1) {
-            final finalLink = body.substring(urlStart + 23, urlEnd);
-            if (finalLink.startsWith('https')) {
-              return finalLink.replaceFirst('.1000x1000x1', '.300x300x1');
-            }
-          }
-        }
-      }
-    }
-  } catch (e) {
-    return null;
-  }
-
-  return null;
-}
-
 Future<List<Map<String, int>>> getSkipSegments(String id) async {
   try {
     final res = await http.get(
