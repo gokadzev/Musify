@@ -38,7 +38,7 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
             final metadata = snapshot.data;
 
             if (metadata == null) {
-              return const SizedBox();
+              return const SizedBox.shrink();
             } else {
               return buildPlayerContent(
                 size,

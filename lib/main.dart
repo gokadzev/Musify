@@ -231,7 +231,7 @@ class _MusifyState extends State<Musify> {
                     builder: (context, snapshot) {
                       final metadata = snapshot.data;
                       if (metadata == null) {
-                        return const SizedBox();
+                        return const SizedBox.shrink();
                       } else {
                         return MiniPlayer(metadata: metadata);
                       }

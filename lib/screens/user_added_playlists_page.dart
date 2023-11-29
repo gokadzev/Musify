@@ -141,9 +141,6 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                   return Center(
                     child: Text(context.l10n!.error),
                   );
-                } else if (!snapshot.hasData ||
-                    (snapshot.data as List).isEmpty) {
-                  return const SizedBox();
                 }
 
                 final _playlists = snapshot.data as List;

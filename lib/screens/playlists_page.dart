@@ -117,9 +117,6 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                   return Center(
                     child: Text(context.l10n!.error),
                   );
-                } else if (!snapshot.hasData ||
-                    (snapshot.data as List).isEmpty) {
-                  return const SizedBox();
                 }
 
                 late List _playlists;

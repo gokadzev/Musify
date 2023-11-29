@@ -164,9 +164,7 @@ class MorePage extends StatelessWidget {
                                                   : availableColors[index],
                                         ),
                                       ),
-                                    )
-                                  else
-                                    const SizedBox.shrink(),
+                                    ),
                                 ],
                               ),
                             );
@@ -476,9 +474,7 @@ class MorePage extends StatelessWidget {
                 () => {
                   checkAppUpdates(context, downloadUpdateAutomatically: true),
                 },
-              )
-            else
-              const SizedBox(),
+              ),
             // CATEGORY: BECOME A SPONSOR
             Text(
               context.l10n!.becomeSponsor,
