@@ -7,14 +7,14 @@ import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/song_bar.dart';
 
-class UserLikedSongs extends StatefulWidget {
-  const UserLikedSongs({super.key});
+class UserLikedSongsPage extends StatefulWidget {
+  const UserLikedSongsPage({super.key});
 
   @override
-  State<UserLikedSongs> createState() => _UserLikedSongsState();
+  State<UserLikedSongsPage> createState() => _UserLikedSongsPageState();
 }
 
-class _UserLikedSongsState extends State<UserLikedSongs> {
+class _UserLikedSongsPageState extends State<UserLikedSongsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
