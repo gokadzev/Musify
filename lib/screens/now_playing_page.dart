@@ -156,50 +156,55 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
     return StreamBuilder<PositionData>(
       stream: audioHandler.positionDataStream,
       builder: (context, snapshot) {
-        final positionData = snapshot.data;
-        if (positionData == null) return const SizedBox.shrink();
-
-        final positionText =
-            formatDuration(positionData.position.inMilliseconds);
-        final durationText =
-            formatDuration(positionData.duration.inMilliseconds);
+        if (!snapshot.hasData || snapshot.data == null) {
+          return const SizedBox.shrink();
+        }
 
         return Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Slider(
-              activeColor: colorScheme.primary,
-              inactiveColor: Colors.green[50],
-              value: positionData.position.inMilliseconds.toDouble(),
-              onChanged: (value) {
-                audioHandler.seek(Duration(milliseconds: value.toInt()));
-              },
-              max: positionData.duration.inMilliseconds.toDouble() + 5000,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  positionText,
-                  style: TextStyle(
-                    fontSize: 17,
-                    color: colorScheme.primary,
-                  ),
-                ),
-                const Spacer(),
-                Text(
-                  durationText,
-                  style: TextStyle(
-                    fontSize: 17,
-                    color: colorScheme.primary,
-                  ),
-                ),
-              ],
-            ),
+            buildSlider(snapshot.data!),
+            buildPositionRow(snapshot.data!),
           ],
         );
       },
+    );
+  }
+
+  Widget buildSlider(PositionData positionData) {
+    return Slider(
+      activeColor: colorScheme.primary,
+      inactiveColor: Colors.green[50],
+      value: positionData.position.inMilliseconds.toDouble(),
+      onChanged: (value) {
+        audioHandler.seek(Duration(milliseconds: value.toInt()));
+      },
+      max: positionData.duration.inMilliseconds.toDouble() + 5000,
+    );
+  }
+
+  Widget buildPositionRow(PositionData positionData) {
+    final positionText = formatDuration(positionData.position.inMilliseconds);
+    final durationText = formatDuration(positionData.duration.inMilliseconds);
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        buildText(positionText),
+        const Spacer(),
+        buildText(durationText),
+      ],
+    );
+  }
+
+  Widget buildText(String text) {
+    return Text(
+      text,
+      style: TextStyle(
+        fontSize: 17,
+        color: colorScheme.primary,
+      ),
     );
   }
 
