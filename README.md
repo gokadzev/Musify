@@ -165,8 +165,10 @@ You can see frequently asked questions and their answers [here](https://github.c
 
 - [flutter_launcher_icons](https://pub.dev/packages/flutter_launcher_icons): A package for generating custom app icons in Flutter.
 - [flutter_native_splash](https://pub.dev/packages/flutter_native_splash): A package for adding a native splash screen to your Flutter app.
+- [translations_cleaner](https://pub.dev/packages/translations_cleaner): A package to remove unused keys in arb files, across all translations
 
 </details>
+
 
 ---
 
