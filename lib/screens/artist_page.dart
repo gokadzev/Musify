@@ -58,27 +58,7 @@ class ArtistPage extends StatelessWidget {
                     );
                   }
                   playlist['list'] = snapshot.data;
-                  return Wrap(
-                    children: <Widget>[
-                      ListView.separated(
-                        shrinkWrap: true,
-                        addAutomaticKeepAlives: false,
-                        addRepaintBoundaries: false,
-                        physics: const BouncingScrollPhysics(),
-                        itemCount: snapshot.data.length as int,
-                        itemBuilder: (context, index) {
-                          return SongBar(
-                            key: UniqueKey(),
-                            snapshot.data[index],
-                            true,
-                          );
-                        },
-                        separatorBuilder: (BuildContext context, int index) {
-                          return const SizedBox(height: 15);
-                        },
-                      ),
-                    ],
-                  );
+                  return buildSongsList(snapshot.data);
                 } else {
                   return const SizedBox.shrink();
                 }
@@ -104,6 +84,30 @@ class ArtistPage extends StatelessWidget {
         color: colorScheme.primary,
         size: 60,
       ),
+    );
+  }
+
+  Widget buildSongsList(List<dynamic> songs) {
+    return Wrap(
+      children: <Widget>[
+        ListView.separated(
+          shrinkWrap: true,
+          addAutomaticKeepAlives: false,
+          addRepaintBoundaries: false,
+          physics: const BouncingScrollPhysics(),
+          itemCount: songs.length,
+          itemBuilder: (context, index) {
+            return SongBar(
+              key: UniqueKey(),
+              songs[index],
+              true,
+            );
+          },
+          separatorBuilder: (BuildContext context, int index) {
+            return const SizedBox(height: 15);
+          },
+        ),
+      ],
     );
   }
 }
