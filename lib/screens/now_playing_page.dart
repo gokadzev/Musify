@@ -9,6 +9,7 @@ import 'package:musify/main.dart';
 import 'package:musify/models/position_data.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/style/app_themes.dart';
+import 'package:musify/utilities/flutter_bottom_sheet.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/formatter.dart';
 import 'package:musify/utilities/mediaitem.dart';
@@ -392,7 +393,7 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
               children: [
                 TextButton(
                   onPressed: () {
-                    _showBottomSheet(
+                    showCustomBottomSheet(
                       context,
                       ListView.builder(
                         shrinkWrap: true,
@@ -428,7 +429,7 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
                       mediaItem.artist.toString(),
                       mediaItem.title.toString(),
                     );
-                    _showBottomSheet(
+                    showCustomBottomSheet(
                       context,
                       ValueListenableBuilder<String?>(
                         valueListenable: lyrics,
@@ -468,44 +469,6 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
           ],
         );
       },
-    );
-  }
-
-  void _showBottomSheet(BuildContext context, Widget content) {
-    showBottomSheet(
-      context: context,
-      builder: (context) => Container(
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(18),
-            topRight: Radius.circular(18),
-          ),
-        ),
-        width: MediaQuery.of(context).size.width - 15,
-        height: MediaQuery.of(context).size.height / 2.14,
-        child: Column(
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.only(
-                top: MediaQuery.of(context).size.height * 0.012,
-              ),
-              child: IconButton(
-                icon: Icon(
-                  FluentIcons.arrow_between_down_24_filled,
-                  color: colorScheme.primary,
-                  size: 20,
-                ),
-                onPressed: () => Navigator.pop(context),
-              ),
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                child: content,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
