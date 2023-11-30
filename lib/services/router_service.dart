@@ -4,31 +4,17 @@ import 'package:musify/screens/more_page.dart';
 import 'package:musify/screens/search_page.dart';
 import 'package:musify/screens/user_added_playlists_page.dart';
 
-class RoutePaths {
-  static const String home = '/';
-  static const String search = '/search';
-  static const String userPlaylists = '/userPlaylists';
-  static const String more = '/more';
-}
+final Map<String, WidgetBuilder> routes = {
+  '/': (_) => HomePage(),
+  '/search': (_) => SearchPage(),
+  '/userPlaylists': (_) => UserPlaylistsPage(),
+  '/more': (_) => MorePage(),
+};
 
-final destinations = [
-  RoutePaths.home,
-  RoutePaths.search,
-  RoutePaths.userPlaylists,
-  RoutePaths.more,
-];
+final destinations = routes.keys.toList();
 
 Route<dynamic> generateRoute(RouteSettings settings) {
-  switch (settings.name) {
-    case RoutePaths.home:
-      return MaterialPageRoute(builder: (_) => HomePage());
-    case RoutePaths.search:
-      return MaterialPageRoute(builder: (_) => SearchPage());
-    case RoutePaths.userPlaylists:
-      return MaterialPageRoute(builder: (_) => UserPlaylistsPage());
-    case RoutePaths.more:
-      return MaterialPageRoute(builder: (_) => MorePage());
-    default:
-      throw Exception('Invalid route: ${settings.name}');
-  }
+  final builder = routes[settings.name] ??
+      (_) => throw Exception('Invalid route: ${settings.name}');
+  return MaterialPageRoute(builder: builder);
 }

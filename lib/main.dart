@@ -220,7 +220,7 @@ class _MusifyState extends State<Musify> {
             child: Scaffold(
               body: Navigator(
                 key: _navigatorKey,
-                initialRoute: RoutePaths.home,
+                initialRoute: '/',
                 onGenerateRoute: generateRoute,
               ),
               bottomNavigationBar: Column(
