@@ -38,40 +38,32 @@ class NowPlayingPage extends StatelessWidget {
             if (metadata == null) {
               return const SizedBox.shrink();
             } else {
-              return buildPlayerContent(
-                size,
-                metadata,
-                metadata.extras?['ytid'],
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(height: size.height * 0.01),
+                  buildArtwork(size, metadata),
+                  SizedBox(height: size.height * 0.03),
+                  buildMarqueeText(
+                    metadata.title,
+                    size.height * 0.030,
+                    FontWeight.bold,
+                  ),
+                  const SizedBox(height: 4),
+                  buildMarqueeText(
+                    metadata.artist ?? '',
+                    size.height * 0.018,
+                    FontWeight.w500,
+                  ),
+                  if (!(metadata.extras?['isLive'] ?? false))
+                    _buildPlayer(size, metadata.extras?['ytid'], metadata),
+                ],
               );
             }
           },
         ),
       ),
-    );
-  }
-
-  Widget buildPlayerContent(
-    Size size,
-    MediaItem metadata,
-    dynamic audioId,
-  ) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        SizedBox(height: size.height * 0.01),
-        buildArtwork(size, metadata),
-        SizedBox(height: size.height * 0.03),
-        buildMarqueeText(metadata.title, size.height * 0.030, FontWeight.bold),
-        const SizedBox(height: 4),
-        buildMarqueeText(
-          metadata.artist ?? '',
-          size.height * 0.018,
-          FontWeight.w500,
-        ),
-        if (!(metadata.extras?['isLive'] ?? false))
-          _buildPlayer(size, audioId, metadata),
-      ],
     );
   }
 
@@ -133,7 +125,7 @@ class NowPlayingPage extends StatelessWidget {
     dynamic audioId,
     dynamic mediaItem,
   ) {
-    return Container(
+    return Padding(
       padding: EdgeInsets.symmetric(
         vertical: size.height * 0.01,
         horizontal: size.width * 0.05,
