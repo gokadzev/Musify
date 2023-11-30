@@ -212,177 +212,180 @@ class NowPlayingPage extends StatelessWidget {
       builder: (context, constraints) {
         return Column(
           children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                Column(
-                  children: [
-                    ValueListenableBuilder<bool>(
-                      valueListenable: muteNotifier,
-                      builder: (_, value, __) {
-                        return customIconButton(
-                          value
-                              ? FluentIcons.speaker_mute_24_filled
-                              : FluentIcons.speaker_mute_24_regular,
-                          colorScheme.primary,
-                          constraints.maxWidth * 0.05,
-                          audioHandler.mute,
-                        );
-                      },
-                    ),
-                    IconButton(
-                      icon: Icon(
-                        Icons.add,
-                        color: colorScheme.primary,
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Column(
+                    children: [
+                      ValueListenableBuilder<bool>(
+                        valueListenable: muteNotifier,
+                        builder: (_, value, __) {
+                          return customIconButton(
+                            value
+                                ? FluentIcons.speaker_mute_24_filled
+                                : FluentIcons.speaker_mute_24_regular,
+                            colorScheme.primary,
+                            constraints.maxWidth * 0.05,
+                            audioHandler.mute,
+                          );
+                        },
                       ),
-                      onPressed: () {
-                        _showAddToPlaylistDialog(
-                          context,
-                          mediaItemToMap(mediaItem),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-                ValueListenableBuilder<bool>(
-                  valueListenable: shuffleNotifier,
-                  builder: (_, value, __) {
-                    return customIconButton(
-                      shuffleNotifier.value
-                          ? FluentIcons.arrow_shuffle_24_filled
-                          : FluentIcons.arrow_shuffle_off_24_filled,
-                      colorScheme.primary,
-                      constraints.maxWidth * 0.05,
-                      () {
-                        audioHandler.setShuffleMode(
-                          shuffleNotifier.value
-                              ? AudioServiceShuffleMode.none
-                              : AudioServiceShuffleMode.all,
-                        );
-                      },
-                    );
-                  },
-                ),
-                IconButton(
-                  icon: Icon(
-                    FluentIcons.previous_24_filled,
-                    color: audioHandler.hasPrevious
-                        ? colorScheme.primary
-                        : colorScheme.primary.withOpacity(0.5),
-                  ),
-                  iconSize: constraints.maxWidth * 0.09,
-                  onPressed: () async {
-                    await audioHandler.skipToPrevious();
-                  },
-                  splashColor: Colors.transparent,
-                ),
-                StreamBuilder<PlaybackState>(
-                  stream: audioHandler.playbackState,
-                  builder: (context, snapshot) {
-                    final playerState = snapshot.data;
-                    if (playerState == null) return const SizedBox.shrink();
-
-                    final processingState = playerState.processingState;
-                    final playing = playerState.playing;
-
-                    IconData icon;
-                    VoidCallback? onPressed;
-
-                    if (processingState == AudioProcessingState.loading ||
-                        processingState == AudioProcessingState.buffering) {
-                      icon = FluentIcons.spinner_ios_20_filled;
-                      onPressed = null;
-                    } else if (!playing) {
-                      icon = FluentIcons.play_circle_48_filled;
-                      onPressed = audioHandler.play;
-                    } else if (processingState !=
-                        AudioProcessingState.completed) {
-                      icon = FluentIcons.pause_circle_48_filled;
-                      onPressed = audioHandler.pause;
-                    } else {
-                      icon = FluentIcons.replay_20_filled;
-                      onPressed = () => audioHandler.seek(Duration.zero);
-                    }
-
-                    return GestureDetector(
-                      onTap: onPressed,
-                      child: Icon(
-                        icon,
-                        color: colorScheme.primary,
-                        size: 60,
+                      IconButton(
+                        icon: Icon(
+                          Icons.add,
+                          color: colorScheme.primary,
+                        ),
+                        onPressed: () {
+                          _showAddToPlaylistDialog(
+                            context,
+                            mediaItemToMap(mediaItem),
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
-                IconButton(
-                  icon: Icon(
-                    FluentIcons.next_24_filled,
-                    color: audioHandler.hasNext
-                        ? colorScheme.primary
-                        : colorScheme.primary.withOpacity(0.5),
+                    ],
                   ),
-                  iconSize: constraints.maxWidth * 0.09,
-                  onPressed: () async {
-                    await audioHandler.skipToNext();
-                  },
-                  splashColor: Colors.transparent,
-                ),
-                ValueListenableBuilder<bool>(
-                  valueListenable: repeatNotifier,
-                  builder: (_, value, __) {
-                    return customIconButton(
-                      value
-                          ? FluentIcons.arrow_repeat_1_24_filled
-                          : FluentIcons.arrow_repeat_all_off_24_filled,
-                      colorScheme.primary,
-                      constraints.maxWidth * 0.05,
-                      () => audioHandler.setRepeatMode(
+                  ValueListenableBuilder<bool>(
+                    valueListenable: shuffleNotifier,
+                    builder: (_, value, __) {
+                      return customIconButton(
+                        shuffleNotifier.value
+                            ? FluentIcons.arrow_shuffle_24_filled
+                            : FluentIcons.arrow_shuffle_off_24_filled,
+                        colorScheme.primary,
+                        constraints.maxWidth * 0.05,
+                        () {
+                          audioHandler.setShuffleMode(
+                            shuffleNotifier.value
+                                ? AudioServiceShuffleMode.none
+                                : AudioServiceShuffleMode.all,
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      FluentIcons.previous_24_filled,
+                      color: audioHandler.hasPrevious
+                          ? colorScheme.primary
+                          : colorScheme.primary.withOpacity(0.5),
+                    ),
+                    iconSize: constraints.maxWidth * 0.09,
+                    onPressed: () async {
+                      await audioHandler.skipToPrevious();
+                    },
+                    splashColor: Colors.transparent,
+                  ),
+                  StreamBuilder<PlaybackState>(
+                    stream: audioHandler.playbackState,
+                    builder: (context, snapshot) {
+                      final playerState = snapshot.data;
+                      if (playerState == null) return const SizedBox.shrink();
+
+                      final processingState = playerState.processingState;
+                      final playing = playerState.playing;
+
+                      IconData icon;
+                      VoidCallback? onPressed;
+
+                      if (processingState == AudioProcessingState.loading ||
+                          processingState == AudioProcessingState.buffering) {
+                        icon = FluentIcons.spinner_ios_20_filled;
+                        onPressed = null;
+                      } else if (!playing) {
+                        icon = FluentIcons.play_circle_48_filled;
+                        onPressed = audioHandler.play;
+                      } else if (processingState !=
+                          AudioProcessingState.completed) {
+                        icon = FluentIcons.pause_circle_48_filled;
+                        onPressed = audioHandler.pause;
+                      } else {
+                        icon = FluentIcons.replay_20_filled;
+                        onPressed = () => audioHandler.seek(Duration.zero);
+                      }
+
+                      return GestureDetector(
+                        onTap: onPressed,
+                        child: Icon(
+                          icon,
+                          color: colorScheme.primary,
+                          size: 60,
+                        ),
+                      );
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      FluentIcons.next_24_filled,
+                      color: audioHandler.hasNext
+                          ? colorScheme.primary
+                          : colorScheme.primary.withOpacity(0.5),
+                    ),
+                    iconSize: constraints.maxWidth * 0.09,
+                    onPressed: () async {
+                      await audioHandler.skipToNext();
+                    },
+                    splashColor: Colors.transparent,
+                  ),
+                  ValueListenableBuilder<bool>(
+                    valueListenable: repeatNotifier,
+                    builder: (_, value, __) {
+                      return customIconButton(
                         value
-                            ? AudioServiceRepeatMode.none
-                            : AudioServiceRepeatMode.all,
+                            ? FluentIcons.arrow_repeat_1_24_filled
+                            : FluentIcons.arrow_repeat_all_off_24_filled,
+                        colorScheme.primary,
+                        constraints.maxWidth * 0.05,
+                        () => audioHandler.setRepeatMode(
+                          value
+                              ? AudioServiceRepeatMode.none
+                              : AudioServiceRepeatMode.all,
+                        ),
+                      );
+                    },
+                  ),
+                  Column(
+                    children: [
+                      ValueListenableBuilder<bool>(
+                        valueListenable: songLikeStatus,
+                        builder: (_, value, __) {
+                          return customIconButton(
+                            value
+                                ? FluentIcons.star_24_filled
+                                : FluentIcons.star_24_regular,
+                            songLikeStatus.value
+                                ? colorScheme.primary
+                                : colorScheme.primary,
+                            constraints.maxWidth * 0.05,
+                            () {
+                              updateSongLikeStatus(
+                                audioId,
+                                !songLikeStatus.value,
+                              );
+                              songLikeStatus.value = !songLikeStatus.value;
+                            },
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
-                Column(
-                  children: [
-                    ValueListenableBuilder<bool>(
-                      valueListenable: songLikeStatus,
-                      builder: (_, value, __) {
-                        return customIconButton(
-                          value
-                              ? FluentIcons.star_24_filled
-                              : FluentIcons.star_24_regular,
-                          songLikeStatus.value
-                              ? colorScheme.primary
-                              : colorScheme.primary,
-                          constraints.maxWidth * 0.05,
-                          () {
-                            updateSongLikeStatus(
-                              audioId,
-                              !songLikeStatus.value,
-                            );
-                            songLikeStatus.value = !songLikeStatus.value;
-                          },
-                        );
-                      },
-                    ),
-                    ValueListenableBuilder<bool>(
-                      valueListenable: playNextSongAutomatically,
-                      builder: (_, value, __) {
-                        return customIconButton(
-                          value
-                              ? FluentIcons.music_note_2_play_20_filled
-                              : FluentIcons.music_note_2_play_20_regular,
-                          colorScheme.primary,
-                          constraints.maxWidth * 0.05,
-                          audioHandler.changeAutoPlayNextStatus,
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ],
+                      ValueListenableBuilder<bool>(
+                        valueListenable: playNextSongAutomatically,
+                        builder: (_, value, __) {
+                          return customIconButton(
+                            value
+                                ? FluentIcons.music_note_2_play_20_filled
+                                : FluentIcons.music_note_2_play_20_regular,
+                            colorScheme.primary,
+                            constraints.maxWidth * 0.05,
+                            audioHandler.changeAutoPlayNextStatus,
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
             SizedBox(height: size.height * 0.047),
             Row(
