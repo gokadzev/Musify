@@ -74,9 +74,9 @@ class PlaylistCube extends StatelessWidget {
                     width: size,
                     imageUrl: image.toString(),
                     fit: BoxFit.cover,
-                    errorWidget: (context, url, error) => noImageCube(size),
+                    errorWidget: (context, url, error) => noImageCube(),
                   )
-                : noImageCube(size),
+                : noImageCube(),
           ),
         ),
         if (id != null && showFavoriteButton)
@@ -137,10 +137,10 @@ class PlaylistCube extends StatelessWidget {
     );
   }
 
-  Widget noImageCube(double calculatedSize) {
+  Widget noImageCube() {
     return Container(
-      height: calculatedSize,
-      width: calculatedSize,
+      height: size,
+      width: size,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         color: colorScheme.secondary,
