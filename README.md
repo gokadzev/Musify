@@ -30,7 +30,7 @@
     No Ads :no_entry_sign:<br>
     No Subscriptions :dollar:<br>
     Inbuilt Updater :new:<br>
-    12 Supported Languages :us:<br>
+    13 Supported Languages :us:<br>
     Material UI & Accent Colors & Dynamic Colors (Android 12+) :art: <br>
 
 ---
@@ -56,12 +56,10 @@
   </table>
 </div>
 
-
 ---
 
   <h3 align="center">Download :floppy_disk:</h3>
      <p align="center" style="align-items:center"><a href="https://github.com/gokadzev/Musify/releases" rel="GitHub Releases"><img width="250" src="https://github.com/gokadzev/Musify/raw/master/repository_files/get-it-on-github.png"></a><a href="https://f-droid.org/packages/com.gokadzev.musify.fdroid/" rel="F-Droid"><img width="250" src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"></a><a href="https://apt.izzysoft.de/fdroid/index/apk/com.gokadzev.musify" rel="IzzySoft"><img width="250" src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png"></a></p>
-
 
 ---
 
@@ -118,13 +116,11 @@ flutter run --flavor github
 
 Contributions are always welcome. Please read our [contributing guidelines](https://github.com/gokadzev/Musify/blob/master/CONTRIBUTING.md) before contributing.
 
-
 ---
 
 <h3 align="center">F.A.Q :question: </h3>
 
 You can see frequently asked questions and their answers [here](https://github.com/gokadzev/Musify/discussions/112).
-
 
 ---
 
@@ -167,7 +163,6 @@ You can see frequently asked questions and their answers [here](https://github.c
 - [translations_cleaner](https://pub.dev/packages/translations_cleaner): A package to remove unused keys in arb files, across all translations
 
 </details>
-
 
 ---
 
