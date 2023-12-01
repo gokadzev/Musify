@@ -56,18 +56,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
               textInputAction: TextInputAction.search,
               controller: _searchBar,
               focusNode: _inputNode,
-              style: TextStyle(
-                fontSize: 16,
-                color: colorScheme.primary,
-              ),
-              cursorColor: Colors.green[50],
               decoration: InputDecoration(
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(15),
-                  ),
-                  borderSide: BorderSide(color: colorScheme.primary),
-                ),
                 suffixIcon: IconButton(
                   icon: Icon(
                     FluentIcons.search_24_regular,

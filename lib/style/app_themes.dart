@@ -60,6 +60,10 @@ ThemeData commonProperties() => ThemeData(
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
         ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide(color: colorScheme.primary),
+        ),
         contentPadding: const EdgeInsets.fromLTRB(18, 14, 20, 14),
       ),
     );

@@ -92,16 +92,7 @@ class _SearchPageState extends State<SearchPage> {
                 textInputAction: TextInputAction.search,
                 controller: _searchBar,
                 focusNode: _inputNode,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: colorScheme.primary,
-                ),
-                cursorColor: Colors.green[50],
                 decoration: InputDecoration(
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-                    borderSide: BorderSide(color: colorScheme.primary),
-                  ),
                   suffixIcon: ValueListenableBuilder<bool>(
                     valueListenable: _fetchingSongs,
                     builder: (_, value, __) {
