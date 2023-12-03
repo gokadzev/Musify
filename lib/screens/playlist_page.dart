@@ -87,6 +87,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
       appBar: AppBar(
         actions: [
           if (widget.playlistId != null) _buildLikeButton(),
+          if (widget.playlistId != null) _buildDownloadButton(),
           _buildSyncButton(),
         ],
       ),
@@ -181,13 +182,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
             ],
           ),
         ),
-        Row(
-          children: [
-            if (widget.playlistId != null) _buildLikeButton(),
-            _buildDownloadButton(),
-            _buildSyncButton(),
-          ],
-        ),
       ],
     );
   }
@@ -254,9 +248,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
     setState(() {
       _currentPage = 0;
       _currentLastLoadedId = 0;
+      _loadMore();
     });
-    _loadMore();
-    setState(() {});
   }
 
   void _updateSongsListOnRemove(int indexOfRemovedSong) {
