@@ -7,6 +7,7 @@ import 'package:musify/main.dart';
 import 'package:musify/services/download_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/style/app_themes.dart';
+import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/formatter.dart';
 
 class SongBar extends StatelessWidget {
@@ -153,6 +154,7 @@ class SongBar extends StatelessWidget {
                     title: Text(playlist['title']),
                     onTap: () {
                       addSongInCustomPlaylist(playlist['title'], song);
+                      showToast(context, context.l10n!.songAdded);
                       Navigator.pop(context);
                     },
                     textColor: Colors.white,
