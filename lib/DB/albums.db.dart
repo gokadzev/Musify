@@ -132,4 +132,18 @@ List<Map<String, dynamic>> albumsDB = [
     'isAlbum': true,
     'list': <Map<String, dynamic>>[],
   },
+  {
+    'ytid': 'PLWrMgSHVv2bPQUSEZnrep56vxWVech7gT',
+    'title': 'SOS - SZA',
+    'image': 'https://i.scdn.co/image/ab67616d0000b27370dbc9f47669d120ad874ec1',
+    'isAlbum': true,
+    'list': <Map<String, dynamic>>[],
+  },
+  {
+    'ytid': 'PL9tY0BWXOZFsRO7M8bLf-PKpUfFP48Jha',
+    'title': 'HEROES & VILLAINS - Metro Boomin',
+    'image': 'https://i.scdn.co/image/ab67616d0000b273c4fee55d7b51479627c31f89',
+    'isAlbum': true,
+    'list': <Map<String, dynamic>>[],
+  }
 ];
