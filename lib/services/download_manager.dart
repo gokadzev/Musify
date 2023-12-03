@@ -9,17 +9,10 @@ import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 Future<void> downloadSong(BuildContext context, dynamic song) async {
   try {
-    final songName = path
-        .basenameWithoutExtension('${song['artist']} ${song['title']}')
-        .replaceAll(
-          RegExp(r'[^\w\s-]'),
-          '',
-        ) // remove non-alphanumeric characters except for hyphens and spaces
-        .replaceAll(RegExp(r'(\s)+'), '-'); // replace spaces with hyphens
+    final songName = _getFormattedSongName(song);
 
     final filename = '$songName.${prefferedFileExtension.value}';
 
@@ -54,13 +47,7 @@ Future<void> downloadSong(BuildContext context, dynamic song) async {
 
 Future<void> downloadSongFaster(BuildContext context, dynamic song) async {
   try {
-    final songName = path
-        .basenameWithoutExtension('${song['artist']} ${song['title']}')
-        .replaceAll(
-          RegExp(r'[^\w\s-]'),
-          '',
-        ) // remove non-alphanumeric characters except for hyphens and spaces
-        .replaceAll(RegExp(r'(\s)+'), '-'); // replace spaces with hyphens
+    final songName = _getFormattedSongName(song);
 
     final filename = '$songName.${prefferedFileExtension.value}';
     final documentsDir = await getApplicationDocumentsDirectory();
@@ -107,16 +94,12 @@ Future<void> downloadSongsFromPlaylist(
   }
 }
 
-Future<void> checkNecessaryPermissions(BuildContext context) async {
-  await Permission.audio.request();
-  await Permission.notification.request();
-  try {
-    await Permission.storage.request();
-  } catch (e) {
-    logger.log('Error while requesting permissions: $e');
-    showToast(
-      context,
-      '${context.l10n!.errorWhileRequestingPerms} + $e',
-    );
-  }
+String _getFormattedSongName(dynamic song) {
+  return path
+      .basenameWithoutExtension('${song['artist']} ${song['title']}')
+      .replaceAll(
+        RegExp(r'[^\w\s-]'),
+        '',
+      ) // remove non-alphanumeric characters except for hyphens and spaces
+      .replaceAll(RegExp(r'(\s)+'), '-'); // replace spaces with hyphens
 }
