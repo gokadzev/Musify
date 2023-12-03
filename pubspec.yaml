@@ -30,6 +30,8 @@ dependencies:
   http: ^1.1.2
   intl: ^0.18.0
   just_audio: ^0.9.36
+  path: ^1.8.3
+  path_provider: ^2.1.1
   permission_handler: ^11.1.0
   receive_sharing_intent:
     path: ./packages/receive_sharing_intent

@@ -2,9 +2,10 @@
 
 * Online Song Search With Suggestions
 * Streaming Support
+* Download Support
 * Import & Export Your Data And Never Lose It
 * Add Custom Playlists With Link
-* High Quality Streaming Experience
+* High Quality mp3 / m4a / flac Format
 * Lyrics Support
 * No Ads
 * No Subscriptions

@@ -4,6 +4,14 @@ import 'package:musify/enums/quality_enum.dart';
 
 // Preferences
 
+final prefferedFileExtension = ValueNotifier<String>(
+  Hive.box('settings').get('audioFileType', defaultValue: 'mp3') as String,
+);
+
+final prefferedDownloadMode = ValueNotifier<String>(
+  Hive.box('settings').get('downloadMode', defaultValue: 'normal') as String,
+);
+
 final playNextSongAutomatically = ValueNotifier<bool>(
   Hive.box('settings').get('playNextSongAutomatically', defaultValue: false),
 );

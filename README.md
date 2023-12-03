@@ -23,9 +23,10 @@
   <p align="center">
     Online Song Search With Suggestions :mag:<br>
     Streaming Support :musical_note:<br>
+    Download Support :arrow_down:<br>
     Import & Export Your Data And Never Lose It :floppy_disk:<br>
     Add Custom Playlists With Link :cool:<br>
-    High Quality Streaming Experience :fire:<br>
+    High Quality mp3 / m4a / flac Format :fire:<br>
     Lyrics Support :pencil:<br>
     No Ads :no_entry_sign:<br>
     No Subscriptions :dollar:<br>
@@ -147,6 +148,8 @@ You can see frequently asked questions and their answers [here](https://github.c
 - [http](https://pub.dev/packages/http): A package for making HTTP requests in Flutter.
 - [intl](https://pub.dev/packages/intl): Internationalization and localization support for Flutter.
 - [just_audio](https://pub.dev/packages/just_audio): A Flutter plugin for audio playback.
+- [path](https://pub.dev/packages/path): A package for working with file system paths in Dart.
+- [path_provider](https://pub.dev/packages/path_provider): A Flutter plugin for getting the application's directories and paths.
 - [permission_handler](https://pub.dev/packages/permission_handler): A Flutter plugin for requesting permissions.
 - [receive_sharing_intent](https://pub.dev/packages/receive_sharing_intent): A flutter plugin that enables flutter apps to receive sharing photos, videos, text, urls or any other file types from another app.
 - [rxdart](https://pub.dev/packages/rxdart): Reactive Extensions for Dart.
