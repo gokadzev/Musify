@@ -38,7 +38,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
   @override
   void initState() {
     super.initState();
-    _isLoading = true;
     _initializePlaylist();
   }
 
@@ -55,15 +54,16 @@ class _PlaylistPageState extends State<PlaylistPage> {
   void _loadMore() {
     _isLoading = true;
     fetch().then((List<dynamic> fetchedList) {
-      if (!mounted) return;
-      setState(() {
-        _isLoading = false;
-        if (fetchedList.isEmpty) {
-          _hasMore = false;
-        } else {
-          _songsList.addAll(fetchedList);
-        }
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          if (fetchedList.isEmpty) {
+            _hasMore = false;
+          } else {
+            _songsList.addAll(fetchedList);
+          }
+        });
+      }
     });
   }
 
@@ -268,8 +268,10 @@ class _PlaylistPageState extends State<PlaylistPage> {
         setState(() {}),
       },
     );
-    _songsList.removeAt(indexOfRemovedSong);
-    setState(() {});
+
+    setState(() {
+      _songsList.removeAt(indexOfRemovedSong);
+    });
   }
 
   Widget buildPlayButton() {
