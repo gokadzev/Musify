@@ -499,7 +499,7 @@ List<Map<String, dynamic>> playlistsDB = [
   {
     'ytid': 'PLFgquLnL59alW3xmYiWRaoz0oM3H17Lth',
     'title': 'New This Week',
-    'image': 'https://i.scdn.co/image/ab67706c0000da849a5367585f64e916277b7265',
+    'image': 'https://i.scdn.co/image/ab67706c0000da84e25ba4f3305c4eba7594aa89',
     'list': [],
   },
   {
