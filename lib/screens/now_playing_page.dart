@@ -400,7 +400,6 @@ class NowPlayingPage extends StatelessWidget {
                               bottom: 5,
                             ),
                             child: SongBar(
-                              key: UniqueKey(),
                               activePlaylist['list'][index],
                               false,
                             ),

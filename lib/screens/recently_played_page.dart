@@ -28,7 +28,6 @@ class _RecentlyPlayedState extends State<RecentlyPlayed> {
             itemCount: userRecentlyPlayed.length,
             itemBuilder: (BuildContext context, int index) {
               return SongBar(
-                key: UniqueKey(),
                 userRecentlyPlayed[(userRecentlyPlayed.length - 1) - index],
                 true,
               );

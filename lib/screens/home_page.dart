@@ -261,7 +261,7 @@ class _HomePageState extends State<HomePage> {
           separatorBuilder: (BuildContext context, int index) =>
               const SizedBox(height: 7),
           itemBuilder: (context, index) {
-            return SongBar(key: UniqueKey(), data[index], true);
+            return SongBar(data[index], true);
           },
         ),
       ],

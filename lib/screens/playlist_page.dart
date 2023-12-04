@@ -98,7 +98,23 @@ class _PlaylistPageState extends State<PlaylistPage> {
       body: _playlist != null
           ? CustomScrollView(
               slivers: [
-                buildSongList(),
+                SliverToBoxAdapter(
+                  child: Column(
+                    children: [
+                      buildPlaylistHeader(),
+                      const SizedBox(height: 30),
+                    ],
+                  ),
+                ),
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (BuildContext context, int index) {
+                      return _buildSongListItem(index);
+                    },
+                    childCount:
+                        _hasMore ? _songsList.length + 1 : _songsList.length,
+                  ),
+                ),
               ],
             )
           : SizedBox(
@@ -120,16 +136,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
         showFavoriteButton: false,
         zoomNumber: 0.55,
       ),
-    );
-  }
-
-  Widget buildSongList() {
-    return SliverList(
-      delegate: SliverChildListDelegate([
-        buildPlaylistHeader(),
-        const SizedBox(height: 30),
-        _buildSongListView(),
-      ]),
     );
   }
 
@@ -395,36 +401,20 @@ class _PlaylistPageState extends State<PlaylistPage> {
     );
   }
 
-  Widget _buildSongListView() {
-    if (_songsList.isNotEmpty)
-      return Column(
-        children: [
-          ListView.separated(
-            shrinkWrap: true,
-            separatorBuilder: (BuildContext context, int index) =>
-                const SizedBox(height: 7),
-            itemCount: _hasMore ? _songsList.length + 1 : _songsList.length,
-            itemBuilder: (BuildContext context, int index) {
-              if (index >= _songsList.length) {
-                if (!_isLoading) {
-                  _loadMore();
-                }
-                return const Spinner();
-              }
-              return SongBar(
-                key: UniqueKey(),
-                _songsList[index],
-                true,
-                isFromPlaylist: widget.playlistData != null,
-                updateOnRemove: () => _updateSongsListOnRemove(index),
-                passingPlaylist: _playlist,
-                songIndexInPlaylist: index,
-              );
-            },
-          ),
-        ],
-      );
-    else
+  Widget _buildSongListItem(int index) {
+    if (index >= _songsList.length) {
+      if (!_isLoading) {
+        _loadMore();
+      }
       return const Spinner();
+    }
+    return SongBar(
+      _songsList[index],
+      true,
+      isFromPlaylist: widget.playlistData != null,
+      updateOnRemove: () => _updateSongsListOnRemove(index),
+      passingPlaylist: _playlist,
+      songIndexInPlaylist: index,
+    );
   }
 }

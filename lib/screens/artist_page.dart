@@ -95,7 +95,6 @@ class ArtistPage extends StatelessWidget {
           itemCount: songs.length,
           itemBuilder: (context, index) {
             return SongBar(
-              key: UniqueKey(),
               songs[index],
               true,
             );
