@@ -92,7 +92,6 @@ class ArtistPage extends StatelessWidget {
       children: <Widget>[
         ListView.separated(
           shrinkWrap: true,
-          physics: const BouncingScrollPhysics(),
           itemCount: songs.length,
           itemBuilder: (context, index) {
             return SongBar(

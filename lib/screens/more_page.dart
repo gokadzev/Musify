@@ -123,7 +123,6 @@ class MorePage extends StatelessWidget {
                             crossAxisCount: 3,
                           ),
                           shrinkWrap: true,
-                          physics: const BouncingScrollPhysics(),
                           itemCount: availableColors.length,
                           itemBuilder: (context, index) {
                             return Padding(
@@ -201,7 +200,6 @@ class MorePage extends StatelessWidget {
                         width: MediaQuery.of(context).size.width * 0.90,
                         child: ListView.builder(
                           shrinkWrap: true,
-                          physics: const BouncingScrollPhysics(),
                           itemCount: availableModes.length,
                           itemBuilder: (context, index) {
                             return Padding(
@@ -256,7 +254,6 @@ class MorePage extends StatelessWidget {
                         width: MediaQuery.of(context).size.width * 0.90,
                         child: ListView.builder(
                           shrinkWrap: true,
-                          physics: const BouncingScrollPhysics(),
                           itemCount: availableLanguages.length,
                           itemBuilder: (context, index) {
                             return Padding(
@@ -364,7 +361,6 @@ class MorePage extends StatelessWidget {
                             MediaQuery.of(context).copyWith().size.width * 0.90,
                         child: ListView.builder(
                           shrinkWrap: true,
-                          physics: const BouncingScrollPhysics(),
                           itemCount: availableFileTypes.length,
                           itemBuilder: (context, index) {
                             return Padding(
@@ -439,7 +435,6 @@ class MorePage extends StatelessWidget {
                             Expanded(
                               child: ListView.builder(
                                 shrinkWrap: true,
-                                physics: const BouncingScrollPhysics(),
                                 itemCount: availableModes.length,
                                 itemBuilder: (context, index) {
                                   return Padding(
@@ -507,7 +502,6 @@ class MorePage extends StatelessWidget {
                         width: MediaQuery.of(context).size.width * 0.90,
                         child: ListView.builder(
                           shrinkWrap: true,
-                          physics: const BouncingScrollPhysics(),
                           itemCount: availableQualities.length,
                           itemBuilder: (context, index) {
                             final quality = availableQualities[index];

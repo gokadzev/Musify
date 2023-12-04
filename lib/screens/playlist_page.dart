@@ -401,7 +401,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
         children: [
           ListView.separated(
             shrinkWrap: true,
-            physics: const BouncingScrollPhysics(),
             separatorBuilder: (BuildContext context, int index) =>
                 const SizedBox(height: 7),
             itemCount: _hasMore ? _songsList.length + 1 : _songsList.length,

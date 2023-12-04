@@ -257,7 +257,6 @@ class _HomePageState extends State<HomePage> {
         ),
         ListView.separated(
           shrinkWrap: true,
-          physics: const BouncingScrollPhysics(),
           itemCount: data.length,
           separatorBuilder: (BuildContext context, int index) =>
               const SizedBox(height: 7),
