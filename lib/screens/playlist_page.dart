@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/extensions/screen_size.dart';
+import 'package:musify/screens/user_added_playlists_page.dart';
+import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/download_manager.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/flutter_toast.dart';
@@ -89,6 +91,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
           if (widget.playlistId != null) _buildLikeButton(),
           if (widget.playlistId != null) _buildDownloadButton(),
           _buildSyncButton(),
+          if (_playlist != null && _playlist['isCustom'] == true)
+            _buildEditButton(),
         ],
       ),
       body: _playlist != null
@@ -220,7 +224,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
       icon: const Icon(FluentIcons.arrow_download_24_regular),
-      padding: const EdgeInsets.only(left: 20, top: 5),
+      padding: const EdgeInsets.only(left: 20),
       iconSize: 26,
       onPressed: () {
         downloadSongsFromPlaylist(context, _playlist['list']);
@@ -233,9 +237,109 @@ class _PlaylistPageState extends State<PlaylistPage> {
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
       icon: const Icon(FluentIcons.arrow_sync_24_filled),
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.only(left: 20),
       iconSize: 26,
       onPressed: _handleSyncPlaylist,
+    );
+  }
+
+  Widget _buildEditButton() {
+    return IconButton(
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      icon: const Icon(FluentIcons.edit_24_filled),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      iconSize: 26,
+      onPressed: () => showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          var customPlaylistName = _playlist['title'];
+          var imageUrl = _playlist['image'];
+          var description = _playlist['header_desc'];
+
+          return AlertDialog(
+            content: SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  const SizedBox(height: 7),
+                  TextField(
+                    controller: TextEditingController(text: customPlaylistName),
+                    decoration: InputDecoration(
+                      labelText: context.l10n!.customPlaylistName,
+                    ),
+                    onChanged: (value) {
+                      customPlaylistName = value;
+                    },
+                  ),
+                  const SizedBox(height: 7),
+                  TextField(
+                    controller: TextEditingController(text: imageUrl),
+                    decoration: InputDecoration(
+                      labelText: context.l10n!.customPlaylistImgUrl,
+                    ),
+                    onChanged: (value) {
+                      imageUrl = value;
+                    },
+                  ),
+                  const SizedBox(height: 7),
+                  TextField(
+                    controller: TextEditingController(text: description),
+                    decoration: InputDecoration(
+                      labelText: context.l10n!.customPlaylistDesc,
+                    ),
+                    onChanged: (value) {
+                      description = value;
+                    },
+                  ),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: Text(
+                  context.l10n!.add.toUpperCase(),
+                ),
+                onPressed: () {
+                  setState(() {
+                    final index =
+                        userCustomPlaylists.indexOf(widget.playlistData);
+
+                    if (index != -1) {
+                      final newPlaylist = {
+                        'title': customPlaylistName,
+                        'isCustom': true,
+                        if (imageUrl != null) 'image': imageUrl,
+                        if (description != null) 'header_desc': description,
+                        'list': widget.playlistData['list'],
+                      };
+                      userCustomPlaylists[index] = newPlaylist;
+                      addOrUpdateData(
+                        'user',
+                        'customPlaylists',
+                        userCustomPlaylists,
+                      );
+                      _playlist = newPlaylist;
+                      showToast(context, context.l10n!.playlistUpdated);
+                    }
+
+                    Navigator.pop(context);
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => UserPlaylistsPage(),
+                      ),
+                      (route) =>
+                          route.isCurrent &&
+                          route is MaterialPageRoute &&
+                          route.settings.name == null,
+                    );
+                  });
+                },
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 
