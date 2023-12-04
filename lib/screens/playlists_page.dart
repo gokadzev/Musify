@@ -106,7 +106,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                     mainAxisSpacing: 20,
                   ),
                   itemCount: _playlists.length,
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 20),
+                  padding: const EdgeInsets.all(16),
                   itemBuilder: (BuildContext context, index) {
                     final playlist = _playlists[index];
 
