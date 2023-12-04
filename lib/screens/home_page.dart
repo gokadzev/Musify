@@ -180,7 +180,7 @@ class _HomePageState extends State<HomePage> {
     List<dynamic> data,
     double calculatedSize,
   ) {
-    return Wrap(
+    return Column(
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.fromLTRB(20, 16, 20, 10),
