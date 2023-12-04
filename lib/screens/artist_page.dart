@@ -88,23 +88,26 @@ class ArtistPage extends StatelessWidget {
   }
 
   Widget buildSongsList(List<dynamic> songs) {
-    return Wrap(
-      children: <Widget>[
-        ListView.separated(
-          shrinkWrap: true,
-          physics: const BouncingScrollPhysics(),
-          itemCount: songs.length,
-          itemBuilder: (context, index) {
-            return SongBar(
-              songs[index],
-              true,
-            );
-          },
-          separatorBuilder: (BuildContext context, int index) {
-            return const SizedBox(height: 15);
-          },
-        ),
-      ],
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      child: Column(
+        children: <Widget>[
+          ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: songs.length,
+            itemBuilder: (context, index) {
+              return SongBar(
+                songs[index],
+                true,
+              );
+            },
+            separatorBuilder: (BuildContext context, int index) {
+              return const SizedBox(height: 15);
+            },
+          ),
+        ],
+      ),
     );
   }
 }
