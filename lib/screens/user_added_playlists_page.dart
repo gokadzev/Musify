@@ -159,53 +159,50 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                     final playlist = _playlists[index];
                     final ytid = playlist['ytid'];
 
-                    return Center(
-                      child: GestureDetector(
-                        onLongPress: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Text(context.l10n!.confirmation),
-                                content: Text(
-                                  context.l10n!.removePlaylistQuestion,
+                    return GestureDetector(
+                      onLongPress: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text(context.l10n!.confirmation),
+                              content: Text(
+                                context.l10n!.removePlaylistQuestion,
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: Text(context.l10n!.cancel),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
                                 ),
-                                actions: <Widget>[
-                                  TextButton(
-                                    child: Text(context.l10n!.cancel),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                  TextButton(
-                                    child: Text(context.l10n!.remove),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
+                                TextButton(
+                                  child: Text(context.l10n!.remove),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
 
-                                      if (ytid == null &&
-                                          playlist['isCustom']) {
-                                        removeUserCustomPlaylist(playlist);
-                                      } else {
-                                        removeUserPlaylist(ytid);
-                                      }
+                                    if (ytid == null && playlist['isCustom']) {
+                                      removeUserCustomPlaylist(playlist);
+                                    } else {
+                                      removeUserPlaylist(ytid);
+                                    }
 
-                                      setState(() {});
-                                    },
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        },
-                        child: PlaylistCube(
-                          id: ytid,
-                          image: playlist['image'],
-                          title: playlist['title'].toString(),
-                          playlistData: playlist['isCustom'] != null &&
-                                  playlist['isCustom']
-                              ? playlist
-                              : null,
-                        ),
+                                    setState(() {});
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                      child: PlaylistCube(
+                        id: ytid,
+                        image: playlist['image'],
+                        title: playlist['title'].toString(),
+                        playlistData:
+                            playlist['isCustom'] != null && playlist['isCustom']
+                                ? playlist
+                                : null,
                       ),
                     );
                   },

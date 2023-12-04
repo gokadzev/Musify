@@ -110,13 +110,11 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                   itemBuilder: (BuildContext context, index) {
                     final playlist = _playlists[index];
 
-                    return Center(
-                      child: PlaylistCube(
-                        id: playlist['ytid'],
-                        image: playlist['image'],
-                        title: playlist['title'].toString(),
-                        isAlbum: playlist['isAlbum'],
-                      ),
+                    return PlaylistCube(
+                      id: playlist['ytid'],
+                      image: playlist['image'],
+                      title: playlist['title'].toString(),
+                      isAlbum: playlist['isAlbum'],
                     );
                   },
                 );
