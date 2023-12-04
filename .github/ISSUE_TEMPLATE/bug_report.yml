@@ -1,6 +1,6 @@
 name: 🐞 Issue Report
 description: Report an issue in Musify
-title: "[Bug] <title>"
+title: '[Bug] <title>'
 labels:
   - bug
 assignees:
@@ -52,15 +52,37 @@ body:
     attributes:
       label: Musify Version
       description: Mention the version of Musify in which you encountered this bug.
-      placeholder: e.g., v3.0.0
+      placeholder: e.g., v7.0.0
     validations:
       required: true
 
   - type: input
+    id: device-and-os
     attributes:
-      label: Operating System Version
-      description: Mention the version of your operating system where you're experiencing the bug.
-      placeholder: e.g., Android 12
+      label: Device And Operating System
+      description: Mention the device name and the version of your operating system where you're experiencing the bug.
+      placeholder: e.g., Xiaomi 12T Pro (MIUI 14)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: android-version
+    attributes:
+      label: Android Version You Use
+      options:
+        - Android 14
+        - Android 13
+        - Android 12L
+        - Android 12
+        - Android 11
+        - Android 10
+        - Android 9 (Pie)
+        - Android 8.1 (Oreo)
+        - Android 8 (Oreo)
+        - Android 7 (Nougat)
+        - Android 6 (Marshmallow)
+        - Android 5.1 (Lollipop)
+        - Android 5 (Lollipop)
     validations:
       required: true
 
