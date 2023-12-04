@@ -30,8 +30,6 @@ class UserLikedPlaylistsPage extends StatelessWidget {
                 )
               : SingleChildScrollView(
                   child: GridView.builder(
-                    addAutomaticKeepAlives: false,
-                    addRepaintBoundaries: false,
                     gridDelegate:
                         const SliverGridDelegateWithMaxCrossAxisExtent(
                       maxCrossAxisExtent: 200,

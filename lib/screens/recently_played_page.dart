@@ -26,8 +26,6 @@ class _RecentlyPlayedState extends State<RecentlyPlayed> {
           return ListView.separated(
             shrinkWrap: true,
             physics: const BouncingScrollPhysics(),
-            addAutomaticKeepAlives: false,
-            addRepaintBoundaries: false,
             itemCount: userRecentlyPlayed.length,
             itemBuilder: (BuildContext context, int index) {
               return SongBar(
