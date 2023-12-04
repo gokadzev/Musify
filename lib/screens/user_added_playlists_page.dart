@@ -29,7 +29,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
             builder: (BuildContext context) {
               var id = '';
               var customPlaylistName = '';
-              var imageUrl = '';
+              String? imageUrl;
               var description = '';
 
               return AlertDialog(
