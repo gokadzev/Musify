@@ -6,8 +6,8 @@ import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/style/app_themes.dart';
+import 'package:musify/widgets/custom_search_bar.dart';
 import 'package:musify/widgets/song_bar.dart';
-import 'package:musify/widgets/spinner.dart';
 
 class SearchPage extends StatefulWidget {
   @override
@@ -73,60 +73,24 @@ class _SearchPageState extends State<SearchPage> {
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-              child: TextField(
-                onSubmitted: (String value) {
-                  search();
+            CustomSearchBar(
+              loadingProgressNotifier: _fetchingSongs,
+              controller: _searchBar,
+              focusNode: _inputNode,
+              labelText: '${context.l10n!.search}...',
+              onChanged: (value) async {
+                if (value.isNotEmpty) {
+                  _suggestionsList = await getSearchSuggestions(value);
+                } else {
                   _suggestionsList = [];
-                  _inputNode.unfocus();
-                },
-                onChanged: (value) async {
-                  if (value.isNotEmpty) {
-                    _suggestionsList = await getSearchSuggestions(value);
-                  } else {
-                    _suggestionsList = [];
-                  }
-                  setState(() {});
-                },
-                textInputAction: TextInputAction.search,
-                controller: _searchBar,
-                focusNode: _inputNode,
-                decoration: InputDecoration(
-                  suffixIcon: ValueListenableBuilder<bool>(
-                    valueListenable: _fetchingSongs,
-                    builder: (_, value, __) {
-                      if (value) {
-                        return IconButton(
-                          icon: const SizedBox(
-                            height: 18,
-                            width: 18,
-                            child: Spinner(),
-                          ),
-                          color: colorScheme.primary,
-                          onPressed: () {
-                            search();
-                            _inputNode.unfocus();
-                          },
-                        );
-                      } else {
-                        return IconButton(
-                          icon: Icon(
-                            FluentIcons.search_20_regular,
-                            color: colorScheme.primary,
-                          ),
-                          color: colorScheme.primary,
-                          onPressed: () {
-                            search();
-                            _inputNode.unfocus();
-                          },
-                        );
-                      }
-                    },
-                  ),
-                  labelText: '${context.l10n!.search}...',
-                ),
-              ),
+                }
+                setState(() {});
+              },
+              onSubmitted: (String value) {
+                search();
+                _suggestionsList = [];
+                _inputNode.unfocus();
+              },
             ),
             if (_searchResult.isEmpty)
               ListView.builder(

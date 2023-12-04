@@ -1,9 +1,8 @@
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
-import 'package:musify/style/app_themes.dart';
+import 'package:musify/widgets/custom_search_bar.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/spinner.dart';
 
@@ -46,31 +45,13 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
       ),
       body: Column(
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.fromLTRB(12, 12, 12, 20),
-            child: TextField(
-              onSubmitted: (String value) {
-                search();
-                FocusManager.instance.primaryFocus?.unfocus();
-              },
-              textInputAction: TextInputAction.search,
-              controller: _searchBar,
-              focusNode: _inputNode,
-              decoration: InputDecoration(
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    FluentIcons.search_24_regular,
-                    color: colorScheme.primary,
-                  ),
-                  color: colorScheme.primary,
-                  onPressed: () {
-                    search();
-                    FocusManager.instance.primaryFocus?.unfocus();
-                  },
-                ),
-                labelText: '${context.l10n!.search}...',
-              ),
-            ),
+          CustomSearchBar(
+            onSubmitted: (String value) {
+              search();
+            },
+            controller: _searchBar,
+            focusNode: _inputNode,
+            labelText: '${context.l10n!.search}...',
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
