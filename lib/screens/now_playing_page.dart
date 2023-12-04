@@ -389,6 +389,7 @@ class NowPlayingPage extends StatelessWidget {
                       context,
                       ListView.builder(
                         shrinkWrap: true,
+                        physics: const BouncingScrollPhysics(),
                         itemCount: activePlaylist['list'].length,
                         itemBuilder: (
                           BuildContext context,
