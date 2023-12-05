@@ -56,15 +56,12 @@ class _UserLikedSongsPageState extends State<UserLikedSongsPage> {
   }
 
   Widget _buildPlaylistImage() {
-    return Card(
-      color: Colors.transparent,
-      child: PlaylistCube(
-        title: context.l10n!.userLikedSongs,
-        onClickOpen: false,
-        showFavoriteButton: false,
-        size: 150,
-        zoomNumber: 0.55,
-      ),
+    return PlaylistCube(
+      title: context.l10n!.userLikedSongs,
+      onClickOpen: false,
+      showFavoriteButton: false,
+      size: 150,
+      zoomNumber: 0.55,
     );
   }
 

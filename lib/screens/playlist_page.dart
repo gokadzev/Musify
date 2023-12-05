@@ -132,17 +132,14 @@ class _PlaylistPageState extends State<PlaylistPage> {
   }
 
   Widget _buildPlaylistImage() {
-    return Card(
-      color: Colors.transparent,
-      child: PlaylistCube(
-        id: _playlist['ytid'],
-        image: _playlist['image'],
-        title: _playlist['title'],
-        isAlbum: _playlist['isAlbum'],
-        onClickOpen: false,
-        showFavoriteButton: false,
-        zoomNumber: 0.55,
-      ),
+    return PlaylistCube(
+      id: _playlist['ytid'],
+      image: _playlist['image'],
+      title: _playlist['title'],
+      isAlbum: _playlist['isAlbum'],
+      onClickOpen: false,
+      showFavoriteButton: false,
+      zoomNumber: 0.55,
     );
   }
 
