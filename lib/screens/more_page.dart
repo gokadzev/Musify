@@ -323,7 +323,7 @@ class MorePage extends StatelessWidget {
               valueListenable: sponsorBlockSupport,
               builder: (_, value, __) {
                 return SettingSwitchBar(
-                  'SponsorBlock [BETA]',
+                  'SponsorBlock',
                   FluentIcons.presence_blocked_24_regular,
                   value,
                   (value) {
