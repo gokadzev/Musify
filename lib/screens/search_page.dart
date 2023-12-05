@@ -106,10 +106,7 @@ class _SearchPageState extends State<SearchPage> {
                       : _suggestionsList[index];
 
                   return Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 12,
-                      horizontal: 5,
-                    ),
+                    padding: const EdgeInsets.all(5),
                     child: Card(
                       child: ListTile(
                         leading: Icon(
