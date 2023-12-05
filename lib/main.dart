@@ -89,7 +89,6 @@ class _MusifyState extends State<Musify> {
       brightness = getBrightnessFromThemeMode(newThemeMode);
       colorScheme = ColorScheme.fromSeed(
         seedColor: primaryColor,
-        primary: primaryColor,
         brightness: brightness,
       ).harmonized();
     });
@@ -117,7 +116,6 @@ class _MusifyState extends State<Musify> {
 
       colorScheme = ColorScheme.fromSeed(
         seedColor: newAccentColor,
-        primary: newAccentColor,
         brightness: brightness,
       ).harmonized();
     });

@@ -9,7 +9,6 @@ Color primaryColor =
 
 ColorScheme colorScheme = ColorScheme.fromSeed(
   seedColor: primaryColor,
-  primary: primaryColor,
   brightness: brightness,
 ).harmonized();
 
