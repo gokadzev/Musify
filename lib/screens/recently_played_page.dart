@@ -23,7 +23,7 @@ class _RecentlyPlayedState extends State<RecentlyPlayed> {
       body: ValueListenableBuilder(
         valueListenable: currentRecentlyPlayedLength,
         builder: (_, value, __) {
-          return ListView.separated(
+          return ListView.builder(
             shrinkWrap: true,
             physics: const BouncingScrollPhysics(),
             itemCount: userRecentlyPlayed.length,
@@ -32,9 +32,6 @@ class _RecentlyPlayedState extends State<RecentlyPlayed> {
                 userRecentlyPlayed[(userRecentlyPlayed.length - 1) - index],
                 true,
               );
-            },
-            separatorBuilder: (BuildContext context, int index) {
-              return const SizedBox(height: 15);
             },
           );
         },

@@ -39,7 +39,7 @@ class UserLikedPlaylistsPage extends StatelessWidget {
                     shrinkWrap: true,
                     physics: const ScrollPhysics(),
                     itemCount: userLikedPlaylists.length,
-                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 20),
+                    padding: const EdgeInsets.all(16),
                     itemBuilder: (BuildContext context, index) {
                       return PlaylistCube(
                         id: userLikedPlaylists[index]['ytid'],

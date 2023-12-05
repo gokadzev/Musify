@@ -40,100 +40,117 @@ class SongBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      onTap: () {
-        audioHandler.playSong(song);
-        if (activePlaylist.isNotEmpty && clearPlaylist) {
-          activePlaylist = {
-            'ytid': '',
-            'title': 'No Playlist',
-            'header_desc': '',
-            'image': '',
-            'list': [],
-          };
-          id = 0;
-        }
-      },
-      leading: CachedNetworkImage(
-        key: Key(song['ytid'].toString()),
-        width: 60,
-        height: 60,
-        imageUrl: song['lowResImage'].toString(),
-        imageBuilder: (context, imageProvider) => DecoratedBox(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            image: DecorationImage(
-              image: imageProvider,
-              centerSlice: const Rect.fromLTRB(1, 1, 1, 1),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Card(
+        child: GestureDetector(
+          onTap: () {
+            audioHandler.playSong(song);
+            if (activePlaylist.isNotEmpty && clearPlaylist) {
+              activePlaylist = {
+                'ytid': '',
+                'title': 'No Playlist',
+                'header_desc': '',
+                'image': '',
+                'list': [],
+              };
+              id = 0;
+            }
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: Row(
+              children: [
+                CachedNetworkImage(
+                  key: Key(song['ytid'].toString()),
+                  width: 60,
+                  height: 60,
+                  imageUrl: song['lowResImage'].toString(),
+                  imageBuilder: (context, imageProvider) => DecoratedBox(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      image: DecorationImage(
+                        image: imageProvider,
+                        centerSlice: const Rect.fromLTRB(1, 1, 1, 1),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        song['title'],
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      Text(
+                        song['artist'].toString(),
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: Theme.of(context).hintColor,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ValueListenableBuilder<bool>(
+                      valueListenable: songLikeStatus,
+                      builder: (_, value, __) {
+                        return IconButton(
+                          color: Theme.of(context).colorScheme.primary,
+                          icon: Icon(likeStatusToIconMapper[value]),
+                          onPressed: () {
+                            songLikeStatus.value = !songLikeStatus.value;
+                            updateSongLikeStatus(
+                              song['ytid'],
+                              songLikeStatus.value,
+                            );
+                            final likedSongsLength =
+                                currentLikedSongsLength.value;
+                            currentLikedSongsLength.value = value
+                                ? likedSongsLength + 1
+                                : likedSongsLength - 1;
+                          },
+                        );
+                      },
+                    ),
+                    IconButton(
+                      color: Theme.of(context).colorScheme.primary,
+                      icon: isFromPlaylist
+                          ? const Icon(FluentIcons.delete_24_filled)
+                          : const Icon(FluentIcons.add_24_regular),
+                      onPressed: () => isFromPlaylist
+                          ? _removeFromPlaylist(context, song)
+                          : _showAddToPlaylistDialog(context, song),
+                    ),
+                    IconButton(
+                      color: Theme.of(context).colorScheme.primary,
+                      icon: const Icon(FluentIcons.arrow_download_24_regular),
+                      onPressed: () => prefferedDownloadMode.value == 'normal'
+                          ? downloadSong(context, song)
+                          : downloadSongFaster(context, song),
+                    ),
+                    if (showMusicDuration && song['duration'] != null)
+                      Text('(${formatDuration(song['duration'])})'),
+                  ],
+                ),
+              ],
             ),
           ),
         ),
-      ),
-      title: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            song['title'],
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.primary,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 5),
-          Text(
-            song['artist'].toString(),
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              color: Theme.of(context).hintColor,
-              fontWeight: FontWeight.w400,
-              fontSize: 14,
-            ),
-          ),
-        ],
-      ),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ValueListenableBuilder<bool>(
-            valueListenable: songLikeStatus,
-            builder: (_, value, __) {
-              return IconButton(
-                color: Theme.of(context).colorScheme.primary,
-                icon: Icon(likeStatusToIconMapper[value]),
-                onPressed: () {
-                  songLikeStatus.value = !songLikeStatus.value;
-                  updateSongLikeStatus(
-                    song['ytid'],
-                    songLikeStatus.value,
-                  );
-                  final likedSongsLength = currentLikedSongsLength.value;
-                  currentLikedSongsLength.value =
-                      value ? likedSongsLength + 1 : likedSongsLength - 1;
-                },
-              );
-            },
-          ),
-          IconButton(
-            color: Theme.of(context).colorScheme.primary,
-            icon: isFromPlaylist
-                ? const Icon(FluentIcons.delete_24_filled)
-                : const Icon(FluentIcons.add_24_regular),
-            onPressed: () => isFromPlaylist
-                ? _removeFromPlaylist(context, song)
-                : _showAddToPlaylistDialog(context, song),
-          ),
-          IconButton(
-            color: Theme.of(context).colorScheme.primary,
-            icon: const Icon(FluentIcons.arrow_download_24_regular),
-            onPressed: () => prefferedDownloadMode.value == 'normal'
-                ? downloadSong(context, song)
-                : downloadSongFaster(context, song),
-          ),
-          if (showMusicDuration && song['duration'] != null)
-            Text('(${formatDuration(song['duration'])})'),
-        ],
       ),
     );
   }

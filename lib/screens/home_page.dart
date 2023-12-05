@@ -67,7 +67,7 @@ class _HomePageState extends State<HomePage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(20, 16, 20, 10),
+          padding: const EdgeInsets.all(20),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -183,7 +183,7 @@ class _HomePageState extends State<HomePage> {
     return Column(
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.fromLTRB(20, 16, 20, 10),
+          padding: const EdgeInsets.all(20),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -231,7 +231,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.fromLTRB(20, 20, 10, 15),
+          padding: const EdgeInsets.all(20),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -243,24 +243,24 @@ class _HomePageState extends State<HomePage> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              IconButton(
-                onPressed: () => setActivePlaylist({
+              GestureDetector(
+                onTap: () => setActivePlaylist({
                   'title': context.l10n!.recommendedForYou,
                   'list': data,
                 }),
-                color: colorScheme.primary,
-                iconSize: 35,
-                icon: const Icon(FluentIcons.play_circle_24_filled),
+                child: Icon(
+                  FluentIcons.play_circle_24_filled,
+                  color: colorScheme.primary,
+                  size: 35,
+                ),
               ),
             ],
           ),
         ),
-        ListView.separated(
+        ListView.builder(
           shrinkWrap: true,
           physics: const BouncingScrollPhysics(),
           itemCount: data.length,
-          separatorBuilder: (BuildContext context, int index) =>
-              const SizedBox(height: 7),
           itemBuilder: (context, index) {
             return SongBar(data[index], true);
           },

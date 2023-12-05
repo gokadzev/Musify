@@ -154,7 +154,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                   shrinkWrap: true,
                   physics: const ScrollPhysics(),
                   itemCount: _playlists.length,
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 20),
+                  padding: const EdgeInsets.all(16),
                   itemBuilder: (BuildContext context, index) {
                     final playlist = _playlists[index];
                     final ytid = playlist['ytid'];

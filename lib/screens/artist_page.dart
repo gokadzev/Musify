@@ -92,7 +92,7 @@ class ArtistPage extends StatelessWidget {
       physics: const BouncingScrollPhysics(),
       child: Column(
         children: <Widget>[
-          ListView.separated(
+          ListView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: songs.length,
@@ -101,9 +101,6 @@ class ArtistPage extends StatelessWidget {
                 songs[index],
                 true,
               );
-            },
-            separatorBuilder: (BuildContext context, int index) {
-              return const SizedBox(height: 15);
             },
           ),
         ],

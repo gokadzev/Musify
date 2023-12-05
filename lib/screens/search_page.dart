@@ -144,7 +144,7 @@ class _SearchPageState extends State<SearchPage> {
                 },
               )
             else
-              ListView.separated(
+              ListView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: _searchResult.length,
@@ -154,9 +154,6 @@ class _SearchPageState extends State<SearchPage> {
                     true,
                     showMusicDuration: true,
                   );
-                },
-                separatorBuilder: (BuildContext context, int index) {
-                  return const SizedBox(height: 15);
                 },
               ),
           ],
