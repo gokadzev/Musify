@@ -106,12 +106,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
           ? CustomScrollView(
               slivers: [
                 SliverToBoxAdapter(
-                  child: Column(
-                    children: [
-                      buildPlaylistHeader(),
-                      const SizedBox(height: 30),
-                    ],
-                  ),
+                  child: buildPlaylistHeader(),
                 ),
                 SliverList(
                   delegate: SliverChildBuilderDelegate(
@@ -144,59 +139,49 @@ class _PlaylistPageState extends State<PlaylistPage> {
   }
 
   Widget buildPlaylistHeader() {
-    final screenHeight = context.screenSize.height;
     final playlistLength = _playlist['list'].length;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
-          child: Column(
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        children: [
+          _buildPlaylistImage(),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            child: MarqueeWidget(
+              child: Text(
+                _playlist['title'],
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+          if (_playlist['header_desc'] != null)
+            Text(
+              _playlist['header_desc'],
+              style: const TextStyle(
+                fontWeight: FontWeight.w300,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          const SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildPlaylistImage(),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                child: MarqueeWidget(
-                  child: Text(
-                    _playlist['title'],
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+              Text(
+                '[ $playlistLength ${context.l10n!.songs} ]'.toUpperCase(),
+                style: const TextStyle(
+                  fontWeight: FontWeight.w300,
                 ),
               ),
-              if (_playlist['header_desc'] != null)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
-                  child: Text(
-                    _playlist['header_desc'],
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w300,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              SizedBox(height: screenHeight * 0.01),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    '[ $playlistLength ${context.l10n!.songs} ]'.toUpperCase(),
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w300,
-                    ),
-                  ),
-                  buildPlayButton(),
-                ],
-              ),
-              SizedBox(height: screenHeight * 0.01),
+              buildPlayButton(),
             ],
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
