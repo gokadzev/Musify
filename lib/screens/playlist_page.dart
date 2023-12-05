@@ -88,11 +88,18 @@ class _PlaylistPageState extends State<PlaylistPage> {
     return Scaffold(
       appBar: AppBar(
         actions: [
-          if (widget.playlistId != null) _buildLikeButton(),
-          if (widget.playlistId != null) _buildDownloadButton(),
+          if (widget.playlistId != null) ...[
+            _buildLikeButton(),
+            const SizedBox(width: 10),
+            _buildDownloadButton(),
+          ],
+          const SizedBox(width: 10),
           _buildSyncButton(),
-          if (_playlist != null && _playlist['isCustom'] == true)
+          const SizedBox(width: 10),
+          if (_playlist != null && _playlist['isCustom'] == true) ...[
             _buildEditButton(),
+            const SizedBox(width: 10),
+          ],
         ],
       ),
       body: _playlist != null
@@ -206,7 +213,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
           icon: value
               ? const Icon(FluentIcons.heart_24_filled)
               : const Icon(FluentIcons.heart_24_regular),
-          padding: const EdgeInsets.only(left: 20),
           iconSize: 26,
           onPressed: () {
             playlistLikeStatus.value = !playlistLikeStatus.value;
@@ -230,7 +236,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
       icon: const Icon(FluentIcons.arrow_download_24_regular),
-      padding: const EdgeInsets.only(left: 20),
       iconSize: 26,
       onPressed: () {
         downloadSongsFromPlaylist(context, _playlist['list']);
@@ -243,7 +248,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
       icon: const Icon(FluentIcons.arrow_sync_24_filled),
-      padding: const EdgeInsets.only(left: 20),
       iconSize: 26,
       onPressed: _handleSyncPlaylist,
     );
@@ -254,7 +258,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
       icon: const Icon(FluentIcons.edit_24_filled),
-      padding: const EdgeInsets.symmetric(horizontal: 20),
       iconSize: 26,
       onPressed: () => showDialog(
         context: context,
