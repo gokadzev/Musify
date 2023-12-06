@@ -5,17 +5,17 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:musify/extensions/l10n.dart';
 
-void addOrUpdateData(String category, dynamic key, dynamic value) async {
+void addOrUpdateData(String category, String key, dynamic value) async {
   final _box = await _openBox(category);
   await _box.put(key, value);
   if (category == 'cache') {
-    await _box.put(key + '_date', DateTime.now());
+    await _box.put('${key}_date', DateTime.now());
   }
 }
 
 Future getData(
   String category,
-  dynamic key, {
+  String key, {
   dynamic defaultValue,
   Duration cachingDuration = const Duration(days: 30),
 }) async {
@@ -31,7 +31,7 @@ Future getData(
   return await _box.get(key, defaultValue: defaultValue);
 }
 
-void deleteData(String category, dynamic key) async {
+void deleteData(String category, String key) async {
   final _box = await _openBox(category);
   await _box.delete(key);
 }
