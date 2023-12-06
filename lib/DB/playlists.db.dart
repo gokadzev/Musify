@@ -565,5 +565,23 @@ List<Map<String, dynamic>> playlistsDB = [
     'header_desc': 'Play something that is very very vibe-worthy',
     'image': 'https://i.scdn.co/image/ab67706c0000da840419292b019d854be8ba381b',
     'list': [],
+  },
+  {
+    'ytid': 'PL40hokT6YTwKtGpW_nohOY-ejoNsOtJEF',
+    'title': 'Situationship type',
+    'image': 'https://i.scdn.co/image/ab67706c0000da84ea4273ea1242a392cda6e0f2',
+    'list': [],
+  },
+  {
+    'ytid': 'PLPz5VBapcZx2YYFt61NJt8Lctu2PyNRWZ',
+    'title': 'Work From Home',
+    'image': 'https://i.scdn.co/image/ab67706f00000002160ef4face593886b043e12a',
+    'list': [],
+  },
+  {
+    'ytid': 'PL788cqrhfEcYf1KsGlpRVm2YFlX5PZJuL',
+    'title': 'Back in 2016',
+    'image': 'https://i.scdn.co/image/ab67706c0000da841d5bded679b19370b9048c86',
+    'list': [],
   }
 ];
