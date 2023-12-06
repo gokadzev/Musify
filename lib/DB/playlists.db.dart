@@ -583,5 +583,23 @@ List<Map<String, dynamic>> playlistsDB = [
     'title': 'Back in 2016',
     'image': 'https://i.scdn.co/image/ab67706c0000da841d5bded679b19370b9048c86',
     'list': [],
+  },
+  {
+    'ytid': 'PLWl4U8L95nKNHk1NOIDi_05bBKzSFkfq4',
+    'title': 'Mint',
+    'image': 'https://i.scdn.co/image/ab67616d0000b273ae8a81cd333a5ad6afc38a1a',
+    'list': [],
+  },
+  {
+    'ytid': 'PLoTmxgrbHycoNOZj2GwTwPP1rLN2kHMjZ',
+    'title': 'Dance hits',
+    'image': 'https://i.scdn.co/image/ab67706c0000da847f5e28ddc4c4ec1994b2206c',
+    'list': [],
+  },
+  {
+    'ytid': 'PLgzTt0k8mXzGjD1gQXkqC3bE0GzYwBnSD',
+    'title': 'Best travel songs',
+    'image': 'https://i.scdn.co/image/ab67706c0000da84bf5ba94543ec0af839c8df25',
+    'list': [],
   }
 ];
