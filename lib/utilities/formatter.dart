@@ -5,10 +5,12 @@ String formatSongTitle(String title) {
     '[': '',
     ']': '',
     '(': '',
+    ')': '',
     '|': '',
     '&amp;': '&',
     '&#039;': "'",
     '&quot;': '"',
+    'Official Video': '',
   };
 
   replacements.forEach((pattern, replacement) {
