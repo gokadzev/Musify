@@ -67,7 +67,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                       );
                     }
                     return const Icon(
-                      Icons.all_out,
+                      Icons.featured_play_list,
                     );
                   },
                 ),
@@ -96,7 +96,9 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                       .where((element) => element['isAlbum'] == true)
                       .toList();
                 } else {
-                  _playlists = snapshot.data as List;
+                  _playlists = (snapshot.data as List)
+                      .where((element) => element['isAlbum'] != true)
+                      .toList();
                 }
 
                 return GridView.builder(
