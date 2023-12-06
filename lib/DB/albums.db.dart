@@ -145,5 +145,12 @@ List<Map<String, dynamic>> albumsDB = [
     'image': 'https://i.scdn.co/image/ab67616d0000b273c4fee55d7b51479627c31f89',
     'isAlbum': true,
     'list': <Map<String, dynamic>>[],
+  },
+  {
+    'ytid': 'PLfiMjLyNWxeYae8z1QiwSLTK12G_6EQU_',
+    'title': 'Surface Sounds - KALEO',
+    'image': 'https://i.scdn.co/image/ab67616d0000b2735956beefe0c79f85aec384b6',
+    'isAlbum': true,
+    'list': <Map<String, dynamic>>[],
   }
 ];
