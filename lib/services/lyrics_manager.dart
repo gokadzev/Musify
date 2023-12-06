@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 
 class LyricsManager {
   Future<String?> fetchLyrics(String artistName, String title) async {
+    title = title.replaceAll('Lyrics', '').replaceAll('Karaoke', '');
     final lyricsFromParolesNet =
         await _fetchLyricsFromParolesNet(artistName, title);
     if (lyricsFromParolesNet != null) {
@@ -76,6 +77,9 @@ class LyricsManager {
 
   String _lyricsManiaUrl(String input) {
     var result = input.replaceAll(' ', '_').toLowerCase();
+    if (result.isNotEmpty && result.startsWith('_')) {
+      result = result.substring(1);
+    }
     if (result.isNotEmpty && result.endsWith('_')) {
       result = result.substring(0, result.length - 1);
     }
