@@ -426,26 +426,25 @@ Future<AudioOnlyStreamInfo> getSongManifest(String songId) async {
   }
 }
 
+const Duration _cacheDuration = Duration(hours: 12);
+
 Future<String> getSong(String songId, bool isLive) async {
   try {
     final qualitySetting = audioQualitySetting.value;
     final isQualityChanged = qualitySetting != null;
 
-    final cacheKey = isQualityChanged
-        ? 'song_${songId}_${qualitySetting.name}_url'
-        : 'song_${songId}__url';
+    final cacheKey =
+        'song_$songId${isQualityChanged ? '_${qualitySetting.name}' : ''}_url';
 
     final cachedUrl = await getData(
       'cache',
       cacheKey,
-      cachingDuration: const Duration(hours: 12),
+      cachingDuration: _cacheDuration,
     );
 
     if (cachedUrl != null) {
       return cachedUrl;
-    }
-
-    if (isLive) {
+    } else if (isLive) {
       return await getLiveStreamUrl(songId);
     } else {
       return await getAudioUrl(songId, isQualityChanged, cacheKey);
