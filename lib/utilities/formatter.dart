@@ -11,6 +11,9 @@ String formatSongTitle(String title) {
     '&#039;': "'",
     '&quot;': '"',
     'Official Video': '',
+    'Official Music Video': '',
+    'Lyric Video': '',
+    'Lyrics Video': '',
   };
 
   replacements.forEach((pattern, replacement) {
