@@ -19,37 +19,32 @@ class ArtistCube extends StatelessWidget {
   Widget build(BuildContext context) {
     final calculatedSize = MediaQuery.of(context).size.height * 0.25;
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(borderRadius),
-      child: Container(
-        height: calculatedSize,
-        width: calculatedSize,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(borderRadius),
-          color: colorScheme.secondary,
-        ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Icon(
-                FluentIcons.mic_sparkle_24_regular,
-                size: iconSize,
-                color: colorScheme.surface,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: Text(
-                  artist,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ],
+    return Container(
+      height: calculatedSize,
+      width: calculatedSize,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(borderRadius),
+        color: colorScheme.secondary,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Icon(
+            FluentIcons.mic_sparkle_24_regular,
+            size: iconSize,
+            color: colorScheme.surface,
           ),
-        ),
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: Text(
+              artist,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
