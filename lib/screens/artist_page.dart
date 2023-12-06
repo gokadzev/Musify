@@ -22,55 +22,34 @@ class ArtistPage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            ArtistCube(playlist['title']),
+            _buildArtistHeader(),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 12),
-              child: Text(
-                playlist['title'].toString(),
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
+              child: _buildPlayButton(context),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: buildPlayButton(context),
-            ),
-            FutureBuilder(
-              future: fetchSongsList(playlist['title'].toString()),
-              builder: (context, AsyncSnapshot<dynamic> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(35),
-                      child: Spinner(),
-                    ),
-                  );
-                } else if (snapshot.connectionState == ConnectionState.done) {
-                  if (snapshot.hasError || snapshot.data.isEmpty) {
-                    return Center(
-                      child: Text(
-                        '${context.l10n!.nothingFound}!',
-                        style: TextStyle(
-                          color: colorScheme.primary,
-                          fontSize: 18,
-                        ),
-                      ),
-                    );
-                  }
-                  playlist['list'] = snapshot.data;
-                  return buildSongsList(snapshot.data);
-                } else {
-                  return const SizedBox.shrink();
-                }
-              },
-            ),
+            _buildSongsList(),
           ],
         ),
       ),
     );
   }
 
-  Widget buildPlayButton(BuildContext context) {
+  Widget _buildArtistHeader() {
+    return Column(
+      children: <Widget>[
+        ArtistCube(playlist['title']),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          child: Text(
+            playlist['title'].toString(),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPlayButton(BuildContext context) {
     return GestureDetector(
       onTap: () {
         setActivePlaylist(playlist);
@@ -87,24 +66,49 @@ class ArtistPage extends StatelessWidget {
     );
   }
 
-  Widget buildSongsList(List<dynamic> songs) {
-    return SingleChildScrollView(
+  Widget _buildSongsList() {
+    return FutureBuilder(
+      future: fetchSongsList(playlist['title'].toString()),
+      builder: (context, AsyncSnapshot<dynamic> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.all(35),
+              child: Spinner(),
+            ),
+          );
+        } else if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasError || snapshot.data.isEmpty) {
+            return Center(
+              child: Text(
+                '${context.l10n!.nothingFound}!',
+                style: TextStyle(
+                  color: colorScheme.primary,
+                  fontSize: 18,
+                ),
+              ),
+            );
+          }
+          playlist['list'] = snapshot.data;
+          return _buildSongsListView(snapshot.data);
+        } else {
+          return const SizedBox.shrink();
+        }
+      },
+    );
+  }
+
+  Widget _buildSongsListView(List<dynamic> songs) {
+    return ListView.builder(
+      shrinkWrap: true,
       physics: const BouncingScrollPhysics(),
-      child: Column(
-        children: <Widget>[
-          ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: songs.length,
-            itemBuilder: (context, index) {
-              return SongBar(
-                songs[index],
-                true,
-              );
-            },
-          ),
-        ],
-      ),
+      itemCount: songs.length,
+      itemBuilder: (context, index) {
+        return SongBar(
+          songs[index],
+          true,
+        );
+      },
     );
   }
 }
