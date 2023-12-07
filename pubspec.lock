@@ -69,10 +69,10 @@ packages:
     dependency: "direct main"
     description:
       name: background_downloader
-      sha256: "0873a939f5a301872cb7614e12f759fbccef2e3ed0d0d37b540dde7611275b12"
+      sha256: e9aa7ad8dccc5583c8308265a07294da24fd147e1606cf2366974f611568fab8
       url: "https://pub.dev"
     source: hosted
-    version: "7.12.3"
+    version: "8.0.0"
   boolean_selector:
     dependency: transitive
     description:
@@ -247,10 +247,10 @@ packages:
     dependency: "direct dev"
     description:
       name: flutter_native_splash
-      sha256: c4d899312b36e7454bedfd0a4740275837b99e532d81c8477579d8183db1de6c
+      sha256: "17d9671396fb8ec45ad10f4a975eb8a0f70bedf0fdaf0720b31ea9de6da8c4da"
       url: "https://pub.dev"
     source: hosted
-    version: "2.3.6"
+    version: "2.3.7"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:

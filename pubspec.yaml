@@ -14,7 +14,7 @@ environment:
 dependencies:
   audio_service: ^0.18.12
   audio_session: ^0.1.18
-  background_downloader: ^7.12.3
+  background_downloader: ^8.0.0
   cached_network_image: ^3.3.0
   dynamic_color: ^1.6.8
   file_picker: ^6.1.1
@@ -41,7 +41,7 @@ dependencies:
 
 dev_dependencies:
   flutter_launcher_icons: ^0.13.1
-  flutter_native_splash: ^2.3.6
+  flutter_native_splash: ^2.3.7
   flutter_test:
     sdk: flutter
   translations_cleaner: ^0.0.5
