@@ -630,7 +630,7 @@ class MorePage extends StatelessWidget {
                 context.l10n!.downloadAppUpdate,
                 FluentIcons.arrow_download_24_filled,
                 () => {
-                  checkAppUpdates(context, downloadUpdateAutomatically: true),
+                  checkAppUpdates(context),
                 },
               ),
             // CATEGORY: BECOME A SPONSOR

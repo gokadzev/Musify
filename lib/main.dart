@@ -19,7 +19,6 @@ import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/logger_service.dart';
 import 'package:musify/services/router_service.dart';
 import 'package:musify/services/settings_manager.dart';
-import 'package:musify/services/update_manager.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/formatter.dart';
 import 'package:musify/widgets/mini_player.dart';
@@ -172,12 +171,6 @@ class _MusifyState extends State<Musify> {
     } catch (e) {
       logger.log('License Registration Error: $e');
     }
-
-    if (!isFdroidBuild) {
-      unawaited(checkAppUpdates(context));
-    }
-
-    unawaited(checkNecessaryPermissions(context));
   }
 
   @override

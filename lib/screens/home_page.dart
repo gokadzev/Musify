@@ -7,6 +7,7 @@ import 'package:musify/extensions/screen_size.dart';
 import 'package:musify/main.dart';
 import 'package:musify/screens/artist_page.dart';
 import 'package:musify/screens/playlists_page.dart';
+import 'package:musify/services/update_manager.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/widgets/artist_cube.dart';
 import 'package:musify/widgets/marque.dart';
@@ -20,6 +21,15 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    if (!isFdroidBuild) {
+      checkAppUpdates(context);
+    }
+    checkNecessaryPermissions(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -16,28 +16,74 @@ const String downloadUrlKey = 'url';
 const String downloadUrlArm64Key = 'arm64url';
 const String downloadFilename = 'Musify.apk';
 
-Future<void> checkAppUpdates(
-  BuildContext context, {
-  bool downloadUpdateAutomatically = false,
-}) async {
+Future<void> checkAppUpdates(BuildContext context) async {
   try {
     final response = await http.get(Uri.parse(checkUrl));
     if (response.statusCode == 200) {
       final map = json.decode(response.body) as Map<String, dynamic>;
       final latestVersion = map['version'].toString();
       if (isLatestVersionHigher(appVersion, latestVersion)) {
-        if (downloadUpdateAutomatically) {
-          await downloadAppUpdates(map);
-          showToast(
-            context,
-            '${context.l10n!.appUpdateAvailableAndDownloading}!',
-          );
-        } else {
-          showToast(
-            context,
-            '${context.l10n!.appUpdateIsAvailable}!',
-          );
-        }
+        await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    context.l10n!.appUpdateIsAvailable,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'V$latestVersion',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                ],
+              ),
+              actions: <Widget>[
+                ButtonBar(
+                  alignment: MainAxisAlignment.center,
+                  children: [
+                    TextButton(
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 12,
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        context.l10n!.cancel.toUpperCase(),
+                      ),
+                    ),
+                    TextButton(
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 12,
+                        ),
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        foregroundColor: Theme.of(context).colorScheme.surface,
+                      ),
+                      onPressed: () {
+                        downloadAppUpdates(map);
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        context.l10n!.download.toUpperCase(),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
+        );
       }
     } else {
       logger.log(
@@ -56,8 +102,16 @@ Future<void> downloadAppUpdates(Map<String, dynamic> map) async {
       url: dlUrl,
       filename: downloadFilename,
     );
-    await FileDownloader().download(task);
-    await FileDownloader().moveToSharedStorage(task, SharedStorage.downloads);
+
+    await FileDownloader().download(
+      task,
+      onStatus: (status) async {
+        if (status == TaskStatus.complete) {
+          await FileDownloader()
+              .moveToSharedStorage(task, SharedStorage.downloads);
+        }
+      },
+    );
   } catch (e) {
     logger.log('Error in downloadAppUpdates: $e');
   }
