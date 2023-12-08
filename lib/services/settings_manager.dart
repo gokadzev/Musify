@@ -4,11 +4,11 @@ import 'package:musify/enums/quality_enum.dart';
 
 // Preferences
 
-final prefferedFileExtension = ValueNotifier<String>(
+final preferredFileExtension = ValueNotifier<String>(
   Hive.box('settings').get('audioFileType', defaultValue: 'mp3') as String,
 );
 
-final prefferedDownloadMode = ValueNotifier<String>(
+final preferredDownloadMode = ValueNotifier<String>(
   Hive.box('settings').get('downloadMode', defaultValue: 'normal') as String,
 );
 
@@ -21,11 +21,11 @@ final useSystemColor = ValueNotifier<bool>(
 );
 
 final sponsorBlockSupport = ValueNotifier<bool>(
-  Hive.box('settings').get('SponsorBlockSupport', defaultValue: false),
+  Hive.box('settings').get('sponsorBlockSupport', defaultValue: false),
 );
 
 final audioQualitySetting = ValueNotifier<AudioQuality?>(
-  Hive.box('settings').get('AudioQuality', defaultValue: null),
+  Hive.box('settings').get('audioQuality', defaultValue: null),
 );
 
 // Non-Storage Notifiers

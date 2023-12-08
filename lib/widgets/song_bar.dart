@@ -139,7 +139,7 @@ class SongBar extends StatelessWidget {
                     IconButton(
                       color: Theme.of(context).colorScheme.primary,
                       icon: const Icon(FluentIcons.arrow_download_24_regular),
-                      onPressed: () => prefferedDownloadMode.value == 'normal'
+                      onPressed: () => preferredDownloadMode.value == 'normal'
                           ? downloadSong(context, song)
                           : downloadSongFaster(context, song),
                     ),

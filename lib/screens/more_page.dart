@@ -370,7 +370,7 @@ class MorePage extends StatelessWidget {
                             return Padding(
                               padding: const EdgeInsets.all(10),
                               child: Card(
-                                elevation: prefferedFileExtension.value ==
+                                elevation: preferredFileExtension.value ==
                                         availableFileTypes[index]
                                     ? 0
                                     : 4,
@@ -384,7 +384,7 @@ class MorePage extends StatelessWidget {
                                       'audioFileType',
                                       availableFileTypes[index],
                                     );
-                                    prefferedFileExtension.value =
+                                    preferredFileExtension.value =
                                         availableFileTypes[index];
                                     showToast(
                                       context,
@@ -445,7 +445,7 @@ class MorePage extends StatelessWidget {
                                   return Padding(
                                     padding: const EdgeInsets.all(10),
                                     child: Card(
-                                      elevation: prefferedDownloadMode.value ==
+                                      elevation: preferredDownloadMode.value ==
                                               availableModes[index]
                                           ? 0
                                           : 4,
@@ -459,7 +459,7 @@ class MorePage extends StatelessWidget {
                                             'downloadMode',
                                             availableModes[index],
                                           );
-                                          prefferedDownloadMode.value =
+                                          preferredDownloadMode.value =
                                               availableModes[index];
                                           showToast(
                                             context,

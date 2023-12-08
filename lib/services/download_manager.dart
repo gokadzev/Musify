@@ -14,7 +14,7 @@ Future<void> downloadSong(BuildContext context, dynamic song) async {
   try {
     final songName = _getFormattedSongName(song);
 
-    final filename = '$songName.${prefferedFileExtension.value}';
+    final filename = '$songName.${preferredFileExtension.value}';
 
     final audio = await getSong(
       song['ytid'].toString(),
@@ -49,7 +49,7 @@ Future<void> downloadSongFaster(BuildContext context, dynamic song) async {
   try {
     final songName = _getFormattedSongName(song);
 
-    final filename = '$songName.${prefferedFileExtension.value}';
+    final filename = '$songName.${preferredFileExtension.value}';
     final documentsDir = await getApplicationDocumentsDirectory();
 
     final audioManifest = await getSongManifest(song['ytid'].toString());
