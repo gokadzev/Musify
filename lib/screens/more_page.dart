@@ -592,8 +592,27 @@ class MorePage extends StatelessWidget {
               context.l10n!.backupUserData,
               FluentIcons.cloud_sync_24_filled,
               () => {
-                backupData(context).then(
-                  (response) => showToast(context, response),
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      content: Text(context.l10n!.folderRestrictions),
+                      actions: <Widget>[
+                        TextButton(
+                          child: Text(
+                            context.l10n!.understand.toUpperCase(),
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                ).then(
+                  (value) => backupData(context).then(
+                    (response) => showToast(context, response),
+                  ),
                 ),
               },
             ),
