@@ -1,0 +1,14 @@
+Bug fixes
+
+- Fixed overflow issue on the now playing page
+
+
+Enhancements
+
+- Re-Added download support
+- Added Hindi language
+- Improved lyrics service
+- Improved UI
+- Improved theming
+- Improved app updater
+- Made various quality and performance improvements for app stability and speed
