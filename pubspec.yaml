@@ -14,11 +14,11 @@ environment:
 dependencies:
   audio_service: ^0.18.12
   audio_session: ^0.1.18
-  background_downloader: ^8.0.0
+  background_downloader: ^8.0.1
   cached_network_image: ^3.3.0
   dynamic_color: ^1.6.8
   file_picker: ^6.1.1
-  fluentui_system_icons: ^1.1.222
+  fluentui_system_icons: ^1.1.223
   flutter:
     sdk: flutter
   flutter_localizations:
@@ -36,12 +36,12 @@ dependencies:
   receive_sharing_intent:
     path: ./packages/receive_sharing_intent
   rxdart: ^0.27.7
-  url_launcher: ^6.2.1
+  url_launcher: ^6.2.2
   youtube_explode_dart: ^2.0.2
 
 dev_dependencies:
   flutter_launcher_icons: ^0.13.1
-  flutter_native_splash: ^2.3.7
+  flutter_native_splash: ^2.3.8
   flutter_test:
     sdk: flutter
   translations_cleaner: ^0.0.5
