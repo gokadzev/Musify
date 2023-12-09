@@ -5,7 +5,7 @@ Bug fixes
 
 Enhancements
 
-- Added 8 albums and 6 playlists
+- Added 10 albums and 6 playlists
 - Re-Added download support
 - Added Hindi language
 - Improved lyrics service

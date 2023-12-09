@@ -187,5 +187,19 @@ List<Map<String, dynamic>> albumsDB = [
     'image': 'https://i.scdn.co/image/ab67616d0000b27394203dd82d27b494c777d07c',
     'isAlbum': true,
     'list': <Map<String, dynamic>>[],
+  },
+  {
+    'ytid': 'OLAK5uy_n6zWDEznvX5Lz6Q8SMCeiEcJk87sKh0XI',
+    'title': 'Ferxxocalipsis - Feid',
+    'image': 'https://i.scdn.co/image/ab67616d0000b273f1aad814a40ec7419c234242',
+    'isAlbum': true,
+    'list': <Map<String, dynamic>>[],
+  },
+  {
+    'ytid': 'PLbxg9IbgCVkThXxuKK8bkMw3WUt5gqrts',
+    'title': 'Everyday Is Christmas - Sia',
+    'image': 'https://i.scdn.co/image/ab67616d0000b273d1410c1372fab1e516328fa8',
+    'isAlbum': true,
+    'list': <Map<String, dynamic>>[],
   }
 ];
