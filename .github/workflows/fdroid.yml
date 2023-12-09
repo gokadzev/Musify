@@ -68,4 +68,4 @@ jobs:
           asset_name: Musify-fdroid.apk
           tag: ${{ github.ref }}
           prerelease: false
-          overwrite: false
+          overwrite: true
