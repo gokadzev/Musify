@@ -37,8 +37,6 @@ Map<String, dynamic> returnSongLayout(int index, Video song) => {
       'isLive': song.isLive,
     };
 
-String? getSongId(String url) => VideoId.parseVideoId(url);
-
 String formatDuration(int milliseconds) {
   final duration = Duration(milliseconds: milliseconds);
 

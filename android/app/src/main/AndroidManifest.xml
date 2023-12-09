@@ -40,21 +40,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-            <!-- Intent filter for handling text sharing -->
-            <intent-filter>
-                <action android:name="android.intent.action.SEND" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="text/*" />
-            </intent-filter>
-
-            <!-- Intent filter for handling YouTube links -->
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="http" android:host="www.youtube.com|m.youtube.com|youtube.com|youtu.be" />
-                <data android:scheme="https" android:host="www.youtube.com|m.youtube.com|youtube.com|youtu.be" />
-            </intent-filter>
         </activity>
 
         <!-- Flutter embedding meta-data -->

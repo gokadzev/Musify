@@ -11,7 +11,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/audio_quality.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/services/audio_service.dart';
@@ -20,12 +19,9 @@ import 'package:musify/services/logger_service.dart';
 import 'package:musify/services/router_service.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/style/app_themes.dart';
-import 'package:musify/utilities/formatter.dart';
 import 'package:musify/widgets/mini_player.dart';
-import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
 late MusifyAudioHandler audioHandler;
-late StreamSubscription<String?> sharingIntentSubscription;
 
 final logger = Logger();
 
@@ -136,29 +132,6 @@ class _MusifyState extends State<Musify> {
 
     GoogleFonts.config.allowRuntimeFetching = false;
 
-    sharingIntentSubscription = ReceiveSharingIntent.getTextStream().listen(
-      (String? value) async {
-        if (value == null) return;
-
-        final regex = RegExp(r'(youtube\.com|youtu\.be)');
-        if (!regex.hasMatch(value)) return;
-
-        final songId = getSongId(value);
-        if (songId == null) return;
-
-        try {
-          final song = await getSongDetails(0, songId);
-
-          await audioHandler.playSong(song);
-        } catch (e) {
-          logger.log('Error while playing shared song: $e');
-        }
-      },
-      onError: (err) {
-        logger.log('getLinkStream error: $err');
-      },
-    );
-
     try {
       LicenseRegistry.addLicense(() async* {
         final license =
@@ -176,7 +149,6 @@ class _MusifyState extends State<Musify> {
   @override
   void dispose() {
     Hive.close();
-    sharingIntentSubscription.cancel();
     super.dispose();
   }
 
