@@ -18,6 +18,14 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+
+      # Extract version from commit message
+      - name: Extract version
+        id: extract_version
+        run: |
+          version=$(echo ${{ github.event.head_commit.message }} | grep -oP '(?<=Update: v)\d+\.\d+\.\d+')
+          echo "version=${version}" >> $GITHUB_OUTPUT
+
       # Setup Java environment in order to build the Android app.
       - uses: actions/setup-java@v3
         with:
@@ -66,6 +74,6 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: build/app/outputs/flutter-apk/app-fdroid-release.apk
           asset_name: Musify-fdroid.apk
-          tag: ${{ github.ref }}
+          tag: ${{ steps.extract_version.outputs.version }}
           prerelease: false
-          overwrite: false
+          overwrite: true

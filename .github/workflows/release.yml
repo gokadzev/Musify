@@ -83,7 +83,7 @@ jobs:
           asset_name: Musify-arm64-v8a.apk
           tag: ${{ steps.extract_version.outputs.version }}
           prerelease: false
-          overwrite: false
+          overwrite: true
 
       # Build universal APK
       - name: Build universal APK
@@ -99,4 +99,4 @@ jobs:
           asset_name: Musify.apk
           tag: ${{ steps.extract_version.outputs.version }}
           prerelease: false
-          overwrite: false
+          overwrite: true
