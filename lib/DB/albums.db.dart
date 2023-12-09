@@ -152,5 +152,40 @@ List<Map<String, dynamic>> albumsDB = [
     'image': 'https://i.scdn.co/image/ab67616d0000b2735956beefe0c79f85aec384b6',
     'isAlbum': true,
     'list': <Map<String, dynamic>>[],
+  },
+  {
+    'ytid': 'OLAK5uy_lYFD0sDFxZ8cr9ttczB7pH1zYc8r16kkg',
+    'title': 'GOLDEN - Jung Kook',
+    'image': 'https://i.scdn.co/image/ab67616d0000b273741fd4807f442af3f7359316',
+    'isAlbum': true,
+    'list': <Map<String, dynamic>>[],
+  },
+  {
+    'ytid': 'PLWOP54w8bbgM2Qlyks0Bt6GQOODjjfJY-',
+    'title': 'Christmas - Michael Bublé',
+    'image': 'https://i.scdn.co/image/ab67616d0000b27395517befb15ad5d63af701ab',
+    'isAlbum': true,
+    'list': <Map<String, dynamic>>[],
+  },
+  {
+    'ytid': 'OLAK5uy_lw2-Cu3aRY2Tkfi28_79m05SkBF_tlufg',
+    'title': 'Midnights - Taylor Swift',
+    'image': 'https://i.scdn.co/image/ab67616d0000b273bb54dde68cd23e2a268ae0f5',
+    'isAlbum': true,
+    'list': <Map<String, dynamic>>[],
+  },
+  {
+    'ytid': 'OLAK5uy_mFp59TqeoWXnMKVRThBlLdVyVXz0pjaYk',
+    'title': 'Merry Christmas - Mariah Carey',
+    'image': 'https://i.scdn.co/image/ab67616d0000b2734246e3158421f5abb75abc4f',
+    'isAlbum': true,
+    'list': <Map<String, dynamic>>[],
+  },
+  {
+    'ytid': 'OLAK5uy_lb5kz8gsKmocY458o2B5FUAtmuG3sNcH4',
+    'title': 'Scarlet - Doja Cat',
+    'image': 'https://i.scdn.co/image/ab67616d0000b27394203dd82d27b494c777d07c',
+    'isAlbum': true,
+    'list': <Map<String, dynamic>>[],
   }
 ];
