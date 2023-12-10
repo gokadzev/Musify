@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/extensions/screen_size.dart';
-import 'package:musify/screens/user_added_playlists_page.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/download_manager.dart';
 import 'package:musify/style/app_themes.dart';
@@ -87,6 +86,11 @@ class _PlaylistPageState extends State<PlaylistPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () =>
+              Navigator.pop(context, widget.playlistData == _playlist),
+        ),
         actions: [
           if (widget.playlistId != null) ...[
             _buildLikeButton(),
@@ -314,16 +318,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
                     }
 
                     Navigator.pop(context);
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => UserPlaylistsPage(),
-                      ),
-                      (route) =>
-                          route.isCurrent &&
-                          route is MaterialPageRoute &&
-                          route.settings.name == null,
-                    );
                   });
                 },
               ),

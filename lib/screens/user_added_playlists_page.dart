@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
+import 'package:musify/screens/playlist_page.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/widgets/playlist_cube.dart';
@@ -160,6 +161,21 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                     final ytid = playlist['ytid'];
 
                     return GestureDetector(
+                      onTap:
+                          playlist['isCustom'] != null && playlist['isCustom']
+                              ? () async {
+                                  final result = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          PlaylistPage(playlistData: playlist),
+                                    ),
+                                  );
+                                  if (result == false) {
+                                    setState(() {});
+                                  }
+                                }
+                              : null,
                       onLongPress: () {
                         showDialog(
                           context: context,
@@ -203,6 +219,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                             playlist['isCustom'] != null && playlist['isCustom']
                                 ? playlist
                                 : null,
+                        onClickOpen: playlist['isCustom'] == null,
                       ),
                     );
                   },
