@@ -217,12 +217,13 @@ class NowPlayingPage extends StatelessWidget {
                                 ? FluentIcons.speaker_mute_24_filled
                                 : FluentIcons.speaker_mute_24_regular,
                             colorScheme.primary,
-                            constraints.maxWidth * 0.05,
+                            20,
                             audioHandler.mute,
                           );
                         },
                       ),
                       IconButton(
+                        iconSize: 20,
                         icon: Icon(
                           Icons.add,
                           color: colorScheme.primary,
@@ -244,7 +245,7 @@ class NowPlayingPage extends StatelessWidget {
                             ? FluentIcons.arrow_shuffle_24_filled
                             : FluentIcons.arrow_shuffle_off_24_filled,
                         colorScheme.primary,
-                        constraints.maxWidth * 0.05,
+                        20,
                         () {
                           audioHandler.setShuffleMode(
                             shuffleNotifier.value
@@ -262,7 +263,9 @@ class NowPlayingPage extends StatelessWidget {
                           ? colorScheme.primary
                           : colorScheme.primary.withOpacity(0.5),
                     ),
-                    iconSize: constraints.maxWidth * 0.09,
+                    iconSize: constraints.maxWidth * 0.09 < 35
+                        ? constraints.maxWidth * 0.09
+                        : 35,
                     onPressed: () async {
                       await audioHandler.skipToPrevious();
                     },
@@ -313,7 +316,9 @@ class NowPlayingPage extends StatelessWidget {
                           ? colorScheme.primary
                           : colorScheme.primary.withOpacity(0.5),
                     ),
-                    iconSize: constraints.maxWidth * 0.09,
+                    iconSize: constraints.maxWidth * 0.09 < 35
+                        ? constraints.maxWidth * 0.09
+                        : 35,
                     onPressed: () async {
                       await audioHandler.skipToNext();
                     },
@@ -327,7 +332,7 @@ class NowPlayingPage extends StatelessWidget {
                             ? FluentIcons.arrow_repeat_1_24_filled
                             : FluentIcons.arrow_repeat_all_off_24_filled,
                         colorScheme.primary,
-                        constraints.maxWidth * 0.05,
+                        20,
                         () => audioHandler.setRepeatMode(
                           value
                               ? AudioServiceRepeatMode.none
@@ -348,7 +353,7 @@ class NowPlayingPage extends StatelessWidget {
                             songLikeStatus.value
                                 ? colorScheme.primary
                                 : colorScheme.primary,
-                            constraints.maxWidth * 0.05,
+                            20,
                             () {
                               updateSongLikeStatus(
                                 audioId,
@@ -367,7 +372,7 @@ class NowPlayingPage extends StatelessWidget {
                                 ? FluentIcons.music_note_2_play_20_filled
                                 : FluentIcons.music_note_2_play_20_regular,
                             colorScheme.primary,
-                            constraints.maxWidth * 0.05,
+                            20,
                             audioHandler.changeAutoPlayNextStatus,
                           );
                         },
