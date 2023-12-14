@@ -68,38 +68,35 @@ class NowPlayingPage extends StatelessWidget {
   }
 
   Widget buildArtwork(Size size, MediaItem metadata) {
-    return FractionallySizedBox(
-      widthFactor: 0.80,
-      child: AspectRatio(
-        aspectRatio: 1,
-        child: CachedNetworkImage(
-          imageUrl: metadata.artUri.toString(),
-          imageBuilder: (context, imageProvider) => DecoratedBox(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              image: DecorationImage(
-                image: imageProvider,
-                fit: BoxFit.cover,
-              ),
-            ),
+    const _padding = 90;
+    return CachedNetworkImage(
+      width: size.width - _padding,
+      height: size.width - _padding,
+      imageUrl: metadata.artUri.toString(),
+      imageBuilder: (context, imageProvider) => DecoratedBox(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          image: DecorationImage(
+            image: imageProvider,
+            fit: BoxFit.cover,
           ),
-          placeholder: (context, url) => const Spinner(),
-          errorWidget: (context, url, error) => DecoratedBox(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: const Color.fromARGB(30, 255, 255, 255),
+        ),
+      ),
+      placeholder: (context, url) => const Spinner(),
+      errorWidget: (context, url, error) => DecoratedBox(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: colorScheme.secondary,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Icon(
+              FluentIcons.music_note_1_24_regular,
+              size: size.width / 8,
+              color: colorScheme.surface,
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Icon(
-                  FluentIcons.music_note_1_24_regular,
-                  size: size.width / 8,
-                  color: colorScheme.primary,
-                ),
-              ],
-            ),
-          ),
+          ],
         ),
       ),
     );
