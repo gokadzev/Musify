@@ -72,15 +72,21 @@ class NowPlayingPage extends StatelessWidget {
     const padding = 90;
     final imageSize = size.width - padding;
 
-    return CachedNetworkImage(
-      width: imageSize,
-      height: imageSize,
-      imageUrl: metadata.artUri.toString(),
-      imageBuilder: (context, imageProvider) =>
-          _buildImageDecoration(imageProvider),
-      placeholder: (context, url) => const Spinner(),
-      errorWidget: (context, url, error) => NullArtworkWidget(
-        iconSize: size.width / 8,
+    return ConstrainedBox(
+      constraints: const BoxConstraints(
+        maxWidth: 300,
+        maxHeight: 300,
+      ),
+      child: CachedNetworkImage(
+        width: imageSize,
+        height: imageSize,
+        imageUrl: metadata.artUri.toString(),
+        imageBuilder: (context, imageProvider) =>
+            _buildImageDecoration(imageProvider),
+        placeholder: (context, url) => const Spinner(),
+        errorWidget: (context, url, error) => NullArtworkWidget(
+          iconSize: size.width / 8,
+        ),
       ),
     );
   }
