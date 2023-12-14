@@ -84,6 +84,12 @@ img {
 .logo {
   max-width: 80px;
 }
+.custom-flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .numofdownloads {
   background: -webkit-linear-gradient(
     297deg,
@@ -629,7 +635,7 @@ a.btn {
   .navbar .hamburger {
     display: block;
     position: absolute;
-    top: 0;
+    top: -25px;
     right: 0;
     z-index: 999;
     cursor: pointer;
@@ -647,9 +653,6 @@ a.btn {
   }
 }
 @media only screen and (max-width: 599px) {
-  .navbar .hamburger {
-    top: -40px;
-  }
   .btn.btn-medium {
     font-size: 0.8em;
   }
