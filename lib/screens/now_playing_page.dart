@@ -14,6 +14,7 @@ import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/formatter.dart';
 import 'package:musify/utilities/mediaitem.dart';
 import 'package:musify/widgets/marque.dart';
+import 'package:musify/widgets/no_artwork_cube.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/spinner.dart';
 
@@ -78,7 +79,9 @@ class NowPlayingPage extends StatelessWidget {
       imageBuilder: (context, imageProvider) =>
           _buildImageDecoration(imageProvider),
       placeholder: (context, url) => const Spinner(),
-      errorWidget: (context, url, error) => _buildErrorWidget(size),
+      errorWidget: (context, url, error) => NullArtworkWidget(
+        iconSize: size.width / 8,
+      ),
     );
   }
 
@@ -90,25 +93,6 @@ class NowPlayingPage extends StatelessWidget {
           image: imageProvider,
           fit: BoxFit.cover,
         ),
-      ),
-    );
-  }
-
-  Widget _buildErrorWidget(Size size) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: colorScheme.secondary,
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Icon(
-            FluentIcons.music_note_1_24_regular,
-            size: size.width / 8,
-            color: colorScheme.surface,
-          ),
-        ],
       ),
     );
   }

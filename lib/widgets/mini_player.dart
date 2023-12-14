@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:musify/main.dart';
 import 'package:musify/screens/now_playing_page.dart';
 import 'package:musify/style/app_themes.dart';
+import 'package:musify/widgets/no_artwork_cube.dart';
 
 class MiniPlayer extends StatelessWidget {
   MiniPlayer({required this.metadata});
@@ -70,7 +71,9 @@ class MiniPlayer extends StatelessWidget {
           fit: BoxFit.cover,
           width: 55,
           height: 55,
-          errorWidget: (context, url, error) => _buildNullArtworkWidget(),
+          errorWidget: (context, url, error) => const NullArtworkWidget(
+            iconSize: 30,
+          ),
         ),
       ),
     );
@@ -106,24 +109,6 @@ class MiniPlayer extends StatelessWidget {
         : text;
   }
 }
-
-Widget _buildNullArtworkWidget() => ClipRRect(
-      borderRadius: BorderRadius.circular(8),
-      child: Container(
-        width: 55,
-        height: 55,
-        decoration: BoxDecoration(
-          color: colorScheme.secondary,
-        ),
-        child: const Center(
-          child: Icon(
-            FluentIcons.music_note_1_24_regular,
-            size: 30,
-            color: Colors.white,
-          ),
-        ),
-      ),
-    );
 
 Widget _buildPlaybackIconButton(PlaybackState? playerState) {
   final processingState = playerState?.processingState;
