@@ -222,13 +222,11 @@ class NowPlayingPage extends StatelessWidget {
                           );
                         },
                       ),
-                      IconButton(
-                        iconSize: 20,
-                        icon: Icon(
-                          Icons.add,
-                          color: colorScheme.primary,
-                        ),
-                        onPressed: () {
+                      customIconButton(
+                        Icons.add,
+                        colorScheme.primary,
+                        20,
+                        () {
                           _showAddToPlaylistDialog(
                             context,
                             mediaItemToMap(mediaItem),
