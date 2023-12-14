@@ -68,36 +68,47 @@ class NowPlayingPage extends StatelessWidget {
   }
 
   Widget buildArtwork(Size size, MediaItem metadata) {
-    const _padding = 90;
+    const padding = 90;
+    final imageSize = size.width - padding;
+
     return CachedNetworkImage(
-      width: size.width - _padding,
-      height: size.width - _padding,
+      width: imageSize,
+      height: imageSize,
       imageUrl: metadata.artUri.toString(),
-      imageBuilder: (context, imageProvider) => DecoratedBox(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          image: DecorationImage(
-            image: imageProvider,
-            fit: BoxFit.cover,
-          ),
+      imageBuilder: (context, imageProvider) =>
+          _buildImageDecoration(imageProvider),
+      placeholder: (context, url) => const Spinner(),
+      errorWidget: (context, url, error) => _buildErrorWidget(size),
+    );
+  }
+
+  Widget _buildImageDecoration(ImageProvider<Object> imageProvider) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        image: DecorationImage(
+          image: imageProvider,
+          fit: BoxFit.cover,
         ),
       ),
-      placeholder: (context, url) => const Spinner(),
-      errorWidget: (context, url, error) => DecoratedBox(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: colorScheme.secondary,
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Icon(
-              FluentIcons.music_note_1_24_regular,
-              size: size.width / 8,
-              color: colorScheme.surface,
-            ),
-          ],
-        ),
+    );
+  }
+
+  Widget _buildErrorWidget(Size size) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: colorScheme.secondary,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Icon(
+            FluentIcons.music_note_1_24_regular,
+            size: size.width / 8,
+            color: colorScheme.surface,
+          ),
+        ],
       ),
     );
   }
