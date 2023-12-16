@@ -113,7 +113,7 @@ Future<List<dynamic>> getUserPlaylists() async {
 }
 
 String addUserPlaylist(String playlistId, BuildContext context) {
-  if (playlistId.length != 34) {
+  if (playlistId.startsWith('http://') || playlistId.startsWith('https://')) {
     return '${context.l10n!.notYTlist}!';
   } else {
     userPlaylists.add(playlistId);
