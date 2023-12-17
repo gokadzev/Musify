@@ -45,9 +45,6 @@ final currentLikedSongsLength = ValueNotifier<int>(userLikedSongsList.length);
 final currentLikedPlaylistsLength =
     ValueNotifier<int>(userLikedPlaylists.length);
 
-final currentRecentlyPlayedLength =
-    ValueNotifier<int>(userRecentlyPlayed.length);
-
 final lyrics = ValueNotifier<String?>(null);
 String? lastFetchedLyrics;
 

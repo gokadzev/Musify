@@ -1,4 +1,4 @@
-import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:musify/enums/quality_enum.dart';
 
 class AudioQualityAdapter extends TypeAdapter<AudioQuality> {
