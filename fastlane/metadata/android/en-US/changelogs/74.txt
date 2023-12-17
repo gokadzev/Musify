@@ -6,5 +6,5 @@ Bug fixes
 Enhancements
 
 - Improved mini player (swipe up to expand)
-- Update Portuguese translation
+- Updated Portuguese translation
 - Made various quality and performance improvements for app stability and speed
