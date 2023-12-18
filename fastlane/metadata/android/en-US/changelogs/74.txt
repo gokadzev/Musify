@@ -1,7 +1,6 @@
 Bug fixes
 
-
-
+- Fixed the issue of adding some playlists
 
 Enhancements
 
