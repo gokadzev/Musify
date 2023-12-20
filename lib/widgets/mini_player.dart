@@ -75,32 +75,39 @@ class MiniPlayer extends StatelessWidget {
   Widget _buildArtwork() {
     return Padding(
       padding: const EdgeInsets.only(top: 7, bottom: 7, right: 15),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(8),
-        child: metadata.extras?['isOffline']
-            ? SizedBox(
-                width: 55,
-                height: 55,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    image: DecorationImage(
-                      image: FileImage(File(metadata.artUri.toString())),
-                      fit: BoxFit.cover,
+      child:
+          metadata.extras?['isOffline'] != null && metadata.extras?['isOffline']
+              ? SizedBox(
+                  width: 55,
+                  height: 55,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      image: DecorationImage(
+                        image: FileImage(File(metadata.artUri.toString())),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                )
+              : CachedNetworkImage(
+                  imageUrl: metadata.artUri.toString(),
+                  fit: BoxFit.cover,
+                  width: 55,
+                  height: 55,
+                  errorWidget: (context, url, error) => const NullArtworkWidget(
+                    iconSize: 30,
+                  ),
+                  imageBuilder: (context, imageProvider) => DecoratedBox(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      image: DecorationImage(
+                        image: imageProvider,
+                        centerSlice: const Rect.fromLTRB(1, 1, 1, 1),
+                      ),
                     ),
                   ),
                 ),
-              )
-            : CachedNetworkImage(
-                imageUrl: metadata.artUri.toString(),
-                fit: BoxFit.cover,
-                width: 55,
-                height: 55,
-                errorWidget: (context, url, error) => const NullArtworkWidget(
-                  iconSize: 30,
-                ),
-              ),
-      ),
     );
   }
 
