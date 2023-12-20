@@ -14,6 +14,8 @@ class MiniPlayer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var _isHandlingSwipe = false;
+
     return GestureDetector(
       onVerticalDragUpdate: (details) {
         if (details.primaryDelta! < 0) {
@@ -23,6 +25,23 @@ class MiniPlayer extends StatelessWidget {
               builder: (context) => const NowPlayingPage(),
             ),
           );
+        }
+      },
+      onHorizontalDragUpdate: (details) {
+        if (details.primaryDelta! > 0) {
+          if (!_isHandlingSwipe) {
+            _isHandlingSwipe = true;
+            audioHandler.skipToPrevious().whenComplete(() {
+              _isHandlingSwipe = false;
+            });
+          }
+        } else if (details.primaryDelta! < 0) {
+          if (!_isHandlingSwipe) {
+            _isHandlingSwipe = true;
+            audioHandler.skipToNext().whenComplete(() {
+              _isHandlingSwipe = false;
+            });
+          }
         }
       },
       child: Container(

@@ -1,0 +1,7 @@
+Bug fixes
+
+
+Enhancements
+
+- Improved mini player (Swipe left to skip to the previous track and swipe right to skip to the next track)
+- Made various quality and performance improvements for app stability and speed
