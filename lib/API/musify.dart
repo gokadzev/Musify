@@ -557,6 +557,9 @@ Future<void> makeSongOffline(dynamic song) async {
   final _song = song;
   _song['artworkPath'] = _artworkFile.path;
   _song['audioPath'] = _audioFile.path;
+  _song['highResImage'] = _artworkFile.path;
+  _song['lowResImage'] = _artworkFile.path;
+
   userOfflineSongs.add(_song);
   addOrUpdateData('user', 'offlineSongs', userOfflineSongs);
 }

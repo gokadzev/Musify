@@ -30,6 +30,7 @@ MediaItem mapToMediaItem(Map song, String songUrl) => MediaItem(
         'lowResImage': song['lowResImage'],
         'ytid': song['ytid'],
         'isLive': song['isLive'],
+        'isOffline': song['isOffline'],
       },
     );
 
