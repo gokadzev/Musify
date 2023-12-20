@@ -31,6 +31,7 @@ MediaItem mapToMediaItem(Map song, String songUrl) => MediaItem(
         'ytid': song['ytid'],
         'isLive': song['isLive'],
         'isOffline': song['isOffline'],
+        'artWorkPath': song['highResImage'].toString(),
       },
     );
 
