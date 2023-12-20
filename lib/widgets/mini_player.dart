@@ -75,7 +75,7 @@ class MiniPlayer extends StatelessWidget {
   Widget _buildArtwork() {
     return Padding(
       padding: const EdgeInsets.only(top: 7, bottom: 7, right: 15),
-      child: metadata.extras?['isOffline'] ?? false
+      child: metadata.artUri?.scheme == 'file'
           ? SizedBox(
               width: 55,
               height: 55,

@@ -79,7 +79,7 @@ class NowPlayingPage extends StatelessWidget {
         maxWidth: 300,
         maxHeight: 300,
       ),
-      child: metadata.extras?['isOffline'] ?? false
+      child: metadata.artUri?.scheme == 'file'
           ? SizedBox(
               width: imageSize,
               height: imageSize,

@@ -556,13 +556,12 @@ void makeSongOffline(dynamic song) async {
 
   if (artworkFile != null) {
     song['artworkPath'] = artworkFile.path;
-    song['audioPath'] = _audioFile.path;
     song['highResImage'] = artworkFile.path;
     song['lowResImage'] = artworkFile.path;
-
-    userOfflineSongs.add(song);
-    addOrUpdateData('user', 'offlineSongs', userOfflineSongs);
   }
+  song['audioPath'] = _audioFile.path;
+  userOfflineSongs.add(song);
+  addOrUpdateData('user', 'offlineSongs', userOfflineSongs);
 }
 
 void removeSongFromOffline(dynamic songId) async {

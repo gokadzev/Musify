@@ -63,7 +63,9 @@ class SongBar extends StatelessWidget {
             padding: const EdgeInsets.all(8),
             child: Row(
               children: [
-                if (song['isOffline'] != null && song['isOffline'] == true)
+                if (song['isOffline'] != null &&
+                    song['isOffline'] == true &&
+                    song['artworkPath'] != null)
                   SizedBox(
                     width: 60,
                     height: 60,
