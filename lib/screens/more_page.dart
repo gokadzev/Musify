@@ -10,6 +10,7 @@ import 'package:musify/screens/recently_played_page.dart';
 import 'package:musify/screens/search_page.dart';
 import 'package:musify/screens/user_liked_playlists_page.dart';
 import 'package:musify/screens/user_liked_songs_page.dart';
+import 'package:musify/screens/user_offline_songs_page.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/services/update_manager.dart';
@@ -73,6 +74,18 @@ class MorePage extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => const UserLikedSongsPage(),
+                  ),
+                ),
+              },
+            ),
+            SettingBar(
+              'User offline songs',
+              FluentIcons.cellular_off_24_filled,
+              () => {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const UserOfflineSongsPage(),
                   ),
                 ),
               },

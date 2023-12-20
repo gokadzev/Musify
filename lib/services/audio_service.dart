@@ -205,11 +205,21 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   Future<void> playSong(Map song) async {
     try {
-      final songUrl = await getSong(
-        song['ytid'],
-        song['isLive'],
-      );
-      await checkIfSponsorBlockIsAvailable(song, songUrl);
+      if (song['isOffline'] != null) {
+        song['highResImage'] = song['artworkPath'];
+        song['lowResImage'] = song['artworkPath'];
+        final _audioSource = AudioSource.uri(
+          Uri.parse(song['audioPath']),
+          tag: mapToMediaItem(song, song['audioPath']),
+        );
+        await audioPlayer.setAudioSource(_audioSource);
+      } else {
+        final songUrl = await getSong(
+          song['ytid'],
+          song['isLive'],
+        );
+        await checkIfSponsorBlockIsAvailable(song, songUrl);
+      }
       await audioPlayer.play();
     } catch (e) {
       logger.log('Error playing song: $e');

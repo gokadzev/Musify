@@ -138,10 +138,8 @@ class SongBar extends StatelessWidget {
                     ),
                     IconButton(
                       color: Theme.of(context).colorScheme.primary,
-                      icon: const Icon(FluentIcons.arrow_download_24_regular),
-                      onPressed: () => preferredDownloadMode.value == 'normal'
-                          ? downloadSong(context, song)
-                          : downloadSongFaster(context, song),
+                      icon: const Icon(FluentIcons.cellular_off_24_regular),
+                      onPressed: () => makeSongOffline(song),
                     ),
                     if (showMusicDuration && song['duration'] != null)
                       Text('(${formatDuration(song['duration'])})'),
