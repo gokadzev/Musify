@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/widgets.dart';
@@ -15,6 +16,7 @@ import 'package:musify/services/lyrics_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/formatter.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 final yt = YoutubeExplode();
@@ -32,6 +34,7 @@ List userLikedPlaylists =
     Hive.box('user').get('likedPlaylists', defaultValue: []);
 List userRecentlyPlayed =
     Hive.box('user').get('recentlyPlayedSongs', defaultValue: []);
+List userOfflineSongs = Hive.box('user').get('offlineSongs', defaultValue: []);
 List suggestedPlaylists = [];
 Map activePlaylist = {
   'ytid': '',
@@ -44,6 +47,7 @@ Map activePlaylist = {
 final currentLikedSongsLength = ValueNotifier<int>(userLikedSongsList.length);
 final currentLikedPlaylistsLength =
     ValueNotifier<int>(userLikedPlaylists.length);
+final currentOfflineSongsLength = ValueNotifier<int>(userOfflineSongs.length);
 
 final lyrics = ValueNotifier<String?>(null);
 String? lastFetchedLyrics;
@@ -231,6 +235,9 @@ bool isSongAlreadyLiked(songIdToCheck) =>
 
 bool isPlaylistAlreadyLiked(playlistIdToCheck) =>
     userLikedPlaylists.any((playlist) => playlist['ytid'] == playlistIdToCheck);
+
+bool isSongAlreadyOffline(songIdToCheck) =>
+    userOfflineSongs.any((song) => song['ytid'] == songIdToCheck);
 
 Future<List> getPlaylists({
   String? query,
@@ -522,6 +529,73 @@ Future getSongLyrics(String artist, String title) async {
   }
 
   return lyrics.value;
+}
+
+void makeSongOffline(dynamic song) async {
+  final _dir = await getApplicationSupportDirectory();
+  final _audioDirPath = '${_dir.path}/tracks';
+  final _artworkDirPath = '${_dir.path}/artworks';
+  final String ytid = song['ytid'];
+  final _audioFile = File('$_audioDirPath/$ytid.m4a');
+  final _artworkFile = File('$_artworkDirPath/$ytid.jpg');
+
+  await Directory(_audioDirPath).create(recursive: true);
+  await Directory(_artworkDirPath).create(recursive: true);
+
+  final audioManifest = await getSongManifest(ytid);
+  final stream = yt.videos.streamsClient.get(audioManifest);
+  final fileStream = _audioFile.openWrite();
+  await stream.pipe(fileStream);
+  await fileStream.flush();
+  await fileStream.close();
+
+  final artworkFile = await _downloadAndSaveArtworkFile(
+    song['highResImage'],
+    _artworkFile.path,
+  );
+
+  if (artworkFile != null) {
+    song['artworkPath'] = artworkFile.path;
+    song['highResImage'] = artworkFile.path;
+    song['lowResImage'] = artworkFile.path;
+  }
+  song['audioPath'] = _audioFile.path;
+  userOfflineSongs.add(song);
+  addOrUpdateData('user', 'offlineSongs', userOfflineSongs);
+}
+
+void removeSongFromOffline(dynamic songId) async {
+  final _dir = await getApplicationSupportDirectory();
+  final _audioDirPath = '${_dir.path}/tracks';
+  final _artworkDirPath = '${_dir.path}/artworks';
+  final _audioFile = File('$_audioDirPath/$songId.m4a');
+  final _artworkFile = File('$_artworkDirPath/$songId.jpg');
+
+  if (await _audioFile.exists()) await _audioFile.delete();
+  if (await _artworkFile.exists()) await _artworkFile.delete();
+
+  userOfflineSongs.removeWhere((song) => song['ytid'] == songId);
+  addOrUpdateData('user', 'offlineSongs', userOfflineSongs);
+  currentOfflineSongsLength.value = userOfflineSongs.length;
+}
+
+Future<File?> _downloadAndSaveArtworkFile(String url, String filePath) async {
+  try {
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final file = File(filePath);
+      await file.writeAsBytes(response.bodyBytes);
+      return file;
+    } else {
+      logger
+          .log('Failed to download file. Status code: ${response.statusCode}');
+    }
+  } catch (e, stackTrace) {
+    logger.log('Error downloading and saving file: $e\n$stackTrace');
+  }
+
+  return null;
 }
 
 Future<void> updateRecentlyPlayed(dynamic songId) async {

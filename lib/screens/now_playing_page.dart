@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:audio_service/audio_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
@@ -77,17 +79,31 @@ class NowPlayingPage extends StatelessWidget {
         maxWidth: 300,
         maxHeight: 300,
       ),
-      child: CachedNetworkImage(
-        width: imageSize,
-        height: imageSize,
-        imageUrl: metadata.artUri.toString(),
-        imageBuilder: (context, imageProvider) =>
-            _buildImageDecoration(imageProvider),
-        placeholder: (context, url) => const Spinner(),
-        errorWidget: (context, url, error) => NullArtworkWidget(
-          iconSize: size.width / 8,
-        ),
-      ),
+      child: metadata.artUri?.scheme == 'file'
+          ? SizedBox(
+              width: imageSize,
+              height: imageSize,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  image: DecorationImage(
+                    image: FileImage(File(metadata.extras?['artWorkPath'])),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            )
+          : CachedNetworkImage(
+              width: imageSize,
+              height: imageSize,
+              imageUrl: metadata.artUri.toString(),
+              imageBuilder: (context, imageProvider) =>
+                  _buildImageDecoration(imageProvider),
+              placeholder: (context, url) => const Spinner(),
+              errorWidget: (context, url, error) => NullArtworkWidget(
+                iconSize: size.width / 8,
+              ),
+            ),
     );
   }
 
@@ -196,7 +212,7 @@ class NowPlayingPage extends StatelessWidget {
     );
   }
 
-  Widget buildPlayerControls(Size size, dynamic audioId, dynamic mediaItem) {
+  Widget buildPlayerControls(Size size, dynamic audioId, MediaItem mediaItem) {
     final songLikeStatus = ValueNotifier<bool>(isSongAlreadyLiked(audioId));
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -419,7 +435,7 @@ class NowPlayingPage extends StatelessWidget {
                   onPressed: () {
                     getSongLyrics(
                       mediaItem.artist.toString(),
-                      mediaItem.title.toString(),
+                      mediaItem.title,
                     );
                     showCustomBottomSheet(
                       context,

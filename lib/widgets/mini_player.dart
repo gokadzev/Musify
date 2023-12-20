@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:audio_service/audio_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
@@ -73,18 +75,32 @@ class MiniPlayer extends StatelessWidget {
   Widget _buildArtwork() {
     return Padding(
       padding: const EdgeInsets.only(top: 7, bottom: 7, right: 15),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(8),
-        child: CachedNetworkImage(
-          imageUrl: metadata.artUri.toString(),
-          fit: BoxFit.cover,
-          width: 55,
-          height: 55,
-          errorWidget: (context, url, error) => const NullArtworkWidget(
-            iconSize: 30,
-          ),
-        ),
-      ),
+      child: metadata.artUri?.scheme == 'file'
+          ? SizedBox(
+              width: 55,
+              height: 55,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  image: DecorationImage(
+                    image: FileImage(File(metadata.extras?['artWorkPath'])),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            )
+          : ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: CachedNetworkImage(
+                imageUrl: metadata.artUri.toString(),
+                fit: BoxFit.cover,
+                width: 55,
+                height: 55,
+                errorWidget: (context, url, error) => const NullArtworkWidget(
+                  iconSize: 30,
+                ),
+              ),
+            ),
     );
   }
 

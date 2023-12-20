@@ -1,11 +1,11 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
-import 'package:musify/services/download_manager.dart';
-import 'package:musify/services/settings_manager.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/formatter.dart';
@@ -37,6 +37,8 @@ class SongBar extends StatelessWidget {
 
   late final songLikeStatus =
       ValueNotifier<bool>(isSongAlreadyLiked(song['ytid']));
+  late final songOfflineStatus =
+      ValueNotifier<bool>(isSongAlreadyOffline(song['ytid']));
 
   @override
   Widget build(BuildContext context) {
@@ -61,21 +63,39 @@ class SongBar extends StatelessWidget {
             padding: const EdgeInsets.all(8),
             child: Row(
               children: [
-                CachedNetworkImage(
-                  key: Key(song['ytid'].toString()),
-                  width: 60,
-                  height: 60,
-                  imageUrl: song['lowResImage'].toString(),
-                  imageBuilder: (context, imageProvider) => DecoratedBox(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      image: DecorationImage(
-                        image: imageProvider,
-                        centerSlice: const Rect.fromLTRB(1, 1, 1, 1),
+                if (song['isOffline'] != null &&
+                    song['isOffline'] == true &&
+                    song['artworkPath'] != null)
+                  SizedBox(
+                    width: 60,
+                    height: 60,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        image: DecorationImage(
+                          image:
+                              FileImage(File(song['lowResImage'].toString())),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  )
+                else
+                  CachedNetworkImage(
+                    key: Key(song['ytid'].toString()),
+                    width: 60,
+                    height: 60,
+                    imageUrl: song['lowResImage'].toString(),
+                    imageBuilder: (context, imageProvider) => DecoratedBox(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        image: DecorationImage(
+                          image: imageProvider,
+                          centerSlice: const Rect.fromLTRB(1, 1, 1, 1),
+                        ),
                       ),
                     ),
                   ),
-                ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Column(
@@ -136,12 +156,26 @@ class SongBar extends StatelessWidget {
                           ? _removeFromPlaylist(context, song)
                           : _showAddToPlaylistDialog(context, song),
                     ),
-                    IconButton(
-                      color: Theme.of(context).colorScheme.primary,
-                      icon: const Icon(FluentIcons.arrow_download_24_regular),
-                      onPressed: () => preferredDownloadMode.value == 'normal'
-                          ? downloadSong(context, song)
-                          : downloadSongFaster(context, song),
+                    ValueListenableBuilder<bool>(
+                      valueListenable: songOfflineStatus,
+                      builder: (_, value, __) {
+                        return IconButton(
+                          icon: Icon(
+                            value
+                                ? FluentIcons.cellular_off_24_regular
+                                : FluentIcons.cellular_data_1_24_regular,
+                          ),
+                          onPressed: () {
+                            if (value) {
+                              removeSongFromOffline(song['ytid']);
+                            } else {
+                              makeSongOffline(song);
+                            }
+
+                            songOfflineStatus.value = !songOfflineStatus.value;
+                          },
+                        );
+                      },
                     ),
                     if (showMusicDuration && song['duration'] != null)
                       Text('(${formatDuration(song['duration'])})'),

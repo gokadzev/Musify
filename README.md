@@ -23,7 +23,7 @@
   <p align="center">
     Online Song Search With Suggestions :mag:<br>
     Streaming Support :musical_note:<br>
-    Download Support :arrow_down:<br>
+    Offline Listening Support :arrow_down:<br>
     Import & Export Your Data And Never Lose It :floppy_disk:<br>
     Add Custom Playlists With Link :cool:<br>
     High Quality mp3 / m4a / flac Format :fire:<br>

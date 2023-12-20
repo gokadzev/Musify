@@ -18,14 +18,20 @@ MediaItem mapToMediaItem(Map song, String songUrl) => MediaItem(
       album: '',
       artist: song['artist'].toString(),
       title: song['title'].toString(),
-      artUri: Uri.parse(
-        song['highResImage'].toString(),
-      ),
+      artUri: song['isOffline'] != null && song['isOffline']
+          ? Uri.file(
+              song['highResImage'].toString(),
+            )
+          : Uri.parse(
+              song['highResImage'].toString(),
+            ),
       extras: {
         'url': songUrl,
         'lowResImage': song['lowResImage'],
         'ytid': song['ytid'],
         'isLive': song['isLive'],
+        'isOffline': song['isOffline'],
+        'artWorkPath': song['highResImage'].toString(),
       },
     );
 
