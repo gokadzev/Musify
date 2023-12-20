@@ -227,7 +227,7 @@ List<Map<String, dynamic>> playlistsDB = [
   {
     'ytid': 'PLOHoVaTp8R7dfrJW5pumS0iD_dhlXKv17',
     'title': 'KPOP 2023 - K-POP Songs 2023 - KPop Playlist',
-    'image': 'https://i.scdn.co/image/ab67706c0000da849be44683b4f6be0c940d817a',
+    'image': 'https://i.scdn.co/image/ab67706c0000da8412710d16432431315bc5dcd3',
     'list': [],
   },
   {
