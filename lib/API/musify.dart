@@ -531,7 +531,7 @@ Future getSongLyrics(String artist, String title) async {
   return lyrics.value;
 }
 
-Future<void> makeSongOffline(dynamic song) async {
+void makeSongOffline(dynamic song) async {
   final _dir = await getApplicationSupportDirectory();
   final _audioDirPath = '${_dir.path}/tracks';
   final _artworkDirPath = '${_dir.path}/artworks';
@@ -565,7 +565,7 @@ Future<void> makeSongOffline(dynamic song) async {
   }
 }
 
-Future<void> removeSongFromOffline(dynamic songId) async {
+void removeSongFromOffline(dynamic songId) async {
   final _dir = await getApplicationSupportDirectory();
   final _audioDirPath = '${_dir.path}/tracks';
   final _artworkDirPath = '${_dir.path}/artworks';
