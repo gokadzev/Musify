@@ -187,19 +187,12 @@ class MusifyAudioHandler extends BaseAudioHandler {
     await super.onTaskRemoved();
   }
 
-  bool get hasNext {
-    if (activePlaylist['list'].isEmpty) {
-      return audioPlayer.hasNext;
-    }
-    return id + 1 < activePlaylist['list'].length;
-  }
+  bool get hasNext => activePlaylist['list'].isEmpty
+      ? audioPlayer.hasNext
+      : id + 1 < activePlaylist['list'].length;
 
-  bool get hasPrevious {
-    if (activePlaylist['list'].isEmpty) {
-      return audioPlayer.hasPrevious;
-    }
-    return id > 0;
-  }
+  bool get hasPrevious =>
+      activePlaylist['list'].isEmpty ? audioPlayer.hasPrevious : id > 0;
 
   @override
   Future<void> play() => audioPlayer.play();
@@ -225,20 +218,24 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   @override
   Future<void> skipToNext() async {
-    id = shuffleNotifier.value
-        ? _generateRandomIndex(activePlaylist['list'].length)
-        : id + 1;
+    if (id + 1 < activePlaylist['list'].length) {
+      id = shuffleNotifier.value
+          ? _generateRandomIndex(activePlaylist['list'].length)
+          : id + 1;
 
-    await playSong(activePlaylist['list'][id]);
+      await playSong(activePlaylist['list'][id]);
+    }
   }
 
   @override
   Future<void> skipToPrevious() async {
-    id = shuffleNotifier.value
-        ? _generateRandomIndex(activePlaylist['list'].length)
-        : id - 1;
+    if (id > 0) {
+      id = shuffleNotifier.value
+          ? _generateRandomIndex(activePlaylist['list'].length)
+          : id - 1;
 
-    await playSong(activePlaylist['list'][id]);
+      await playSong(activePlaylist['list'][id]);
+    }
   }
 
   @override
