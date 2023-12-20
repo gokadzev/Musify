@@ -1,11 +1,11 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
-import 'package:musify/services/download_manager.dart';
-import 'package:musify/services/settings_manager.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/formatter.dart';
@@ -61,21 +61,37 @@ class SongBar extends StatelessWidget {
             padding: const EdgeInsets.all(8),
             child: Row(
               children: [
-                CachedNetworkImage(
-                  key: Key(song['ytid'].toString()),
-                  width: 60,
-                  height: 60,
-                  imageUrl: song['lowResImage'].toString(),
-                  imageBuilder: (context, imageProvider) => DecoratedBox(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      image: DecorationImage(
-                        image: imageProvider,
-                        centerSlice: const Rect.fromLTRB(1, 1, 1, 1),
+                if (song['isOffline'] != null && song['isOffline'] == true)
+                  SizedBox(
+                    width: 60,
+                    height: 60,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        image: DecorationImage(
+                          image:
+                              FileImage(File(song['lowResImage'].toString())),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  )
+                else
+                  CachedNetworkImage(
+                    key: Key(song['ytid'].toString()),
+                    width: 60,
+                    height: 60,
+                    imageUrl: song['lowResImage'].toString(),
+                    imageBuilder: (context, imageProvider) => DecoratedBox(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        image: DecorationImage(
+                          image: imageProvider,
+                          centerSlice: const Rect.fromLTRB(1, 1, 1, 1),
+                        ),
                       ),
                     ),
                   ),
-                ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Column(
