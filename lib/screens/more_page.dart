@@ -79,7 +79,7 @@ class MorePage extends StatelessWidget {
               },
             ),
             SettingBar(
-              'User offline songs',
+              context.l10n!.userOfflineSongs,
               FluentIcons.cellular_off_24_filled,
               () => {
                 Navigator.push(

@@ -19,7 +19,7 @@ class _UserOfflineSongsPageState extends State<UserOfflineSongsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('User Offline Songs'),
+        title: Text(context.l10n!.userOfflineSongs),
       ),
       body: Column(
         children: [
@@ -41,9 +41,9 @@ class _UserOfflineSongsPageState extends State<UserOfflineSongsPage> {
         const SizedBox(width: 20),
         Column(
           children: [
-            const Text(
-              'Your Offline Songs Here',
-              style: TextStyle(
+            Text(
+              context.l10n!.userOfflineSongs,
+              style: const TextStyle(
                 fontWeight: FontWeight.w300,
               ),
             ),
@@ -57,11 +57,12 @@ class _UserOfflineSongsPageState extends State<UserOfflineSongsPage> {
 
   Widget _buildPlaylistImage() {
     return PlaylistCube(
-      title: 'User Offline Songs',
+      title: context.l10n!.userOfflineSongs,
       onClickOpen: false,
       showFavoriteButton: false,
       size: 150,
       zoomNumber: 0.55,
+      cubeIcon: FluentIcons.cellular_off_24_regular,
     );
   }
 
