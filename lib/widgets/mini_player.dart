@@ -89,21 +89,15 @@ class MiniPlayer extends StatelessWidget {
                 ),
               ),
             )
-          : CachedNetworkImage(
-              imageUrl: metadata.artUri.toString(),
-              fit: BoxFit.cover,
-              width: 55,
-              height: 55,
-              errorWidget: (context, url, error) => const NullArtworkWidget(
-                iconSize: 30,
-              ),
-              imageBuilder: (context, imageProvider) => DecoratedBox(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  image: DecorationImage(
-                    image: imageProvider,
-                    centerSlice: const Rect.fromLTRB(1, 1, 1, 1),
-                  ),
+          : ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: CachedNetworkImage(
+                imageUrl: metadata.artUri.toString(),
+                fit: BoxFit.cover,
+                width: 55,
+                height: 55,
+                errorWidget: (context, url, error) => const NullArtworkWidget(
+                  iconSize: 30,
                 ),
               ),
             ),
