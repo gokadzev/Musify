@@ -336,10 +336,12 @@ Future<List<Map<String, int>>> getSkipSegments(String id) async {
 }
 
 Future<Map> getRandomSong() async {
-  const playlistId = 'PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx';
-  final playlistSongs = await getSongsFromPlaylist(playlistId);
+  if (globalSongs.isEmpty) {
+    const playlistId = 'PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx';
+    globalSongs = await getSongsFromPlaylist(playlistId);
+  }
 
-  return playlistSongs[random.nextInt(playlistSongs.length)];
+  return globalSongs[random.nextInt(globalSongs.length)];
 }
 
 Future<List> getSongsFromPlaylist(dynamic playlistId) async {
