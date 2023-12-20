@@ -236,6 +236,9 @@ bool isSongAlreadyLiked(songIdToCheck) =>
 bool isPlaylistAlreadyLiked(playlistIdToCheck) =>
     userLikedPlaylists.any((playlist) => playlist['ytid'] == playlistIdToCheck);
 
+bool isSongAlreadyOffline(songIdToCheck) =>
+    userOfflineSongs.any((song) => song['ytid'] == songIdToCheck);
+
 Future<List> getPlaylists({
   String? query,
   int? playlistsNum,

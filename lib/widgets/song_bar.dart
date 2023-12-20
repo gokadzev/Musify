@@ -37,6 +37,8 @@ class SongBar extends StatelessWidget {
 
   late final songLikeStatus =
       ValueNotifier<bool>(isSongAlreadyLiked(song['ytid']));
+  late final songOfflineStatus =
+      ValueNotifier<bool>(isSongAlreadyOffline(song['ytid']));
 
   @override
   Widget build(BuildContext context) {
@@ -152,15 +154,25 @@ class SongBar extends StatelessWidget {
                           ? _removeFromPlaylist(context, song)
                           : _showAddToPlaylistDialog(context, song),
                     ),
-                    IconButton(
-                      icon: Icon(
-                        userOfflineSongs.contains(song)
-                            ? FluentIcons.cellular_off_24_regular
-                            : FluentIcons.cellular_data_1_24_regular,
-                      ),
-                      onPressed: () => userOfflineSongs.contains(song)
-                          ? removeSongFromOffline(song['ytid'])
-                          : makeSongOffline(song),
+                    ValueListenableBuilder<bool>(
+                      valueListenable: songOfflineStatus,
+                      builder: (_, value, __) {
+                        return IconButton(
+                          icon: Icon(
+                            value
+                                ? FluentIcons.cellular_off_24_regular
+                                : FluentIcons.cellular_data_1_24_regular,
+                          ),
+                          onPressed: () {
+                            if (value)
+                              removeSongFromOffline(song['ytid']);
+                            else
+                              makeSongOffline(song);
+
+                            songOfflineStatus.value = !songOfflineStatus.value;
+                          },
+                        );
+                      },
                     ),
                     if (showMusicDuration && song['duration'] != null)
                       Text('(${formatDuration(song['duration'])})'),
