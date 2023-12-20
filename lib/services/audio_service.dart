@@ -225,27 +225,20 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   @override
   Future<void> skipToNext() async {
-    if (shuffleNotifier.value) {
-      final randomIndex = _generateRandomIndex(activePlaylist['list'].length);
-      id = randomIndex;
-      await playSong(activePlaylist['list'][id]);
-    } else {
-      id++;
-      await playSong(activePlaylist['list'][id]);
-    }
+    id = shuffleNotifier.value
+        ? _generateRandomIndex(activePlaylist['list'].length)
+        : id + 1;
+
+    await playSong(activePlaylist['list'][id]);
   }
 
   @override
   Future<void> skipToPrevious() async {
-    if (shuffleNotifier.value) {
-      final randomIndex = _generateRandomIndex(activePlaylist['list'].length);
+    id = shuffleNotifier.value
+        ? _generateRandomIndex(activePlaylist['list'].length)
+        : id - 1;
 
-      id = randomIndex;
-      await playSong(activePlaylist['list'][id]);
-    } else {
-      id--;
-      await playSong(activePlaylist['list'][id]);
-    }
+    await playSong(activePlaylist['list'][id]);
   }
 
   @override
