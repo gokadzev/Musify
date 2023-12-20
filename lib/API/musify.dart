@@ -47,6 +47,7 @@ Map activePlaylist = {
 final currentLikedSongsLength = ValueNotifier<int>(userLikedSongsList.length);
 final currentLikedPlaylistsLength =
     ValueNotifier<int>(userLikedPlaylists.length);
+final currentOfflineSongsLength = ValueNotifier<int>(userOfflineSongs.length);
 
 final lyrics = ValueNotifier<String?>(null);
 String? lastFetchedLyrics;
@@ -570,8 +571,9 @@ Future<void> removeSongFromOffline(dynamic songId) async {
   final _artworkDirPath = '${_dir.path}/artworks';
   final _audioFile = File('$_audioDirPath/$songId.m4a');
   final _artworkFile = File('$_artworkDirPath/$songId.jpg');
-  await _audioFile.delete();
-  await _artworkFile.delete();
+
+  if (await _audioFile.exists()) await _audioFile.delete();
+  if (await _artworkFile.exists()) await _artworkFile.delete();
   userOfflineSongs.removeWhere((song) => song['ytid'] == songId);
   addOrUpdateData('user', 'offlineSongs', userOfflineSongs);
 }

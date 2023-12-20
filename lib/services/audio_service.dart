@@ -205,7 +205,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   Future<void> playSong(Map song) async {
     try {
-      if (song['isOffline'] != null) {
+      if (song['isOffline'] ?? false) {
         final _audioSource = AudioSource.uri(
           Uri.parse(song['audioPath']),
           tag: mapToMediaItem(song, song['audioPath']),

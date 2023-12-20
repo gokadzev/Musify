@@ -35,7 +35,7 @@ class _UserOfflineSongsPageState extends State<UserOfflineSongsPage> {
 
   Widget buildPlaylistHeader() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         _buildPlaylistImage(),
         const SizedBox(width: 20),
@@ -92,15 +92,20 @@ class _UserOfflineSongsPageState extends State<UserOfflineSongsPage> {
   }
 
   Widget buildSongList() {
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: userOfflineSongs.length,
-      itemBuilder: (context, index) {
-        final _song = userOfflineSongs[index];
-        _song['isOffline'] = true;
-        return SongBar(
-          _song,
-          true,
+    return ValueListenableBuilder(
+      valueListenable: currentOfflineSongsLength,
+      builder: (_, value, __) {
+        return ListView.builder(
+          shrinkWrap: true,
+          itemCount: userOfflineSongs.length,
+          itemBuilder: (context, index) {
+            final _song = userOfflineSongs[index];
+            _song['isOffline'] = true;
+            return SongBar(
+              _song,
+              true,
+            );
+          },
         );
       },
     );
