@@ -212,7 +212,7 @@ class NowPlayingPage extends StatelessWidget {
     );
   }
 
-  Widget buildPlayerControls(Size size, dynamic audioId, dynamic mediaItem) {
+  Widget buildPlayerControls(Size size, dynamic audioId, MediaItem mediaItem) {
     final songLikeStatus = ValueNotifier<bool>(isSongAlreadyLiked(audioId));
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -435,7 +435,7 @@ class NowPlayingPage extends StatelessWidget {
                   onPressed: () {
                     getSongLyrics(
                       mediaItem.artist.toString(),
-                      mediaItem.title.toString(),
+                      mediaItem.title,
                     );
                     showCustomBottomSheet(
                       context,
