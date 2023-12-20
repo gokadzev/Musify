@@ -8,10 +8,13 @@ import 'package:musify/API/version.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/utilities/flutter_toast.dart';
+import 'package:musify/widgets/auto_format_text.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 const String checkUrl =
     'https://raw.githubusercontent.com/gokadzev/Musify/update/check.json';
+const String releasesUrl =
+    'https://api.github.com/repos/gokadzev/Musify/releases/latest';
 const String downloadUrlKey = 'url';
 const String downloadUrlArm64Key = 'arm64url';
 const String downloadFilename = 'Musify.apk';
@@ -23,6 +26,9 @@ Future<void> checkAppUpdates(BuildContext context) async {
       final map = json.decode(response.body) as Map<String, dynamic>;
       final latestVersion = map['version'].toString();
       if (isLatestVersionHigher(appVersion, latestVersion)) {
+        final releasesRequest = await http.get(Uri.parse(releasesUrl));
+        final releasesResponse =
+            json.decode(releasesRequest.body) as Map<String, dynamic>;
         await showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -33,13 +39,25 @@ Future<void> checkAppUpdates(BuildContext context) async {
                   Text(
                     context.l10n!.appUpdateIsAvailable,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 16),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 10),
                   Text(
                     'V$latestVersion',
                     textAlign: TextAlign.center,
                     style: const TextStyle(fontSize: 16),
+                  ),
+                  const SizedBox(height: 10),
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxHeight: MediaQuery.of(context).size.height / 2.14,
+                    ),
+                    child: SingleChildScrollView(
+                      child: AutoFormatText(text: releasesResponse['body']),
+                    ),
                   ),
                 ],
               ),
