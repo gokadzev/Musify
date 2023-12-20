@@ -153,9 +153,14 @@ class SongBar extends StatelessWidget {
                           : _showAddToPlaylistDialog(context, song),
                     ),
                     IconButton(
-                      color: Theme.of(context).colorScheme.primary,
-                      icon: const Icon(FluentIcons.cellular_off_24_regular),
-                      onPressed: () => makeSongOffline(song),
+                      icon: Icon(
+                        userOfflineSongs.contains(song)
+                            ? FluentIcons.cellular_off_24_regular
+                            : FluentIcons.cellular_data_1_24_regular,
+                      ),
+                      onPressed: () => userOfflineSongs.contains(song)
+                          ? removeSongFromOffline(song['ytid'])
+                          : makeSongOffline(song),
                     ),
                     if (showMusicDuration && song['duration'] != null)
                       Text('(${formatDuration(song['duration'])})'),
