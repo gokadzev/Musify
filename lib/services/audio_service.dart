@@ -275,31 +275,28 @@ class MusifyAudioHandler extends BaseAudioHandler {
         Uri.parse(songUrl),
         tag: mapToMediaItem(song, songUrl),
       );
+
       if (sponsorBlockSupport.value) {
         final segments = await getSkipSegments(song['ytid']);
+
         if (segments.isNotEmpty) {
-          if (segments.length == 1) {
-            await audioPlayer.setAudioSource(
-              ClippingAudioSource(
-                child: _audioSource,
-                start: Duration(seconds: segments[0]['end']!),
-                tag: _audioSource.tag,
-              ),
-            );
-            return;
-          } else {
-            await audioPlayer.setAudioSource(
-              ClippingAudioSource(
-                child: _audioSource,
-                start: Duration(seconds: segments[0]['end']!),
-                end: Duration(seconds: segments[1]['start']!),
-                tag: _audioSource.tag,
-              ),
-            );
-            return;
-          }
+          final start = Duration(seconds: segments[0]['end']!);
+          final end = segments.length == 1
+              ? null
+              : Duration(seconds: segments[1]['start']!);
+
+          await audioPlayer.setAudioSource(
+            ClippingAudioSource(
+              child: _audioSource,
+              start: start,
+              end: end,
+              tag: _audioSource.tag,
+            ),
+          );
+          return;
         }
       }
+
       await audioPlayer.setAudioSource(_audioSource);
     } catch (e) {
       logger.log('Error checking sponsor block: $e');
