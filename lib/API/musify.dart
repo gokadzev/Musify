@@ -535,37 +535,34 @@ Future<void> makeSongOffline(dynamic song) async {
   final _dir = await getApplicationSupportDirectory();
   final _audioDirPath = '${_dir.path}/tracks';
   final _artworkDirPath = '${_dir.path}/artworks';
-  final _audioFile = File('$_audioDirPath/${song['ytid']}.m4a');
-  final _artworkFile = File('$_artworkDirPath/${song['ytid']}.jpg');
+  final String ytid = song['ytid'];
+  final _audioFile = File('$_audioDirPath/$ytid.m4a');
+  final _artworkFile = File('$_artworkDirPath/$ytid.jpg');
+
   await Directory(_audioDirPath).create(recursive: true);
   await Directory(_artworkDirPath).create(recursive: true);
-  final audioManifest = await getSongManifest(song['ytid']);
+
+  final audioManifest = await getSongManifest(ytid);
   final stream = yt.videos.streamsClient.get(audioManifest);
   final fileStream = _audioFile.openWrite();
   await stream.pipe(fileStream);
   await fileStream.flush();
   await fileStream.close();
-  try {
-    final response = await http.get(Uri.parse(song['highResImage']));
 
-    if (response.statusCode == 200) {
-      await _artworkFile.writeAsBytes(response.bodyBytes);
-    } else {
-      logger.log(
-        'Failed to download artwork file. Status code: ${response.statusCode}',
-      );
-    }
-  } catch (e) {
-    logger.log('Error downloading and saving file: $e');
+  final artworkFile = await _downloadAndSaveArtworkFile(
+    song['highResImage'],
+    _artworkFile.path,
+  );
+
+  if (artworkFile != null) {
+    song['artworkPath'] = artworkFile.path;
+    song['audioPath'] = _audioFile.path;
+    song['highResImage'] = artworkFile.path;
+    song['lowResImage'] = artworkFile.path;
+
+    userOfflineSongs.add(song);
+    addOrUpdateData('user', 'offlineSongs', userOfflineSongs);
   }
-  final _song = song;
-  _song['artworkPath'] = _artworkFile.path;
-  _song['audioPath'] = _audioFile.path;
-  _song['highResImage'] = _artworkFile.path;
-  _song['lowResImage'] = _artworkFile.path;
-
-  userOfflineSongs.add(_song);
-  addOrUpdateData('user', 'offlineSongs', userOfflineSongs);
 }
 
 Future<void> removeSongFromOffline(dynamic songId) async {
@@ -577,9 +574,29 @@ Future<void> removeSongFromOffline(dynamic songId) async {
 
   if (await _audioFile.exists()) await _audioFile.delete();
   if (await _artworkFile.exists()) await _artworkFile.delete();
+
   userOfflineSongs.removeWhere((song) => song['ytid'] == songId);
   addOrUpdateData('user', 'offlineSongs', userOfflineSongs);
   currentOfflineSongsLength.value = userOfflineSongs.length;
+}
+
+Future<File?> _downloadAndSaveArtworkFile(String url, String filePath) async {
+  try {
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final file = File(filePath);
+      await file.writeAsBytes(response.bodyBytes);
+      return file;
+    } else {
+      logger
+          .log('Failed to download file. Status code: ${response.statusCode}');
+    }
+  } catch (e, stackTrace) {
+    logger.log('Error downloading and saving file: $e\n$stackTrace');
+  }
+
+  return null;
 }
 
 Future<void> updateRecentlyPlayed(dynamic songId) async {
