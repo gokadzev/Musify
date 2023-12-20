@@ -579,6 +579,7 @@ Future<void> removeSongFromOffline(dynamic songId) async {
   if (await _artworkFile.exists()) await _artworkFile.delete();
   userOfflineSongs.removeWhere((song) => song['ytid'] == songId);
   addOrUpdateData('user', 'offlineSongs', userOfflineSongs);
+  currentOfflineSongsLength.value = userOfflineSongs.length;
 }
 
 Future<void> updateRecentlyPlayed(dynamic songId) async {

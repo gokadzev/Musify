@@ -164,10 +164,11 @@ class SongBar extends StatelessWidget {
                                 : FluentIcons.cellular_data_1_24_regular,
                           ),
                           onPressed: () {
-                            if (value)
+                            if (value) {
                               removeSongFromOffline(song['ytid']);
-                            else
+                            } else {
                               makeSongOffline(song);
+                            }
 
                             songOfflineStatus.value = !songOfflineStatus.value;
                           },
