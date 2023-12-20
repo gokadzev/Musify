@@ -10,8 +10,9 @@ String formatSongTitle(String title) {
     '&amp;': '&',
     '&#039;': "'",
     '&quot;': '"',
-    'Official Video': '',
     'Official Music Video': '',
+    'Official Lyric Video': '',
+    'Official Video': '',
     'Lyric Video': '',
     'Lyrics Video': '',
   };
