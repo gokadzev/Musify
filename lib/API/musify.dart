@@ -34,7 +34,8 @@ List userLikedPlaylists =
     Hive.box('user').get('likedPlaylists', defaultValue: []);
 List userRecentlyPlayed =
     Hive.box('user').get('recentlyPlayedSongs', defaultValue: []);
-List userOfflineSongs = Hive.box('user').get('offlineSongs', defaultValue: []);
+List userOfflineSongs =
+    Hive.box('userNoBackup').get('offlineSongs', defaultValue: []);
 List suggestedPlaylists = [];
 Map activePlaylist = {
   'ytid': '',
@@ -561,7 +562,7 @@ void makeSongOffline(dynamic song) async {
   }
   song['audioPath'] = _audioFile.path;
   userOfflineSongs.add(song);
-  addOrUpdateData('user', 'offlineSongs', userOfflineSongs);
+  addOrUpdateData('userNoBackup', 'offlineSongs', userOfflineSongs);
 }
 
 void removeSongFromOffline(dynamic songId) async {
@@ -575,7 +576,7 @@ void removeSongFromOffline(dynamic songId) async {
   if (await _artworkFile.exists()) await _artworkFile.delete();
 
   userOfflineSongs.removeWhere((song) => song['ytid'] == songId);
-  addOrUpdateData('user', 'offlineSongs', userOfflineSongs);
+  addOrUpdateData('userNoBackup', 'offlineSongs', userOfflineSongs);
   currentOfflineSongsLength.value = userOfflineSongs.length;
 }
 

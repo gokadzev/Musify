@@ -281,6 +281,7 @@ Future<void> initialisation() async {
     Hive.registerAdapter(AudioQualityAdapter());
     await Hive.openBox('settings');
     await Hive.openBox('user');
+    await Hive.openBox('userNoBackup');
     await Hive.openBox('cache');
 
     audioHandler = await AudioService.init(
