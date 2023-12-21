@@ -67,17 +67,22 @@ Future<String> backupData(BuildContext context) async {
     return '${context.l10n!.chooseBackupDir}!';
   }
 
-  for (var i = 0; i < boxNames.length; i++) {
-    try {
-      final _box = await _openBox(boxNames[i]);
-      await _box.compact();
-      await File(_box.path!).copy('$dlPath/${boxNames[i]}Data.hive');
-      await _box.close();
-    } catch (e) {
-      return '${context.l10n!.backupError}: $e';
+  try {
+    for (final boxName in boxNames) {
+      final sourceFile = File('$dlPath/$boxName.hive');
+      final box = await _openBox(boxName);
+
+      if (await sourceFile.exists()) {
+        await sourceFile.delete();
+      }
+
+      await box.compact();
+      await File(box.path!).copy(sourceFile.path);
     }
+    return '${context.l10n!.backedupSuccess}!';
+  } catch (e) {
+    return '${context.l10n!.backupError}: $e';
   }
-  return '${context.l10n!.backedupSuccess}!';
 }
 
 Future<String> restoreData(BuildContext context) async {
@@ -88,16 +93,16 @@ Future<String> restoreData(BuildContext context) async {
     return '${context.l10n!.chooseRestoreDir}!';
   }
 
-  for (var i = 0; i < boxNames.length; i++) {
-    try {
-      final _box = await _openBox(boxNames[i]);
-      final boxPath = _box.path;
-      await File('$uplPath/${boxNames[i]}Data.hive').copy(boxPath!);
-      await _box.close();
-    } catch (e) {
-      return '${context.l10n!.restoreError}: $e';
-    }
-  }
+  try {
+    for (final boxName in boxNames) {
+      final sourceFile = File('$uplPath/$boxName.hive');
+      final box = await _openBox(boxName);
 
-  return '${context.l10n!.restoredSuccess}!';
+      final boxPath = box.path;
+      await sourceFile.copy(boxPath!);
+    }
+    return '${context.l10n!.restoredSuccess}!';
+  } catch (e) {
+    return '${context.l10n!.restoreError}: $e';
+  }
 }

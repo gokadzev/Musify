@@ -1,0 +1,4 @@
+Enhancements
+
+- Improved backup and restore features
+- Made various quality and performance improvements for app stability and speed
