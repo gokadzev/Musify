@@ -72,10 +72,10 @@ class _UserOfflineSongsPageState extends State<UserOfflineSongsPage> {
         setActivePlaylist(
           {
             'ytid': '',
-            'title': context.l10n!.userLikedSongs,
+            'title': context.l10n!.userOfflineSongs,
             'header_desc': '',
             'image': '',
-            'list': userLikedSongsList,
+            'list': userOfflineSongs,
           },
         );
         showToast(
