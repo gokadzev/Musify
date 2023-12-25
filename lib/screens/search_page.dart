@@ -51,8 +51,8 @@ class _SearchPageState extends State<SearchPage> {
 
     try {
       _searchResult = await fetchSongsList(query);
-    } catch (e) {
-      logger.log('Error while searching online songs: $e');
+    } catch (e, stackTrace) {
+      logger.log('Error while searching online songs:$e\n$stackTrace');
     }
 
     if (_fetchingSongs.value) {

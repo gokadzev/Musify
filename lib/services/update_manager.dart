@@ -108,8 +108,8 @@ Future<void> checkAppUpdates(BuildContext context) async {
         'Fetch update API call returned status code ${response.statusCode}',
       );
     }
-  } catch (e) {
-    logger.log('Error in checkAppUpdates: $e');
+  } catch (e, stackTrace) {
+    logger.log('Error in checkAppUpdates:$e\n$stackTrace');
   }
 }
 
@@ -130,8 +130,8 @@ Future<void> downloadAppUpdates(Map<String, dynamic> map) async {
         }
       },
     );
-  } catch (e) {
-    logger.log('Error in downloadAppUpdates: $e');
+  } catch (e, stackTrace) {
+    logger.log('Error in downloadAppUpdates:$e\n$stackTrace');
   }
 }
 
@@ -175,8 +175,8 @@ Future<void> checkNecessaryPermissions(BuildContext context) async {
   await Permission.notification.request();
   try {
     await Permission.storage.request();
-  } catch (e) {
-    logger.log('Error while requesting permissions: $e');
+  } catch (e, stackTrace) {
+    logger.log('Error while requesting permissions:$e\n$stackTrace');
     showToast(
       context,
       '${context.l10n!.errorWhileRequestingPerms} + $e',

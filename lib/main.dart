@@ -141,8 +141,8 @@ class _MusifyState extends State<Musify> {
             await rootBundle.loadString('assets/fonts/paytone/OFL.txt');
         yield LicenseEntryWithLineBreaks(['google_fonts'], license1);
       });
-    } catch (e) {
-      logger.log('License Registration Error: $e');
+    } catch (e, stackTrace) {
+      logger.log('License Registration Error:$e\n$stackTrace');
     }
   }
 
@@ -300,7 +300,7 @@ Future<void> initialisation() async {
       progressBar: true,
       tapOpensFile: true,
     );
-  } catch (e) {
-    logger.log('Initialization Error: $e');
+  } catch (e, stackTrace) {
+    logger.log('Initialization Error:$e\n$stackTrace');
   }
 }

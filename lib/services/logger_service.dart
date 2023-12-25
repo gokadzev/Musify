@@ -22,8 +22,8 @@ class Logger {
       } else {
         return '${context.l10n!.copyLogsNoLogs}.';
       }
-    } catch (e) {
-      log('Error copying logs: $e');
+    } catch (e, stackTrace) {
+      log('Error copying logs:$e\n$stackTrace');
       return 'Error: $e';
     }
   }

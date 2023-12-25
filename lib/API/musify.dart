@@ -60,8 +60,8 @@ Future<List> fetchSongsList(String searchQuery) async {
     final List<Video> searchResults = await yt.search.search(searchQuery);
 
     return searchResults.map((video) => returnSongLayout(0, video)).toList();
-  } catch (e) {
-    logger.log('Error in fetchSongsList: $e');
+  } catch (e, stackTrace) {
+    logger.log('Error in fetchSongsList:$e\n$stackTrace');
     return [];
   }
 }
@@ -91,8 +91,8 @@ Future<List> getRecommendedSongs() async {
     playlistSongs.removeWhere((song) => !seenYtIds.add(song['ytid']));
 
     return playlistSongs.take(15).toList();
-  } catch (e) {
-    logger.log('Error in getRecommendedSongs: $e');
+  } catch (e, stackTrace) {
+    logger.log('Error in getRecommendedSongs:$e\n$stackTrace');
     return [];
   }
 }
@@ -293,8 +293,8 @@ Future<List<String>> getSearchSuggestions(String query) async {
   //     final suggestionStrings = suggestions.cast<String>().toList();
   //     return suggestionStrings;
   //   }
-  // } catch (e) {
-  //   logger.log('Error in getSearchSuggestions: $e');
+  // } catch (e, stackTrace) {
+  //   logger.log('Error in getSearchSuggestions:$e\n$stackTrace');
   // }
 
   // Built-in implementation:
@@ -427,8 +427,8 @@ Future<AudioOnlyStreamInfo> getSongManifest(String songId) async {
     final manifest = await yt.videos.streamsClient.getManifest(songId);
     final audioStream = manifest.audioOnly.withHighestBitrate();
     return audioStream;
-  } catch (e) {
-    logger.log('Error while getting song streaming manifest: $e');
+  } catch (e, stackTrace) {
+    logger.log('Error while getting song streaming manifest:$e\n$stackTrace');
     rethrow; // Rethrow the exception to allow the caller to handle it
   }
 }
@@ -456,8 +456,8 @@ Future<String> getSong(String songId, bool isLive) async {
     } else {
       return await getAudioUrl(songId, isQualityChanged, cacheKey);
     }
-  } catch (e) {
-    logger.log('Error while getting song streaming URL: $e');
+  } catch (e, stackTrace) {
+    logger.log('Error while getting song streaming URL:$e\n$stackTrace');
     rethrow;
   }
 }
@@ -509,8 +509,8 @@ Future<Map<String, dynamic>> getSongDetails(
   try {
     final song = await yt.videos.get(songId);
     return returnSongLayout(songIndex, song);
-  } catch (e) {
-    logger.log('Error while getting song details: $e');
+  } catch (e, stackTrace) {
+    logger.log('Error while getting song details:$e\n$stackTrace');
     rethrow;
   }
 }

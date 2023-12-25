@@ -80,8 +80,8 @@ Future<String> backupData(BuildContext context) async {
       await File(box.path!).copy(sourceFile.path);
     }
     return '${context.l10n!.backedupSuccess}!';
-  } catch (e) {
-    return '${context.l10n!.backupError}: $e';
+  } catch (e, stackTrace) {
+    return '${context.l10n!.backupError}: $e\n$stackTrace';
   }
 }
 
@@ -102,7 +102,7 @@ Future<String> restoreData(BuildContext context) async {
       await sourceFile.copy(boxPath!);
     }
     return '${context.l10n!.restoredSuccess}!';
-  } catch (e) {
-    return '${context.l10n!.restoreError}: $e';
+  } catch (e, stackTrace) {
+    return '${context.l10n!.restoreError}: $e\n$stackTrace';
   }
 }

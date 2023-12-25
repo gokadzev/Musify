@@ -34,8 +34,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
     _updatePlaybackState();
     try {
       audioPlayer.setAudioSource(_playlist);
-    } catch (e) {
-      logger.log('Error in setNewPlaylist: $e');
+    } catch (e, stackTrace) {
+      logger.log('Error in setNewPlaylist:$e\n$stackTrace');
     }
 
     _initialize();
@@ -170,8 +170,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
           }
         }
       });
-    } catch (e) {
-      logger.log('Error initializing audio session: $e');
+    } catch (e, stackTrace) {
+      logger.log('Error initializing audio session:$e\n$stackTrace');
     }
   }
 
@@ -219,8 +219,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
         await checkIfSponsorBlockIsAvailable(song, songUrl);
       }
       await audioPlayer.play();
-    } catch (e) {
-      logger.log('Error playing song: $e');
+    } catch (e, stackTrace) {
+      logger.log('Error playing song:$e\n$stackTrace');
     }
   }
 
@@ -306,8 +306,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
       }
 
       await audioPlayer.setAudioSource(_audioSource);
-    } catch (e) {
-      logger.log('Error checking sponsor block: $e');
+    } catch (e, stackTrace) {
+      logger.log('Error checking sponsor block:$e\n$stackTrace');
     }
   }
 
