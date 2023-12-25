@@ -160,6 +160,7 @@ class SongBar extends StatelessWidget {
                       valueListenable: songOfflineStatus,
                       builder: (_, value, __) {
                         return IconButton(
+                          color: Theme.of(context).colorScheme.primary,
                           icon: Icon(
                             value
                                 ? FluentIcons.cellular_off_24_regular
