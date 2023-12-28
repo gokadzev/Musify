@@ -69,10 +69,10 @@ packages:
     dependency: "direct main"
     description:
       name: background_downloader
-      sha256: e4a7ba867c933836ce40aa8f2d096e0fbe7dae7323f07498663233917d85f59c
+      sha256: ab416ed9543020687be640599e5e432e0707d0f8d98b65c7f6a2425ebd5fdefc
       url: "https://pub.dev"
     source: hosted
-    version: "8.0.2"
+    version: "8.0.5"
   boolean_selector:
     dependency: transitive
     description:
@@ -814,10 +814,10 @@ packages:
     dependency: "direct main"
     description:
       name: youtube_explode_dart
-      sha256: d0a92f617c64da9565dad864e56b9b3eb406aa77bdeee17b233f9ac8f929d7dd
+      sha256: "89aff5ac7de139c492ecea4bfc9189d33791632fa57e7e438e598873b040b077"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.3"
+    version: "2.0.4"
 sdks:
   dart: ">=3.2.0 <4.0.0"
   flutter: ">=3.16.5"

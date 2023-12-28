@@ -14,7 +14,7 @@ environment:
 dependencies:
   audio_service: ^0.18.12
   audio_session: ^0.1.18
-  background_downloader: ^8.0.2
+  background_downloader: ^8.0.5
   cached_network_image: ^3.3.0
   dynamic_color: ^1.6.9
   file_picker: ^6.1.1
@@ -35,7 +35,7 @@ dependencies:
   permission_handler: ^11.1.0
   rxdart: ^0.27.7
   url_launcher: ^6.2.2
-  youtube_explode_dart: ^2.0.3
+  youtube_explode_dart: ^2.0.4
 
 dev_dependencies:
   flutter_launcher_icons: ^0.13.1
