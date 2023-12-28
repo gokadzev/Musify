@@ -470,7 +470,7 @@ Future<String> getAudioUrl(
   String cacheKey,
 ) async {
   final manifest = await yt.videos.streamsClient.getManifest(songId);
-  final audioQuality = selectAudioQuality(manifest.audioOnly);
+  final audioQuality = selectAudioQuality(manifest.audioOnly.sortByBitrate());
   final audioUrl = audioQuality.url.toString();
 
   unawaited(updateRecentlyPlayed(songId));
