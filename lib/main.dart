@@ -193,6 +193,13 @@ class _MusifyState extends State<Musify> {
                   StreamBuilder<MediaItem?>(
                     stream: audioHandler.mediaItem,
                     builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        logger.log(
+                          'Error in mini player bar',
+                          snapshot.error,
+                          snapshot.stackTrace,
+                        );
+                      }
                       final metadata = snapshot.data;
                       if (metadata == null) {
                         return const SizedBox.shrink();
