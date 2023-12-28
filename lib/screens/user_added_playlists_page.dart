@@ -137,8 +137,11 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Spinner();
                 } else if (snapshot.hasError) {
-                  logger
-                      .log('Error on user playlists page:  ${snapshot.error}');
+                  logger.log(
+                    'Error on user playlists page',
+                    snapshot.error,
+                    snapshot.stackTrace,
+                  );
                   return Center(
                     child: Text(context.l10n!.error),
                   );

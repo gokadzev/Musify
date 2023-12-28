@@ -61,7 +61,7 @@ Future<List> fetchSongsList(String searchQuery) async {
 
     return searchResults.map((video) => returnSongLayout(0, video)).toList();
   } catch (e, stackTrace) {
-    logger.log('Error in fetchSongsList:$e\n$stackTrace');
+    logger.log('Error in fetchSongsList', e, stackTrace);
     return [];
   }
 }
@@ -92,7 +92,7 @@ Future<List> getRecommendedSongs() async {
 
     return playlistSongs.take(15).toList();
   } catch (e, stackTrace) {
-    logger.log('Error in getRecommendedSongs:$e\n$stackTrace');
+    logger.log('Error in getRecommendedSongs', e, stackTrace);
     return [];
   }
 }
@@ -338,7 +338,7 @@ Future<List<Map<String, int>>> getSkipSegments(String id) async {
       return [];
     }
   } catch (e, stack) {
-    logger.log('Error in getSkipSegments: $e $stack');
+    logger.log('Error in getSkipSegments', e, stack);
     return [];
   }
 }
@@ -428,7 +428,7 @@ Future<AudioOnlyStreamInfo> getSongManifest(String songId) async {
     final audioStream = manifest.audioOnly.withHighestBitrate();
     return audioStream;
   } catch (e, stackTrace) {
-    logger.log('Error while getting song streaming manifest:$e\n$stackTrace');
+    logger.log('Error while getting song streaming manifest', e, stackTrace);
     rethrow; // Rethrow the exception to allow the caller to handle it
   }
 }
@@ -457,7 +457,7 @@ Future<String> getSong(String songId, bool isLive) async {
       return await getAudioUrl(songId, isQualityChanged, cacheKey);
     }
   } catch (e, stackTrace) {
-    logger.log('Error while getting song streaming URL:$e\n$stackTrace');
+    logger.log('Error while getting song streaming URL', e, stackTrace);
     rethrow;
   }
 }
@@ -510,7 +510,7 @@ Future<Map<String, dynamic>> getSongDetails(
     final song = await yt.videos.get(songId);
     return returnSongLayout(songIndex, song);
   } catch (e, stackTrace) {
-    logger.log('Error while getting song details:$e\n$stackTrace');
+    logger.log('Error while getting song details', e, stackTrace);
     rethrow;
   }
 }
@@ -589,11 +589,14 @@ Future<File?> _downloadAndSaveArtworkFile(String url, String filePath) async {
       await file.writeAsBytes(response.bodyBytes);
       return file;
     } else {
-      logger
-          .log('Failed to download file. Status code: ${response.statusCode}');
+      logger.log(
+        'Failed to download file. Status code: ${response.statusCode}',
+        null,
+        null,
+      );
     }
   } catch (e, stackTrace) {
-    logger.log('Error downloading and saving file: $e\n$stackTrace');
+    logger.log('Error downloading and saving file', e, stackTrace);
   }
 
   return null;

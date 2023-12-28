@@ -65,7 +65,11 @@ class _HomePageState extends State<HomePage> {
     if (snapshot.connectionState == ConnectionState.waiting) {
       return _buildLoadingWidget();
     } else if (snapshot.hasError) {
-      logger.log('Error in _buildSuggestedPlaylistsWidget:  ${snapshot.error}');
+      logger.log(
+        'Error in _buildSuggestedPlaylistsWidget',
+        snapshot.error,
+        snapshot.stackTrace,
+      );
       return _buildErrorWidget(context);
     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
       return const SizedBox.shrink();
@@ -145,7 +149,9 @@ class _HomePageState extends State<HomePage> {
           case ConnectionState.done:
             if (snapshot.hasError) {
               logger.log(
-                'Error in _buildRecommendedSongsAndArtists:  ${snapshot.error}',
+                'Error in _buildRecommendedSongsAndArtists',
+                snapshot.error,
+                snapshot.stackTrace,
               );
               return _buildErrorWidget(context);
             }

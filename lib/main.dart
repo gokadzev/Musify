@@ -142,7 +142,7 @@ class _MusifyState extends State<Musify> {
         yield LicenseEntryWithLineBreaks(['google_fonts'], license1);
       });
     } catch (e, stackTrace) {
-      logger.log('License Registration Error:$e\n$stackTrace');
+      logger.log('License Registration Error', e, stackTrace);
     }
   }
 
@@ -301,6 +301,6 @@ Future<void> initialisation() async {
       tapOpensFile: true,
     );
   } catch (e, stackTrace) {
-    logger.log('Initialization Error:$e\n$stackTrace');
+    logger.log('Initialization Error', e, stackTrace);
   }
 }
