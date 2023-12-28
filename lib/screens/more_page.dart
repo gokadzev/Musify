@@ -1,7 +1,6 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/version.dart';
-import 'package:musify/enums/quality_enum.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/screens/about_page.dart';
@@ -364,11 +363,7 @@ class MorePage extends StatelessWidget {
                   backgroundColor: Colors.transparent,
                   context: context,
                   builder: (BuildContext context) {
-                    final availableQualities = [
-                      AudioQuality.lowQuality,
-                      AudioQuality.mediumQuality,
-                      AudioQuality.bestQuality,
-                    ];
+                    final availableQualities = ['low', 'medium', 'high'];
 
                     return Center(
                       child: Container(
@@ -385,36 +380,23 @@ class MorePage extends StatelessWidget {
                           itemCount: availableQualities.length,
                           itemBuilder: (context, index) {
                             final quality = availableQualities[index];
-                            final isDefault =
-                                audioQualitySetting.value == null &&
-                                    quality == AudioQuality.bestQuality;
                             final isCurrentQuality =
                                 audioQualitySetting.value == quality;
 
                             return Padding(
                               padding: const EdgeInsets.all(10),
                               child: Card(
-                                elevation:
-                                    isCurrentQuality || isDefault ? 0 : 4,
+                                elevation: isCurrentQuality ? 0 : 4,
                                 child: ListTile(
-                                  title: Text(quality.name),
+                                  title: Text(quality),
                                   onTap: () {
-                                    if (quality == AudioQuality.bestQuality) {
-                                      // Save null when "Best Quality" is selected
-                                      addOrUpdateData(
-                                        'settings',
-                                        'audioQuality',
-                                        null,
-                                      );
-                                      audioQualitySetting.value = null;
-                                    } else {
-                                      addOrUpdateData(
-                                        'settings',
-                                        'audioQuality',
-                                        quality,
-                                      );
-                                      audioQualitySetting.value = quality;
-                                    }
+                                    addOrUpdateData(
+                                      'settings',
+                                      'audioQuality',
+                                      quality,
+                                    );
+                                    audioQualitySetting.value = quality;
+
                                     showToast(
                                       context,
                                       context.l10n!.audioQualityMsg,

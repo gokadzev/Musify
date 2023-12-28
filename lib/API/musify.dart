@@ -8,7 +8,6 @@ import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:musify/DB/albums.db.dart';
 import 'package:musify/DB/playlists.db.dart';
-import 'package:musify/enums/quality_enum.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/data_manager.dart';
@@ -438,10 +437,8 @@ const Duration _cacheDuration = Duration(hours: 12);
 Future<String> getSong(String songId, bool isLive) async {
   try {
     final qualitySetting = audioQualitySetting.value;
-    final isQualityChanged = qualitySetting != null;
 
-    final cacheKey =
-        'song_$songId${isQualityChanged ? '_${qualitySetting.name}' : ''}_url';
+    final cacheKey = 'song_${songId}_${qualitySetting}_url';
 
     final cachedUrl = await getData(
       'cache',
@@ -454,7 +451,7 @@ Future<String> getSong(String songId, bool isLive) async {
     } else if (isLive) {
       return await getLiveStreamUrl(songId);
     } else {
-      return await getAudioUrl(songId, isQualityChanged, cacheKey);
+      return await getAudioUrl(songId, cacheKey);
     }
   } catch (e, stackTrace) {
     logger.log('Error while getting song streaming URL', e, stackTrace);
@@ -470,11 +467,10 @@ Future<String> getLiveStreamUrl(String songId) async {
 
 Future<String> getAudioUrl(
   String songId,
-  bool isQualityChanged,
   String cacheKey,
 ) async {
   final manifest = await yt.videos.streamsClient.getManifest(songId);
-  final audioQuality = selectAudioQuality(manifest.audioOnly, isQualityChanged);
+  final audioQuality = selectAudioQuality(manifest.audioOnly);
   final audioUrl = audioQuality.url.toString();
 
   unawaited(updateRecentlyPlayed(songId));
@@ -482,23 +478,17 @@ Future<String> getAudioUrl(
   return audioUrl;
 }
 
-AudioStreamInfo selectAudioQuality(
-  List<AudioStreamInfo> availableSources,
-  bool isQualityChanged,
-) {
-  if (!isQualityChanged) {
-    return availableSources.withHighestBitrate();
-  }
+AudioStreamInfo selectAudioQuality(List<AudioStreamInfo> availableSources) {
+  final qualitySetting = audioQualitySetting.value;
 
-  final selectedQuality = audioQualitySetting.value ?? AudioQuality.bestQuality;
-  switch (selectedQuality) {
-    case AudioQuality.lowQuality:
-      return availableSources.last;
-    case AudioQuality.mediumQuality:
-      return availableSources[availableSources.length ~/ 2];
-    case AudioQuality.bestQuality:
-    default:
-      return availableSources.first;
+  if (qualitySetting == 'low') {
+    return availableSources.last;
+  } else if (qualitySetting == 'medium') {
+    return availableSources[availableSources.length ~/ 2];
+  } else if (qualitySetting == 'high') {
+    return availableSources.first;
+  } else {
+    return availableSources.withHighestBitrate();
   }
 }
 

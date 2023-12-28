@@ -11,7 +11,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:musify/extensions/audio_quality.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/services/audio_service.dart';
 import 'package:musify/services/data_manager.dart';
@@ -285,7 +284,6 @@ void main() async {
 Future<void> initialisation() async {
   try {
     await Hive.initFlutter();
-    Hive.registerAdapter(AudioQualityAdapter());
     await Hive.openBox('settings');
     await Hive.openBox('user');
     await Hive.openBox('userNoBackup');
