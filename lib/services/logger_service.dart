@@ -8,7 +8,16 @@ class Logger {
 
   void log(String errorLocation, Object? error, StackTrace? stackTrace) {
     final timestamp = DateTime.now().toString();
-    final logMessage = '[$timestamp] $errorLocation:$error\n$stackTrace';
+
+    // Check if error is not null, otherwise use an empty string
+    final errorMessage = error != null ? '$error' : '';
+
+    // Check if stackTrace is not null, otherwise use an empty string
+    final stackTraceMessage = stackTrace != null ? '$stackTrace' : '';
+
+    final logMessage =
+        '[$timestamp] $errorLocation:$errorMessage\n$stackTraceMessage';
+
     debugPrint(logMessage);
     _logs += '$logMessage\n';
     _logCount++;
