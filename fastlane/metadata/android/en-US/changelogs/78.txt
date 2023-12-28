@@ -1,0 +1,6 @@
+Enhancements
+
+- Improved logger
+- Updated and improved Portuguese translations
+- Official Android 14 support
+- Made various quality and performance improvements for app stability and speed
