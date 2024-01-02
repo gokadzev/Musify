@@ -1,8 +1,7 @@
 name: 🐞 Issue Report
 description: Report an issue in Musify
 title: '[Bug] <title>'
-labels:
-  - bug
+labels: "type: bug"
 assignees:
   - gokadzev
 

@@ -3,8 +3,7 @@ assignees:
   - gokadzev
 description: Suggest a feature to improve the app
 title: "[Feature] <title>"
-labels:
-  - enhancement
+labels: "type: enhancement"
 
 body:
   - type: checkboxes
