@@ -18,9 +18,7 @@ import 'package:musify/utilities/formatter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
-final yt = YoutubeExplode();
-
-final random = Random();
+final _yt = YoutubeExplode();
 
 List globalSongs = [];
 
@@ -56,7 +54,7 @@ int id = 0;
 
 Future<List> fetchSongsList(String searchQuery) async {
   try {
-    final List<Video> searchResults = await yt.search.search(searchQuery);
+    final List<Video> searchResults = await _yt.search.search(searchQuery);
 
     return searchResults.map((video) => returnSongLayout(0, video)).toList();
   } catch (e, stackTrace) {
@@ -99,7 +97,7 @@ Future<List> getRecommendedSongs() async {
 Future<List<dynamic>> getUserPlaylists() async {
   final playlistsByUser = [...userCustomPlaylists];
   for (final playlistID in userPlaylists) {
-    final plist = await yt.playlists.get(playlistID);
+    final plist = await _yt.playlists.get(playlistID);
     playlistsByUser.add({
       'ytid': plist.id.toString(),
       'title': plist.title,
@@ -298,7 +296,7 @@ Future<List<String>> getSearchSuggestions(String query) async {
 
   // Built-in implementation:
 
-  final suggestions = await yt.search.getQuerySuggestions(query);
+  final suggestions = await _yt.search.getQuerySuggestions(query);
 
   return suggestions;
 }
@@ -348,6 +346,8 @@ Future<Map> getRandomSong() async {
     globalSongs = await getSongsFromPlaylist(playlistId);
   }
 
+  final random = Random();
+
   return globalSongs[random.nextInt(globalSongs.length)];
 }
 
@@ -355,7 +355,7 @@ Future<List> getSongsFromPlaylist(dynamic playlistId) async {
   final songList = await getData('cache', 'playlistSongs$playlistId') ?? [];
 
   if (songList.isEmpty) {
-    await for (final song in yt.playlists.getVideos(playlistId)) {
+    await for (final song in _yt.playlists.getVideos(playlistId)) {
       songList.add(returnSongLayout(songList.length, song));
     }
 
@@ -372,7 +372,7 @@ Future updatePlaylistList(
   final index = findPlaylistIndexByYtId(playlistId);
   if (index != -1) {
     final songList = [];
-    await for (final song in yt.playlists.getVideos(playlistId)) {
+    await for (final song in _yt.playlists.getVideos(playlistId)) {
       songList.add(returnSongLayout(songList.length, song));
     }
 
@@ -423,7 +423,7 @@ Future<Map<String, dynamic>?> getPlaylistInfoForWidget(dynamic id) async {
 
 Future<AudioOnlyStreamInfo> getSongManifest(String songId) async {
   try {
-    final manifest = await yt.videos.streamsClient.getManifest(songId);
+    final manifest = await _yt.videos.streamsClient.getManifest(songId);
     final audioStream = manifest.audioOnly.withHighestBitrate();
     return audioStream;
   } catch (e, stackTrace) {
@@ -461,7 +461,7 @@ Future<String> getSong(String songId, bool isLive) async {
 
 Future<String> getLiveStreamUrl(String songId) async {
   final streamInfo =
-      await yt.videos.streamsClient.getHttpLiveStreamUrl(VideoId(songId));
+      await _yt.videos.streamsClient.getHttpLiveStreamUrl(VideoId(songId));
   return streamInfo;
 }
 
@@ -469,7 +469,7 @@ Future<String> getAudioUrl(
   String songId,
   String cacheKey,
 ) async {
-  final manifest = await yt.videos.streamsClient.getManifest(songId);
+  final manifest = await _yt.videos.streamsClient.getManifest(songId);
   final audioQuality = selectAudioQuality(manifest.audioOnly.sortByBitrate());
   final audioUrl = audioQuality.url.toString();
 
@@ -497,7 +497,7 @@ Future<Map<String, dynamic>> getSongDetails(
   String songId,
 ) async {
   try {
-    final song = await yt.videos.get(songId);
+    final song = await _yt.videos.get(songId);
     return returnSongLayout(songIndex, song);
   } catch (e, stackTrace) {
     logger.log('Error while getting song details', e, stackTrace);
@@ -534,7 +534,7 @@ void makeSongOffline(dynamic song) async {
   await Directory(_artworkDirPath).create(recursive: true);
 
   final audioManifest = await getSongManifest(ytid);
-  final stream = yt.videos.streamsClient.get(audioManifest);
+  final stream = _yt.videos.streamsClient.get(audioManifest);
   final fileStream = _audioFile.openWrite();
   await stream.pipe(fileStream);
   await fileStream.flush();
