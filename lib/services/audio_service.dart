@@ -103,6 +103,20 @@ class MusifyAudioHandler extends BaseAudioHandler {
   }
 
   void _updatePlaybackState() {
+    final processingStateMap = {
+      ProcessingState.idle: AudioProcessingState.idle,
+      ProcessingState.loading: AudioProcessingState.loading,
+      ProcessingState.buffering: AudioProcessingState.buffering,
+      ProcessingState.ready: AudioProcessingState.ready,
+      ProcessingState.completed: AudioProcessingState.completed,
+    };
+
+    final repeatModeMap = {
+      LoopMode.off: AudioServiceRepeatMode.none,
+      LoopMode.one: AudioServiceRepeatMode.one,
+      LoopMode.all: AudioServiceRepeatMode.all,
+    };
+
     playbackState.add(
       playbackState.value.copyWith(
         controls: [
@@ -117,18 +131,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
           MediaAction.seekBackward,
         },
         androidCompactActionIndices: const [0, 1, 3],
-        processingState: const {
-          ProcessingState.idle: AudioProcessingState.idle,
-          ProcessingState.loading: AudioProcessingState.loading,
-          ProcessingState.buffering: AudioProcessingState.buffering,
-          ProcessingState.ready: AudioProcessingState.ready,
-          ProcessingState.completed: AudioProcessingState.completed,
-        }[audioPlayer.processingState]!,
-        repeatMode: const {
-          LoopMode.off: AudioServiceRepeatMode.none,
-          LoopMode.one: AudioServiceRepeatMode.one,
-          LoopMode.all: AudioServiceRepeatMode.all,
-        }[audioPlayer.loopMode]!,
+        processingState: processingStateMap[audioPlayer.processingState]!,
+        repeatMode: repeatModeMap[audioPlayer.loopMode]!,
         shuffleMode: audioPlayer.shuffleModeEnabled
             ? AudioServiceShuffleMode.all
             : AudioServiceShuffleMode.none,
