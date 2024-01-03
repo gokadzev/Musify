@@ -50,7 +50,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
   late StreamSubscription<SequenceState?> _sequenceStateSubscription;
 
   final _playlist = ConcatenatingAudioSource(children: []);
-  final Random _random = Random();
 
   Stream<PositionData> get positionDataStream =>
       Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
@@ -340,10 +339,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
   }
 
   int _generateRandomIndex(int length) {
-    var randomIndex = _random.nextInt(length);
+    final random = Random();
+    var randomIndex = random.nextInt(length);
 
     while (randomIndex == id) {
-      randomIndex = _random.nextInt(length);
+      randomIndex = random.nextInt(length);
     }
 
     return randomIndex;
