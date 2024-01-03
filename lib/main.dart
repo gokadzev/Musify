@@ -283,11 +283,11 @@ void main() async {
 
 Future<void> initialisation() async {
   try {
-    await Hive.initFlutter();
-    await Hive.openBox('settings');
-    await Hive.openBox('user');
-    await Hive.openBox('userNoBackup');
-    await Hive.openBox('cache');
+    final boxNames = ['settings', 'user', 'userNoBackup', 'cache'];
+
+    for (final boxName in boxNames) {
+      await Hive.openBox(boxName);
+    }
 
     audioHandler = await AudioService.init(
       builder: MusifyAudioHandler.new,
