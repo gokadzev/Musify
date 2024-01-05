@@ -341,7 +341,7 @@ class MorePage extends StatelessWidget {
                   (value) {
                     addOrUpdateData(
                       'settings',
-                      'SponsorBlockSupport',
+                      'sponsorBlockSupport',
                       value,
                     );
                     sponsorBlockSupport.value = value;
