@@ -283,6 +283,8 @@ void main() async {
 
 Future<void> initialisation() async {
   try {
+    await Hive.initFlutter();
+
     final boxNames = ['settings', 'user', 'userNoBackup', 'cache'];
 
     for (final boxName in boxNames) {
