@@ -8,10 +8,12 @@ class MarqueeWidget extends StatefulWidget {
     this.animationDuration = const Duration(milliseconds: 6000),
     this.backDuration = const Duration(milliseconds: 800),
     this.pauseDuration = const Duration(milliseconds: 800),
+    this.manualScrollEnabled = true,
   });
   final Widget child;
   final Axis direction;
   final Duration animationDuration, backDuration, pauseDuration;
+  final bool manualScrollEnabled;
 
   @override
   _MarqueeWidgetState createState() => _MarqueeWidgetState();
@@ -38,6 +40,9 @@ class _MarqueeWidgetState extends State<MarqueeWidget> {
     return SingleChildScrollView(
       scrollDirection: widget.direction,
       controller: scrollController,
+      physics: widget.manualScrollEnabled
+          ? const AlwaysScrollableScrollPhysics()
+          : const NeverScrollableScrollPhysics(),
       child: widget.child,
     );
   }

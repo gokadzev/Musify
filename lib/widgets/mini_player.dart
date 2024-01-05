@@ -113,6 +113,7 @@ class MiniPlayer extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             MarqueeWidget(
+              manualScrollEnabled: false,
               child: Text(
                 metadata.title,
                 style: TextStyle(
@@ -123,6 +124,7 @@ class MiniPlayer extends StatelessWidget {
               ),
             ),
             MarqueeWidget(
+              manualScrollEnabled: false,
               child: Text(
                 metadata.artist.toString(),
                 style: TextStyle(
