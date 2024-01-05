@@ -47,7 +47,7 @@ class MiniPlayer extends StatelessWidget {
         }
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 18),
         height: 75,
         decoration: BoxDecoration(
           color: colorScheme.onSecondary,
