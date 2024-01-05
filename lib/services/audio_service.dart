@@ -300,11 +300,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
       if (segments.isNotEmpty) {
         final start = Duration(seconds: segments[0]['end']!);
-        final end = segments.length == 1
-            ? null
-            : Duration(seconds: segments[1]['start']!);
+        final end = segments.length > 1
+            ? Duration(seconds: segments[1]['start']!)
+            : null;
 
-        return end != Duration.zero
+        return end != null && end != Duration.zero
             ? ClippingAudioSource(
                 child: audioSource,
                 start: start,
