@@ -208,19 +208,30 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   Future<void> playSong(Map song) async {
     try {
+      late AudioSource _audioSource;
       if (song['isOffline'] ?? false) {
-        final _audioSource = AudioSource.uri(
+        _audioSource = AudioSource.uri(
           Uri.parse(song['audioPath']),
           tag: mapToMediaItem(song, song['audioPath']),
         );
-        await audioPlayer.setAudioSource(_audioSource);
       } else {
         final songUrl = await getSong(
           song['ytid'],
           song['isLive'],
         );
-        await checkIfSponsorBlockIsAvailable(song, songUrl);
+        final _spbAudioSource = AudioSource.uri(
+          Uri.parse(songUrl),
+          tag: mapToMediaItem(song, songUrl),
+        );
+        _audioSource = sponsorBlockSupport.value
+            ? await checkIfSponsorBlockIsAvailable(
+                  _spbAudioSource,
+                  song['ytid'],
+                ) ??
+                _spbAudioSource
+            : _spbAudioSource;
       }
+      await audioPlayer.setAudioSource(_audioSource);
       await audioPlayer.play();
     } catch (e, stackTrace) {
       logger.log('Error playing song', e, stackTrace);
@@ -280,38 +291,32 @@ class MusifyAudioHandler extends BaseAudioHandler {
     await audioPlayer.setLoopMode(repeatEnabled ? LoopMode.one : LoopMode.off);
   }
 
-  Future<void> checkIfSponsorBlockIsAvailable(song, songUrl) async {
+  Future<ClippingAudioSource?> checkIfSponsorBlockIsAvailable(
+    UriAudioSource audioSource,
+    String songId,
+  ) async {
     try {
-      final _audioSource = AudioSource.uri(
-        Uri.parse(songUrl),
-        tag: mapToMediaItem(song, songUrl),
-      );
+      final segments = await getSkipSegments(songId);
 
-      if (sponsorBlockSupport.value) {
-        final segments = await getSkipSegments(song['ytid']);
+      if (segments.isNotEmpty) {
+        final start = Duration(seconds: segments[0]['end']!);
+        final end = segments.length == 1
+            ? null
+            : Duration(seconds: segments[1]['start']!);
 
-        if (segments.isNotEmpty) {
-          final start = Duration(seconds: segments[0]['end']!);
-          final end = segments.length == 1
-              ? null
-              : Duration(seconds: segments[1]['start']!);
-
-          await audioPlayer.setAudioSource(
-            ClippingAudioSource(
-              child: _audioSource,
-              start: start,
-              end: end,
-              tag: _audioSource.tag,
-            ),
-          );
-          return;
-        }
+        return end != Duration.zero
+            ? ClippingAudioSource(
+                child: audioSource,
+                start: start,
+                end: end,
+                tag: audioSource.tag,
+              )
+            : null;
       }
-
-      await audioPlayer.setAudioSource(_audioSource);
     } catch (e, stackTrace) {
       logger.log('Error checking sponsor block', e, stackTrace);
     }
+    return null;
   }
 
   void changeSponsorBlockStatus() {
