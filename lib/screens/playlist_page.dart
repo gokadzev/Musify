@@ -71,12 +71,11 @@ class _PlaylistPageState extends State<PlaylistPage> {
     final list = <dynamic>[];
     final _count = _playlist['list'].length as int;
     final n = min(_itemsPerPage, _count - _currentPage * _itemsPerPage);
-    await Future.delayed(const Duration(seconds: 1), () {
-      for (var i = 0; i < n; i++) {
-        list.add(_playlist['list'][_currentLastLoadedId]);
-        _currentLastLoadedId++;
-      }
-    });
+    for (var i = 0; i < n; i++) {
+      list.add(_playlist['list'][_currentLastLoadedId]);
+      _currentLastLoadedId++;
+    }
+
     _currentPage++;
     return list;
   }
