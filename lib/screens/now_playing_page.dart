@@ -17,6 +17,7 @@ import 'package:musify/utilities/formatter.dart';
 import 'package:musify/utilities/mediaitem.dart';
 import 'package:musify/widgets/marque.dart';
 import 'package:musify/widgets/no_artwork_cube.dart';
+import 'package:musify/widgets/playback_icon_button.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/spinner.dart';
 
@@ -223,35 +224,6 @@ class NowPlayingPage extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  if (constraints.maxWidth > 300)
-                    Column(
-                      children: [
-                        ValueListenableBuilder<bool>(
-                          valueListenable: muteNotifier,
-                          builder: (_, value, __) {
-                            return customIconButton(
-                              value
-                                  ? FluentIcons.speaker_mute_24_filled
-                                  : FluentIcons.speaker_mute_24_regular,
-                              colorScheme.primary,
-                              20,
-                              audioHandler.mute,
-                            );
-                          },
-                        ),
-                        customIconButton(
-                          Icons.add,
-                          colorScheme.primary,
-                          20,
-                          () {
-                            _showAddToPlaylistDialog(
-                              context,
-                              mediaItemToMap(mediaItem),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
                   ValueListenableBuilder<bool>(
                     valueListenable: shuffleNotifier,
                     builder: (_, value, __) {
@@ -289,39 +261,7 @@ class NowPlayingPage extends StatelessWidget {
                   StreamBuilder<PlaybackState>(
                     stream: audioHandler.playbackState,
                     builder: (context, snapshot) {
-                      final playerState = snapshot.data;
-                      if (playerState == null) return const SizedBox.shrink();
-
-                      final processingState = playerState.processingState;
-                      final playing = playerState.playing;
-
-                      IconData icon;
-                      VoidCallback? onPressed;
-
-                      if (processingState == AudioProcessingState.loading ||
-                          processingState == AudioProcessingState.buffering) {
-                        icon = FluentIcons.spinner_ios_20_filled;
-                        onPressed = null;
-                      } else if (!playing) {
-                        icon = FluentIcons.play_circle_48_filled;
-                        onPressed = audioHandler.play;
-                      } else if (processingState !=
-                          AudioProcessingState.completed) {
-                        icon = FluentIcons.pause_circle_48_filled;
-                        onPressed = audioHandler.pause;
-                      } else {
-                        icon = FluentIcons.replay_20_filled;
-                        onPressed = () => audioHandler.seek(Duration.zero);
-                      }
-
-                      return GestureDetector(
-                        onTap: onPressed,
-                        child: Icon(
-                          icon,
-                          color: colorScheme.primary,
-                          size: 60,
-                        ),
-                      );
+                      return buildPlaybackIconButton(snapshot.data, 60);
                     },
                   ),
                   IconButton(
@@ -356,54 +296,43 @@ class NowPlayingPage extends StatelessWidget {
                       );
                     },
                   ),
-                  if (constraints.maxWidth > 300)
-                    Column(
-                      children: [
-                        ValueListenableBuilder<bool>(
-                          valueListenable: songLikeStatus,
-                          builder: (_, value, __) {
-                            return customIconButton(
-                              value
-                                  ? FluentIcons.star_24_filled
-                                  : FluentIcons.star_24_regular,
-                              songLikeStatus.value
-                                  ? colorScheme.primary
-                                  : colorScheme.primary,
-                              20,
-                              () {
-                                updateSongLikeStatus(
-                                  audioId,
-                                  !songLikeStatus.value,
-                                );
-                                songLikeStatus.value = !songLikeStatus.value;
-                              },
-                            );
-                          },
-                        ),
-                        ValueListenableBuilder<bool>(
-                          valueListenable: playNextSongAutomatically,
-                          builder: (_, value, __) {
-                            return customIconButton(
-                              value
-                                  ? FluentIcons.music_note_2_play_20_filled
-                                  : FluentIcons.music_note_2_play_20_regular,
-                              colorScheme.primary,
-                              20,
-                              audioHandler.changeAutoPlayNextStatus,
-                            );
-                          },
-                        ),
-                      ],
-                    ),
                 ],
               ),
             ),
             SizedBox(height: size.height * 0.047),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 8,
               children: [
-                TextButton(
-                  onPressed: () {
+                ValueListenableBuilder<bool>(
+                  valueListenable: muteNotifier,
+                  builder: (_, value, __) {
+                    return customIconButton(
+                      value
+                          ? FluentIcons.speaker_mute_24_filled
+                          : FluentIcons.speaker_mute_24_regular,
+                      colorScheme.primary,
+                      20,
+                      audioHandler.mute,
+                    );
+                  },
+                ),
+                customIconButton(
+                  Icons.add,
+                  colorScheme.primary,
+                  20,
+                  () {
+                    _showAddToPlaylistDialog(
+                      context,
+                      mediaItemToMap(mediaItem),
+                    );
+                  },
+                ),
+                customIconButton(
+                  FluentIcons.apps_list_24_filled,
+                  colorScheme.primary,
+                  20,
+                  () {
                     showCustomBottomSheet(
                       context,
                       ListView.builder(
@@ -428,11 +357,12 @@ class NowPlayingPage extends StatelessWidget {
                       ),
                     );
                   },
-                  child: Text(context.l10n!.playlist),
                 ),
-                const Text(' | '),
-                TextButton(
-                  onPressed: () {
+                customIconButton(
+                  FluentIcons.text_32_filled,
+                  colorScheme.primary,
+                  20,
+                  () {
                     getSongLyrics(
                       mediaItem.artist.toString(),
                       mediaItem.title,
@@ -470,7 +400,40 @@ class NowPlayingPage extends StatelessWidget {
                       ),
                     );
                   },
-                  child: Text(context.l10n!.lyrics),
+                ),
+                ValueListenableBuilder<bool>(
+                  valueListenable: songLikeStatus,
+                  builder: (_, value, __) {
+                    return customIconButton(
+                      value
+                          ? FluentIcons.star_24_filled
+                          : FluentIcons.star_24_regular,
+                      songLikeStatus.value
+                          ? colorScheme.primary
+                          : colorScheme.primary,
+                      20,
+                      () {
+                        updateSongLikeStatus(
+                          audioId,
+                          !songLikeStatus.value,
+                        );
+                        songLikeStatus.value = !songLikeStatus.value;
+                      },
+                    );
+                  },
+                ),
+                ValueListenableBuilder<bool>(
+                  valueListenable: playNextSongAutomatically,
+                  builder: (_, value, __) {
+                    return customIconButton(
+                      value
+                          ? FluentIcons.music_note_2_play_20_filled
+                          : FluentIcons.music_note_2_play_20_regular,
+                      colorScheme.primary,
+                      20,
+                      audioHandler.changeAutoPlayNextStatus,
+                    );
+                  },
                 ),
               ],
             ),
