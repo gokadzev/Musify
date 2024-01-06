@@ -142,7 +142,7 @@ class NowPlayingPage extends StatelessWidget {
   ) {
     return Padding(
       padding: EdgeInsets.symmetric(
-        vertical: size.height * 0.01,
+        vertical: size.height * 0.02,
         horizontal: size.width * 0.05,
       ),
       child: Column(
