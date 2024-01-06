@@ -208,34 +208,64 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   Future<void> playSong(Map song) async {
     try {
-      late AudioSource _audioSource;
-      if (song['isOffline'] ?? false) {
-        _audioSource = AudioSource.uri(
-          Uri.parse(song['audioPath']),
-          tag: mapToMediaItem(song, song['audioPath']),
-        );
-      } else {
-        final songUrl = await getSong(
-          song['ytid'],
-          song['isLive'],
-        );
-        final _spbAudioSource = AudioSource.uri(
-          Uri.parse(songUrl),
-          tag: mapToMediaItem(song, songUrl),
-        );
-        _audioSource = sponsorBlockSupport.value
-            ? await checkIfSponsorBlockIsAvailable(
-                  _spbAudioSource,
-                  song['ytid'],
-                ) ??
-                _spbAudioSource
-            : _spbAudioSource;
-      }
-      await audioPlayer.setAudioSource(_audioSource);
+      final isOffline = song['isOffline'] ?? false;
+      final songUrl = isOffline
+          ? song['audioPath']
+          : await getSong(song['ytid'], song['isLive']);
+
+      final audioSource = await buildAudioSource(song, songUrl, isOffline);
+
+      await audioPlayer.setAudioSource(audioSource);
       await audioPlayer.play();
     } catch (e, stackTrace) {
       logger.log('Error playing song', e, stackTrace);
     }
+  }
+
+  Future<AudioSource> buildAudioSource(
+    Map song,
+    String songUrl,
+    bool isOffline,
+  ) async {
+    final uri = Uri.parse(songUrl);
+    final tag = mapToMediaItem(song, songUrl);
+    final audioSource = AudioSource.uri(uri, tag: tag);
+
+    if (!isOffline && sponsorBlockSupport.value) {
+      final spbAudioSource =
+          await checkIfSponsorBlockIsAvailable(audioSource, song['ytid']);
+      return spbAudioSource ?? audioSource;
+    }
+
+    return audioSource;
+  }
+
+  Future<ClippingAudioSource?> checkIfSponsorBlockIsAvailable(
+    UriAudioSource audioSource,
+    String songId,
+  ) async {
+    try {
+      final segments = await getSkipSegments(songId);
+
+      if (segments.isNotEmpty) {
+        final start = Duration(seconds: segments[0]['end']!);
+        final end = segments.length > 1
+            ? Duration(seconds: segments[1]['start']!)
+            : null;
+
+        return end != null && end != Duration.zero
+            ? ClippingAudioSource(
+                child: audioSource,
+                start: start,
+                end: end,
+                tag: audioSource.tag,
+              )
+            : null;
+      }
+    } catch (e, stackTrace) {
+      logger.log('Error checking sponsor block', e, stackTrace);
+    }
+    return null;
   }
 
   @override
@@ -289,34 +319,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
     final repeatEnabled = repeatMode != AudioServiceRepeatMode.none;
     repeatNotifier.value = repeatEnabled;
     await audioPlayer.setLoopMode(repeatEnabled ? LoopMode.one : LoopMode.off);
-  }
-
-  Future<ClippingAudioSource?> checkIfSponsorBlockIsAvailable(
-    UriAudioSource audioSource,
-    String songId,
-  ) async {
-    try {
-      final segments = await getSkipSegments(songId);
-
-      if (segments.isNotEmpty) {
-        final start = Duration(seconds: segments[0]['end']!);
-        final end = segments.length > 1
-            ? Duration(seconds: segments[1]['start']!)
-            : null;
-
-        return end != null && end != Duration.zero
-            ? ClippingAudioSource(
-                child: audioSource,
-                start: start,
-                end: end,
-                tag: audioSource.tag,
-              )
-            : null;
-      }
-    } catch (e, stackTrace) {
-      logger.log('Error checking sponsor block', e, stackTrace);
-    }
-    return null;
   }
 
   void changeSponsorBlockStatus() {
