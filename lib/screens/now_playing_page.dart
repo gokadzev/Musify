@@ -305,7 +305,7 @@ class NowPlayingPage extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: size.height * 0.047),
+            SizedBox(height: size.height * 0.1),
             Wrap(
               alignment: WrapAlignment.center,
               spacing: 8,
