@@ -215,6 +215,7 @@ class NowPlayingPage extends StatelessWidget {
 
   Widget buildPlayerControls(Size size, dynamic audioId, MediaItem mediaItem) {
     final songLikeStatus = ValueNotifier<bool>(isSongAlreadyLiked(audioId));
+    const iconSize = 20.0;
     return LayoutBuilder(
       builder: (context, constraints) {
         return Column(
@@ -232,7 +233,7 @@ class NowPlayingPage extends StatelessWidget {
                             ? FluentIcons.arrow_shuffle_24_filled
                             : FluentIcons.arrow_shuffle_off_24_filled,
                         colorScheme.primary,
-                        20,
+                        iconSize,
                         () {
                           audioHandler.setShuffleMode(
                             shuffleNotifier.value
@@ -261,7 +262,12 @@ class NowPlayingPage extends StatelessWidget {
                   StreamBuilder<PlaybackState>(
                     stream: audioHandler.playbackState,
                     builder: (context, snapshot) {
-                      return buildPlaybackIconButton(snapshot.data, 60);
+                      return buildPlaybackIconButton(
+                        snapshot.data,
+                        constraints.maxWidth * 0.19 < 72
+                            ? constraints.maxWidth * 0.19
+                            : 72,
+                      );
                     },
                   ),
                   IconButton(
@@ -287,7 +293,7 @@ class NowPlayingPage extends StatelessWidget {
                             ? FluentIcons.arrow_repeat_1_24_filled
                             : FluentIcons.arrow_repeat_all_off_24_filled,
                         colorScheme.primary,
-                        20,
+                        iconSize,
                         () => audioHandler.setRepeatMode(
                           value
                               ? AudioServiceRepeatMode.none
@@ -312,7 +318,7 @@ class NowPlayingPage extends StatelessWidget {
                           ? FluentIcons.speaker_mute_24_filled
                           : FluentIcons.speaker_mute_24_regular,
                       colorScheme.primary,
-                      20,
+                      iconSize,
                       audioHandler.mute,
                     );
                   },
@@ -320,7 +326,7 @@ class NowPlayingPage extends StatelessWidget {
                 customIconButton(
                   Icons.add,
                   colorScheme.primary,
-                  20,
+                  iconSize,
                   () {
                     _showAddToPlaylistDialog(
                       context,
@@ -331,7 +337,7 @@ class NowPlayingPage extends StatelessWidget {
                 customIconButton(
                   FluentIcons.apps_list_24_filled,
                   colorScheme.primary,
-                  20,
+                  iconSize,
                   () {
                     showCustomBottomSheet(
                       context,
@@ -361,7 +367,7 @@ class NowPlayingPage extends StatelessWidget {
                 customIconButton(
                   FluentIcons.text_32_filled,
                   colorScheme.primary,
-                  20,
+                  iconSize,
                   () {
                     getSongLyrics(
                       mediaItem.artist.toString(),
@@ -411,7 +417,7 @@ class NowPlayingPage extends StatelessWidget {
                       songLikeStatus.value
                           ? colorScheme.primary
                           : colorScheme.primary,
-                      20,
+                      iconSize,
                       () {
                         updateSongLikeStatus(
                           audioId,
@@ -430,7 +436,7 @@ class NowPlayingPage extends StatelessWidget {
                           ? FluentIcons.music_note_2_play_20_filled
                           : FluentIcons.music_note_2_play_20_regular,
                       colorScheme.primary,
-                      20,
+                      iconSize,
                       audioHandler.changeAutoPlayNextStatus,
                     );
                   },

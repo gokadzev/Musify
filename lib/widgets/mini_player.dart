@@ -63,7 +63,7 @@ class MiniPlayer extends StatelessWidget {
             StreamBuilder<PlaybackState>(
               stream: audioHandler.playbackState,
               builder: (context, snapshot) {
-                return buildPlaybackIconButton(snapshot.data, 40);
+                return buildPlaybackIconButton(snapshot.data, 45);
               },
             ),
           ],
