@@ -254,9 +254,7 @@ class NowPlayingPage extends StatelessWidget {
                     iconSize: constraints.maxWidth * 0.09 < 35
                         ? constraints.maxWidth * 0.09
                         : 35,
-                    onPressed: () async {
-                      await audioHandler.skipToPrevious();
-                    },
+                    onPressed: () => audioHandler.skipToPrevious(),
                     splashColor: Colors.transparent,
                   ),
                   StreamBuilder<PlaybackState>(
@@ -280,9 +278,7 @@ class NowPlayingPage extends StatelessWidget {
                     iconSize: constraints.maxWidth * 0.09 < 35
                         ? constraints.maxWidth * 0.09
                         : 35,
-                    onPressed: () async {
-                      await audioHandler.skipToNext();
-                    },
+                    onPressed: () => audioHandler.skipToNext(),
                     splashColor: Colors.transparent,
                   ),
                   ValueListenableBuilder<bool>(
