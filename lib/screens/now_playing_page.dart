@@ -53,12 +53,14 @@ class NowPlayingPage extends StatelessWidget {
                     metadata.title,
                     size.height * 0.030,
                     FontWeight.bold,
+                    size.width,
                   ),
                   const SizedBox(height: 4),
                   buildMarqueeText(
                     metadata.artist ?? '',
                     size.height * 0.018,
                     FontWeight.w500,
+                    size.width,
                   ),
                   if (!(metadata.extras?['isLive'] ?? false))
                     _buildPlayer(size, metadata.extras?['ytid'], metadata),
@@ -120,16 +122,24 @@ class NowPlayingPage extends StatelessWidget {
     );
   }
 
-  Widget buildMarqueeText(String text, double fontSize, FontWeight fontWeight) {
-    return MarqueeWidget(
-      backDuration: const Duration(seconds: 1),
-      child: Text(
-        text,
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          fontSize: fontSize,
-          fontWeight: fontWeight,
-          color: colorScheme.primary,
+  Widget buildMarqueeText(
+    String text,
+    double fontSize,
+    FontWeight fontWeight,
+    double maxWidth,
+  ) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: maxWidth * 0.05),
+      child: MarqueeWidget(
+        backDuration: const Duration(seconds: 1),
+        child: Text(
+          text,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: fontSize,
+            fontWeight: fontWeight,
+            color: colorScheme.primary,
+          ),
         ),
       ),
     );
