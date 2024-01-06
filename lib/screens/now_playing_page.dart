@@ -340,36 +340,37 @@ class NowPlayingPage extends StatelessWidget {
                     );
                   },
                 ),
-                customIconButton(
-                  FluentIcons.apps_list_24_filled,
-                  colorScheme.primary,
-                  iconSize,
-                  () {
-                    showCustomBottomSheet(
-                      context,
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: const BouncingScrollPhysics(),
-                        itemCount: activePlaylist['list'].length,
-                        itemBuilder: (
-                          BuildContext context,
-                          int index,
-                        ) {
-                          return Padding(
-                            padding: const EdgeInsets.only(
-                              top: 5,
-                              bottom: 5,
-                            ),
-                            child: SongBar(
-                              activePlaylist['list'][index],
-                              false,
-                            ),
-                          );
-                        },
-                      ),
-                    );
-                  },
-                ),
+                if (activePlaylist['list'].isNotEmpty)
+                  customIconButton(
+                    FluentIcons.apps_list_24_filled,
+                    colorScheme.primary,
+                    iconSize,
+                    () {
+                      showCustomBottomSheet(
+                        context,
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics: const BouncingScrollPhysics(),
+                          itemCount: activePlaylist['list'].length,
+                          itemBuilder: (
+                            BuildContext context,
+                            int index,
+                          ) {
+                            return Padding(
+                              padding: const EdgeInsets.only(
+                                top: 5,
+                                bottom: 5,
+                              ),
+                              child: SongBar(
+                                activePlaylist['list'][index],
+                                false,
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  ),
                 customIconButton(
                   FluentIcons.text_32_filled,
                   colorScheme.primary,
