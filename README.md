@@ -26,7 +26,7 @@
     Offline Listening Support :arrow_down:<br>
     Import & Export Your Data And Never Lose It :floppy_disk:<br>
     Add Custom Playlists With Link :cool:<br>
-    High Quality mp3 / m4a / flac Format :fire:<br>
+    Optimized Sound Experience :fire:<br>
     Lyrics Support :pencil:<br>
     No Ads :no_entry_sign:<br>
     No Subscriptions :dollar:<br>

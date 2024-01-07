@@ -5,7 +5,7 @@
 * Offline listening Support
 * Import & Export Your Data And Never Lose It
 * Add Custom Playlists With Link
-* High Quality mp3 / m4a / flac Format
+* Optimized Sound Experience
 * Lyrics Support
 * No Ads
 * No Subscriptions
