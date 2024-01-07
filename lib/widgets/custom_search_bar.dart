@@ -5,6 +5,7 @@ import 'package:musify/widgets/spinner.dart';
 
 class CustomSearchBar extends StatefulWidget {
   const CustomSearchBar({
+    super.key,
     required this.onSubmitted,
     required this.controller,
     required this.focusNode,

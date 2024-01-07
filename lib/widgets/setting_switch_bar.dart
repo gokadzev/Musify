@@ -2,7 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:musify/style/app_themes.dart';
 
 class SettingSwitchBar extends StatelessWidget {
-  SettingSwitchBar(this.tileName, this.tileIcon, this.value, this.onChanged);
+  SettingSwitchBar(
+    this.tileName,
+    this.tileIcon,
+    this.value,
+    this.onChanged, {
+    super.key,
+  });
 
   final Function(bool) onChanged;
   final bool value;

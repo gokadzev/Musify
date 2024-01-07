@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:musify/style/app_themes.dart';
 
 class SettingBar extends StatelessWidget {
-  SettingBar(this.tileName, this.tileIcon, this.onTap);
+  SettingBar(this.tileName, this.tileIcon, this.onTap, {super.key});
 
   final Function() onTap;
   final String tileName;

@@ -5,6 +5,7 @@ import 'package:musify/style/app_themes.dart';
 class ArtistCube extends StatelessWidget {
   const ArtistCube(
     this.artist, {
+    super.key,
     this.borderRadius = 150,
     this.borderRadiusInner = 10,
     this.iconSize = 30,

@@ -11,7 +11,7 @@ import 'package:musify/widgets/no_artwork_cube.dart';
 import 'package:musify/widgets/playback_icon_button.dart';
 
 class MiniPlayer extends StatelessWidget {
-  MiniPlayer({required this.metadata});
+  MiniPlayer({super.key, required this.metadata});
   final MediaItem metadata;
 
   @override

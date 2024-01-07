@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AutoFormatText extends StatelessWidget {
-  AutoFormatText({required this.text});
+  AutoFormatText({super.key, required this.text});
   final String text;
 
   @override
