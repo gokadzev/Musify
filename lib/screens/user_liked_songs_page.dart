@@ -35,7 +35,7 @@ class _UserLikedSongsPageState extends State<UserLikedSongsPage> {
 
   Widget buildPlaylistHeader() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         _buildPlaylistImage(),
         const SizedBox(width: 20),
