@@ -38,6 +38,7 @@ final appLanguages = <String, String>{
   'German': 'de',
   'Greek': 'el',
   'Hindi': 'hi',
+  'Russian': 'ru',
   'Polish': 'pl',
   'Portuguese': 'pt',
   'Spanish': 'es',
