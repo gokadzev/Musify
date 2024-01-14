@@ -218,8 +218,9 @@ class _MusifyState extends State<Musify> {
                         } else {
                           _selectedIndex.value = index;
 
-                          _navigatorKey.currentState?.pushReplacementNamed(
+                          _navigatorKey.currentState?.pushNamedAndRemoveUntil(
                             destinations[index],
+                            ModalRoute.withName(destinations[index]),
                           );
                         }
                       }
