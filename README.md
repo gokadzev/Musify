@@ -31,7 +31,7 @@
     No Ads :no_entry_sign:<br>
     No Subscriptions :dollar:<br>
     Inbuilt Updater :new:<br>
-    13 Supported Languages :us:<br>
+    14 Supported Languages :us:<br>
     Material UI & Accent Colors & Dynamic Colors (Android 12+) :art: <br>
 
 ---
