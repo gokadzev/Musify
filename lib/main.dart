@@ -212,15 +212,17 @@ class _MusifyState extends State<Musify> {
                     valueListenable: _selectedIndex,
                     builder: (_, value, __) {
                       void onDestinationSelected(int index) {
-                        if (_selectedIndex.value == index) {
-                          if (_navigatorKey.currentState?.canPop() == true) {
-                            _navigatorKey.currentState?.pop();
-                          }
+                        final currentState = _navigatorKey.currentState;
+
+                        if (_selectedIndex.value == index &&
+                            currentState?.canPop() == true) {
+                          currentState?.pop();
                         } else {
                           _selectedIndex.value = index;
 
-                          _navigatorKey.currentState?.pushReplacementNamed(
+                          currentState?.pushNamedAndRemoveUntil(
                             destinations[index],
+                            ModalRoute.withName(destinations[index]),
                           );
                         }
                       }
