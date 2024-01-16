@@ -77,6 +77,18 @@ class AboutPage extends StatelessWidget {
                           );
                         },
                       ),
+                      IconButton(
+                        icon: Icon(
+                          FluentIcons.globe_24_filled,
+                          color: colorScheme.primary,
+                        ),
+                        tooltip: 'Website',
+                        onPressed: () {
+                          launchURL(
+                            Uri.parse('https://gokadzev.github.io'),
+                          );
+                        },
+                      ),
                     ],
                   ),
                 ),
