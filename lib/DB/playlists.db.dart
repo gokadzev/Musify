@@ -166,7 +166,7 @@ List<Map<String, dynamic>> playlistsDB = [
     'title': 'Best Remixes Of Popular SONGS 2022 and 2023',
     'header_desc':
         'Best Remixes Of Popular SONGS 2022 and 2023 Those are some of best remixes of popular songs for 2022, we hope u like th',
-    'image': 'https://i.scdn.co/image/ab67706c0000da84031a9d25e9a4c24c0a9474f8',
+    'image': 'https://i.scdn.co/image/ab67706c0000da84896a7f23065fa962b6e9a5f5',
     'list': [],
   },
   {
@@ -599,7 +599,7 @@ List<Map<String, dynamic>> playlistsDB = [
   {
     'ytid': 'PLgzTt0k8mXzGjD1gQXkqC3bE0GzYwBnSD',
     'title': 'Best travel songs',
-    'image': 'https://i.scdn.co/image/ab67706c0000da84bf5ba94543ec0af839c8df25',
+    'image': 'https://i.scdn.co/image/ab67706c0000da8424979e795638ce02dfb72907',
     'list': [],
   }
 ];
