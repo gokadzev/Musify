@@ -21,22 +21,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
         ],
       ),
     );
-    enableBooster();
-    _playbackEventSubscription =
-        audioPlayer.playbackEventStream.listen(_handlePlaybackEvent);
-    _durationSubscription =
-        audioPlayer.durationStream.listen(_handleDurationChange);
-    _currentIndexSubscription =
-        audioPlayer.currentIndexStream.listen(_handleCurrentSongIndexChanged);
-    _sequenceStateSubscription =
-        audioPlayer.sequenceStateStream.listen(_handleSequenceStateChange);
-
+    _enableBooster();
+    _setupEventSubscriptions();
     _updatePlaybackState();
-    try {
-      audioPlayer.setAudioSource(_playlist);
-    } catch (e, stackTrace) {
-      logger.log('Error in setNewPlaylist', e, stackTrace);
-    }
+    _initAudioPlaylist();
 
     _initialize();
   }
@@ -120,6 +108,25 @@ class MusifyAudioHandler extends BaseAudioHandler {
       }
     } catch (e, stackTrace) {
       logger.log('Error handling sequence state change', e, stackTrace);
+    }
+  }
+
+  void _setupEventSubscriptions() {
+    _playbackEventSubscription =
+        audioPlayer.playbackEventStream.listen(_handlePlaybackEvent);
+    _durationSubscription =
+        audioPlayer.durationStream.listen(_handleDurationChange);
+    _currentIndexSubscription =
+        audioPlayer.currentIndexStream.listen(_handleCurrentSongIndexChanged);
+    _sequenceStateSubscription =
+        audioPlayer.sequenceStateStream.listen(_handleSequenceStateChange);
+  }
+
+  void _initAudioPlaylist() {
+    try {
+      audioPlayer.setAudioSource(_playlist);
+    } catch (e, stackTrace) {
+      logger.log('Error in setAudioSource', e, stackTrace);
     }
   }
 
@@ -358,7 +365,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
     );
   }
 
-  Future enableBooster() async {
+  Future _enableBooster() async {
     await _loudnessEnhancer.setEnabled(true);
     await _loudnessEnhancer.setTargetGain(0.5);
   }
