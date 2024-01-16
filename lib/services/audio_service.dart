@@ -61,44 +61,65 @@ class MusifyAudioHandler extends BaseAudioHandler {
       );
 
   void _handlePlaybackEvent(PlaybackEvent event) {
-    if (event.processingState == ProcessingState.completed &&
-        audioPlayer.playing) {
-      if (!hasNext) {
-        if (playNextSongAutomatically.value) {
-          getRandomSong().then(playSong);
+    try {
+      if (event.processingState == ProcessingState.completed &&
+          audioPlayer.playing) {
+        if (!hasNext) {
+          if (playNextSongAutomatically.value) {
+            getRandomSong().then(playSong);
+          }
+        } else {
+          skipToNext();
         }
-      } else {
-        skipToNext();
       }
+      _updatePlaybackState();
+    } catch (e, stackTrace) {
+      logger.log('Error handling playback event', e, stackTrace);
     }
-    _updatePlaybackState();
   }
 
   void _handleDurationChange(Duration? duration) {
-    final index = audioPlayer.currentIndex;
-    if (index != null && queue.value.isNotEmpty) {
-      final newQueue = List<MediaItem>.from(queue.value);
-      final oldMediaItem = newQueue[index];
-      final newMediaItem = oldMediaItem.copyWith(duration: duration);
-      newQueue[index] = newMediaItem;
-      queue.add(newQueue);
-      mediaItem.add(newMediaItem);
+    try {
+      final index = audioPlayer.currentIndex;
+      if (index != null && queue.value.isNotEmpty) {
+        final newQueue = List<MediaItem>.from(queue.value);
+        final oldMediaItem = newQueue[index];
+        final newMediaItem = oldMediaItem.copyWith(duration: duration);
+        newQueue[index] = newMediaItem;
+        queue.add(newQueue);
+        mediaItem.add(newMediaItem);
+      }
+    } catch (e, stackTrace) {
+      logger.log('Error handling duration change', e, stackTrace);
     }
   }
 
   void _handleCurrentSongIndexChanged(int? index) {
-    if (index != null && queue.value.isNotEmpty) {
-      final playlist = queue.value;
-      mediaItem.add(playlist[index]);
+    try {
+      if (index != null && queue.value.isNotEmpty) {
+        final playlist = queue.value;
+        mediaItem.add(playlist[index]);
+      }
+    } catch (e, stackTrace) {
+      logger.log(
+        'Error handling current song index change',
+        e,
+        stackTrace,
+      );
     }
   }
 
   void _handleSequenceStateChange(SequenceState? sequenceState) {
-    final sequence = sequenceState?.effectiveSequence;
-    if (sequence != null && sequence.isNotEmpty) {
-      final items = sequence.map((source) => source.tag as MediaItem).toList();
-      queue.add(items);
-      shuffleNotifier.value = sequenceState?.shuffleModeEnabled ?? false;
+    try {
+      final sequence = sequenceState?.effectiveSequence;
+      if (sequence != null && sequence.isNotEmpty) {
+        final items =
+            sequence.map((source) => source.tag as MediaItem).toList();
+        queue.add(items);
+        shuffleNotifier.value = sequenceState?.shuffleModeEnabled ?? false;
+      }
+    } catch (e, stackTrace) {
+      logger.log('Error handling sequence state change', e, stackTrace);
     }
   }
 
