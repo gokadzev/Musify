@@ -53,26 +53,29 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
             focusNode: _inputNode,
             labelText: '${context.l10n!.search}...',
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              Switch(
-                value: _showOnlyAlbums,
-                onChanged: toggleShowOnlyAlbums,
-                thumbIcon: MaterialStateProperty.resolveWith<Icon?>(
-                  (Set<MaterialState> states) {
-                    if (states.contains(MaterialState.selected)) {
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                Switch(
+                  value: _showOnlyAlbums,
+                  onChanged: toggleShowOnlyAlbums,
+                  thumbIcon: MaterialStateProperty.resolveWith<Icon?>(
+                    (Set<MaterialState> states) {
+                      if (states.contains(MaterialState.selected)) {
+                        return const Icon(
+                          Icons.album,
+                        );
+                      }
                       return const Icon(
-                        Icons.album,
+                        Icons.featured_play_list,
                       );
-                    }
-                    return const Icon(
-                      Icons.featured_play_list,
-                    );
-                  },
+                    },
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           Expanded(
             child: FutureBuilder(
