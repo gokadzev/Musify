@@ -20,7 +20,7 @@ class RecentlyPlayed extends StatelessWidget {
         itemCount: userRecentlyPlayed.length,
         itemBuilder: (BuildContext context, int index) {
           return SongBar(
-            userRecentlyPlayed[(userRecentlyPlayed.length - 1) - index],
+            userRecentlyPlayed[index],
             true,
           );
         },

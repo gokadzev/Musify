@@ -587,12 +587,13 @@ Future<File?> _downloadAndSaveArtworkFile(String url, String filePath) async {
 
 Future<void> updateRecentlyPlayed(dynamic songId) async {
   if (userRecentlyPlayed.length >= 20) {
-    userRecentlyPlayed.removeAt(0);
+    userRecentlyPlayed.removeLast();
   }
   userRecentlyPlayed.removeWhere((song) => song['ytid'] == songId);
 
   final newSongDetails =
       await getSongDetails(userRecentlyPlayed.length, songId);
-  userRecentlyPlayed.add(newSongDetails);
+
+  userRecentlyPlayed.insert(0, newSongDetails);
   addOrUpdateData('user', 'recentlyPlayedSongs', userRecentlyPlayed);
 }
