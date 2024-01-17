@@ -303,12 +303,15 @@ Future<void> initialisation() async {
       ),
     );
 
-    FileDownloader().configureNotification(
-      running: const TaskNotification('Downloading', 'file: {filename}'),
-      complete: const TaskNotification('Download finished', 'file: {filename}'),
-      progressBar: true,
-      tapOpensFile: true,
-    );
+    if (!isFdroidBuild) {
+      FileDownloader().configureNotification(
+        running: const TaskNotification('Downloading', 'file: {filename}'),
+        complete:
+            const TaskNotification('Download finished', 'file: {filename}'),
+        progressBar: true,
+        tapOpensFile: true,
+      );
+    }
   } catch (e, stackTrace) {
     logger.log('Initialization Error', e, stackTrace);
   }
