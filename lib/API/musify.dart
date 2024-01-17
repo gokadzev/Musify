@@ -346,9 +346,7 @@ Future<Map> getRandomSong() async {
     globalSongs = await getSongsFromPlaylist(playlistId);
   }
 
-  final random = Random();
-
-  return globalSongs[random.nextInt(globalSongs.length)];
+  return globalSongs[Random().nextInt(globalSongs.length)];
 }
 
 Future<List> getSongsFromPlaylist(dynamic playlistId) async {
@@ -384,12 +382,7 @@ Future updatePlaylistList(
 }
 
 int findPlaylistIndexByYtId(String ytid) {
-  for (var i = 0; i < playlists.length; i++) {
-    if (playlists[i]['ytid'] == ytid) {
-      return i;
-    }
-  }
-  return -1;
+  return playlists.indexWhere((playlist) => playlist['ytid'] == ytid);
 }
 
 Future<void> setActivePlaylist(Map info) async {
