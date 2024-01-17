@@ -18,7 +18,7 @@ dependencies:
   cached_network_image: ^3.3.1
   dynamic_color: ^1.6.9
   file_picker: ^6.1.1
-  fluentui_system_icons: ^1.1.223
+  fluentui_system_icons: ^1.1.224
   flutter:
     sdk: flutter
   flutter_localizations:
@@ -27,7 +27,7 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   html: ^0.15.4
-  http: ^1.1.2
+  http: ^1.2.0
   intl: ^0.18.0
   just_audio: ^0.9.36
   path: ^1.8.3
@@ -35,7 +35,7 @@ dependencies:
   permission_handler: ^11.1.0
   rxdart: ^0.27.7
   url_launcher: ^6.2.3
-  youtube_explode_dart: ^2.0.4
+  youtube_explode_dart: ^2.1.0
 
 dev_dependencies:
   flutter_launcher_icons: ^0.13.1
