@@ -1,0 +1,13 @@
+Bug Fixes
+
+- Resolved the issue with saving SponsorBlock settings
+- Resolved the issue with the artworks for 2 playlists
+
+Enhancements
+
+- Improved mini player UI
+- Updated now playing page UI
+- Improved user liked songs page UI
+- Added 1 language
+- Updated and improved existing language translations
+- Made various quality and performance improvements for app stability and speed
