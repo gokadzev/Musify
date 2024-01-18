@@ -1,0 +1,4 @@
+Enhancements
+
+- Removed File Downloader service initialization for F-droid builds as it's totally unused
+- Removed POST_NOTIFICATIONS and REQUEST_INSTALL_PACKAGES permissions for F-droid builds
