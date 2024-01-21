@@ -59,6 +59,25 @@
 
 ---
 
+<h3 align="center">Permissions for normal and F-Droid builds :lock: </h3>
+
+
+The following permissions are intentionally removed during the F-Droid build:
+
+- **REQUEST_INSTALL_PACKAGES:**
+  - *Purpose:* Allows the app to request the installation of packages.
+  - *Exclusion:* Removed, as F-Droid builds don't have built-in updater feature. F-Droid handles app installations and updates independently.
+
+- **POST_NOTIFICATIONS:**
+  - *Purpose:* Allows the app to post notifications.
+  - *Exclusion:* Removed, as F-Droid builds lack a built-in updater feature, and it was the only feature for which notifications were necessary.
+
+- **WRITE_EXTERNAL_STORAGE & READ_EXTERNAL_STORAGE:**
+  - *Purpose:* Allows the app to read and write to external storage.
+  - *Exclusion:* Removed, as F-Droid builds lack a built-in updater feature, and it was the only feature for which reading and writing external storage were necessary.
+
+---
+
   <h3 align="center">Download :floppy_disk:</h3>
      <p align="center" style="align-items:center"><a href="https://github.com/gokadzev/Musify/releases" rel="GitHub Releases"><img width="250" src="https://github.com/gokadzev/Musify/raw/master/repository_files/get-it-on-github.png"></a><a href="https://f-droid.org/packages/com.gokadzev.musify.fdroid/" rel="F-Droid"><img width="250" src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"></a></p>
 

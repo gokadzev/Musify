@@ -173,10 +173,7 @@ Future<String> getDownloadUrl(Map<String, dynamic> map) async {
 }
 
 Future<void> checkNecessaryPermissions(BuildContext context) async {
-  if (!isFdroidBuild) {
-    await Permission.notification.request();
-  }
-
+  await Permission.notification.request();
   try {
     await Permission.storage.request();
   } catch (e, stackTrace) {

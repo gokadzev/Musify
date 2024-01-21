@@ -26,8 +26,8 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     if (!isFdroidBuild) {
       checkAppUpdates(context);
+      checkNecessaryPermissions(context);
     }
-    checkNecessaryPermissions(context);
   }
 
   @override
