@@ -173,7 +173,6 @@ Future<String> getDownloadUrl(Map<String, dynamic> map) async {
 }
 
 Future<void> checkNecessaryPermissions(BuildContext context) async {
-  await Permission.audio.request();
   if (!isFdroidBuild) {
     await Permission.notification.request();
   }
