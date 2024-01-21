@@ -1,0 +1,4 @@
+Enhancements
+
+- Removed unused READ_MEDIA_AUDIO permission
+- Removed WRITE_EXTERNAL_STORAGE & READ_EXTERNAL_STORAGE permissions for F-droid builds As they are only used for built-in updater which isn't available for F-Droid
