@@ -1,20 +1,137 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:musify/screens/bottom_navigation_page.dart';
 import 'package:musify/screens/home_page.dart';
 import 'package:musify/screens/more_page.dart';
 import 'package:musify/screens/search_page.dart';
 import 'package:musify/screens/user_added_playlists_page.dart';
 
-final Map<String, WidgetBuilder> routes = {
-  '/': (_) => HomePage(),
-  '/search': (_) => SearchPage(),
-  '/userPlaylists': (_) => UserPlaylistsPage(),
-  '/more': (_) => MorePage(),
-};
+class CustomNavigationHelper {
+  factory CustomNavigationHelper() {
+    return _instance;
+  }
 
-final destinations = routes.keys.toList();
+  CustomNavigationHelper._internal() {
+    final routes = [
+      StatefulShellRoute.indexedStack(
+        parentNavigatorKey: parentNavigatorKey,
+        branches: [
+          StatefulShellBranch(
+            navigatorKey: homeTabNavigatorKey,
+            routes: [
+              GoRoute(
+                path: homePath,
+                pageBuilder: (context, GoRouterState state) {
+                  return getPage(
+                    child: HomePage(),
+                    state: state,
+                  );
+                },
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            navigatorKey: searchTabNavigatorKey,
+            routes: [
+              GoRoute(
+                path: searchPath,
+                pageBuilder: (context, GoRouterState state) {
+                  return getPage(
+                    child: SearchPage(),
+                    state: state,
+                  );
+                },
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            navigatorKey: userPlaylistsTabNavigatorKey,
+            routes: [
+              GoRoute(
+                path: userPlaylistsPath,
+                pageBuilder: (context, GoRouterState state) {
+                  return getPage(
+                    child: UserPlaylistsPage(),
+                    state: state,
+                  );
+                },
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            navigatorKey: moreTabNavigatorKey,
+            routes: [
+              GoRoute(
+                path: morePath,
+                pageBuilder: (context, state) {
+                  return getPage(
+                    child: MorePage(),
+                    state: state,
+                  );
+                },
+              ),
+            ],
+          ),
+        ],
+        pageBuilder: (
+          BuildContext context,
+          GoRouterState state,
+          StatefulNavigationShell navigationShell,
+        ) {
+          return getPage(
+            child: BottomNavigationPage(
+              child: navigationShell,
+            ),
+            state: state,
+          );
+        },
+      ),
+    ];
 
-Route<dynamic> generateRoute(RouteSettings settings) {
-  final builder = routes[settings.name] ??
-      (_) => throw Exception('Invalid route: ${settings.name}');
-  return MaterialPageRoute(builder: builder);
+    router = GoRouter(
+      navigatorKey: parentNavigatorKey,
+      initialLocation: homePath,
+      routes: routes,
+    );
+  }
+  static final CustomNavigationHelper _instance =
+      CustomNavigationHelper._internal();
+
+  static CustomNavigationHelper get instance => _instance;
+
+  static late final GoRouter router;
+
+  static final GlobalKey<NavigatorState> parentNavigatorKey =
+      GlobalKey<NavigatorState>();
+  static final GlobalKey<NavigatorState> homeTabNavigatorKey =
+      GlobalKey<NavigatorState>();
+  static final GlobalKey<NavigatorState> searchTabNavigatorKey =
+      GlobalKey<NavigatorState>();
+  static final GlobalKey<NavigatorState> userPlaylistsTabNavigatorKey =
+      GlobalKey<NavigatorState>();
+  static final GlobalKey<NavigatorState> moreTabNavigatorKey =
+      GlobalKey<NavigatorState>();
+
+  BuildContext get context =>
+      router.routerDelegate.navigatorKey.currentContext!;
+
+  GoRouterDelegate get routerDelegate => router.routerDelegate;
+
+  GoRouteInformationParser get routeInformationParser =>
+      router.routeInformationParser;
+
+  static const String homePath = '/home';
+  static const String morePath = '/more';
+  static const String searchPath = '/search';
+  static const String userPlaylistsPath = '/userPlaylists';
+
+  static Page getPage({
+    required Widget child,
+    required GoRouterState state,
+  }) {
+    return MaterialPage(
+      key: state.pageKey,
+      child: child,
+    );
+  }
 }
