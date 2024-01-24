@@ -102,12 +102,6 @@ List<Map<String, dynamic>> playlistsDB = [
     'list': [],
   },
   {
-    'ytid': 'RDCLAK5uy_no33oh6TOe0vPTFGabR24wAu3NeiVvc-Q',
-    'title': 'Electromix',
-    'image': 'https://i.scdn.co/image/ab67616d0000b273a66c1376051e1c5228df9733',
-    'list': [],
-  },
-  {
     'ytid': 'RDCLAK5uy_n0oLcyKJhNW8BmrnMySAoVuLjRZfgozG0',
     'title': 'Energizing EDM',
     'image': 'https://i.scdn.co/image/ab67706c0000bebb10d786ec8874e176f92c49d8',
@@ -117,12 +111,6 @@ List<Map<String, dynamic>> playlistsDB = [
     'ytid': 'RDCLAK5uy_lHUYsU7VTxndTCtf-ofbHDsvQWspcFBJ8',
     'title': 'Unstoppable Pop',
     'image': 'https://i.scdn.co/image/ab67706c0000bebb0885e7a2c6186017bbb392a0',
-    'list': [],
-  },
-  {
-    'ytid': 'RDCLAK5uy_n0TxkLvMf0yENdVCRD31Oes1XEBoJgpIU',
-    'title': 'Electronic Motivation',
-    'image': 'https://i.scdn.co/image/ab67706c0000bebb3ce718571dd7ac56a0c15f25',
     'list': [],
   },
   {
