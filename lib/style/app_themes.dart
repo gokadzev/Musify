@@ -1,4 +1,3 @@
-import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -6,11 +5,6 @@ import 'package:hive/hive.dart';
 
 Color primaryColor =
     Color(Hive.box('settings').get('accentColor', defaultValue: 0xff91cef4));
-
-ColorScheme colorScheme = ColorScheme.fromSeed(
-  seedColor: primaryColor,
-  brightness: brightness,
-).harmonized();
 
 ThemeMode themeMode = ThemeMode.dark;
 Brightness brightness = Brightness.dark;
@@ -41,36 +35,11 @@ ThemeMode getThemeMode(String themeModeString) {
   }
 }
 
-ThemeData commonProperties() => ThemeData(
-      colorScheme: colorScheme,
-      visualDensity: VisualDensity.adaptivePlatformDensity,
-      useMaterial3: true,
-      pageTransitionsTheme: const PageTransitionsTheme(
-        builders: {
-          TargetPlatform.android: CupertinoPageTransitionsBuilder(),
-        },
-      ),
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        isDense: true,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide(color: colorScheme.primary),
-        ),
-        contentPadding: const EdgeInsets.fromLTRB(18, 14, 20, 14),
-      ),
-    );
-
-ThemeData getAppDarkTheme() {
+ThemeData getAppDarkTheme(ColorScheme colorScheme) {
   final base = ThemeData.dark();
 
-  return commonProperties().copyWith(
+  return ThemeData(
+    colorScheme: colorScheme,
     textTheme: GoogleFonts.robotoTextTheme(base.textTheme),
     appBarTheme: base.appBarTheme.copyWith(
       iconTheme: IconThemeData(color: colorScheme.primary),
@@ -86,13 +55,36 @@ ThemeData getAppDarkTheme() {
       selectedColor: colorScheme.primary.withOpacity(0.4),
       textColor: colorScheme.primary,
     ),
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      isDense: true,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(15),
+        borderSide: BorderSide(color: colorScheme.primary),
+      ),
+      contentPadding: const EdgeInsets.fromLTRB(18, 14, 20, 14),
+    ),
     hintColor: Colors.white,
+    visualDensity: VisualDensity.adaptivePlatformDensity,
+    useMaterial3: true,
+    pageTransitionsTheme: const PageTransitionsTheme(
+      builders: {
+        TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+      },
+    ),
   );
 }
 
-ThemeData getAppLightTheme() {
+ThemeData getAppLightTheme(ColorScheme colorScheme) {
   final base = ThemeData.light();
-  return commonProperties().copyWith(
+  return ThemeData(
+    colorScheme: colorScheme,
     textTheme: GoogleFonts.robotoTextTheme(base.textTheme),
     bottomSheetTheme:
         base.bottomSheetTheme.copyWith(backgroundColor: colorScheme.surface),
@@ -110,6 +102,28 @@ ThemeData getAppLightTheme() {
       selectedColor: colorScheme.primary.withOpacity(0.4),
       textColor: colorScheme.primary,
     ),
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      isDense: true,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(15),
+        borderSide: BorderSide(color: colorScheme.primary),
+      ),
+      contentPadding: const EdgeInsets.fromLTRB(18, 14, 20, 14),
+    ),
     hintColor: colorScheme.primary.withOpacity(0.7),
+    visualDensity: VisualDensity.adaptivePlatformDensity,
+    useMaterial3: true,
+    pageTransitionsTheme: const PageTransitionsTheme(
+      builders: {
+        TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+      },
+    ),
   );
 }

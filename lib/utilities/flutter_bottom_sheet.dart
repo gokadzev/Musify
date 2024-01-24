@@ -1,6 +1,6 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:musify/style/app_themes.dart';
+import 'package:musify/extensions/colorScheme.dart';
 
 void showCustomBottomSheet(BuildContext context, Widget content) {
   showBottomSheet(
@@ -23,7 +23,7 @@ void showCustomBottomSheet(BuildContext context, Widget content) {
             child: IconButton(
               icon: Icon(
                 FluentIcons.arrow_between_down_24_filled,
-                color: colorScheme.primary,
+                color: context.colorScheme.primary,
                 size: 20,
               ),
               onPressed: () => Navigator.pop(context),

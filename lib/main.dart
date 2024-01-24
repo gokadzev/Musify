@@ -76,10 +76,6 @@ class _MusifyState extends State<Musify> {
     setState(() {
       themeMode = newThemeMode;
       brightness = getBrightnessFromThemeMode(newThemeMode);
-      colorScheme = ColorScheme.fromSeed(
-        seedColor: primaryColor,
-        brightness: brightness,
-      ).harmonized();
     });
   }
 
@@ -102,11 +98,6 @@ class _MusifyState extends State<Musify> {
       }
 
       primaryColor = newAccentColor;
-
-      colorScheme = ColorScheme.fromSeed(
-        seedColor: newAccentColor,
-        brightness: brightness,
-      ).harmonized();
     });
   }
 
@@ -153,14 +144,17 @@ class _MusifyState extends State<Musify> {
         final selectedScheme =
             brightness == Brightness.light ? lightColorScheme : darkColorScheme;
 
-        if (useSystemColor.value && selectedScheme != null) {
-          colorScheme = selectedScheme;
-        }
+        final colorScheme = useSystemColor.value && selectedScheme != null
+            ? selectedScheme
+            : ColorScheme.fromSeed(
+                seedColor: primaryColor,
+                brightness: brightness,
+              ).harmonized();
 
         return MaterialApp.router(
           themeMode: themeMode,
-          darkTheme: getAppDarkTheme(),
-          theme: getAppLightTheme(),
+          darkTheme: getAppDarkTheme(colorScheme),
+          theme: getAppLightTheme(colorScheme),
           localizationsDelegates: const [
             AppLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,

@@ -2,8 +2,8 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:musify/API/version.dart';
+import 'package:musify/extensions/colorScheme.dart';
 import 'package:musify/extensions/l10n.dart';
-import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/url_launcher.dart';
 
 class AboutPage extends StatelessWidget {
@@ -25,7 +25,7 @@ class AboutPage extends StatelessWidget {
               child: Text(
                 'Musify  | $appVersion',
                 style: GoogleFonts.paytoneOne(
-                  color: colorScheme.primary,
+                  color: context.colorScheme.primary,
                   fontSize: 24,
                   fontWeight: FontWeight.w600,
                 ),
@@ -68,7 +68,7 @@ class AboutPage extends StatelessWidget {
                       IconButton(
                         icon: Icon(
                           FluentIcons.code_24_filled,
-                          color: colorScheme.primary,
+                          color: context.colorScheme.primary,
                         ),
                         tooltip: 'Github',
                         onPressed: () {
@@ -80,7 +80,7 @@ class AboutPage extends StatelessWidget {
                       IconButton(
                         icon: Icon(
                           FluentIcons.globe_24_filled,
-                          color: colorScheme.primary,
+                          color: context.colorScheme.primary,
                         ),
                         tooltip: 'Website',
                         onPressed: () {

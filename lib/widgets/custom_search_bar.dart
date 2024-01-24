@@ -1,6 +1,6 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:musify/style/app_themes.dart';
+import 'package:musify/extensions/colorScheme.dart';
 import 'package:musify/widgets/spinner.dart';
 
 class CustomSearchBar extends StatefulWidget {
@@ -56,7 +56,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                           width: 18,
                           child: Spinner(),
                         ),
-                        color: colorScheme.primary,
+                        color: context.colorScheme.primary,
                         onPressed: () {
                           widget.onSubmitted(widget.controller.text);
                           widget.focusNode.unfocus();
@@ -66,9 +66,9 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                       return IconButton(
                         icon: Icon(
                           FluentIcons.search_20_regular,
-                          color: colorScheme.primary,
+                          color: context.colorScheme.primary,
                         ),
-                        color: colorScheme.primary,
+                        color: context.colorScheme.primary,
                         onPressed: () {
                           widget.onSubmitted(widget.controller.text);
                           widget.focusNode.unfocus();
@@ -80,9 +80,9 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
               : IconButton(
                   icon: Icon(
                     FluentIcons.search_20_regular,
-                    color: colorScheme.primary,
+                    color: context.colorScheme.primary,
                   ),
-                  color: colorScheme.primary,
+                  color: context.colorScheme.primary,
                   onPressed: () {
                     widget.onSubmitted(widget.controller.text);
                     widget.focusNode.unfocus();

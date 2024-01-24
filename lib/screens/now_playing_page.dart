@@ -5,12 +5,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
+import 'package:musify/extensions/colorScheme.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/extensions/screen_size.dart';
 import 'package:musify/main.dart';
 import 'package:musify/models/position_data.dart';
 import 'package:musify/services/settings_manager.dart';
-import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/flutter_bottom_sheet.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/formatter.dart';
@@ -51,6 +51,7 @@ class NowPlayingPage extends StatelessWidget {
                   SizedBox(height: size.height * 0.03),
                   buildMarqueeText(
                     metadata.title,
+                    context.colorScheme.primary,
                     size.height * 0.030,
                     FontWeight.bold,
                     size.width,
@@ -58,6 +59,7 @@ class NowPlayingPage extends StatelessWidget {
                   const SizedBox(height: 4),
                   buildMarqueeText(
                     metadata.artist ?? '',
+                    context.colorScheme.primary,
                     size.height * 0.018,
                     FontWeight.w500,
                     size.width,
@@ -105,6 +107,8 @@ class NowPlayingPage extends StatelessWidget {
               placeholder: (context, url) => const Spinner(),
               errorWidget: (context, url, error) => NullArtworkWidget(
                 iconSize: size.width / 8,
+                backgroundColor: context.colorScheme.secondary,
+                iconColor: context.colorScheme.surface,
               ),
             ),
     );
@@ -124,6 +128,7 @@ class NowPlayingPage extends StatelessWidget {
 
   Widget buildMarqueeText(
     String text,
+    Color color,
     double fontSize,
     FontWeight fontWeight,
     double maxWidth,
@@ -138,7 +143,7 @@ class NowPlayingPage extends StatelessWidget {
           style: TextStyle(
             fontSize: fontSize,
             fontWeight: fontWeight,
-            color: colorScheme.primary,
+            color: color,
           ),
         ),
       ),
@@ -179,17 +184,17 @@ class NowPlayingPage extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            buildSlider(snapshot.data!),
-            buildPositionRow(snapshot.data!),
+            buildSlider(context.colorScheme.primary, snapshot.data!),
+            buildPositionRow(context.colorScheme.primary, snapshot.data!),
           ],
         );
       },
     );
   }
 
-  Widget buildSlider(PositionData positionData) {
+  Widget buildSlider(Color color, PositionData positionData) {
     return Slider(
-      activeColor: colorScheme.primary,
+      activeColor: color,
       inactiveColor: Colors.green[50],
       value: positionData.position.inMilliseconds.toDouble(),
       onChanged: (value) {
@@ -199,27 +204,29 @@ class NowPlayingPage extends StatelessWidget {
     );
   }
 
-  Widget buildPositionRow(PositionData positionData) {
+  Widget buildPositionRow(Color color, PositionData positionData) {
     final positionText = formatDuration(positionData.position.inMilliseconds);
     final durationText = formatDuration(positionData.duration.inMilliseconds);
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        buildText(positionText),
+        Text(
+          positionText,
+          style: TextStyle(
+            fontSize: 17,
+            color: color,
+          ),
+        ),
         const Spacer(),
-        buildText(durationText),
+        Text(
+          durationText,
+          style: TextStyle(
+            fontSize: 17,
+            color: color,
+          ),
+        ),
       ],
-    );
-  }
-
-  Widget buildText(String text) {
-    return Text(
-      text,
-      style: TextStyle(
-        fontSize: 17,
-        color: colorScheme.primary,
-      ),
     );
   }
 
@@ -242,7 +249,7 @@ class NowPlayingPage extends StatelessWidget {
                         shuffleNotifier.value
                             ? FluentIcons.arrow_shuffle_24_filled
                             : FluentIcons.arrow_shuffle_off_24_filled,
-                        colorScheme.primary,
+                        context.colorScheme.primary,
                         iconSize,
                         () {
                           audioHandler.setShuffleMode(
@@ -258,8 +265,8 @@ class NowPlayingPage extends StatelessWidget {
                     icon: Icon(
                       FluentIcons.previous_24_filled,
                       color: audioHandler.hasPrevious
-                          ? colorScheme.primary
-                          : colorScheme.primary.withOpacity(0.5),
+                          ? context.colorScheme.primary
+                          : context.colorScheme.primary.withOpacity(0.5),
                     ),
                     iconSize: constraints.maxWidth * 0.09 < 35
                         ? constraints.maxWidth * 0.09
@@ -275,6 +282,7 @@ class NowPlayingPage extends StatelessWidget {
                         constraints.maxWidth * 0.19 < 72
                             ? constraints.maxWidth * 0.19
                             : 72,
+                        context.colorScheme.primary,
                       );
                     },
                   ),
@@ -282,8 +290,8 @@ class NowPlayingPage extends StatelessWidget {
                     icon: Icon(
                       FluentIcons.next_24_filled,
                       color: audioHandler.hasNext
-                          ? colorScheme.primary
-                          : colorScheme.primary.withOpacity(0.5),
+                          ? context.colorScheme.primary
+                          : context.colorScheme.primary.withOpacity(0.5),
                     ),
                     iconSize: constraints.maxWidth * 0.09 < 35
                         ? constraints.maxWidth * 0.09
@@ -298,7 +306,7 @@ class NowPlayingPage extends StatelessWidget {
                         value
                             ? FluentIcons.arrow_repeat_1_24_filled
                             : FluentIcons.arrow_repeat_all_off_24_filled,
-                        colorScheme.primary,
+                        context.colorScheme.primary,
                         iconSize,
                         () => audioHandler.setRepeatMode(
                           value
@@ -323,7 +331,7 @@ class NowPlayingPage extends StatelessWidget {
                       value
                           ? FluentIcons.speaker_mute_24_filled
                           : FluentIcons.speaker_mute_24_regular,
-                      colorScheme.primary,
+                      context.colorScheme.primary,
                       iconSize,
                       audioHandler.mute,
                     );
@@ -331,7 +339,7 @@ class NowPlayingPage extends StatelessWidget {
                 ),
                 customIconButton(
                   Icons.add,
-                  colorScheme.primary,
+                  context.colorScheme.primary,
                   iconSize,
                   () {
                     _showAddToPlaylistDialog(
@@ -343,7 +351,7 @@ class NowPlayingPage extends StatelessWidget {
                 if (activePlaylist['list'].isNotEmpty)
                   customIconButton(
                     FluentIcons.apps_list_24_filled,
-                    colorScheme.primary,
+                    context.colorScheme.primary,
                     iconSize,
                     () {
                       showCustomBottomSheet(
@@ -373,7 +381,7 @@ class NowPlayingPage extends StatelessWidget {
                   ),
                 customIconButton(
                   FluentIcons.text_32_filled,
-                  colorScheme.primary,
+                  context.colorScheme.primary,
                   iconSize,
                   () {
                     getSongLyrics(
@@ -422,8 +430,8 @@ class NowPlayingPage extends StatelessWidget {
                           ? FluentIcons.star_24_filled
                           : FluentIcons.star_24_regular,
                       songLikeStatus.value
-                          ? colorScheme.primary
-                          : colorScheme.primary,
+                          ? context.colorScheme.primary
+                          : context.colorScheme.primary,
                       iconSize,
                       () {
                         updateSongLikeStatus(
@@ -442,7 +450,7 @@ class NowPlayingPage extends StatelessWidget {
                       value
                           ? FluentIcons.music_note_2_play_20_filled
                           : FluentIcons.music_note_2_play_20_regular,
-                      colorScheme.primary,
+                      context.colorScheme.primary,
                       iconSize,
                       audioHandler.changeAutoPlayNextStatus,
                     );
@@ -467,7 +475,7 @@ class NowPlayingPage extends StatelessWidget {
             children: [
               for (final playlist in userCustomPlaylists)
                 Card(
-                  color: colorScheme.secondary,
+                  color: context.colorScheme.secondary,
                   child: ListTile(
                     title: Text(playlist['title']),
                     onTap: () {

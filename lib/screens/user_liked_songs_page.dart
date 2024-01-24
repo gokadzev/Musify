@@ -1,8 +1,8 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
+import 'package:musify/extensions/colorScheme.dart';
 import 'package:musify/extensions/l10n.dart';
-import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/song_bar.dart';
@@ -84,7 +84,7 @@ class _UserLikedSongsPageState extends State<UserLikedSongsPage> {
       },
       child: Icon(
         FluentIcons.play_circle_48_filled,
-        color: colorScheme.primary,
+        color: context.colorScheme.primary,
         size: 60,
       ),
     );

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:musify/style/app_themes.dart';
+import 'package:musify/extensions/colorScheme.dart';
 
 class SettingSwitchBar extends StatelessWidget {
   SettingSwitchBar(
@@ -21,8 +21,8 @@ class SettingSwitchBar extends StatelessWidget {
       padding: const EdgeInsets.all(8),
       child: Card(
         child: SwitchListTile(
-          inactiveThumbColor: colorScheme.background,
-          secondary: Icon(tileIcon, color: colorScheme.primary),
+          inactiveThumbColor: context.colorScheme.background,
+          secondary: Icon(tileIcon, color: context.colorScheme.primary),
           title: Text(
             tileName,
             style: const TextStyle(fontWeight: FontWeight.w600),
