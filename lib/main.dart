@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:audio_service/audio_service.dart';
 import 'package:background_downloader/background_downloader.dart';
 import 'package:dynamic_color/dynamic_color.dart';
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,14 +10,12 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:musify/extensions/l10n.dart';
 import 'package:musify/services/audio_service.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/logger_service.dart';
 import 'package:musify/services/router_service.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/style/app_themes.dart';
-import 'package:musify/widgets/mini_player.dart';
 
 late MusifyAudioHandler audioHandler;
 
@@ -26,9 +23,6 @@ final logger = Logger();
 
 Locale locale = const Locale('en', '');
 var isFdroidBuild = false;
-
-final _navigatorKey = GlobalKey<NavigatorState>();
-final _selectedIndex = ValueNotifier<int>(0);
 
 final appLanguages = <String, String>{
   'English': 'en',
@@ -82,10 +76,6 @@ class _MusifyState extends State<Musify> {
     setState(() {
       themeMode = newThemeMode;
       brightness = getBrightnessFromThemeMode(newThemeMode);
-      colorScheme = ColorScheme.fromSeed(
-        seedColor: primaryColor,
-        brightness: brightness,
-      ).harmonized();
     });
   }
 
@@ -108,11 +98,6 @@ class _MusifyState extends State<Musify> {
       }
 
       primaryColor = newAccentColor;
-
-      colorScheme = ColorScheme.fromSeed(
-        seedColor: newAccentColor,
-        brightness: brightness,
-      ).harmonized();
     });
   }
 
@@ -156,21 +141,20 @@ class _MusifyState extends State<Musify> {
   Widget build(BuildContext context) {
     return DynamicColorBuilder(
       builder: (lightColorScheme, darkColorScheme) {
-        if (lightColorScheme != null &&
-            darkColorScheme != null &&
-            useSystemColor.value) {
-          colorScheme = brightness == Brightness.light
-              ? lightColorScheme
-              : darkColorScheme;
-        }
-        final lightTheme = getAppLightTheme();
+        final selectedScheme =
+            brightness == Brightness.light ? lightColorScheme : darkColorScheme;
 
-        final darkTheme = getAppDarkTheme();
+        final colorScheme = useSystemColor.value && selectedScheme != null
+            ? selectedScheme
+            : ColorScheme.fromSeed(
+                seedColor: primaryColor,
+                brightness: brightness,
+              ).harmonized();
 
-        return MaterialApp(
+        return MaterialApp.router(
           themeMode: themeMode,
-          darkTheme: darkTheme,
-          theme: lightTheme,
+          darkTheme: getAppDarkTheme(colorScheme),
+          theme: getAppLightTheme(colorScheme),
           localizationsDelegates: const [
             AppLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,
@@ -179,98 +163,7 @@ class _MusifyState extends State<Musify> {
           ],
           supportedLocales: appSupportedLocales,
           locale: locale,
-          home: NavigatorPopHandler(
-            onPop: () => _navigatorKey.currentState!.pop(),
-            child: Scaffold(
-              body: Navigator(
-                key: _navigatorKey,
-                initialRoute: '/',
-                onGenerateRoute: generateRoute,
-              ),
-              bottomNavigationBar: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  StreamBuilder<MediaItem?>(
-                    stream: audioHandler.mediaItem,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasError) {
-                        logger.log(
-                          'Error in mini player bar',
-                          snapshot.error,
-                          snapshot.stackTrace,
-                        );
-                      }
-                      final metadata = snapshot.data;
-                      if (metadata == null) {
-                        return const SizedBox.shrink();
-                      } else {
-                        return MiniPlayer(metadata: metadata);
-                      }
-                    },
-                  ),
-                  ValueListenableBuilder(
-                    valueListenable: _selectedIndex,
-                    builder: (_, value, __) {
-                      void onDestinationSelected(int index) {
-                        final currentState = _navigatorKey.currentState;
-
-                        if (_selectedIndex.value == index &&
-                            currentState?.canPop() == true) {
-                          currentState?.pop();
-                        } else {
-                          _selectedIndex.value = index;
-
-                          currentState?.pushNamedAndRemoveUntil(
-                            destinations[index],
-                            ModalRoute.withName(destinations[index]),
-                          );
-                        }
-                      }
-
-                      return NavigationBar(
-                        selectedIndex: value,
-                        labelBehavior: locale == const Locale('en', '')
-                            ? NavigationDestinationLabelBehavior
-                                .onlyShowSelected
-                            : NavigationDestinationLabelBehavior.alwaysHide,
-                        onDestinationSelected: onDestinationSelected,
-                        destinations: [
-                          NavigationDestination(
-                            icon: const Icon(FluentIcons.home_24_regular),
-                            selectedIcon:
-                                const Icon(FluentIcons.home_24_filled),
-                            label: context.l10n?.home ?? 'Home',
-                          ),
-                          NavigationDestination(
-                            icon: const Icon(FluentIcons.search_24_regular),
-                            selectedIcon:
-                                const Icon(FluentIcons.search_24_filled),
-                            label: context.l10n?.search ?? 'Search',
-                          ),
-                          NavigationDestination(
-                            icon: const Icon(FluentIcons.book_24_regular),
-                            selectedIcon:
-                                const Icon(FluentIcons.book_24_filled),
-                            label:
-                                context.l10n?.userPlaylists ?? 'User Playlists',
-                          ),
-                          NavigationDestination(
-                            icon: const Icon(
-                              FluentIcons.more_horizontal_24_regular,
-                            ),
-                            selectedIcon: const Icon(
-                              FluentIcons.more_horizontal_24_filled,
-                            ),
-                            label: context.l10n?.more ?? 'More',
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ),
+          routerConfig: CustomNavigationHelper.router,
         );
       },
     );
@@ -312,6 +205,9 @@ Future<void> initialisation() async {
         tapOpensFile: true,
       );
     }
+
+    // Init router
+    CustomNavigationHelper.instance;
   } catch (e, stackTrace) {
     logger.log('Initialization Error', e, stackTrace);
   }

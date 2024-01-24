@@ -3,10 +3,10 @@ import 'dart:math';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
+import 'package:musify/extensions/colorScheme.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/extensions/screen_size.dart';
 import 'package:musify/services/data_manager.dart';
-import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/widgets/marque.dart';
 import 'package:musify/widgets/playlist_cube.dart';
@@ -358,7 +358,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
       },
       child: Icon(
         FluentIcons.play_circle_48_filled,
-        color: colorScheme.primary,
+        color: context.colorScheme.primary,
         size: 60,
       ),
     );

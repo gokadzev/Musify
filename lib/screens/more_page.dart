@@ -1,6 +1,7 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/version.dart';
+import 'package:musify/extensions/colorScheme.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/screens/about_page.dart';
@@ -36,7 +37,7 @@ class MorePage extends StatelessWidget {
             Text(
               context.l10n!.pages,
               style: TextStyle(
-                color: colorScheme.primary,
+                color: context.colorScheme.primary,
                 fontSize: 15,
                 fontWeight: FontWeight.w400,
               ),
@@ -106,7 +107,7 @@ class MorePage extends StatelessWidget {
             Text(
               context.l10n!.settings,
               style: TextStyle(
-                color: colorScheme.primary,
+                color: context.colorScheme.primary,
                 fontSize: 15,
                 fontWeight: FontWeight.w400,
               ),
@@ -124,7 +125,7 @@ class MorePage extends StatelessWidget {
                       child: Container(
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: colorScheme.primary,
+                            color: context.colorScheme.primary,
                           ),
                           borderRadius: BorderRadius.circular(20),
                         ),
@@ -206,7 +207,7 @@ class MorePage extends StatelessWidget {
                       child: Container(
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: colorScheme.primary,
+                            color: context.colorScheme.primary,
                           ),
                           borderRadius: BorderRadius.circular(20),
                         ),
@@ -261,7 +262,7 @@ class MorePage extends StatelessWidget {
                       child: Container(
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: colorScheme.primary,
+                            color: context.colorScheme.primary,
                           ),
                           borderRadius: BorderRadius.circular(20),
                         ),
@@ -369,7 +370,7 @@ class MorePage extends StatelessWidget {
                       child: Container(
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: colorScheme.primary,
+                            color: context.colorScheme.primary,
                           ),
                           borderRadius: BorderRadius.circular(20),
                         ),
@@ -419,7 +420,7 @@ class MorePage extends StatelessWidget {
             Text(
               context.l10n!.tools,
               style: TextStyle(
-                color: colorScheme.primary,
+                color: context.colorScheme.primary,
                 fontSize: 15,
                 fontWeight: FontWeight.w400,
               ),
@@ -493,7 +494,7 @@ class MorePage extends StatelessWidget {
             Text(
               context.l10n!.becomeSponsor,
               style: TextStyle(
-                color: colorScheme.primary,
+                color: context.colorScheme.primary,
                 fontSize: 15,
                 fontWeight: FontWeight.w400,
               ),
@@ -501,7 +502,7 @@ class MorePage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8),
               child: Card(
-                color: colorScheme.primary,
+                color: context.colorScheme.primary,
                 child: ListTile(
                   leading: const Icon(
                     FluentIcons.heart_24_filled,
@@ -526,7 +527,7 @@ class MorePage extends StatelessWidget {
             Text(
               context.l10n!.others,
               style: TextStyle(
-                color: colorScheme.primary,
+                color: context.colorScheme.primary,
                 fontSize: 15,
                 fontWeight: FontWeight.w400,
               ),

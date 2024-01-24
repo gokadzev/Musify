@@ -2,9 +2,12 @@ import 'package:audio_service/audio_service.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/main.dart';
-import 'package:musify/style/app_themes.dart';
 
-Widget buildPlaybackIconButton(PlaybackState? playerState, double size) {
+Widget buildPlaybackIconButton(
+  PlaybackState? playerState,
+  double iconSize,
+  Color iconColor,
+) {
   final processingState = playerState?.processingState;
   final playing = playerState?.playing;
 
@@ -31,8 +34,8 @@ Widget buildPlaybackIconButton(PlaybackState? playerState, double size) {
     splashColor: Colors.transparent,
     child: Icon(
       icon,
-      color: colorScheme.primary,
-      size: size,
+      color: iconColor,
+      size: iconSize,
     ),
   );
 }

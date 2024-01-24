@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:audio_service/audio_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:musify/extensions/colorScheme.dart';
 import 'package:musify/main.dart';
 import 'package:musify/screens/now_playing_page.dart';
-import 'package:musify/style/app_themes.dart';
 import 'package:musify/widgets/marque.dart';
 import 'package:musify/widgets/no_artwork_cube.dart';
 import 'package:musify/widgets/playback_icon_button.dart';
@@ -50,7 +50,7 @@ class MiniPlayer extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 18),
         height: 75,
         decoration: BoxDecoration(
-          color: colorScheme.onSecondary,
+          color: context.colorScheme.onSecondary,
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(18),
             topRight: Radius.circular(18),
@@ -59,11 +59,15 @@ class MiniPlayer extends StatelessWidget {
         child: Row(
           children: <Widget>[
             _buildArtwork(),
-            _buildMetadata(),
+            _buildMetadata(context.colorScheme.primary),
             StreamBuilder<PlaybackState>(
               stream: audioHandler.playbackState,
               builder: (context, snapshot) {
-                return buildPlaybackIconButton(snapshot.data, 45);
+                return buildPlaybackIconButton(
+                  snapshot.data,
+                  45,
+                  context.colorScheme.primary,
+                );
               },
             ),
           ],
@@ -96,15 +100,17 @@ class MiniPlayer extends StatelessWidget {
                 fit: BoxFit.cover,
                 width: 55,
                 height: 55,
-                errorWidget: (context, url, error) => const NullArtworkWidget(
+                errorWidget: (context, url, error) => NullArtworkWidget(
                   iconSize: 30,
+                  backgroundColor: context.colorScheme.secondary,
+                  iconColor: context.colorScheme.surface,
                 ),
               ),
             ),
     );
   }
 
-  Widget _buildMetadata() {
+  Widget _buildMetadata(Color fontColor) {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.only(right: 8),
@@ -117,7 +123,7 @@ class MiniPlayer extends StatelessWidget {
               child: Text(
                 metadata.title,
                 style: TextStyle(
-                  color: colorScheme.primary,
+                  color: fontColor,
                   fontSize: 17,
                   fontWeight: FontWeight.w600,
                 ),
@@ -128,7 +134,7 @@ class MiniPlayer extends StatelessWidget {
               child: Text(
                 metadata.artist.toString(),
                 style: TextStyle(
-                  color: colorScheme.primary,
+                  color: fontColor,
                   fontSize: 15,
                 ),
               ),

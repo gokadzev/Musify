@@ -1,8 +1,8 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
+import 'package:musify/extensions/colorScheme.dart';
 import 'package:musify/extensions/l10n.dart';
-import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/widgets/artist_cube.dart';
 import 'package:musify/widgets/song_bar.dart';
@@ -60,7 +60,7 @@ class ArtistPage extends StatelessWidget {
       },
       child: Icon(
         FluentIcons.play_circle_48_filled,
-        color: colorScheme.primary,
+        color: context.colorScheme.primary,
         size: 60,
       ),
     );
@@ -83,7 +83,7 @@ class ArtistPage extends StatelessWidget {
               child: Text(
                 '${context.l10n!.nothingFound}!',
                 style: TextStyle(
-                  color: colorScheme.primary,
+                  color: context.colorScheme.primary,
                   fontSize: 18,
                 ),
               ),

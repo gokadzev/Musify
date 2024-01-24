@@ -1,10 +1,10 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
+import 'package:musify/extensions/colorScheme.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/screens/playlist_page.dart';
-import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/spinner.dart';
@@ -44,7 +44,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: colorScheme.primary,
+                          color: context.colorScheme.primary,
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -121,7 +121,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
             },
           );
         },
-        backgroundColor: colorScheme.primary,
+        backgroundColor: context.colorScheme.primary,
         child: const Icon(
           FluentIcons.add_24_filled,
           color: Colors.white,

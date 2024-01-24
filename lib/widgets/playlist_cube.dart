@@ -2,9 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
+import 'package:musify/extensions/colorScheme.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/screens/playlist_page.dart';
-import 'package:musify/style/app_themes.dart';
 
 class PlaylistCube extends StatelessWidget {
   PlaylistCube({
@@ -74,9 +74,15 @@ class PlaylistCube extends StatelessWidget {
                     width: size,
                     imageUrl: image.toString(),
                     fit: BoxFit.cover,
-                    errorWidget: (context, url, error) => noImageCube(),
+                    errorWidget: (context, url, error) => noImageCube(
+                      context.colorScheme.primary,
+                      context.colorScheme.surface,
+                    ),
                   )
-                : noImageCube(),
+                : noImageCube(
+                    context.colorScheme.primary,
+                    context.colorScheme.surface,
+                  ),
           ),
         ),
         if (id != null && showFavoriteButton)
@@ -88,7 +94,7 @@ class PlaylistCube extends StatelessWidget {
                 right: 5,
                 child: DecoratedBox(
                   decoration: BoxDecoration(
-                    color: colorScheme.background,
+                    color: context.colorScheme.background,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: IconButton(
@@ -106,7 +112,7 @@ class PlaylistCube extends StatelessWidget {
                     },
                     icon: Icon(
                       likeStatusToIconMapper[value],
-                      color: colorScheme.primary,
+                      color: context.colorScheme.primary,
                       size: 25,
                     ),
                   ),
@@ -137,13 +143,13 @@ class PlaylistCube extends StatelessWidget {
     );
   }
 
-  Widget noImageCube() {
+  Widget noImageCube(Color backgroundColor, Color surfaceColor) {
     return Container(
       height: size,
       width: size,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: colorScheme.secondary,
+        color: backgroundColor,
       ),
       child: Center(
         child: Column(
@@ -152,7 +158,7 @@ class PlaylistCube extends StatelessWidget {
             Icon(
               cubeIcon,
               size: 30,
-              color: colorScheme.surface,
+              color: surfaceColor,
             ),
             Padding(
               padding: const EdgeInsets.all(10),

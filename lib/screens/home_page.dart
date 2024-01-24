@@ -2,13 +2,13 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:musify/API/musify.dart';
+import 'package:musify/extensions/colorScheme.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/extensions/screen_size.dart';
 import 'package:musify/main.dart';
 import 'package:musify/screens/artist_page.dart';
 import 'package:musify/screens/playlists_page.dart';
 import 'package:musify/services/update_manager.dart';
-import 'package:musify/style/app_themes.dart';
 import 'package:musify/widgets/artist_cube.dart';
 import 'package:musify/widgets/marque.dart';
 import 'package:musify/widgets/playlist_cube.dart';
@@ -36,7 +36,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text(
           'Musify.',
-          style: GoogleFonts.paytoneOne(color: colorScheme.primary),
+          style: GoogleFonts.paytoneOne(color: context.colorScheme.primary),
         ),
       ),
       body: SingleChildScrollView(
@@ -91,7 +91,7 @@ class _HomePageState extends State<HomePage> {
                   child: Text(
                     context.l10n!.suggestedPlaylists,
                     style: TextStyle(
-                      color: colorScheme.primary,
+                      color: context.colorScheme.primary,
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
@@ -109,7 +109,7 @@ class _HomePageState extends State<HomePage> {
                 },
                 icon: Icon(
                   FluentIcons.more_horizontal_24_regular,
-                  color: colorScheme.primary,
+                  color: context.colorScheme.primary,
                 ),
               ),
             ],
@@ -184,7 +184,7 @@ class _HomePageState extends State<HomePage> {
       child: Text(
         '${context.l10n!.error}!',
         style: TextStyle(
-          color: colorScheme.primary,
+          color: context.colorScheme.primary,
           fontSize: 18,
         ),
       ),
@@ -209,7 +209,7 @@ class _HomePageState extends State<HomePage> {
                   child: Text(
                     context.l10n!.suggestedArtists,
                     style: TextStyle(
-                      color: colorScheme.primary,
+                      color: context.colorScheme.primary,
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
@@ -254,7 +254,7 @@ class _HomePageState extends State<HomePage> {
               Text(
                 context.l10n!.recommendedForYou,
                 style: TextStyle(
-                  color: colorScheme.primary,
+                  color: context.colorScheme.primary,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
@@ -266,7 +266,7 @@ class _HomePageState extends State<HomePage> {
                 }),
                 child: Icon(
                   FluentIcons.play_circle_24_filled,
-                  color: colorScheme.primary,
+                  color: context.colorScheme.primary,
                   size: 35,
                 ),
               ),
