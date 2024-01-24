@@ -213,13 +213,6 @@ List<Map<String, dynamic>> playlistsDB = [
     'list': [],
   },
   {
-    'ytid': 'PLOHoVaTp8R7c-vblRA0F_hOPCSMSwqu3z',
-    'title':
-        'Cover Songs 2023 - Best Covers of Popular Songs - Top Covers 2023',
-    'image': 'https://i.scdn.co/image/ab67706c0000da845d3934504b41f6d8ed86df37',
-    'list': [],
-  },
-  {
     'ytid': 'PL-_a53M3g7u1m2YDp_Y1nRs4tYXOqE2iE',
     'title':
         'Sped Up Mexican Songs - Epic Mexico Music Speed Up Playlist (Mix Mexican Sped Up Audios Mashup)',
@@ -468,7 +461,7 @@ List<Map<String, dynamic>> playlistsDB = [
     'ytid': 'PLXpMeQYR1ilKXzjYmIb-FIKmYnzWZ7v4b',
     'title': 'New House Songs 2023 to 2024',
     'header_desc': 'Latest House Music 2023 Mix',
-    'image': 'https://i.scdn.co/image/ab67706c0000da84ad0d4221440d934604d98657',
+    'image': 'https://i.scdn.co/image/ab67706c0000da84ed4f4edd01cfb81857eff52d',
     'list': [],
   },
   {
