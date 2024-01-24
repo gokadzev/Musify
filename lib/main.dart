@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
-import 'package:background_downloader/background_downloader.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -195,16 +194,6 @@ Future<void> initialisation() async {
         androidShowNotificationBadge: true,
       ),
     );
-
-    if (!isFdroidBuild) {
-      FileDownloader().configureNotification(
-        running: const TaskNotification('Downloading', 'file: {filename}'),
-        complete:
-            const TaskNotification('Download finished', 'file: {filename}'),
-        progressBar: true,
-        tapOpensFile: true,
-      );
-    }
 
     // Init router
     CustomNavigationHelper.instance;

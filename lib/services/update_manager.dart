@@ -1,15 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:background_downloader/background_downloader.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:musify/API/version.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
-import 'package:musify/utilities/flutter_toast.dart';
+import 'package:musify/utilities/url_launcher.dart';
 import 'package:musify/widgets/auto_format_text.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 const String checkUrl =
     'https://raw.githubusercontent.com/gokadzev/Musify/update/check.json';
@@ -89,8 +87,12 @@ Future<void> checkAppUpdates(BuildContext context) async {
                         foregroundColor: Theme.of(context).colorScheme.surface,
                       ),
                       onPressed: () {
-                        downloadAppUpdates(map);
-                        Navigator.pop(context);
+                        getDownloadUrl(map).then(
+                          (url) => {
+                            launchURL(Uri.parse(url)),
+                            Navigator.pop(context),
+                          },
+                        );
                       },
                       child: Text(
                         context.l10n!.download.toUpperCase(),
@@ -112,28 +114,6 @@ Future<void> checkAppUpdates(BuildContext context) async {
     }
   } catch (e, stackTrace) {
     logger.log('Error in checkAppUpdates', e, stackTrace);
-  }
-}
-
-Future<void> downloadAppUpdates(Map<String, dynamic> map) async {
-  try {
-    final dlUrl = await getDownloadUrl(map);
-    final task = DownloadTask(
-      url: dlUrl,
-      filename: downloadFilename,
-    );
-
-    await FileDownloader().download(
-      task,
-      onStatus: (status) async {
-        if (status == TaskStatus.complete) {
-          await FileDownloader()
-              .moveToSharedStorage(task, SharedStorage.downloads);
-        }
-      },
-    );
-  } catch (e, stackTrace) {
-    logger.log('Error in downloadAppUpdates', e, stackTrace);
   }
 }
 
@@ -170,17 +150,4 @@ Future<String> getDownloadUrl(Map<String, dynamic> map) async {
       ? map[downloadUrlArm64Key].toString()
       : map[downloadUrlKey].toString();
   return url;
-}
-
-Future<void> checkNecessaryPermissions(BuildContext context) async {
-  await Permission.notification.request();
-  try {
-    await Permission.storage.request();
-  } catch (e, stackTrace) {
-    logger.log('Error while requesting permissions', e, stackTrace);
-    showToast(
-      context,
-      '${context.l10n!.errorWhileRequestingPerms} + $e',
-    );
-  }
 }

@@ -59,25 +59,6 @@
 
 ---
 
-<h3 align="center">Permissions for normal and F-Droid builds :lock: </h3>
-
-
-The following permissions are intentionally removed during the F-Droid build:
-
-- **REQUEST_INSTALL_PACKAGES:**
-  - *Purpose:* Allows the app to request the installation of packages.
-  - *Exclusion:* Removed, as F-Droid builds don't have built-in updater feature. F-Droid handles app installations and updates independently.
-
-- **POST_NOTIFICATIONS:**
-  - *Purpose:* Allows the app to post notifications.
-  - *Exclusion:* Removed, as F-Droid builds lack a built-in updater feature, and it was the only feature for which notifications were necessary.
-
-- **WRITE_EXTERNAL_STORAGE & READ_EXTERNAL_STORAGE:**
-  - *Purpose:* Allows the app to read and write to external storage.
-  - *Exclusion:* Removed, as F-Droid builds lack a built-in updater feature, and it was the only feature for which reading and writing external storage were necessary.
-
----
-
   <h3 align="center">Download :floppy_disk:</h3>
      <p align="center" style="align-items:center"><a href="https://github.com/gokadzev/Musify/releases" rel="GitHub Releases"><img width="250" src="https://github.com/gokadzev/Musify/raw/master/repository_files/get-it-on-github.png"></a><a href="https://f-droid.org/packages/com.gokadzev.musify.fdroid/" rel="F-Droid"><img width="250" src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"></a></p>
 
@@ -153,7 +134,6 @@ You can see frequently asked questions and their answers [here](https://github.c
 
 - [audio_service](https://pub.dev/packages/audio_service): A Flutter plugin for playing audio in the background.
 - [audio_session](https://pub.dev/packages/audio_session): A plugin for managing audio sessions in Flutter.
-- [background_downloader](https://pub.dev/packages/background_downloader): A Flutter plugin for downloading files in the background.
 - [cached_network_image](https://pub.dev/packages/cached_network_image): A Flutter library to load and cache network images.
 - [dynamic_color](https://pub.dev/packages/dynamic_color): A package for working with dynamic colors in Flutter.
 - [file_picker](https://pub.dev/packages/file_picker): A Flutter plugin for selecting files from the device.
@@ -168,7 +148,6 @@ You can see frequently asked questions and their answers [here](https://github.c
 - [just_audio](https://pub.dev/packages/just_audio): A Flutter plugin for audio playback.
 - [path](https://pub.dev/packages/path): A package for working with file system paths in Dart.
 - [path_provider](https://pub.dev/packages/path_provider): A Flutter plugin for getting the application's directories and paths.
-- [permission_handler](https://pub.dev/packages/permission_handler): A Flutter plugin for requesting permissions.
 - [rxdart](https://pub.dev/packages/rxdart): Reactive Extensions for Dart.
 - [url_launcher](https://pub.dev/packages/url_launcher): A Flutter plugin for launching URLs.
 - [youtube_explode_dart](https://pub.dev/packages/youtube_explode_dart): A Dart library for interacting with YouTube.
