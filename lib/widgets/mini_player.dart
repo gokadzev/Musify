@@ -110,7 +110,7 @@ class MiniPlayer extends StatelessWidget {
     );
   }
 
-  Widget _buildMetadata(Color color) {
+  Widget _buildMetadata(Color fontColor) {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.only(right: 8),
@@ -123,7 +123,7 @@ class MiniPlayer extends StatelessWidget {
               child: Text(
                 metadata.title,
                 style: TextStyle(
-                  color: color,
+                  color: fontColor,
                   fontSize: 17,
                   fontWeight: FontWeight.w600,
                 ),
@@ -134,7 +134,7 @@ class MiniPlayer extends StatelessWidget {
               child: Text(
                 metadata.artist.toString(),
                 style: TextStyle(
-                  color: color,
+                  color: fontColor,
                   fontSize: 15,
                 ),
               ),

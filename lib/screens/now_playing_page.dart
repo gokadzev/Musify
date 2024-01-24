@@ -128,7 +128,7 @@ class NowPlayingPage extends StatelessWidget {
 
   Widget buildMarqueeText(
     String text,
-    Color color,
+    Color fontColor,
     double fontSize,
     FontWeight fontWeight,
     double maxWidth,
@@ -143,7 +143,7 @@ class NowPlayingPage extends StatelessWidget {
           style: TextStyle(
             fontSize: fontSize,
             fontWeight: fontWeight,
-            color: color,
+            color: fontColor,
           ),
         ),
       ),
@@ -192,9 +192,9 @@ class NowPlayingPage extends StatelessWidget {
     );
   }
 
-  Widget buildSlider(Color color, PositionData positionData) {
+  Widget buildSlider(Color activeColor, PositionData positionData) {
     return Slider(
-      activeColor: color,
+      activeColor: activeColor,
       inactiveColor: Colors.green[50],
       value: positionData.position.inMilliseconds.toDouble(),
       onChanged: (value) {
@@ -204,7 +204,7 @@ class NowPlayingPage extends StatelessWidget {
     );
   }
 
-  Widget buildPositionRow(Color color, PositionData positionData) {
+  Widget buildPositionRow(Color fontColor, PositionData positionData) {
     final positionText = formatDuration(positionData.position.inMilliseconds);
     final durationText = formatDuration(positionData.duration.inMilliseconds);
 
@@ -215,7 +215,7 @@ class NowPlayingPage extends StatelessWidget {
           positionText,
           style: TextStyle(
             fontSize: 17,
-            color: color,
+            color: fontColor,
           ),
         ),
         const Spacer(),
@@ -223,7 +223,7 @@ class NowPlayingPage extends StatelessWidget {
           durationText,
           style: TextStyle(
             fontSize: 17,
-            color: color,
+            color: fontColor,
           ),
         ),
       ],
@@ -495,12 +495,12 @@ class NowPlayingPage extends StatelessWidget {
 
   Widget customIconButton(
     IconData iconData,
-    Color color,
+    Color iconColor,
     double iconSize,
     VoidCallback onPressed,
   ) {
     return IconButton(
-      icon: Icon(iconData, color: color),
+      icon: Icon(iconData, color: iconColor),
       iconSize: iconSize,
       onPressed: onPressed,
       splashColor: Colors.transparent,

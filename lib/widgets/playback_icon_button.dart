@@ -5,8 +5,8 @@ import 'package:musify/main.dart';
 
 Widget buildPlaybackIconButton(
   PlaybackState? playerState,
-  double size,
-  Color color,
+  double iconSize,
+  Color iconColor,
 ) {
   final processingState = playerState?.processingState;
   final playing = playerState?.playing;
@@ -34,8 +34,8 @@ Widget buildPlaybackIconButton(
     splashColor: Colors.transparent,
     child: Icon(
       icon,
-      color: color,
-      size: size,
+      color: iconColor,
+      size: iconSize,
     ),
   );
 }

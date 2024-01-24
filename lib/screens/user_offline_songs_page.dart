@@ -66,7 +66,7 @@ class _UserOfflineSongsPageState extends State<UserOfflineSongsPage> {
     );
   }
 
-  Widget buildPlayButton(Color color) {
+  Widget buildPlayButton(Color iconColor) {
     return GestureDetector(
       onTap: () {
         setActivePlaylist(
@@ -85,7 +85,7 @@ class _UserOfflineSongsPageState extends State<UserOfflineSongsPage> {
       },
       child: Icon(
         FluentIcons.play_circle_48_filled,
-        color: color,
+        color: iconColor,
         size: 60,
       ),
     );
