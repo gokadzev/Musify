@@ -22,6 +22,8 @@ import 'package:musify/widgets/setting_bar.dart';
 import 'package:musify/widgets/setting_switch_bar.dart';
 
 class MorePage extends StatelessWidget {
+  const MorePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -97,7 +99,7 @@ class MorePage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => UserLikedPlaylistsPage(),
+                    builder: (context) => const UserLikedPlaylistsPage(),
                   ),
                 ),
               },

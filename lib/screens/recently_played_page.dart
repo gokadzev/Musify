@@ -6,6 +6,7 @@ import 'package:musify/widgets/song_bar.dart';
 
 class RecentlyPlayed extends StatelessWidget {
   const RecentlyPlayed({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

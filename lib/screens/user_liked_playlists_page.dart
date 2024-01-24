@@ -5,6 +5,8 @@ import 'package:musify/extensions/l10n.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 
 class UserLikedPlaylistsPage extends StatelessWidget {
+  const UserLikedPlaylistsPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

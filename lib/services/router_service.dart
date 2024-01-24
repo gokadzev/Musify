@@ -65,7 +65,7 @@ class CustomNavigationHelper {
                 path: morePath,
                 pageBuilder: (context, state) {
                   return getPage(
-                    child: MorePage(),
+                    child: const MorePage(),
                     state: state,
                   );
                 },
