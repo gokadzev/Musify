@@ -1,0 +1,11 @@
+Bug Fixes
+
+- Removed 3 broken playlists
+- Resolved the issue with artworks for playlists
+
+Enhancements
+
+- Improved routing experience
+- Enhanced theming
+- Improved the song bar UI by ensuring consistent padding for both the song title and artist text
+- Made various quality and performance improvements for app stability and speed
