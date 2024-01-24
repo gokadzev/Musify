@@ -150,21 +150,17 @@ class _MusifyState extends State<Musify> {
   Widget build(BuildContext context) {
     return DynamicColorBuilder(
       builder: (lightColorScheme, darkColorScheme) {
-        if (lightColorScheme != null &&
-            darkColorScheme != null &&
-            useSystemColor.value) {
-          colorScheme = brightness == Brightness.light
-              ? lightColorScheme
-              : darkColorScheme;
-        }
-        final lightTheme = getAppLightTheme();
+        final selectedScheme =
+            brightness == Brightness.light ? lightColorScheme : darkColorScheme;
 
-        final darkTheme = getAppDarkTheme();
+        if (useSystemColor.value && selectedScheme != null) {
+          colorScheme = selectedScheme;
+        }
 
         return MaterialApp.router(
           themeMode: themeMode,
-          darkTheme: darkTheme,
-          theme: lightTheme,
+          darkTheme: getAppDarkTheme(),
+          theme: getAppLightTheme(),
           localizationsDelegates: const [
             AppLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,
