@@ -144,12 +144,6 @@ List<Map<String, dynamic>> playlistsDB = [
     'list': [],
   },
   {
-    'ytid': 'RDCLAK5uy_mnBFITP45AFCdVtu8b7JfLFLbUZR46ObU',
-    'title': 'Essential EDM',
-    'image': 'https://i.scdn.co/image/ab67616d0000b273727362a482b776115354a507',
-    'list': [],
-  },
-  {
     'ytid': 'RDCLAK5uy_k-fiP0mCE_HlLqk-h15LlxGmjTCTn4_aA',
     'title': 'House Rap Hits',
     'image': 'https://i.scdn.co/image/ab67616d0000b2734448c77918ba9ab6d63aadfb',
