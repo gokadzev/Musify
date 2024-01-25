@@ -33,7 +33,6 @@
     "downloadAppUpdate": "Tải xuống cập nhật ứng dụng",
     "dynamicColor": "Màu chủ đạo động (Android 12+)",
     "error": "Đã xảy ra lỗi",
-    "errorWhileRequestingPerms": "Lỗi khi yêu cầu cấp quyền",
     "folderRestrictions": "Do các hạn chế mới trên Android, việc chọn các thư mục cụ thể và phù hợp cho các loại tệp khác nhau là rất quan trọng. Hãy đảm bảo bạn chọn thư mục 'Tài liệu' hoặc 'Tải xuống' cho sao lưu ứng dụng.",
     "home": "Trang chủ",
     "language": "Ngôn ngữ",

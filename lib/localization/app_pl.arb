@@ -33,7 +33,6 @@
     "downloadAppUpdate": "Pobierz aktualizację aplikacji",
     "dynamicColor": "Dynamiczny kolor akcentu (Android 12+)",
     "error": "Coś poszło nie tak",
-    "errorWhileRequestingPerms": "Błąd podczas prośby o uprawnienia",
     "folderRestrictions": "Due to new restrictions on Android, it is essential to select specific and appropriate folders for different file types. Please ensure that you choose either the 'Documents' or 'Downloads' folder for the app backup.",
     "home": "Dom",
     "language": "Język",

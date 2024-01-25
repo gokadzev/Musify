@@ -33,7 +33,6 @@
     "downloadAppUpdate": "Descargar actualización de la aplicación",
     "dynamicColor": "Color de acento dinámico (Android 12+)",
     "error": "Algo salió mal",
-    "errorWhileRequestingPerms": "Error al solicitar permisos",
     "folderRestrictions": "Debido a las nuevas restricciones en Android, es esencial seleccionar carpetas específicas y apropiadas para diferentes tipos de archivos. Asegúrate de elegir la carpeta 'Documentos' o 'Descargas' para la copia de seguridad de la aplicación.",
     "home": "Inicio",
     "language": "Idioma",

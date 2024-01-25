@@ -33,7 +33,6 @@
     "downloadAppUpdate": "Update herunterladen",
     "dynamicColor": "Dynamische Akzentfarbe (Android 12+)",
     "error": "Etwas ist schiefgelaufen",
-    "errorWhileRequestingPerms": "Fehler bei der Anforderung von Berechtigungen",
     "folderRestrictions": "Aufgrund neuer Beschränkungen auf Android ist es wichtig, spezifische und geeignete Ordner für verschiedene Dateitypen auszuwählen. Stellen Sie sicher, dass Sie entweder den Ordner 'Dokumente' oder 'Downloads' für das App-Backup auswählen.",
     "home": "Startseite",
     "language": "Sprache",

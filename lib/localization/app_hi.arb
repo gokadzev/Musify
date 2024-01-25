@@ -33,7 +33,6 @@
     "downloadAppUpdate": "ऐप अपडेट डाउनलोड करें",
     "dynamicColor": "गतिशील उच्चारण रंग (Android 12+)",
     "error": "कुछ गलत हो गया",
-    "errorWhileRequestingPerms": "अनुमतियों का अनुरोध करते समय त्रुटि",
     "folderRestrictions": "Due to new restrictions on Android, it is essential to select specific and appropriate folders for different file types. Please ensure that you choose either the 'Documents' or 'Downloads' folder for the app backup.",
     "home": "घर",
     "language": "भाषा",

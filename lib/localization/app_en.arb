@@ -33,7 +33,6 @@
     "downloadAppUpdate": "Download app update",
     "dynamicColor": "Dynamic accent color (Android 12+)",
     "error": "Something went wrong",
-    "errorWhileRequestingPerms": "Error while requesting permissions",
     "folderRestrictions": "Due to new restrictions on Android, it is essential to select specific and appropriate folders for different file types. Please ensure that you choose either the 'Documents' or 'Downloads' folder for the app backup.",
     "home": "Home",
     "language": "Language",
