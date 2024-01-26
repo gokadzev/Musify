@@ -10,6 +10,8 @@ import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/spinner.dart';
 
 class UserPlaylistsPage extends StatefulWidget {
+  const UserPlaylistsPage({super.key});
+
   @override
   State<UserPlaylistsPage> createState() => _UserPlaylistsPageState();
 }

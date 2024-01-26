@@ -23,7 +23,7 @@ class CustomNavigationHelper {
                 path: homePath,
                 pageBuilder: (context, GoRouterState state) {
                   return getPage(
-                    child: HomePage(),
+                    child: const HomePage(),
                     state: state,
                   );
                 },
@@ -37,7 +37,7 @@ class CustomNavigationHelper {
                 path: searchPath,
                 pageBuilder: (context, GoRouterState state) {
                   return getPage(
-                    child: SearchPage(),
+                    child: const SearchPage(),
                     state: state,
                   );
                 },
@@ -51,7 +51,7 @@ class CustomNavigationHelper {
                 path: userPlaylistsPath,
                 pageBuilder: (context, GoRouterState state) {
                   return getPage(
-                    child: UserPlaylistsPage(),
+                    child: const UserPlaylistsPage(),
                     state: state,
                   );
                 },

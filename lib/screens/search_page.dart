@@ -10,6 +10,8 @@ import 'package:musify/widgets/custom_search_bar.dart';
 import 'package:musify/widgets/song_bar.dart';
 
 class SearchPage extends StatefulWidget {
+  const SearchPage({super.key});
+
   @override
   _SearchPageState createState() => _SearchPageState();
 }

@@ -63,7 +63,7 @@ class MorePage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => PlaylistsPage(),
+                    builder: (context) => const PlaylistsPage(),
                   ),
                 ),
               },

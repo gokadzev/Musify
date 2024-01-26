@@ -16,6 +16,8 @@ import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/spinner.dart';
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -102,7 +104,7 @@ class _HomePageState extends State<HomePage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => PlaylistsPage(),
+                      builder: (context) => const PlaylistsPage(),
                     ),
                   );
                 },
