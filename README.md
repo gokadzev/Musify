@@ -121,7 +121,7 @@ Contributions are always welcome. Please read our [contributing guidelines](http
 
 <h3 align="center">F.A.Q :question: </h3>
 
-You can see frequently asked questions and their answers [here](https://github.com/gokadzev/Musify/discussions/112).
+You can see frequently asked questions and their answers [here](https://github.com/gokadzev/Musify/discussions/340).
 
 ---
 
