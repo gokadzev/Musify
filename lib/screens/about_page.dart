@@ -21,7 +21,7 @@ class AboutPage extends StatelessWidget {
         child: Column(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.fromLTRB(8, 17, 8, 17),
+              padding: const EdgeInsets.fromLTRB(8, 17, 8, 0),
               child: Text(
                 'Musify  | $appVersion',
                 style: GoogleFonts.paytoneOne(
@@ -32,65 +32,60 @@ class AboutPage extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.only(bottom: 8, left: 10, right: 10),
-              child: Divider(
-                color: Colors.white24,
-                thickness: 0.8,
-              ),
+            const Divider(
+              color: Colors.white24,
+              thickness: 0.8,
+              height: 50,
             ),
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: Card(
-                child: ListTile(
-                  leading: Container(
-                    height: 50,
-                    width: 50,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                        fit: BoxFit.fill,
-                        image: NetworkImage(
-                          'https://avatars.githubusercontent.com/u/79704324?v=4',
-                        ),
+            Card(
+              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: ListTile(
+                contentPadding: const EdgeInsets.all(8),
+                leading: Container(
+                  height: 50,
+                  width: 50,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                      fit: BoxFit.fill,
+                      image: NetworkImage(
+                        'https://avatars.githubusercontent.com/u/79704324?v=4',
                       ),
                     ),
                   ),
-                  title: const Text(
-                    'Valeri Gokadze',
-                    style: TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                  subtitle: const Text(
-                    'WEB & APP Developer',
-                  ),
-                  trailing: Wrap(
-                    children: <Widget>[
-                      IconButton(
-                        icon: Icon(
-                          FluentIcons.code_24_filled,
-                          color: context.colorScheme.primary,
-                        ),
-                        tooltip: 'Github',
-                        onPressed: () {
-                          launchURL(
-                            Uri.parse('https://github.com/gokadzev'),
-                          );
-                        },
+                ),
+                title: const Text(
+                  'Valeri Gokadze',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+                subtitle: const Text('WEB & APP Developer'),
+                trailing: Wrap(
+                  children: <Widget>[
+                    IconButton(
+                      icon: Icon(
+                        FluentIcons.code_24_filled,
+                        color: context.colorScheme.primary,
                       ),
-                      IconButton(
-                        icon: Icon(
-                          FluentIcons.globe_24_filled,
-                          color: context.colorScheme.primary,
-                        ),
-                        tooltip: 'Website',
-                        onPressed: () {
-                          launchURL(
-                            Uri.parse('https://gokadzev.github.io'),
-                          );
-                        },
+                      tooltip: 'Github',
+                      onPressed: () {
+                        launchURL(
+                          Uri.parse('https://github.com/gokadzev'),
+                        );
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        FluentIcons.globe_24_filled,
+                        color: context.colorScheme.primary,
                       ),
-                    ],
-                  ),
+                      tooltip: 'Website',
+                      onPressed: () {
+                        launchURL(
+                          Uri.parse('https://gokadzev.github.io'),
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ),
             ),

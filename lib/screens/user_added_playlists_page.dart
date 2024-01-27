@@ -130,9 +130,9 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
         ),
       ),
       body: SingleChildScrollView(
+        padding: const EdgeInsets.only(top: 15),
         child: Column(
           children: <Widget>[
-            const Padding(padding: EdgeInsets.only(top: 20)),
             FutureBuilder(
               future: getUserPlaylists(),
               builder: (context, snapshot) {

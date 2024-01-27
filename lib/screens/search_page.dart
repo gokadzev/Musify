@@ -107,37 +107,35 @@ class _SearchPageState extends State<SearchPage> {
                       ? searchHistory[index]
                       : _suggestionsList[index];
 
-                  return Padding(
-                    padding: const EdgeInsets.all(5),
-                    child: Card(
-                      child: ListTile(
-                        leading: Icon(
-                          FluentIcons.search_24_regular,
-                          color: context.colorScheme.primary,
-                        ),
-                        title: Text(query),
-                        onTap: () async {
-                          _searchBar.text = query;
-                          await search();
-                          _inputNode.unfocus();
-                        },
-                        onLongPress: () async {
-                          final confirm =
-                              await _showConfirmationDialog(context) ?? false;
-
-                          if (confirm) {
-                            setState(() {
-                              searchHistory.remove(query);
-                            });
-
-                            addOrUpdateData(
-                              'user',
-                              'searchHistory',
-                              searchHistory,
-                            );
-                          }
-                        },
+                  return Card(
+                    margin: const EdgeInsets.all(10),
+                    child: ListTile(
+                      leading: Icon(
+                        FluentIcons.search_24_regular,
+                        color: context.colorScheme.primary,
                       ),
+                      title: Text(query),
+                      onTap: () async {
+                        _searchBar.text = query;
+                        await search();
+                        _inputNode.unfocus();
+                      },
+                      onLongPress: () async {
+                        final confirm =
+                            await _showConfirmationDialog(context) ?? false;
+
+                        if (confirm) {
+                          setState(() {
+                            searchHistory.remove(query);
+                          });
+
+                          addOrUpdateData(
+                            'user',
+                            'searchHistory',
+                            searchHistory,
+                          );
+                        }
+                      },
                     ),
                   );
                 },

@@ -42,7 +42,6 @@ class _HomePageState extends State<HomePage> {
       ),
       body: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             _buildSuggestedPlaylists(),
             _buildRecommendedSongsAndArtists(),
@@ -79,41 +78,22 @@ class _HomePageState extends State<HomePage> {
     final _suggestedPlaylists = snapshot.data!;
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.all(20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              SizedBox(
-                width: context.screenSize.width / 1.4,
-                child: MarqueeWidget(
-                  child: Text(
-                    context.l10n!.suggestedPlaylists,
-                    style: TextStyle(
-                      color: context.colorScheme.primary,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+        _buildSectionHeader(
+          context.l10n!.suggestedPlaylists,
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const PlaylistsPage(),
                 ),
-              ),
-              IconButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const PlaylistsPage(),
-                    ),
-                  );
-                },
-                icon: Icon(
-                  FluentIcons.more_horizontal_24_regular,
-                  color: context.colorScheme.primary,
-                ),
-              ),
-            ],
+              );
+            },
+            icon: Icon(
+              FluentIcons.more_horizontal_24_regular,
+              color: context.colorScheme.primary,
+            ),
           ),
         ),
         SizedBox(
@@ -199,27 +179,7 @@ class _HomePageState extends State<HomePage> {
   ) {
     return Column(
       children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.all(20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              SizedBox(
-                width: context.screenSize.width / 1.4,
-                child: MarqueeWidget(
-                  child: Text(
-                    context.l10n!.suggestedArtists,
-                    style: TextStyle(
-                      color: context.colorScheme.primary,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+        _buildSectionHeader(context.l10n!.suggestedArtists),
         SizedBox(
           height: calculatedSize,
           child: ListView.separated(
@@ -247,31 +207,20 @@ class _HomePageState extends State<HomePage> {
             },
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                context.l10n!.recommendedForYou,
-                style: TextStyle(
-                  color: context.colorScheme.primary,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              GestureDetector(
-                onTap: () => setActivePlaylist({
-                  'title': context.l10n!.recommendedForYou,
-                  'list': data,
-                }),
-                child: Icon(
-                  FluentIcons.play_circle_24_filled,
-                  color: context.colorScheme.primary,
-                  size: 35,
-                ),
-              ),
-            ],
+        _buildSectionHeader(
+          context.l10n!.recommendedForYou,
+          IconButton(
+            onPressed: () {
+              setActivePlaylist({
+                'title': context.l10n!.recommendedForYou,
+                'list': data,
+              });
+            },
+            iconSize: 30,
+            icon: Icon(
+              FluentIcons.play_circle_24_filled,
+              color: context.colorScheme.primary,
+            ),
           ),
         ),
         ListView.builder(
@@ -283,6 +232,31 @@ class _HomePageState extends State<HomePage> {
           },
         ),
       ],
+    );
+  }
+
+  Widget _buildSectionHeader(String title, [IconButton? actionButton]) {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          SizedBox(
+            width: context.screenSize.width / 1.4,
+            child: MarqueeWidget(
+              child: Text(
+                title,
+                style: TextStyle(
+                  color: context.colorScheme.primary,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+          if (actionButton != null) actionButton,
+        ],
+      ),
     );
   }
 }
