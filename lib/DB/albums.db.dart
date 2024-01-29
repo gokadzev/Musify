@@ -201,5 +201,33 @@ List<Map<String, dynamic>> albumsDB = [
     'image': 'https://i.scdn.co/image/ab67616d0000b273d1410c1372fab1e516328fa8',
     'isAlbum': true,
     'list': <Map<String, dynamic>>[],
+  },
+  {
+    'ytid': 'OLAK5uy_mUTfdj6ahy1pcLm_ocVbcWXrhB99Q0KmU',
+    'title': 'Thank u,next - Ariana Grande',
+    'image': 'https://i.scdn.co/image/ab67616d0000b27356ac7b86e090f307e218e9c8',
+    'isAlbum': true,
+    'list': <Map<String, dynamic>>[],
+  },
+  {
+    'ytid': 'OLAK5uy_lnx0vO7zWw_AcGVVHsaDvsowsRQiIjBMk',
+    'title': 'Evolve - Imagine Dragons',
+    'image': 'https://i.scdn.co/image/ab67616d0000b2735675e83f707f1d7271e5cf8a',
+    'isAlbum': true,
+    'list': <Map<String, dynamic>>[],
+  },
+  {
+    'ytid': 'OLAK5uy_l38zxOdBaYnNtz_thk94HRP8V5s6_oGsU',
+    'title': 'This Is Acting - Sia',
+    'image': 'https://i.scdn.co/image/ab67616d0000b27349e0134c686547c28b7c999f',
+    'isAlbum': true,
+    'list': <Map<String, dynamic>>[],
+  },
+  {
+    'ytid': 'OLAK5uy_nRIwFxK9HoO5lNT4THuPKYfit57ZgBxdM',
+    'title': 'What Is Love? - Clean Bandit',
+    'image': 'https://i.scdn.co/image/ab67616d0000b27337fb0680110fbb107740de5d',
+    'isAlbum': true,
+    'list': <Map<String, dynamic>>[],
   }
 ];
