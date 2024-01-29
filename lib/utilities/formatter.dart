@@ -13,6 +13,7 @@ String formatSongTitle(String title) {
     'Official Music Video': '',
     'Official Lyric Video': '',
     'Official Video': '',
+    'Official Audio': '',
     'Lyric Video': '',
     'Lyrics Video': '',
   };
