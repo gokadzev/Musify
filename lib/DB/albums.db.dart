@@ -229,5 +229,26 @@ List albumsDB = [
     'image': 'https://i.scdn.co/image/ab67616d0000b27337fb0680110fbb107740de5d',
     'isAlbum': true,
     'list': [],
+  },
+  {
+    'ytid': 'OLAK5uy_lTUCPSiT_kZOCY1BlJ1t5T5nsxeG6v20s',
+    'title': 'DRIVE - Tiësto',
+    'image': 'https://i.scdn.co/image/ab67616d0000b27375544696cbe0e019eaf0fcbb',
+    'isAlbum': true,
+    'list': [],
+  },
+  {
+    'ytid': 'LAK5uy_nF3Y8B3Dljpk27p5o0adXl0jQJXR_pVj8',
+    'title': 'Don Juan - Maluma',
+    'image': 'https://i.scdn.co/image/ab67616d0000b273d688b951a19f48941682e026',
+    'isAlbum': true,
+    'list': [],
+  },
+  {
+    'ytid': 'OLAK5uy_nRTHZ_yD4II6q7KlgQo1Fd6I05cPyThs8',
+    'title': 'THINK LATER - Tate McRae ',
+    'image': 'https://i.scdn.co/image/ab67616d0000b27377eb7a5b9367de79c3b92a49',
+    'isAlbum': true,
+    'list': [],
   }
 ];
