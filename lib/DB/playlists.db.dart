@@ -96,12 +96,6 @@ List<Map<String, dynamic>> playlistsDB = [
     'list': [],
   },
   {
-    'ytid': 'RDCLAK5uy_kA_dvd-bpRQ98y6LwOjAnhQL5lyjNnZYA',
-    'title': 'Best New Indie',
-    'image': 'https://i.scdn.co/image/ab67706f0000000293433469cd26278febee5a53',
-    'list': [],
-  },
-  {
     'ytid': 'RDCLAK5uy_n0oLcyKJhNW8BmrnMySAoVuLjRZfgozG0',
     'title': 'Energizing EDM',
     'image': 'https://i.scdn.co/image/ab67706c0000bebb10d786ec8874e176f92c49d8',
