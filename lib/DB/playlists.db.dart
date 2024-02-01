@@ -108,12 +108,6 @@ List<Map<String, dynamic>> playlistsDB = [
     'list': [],
   },
   {
-    'ytid': 'RDCLAK5uy_lrRVyinf4bGiN8dQ1jRWkVOMroYKAvnqE',
-    'title': 'Confidence Boost',
-    'image': 'https://i.scdn.co/image/ab67616d0000b273411e532bde4068f5f301b22f',
-    'list': [],
-  },
-  {
     'ytid': 'RDCLAK5uy_mpcC2CwnVbb6kBi_d99_FZvgG2QSi5ylo',
     'title': 'Rock Adrenaline',
     'image': 'https://i.scdn.co/image/ab67616d0000b273bd0a1a068fe3b8e953682375',
@@ -283,7 +277,7 @@ List<Map<String, dynamic>> playlistsDB = [
   {
     'ytid': 'PL-_a53M3g7u2D0E08dF-JKH70g46Nj7od',
     'title': 'Instagram Music 2023',
-    'image': 'https://i.scdn.co/image/ab67706c0000da84070cb3d2e7445e739d60b289',
+    'image': 'https://i.scdn.co/image/ab67706c0000da84cdf7cfa2e1fc93114a2afab9',
     'list': [],
   },
   {
