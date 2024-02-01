@@ -1,9 +1,8 @@
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
-import 'package:musify/extensions/colorScheme.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/utilities/flutter_toast.dart';
+import 'package:musify/widgets/play_button.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/song_bar.dart';
 
@@ -48,7 +47,23 @@ class _UserLikedSongsPageState extends State<UserLikedSongsPage> {
               ),
             ),
             const SizedBox(height: 10),
-            buildPlayButton(),
+            PlayButton(
+              onTap: () {
+                setActivePlaylist(
+                  {
+                    'ytid': '',
+                    'title': context.l10n!.userLikedSongs,
+                    'header_desc': '',
+                    'image': '',
+                    'list': userLikedSongsList,
+                  },
+                );
+                showToast(
+                  context,
+                  context.l10n!.queueInitText,
+                );
+              },
+            ),
           ],
         ),
       ],
@@ -62,31 +77,6 @@ class _UserLikedSongsPageState extends State<UserLikedSongsPage> {
       showFavoriteButton: false,
       size: 150,
       zoomNumber: 0.55,
-    );
-  }
-
-  Widget buildPlayButton() {
-    return GestureDetector(
-      onTap: () {
-        setActivePlaylist(
-          {
-            'ytid': '',
-            'title': context.l10n!.userLikedSongs,
-            'header_desc': '',
-            'image': '',
-            'list': userLikedSongsList,
-          },
-        );
-        showToast(
-          context,
-          context.l10n!.queueInitText,
-        );
-      },
-      child: Icon(
-        FluentIcons.play_circle_48_filled,
-        color: context.colorScheme.primary,
-        size: 60,
-      ),
     );
   }
 

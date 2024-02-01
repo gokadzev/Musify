@@ -3,12 +3,12 @@ import 'dart:math';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
-import 'package:musify/extensions/colorScheme.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/extensions/screen_size.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/widgets/marque.dart';
+import 'package:musify/widgets/play_button.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/spinner.dart';
@@ -177,7 +177,15 @@ class _PlaylistPageState extends State<PlaylistPage> {
                   fontWeight: FontWeight.w300,
                 ),
               ),
-              buildPlayButton(),
+              PlayButton(
+                onTap: () {
+                  setActivePlaylist(_playlist);
+                  showToast(
+                    context,
+                    context.l10n!.queueInitText,
+                  );
+                },
+              ),
             ],
           ),
         ],
@@ -345,23 +353,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
     setState(() {
       _songsList.removeAt(indexOfRemovedSong);
     });
-  }
-
-  Widget buildPlayButton() {
-    return GestureDetector(
-      onTap: () {
-        setActivePlaylist(_playlist);
-        showToast(
-          context,
-          context.l10n!.queueInitText,
-        );
-      },
-      child: Icon(
-        FluentIcons.play_circle_48_filled,
-        color: context.colorScheme.primary,
-        size: 60,
-      ),
-    );
   }
 
   Widget _buildSongListItem(int index) {

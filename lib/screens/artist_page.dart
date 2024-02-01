@@ -1,10 +1,10 @@
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/colorScheme.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/widgets/artist_cube.dart';
+import 'package:musify/widgets/play_button.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/spinner.dart';
 
@@ -25,7 +25,15 @@ class ArtistPage extends StatelessWidget {
             _buildArtistHeader(),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 12),
-              child: _buildPlayButton(context),
+              child: PlayButton(
+                onTap: () {
+                  setActivePlaylist(playlist);
+                  showToast(
+                    context,
+                    context.l10n!.queueInitText,
+                  );
+                },
+              ),
             ),
             _buildSongsList(),
           ],
@@ -46,23 +54,6 @@ class ArtistPage extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildPlayButton(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        setActivePlaylist(playlist);
-        showToast(
-          context,
-          context.l10n!.queueInitText,
-        );
-      },
-      child: Icon(
-        FluentIcons.play_circle_48_filled,
-        color: context.colorScheme.primary,
-        size: 60,
-      ),
     );
   }
 
