@@ -213,10 +213,10 @@ packages:
     dependency: "direct main"
     description:
       name: fluentui_system_icons
-      sha256: "077cc7bd15ced57d768024508aefefff45431a2e82ae11e95c66815fd4d2880d"
+      sha256: "1c02e6a4898dfc45e470ddcd62fb9c8fe59a7f8bb380e7f3edcb0d127c23bfd3"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.224"
+    version: "1.1.225"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -247,10 +247,10 @@ packages:
     dependency: "direct dev"
     description:
       name: flutter_native_splash
-      sha256: "9cdb5d9665dab5d098dc50feab74301c2c228cd02ca25c9b546ab572cebcd6af"
+      sha256: "558f10070f03ee71f850a78f7136ab239a67636a294a44a06b6b7345178edb1e"
       url: "https://pub.dev"
     source: hosted
-    version: "2.3.9"
+    version: "2.3.10"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -289,10 +289,10 @@ packages:
     dependency: "direct main"
     description:
       name: go_router
-      sha256: "3b40e751eaaa855179b416974d59d29669e750d2e50fcdb2b37f1cb0ca8c803a"
+      sha256: "07ee2436909f749d606f53521dc1725dd738dc5196e5ff815bc254253c594075"
       url: "https://pub.dev"
     source: hosted
-    version: "13.0.1"
+    version: "13.1.0"
   google_fonts:
     dependency: "direct main"
     description:
