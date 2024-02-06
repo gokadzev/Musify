@@ -235,6 +235,18 @@ class NowPlayingPage extends StatelessWidget {
     const iconSize = 20.0;
     return LayoutBuilder(
       builder: (context, constraints) {
+        Widget customIconButton(
+          IconData iconData,
+          double iconSize,
+          VoidCallback onPressed,
+        ) {
+          return IconButton(
+            icon: Icon(iconData, color: context.colorScheme.primary),
+            iconSize: iconSize,
+            onPressed: onPressed,
+          );
+        }
+
         return Column(
           children: <Widget>[
             SingleChildScrollView(
@@ -249,7 +261,6 @@ class NowPlayingPage extends StatelessWidget {
                         shuffleNotifier.value
                             ? FluentIcons.arrow_shuffle_24_filled
                             : FluentIcons.arrow_shuffle_off_24_filled,
-                        context.colorScheme.primary,
                         iconSize,
                         () {
                           audioHandler.setShuffleMode(
@@ -306,7 +317,6 @@ class NowPlayingPage extends StatelessWidget {
                         value
                             ? FluentIcons.arrow_repeat_1_24_filled
                             : FluentIcons.arrow_repeat_all_off_24_filled,
-                        context.colorScheme.primary,
                         iconSize,
                         () => audioHandler.setRepeatMode(
                           value
@@ -331,7 +341,6 @@ class NowPlayingPage extends StatelessWidget {
                       value
                           ? FluentIcons.speaker_mute_24_filled
                           : FluentIcons.speaker_mute_24_regular,
-                      context.colorScheme.primary,
                       iconSize,
                       audioHandler.mute,
                     );
@@ -339,7 +348,6 @@ class NowPlayingPage extends StatelessWidget {
                 ),
                 customIconButton(
                   Icons.add,
-                  context.colorScheme.primary,
                   iconSize,
                   () {
                     _showAddToPlaylistDialog(
@@ -351,7 +359,6 @@ class NowPlayingPage extends StatelessWidget {
                 if (activePlaylist['list'].isNotEmpty)
                   customIconButton(
                     FluentIcons.apps_list_24_filled,
-                    context.colorScheme.primary,
                     iconSize,
                     () {
                       showCustomBottomSheet(
@@ -381,7 +388,6 @@ class NowPlayingPage extends StatelessWidget {
                   ),
                 customIconButton(
                   FluentIcons.text_32_filled,
-                  context.colorScheme.primary,
                   iconSize,
                   () {
                     getSongLyrics(
@@ -429,9 +435,6 @@ class NowPlayingPage extends StatelessWidget {
                       value
                           ? FluentIcons.star_24_filled
                           : FluentIcons.star_24_regular,
-                      songLikeStatus.value
-                          ? context.colorScheme.primary
-                          : context.colorScheme.primary,
                       iconSize,
                       () {
                         updateSongLikeStatus(
@@ -450,7 +453,6 @@ class NowPlayingPage extends StatelessWidget {
                       value
                           ? FluentIcons.music_note_2_play_20_filled
                           : FluentIcons.music_note_2_play_20_regular,
-                      context.colorScheme.primary,
                       iconSize,
                       audioHandler.changeAutoPlayNextStatus,
                     );
@@ -490,20 +492,6 @@ class NowPlayingPage extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-
-  Widget customIconButton(
-    IconData iconData,
-    Color iconColor,
-    double iconSize,
-    VoidCallback onPressed,
-  ) {
-    return IconButton(
-      icon: Icon(iconData, color: iconColor),
-      iconSize: iconSize,
-      onPressed: onPressed,
-      splashColor: Colors.transparent,
     );
   }
 }
