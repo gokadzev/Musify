@@ -7,6 +7,7 @@ class NullArtworkWidget extends StatelessWidget {
     required this.iconSize,
     required this.backgroundColor,
     required this.iconColor,
+    this.title,
     super.key,
   });
 
@@ -14,6 +15,7 @@ class NullArtworkWidget extends StatelessWidget {
   final double iconSize;
   final Color backgroundColor;
   final Color iconColor;
+  final String? title;
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +32,17 @@ class NullArtworkWidget extends StatelessWidget {
             size: iconSize,
             color: iconColor,
           ),
+          if (title != null)
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Text(
+                title!,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            ),
         ],
       ),
     );

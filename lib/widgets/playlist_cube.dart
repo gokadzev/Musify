@@ -5,6 +5,7 @@ import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/colorScheme.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/screens/playlist_page.dart';
+import 'package:musify/widgets/no_artwork_cube.dart';
 
 class PlaylistCube extends StatelessWidget {
   PlaylistCube({
@@ -74,14 +75,19 @@ class PlaylistCube extends StatelessWidget {
                     width: size,
                     imageUrl: image.toString(),
                     fit: BoxFit.cover,
-                    errorWidget: (context, url, error) => noImageCube(
-                      context.colorScheme.primary,
-                      context.colorScheme.surface,
+                    errorWidget: (context, url, error) => NullArtworkWidget(
+                      icon: cubeIcon,
+                      iconSize: 30,
+                      backgroundColor: context.colorScheme.primary,
+                      iconColor: context.colorScheme.surface,
+                      title: title,
                     ),
                   )
-                : noImageCube(
-                    context.colorScheme.primary,
-                    context.colorScheme.surface,
+                : NullArtworkWidget(
+                    icon: cubeIcon,
+                    iconSize: 30,
+                    backgroundColor: context.colorScheme.primary,
+                    iconColor: context.colorScheme.surface,
                   ),
           ),
         ),
@@ -140,39 +146,6 @@ class PlaylistCube extends StatelessWidget {
             ),
           ),
       ],
-    );
-  }
-
-  Widget noImageCube(Color backgroundColor, Color surfaceColor) {
-    return Container(
-      height: size,
-      width: size,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: backgroundColor,
-      ),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Icon(
-              cubeIcon,
-              size: 30,
-              color: surfaceColor,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: Text(
-                title,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
