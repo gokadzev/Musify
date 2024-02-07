@@ -16,7 +16,7 @@ import 'package:musify/widgets/spinner.dart';
 class PlaylistPage extends StatefulWidget {
   const PlaylistPage({super.key, this.playlistId, this.playlistData});
 
-  final dynamic playlistId;
+  final String? playlistId;
   final dynamic playlistData;
 
   @override

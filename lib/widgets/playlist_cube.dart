@@ -48,22 +48,15 @@ class PlaylistCube extends StatelessWidget {
         GestureDetector(
           onTap: onClickOpen && (id != null || playlistData != null)
               ? () {
-                  if (id != null) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PlaylistPage(playlistId: id),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PlaylistPage(
+                        playlistId: id,
+                        playlistData: playlistData,
                       ),
-                    );
-                  } else if (playlistData != null) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            PlaylistPage(playlistData: playlistData),
-                      ),
-                    );
-                  }
+                    ),
+                  );
                 }
               : null,
           child: ClipRRect(
