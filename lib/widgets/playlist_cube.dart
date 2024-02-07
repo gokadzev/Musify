@@ -81,6 +81,7 @@ class PlaylistCube extends StatelessWidget {
                     iconSize: 30,
                     backgroundColor: context.colorScheme.primary,
                     iconColor: context.colorScheme.surface,
+                    title: title,
                   ),
           ),
         ),
