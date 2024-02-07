@@ -126,7 +126,7 @@ class PlaylistCube extends StatelessWidget {
               );
             },
           ),
-        if (isAlbum != null && isAlbum == true)
+        if (isAlbum ?? false)
           Positioned(
             top: 5,
             right: 5,

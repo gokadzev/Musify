@@ -166,21 +166,20 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                     final ytid = playlist['ytid'];
 
                     return GestureDetector(
-                      onTap:
-                          playlist['isCustom'] != null && playlist['isCustom']
-                              ? () async {
-                                  final result = await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          PlaylistPage(playlistData: playlist),
-                                    ),
-                                  );
-                                  if (result == false) {
-                                    setState(() {});
-                                  }
-                                }
-                              : null,
+                      onTap: playlist['isCustom'] ?? false
+                          ? () async {
+                              final result = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      PlaylistPage(playlistData: playlist),
+                                ),
+                              );
+                              if (result == false) {
+                                setState(() {});
+                              }
+                            }
+                          : null,
                       onLongPress: () {
                         showDialog(
                           context: context,
@@ -221,9 +220,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                         image: playlist['image'],
                         title: playlist['title'].toString(),
                         playlistData:
-                            playlist['isCustom'] != null && playlist['isCustom']
-                                ? playlist
-                                : null,
+                            playlist['isCustom'] ?? false ? playlist : null,
                         onClickOpen: playlist['isCustom'] == null,
                       ),
                     );
