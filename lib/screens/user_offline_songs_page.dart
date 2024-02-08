@@ -61,7 +61,6 @@ class _UserOfflineSongsPageState extends State<UserOfflineSongsPage> {
       onClickOpen: false,
       showFavoriteButton: false,
       size: 150,
-      zoomNumber: 0.55,
       cubeIcon: FluentIcons.cellular_off_24_regular,
     );
   }

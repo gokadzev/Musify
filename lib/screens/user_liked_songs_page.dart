@@ -76,7 +76,6 @@ class _UserLikedSongsPageState extends State<UserLikedSongsPage> {
       onClickOpen: false,
       showFavoriteButton: false,
       size: 150,
-      zoomNumber: 0.55,
     );
   }
 

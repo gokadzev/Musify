@@ -134,7 +134,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
       isAlbum: _playlist['isAlbum'],
       onClickOpen: false,
       showFavoriteButton: false,
-      zoomNumber: 0.55,
     );
   }
 

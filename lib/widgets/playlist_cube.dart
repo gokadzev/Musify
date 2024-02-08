@@ -18,7 +18,6 @@ class PlaylistCube extends StatelessWidget {
     this.showFavoriteButton = true,
     this.cubeIcon = FluentIcons.music_note_1_24_regular,
     this.size = 220,
-    this.zoomNumber = 0.5,
     this.isAlbum = false,
   });
 
@@ -30,7 +29,6 @@ class PlaylistCube extends StatelessWidget {
   final bool showFavoriteButton;
   final IconData cubeIcon;
   final double size;
-  final double zoomNumber;
   final bool? isAlbum;
 
   final likeStatusToIconMapper = {
