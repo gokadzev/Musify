@@ -364,9 +364,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
     return SongBar(
       _songsList[index],
       true,
-      isFromPlaylist: widget.playlistData != null,
       updateOnRemove: () => _updateSongsListOnRemove(index),
-      passingPlaylist: _playlist,
+      passingPlaylist: widget.playlistData,
       songIndexInPlaylist: index,
     );
   }

@@ -15,7 +15,6 @@ class SongBar extends StatelessWidget {
     this.song,
     this.clearPlaylist, {
     this.showMusicDuration = false,
-    this.isFromPlaylist = false,
     this.updateOnRemove,
     this.passingPlaylist,
     this.songIndexInPlaylist,
@@ -28,7 +27,6 @@ class SongBar extends StatelessWidget {
   final dynamic passingPlaylist;
   final int? songIndexInPlaylist;
   final bool showMusicDuration;
-  final bool isFromPlaylist;
 
   static const likeStatusToIconMapper = {
     true: FluentIcons.star_24_filled,
@@ -150,12 +148,12 @@ class SongBar extends StatelessWidget {
                     ),
                     IconButton(
                       color: context.colorScheme.primary,
-                      icon: isFromPlaylist
+                      icon: passingPlaylist != null
                           ? const Icon(FluentIcons.delete_24_filled)
                           : const Icon(FluentIcons.add_24_regular),
-                      onPressed: () => isFromPlaylist
-                          ? _removeFromPlaylist(context, song)
-                          : _showAddToPlaylistDialog(context, song),
+                      onPressed: () => passingPlaylist != null
+                          ? _removeFromPlaylist()
+                          : _showAddToPlaylistDialog(context),
                     ),
                     ValueListenableBuilder<bool>(
                       valueListenable: songOfflineStatus,
@@ -191,7 +189,7 @@ class SongBar extends StatelessWidget {
     );
   }
 
-  void _showAddToPlaylistDialog(BuildContext context, dynamic song) {
+  void _showAddToPlaylistDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -220,7 +218,7 @@ class SongBar extends StatelessWidget {
     );
   }
 
-  void _removeFromPlaylist(BuildContext context, dynamic song) {
+  void _removeFromPlaylist() {
     if (passingPlaylist == null) {
       return;
     }
