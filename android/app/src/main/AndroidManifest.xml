@@ -15,7 +15,6 @@
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon"
         android:enableOnBackInvokedCallback="true"
-        android:requestLegacyExternalStorage="true"
         android:extractNativeLibs="true"
         tools:replace="android:extractNativeLibs">
 
