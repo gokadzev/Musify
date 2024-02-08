@@ -69,6 +69,7 @@ class PlaylistCube extends StatelessWidget {
                     errorWidget: (context, url, error) => NullArtworkWidget(
                       icon: cubeIcon,
                       iconSize: 30,
+                      size: size,
                       backgroundColor: context.colorScheme.primary,
                       iconColor: context.colorScheme.surface,
                       title: title,
@@ -77,6 +78,7 @@ class PlaylistCube extends StatelessWidget {
                 : NullArtworkWidget(
                     icon: cubeIcon,
                     iconSize: 30,
+                    size: size,
                     backgroundColor: context.colorScheme.primary,
                     iconColor: context.colorScheme.surface,
                     title: title,

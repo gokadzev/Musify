@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
+import 'package:musify/extensions/screen_size.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/song_bar.dart';
@@ -70,7 +71,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
       title: widget.title,
       onClickOpen: false,
       showFavoriteButton: false,
-      size: 150,
+      size: context.screenSize.width / 2.2,
       cubeIcon: widget.title == context.l10n!.userOfflineSongs
           ? FluentIcons.cellular_off_24_regular
           : FluentIcons.music_note_1_24_regular,
