@@ -34,8 +34,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
       ),
       body: Column(
         children: [
-          buildPlaylistHeader(context),
-          const SizedBox(height: 30),
+          buildPlaylistHeader(),
           Expanded(
             child: buildSongList(),
           ),
@@ -44,25 +43,39 @@ class _UserSongsPageState extends State<UserSongsPage> {
     );
   }
 
-  Widget buildPlaylistHeader(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        _buildPlaylistImage(context),
-        const SizedBox(width: 20),
-        Column(
-          children: [
-            Text(
+  Widget buildPlaylistHeader() {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        children: [
+          _buildPlaylistImage(context),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            child: Text(
               widget.title,
+              textAlign: TextAlign.center,
               style: const TextStyle(
-                fontWeight: FontWeight.w300,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 10),
-            buildPlayButton(context),
-          ],
-        ),
-      ],
+          ),
+          const SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '[ ${widget.songList.length} ${context.l10n!.songs} ]'
+                    .toUpperCase(),
+                style: const TextStyle(
+                  fontWeight: FontWeight.w300,
+                ),
+              ),
+              buildPlayButton(context),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
