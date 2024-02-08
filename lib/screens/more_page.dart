@@ -1,5 +1,6 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:musify/API/musify.dart';
 import 'package:musify/API/version.dart';
 import 'package:musify/extensions/colorScheme.dart';
 import 'package:musify/extensions/l10n.dart';
@@ -9,8 +10,7 @@ import 'package:musify/screens/playlists_page.dart';
 import 'package:musify/screens/recently_played_page.dart';
 import 'package:musify/screens/search_page.dart';
 import 'package:musify/screens/user_liked_playlists_page.dart';
-import 'package:musify/screens/user_liked_songs_page.dart';
-import 'package:musify/screens/user_offline_songs_page.dart';
+import 'package:musify/screens/user_songs_page.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/services/update_manager.dart';
@@ -75,7 +75,12 @@ class MorePage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const UserLikedSongsPage(),
+                    builder: (context) => UserSongsPage(
+                      title: context.l10n!.userLikedSongs,
+                      songList: userLikedSongsList,
+                      currentSongsLength: currentLikedSongsLength,
+                      showReorderableListView: true,
+                    ),
                   ),
                 ),
               },
@@ -87,7 +92,11 @@ class MorePage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const UserOfflineSongsPage(),
+                    builder: (context) => UserSongsPage(
+                      title: context.l10n!.userOfflineSongs,
+                      songList: userOfflineSongs,
+                      currentSongsLength: currentOfflineSongsLength,
+                    ),
                   ),
                 ),
               },
