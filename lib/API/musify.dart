@@ -502,11 +502,7 @@ Future getSongLyrics(String artist, String title) async {
   if (lastFetchedLyrics != '$artist - $title') {
     lyrics.value = null;
     final _lyrics = await LyricsManager().fetchLyrics(artist, title);
-    if (_lyrics != null) {
-      lyrics.value = _lyrics;
-    } else {
-      lyrics.value = 'not found';
-    }
+    lyrics.value = _lyrics != null ? _lyrics : 'not found';
 
     lastFetchedLyrics = '$artist - $title';
     return _lyrics;

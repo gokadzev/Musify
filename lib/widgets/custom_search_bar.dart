@@ -49,32 +49,30 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
               ? ValueListenableBuilder<bool>(
                   valueListenable: widget.loadingProgressNotifier!,
                   builder: (_, value, __) {
-                    if (value) {
-                      return IconButton(
-                        icon: const SizedBox(
-                          height: 18,
-                          width: 18,
-                          child: Spinner(),
-                        ),
-                        color: context.colorScheme.primary,
-                        onPressed: () {
-                          widget.onSubmitted(widget.controller.text);
-                          widget.focusNode.unfocus();
-                        },
-                      );
-                    } else {
-                      return IconButton(
-                        icon: Icon(
-                          FluentIcons.search_20_regular,
-                          color: context.colorScheme.primary,
-                        ),
-                        color: context.colorScheme.primary,
-                        onPressed: () {
-                          widget.onSubmitted(widget.controller.text);
-                          widget.focusNode.unfocus();
-                        },
-                      );
-                    }
+                    return value
+                        ? IconButton(
+                            icon: const SizedBox(
+                              height: 18,
+                              width: 18,
+                              child: Spinner(),
+                            ),
+                            color: context.colorScheme.primary,
+                            onPressed: () {
+                              widget.onSubmitted(widget.controller.text);
+                              widget.focusNode.unfocus();
+                            },
+                          )
+                        : IconButton(
+                            icon: Icon(
+                              FluentIcons.search_20_regular,
+                              color: context.colorScheme.primary,
+                            ),
+                            color: context.colorScheme.primary,
+                            onPressed: () {
+                              widget.onSubmitted(widget.controller.text);
+                              widget.focusNode.unfocus();
+                            },
+                          );
                   },
                 )
               : IconButton(

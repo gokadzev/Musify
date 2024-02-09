@@ -81,11 +81,8 @@ class _SearchPageState extends State<SearchPage> {
               focusNode: _inputNode,
               labelText: '${context.l10n!.search}...',
               onChanged: (value) async {
-                if (value.isNotEmpty) {
-                  _suggestionsList = await getSearchSuggestions(value);
-                } else {
-                  _suggestionsList = [];
-                }
+                _suggestionsList =
+                    value.isNotEmpty ? await getSearchSuggestions(value) : [];
                 setState(() {});
               },
               onSubmitted: (String value) {

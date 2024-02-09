@@ -1,4 +1,4 @@
-List albumsDB = [
+const List albumsDB = [
   {
     'ytid': 'PLS5_MK8e_MzSNmCQ3_AqbQL1JOM4Yy-_v',
     'title': 'Starboy - The Weeknd',

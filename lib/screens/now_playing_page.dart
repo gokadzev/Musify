@@ -39,36 +39,34 @@ class NowPlayingPage extends StatelessWidget {
           builder: (context, snapshot) {
             final metadata = snapshot.data;
 
-            if (metadata == null) {
-              return const SizedBox.shrink();
-            } else {
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(height: size.height * 0.01),
-                  buildArtwork(size, metadata),
-                  SizedBox(height: size.height * 0.03),
-                  buildMarqueeText(
-                    metadata.title,
-                    context.colorScheme.primary,
-                    size.height * 0.030,
-                    FontWeight.bold,
-                    size.width,
-                  ),
-                  const SizedBox(height: 4),
-                  buildMarqueeText(
-                    metadata.artist ?? '',
-                    context.colorScheme.primary,
-                    size.height * 0.018,
-                    FontWeight.w500,
-                    size.width,
-                  ),
-                  if (!(metadata.extras?['isLive'] ?? false))
-                    _buildPlayer(size, metadata.extras?['ytid'], metadata),
-                ],
-              );
-            }
+            return metadata == null
+                ? const SizedBox.shrink()
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(height: size.height * 0.01),
+                      buildArtwork(size, metadata),
+                      SizedBox(height: size.height * 0.03),
+                      buildMarqueeText(
+                        metadata.title,
+                        context.colorScheme.primary,
+                        size.height * 0.03,
+                        FontWeight.bold,
+                        size.width,
+                      ),
+                      const SizedBox(height: 4),
+                      buildMarqueeText(
+                        metadata.artist ?? '',
+                        context.colorScheme.primary,
+                        size.height * 0.018,
+                        FontWeight.w500,
+                        size.width,
+                      ),
+                      if (!(metadata.extras?['isLive'] ?? false))
+                        _buildPlayer(size, metadata.extras?['ytid'], metadata),
+                    ],
+                  );
           },
         ),
       ),

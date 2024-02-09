@@ -100,15 +100,13 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
 
                 late List _playlists;
 
-                if (_showOnlyAlbums) {
-                  _playlists = (snapshot.data as List)
-                      .where((element) => element['isAlbum'] == true)
-                      .toList();
-                } else {
-                  _playlists = (snapshot.data as List)
-                      .where((element) => element['isAlbum'] != true)
-                      .toList();
-                }
+                _playlists = _showOnlyAlbums
+                    ? (snapshot.data as List)
+                        .where((element) => element['isAlbum'] == true)
+                        .toList()
+                    : (snapshot.data as List)
+                        .where((element) => element['isAlbum'] != true)
+                        .toList();
 
                 return GridView.builder(
                   gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(

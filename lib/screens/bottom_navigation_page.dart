@@ -44,11 +44,9 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
                 );
               }
               final metadata = snapshot.data;
-              if (metadata == null) {
-                return const SizedBox.shrink();
-              } else {
-                return MiniPlayer(metadata: metadata);
-              }
+              return metadata == null
+                  ? const SizedBox.shrink()
+                  : MiniPlayer(metadata: metadata);
             },
           ),
           NavigationBar(

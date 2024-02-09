@@ -6,7 +6,7 @@ import 'package:musify/DB/playlists.db.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 final _yt = YoutubeExplode();
-List playlists = [...playlistsDB, ...albumsDB];
+final List playlists = [...playlistsDB, ...albumsDB];
 
 void main() async {
   print('PLAYLISTS AND ALBUMS CHECKING RESULT:');
