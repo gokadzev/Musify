@@ -154,12 +154,14 @@ class SongBar extends StatelessWidget {
                     ),
                     IconButton(
                       color: context.colorScheme.primary,
-                      icon: passingPlaylist != null
-                          ? const Icon(FluentIcons.delete_24_filled)
-                          : const Icon(FluentIcons.add_24_regular),
-                      onPressed: () => passingPlaylist != null
-                          ? _removeFromPlaylist()
-                          : _showAddToPlaylistDialog(context),
+                      icon:
+                          passingPlaylist != null && songIndexInPlaylist != null
+                              ? const Icon(FluentIcons.delete_24_filled)
+                              : const Icon(FluentIcons.add_24_regular),
+                      onPressed: () =>
+                          passingPlaylist != null && songIndexInPlaylist != null
+                              ? _removeFromPlaylist()
+                              : _showAddToPlaylistDialog(context),
                     ),
                     ValueListenableBuilder<bool>(
                       valueListenable: songOfflineStatus,
@@ -225,7 +227,7 @@ class SongBar extends StatelessWidget {
   }
 
   void _removeFromPlaylist() {
-    if (passingPlaylist == null) {
+    if (passingPlaylist == null || songIndexInPlaylist == null) {
       return;
     }
     removeSongFromPlaylist(

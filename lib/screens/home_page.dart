@@ -6,7 +6,7 @@ import 'package:musify/extensions/colorScheme.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/extensions/screen_size.dart';
 import 'package:musify/main.dart';
-import 'package:musify/screens/artist_page.dart';
+import 'package:musify/screens/playlist_page.dart';
 import 'package:musify/screens/playlists_page.dart';
 import 'package:musify/services/update_manager.dart';
 import 'package:musify/widgets/artist_cube.dart';
@@ -190,13 +190,15 @@ class _HomePageState extends State<HomePage> {
             itemBuilder: (context, index) {
               final artist = data[index]['artist'].split('~')[0];
               return GestureDetector(
-                onTap: () {
-                  Navigator.push(
+                onTap: () async {
+                  final result = await fetchSongsList(artist);
+                  await Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ArtistPage(
-                        playlist: {
+                      builder: (context) => PlaylistPage(
+                        playlistData: {
                           'title': artist,
+                          'list': result,
                         },
                       ),
                     ),

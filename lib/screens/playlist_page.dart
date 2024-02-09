@@ -364,9 +364,11 @@ class _PlaylistPageState extends State<PlaylistPage> {
     return SongBar(
       _songsList[index],
       true,
-      updateOnRemove: () => _updateSongsListOnRemove(index),
+      updateOnRemove: () => _playlist['isCustom'] == true
+          ? _updateSongsListOnRemove(index)
+          : null,
       passingPlaylist: widget.playlistData,
-      songIndexInPlaylist: index,
+      songIndexInPlaylist: _playlist['isCustom'] == true ? index : null,
     );
   }
 }
