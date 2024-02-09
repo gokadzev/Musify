@@ -1,6 +1,5 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:musify/API/version.dart';
 import 'package:musify/extensions/colorScheme.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
@@ -481,14 +480,8 @@ class MorePage extends StatelessWidget {
             SettingBar(
               context.l10n!.licenses,
               FluentIcons.document_24_filled,
-              () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const LicensePage(
-                    applicationName: 'Musify',
-                    applicationVersion: appVersion,
-                  ),
-                ),
+              () => NavigationManager.router.go(
+                '/more/license',
               ),
             ),
             SettingBar(

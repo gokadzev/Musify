@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:musify/API/version.dart';
 import 'package:musify/screens/about_page.dart';
 import 'package:musify/screens/bottom_navigation_page.dart';
 import 'package:musify/screens/home_page.dart';
@@ -98,6 +99,13 @@ class NavigationManager {
                   GoRoute(
                     path: 'userLikedPlaylists',
                     builder: (context, state) => const UserLikedPlaylistsPage(),
+                  ),
+                  GoRoute(
+                    path: 'license',
+                    builder: (context, state) => const LicensePage(
+                      applicationName: 'Musify',
+                      applicationVersion: appVersion,
+                    ),
                   ),
                   GoRoute(
                     path: 'about',
