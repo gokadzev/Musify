@@ -4,7 +4,7 @@ import 'package:musify/extensions/colorScheme.dart';
 class SettingBar extends StatelessWidget {
   SettingBar(this.tileName, this.tileIcon, this.onTap, {super.key});
 
-  final Function() onTap;
+  final VoidCallback onTap;
   final String tileName;
   final IconData tileIcon;
 

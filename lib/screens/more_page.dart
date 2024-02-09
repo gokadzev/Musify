@@ -45,71 +45,61 @@ class MorePage extends StatelessWidget {
             SettingBar(
               context.l10n!.recentlyPlayed,
               FluentIcons.history_24_filled,
-              () => {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const RecentlyPlayed(),
-                  ),
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const RecentlyPlayed(),
                 ),
-              },
+              ),
             ),
             SettingBar(
               context.l10n!.playlists,
               FluentIcons.list_24_filled,
-              () => {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const PlaylistsPage(),
-                  ),
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const PlaylistsPage(),
                 ),
-              },
+              ),
             ),
             SettingBar(
               context.l10n!.userLikedSongs,
               FluentIcons.heart_24_filled,
-              () => {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => UserSongsPage(
-                      title: context.l10n!.userLikedSongs,
-                      songList: userLikedSongsList,
-                      currentSongsLength: currentLikedSongsLength,
-                      showReorderableListView: true,
-                    ),
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => UserSongsPage(
+                    title: context.l10n!.userLikedSongs,
+                    songList: userLikedSongsList,
+                    currentSongsLength: currentLikedSongsLength,
+                    showReorderableListView: true,
                   ),
                 ),
-              },
+              ),
             ),
             SettingBar(
               context.l10n!.userOfflineSongs,
               FluentIcons.cellular_off_24_filled,
-              () => {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => UserSongsPage(
-                      title: context.l10n!.userOfflineSongs,
-                      songList: userOfflineSongs,
-                      currentSongsLength: currentOfflineSongsLength,
-                    ),
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => UserSongsPage(
+                    title: context.l10n!.userOfflineSongs,
+                    songList: userOfflineSongs,
+                    currentSongsLength: currentOfflineSongsLength,
                   ),
                 ),
-              },
+              ),
             ),
             SettingBar(
               context.l10n!.userLikedPlaylists,
               FluentIcons.star_24_filled,
-              () => {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const UserLikedPlaylistsPage(),
-                  ),
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const UserLikedPlaylistsPage(),
                 ),
-              },
+              ),
             ),
 
             // CATEGORY: SETTINGS
@@ -120,202 +110,193 @@ class MorePage extends StatelessWidget {
             SettingBar(
               context.l10n!.accentColor,
               FluentIcons.color_24_filled,
-              () => {
-                showModalBottomSheet(
-                  isDismissible: true,
-                  backgroundColor: Colors.transparent,
-                  context: context,
-                  builder: (BuildContext context) {
-                    return Center(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: primaryColor,
-                          ),
-                          borderRadius: BorderRadius.circular(20),
+              () => showModalBottomSheet(
+                isDismissible: true,
+                backgroundColor: Colors.transparent,
+                context: context,
+                builder: (BuildContext context) {
+                  return Center(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: primaryColor,
                         ),
-                        width: MediaQuery.of(context).size.width * 0.90,
-                        child: GridView.builder(
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                          ),
-                          shrinkWrap: true,
-                          physics: const BouncingScrollPhysics(),
-                          itemCount: availableColors.length,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 15),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  if (availableColors.length > index)
-                                    GestureDetector(
-                                      onTap: () {
-                                        addOrUpdateData(
-                                          'settings',
-                                          'accentColor',
-                                          availableColors[index].value,
-                                        );
-                                        Musify.updateAppState(
-                                          context,
-                                          newAccentColor:
-                                              availableColors[index],
-                                          useSystemColor: false,
-                                        );
-                                        showToast(
-                                          context,
-                                          context.l10n!.accentChangeMsg,
-                                        );
-                                        Navigator.pop(context);
-                                      },
-                                      child: Material(
-                                        elevation: 4,
-                                        shape: const CircleBorder(),
-                                        child: CircleAvatar(
-                                          radius: 25,
-                                          backgroundColor:
-                                              themeMode == ThemeMode.light
-                                                  ? availableColors[index]
-                                                      .withAlpha(150)
-                                                  : availableColors[index],
-                                        ),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      width: MediaQuery.of(context).size.width * 0.90,
+                      child: GridView.builder(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                        ),
+                        shrinkWrap: true,
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: availableColors.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                if (availableColors.length > index)
+                                  GestureDetector(
+                                    onTap: () {
+                                      addOrUpdateData(
+                                        'settings',
+                                        'accentColor',
+                                        availableColors[index].value,
+                                      );
+                                      Musify.updateAppState(
+                                        context,
+                                        newAccentColor: availableColors[index],
+                                        useSystemColor: false,
+                                      );
+                                      showToast(
+                                        context,
+                                        context.l10n!.accentChangeMsg,
+                                      );
+                                      Navigator.pop(context);
+                                    },
+                                    child: Material(
+                                      elevation: 4,
+                                      shape: const CircleBorder(),
+                                      child: CircleAvatar(
+                                        radius: 25,
+                                        backgroundColor:
+                                            themeMode == ThemeMode.light
+                                                ? availableColors[index]
+                                                    .withAlpha(150)
+                                                : availableColors[index],
                                       ),
                                     ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
+                                  ),
+                              ],
+                            ),
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
-              },
+                    ),
+                  );
+                },
+              ),
             ),
             SettingBar(
               context.l10n!.themeMode,
               FluentIcons.weather_sunny_28_filled,
-              () => {
-                showModalBottomSheet(
-                  isDismissible: true,
-                  backgroundColor: Colors.transparent,
-                  context: context,
-                  builder: (BuildContext context) {
-                    final availableModes = [
-                      ThemeMode.system,
-                      ThemeMode.light,
-                      ThemeMode.dark,
-                    ];
+              () => showModalBottomSheet(
+                isDismissible: true,
+                backgroundColor: Colors.transparent,
+                context: context,
+                builder: (BuildContext context) {
+                  final availableModes = [
+                    ThemeMode.system,
+                    ThemeMode.light,
+                    ThemeMode.dark,
+                  ];
 
-                    return Center(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: primaryColor,
-                          ),
-                          borderRadius: BorderRadius.circular(20),
+                  return Center(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: primaryColor,
                         ),
-                        width: MediaQuery.of(context).size.width * 0.90,
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          physics: const BouncingScrollPhysics(),
-                          itemCount: availableModes.length,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: Card(
-                                child: ListTile(
-                                  title: Text(
-                                    availableModes[index].name,
-                                  ),
-                                  onTap: () {
-                                    addOrUpdateData(
-                                      'settings',
-                                      'themeMode',
-                                      availableModes[index].name,
-                                    );
-                                    Musify.updateAppState(
-                                      context,
-                                      newThemeMode: availableModes[index],
-                                    );
-
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                              ),
-                            );
-                          },
-                        ),
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                    );
-                  },
-                ),
-              },
+                      width: MediaQuery.of(context).size.width * 0.90,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: availableModes.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Card(
+                              child: ListTile(
+                                title: Text(
+                                  availableModes[index].name,
+                                ),
+                                onTap: () {
+                                  addOrUpdateData(
+                                    'settings',
+                                    'themeMode',
+                                    availableModes[index].name,
+                                  );
+                                  Musify.updateAppState(
+                                    context,
+                                    newThemeMode: availableModes[index],
+                                  );
+
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  );
+                },
+              ),
             ),
             SettingBar(
               context.l10n!.language,
               FluentIcons.translate_24_filled,
-              () => {
-                showModalBottomSheet(
-                  isDismissible: true,
-                  backgroundColor: Colors.transparent,
-                  context: context,
-                  builder: (BuildContext context) {
-                    final availableLanguages = appLanguages.keys.toList();
+              () => showModalBottomSheet(
+                isDismissible: true,
+                backgroundColor: Colors.transparent,
+                context: context,
+                builder: (BuildContext context) {
+                  final availableLanguages = appLanguages.keys.toList();
 
-                    return Center(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: primaryColor,
-                          ),
-                          borderRadius: BorderRadius.circular(20),
+                  return Center(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: primaryColor,
                         ),
-                        width: MediaQuery.of(context).size.width * 0.90,
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          physics: const BouncingScrollPhysics(),
-                          itemCount: availableLanguages.length,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: Card(
-                                child: ListTile(
-                                  title: Text(
-                                    availableLanguages[index],
-                                  ),
-                                  onTap: () {
-                                    addOrUpdateData(
-                                      'settings',
-                                      'language',
-                                      availableLanguages[index],
-                                    );
-                                    Musify.updateAppState(
-                                      context,
-                                      newLocale: Locale(
-                                        appLanguages[
-                                            availableLanguages[index]]!,
-                                      ),
-                                    );
-
-                                    showToast(
-                                      context,
-                                      context.l10n!.languageMsg,
-                                    );
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                              ),
-                            );
-                          },
-                        ),
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                    );
-                  },
-                ),
-              },
+                      width: MediaQuery.of(context).size.width * 0.90,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: availableLanguages.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Card(
+                              child: ListTile(
+                                title: Text(
+                                  availableLanguages[index],
+                                ),
+                                onTap: () {
+                                  addOrUpdateData(
+                                    'settings',
+                                    'language',
+                                    availableLanguages[index],
+                                  );
+                                  Musify.updateAppState(
+                                    context,
+                                    newLocale: Locale(
+                                      appLanguages[availableLanguages[index]]!,
+                                    ),
+                                  );
+
+                                  showToast(
+                                    context,
+                                    context.l10n!.languageMsg,
+                                  );
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  );
+                },
+              ),
             ),
             SettingSwitchBar(
               context.l10n!.dynamicColor,
@@ -488,9 +469,7 @@ class MorePage extends StatelessWidget {
               SettingBar(
                 context.l10n!.downloadAppUpdate,
                 FluentIcons.arrow_download_24_filled,
-                () => {
-                  checkAppUpdates(context),
-                },
+                () => checkAppUpdates(context),
               ),
             // CATEGORY: BECOME A SPONSOR
 
@@ -531,32 +510,28 @@ class MorePage extends StatelessWidget {
             SettingBar(
               context.l10n!.licenses,
               FluentIcons.document_24_filled,
-              () => {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const LicensePage(
-                      applicationName: 'Musify',
-                      applicationVersion: appVersion,
-                    ),
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const LicensePage(
+                    applicationName: 'Musify',
+                    applicationVersion: appVersion,
                   ),
                 ),
-              },
+              ),
             ),
             SettingBar(
               '${context.l10n!.copyLogs} (${logger.getLogCount()})',
               FluentIcons.error_circle_24_filled,
-              () async => {showToast(context, await logger.copyLogs(context))},
+              () async => showToast(context, await logger.copyLogs(context)),
             ),
             SettingBar(
               context.l10n!.about,
               FluentIcons.book_information_24_filled,
-              () => {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const AboutPage()),
-                ),
-              },
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const AboutPage()),
+              ),
             ),
             const SizedBox(
               height: 20,

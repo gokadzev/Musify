@@ -21,7 +21,7 @@ void showToastWithButton(
   BuildContext context,
   String text,
   String buttonName,
-  Function onPressedToast,
+  VoidCallback onPressedToast,
 ) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(

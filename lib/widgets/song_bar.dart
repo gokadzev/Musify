@@ -24,7 +24,7 @@ class SongBar extends StatelessWidget {
 
   final dynamic song;
   final bool clearPlaylist;
-  final Function? updateOnRemove;
+  final VoidCallback? updateOnRemove;
   final dynamic passingPlaylist;
   final int? songIndexInPlaylist;
   final bool showMusicDuration;
