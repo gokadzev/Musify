@@ -33,15 +33,15 @@ class ArtistCube extends StatelessWidget {
           Icon(
             FluentIcons.mic_sparkle_24_regular,
             size: iconSize,
-            color: context.colorScheme.surface,
+            color: context.colorScheme.onPrimary,
           ),
           Padding(
             padding: const EdgeInsets.all(10),
             child: Text(
               artist,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: context.colorScheme.onPrimary,
               ),
             ),
           ),

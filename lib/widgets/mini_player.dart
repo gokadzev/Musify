@@ -100,10 +100,8 @@ class MiniPlayer extends StatelessWidget {
                 fit: BoxFit.cover,
                 width: 55,
                 height: 55,
-                errorWidget: (context, url, error) => NullArtworkWidget(
+                errorWidget: (context, url, error) => const NullArtworkWidget(
                   iconSize: 30,
-                  backgroundColor: context.colorScheme.secondary,
-                  iconColor: context.colorScheme.surface,
                 ),
               ),
             ),

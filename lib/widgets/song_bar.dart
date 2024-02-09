@@ -92,10 +92,9 @@ class SongBar extends StatelessWidget {
                         ),
                       ),
                     ),
-                    errorWidget: (context, url, error) => NullArtworkWidget(
+                    errorWidget: (context, url, error) =>
+                        const NullArtworkWidget(
                       iconSize: 30,
-                      backgroundColor: context.colorScheme.secondary,
-                      iconColor: context.colorScheme.surface,
                     ),
                   ),
                 const SizedBox(width: 8),

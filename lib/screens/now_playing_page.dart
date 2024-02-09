@@ -107,8 +107,6 @@ class NowPlayingPage extends StatelessWidget {
               placeholder: (context, url) => const Spinner(),
               errorWidget: (context, url, error) => NullArtworkWidget(
                 iconSize: size.width / 8,
-                backgroundColor: context.colorScheme.secondary,
-                iconColor: context.colorScheme.surface,
               ),
             ),
     );
