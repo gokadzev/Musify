@@ -299,10 +299,10 @@ class MorePage extends StatelessWidget {
               ),
             ),
             SettingSwitchBar(
-              context.l10n!.dynamicColor,
-              FluentIcons.toggle_left_24_filled,
-              useSystemColor.value,
-              (value) {
+              tileName: context.l10n!.dynamicColor,
+              tileIcon: FluentIcons.toggle_left_24_filled,
+              value: useSystemColor.value,
+              onChanged: (value) {
                 addOrUpdateData(
                   'settings',
                   'useSystemColor',
@@ -324,10 +324,10 @@ class MorePage extends StatelessWidget {
               valueListenable: sponsorBlockSupport,
               builder: (_, value, __) {
                 return SettingSwitchBar(
-                  'SponsorBlock',
-                  FluentIcons.presence_blocked_24_regular,
-                  value,
-                  (value) {
+                  tileName: 'SponsorBlock',
+                  tileIcon: FluentIcons.presence_blocked_24_regular,
+                  value: value,
+                  onChanged: (value) {
                     addOrUpdateData(
                       'settings',
                       'sponsorBlockSupport',
