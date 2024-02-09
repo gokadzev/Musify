@@ -193,6 +193,7 @@ class _HomePageState extends State<HomePage> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => PlaylistPage(
+                        cubeIcon: FluentIcons.mic_sparkle_24_regular,
                         playlistData: {
                           'title': artist,
                           'list': result,

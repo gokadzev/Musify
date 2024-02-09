@@ -14,10 +14,16 @@ import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/spinner.dart';
 
 class PlaylistPage extends StatefulWidget {
-  const PlaylistPage({super.key, this.playlistId, this.playlistData});
+  const PlaylistPage({
+    super.key,
+    this.playlistId,
+    this.playlistData,
+    this.cubeIcon = FluentIcons.music_note_1_24_regular,
+  });
 
   final String? playlistId;
   final dynamic playlistData;
+  final IconData cubeIcon;
 
   @override
   _PlaylistPageState createState() => _PlaylistPageState();
@@ -133,6 +139,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
       title: _playlist['title'],
       isAlbum: _playlist['isAlbum'],
       onClickOpen: false,
+      cubeIcon: widget.cubeIcon,
       showFavoriteButton: false,
     );
   }
