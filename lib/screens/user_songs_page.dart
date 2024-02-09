@@ -21,7 +21,7 @@ class UserSongsPage extends StatefulWidget {
 }
 
 class _UserSongsPageState extends State<UserSongsPage> {
-  var isEditEnabled = false;
+  bool isEditEnabled = false;
 
   @override
   Widget build(BuildContext context) {
