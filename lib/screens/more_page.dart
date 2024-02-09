@@ -48,7 +48,7 @@ class MorePage extends StatelessWidget {
               () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const RecentlyPlayed(),
+                  builder: (context) => const RecentlyPlayedPage(),
                 ),
               ),
             ),
