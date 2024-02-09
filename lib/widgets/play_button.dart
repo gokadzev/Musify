@@ -1,3 +1,4 @@
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 
 class PlayButton extends StatelessWidget {
@@ -9,7 +10,7 @@ class PlayButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Icon(
-        Icons.play_circle_filled,
+        FluentIcons.play_circle_48_filled,
         color: Theme.of(context).colorScheme.primary,
         size: 60,
       ),
