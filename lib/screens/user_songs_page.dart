@@ -52,10 +52,10 @@ class _UserSongsPageState extends State<UserSongsPage> {
 
   IconData getIcon(String page) {
     return {
-          'liked': FluentIcons.music_note_1_24_regular,
+          'liked': FluentIcons.heart_24_regular,
           'offline': FluentIcons.cellular_off_24_regular,
         }[page] ??
-        FluentIcons.music_note_1_24_regular;
+        FluentIcons.heart_24_regular;
   }
 
   List getSongsList(String page) {
