@@ -38,13 +38,9 @@ class MorePage extends StatelessWidget {
         child: Column(
           children: <Widget>[
             // CATEGORY: PAGES
-            Text(
+            _buildSectionTitle(
+              primaryColor,
               context.l10n!.pages,
-              style: TextStyle(
-                color: primaryColor,
-                fontSize: 15,
-                fontWeight: FontWeight.w400,
-              ),
             ),
             SettingBar(
               context.l10n!.recentlyPlayed,
@@ -117,13 +113,9 @@ class MorePage extends StatelessWidget {
             ),
 
             // CATEGORY: SETTINGS
-            Text(
+            _buildSectionTitle(
+              primaryColor,
               context.l10n!.settings,
-              style: TextStyle(
-                color: primaryColor,
-                fontSize: 15,
-                fontWeight: FontWeight.w400,
-              ),
             ),
             SettingBar(
               context.l10n!.accentColor,
@@ -432,13 +424,9 @@ class MorePage extends StatelessWidget {
             ),
 
             // CATEGORY: TOOLS
-            Text(
+            _buildSectionTitle(
+              primaryColor,
               context.l10n!.tools,
-              style: TextStyle(
-                color: primaryColor,
-                fontSize: 15,
-                fontWeight: FontWeight.w400,
-              ),
             ),
             SettingBar(
               context.l10n!.clearCache,
@@ -505,13 +493,10 @@ class MorePage extends StatelessWidget {
                 },
               ),
             // CATEGORY: BECOME A SPONSOR
-            Text(
+
+            _buildSectionTitle(
+              primaryColor,
               context.l10n!.becomeSponsor,
-              style: TextStyle(
-                color: primaryColor,
-                fontSize: 15,
-                fontWeight: FontWeight.w400,
-              ),
             ),
             Padding(
               padding: const EdgeInsets.all(8),
@@ -538,14 +523,11 @@ class MorePage extends StatelessWidget {
               ),
             ),
             // CATEGORY: OTHERS
-            Text(
+            _buildSectionTitle(
+              primaryColor,
               context.l10n!.others,
-              style: TextStyle(
-                color: primaryColor,
-                fontSize: 15,
-                fontWeight: FontWeight.w400,
-              ),
             ),
+
             SettingBar(
               context.l10n!.licenses,
               FluentIcons.document_24_filled,
@@ -580,6 +562,20 @@ class MorePage extends StatelessWidget {
               height: 20,
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(Color primaryColor, String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Text(
+        title,
+        style: TextStyle(
+          color: primaryColor,
+          fontSize: 15,
+          fontWeight: FontWeight.w400,
         ),
       ),
     );
