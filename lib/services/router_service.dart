@@ -9,6 +9,7 @@ import 'package:musify/screens/recently_played_page.dart';
 import 'package:musify/screens/search_page.dart';
 import 'package:musify/screens/user_added_playlists_page.dart';
 import 'package:musify/screens/user_liked_playlists_page.dart';
+import 'package:musify/screens/user_songs_page.dart';
 
 class NavigationManager {
   factory NavigationManager() {
@@ -83,6 +84,12 @@ class NavigationManager {
                   GoRoute(
                     path: 'recentlyPlayed',
                     builder: (context, state) => const RecentlyPlayedPage(),
+                  ),
+                  GoRoute(
+                    path: 'userSongs/:page',
+                    builder: (context, state) => UserSongsPage(
+                      page: state.pathParameters['page'] ?? 'liked',
+                    ),
                   ),
                   GoRoute(
                     path: 'playlists',

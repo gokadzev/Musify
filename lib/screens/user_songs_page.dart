@@ -1,5 +1,4 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
@@ -11,15 +10,10 @@ import 'package:musify/widgets/song_bar.dart';
 class UserSongsPage extends StatefulWidget {
   const UserSongsPage({
     super.key,
-    required this.title,
-    required this.songList,
-    required this.currentSongsLength,
-    this.showReorderableListView = false,
+    required this.page,
   });
-  final String title;
-  final List songList;
-  final ValueListenable<int> currentSongsLength;
-  final bool showReorderableListView;
+
+  final String page;
 
   @override
   State<UserSongsPage> createState() => _UserSongsPageState();
@@ -28,31 +22,68 @@ class UserSongsPage extends StatefulWidget {
 class _UserSongsPageState extends State<UserSongsPage> {
   @override
   Widget build(BuildContext context) {
+    final title = getTitle(widget.page, context);
+    final icon = getIcon(widget.page);
+    final songsList = getSongsList(widget.page);
+    final length = getLength(widget.page);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(title),
       ),
       body: Column(
         children: [
-          buildPlaylistHeader(),
+          buildPlaylistHeader(title, icon, songsList),
           Expanded(
-            child: buildSongList(),
+            child: buildSongList(title, songsList, length),
           ),
         ],
       ),
     );
   }
 
-  Widget buildPlaylistHeader() {
+  String getTitle(String page, BuildContext context) {
+    return {
+          'liked': context.l10n!.userLikedSongs,
+          'offline': context.l10n!.userOfflineSongs,
+        }[page] ??
+        context.l10n!.playlist;
+  }
+
+  IconData getIcon(String page) {
+    return {
+          'liked': FluentIcons.music_note_1_24_regular,
+          'offline': FluentIcons.cellular_off_24_regular,
+        }[page] ??
+        FluentIcons.music_note_1_24_regular;
+  }
+
+  List getSongsList(String page) {
+    return {
+          'liked': userLikedSongsList,
+          'offline': userOfflineSongs,
+        }[page] ??
+        userLikedSongsList;
+  }
+
+  ValueNotifier getLength(String page) {
+    return {
+          'liked': currentLikedSongsLength,
+          'offline': currentOfflineSongsLength,
+        }[page] ??
+        currentLikedSongsLength;
+  }
+
+  Widget buildPlaylistHeader(String title, IconData icon, List songsList) {
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Column(
         children: [
-          _buildPlaylistImage(context),
+          _buildPlaylistImage(title, icon),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 20),
             child: Text(
-              widget.title,
+              title,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 18,
@@ -65,13 +96,12 @@ class _UserSongsPageState extends State<UserSongsPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '[ ${widget.songList.length} ${context.l10n!.songs} ]'
-                    .toUpperCase(),
+                '[ ${songsList.length} ${context.l10n!.songs} ]'.toUpperCase(),
                 style: const TextStyle(
                   fontWeight: FontWeight.w300,
                 ),
               ),
-              buildPlayButton(context),
+              buildPlayButton(title, songsList),
             ],
           ),
         ],
@@ -79,27 +109,25 @@ class _UserSongsPageState extends State<UserSongsPage> {
     );
   }
 
-  Widget _buildPlaylistImage(BuildContext context) {
+  Widget _buildPlaylistImage(String title, IconData icon) {
     return PlaylistCube(
-      title: widget.title,
+      title: title,
       onClickOpen: false,
       showFavoriteButton: false,
       size: context.screenSize.width / 2.2,
-      cubeIcon: widget.title == context.l10n!.userOfflineSongs
-          ? FluentIcons.cellular_off_24_regular
-          : FluentIcons.music_note_1_24_regular,
+      cubeIcon: icon,
     );
   }
 
-  Widget buildPlayButton(BuildContext context) {
+  Widget buildPlayButton(String title, List songList) {
     return GestureDetector(
       onTap: () {
         setActivePlaylist({
           'ytid': '',
-          'title': widget.title,
+          'title': title,
           'header_desc': '',
           'image': '',
-          'list': widget.songList,
+          'list': songList,
         });
         showToast(
           context,
@@ -114,11 +142,15 @@ class _UserSongsPageState extends State<UserSongsPage> {
     );
   }
 
-  Widget buildSongList() {
+  Widget buildSongList(
+    String title,
+    List songList,
+    ValueNotifier currentSongsLength,
+  ) {
     return ValueListenableBuilder(
-      valueListenable: widget.currentSongsLength,
+      valueListenable: currentSongsLength,
       builder: (_, value, __) {
-        if (widget.showReorderableListView) {
+        if (title == context.l10n!.userLikedSongs) {
           return ReorderableListView(
             shrinkWrap: true,
             onReorder: (oldIndex, newIndex) {
@@ -129,7 +161,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
                 moveLikedSong(oldIndex, newIndex);
               });
             },
-            children: widget.songList
+            children: songList
                 .asMap()
                 .entries
                 .map(
@@ -145,11 +177,10 @@ class _UserSongsPageState extends State<UserSongsPage> {
         } else {
           return ListView.builder(
             shrinkWrap: true,
-            itemCount: widget.songList.length,
+            itemCount: songList.length,
             itemBuilder: (context, index) {
-              final song = widget.songList[index];
-              song['isOffline'] =
-                  widget.title == context.l10n!.userOfflineSongs;
+              final song = songList[index];
+              song['isOffline'] = title == context.l10n!.userOfflineSongs;
               return SongBar(song, true);
             },
           );

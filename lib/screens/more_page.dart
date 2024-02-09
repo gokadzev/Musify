@@ -1,12 +1,10 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:musify/API/musify.dart';
 import 'package:musify/API/version.dart';
 import 'package:musify/extensions/colorScheme.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/screens/search_page.dart';
-import 'package:musify/screens/user_songs_page.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/router_service.dart';
 import 'package:musify/services/settings_manager.dart';
@@ -56,30 +54,15 @@ class MorePage extends StatelessWidget {
             SettingBar(
               context.l10n!.userLikedSongs,
               FluentIcons.heart_24_filled,
-              () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => UserSongsPage(
-                    title: context.l10n!.userLikedSongs,
-                    songList: userLikedSongsList,
-                    currentSongsLength: currentLikedSongsLength,
-                    showReorderableListView: true,
-                  ),
-                ),
+              () => NavigationManager.router.go(
+                '/more/userSongs/liked',
               ),
             ),
             SettingBar(
               context.l10n!.userOfflineSongs,
               FluentIcons.cellular_off_24_filled,
-              () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => UserSongsPage(
-                    title: context.l10n!.userOfflineSongs,
-                    songList: userOfflineSongs,
-                    currentSongsLength: currentOfflineSongsLength,
-                  ),
-                ),
+              () => NavigationManager.router.go(
+                '/more/userSongs/offline',
               ),
             ),
             SettingBar(
