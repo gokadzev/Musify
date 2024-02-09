@@ -463,8 +463,8 @@ class MorePage extends StatelessWidget {
             SettingBar(
               context.l10n!.backupUserData,
               FluentIcons.cloud_sync_24_filled,
-              () => {
-                showDialog(
+              () async {
+                await showDialog(
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
@@ -481,22 +481,21 @@ class MorePage extends StatelessWidget {
                       ],
                     );
                   },
-                ).then(
-                  (value) => backupData(context).then(
-                    (response) => showToast(context, response),
-                  ),
-                ),
+                );
+                final response = await backupData(context);
+                showToast(context, response);
               },
             ),
+
             SettingBar(
               context.l10n!.restoreUserData,
               FluentIcons.cloud_add_24_filled,
-              () => {
-                restoreData(context).then(
-                  (response) => showToast(context, response),
-                ),
+              () async {
+                final response = await restoreData(context);
+                showToast(context, response);
               },
             ),
+
             if (!isFdroidBuild)
               SettingBar(
                 context.l10n!.downloadAppUpdate,
