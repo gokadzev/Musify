@@ -276,7 +276,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       final segments = await getSkipSegments(songId);
 
       if (segments.isNotEmpty) {
-        final start = Duration(seconds: segments.first['end']!);
+        final start = Duration(seconds: segments[0]['end']!);
         final end = segments.length > 1
             ? Duration(seconds: segments[1]['start']!)
             : null;

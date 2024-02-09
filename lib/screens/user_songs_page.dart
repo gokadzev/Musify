@@ -118,40 +118,42 @@ class _UserSongsPageState extends State<UserSongsPage> {
     return ValueListenableBuilder(
       valueListenable: widget.currentSongsLength,
       builder: (_, value, __) {
-        return widget.showReorderableListView
-            ? ReorderableListView(
-                shrinkWrap: true,
-                onReorder: (oldIndex, newIndex) {
-                  setState(() {
-                    if (oldIndex < newIndex) {
-                      newIndex -= 1;
-                    }
-                    moveLikedSong(oldIndex, newIndex);
-                  });
-                },
-                children: widget.songList
-                    .asMap()
-                    .entries
-                    .map(
-                      (entry) => SongBar(
-                        entry.value,
-                        true,
-                        key: Key(entry.value['ytid'].toString()),
-                        songIndexInPlaylist: entry.key,
-                      ),
-                    )
-                    .toList(),
-              )
-            : ListView.builder(
-                shrinkWrap: true,
-                itemCount: widget.songList.length,
-                itemBuilder: (context, index) {
-                  final song = widget.songList[index];
-                  song['isOffline'] =
-                      widget.title == context.l10n!.userOfflineSongs;
-                  return SongBar(song, true);
-                },
-              );
+        if (widget.showReorderableListView) {
+          return ReorderableListView(
+            shrinkWrap: true,
+            onReorder: (oldIndex, newIndex) {
+              setState(() {
+                if (oldIndex < newIndex) {
+                  newIndex -= 1;
+                }
+                moveLikedSong(oldIndex, newIndex);
+              });
+            },
+            children: widget.songList
+                .asMap()
+                .entries
+                .map(
+                  (entry) => SongBar(
+                    entry.value,
+                    true,
+                    key: Key(entry.value['ytid'].toString()),
+                    songIndexInPlaylist: entry.key,
+                  ),
+                )
+                .toList(),
+          );
+        } else {
+          return ListView.builder(
+            shrinkWrap: true,
+            itemCount: widget.songList.length,
+            itemBuilder: (context, index) {
+              final song = widget.songList[index];
+              song['isOffline'] =
+                  widget.title == context.l10n!.userOfflineSongs;
+              return SongBar(song, true);
+            },
+          );
+        }
       },
     );
   }

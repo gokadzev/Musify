@@ -4,8 +4,8 @@ import 'package:musify/extensions/l10n.dart';
 
 import 'package:musify/widgets/song_bar.dart';
 
-class RecentlyPlayedPage extends StatelessWidget {
-  const RecentlyPlayedPage({super.key});
+class RecentlyPlayed extends StatelessWidget {
+  const RecentlyPlayed({super.key});
 
   @override
   Widget build(BuildContext context) {

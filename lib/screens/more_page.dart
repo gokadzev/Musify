@@ -53,7 +53,7 @@ class MorePage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const RecentlyPlayedPage(),
+                    builder: (context) => const RecentlyPlayed(),
                   ),
                 ),
               },
@@ -142,7 +142,7 @@ class MorePage extends StatelessWidget {
                           ),
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        width: MediaQuery.of(context).size.width * 0.9,
+                        width: MediaQuery.of(context).size.width * 0.90,
                         child: GridView.builder(
                           gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(
@@ -225,7 +225,7 @@ class MorePage extends StatelessWidget {
                           ),
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        width: MediaQuery.of(context).size.width * 0.9,
+                        width: MediaQuery.of(context).size.width * 0.90,
                         child: ListView.builder(
                           shrinkWrap: true,
                           physics: const BouncingScrollPhysics(),
@@ -281,7 +281,7 @@ class MorePage extends StatelessWidget {
                           ),
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        width: MediaQuery.of(context).size.width * 0.9,
+                        width: MediaQuery.of(context).size.width * 0.90,
                         child: ListView.builder(
                           shrinkWrap: true,
                           physics: const BouncingScrollPhysics(),
@@ -389,7 +389,7 @@ class MorePage extends StatelessWidget {
                           ),
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        width: MediaQuery.of(context).size.width * 0.9,
+                        width: MediaQuery.of(context).size.width * 0.90,
                         child: ListView.builder(
                           shrinkWrap: true,
                           physics: const BouncingScrollPhysics(),

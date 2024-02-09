@@ -1,4 +1,4 @@
-const List<Map<String, dynamic>> playlistsDB = [
+List<Map<String, dynamic>> playlistsDB = [
   {
     'ytid': 'PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx',
     'title': 'Top 50 Global',

@@ -31,7 +31,7 @@ Map<String, dynamic> returnSongLayout(int index, Video song) => {
       'title': formatSongTitle(
         song.title.split('-')[song.title.split('-').length - 1],
       ),
-      'artist': song.title.split('-').first,
+      'artist': song.title.split('-')[0],
       'image': song.thumbnails.standardResUrl,
       'lowResImage': song.thumbnails.lowResUrl,
       'highResImage': song.thumbnails.maxResUrl,
