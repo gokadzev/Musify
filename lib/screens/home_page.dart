@@ -7,7 +7,7 @@ import 'package:musify/extensions/l10n.dart';
 import 'package:musify/extensions/screen_size.dart';
 import 'package:musify/main.dart';
 import 'package:musify/screens/playlist_page.dart';
-import 'package:musify/screens/playlists_page.dart';
+import 'package:musify/services/router_service.dart';
 import 'package:musify/services/update_manager.dart';
 import 'package:musify/widgets/artist_cube.dart';
 import 'package:musify/widgets/marque.dart';
@@ -83,11 +83,8 @@ class _HomePageState extends State<HomePage> {
           context.l10n!.suggestedPlaylists,
           IconButton(
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const PlaylistsPage(),
-                ),
+              NavigationManager.router.go(
+                '/home/playlists',
               );
             },
             icon: Icon(

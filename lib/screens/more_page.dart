@@ -5,13 +5,10 @@ import 'package:musify/API/version.dart';
 import 'package:musify/extensions/colorScheme.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
-import 'package:musify/screens/about_page.dart';
-import 'package:musify/screens/playlists_page.dart';
-import 'package:musify/screens/recently_played_page.dart';
 import 'package:musify/screens/search_page.dart';
-import 'package:musify/screens/user_liked_playlists_page.dart';
 import 'package:musify/screens/user_songs_page.dart';
 import 'package:musify/services/data_manager.dart';
+import 'package:musify/services/router_service.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/services/update_manager.dart';
 import 'package:musify/style/app_colors.dart';
@@ -45,21 +42,15 @@ class MorePage extends StatelessWidget {
             SettingBar(
               context.l10n!.recentlyPlayed,
               FluentIcons.history_24_filled,
-              () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const RecentlyPlayedPage(),
-                ),
+              () => NavigationManager.router.go(
+                '/more/recentlyPlayed',
               ),
             ),
             SettingBar(
               context.l10n!.playlists,
               FluentIcons.list_24_filled,
-              () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const PlaylistsPage(),
-                ),
+              () => NavigationManager.router.go(
+                '/more/playlists',
               ),
             ),
             SettingBar(
@@ -94,11 +85,8 @@ class MorePage extends StatelessWidget {
             SettingBar(
               context.l10n!.userLikedPlaylists,
               FluentIcons.star_24_filled,
-              () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const UserLikedPlaylistsPage(),
-                ),
+              () => NavigationManager.router.go(
+                '/more/userLikedPlaylists',
               ),
             ),
 
@@ -528,9 +516,8 @@ class MorePage extends StatelessWidget {
             SettingBar(
               context.l10n!.about,
               FluentIcons.book_information_24_filled,
-              () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const AboutPage()),
+              () => NavigationManager.router.go(
+                '/more/about',
               ),
             ),
             const SizedBox(

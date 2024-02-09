@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:musify/screens/about_page.dart';
 import 'package:musify/screens/bottom_navigation_page.dart';
 import 'package:musify/screens/home_page.dart';
 import 'package:musify/screens/more_page.dart';
+import 'package:musify/screens/playlists_page.dart';
+import 'package:musify/screens/recently_played_page.dart';
 import 'package:musify/screens/search_page.dart';
 import 'package:musify/screens/user_added_playlists_page.dart';
+import 'package:musify/screens/user_liked_playlists_page.dart';
 
-class CustomNavigationHelper {
-  factory CustomNavigationHelper() {
+class NavigationManager {
+  factory NavigationManager() {
     return _instance;
   }
 
-  CustomNavigationHelper._internal() {
+  NavigationManager._internal() {
     final routes = [
       StatefulShellRoute.indexedStack(
         parentNavigatorKey: parentNavigatorKey,
@@ -27,6 +31,12 @@ class CustomNavigationHelper {
                     state: state,
                   );
                 },
+                routes: [
+                  GoRoute(
+                    path: 'playlists',
+                    builder: (context, state) => const PlaylistsPage(),
+                  ),
+                ],
               ),
             ],
           ),
@@ -69,6 +79,24 @@ class CustomNavigationHelper {
                     state: state,
                   );
                 },
+                routes: [
+                  GoRoute(
+                    path: 'recentlyPlayed',
+                    builder: (context, state) => const RecentlyPlayedPage(),
+                  ),
+                  GoRoute(
+                    path: 'playlists',
+                    builder: (context, state) => const PlaylistsPage(),
+                  ),
+                  GoRoute(
+                    path: 'userLikedPlaylists',
+                    builder: (context, state) => const UserLikedPlaylistsPage(),
+                  ),
+                  GoRoute(
+                    path: 'about',
+                    builder: (context, state) => const AboutPage(),
+                  ),
+                ],
               ),
             ],
           ),
@@ -94,10 +122,9 @@ class CustomNavigationHelper {
       routes: routes,
     );
   }
-  static final CustomNavigationHelper _instance =
-      CustomNavigationHelper._internal();
+  static final NavigationManager _instance = NavigationManager._internal();
 
-  static CustomNavigationHelper get instance => _instance;
+  static NavigationManager get instance => _instance;
 
   static late final GoRouter router;
 
