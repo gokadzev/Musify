@@ -11,6 +11,8 @@ class AboutPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final primaryColor = context.colorScheme.primary;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -25,7 +27,7 @@ class AboutPage extends StatelessWidget {
               child: Text(
                 'Musify  | $appVersion',
                 style: GoogleFonts.paytoneOne(
-                  color: context.colorScheme.primary,
+                  color: primaryColor,
                   fontSize: 24,
                   fontWeight: FontWeight.w600,
                 ),
@@ -64,7 +66,7 @@ class AboutPage extends StatelessWidget {
                     IconButton(
                       icon: Icon(
                         FluentIcons.code_24_filled,
-                        color: context.colorScheme.primary,
+                        color: primaryColor,
                       ),
                       tooltip: 'Github',
                       onPressed: () {
@@ -76,7 +78,7 @@ class AboutPage extends StatelessWidget {
                     IconButton(
                       icon: Icon(
                         FluentIcons.globe_24_filled,
-                        color: context.colorScheme.primary,
+                        color: primaryColor,
                       ),
                       tooltip: 'Website',
                       onPressed: () {

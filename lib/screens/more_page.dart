@@ -26,6 +26,8 @@ class MorePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final primaryColor = context.colorScheme.primary;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -39,7 +41,7 @@ class MorePage extends StatelessWidget {
             Text(
               context.l10n!.pages,
               style: TextStyle(
-                color: context.colorScheme.primary,
+                color: primaryColor,
                 fontSize: 15,
                 fontWeight: FontWeight.w400,
               ),
@@ -118,7 +120,7 @@ class MorePage extends StatelessWidget {
             Text(
               context.l10n!.settings,
               style: TextStyle(
-                color: context.colorScheme.primary,
+                color: primaryColor,
                 fontSize: 15,
                 fontWeight: FontWeight.w400,
               ),
@@ -136,7 +138,7 @@ class MorePage extends StatelessWidget {
                       child: Container(
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: context.colorScheme.primary,
+                            color: primaryColor,
                           ),
                           borderRadius: BorderRadius.circular(20),
                         ),
@@ -214,11 +216,12 @@ class MorePage extends StatelessWidget {
                       ThemeMode.light,
                       ThemeMode.dark,
                     ];
+
                     return Center(
                       child: Container(
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: context.colorScheme.primary,
+                            color: primaryColor,
                           ),
                           borderRadius: BorderRadius.circular(20),
                         ),
@@ -269,11 +272,12 @@ class MorePage extends StatelessWidget {
                   context: context,
                   builder: (BuildContext context) {
                     final availableLanguages = appLanguages.keys.toList();
+
                     return Center(
                       child: Container(
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: context.colorScheme.primary,
+                            color: primaryColor,
                           ),
                           borderRadius: BorderRadius.circular(20),
                         ),
@@ -381,7 +385,7 @@ class MorePage extends StatelessWidget {
                       child: Container(
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: context.colorScheme.primary,
+                            color: primaryColor,
                           ),
                           borderRadius: BorderRadius.circular(20),
                         ),
@@ -431,7 +435,7 @@ class MorePage extends StatelessWidget {
             Text(
               context.l10n!.tools,
               style: TextStyle(
-                color: context.colorScheme.primary,
+                color: primaryColor,
                 fontSize: 15,
                 fontWeight: FontWeight.w400,
               ),
@@ -505,7 +509,7 @@ class MorePage extends StatelessWidget {
             Text(
               context.l10n!.becomeSponsor,
               style: TextStyle(
-                color: context.colorScheme.primary,
+                color: primaryColor,
                 fontSize: 15,
                 fontWeight: FontWeight.w400,
               ),
@@ -513,7 +517,7 @@ class MorePage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8),
               child: Card(
-                color: context.colorScheme.primary,
+                color: primaryColor,
                 child: ListTile(
                   leading: const Icon(
                     FluentIcons.heart_24_filled,
@@ -538,7 +542,7 @@ class MorePage extends StatelessWidget {
             Text(
               context.l10n!.others,
               style: TextStyle(
-                color: context.colorScheme.primary,
+                color: primaryColor,
                 fontSize: 15,
                 fontWeight: FontWeight.w400,
               ),

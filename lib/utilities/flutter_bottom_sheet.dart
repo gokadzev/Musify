@@ -1,8 +1,10 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/extensions/colorScheme.dart';
+import 'package:musify/extensions/screen_size.dart';
 
 void showCustomBottomSheet(BuildContext context, Widget content) {
+  final size = context.screenSize;
   showBottomSheet(
     context: context,
     builder: (context) => Container(
@@ -12,13 +14,13 @@ void showCustomBottomSheet(BuildContext context, Widget content) {
           topRight: Radius.circular(18),
         ),
       ),
-      width: MediaQuery.of(context).size.width - 15,
-      height: MediaQuery.of(context).size.height / 2.14,
+      width: size.width - 15,
+      height: size.height / 2.14,
       child: Column(
         children: <Widget>[
           Padding(
             padding: EdgeInsets.only(
-              top: MediaQuery.of(context).size.height * 0.012,
+              top: size.height * 0.012,
             ),
             child: IconButton(
               icon: Icon(

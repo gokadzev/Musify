@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:musify/API/version.dart';
+import 'package:musify/extensions/colorScheme.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/utilities/url_launcher.dart';
@@ -83,8 +84,8 @@ Future<void> checkAppUpdates(BuildContext context) async {
                           horizontal: 20,
                           vertical: 12,
                         ),
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        foregroundColor: Theme.of(context).colorScheme.surface,
+                        backgroundColor: context.colorScheme.primary,
+                        foregroundColor: context.colorScheme.surface,
                       ),
                       onPressed: () {
                         getDownloadUrl(map).then(
@@ -135,12 +136,14 @@ bool isLatestVersionHigher(String appVersion, String latestVersion) {
       return false;
     }
   }
+
   return false;
 }
 
 Future<String> getCPUArchitecture() async {
   final info = await Process.run('uname', ['-m']);
   final cpu = info.stdout.toString().replaceAll('\n', '');
+
   return cpu;
 }
 
@@ -149,5 +152,6 @@ Future<String> getDownloadUrl(Map<String, dynamic> map) async {
   final url = cpuArchitecture == 'aarch64'
       ? map[downloadUrlArm64Key].toString()
       : map[downloadUrlKey].toString();
+
   return url;
 }
