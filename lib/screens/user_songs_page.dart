@@ -1,6 +1,7 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
+import 'package:musify/extensions/colorScheme.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/extensions/screen_size.dart';
 import 'package:musify/utilities/flutter_toast.dart';
@@ -20,6 +21,8 @@ class UserSongsPage extends StatefulWidget {
 }
 
 class _UserSongsPageState extends State<UserSongsPage> {
+  var isEditEnabled = false;
+
   @override
   Widget build(BuildContext context) {
     final title = getTitle(widget.page, context);
@@ -31,14 +34,39 @@ class _UserSongsPageState extends State<UserSongsPage> {
       appBar: AppBar(
         title: Text(title),
       ),
-      body: Column(
-        children: [
-          buildPlaylistHeader(title, icon, songsList),
-          Expanded(
-            child: buildSongList(title, songsList, length),
-          ),
-        ],
-      ),
+      floatingActionButton: title == context.l10n!.userLikedSongs
+          ? FloatingActionButton(
+              onPressed: () {
+                setState(() {
+                  isEditEnabled = !isEditEnabled;
+                });
+              },
+              backgroundColor: isEditEnabled
+                  ? context.colorScheme.surface
+                  : context.colorScheme.primary,
+              child: const Icon(
+                FluentIcons.re_order_24_filled,
+                color: Colors.white,
+              ),
+            )
+          : null,
+      body: _buildCustomScrollView(title, icon, songsList, length),
+    );
+  }
+
+  Widget _buildCustomScrollView(
+    String title,
+    IconData icon,
+    List songsList,
+    ValueNotifier length,
+  ) {
+    return CustomScrollView(
+      slivers: [
+        SliverToBoxAdapter(
+          child: buildPlaylistHeader(title, icon, songsList),
+        ),
+        buildSongList(title, songsList, length),
+      ],
     );
   }
 
@@ -151,8 +179,21 @@ class _UserSongsPageState extends State<UserSongsPage> {
       valueListenable: currentSongsLength,
       builder: (_, value, __) {
         if (title == context.l10n!.userLikedSongs) {
-          return ReorderableListView(
-            shrinkWrap: true,
+          return SliverReorderableList(
+            itemCount: songList.length,
+            itemBuilder: (context, index) {
+              final song = songList[index];
+              return ReorderableDragStartListener(
+                enabled: isEditEnabled,
+                key: Key(song['ytid'].toString()),
+                index: index,
+                child: SongBar(
+                  song,
+                  true,
+                  songIndexInPlaylist: index,
+                ),
+              );
+            },
             onReorder: (oldIndex, newIndex) {
               setState(() {
                 if (oldIndex < newIndex) {
@@ -161,28 +202,17 @@ class _UserSongsPageState extends State<UserSongsPage> {
                 moveLikedSong(oldIndex, newIndex);
               });
             },
-            children: songList
-                .asMap()
-                .entries
-                .map(
-                  (entry) => SongBar(
-                    entry.value,
-                    true,
-                    key: Key(entry.value['ytid'].toString()),
-                    songIndexInPlaylist: entry.key,
-                  ),
-                )
-                .toList(),
           );
         } else {
-          return ListView.builder(
-            shrinkWrap: true,
-            itemCount: songList.length,
-            itemBuilder: (context, index) {
-              final song = songList[index];
-              song['isOffline'] = title == context.l10n!.userOfflineSongs;
-              return SongBar(song, true);
-            },
+          return SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (BuildContext context, int index) {
+                final song = songList[index];
+                song['isOffline'] = title == context.l10n!.userOfflineSongs;
+                return SongBar(song, true);
+              },
+              childCount: songList.length,
+            ),
           );
         }
       },
