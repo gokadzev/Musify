@@ -24,15 +24,19 @@
       property="og:description"
       content="Experience the ultimate music listening experience with our versatile music app. Discover, stream, and download your favorite songs effortlessly. Enjoy ad-free listening, lyrics support, and customizable playlists. Try our music player today and revolutionize your music experience with offline and online listening capabilities!"
     />
+    <meta
+      property="og:image"
+      content="https://github.com/gokadzev/Musify/raw/master/android/app/src/main/res/mipmap-xxxhdpi/launcher_icon.png"
+    />
 
     <link href="assets/favicon.ico" rel="icon" />
-    <link rel="stylesheet" type="text/css" href="assets/css/vendor.css" />
-    <link rel="stylesheet" type="text/css" href="style.css" />
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css"
     />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" type="text/css" href="assets/css/vendor.css" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700;800;900&display=swap"
@@ -43,7 +47,7 @@
     <header id="header">
       <nav class="primary-nav padding-small">
         <div class="container">
-          <div class="row custom-flex">
+          <div class="row custom-flex align-items-center">
             <div class="col-md-3">
               <a href="index.html">
                 <img
@@ -55,8 +59,8 @@
             </div>
             <div class="col-md-9">
               <div class="navbar">
-                <div class="main-menu d-flex justify-content-between">
-                  <ul class="menu-list col-md-6 list-unstyled d-flex">
+                <div class="main-menu">
+                  <ul class="menu-list list-unstyled d-flex">
                     <li class="menu-item">
                       <a href="#" class="item-anchor active" data-effect="Home"
                         >Home</a
@@ -75,7 +79,7 @@
                         href="https://ko-fi.com/gokadzev"
                         class="item-anchor"
                         data-effect="Sponsorship"
-                        >Become sponsor</a
+                        >Become Sponsor</a
                       >
                     </li>
                     <li class="menu-item">
@@ -106,8 +110,8 @@
     </header>
     <div class="overflow-hidden m-banner" style="padding-bottom: 4em">
       <div class="container">
-        <div class="row d-flex flex-wrap">
-          <div class="col-md9 col-sm-8">
+        <div class="row d-flex flex-wrap align-items-center">
+          <div class="col-md-7">
             <div class="banner-content content-light">
               <h1 class="banner-title">
                 Best Music Streaming and Downloading app.
@@ -119,7 +123,7 @@
                 you'll never need another music app. Plus, enjoy it all ad-free
                 and without any subscriptions. Try it out today!
               </p>
-              <div class="btn-wrap d-flex flex-wrap">
+              <div class="btn-wrap">
                 <a id="download" href="" class="btn btn-linear btn-medium"
                   >Download</a
                 >
@@ -129,7 +133,7 @@
               </div>
             </div>
           </div>
-          <div class="col-md-6 col-sm-8"></div>
+          <div class="col-md-5"></div>
         </div>
       </div>
     </div>
@@ -200,7 +204,6 @@
             </div>
           </div>
         </div>
-        <!-- <div class="swiper-pagination"></div> -->
       </div>
     </section>
     <hr />
@@ -233,7 +236,7 @@
                   <a href="https://github.com/gokadzev/Musify">Source Code</a>
                 </li>
                 <li>
-                  <a href="https://ko-fi.com/gokadzev">Become sponsor</a>
+                  <a href="https://ko-fi.com/gokadzev">Become Sponsor</a>
                 </li>
                 <li>
                   <a href="https://github.com/gokadzev/Musify/discussions/112"
