@@ -97,16 +97,26 @@ Future<List> getRecommendedSongs() async {
 Future<List<dynamic>> getUserPlaylists() async {
   final playlistsByUser = [...userCustomPlaylists];
   for (final playlistID in userPlaylists) {
-    final plist = await _yt.playlists.get(playlistID);
-    playlistsByUser.add({
-      'ytid': plist.id.toString(),
-      'title': plist.title,
-      'header_desc': plist.description.length < 120
-          ? plist.description
-          : plist.description.substring(0, 120),
-      'image': '',
-      'list': [],
-    });
+    try {
+      final plist = await _yt.playlists.get(playlistID);
+      playlistsByUser.add({
+        'ytid': plist.id.toString(),
+        'title': plist.title,
+        'header_desc': plist.description.length < 120
+            ? plist.description
+            : plist.description.substring(0, 120),
+        'image': '',
+        'list': [],
+      });
+    } catch (e, stackTrace) {
+      logger.log(
+        'Error occurred while fetching playlist so playlist will be removed:',
+        e,
+        stackTrace,
+      );
+      userPlaylists.remove(playlistID);
+      addOrUpdateData('user', 'playlists', userPlaylists);
+    }
   }
   return playlistsByUser;
 }
