@@ -7,6 +7,7 @@ import 'package:musify/extensions/l10n.dart';
 import 'package:musify/extensions/screen_size.dart';
 import 'package:musify/main.dart';
 import 'package:musify/screens/playlist_page.dart';
+import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/router_service.dart';
 import 'package:musify/services/update_manager.dart';
 import 'package:musify/widgets/artist_cube.dart';
@@ -188,7 +189,13 @@ class _HomePageState extends State<HomePage> {
               final artist = data[index]['artist'].split('~')[0];
               return GestureDetector(
                 onTap: () async {
-                  final result = await fetchSongsList(artist);
+                  var result = await getData('cache', 'artistResults_$artist');
+
+                  if (result == null) {
+                    result = await fetchSongsList(artist);
+                    addOrUpdateData('cache', 'artistResults_$artist', result);
+                  }
+
                   await Navigator.push(
                     context,
                     MaterialPageRoute(
