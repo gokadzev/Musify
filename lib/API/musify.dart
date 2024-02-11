@@ -121,13 +121,18 @@ Future<List<dynamic>> getUserPlaylists() async {
   return playlistsByUser;
 }
 
-String addUserPlaylist(String playlistId, BuildContext context) {
+Future<String> addUserPlaylist(String playlistId, BuildContext context) async {
   if (playlistId.startsWith('http://') || playlistId.startsWith('https://')) {
     return '${context.l10n!.notYTlist}!';
   } else {
-    userPlaylists.add(playlistId);
-    addOrUpdateData('user', 'playlists', userPlaylists);
-    return '${context.l10n!.addedSuccess}!';
+    try {
+      await _yt.playlists.get(playlistId);
+      userPlaylists.add(playlistId);
+      addOrUpdateData('user', 'playlists', userPlaylists);
+      return '${context.l10n!.addedSuccess}!';
+    } catch (e) {
+      return '${context.l10n!.error}!';
+    }
   }
 }
 

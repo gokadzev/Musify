@@ -93,9 +93,9 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                     child: Text(
                       context.l10n!.add.toUpperCase(),
                     ),
-                    onPressed: () {
+                    onPressed: () async {
                       if (id.isNotEmpty) {
-                        showToast(context, addUserPlaylist(id, context));
+                        showToast(context, await addUserPlaylist(id, context));
                       } else if (customPlaylistName.isNotEmpty) {
                         showToast(
                           context,
