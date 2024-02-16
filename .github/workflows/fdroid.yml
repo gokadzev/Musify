@@ -16,7 +16,7 @@ jobs:
     if: "contains(github.event.head_commit.message, 'Update:')"
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
 
       # Extract version from commit message

@@ -18,7 +18,7 @@ jobs:
           exit 0
         fi
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         ref: update # Use the update branch instead of master
 
