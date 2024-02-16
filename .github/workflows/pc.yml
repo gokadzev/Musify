@@ -26,7 +26,7 @@ jobs:
           filename: Musify-linux.zip
           directory: build/linux/x64/release/bundle
       - name: Linux Release
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Musify-linux.zip
           path: build/linux/x64/release/bundle/Musify-linux.zip
@@ -55,7 +55,7 @@ jobs:
           filename: Musify-windows.zip
           directory: build/windows/runner/Release
       - name: Windows Release
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Musify-windows.zip
           path: build/windows/runner/Release/Musify-windows.zip
