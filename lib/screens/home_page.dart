@@ -77,6 +77,7 @@ class _HomePageState extends State<HomePage> {
     }
 
     final _suggestedPlaylists = snapshot.data!;
+    final _screenHeight = context.screenSize.height;
 
     return Column(
       children: [
@@ -95,7 +96,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         SizedBox(
-          height: context.screenSize.height * 0.25,
+          height: _screenHeight * 0.25,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             separatorBuilder: (_, __) => const SizedBox(width: 15),
@@ -108,7 +109,7 @@ class _HomePageState extends State<HomePage> {
                 image: playlist['image'].toString(),
                 title: playlist['title'].toString(),
                 isAlbum: playlist['isAlbum'],
-                size: context.screenSize.height * 0.25,
+                size: _screenHeight * 0.25,
               );
             },
           ),
