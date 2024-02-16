@@ -34,7 +34,7 @@ jobs:
 
       # Gradle cache for faster builds
       - name: Cache Gradle dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: |
             ~/.gradle/caches

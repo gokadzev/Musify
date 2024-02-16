@@ -33,7 +33,7 @@ jobs:
           java-version: '12.x'
 
       # Gradle cache for faster builds
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: |
             ~/.gradle/caches
