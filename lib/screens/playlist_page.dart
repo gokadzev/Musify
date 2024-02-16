@@ -345,14 +345,14 @@ class _PlaylistPageState extends State<PlaylistPage> {
       context,
       context.l10n!.songRemoved,
       context.l10n!.undo.toUpperCase(),
-      () => {
+      () {
         addSongInCustomPlaylist(
           _playlist['title'],
           songToRemove,
           indexToInsert: indexOfRemovedSong,
-        ),
-        _songsList.insert(indexOfRemovedSong, songToRemove),
-        setState(() {}),
+        );
+        _songsList.insert(indexOfRemovedSong, songToRemove);
+        setState(() {});
       },
     );
 

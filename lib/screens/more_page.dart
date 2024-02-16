@@ -382,21 +382,21 @@ class MorePage extends StatelessWidget {
             SettingBar(
               context.l10n!.clearCache,
               FluentIcons.broom_24_filled,
-              () => {
-                clearCache(),
+              () {
+                clearCache();
                 showToast(
                   context,
                   '${context.l10n!.cacheMsg}!',
-                ),
+                );
               },
             ),
             SettingBar(
               context.l10n!.clearSearchHistory,
               FluentIcons.history_24_filled,
-              () => {
-                searchHistory = [],
-                deleteData('user', 'searchHistory'),
-                showToast(context, '${context.l10n!.searchHistoryMsg}!'),
+              () {
+                searchHistory = [];
+                deleteData('user', 'searchHistory');
+                showToast(context, '${context.l10n!.searchHistoryMsg}!');
               },
             ),
             SettingBar(
