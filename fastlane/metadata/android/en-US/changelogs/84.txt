@@ -1,0 +1,9 @@
+Bug Fixes
+
+- Avoid errors for invalid playlists on the user playlists page
+
+Enhancements
+
+- Check user playlist existence when adding
+- Opening the same artist's page will be faster
+- Boosted app stability and speed with quality and performance enhancements
