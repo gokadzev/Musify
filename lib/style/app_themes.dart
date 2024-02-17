@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:musify/services/settings_manager.dart';
 
-ThemeMode themeMode = ThemeMode.dark;
-Brightness brightness = Brightness.dark;
+ThemeMode themeMode = getThemeMode(themeModeSetting);
+Brightness brightness = getBrightnessFromThemeMode(themeMode);
 
 Brightness getBrightnessFromThemeMode(
   ThemeMode themeMode,

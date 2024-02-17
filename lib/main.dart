@@ -103,11 +103,6 @@ class _MusifyState extends State<Musify> {
   void initState() {
     super.initState();
 
-    if (themeModeSetting != themeMode.name) {
-      themeMode = getThemeMode(themeModeSetting);
-      brightness = getBrightnessFromThemeMode(themeMode);
-    }
-
     GoogleFonts.config.allowRuntimeFetching = false;
 
     try {
