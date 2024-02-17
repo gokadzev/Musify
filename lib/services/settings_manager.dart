@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:musify/main.dart';
 
 // Preferences
 
@@ -18,6 +19,18 @@ final sponsorBlockSupport = ValueNotifier<bool>(
 final audioQualitySetting = ValueNotifier<String>(
   Hive.box('settings').get('audioQuality', defaultValue: 'high'),
 );
+
+Locale languageSetting = Locale(
+  appLanguages[Hive.box('settings').get('language', defaultValue: 'English')
+          as String] ??
+      'en',
+);
+
+final themeModeSetting =
+    Hive.box('settings').get('themeMode', defaultValue: 'dark') as String;
+
+Color primaryColorSetting =
+    Color(Hive.box('settings').get('accentColor', defaultValue: 0xff91cef4));
 
 // Non-Storage Notifiers
 

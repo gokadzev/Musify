@@ -20,7 +20,6 @@ late MusifyAudioHandler audioHandler;
 
 final logger = Logger();
 
-Locale locale = const Locale('en', '');
 var isFdroidBuild = false;
 
 final appLanguages = <String, String>{
@@ -80,7 +79,7 @@ class _MusifyState extends State<Musify> {
 
   void changeLanguage(Locale newLocale) {
     setState(() {
-      locale = newLocale;
+      languageSetting = newLocale;
     });
   }
 
@@ -96,20 +95,15 @@ class _MusifyState extends State<Musify> {
         );
       }
 
-      primaryColor = newAccentColor;
+      primaryColorSetting = newAccentColor;
     });
   }
 
   @override
   void initState() {
     super.initState();
-    final settingsBox = Hive.box('settings');
-    final language =
-        settingsBox.get('language', defaultValue: 'English') as String;
-    locale = Locale(appLanguages[language] ?? 'en');
-    final themeModeSetting = settingsBox.get('themeMode') as String?;
 
-    if (themeModeSetting != null && themeModeSetting != themeMode.name) {
+    if (themeModeSetting != themeMode.name) {
       themeMode = getThemeMode(themeModeSetting);
       brightness = getBrightnessFromThemeMode(themeMode);
     }
@@ -146,7 +140,7 @@ class _MusifyState extends State<Musify> {
         final colorScheme = useSystemColor.value && selectedScheme != null
             ? selectedScheme
             : ColorScheme.fromSeed(
-                seedColor: primaryColor,
+                seedColor: primaryColorSetting,
                 brightness: brightness,
               ).harmonized();
 
@@ -161,7 +155,7 @@ class _MusifyState extends State<Musify> {
             GlobalCupertinoLocalizations.delegate,
           ],
           supportedLocales: appSupportedLocales,
-          locale: locale,
+          locale: languageSetting,
           routerConfig: NavigationManager.router,
         );
       },

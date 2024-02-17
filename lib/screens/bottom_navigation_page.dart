@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
+import 'package:musify/services/settings_manager.dart';
 import 'package:musify/widgets/mini_player.dart';
 
 class BottomNavigationPage extends StatefulWidget {
@@ -53,7 +54,7 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
           ),
           NavigationBar(
             selectedIndex: _selectedIndex.value,
-            labelBehavior: locale == const Locale('en', '')
+            labelBehavior: languageSetting == const Locale('en', '')
                 ? NavigationDestinationLabelBehavior.onlyShowSelected
                 : NavigationDestinationLabelBehavior.alwaysHide,
             onDestinationSelected: (index) {
