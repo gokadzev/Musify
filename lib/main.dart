@@ -20,7 +20,8 @@ late MusifyAudioHandler audioHandler;
 
 final logger = Logger();
 
-var isFdroidBuild = false;
+bool isFdroidBuild = false;
+bool isUpdateChecked = false;
 
 final appLanguages = <String, String>{
   'English': 'en',
