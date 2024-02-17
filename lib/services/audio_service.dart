@@ -14,14 +14,7 @@ import 'package:rxdart/rxdart.dart';
 
 class MusifyAudioHandler extends BaseAudioHandler {
   MusifyAudioHandler() {
-    audioPlayer = AudioPlayer(
-      audioPipeline: AudioPipeline(
-        androidAudioEffects: [
-          _loudnessEnhancer,
-        ],
-      ),
-    );
-    _enableBooster();
+    _initializeAudioPlayer();
     _setupEventSubscriptions();
     _updatePlaybackState();
     _initAudioPlaylist();
@@ -29,8 +22,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
     _initialize();
   }
 
-  final AndroidLoudnessEnhancer _loudnessEnhancer = AndroidLoudnessEnhancer();
   late AudioPlayer audioPlayer;
+  late AndroidLoudnessEnhancer _loudnessEnhancer;
 
   late StreamSubscription<PlaybackEvent> _playbackEventSubscription;
   late StreamSubscription<Duration?> _durationSubscription;
@@ -47,6 +40,33 @@ class MusifyAudioHandler extends BaseAudioHandler {
         (position, bufferedPosition, duration) =>
             PositionData(position, bufferedPosition, duration ?? Duration.zero),
       );
+
+  final processingStateMap = {
+    ProcessingState.idle: AudioProcessingState.idle,
+    ProcessingState.loading: AudioProcessingState.loading,
+    ProcessingState.buffering: AudioProcessingState.buffering,
+    ProcessingState.ready: AudioProcessingState.ready,
+    ProcessingState.completed: AudioProcessingState.completed,
+  };
+
+  final repeatModeMap = {
+    LoopMode.off: AudioServiceRepeatMode.none,
+    LoopMode.one: AudioServiceRepeatMode.one,
+    LoopMode.all: AudioServiceRepeatMode.all,
+  };
+
+  void _initializeAudioPlayer() {
+    _loudnessEnhancer = AndroidLoudnessEnhancer();
+    _loudnessEnhancer.setEnabled(true);
+    _loudnessEnhancer.setTargetGain(0.5);
+    audioPlayer = AudioPlayer(
+      audioPipeline: AudioPipeline(
+        androidAudioEffects: [
+          _loudnessEnhancer,
+        ],
+      ),
+    );
+  }
 
   void _handlePlaybackEvent(PlaybackEvent event) {
     try {
@@ -131,20 +151,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
   }
 
   void _updatePlaybackState() {
-    final processingStateMap = {
-      ProcessingState.idle: AudioProcessingState.idle,
-      ProcessingState.loading: AudioProcessingState.loading,
-      ProcessingState.buffering: AudioProcessingState.buffering,
-      ProcessingState.ready: AudioProcessingState.ready,
-      ProcessingState.completed: AudioProcessingState.completed,
-    };
-
-    final repeatModeMap = {
-      LoopMode.off: AudioServiceRepeatMode.none,
-      LoopMode.one: AudioServiceRepeatMode.one,
-      LoopMode.all: AudioServiceRepeatMode.all,
-    };
-
     playbackState.add(
       playbackState.value.copyWith(
         controls: [
@@ -363,11 +369,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
       'playNextSongAutomatically',
       playNextSongAutomatically.value,
     );
-  }
-
-  Future _enableBooster() async {
-    await _loudnessEnhancer.setEnabled(true);
-    await _loudnessEnhancer.setTargetGain(0.5);
   }
 
   Future mute() async {
