@@ -4,7 +4,6 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
-import 'package:musify/extensions/screen_size.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/widgets/marque.dart';
@@ -126,7 +125,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
               ],
             )
           : SizedBox(
-              height: context.screenSize.height - 100,
+              height: MediaQuery.of(context).size.height - 100,
               child: const Spinner(),
             ),
     );

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/colorScheme.dart';
 import 'package:musify/extensions/l10n.dart';
-import 'package:musify/extensions/screen_size.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/song_bar.dart';
@@ -142,7 +141,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
       title: title,
       onClickOpen: false,
       showFavoriteButton: false,
-      size: context.screenSize.width / 2.2,
+      size: MediaQuery.of(context).size.width / 2.2,
       cubeIcon: icon,
     );
   }

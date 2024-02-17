@@ -1,10 +1,9 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/extensions/colorScheme.dart';
-import 'package:musify/extensions/screen_size.dart';
 
 void showCustomBottomSheet(BuildContext context, Widget content) {
-  final size = context.screenSize;
+  final size = MediaQuery.of(context).size;
   showBottomSheet(
     context: context,
     builder: (context) => Container(
