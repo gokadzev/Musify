@@ -387,10 +387,10 @@ List<Map<String, dynamic>> playlistsDB = [
   },
   {
     'ytid': 'PLXpMeQYR1ilIgQ0klpqWf7-RdfouCeJLj',
-    'title': 'Remix Music 2023',
+    'title': 'Best Remixes of 2024',
     'header_desc':
-        'Best Remixes Popular Songs 2023 - Top Remix Music 2023 - Mashup Remix 2023 Song',
-    'image': 'https://i.scdn.co/image/ab67706c0000da84fd3e22d7d5e075d1dba25af2',
+        'Best Remixes Popular Songs 2024 - Top Remix Music 2024 - Mashup Remix 2024 Song',
+    'image': 'https://i.scdn.co/image/ab67706c0000da84dd30b4484aeabc40b213d921',
     'list': [],
   },
   {
