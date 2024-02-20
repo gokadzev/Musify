@@ -1,5 +1,6 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/colorScheme.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
@@ -397,6 +398,15 @@ class MorePage extends StatelessWidget {
                 searchHistory = [];
                 deleteData('user', 'searchHistory');
                 showToast(context, '${context.l10n!.searchHistoryMsg}!');
+              },
+            ),
+            SettingBar(
+              context.l10n!.clearRecentlyPlayed,
+              FluentIcons.receipt_play_24_filled,
+              () {
+                userRecentlyPlayed = [];
+                deleteData('user', 'recentlyPlayedSongs');
+                showToast(context, '${context.l10n!.recentlyPlayedMsg}!');
               },
             ),
             SettingBar(
