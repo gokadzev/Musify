@@ -18,11 +18,13 @@ class PlaylistPage extends StatefulWidget {
     this.playlistId,
     this.playlistData,
     this.cubeIcon = FluentIcons.music_note_1_24_regular,
+    this.isArtist = false,
   });
 
   final String? playlistId;
   final dynamic playlistData;
   final IconData cubeIcon;
+  final bool isArtist;
 
   @override
   _PlaylistPageState createState() => _PlaylistPageState();
@@ -48,7 +50,10 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
   Future<void> _initializePlaylist() async {
     _playlist = (widget.playlistId != null)
-        ? await getPlaylistInfoForWidget(widget.playlistId)
+        ? await getPlaylistInfoForWidget(
+            widget.playlistId,
+            isArtist: widget.isArtist,
+          )
         : widget.playlistData;
 
     if (_playlist != null) {
