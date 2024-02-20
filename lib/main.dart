@@ -55,15 +55,12 @@ class Musify extends StatefulWidget {
     bool? useSystemColor,
   }) async {
     final state = context.findAncestorStateOfType<_MusifyState>()!;
-    if (newThemeMode != null) {
-      state.changeTheme(newThemeMode);
-    }
-    if (newLocale != null) {
-      state.changeLanguage(newLocale);
-    }
-    if (newAccentColor != null && useSystemColor != null) {
-      state.changeAccentColor(newAccentColor, useSystemColor);
-    }
+    state.changeSettings(
+      newThemeMode: newThemeMode,
+      newLocale: newLocale,
+      newAccentColor: newAccentColor,
+      systemColorStatus: useSystemColor,
+    );
   }
 
   @override
@@ -71,32 +68,32 @@ class Musify extends StatefulWidget {
 }
 
 class _MusifyState extends State<Musify> {
-  void changeTheme(ThemeMode newThemeMode) {
+  void changeSettings({
+    ThemeMode? newThemeMode,
+    Locale? newLocale,
+    Color? newAccentColor,
+    bool? systemColorStatus,
+  }) {
     setState(() {
-      themeMode = newThemeMode;
-      brightness = getBrightnessFromThemeMode(newThemeMode);
-    });
-  }
-
-  void changeLanguage(Locale newLocale) {
-    setState(() {
-      languageSetting = newLocale;
-    });
-  }
-
-  void changeAccentColor(Color newAccentColor, bool systemColorStatus) {
-    setState(() {
-      if (useSystemColor.value != systemColorStatus) {
-        useSystemColor.value = systemColorStatus;
-
-        addOrUpdateData(
-          'settings',
-          'useSystemColor',
-          systemColorStatus,
-        );
+      if (newThemeMode != null) {
+        themeMode = newThemeMode;
+        brightness = getBrightnessFromThemeMode(newThemeMode);
       }
-
-      primaryColorSetting = newAccentColor;
+      if (newLocale != null) {
+        languageSetting = newLocale;
+      }
+      if (newAccentColor != null) {
+        if (systemColorStatus != null &&
+            useSystemColor.value != systemColorStatus) {
+          useSystemColor.value = systemColorStatus;
+          addOrUpdateData(
+            'settings',
+            'useSystemColor',
+            systemColorStatus,
+          );
+        }
+        primaryColorSetting = newAccentColor;
+      }
     });
   }
 
