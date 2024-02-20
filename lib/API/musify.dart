@@ -467,6 +467,8 @@ Future<String> getSong(String songId, bool isLive) async {
       cachingDuration: _cacheDuration,
     );
 
+    unawaited(updateRecentlyPlayed(songId));
+
     if (cachedUrl != null) {
       return cachedUrl;
     } else if (isLive) {
@@ -494,7 +496,6 @@ Future<String> getAudioUrl(
   final audioQuality = selectAudioQuality(manifest.audioOnly.sortByBitrate());
   final audioUrl = audioQuality.url.toString();
 
-  unawaited(updateRecentlyPlayed(songId));
   addOrUpdateData('cache', cacheKey, audioUrl);
   return audioUrl;
 }
