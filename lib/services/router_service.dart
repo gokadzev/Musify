@@ -6,7 +6,6 @@ import 'package:musify/screens/bottom_navigation_page.dart';
 import 'package:musify/screens/home_page.dart';
 import 'package:musify/screens/more_page.dart';
 import 'package:musify/screens/playlists_page.dart';
-import 'package:musify/screens/recently_played_page.dart';
 import 'package:musify/screens/search_page.dart';
 import 'package:musify/screens/user_added_playlists_page.dart';
 import 'package:musify/screens/user_liked_playlists_page.dart';
@@ -82,10 +81,6 @@ class NavigationManager {
                   );
                 },
                 routes: [
-                  GoRoute(
-                    path: 'recentlyPlayed',
-                    builder: (context, state) => const RecentlyPlayedPage(),
-                  ),
                   GoRoute(
                     path: 'userSongs/:page',
                     builder: (context, state) => UserSongsPage(
