@@ -32,23 +32,23 @@ class _UserSongsPageState extends State<UserSongsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
-      ),
-      floatingActionButton: title == context.l10n!.userLikedSongs
-          ? FloatingActionButton(
+        actions: [
+          if (title == context.l10n!.userLikedSongs)
+            IconButton(
               onPressed: () {
                 setState(() {
                   isEditEnabled = !isEditEnabled;
                 });
               },
-              backgroundColor: isEditEnabled
-                  ? context.colorScheme.surface
-                  : context.colorScheme.primary,
-              child: const Icon(
+              icon: Icon(
                 FluentIcons.re_order_24_filled,
-                color: Colors.white,
+                color: isEditEnabled
+                    ? context.colorScheme.inversePrimary
+                    : context.colorScheme.primary,
               ),
-            )
-          : null,
+            ),
+        ],
+      ),
       body: _buildCustomScrollView(title, icon, songsList, length),
     );
   }
