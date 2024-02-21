@@ -40,6 +40,7 @@ class SongBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: GestureDetector(
@@ -105,7 +106,7 @@ class SongBar extends StatelessWidget {
                         song['title'],
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
+                          color: colorScheme.primary,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
@@ -133,7 +134,7 @@ class SongBar extends StatelessWidget {
                       valueListenable: songLikeStatus,
                       builder: (_, value, __) {
                         return IconButton(
-                          color: Theme.of(context).colorScheme.primary,
+                          color: colorScheme.primary,
                           icon: Icon(likeStatusToIconMapper[value]),
                           onPressed: () {
                             songLikeStatus.value = !songLikeStatus.value;
@@ -151,7 +152,7 @@ class SongBar extends StatelessWidget {
                       },
                     ),
                     IconButton(
-                      color: Theme.of(context).colorScheme.primary,
+                      color: colorScheme.primary,
                       icon:
                           passingPlaylist != null && songIndexInPlaylist != null
                               ? const Icon(FluentIcons.delete_24_filled)
@@ -165,7 +166,7 @@ class SongBar extends StatelessWidget {
                       valueListenable: songOfflineStatus,
                       builder: (_, value, __) {
                         return IconButton(
-                          color: Theme.of(context).colorScheme.primary,
+                          color: colorScheme.primary,
                           icon: Icon(
                             value
                                 ? FluentIcons.cellular_off_24_regular

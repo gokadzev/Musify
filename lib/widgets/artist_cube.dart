@@ -18,13 +18,14 @@ class ArtistCube extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final calculatedSize = MediaQuery.of(context).size.height * 0.25;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Container(
       height: calculatedSize,
       width: calculatedSize,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(borderRadius),
-        color: Theme.of(context).colorScheme.secondary,
+        color: colorScheme.secondary,
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -32,7 +33,7 @@ class ArtistCube extends StatelessWidget {
           Icon(
             FluentIcons.mic_sparkle_24_regular,
             size: iconSize,
-            color: Theme.of(context).colorScheme.onPrimary,
+            color: colorScheme.onPrimary,
           ),
           Padding(
             padding: const EdgeInsets.all(10),
@@ -40,7 +41,7 @@ class ArtistCube extends StatelessWidget {
               artist,
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Theme.of(context).colorScheme.onPrimary,
+                color: colorScheme.onPrimary,
               ),
             ),
           ),
