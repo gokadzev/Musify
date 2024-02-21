@@ -1,7 +1,6 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
-import 'package:musify/extensions/colorScheme.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/screens/playlist_page.dart';
@@ -22,7 +21,7 @@ class MorePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final primaryColor = context.colorScheme.primary;
+    final primaryColor = Theme.of(context).colorScheme.primary;
 
     return Scaffold(
       appBar: AppBar(

@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
-import 'package:musify/extensions/colorScheme.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/screens/playlist_page.dart';
 import 'package:musify/widgets/no_artwork_cube.dart';
@@ -90,7 +89,7 @@ class PlaylistCube extends StatelessWidget {
                 right: 5,
                 child: DecoratedBox(
                   decoration: BoxDecoration(
-                    color: context.colorScheme.background,
+                    color: Theme.of(context).colorScheme.background,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: IconButton(
@@ -108,7 +107,7 @@ class PlaylistCube extends StatelessWidget {
                     },
                     icon: Icon(
                       likeStatusToIconMapper[value],
-                      color: context.colorScheme.primary,
+                      color: Theme.of(context).colorScheme.primary,
                       size: 25,
                     ),
                   ),

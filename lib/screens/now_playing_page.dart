@@ -5,7 +5,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
-import 'package:musify/extensions/colorScheme.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/models/position_data.dart';
@@ -49,7 +48,7 @@ class NowPlayingPage extends StatelessWidget {
                   SizedBox(height: size.height * 0.03),
                   buildMarqueeText(
                     metadata.title,
-                    context.colorScheme.primary,
+                    Theme.of(context).colorScheme.primary,
                     size.height * 0.030,
                     FontWeight.bold,
                     size.width,
@@ -57,7 +56,7 @@ class NowPlayingPage extends StatelessWidget {
                   const SizedBox(height: 4),
                   buildMarqueeText(
                     metadata.artist ?? '',
-                    context.colorScheme.primary,
+                    Theme.of(context).colorScheme.primary,
                     size.height * 0.018,
                     FontWeight.w500,
                     size.width,
@@ -186,8 +185,11 @@ class NowPlayingPage extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            buildSlider(context.colorScheme.primary, positionData),
-            buildPositionRow(context.colorScheme.primary, positionData),
+            buildSlider(Theme.of(context).colorScheme.primary, positionData),
+            buildPositionRow(
+              Theme.of(context).colorScheme.primary,
+              positionData,
+            ),
           ],
         );
       },
@@ -271,8 +273,8 @@ class NowPlayingPage extends StatelessWidget {
                 icon: Icon(
                   FluentIcons.previous_24_filled,
                   color: audioHandler.hasPrevious
-                      ? context.colorScheme.primary
-                      : context.colorScheme.primary.withOpacity(0.5),
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context).colorScheme.primary.withOpacity(0.5),
                 ),
                 iconSize: size.width * 0.09 < 35 ? size.width * 0.09 : 35,
                 onPressed: () => audioHandler.skipToPrevious(),
@@ -284,7 +286,7 @@ class NowPlayingPage extends StatelessWidget {
                   return buildPlaybackIconButton(
                     snapshot.data,
                     size.width * 0.19 < 72 ? size.width * 0.19 : 72,
-                    context.colorScheme.primary,
+                    Theme.of(context).colorScheme.primary,
                   );
                 },
               ),
@@ -292,8 +294,8 @@ class NowPlayingPage extends StatelessWidget {
                 icon: Icon(
                   FluentIcons.next_24_filled,
                   color: audioHandler.hasNext
-                      ? context.colorScheme.primary
-                      : context.colorScheme.primary.withOpacity(0.5),
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context).colorScheme.primary.withOpacity(0.5),
                 ),
                 iconSize: size.width * 0.09 < 35 ? size.width * 0.09 : 35,
                 onPressed: () => audioHandler.skipToNext(),
@@ -466,7 +468,7 @@ class NowPlayingPage extends StatelessWidget {
             children: [
               for (final playlist in userCustomPlaylists)
                 Card(
-                  color: context.colorScheme.secondary,
+                  color: Theme.of(context).colorScheme.secondary,
                   child: ListTile(
                     title: Text(playlist['title']),
                     onTap: () {

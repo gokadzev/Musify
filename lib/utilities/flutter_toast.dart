@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:musify/extensions/colorScheme.dart';
 
 void showToast(BuildContext context, String text) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
-      backgroundColor: context.colorScheme.primary,
+      backgroundColor: Theme.of(context).colorScheme.primary,
 
       content: Text(
         text,
@@ -25,7 +24,7 @@ void showToastWithButton(
 ) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
-      backgroundColor: context.colorScheme.primary,
+      backgroundColor: Theme.of(context).colorScheme.primary,
 
       content: Text(
         text,

@@ -1,6 +1,5 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:musify/extensions/colorScheme.dart';
 
 class NullArtworkWidget extends StatelessWidget {
   const NullArtworkWidget({
@@ -23,7 +22,7 @@ class NullArtworkWidget extends StatelessWidget {
       height: size,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: context.colorScheme.secondary,
+        color: Theme.of(context).colorScheme.secondary,
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -31,7 +30,7 @@ class NullArtworkWidget extends StatelessWidget {
           Icon(
             icon,
             size: iconSize,
-            color: context.colorScheme.onPrimary,
+            color: Theme.of(context).colorScheme.onPrimary,
           ),
           if (title != null)
             Padding(
@@ -39,7 +38,8 @@ class NullArtworkWidget extends StatelessWidget {
               child: Text(
                 title!,
                 textAlign: TextAlign.center,
-                style: TextStyle(color: context.colorScheme.onPrimary),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onPrimary),
               ),
             ),
         ],

@@ -4,7 +4,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
-import 'package:musify/extensions/colorScheme.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/utilities/flutter_toast.dart';
@@ -106,7 +105,7 @@ class SongBar extends StatelessWidget {
                         song['title'],
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          color: context.colorScheme.primary,
+                          color: Theme.of(context).colorScheme.primary,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
@@ -134,7 +133,7 @@ class SongBar extends StatelessWidget {
                       valueListenable: songLikeStatus,
                       builder: (_, value, __) {
                         return IconButton(
-                          color: context.colorScheme.primary,
+                          color: Theme.of(context).colorScheme.primary,
                           icon: Icon(likeStatusToIconMapper[value]),
                           onPressed: () {
                             songLikeStatus.value = !songLikeStatus.value;
@@ -152,7 +151,7 @@ class SongBar extends StatelessWidget {
                       },
                     ),
                     IconButton(
-                      color: context.colorScheme.primary,
+                      color: Theme.of(context).colorScheme.primary,
                       icon:
                           passingPlaylist != null && songIndexInPlaylist != null
                               ? const Icon(FluentIcons.delete_24_filled)
@@ -166,7 +165,7 @@ class SongBar extends StatelessWidget {
                       valueListenable: songOfflineStatus,
                       builder: (_, value, __) {
                         return IconButton(
-                          color: context.colorScheme.primary,
+                          color: Theme.of(context).colorScheme.primary,
                           icon: Icon(
                             value
                                 ? FluentIcons.cellular_off_24_regular
@@ -207,7 +206,7 @@ class SongBar extends StatelessWidget {
             children: [
               for (final playlist in userCustomPlaylists)
                 Card(
-                  color: context.colorScheme.secondary,
+                  color: Theme.of(context).colorScheme.secondary,
                   child: ListTile(
                     title: Text(playlist['title']),
                     onTap: () {

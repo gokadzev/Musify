@@ -1,7 +1,6 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
-import 'package:musify/extensions/colorScheme.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/widgets/playlist_cube.dart';
@@ -43,8 +42,8 @@ class _UserSongsPageState extends State<UserSongsPage> {
               icon: Icon(
                 FluentIcons.re_order_24_filled,
                 color: isEditEnabled
-                    ? context.colorScheme.inversePrimary
-                    : context.colorScheme.primary,
+                    ? Theme.of(context).colorScheme.inversePrimary
+                    : Theme.of(context).colorScheme.primary,
               ),
             ),
         ],

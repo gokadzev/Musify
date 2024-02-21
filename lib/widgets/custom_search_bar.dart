@@ -1,6 +1,5 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:musify/extensions/colorScheme.dart';
 import 'package:musify/widgets/spinner.dart';
 
 class CustomSearchBar extends StatefulWidget {
@@ -27,7 +26,7 @@ class CustomSearchBar extends StatefulWidget {
 class _CustomSearchBarState extends State<CustomSearchBar> {
   @override
   Widget build(BuildContext context) {
-    final primaryColor = context.colorScheme.primary;
+    final primaryColor = Theme.of(context).colorScheme.primary;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),

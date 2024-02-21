@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
-import 'package:musify/extensions/colorScheme.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 
@@ -26,7 +25,7 @@ class UserLikedPlaylistsPage extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: context.colorScheme.primary,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
                 )
