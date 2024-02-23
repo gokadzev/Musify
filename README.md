@@ -1,70 +1,58 @@
-<p align="center">
-    <img src="https://github.com/gokadzev/Musify/raw/master/repository_files/Musify-banner.png" width="100%">
-</p>
-
-<p align="center">
-    Unlock the full potential of music: Stream effortlessly with one app!
-</p>
-
-<p align="center">
- <p align="center">
-    <a href="https://github.com/gokadzev/Musify/stargazers"><img alt="Stars" src="https://img.shields.io/github/stars/gokadzev/Musify?style=flat-square&color=D3BEAB"/></a>
-    <a href="https://github.com/gokadzev/Musify/fork"><img alt="Forks" src="https://img.shields.io/github/forks/gokadzev/Musify?style=flat-square&color=D3BEAB"/></a>
-    <a href="https://github.com/gokadzev/Musify/releases"><img alt="GitHub release" src="https://img.shields.io/github/v/release/gokadzev/Musify?color=D3BEAB"/></a>
-    <a href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/gokadzev/Musify?color=D3BEAB"/></a>
- </p>
-</p>
-
-<h3 align="center">Don't forget to :star: the repository</h3>
-
----
-
-  <h3 align="center">Features :rocket:</h3>
-  <p align="center">
-    Online Song Search With Suggestions :mag:<br>
-    Streaming Support :musical_note:<br>
-    Offline Listening Support :arrow_down:<br>
-    Import & Export Your Data And Never Lose It :floppy_disk:<br>
-    Add Custom Playlists With Link :cool:<br>
-    Optimized Sound Experience :fire:<br>
-    Lyrics Support :pencil:<br>
-    No Ads :no_entry_sign:<br>
-    No Subscriptions :dollar:<br>
-    Inbuilt Updater :new:<br>
-    14 Supported Languages :us:<br>
-    Material UI & Accent Colors & Dynamic Colors (Android 12+) :art: <br>
-
----
-
-<h3 align="center">Screenshots :camera:</h3>
-
 <div align="center">
-  <table>
-    <tr>
-      <td align="center">
-        <img width="100%" src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/01.jpg" alt="screenshot 1">
-      </td>
-      <td align="center">
-        <img width="100%" src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/02.jpg" alt="screenshot 2">
-      </td>
-      <td align="center">
-        <img width="100%" src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/03.jpg" alt="screenshot 3">
-      </td>
-      <td align="center">
-        <img width="100%" src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/04.jpg" alt="screenshot 4">
-      </td>
-    </tr>
-  </table>
-</div>
+<img src="https://github.com/gokadzev/Musify/raw/master/repository_files/Musify-banner.png" width="100%">
+
+# Musify
+
+Unlock the full potential of music: Stream effortlessly with one app!
+
+[![Stars](https://img.shields.io/github/stars/gokadzev/Musify?style=flat-square&color=D3BEAB)](https://github.com/gokadzev/Musify/stargazers)
+[![Forks](https://img.shields.io/github/forks/gokadzev/Musify?style=flat-square&color=D3BEAB)](https://github.com/gokadzev/Musify/fork)
+[![GitHub release](https://img.shields.io/github/v/release/gokadzev/Musify?color=D3BEAB)](https://github.com/gokadzev/Musify/releases)
+[![License](https://img.shields.io/github/license/gokadzev/Musify?color=D3BEAB)](LICENSE)
+
 
 ---
 
-  <h3 align="center">Download :floppy_disk:</h3>
-     <p align="center" style="align-items:center"><a href="https://github.com/gokadzev/Musify/releases" rel="GitHub Releases"><img width="250" src="https://github.com/gokadzev/Musify/raw/master/repository_files/get-it-on-github.png"></a><a href="https://f-droid.org/packages/com.gokadzev.musify.fdroid/" rel="F-Droid"><img width="250" src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"></a></p>
+## Features
+
+<center>
+
+Online Song Search With Suggestions <br/>
+Streaming Support <br/>
+Offline Listening Support <br/>
+Import & Export Your Data And Never Lose It <br/>
+Add Custom Playlists With Link <br/>
+Optimized Sound Experience <br/>
+Lyrics Support <br/>
+No Ads <br/>
+No Subscriptions <br/>
+Inbuilt Updater <br/>
+14 Supported Languages <br/>
+Material UI & Accent Colors & Dynamic Colors (Android 12+) <br/>
+
+</center>
+
 
 ---
 
-<h3 align="center">License :scroll:</h3>
+## Screenshots
+
+| ![Screenshot 1](https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/01.jpg) | ![Screenshot 2](https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/02.jpg) | ![Screenshot 3](https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/03.jpg) | ![Screenshot 4](https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/04.jpg) |
+|----------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------|
+
+
+---
+
+## Download
+
+
+[<img src="https://github.com/gokadzev/Musify/raw/master/repository_files/get-it-on-github.png" alt="Get it on Github" height="80">](https://github.com/gokadzev/Musify/releases/latest)
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on Fdroid" height="80">](https://f-droid.org/packages/com.gokadzev.musify.fdroid)
+
+---
+
+## License
+
 
 ```
 Copyright © 2023 Valeri Gokadze
@@ -95,42 +83,45 @@ See the [GNU General Public License](https://github.com/gokadzev/Musify/blob/mas
 
 ---
 
-<h3 align="center">Building from source :hammer_and_wrench:</h3>
+## Building from source
 
 1. If you don't have Flutter SDK installed, please visit official [Flutter](https://flutter.dev/) site.
-2. Fetch latest source code from master branch.
 
-```
+2. Fetch latest source code from master branch:
+
+```console
 git clone https://github.com/gokadzev/Musify.git
 ```
 
 3. Run the app with Android Studio or VS Code. Or the command line:
 
-```
+```console
 flutter pub get
+```
+```console
 flutter run --flavor github
 ```
 
 ---
 
-<h3 align="center">Contribute :pencil2:</h3>
+## Contribute
 
 Contributions are always welcome. Please read our [contributing guidelines](https://github.com/gokadzev/Musify/blob/master/CONTRIBUTING.md) before contributing.
 
 ---
 
-<h3 align="center">F.A.Q :question: </h3>
+## F.A.Q
 
 You can see frequently asked questions and their answers [here](https://github.com/gokadzev/Musify/discussions/340).
 
 ---
 
-<h3 align="center">Credits :pushpin:	</h3>
+## Credits
 
-- [Musify](https://github.com/Harsh-23/Musify): Original inspiration for the concept and app name, while our implementation took a different direction with a complete rewrite, a rebranded logo, and a redesigned layout and UI.
+[Musify](https://github.com/Harsh-23/Musify) - Original inspiration for the concept and app name, while our implementation took a different direction with a complete rewrite, a rebranded logo, and a redesigned layout and UI.
 
 <details>
-<summary>Click to show dependencies :pushpin:</summary>
+<summary>Click to show dependencies</summary>
 
 - [audio_service](https://pub.dev/packages/audio_service): A Flutter plugin for playing audio in the background.
 - [audio_session](https://pub.dev/packages/audio_session): A plugin for managing audio sessions in Flutter.
@@ -155,7 +146,7 @@ You can see frequently asked questions and their answers [here](https://github.c
 </details>
 
 <details>
-<summary>Click to show development dependencies :pushpin:</summary>
+<summary>Click to show development dependencies</summary>
 
 - [flutter_launcher_icons](https://pub.dev/packages/flutter_launcher_icons): A package for generating custom app icons in Flutter.
 - [flutter_native_splash](https://pub.dev/packages/flutter_native_splash): A package for adding a native splash screen to your Flutter app.
@@ -165,7 +156,7 @@ You can see frequently asked questions and their answers [here](https://github.c
 
 ---
 
-<h3 align="center">Disclaimer :warning:</h3>
+## Disclaimer
 
 ```
 Musify does not possess or maintain any association with the songs and other content accessible through the app.
@@ -180,10 +171,10 @@ non-commercial purposes and in accordance with all applicable laws and regulatio
 
 ---
 
-<h3 align="center">Do you like the project? Sponsor it! :heartpulse:	</h3>
+## Do you like the project? Sponsor it!
 
-<div align="center">
   <a href="https://ko-fi.com/gokadzev">
-    <img width="32%" src="https://storage.ko-fi.com/cdn/brandasset/logo_white_stroke.png" alt="ko-fi">
+    <img width="30%" src="https://storage.ko-fi.com/cdn/brandasset/logo_white_stroke.png" alt="ko-fi">
   </a>
+
 </div>
