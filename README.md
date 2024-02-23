@@ -83,27 +83,6 @@ See the [GNU General Public License](https://github.com/gokadzev/Musify/blob/mas
 
 ---
 
-## Building from source
-
-1. If you don't have Flutter SDK installed, please visit official [Flutter](https://flutter.dev/) site.
-
-2. Fetch latest source code from master branch:
-
-```console
-git clone https://github.com/gokadzev/Musify.git
-```
-
-3. Run the app with Android Studio or VS Code. Or the command line:
-
-```console
-flutter pub get
-```
-```console
-flutter run --flavor github
-```
-
----
-
 ## Contribute
 
 Contributions are always welcome. Please read our [contributing guidelines](https://github.com/gokadzev/Musify/blob/master/CONTRIBUTING.md) before contributing.
