@@ -91,69 +91,61 @@ class MorePage extends StatelessWidget {
               FluentIcons.color_24_filled,
               () => showModalBottomSheet(
                 isDismissible: true,
-                backgroundColor: Colors.transparent,
+                backgroundColor: Theme.of(context).colorScheme.background,
                 context: context,
                 builder: (BuildContext context) {
-                  return Center(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: primaryColor,
-                        ),
-                        borderRadius: BorderRadius.circular(20),
+                  return SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.90,
+                    child: GridView.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
                       ),
-                      width: MediaQuery.of(context).size.width * 0.90,
-                      child: GridView.builder(
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                        ),
-                        shrinkWrap: true,
-                        physics: const BouncingScrollPhysics(),
-                        itemCount: availableColors.length,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 15),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                if (availableColors.length > index)
-                                  GestureDetector(
-                                    onTap: () {
-                                      addOrUpdateData(
-                                        'settings',
-                                        'accentColor',
-                                        availableColors[index].value,
-                                      );
-                                      Musify.updateAppState(
-                                        context,
-                                        newAccentColor: availableColors[index],
-                                        useSystemColor: false,
-                                      );
-                                      showToast(
-                                        context,
-                                        context.l10n!.accentChangeMsg,
-                                      );
-                                      Navigator.pop(context);
-                                    },
-                                    child: Material(
-                                      elevation: 4,
-                                      shape: const CircleBorder(),
-                                      child: CircleAvatar(
-                                        radius: 25,
-                                        backgroundColor:
-                                            themeMode == ThemeMode.light
-                                                ? availableColors[index]
-                                                    .withAlpha(150)
-                                                : availableColors[index],
-                                      ),
+                      shrinkWrap: true,
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: availableColors.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              if (availableColors.length > index)
+                                GestureDetector(
+                                  onTap: () {
+                                    addOrUpdateData(
+                                      'settings',
+                                      'accentColor',
+                                      availableColors[index].value,
+                                    );
+                                    Musify.updateAppState(
+                                      context,
+                                      newAccentColor: availableColors[index],
+                                      useSystemColor: false,
+                                    );
+                                    showToast(
+                                      context,
+                                      context.l10n!.accentChangeMsg,
+                                    );
+                                    Navigator.pop(context);
+                                  },
+                                  child: Material(
+                                    elevation: 4,
+                                    shape: const CircleBorder(),
+                                    child: CircleAvatar(
+                                      radius: 25,
+                                      backgroundColor:
+                                          themeMode == ThemeMode.light
+                                              ? availableColors[index]
+                                                  .withAlpha(150)
+                                              : availableColors[index],
                                     ),
                                   ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
+                                ),
+                            ],
+                          ),
+                        );
+                      },
                     ),
                   );
                 },
@@ -163,8 +155,8 @@ class MorePage extends StatelessWidget {
               context.l10n!.themeMode,
               FluentIcons.weather_sunny_28_filled,
               () => showModalBottomSheet(
+                backgroundColor: Theme.of(context).colorScheme.background,
                 isDismissible: true,
-                backgroundColor: Colors.transparent,
                 context: context,
                 builder: (BuildContext context) {
                   final availableModes = [
@@ -173,45 +165,38 @@ class MorePage extends StatelessWidget {
                     ThemeMode.dark,
                   ];
 
-                  return Center(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: primaryColor,
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      width: MediaQuery.of(context).size.width * 0.90,
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        physics: const BouncingScrollPhysics(),
-                        itemCount: availableModes.length,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: Card(
-                              child: ListTile(
-                                title: Text(
-                                  availableModes[index].name,
-                                ),
-                                onTap: () {
-                                  addOrUpdateData(
-                                    'settings',
-                                    'themeMode',
-                                    availableModes[index].name,
-                                  );
-                                  Musify.updateAppState(
-                                    context,
-                                    newThemeMode: availableModes[index],
-                                  );
-
-                                  Navigator.pop(context);
-                                },
+                  return SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.90,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: availableModes.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Card(
+                            color: Theme.of(context).hoverColor,
+                            child: ListTile(
+                              title: Text(
+                                availableModes[index].name,
                               ),
+                              onTap: () {
+                                addOrUpdateData(
+                                  'settings',
+                                  'themeMode',
+                                  availableModes[index].name,
+                                );
+                                Musify.updateAppState(
+                                  context,
+                                  newThemeMode: availableModes[index],
+                                );
+
+                                Navigator.pop(context);
+                              },
                             ),
-                          );
-                        },
-                      ),
+                          ),
+                        );
+                      },
                     ),
                   );
                 },
@@ -221,57 +206,50 @@ class MorePage extends StatelessWidget {
               context.l10n!.language,
               FluentIcons.translate_24_filled,
               () => showModalBottomSheet(
+                backgroundColor: Theme.of(context).colorScheme.background,
                 isDismissible: true,
-                backgroundColor: Colors.transparent,
                 context: context,
                 builder: (BuildContext context) {
                   final availableLanguages = appLanguages.keys.toList();
 
-                  return Center(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: primaryColor,
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      width: MediaQuery.of(context).size.width * 0.90,
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        physics: const BouncingScrollPhysics(),
-                        itemCount: availableLanguages.length,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: Card(
-                              child: ListTile(
-                                title: Text(
-                                  availableLanguages[index],
-                                ),
-                                onTap: () {
-                                  addOrUpdateData(
-                                    'settings',
-                                    'language',
-                                    availableLanguages[index],
-                                  );
-                                  Musify.updateAppState(
-                                    context,
-                                    newLocale: Locale(
-                                      appLanguages[availableLanguages[index]]!,
-                                    ),
-                                  );
-
-                                  showToast(
-                                    context,
-                                    context.l10n!.languageMsg,
-                                  );
-                                  Navigator.pop(context);
-                                },
+                  return SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.90,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: availableLanguages.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Card(
+                            color: Theme.of(context).hoverColor,
+                            child: ListTile(
+                              title: Text(
+                                availableLanguages[index],
                               ),
+                              onTap: () {
+                                addOrUpdateData(
+                                  'settings',
+                                  'language',
+                                  availableLanguages[index],
+                                );
+                                Musify.updateAppState(
+                                  context,
+                                  newLocale: Locale(
+                                    appLanguages[availableLanguages[index]]!,
+                                  ),
+                                );
+
+                                showToast(
+                                  context,
+                                  context.l10n!.languageMsg,
+                                );
+                                Navigator.pop(context);
+                              },
                             ),
-                          );
-                        },
-                      ),
+                          ),
+                        );
+                      },
                     ),
                   );
                 },
@@ -328,54 +306,46 @@ class MorePage extends StatelessWidget {
               () {
                 showModalBottomSheet(
                   isDismissible: true,
-                  backgroundColor: Colors.transparent,
+                  backgroundColor: Theme.of(context).colorScheme.background,
                   context: context,
                   builder: (BuildContext context) {
                     final availableQualities = ['low', 'medium', 'high'];
 
-                    return Center(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: primaryColor,
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        width: MediaQuery.of(context).size.width * 0.90,
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          physics: const BouncingScrollPhysics(),
-                          itemCount: availableQualities.length,
-                          itemBuilder: (context, index) {
-                            final quality = availableQualities[index];
-                            final isCurrentQuality =
-                                audioQualitySetting.value == quality;
+                    return SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.90,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: availableQualities.length,
+                        itemBuilder: (context, index) {
+                          final quality = availableQualities[index];
+                          final isCurrentQuality =
+                              audioQualitySetting.value == quality;
 
-                            return Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: Card(
-                                elevation: isCurrentQuality ? 0 : 4,
-                                child: ListTile(
-                                  title: Text(quality),
-                                  onTap: () {
-                                    addOrUpdateData(
-                                      'settings',
-                                      'audioQuality',
-                                      quality,
-                                    );
-                                    audioQualitySetting.value = quality;
+                          return Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Card(
+                              elevation: isCurrentQuality ? 0 : 4,
+                              child: ListTile(
+                                title: Text(quality),
+                                onTap: () {
+                                  addOrUpdateData(
+                                    'settings',
+                                    'audioQuality',
+                                    quality,
+                                  );
+                                  audioQualitySetting.value = quality;
 
-                                    showToast(
-                                      context,
-                                      context.l10n!.audioQualityMsg,
-                                    );
-                                    Navigator.pop(context);
-                                  },
-                                ),
+                                  showToast(
+                                    context,
+                                    context.l10n!.audioQualityMsg,
+                                  );
+                                  Navigator.pop(context);
+                                },
                               ),
-                            );
-                          },
-                        ),
+                            ),
+                          );
+                        },
                       ),
                     );
                   },
