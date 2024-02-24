@@ -191,6 +191,11 @@ class MorePage extends StatelessWidget {
 
                                 Navigator.pop(context);
                               },
+                              trailing: availableModes[index] ==
+                                          ThemeMode.light ||
+                                      availableModes[index] == ThemeMode.system
+                                  ? const Text('BETA')
+                                  : null,
                             ),
                           ),
                         );
