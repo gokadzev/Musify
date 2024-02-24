@@ -68,6 +68,9 @@ ThemeData getAppDarkTheme(ColorScheme colorScheme) {
       contentPadding: const EdgeInsets.fromLTRB(18, 14, 20, 14),
       // suffixIconColor: colorScheme.onSurface,
     ),
+    bottomSheetTheme: BottomSheetThemeData(
+      backgroundColor: colorScheme.background,
+    ),
     hintColor: Colors.white,
     visualDensity: VisualDensity.adaptivePlatformDensity,
     useMaterial3: true,
@@ -84,8 +87,6 @@ ThemeData getAppLightTheme(ColorScheme colorScheme) {
   return ThemeData(
     colorScheme: colorScheme,
     textTheme: GoogleFonts.robotoTextTheme(base.textTheme),
-    bottomSheetTheme:
-        base.bottomSheetTheme.copyWith(backgroundColor: colorScheme.surface),
     appBarTheme: base.appBarTheme.copyWith(
       iconTheme: IconThemeData(color: colorScheme.primary),
       centerTitle: true,

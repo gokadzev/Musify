@@ -91,7 +91,6 @@ class MorePage extends StatelessWidget {
               FluentIcons.color_24_filled,
               () => showModalBottomSheet(
                 isDismissible: true,
-                backgroundColor: Theme.of(context).colorScheme.background,
                 context: context,
                 builder: (BuildContext context) {
                   return SizedBox(
@@ -155,7 +154,6 @@ class MorePage extends StatelessWidget {
               context.l10n!.themeMode,
               FluentIcons.weather_sunny_28_filled,
               () => showModalBottomSheet(
-                backgroundColor: Theme.of(context).colorScheme.background,
                 isDismissible: true,
                 context: context,
                 builder: (BuildContext context) {
@@ -206,7 +204,6 @@ class MorePage extends StatelessWidget {
               context.l10n!.language,
               FluentIcons.translate_24_filled,
               () => showModalBottomSheet(
-                backgroundColor: Theme.of(context).colorScheme.background,
                 isDismissible: true,
                 context: context,
                 builder: (BuildContext context) {
@@ -306,7 +303,6 @@ class MorePage extends StatelessWidget {
               () {
                 showModalBottomSheet(
                   isDismissible: true,
-                  backgroundColor: Theme.of(context).colorScheme.background,
                   context: context,
                   builder: (BuildContext context) {
                     final availableQualities = ['low', 'medium', 'high'];
