@@ -105,9 +105,11 @@ ThemeData getAppLightTheme(ColorScheme colorScheme) {
       isDense: true,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(15),
+        borderSide: BorderSide.none,
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(15),
+        borderSide: BorderSide.none,
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(15),
