@@ -213,6 +213,8 @@ class MorePage extends StatelessWidget {
                 context: context,
                 builder: (BuildContext context) {
                   final availableLanguages = appLanguages.keys.toList();
+                  final activeLanguageCode =
+                      Localizations.localeOf(context).languageCode;
 
                   return SizedBox(
                     width: MediaQuery.of(context).size.width * 0.90,
@@ -221,24 +223,28 @@ class MorePage extends StatelessWidget {
                       physics: const BouncingScrollPhysics(),
                       itemCount: availableLanguages.length,
                       itemBuilder: (context, index) {
+                        final language = availableLanguages[index];
+                        final languageCode = appLanguages[language] ?? 'en';
                         return Padding(
                           padding: const EdgeInsets.all(10),
                           child: Card(
+                            elevation:
+                                activeLanguageCode == languageCode ? 0 : 4,
                             color: Theme.of(context).hoverColor,
                             child: ListTile(
                               title: Text(
-                                availableLanguages[index],
+                                language,
                               ),
                               onTap: () {
                                 addOrUpdateData(
                                   'settings',
                                   'language',
-                                  availableLanguages[index],
+                                  language,
                                 );
                                 Musify.updateAppState(
                                   context,
                                   newLocale: Locale(
-                                    appLanguages[availableLanguages[index]]!,
+                                    languageCode,
                                   ),
                                 );
 
