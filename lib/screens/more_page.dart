@@ -173,6 +173,8 @@ class MorePage extends StatelessWidget {
                         return Padding(
                           padding: const EdgeInsets.all(10),
                           child: Card(
+                            elevation:
+                                themeMode == availableModes[index] ? 0 : 4,
                             color: Theme.of(context).hoverColor,
                             child: ListTile(
                               title: Text(
