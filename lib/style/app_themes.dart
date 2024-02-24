@@ -66,6 +66,7 @@ ThemeData getAppDarkTheme(ColorScheme colorScheme) {
         borderSide: BorderSide(color: colorScheme.primary),
       ),
       contentPadding: const EdgeInsets.fromLTRB(18, 14, 20, 14),
+      // suffixIconColor: colorScheme.onSurface,
     ),
     hintColor: Colors.white,
     visualDensity: VisualDensity.adaptivePlatformDensity,
