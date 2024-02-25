@@ -16,7 +16,7 @@ jobs:
     if: "contains(github.event.head_commit.message, 'Update:')"
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
 
       # Extract version from commit message
@@ -27,7 +27,7 @@ jobs:
           echo "version=${version}" >> $GITHUB_OUTPUT
 
       # Setup Java environment in order to build the Android app.
-      - uses: actions/setup-java@v3
+      - uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '12.x'
