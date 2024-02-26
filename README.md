@@ -116,7 +116,6 @@ You can see frequently asked questions and their answers [here](https://github.c
 - [http](https://pub.dev/packages/http): A package for making HTTP requests in Flutter.
 - [intl](https://pub.dev/packages/intl): Internationalization and localization support for Flutter.
 - [just_audio](https://pub.dev/packages/just_audio): A Flutter plugin for audio playback.
-- [path](https://pub.dev/packages/path): A package for working with file system paths in Dart.
 - [path_provider](https://pub.dev/packages/path_provider): A Flutter plugin for getting the application's directories and paths.
 - [rxdart](https://pub.dev/packages/rxdart): Reactive Extensions for Dart.
 - [url_launcher](https://pub.dev/packages/url_launcher): A Flutter plugin for launching URLs.
