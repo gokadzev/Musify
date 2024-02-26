@@ -1,7 +1,4 @@
-import 'dart:io';
-
 import 'package:audio_service/audio_service.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
@@ -14,8 +11,8 @@ import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/formatter.dart';
 import 'package:musify/utilities/mediaitem.dart';
 import 'package:musify/widgets/marque.dart';
-import 'package:musify/widgets/no_artwork_cube.dart';
 import 'package:musify/widgets/playback_icon_button.dart';
+import 'package:musify/widgets/song_artwork.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/spinner.dart';
 
@@ -81,41 +78,17 @@ class NowPlayingPage extends StatelessWidget {
   Widget buildArtwork(Size size, MediaItem metadata) {
     const padding = 90;
     final imageSize = size.width - padding;
-    final borderRadius = BorderRadius.circular(10);
 
     return ConstrainedBox(
       constraints: const BoxConstraints(
         maxWidth: 300,
         maxHeight: 300,
       ),
-      child: metadata.artUri?.scheme == 'file'
-          ? SizedBox(
-              width: imageSize,
-              height: imageSize,
-              child: ClipRRect(
-                borderRadius: borderRadius,
-                child: Image.file(
-                  File(metadata.extras?['artWorkPath']),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            )
-          : CachedNetworkImage(
-              width: imageSize,
-              height: imageSize,
-              imageUrl: metadata.artUri.toString(),
-              imageBuilder: (context, imageProvider) => ClipRRect(
-                borderRadius: borderRadius,
-                child: Image(
-                  image: imageProvider,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              placeholder: (context, url) => const Spinner(),
-              errorWidget: (context, url, error) => NullArtworkWidget(
-                iconSize: size.width / 8,
-              ),
-            ),
+      child: SongArtworkWidget(
+        metadata: metadata,
+        size: imageSize,
+        errorWidgetIconSize: size.width / 8,
+      ),
     );
   }
 

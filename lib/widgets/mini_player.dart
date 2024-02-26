@@ -1,13 +1,10 @@
-import 'dart:io';
-
 import 'package:audio_service/audio_service.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/main.dart';
 import 'package:musify/screens/now_playing_page.dart';
 import 'package:musify/widgets/marque.dart';
-import 'package:musify/widgets/no_artwork_cube.dart';
 import 'package:musify/widgets/playback_icon_button.dart';
+import 'package:musify/widgets/song_artwork.dart';
 
 class MiniPlayer extends StatelessWidget {
   MiniPlayer({super.key, required this.metadata});
@@ -78,30 +75,12 @@ class MiniPlayer extends StatelessWidget {
   Widget _buildArtwork() {
     return Padding(
       padding: const EdgeInsets.only(top: 7, bottom: 7, right: 15),
-      child: metadata.artUri?.scheme == 'file'
-          ? SizedBox(
-              width: 55,
-              height: 55,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.file(
-                  File(metadata.extras?['artWorkPath']),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            )
-          : ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: CachedNetworkImage(
-                imageUrl: metadata.artUri.toString(),
-                fit: BoxFit.cover,
-                width: 55,
-                height: 55,
-                errorWidget: (context, url, error) => const NullArtworkWidget(
-                  iconSize: 30,
-                ),
-              ),
-            ),
+      child: SongArtworkWidget(
+        metadata: metadata,
+        size: 55,
+        borderRadius: 12,
+        errorWidgetIconSize: 30,
+      ),
     );
   }
 
