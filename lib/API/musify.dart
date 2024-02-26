@@ -105,7 +105,7 @@ Future<List<dynamic>> getUserPlaylists() async {
         'header_desc': plist.description.length < 120
             ? plist.description
             : plist.description.substring(0, 120),
-        'image': '',
+        'image': null,
         'list': [],
       });
     } catch (e, stackTrace) {
