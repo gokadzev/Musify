@@ -54,13 +54,14 @@ class NowPlayingPage extends StatelessWidget {
                     size.width,
                   ),
                   const SizedBox(height: 4),
-                  buildMarqueeText(
-                    metadata.artist ?? '',
-                    Theme.of(context).colorScheme.primary,
-                    size.height * 0.018,
-                    FontWeight.w500,
-                    size.width,
-                  ),
+                  if (metadata.artist != null)
+                    buildMarqueeText(
+                      metadata.artist!,
+                      Theme.of(context).colorScheme.primary,
+                      size.height * 0.018,
+                      FontWeight.w500,
+                      size.width,
+                    ),
                   if (!(metadata.extras?['isLive'] ?? false))
                     _buildPlayer(
                       context,
@@ -383,7 +384,7 @@ class NowPlayingPage extends StatelessWidget {
               iconSize: iconSize,
               onPressed: () {
                 getSongLyrics(
-                  mediaItem.artist.toString(),
+                  mediaItem.artist ?? '',
                   mediaItem.title,
                 );
                 showCustomBottomSheet(

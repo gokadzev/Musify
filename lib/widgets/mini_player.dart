@@ -126,16 +126,17 @@ class MiniPlayer extends StatelessWidget {
                 ),
               ),
             ),
-            MarqueeWidget(
-              manualScrollEnabled: false,
-              child: Text(
-                metadata.artist.toString(),
-                style: TextStyle(
-                  color: fontColor,
-                  fontSize: 15,
+            if (metadata.artist != null)
+              MarqueeWidget(
+                manualScrollEnabled: false,
+                child: Text(
+                  metadata.artist!,
+                  style: TextStyle(
+                    color: fontColor,
+                    fontSize: 15,
+                  ),
                 ),
               ),
-            ),
           ],
         ),
       ),
