@@ -32,7 +32,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
               var id = '';
               var customPlaylistName = '';
               String? imageUrl;
-              var description = '';
+              String? description;
 
               return AlertDialog(
                 backgroundColor:
