@@ -73,8 +73,11 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
           Expanded(
             child: FutureBuilder(
               future: _searchBar.text.isEmpty
-                  ? getPlaylists()
-                  : getPlaylists(query: _searchBar.text),
+                  ? getPlaylists(type: _showOnlyAlbums ? 'album' : 'playlist')
+                  : getPlaylists(
+                      query: _searchBar.text,
+                      type: _showOnlyAlbums ? 'album' : 'playlist',
+                    ),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Spinner();
@@ -89,13 +92,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                   );
                 }
 
-                final _playlists = (snapshot.data as List)
-                    .where(
-                      (element) => _showOnlyAlbums
-                          ? element['isAlbum'] == true
-                          : element['isAlbum'] != true,
-                    )
-                    .toList();
+                final _playlists = snapshot.data as List;
 
                 return GridView.builder(
                   gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(

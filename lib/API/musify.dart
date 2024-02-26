@@ -256,7 +256,15 @@ Future<List> getPlaylists({
   String? query,
   int? playlistsNum,
   bool onlyLiked = false,
+  String type = 'all',
 }) async {
+  // Early exit if playlists or suggestedPlaylists is empty
+  if (playlists.isEmpty ||
+      (playlistsNum != null && query == null && suggestedPlaylists.isEmpty)) {
+    return [];
+  }
+
+  // Return a subset of suggested playlists if playlistsNum is specified without a query
   if (playlistsNum != null && query == null) {
     if (suggestedPlaylists.isEmpty) {
       suggestedPlaylists = playlists.toList()..shuffle();
@@ -264,19 +272,36 @@ Future<List> getPlaylists({
     return suggestedPlaylists.take(playlistsNum).toList();
   }
 
+  // Filter playlists based on query and type if only query is specified
   if (query != null && playlistsNum == null) {
     final lowercaseQuery = query.toLowerCase();
     return playlists.where((playlist) {
       final lowercaseTitle = playlist['title'].toLowerCase();
-      return lowercaseTitle.contains(lowercaseQuery);
+      return lowercaseTitle.contains(lowercaseQuery) &&
+          ((type == 'all') ||
+              (type == 'album' && playlist['isAlbum'] == true) ||
+              (type == 'playlist' && playlist['isAlbum'] != true));
     }).toList();
   }
 
+  // Return userLikedPlaylists if onlyLiked flag is set and no query or playlistsNum is specified
   if (onlyLiked && playlistsNum == null && query == null) {
     return userLikedPlaylists;
   }
 
-  return playlists;
+  // Return playlists directly if type is 'all'
+  if (type == 'all') {
+    return playlists;
+  }
+
+  // Filter playlists by type
+  return playlists
+      .where(
+        (playlist) =>
+            type == 'album' && playlist['isAlbum'] == true ||
+            type == 'playlist' && playlist['isAlbum'] != true,
+      )
+      .toList();
 }
 
 Future<List<String>> getSearchSuggestions(String query) async {
