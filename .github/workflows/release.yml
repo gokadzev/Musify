@@ -71,7 +71,7 @@ jobs:
 
       # Build arm64 APK for GitHub release
       - name: Build arm64 APK
-        run: flutter build apk --release --split-per-abi --target-platform="android-arm64" --flavor github
+        run: flutter build apk --release --target-platform="android-arm64" --flavor github
 
       # Release arm64 generated APK
       - name: Release arm64 APK
