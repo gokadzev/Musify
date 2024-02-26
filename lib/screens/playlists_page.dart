@@ -16,13 +16,7 @@ class PlaylistsPage extends StatefulWidget {
 class _PlaylistsPageState extends State<PlaylistsPage> {
   final TextEditingController _searchBar = TextEditingController();
   final FocusNode _inputNode = FocusNode();
-  String _searchQuery = '';
   bool _showOnlyAlbums = false;
-
-  Future<void> search() async {
-    _searchQuery = _searchBar.text;
-    setState(() {});
-  }
 
   void toggleShowOnlyAlbums(bool value) {
     setState(() {
@@ -49,7 +43,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
         children: <Widget>[
           CustomSearchBar(
             onSubmitted: (String value) {
-              search();
+              setState(() {});
             },
             controller: _searchBar,
             focusNode: _inputNode,
@@ -63,15 +57,12 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                 Switch(
                   value: _showOnlyAlbums,
                   onChanged: toggleShowOnlyAlbums,
-                  thumbIcon: MaterialStateProperty.resolveWith<Icon?>(
+                  thumbIcon: MaterialStateProperty.resolveWith<Icon>(
                     (Set<MaterialState> states) {
-                      if (states.contains(MaterialState.selected)) {
-                        return const Icon(
-                          Icons.album,
-                        );
-                      }
-                      return const Icon(
-                        Icons.featured_play_list,
+                      return Icon(
+                        states.contains(MaterialState.selected)
+                            ? Icons.album
+                            : Icons.featured_play_list,
                       );
                     },
                   ),
@@ -81,9 +72,9 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
           ),
           Expanded(
             child: FutureBuilder(
-              future: _searchQuery.isEmpty
+              future: _searchBar.text.isEmpty
                   ? getPlaylists()
-                  : getPlaylists(query: _searchQuery),
+                  : getPlaylists(query: _searchBar.text),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Spinner();
@@ -98,17 +89,13 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                   );
                 }
 
-                late List _playlists;
-
-                if (_showOnlyAlbums) {
-                  _playlists = (snapshot.data as List)
-                      .where((element) => element['isAlbum'] == true)
-                      .toList();
-                } else {
-                  _playlists = (snapshot.data as List)
-                      .where((element) => element['isAlbum'] != true)
-                      .toList();
-                }
+                final _playlists = (snapshot.data as List)
+                    .where(
+                      (element) => _showOnlyAlbums
+                          ? element['isAlbum'] == true
+                          : element['isAlbum'] != true,
+                    )
+                    .toList();
 
                 return GridView.builder(
                   gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
