@@ -124,7 +124,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                     return PlaylistCube(
                       id: playlist['ytid'],
                       image: playlist['image'],
-                      title: playlist['title'].toString(),
+                      title: playlist['title'],
                       isAlbum: playlist['isAlbum'],
                     );
                   },

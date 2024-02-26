@@ -45,7 +45,7 @@ class UserLikedPlaylistsPage extends StatelessWidget {
                       return PlaylistCube(
                         id: userLikedPlaylists[index]['ytid'],
                         image: userLikedPlaylists[index]['image'],
-                        title: userLikedPlaylists[index]['title'].toString(),
+                        title: userLikedPlaylists[index]['title'],
                       );
                     },
                   ),

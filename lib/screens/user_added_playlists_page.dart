@@ -217,7 +217,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                       child: PlaylistCube(
                         id: ytid,
                         image: playlist['image'],
-                        title: playlist['title'].toString(),
+                        title: playlist['title'],
                         playlistData:
                             playlist['isCustom'] ?? false ? playlist : null,
                         onClickOpen: playlist['isCustom'] == null,

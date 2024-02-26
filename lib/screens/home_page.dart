@@ -106,8 +106,8 @@ class _HomePageState extends State<HomePage> {
               final playlist = _suggestedPlaylists[index];
               return PlaylistCube(
                 id: playlist['ytid'],
-                image: playlist['image'].toString(),
-                title: playlist['title'].toString(),
+                image: playlist['image'],
+                title: playlist['title'],
                 isAlbum: playlist['isAlbum'],
                 size: _screenHeight * 0.25,
               );
