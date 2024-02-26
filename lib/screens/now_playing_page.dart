@@ -81,6 +81,7 @@ class NowPlayingPage extends StatelessWidget {
   Widget buildArtwork(Size size, MediaItem metadata) {
     const padding = 90;
     final imageSize = size.width - padding;
+    final borderRadius = BorderRadius.circular(10);
 
     return ConstrainedBox(
       constraints: const BoxConstraints(
@@ -91,13 +92,11 @@ class NowPlayingPage extends StatelessWidget {
           ? SizedBox(
               width: imageSize,
               height: imageSize,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  image: DecorationImage(
-                    image: FileImage(File(metadata.extras?['artWorkPath'])),
-                    fit: BoxFit.cover,
-                  ),
+              child: ClipRRect(
+                borderRadius: borderRadius,
+                child: Image.file(
+                  File(metadata.extras?['artWorkPath']),
+                  fit: BoxFit.cover,
                 ),
               ),
             )
@@ -105,25 +104,18 @@ class NowPlayingPage extends StatelessWidget {
               width: imageSize,
               height: imageSize,
               imageUrl: metadata.artUri.toString(),
-              imageBuilder: (context, imageProvider) =>
-                  _buildImageDecoration(imageProvider),
+              imageBuilder: (context, imageProvider) => ClipRRect(
+                borderRadius: borderRadius,
+                child: Image(
+                  image: imageProvider,
+                  fit: BoxFit.cover,
+                ),
+              ),
               placeholder: (context, url) => const Spinner(),
               errorWidget: (context, url, error) => NullArtworkWidget(
                 iconSize: size.width / 8,
               ),
             ),
-    );
-  }
-
-  Widget _buildImageDecoration(ImageProvider<Object> imageProvider) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        image: DecorationImage(
-          image: imageProvider,
-          fit: BoxFit.cover,
-        ),
-      ),
     );
   }
 

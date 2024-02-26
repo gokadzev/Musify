@@ -82,13 +82,11 @@ class MiniPlayer extends StatelessWidget {
           ? SizedBox(
               width: 55,
               height: 55,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  image: DecorationImage(
-                    image: FileImage(File(metadata.extras?['artWorkPath'])),
-                    fit: BoxFit.cover,
-                  ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.file(
+                  File(metadata.extras?['artWorkPath']),
+                  fit: BoxFit.cover,
                 ),
               ),
             )
