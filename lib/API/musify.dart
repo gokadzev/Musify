@@ -260,7 +260,7 @@ Future<List> getPlaylists({
 }) async {
   // Early exit if playlists or suggestedPlaylists is empty
   if (playlists.isEmpty ||
-      (playlistsNum != null && query == null && suggestedPlaylists.isEmpty)) {
+      (playlistsNum == null && query == null && suggestedPlaylists.isEmpty)) {
     return [];
   }
 
