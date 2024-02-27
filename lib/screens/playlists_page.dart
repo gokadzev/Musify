@@ -72,12 +72,10 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
           ),
           Expanded(
             child: FutureBuilder(
-              future: _searchBar.text.isEmpty
-                  ? getPlaylists(type: _showOnlyAlbums ? 'album' : 'playlist')
-                  : getPlaylists(
-                      query: _searchBar.text,
-                      type: _showOnlyAlbums ? 'album' : 'playlist',
-                    ),
+              future: getPlaylists(
+                query: _searchBar.text.isEmpty ? null : _searchBar.text,
+                type: _showOnlyAlbums ? 'album' : 'playlist',
+              ),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Spinner();
