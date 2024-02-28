@@ -46,11 +46,7 @@ class MiniPlayer extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 18),
         height: 75,
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.onSecondary,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(18),
-            topRight: Radius.circular(18),
-          ),
+          color: Theme.of(context).colorScheme.secondaryContainer,
         ),
         child: Row(
           children: <Widget>[
@@ -88,33 +84,21 @@ class MiniPlayer extends StatelessWidget {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.only(right: 8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            MarqueeWidget(
-              manualScrollEnabled: false,
-              child: Text(
-                metadata.title,
-                style: TextStyle(
-                  color: fontColor,
-                  fontSize: 17,
-                  fontWeight: FontWeight.w600,
-                ),
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: MarqueeWidget(
+            manualScrollEnabled: false,
+            child: Text(
+              metadata.artist != null
+                  ? '${metadata.artist} - ${metadata.title}'
+                  : metadata.title,
+              style: TextStyle(
+                color: fontColor,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
               ),
             ),
-            if (metadata.artist != null)
-              MarqueeWidget(
-                manualScrollEnabled: false,
-                child: Text(
-                  metadata.artist!,
-                  style: TextStyle(
-                    color: fontColor,
-                    fontSize: 15,
-                  ),
-                ),
-              ),
-          ],
+          ),
         ),
       ),
     );
