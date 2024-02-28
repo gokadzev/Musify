@@ -121,14 +121,14 @@ class PlaylistCube extends StatelessWidget {
             right: 5,
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.7),
+                color: Theme.of(context).colorScheme.background,
                 borderRadius: BorderRadius.circular(5),
               ),
               padding: const EdgeInsets.all(4),
               child: Text(
                 context.l10n!.album,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
                   fontSize: 12,
                 ),
               ),
