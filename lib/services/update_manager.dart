@@ -25,92 +25,96 @@ Future<void> checkAppUpdates(BuildContext context) async {
       final latestVersion = map['version'].toString();
       if (isLatestVersionHigher(appVersion, latestVersion)) {
         final releasesRequest = await http.get(Uri.parse(releasesUrl));
-        final releasesResponse =
-            json.decode(releasesRequest.body) as Map<String, dynamic>;
-        await showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    context.l10n!.appUpdateIsAvailable,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    'V$latestVersion',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                  const SizedBox(height: 10),
-                  ConstrainedBox(
-                    constraints: BoxConstraints(
-                      maxHeight: MediaQuery.of(context).size.height / 2.14,
-                    ),
-                    child: SingleChildScrollView(
-                      child: AutoFormatText(text: releasesResponse['body']),
-                    ),
-                  ),
-                ],
-              ),
-              actions: <Widget>[
-                ButtonBar(
-                  alignment: MainAxisAlignment.center,
+        if (releasesRequest.statusCode == 200) {
+          final releasesResponse =
+              json.decode(releasesRequest.body) as Map<String, dynamic>;
+          await showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    TextButton(
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 12,
-                        ),
-                      ),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        context.l10n!.cancel.toUpperCase(),
+                    Text(
+                      context.l10n!.appUpdateIsAvailable,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    TextButton(
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 12,
-                        ),
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        foregroundColor: Theme.of(context).colorScheme.surface,
+                    const SizedBox(height: 10),
+                    Text(
+                      'V$latestVersion',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(height: 10),
+                    ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxHeight: MediaQuery.of(context).size.height / 2.14,
                       ),
-                      onPressed: () {
-                        getDownloadUrl(map).then(
-                          (url) => {
-                            launchURL(Uri.parse(url)),
-                            Navigator.pop(context),
-                          },
-                        );
-                      },
-                      child: Text(
-                        context.l10n!.download.toUpperCase(),
+                      child: SingleChildScrollView(
+                        child: AutoFormatText(text: releasesResponse['body']),
                       ),
                     ),
                   ],
                 ),
-              ],
-            );
-          },
+                actions: <Widget>[
+                  ButtonBar(
+                    alignment: MainAxisAlignment.center,
+                    children: [
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 12,
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          context.l10n!.cancel.toUpperCase(),
+                        ),
+                      ),
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 12,
+                          ),
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
+                          foregroundColor:
+                              Theme.of(context).colorScheme.surface,
+                        ),
+                        onPressed: () {
+                          getDownloadUrl(map).then(
+                            (url) => {
+                              launchURL(Uri.parse(url)),
+                              Navigator.pop(context),
+                            },
+                          );
+                        },
+                        child: Text(
+                          context.l10n!.download.toUpperCase(),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              );
+            },
+          );
+        }
+      } else {
+        logger.log(
+          'Fetch update API call returned status code ${response.statusCode}',
+          null,
+          null,
         );
       }
-    } else {
-      logger.log(
-        'Fetch update API call returned status code ${response.statusCode}',
-        null,
-        null,
-      );
     }
   } catch (e, stackTrace) {
     logger.log('Error in checkAppUpdates', e, stackTrace);
