@@ -1,4 +1,5 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:musify/API/musify.dart';
@@ -24,7 +25,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    if (!isFdroidBuild && !isUpdateChecked) {
+    if (!isFdroidBuild && !isUpdateChecked && kReleaseMode) {
       checkAppUpdates(context);
       isUpdateChecked = true;
     }
