@@ -86,7 +86,9 @@ ThemeData getAppLightTheme(ColorScheme colorScheme) {
   final base = ThemeData.light();
   return ThemeData(
     colorScheme: colorScheme,
-    textTheme: GoogleFonts.robotoTextTheme(base.textTheme),
+    textTheme: GoogleFonts.robotoTextTheme(base.textTheme).apply(
+      bodyColor: colorScheme.primary,
+    ),
     appBarTheme: base.appBarTheme.copyWith(
       iconTheme: IconThemeData(color: colorScheme.primary),
       centerTitle: true,
