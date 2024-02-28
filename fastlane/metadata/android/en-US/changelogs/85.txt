@@ -1,0 +1,11 @@
+Bug Fixes
+
+- Recently played songs weren't saved in certain cases
+
+Enhancements
+
+- Added an option to clear recently played history
+- Made various changes in UI
+- Changed the mini player UI
+- Boosted app stability and speed with quality and performance enhancements
+- For the full changelog, please visit the GitHub repository
