@@ -117,8 +117,7 @@ class SongBar extends StatelessWidget {
                         child: Text(
                           song['artist'].toString(),
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: Theme.of(context).hintColor,
+                          style: const TextStyle(
                             fontWeight: FontWeight.w400,
                             fontSize: 14,
                           ),

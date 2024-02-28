@@ -35,8 +35,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
               String? description;
 
               return AlertDialog(
-                backgroundColor:
-                    Theme.of(context).dialogBackgroundColor.withOpacity(0.5),
+                backgroundColor: Theme.of(context).dialogBackgroundColor,
                 content: SingleChildScrollView(
                   child: Column(
                     children: <Widget>[

@@ -49,7 +49,6 @@ ThemeData getAppDarkTheme(ColorScheme colorScheme) {
       elevation: 0,
     ),
     listTileTheme: base.listTileTheme.copyWith(
-      selectedColor: colorScheme.primary.withOpacity(0.4),
       textColor: colorScheme.primary,
     ),
     inputDecorationTheme: InputDecorationTheme(
@@ -57,9 +56,11 @@ ThemeData getAppDarkTheme(ColorScheme colorScheme) {
       isDense: true,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(15),
+        borderSide: BorderSide(color: colorScheme.onPrimaryContainer),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(15),
+        borderSide: BorderSide(color: colorScheme.onPrimaryContainer),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(15),
@@ -71,7 +72,6 @@ ThemeData getAppDarkTheme(ColorScheme colorScheme) {
     bottomSheetTheme: BottomSheetThemeData(
       backgroundColor: colorScheme.background,
     ),
-    hintColor: Colors.white,
     visualDensity: VisualDensity.adaptivePlatformDensity,
     useMaterial3: true,
     pageTransitionsTheme: const PageTransitionsTheme(
@@ -100,7 +100,6 @@ ThemeData getAppLightTheme(ColorScheme colorScheme) {
       elevation: 0,
     ),
     listTileTheme: base.listTileTheme.copyWith(
-      selectedColor: colorScheme.primary.withOpacity(0.4),
       textColor: colorScheme.primary,
     ),
     inputDecorationTheme: InputDecorationTheme(
@@ -120,7 +119,6 @@ ThemeData getAppLightTheme(ColorScheme colorScheme) {
       ),
       contentPadding: const EdgeInsets.fromLTRB(18, 14, 20, 14),
     ),
-    hintColor: colorScheme.primary.withOpacity(0.7),
     visualDensity: VisualDensity.adaptivePlatformDensity,
     useMaterial3: true,
     pageTransitionsTheme: const PageTransitionsTheme(

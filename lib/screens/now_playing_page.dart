@@ -240,7 +240,7 @@ class NowPlayingPage extends StatelessWidget {
                   FluentIcons.previous_24_filled,
                   color: audioHandler.hasPrevious
                       ? Theme.of(context).colorScheme.primary
-                      : Theme.of(context).colorScheme.primary.withOpacity(0.5),
+                      : Theme.of(context).colorScheme.surfaceVariant,
                 ),
                 iconSize: size.width * 0.09 < 35 ? size.width * 0.09 : 35,
                 onPressed: () => audioHandler.skipToPrevious(),
@@ -261,7 +261,7 @@ class NowPlayingPage extends StatelessWidget {
                   FluentIcons.next_24_filled,
                   color: audioHandler.hasNext
                       ? Theme.of(context).colorScheme.primary
-                      : Theme.of(context).colorScheme.primary.withOpacity(0.5),
+                      : Theme.of(context).colorScheme.surfaceVariant,
                 ),
                 iconSize: size.width * 0.09 < 35 ? size.width * 0.09 : 35,
                 onPressed: () => audioHandler.skipToNext(),
