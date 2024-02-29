@@ -207,6 +207,8 @@ class NowPlayingPage extends StatelessWidget {
     MediaItem mediaItem,
   ) {
     final songLikeStatus = ValueNotifier<bool>(isSongAlreadyLiked(audioId));
+    late final songOfflineStatus =
+        ValueNotifier<bool>(isSongAlreadyOffline(audioId));
     const iconSize = 20.0;
     return Column(
       children: <Widget>[
@@ -293,6 +295,27 @@ class NowPlayingPage extends StatelessWidget {
           alignment: WrapAlignment.center,
           spacing: 8,
           children: [
+            ValueListenableBuilder<bool>(
+              valueListenable: songOfflineStatus,
+              builder: (_, value, __) {
+                return IconButton(
+                  icon: Icon(
+                    value
+                        ? FluentIcons.cellular_off_24_regular
+                        : FluentIcons.cellular_data_1_24_regular,
+                  ),
+                  onPressed: () {
+                    if (value) {
+                      removeSongFromOffline(audioId);
+                    } else {
+                      makeSongOffline(mediaItemToMap(mediaItem));
+                    }
+
+                    songOfflineStatus.value = !songOfflineStatus.value;
+                  },
+                );
+              },
+            ),
             ValueListenableBuilder<bool>(
               valueListenable: muteNotifier,
               builder: (_, value, __) {
