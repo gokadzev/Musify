@@ -451,13 +451,15 @@ class NowPlayingPage extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(context.l10n!.addToPlaylist),
+          title: Text(
+            context.l10n!.addToPlaylist,
+            style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+          ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               for (final playlist in userCustomPlaylists)
                 Card(
-                  color: Theme.of(context).colorScheme.secondary,
                   child: ListTile(
                     title: Text(playlist['title']),
                     onTap: () {
@@ -465,7 +467,6 @@ class NowPlayingPage extends StatelessWidget {
                       showToast(context, context.l10n!.addedSuccess);
                       Navigator.pop(context);
                     },
-                    textColor: Colors.white,
                   ),
                 ),
             ],
