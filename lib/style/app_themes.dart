@@ -50,6 +50,7 @@ ThemeData getAppDarkTheme(ColorScheme colorScheme) {
     ),
     listTileTheme: base.listTileTheme.copyWith(
       textColor: colorScheme.primary,
+      iconColor: colorScheme.primary,
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
@@ -101,6 +102,7 @@ ThemeData getAppLightTheme(ColorScheme colorScheme) {
     ),
     listTileTheme: base.listTileTheme.copyWith(
       textColor: colorScheme.primary,
+      iconColor: colorScheme.primary,
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,

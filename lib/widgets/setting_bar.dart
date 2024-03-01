@@ -13,7 +13,7 @@ class SettingBar extends StatelessWidget {
       padding: const EdgeInsets.all(8),
       child: Card(
         child: ListTile(
-          leading: Icon(tileIcon, color: Theme.of(context).colorScheme.primary),
+          leading: Icon(tileIcon),
           title: Text(
             tileName,
             style: const TextStyle(fontWeight: FontWeight.w600),

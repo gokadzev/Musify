@@ -109,10 +109,7 @@ class _SearchPageState extends State<SearchPage> {
                   return Card(
                     margin: const EdgeInsets.all(10),
                     child: ListTile(
-                      leading: Icon(
-                        FluentIcons.search_24_regular,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
+                      leading: const Icon(FluentIcons.search_24_regular),
                       title: Text(query),
                       onTap: () async {
                         _searchBar.text = query;
