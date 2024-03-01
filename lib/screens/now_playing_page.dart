@@ -7,7 +7,6 @@ import 'package:musify/main.dart';
 import 'package:musify/models/position_data.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/flutter_bottom_sheet.dart';
-import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/formatter.dart';
 import 'package:musify/utilities/mediaitem.dart';
 import 'package:musify/widgets/marque.dart';
@@ -334,7 +333,7 @@ class NowPlayingPage extends StatelessWidget {
               icon: const Icon(Icons.add),
               iconSize: iconSize,
               onPressed: () {
-                _showAddToPlaylistDialog(context, mediaItemToMap(mediaItem));
+                showAddToPlaylistDialog(context, mediaItemToMap(mediaItem));
               },
             ),
             if (activePlaylist['list'].isNotEmpty)
@@ -443,36 +442,6 @@ class NowPlayingPage extends StatelessWidget {
           ],
         ),
       ],
-    );
-  }
-
-  void _showAddToPlaylistDialog(BuildContext context, dynamic song) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(
-            context.l10n!.addToPlaylist,
-            style: TextStyle(color: Theme.of(context).colorScheme.secondary),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              for (final playlist in userCustomPlaylists)
-                Card(
-                  child: ListTile(
-                    title: Text(playlist['title']),
-                    onTap: () {
-                      addSongInCustomPlaylist(playlist['title'], song);
-                      showToast(context, context.l10n!.addedSuccess);
-                      Navigator.pop(context);
-                    },
-                  ),
-                ),
-            ],
-          ),
-        );
-      },
     );
   }
 }
