@@ -33,14 +33,9 @@ class SongBar extends StatelessWidget {
     false: FluentIcons.star_24_regular,
   };
 
-  late final songLikeStatus =
-      ValueNotifier<bool>(isSongAlreadyLiked(song['ytid']));
-  late final songOfflineStatus =
-      ValueNotifier<bool>(isSongAlreadyOffline(song['ytid']));
-
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final primaryColor = Theme.of(context).colorScheme.primary;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: GestureDetector(
@@ -62,41 +57,7 @@ class SongBar extends StatelessWidget {
             padding: const EdgeInsets.all(8),
             child: Row(
               children: [
-                if ((song['isOffline'] ?? false) && song['artworkPath'] != null)
-                  SizedBox(
-                    width: 60,
-                    height: 60,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        image: DecorationImage(
-                          image:
-                              FileImage(File(song['lowResImage'].toString())),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  )
-                else
-                  CachedNetworkImage(
-                    key: Key(song['ytid'].toString()),
-                    width: 60,
-                    height: 60,
-                    imageUrl: song['lowResImage'].toString(),
-                    imageBuilder: (context, imageProvider) => DecoratedBox(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        image: DecorationImage(
-                          image: imageProvider,
-                          centerSlice: const Rect.fromLTRB(1, 1, 1, 1),
-                        ),
-                      ),
-                    ),
-                    errorWidget: (context, url, error) =>
-                        const NullArtworkWidget(
-                      iconSize: 30,
-                    ),
-                  ),
+                _buildAlbumArt(),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Column(
@@ -106,7 +67,7 @@ class SongBar extends StatelessWidget {
                         song['title'],
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          color: colorScheme.primary,
+                          color: primaryColor,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
@@ -126,72 +87,115 @@ class SongBar extends StatelessWidget {
                     ],
                   ),
                 ),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    ValueListenableBuilder<bool>(
-                      valueListenable: songLikeStatus,
-                      builder: (_, value, __) {
-                        return IconButton(
-                          color: colorScheme.primary,
-                          icon: Icon(likeStatusToIconMapper[value]),
-                          onPressed: () {
-                            songLikeStatus.value = !songLikeStatus.value;
-                            updateSongLikeStatus(
-                              song['ytid'],
-                              songLikeStatus.value,
-                            );
-                            final likedSongsLength =
-                                currentLikedSongsLength.value;
-                            currentLikedSongsLength.value = value
-                                ? likedSongsLength + 1
-                                : likedSongsLength - 1;
-                          },
-                        );
-                      },
-                    ),
-                    IconButton(
-                      color: colorScheme.primary,
-                      icon:
-                          passingPlaylist != null && songIndexInPlaylist != null
-                              ? const Icon(FluentIcons.delete_24_filled)
-                              : const Icon(FluentIcons.add_24_regular),
-                      onPressed: () =>
-                          passingPlaylist != null && songIndexInPlaylist != null
-                              ? _removeFromPlaylist()
-                              : showAddToPlaylistDialog(context, song),
-                    ),
-                    ValueListenableBuilder<bool>(
-                      valueListenable: songOfflineStatus,
-                      builder: (_, value, __) {
-                        return IconButton(
-                          color: colorScheme.primary,
-                          icon: Icon(
-                            value
-                                ? FluentIcons.cellular_off_24_regular
-                                : FluentIcons.cellular_data_1_24_regular,
-                          ),
-                          onPressed: () {
-                            if (value) {
-                              removeSongFromOffline(song['ytid']);
-                            } else {
-                              makeSongOffline(song);
-                            }
-
-                            songOfflineStatus.value = !songOfflineStatus.value;
-                          },
-                        );
-                      },
-                    ),
-                    if (showMusicDuration && song['duration'] != null)
-                      Text('(${formatDuration(song['duration'])})'),
-                  ],
-                ),
+                _buildActionButtons(context, primaryColor),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildAlbumArt() {
+    if ((song['isOffline'] ?? false) && song['artworkPath'] != null) {
+      return SizedBox(
+        width: 60,
+        height: 60,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            image: DecorationImage(
+              image: FileImage(File(song['lowResImage'].toString())),
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+      );
+    } else {
+      return CachedNetworkImage(
+        key: Key(song['ytid'].toString()),
+        width: 60,
+        height: 60,
+        imageUrl: song['lowResImage'].toString(),
+        imageBuilder: (context, imageProvider) => DecoratedBox(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            image: DecorationImage(
+              image: imageProvider,
+              centerSlice: const Rect.fromLTRB(1, 1, 1, 1),
+            ),
+          ),
+        ),
+        errorWidget: (context, url, error) => const NullArtworkWidget(
+          iconSize: 30,
+        ),
+      );
+    }
+  }
+
+  Widget _buildActionButtons(BuildContext context, Color primaryColor) {
+    final songLikeStatus =
+        ValueNotifier<bool>(isSongAlreadyLiked(song['ytid']));
+    final songOfflineStatus =
+        ValueNotifier<bool>(isSongAlreadyOffline(song['ytid']));
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ValueListenableBuilder<bool>(
+          valueListenable: songLikeStatus,
+          builder: (_, value, __) {
+            return IconButton(
+              color: primaryColor,
+              icon: Icon(likeStatusToIconMapper[value]),
+              onPressed: () {
+                songLikeStatus.value = !songLikeStatus.value;
+                updateSongLikeStatus(
+                  song['ytid'],
+                  songLikeStatus.value,
+                );
+                final likedSongsLength = currentLikedSongsLength.value;
+                currentLikedSongsLength.value =
+                    value ? likedSongsLength + 1 : likedSongsLength - 1;
+              },
+            );
+          },
+        ),
+        IconButton(
+          color: primaryColor,
+          icon: passingPlaylist != null && songIndexInPlaylist != null
+              ? const Icon(FluentIcons.delete_24_filled)
+              : const Icon(FluentIcons.add_24_regular),
+          onPressed: () =>
+              passingPlaylist != null && songIndexInPlaylist != null
+                  ? _removeFromPlaylist()
+                  : showAddToPlaylistDialog(context, song),
+        ),
+        ValueListenableBuilder<bool>(
+          valueListenable: songOfflineStatus,
+          builder: (_, value, __) {
+            return IconButton(
+              color: primaryColor,
+              icon: Icon(
+                value
+                    ? FluentIcons.cellular_off_24_regular
+                    : FluentIcons.cellular_data_1_24_regular,
+              ),
+              onPressed: () {
+                if (value) {
+                  removeSongFromOffline(song['ytid']);
+                } else {
+                  makeSongOffline(song);
+                }
+
+                songOfflineStatus.value = !songOfflineStatus.value;
+              },
+            );
+          },
+        ),
+        if (showMusicDuration && song['duration'] != null)
+          Text('(${formatDuration(song['duration'])})'),
+      ],
     );
   }
 
