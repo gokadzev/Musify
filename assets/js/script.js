@@ -1,4 +1,5 @@
-const checkApiUrl = 'https://api.github.com/repos/gokadzev/Musify/releases'
+const checkApiUrl =
+  'https://api.github.com/repos/gokadzev/Musify/releases/latest'
 const versionElement = document.getElementById('version')
 const downloadElement = document.getElementById('download')
 const downloadsCount = document.getElementById('downloads_count_element')
@@ -97,10 +98,10 @@ window.onload = function () {
 
   makeHttpRequest(checkApiUrl, (res) => {
     const response = JSON.parse(res)
-    const appUrl = response[0]['assets'].find(
-      (r) => r['name'] === 'Musify.apk'
-    )['browser_download_url']
-    const appVersion = response[0]['tag_name']
+    const appUrl = response['assets'].find((r) => r['name'] === 'Musify.apk')[
+      'browser_download_url'
+    ]
+    const appVersion = response['tag_name']
     versionElement.textContent += 'Current Version: ' + appVersion
     downloadElement.setAttribute('href', appUrl)
   })
