@@ -107,14 +107,20 @@ Future<void> checkAppUpdates(BuildContext context) async {
               );
             },
           );
+        } else {
+          logger.log(
+            'Fetch update API (releasesUrl) call returned status code ${response.statusCode}',
+            null,
+            null,
+          );
         }
-      } else {
-        logger.log(
-          'Fetch update API call returned status code ${response.statusCode}',
-          null,
-          null,
-        );
       }
+    } else {
+      logger.log(
+        'Fetch update API (checkUrl) call returned status code ${response.statusCode}',
+        null,
+        null,
+      );
     }
   } catch (e, stackTrace) {
     logger.log('Error in checkAppUpdates', e, stackTrace);
