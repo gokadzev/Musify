@@ -1,0 +1,11 @@
+Bug Fixes
+
+- Don't add a false log in non-fdroid version
+
+Enhancements
+
+- Added offline button in the full player page too
+- Updated Portuguese translation
+- Made various improvements in UI
+- Boosted app stability and speed with quality and performance enhancements
+- For the full changelog, please visit the GitHub repository
