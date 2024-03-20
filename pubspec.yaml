@@ -20,6 +20,7 @@ dependencies:
   fluentui_system_icons: ^1.1.230
   flutter:
     sdk: flutter
+  flutter_flip_card: ^0.0.5
   flutter_localizations:
     sdk: flutter
   go_router: ^13.1.0

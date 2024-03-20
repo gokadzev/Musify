@@ -1,6 +1,7 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_flip_card/flutter_flip_card.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
@@ -14,6 +15,8 @@ import 'package:musify/widgets/playback_icon_button.dart';
 import 'package:musify/widgets/song_artwork.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/spinner.dart';
+
+final _lyricsController = FlipCardController();
 
 class NowPlayingPage extends StatelessWidget {
   const NowPlayingPage({super.key});
@@ -43,7 +46,7 @@ class NowPlayingPage extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       SizedBox(height: size.height * 0.01),
-                      buildArtwork(size, metadata),
+                      buildArtwork(context, size, metadata),
                       SizedBox(height: size.height * 0.03),
                       buildMarqueeText(
                         metadata.title,
@@ -79,19 +82,67 @@ class NowPlayingPage extends StatelessWidget {
     );
   }
 
-  Widget buildArtwork(Size size, MediaItem metadata) {
+  Widget buildArtwork(BuildContext context, Size size, MediaItem metadata) {
     const padding = 90;
     final imageSize = size.width - padding;
 
-    return ConstrainedBox(
-      constraints: const BoxConstraints(
-        maxWidth: 300,
-        maxHeight: 300,
+    return FlipCard(
+      rotateSide: RotateSide.right,
+      onTapFlipping: true,
+      controller: _lyricsController,
+      frontWidget: ConstrainedBox(
+        constraints: const BoxConstraints(
+          maxWidth: 300,
+          maxHeight: 300,
+        ),
+        child: SongArtworkWidget(
+          metadata: metadata,
+          size: imageSize,
+          errorWidgetIconSize: size.width / 8,
+        ),
       ),
-      child: SongArtworkWidget(
-        metadata: metadata,
-        size: imageSize,
-        errorWidgetIconSize: size.width / 8,
+      backWidget: ConstrainedBox(
+        constraints: const BoxConstraints(
+          maxWidth: 300,
+          maxHeight: 300,
+        ),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.secondaryContainer,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: ValueListenableBuilder<String?>(
+            valueListenable: lyrics,
+            builder: (_, value, __) {
+              if (value != null && value != 'not found') {
+                return SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(6),
+                    child: Center(
+                      child: Text(
+                        value,
+                        style: const TextStyle(
+                          fontSize: 16,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                );
+              } else if (value == null) {
+                return const Spinner();
+              } else {
+                return Text(
+                  context.l10n!.lyricsNotAvailable,
+                  style: const TextStyle(
+                    fontSize: 25,
+                  ),
+                  textAlign: TextAlign.center,
+                );
+              }
+            },
+          ),
+        ),
       ),
     );
   }
@@ -366,42 +417,14 @@ class NowPlayingPage extends StatelessWidget {
               icon: const Icon(FluentIcons.text_32_filled),
               iconSize: iconSize,
               onPressed: () {
-                getSongLyrics(
-                  mediaItem.artist ?? '',
-                  mediaItem.title,
-                );
-                showCustomBottomSheet(
-                  context,
-                  ValueListenableBuilder<String?>(
-                    valueListenable: lyrics,
-                    builder: (_, value, __) {
-                      if (value != null && value != 'not found') {
-                        return Padding(
-                          padding: const EdgeInsets.all(6),
-                          child: Center(
-                            child: Text(
-                              value,
-                              style: const TextStyle(
-                                fontSize: 16,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        );
-                      } else if (value == null) {
-                        return const Spinner();
-                      } else {
-                        return Text(
-                          context.l10n!.lyricsNotAvailable,
-                          style: const TextStyle(
-                            fontSize: 25,
-                          ),
-                          textAlign: TextAlign.center,
-                        );
-                      }
-                    },
-                  ),
-                );
+                if (lastFetchedLyrics !=
+                    '${mediaItem.artist} - ${mediaItem.title}') {
+                  getSongLyrics(
+                    mediaItem.artist ?? '',
+                    mediaItem.title,
+                  );
+                }
+                _lyricsController.flipcard();
               },
             ),
             ValueListenableBuilder<bool>(
