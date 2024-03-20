@@ -24,52 +24,57 @@ class NowPlayingPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: size.height * 0.07,
         title: Text(context.l10n!.nowPlaying),
       ),
-      body: SingleChildScrollView(
-        child: StreamBuilder<MediaItem?>(
-          stream: audioHandler.mediaItem,
-          builder: (context, snapshot) {
-            if (!snapshot.hasData || snapshot.data == null) {
-              return const SizedBox.shrink();
-            } else {
-              final metadata = snapshot.data!;
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(height: size.height * 0.01),
-                  buildArtwork(size, metadata),
-                  SizedBox(height: size.height * 0.03),
-                  buildMarqueeText(
-                    metadata.title,
-                    Theme.of(context).colorScheme.primary,
-                    size.height * 0.030,
-                    FontWeight.bold,
-                    size.width,
+      body: StreamBuilder<MediaItem?>(
+        stream: audioHandler.mediaItem,
+        builder: (context, snapshot) {
+          if (!snapshot.hasData || snapshot.data == null) {
+            return const SizedBox.shrink();
+          } else {
+            final metadata = snapshot.data!;
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(height: size.height * 0.01),
+                      buildArtwork(size, metadata),
+                      SizedBox(height: size.height * 0.03),
+                      buildMarqueeText(
+                        metadata.title,
+                        Theme.of(context).colorScheme.primary,
+                        size.height * 0.030,
+                        FontWeight.bold,
+                        size.width,
+                      ),
+                      const SizedBox(height: 4),
+                      if (metadata.artist != null)
+                        buildMarqueeText(
+                          metadata.artist!,
+                          Theme.of(context).colorScheme.primary,
+                          size.height * 0.018,
+                          FontWeight.w500,
+                          size.width,
+                        ),
+                      if (!(metadata.extras?['isLive'] ?? false))
+                        _buildPlayer(
+                          context,
+                          size,
+                          metadata.extras?['ytid'],
+                          metadata,
+                        ),
+                    ],
                   ),
-                  const SizedBox(height: 4),
-                  if (metadata.artist != null)
-                    buildMarqueeText(
-                      metadata.artist!,
-                      Theme.of(context).colorScheme.primary,
-                      size.height * 0.018,
-                      FontWeight.w500,
-                      size.width,
-                    ),
-                  if (!(metadata.extras?['isLive'] ?? false))
-                    _buildPlayer(
-                      context,
-                      size,
-                      metadata.extras?['ytid'],
-                      metadata,
-                    ),
-                ],
-              );
-            }
-          },
-        ),
+                ),
+              ],
+            );
+          }
+        },
       ),
     );
   }
@@ -121,20 +126,13 @@ class NowPlayingPage extends StatelessWidget {
     dynamic audioId,
     MediaItem mediaItem,
   ) {
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        vertical: size.height * 0.02,
-        horizontal: size.width * 0.05,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          buildPositionSlider(),
-          SizedBox(height: size.height * 0.03),
-          buildPlayerControls(context, size, audioId, mediaItem),
-        ],
-      ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        buildPositionSlider(),
+        SizedBox(height: size.height * 0.03),
+        buildPlayerControls(context, size, audioId, mediaItem),
+      ],
     );
   }
 
@@ -147,7 +145,6 @@ class NowPlayingPage extends StatelessWidget {
         }
         final positionData = snapshot.data!;
         return Column(
-          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             buildSlider(Theme.of(context).colorScheme.primary, positionData),
@@ -177,25 +174,27 @@ class NowPlayingPage extends StatelessWidget {
     final positionText = formatDuration(positionData.position.inMilliseconds);
     final durationText = formatDuration(positionData.duration.inMilliseconds);
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          positionText,
-          style: TextStyle(
-            fontSize: 17,
-            color: fontColor,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 22),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            positionText,
+            style: TextStyle(
+              fontSize: 17,
+              color: fontColor,
+            ),
           ),
-        ),
-        const Spacer(),
-        Text(
-          durationText,
-          style: TextStyle(
-            fontSize: 17,
-            color: fontColor,
+          Text(
+            durationText,
+            style: TextStyle(
+              fontSize: 17,
+              color: fontColor,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -211,83 +210,80 @@ class NowPlayingPage extends StatelessWidget {
     const iconSize = 20.0;
     return Column(
       children: <Widget>[
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              ValueListenableBuilder<bool>(
-                valueListenable: shuffleNotifier,
-                builder: (_, value, __) {
-                  return IconButton(
-                    icon: Icon(
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            ValueListenableBuilder<bool>(
+              valueListenable: shuffleNotifier,
+              builder: (_, value, __) {
+                return IconButton(
+                  icon: Icon(
+                    value
+                        ? FluentIcons.arrow_shuffle_24_filled
+                        : FluentIcons.arrow_shuffle_off_24_filled,
+                  ),
+                  iconSize: iconSize,
+                  onPressed: () {
+                    audioHandler.setShuffleMode(
                       value
-                          ? FluentIcons.arrow_shuffle_24_filled
-                          : FluentIcons.arrow_shuffle_off_24_filled,
-                    ),
-                    iconSize: iconSize,
-                    onPressed: () {
-                      audioHandler.setShuffleMode(
-                        value
-                            ? AudioServiceShuffleMode.none
-                            : AudioServiceShuffleMode.all,
-                      );
-                    },
-                  );
-                },
+                          ? AudioServiceShuffleMode.none
+                          : AudioServiceShuffleMode.all,
+                    );
+                  },
+                );
+              },
+            ),
+            IconButton(
+              icon: Icon(
+                FluentIcons.previous_24_filled,
+                color: audioHandler.hasPrevious
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).colorScheme.surfaceVariant,
               ),
-              IconButton(
-                icon: Icon(
-                  FluentIcons.previous_24_filled,
-                  color: audioHandler.hasPrevious
-                      ? Theme.of(context).colorScheme.primary
-                      : Theme.of(context).colorScheme.surfaceVariant,
-                ),
-                iconSize: size.width * 0.09 < 35 ? size.width * 0.09 : 35,
-                onPressed: () => audioHandler.skipToPrevious(),
-                splashColor: Colors.transparent,
+              iconSize: size.width * 0.09 < 35 ? size.width * 0.09 : 35,
+              onPressed: () => audioHandler.skipToPrevious(),
+              splashColor: Colors.transparent,
+            ),
+            StreamBuilder<PlaybackState>(
+              stream: audioHandler.playbackState,
+              builder: (context, snapshot) {
+                return buildPlaybackIconButton(
+                  snapshot.data,
+                  size.width * 0.19 < 72 ? size.width * 0.19 : 72,
+                  Theme.of(context).colorScheme.primary,
+                );
+              },
+            ),
+            IconButton(
+              icon: Icon(
+                FluentIcons.next_24_filled,
+                color: audioHandler.hasNext
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).colorScheme.surfaceVariant,
               ),
-              StreamBuilder<PlaybackState>(
-                stream: audioHandler.playbackState,
-                builder: (context, snapshot) {
-                  return buildPlaybackIconButton(
-                    snapshot.data,
-                    size.width * 0.19 < 72 ? size.width * 0.19 : 72,
-                    Theme.of(context).colorScheme.primary,
-                  );
-                },
-              ),
-              IconButton(
-                icon: Icon(
-                  FluentIcons.next_24_filled,
-                  color: audioHandler.hasNext
-                      ? Theme.of(context).colorScheme.primary
-                      : Theme.of(context).colorScheme.surfaceVariant,
-                ),
-                iconSize: size.width * 0.09 < 35 ? size.width * 0.09 : 35,
-                onPressed: () => audioHandler.skipToNext(),
-                splashColor: Colors.transparent,
-              ),
-              ValueListenableBuilder<bool>(
-                valueListenable: repeatNotifier,
-                builder: (_, value, __) {
-                  return IconButton(
-                    icon: Icon(
-                      value
-                          ? FluentIcons.arrow_repeat_1_24_filled
-                          : FluentIcons.arrow_repeat_all_off_24_filled,
-                    ),
-                    iconSize: iconSize,
-                    onPressed: () => audioHandler.setRepeatMode(
-                      value
-                          ? AudioServiceRepeatMode.none
-                          : AudioServiceRepeatMode.all,
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
+              iconSize: size.width * 0.09 < 35 ? size.width * 0.09 : 35,
+              onPressed: () => audioHandler.skipToNext(),
+              splashColor: Colors.transparent,
+            ),
+            ValueListenableBuilder<bool>(
+              valueListenable: repeatNotifier,
+              builder: (_, value, __) {
+                return IconButton(
+                  icon: Icon(
+                    value
+                        ? FluentIcons.arrow_repeat_1_24_filled
+                        : FluentIcons.arrow_repeat_all_off_24_filled,
+                  ),
+                  iconSize: iconSize,
+                  onPressed: () => audioHandler.setRepeatMode(
+                    value
+                        ? AudioServiceRepeatMode.none
+                        : AudioServiceRepeatMode.all,
+                  ),
+                );
+              },
+            ),
+          ],
         ),
         SizedBox(height: size.height * 0.1),
         Wrap(
