@@ -39,8 +39,8 @@ Map<String, dynamic> returnSongLayout(int index, Video song) => {
       'isLive': song.isLive,
     };
 
-String formatDuration(int milliseconds) {
-  final duration = Duration(milliseconds: milliseconds);
+String formatDuration(int audioDurationInSeconds) {
+  final duration = Duration(seconds: audioDurationInSeconds);
 
   final hours = duration.inHours;
   final minutes = duration.inMinutes.remainder(60);

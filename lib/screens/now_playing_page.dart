@@ -222,8 +222,8 @@ class NowPlayingPage extends StatelessWidget {
   }
 
   Widget buildPositionRow(Color fontColor, PositionData positionData) {
-    final positionText = formatDuration(positionData.position.inMilliseconds);
-    final durationText = formatDuration(positionData.duration.inMilliseconds);
+    final positionText = formatDuration(positionData.position.inSeconds);
+    final durationText = formatDuration(positionData.duration.inSeconds);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 22),
