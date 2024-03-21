@@ -213,11 +213,11 @@ class NowPlayingPage extends StatelessWidget {
     return Slider(
       activeColor: activeColor,
       inactiveColor: Colors.green[50],
-      value: positionData.position.inMilliseconds.toDouble(),
+      value: positionData.position.inSeconds.toDouble(),
       onChanged: (value) {
-        audioHandler.seek(Duration(milliseconds: value.toInt()));
+        audioHandler.seek(Duration(seconds: value.toInt()));
       },
-      max: positionData.duration.inMilliseconds.toDouble() + 5000,
+      max: positionData.duration.inSeconds.toDouble(),
     );
   }
 
