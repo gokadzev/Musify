@@ -114,6 +114,13 @@ class NowPlayingPage extends StatelessWidget {
           child: ValueListenableBuilder<String?>(
             valueListenable: lyrics,
             builder: (_, value, __) {
+              if (lastFetchedLyrics !=
+                  '${metadata.artist} - ${metadata.title}') {
+                getSongLyrics(
+                  metadata.artist ?? '',
+                  metadata.title,
+                );
+              }
               if (value != null && value != 'not found') {
                 return SingleChildScrollView(
                   child: Padding(
@@ -416,16 +423,7 @@ class NowPlayingPage extends StatelessWidget {
             IconButton(
               icon: const Icon(FluentIcons.text_32_filled),
               iconSize: iconSize,
-              onPressed: () {
-                if (lastFetchedLyrics !=
-                    '${mediaItem.artist} - ${mediaItem.title}') {
-                  getSongLyrics(
-                    mediaItem.artist ?? '',
-                    mediaItem.title,
-                  );
-                }
-                _lyricsController.flipcard();
-              },
+              onPressed: _lyricsController.flipcard,
             ),
             ValueListenableBuilder<bool>(
               valueListenable: songLikeStatus,
