@@ -14,19 +14,20 @@ Widget buildPlaybackIconButton(
   IconData icon;
   VoidCallback? onPressed;
 
-  if (processingState == AudioProcessingState.loading ||
-      processingState == AudioProcessingState.buffering) {
-    icon = FluentIcons.spinner_ios_16_filled;
-    onPressed = null;
-  } else if (playing != true) {
-    icon = FluentIcons.play_circle_24_filled;
-    onPressed = audioHandler.play;
-  } else if (processingState != AudioProcessingState.completed) {
-    icon = FluentIcons.pause_circle_24_filled;
-    onPressed = audioHandler.pause;
-  } else {
-    icon = FluentIcons.replay_20_filled;
-    onPressed = () => audioHandler.seek(Duration.zero);
+  switch (processingState) {
+    case AudioProcessingState.buffering || AudioProcessingState.loading:
+      icon = FluentIcons.spinner_ios_16_filled;
+      onPressed = null;
+      break;
+    case AudioProcessingState.completed:
+      icon = FluentIcons.replay_20_filled;
+      onPressed = () => audioHandler.seek(Duration.zero);
+      break;
+    default:
+      icon = playing != true
+          ? FluentIcons.play_circle_24_filled
+          : FluentIcons.pause_circle_24_filled;
+      onPressed = playing != true ? audioHandler.play : audioHandler.pause;
   }
 
   return InkWell(
