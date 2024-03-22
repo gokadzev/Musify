@@ -25,23 +25,25 @@ class MiniPlayer extends StatelessWidget {
           );
         }
       },
-      onHorizontalDragUpdate: (details) {
-        if (details.primaryDelta! > 0) {
-          if (!_isHandlingSwipe) {
-            _isHandlingSwipe = true;
-            audioHandler.skipToPrevious().whenComplete(() {
-              _isHandlingSwipe = false;
-            });
-          }
-        } else if (details.primaryDelta! < 0) {
-          if (!_isHandlingSwipe) {
-            _isHandlingSwipe = true;
-            audioHandler.skipToNext().whenComplete(() {
-              _isHandlingSwipe = false;
-            });
-          }
-        }
-      },
+      onHorizontalDragUpdate: audioHandler.hasNext
+          ? (details) {
+              if (details.primaryDelta! > 0) {
+                if (!_isHandlingSwipe) {
+                  _isHandlingSwipe = true;
+                  audioHandler.skipToPrevious().whenComplete(() {
+                    _isHandlingSwipe = false;
+                  });
+                }
+              } else if (details.primaryDelta! < 0) {
+                if (!_isHandlingSwipe) {
+                  _isHandlingSwipe = true;
+                  audioHandler.skipToNext().whenComplete(() {
+                    _isHandlingSwipe = false;
+                  });
+                }
+              }
+            }
+          : null,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 18),
         height: 75,
