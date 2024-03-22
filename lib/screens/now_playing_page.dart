@@ -106,7 +106,9 @@ class NowPlayingPage extends StatelessWidget {
           maxWidth: 300,
           maxHeight: 300,
         ),
-        child: DecoratedBox(
+        child: Container(
+          width: imageSize,
+          height: imageSize,
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.secondaryContainer,
             borderRadius: BorderRadius.circular(10),
@@ -139,12 +141,14 @@ class NowPlayingPage extends StatelessWidget {
               } else if (value == null) {
                 return const Spinner();
               } else {
-                return Text(
-                  context.l10n!.lyricsNotAvailable,
-                  style: const TextStyle(
-                    fontSize: 25,
+                return Center(
+                  child: Text(
+                    context.l10n!.lyricsNotAvailable,
+                    style: const TextStyle(
+                      fontSize: 25,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
                 );
               }
             },
