@@ -36,6 +36,8 @@ class NowPlayingPage extends StatelessWidget {
             return const SizedBox.shrink();
           } else {
             final metadata = snapshot.data!;
+            final screenHeight = size.height;
+            final screenWidth = size.width;
             return Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               mainAxisSize: MainAxisSize.min,
@@ -45,24 +47,23 @@ class NowPlayingPage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      SizedBox(height: size.height * 0.01),
                       buildArtwork(context, size, metadata),
-                      SizedBox(height: size.height * 0.03),
+                      const SizedBox(height: 1),
                       buildMarqueeText(
                         metadata.title,
                         Theme.of(context).colorScheme.primary,
-                        size.height * 0.030,
+                        screenHeight * 0.030,
                         FontWeight.bold,
-                        size.width,
+                        screenWidth,
                       ),
                       const SizedBox(height: 4),
                       if (metadata.artist != null)
                         buildMarqueeText(
                           metadata.artist!,
                           Theme.of(context).colorScheme.primary,
-                          size.height * 0.018,
+                          screenHeight * 0.018,
                           FontWeight.w500,
-                          size.width,
+                          screenWidth,
                         ),
                       if (!(metadata.extras?['isLive'] ?? false))
                         _buildPlayer(
