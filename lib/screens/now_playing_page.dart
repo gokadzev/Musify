@@ -206,12 +206,18 @@ class NowPlayingPage extends StatelessWidget {
           return const SizedBox.shrink();
         }
         final positionData = snapshot.data!;
+        final primaryColor = Theme.of(context).colorScheme.primary;
+        final secondaryColor = Theme.of(context).colorScheme.secondaryContainer;
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            buildSlider(Theme.of(context).colorScheme.primary, positionData),
+            buildSlider(
+              secondaryColor,
+              primaryColor,
+              positionData,
+            ),
             buildPositionRow(
-              Theme.of(context).colorScheme.primary,
+              primaryColor,
               positionData,
             ),
           ],
@@ -220,10 +226,14 @@ class NowPlayingPage extends StatelessWidget {
     );
   }
 
-  Widget buildSlider(Color activeColor, PositionData positionData) {
+  Widget buildSlider(
+    Color sliderColor,
+    Color activeColor,
+    PositionData positionData,
+  ) {
     return Slider(
       activeColor: activeColor,
-      inactiveColor: Colors.green[50],
+      inactiveColor: sliderColor,
       value: positionData.position.inSeconds.toDouble(),
       onChanged: (value) {
         audioHandler.seek(Duration(seconds: value.toInt()));
