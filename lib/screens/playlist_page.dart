@@ -162,9 +162,10 @@ class _PlaylistPageState extends State<PlaylistPage> {
               child: Text(
                 _playlist['title'],
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
             ),
