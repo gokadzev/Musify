@@ -13,6 +13,7 @@ import 'package:musify/style/app_colors.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/url_launcher.dart';
+import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/setting_bar.dart';
 import 'package:musify/widgets/setting_switch_bar.dart';
 
@@ -377,21 +378,50 @@ class MorePage extends StatelessWidget {
               },
             ),
             SettingBar(
-              context.l10n!.clearSearchHistory,
-              FluentIcons.history_24_filled,
-              () {
-                searchHistory = [];
-                deleteData('user', 'searchHistory');
-                showToast(context, '${context.l10n!.searchHistoryMsg}!');
-              },
-            ),
+                context.l10n!.clearSearchHistory, FluentIcons.history_24_filled,
+                () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return ConfirmationDialog(
+                    submitMessage: context.l10n!.clear,
+                    confirmationMessage:
+                        context.l10n!.clearSearchHistoryQuestion,
+                    onCancel: () => {Navigator.of(context).pop()},
+                    onSubmit: () => {
+                      Navigator.of(context).pop(),
+                      searchHistory = [],
+                      deleteData('user', 'searchHistory'),
+                      showToast(context, '${context.l10n!.searchHistoryMsg}!'),
+                    },
+                  );
+                },
+              );
+            }),
             SettingBar(
               context.l10n!.clearRecentlyPlayed,
               FluentIcons.receipt_play_24_filled,
               () {
-                userRecentlyPlayed = [];
-                deleteData('user', 'recentlyPlayedSongs');
-                showToast(context, '${context.l10n!.recentlyPlayedMsg}!');
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return ConfirmationDialog(
+                      submitMessage: context.l10n!.clear,
+                      confirmationMessage:
+                          context.l10n!.clearRecentlyPlayedQuestion,
+                      onCancel: () => {Navigator.of(context).pop()},
+                      onSubmit: () => {
+                        Navigator.of(context).pop(),
+                        userRecentlyPlayed = [],
+                        deleteData('user', 'recentlyPlayedSongs'),
+                        showToast(
+                          context,
+                          '${context.l10n!.recentlyPlayedMsg}!',
+                        ),
+                      },
+                    );
+                  },
+                );
               },
             ),
             SettingBar(
