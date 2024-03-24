@@ -56,16 +56,8 @@ ThemeData getAppDarkTheme(ColorScheme colorScheme) {
       filled: true,
       isDense: true,
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(15),
-        borderSide: BorderSide(color: colorScheme.onPrimaryContainer),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(15),
-        borderSide: BorderSide(color: colorScheme.onPrimaryContainer),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(15),
-        borderSide: BorderSide(color: colorScheme.primary),
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide.none,
       ),
       contentPadding: const EdgeInsets.fromLTRB(18, 14, 20, 14),
       // suffixIconColor: colorScheme.onSurface,
@@ -108,16 +100,8 @@ ThemeData getAppLightTheme(ColorScheme colorScheme) {
       filled: true,
       isDense: true,
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide.none,
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(15),
-        borderSide: BorderSide.none,
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(15),
-        borderSide: BorderSide(color: colorScheme.primary),
       ),
       contentPadding: const EdgeInsets.fromLTRB(18, 14, 20, 14),
     ),
