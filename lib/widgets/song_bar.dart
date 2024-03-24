@@ -230,7 +230,7 @@ void showAddToPlaylistDialog(BuildContext context, dynamic song) {
                   title: Text(playlist['title']),
                   onTap: () {
                     addSongInCustomPlaylist(playlist['title'], song);
-                    showToast(context, context.l10n!.addedSuccess);
+                    showToast(context, context.l10n!.songAdded);
                     Navigator.pop(context);
                   },
                 ),
