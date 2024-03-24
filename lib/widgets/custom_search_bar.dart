@@ -28,7 +28,8 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-      child: TextField(
+      child: SearchBar(
+        hintText: widget.labelText,
         onSubmitted: (String value) {
           widget.onSubmitted(value);
           widget.focusNode.unfocus();
@@ -43,47 +44,47 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
         textInputAction: TextInputAction.search,
         controller: widget.controller,
         focusNode: widget.focusNode,
-        decoration: InputDecoration(
-          suffixIcon: widget.loadingProgressNotifier != null
-              ? ValueListenableBuilder<bool>(
-                  valueListenable: widget.loadingProgressNotifier!,
-                  builder: (_, value, __) {
-                    if (value) {
-                      return IconButton(
-                        icon: const SizedBox(
-                          height: 18,
-                          width: 18,
-                          child: Spinner(),
-                        ),
-                        onPressed: () {
-                          widget.onSubmitted(widget.controller.text);
-                          widget.focusNode.unfocus();
-                        },
-                      );
-                    } else {
-                      return IconButton(
-                        icon: const Icon(
-                          FluentIcons.search_20_regular,
-                        ),
-                        onPressed: () {
-                          widget.onSubmitted(widget.controller.text);
-                          widget.focusNode.unfocus();
-                        },
-                      );
-                    }
-                  },
-                )
-              : IconButton(
-                  icon: const Icon(
-                    FluentIcons.search_20_regular,
-                  ),
-                  onPressed: () {
-                    widget.onSubmitted(widget.controller.text);
-                    widget.focusNode.unfocus();
-                  },
-                ),
-          labelText: widget.labelText,
-        ),
+        trailing: [
+          if (widget.loadingProgressNotifier != null)
+            ValueListenableBuilder<bool>(
+              valueListenable: widget.loadingProgressNotifier!,
+              builder: (_, value, __) {
+                if (value) {
+                  return IconButton(
+                    icon: const SizedBox(
+                      height: 18,
+                      width: 18,
+                      child: Spinner(),
+                    ),
+                    onPressed: () {
+                      widget.onSubmitted(widget.controller.text);
+                      widget.focusNode.unfocus();
+                    },
+                  );
+                } else {
+                  return IconButton(
+                    icon: const Icon(
+                      FluentIcons.search_20_regular,
+                    ),
+                    onPressed: () {
+                      widget.onSubmitted(widget.controller.text);
+                      widget.focusNode.unfocus();
+                    },
+                  );
+                }
+              },
+            )
+          else
+            IconButton(
+              icon: const Icon(
+                FluentIcons.search_20_regular,
+              ),
+              onPressed: () {
+                widget.onSubmitted(widget.controller.text);
+                widget.focusNode.unfocus();
+              },
+            ),
+        ],
       ),
     );
   }
