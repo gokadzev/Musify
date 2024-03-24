@@ -5,6 +5,7 @@ import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/data_manager.dart';
+import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/custom_search_bar.dart';
 import 'package:musify/widgets/song_bar.dart';
 
@@ -159,23 +160,15 @@ class _SearchPageState extends State<SearchPage> {
     return showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(context.l10n!.confirmation),
-          content: Text(context.l10n!.removeSearchQueryQuestion),
-          actions: <Widget>[
-            TextButton(
-              child: Text(context.l10n!.cancel),
-              onPressed: () {
-                Navigator.of(context).pop(false);
-              },
-            ),
-            TextButton(
-              child: Text(context.l10n!.confirm),
-              onPressed: () {
-                Navigator.of(context).pop(true);
-              },
-            ),
-          ],
+        return ConfirmationDialog(
+          confirmationMessage: context.l10n!.removeSearchQueryQuestion,
+          submitMessage: context.l10n!.confirm,
+          onCancel: () {
+            Navigator.of(context).pop(false);
+          },
+          onSubmit: () {
+            Navigator.of(context).pop(true);
+          },
         );
       },
     );

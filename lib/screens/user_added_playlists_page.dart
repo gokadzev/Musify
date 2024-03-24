@@ -5,6 +5,7 @@ import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/screens/playlist_page.dart';
 import 'package:musify/utilities/flutter_toast.dart';
+import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/spinner.dart';
 
@@ -182,33 +183,24 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text(context.l10n!.confirmation),
-                              content: Text(
-                                context.l10n!.removePlaylistQuestion,
-                              ),
-                              actions: <Widget>[
-                                TextButton(
-                                  child: Text(context.l10n!.cancel),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                                TextButton(
-                                  child: Text(context.l10n!.remove),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
+                            return ConfirmationDialog(
+                              confirmationMessage:
+                                  context.l10n!.removePlaylistQuestion,
+                              submitMessage: context.l10n!.remove,
+                              onCancel: () {
+                                Navigator.of(context).pop();
+                              },
+                              onSubmit: () {
+                                Navigator.of(context).pop();
 
-                                    if (ytid == null && playlist['isCustom']) {
-                                      removeUserCustomPlaylist(playlist);
-                                    } else {
-                                      removeUserPlaylist(ytid);
-                                    }
+                                if (ytid == null && playlist['isCustom']) {
+                                  removeUserCustomPlaylist(playlist);
+                                } else {
+                                  removeUserPlaylist(ytid);
+                                }
 
-                                    setState(() {});
-                                  },
-                                ),
-                              ],
+                                setState(() {});
+                              },
                             );
                           },
                         );
