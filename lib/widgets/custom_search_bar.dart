@@ -29,6 +29,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
       child: SearchBar(
+        shadowColor: MaterialStateProperty.all(Colors.transparent),
         hintText: widget.labelText,
         onSubmitted: (String value) {
           widget.onSubmitted(value);
