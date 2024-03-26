@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:musify/services/settings_manager.dart';
 
@@ -111,6 +112,21 @@ ThemeData getAppLightTheme(ColorScheme colorScheme) {
       builders: {
         TargetPlatform.android: CupertinoPageTransitionsBuilder(),
       },
+    ),
+  );
+}
+
+void setSystemUIOverlayStyle(Brightness iconsBrightness) {
+  // Some people said that Colors.transparent causes some issues, so better to use it this way
+  final trickyFixForTransparency = Colors.black.withOpacity(0.002);
+
+  SystemChrome.setSystemUIOverlayStyle(
+    SystemUiOverlayStyle(
+      systemStatusBarContrastEnforced: true,
+      systemNavigationBarColor: trickyFixForTransparency,
+      systemNavigationBarDividerColor: trickyFixForTransparency,
+      systemNavigationBarIconBrightness: iconsBrightness,
+      statusBarIconBrightness: iconsBrightness,
     ),
   );
 }
