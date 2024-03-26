@@ -19,4 +19,4 @@ with open('pubspec.yaml', 'w') as file:
     file.write(data)
 
 # Print message indicating the version update
-print(f"Flutter version updated to {new_version}")
+print(f"Project version updated to {new_version}")
