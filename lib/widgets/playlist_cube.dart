@@ -40,6 +40,9 @@ class PlaylistCube extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _secondaryColor = Theme.of(context).colorScheme.secondary;
+    final _onPrimaryColor = Theme.of(context).colorScheme.onPrimary;
+
     return Stack(
       children: <Widget>[
         GestureDetector(
@@ -89,7 +92,7 @@ class PlaylistCube extends StatelessWidget {
                 right: 5,
                 child: DecoratedBox(
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.background,
+                    color: _secondaryColor,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: IconButton(
@@ -107,7 +110,7 @@ class PlaylistCube extends StatelessWidget {
                     },
                     icon: Icon(
                       likeStatusToIconMapper[value],
-                      color: Theme.of(context).colorScheme.primary,
+                      color: _onPrimaryColor,
                       size: 25,
                     ),
                   ),
@@ -121,14 +124,14 @@ class PlaylistCube extends StatelessWidget {
             right: 5,
             child: Container(
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.background,
+                color: _secondaryColor,
                 borderRadius: BorderRadius.circular(5),
               ),
               padding: const EdgeInsets.all(4),
               child: Text(
                 context.l10n!.album,
                 style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
+                  color: _onPrimaryColor,
                   fontSize: 12,
                 ),
               ),
