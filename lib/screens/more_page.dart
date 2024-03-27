@@ -105,6 +105,7 @@ class MorePage extends StatelessWidget {
                       physics: const BouncingScrollPhysics(),
                       itemCount: availableColors.length,
                       itemBuilder: (context, index) {
+                        final color = availableColors[index];
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 15),
                           child: Row(
@@ -116,11 +117,11 @@ class MorePage extends StatelessWidget {
                                     addOrUpdateData(
                                       'settings',
                                       'accentColor',
-                                      availableColors[index].value,
+                                      color.value,
                                     );
                                     Musify.updateAppState(
                                       context,
-                                      newAccentColor: availableColors[index],
+                                      newAccentColor: color,
                                       useSystemColor: false,
                                     );
                                     showToast(
@@ -136,9 +137,8 @@ class MorePage extends StatelessWidget {
                                       radius: 25,
                                       backgroundColor:
                                           themeMode == ThemeMode.light
-                                              ? availableColors[index]
-                                                  .withAlpha(150)
-                                              : availableColors[index],
+                                              ? color.withAlpha(150)
+                                              : color,
                                     ),
                                   ),
                                 ),
@@ -171,34 +171,31 @@ class MorePage extends StatelessWidget {
                       physics: const BouncingScrollPhysics(),
                       itemCount: availableModes.length,
                       itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Card(
-                            elevation:
-                                themeMode == availableModes[index] ? 0 : 4,
-                            child: ListTile(
-                              title: Text(
-                                availableModes[index].name,
-                              ),
-                              onTap: () {
-                                addOrUpdateData(
-                                  'settings',
-                                  'themeMode',
-                                  availableModes[index].name,
-                                );
-                                Musify.updateAppState(
-                                  context,
-                                  newThemeMode: availableModes[index],
-                                );
-
-                                Navigator.pop(context);
-                              },
-                              trailing: availableModes[index] ==
-                                          ThemeMode.light ||
-                                      availableModes[index] == ThemeMode.system
-                                  ? const Text('BETA')
-                                  : null,
+                        final mode = availableModes[index];
+                        return Card(
+                          margin: const EdgeInsets.all(10),
+                          elevation: themeMode == mode ? 0 : 4,
+                          child: ListTile(
+                            title: Text(
+                              mode.name,
                             ),
+                            onTap: () {
+                              addOrUpdateData(
+                                'settings',
+                                'themeMode',
+                                mode.name,
+                              );
+                              Musify.updateAppState(
+                                context,
+                                newThemeMode: mode,
+                              );
+
+                              Navigator.pop(context);
+                            },
+                            trailing: mode == ThemeMode.light ||
+                                    mode == ThemeMode.system
+                                ? const Text('BETA')
+                                : null,
                           ),
                         );
                       },
@@ -227,35 +224,32 @@ class MorePage extends StatelessWidget {
                       itemBuilder: (context, index) {
                         final language = availableLanguages[index];
                         final languageCode = appLanguages[language] ?? 'en';
-                        return Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Card(
-                            elevation:
-                                activeLanguageCode == languageCode ? 0 : 4,
-                            child: ListTile(
-                              title: Text(
-                                language,
-                              ),
-                              onTap: () {
-                                addOrUpdateData(
-                                  'settings',
-                                  'language',
-                                  language,
-                                );
-                                Musify.updateAppState(
-                                  context,
-                                  newLocale: Locale(
-                                    languageCode,
-                                  ),
-                                );
-
-                                showToast(
-                                  context,
-                                  context.l10n!.languageMsg,
-                                );
-                                Navigator.pop(context);
-                              },
+                        return Card(
+                          elevation: activeLanguageCode == languageCode ? 0 : 4,
+                          margin: const EdgeInsets.all(10),
+                          child: ListTile(
+                            title: Text(
+                              language,
                             ),
+                            onTap: () {
+                              addOrUpdateData(
+                                'settings',
+                                'language',
+                                language,
+                              );
+                              Musify.updateAppState(
+                                context,
+                                newLocale: Locale(
+                                  languageCode,
+                                ),
+                              );
+
+                              showToast(
+                                context,
+                                context.l10n!.languageMsg,
+                              );
+                              Navigator.pop(context);
+                            },
                           ),
                         );
                       },
