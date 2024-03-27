@@ -271,7 +271,7 @@ class MorePage extends StatelessWidget {
                 useSystemColor.value = value;
                 Musify.updateAppState(
                   context,
-                  newAccentColor: primaryColor,
+                  newAccentColor: primaryColorSetting,
                   useSystemColor: value,
                 );
                 showToast(
