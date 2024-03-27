@@ -20,9 +20,7 @@ class SettingSwitchBar extends StatelessWidget {
       padding: const EdgeInsets.all(8),
       child: Card(
         child: SwitchListTile(
-          inactiveThumbColor: Theme.of(context).colorScheme.background,
-          secondary:
-              Icon(tileIcon, color: Theme.of(context).colorScheme.primary),
+          secondary: Icon(tileIcon),
           title: Text(
             tileName,
             style: const TextStyle(fontWeight: FontWeight.w600),
