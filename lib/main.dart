@@ -142,8 +142,8 @@ class _MusifyState extends State<Musify> {
 
         return MaterialApp.router(
           themeMode: themeMode,
-          darkTheme: getAppDarkTheme(colorScheme),
-          theme: getAppLightTheme(colorScheme),
+          darkTheme: getAppTheme(colorScheme),
+          theme: getAppTheme(colorScheme),
           localizationsDelegates: const [
             AppLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,

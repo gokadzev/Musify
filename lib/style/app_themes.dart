@@ -33,51 +33,11 @@ ThemeMode getThemeMode(String themeModeString) {
   }
 }
 
-ThemeData getAppDarkTheme(ColorScheme colorScheme) {
-  final base = ThemeData.dark();
+ThemeData getAppTheme(ColorScheme colorScheme) {
+  final base = colorScheme.brightness == Brightness.light
+      ? ThemeData.light()
+      : ThemeData.dark();
 
-  return ThemeData(
-    colorScheme: colorScheme,
-    textTheme: GoogleFonts.robotoTextTheme(base.textTheme),
-    appBarTheme: base.appBarTheme.copyWith(
-      iconTheme: IconThemeData(color: colorScheme.primary),
-      centerTitle: true,
-      titleTextStyle: TextStyle(
-        fontSize: 27,
-        fontWeight: FontWeight.bold,
-        color: colorScheme.primary,
-      ),
-      elevation: 0,
-    ),
-    listTileTheme: base.listTileTheme.copyWith(
-      textColor: colorScheme.primary,
-      iconColor: colorScheme.primary,
-    ),
-    inputDecorationTheme: InputDecorationTheme(
-      filled: true,
-      isDense: true,
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide.none,
-      ),
-      contentPadding: const EdgeInsets.fromLTRB(18, 14, 20, 14),
-      // suffixIconColor: colorScheme.onSurface,
-    ),
-    bottomSheetTheme: BottomSheetThemeData(
-      backgroundColor: colorScheme.background,
-    ),
-    visualDensity: VisualDensity.adaptivePlatformDensity,
-    useMaterial3: true,
-    pageTransitionsTheme: const PageTransitionsTheme(
-      builders: {
-        TargetPlatform.android: CupertinoPageTransitionsBuilder(),
-      },
-    ),
-  );
-}
-
-ThemeData getAppLightTheme(ColorScheme colorScheme) {
-  final base = ThemeData.light();
   return ThemeData(
     colorScheme: colorScheme,
     textTheme: GoogleFonts.robotoTextTheme(base.textTheme).apply(
