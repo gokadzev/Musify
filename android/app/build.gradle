@@ -85,6 +85,10 @@ android {
         }
     }
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     buildTypes {
         release {
             signingConfig signingConfigs.release
