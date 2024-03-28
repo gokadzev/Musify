@@ -30,7 +30,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: '12.x'
+          java-version: '17.x'
 
       # Gradle cache for faster builds
       - name: Cache Gradle dependencies
