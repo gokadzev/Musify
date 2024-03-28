@@ -32,7 +32,7 @@ if (keystorePropertiesFile.exists()) {
 android {
     namespace = "com.gokadzev.musify"
     compileSdk 34
-    ndkVersion flutter.ndkVersion
+    ndkVersion "26.2.11394342"
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
