@@ -69,34 +69,25 @@ jobs:
       - name: Analyze Dart code
         run: flutter analyze .
 
-      # Build arm64 APK for GitHub release
-      - name: Build arm64 APK
-        run: flutter build apk --release --split-per-abi --target-platform="android-arm64" --flavor github
-
-      # Release arm64 generated APK
-      - name: Release arm64 APK
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_name: gokadzev/Musify
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: build/app/outputs/flutter-apk/app-arm64-v8a-github-release.apk
-          asset_name: Musify-arm64-v8a.apk
-          tag: ${{ steps.extract_version.outputs.version }}
-          prerelease: false
-          overwrite: true
-
-      # Build universal APK
-      - name: Build universal APK
+      # Build APKs
+      - name: Build APKs
         run: flutter build apk --release --flavor github
 
-      # Release universal generated APK
-      - name: Release universal APK
+      # Rename APKs
+      - name: Rename APKs
+        run: |
+          cd build/app/outputs/flutter-apk || exit
+          mv app-arm64-v8a-github-release.apk Musify-arm64-v8a.apk && \
+          mv app-github-release.apk Musify.apk
+
+      # Release generated APKs
+      - name: Release APKs
         uses: svenstaro/upload-release-action@v2
         with:
           repo_name: gokadzev/Musify
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: build/app/outputs/flutter-apk/app-github-release.apk
-          asset_name: Musify.apk
+          file: build/app/outputs/flutter-apk/*.apk
+          file_glob: true
           tag: ${{ steps.extract_version.outputs.version }}
           prerelease: false
           overwrite: true
