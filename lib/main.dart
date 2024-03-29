@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:musify/services/audio_service.dart';
 import 'package:musify/services/data_manager.dart';
@@ -104,16 +103,11 @@ class _MusifyState extends State<Musify> {
   void initState() {
     super.initState();
 
-    GoogleFonts.config.allowRuntimeFetching = false;
-
     try {
       LicenseRegistry.addLicense(() async* {
         final license =
-            await rootBundle.loadString('assets/fonts/roboto/LICENSE.txt');
-        yield LicenseEntryWithLineBreaks(['google_fonts'], license);
-        final license1 =
-            await rootBundle.loadString('assets/fonts/paytone/OFL.txt');
-        yield LicenseEntryWithLineBreaks(['google_fonts'], license1);
+            await rootBundle.loadString('assets/licenses/paytone.txt');
+        yield LicenseEntryWithLineBreaks(['paytoneOne'], license);
       });
     } catch (e, stackTrace) {
       logger.log('License Registration Error', e, stackTrace);

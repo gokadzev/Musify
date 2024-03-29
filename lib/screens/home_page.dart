@@ -1,7 +1,6 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
@@ -37,8 +36,9 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text(
           'Musify.',
-          style: GoogleFonts.paytoneOne(
+          style: TextStyle(
             color: Theme.of(context).colorScheme.primary,
+            fontFamily: 'paytoneOne',
           ),
         ),
       ),

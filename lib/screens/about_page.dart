@@ -1,6 +1,5 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:musify/API/version.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/utilities/url_launcher.dart';
@@ -23,10 +22,11 @@ class AboutPage extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(8, 17, 8, 0),
               child: Text(
                 'Musify  | $appVersion',
-                style: GoogleFonts.paytoneOne(
+                style: TextStyle(
                   color: Theme.of(context).colorScheme.primary,
                   fontSize: 24,
                   fontWeight: FontWeight.w600,
+                  fontFamily: 'paytoneOne',
                 ),
                 textAlign: TextAlign.center,
               ),

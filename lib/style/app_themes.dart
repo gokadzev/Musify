@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:musify/services/settings_manager.dart';
 
 ThemeMode themeMode = getThemeMode(themeModeSetting);
@@ -40,9 +39,6 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
 
   return ThemeData(
     colorScheme: colorScheme,
-    textTheme: GoogleFonts.robotoTextTheme(base.textTheme).apply(
-      bodyColor: colorScheme.primary,
-    ),
     appBarTheme: base.appBarTheme.copyWith(
       iconTheme: IconThemeData(color: colorScheme.primary),
       centerTitle: true,
