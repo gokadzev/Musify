@@ -73,15 +73,12 @@ class SongBar extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 5),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 5),
-                        child: Text(
-                          song['artist'].toString(),
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w400,
-                            fontSize: 14,
-                          ),
+                      Text(
+                        song['artist'].toString(),
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14,
                         ),
                       ),
                     ],

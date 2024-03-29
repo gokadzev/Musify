@@ -22,7 +22,7 @@ String formatSongTitle(String title) {
     title = title.replaceAll(pattern, replacement);
   });
 
-  return title;
+  return title.trimLeft();
 }
 
 Map<String, dynamic> returnSongLayout(int index, Video song) => {
