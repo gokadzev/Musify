@@ -18,11 +18,14 @@ String formatSongTitle(String title) {
     'Lyrics Video': '',
   };
 
-  replacements.forEach((pattern, replacement) {
-    title = title.replaceAll(pattern, replacement);
-  });
+  final pattern = RegExp(replacements.keys.map(RegExp.escape).join('|'));
 
-  return title.trimLeft();
+  return title
+      .replaceAllMapped(
+        pattern,
+        (match) => replacements[match.group(0)] ?? '',
+      )
+      .trimLeft();
 }
 
 Map<String, dynamic> returnSongLayout(int index, Video song) => {
