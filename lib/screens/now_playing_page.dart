@@ -39,8 +39,6 @@ class NowPlayingPage extends StatelessWidget {
             final screenHeight = size.height;
             final screenWidth = size.width;
             return Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              mainAxisSize: MainAxisSize.min,
               children: [
                 Expanded(
                   child: Column(
@@ -48,23 +46,27 @@ class NowPlayingPage extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       buildArtwork(context, size, metadata),
-                      const SizedBox(height: 1),
-                      buildMarqueeText(
-                        metadata.title,
-                        Theme.of(context).colorScheme.primary,
-                        screenHeight * 0.030,
-                        FontWeight.bold,
-                        screenWidth,
+                      Column(
+                        children: [
+                          const SizedBox(height: 1),
+                          buildMarqueeText(
+                            metadata.title,
+                            Theme.of(context).colorScheme.primary,
+                            screenHeight * 0.034,
+                            FontWeight.bold,
+                            screenWidth,
+                          ),
+                          const SizedBox(height: 4),
+                          if (metadata.artist != null)
+                            buildMarqueeText(
+                              metadata.artist!,
+                              Theme.of(context).colorScheme.primary,
+                              screenHeight * 0.015,
+                              FontWeight.w400,
+                              screenWidth,
+                            ),
+                        ],
                       ),
-                      const SizedBox(height: 4),
-                      if (metadata.artist != null)
-                        buildMarqueeText(
-                          metadata.artist!,
-                          Theme.of(context).colorScheme.primary,
-                          screenHeight * 0.018,
-                          FontWeight.w500,
-                          screenWidth,
-                        ),
                       if (!(metadata.extras?['isLive'] ?? false))
                         _buildPlayer(
                           context,
