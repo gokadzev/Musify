@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/utilities/flutter_toast.dart';
+import 'package:musify/widgets/play_button.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/song_bar.dart';
 
@@ -130,7 +131,21 @@ class _UserSongsPageState extends State<UserSongsPage> {
                   color: _primaryColor,
                 ),
               ),
-              buildPlayButton(title, songsList),
+              PlayButton(
+                onTap: () {
+                  setActivePlaylist({
+                    'ytid': '',
+                    'title': title,
+                    'header_desc': '',
+                    'image': '',
+                    'list': songsList,
+                  });
+                  showToast(
+                    context,
+                    context.l10n!.queueInitText,
+                  );
+                },
+              ),
             ],
           ),
         ],
@@ -145,29 +160,6 @@ class _UserSongsPageState extends State<UserSongsPage> {
       showFavoriteButton: false,
       size: MediaQuery.of(context).size.width / 2.2,
       cubeIcon: icon,
-    );
-  }
-
-  Widget buildPlayButton(String title, List songList) {
-    return GestureDetector(
-      onTap: () {
-        setActivePlaylist({
-          'ytid': '',
-          'title': title,
-          'header_desc': '',
-          'image': '',
-          'list': songList,
-        });
-        showToast(
-          context,
-          context.l10n!.queueInitText,
-        );
-      },
-      child: Icon(
-        FluentIcons.play_circle_48_filled,
-        color: Theme.of(context).colorScheme.primary,
-        size: 60,
-      ),
     );
   }
 
