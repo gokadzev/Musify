@@ -149,7 +149,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
   }
 
   Widget buildPlaylistHeader() {
-    final playlistLength = _playlist['list'].length;
+    final _playlistLength = _playlist['list'].length;
+    final _primaryColor = Theme.of(context).colorScheme.primary;
 
     return Padding(
       padding: const EdgeInsets.all(20),
@@ -165,7 +166,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.primary,
+                  color: _primaryColor,
                 ),
               ),
             ),
@@ -183,9 +184,10 @@ class _PlaylistPageState extends State<PlaylistPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '[ $playlistLength ${context.l10n!.songs} ]'.toUpperCase(),
-                style: const TextStyle(
-                  fontWeight: FontWeight.w300,
+                '[ $_playlistLength ${context.l10n!.songs} ]'.toUpperCase(),
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: _primaryColor,
                 ),
               ),
               PlayButton(

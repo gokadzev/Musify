@@ -101,6 +101,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
   }
 
   Widget buildPlaylistHeader(String title, IconData icon, List songsList) {
+    final _primaryColor = Theme.of(context).colorScheme.primary;
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -114,7 +115,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.primary,
+                color: _primaryColor,
               ),
             ),
           ),
@@ -124,8 +125,9 @@ class _UserSongsPageState extends State<UserSongsPage> {
             children: [
               Text(
                 '[ ${songsList.length} ${context.l10n!.songs} ]'.toUpperCase(),
-                style: const TextStyle(
-                  fontWeight: FontWeight.w300,
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: _primaryColor,
                 ),
               ),
               buildPlayButton(title, songsList),
