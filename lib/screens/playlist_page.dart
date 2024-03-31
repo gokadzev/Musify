@@ -174,8 +174,9 @@ class _PlaylistPageState extends State<PlaylistPage> {
           if (_playlist['header_desc'] != null)
             Text(
               _playlist['header_desc'],
-              style: const TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.w300,
+                color: Theme.of(context).colorScheme.secondary,
               ),
               textAlign: TextAlign.center,
             ),
