@@ -60,7 +60,7 @@ class NowPlayingPage extends StatelessWidget {
                           if (metadata.artist != null)
                             buildMarqueeText(
                               metadata.artist!,
-                              Theme.of(context).colorScheme.primary,
+                              Theme.of(context).colorScheme.secondary,
                               screenHeight * 0.015,
                               FontWeight.w400,
                               screenWidth,
@@ -272,6 +272,10 @@ class NowPlayingPage extends StatelessWidget {
     late final songOfflineStatus =
         ValueNotifier<bool>(isSongAlreadyOffline(audioId));
     const iconSize = 20.0;
+
+    final _primaryColor = Theme.of(context).colorScheme.primary;
+    final _secondaryColor = Theme.of(context).colorScheme.secondaryContainer;
+
     return Column(
       children: <Widget>[
         Row(
@@ -285,6 +289,7 @@ class NowPlayingPage extends StatelessWidget {
                     value
                         ? FluentIcons.arrow_shuffle_24_filled
                         : FluentIcons.arrow_shuffle_off_24_filled,
+                    color: value ? _primaryColor : _secondaryColor,
                   ),
                   iconSize: iconSize,
                   onPressed: () {
@@ -300,9 +305,8 @@ class NowPlayingPage extends StatelessWidget {
             IconButton(
               icon: Icon(
                 FluentIcons.previous_24_filled,
-                color: audioHandler.hasPrevious
-                    ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).colorScheme.surfaceVariant,
+                color:
+                    audioHandler.hasPrevious ? _primaryColor : _secondaryColor,
               ),
               iconSize: size.width * 0.09 < 35 ? size.width * 0.09 : 35,
               onPressed: () => audioHandler.skipToPrevious(),
@@ -314,16 +318,14 @@ class NowPlayingPage extends StatelessWidget {
                 return buildPlaybackIconButton(
                   snapshot.data,
                   size.width * 0.19 < 72 ? size.width * 0.19 : 72,
-                  Theme.of(context).colorScheme.primary,
+                  _primaryColor,
                 );
               },
             ),
             IconButton(
               icon: Icon(
                 FluentIcons.next_24_filled,
-                color: audioHandler.hasNext
-                    ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).colorScheme.surfaceVariant,
+                color: audioHandler.hasNext ? _primaryColor : _secondaryColor,
               ),
               iconSize: size.width * 0.09 < 35 ? size.width * 0.09 : 35,
               onPressed: () => audioHandler.skipToNext(),
@@ -337,6 +339,7 @@ class NowPlayingPage extends StatelessWidget {
                     value
                         ? FluentIcons.arrow_repeat_1_24_filled
                         : FluentIcons.arrow_repeat_all_off_24_filled,
+                    color: value ? _primaryColor : _secondaryColor,
                   ),
                   iconSize: iconSize,
                   onPressed: () => audioHandler.setRepeatMode(
@@ -362,6 +365,7 @@ class NowPlayingPage extends StatelessWidget {
                     value
                         ? FluentIcons.cellular_off_24_regular
                         : FluentIcons.cellular_data_1_24_regular,
+                    color: _primaryColor,
                   ),
                   onPressed: () {
                     if (value) {
@@ -383,6 +387,7 @@ class NowPlayingPage extends StatelessWidget {
                     value
                         ? FluentIcons.speaker_mute_24_filled
                         : FluentIcons.speaker_mute_24_regular,
+                    color: _primaryColor,
                   ),
                   iconSize: iconSize,
                   onPressed: audioHandler.mute,
@@ -390,7 +395,10 @@ class NowPlayingPage extends StatelessWidget {
               },
             ),
             IconButton(
-              icon: const Icon(Icons.add),
+              icon: Icon(
+                Icons.add,
+                color: _primaryColor,
+              ),
               iconSize: iconSize,
               onPressed: () {
                 showAddToPlaylistDialog(context, mediaItemToMap(mediaItem));
@@ -398,7 +406,10 @@ class NowPlayingPage extends StatelessWidget {
             ),
             if (activePlaylist['list'].isNotEmpty)
               IconButton(
-                icon: const Icon(FluentIcons.apps_list_24_filled),
+                icon: Icon(
+                  FluentIcons.apps_list_24_filled,
+                  color: _primaryColor,
+                ),
                 iconSize: iconSize,
                 onPressed: () {
                   showCustomBottomSheet(
@@ -427,7 +438,10 @@ class NowPlayingPage extends StatelessWidget {
                 },
               ),
             IconButton(
-              icon: const Icon(FluentIcons.text_32_filled),
+              icon: Icon(
+                FluentIcons.text_32_filled,
+                color: _primaryColor,
+              ),
               iconSize: iconSize,
               onPressed: _lyricsController.flipcard,
             ),
@@ -439,6 +453,7 @@ class NowPlayingPage extends StatelessWidget {
                     value
                         ? FluentIcons.star_24_filled
                         : FluentIcons.star_24_regular,
+                    color: _primaryColor,
                   ),
                   iconSize: iconSize,
                   onPressed: () {
@@ -456,6 +471,7 @@ class NowPlayingPage extends StatelessWidget {
                     value
                         ? FluentIcons.music_note_2_play_20_filled
                         : FluentIcons.music_note_2_play_20_regular,
+                    color: _primaryColor,
                   ),
                   iconSize: iconSize,
                   onPressed: audioHandler.changeAutoPlayNextStatus,
