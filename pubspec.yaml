@@ -12,7 +12,7 @@ environment:
   flutter: ^3.19.5
 
 dependencies:
-  audio_service: ^0.18.12
+  audio_service: ^0.18.13
   audio_session: ^0.1.18
   cached_network_image: ^3.3.1
   dynamic_color: ^1.7.0
@@ -29,7 +29,7 @@ dependencies:
   html: ^0.15.4
   http: ^1.2.0
   intl: ^0.18.0
-  just_audio: ^0.9.36
+  just_audio: ^0.9.37
   path_provider: ^2.1.2
   rxdart: ^0.27.7
   url_launcher: ^6.2.5
