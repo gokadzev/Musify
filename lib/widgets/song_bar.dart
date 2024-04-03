@@ -15,19 +15,15 @@ class SongBar extends StatelessWidget {
     this.song,
     this.clearPlaylist, {
     this.showMusicDuration = false,
-    this.onTap,
-    this.updateOnRemove,
-    this.passingPlaylist,
-    this.songIndexInPlaylist,
+    this.onPlay,
+    this.onRemove,
     super.key,
   });
 
   final dynamic song;
   final bool clearPlaylist;
-  final VoidCallback? updateOnRemove;
-  final VoidCallback? onTap;
-  final dynamic passingPlaylist;
-  final int? songIndexInPlaylist;
+  final VoidCallback? onRemove;
+  final VoidCallback? onPlay;
   final bool showMusicDuration;
 
   static const likeStatusToIconMapper = {
@@ -41,7 +37,7 @@ class SongBar extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: GestureDetector(
-        onTap: onTap ??
+        onTap: onPlay ??
             () {
               audioHandler.playSong(song);
               if (activePlaylist.isNotEmpty && clearPlaylist) {
@@ -163,16 +159,18 @@ class SongBar extends StatelessWidget {
             );
           },
         ),
-        IconButton(
-          color: primaryColor,
-          icon: passingPlaylist != null && songIndexInPlaylist != null
-              ? const Icon(FluentIcons.delete_24_filled)
-              : const Icon(FluentIcons.add_24_regular),
-          onPressed: () =>
-              passingPlaylist != null && songIndexInPlaylist != null
-                  ? _removeFromPlaylist()
-                  : showAddToPlaylistDialog(context, song),
-        ),
+        if (onRemove != null)
+          IconButton(
+            color: primaryColor,
+            icon: const Icon(FluentIcons.delete_24_filled),
+            onPressed: () => onRemove!(),
+          )
+        else
+          IconButton(
+            color: primaryColor,
+            icon: const Icon(FluentIcons.add_24_regular),
+            onPressed: () => showAddToPlaylistDialog(context, song),
+          ),
         ValueListenableBuilder<bool>(
           valueListenable: songOfflineStatus,
           builder: (_, value, __) {
@@ -199,18 +197,6 @@ class SongBar extends StatelessWidget {
           Text('(${formatDuration(song['duration'])})'),
       ],
     );
-  }
-
-  void _removeFromPlaylist() {
-    if (passingPlaylist == null || songIndexInPlaylist == null) {
-      return;
-    }
-    removeSongFromPlaylist(
-      passingPlaylist,
-      song,
-      removeOneAtIndex: songIndexInPlaylist,
-    );
-    if (updateOnRemove != null) updateOnRemove!();
   }
 }
 

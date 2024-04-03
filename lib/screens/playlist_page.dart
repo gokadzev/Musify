@@ -365,17 +365,22 @@ class _PlaylistPageState extends State<PlaylistPage> {
     return SongBar(
       _songsList[index],
       true,
-      updateOnRemove: () => _playlist['isCustom'] == true
-          ? _updateSongsListOnRemove(index)
+      onRemove: _playlist['isCustom'] == true
+          ? () => {
+                removeSongFromPlaylist(
+                  _playlist,
+                  _songsList[index],
+                  removeOneAtIndex: index,
+                ),
+                _updateSongsListOnRemove(index),
+              }
           : null,
-      onTap: () => {
+      onPlay: () => {
         audioHandler.playPlaylistSong(
           playlist: activePlaylist != _playlist ? _playlist : null,
           songIndex: index,
         ),
       },
-      passingPlaylist: widget.playlistData,
-      songIndexInPlaylist: _playlist['isCustom'] == true ? index : null,
     );
   }
 }

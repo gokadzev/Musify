@@ -166,7 +166,6 @@ class _UserSongsPageState extends State<UserSongsPage> {
                 child: SongBar(
                   song,
                   true,
-                  songIndexInPlaylist: index,
                 ),
               );
             },
