@@ -109,13 +109,17 @@ Future<List<dynamic>> getUserPlaylists() async {
         'list': [],
       });
     } catch (e, stackTrace) {
+      playlistsByUser.add({
+        'ytid': playlistID.toString(),
+        'title': 'Failed playlist',
+        'image': null,
+        'list': [],
+      });
       logger.log(
-        'Error occurred while fetching playlist so playlist will be removed:',
+        'Error occurred while fetching the playlist:',
         e,
         stackTrace,
       );
-      userPlaylists.remove(playlistID);
-      addOrUpdateData('user', 'playlists', userPlaylists);
     }
   }
   return playlistsByUser;
