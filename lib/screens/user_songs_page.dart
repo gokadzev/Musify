@@ -120,17 +120,12 @@ class _UserSongsPageState extends State<UserSongsPage> {
             ),
           ),
           const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '[ ${songsList.length} ${context.l10n!.songs} ]'.toUpperCase(),
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  color: _primaryColor,
-                ),
-              ),
-            ],
+          Text(
+            '[ ${songsList.length} ${context.l10n!.songs} ]'.toUpperCase(),
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              color: _primaryColor,
+            ),
           ),
         ],
       ),
