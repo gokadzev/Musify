@@ -2,6 +2,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
+import 'package:musify/main.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/song_bar.dart';
 
@@ -148,17 +149,23 @@ class _UserSongsPageState extends State<UserSongsPage> {
 
   Widget buildSongList(
     String title,
-    List songList,
+    List songsList,
     ValueNotifier currentSongsLength,
   ) {
+    final _playlist = {
+      'ytid': '',
+      'title': title,
+      'list': songsList,
+    };
     return ValueListenableBuilder(
       valueListenable: currentSongsLength,
       builder: (_, value, __) {
         if (title == context.l10n!.userLikedSongs) {
           return SliverReorderableList(
-            itemCount: songList.length,
+            itemCount: songsList.length,
             itemBuilder: (context, index) {
-              final song = songList[index];
+              final song = songsList[index];
+
               return ReorderableDragStartListener(
                 enabled: isEditEnabled,
                 key: Key(song['ytid'].toString()),
@@ -166,6 +173,12 @@ class _UserSongsPageState extends State<UserSongsPage> {
                 child: SongBar(
                   song,
                   true,
+                  onPlay: () => {
+                    audioHandler.playPlaylistSong(
+                      playlist: activePlaylist != _playlist ? _playlist : null,
+                      songIndex: index,
+                    ),
+                  },
                 ),
               );
             },
@@ -182,11 +195,20 @@ class _UserSongsPageState extends State<UserSongsPage> {
           return SliverList(
             delegate: SliverChildBuilderDelegate(
               (BuildContext context, int index) {
-                final song = songList[index];
+                final song = songsList[index];
                 song['isOffline'] = title == context.l10n!.userOfflineSongs;
-                return SongBar(song, true);
+                return SongBar(
+                  song,
+                  true,
+                  onPlay: () => {
+                    audioHandler.playPlaylistSong(
+                      playlist: activePlaylist != _playlist ? _playlist : null,
+                      songIndex: index,
+                    ),
+                  },
+                );
               },
-              childCount: songList.length,
+              childCount: songsList.length,
             ),
           );
         }
