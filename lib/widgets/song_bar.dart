@@ -95,30 +95,35 @@ class SongBar extends StatelessWidget {
   }
 
   Widget _buildAlbumArt() {
-    if ((song['isOffline'] ?? false) && song['artworkPath'] != null) {
+    const size = 60.0;
+    const radius = 12.0;
+
+    final bool isOffline = song['isOffline'] ?? false;
+    final String? artworkPath = song['artworkPath'];
+    if (isOffline && artworkPath != null) {
       return SizedBox(
-        width: 60,
-        height: 60,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            image: DecorationImage(
-              image: FileImage(File(song['lowResImage'].toString())),
-              fit: BoxFit.cover,
-            ),
+        width: size,
+        height: size,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(radius),
+          child: Image.file(
+            File(artworkPath),
+            fit: BoxFit.cover,
           ),
         ),
       );
     } else {
       return CachedNetworkImage(
         key: Key(song['ytid'].toString()),
-        width: 60,
-        height: 60,
+        width: size,
+        height: size,
         imageUrl: song['lowResImage'].toString(),
-        imageBuilder: (context, imageProvider) => DecoratedBox(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            image: DecorationImage(
+        imageBuilder: (context, imageProvider) => SizedBox(
+          width: size,
+          height: size,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(radius),
+            child: Image(
               image: imageProvider,
               centerSlice: const Rect.fromLTRB(1, 1, 1, 1),
             ),
