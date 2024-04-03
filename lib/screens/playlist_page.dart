@@ -4,10 +4,10 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
+import 'package:musify/main.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/widgets/marque.dart';
-import 'package:musify/widgets/play_button.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/spinner.dart';
@@ -181,26 +181,12 @@ class _PlaylistPageState extends State<PlaylistPage> {
               textAlign: TextAlign.center,
             ),
           const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '[ $_playlistLength ${context.l10n!.songs} ]'.toUpperCase(),
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  color: _primaryColor,
-                ),
-              ),
-              PlayButton(
-                onTap: () {
-                  setActivePlaylist(_playlist);
-                  showToast(
-                    context,
-                    context.l10n!.queueInitText,
-                  );
-                },
-              ),
-            ],
+          Text(
+            '[ $_playlistLength ${context.l10n!.songs} ]'.toUpperCase(),
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              color: _primaryColor,
+            ),
           ),
         ],
       ),
@@ -382,6 +368,12 @@ class _PlaylistPageState extends State<PlaylistPage> {
       updateOnRemove: () => _playlist['isCustom'] == true
           ? _updateSongsListOnRemove(index)
           : null,
+      onTap: () => {
+        audioHandler.playPlaylistSong(
+          playlist: activePlaylist != _playlist ? _playlist : null,
+          songIndex: index,
+        ),
+      },
       passingPlaylist: widget.playlistData,
       songIndexInPlaylist: _playlist['isCustom'] == true ? index : null,
     );

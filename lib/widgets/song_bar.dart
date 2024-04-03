@@ -15,6 +15,7 @@ class SongBar extends StatelessWidget {
     this.song,
     this.clearPlaylist, {
     this.showMusicDuration = false,
+    this.onTap,
     this.updateOnRemove,
     this.passingPlaylist,
     this.songIndexInPlaylist,
@@ -24,6 +25,7 @@ class SongBar extends StatelessWidget {
   final dynamic song;
   final bool clearPlaylist;
   final VoidCallback? updateOnRemove;
+  final VoidCallback? onTap;
   final dynamic passingPlaylist;
   final int? songIndexInPlaylist;
   final bool showMusicDuration;
@@ -39,19 +41,20 @@ class SongBar extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: GestureDetector(
-        onTap: () {
-          audioHandler.playSong(song);
-          if (activePlaylist.isNotEmpty && clearPlaylist) {
-            activePlaylist = {
-              'ytid': '',
-              'title': 'No Playlist',
-              'header_desc': '',
-              'image': '',
-              'list': [],
-            };
-            id = 0;
-          }
-        },
+        onTap: onTap ??
+            () {
+              audioHandler.playSong(song);
+              if (activePlaylist.isNotEmpty && clearPlaylist) {
+                activePlaylist = {
+                  'ytid': '',
+                  'title': 'No Playlist',
+                  'header_desc': '',
+                  'image': '',
+                  'list': [],
+                };
+                id = 0;
+              }
+            },
         child: Card(
           child: Padding(
             padding: const EdgeInsets.all(8),

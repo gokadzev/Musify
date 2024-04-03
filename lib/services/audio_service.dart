@@ -256,6 +256,15 @@ class MusifyAudioHandler extends BaseAudioHandler {
     }
   }
 
+  Future<void> playPlaylistSong({
+    Map<dynamic, dynamic>? playlist,
+    required int songIndex,
+  }) async {
+    if (playlist != null) activePlaylist = playlist;
+    id = songIndex;
+    await audioHandler.playSong(activePlaylist['list'][id]);
+  }
+
   Future<AudioSource> buildAudioSource(
     Map song,
     String songUrl,

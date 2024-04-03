@@ -2,8 +2,6 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
-import 'package:musify/utilities/flutter_toast.dart';
-import 'package:musify/widgets/play_button.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/song_bar.dart';
 
@@ -130,21 +128,6 @@ class _UserSongsPageState extends State<UserSongsPage> {
                   fontWeight: FontWeight.w500,
                   color: _primaryColor,
                 ),
-              ),
-              PlayButton(
-                onTap: () {
-                  setActivePlaylist({
-                    'ytid': '',
-                    'title': title,
-                    'header_desc': '',
-                    'image': '',
-                    'list': songsList,
-                  });
-                  showToast(
-                    context,
-                    context.l10n!.queueInitText,
-                  );
-                },
               ),
             ],
           ),
