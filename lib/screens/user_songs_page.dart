@@ -61,7 +61,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
     return CustomScrollView(
       slivers: [
         SliverToBoxAdapter(
-          child: buildPlaylistHeader(title, icon, songsList),
+          child: buildPlaylistHeader(title, icon, songsList.length),
         ),
         buildSongList(title, songsList, length),
       ],
@@ -100,7 +100,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
         currentLikedSongsLength;
   }
 
-  Widget buildPlaylistHeader(String title, IconData icon, List songsList) {
+  Widget buildPlaylistHeader(String title, IconData icon, int songsLength) {
     final _primaryColor = Theme.of(context).colorScheme.primary;
     return Padding(
       padding: const EdgeInsets.all(20),
@@ -121,7 +121,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
           ),
           const SizedBox(height: 20),
           Text(
-            '[ ${songsList.length} ${context.l10n!.songs} ]'.toUpperCase(),
+            '[ $songsLength ${context.l10n!.songs} ]'.toUpperCase(),
             style: TextStyle(
               fontWeight: FontWeight.w500,
               color: _primaryColor,
