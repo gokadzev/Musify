@@ -103,6 +103,14 @@ class _MusifyState extends State<Musify> {
   void initState() {
     super.initState();
 
+    SystemChrome.setEnabledSystemUIMode(
+      SystemUiMode.edgeToEdge,
+      overlays: [SystemUiOverlay.top],
+    );
+    setSystemUIOverlayStyle(
+      brightness == Brightness.dark ? Brightness.light : Brightness.dark,
+    );
+
     try {
       LicenseRegistry.addLicense(() async* {
         final license =
@@ -156,14 +164,6 @@ class _MusifyState extends State<Musify> {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initialisation();
-
-  await SystemChrome.setEnabledSystemUIMode(
-    SystemUiMode.edgeToEdge,
-    overlays: [SystemUiOverlay.top],
-  );
-  setSystemUIOverlayStyle(
-    brightness == Brightness.dark ? Brightness.light : Brightness.dark,
-  );
 
   runApp(const Musify());
 }
