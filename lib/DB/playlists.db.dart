@@ -151,7 +151,7 @@ List<Map<String, dynamic>> playlistsDB = [
     'title': 'OPM 2000-2009 / Best Pinoy Songs Playlist 2000s Hits',
     'header_desc':
         'Pinoy Rock Songs,Tagalog Hit Songs 2000, 2001, 2002,Filipino Songs Playlist 2003, 2004, 2005,OPM Songs 2006',
-    'image': 'https://i.scdn.co/image/ab67706c0000bebbc1aa43ecf170c86146b88e9a',
+    'image': 'https://i.scdn.co/image/ab67706c0000da849c699ac14bfc67b08cd944b4',
     'list': [],
   },
   {
@@ -163,7 +163,7 @@ List<Map<String, dynamic>> playlistsDB = [
   {
     'ytid': 'PLmYULo-LwF9Lsx-JRO0UN-dJWk_0pbd-L',
     'title': 'Best of MrSuicideSheep',
-    'image': 'https://i.scdn.co/image/ab67706c0000bebb5844370cd89c9055a53a9d1a',
+    'image': 'https://i.scdn.co/image/ab67706c0000da843d24ef512b7d370dcb045df9',
     'list': [],
   },
   {
