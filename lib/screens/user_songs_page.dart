@@ -4,6 +4,7 @@ import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/widgets/playlist_cube.dart';
+import 'package:musify/widgets/playlist_header.dart';
 import 'package:musify/widgets/song_bar.dart';
 
 class UserSongsPage extends StatefulWidget {
@@ -103,37 +104,11 @@ class _UserSongsPageState extends State<UserSongsPage> {
   }
 
   Widget buildPlaylistHeader(String title, IconData icon, int songsLength) {
-    final _primaryColor = Theme.of(context).colorScheme.primary;
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        _buildPlaylistImage(title, icon),
-        const SizedBox(width: 10),
-        SizedBox(
-          width: MediaQuery.of(context).size.width / 2.3,
-          child: Column(
-            children: [
-              Text(
-                title,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: _primaryColor,
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                '[ $songsLength ${context.l10n!.songs} ]'.toUpperCase(),
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  color: _primaryColor,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
+    return PlaylistHeader(
+      _buildPlaylistImage(title, icon),
+      title,
+      null,
+      songsLength,
     );
   }
 

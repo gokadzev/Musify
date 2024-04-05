@@ -7,8 +7,8 @@ import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
-import 'package:musify/widgets/marque.dart';
 import 'package:musify/widgets/playlist_cube.dart';
+import 'package:musify/widgets/playlist_header.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/spinner.dart';
 
@@ -153,51 +153,13 @@ class _PlaylistPageState extends State<PlaylistPage> {
   }
 
   Widget buildPlaylistHeader() {
-    final _playlistLength = _playlist['list'].length;
-    final _primaryColor = Theme.of(context).colorScheme.primary;
+    final _songsLength = _playlist['list'].length;
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        _buildPlaylistImage(),
-        const SizedBox(width: 10),
-        SizedBox(
-          width: MediaQuery.of(context).size.width / 2.3,
-          child: Column(
-            children: [
-              Text(
-                _playlist['title'],
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: _primaryColor,
-                ),
-              ),
-              if (_playlist['header_desc'] != null)
-                MarqueeWidget(
-                  child: Text(
-                    _playlist['header_desc'],
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w300,
-                      color: Theme.of(context).colorScheme.secondary,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              const SizedBox(height: 20),
-              Text(
-                '[ $_playlistLength ${context.l10n!.songs} ]'.toUpperCase(),
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  color: _primaryColor,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
+    return PlaylistHeader(
+      _buildPlaylistImage(),
+      _playlist['title'],
+      _playlist['header_desc'],
+      _songsLength,
     );
   }
 
