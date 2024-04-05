@@ -116,7 +116,10 @@ class _PlaylistPageState extends State<PlaylistPage> {
           ? CustomScrollView(
               slivers: [
                 SliverToBoxAdapter(
-                  child: buildPlaylistHeader(),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: buildPlaylistHeader(),
+                  ),
                 ),
                 SliverList(
                   delegate: SliverChildBuilderDelegate(
@@ -142,6 +145,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
       image: _playlist['image'],
       title: _playlist['title'],
       isAlbum: _playlist['isAlbum'],
+      size: MediaQuery.of(context).size.width / 2.5,
       onClickOpen: false,
       cubeIcon: widget.cubeIcon,
       showFavoriteButton: false,
@@ -152,44 +156,48 @@ class _PlaylistPageState extends State<PlaylistPage> {
     final _playlistLength = _playlist['list'].length;
     final _primaryColor = Theme.of(context).colorScheme.primary;
 
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        children: [
-          _buildPlaylistImage(),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20),
-            child: MarqueeWidget(
-              child: Text(
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        _buildPlaylistImage(),
+        const SizedBox(width: 10),
+        SizedBox(
+          width: MediaQuery.of(context).size.width / 2.3,
+          child: Column(
+            children: [
+              Text(
                 _playlist['title'],
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 15,
                   fontWeight: FontWeight.bold,
                   color: _primaryColor,
                 ),
               ),
-            ),
-          ),
-          if (_playlist['header_desc'] != null)
-            Text(
-              _playlist['header_desc'],
-              style: TextStyle(
-                fontWeight: FontWeight.w300,
-                color: Theme.of(context).colorScheme.secondary,
+              if (_playlist['header_desc'] != null)
+                MarqueeWidget(
+                  child: Text(
+                    _playlist['header_desc'],
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w300,
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              const SizedBox(height: 20),
+              Text(
+                '[ $_playlistLength ${context.l10n!.songs} ]'.toUpperCase(),
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: _primaryColor,
+                ),
               ),
-              textAlign: TextAlign.center,
-            ),
-          const SizedBox(height: 20),
-          Text(
-            '[ $_playlistLength ${context.l10n!.songs} ]'.toUpperCase(),
-            style: TextStyle(
-              fontWeight: FontWeight.w500,
-              color: _primaryColor,
-            ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

@@ -30,7 +30,6 @@ class _UserSongsPageState extends State<UserSongsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(title),
         actions: [
           if (title == context.l10n!.userLikedSongs)
             IconButton(
@@ -61,7 +60,10 @@ class _UserSongsPageState extends State<UserSongsPage> {
     return CustomScrollView(
       slivers: [
         SliverToBoxAdapter(
-          child: buildPlaylistHeader(title, icon, songsList.length),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: buildPlaylistHeader(title, icon, songsList.length),
+          ),
         ),
         buildSongList(title, songsList, length),
       ],
@@ -102,33 +104,36 @@ class _UserSongsPageState extends State<UserSongsPage> {
 
   Widget buildPlaylistHeader(String title, IconData icon, int songsLength) {
     final _primaryColor = Theme.of(context).colorScheme.primary;
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        children: [
-          _buildPlaylistImage(title, icon),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20),
-            child: Text(
-              title,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: _primaryColor,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        _buildPlaylistImage(title, icon),
+        const SizedBox(width: 10),
+        SizedBox(
+          width: MediaQuery.of(context).size.width / 2.3,
+          child: Column(
+            children: [
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                  color: _primaryColor,
+                ),
               ),
-            ),
+              const SizedBox(height: 20),
+              Text(
+                '[ $songsLength ${context.l10n!.songs} ]'.toUpperCase(),
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: _primaryColor,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 20),
-          Text(
-            '[ $songsLength ${context.l10n!.songs} ]'.toUpperCase(),
-            style: TextStyle(
-              fontWeight: FontWeight.w500,
-              color: _primaryColor,
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -137,7 +142,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
       title: title,
       onClickOpen: false,
       showFavoriteButton: false,
-      size: MediaQuery.of(context).size.width / 2.2,
+      size: MediaQuery.of(context).size.width / 2.5,
       cubeIcon: icon,
     );
   }
