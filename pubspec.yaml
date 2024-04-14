@@ -13,26 +13,26 @@ environment:
 
 dependencies:
   audio_service: ^0.18.13
-  audio_session: ^0.1.18
+  audio_session: ^0.1.19
   cached_network_image: ^3.3.1
   dynamic_color: ^1.7.0
   file_picker: ^8.0.0+1
-  fluentui_system_icons: ^1.1.232
+  fluentui_system_icons: ^1.1.234
   flutter:
     sdk: flutter
   flutter_flip_card: ^0.0.5
   flutter_localizations:
     sdk: flutter
-  go_router: ^13.2.2
+  go_router: ^13.2.4
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   html: ^0.15.4
   http: ^1.2.0
   intl: ^0.18.0
   just_audio: ^0.9.37
-  path_provider: ^2.1.2
+  path_provider: ^2.1.3
   rxdart: ^0.27.7
-  url_launcher: ^6.2.5
+  url_launcher: ^6.2.6
   youtube_explode_dart: ^2.2.0
 
 dev_dependencies:

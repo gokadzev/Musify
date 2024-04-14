@@ -61,10 +61,10 @@ packages:
     dependency: "direct main"
     description:
       name: audio_session
-      sha256: "6fdf255ed3af86535c96452c33ecff1245990bb25a605bfb1958661ccc3d467f"
+      sha256: a49af9981eec5d7cd73b37bacb6ee73f8143a6a9f9bd5b6021e6c346b9b6cf4e
       url: "https://pub.dev"
     source: hosted
-    version: "0.1.18"
+    version: "0.1.19"
   boolean_selector:
     dependency: transitive
     description:
@@ -221,10 +221,10 @@ packages:
     dependency: "direct main"
     description:
       name: fluentui_system_icons
-      sha256: cb71bafe3d760b0a6c49aabeaa8ae9534968b8a8e2e6d8e32f67090cd9bb53be
+      sha256: "1c860f10a0e74c5788ff8a650ae6074d9a544463ae269714f1044b32df52b978"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.232"
+    version: "1.1.234"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -305,10 +305,10 @@ packages:
     dependency: "direct main"
     description:
       name: go_router
-      sha256: "5ed2687bc961f33a752017ccaa7edead3e5601b28b6376a5901bf24728556b85"
+      sha256: "771c8feb40ad0ef639973d7ecf1b43d55ffcedb2207fd43fab030f5639e40446"
       url: "https://pub.dev"
     source: hosted
-    version: "13.2.2"
+    version: "13.2.4"
   hive:
     dependency: "direct main"
     description:
@@ -481,10 +481,10 @@ packages:
     dependency: "direct main"
     description:
       name: path_provider
-      sha256: b27217933eeeba8ff24845c34003b003b2b22151de3c908d0e679e8fe1aa078b
+      sha256: c9e7d3a4cd1410877472158bee69963a4579f78b68c65a2b7d40d1a7a88bb161
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.2"
+    version: "2.1.3"
   path_provider_android:
     dependency: transitive
     description:
@@ -678,10 +678,10 @@ packages:
     dependency: "direct main"
     description:
       name: url_launcher
-      sha256: "0ecc004c62fd3ed36a2ffcbe0dd9700aee63bd7532d0b642a488b1ec310f492e"
+      sha256: "6ce1e04375be4eed30548f10a315826fd933c1e493206eab82eed01f438c8d2e"
       url: "https://pub.dev"
     source: hosted
-    version: "6.2.5"
+    version: "6.2.6"
   url_launcher_android:
     dependency: transitive
     description:
