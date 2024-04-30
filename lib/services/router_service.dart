@@ -192,20 +192,6 @@ class NavigationManager {
             },
             routes: [
               GoRoute(
-                path: 'userSongs/:page',
-                builder: (context, state) => UserSongsPage(
-                  page: state.pathParameters['page'] ?? 'liked',
-                ),
-              ),
-              GoRoute(
-                path: 'playlists',
-                builder: (context, state) => const PlaylistsPage(),
-              ),
-              GoRoute(
-                path: 'userLikedPlaylists',
-                builder: (context, state) => const UserLikedPlaylistsPage(),
-              ),
-              GoRoute(
                 path: 'license',
                 builder: (context, state) => const LicensePage(
                   applicationName: 'Musify',
