@@ -62,6 +62,7 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
       ),
       contentPadding: const EdgeInsets.fromLTRB(18, 14, 20, 14),
     ),
+    sliderTheme: const SliderThemeData(trackHeight: 1.8),
     visualDensity: VisualDensity.adaptivePlatformDensity,
     useMaterial3: true,
     pageTransitionsTheme: const PageTransitionsTheme(

@@ -7,7 +7,10 @@ Widget buildPlaybackIconButton(
   PlaybackState? playerState,
   double iconSize,
   Color iconColor,
-) {
+  Color backgroundColor, {
+  double elevation = 2,
+  EdgeInsets padding = const EdgeInsets.all(15),
+}) {
   final processingState = playerState?.processingState;
   final playing = playerState?.playing;
 
@@ -20,23 +23,30 @@ Widget buildPlaybackIconButton(
       onPressed = null;
       break;
     case AudioProcessingState.completed:
-      icon = FluentIcons.replay_20_filled;
+      icon = FluentIcons.arrow_counterclockwise_24_filled;
       onPressed = () => audioHandler.seek(Duration.zero);
       break;
     default:
       icon = playing != true
-          ? FluentIcons.play_circle_24_filled
-          : FluentIcons.pause_circle_24_filled;
+          ? FluentIcons.play_24_filled
+          : FluentIcons.pause_24_filled;
       onPressed = playing != true ? audioHandler.play : audioHandler.pause;
   }
 
-  return InkWell(
-    onTap: onPressed,
+  return RawMaterialButton(
+    elevation: elevation,
+    onPressed: onPressed,
+    fillColor: backgroundColor,
     splashColor: Colors.transparent,
-    child: Icon(
-      icon,
-      color: iconColor,
-      size: iconSize,
+    padding: padding,
+    shape: const CircleBorder(),
+    child: Padding(
+      padding: const EdgeInsetsDirectional.all(10),
+      child: Icon(
+        icon,
+        color: iconColor,
+        size: iconSize,
+      ),
     ),
   );
 }

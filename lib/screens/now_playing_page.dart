@@ -15,6 +15,7 @@ import 'package:musify/widgets/playback_icon_button.dart';
 import 'package:musify/widgets/song_artwork.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/spinner.dart';
+import 'package:musify/widgets/squiggly_slider.dart';
 
 final _lyricsController = FlipCardController();
 
@@ -26,9 +27,7 @@ class NowPlayingPage extends StatelessWidget {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(context.l10n!.nowPlaying),
-      ),
+      appBar: AppBar(),
       body: StreamBuilder<MediaItem?>(
         stream: audioHandler.mediaItem,
         builder: (context, snapshot) {
@@ -52,8 +51,8 @@ class NowPlayingPage extends StatelessWidget {
                           buildMarqueeText(
                             metadata.title,
                             Theme.of(context).colorScheme.primary,
-                            screenHeight * 0.034,
-                            FontWeight.bold,
+                            screenHeight * 0.032,
+                            FontWeight.w600,
                             screenWidth,
                           ),
                           const SizedBox(height: 4),
@@ -61,8 +60,8 @@ class NowPlayingPage extends StatelessWidget {
                             buildMarqueeText(
                               metadata.artist!,
                               Theme.of(context).colorScheme.secondary,
-                              screenHeight * 0.015,
-                              FontWeight.w400,
+                              screenHeight * 0.017,
+                              FontWeight.w500,
                               screenWidth,
                             ),
                         ],
@@ -86,8 +85,10 @@ class NowPlayingPage extends StatelessWidget {
   }
 
   Widget buildArtwork(BuildContext context, Size size, MediaItem metadata) {
-    const padding = 90;
-    final imageSize = size.width - padding;
+    const _padding = 50;
+    const _radius = 20.0;
+    const _maxSize = 360.0;
+    final imageSize = size.width - _padding;
 
     return FlipCard(
       rotateSide: RotateSide.right,
@@ -95,26 +96,27 @@ class NowPlayingPage extends StatelessWidget {
       controller: _lyricsController,
       frontWidget: ConstrainedBox(
         constraints: const BoxConstraints(
-          maxWidth: 300,
-          maxHeight: 300,
+          maxWidth: _maxSize,
+          maxHeight: _maxSize,
         ),
         child: SongArtworkWidget(
           metadata: metadata,
           size: imageSize,
           errorWidgetIconSize: size.width / 8,
+          borderRadius: _radius,
         ),
       ),
       backWidget: ConstrainedBox(
         constraints: const BoxConstraints(
-          maxWidth: 300,
-          maxHeight: 300,
+          maxWidth: _maxSize,
+          maxHeight: _maxSize,
         ),
         child: Container(
           width: imageSize,
           height: imageSize,
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.secondaryContainer,
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(_radius),
           ),
           child: ValueListenableBuilder<String?>(
             valueListenable: lyrics,
@@ -196,9 +198,8 @@ class NowPlayingPage extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         buildPositionSlider(),
-        SizedBox(height: size.height * 0.03),
         buildPlayerControls(context, size, mediaItem, iconSize),
-        SizedBox(height: size.height * 0.1),
+        SizedBox(height: size.height * 0.04),
         buildBottomActions(context, audioId, mediaItem, iconSize),
       ],
     );
@@ -215,14 +216,10 @@ class NowPlayingPage extends StatelessWidget {
           }
           final positionData = snapshot.data!;
           final primaryColor = Theme.of(context).colorScheme.primary;
-          final secondaryColor =
-              Theme.of(context).colorScheme.secondaryContainer;
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               buildSlider(
-                secondaryColor,
-                primaryColor,
                 positionData,
               ),
               buildPositionRow(
@@ -237,25 +234,24 @@ class NowPlayingPage extends StatelessWidget {
   }
 
   Widget buildSlider(
-    Color sliderColor,
-    Color activeColor,
     PositionData positionData,
   ) {
-    return Slider(
-      activeColor: activeColor,
-      inactiveColor: sliderColor,
+    return SquigglySlider(
       value: positionData.position.inSeconds.toDouble(),
       onChanged: (value) {
         audioHandler.seek(Duration(seconds: value.toInt()));
       },
       max: positionData.duration.inSeconds.toDouble(),
+      squiggleAmplitude: 3,
+      squiggleWavelength: 5,
+      squiggleSpeed: 0.1,
     );
   }
 
   Widget buildPositionRow(Color fontColor, PositionData positionData) {
     final positionText = formatDuration(positionData.position.inSeconds);
     final durationText = formatDuration(positionData.duration.inSeconds);
-    final textStyle = TextStyle(fontSize: 17, color: fontColor);
+    final textStyle = TextStyle(fontSize: 15, color: fontColor);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 22),
@@ -278,78 +274,82 @@ class NowPlayingPage extends StatelessWidget {
     final _primaryColor = Theme.of(context).colorScheme.primary;
     final _secondaryColor = Theme.of(context).colorScheme.secondaryContainer;
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        ValueListenableBuilder<bool>(
-          valueListenable: shuffleNotifier,
-          builder: (_, value, __) {
-            return IconButton(
-              icon: Icon(
-                value
-                    ? FluentIcons.arrow_shuffle_24_filled
-                    : FluentIcons.arrow_shuffle_off_24_filled,
-                color: value ? _primaryColor : _secondaryColor,
-              ),
-              iconSize: iconSize,
-              onPressed: () {
-                audioHandler.setShuffleMode(
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 22),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          ValueListenableBuilder<bool>(
+            valueListenable: shuffleNotifier,
+            builder: (_, value, __) {
+              return IconButton(
+                icon: Icon(
                   value
-                      ? AudioServiceShuffleMode.none
-                      : AudioServiceShuffleMode.all,
-                );
-              },
-            );
-          },
-        ),
-        IconButton(
-          icon: Icon(
-            FluentIcons.previous_24_filled,
-            color: audioHandler.hasPrevious ? _primaryColor : _secondaryColor,
+                      ? FluentIcons.arrow_shuffle_24_filled
+                      : FluentIcons.arrow_shuffle_off_24_filled,
+                  color: value ? _primaryColor : _secondaryColor,
+                ),
+                iconSize: iconSize,
+                onPressed: () {
+                  audioHandler.setShuffleMode(
+                    value
+                        ? AudioServiceShuffleMode.none
+                        : AudioServiceShuffleMode.all,
+                  );
+                },
+              );
+            },
           ),
-          iconSize: size.width * 0.09 < 35 ? size.width * 0.09 : 35,
-          onPressed: () => audioHandler.skipToPrevious(),
-          splashColor: Colors.transparent,
-        ),
-        StreamBuilder<PlaybackState>(
-          stream: audioHandler.playbackState,
-          builder: (context, snapshot) {
-            return buildPlaybackIconButton(
-              snapshot.data,
-              size.width * 0.19 < 72 ? size.width * 0.19 : 72,
-              _primaryColor,
-            );
-          },
-        ),
-        IconButton(
-          icon: Icon(
-            FluentIcons.next_24_filled,
-            color: audioHandler.hasNext ? _primaryColor : _secondaryColor,
+          IconButton(
+            icon: Icon(
+              FluentIcons.previous_24_filled,
+              color: audioHandler.hasPrevious ? _primaryColor : _secondaryColor,
+            ),
+            iconSize: size.width * 0.11 > 45 ? size.width * 0.11 : 45,
+            onPressed: () => audioHandler.skipToPrevious(),
+            splashColor: Colors.transparent,
           ),
-          iconSize: size.width * 0.09 < 35 ? size.width * 0.09 : 35,
-          onPressed: () => audioHandler.skipToNext(),
-          splashColor: Colors.transparent,
-        ),
-        ValueListenableBuilder<bool>(
-          valueListenable: repeatNotifier,
-          builder: (_, value, __) {
-            return IconButton(
-              icon: Icon(
-                value
-                    ? FluentIcons.arrow_repeat_1_24_filled
-                    : FluentIcons.arrow_repeat_all_off_24_filled,
-                color: value ? _primaryColor : _secondaryColor,
-              ),
-              iconSize: iconSize,
-              onPressed: () => audioHandler.setRepeatMode(
-                value
-                    ? AudioServiceRepeatMode.none
-                    : AudioServiceRepeatMode.all,
-              ),
-            );
-          },
-        ),
-      ],
+          StreamBuilder<PlaybackState>(
+            stream: audioHandler.playbackState,
+            builder: (context, snapshot) {
+              return buildPlaybackIconButton(
+                snapshot.data,
+                size.width * 0.19 > 20 && size.width < 50 ? size.width : 50,
+                _primaryColor,
+                _secondaryColor,
+              );
+            },
+          ),
+          IconButton(
+            icon: Icon(
+              FluentIcons.next_24_filled,
+              color: audioHandler.hasNext ? _primaryColor : _secondaryColor,
+            ),
+            iconSize: size.width * 0.11 > 45 ? size.width * 0.11 : 45,
+            onPressed: () => audioHandler.skipToNext(),
+            splashColor: Colors.transparent,
+          ),
+          ValueListenableBuilder<bool>(
+            valueListenable: repeatNotifier,
+            builder: (_, value, __) {
+              return IconButton(
+                icon: Icon(
+                  value
+                      ? FluentIcons.arrow_repeat_1_24_filled
+                      : FluentIcons.arrow_repeat_all_off_24_filled,
+                  color: value ? _primaryColor : _secondaryColor,
+                ),
+                iconSize: iconSize,
+                onPressed: () => audioHandler.setRepeatMode(
+                  value
+                      ? AudioServiceRepeatMode.none
+                      : AudioServiceRepeatMode.all,
+                ),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 

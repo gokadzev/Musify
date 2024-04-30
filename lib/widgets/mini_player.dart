@@ -45,7 +45,7 @@ class MiniPlayer extends StatelessWidget {
             }
           : null,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 18),
+        padding: const EdgeInsets.only(left: 18),
         height: 75,
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.secondaryContainer,
@@ -59,8 +59,11 @@ class MiniPlayer extends StatelessWidget {
               builder: (context, snapshot) {
                 return buildPlaybackIconButton(
                   snapshot.data,
-                  45,
+                  30,
                   Theme.of(context).colorScheme.primary,
+                  Colors.transparent,
+                  elevation: 0,
+                  padding: EdgeInsets.zero,
                 );
               },
             ),
