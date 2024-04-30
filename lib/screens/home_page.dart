@@ -45,8 +45,74 @@ class _HomePageState extends State<HomePage> {
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
+            _buildTopNavBar(),
             _buildSuggestedPlaylists(),
             _buildRecommendedSongsAndArtists(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTopNavBar() {
+    return Padding(
+      padding: const EdgeInsetsDirectional.symmetric(
+        horizontal: 12,
+        vertical: 8,
+      ),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: [
+            FilledButton.tonalIcon(
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PlaylistPage(
+                    playlistData: {
+                      'title': context.l10n!.recentlyPlayed,
+                      'list': userRecentlyPlayed,
+                    },
+                  ),
+                ),
+              ),
+              icon: const Icon(FluentIcons.history_24_filled),
+              label: Text(context.l10n!.recentlyPlayed),
+            ),
+            const SizedBox(width: 10),
+            FilledButton.tonalIcon(
+              onPressed: () => NavigationManager.router.go(
+                '/home/playlists',
+              ),
+              icon: const Icon(FluentIcons.list_24_filled),
+              label: Text(context.l10n!.playlists),
+            ),
+            const SizedBox(width: 10),
+            FilledButton.tonalIcon(
+              onPressed: () => NavigationManager.router.go(
+                '/home/userSongs/liked',
+              ),
+              icon: const Icon(FluentIcons.heart_24_filled),
+              label: Text(context.l10n!.userLikedSongs),
+            ),
+            const SizedBox(width: 10),
+            FilledButton.tonalIcon(
+              onPressed: () => NavigationManager.router.go(
+                '/home/userSongs/offline',
+              ),
+              icon: const Icon(FluentIcons.cellular_off_24_filled),
+              label: Text(context.l10n!.userOfflineSongs),
+            ),
+            const SizedBox(width: 10),
+            FilledButton.tonalIcon(
+              onPressed: () => NavigationManager.router.go(
+                '/home/userLikedPlaylists',
+              ),
+              icon: const Icon(
+                FluentIcons.star_24_filled,
+              ),
+              label: Text(context.l10n!.userLikedPlaylists),
+            ),
           ],
         ),
       ),

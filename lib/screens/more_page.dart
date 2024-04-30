@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
-import 'package:musify/screens/playlist_page.dart';
 import 'package:musify/screens/search_page.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/router_service.dart';
@@ -33,60 +32,6 @@ class MorePage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            if (isOnline)
-              Column(
-                children: [
-                  // CATEGORY: PAGES
-                  _buildSectionTitle(
-                    primaryColor,
-                    context.l10n!.pages,
-                  ),
-                  SettingBar(
-                    context.l10n!.recentlyPlayed,
-                    FluentIcons.history_24_filled,
-                    () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PlaylistPage(
-                          playlistData: {
-                            'title': context.l10n!.recentlyPlayed,
-                            'list': userRecentlyPlayed,
-                          },
-                        ),
-                      ),
-                    ),
-                  ),
-                  SettingBar(
-                    context.l10n!.playlists,
-                    FluentIcons.list_24_filled,
-                    () => NavigationManager.router.go(
-                      '/more/playlists',
-                    ),
-                  ),
-                  SettingBar(
-                    context.l10n!.userLikedSongs,
-                    FluentIcons.heart_24_filled,
-                    () => NavigationManager.router.go(
-                      '/more/userSongs/liked',
-                    ),
-                  ),
-                  SettingBar(
-                    context.l10n!.userOfflineSongs,
-                    FluentIcons.cellular_off_24_filled,
-                    () => NavigationManager.router.go(
-                      '/more/userSongs/offline',
-                    ),
-                  ),
-                  SettingBar(
-                    context.l10n!.userLikedPlaylists,
-                    FluentIcons.star_24_filled,
-                    () => NavigationManager.router.go(
-                      '/more/userLikedPlaylists',
-                    ),
-                  ),
-                ],
-              ),
-
             // CATEGORY: SETTINGS
             _buildSectionTitle(
               primaryColor,
