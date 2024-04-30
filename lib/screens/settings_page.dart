@@ -16,8 +16,8 @@ import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/setting_bar.dart';
 import 'package:musify/widgets/setting_switch_bar.dart';
 
-class MorePage extends StatelessWidget {
-  const MorePage({super.key});
+class SettingsPage extends StatelessWidget {
+  const SettingsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class MorePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          context.l10n!.more,
+          context.l10n!.settings,
         ),
       ),
       body: SingleChildScrollView(
@@ -456,7 +456,7 @@ class MorePage extends StatelessWidget {
               context.l10n!.licenses,
               FluentIcons.document_24_filled,
               () => NavigationManager.router.go(
-                '/more/license',
+                '/settings/license',
               ),
             ),
             SettingBar(
@@ -468,7 +468,7 @@ class MorePage extends StatelessWidget {
               context.l10n!.about,
               FluentIcons.book_information_24_filled,
               () => NavigationManager.router.go(
-                '/more/about',
+                '/settings/about',
               ),
             ),
             const SizedBox(

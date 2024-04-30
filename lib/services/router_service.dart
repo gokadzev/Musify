@@ -5,9 +5,9 @@ import 'package:musify/main.dart';
 import 'package:musify/screens/about_page.dart';
 import 'package:musify/screens/bottom_navigation_page.dart';
 import 'package:musify/screens/home_page.dart';
-import 'package:musify/screens/more_page.dart';
 import 'package:musify/screens/playlists_page.dart';
 import 'package:musify/screens/search_page.dart';
+import 'package:musify/screens/settings_page.dart';
 import 'package:musify/screens/user_added_playlists_page.dart';
 import 'package:musify/screens/user_liked_playlists_page.dart';
 import 'package:musify/screens/user_songs_page.dart';
@@ -57,7 +57,7 @@ class NavigationManager {
       GlobalKey<NavigatorState>();
   static final GlobalKey<NavigatorState> userPlaylistsTabNavigatorKey =
       GlobalKey<NavigatorState>();
-  static final GlobalKey<NavigatorState> moreTabNavigatorKey =
+  static final GlobalKey<NavigatorState> settingsTabNavigatorKey =
       GlobalKey<NavigatorState>();
 
   BuildContext get context =>
@@ -69,7 +69,7 @@ class NavigationManager {
       router.routeInformationParser;
 
   static const String homePath = '/home';
-  static const String morePath = '/more';
+  static const String settingsPath = '/settings';
   static const String searchPath = '/search';
   static const String userPlaylistsPath = '/userPlaylists';
 
@@ -134,13 +134,13 @@ class NavigationManager {
         ],
       ),
       StatefulShellBranch(
-        navigatorKey: moreTabNavigatorKey,
+        navigatorKey: settingsTabNavigatorKey,
         routes: [
           GoRoute(
-            path: morePath,
+            path: settingsPath,
             pageBuilder: (context, state) {
               return getPage(
-                child: const MorePage(),
+                child: const SettingsPage(),
                 state: state,
               );
             },
@@ -180,13 +180,13 @@ class NavigationManager {
         ],
       ),
       StatefulShellBranch(
-        navigatorKey: moreTabNavigatorKey,
+        navigatorKey: settingsTabNavigatorKey,
         routes: [
           GoRoute(
-            path: morePath,
+            path: settingsPath,
             pageBuilder: (context, state) {
               return getPage(
-                child: const MorePage(),
+                child: const SettingsPage(),
                 state: state,
               );
             },

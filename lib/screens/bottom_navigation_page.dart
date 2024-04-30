@@ -90,7 +90,7 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
                       selectedIcon: const Icon(
                         FluentIcons.more_horizontal_24_filled,
                       ),
-                      label: context.l10n?.more ?? 'More',
+                      label: context.l10n?.settings ?? 'Settings',
                     ),
                   ]
                 : [
@@ -106,7 +106,7 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
                       selectedIcon: const Icon(
                         FluentIcons.more_horizontal_24_filled,
                       ),
-                      label: context.l10n?.more ?? 'More',
+                      label: context.l10n?.settings ?? 'Settings',
                     ),
                   ],
           ),
