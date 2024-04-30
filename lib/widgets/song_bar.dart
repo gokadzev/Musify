@@ -145,36 +145,41 @@ class SongBar extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        ValueListenableBuilder<bool>(
-          valueListenable: songLikeStatus,
-          builder: (_, value, __) {
-            return IconButton(
-              color: primaryColor,
-              icon: Icon(likeStatusToIconMapper[value]),
-              onPressed: () {
-                songLikeStatus.value = !songLikeStatus.value;
-                updateSongLikeStatus(
-                  song['ytid'],
-                  songLikeStatus.value,
-                );
-                final likedSongsLength = currentLikedSongsLength.value;
-                currentLikedSongsLength.value =
-                    value ? likedSongsLength + 1 : likedSongsLength - 1;
-              },
-            );
-          },
-        ),
-        if (onRemove != null)
-          IconButton(
-            color: primaryColor,
-            icon: const Icon(FluentIcons.delete_24_filled),
-            onPressed: () => onRemove!(),
-          )
-        else
-          IconButton(
-            color: primaryColor,
-            icon: const Icon(FluentIcons.add_24_regular),
-            onPressed: () => showAddToPlaylistDialog(context, song),
+        if (isOnline)
+          Row(
+            children: [
+              ValueListenableBuilder<bool>(
+                valueListenable: songLikeStatus,
+                builder: (_, value, __) {
+                  return IconButton(
+                    color: primaryColor,
+                    icon: Icon(likeStatusToIconMapper[value]),
+                    onPressed: () {
+                      songLikeStatus.value = !songLikeStatus.value;
+                      updateSongLikeStatus(
+                        song['ytid'],
+                        songLikeStatus.value,
+                      );
+                      final likedSongsLength = currentLikedSongsLength.value;
+                      currentLikedSongsLength.value =
+                          value ? likedSongsLength + 1 : likedSongsLength - 1;
+                    },
+                  );
+                },
+              ),
+              if (onRemove != null)
+                IconButton(
+                  color: primaryColor,
+                  icon: const Icon(FluentIcons.delete_24_filled),
+                  onPressed: () => onRemove!(),
+                )
+              else
+                IconButton(
+                  color: primaryColor,
+                  icon: const Icon(FluentIcons.add_24_regular),
+                  onPressed: () => showAddToPlaylistDialog(context, song),
+                ),
+            ],
           ),
         ValueListenableBuilder<bool>(
           valueListenable: songOfflineStatus,

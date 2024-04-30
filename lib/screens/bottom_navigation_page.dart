@@ -66,32 +66,49 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
                 _selectedIndex.value = index;
               });
             },
-            destinations: [
-              NavigationDestination(
-                icon: const Icon(FluentIcons.home_24_regular),
-                selectedIcon: const Icon(FluentIcons.home_24_filled),
-                label: context.l10n?.home ?? 'Home',
-              ),
-              NavigationDestination(
-                icon: const Icon(FluentIcons.search_24_regular),
-                selectedIcon: const Icon(FluentIcons.search_24_filled),
-                label: context.l10n?.search ?? 'Search',
-              ),
-              NavigationDestination(
-                icon: const Icon(FluentIcons.book_24_regular),
-                selectedIcon: const Icon(FluentIcons.book_24_filled),
-                label: context.l10n?.userPlaylists ?? 'User Playlists',
-              ),
-              NavigationDestination(
-                icon: const Icon(
-                  FluentIcons.more_horizontal_24_regular,
-                ),
-                selectedIcon: const Icon(
-                  FluentIcons.more_horizontal_24_filled,
-                ),
-                label: context.l10n?.more ?? 'More',
-              ),
-            ],
+            destinations: isOnline
+                ? [
+                    NavigationDestination(
+                      icon: const Icon(FluentIcons.home_24_regular),
+                      selectedIcon: const Icon(FluentIcons.home_24_filled),
+                      label: context.l10n?.home ?? 'Home',
+                    ),
+                    NavigationDestination(
+                      icon: const Icon(FluentIcons.search_24_regular),
+                      selectedIcon: const Icon(FluentIcons.search_24_filled),
+                      label: context.l10n?.search ?? 'Search',
+                    ),
+                    NavigationDestination(
+                      icon: const Icon(FluentIcons.book_24_regular),
+                      selectedIcon: const Icon(FluentIcons.book_24_filled),
+                      label: context.l10n?.userPlaylists ?? 'User Playlists',
+                    ),
+                    NavigationDestination(
+                      icon: const Icon(
+                        FluentIcons.more_horizontal_24_regular,
+                      ),
+                      selectedIcon: const Icon(
+                        FluentIcons.more_horizontal_24_filled,
+                      ),
+                      label: context.l10n?.more ?? 'More',
+                    ),
+                  ]
+                : [
+                    NavigationDestination(
+                      icon: const Icon(FluentIcons.home_24_regular),
+                      selectedIcon: const Icon(FluentIcons.home_24_filled),
+                      label: context.l10n?.home ?? 'Home',
+                    ),
+                    NavigationDestination(
+                      icon: const Icon(
+                        FluentIcons.more_horizontal_24_regular,
+                      ),
+                      selectedIcon: const Icon(
+                        FluentIcons.more_horizontal_24_filled,
+                      ),
+                      label: context.l10n?.more ?? 'More',
+                    ),
+                  ],
           ),
         ],
       ),

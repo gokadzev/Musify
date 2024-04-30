@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:musify/API/version.dart';
+import 'package:musify/main.dart';
 import 'package:musify/screens/about_page.dart';
 import 'package:musify/screens/bottom_navigation_page.dart';
 import 'package:musify/screens/home_page.dart';
@@ -20,97 +21,7 @@ class NavigationManager {
     final routes = [
       StatefulShellRoute.indexedStack(
         parentNavigatorKey: parentNavigatorKey,
-        branches: [
-          StatefulShellBranch(
-            navigatorKey: homeTabNavigatorKey,
-            routes: [
-              GoRoute(
-                path: homePath,
-                pageBuilder: (context, GoRouterState state) {
-                  return getPage(
-                    child: const HomePage(),
-                    state: state,
-                  );
-                },
-                routes: [
-                  GoRoute(
-                    path: 'playlists',
-                    builder: (context, state) => const PlaylistsPage(),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            navigatorKey: searchTabNavigatorKey,
-            routes: [
-              GoRoute(
-                path: searchPath,
-                pageBuilder: (context, GoRouterState state) {
-                  return getPage(
-                    child: const SearchPage(),
-                    state: state,
-                  );
-                },
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            navigatorKey: userPlaylistsTabNavigatorKey,
-            routes: [
-              GoRoute(
-                path: userPlaylistsPath,
-                pageBuilder: (context, GoRouterState state) {
-                  return getPage(
-                    child: const UserPlaylistsPage(),
-                    state: state,
-                  );
-                },
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            navigatorKey: moreTabNavigatorKey,
-            routes: [
-              GoRoute(
-                path: morePath,
-                pageBuilder: (context, state) {
-                  return getPage(
-                    child: const MorePage(),
-                    state: state,
-                  );
-                },
-                routes: [
-                  GoRoute(
-                    path: 'userSongs/:page',
-                    builder: (context, state) => UserSongsPage(
-                      page: state.pathParameters['page'] ?? 'liked',
-                    ),
-                  ),
-                  GoRoute(
-                    path: 'playlists',
-                    builder: (context, state) => const PlaylistsPage(),
-                  ),
-                  GoRoute(
-                    path: 'userLikedPlaylists',
-                    builder: (context, state) => const UserLikedPlaylistsPage(),
-                  ),
-                  GoRoute(
-                    path: 'license',
-                    builder: (context, state) => const LicensePage(
-                      applicationName: 'Musify',
-                      applicationVersion: appVersion,
-                    ),
-                  ),
-                  GoRoute(
-                    path: 'about',
-                    builder: (context, state) => const AboutPage(),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
+        branches: isOnline ? _onlineRoutes() : _offlineRoutes(),
         pageBuilder: (
           BuildContext context,
           GoRouterState state,
@@ -161,6 +72,160 @@ class NavigationManager {
   static const String morePath = '/more';
   static const String searchPath = '/search';
   static const String userPlaylistsPath = '/userPlaylists';
+
+  List<StatefulShellBranch> _onlineRoutes() {
+    return [
+      StatefulShellBranch(
+        navigatorKey: homeTabNavigatorKey,
+        routes: [
+          GoRoute(
+            path: homePath,
+            pageBuilder: (context, GoRouterState state) {
+              return getPage(
+                child: const HomePage(),
+                state: state,
+              );
+            },
+            routes: [
+              GoRoute(
+                path: 'playlists',
+                builder: (context, state) => const PlaylistsPage(),
+              ),
+            ],
+          ),
+        ],
+      ),
+      StatefulShellBranch(
+        navigatorKey: searchTabNavigatorKey,
+        routes: [
+          GoRoute(
+            path: searchPath,
+            pageBuilder: (context, GoRouterState state) {
+              return getPage(
+                child: const SearchPage(),
+                state: state,
+              );
+            },
+          ),
+        ],
+      ),
+      StatefulShellBranch(
+        navigatorKey: userPlaylistsTabNavigatorKey,
+        routes: [
+          GoRoute(
+            path: userPlaylistsPath,
+            pageBuilder: (context, GoRouterState state) {
+              return getPage(
+                child: const UserPlaylistsPage(),
+                state: state,
+              );
+            },
+          ),
+        ],
+      ),
+      StatefulShellBranch(
+        navigatorKey: moreTabNavigatorKey,
+        routes: [
+          GoRoute(
+            path: morePath,
+            pageBuilder: (context, state) {
+              return getPage(
+                child: const MorePage(),
+                state: state,
+              );
+            },
+            routes: [
+              GoRoute(
+                path: 'userSongs/:page',
+                builder: (context, state) => UserSongsPage(
+                  page: state.pathParameters['page'] ?? 'liked',
+                ),
+              ),
+              GoRoute(
+                path: 'playlists',
+                builder: (context, state) => const PlaylistsPage(),
+              ),
+              GoRoute(
+                path: 'userLikedPlaylists',
+                builder: (context, state) => const UserLikedPlaylistsPage(),
+              ),
+              GoRoute(
+                path: 'license',
+                builder: (context, state) => const LicensePage(
+                  applicationName: 'Musify',
+                  applicationVersion: appVersion,
+                ),
+              ),
+              GoRoute(
+                path: 'about',
+                builder: (context, state) => const AboutPage(),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ];
+  }
+
+  List<StatefulShellBranch> _offlineRoutes() {
+    return [
+      StatefulShellBranch(
+        navigatorKey: homeTabNavigatorKey,
+        routes: [
+          GoRoute(
+            path: homePath,
+            pageBuilder: (context, GoRouterState state) {
+              return getPage(
+                child: const UserSongsPage(page: 'offline'),
+                state: state,
+              );
+            },
+          ),
+        ],
+      ),
+      StatefulShellBranch(
+        navigatorKey: moreTabNavigatorKey,
+        routes: [
+          GoRoute(
+            path: morePath,
+            pageBuilder: (context, state) {
+              return getPage(
+                child: const MorePage(),
+                state: state,
+              );
+            },
+            routes: [
+              GoRoute(
+                path: 'userSongs/:page',
+                builder: (context, state) => UserSongsPage(
+                  page: state.pathParameters['page'] ?? 'liked',
+                ),
+              ),
+              GoRoute(
+                path: 'playlists',
+                builder: (context, state) => const PlaylistsPage(),
+              ),
+              GoRoute(
+                path: 'userLikedPlaylists',
+                builder: (context, state) => const UserLikedPlaylistsPage(),
+              ),
+              GoRoute(
+                path: 'license',
+                builder: (context, state) => const LicensePage(
+                  applicationName: 'Musify',
+                  applicationVersion: appVersion,
+                ),
+              ),
+              GoRoute(
+                path: 'about',
+                builder: (context, state) => const AboutPage(),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ];
+  }
 
   static Page getPage({
     required Widget child,

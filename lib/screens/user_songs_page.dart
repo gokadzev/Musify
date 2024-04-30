@@ -31,6 +31,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
 
     return Scaffold(
       appBar: AppBar(
+        title: !isOnline ? Text(title) : null,
         actions: [
           if (title == context.l10n!.userLikedSongs)
             IconButton(

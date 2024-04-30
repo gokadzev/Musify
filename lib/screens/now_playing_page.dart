@@ -91,7 +91,7 @@ class NowPlayingPage extends StatelessWidget {
 
     return FlipCard(
       rotateSide: RotateSide.right,
-      onTapFlipping: true,
+      onTapFlipping: isOnline,
       controller: _lyricsController,
       frontWidget: ConstrainedBox(
         constraints: const BoxConstraints(
@@ -406,16 +406,17 @@ class NowPlayingPage extends StatelessWidget {
             );
           },
         ),
-        IconButton(
-          icon: Icon(
-            Icons.add,
-            color: _primaryColor,
+        if (isOnline)
+          IconButton(
+            icon: Icon(
+              Icons.add,
+              color: _primaryColor,
+            ),
+            iconSize: iconSize,
+            onPressed: () {
+              showAddToPlaylistDialog(context, mediaItemToMap(mediaItem));
+            },
           ),
-          iconSize: iconSize,
-          onPressed: () {
-            showAddToPlaylistDialog(context, mediaItemToMap(mediaItem));
-          },
-        ),
         if (activePlaylist['list'].isNotEmpty)
           IconButton(
             icon: Icon(
@@ -449,47 +450,50 @@ class NowPlayingPage extends StatelessWidget {
               );
             },
           ),
-        IconButton(
-          icon: Icon(
-            FluentIcons.text_32_filled,
-            color: _primaryColor,
+        if (isOnline)
+          IconButton(
+            icon: Icon(
+              FluentIcons.text_32_filled,
+              color: _primaryColor,
+            ),
+            iconSize: iconSize,
+            onPressed: _lyricsController.flipcard,
           ),
-          iconSize: iconSize,
-          onPressed: _lyricsController.flipcard,
-        ),
-        ValueListenableBuilder<bool>(
-          valueListenable: songLikeStatus,
-          builder: (_, value, __) {
-            return IconButton(
-              icon: Icon(
-                value
-                    ? FluentIcons.star_24_filled
-                    : FluentIcons.star_24_regular,
-                color: _primaryColor,
-              ),
-              iconSize: iconSize,
-              onPressed: () {
-                updateSongLikeStatus(audioId, !songLikeStatus.value);
-                songLikeStatus.value = !songLikeStatus.value;
-              },
-            );
-          },
-        ),
-        ValueListenableBuilder<bool>(
-          valueListenable: playNextSongAutomatically,
-          builder: (_, value, __) {
-            return IconButton(
-              icon: Icon(
-                value
-                    ? FluentIcons.music_note_2_play_20_filled
-                    : FluentIcons.music_note_2_play_20_regular,
-                color: _primaryColor,
-              ),
-              iconSize: iconSize,
-              onPressed: audioHandler.changeAutoPlayNextStatus,
-            );
-          },
-        ),
+        if (isOnline)
+          ValueListenableBuilder<bool>(
+            valueListenable: songLikeStatus,
+            builder: (_, value, __) {
+              return IconButton(
+                icon: Icon(
+                  value
+                      ? FluentIcons.star_24_filled
+                      : FluentIcons.star_24_regular,
+                  color: _primaryColor,
+                ),
+                iconSize: iconSize,
+                onPressed: () {
+                  updateSongLikeStatus(audioId, !songLikeStatus.value);
+                  songLikeStatus.value = !songLikeStatus.value;
+                },
+              );
+            },
+          ),
+        if (isOnline)
+          ValueListenableBuilder<bool>(
+            valueListenable: playNextSongAutomatically,
+            builder: (_, value, __) {
+              return IconButton(
+                icon: Icon(
+                  value
+                      ? FluentIcons.music_note_2_play_20_filled
+                      : FluentIcons.music_note_2_play_20_regular,
+                  color: _primaryColor,
+                ),
+                iconSize: iconSize,
+                onPressed: audioHandler.changeAutoPlayNextStatus,
+              );
+            },
+          ),
       ],
     );
   }

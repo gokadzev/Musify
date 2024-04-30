@@ -33,54 +33,59 @@ class MorePage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            // CATEGORY: PAGES
-            _buildSectionTitle(
-              primaryColor,
-              context.l10n!.pages,
-            ),
-            SettingBar(
-              context.l10n!.recentlyPlayed,
-              FluentIcons.history_24_filled,
-              () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => PlaylistPage(
-                    playlistData: {
-                      'title': context.l10n!.recentlyPlayed,
-                      'list': userRecentlyPlayed,
-                    },
+            if (isOnline)
+              Column(
+                children: [
+                  // CATEGORY: PAGES
+                  _buildSectionTitle(
+                    primaryColor,
+                    context.l10n!.pages,
                   ),
-                ),
+                  SettingBar(
+                    context.l10n!.recentlyPlayed,
+                    FluentIcons.history_24_filled,
+                    () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PlaylistPage(
+                          playlistData: {
+                            'title': context.l10n!.recentlyPlayed,
+                            'list': userRecentlyPlayed,
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                  SettingBar(
+                    context.l10n!.playlists,
+                    FluentIcons.list_24_filled,
+                    () => NavigationManager.router.go(
+                      '/more/playlists',
+                    ),
+                  ),
+                  SettingBar(
+                    context.l10n!.userLikedSongs,
+                    FluentIcons.heart_24_filled,
+                    () => NavigationManager.router.go(
+                      '/more/userSongs/liked',
+                    ),
+                  ),
+                  SettingBar(
+                    context.l10n!.userOfflineSongs,
+                    FluentIcons.cellular_off_24_filled,
+                    () => NavigationManager.router.go(
+                      '/more/userSongs/offline',
+                    ),
+                  ),
+                  SettingBar(
+                    context.l10n!.userLikedPlaylists,
+                    FluentIcons.star_24_filled,
+                    () => NavigationManager.router.go(
+                      '/more/userLikedPlaylists',
+                    ),
+                  ),
+                ],
               ),
-            ),
-            SettingBar(
-              context.l10n!.playlists,
-              FluentIcons.list_24_filled,
-              () => NavigationManager.router.go(
-                '/more/playlists',
-              ),
-            ),
-            SettingBar(
-              context.l10n!.userLikedSongs,
-              FluentIcons.heart_24_filled,
-              () => NavigationManager.router.go(
-                '/more/userSongs/liked',
-              ),
-            ),
-            SettingBar(
-              context.l10n!.userOfflineSongs,
-              FluentIcons.cellular_off_24_filled,
-              () => NavigationManager.router.go(
-                '/more/userSongs/offline',
-              ),
-            ),
-            SettingBar(
-              context.l10n!.userLikedPlaylists,
-              FluentIcons.star_24_filled,
-              () => NavigationManager.router.go(
-                '/more/userLikedPlaylists',
-              ),
-            ),
 
             // CATEGORY: SETTINGS
             _buildSectionTitle(
@@ -280,216 +285,222 @@ class MorePage extends StatelessWidget {
                 );
               },
             ),
-            ValueListenableBuilder<bool>(
-              valueListenable: sponsorBlockSupport,
-              builder: (_, value, __) {
-                return SettingSwitchBar(
-                  tileName: 'SponsorBlock',
-                  tileIcon: FluentIcons.presence_blocked_24_regular,
-                  value: value,
-                  onChanged: (value) {
-                    addOrUpdateData(
-                      'settings',
-                      'sponsorBlockSupport',
-                      value,
-                    );
-                    sponsorBlockSupport.value = value;
-                    showToast(
-                      context,
-                      context.l10n!.settingChangedMsg,
-                    );
-                  },
-                );
-              },
-            ),
+            if (isOnline)
+              Column(
+                children: [
+                  ValueListenableBuilder<bool>(
+                    valueListenable: sponsorBlockSupport,
+                    builder: (_, value, __) {
+                      return SettingSwitchBar(
+                        tileName: 'SponsorBlock',
+                        tileIcon: FluentIcons.presence_blocked_24_regular,
+                        value: value,
+                        onChanged: (value) {
+                          addOrUpdateData(
+                            'settings',
+                            'sponsorBlockSupport',
+                            value,
+                          );
+                          sponsorBlockSupport.value = value;
+                          showToast(
+                            context,
+                            context.l10n!.settingChangedMsg,
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  SettingBar(
+                    context.l10n!.audioQuality,
+                    Icons.music_note,
+                    () {
+                      showModalBottomSheet(
+                        isDismissible: true,
+                        context: context,
+                        builder: (BuildContext context) {
+                          final availableQualities = ['low', 'medium', 'high'];
 
-            SettingBar(
-              context.l10n!.audioQuality,
-              Icons.music_note,
-              () {
-                showModalBottomSheet(
-                  isDismissible: true,
-                  context: context,
-                  builder: (BuildContext context) {
-                    final availableQualities = ['low', 'medium', 'high'];
+                          return SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.90,
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              physics: const BouncingScrollPhysics(),
+                              itemCount: availableQualities.length,
+                              itemBuilder: (context, index) {
+                                final quality = availableQualities[index];
+                                final isCurrentQuality =
+                                    audioQualitySetting.value == quality;
 
-                    return SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.90,
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        physics: const BouncingScrollPhysics(),
-                        itemCount: availableQualities.length,
-                        itemBuilder: (context, index) {
-                          final quality = availableQualities[index];
-                          final isCurrentQuality =
-                              audioQualitySetting.value == quality;
+                                return Padding(
+                                  padding: const EdgeInsets.all(10),
+                                  child: Card(
+                                    elevation: isCurrentQuality ? 0 : 4,
+                                    child: ListTile(
+                                      title: Text(quality),
+                                      onTap: () {
+                                        addOrUpdateData(
+                                          'settings',
+                                          'audioQuality',
+                                          quality,
+                                        );
+                                        audioQualitySetting.value = quality;
 
-                          return Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: Card(
-                              elevation: isCurrentQuality ? 0 : 4,
-                              child: ListTile(
-                                title: Text(quality),
-                                onTap: () {
-                                  addOrUpdateData(
-                                    'settings',
-                                    'audioQuality',
-                                    quality,
-                                  );
-                                  audioQualitySetting.value = quality;
-
-                                  showToast(
-                                    context,
-                                    context.l10n!.audioQualityMsg,
-                                  );
-                                  Navigator.pop(context);
-                                },
-                              ),
+                                        showToast(
+                                          context,
+                                          context.l10n!.audioQualityMsg,
+                                        );
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
                           );
                         },
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-
-            // CATEGORY: TOOLS
-            _buildSectionTitle(
-              primaryColor,
-              context.l10n!.tools,
-            ),
-            SettingBar(
-              context.l10n!.clearCache,
-              FluentIcons.broom_24_filled,
-              () {
-                clearCache();
-                showToast(
-                  context,
-                  '${context.l10n!.cacheMsg}!',
-                );
-              },
-            ),
-            SettingBar(
-                context.l10n!.clearSearchHistory, FluentIcons.history_24_filled,
-                () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return ConfirmationDialog(
-                    submitMessage: context.l10n!.clear,
-                    confirmationMessage:
-                        context.l10n!.clearSearchHistoryQuestion,
-                    onCancel: () => {Navigator.of(context).pop()},
-                    onSubmit: () => {
-                      Navigator.of(context).pop(),
-                      searchHistory = [],
-                      deleteData('user', 'searchHistory'),
-                      showToast(context, '${context.l10n!.searchHistoryMsg}!'),
+                      );
                     },
-                  );
-                },
-              );
-            }),
-            SettingBar(
-              context.l10n!.clearRecentlyPlayed,
-              FluentIcons.receipt_play_24_filled,
-              () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return ConfirmationDialog(
-                      submitMessage: context.l10n!.clear,
-                      confirmationMessage:
-                          context.l10n!.clearRecentlyPlayedQuestion,
-                      onCancel: () => {Navigator.of(context).pop()},
-                      onSubmit: () => {
-                        Navigator.of(context).pop(),
-                        userRecentlyPlayed = [],
-                        deleteData('user', 'recentlyPlayedSongs'),
-                        showToast(
-                          context,
-                          '${context.l10n!.recentlyPlayedMsg}!',
-                        ),
+                  ),
+
+                  // CATEGORY: TOOLS
+                  _buildSectionTitle(
+                    primaryColor,
+                    context.l10n!.tools,
+                  ),
+                  SettingBar(
+                    context.l10n!.clearCache,
+                    FluentIcons.broom_24_filled,
+                    () {
+                      clearCache();
+                      showToast(
+                        context,
+                        '${context.l10n!.cacheMsg}!',
+                      );
+                    },
+                  ),
+                  SettingBar(context.l10n!.clearSearchHistory,
+                      FluentIcons.history_24_filled, () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return ConfirmationDialog(
+                          submitMessage: context.l10n!.clear,
+                          confirmationMessage:
+                              context.l10n!.clearSearchHistoryQuestion,
+                          onCancel: () => {Navigator.of(context).pop()},
+                          onSubmit: () => {
+                            Navigator.of(context).pop(),
+                            searchHistory = [],
+                            deleteData('user', 'searchHistory'),
+                            showToast(
+                              context,
+                              '${context.l10n!.searchHistoryMsg}!',
+                            ),
+                          },
+                        );
                       },
                     );
-                  },
-                );
-              },
-            ),
-            SettingBar(
-              context.l10n!.backupUserData,
-              FluentIcons.cloud_sync_24_filled,
-              () async {
-                await showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      content: Text(context.l10n!.folderRestrictions),
-                      actions: <Widget>[
-                        TextButton(
-                          child: Text(
-                            context.l10n!.understand.toUpperCase(),
-                          ),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
+                  }),
+                  SettingBar(
+                    context.l10n!.clearRecentlyPlayed,
+                    FluentIcons.receipt_play_24_filled,
+                    () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return ConfirmationDialog(
+                            submitMessage: context.l10n!.clear,
+                            confirmationMessage:
+                                context.l10n!.clearRecentlyPlayedQuestion,
+                            onCancel: () => {Navigator.of(context).pop()},
+                            onSubmit: () => {
+                              Navigator.of(context).pop(),
+                              userRecentlyPlayed = [],
+                              deleteData('user', 'recentlyPlayedSongs'),
+                              showToast(
+                                context,
+                                '${context.l10n!.recentlyPlayedMsg}!',
+                              ),
+                            },
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  SettingBar(
+                    context.l10n!.backupUserData,
+                    FluentIcons.cloud_sync_24_filled,
+                    () async {
+                      await showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            content: Text(context.l10n!.folderRestrictions),
+                            actions: <Widget>[
+                              TextButton(
+                                child: Text(
+                                  context.l10n!.understand.toUpperCase(),
+                                ),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                      final response = await backupData(context);
+                      showToast(context, response);
+                    },
+                  ),
+
+                  SettingBar(
+                    context.l10n!.restoreUserData,
+                    FluentIcons.cloud_add_24_filled,
+                    () async {
+                      final response = await restoreData(context);
+                      showToast(context, response);
+                    },
+                  ),
+
+                  if (!isFdroidBuild)
+                    SettingBar(
+                      context.l10n!.downloadAppUpdate,
+                      FluentIcons.arrow_download_24_filled,
+                      () => checkAppUpdates(context),
+                    ),
+                  // CATEGORY: BECOME A SPONSOR
+
+                  _buildSectionTitle(
+                    primaryColor,
+                    context.l10n!.becomeSponsor,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Card(
+                      color: primaryColor,
+                      child: ListTile(
+                        leading: const Icon(
+                          FluentIcons.heart_24_filled,
+                          color: Colors.white,
                         ),
-                      ],
-                    );
-                  },
-                );
-                final response = await backupData(context);
-                showToast(context, response);
-              },
-            ),
-
-            SettingBar(
-              context.l10n!.restoreUserData,
-              FluentIcons.cloud_add_24_filled,
-              () async {
-                final response = await restoreData(context);
-                showToast(context, response);
-              },
-            ),
-
-            if (!isFdroidBuild)
-              SettingBar(
-                context.l10n!.downloadAppUpdate,
-                FluentIcons.arrow_download_24_filled,
-                () => checkAppUpdates(context),
-              ),
-            // CATEGORY: BECOME A SPONSOR
-
-            _buildSectionTitle(
-              primaryColor,
-              context.l10n!.becomeSponsor,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: Card(
-                color: primaryColor,
-                child: ListTile(
-                  leading: const Icon(
-                    FluentIcons.heart_24_filled,
-                    color: Colors.white,
-                  ),
-                  title: Text(
-                    context.l10n!.sponsorProject,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
+                        title: Text(
+                          context.l10n!.sponsorProject,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                        onTap: () => {
+                          launchURL(
+                            Uri.parse('https://ko-fi.com/gokadzev'),
+                          ),
+                        },
+                      ),
                     ),
                   ),
-                  onTap: () => {
-                    launchURL(
-                      Uri.parse('https://ko-fi.com/gokadzev'),
-                    ),
-                  },
-                ),
+                ],
               ),
-            ),
             // CATEGORY: OTHERS
             _buildSectionTitle(
               primaryColor,

@@ -24,7 +24,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    if (!isFdroidBuild && !isUpdateChecked && kReleaseMode) {
+    if (!isFdroidBuild && !isUpdateChecked && isOnline && kReleaseMode) {
       checkAppUpdates(context);
       isUpdateChecked = true;
     }

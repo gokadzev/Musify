@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:musify/services/audio_service.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/logger_service.dart';
@@ -21,6 +22,8 @@ final logger = Logger();
 
 bool isFdroidBuild = false;
 bool isUpdateChecked = false;
+
+late bool isOnline;
 
 final appLanguages = <String, String>{
   'English': 'en',
@@ -187,6 +190,8 @@ Future<void> initialisation() async {
         androidShowNotificationBadge: true,
       ),
     );
+
+    isOnline = await InternetConnection().hasInternetAccess;
 
     // Init router
     NavigationManager.instance;
