@@ -33,7 +33,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
       appBar: AppBar(
         title: !isOnline ? Text(title) : null,
         actions: [
-          if (title == context.l10n!.userLikedSongs)
+          if (title == context.l10n!.likedSongs)
             IconButton(
               onPressed: () {
                 setState(() {
@@ -74,8 +74,8 @@ class _UserSongsPageState extends State<UserSongsPage> {
 
   String getTitle(String page, BuildContext context) {
     return {
-          'liked': context.l10n!.userLikedSongs,
-          'offline': context.l10n!.userOfflineSongs,
+          'liked': context.l10n!.likedSongs,
+          'offline': context.l10n!.offlineSongs,
         }[page] ??
         context.l10n!.playlist;
   }
@@ -136,7 +136,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
     return ValueListenableBuilder(
       valueListenable: currentSongsLength,
       builder: (_, value, __) {
-        if (title == context.l10n!.userLikedSongs) {
+        if (title == context.l10n!.likedSongs) {
           return SliverReorderableList(
             itemCount: songsList.length,
             itemBuilder: (context, index) {
@@ -172,7 +172,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
             delegate: SliverChildBuilderDelegate(
               (BuildContext context, int index) {
                 final song = songsList[index];
-                song['isOffline'] = title == context.l10n!.userOfflineSongs;
+                song['isOffline'] = title == context.l10n!.offlineSongs;
                 return SongBar(
                   song,
                   true,

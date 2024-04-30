@@ -93,7 +93,7 @@ class _HomePageState extends State<HomePage> {
                 '/home/userSongs/liked',
               ),
               icon: const Icon(FluentIcons.heart_24_filled),
-              label: Text(context.l10n!.userLikedSongs),
+              label: Text(context.l10n!.likedSongs),
             ),
             const SizedBox(width: 10),
             FilledButton.tonalIcon(
@@ -101,7 +101,7 @@ class _HomePageState extends State<HomePage> {
                 '/home/userSongs/offline',
               ),
               icon: const Icon(FluentIcons.cellular_off_24_filled),
-              label: Text(context.l10n!.userOfflineSongs),
+              label: Text(context.l10n!.offlineSongs),
             ),
             const SizedBox(width: 10),
             FilledButton.tonalIcon(
@@ -111,7 +111,7 @@ class _HomePageState extends State<HomePage> {
               icon: const Icon(
                 FluentIcons.star_24_filled,
               ),
-              label: Text(context.l10n!.userLikedPlaylists),
+              label: Text(context.l10n!.likedPlaylists),
             ),
           ],
         ),
