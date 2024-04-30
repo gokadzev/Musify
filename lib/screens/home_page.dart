@@ -10,7 +10,7 @@ import 'package:musify/services/update_manager.dart';
 import 'package:musify/widgets/artist_cube.dart';
 import 'package:musify/widgets/marque.dart';
 import 'package:musify/widgets/playlist_cube.dart';
-import 'package:musify/widgets/song_bar.dart';
+import 'package:musify/widgets/song_cube.dart';
 import 'package:musify/widgets/spinner.dart';
 
 class HomePage extends StatefulWidget {
@@ -78,7 +78,8 @@ class _HomePageState extends State<HomePage> {
     }
 
     final _suggestedPlaylists = snapshot.data!;
-    final _screenHeight = MediaQuery.of(context).size.height;
+    final calculatedSize = MediaQuery.of(context).size.height * 0.25;
+    final _suggestedPlaylistsSize = calculatedSize / 1.1;
 
     return Column(
       children: [
@@ -97,7 +98,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         SizedBox(
-          height: _screenHeight * 0.25,
+          height: _suggestedPlaylistsSize,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             separatorBuilder: (_, __) => const SizedBox(width: 15),
@@ -110,7 +111,7 @@ class _HomePageState extends State<HomePage> {
                 image: playlist['image'],
                 title: playlist['title'],
                 isAlbum: playlist['isAlbum'],
-                size: _screenHeight * 0.25,
+                size: _suggestedPlaylistsSize,
               );
             },
           ),
@@ -223,13 +224,20 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ),
-        ListView.builder(
-          shrinkWrap: true,
-          physics: const BouncingScrollPhysics(),
-          itemCount: data.length,
-          itemBuilder: (context, index) {
-            return SongBar(data[index], true);
-          },
+        SizedBox(
+          height: calculatedSize + 50,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            separatorBuilder: (_, __) => const SizedBox(width: 15),
+            itemCount: data.length,
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            itemBuilder: (context, index) {
+              return SongCube(
+                data[index],
+                size: calculatedSize / 1.1,
+              );
+            },
+          ),
         ),
       ],
     );
