@@ -282,12 +282,12 @@ class NowPlayingPage extends StatelessWidget {
           ValueListenableBuilder<bool>(
             valueListenable: shuffleNotifier,
             builder: (_, value, __) {
-              return IconButton(
+              return IconButton.filled(
                 icon: Icon(
                   value
                       ? FluentIcons.arrow_shuffle_24_filled
                       : FluentIcons.arrow_shuffle_off_24_filled,
-                  color: value ? _primaryColor : _secondaryColor,
+                  color: _secondaryColor,
                 ),
                 iconSize: iconSize,
                 onPressed: () {
@@ -303,7 +303,7 @@ class NowPlayingPage extends StatelessWidget {
           IconButton(
             icon: Icon(
               FluentIcons.previous_24_filled,
-              color: audioHandler.hasPrevious ? _primaryColor : _secondaryColor,
+              color: _primaryColor,
             ),
             iconSize: size.width * 0.11 > 45 ? size.width * 0.11 : 45,
             onPressed: () => audioHandler.skipToPrevious(),
@@ -317,13 +317,14 @@ class NowPlayingPage extends StatelessWidget {
                 size.width * 0.19 > 20 && size.width < 50 ? size.width : 50,
                 _primaryColor,
                 _secondaryColor,
+                elevation: 0,
               );
             },
           ),
           IconButton(
             icon: Icon(
               FluentIcons.next_24_filled,
-              color: audioHandler.hasNext ? _primaryColor : _secondaryColor,
+              color: _primaryColor,
             ),
             iconSize: size.width * 0.11 > 45 ? size.width * 0.11 : 45,
             onPressed: () => audioHandler.skipToNext(),
@@ -332,12 +333,12 @@ class NowPlayingPage extends StatelessWidget {
           ValueListenableBuilder<bool>(
             valueListenable: repeatNotifier,
             builder: (_, value, __) {
-              return IconButton(
+              return IconButton.filled(
                 icon: Icon(
                   value
                       ? FluentIcons.arrow_repeat_1_24_filled
                       : FluentIcons.arrow_repeat_all_off_24_filled,
-                  color: value ? _primaryColor : _secondaryColor,
+                  color: _secondaryColor,
                 ),
                 iconSize: iconSize,
                 onPressed: () => audioHandler.setRepeatMode(
@@ -372,7 +373,7 @@ class NowPlayingPage extends StatelessWidget {
         ValueListenableBuilder<bool>(
           valueListenable: songOfflineStatus,
           builder: (_, value, __) {
-            return IconButton(
+            return IconButton.filledTonal(
               icon: Icon(
                 value
                     ? FluentIcons.cellular_off_24_regular
@@ -394,7 +395,7 @@ class NowPlayingPage extends StatelessWidget {
         ValueListenableBuilder<bool>(
           valueListenable: muteNotifier,
           builder: (_, value, __) {
-            return IconButton(
+            return IconButton.filledTonal(
               icon: Icon(
                 value
                     ? FluentIcons.speaker_mute_24_filled
@@ -407,7 +408,7 @@ class NowPlayingPage extends StatelessWidget {
           },
         ),
         if (isOnline)
-          IconButton(
+          IconButton.filledTonal(
             icon: Icon(
               Icons.add,
               color: _primaryColor,
@@ -418,7 +419,7 @@ class NowPlayingPage extends StatelessWidget {
             },
           ),
         if (activePlaylist['list'].isNotEmpty)
-          IconButton(
+          IconButton.filledTonal(
             icon: Icon(
               FluentIcons.apps_list_24_filled,
               color: _primaryColor,
@@ -451,7 +452,7 @@ class NowPlayingPage extends StatelessWidget {
             },
           ),
         if (isOnline)
-          IconButton(
+          IconButton.filledTonal(
             icon: Icon(
               FluentIcons.text_32_filled,
               color: _primaryColor,
@@ -463,7 +464,7 @@ class NowPlayingPage extends StatelessWidget {
           ValueListenableBuilder<bool>(
             valueListenable: songLikeStatus,
             builder: (_, value, __) {
-              return IconButton(
+              return IconButton.filledTonal(
                 icon: Icon(
                   value
                       ? FluentIcons.star_24_filled
@@ -482,7 +483,7 @@ class NowPlayingPage extends StatelessWidget {
           ValueListenableBuilder<bool>(
             valueListenable: playNextSongAutomatically,
             builder: (_, value, __) {
-              return IconButton(
+              return IconButton.filledTonal(
                 icon: Icon(
                   value
                       ? FluentIcons.music_note_2_play_20_filled
