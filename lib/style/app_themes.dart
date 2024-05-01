@@ -43,7 +43,7 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
       iconTheme: IconThemeData(color: colorScheme.primary),
       centerTitle: true,
       titleTextStyle: TextStyle(
-        fontSize: 27,
+        fontSize: 30,
         fontWeight: FontWeight.bold,
         color: colorScheme.primary,
       ),

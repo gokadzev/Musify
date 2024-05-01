@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 
+const _toastDuration = Duration(seconds: 3);
+
 void showToast(BuildContext context, String text) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
-      backgroundColor: Theme.of(context).colorScheme.primary,
-
+      backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+      behavior: SnackBarBehavior.floating,
       content: Text(
         text,
-        style: const TextStyle(
-          color: Colors.white,
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.inverseSurface,
         ),
       ),
-      duration: const Duration(seconds: 3), // Adjust the duration as needed
+      duration: _toastDuration,
     ),
   );
 }
@@ -24,17 +26,19 @@ void showToastWithButton(
 ) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
-      backgroundColor: Theme.of(context).colorScheme.primary,
-
+      backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
       content: Text(
         text,
-        style: const TextStyle(
-          color: Colors.white,
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.inverseSurface,
         ),
       ),
-      action:
-          SnackBarAction(label: buttonName, onPressed: () => onPressedToast()),
-      duration: const Duration(seconds: 3), // Adjust the duration as needed
+      action: SnackBarAction(
+        label: buttonName,
+        textColor: Theme.of(context).colorScheme.secondary,
+        onPressed: () => onPressedToast(),
+      ),
+      duration: _toastDuration,
     ),
   );
 }

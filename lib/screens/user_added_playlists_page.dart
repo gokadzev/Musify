@@ -122,11 +122,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
             },
           );
         },
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        child: const Icon(
-          FluentIcons.add_24_filled,
-          color: Colors.white,
-        ),
+        child: const Icon(FluentIcons.add_24_filled),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.only(top: 15),
