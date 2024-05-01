@@ -54,6 +54,7 @@
   "playlist": "Playlista",
   "playlistUpdated": "Playlista zaktualizowana pomyślnie",
   "playlists": "Playlisty",
+  "preferences": "Preferences",
   "provideIdOrNameError": "Please provide either a YouTube ID or a custom playlist name",
   "recentlyPlayed": "Ostatnio odtwarzane",
   "recentlyPlayedMsg": "Recently played history cleared",

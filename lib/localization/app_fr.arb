@@ -54,6 +54,7 @@
   "playlist": "Liste de lecture",
   "playlistUpdated": "Mise à jour de la liste de lecture réussie",
   "playlists": "Listes de lectures",
+  "preferences": "Preferences",
   "provideIdOrNameError": "Veuillez fournir soit un ID YouTube soit un nom de liste de lecture personnalisée",
   "recentlyPlayed": "Lectures récentes",
   "recentlyPlayedMsg": "Recently played history cleared",

@@ -32,10 +32,10 @@ class SettingsPage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            // CATEGORY: SETTINGS
+            // CATEGORY: PREFERENCES
             _buildSectionTitle(
               primaryColor,
-              context.l10n!.settings,
+              context.l10n!.preferences,
             ),
             SettingBar(
               context.l10n!.accentColor,

@@ -54,6 +54,7 @@
   "playlist": "Lista de reproducción",
   "playlistUpdated": "Lista de reproducción actualizada exitosamente",
   "playlists": "Listas de reproducción",
+  "preferences": "Preferences",
   "provideIdOrNameError": "Por favor, proporciona ya sea un ID de YouTube o un nombre de lista de reproducción personalizada",
   "recentlyPlayed": "Reproducido recientemente",
   "recentlyPlayedMsg": "Recently played history cleared",

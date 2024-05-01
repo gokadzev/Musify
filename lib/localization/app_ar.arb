@@ -54,6 +54,7 @@
   "playlist": "قائمة تشغيل",
   "playlistUpdated": "تم تحديث القائمة بنجاح",
   "playlists": "قوائم التشغيل",
+  "preferences": "Preferences",
   "provideIdOrNameError": "يرجى توفير إما معرف YouTube أو اسم قائمة التشغيل الخاصة",
   "recentlyPlayed": "تم التشغيل مؤخرًا",
   "recentlyPlayedMsg": "Recently played history cleared",

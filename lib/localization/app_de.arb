@@ -54,6 +54,7 @@
   "playlist": "Wiedergabeliste",
   "playlistUpdated": "Wiedergabeliste erfolgreich aktualisiert",
   "playlists": "Wiedergabelisten",
+  "preferences": "Preferences",
   "provideIdOrNameError": "Bitte geben Sie entweder eine YouTube-ID oder einen benutzerdefinierten Playlist-Namen an",
   "recentlyPlayed": "Zuletzt gespielt",
   "recentlyPlayedMsg": "Recently played history cleared",
