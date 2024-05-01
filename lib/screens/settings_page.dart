@@ -10,6 +10,7 @@ import 'package:musify/services/settings_manager.dart';
 import 'package:musify/services/update_manager.dart';
 import 'package:musify/style/app_colors.dart';
 import 'package:musify/style/app_themes.dart';
+import 'package:musify/utilities/flutter_bottom_sheet.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/url_launcher.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
@@ -40,81 +41,76 @@ class SettingsPage extends StatelessWidget {
             SettingBar(
               context.l10n!.accentColor,
               FluentIcons.color_24_filled,
-              () => showModalBottomSheet(
-                isDismissible: true,
-                context: context,
-                builder: (BuildContext context) {
-                  return SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.90,
-                    child: GridView.builder(
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                      ),
-                      shrinkWrap: true,
-                      physics: const BouncingScrollPhysics(),
-                      itemCount: availableColors.length,
-                      itemBuilder: (context, index) {
-                        final color = availableColors[index];
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 15),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              if (availableColors.length > index)
-                                GestureDetector(
-                                  onTap: () {
-                                    addOrUpdateData(
-                                      'settings',
-                                      'accentColor',
-                                      color.value,
-                                    );
-                                    Musify.updateAppState(
-                                      context,
-                                      newAccentColor: color,
-                                      useSystemColor: false,
-                                    );
-                                    showToast(
-                                      context,
-                                      context.l10n!.accentChangeMsg,
-                                    );
-                                    Navigator.pop(context);
-                                  },
-                                  child: Material(
-                                    elevation: 4,
-                                    shape: const CircleBorder(),
-                                    child: CircleAvatar(
-                                      radius: 25,
-                                      backgroundColor:
-                                          themeMode == ThemeMode.light
-                                              ? color.withAlpha(150)
-                                              : color,
-                                    ),
+              () => showCustomBottomSheet(
+                context,
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.90,
+                  child: GridView.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                    ),
+                    shrinkWrap: true,
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: availableColors.length,
+                    itemBuilder: (context, index) {
+                      final color = availableColors[index];
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 15),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            if (availableColors.length > index)
+                              GestureDetector(
+                                onTap: () {
+                                  addOrUpdateData(
+                                    'settings',
+                                    'accentColor',
+                                    color.value,
+                                  );
+                                  Musify.updateAppState(
+                                    context,
+                                    newAccentColor: color,
+                                    useSystemColor: false,
+                                  );
+                                  showToast(
+                                    context,
+                                    context.l10n!.accentChangeMsg,
+                                  );
+                                  Navigator.pop(context);
+                                },
+                                child: Material(
+                                  elevation: 4,
+                                  shape: const CircleBorder(),
+                                  child: CircleAvatar(
+                                    radius: 25,
+                                    backgroundColor:
+                                        themeMode == ThemeMode.light
+                                            ? color.withAlpha(150)
+                                            : color,
                                   ),
                                 ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  );
-                },
+                              ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
               ),
             ),
             SettingBar(
               context.l10n!.themeMode,
               FluentIcons.weather_sunny_28_filled,
-              () => showModalBottomSheet(
-                isDismissible: true,
-                context: context,
-                builder: (BuildContext context) {
-                  final availableModes = [
-                    ThemeMode.system,
-                    ThemeMode.light,
-                    ThemeMode.dark,
-                  ];
-
-                  return SizedBox(
+              () {
+                final availableModes = [
+                  ThemeMode.system,
+                  ThemeMode.light,
+                  ThemeMode.dark,
+                ];
+                showCustomBottomSheet(
+                  context,
+                  SizedBox(
                     width: MediaQuery.of(context).size.width * 0.90,
                     child: ListView.builder(
                       shrinkWrap: true,
@@ -150,63 +146,58 @@ class SettingsPage extends StatelessWidget {
                         );
                       },
                     ),
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             ),
             SettingBar(
               context.l10n!.language,
               FluentIcons.translate_24_filled,
-              () => showModalBottomSheet(
-                isDismissible: true,
-                context: context,
-                builder: (BuildContext context) {
-                  final availableLanguages = appLanguages.keys.toList();
-                  final activeLanguageCode =
-                      Localizations.localeOf(context).languageCode;
-
-                  return SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.90,
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      physics: const BouncingScrollPhysics(),
-                      itemCount: availableLanguages.length,
-                      itemBuilder: (context, index) {
-                        final language = availableLanguages[index];
-                        final languageCode = appLanguages[language] ?? 'en';
-                        return Card(
-                          elevation: activeLanguageCode == languageCode ? 0 : 4,
-                          margin: const EdgeInsets.all(10),
-                          child: ListTile(
-                            title: Text(
-                              language,
-                            ),
-                            onTap: () {
-                              addOrUpdateData(
-                                'settings',
-                                'language',
-                                language,
-                              );
-                              Musify.updateAppState(
-                                context,
-                                newLocale: Locale(
-                                  languageCode,
-                                ),
-                              );
-
-                              showToast(
-                                context,
-                                context.l10n!.languageMsg,
-                              );
-                              Navigator.pop(context);
-                            },
+              () {
+                final availableLanguages = appLanguages.keys.toList();
+                final activeLanguageCode =
+                    Localizations.localeOf(context).languageCode;
+                showCustomBottomSheet(
+                  context,
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: availableLanguages.length,
+                    itemBuilder: (context, index) {
+                      final language = availableLanguages[index];
+                      final languageCode = appLanguages[language] ?? 'en';
+                      return Card(
+                        elevation: activeLanguageCode == languageCode ? 0 : 4,
+                        margin: const EdgeInsets.all(10),
+                        child: ListTile(
+                          title: Text(
+                            language,
                           ),
-                        );
-                      },
-                    ),
-                  );
-                },
-              ),
+                          onTap: () {
+                            addOrUpdateData(
+                              'settings',
+                              'language',
+                              language,
+                            );
+                            Musify.updateAppState(
+                              context,
+                              newLocale: Locale(
+                                languageCode,
+                              ),
+                            );
+
+                            showToast(
+                              context,
+                              context.l10n!.languageMsg,
+                            );
+                            Navigator.pop(context);
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
             ),
             SettingSwitchBar(
               tileName: context.l10n!.dynamicColor,
@@ -259,50 +250,44 @@ class SettingsPage extends StatelessWidget {
                     context.l10n!.audioQuality,
                     Icons.music_note,
                     () {
-                      showModalBottomSheet(
-                        isDismissible: true,
-                        context: context,
-                        builder: (BuildContext context) {
-                          final availableQualities = ['low', 'medium', 'high'];
+                      final availableQualities = ['low', 'medium', 'high'];
 
-                          return SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.90,
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              physics: const BouncingScrollPhysics(),
-                              itemCount: availableQualities.length,
-                              itemBuilder: (context, index) {
-                                final quality = availableQualities[index];
-                                final isCurrentQuality =
-                                    audioQualitySetting.value == quality;
+                      showCustomBottomSheet(
+                        context,
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics: const BouncingScrollPhysics(),
+                          itemCount: availableQualities.length,
+                          itemBuilder: (context, index) {
+                            final quality = availableQualities[index];
+                            final isCurrentQuality =
+                                audioQualitySetting.value == quality;
 
-                                return Padding(
-                                  padding: const EdgeInsets.all(10),
-                                  child: Card(
-                                    elevation: isCurrentQuality ? 0 : 4,
-                                    child: ListTile(
-                                      title: Text(quality),
-                                      onTap: () {
-                                        addOrUpdateData(
-                                          'settings',
-                                          'audioQuality',
-                                          quality,
-                                        );
-                                        audioQualitySetting.value = quality;
+                            return Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: Card(
+                                elevation: isCurrentQuality ? 0 : 4,
+                                child: ListTile(
+                                  title: Text(quality),
+                                  onTap: () {
+                                    addOrUpdateData(
+                                      'settings',
+                                      'audioQuality',
+                                      quality,
+                                    );
+                                    audioQualitySetting.value = quality;
 
-                                        showToast(
-                                          context,
-                                          context.l10n!.audioQualityMsg,
-                                        );
-                                        Navigator.pop(context);
-                                      },
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          );
-                        },
+                                    showToast(
+                                      context,
+                                      context.l10n!.audioQualityMsg,
+                                    );
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                              ),
+                            );
+                          },
+                        ),
                       );
                     },
                   ),
