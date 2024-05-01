@@ -11,11 +11,19 @@ String formatSongTitle(String title) {
     '&#039;': "'",
     '&quot;': '"',
     'Official Music Video': '',
+    'Official music Video': '',
     'Official Lyric Video': '',
+    'Official lyric video': '',
+    'Official Lyrics Video': '',
+    'Official lyrics video': '',
     'Official Video': '',
+    'Official video': '',
     'Official Audio': '',
+    'Official audio': '',
     'Lyric Video': '',
+    'Lyric video': '',
     'Lyrics Video': '',
+    'Lyrics video': '',
   };
 
   final pattern = RegExp(replacements.keys.map(RegExp.escape).join('|'));
