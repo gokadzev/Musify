@@ -22,6 +22,11 @@
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 String formatSongTitle(String title) {
+  final wordsPattern = RegExp(
+    r'\b(official music video|official lyric video|official lyrics video|official video|official audio|lyric video|lyrics video|official hd video)\b',
+    caseSensitive: false,
+  );
+
   final replacements = {
     '[': '',
     ']': '',
@@ -31,30 +36,20 @@ String formatSongTitle(String title) {
     '&amp;': '&',
     '&#039;': "'",
     '&quot;': '"',
-    'Official Music Video': '',
-    'Official music Video': '',
-    'Official Lyric Video': '',
-    'Official lyric video': '',
-    'Official Lyrics Video': '',
-    'Official lyrics video': '',
-    'Official Video': '',
-    'Official video': '',
-    'Official Audio': '',
-    'Official audio': '',
-    'Lyric Video': '',
-    'Lyric video': '',
-    'Lyrics Video': '',
-    'Lyrics video': '',
   };
 
   final pattern = RegExp(replacements.keys.map(RegExp.escape).join('|'));
 
-  return title
+  var finalTitle = title
       .replaceAllMapped(
         pattern,
         (match) => replacements[match.group(0)] ?? '',
       )
       .trimLeft();
+
+  finalTitle = finalTitle.replaceAll(wordsPattern, '');
+
+  return finalTitle;
 }
 
 Map<String, dynamic> returnSongLayout(int index, Video song) => {
