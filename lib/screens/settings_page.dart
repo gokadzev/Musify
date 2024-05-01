@@ -43,59 +43,54 @@ class SettingsPage extends StatelessWidget {
               FluentIcons.color_24_filled,
               () => showCustomBottomSheet(
                 context,
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.90,
-                  child: GridView.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                    ),
-                    shrinkWrap: true,
-                    physics: const BouncingScrollPhysics(),
-                    itemCount: availableColors.length,
-                    itemBuilder: (context, index) {
-                      final color = availableColors[index];
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 15),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            if (availableColors.length > index)
-                              GestureDetector(
-                                onTap: () {
-                                  addOrUpdateData(
-                                    'settings',
-                                    'accentColor',
-                                    color.value,
-                                  );
-                                  Musify.updateAppState(
-                                    context,
-                                    newAccentColor: color,
-                                    useSystemColor: false,
-                                  );
-                                  showToast(
-                                    context,
-                                    context.l10n!.accentChangeMsg,
-                                  );
-                                  Navigator.pop(context);
-                                },
-                                child: Material(
-                                  elevation: 4,
-                                  shape: const CircleBorder(),
-                                  child: CircleAvatar(
-                                    radius: 25,
-                                    backgroundColor:
-                                        themeMode == ThemeMode.light
-                                            ? color.withAlpha(150)
-                                            : color,
-                                  ),
+                GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                  ),
+                  shrinkWrap: true,
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: availableColors.length,
+                  itemBuilder: (context, index) {
+                    final color = availableColors[index];
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          if (availableColors.length > index)
+                            GestureDetector(
+                              onTap: () {
+                                addOrUpdateData(
+                                  'settings',
+                                  'accentColor',
+                                  color.value,
+                                );
+                                Musify.updateAppState(
+                                  context,
+                                  newAccentColor: color,
+                                  useSystemColor: false,
+                                );
+                                showToast(
+                                  context,
+                                  context.l10n!.accentChangeMsg,
+                                );
+                                Navigator.pop(context);
+                              },
+                              child: Material(
+                                elevation: 4,
+                                shape: const CircleBorder(),
+                                child: CircleAvatar(
+                                  radius: 25,
+                                  backgroundColor: themeMode == ThemeMode.light
+                                      ? color.withAlpha(150)
+                                      : color,
                                 ),
                               ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
+                            ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
               ),
             ),
@@ -110,42 +105,39 @@ class SettingsPage extends StatelessWidget {
                 ];
                 showCustomBottomSheet(
                   context,
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.90,
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      physics: const BouncingScrollPhysics(),
-                      itemCount: availableModes.length,
-                      itemBuilder: (context, index) {
-                        final mode = availableModes[index];
-                        return Card(
-                          margin: const EdgeInsets.all(10),
-                          elevation: themeMode == mode ? 0 : 4,
-                          child: ListTile(
-                            title: Text(
-                              mode.name,
-                            ),
-                            onTap: () {
-                              addOrUpdateData(
-                                'settings',
-                                'themeMode',
-                                mode.name,
-                              );
-                              Musify.updateAppState(
-                                context,
-                                newThemeMode: mode,
-                              );
-
-                              Navigator.pop(context);
-                            },
-                            trailing: mode == ThemeMode.light ||
-                                    mode == ThemeMode.system
-                                ? const Text('BETA')
-                                : null,
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: availableModes.length,
+                    itemBuilder: (context, index) {
+                      final mode = availableModes[index];
+                      return Card(
+                        margin: const EdgeInsets.all(10),
+                        elevation: themeMode == mode ? 0 : 4,
+                        child: ListTile(
+                          title: Text(
+                            mode.name,
                           ),
-                        );
-                      },
-                    ),
+                          onTap: () {
+                            addOrUpdateData(
+                              'settings',
+                              'themeMode',
+                              mode.name,
+                            );
+                            Musify.updateAppState(
+                              context,
+                              newThemeMode: mode,
+                            );
+
+                            Navigator.pop(context);
+                          },
+                          trailing: mode == ThemeMode.light ||
+                                  mode == ThemeMode.system
+                              ? const Text('BETA')
+                              : null,
+                        ),
+                      );
+                    },
                   ),
                 );
               },
