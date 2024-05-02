@@ -66,26 +66,27 @@ class NowPlayingPage extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       buildArtwork(context, size, metadata),
-                      Column(
-                        children: [
-                          const SizedBox(height: 1),
-                          buildMarqueeText(
-                            metadata.title,
-                            Theme.of(context).colorScheme.primary,
-                            screenHeight * 0.032,
-                            FontWeight.w600,
-                            screenWidth,
-                          ),
-                          const SizedBox(height: 4),
-                          if (metadata.artist != null)
+                      SizedBox(
+                        width: screenWidth * 0.85,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const SizedBox(height: 1),
                             buildMarqueeText(
-                              metadata.artist!,
-                              Theme.of(context).colorScheme.secondary,
-                              screenHeight * 0.017,
-                              FontWeight.w500,
-                              screenWidth,
+                              metadata.title,
+                              Theme.of(context).colorScheme.primary,
+                              screenHeight * 0.028,
+                              FontWeight.w600,
                             ),
-                        ],
+                            if (metadata.artist != null)
+                              buildMarqueeText(
+                                metadata.artist!,
+                                Theme.of(context).colorScheme.secondary,
+                                screenHeight * 0.017,
+                                FontWeight.w500,
+                              ),
+                          ],
+                        ),
                       ),
                       if (!(metadata.extras?['isLive'] ?? false))
                         _buildPlayer(
@@ -189,20 +190,15 @@ class NowPlayingPage extends StatelessWidget {
     Color fontColor,
     double fontSize,
     FontWeight fontWeight,
-    double maxWidth,
   ) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: maxWidth * 0.05),
-      child: MarqueeWidget(
-        backDuration: const Duration(seconds: 1),
-        child: Text(
-          text,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: fontSize,
-            fontWeight: fontWeight,
-            color: fontColor,
-          ),
+    return MarqueeWidget(
+      backDuration: const Duration(seconds: 1),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: fontSize,
+          fontWeight: fontWeight,
+          color: fontColor,
         ),
       ),
     );
