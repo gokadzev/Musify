@@ -324,7 +324,7 @@ class NowPlayingPage extends StatelessWidget {
           IconButton(
             icon: Icon(
               FluentIcons.previous_24_filled,
-              color: _primaryColor,
+              color: audioHandler.hasPrevious ? _primaryColor : _secondaryColor,
             ),
             iconSize: size.width * 0.11 > 45 ? size.width * 0.11 : 45,
             onPressed: () => audioHandler.skipToPrevious(),
@@ -345,7 +345,7 @@ class NowPlayingPage extends StatelessWidget {
           IconButton(
             icon: Icon(
               FluentIcons.next_24_filled,
-              color: _primaryColor,
+              color: audioHandler.hasNext ? _primaryColor : _secondaryColor,
             ),
             iconSize: size.width * 0.11 > 45 ? size.width * 0.11 : 45,
             onPressed: () => audioHandler.skipToNext(),
