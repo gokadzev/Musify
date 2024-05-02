@@ -42,9 +42,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          context.l10n!.userPlaylists,
-        ),
+        title: Text(context.l10n!.userPlaylists),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

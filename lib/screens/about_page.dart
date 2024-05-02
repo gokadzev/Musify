@@ -32,9 +32,7 @@ class AboutPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          context.l10n!.about,
-        ),
+        title: Text(context.l10n!.about),
       ),
       body: SingleChildScrollView(
         child: Column(

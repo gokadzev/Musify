@@ -31,9 +31,7 @@ class UserLikedPlaylistsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          context.l10n!.likedPlaylists,
-        ),
+        title: Text(context.l10n!.likedPlaylists),
       ),
       body: ValueListenableBuilder(
         valueListenable: currentLikedPlaylistsLength,
