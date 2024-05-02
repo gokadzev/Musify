@@ -38,7 +38,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
     _initializeAudioPlayer();
     _setupEventSubscriptions();
     _updatePlaybackState();
-    _initAudioPlaylist();
 
     _initialize();
   }
@@ -50,8 +49,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
   late StreamSubscription<Duration?> _durationSubscription;
   late StreamSubscription<int?> _currentIndexSubscription;
   late StreamSubscription<SequenceState?> _sequenceStateSubscription;
-
-  final _playlist = ConcatenatingAudioSource(children: []);
 
   Stream<PositionData> get positionDataStream =>
       Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
@@ -161,14 +158,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
         audioPlayer.currentIndexStream.listen(_handleCurrentSongIndexChanged);
     _sequenceStateSubscription =
         audioPlayer.sequenceStateStream.listen(_handleSequenceStateChange);
-  }
-
-  void _initAudioPlaylist() {
-    try {
-      audioPlayer.setAudioSource(_playlist);
-    } catch (e, stackTrace) {
-      logger.log('Error in setAudioSource', e, stackTrace);
-    }
   }
 
   void _updatePlaybackState() {
@@ -365,23 +354,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
   @override
   Future<void> skipToPrevious() async {
     await skipToSong(id - 1);
-  }
-
-  @override
-  Future<void> skipToQueueItem(int index) async {
-    if (index < 0 || index >= _playlist.length) return;
-    await audioPlayer.seek(
-      Duration.zero,
-      index: audioPlayer.shuffleModeEnabled
-          ? audioPlayer.shuffleIndices![index]
-          : index,
-    );
-  }
-
-  @override
-  Future<void> updateQueue(List<MediaItem> queue) async {
-    await _playlist.clear();
-    await _playlist.addAll(createAudioSources(queue));
   }
 
   @override
