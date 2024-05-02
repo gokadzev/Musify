@@ -397,6 +397,7 @@ class NowPlayingPage extends StatelessWidget {
                     : FluentIcons.cellular_data_1_24_regular,
                 color: _primaryColor,
               ),
+              iconSize: iconSize,
               onPressed: () {
                 if (value) {
                   removeSongFromOffline(audioId);
