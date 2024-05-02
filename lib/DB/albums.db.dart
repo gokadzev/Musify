@@ -313,5 +313,33 @@ List albumsDB = [
     'image': 'https://i.scdn.co/image/ab67616d0000b273879e9318cb9f4e05ee552ac9',
     'isAlbum': true,
     'list': [],
+  },
+  {
+    'ytid': 'OLAK5uy_lFbfW_UOra8dYRTa69lxR3fxYjogNtiQw',
+    'title': 'THE TORTURED POETS DEPARTMENT - Taylor Swift',
+    'image': 'https://i.scdn.co/image/ab67616d0000b2735076e4160d018e378f488c33',
+    'isAlbum': true,
+    'list': [],
+  },
+  {
+    'ytid': 'OLAK5uy_lVxq_QCXDlleCnpsszQyiFextilkX12_w',
+    'title': "WE DON'T TRUST YOU - Future, Metro Boomin",
+    'image': 'https://i.scdn.co/image/ab67616d00001e02a46b07c291e6dfdee13b3ee8',
+    'isAlbum': true,
+    'list': [],
+  },
+  {
+    'ytid': 'OLAK5uy_kZqVnh5DXwZ95R5yuAnWUX20OjrNJh09U',
+    'title': 'Fireworks & Rollerblades - Benson Boone',
+    'image': 'https://i.scdn.co/image/ab67616d0000b273cc04ff3e70e146ba9abacf40',
+    'isAlbum': true,
+    'list': [],
+  },
+  {
+    'ytid': 'OLAK5uy_mbcpEgHbfi3deQRnyGfQWnlzgQd86_tMI',
+    'title': 'Wasteland, Baby! - Hozier',
+    'image': 'https://i.scdn.co/image/ab67616d00001e025795e01c151ba5a8ce4bd295',
+    'isAlbum': true,
+    'list': [],
   }
 ];
