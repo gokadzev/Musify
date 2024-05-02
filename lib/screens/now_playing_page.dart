@@ -60,44 +60,38 @@ class NowPlayingPage extends StatelessWidget {
             final screenWidth = size.width;
             return Column(
               children: [
-                Expanded(
+                buildArtwork(context, size, metadata),
+                SizedBox(height: screenHeight * 0.022),
+                SizedBox(
+                  width: screenWidth * 0.85,
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      buildArtwork(context, size, metadata),
-                      SizedBox(
-                        width: screenWidth * 0.85,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const SizedBox(height: 1),
-                            buildMarqueeText(
-                              metadata.title,
-                              Theme.of(context).colorScheme.primary,
-                              screenHeight * 0.028,
-                              FontWeight.w600,
-                            ),
-                            if (metadata.artist != null)
-                              buildMarqueeText(
-                                metadata.artist!,
-                                Theme.of(context).colorScheme.secondary,
-                                screenHeight * 0.017,
-                                FontWeight.w500,
-                              ),
-                          ],
-                        ),
+                      buildMarqueeText(
+                        metadata.title,
+                        Theme.of(context).colorScheme.primary,
+                        screenHeight * 0.028,
+                        FontWeight.w600,
                       ),
-                      if (!(metadata.extras?['isLive'] ?? false))
-                        _buildPlayer(
-                          context,
-                          size,
-                          metadata.extras?['ytid'],
-                          metadata,
+                      SizedBox(height: screenHeight * 0.005),
+                      if (metadata.artist != null)
+                        buildMarqueeText(
+                          metadata.artist!,
+                          Theme.of(context).colorScheme.secondary,
+                          screenHeight * 0.017,
+                          FontWeight.w500,
                         ),
                     ],
                   ),
                 ),
+                SizedBox(height: screenHeight * 0.01),
+                if (!(metadata.extras?['isLive'] ?? false))
+                  _buildPlayer(
+                    context,
+                    size,
+                    metadata.extras?['ytid'],
+                    metadata,
+                  ),
               ],
             );
           }
@@ -107,79 +101,64 @@ class NowPlayingPage extends StatelessWidget {
   }
 
   Widget buildArtwork(BuildContext context, Size size, MediaItem metadata) {
-    const _padding = 50;
+    const _padding = 70;
     const _radius = 20.0;
-    const _maxSize = 360.0;
-    final imageSize = size.width - _padding;
+    final screen = (size.width + size.height) / 3.05;
+    final imageSize = screen - _padding;
 
     return FlipCard(
       rotateSide: RotateSide.right,
       onTapFlipping: isOnline,
       controller: _lyricsController,
-      frontWidget: ConstrainedBox(
-        constraints: const BoxConstraints(
-          maxWidth: _maxSize,
-          maxHeight: _maxSize,
-        ),
-        child: SongArtworkWidget(
-          metadata: metadata,
-          size: imageSize,
-          errorWidgetIconSize: size.width / 8,
-          borderRadius: _radius,
-        ),
+      frontWidget: SongArtworkWidget(
+        metadata: metadata,
+        size: imageSize,
+        errorWidgetIconSize: size.width / 8,
+        borderRadius: _radius,
       ),
-      backWidget: ConstrainedBox(
-        constraints: const BoxConstraints(
-          maxWidth: _maxSize,
-          maxHeight: _maxSize,
+      backWidget: Container(
+        width: imageSize,
+        height: imageSize,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.secondaryContainer,
+          borderRadius: BorderRadius.circular(_radius),
         ),
-        child: Container(
-          width: imageSize,
-          height: imageSize,
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.secondaryContainer,
-            borderRadius: BorderRadius.circular(_radius),
-          ),
-          child: ValueListenableBuilder<String?>(
-            valueListenable: lyrics,
-            builder: (_, value, __) {
-              if (lastFetchedLyrics !=
-                  '${metadata.artist} - ${metadata.title}') {
-                getSongLyrics(
-                  metadata.artist ?? '',
-                  metadata.title,
-                );
-              }
-              if (value != null && value != 'not found') {
-                return SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.all(6),
-                    child: Center(
-                      child: Text(
-                        value,
-                        style: const TextStyle(
-                          fontSize: 16,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                );
-              } else if (value == null) {
-                return const Spinner();
-              } else {
-                return Center(
+        child: ValueListenableBuilder<String?>(
+          valueListenable: lyrics,
+          builder: (_, value, __) {
+            if (lastFetchedLyrics != '${metadata.artist} - ${metadata.title}') {
+              getSongLyrics(
+                metadata.artist ?? '',
+                metadata.title,
+              );
+            }
+            if (value != null && value != 'not found') {
+              return SingleChildScrollView(
+                padding: const EdgeInsets.all(12),
+                child: Center(
                   child: Text(
-                    context.l10n!.lyricsNotAvailable,
+                    value,
                     style: const TextStyle(
-                      fontSize: 25,
+                      fontSize: 16,
                     ),
                     textAlign: TextAlign.center,
                   ),
-                );
-              }
-            },
-          ),
+                ),
+              );
+            } else if (value == null) {
+              return const Spinner();
+            } else {
+              return Center(
+                child: Text(
+                  context.l10n!.lyricsNotAvailable,
+                  style: const TextStyle(
+                    fontSize: 25,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              );
+            }
+          },
         ),
       ),
     );
@@ -291,6 +270,8 @@ class NowPlayingPage extends StatelessWidget {
     final _primaryColor = Theme.of(context).colorScheme.primary;
     final _secondaryColor = Theme.of(context).colorScheme.secondaryContainer;
 
+    final screen = (size.width + size.height) / 4;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 22),
       child: Row(
@@ -322,7 +303,7 @@ class NowPlayingPage extends StatelessWidget {
               FluentIcons.previous_24_filled,
               color: audioHandler.hasPrevious ? _primaryColor : _secondaryColor,
             ),
-            iconSize: size.width * 0.11 > 45 ? size.width * 0.11 : 45,
+            iconSize: screen * 0.10,
             onPressed: () => audioHandler.skipToPrevious(),
             splashColor: Colors.transparent,
           ),
@@ -331,7 +312,7 @@ class NowPlayingPage extends StatelessWidget {
             builder: (context, snapshot) {
               return buildPlaybackIconButton(
                 snapshot.data,
-                size.width * 0.19 > 20 && size.width < 50 ? size.width : 50,
+                screen * 0.15,
                 _primaryColor,
                 _secondaryColor,
                 elevation: 0,
@@ -343,7 +324,7 @@ class NowPlayingPage extends StatelessWidget {
               FluentIcons.next_24_filled,
               color: audioHandler.hasNext ? _primaryColor : _secondaryColor,
             ),
-            iconSize: size.width * 0.11 > 45 ? size.width * 0.11 : 45,
+            iconSize: screen * 0.10,
             onPressed: () => audioHandler.skipToNext(),
             splashColor: Colors.transparent,
           ),
