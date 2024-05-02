@@ -244,6 +244,7 @@ void showAddToPlaylistDialog(BuildContext context, dynamic song) {
             children: [
               for (final playlist in userCustomPlaylists)
                 Card(
+                  color: Theme.of(context).colorScheme.secondaryContainer,
                   elevation: 0,
                   child: ListTile(
                     title: Text(playlist['title']),
