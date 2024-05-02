@@ -79,7 +79,7 @@ class NowPlayingPage extends StatelessWidget {
 
   Widget buildArtwork(BuildContext context, Size size, MediaItem metadata) {
     const _padding = 70;
-    const _radius = 20.0;
+    const _radius = 17.0;
     final screen = (size.width + size.height) / 3.05;
     final imageSize = screen - _padding;
 

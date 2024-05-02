@@ -100,7 +100,6 @@ class MiniPlayer extends StatelessWidget {
       child: SongArtworkWidget(
         metadata: metadata,
         size: 55,
-        borderRadius: 12,
         errorWidgetIconSize: 30,
       ),
     );
