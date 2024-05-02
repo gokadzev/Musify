@@ -52,9 +52,7 @@ void showCustomBottomSheet(BuildContext context, Widget content) {
             ),
           ),
           Expanded(
-            child: SingleChildScrollView(
-              child: content,
-            ),
+            child: content,
           ),
         ],
       ),
