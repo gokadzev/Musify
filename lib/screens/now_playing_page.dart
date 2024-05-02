@@ -57,33 +57,10 @@ class NowPlayingPage extends StatelessWidget {
           } else {
             final metadata = snapshot.data!;
             final screenHeight = size.height;
-            final screenWidth = size.width;
+
             return Column(
               children: [
                 buildArtwork(context, size, metadata),
-                SizedBox(height: screenHeight * 0.022),
-                SizedBox(
-                  width: screenWidth * 0.85,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      buildMarqueeText(
-                        metadata.title,
-                        Theme.of(context).colorScheme.primary,
-                        screenHeight * 0.028,
-                        FontWeight.w600,
-                      ),
-                      SizedBox(height: screenHeight * 0.005),
-                      if (metadata.artist != null)
-                        buildMarqueeText(
-                          metadata.artist!,
-                          Theme.of(context).colorScheme.secondary,
-                          screenHeight * 0.017,
-                          FontWeight.w500,
-                        ),
-                    ],
-                  ),
-                ),
                 SizedBox(height: screenHeight * 0.01),
                 if (!(metadata.extras?['isLive'] ?? false))
                   _buildPlayer(
@@ -190,14 +167,42 @@ class NowPlayingPage extends StatelessWidget {
     MediaItem mediaItem,
   ) {
     const iconSize = 20.0;
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        buildPositionSlider(),
-        buildPlayerControls(context, size, mediaItem, iconSize),
-        SizedBox(height: size.height * 0.04),
-        buildBottomActions(context, audioId, mediaItem, iconSize),
-      ],
+    final screenWidth = size.width;
+    final screenHeight = size.height;
+
+    return Expanded(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: screenWidth * 0.85,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                buildMarqueeText(
+                  mediaItem.title,
+                  Theme.of(context).colorScheme.primary,
+                  screenHeight * 0.028,
+                  FontWeight.w600,
+                ),
+                SizedBox(height: screenHeight * 0.005),
+                if (mediaItem.artist != null)
+                  buildMarqueeText(
+                    mediaItem.artist!,
+                    Theme.of(context).colorScheme.secondary,
+                    screenHeight * 0.017,
+                    FontWeight.w500,
+                  ),
+              ],
+            ),
+          ),
+          SizedBox(height: size.height * 0.01),
+          buildPositionSlider(),
+          buildPlayerControls(context, size, mediaItem, iconSize),
+          SizedBox(height: size.height * 0.055),
+          buildBottomActions(context, audioId, mediaItem, iconSize),
+        ],
+      ),
     );
   }
 
