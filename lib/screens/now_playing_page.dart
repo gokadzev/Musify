@@ -448,6 +448,8 @@ class NowPlayingPage extends StatelessWidget {
                       child: SongBar(
                         activePlaylist['list'][index],
                         false,
+                        backgroundColor:
+                            Theme.of(context).colorScheme.secondaryContainer,
                       ),
                     );
                   },

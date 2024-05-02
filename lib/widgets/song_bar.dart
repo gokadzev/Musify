@@ -35,6 +35,7 @@ class SongBar extends StatelessWidget {
   SongBar(
     this.song,
     this.clearPlaylist, {
+    this.backgroundColor,
     this.showMusicDuration = false,
     this.onPlay,
     this.onRemove,
@@ -43,6 +44,7 @@ class SongBar extends StatelessWidget {
 
   final dynamic song;
   final bool clearPlaylist;
+  final Color? backgroundColor;
   final VoidCallback? onRemove;
   final VoidCallback? onPlay;
   final bool showMusicDuration;
@@ -74,6 +76,7 @@ class SongBar extends StatelessWidget {
             },
         child: Card(
           elevation: 1.5,
+          color: backgroundColor,
           child: Padding(
             padding: const EdgeInsets.all(8),
             child: Row(
