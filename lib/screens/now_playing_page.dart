@@ -52,7 +52,7 @@ class NowPlayingPage extends StatelessWidget {
       body: StreamBuilder<MediaItem?>(
         stream: audioHandler.mediaItem,
         builder: (context, snapshot) {
-          if (!snapshot.hasData || snapshot.data == null) {
+          if (snapshot.data == null || !snapshot.hasData) {
             return const SizedBox.shrink();
           } else {
             final metadata = snapshot.data!;
