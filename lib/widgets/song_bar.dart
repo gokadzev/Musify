@@ -236,25 +236,26 @@ void showAddToPlaylistDialog(BuildContext context, dynamic song) {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: Text(
-          context.l10n!.addToPlaylist,
-          style: TextStyle(color: Theme.of(context).colorScheme.secondary),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            for (final playlist in userCustomPlaylists)
-              Card(
-                child: ListTile(
-                  title: Text(playlist['title']),
-                  onTap: () {
-                    addSongInCustomPlaylist(playlist['title'], song);
-                    showToast(context, context.l10n!.songAdded);
-                    Navigator.pop(context);
-                  },
+        icon: const Icon(FluentIcons.text_bullet_list_add_24_filled),
+        title: Text(context.l10n!.addToPlaylist),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (final playlist in userCustomPlaylists)
+                Card(
+                  elevation: 0,
+                  child: ListTile(
+                    title: Text(playlist['title']),
+                    onTap: () {
+                      addSongInCustomPlaylist(playlist['title'], song);
+                      showToast(context, context.l10n!.songAdded);
+                      Navigator.pop(context);
+                    },
+                  ),
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
       );
     },
