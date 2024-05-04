@@ -27,6 +27,7 @@ import 'package:http/http.dart' as http;
 import 'package:musify/API/version.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
+import 'package:musify/services/router_service.dart';
 import 'package:musify/utilities/url_launcher.dart';
 import 'package:musify/widgets/auto_format_text.dart';
 
@@ -38,7 +39,7 @@ const String downloadUrlKey = 'url';
 const String downloadUrlArm64Key = 'arm64url';
 const String downloadFilename = 'Musify.apk';
 
-Future<void> checkAppUpdates(BuildContext context) async {
+Future<void> checkAppUpdates() async {
   try {
     final response = await http.get(Uri.parse(checkUrl));
 
@@ -73,7 +74,7 @@ Future<void> checkAppUpdates(BuildContext context) async {
         json.decode(releasesRequest.body) as Map<String, dynamic>;
 
     await showDialog(
-      context: context,
+      context: NavigationManager().context,
       builder: (BuildContext context) {
         return AlertDialog(
           content: Column(

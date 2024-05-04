@@ -20,14 +20,12 @@
  */
 
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/screens/playlist_page.dart';
 import 'package:musify/services/router_service.dart';
-import 'package:musify/services/update_manager.dart';
 import 'package:musify/widgets/artist_cube.dart';
 import 'package:musify/widgets/marque.dart';
 import 'package:musify/widgets/playlist_cube.dart';
@@ -42,15 +40,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  @override
-  void initState() {
-    super.initState();
-    if (!isFdroidBuild && !isUpdateChecked && isOnline && kReleaseMode) {
-      checkAppUpdates(context);
-      isUpdateChecked = true;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

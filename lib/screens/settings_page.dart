@@ -408,7 +408,7 @@ class SettingsPage extends StatelessWidget {
                     SettingBar(
                       context.l10n!.downloadAppUpdate,
                       FluentIcons.arrow_download_24_filled,
-                      () => checkAppUpdates(context),
+                      checkAppUpdates,
                     ),
                   // CATEGORY: BECOME A SPONSOR
 

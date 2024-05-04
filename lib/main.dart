@@ -35,6 +35,7 @@ import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/logger_service.dart';
 import 'package:musify/services/router_service.dart';
 import 'package:musify/services/settings_manager.dart';
+import 'package:musify/services/update_manager.dart';
 import 'package:musify/style/app_themes.dart';
 
 late MusifyAudioHandler audioHandler;
@@ -143,6 +144,13 @@ class _MusifyState extends State<Musify> {
       });
     } catch (e, stackTrace) {
       logger.log('License Registration Error', e, stackTrace);
+    }
+
+    if (!isFdroidBuild && !isUpdateChecked && isOnline && kReleaseMode) {
+      Future.delayed(Duration.zero, () {
+        checkAppUpdates();
+        isUpdateChecked = true;
+      });
     }
   }
 
