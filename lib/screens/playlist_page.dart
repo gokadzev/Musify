@@ -166,7 +166,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
       image: _playlist['image'],
       title: _playlist['title'],
       isAlbum: _playlist['isAlbum'],
-      size: MediaQuery.of(context).size.width / 2.7,
+      size: MediaQuery.of(context).size.width / 2.5,
       onClickOpen: false,
       cubeIcon: widget.cubeIcon,
       showFavoriteButton: false,
