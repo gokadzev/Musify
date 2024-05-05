@@ -9,12 +9,12 @@
   }
 }
 :root {
-  --accent-color: #f0f0f0;
+  --accent-color: #8fbce8;
   --dark-color: #081c15;
   --light-color: #e3f1e4;
   --dim-light-color: rgba(137, 195, 150, 0.8);
-  --primary-color: #4caf50;
-  --secondary-color: #81c784;
+  --primary-color: #135abb;
+  --secondary-color: #3083d8;
   --blue-color: #00a8e8;
   --swiper-pagination: #d9d8e2;
   --body-font: 'Montserrat', sans-serif;
@@ -409,7 +409,7 @@ a.btn {
   background-color: var(--light-color) !important;
 }
 .bg-dark {
-  background-color: var(--dark-color) !important;
+  background-color: #181c20 !important;
 }
 .bg-blue-trans {
   background: rgba(134, 155, 223, 0.14) !important;
@@ -663,21 +663,7 @@ a.btn {
 .m-banner .banner-content h1.banner-title {
   font-size: 5.1em;
   font-weight: 900;
-  background: linear-gradient(
-    297deg,
-    var(--blue-color),
-    var(--secondary-color),
-    var(--blue-color)
-  );
-  background: -webkit-linear-gradient(
-    297deg,
-    var(--blue-color),
-    var(--secondary-color),
-    var(--blue-color)
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #8fbce8;
 }
 .m-banner .banner-content p {
   width: 85%;
