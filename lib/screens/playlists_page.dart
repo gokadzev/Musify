@@ -69,7 +69,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
             labelText: '${context.l10n!.search}...',
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
