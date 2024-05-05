@@ -1,0 +1,10 @@
+Bug Fixes
+
+- Fixed overflow issue while adding song in playlist
+
+Enhancements
+
+- Added offline mode for better experience while having no connection
+- Redesigned some components and give the app more material 3 vibe
+- Boosted app stability and speed with quality and performance enhancements
+- For the full changelog, please visit the GitHub repository
