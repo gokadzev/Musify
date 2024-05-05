@@ -29,7 +29,6 @@
     "copyLogsNoLogs": "Kopyalanacak log bulunamadı",
     "copyLogsSuccess": "Loglar başarıyla kopyalandı.",
     "customPlaylistAddInstruction": "Eğer YouTube çalma listesi ekliyorsanız, sadece YouTube çalma listesi ID alanını doldurun. Kendi çalma listenizi oluşturuyorsanız, YouTube çalma listesi ID alanını boş bırakın ve sadece: Ad, Resim bağlantısı (isteğe bağlı), Açıklama (isteğe bağlı) alanlarını doldurun.",
-    "customPlaylistDesc": "Özel çalma listesi açıklaması",
     "customPlaylistImgUrl": "Özel çalma listesi resim bağlantısı",
     "customPlaylistName": "Özel çalma listesi adı",
     "download": "İndir",

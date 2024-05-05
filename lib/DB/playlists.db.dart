@@ -23,7 +23,6 @@ List<Map<String, dynamic>> playlistsDB = [
   {
     'ytid': 'PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx',
     'title': 'Top 50 Global',
-    'header_desc': 'Top 50 Global Song.',
     'image':
         'https://charts-images.scdn.co/assets/locale_en/regional/daily/region_global_large.jpg',
     'list': [],
@@ -37,25 +36,18 @@ List<Map<String, dynamic>> playlistsDB = [
   {
     'ytid': 'PLuUt-gc4791lfJJRh-FMS7YzZDS5SUZ_9',
     'title': 'Internet Rewind',
-    'header_desc':
-        "Internet Rewind - Viral Songs You Don't Know the Name of - Hit Rewind Playlist - Popular Hits 2023-2024",
     'image': 'https://i.scdn.co/image/ab67706f0000000294bddc1d05920cce685229c5',
     'list': [],
   },
   {
     'ytid': 'PLH1a9jqvHSspkYxCtSCBLgW2CxC-B9Gdg',
     'title': 'Goosebumps',
-    'header_desc':
-        'Goosebumps Playlist - Songs that Will Make You Have Goosebumps (Best Music You Can Find 2023-2024)',
     'image': 'https://i.scdn.co/image/ab67706f000000020d5e6f861f423ecfac53610b',
     'list': [],
   },
   {
     'ytid': 'PLoumn5BIsUDd3IH7MVw2XiW9nQKzCFy4O',
-    'title':
-        "Best Pop Music Playlist 2022 - Most Listened Pop Songs 2022 (Today's Top Pop Hits 2022)",
-    'header_desc':
-        'We recommend you to check other playlists or our favorite music charts. If you enjoyed listening to this one, maybe you',
+    'title': 'Best Pop Music Playlist 2022',
     'image': 'https://i.scdn.co/image/ab67706c0000bebbc14667db36e06ca21c2746fb',
     'list': [],
   },
@@ -75,16 +67,12 @@ List<Map<String, dynamic>> playlistsDB = [
   {
     'ytid': 'PLHg022HMFzFDMNp9xBGy3sARnqxaPl3PG',
     'title': 'Car Music 2022',
-    'header_desc':
-        'Car Music 2022 - Best Car Music Playlist 2022 - Car Music Mix (Songs for Car Driving)',
     'image': 'https://i.scdn.co/image/ab67706c0000da84cd9bd13f71d8b16277e1092a',
     'list': [],
   },
   {
     'ytid': 'PLSR9lWowvoE3A9i4JVVHtQFjlJt0_LItG',
-    'title': 'TikTok Songs 2022 - Tik Tok Music - Best TikTok Songs 2022',
-    'header_desc':
-        'TikTok Songs 2022 - Tik Tok Music - Best TikTok Songs 2022 Every week, we update our playlist with the latest hits. The',
+    'title': 'TikTok Songs 2022',
     'image': 'https://i.scdn.co/image/ab67616d0000b2739da92b8aa7cbcd57a20fe10e',
     'list': [],
   },
@@ -97,15 +85,12 @@ List<Map<String, dynamic>> playlistsDB = [
   {
     'ytid': 'PLw9U13gRyHys_YyMKCWuG2gYQ1eG-vQv4',
     'title': 'Big on the internet',
-    'header_desc': 'Big On The Internet - Super Mix, Viral Hits ',
     'image': 'https://i.scdn.co/image/ab67706f000000030cff82b06291045fe23facaf',
     'list': [],
   },
   {
     'ytid': 'PLgzTt0k8mXzHcKebL8d0uYHfawiARhQja',
-    'title': 'Best Sad and Emotional Songs - Spotify Playlist 2022',
-    'header_desc':
-        'If you are in a sad mood or you just want to listen to some sad songs and emotional songs, this is the perfect playlist ',
+    'title': 'Best Sad and Emotional Songs 2022',
     'image': 'https://i.scdn.co/image/ab67706c0000bebba7222f1f28cf4322f99585f1',
     'list': [],
   },
@@ -154,8 +139,6 @@ List<Map<String, dynamic>> playlistsDB = [
   {
     'ytid': 'PL7zsB-C3aNu03RwSy2Bn3Ov3oaEReOlT5',
     'title': 'Best Remixes Of Popular SONGS 2022 and 2023',
-    'header_desc':
-        'Best Remixes Of Popular SONGS 2022 and 2023 Those are some of best remixes of popular songs for 2022, we hope u like th',
     'image': 'https://i.scdn.co/image/ab67706c0000da84896a7f23065fa962b6e9a5f5',
     'list': [],
   },
@@ -163,15 +146,12 @@ List<Map<String, dynamic>> playlistsDB = [
     'ytid': 'PLWEEt0QgQFInR8b2_sKk86VAGhLs_Iczf',
     'title':
         'OPM Top Hits: Original Pilipino Music 2022 (Pinoy Hits & Love Songs)',
-    'header_desc': 'opm songs',
     'image': 'https://i.scdn.co/image/ab67706c0000bebb5c6e74a654ff510d06bd1734',
     'list': [],
   },
   {
     'ytid': 'PLiy0XOfUv4hGbDDI0gx6sFqsYdcQ6zMWx',
     'title': 'OPM 2000-2009 / Best Pinoy Songs Playlist 2000s Hits',
-    'header_desc':
-        'Pinoy Rock Songs,Tagalog Hit Songs 2000, 2001, 2002,Filipino Songs Playlist 2003, 2004, 2005,OPM Songs 2006',
     'image': 'https://i.scdn.co/image/ab67706c0000da849c699ac14bfc67b08cd944b4',
     'list': [],
   },
@@ -202,8 +182,6 @@ List<Map<String, dynamic>> playlistsDB = [
   {
     'ytid': 'PLZmONlbUZQSlqdckShGOb-YK4Ti1F-ck-',
     'title': 'Disney Hits',
-    'header_desc':
-        'Disney Hits - Best Disney Songs Playlist (Top Disney Hits Mix 2023-2024)',
     'image': 'https://i.scdn.co/image/ab67706f00000002a776ee8792ff69dfe9ff87c6',
     'list': [],
   },
@@ -216,42 +194,37 @@ List<Map<String, dynamic>> playlistsDB = [
   },
   {
     'ytid': 'PLOHoVaTp8R7dfrJW5pumS0iD_dhlXKv17',
-    'title': 'KPOP 2023 - K-POP Songs 2023 - KPop Playlist',
+    'title': 'KPOP 2023',
     'image': 'https://i.scdn.co/image/ab67706c0000da8412710d16432431315bc5dcd3',
     'list': [],
   },
   {
     'ytid': 'PL-_a53M3g7u1m2YDp_Y1nRs4tYXOqE2iE',
-    'title':
-        'Sped Up Mexican Songs - Epic Mexico Music Speed Up Playlist (Mix Mexican Sped Up Audios Mashup)',
+    'title': 'Sped Up Mexican Songs',
     'image': 'https://i.scdn.co/image/ab67706c0000da841d03f188ee806c2d47e659b0',
     'list': [],
   },
   {
     'ytid': 'PL-_a53M3g7u2qU3XTnVlWgAKJQXXm7Kjz',
-    'title':
-        'Lost in the Woods Spotify - Best Spotify Indie Folk Music Relaxing (Spotify Indie Folk Nature Songs 2023-2024)',
+    'title': 'Lost in the Woods Spotify 2023-2024',
     'image': 'https://i.scdn.co/image/ab67706f00000002ab9f1c2cea3507840710a314',
     'list': [],
   },
   {
     'ytid': 'PL-_a53M3g7u23B84qz128Nv4I0piBp3zr',
-    'title':
-        'Celtic Punk Spotify - Best Celtic Punk Songs (Top Celtic Music Punk 2023-2024)',
+    'title': 'Celtic Punk Spotify 2023-2024',
     'image': 'https://i.scdn.co/image/ab67706f000000024d023977376ec4f30795ecf4',
     'list': [],
   },
   {
     'ytid': 'PL-_a53M3g7u2UQT5jfGpmhkMswdNJe-Gh',
-    'title':
-        'New NCS Song 2023 - New Electronic Dance Music 2023-2024 (NCS No Copyright Sounds 2023 New)',
+    'title': 'New NCS Song 2023',
     'image': 'https://i.scdn.co/image/ab6775700000ee857b70ef84af66d93faf460fb1',
     'list': [],
   },
   {
     'ytid': 'PL-_a53M3g7u2siW7D-B89KS49vmCBekjY',
-    'title':
-        "Timeless Love Songs Spotify - Romantic Music Spotify List (Playlist for When You're in Love Spotify 2023-2024)",
+    'title': 'Timeless Love Songs Spotify 2023-2024',
     'image': 'https://i.scdn.co/image/ab67706f00000002ab79e9cccfbc31fc14063f55',
     'list': [],
   },
@@ -264,21 +237,19 @@ List<Map<String, dynamic>> playlistsDB = [
   },
   {
     'ytid': 'PL-_a53M3g7u0GJasXfv8u9lWpIGxNEGio',
-    'title': '2023 Rap Hits - Hottest Rap Music 2023 (Top Rap Songs 2023-2024)',
+    'title': '2023-2024 Rap Hits',
     'image': 'https://i.scdn.co/image/ab67706c0000da84c06bf2f63b986a90b48bcd7c',
     'list': [],
   },
   {
     'ytid': 'PL-_a53M3g7u3EyY6fsaOrYhrGDSMTpu8g',
-    'title':
-        'Polskie Teledyski 2023 - Polskie Klipy 2023 (Playlista Hity 2023-2024)',
+    'title': 'Polskie Teledyski 2023-2024',
     'image': 'https://i.scdn.co/image/ab67706f0000000297857d20f856f2c6a703fede',
     'list': [],
   },
   {
     'ytid': 'PL-_a53M3g7u0HHF7xyyIO8bRoJizjk26J',
-    'title':
-        'Boost Your Confidence Songs - Music That Make You Feel Like s Baddie (Good Baddie Music)',
+    'title': 'Boost Your Confidence Songs',
     'image': 'https://i.scdn.co/image/ab67706f00000002ee1821c3e4d71dbeaacf3e51',
     'list': [],
   },
@@ -339,78 +310,60 @@ List<Map<String, dynamic>> playlistsDB = [
   {
     'ytid': 'PLXpMeQYR1ilJiZuba40Sfzq-5AbF3XF4z',
     'title': 'Sped Up Audios 2023',
-    'header_desc':
-        'A Sped Up/Speed Songs Playlist 2023-2024 (Best Edit Audios Sped Up 2023 Hits)',
     'image': 'https://i.scdn.co/image/ab67616d0000b2734a98d0e7c1da1c7b258c3447',
     'list': [],
   },
   {
     'ytid': 'PLXpMeQYR1ilKN2Lj8R9rowFpn-8kTkH94',
     'title': 'Spotify Workday Lounge',
-    'header_desc':
-        'Office Relaxing Music for Spotify - Wonderful Lounge Chill Music Mix for Work - Spotify Lounge Music for Work 2023-2024',
     'image': 'https://i.scdn.co/image/ab67706f00000002e435ce0a86a8b9dc24527618',
     'list': [],
   },
   {
     'ytid': 'PLXpMeQYR1ilKCtx2KEEN2ogI5YchRNMoe',
     'title': 'Party Cove Spotify',
-    'header_desc': 'Best Soundtrack Spotify (Party Spotify Playlist 2023-2024)',
     'image': 'https://i.scdn.co/image/ab67706f000000029025bb363aa17ec9f1e1bc87',
     'list': [],
   },
   {
     'ytid': 'PLXpMeQYR1ilLvj8yAKf7UUYIsjEF65JoP',
     'title': 'Spotify Spooning',
-    'header_desc':
-        'Comfort Songs Playlist Spotify (Best Cozy Mood Songs 2023-2024)',
     'image': 'https://i.scdn.co/image/ab67706c0000da849185cd363c3dd2f2c654a58d',
     'list': [],
   },
   {
     'ytid': 'PLXpMeQYR1ilKfnosI1735VbavkfHNh0a8',
     'title': 'Chill Rock Spotify',
-    'header_desc':
-        '- Relaxing Rock Songs Playlist (Best Relax Rock Music Spotify 2023-2024)',
     'image': 'https://i.scdn.co/image/ab67616d0000b273a1452d02bc25ad5f5770d42d',
     'list': [],
   },
   {
     'ytid': 'PLXpMeQYR1ilJIRQb6wcAOscYz2TnmyOM0',
     'title': 'Sing-Along Indie Hits Spotify',
-    'header_desc':
-        'Popular Indie Music Spotify (Singable Songs Playlist 2023-2024)',
     'image': 'https://i.scdn.co/image/ab67706f000000028b24a34ec6818ba8eb76d222',
     'list': [],
   },
   {
     'ytid': 'PLXpMeQYR1ilJRHtUCgzgLm4x9WZ7YhYQQ',
     'title': "80's Rock Ballads Love Songs",
-    'header_desc':
-        "Best Oldies 80s Rock Love Music (1980's Rock Love Ballads Collection)",
     'image': 'https://i.scdn.co/image/ab67616d0000b2731b383e3ffe0d84dd44b7ff73',
     'list': [],
   },
   {
     'ytid': 'PLXpMeQYR1ilJWc-C5uKMSpVS49mphJcKC',
     'title': 'Cardio Spotify Playlist',
-    'header_desc': 'Workout Motivation Spotify Playlist (Gym Songs Spotify)',
     'image': 'https://i.scdn.co/image/ab67706c0000da84c5cc2fbe603427c47b630014',
     'list': [],
   },
   {
     'ytid': 'PLXpMeQYR1ilK2M6PUwdA75st7uAUrH7Z_',
     'title': 'Canciones 2023 Reggaeton',
-    'header_desc':
-        'Lo Mas Escuchado 2023 Reggaeton (Top Mix Reggaeton 2023-2024)',
     'image': 'https://i.scdn.co/image/ab67706c0000da8440211c58b689be17578b406d',
     'list': [],
   },
   {
     'ytid': 'PLXpMeQYR1ilIgQ0klpqWf7-RdfouCeJLj',
     'title': 'Best Remixes of 2024',
-    'header_desc':
-        'Best Remixes Popular Songs 2024 - Top Remix Music 2024 - Mashup Remix 2024 Song',
     'image': 'https://i.scdn.co/image/ab67706c0000da84dd30b4484aeabc40b213d921',
     'list': [],
   },
@@ -447,35 +400,30 @@ List<Map<String, dynamic>> playlistsDB = [
   {
     'ytid': 'PLXpMeQYR1ilJKp9YfL2fVMsoQuKSbxsLK',
     'title': 'Disney Soundtracks Playlist 2023',
-    'header_desc': 'Walt Disney World Music 2023',
     'image': 'https://i.scdn.co/image/ab6761610000e5ebc698d53b77db34027b00f853',
     'list': [],
   },
   {
     'ytid': 'PLXpMeQYR1ilL_qsEr9Z9aaTlcOq2oQhe8',
     'title': 'New Song 2023 Dance',
-    'header_desc': 'Latest Dance Tracks 2023',
     'image': 'https://i.scdn.co/image/ab67706c0000da84958dfdf2e46ba62b0ba2c38e',
     'list': [],
   },
   {
     'ytid': 'PLXpMeQYR1ilIU529zp7xRsv990b6YpyAh',
     'title': 'Clean TikTok Playlist 2023',
-    'header_desc': 'TikTok Songs Compilation 2023 Clean',
     'image': 'https://i.scdn.co/image/ab67706c0000da84e7d5897020753e1d58be9446',
     'list': [],
   },
   {
     'ytid': 'PLXpMeQYR1ilKXzjYmIb-FIKmYnzWZ7v4b',
     'title': 'New House Songs 2023 to 2024',
-    'header_desc': 'Latest House Music 2023 Mix',
     'image': 'https://i.scdn.co/image/ab67706c0000da84ed4f4edd01cfb81857eff52d',
     'list': [],
   },
   {
     'ytid': 'PLXpMeQYR1ilJbpgayg1uVwZ9fZEMTbdL5',
     'title': 'Top Upbeat Hits 2023',
-    'header_desc': 'Happy Uplifting Songs 2023 to 2024',
     'image': 'https://i.scdn.co/image/ab67706c0000da84e39142e42362f0d30b99a815',
     'list': [],
   },
@@ -500,7 +448,6 @@ List<Map<String, dynamic>> playlistsDB = [
   {
     'ytid': 'PLZhMSEOdAKDj0MCF_HTXB8bKBLywN_rnc',
     'title': 'Warehouse Party',
-    'header_desc': 'Classic party anthems from the club to your ears!',
     'image': 'https://i.scdn.co/image/ab67706f0000000244a93914cbb4ec7ebbf8b802',
     'list': [],
   },
@@ -525,7 +472,6 @@ List<Map<String, dynamic>> playlistsDB = [
   {
     'ytid': 'PLypD8YB4XFBzSbQN-XdJYzvXDpEcDmvD4',
     'title': 'Levitate',
-    'header_desc': "Music that makes you feel like you're levitating.",
     'image': 'https://i.scdn.co/image/ab67706f0000000288176f364f98371e03bb9d98',
     'list': [],
   },
@@ -538,14 +484,12 @@ List<Map<String, dynamic>> playlistsDB = [
   {
     'ytid': 'PLeZo-g7MgUlFrrsJ5rZvz5cgwXka6y1kV',
     'title': 'Phonk Music',
-    'header_desc': 'Selection of the best phonk & aggressive drift phonk music',
     'image': 'https://i.scdn.co/image/ab67706c0000da84ad4c22bc29f8fa3e37a14b70',
     'list': [],
   },
   {
     'ytid': 'PLw1Oi3cBR52TbfWJkV_bCg2K2_cOJVsBa',
     'title': 'Dopamine Music',
-    'header_desc': 'Play something that is very very vibe-worthy',
     'image': 'https://i.scdn.co/image/ab67706c0000da840419292b019d854be8ba381b',
     'list': [],
   },

@@ -29,7 +29,6 @@
     "copyLogsNoLogs": "Nenhum log encontrado para copiar",
     "copyLogsSuccess": "Logs copiados com sucesso",
     "customPlaylistAddInstruction": "Se você adicionar uma lista de reprodução do YouTube, preencha apenas o campo ID da lista de reprodução do YouTube. Se você criar sua própria lista de reprodução, deixe o campo ID da lista de reprodução do YouTube vazio e preencha apenas: Nome, Link da imagem (opcional), Descrição (opcional).",
-    "customPlaylistDesc": "Descrição personalizada da playlist",
     "customPlaylistImgUrl": "Link de imagem personalizada da playlist",
     "customPlaylistName": "Nome personalizado da playlist",
     "download": "Baixar",

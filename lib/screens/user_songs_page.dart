@@ -129,7 +129,6 @@ class _UserSongsPageState extends State<UserSongsPage> {
     return PlaylistHeader(
       _buildPlaylistImage(title, icon),
       title,
-      null,
       songsLength,
     );
   }

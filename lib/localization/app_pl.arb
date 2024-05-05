@@ -29,7 +29,6 @@
     "copyLogsNoLogs": "Brak logów do skopiowania",
     "copyLogsSuccess": "Pomyślnie skopiowano logi.",
     "customPlaylistAddInstruction": "If you add YouTube playlist, fill only YouTube playlist ID field, if you create your own playlist leave YouTube playlist ID empty and fill only: Name, Image link (optional), Description (optional)",
-    "customPlaylistDesc": "Custom playlist description",
     "customPlaylistImgUrl": "Custom playlist image link",
     "customPlaylistName": "Custom playlist name",
     "download": "Download",

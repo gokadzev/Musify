@@ -166,7 +166,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
       image: _playlist['image'],
       title: _playlist['title'],
       isAlbum: _playlist['isAlbum'],
-      size: MediaQuery.of(context).size.width / 2.5,
+      size: MediaQuery.of(context).size.width / 2.7,
       onClickOpen: false,
       cubeIcon: widget.cubeIcon,
       showFavoriteButton: false,
@@ -179,7 +179,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
     return PlaylistHeader(
       _buildPlaylistImage(),
       _playlist['title'],
-      _playlist['header_desc'],
       _songsLength,
     );
   }
@@ -233,7 +232,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
         builder: (BuildContext context) {
           var customPlaylistName = _playlist['title'];
           var imageUrl = _playlist['image'];
-          var description = _playlist['header_desc'];
 
           return AlertDialog(
             content: SingleChildScrollView(
@@ -259,16 +257,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
                       imageUrl = value;
                     },
                   ),
-                  const SizedBox(height: 7),
-                  TextField(
-                    controller: TextEditingController(text: description),
-                    decoration: InputDecoration(
-                      labelText: context.l10n!.customPlaylistDesc,
-                    ),
-                    onChanged: (value) {
-                      description = value;
-                    },
-                  ),
                 ],
               ),
             ),
@@ -287,7 +275,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
                         'title': customPlaylistName,
                         'isCustom': true,
                         if (imageUrl != null) 'image': imageUrl,
-                        if (description != null) 'header_desc': description,
                         'list': widget.playlistData['list'],
                       };
                       userCustomPlaylists[index] = newPlaylist;

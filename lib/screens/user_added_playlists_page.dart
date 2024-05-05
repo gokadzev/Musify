@@ -52,7 +52,6 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
               var id = '';
               var customPlaylistName = '';
               String? imageUrl;
-              String? description;
 
               return AlertDialog(
                 backgroundColor: Theme.of(context).dialogBackgroundColor,
@@ -94,15 +93,6 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                           imageUrl = value;
                         },
                       ),
-                      const SizedBox(height: 7),
-                      TextField(
-                        decoration: InputDecoration(
-                          labelText: context.l10n!.customPlaylistDesc,
-                        ),
-                        onChanged: (value) {
-                          description = value;
-                        },
-                      ),
                     ],
                   ),
                 ),
@@ -120,7 +110,6 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                           createCustomPlaylist(
                             customPlaylistName,
                             imageUrl,
-                            description,
                             context,
                           ),
                         );

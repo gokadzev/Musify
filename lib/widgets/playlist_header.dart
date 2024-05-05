@@ -21,20 +21,17 @@
 
 import 'package:flutter/material.dart';
 import 'package:musify/extensions/l10n.dart';
-import 'package:musify/widgets/marque.dart';
 
 class PlaylistHeader extends StatelessWidget {
   PlaylistHeader(
     this.image,
     this.title,
-    this.headerDescription,
     this.songsLength, {
     super.key,
   });
 
   final Widget image;
   final String title;
-  final String? headerDescription;
   final int songsLength;
 
   @override
@@ -53,30 +50,15 @@ class PlaylistHeader extends StatelessWidget {
                 title,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 15,
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: _primaryColor,
                 ),
               ),
-              if (headerDescription != null)
-                MarqueeWidget(
-                  child: Text(
-                    headerDescription!,
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w300,
-                      color: Theme.of(context).colorScheme.secondary,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 15),
               Text(
-                '[ $songsLength ${context.l10n!.songs} ]'.toUpperCase(),
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  color: _primaryColor,
-                ),
+                '$songsLength ${context.l10n!.songs}'.toUpperCase(),
+                style: const TextStyle(fontWeight: FontWeight.w500),
               ),
             ],
           ),

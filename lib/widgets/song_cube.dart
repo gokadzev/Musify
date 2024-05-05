@@ -75,7 +75,6 @@ class SongCube extends StatelessWidget {
                       activePlaylist = {
                         'ytid': '',
                         'title': 'No Playlist',
-                        'header_desc': '',
                         'image': '',
                         'list': [],
                       };

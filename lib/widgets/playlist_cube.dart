@@ -38,6 +38,7 @@ class PlaylistCube extends StatelessWidget {
     this.showFavoriteButton = true,
     this.cubeIcon = FluentIcons.music_note_1_24_regular,
     this.size = 220,
+    this.borderRadius = 13,
     this.isAlbum = false,
   });
 
@@ -49,6 +50,7 @@ class PlaylistCube extends StatelessWidget {
   final bool showFavoriteButton;
   final IconData cubeIcon;
   final double size;
+  final double borderRadius;
   final bool? isAlbum;
 
   final likeStatusToIconMapper = {
@@ -81,7 +83,7 @@ class PlaylistCube extends StatelessWidget {
                 }
               : null,
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(borderRadius),
             child: image != null
                 ? CachedNetworkImage(
                     key: Key(image.toString()),

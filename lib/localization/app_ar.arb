@@ -29,7 +29,6 @@
     "copyLogsNoLogs": "لم يتم العثور على سجلات للنسخ",
     "copyLogsSuccess": "تم نسخ السجلات بنجاح",
     "customPlaylistAddInstruction": "إذا قمت بإضافة قائمة تشغيل YouTube، قم بملء حقل معرف قائمة تشغيل YouTube فقط. إذا كنت تقوم بإنشاء قائمة تشغيل خاصة، اترك حقل معرف قائمة تشغيل YouTube فارغًا واملأ فقط: الاسم، رابط الصورة (اختياري)، الوصف (اختياري)",
-    "customPlaylistDesc": "وصف قائمة التشغيل الخاصة",
     "customPlaylistImgUrl": "رابط صورة قائمة التشغيل الخاصة",
     "customPlaylistName": "اسم قائمة التشغيل الخاصة",
     "download": "تحميل",
