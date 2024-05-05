@@ -341,5 +341,41 @@ List albumsDB = [
     'image': 'https://i.scdn.co/image/ab67616d00001e025795e01c151ba5a8ce4bd295',
     'isAlbum': true,
     'list': [],
+  },
+  {
+    'ytid': 'OLAK5uy_mG42_gxfZ-Cq6Y921XWm43Z75YAiaSIWI',
+    'title': 'eternal sunshine (slightly deluxe) - Ariana Grande',
+    'image': 'https://i.scdn.co/image/ab67616d0000b273bd3de668e4784d791c4ab695',
+    'isAlbum': true,
+    'list': [],
+  },
+  {
+    'ytid': 'OLAK5uy_kmtA2RV4sA_baCJwuaazeDtKmBM85j-yo',
+    'title': 'UTOPIA - Travis Scott',
+    'image': 'https://i.scdn.co/image/ab67616d00001e02881d8d8378cd01099babcd44',
+    'isAlbum': true,
+    'list': [],
+  },
+  {
+    'ytid': 'OLAK5uy_kDuqdPyyBdToRV-mvWklRE_ysv7-LqveI',
+    'title': 'One Thing At A Time - Morgan Wallen',
+    'image': 'https://i.scdn.co/image/ab67616d0000b273705079df9a25a28b452c1fc9',
+    'isAlbum': true,
+    'list': [],
+  },
+  {
+    'ytid': 'OLAK5uy_kFa9tOyLsP4JH1EqSD3hIudVdkmQWfKT0',
+    'title': 'DECIDE - Djo',
+    'image': 'https://i.scdn.co/image/ab67616d0000b273fddfffec51b4580acae727c1',
+    'isAlbum': true,
+    'list': [],
+  },
+  {
+    'ytid': 'OLAK5uy_ngyCd9rAr-KZ5eI5juhaOe-LgrjlteONU',
+    'title':
+        'Hard To Imagine The Neighbourhood Ever Changing - The Neighbourhood',
+    'image': 'https://i.scdn.co/image/ab67616d0000b2739b6ac98a52f62d5cb473da40',
+    'isAlbum': true,
+    'list': [],
   }
 ];
