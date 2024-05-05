@@ -145,95 +145,91 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.only(top: 15),
-        child: Column(
-          children: <Widget>[
-            FutureBuilder(
-              future: getUserPlaylists(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Spinner();
-                } else if (snapshot.hasError) {
-                  logger.log(
-                    'Error on user playlists page',
-                    snapshot.error,
-                    snapshot.stackTrace,
-                  );
-                  return Center(
-                    child: Text(context.l10n!.error),
-                  );
-                }
+        child: FutureBuilder(
+          future: getUserPlaylists(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Spinner();
+            } else if (snapshot.hasError) {
+              logger.log(
+                'Error on user playlists page',
+                snapshot.error,
+                snapshot.stackTrace,
+              );
+              return Center(
+                child: Text(context.l10n!.error),
+              );
+            }
 
-                final _playlists = snapshot.data as List;
+            final _playlists = snapshot.data as List;
 
-                return GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 200,
-                    crossAxisSpacing: 20,
-                    mainAxisSpacing: 20,
-                  ),
-                  shrinkWrap: true,
-                  physics: const ScrollPhysics(),
-                  itemCount: _playlists.length,
-                  padding: const EdgeInsets.all(16),
-                  itemBuilder: (BuildContext context, index) {
-                    final playlist = _playlists[index];
-                    final ytid = playlist['ytid'];
+            return GridView.builder(
+              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 200,
+                crossAxisSpacing: 20,
+                mainAxisSpacing: 20,
+              ),
+              shrinkWrap: true,
+              physics: const ScrollPhysics(),
+              itemCount: _playlists.length,
+              padding: const EdgeInsets.all(16),
+              itemBuilder: (BuildContext context, index) {
+                final playlist = _playlists[index];
+                final ytid = playlist['ytid'];
 
-                    return GestureDetector(
-                      onTap: playlist['isCustom'] ?? false
-                          ? () async {
-                              final result = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      PlaylistPage(playlistData: playlist),
-                                ),
-                              );
-                              if (result == false) {
-                                setState(() {});
-                              }
+                return GestureDetector(
+                  onTap: playlist['isCustom'] ?? false
+                      ? () async {
+                          final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  PlaylistPage(playlistData: playlist),
+                            ),
+                          );
+                          if (result == false) {
+                            setState(() {});
+                          }
+                        }
+                      : null,
+                  onLongPress: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return ConfirmationDialog(
+                          confirmationMessage:
+                              context.l10n!.removePlaylistQuestion,
+                          submitMessage: context.l10n!.remove,
+                          onCancel: () {
+                            Navigator.of(context).pop();
+                          },
+                          onSubmit: () {
+                            Navigator.of(context).pop();
+
+                            if (ytid == null && playlist['isCustom']) {
+                              removeUserCustomPlaylist(playlist);
+                            } else {
+                              removeUserPlaylist(ytid);
                             }
-                          : null,
-                      onLongPress: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return ConfirmationDialog(
-                              confirmationMessage:
-                                  context.l10n!.removePlaylistQuestion,
-                              submitMessage: context.l10n!.remove,
-                              onCancel: () {
-                                Navigator.of(context).pop();
-                              },
-                              onSubmit: () {
-                                Navigator.of(context).pop();
 
-                                if (ytid == null && playlist['isCustom']) {
-                                  removeUserCustomPlaylist(playlist);
-                                } else {
-                                  removeUserPlaylist(ytid);
-                                }
-
-                                setState(() {});
-                              },
-                            );
+                            setState(() {});
                           },
                         );
                       },
-                      child: PlaylistCube(
-                        id: ytid,
-                        image: playlist['image'],
-                        title: playlist['title'],
-                        playlistData:
-                            playlist['isCustom'] ?? false ? playlist : null,
-                        onClickOpen: playlist['isCustom'] == null,
-                      ),
                     );
                   },
+                  child: PlaylistCube(
+                    id: ytid,
+                    image: playlist['image'],
+                    title: playlist['title'],
+                    playlistData:
+                        playlist['isCustom'] ?? false ? playlist : null,
+                    onClickOpen: playlist['isCustom'] == null,
+                  ),
                 );
               },
-            ),
-          ],
+            );
+          },
         ),
       ),
     );
