@@ -142,6 +142,12 @@ class _PlaylistPageState extends State<PlaylistPage> {
                     child: buildPlaylistHeader(),
                   ),
                 ),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: buildSongActionsRow(),
+                  ),
+                ),
                 SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (BuildContext context, int index) {
@@ -331,6 +337,85 @@ class _PlaylistPageState extends State<PlaylistPage> {
     setState(() {
       _songsList.removeAt(indexOfRemovedSong);
     });
+  }
+
+  Widget _buildShuffleSongActionButton() {
+    return IconButton(
+      color: Theme.of(context).colorScheme.primary,
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      icon: const Icon(FluentIcons.arrow_shuffle_16_filled),
+      iconSize: 25,
+      onPressed: () {
+        final _newList = List.from(_playlist['list']);
+        _newList.shuffle();
+        setActivePlaylist({
+          'title': _playlist['title'],
+          'image': _playlist['image'],
+          'list': _newList,
+        });
+      },
+    );
+  }
+
+  Widget _buildSortSongActionButton() {
+    return DropdownButton<String>(
+      borderRadius: BorderRadius.circular(5),
+      dropdownColor: Theme.of(context).colorScheme.secondaryContainer,
+      underline: const SizedBox.shrink(),
+      iconEnabledColor: Theme.of(context).colorScheme.primary,
+      elevation: 0,
+      iconSize: 25,
+      icon: const Icon(FluentIcons.filter_16_filled),
+      items: <String>[context.l10n!.name, context.l10n!.artist]
+          .map((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+      onChanged: (item) {
+        setState(() {
+          if (item == context.l10n!.name) {
+            final playlist = _playlist['list'];
+
+            playlist.sort((a, b) {
+              final titleA = a['title'].toString().toLowerCase();
+              final titleB = b['title'].toString().toLowerCase();
+              return titleA.compareTo(titleB);
+            });
+
+            _playlist['list'] = playlist;
+          } else if (item == context.l10n!.artist) {
+            final playlist = _playlist['list'];
+
+            playlist.sort((a, b) {
+              final artistA = a['artist'].toString().toLowerCase();
+              final artistB = b['artist'].toString().toLowerCase();
+              return artistA.compareTo(artistB);
+            });
+
+            _playlist['list'] = playlist;
+          }
+          _hasMore = true;
+          _songsList.clear();
+          _currentPage = 0;
+          _currentLastLoadedId = 0;
+          _loadMore();
+        });
+      },
+    );
+  }
+
+  Widget buildSongActionsRow() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        _buildSortSongActionButton(),
+        const SizedBox(width: 5),
+        _buildShuffleSongActionButton(),
+      ],
+    );
   }
 
   Widget _buildSongListItem(int index) {
