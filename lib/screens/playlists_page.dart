@@ -76,10 +76,10 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
                 Switch(
                   value: _showOnlyAlbums,
                   onChanged: toggleShowOnlyAlbums,
-                  thumbIcon: MaterialStateProperty.resolveWith<Icon>(
-                    (Set<MaterialState> states) {
+                  thumbIcon: WidgetStateProperty.resolveWith<Icon>(
+                    (Set<WidgetState> states) {
                       return Icon(
-                        states.contains(MaterialState.selected)
+                        states.contains(WidgetState.selected)
                             ? Icons.album
                             : Icons.featured_play_list,
                       );
