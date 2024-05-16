@@ -167,6 +167,8 @@ class _MusifyState extends State<Musify> {
         final selectedScheme =
             brightness == Brightness.light ? lightColorScheme : darkColorScheme;
 
+        //TODO: dynamic coloring is broken because of major change by flutter
+
         final colorScheme = useSystemColor.value && selectedScheme != null
             ? selectedScheme
             : ColorScheme.fromSeed(
