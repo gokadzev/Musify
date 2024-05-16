@@ -58,6 +58,11 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
       ? ThemeData.light()
       : ThemeData.dark();
 
+  // Some people said that Colors.transparent causes some issues, so better to use it this way
+  final trickyFixForTransparency = Colors.black.withOpacity(0.002);
+  final iconsBrightness =
+      brightness == Brightness.dark ? Brightness.light : Brightness.dark;
+
   return ThemeData(
     colorScheme: colorScheme,
     appBarTheme: base.appBarTheme.copyWith(
@@ -67,6 +72,13 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
         fontSize: 30,
         fontWeight: FontWeight.bold,
         color: colorScheme.primary,
+      ),
+      systemOverlayStyle: SystemUiOverlayStyle(
+        systemNavigationBarColor: trickyFixForTransparency,
+        systemNavigationBarDividerColor: trickyFixForTransparency,
+        statusBarColor: trickyFixForTransparency,
+        systemNavigationBarIconBrightness: iconsBrightness,
+        statusBarIconBrightness: iconsBrightness,
       ),
       elevation: 0,
     ),
@@ -90,21 +102,6 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
       builders: {
         TargetPlatform.android: CupertinoPageTransitionsBuilder(),
       },
-    ),
-  );
-}
-
-void setSystemUIOverlayStyle(Brightness iconsBrightness) {
-  // Some people said that Colors.transparent causes some issues, so better to use it this way
-  final trickyFixForTransparency = Colors.black.withOpacity(0.002);
-
-  SystemChrome.setSystemUIOverlayStyle(
-    SystemUiOverlayStyle(
-      systemStatusBarContrastEnforced: true,
-      systemNavigationBarColor: trickyFixForTransparency,
-      systemNavigationBarDividerColor: trickyFixForTransparency,
-      systemNavigationBarIconBrightness: iconsBrightness,
-      statusBarIconBrightness: iconsBrightness,
     ),
   );
 }

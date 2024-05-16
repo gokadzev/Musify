@@ -102,9 +102,6 @@ class _MusifyState extends State<Musify> {
       if (newThemeMode != null) {
         themeMode = newThemeMode;
         brightness = getBrightnessFromThemeMode(newThemeMode);
-        setSystemUIOverlayStyle(
-          brightness == Brightness.dark ? Brightness.light : Brightness.dark,
-        );
       }
       if (newLocale != null) {
         languageSetting = newLocale;
@@ -127,14 +124,6 @@ class _MusifyState extends State<Musify> {
   @override
   void initState() {
     super.initState();
-
-    SystemChrome.setEnabledSystemUIMode(
-      SystemUiMode.edgeToEdge,
-      overlays: [SystemUiOverlay.top],
-    );
-    setSystemUIOverlayStyle(
-      brightness == Brightness.dark ? Brightness.light : Brightness.dark,
-    );
 
     try {
       LicenseRegistry.addLicense(() async* {
