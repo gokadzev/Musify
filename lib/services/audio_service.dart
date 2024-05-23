@@ -388,11 +388,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
     );
   }
 
-  Future mute() async {
-    await audioPlayer.setVolume(audioPlayer.volume == 0 ? 1 : 0);
-    muteNotifier.value = audioPlayer.volume == 0;
-  }
-
   int _generateRandomIndex(int length) {
     final random = Random();
     var randomIndex = random.nextInt(length);

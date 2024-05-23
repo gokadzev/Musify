@@ -60,6 +60,7 @@ class NowPlayingPage extends StatelessWidget {
 
             return Column(
               children: [
+                SizedBox(height: screenHeight * 0.02),
                 buildArtwork(context, size, metadata),
                 SizedBox(height: screenHeight * 0.01),
                 if (!(metadata.extras?['isLive'] ?? false))
@@ -321,6 +322,7 @@ class NowPlayingPage extends StatelessWidget {
                 _primaryColor,
                 _secondaryColor,
                 elevation: 0,
+                padding: EdgeInsets.all(screen * 0.08),
               );
             },
           ),
@@ -393,21 +395,6 @@ class NowPlayingPage extends StatelessWidget {
 
                 songOfflineStatus.value = !songOfflineStatus.value;
               },
-            );
-          },
-        ),
-        ValueListenableBuilder<bool>(
-          valueListenable: muteNotifier,
-          builder: (_, value, __) {
-            return IconButton.filledTonal(
-              icon: Icon(
-                value
-                    ? FluentIcons.speaker_mute_24_filled
-                    : FluentIcons.speaker_mute_24_regular,
-                color: _primaryColor,
-              ),
-              iconSize: iconSize,
-              onPressed: audioHandler.mute,
             );
           },
         ),

@@ -57,4 +57,3 @@ Color primaryColorSetting =
 
 final shuffleNotifier = ValueNotifier<bool>(false);
 final repeatNotifier = ValueNotifier<bool>(false);
-final muteNotifier = ValueNotifier<bool>(false);

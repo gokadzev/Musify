@@ -61,13 +61,10 @@ Widget buildPlaybackIconButton(
     splashColor: Colors.transparent,
     padding: padding,
     shape: const CircleBorder(),
-    child: Padding(
-      padding: const EdgeInsetsDirectional.all(10),
-      child: Icon(
-        icon,
-        color: iconColor,
-        size: iconSize,
-      ),
+    child: Icon(
+      icon,
+      color: iconColor,
+      size: iconSize,
     ),
   );
 }
