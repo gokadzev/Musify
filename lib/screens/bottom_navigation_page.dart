@@ -106,10 +106,10 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
                     ),
                     NavigationDestination(
                       icon: const Icon(
-                        FluentIcons.more_horizontal_24_regular,
+                        FluentIcons.settings_24_regular,
                       ),
                       selectedIcon: const Icon(
-                        FluentIcons.more_horizontal_24_filled,
+                        FluentIcons.settings_24_filled,
                       ),
                       label: context.l10n?.settings ?? 'Settings',
                     ),
@@ -122,10 +122,10 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
                     ),
                     NavigationDestination(
                       icon: const Icon(
-                        FluentIcons.more_horizontal_24_regular,
+                        FluentIcons.settings_24_regular,
                       ),
                       selectedIcon: const Icon(
-                        FluentIcons.more_horizontal_24_filled,
+                        FluentIcons.settings_24_filled,
                       ),
                       label: context.l10n?.settings ?? 'Settings',
                     ),
