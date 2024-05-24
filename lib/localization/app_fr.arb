@@ -29,7 +29,6 @@
   "copyLogs": "Copier les logs",
   "copyLogsNoLogs": "Pas de logs à copier",
   "copyLogsSuccess": "Copie des logs réussie. ",
-  "customPlaylistAddInstruction": "Si vous ajoutez une liste de lecture YouTube, remplissez uniquement le champ d'ID de liste de lecture YouTube. Si vous créez votre propre liste de lecture, laissez le champ d'ID de liste de lecture YouTube vide et remplissez uniquement : Nom, Lien de l'image (facultatif), Description (facultatif)",
   "customPlaylistImgUrl": "Lien d'image de la liste de lecture personnalisée",
   "customPlaylistName": "Nom de la liste de lecture personnalisée",
   "download": "Télécharger",

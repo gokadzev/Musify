@@ -29,7 +29,6 @@
   "copyLogs": "Sao chép logs",
   "copyLogsNoLogs": "Không tìm thấy logs để sao chép",
   "copyLogsSuccess": "Sao chép logs thành công.",
-  "customPlaylistAddInstruction": "Nếu bạn thêm danh sách phát YouTube, hãy chỉ điền vào trường ID danh sách phát YouTube. Nếu bạn tạo danh sách phát riêng của mình, hãy để trống trường ID danh sách phát YouTube và chỉ điền vào: Tên, Đường link ảnh (tùy chọn), Mô tả (tùy chọn)",
   "customPlaylistImgUrl": "Đường link ảnh danh sách phát tùy chỉnh",
   "customPlaylistName": "Tên danh sách phát tùy chỉnh",
   "download": "Tải xuống",

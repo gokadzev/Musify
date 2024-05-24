@@ -29,7 +29,6 @@
   "copyLogs": "Logs kopieren",
   "copyLogsNoLogs": "Keine Logs zum Kopieren gefunden",
   "copyLogsSuccess": "Logs erfolgreich kopiert",
-  "customPlaylistAddInstruction": "Wenn Sie eine YouTube-Playlist hinzufügen, füllen Sie nur das Feld 'YouTube-Playlist-ID' aus. Wenn Sie Ihre eigene Playlist erstellen, lassen Sie das Feld 'YouTube-Playlist-ID' leer und füllen Sie nur Name, Bildlink (optional) und Beschreibung (optional) aus.",
   "customPlaylistImgUrl": "Bildlink der benutzerdefinierten Playlist",
   "customPlaylistName": "Name der benutzerdefinierten Playlist",
   "download": "Herunterladen",
