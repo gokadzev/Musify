@@ -347,8 +347,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
       icon: const Icon(FluentIcons.arrow_shuffle_16_filled),
       iconSize: 25,
       onPressed: () {
-        final _newList = List.from(_playlist['list']);
-        _newList.shuffle();
+        final _newList = List.of(_playlist['list'])..shuffle();
         setActivePlaylist({
           'title': _playlist['title'],
           'image': _playlist['image'],
@@ -376,27 +375,25 @@ class _PlaylistPageState extends State<PlaylistPage> {
       }).toList(),
       onChanged: (item) {
         setState(() {
-          if (item == context.l10n!.name) {
-            final playlist = _playlist['list'];
+          final playlist = _playlist['list'];
 
+          void sortBy(String key) {
             playlist.sort((a, b) {
-              final titleA = a['title'].toString().toLowerCase();
-              final titleB = b['title'].toString().toLowerCase();
-              return titleA.compareTo(titleB);
+              final valueA = a[key].toString().toLowerCase();
+              final valueB = b[key].toString().toLowerCase();
+              return valueA.compareTo(valueB);
             });
-
-            _playlist['list'] = playlist;
-          } else if (item == context.l10n!.artist) {
-            final playlist = _playlist['list'];
-
-            playlist.sort((a, b) {
-              final artistA = a['artist'].toString().toLowerCase();
-              final artistB = b['artist'].toString().toLowerCase();
-              return artistA.compareTo(artistB);
-            });
-
-            _playlist['list'] = playlist;
           }
+
+          if (item == context.l10n!.name) {
+            sortBy('title');
+          } else if (item == context.l10n!.artist) {
+            sortBy('artist');
+          }
+
+          _playlist['list'] = playlist;
+
+          // Reset pagination and reload
           _hasMore = true;
           _songsList.clear();
           _currentPage = 0;
