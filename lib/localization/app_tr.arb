@@ -45,6 +45,7 @@
   "lyrics": "Şarkı sözleri",
   "lyricsNotAvailable": "Şarkı sözü yok",
   "name": "Name",
+  "noCustomPlaylists": "You haven't created any custom playlists yet",
   "noLikedPlaylists": "Henüz hiçbir çalma listesini beğenmediniz",
   "notYTlist": "Bu bir YouTube çalma listesi kimliği değil",
   "offlineSongs": "Offline songs",

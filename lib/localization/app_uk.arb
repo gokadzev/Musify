@@ -45,6 +45,7 @@
   "lyrics": "Текст пісні",
   "lyricsNotAvailable": "Текст пісні не доступний",
   "name": "Name",
+  "noCustomPlaylists": "You haven't created any custom playlists yet",
   "noLikedPlaylists": "Вам ще не сподобався жоден список відтворення",
   "notYTlist": "Це не ідентифікатор плейлиста YouTube",
   "offlineSongs": "Offline songs",

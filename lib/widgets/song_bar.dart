@@ -244,17 +244,30 @@ void showAddToPlaylistDialog(BuildContext context, dynamic song) {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              for (final playlist in userCustomPlaylists)
-                Card(
-                  color: Theme.of(context).colorScheme.secondaryContainer,
-                  elevation: 0,
-                  child: ListTile(
-                    title: Text(playlist['title']),
-                    onTap: () {
-                      addSongInCustomPlaylist(playlist['title'], song);
-                      showToast(context, context.l10n!.songAdded);
-                      Navigator.pop(context);
-                    },
+              if (userCustomPlaylists.isNotEmpty)
+                ListView.builder(
+                  itemCount: userCustomPlaylists.length,
+                  itemBuilder: (context, index) {
+                    final playlist = userCustomPlaylists[index];
+                    return Card(
+                      color: Theme.of(context).colorScheme.secondaryContainer,
+                      elevation: 0,
+                      child: ListTile(
+                        title: Text(playlist['title']),
+                        onTap: () {
+                          addSongInCustomPlaylist(playlist['title'], song);
+                          showToast(context, context.l10n!.songAdded);
+                          Navigator.pop(context);
+                        },
+                      ),
+                    );
+                  },
+                )
+              else
+                Center(
+                  child: Text(
+                    context.l10n!.noCustomPlaylists,
+                    textAlign: TextAlign.center,
                   ),
                 ),
             ],

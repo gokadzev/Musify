@@ -45,6 +45,7 @@
   "lyrics": "Paroles",
   "lyricsNotAvailable": "Pas de paroles disponibles",
   "name": "Name",
+  "noCustomPlaylists": "You haven't created any custom playlists yet",
   "noLikedPlaylists": "Pas de liste de lecteur favorite",
   "notYTlist": "Ceci n'est pas un ID de playlist YouTube",
   "offlineSongs": "Offline songs",

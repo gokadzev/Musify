@@ -45,6 +45,7 @@
   "lyrics": "Liedtext",
   "lyricsNotAvailable": "Keine Liedtexte verfügbar",
   "name": "Name",
+  "noCustomPlaylists": "You haven't created any custom playlists yet",
   "noLikedPlaylists": "Du hast noch keine Playlists geliked",
   "notYTlist": "Das ist keine YouTube-Playlist-ID",
   "offlineSongs": "Offline songs",

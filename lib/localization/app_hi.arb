@@ -45,6 +45,7 @@
   "lyrics": "बोल",
   "lyricsNotAvailable": "कोई गीत उपलब्ध नहीं",
   "name": "Name",
+  "noCustomPlaylists": "You haven't created any custom playlists yet",
   "noLikedPlaylists": "आपको अभी तक कोई भी प्लेलिस्ट पसंद नहीं आई है",
   "notYTlist": "यह यूट्यूब प्लेलिस्ट आईडी नहीं है",
   "offlineSongs": "Offline songs",
