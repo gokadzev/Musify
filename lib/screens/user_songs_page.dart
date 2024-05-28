@@ -24,6 +24,7 @@ import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
+import 'package:musify/services/settings_manager.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/playlist_header.dart';
 import 'package:musify/widgets/song_bar.dart';
@@ -52,7 +53,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: !isOnline ? Text(title) : null,
+        title: offlineMode.value ? Text(title) : null,
         actions: [
           if (title == context.l10n!.likedSongs)
             IconButton(

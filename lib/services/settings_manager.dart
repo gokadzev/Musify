@@ -33,6 +33,10 @@ final useSystemColor = ValueNotifier<bool>(
   Hive.box('settings').get('useSystemColor', defaultValue: true),
 );
 
+final offlineMode = ValueNotifier<bool>(
+  Hive.box('settings').get('offlineMode', defaultValue: false),
+);
+
 final sponsorBlockSupport = ValueNotifier<bool>(
   Hive.box('settings').get('sponsorBlockSupport', defaultValue: false),
 );

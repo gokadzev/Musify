@@ -87,7 +87,7 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
                 _selectedIndex.value = index;
               });
             },
-            destinations: isOnline
+            destinations: !offlineMode.value
                 ? [
                     NavigationDestination(
                       icon: const Icon(FluentIcons.home_24_regular),

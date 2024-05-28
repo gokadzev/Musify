@@ -22,7 +22,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:musify/API/version.dart';
-import 'package:musify/main.dart';
 import 'package:musify/screens/about_page.dart';
 import 'package:musify/screens/bottom_navigation_page.dart';
 import 'package:musify/screens/home_page.dart';
@@ -32,6 +31,7 @@ import 'package:musify/screens/settings_page.dart';
 import 'package:musify/screens/user_added_playlists_page.dart';
 import 'package:musify/screens/user_liked_playlists_page.dart';
 import 'package:musify/screens/user_songs_page.dart';
+import 'package:musify/services/settings_manager.dart';
 
 class NavigationManager {
   factory NavigationManager() {
@@ -42,7 +42,7 @@ class NavigationManager {
     final routes = [
       StatefulShellRoute.indexedStack(
         parentNavigatorKey: parentNavigatorKey,
-        branches: isOnline ? _onlineRoutes() : _offlineRoutes(),
+        branches: !offlineMode.value ? _onlineRoutes() : _offlineRoutes(),
         pageBuilder: (
           BuildContext context,
           GoRouterState state,

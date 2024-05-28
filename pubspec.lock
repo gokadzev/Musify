@@ -137,22 +137,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.18.0"
-  connectivity_plus:
-    dependency: transitive
-    description:
-      name: connectivity_plus
-      sha256: db7a4e143dc72cc3cb2044ef9b052a7ebfe729513e6a82943bc3526f784365b8
-      url: "https://pub.dev"
-    source: hosted
-    version: "6.0.3"
-  connectivity_plus_platform_interface:
-    dependency: transitive
-    description:
-      name: connectivity_plus_platform_interface
-      sha256: b6a56efe1e6675be240de39107281d4034b64ac23438026355b4234042a35adb
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.0"
   cross_file:
     dependency: transitive
     description:
@@ -177,14 +161,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0"
-  dbus:
-    dependency: transitive
-    description:
-      name: dbus
-      sha256: "365c771ac3b0e58845f39ec6deebc76e3276aa9922b0cc60840712094d9047ac"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.7.10"
   dynamic_color:
     dependency: "direct main"
     description:
@@ -373,14 +349,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.7"
-  internet_connection_checker_plus:
-    dependency: "direct main"
-    description:
-      name: internet_connection_checker_plus
-      sha256: b321797053ede24e686c4cd5fd5acc6c2a357b8b64b742e25d302c0d7569a484
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.4.0"
   intl:
     dependency: "direct main"
     description:
@@ -485,14 +453,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.12.0"
-  nm:
-    dependency: transitive
-    description:
-      name: nm
-      sha256: "2c9aae4127bdc8993206464fcc063611e0e36e72018696cd9631023a31b24254"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.5.0"
   octo_image:
     dependency: transitive
     description:

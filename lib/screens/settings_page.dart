@@ -232,7 +232,29 @@ class SettingsPage extends StatelessWidget {
                 );
               },
             ),
-            if (isOnline)
+            ValueListenableBuilder<bool>(
+              valueListenable: offlineMode,
+              builder: (_, value, __) {
+                return SettingSwitchBar(
+                  tileName: context.l10n!.offlineMode,
+                  tileIcon: FluentIcons.cellular_off_24_regular,
+                  value: value,
+                  onChanged: (value) {
+                    addOrUpdateData(
+                      'settings',
+                      'offlineMode',
+                      value,
+                    );
+                    offlineMode.value = value;
+                    showToast(
+                      context,
+                      context.l10n!.restartAppMsg,
+                    );
+                  },
+                );
+              },
+            ),
+            if (!offlineMode.value)
               Column(
                 children: [
                   ValueListenableBuilder<bool>(

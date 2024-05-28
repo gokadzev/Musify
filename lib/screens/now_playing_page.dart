@@ -86,7 +86,7 @@ class NowPlayingPage extends StatelessWidget {
 
     return FlipCard(
       rotateSide: RotateSide.right,
-      onTapFlipping: isOnline,
+      onTapFlipping: !offlineMode.value,
       controller: _lyricsController,
       frontWidget: SongArtworkWidget(
         metadata: metadata,
@@ -398,7 +398,7 @@ class NowPlayingPage extends StatelessWidget {
             );
           },
         ),
-        if (isOnline)
+        if (!offlineMode.value)
           IconButton.filledTonal(
             icon: Icon(
               Icons.add,
@@ -444,7 +444,7 @@ class NowPlayingPage extends StatelessWidget {
               );
             },
           ),
-        if (isOnline)
+        if (!offlineMode.value)
           IconButton.filledTonal(
             icon: Icon(
               FluentIcons.text_32_filled,
@@ -453,7 +453,7 @@ class NowPlayingPage extends StatelessWidget {
             iconSize: iconSize,
             onPressed: _lyricsController.flipcard,
           ),
-        if (isOnline)
+        if (!offlineMode.value)
           ValueListenableBuilder<bool>(
             valueListenable: songLikeStatus,
             builder: (_, value, __) {
@@ -472,7 +472,7 @@ class NowPlayingPage extends StatelessWidget {
               );
             },
           ),
-        if (isOnline)
+        if (!offlineMode.value)
           ValueListenableBuilder<bool>(
             valueListenable: playNextSongAutomatically,
             builder: (_, value, __) {
