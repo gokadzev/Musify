@@ -276,7 +276,7 @@ class NowPlayingPage extends StatelessWidget {
     final _primaryColor = Theme.of(context).colorScheme.primary;
     final _secondaryColor = Theme.of(context).colorScheme.secondaryContainer;
 
-    final screen = (size.width + size.height) / 4;
+    final screen = ((size.width + size.height) / 4) - 10;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 22),
@@ -304,36 +304,44 @@ class NowPlayingPage extends StatelessWidget {
               );
             },
           ),
-          IconButton(
-            icon: Icon(
-              FluentIcons.previous_24_filled,
-              color: audioHandler.hasPrevious ? _primaryColor : _secondaryColor,
-            ),
-            iconSize: screen * 0.12,
-            onPressed: () => audioHandler.skipToPrevious(),
-            splashColor: Colors.transparent,
-          ),
-          StreamBuilder<PlaybackState>(
-            stream: audioHandler.playbackState,
-            builder: (context, snapshot) {
-              return buildPlaybackIconButton(
-                snapshot.data,
-                screen * 0.15,
-                _primaryColor,
-                _secondaryColor,
-                elevation: 0,
-                padding: EdgeInsets.all(screen * 0.08),
-              );
-            },
-          ),
-          IconButton(
-            icon: Icon(
-              FluentIcons.next_24_filled,
-              color: audioHandler.hasNext ? _primaryColor : _secondaryColor,
-            ),
-            iconSize: screen * 0.12,
-            onPressed: () => audioHandler.skipToNext(),
-            splashColor: Colors.transparent,
+          Row(
+            children: [
+              IconButton(
+                icon: Icon(
+                  FluentIcons.previous_24_filled,
+                  color: audioHandler.hasPrevious
+                      ? _primaryColor
+                      : _secondaryColor,
+                ),
+                iconSize: screen * 0.14,
+                onPressed: () => audioHandler.skipToPrevious(),
+                splashColor: Colors.transparent,
+              ),
+              const SizedBox(width: 5),
+              StreamBuilder<PlaybackState>(
+                stream: audioHandler.playbackState,
+                builder: (context, snapshot) {
+                  return buildPlaybackIconButton(
+                    snapshot.data,
+                    screen * 0.15,
+                    _primaryColor,
+                    _secondaryColor,
+                    elevation: 0,
+                    padding: EdgeInsets.all(screen * 0.08),
+                  );
+                },
+              ),
+              const SizedBox(width: 5),
+              IconButton(
+                icon: Icon(
+                  FluentIcons.next_24_filled,
+                  color: audioHandler.hasNext ? _primaryColor : _secondaryColor,
+                ),
+                iconSize: screen * 0.14,
+                onPressed: () => audioHandler.skipToNext(),
+                splashColor: Colors.transparent,
+              ),
+            ],
           ),
           ValueListenableBuilder<bool>(
             valueListenable: repeatNotifier,
