@@ -286,22 +286,31 @@ class NowPlayingPage extends StatelessWidget {
           ValueListenableBuilder<bool>(
             valueListenable: shuffleNotifier,
             builder: (_, value, __) {
-              return IconButton.filled(
-                icon: Icon(
-                  value
-                      ? FluentIcons.arrow_shuffle_24_filled
-                      : FluentIcons.arrow_shuffle_off_24_filled,
-                  color: _secondaryColor,
-                ),
-                iconSize: iconSize,
-                onPressed: () {
-                  audioHandler.setShuffleMode(
-                    value
-                        ? AudioServiceShuffleMode.none
-                        : AudioServiceShuffleMode.all,
-                  );
-                },
-              );
+              return value
+                  ? IconButton.filled(
+                      icon: Icon(
+                        FluentIcons.arrow_shuffle_24_filled,
+                        color: _secondaryColor,
+                      ),
+                      iconSize: iconSize,
+                      onPressed: () {
+                        audioHandler.setShuffleMode(
+                          AudioServiceShuffleMode.none,
+                        );
+                      },
+                    )
+                  : IconButton.filledTonal(
+                      icon: Icon(
+                        FluentIcons.arrow_shuffle_off_24_filled,
+                        color: _primaryColor,
+                      ),
+                      iconSize: iconSize,
+                      onPressed: () {
+                        audioHandler.setShuffleMode(
+                          AudioServiceShuffleMode.all,
+                        );
+                      },
+                    );
             },
           ),
           Row(
@@ -346,20 +355,31 @@ class NowPlayingPage extends StatelessWidget {
           ValueListenableBuilder<bool>(
             valueListenable: repeatNotifier,
             builder: (_, value, __) {
-              return IconButton.filled(
-                icon: Icon(
-                  value
-                      ? FluentIcons.arrow_repeat_1_24_filled
-                      : FluentIcons.arrow_repeat_all_off_24_filled,
-                  color: _secondaryColor,
-                ),
-                iconSize: iconSize,
-                onPressed: () => audioHandler.setRepeatMode(
-                  value
-                      ? AudioServiceRepeatMode.none
-                      : AudioServiceRepeatMode.all,
-                ),
-              );
+              return value
+                  ? IconButton.filled(
+                      icon: Icon(
+                        FluentIcons.arrow_repeat_1_24_filled,
+                        color: _secondaryColor,
+                      ),
+                      iconSize: iconSize,
+                      onPressed: () {
+                        audioHandler.setRepeatMode(
+                          AudioServiceRepeatMode.none,
+                        );
+                      },
+                    )
+                  : IconButton.filledTonal(
+                      icon: Icon(
+                        FluentIcons.arrow_repeat_all_off_24_filled,
+                        color: _primaryColor,
+                      ),
+                      iconSize: iconSize,
+                      onPressed: () {
+                        audioHandler.setRepeatMode(
+                          AudioServiceRepeatMode.all,
+                        );
+                      },
+                    );
             },
           ),
         ],
