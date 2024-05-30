@@ -31,6 +31,7 @@
   "copyLogsSuccess": "Sao chép logs thành công.",
   "customPlaylistImgUrl": "Đường link ảnh danh sách phát tùy chỉnh",
   "customPlaylistName": "Tên danh sách phát tùy chỉnh",
+  "defaultRecommendations": "Default recommendations algorithm",
   "download": "Tải xuống",
   "downloadAppUpdate": "Tải xuống cập nhật ứng dụng",
   "dynamicColor": "Màu chủ đạo động (Android 12+)",

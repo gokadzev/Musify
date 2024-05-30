@@ -26,6 +26,7 @@ import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/screens/playlist_page.dart';
 import 'package:musify/services/router_service.dart';
+import 'package:musify/services/settings_manager.dart';
 import 'package:musify/widgets/artist_cube.dart';
 import 'package:musify/widgets/marque.dart';
 import 'package:musify/widgets/playlist_cube.dart';
@@ -197,33 +198,39 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildRecommendedSongsAndArtists() {
-    return FutureBuilder(
-      future: getRecommendedSongs(),
-      builder: (context, AsyncSnapshot<dynamic> snapshot) {
-        final calculatedSize = MediaQuery.of(context).size.height * 0.25;
-        switch (snapshot.connectionState) {
-          case ConnectionState.waiting:
-            return _buildLoadingWidget();
-          case ConnectionState.done:
-            if (snapshot.hasError) {
-              logger.log(
-                'Error in _buildRecommendedSongsAndArtists',
-                snapshot.error,
-                snapshot.stackTrace,
-              );
-              return _buildErrorWidget(context);
+    return ValueListenableBuilder<bool>(
+      valueListenable: defaultRecommendations,
+      builder: (_, recommendations, __) {
+        return FutureBuilder(
+          future: getRecommendedSongs(),
+          builder: (context, AsyncSnapshot<dynamic> snapshot) {
+            final calculatedSize = MediaQuery.of(context).size.height * 0.25;
+            switch (snapshot.connectionState) {
+              case ConnectionState.waiting:
+                return _buildLoadingWidget();
+              case ConnectionState.done:
+                if (snapshot.hasError) {
+                  logger.log(
+                    'Error in _buildRecommendedSongsAndArtists',
+                    snapshot.error,
+                    snapshot.stackTrace,
+                  );
+                  return _buildErrorWidget(context);
+                }
+                if (!snapshot.hasData) {
+                  return const SizedBox.shrink();
+                }
+                return _buildRecommendedContent(
+                  context,
+                  snapshot.data,
+                  calculatedSize,
+                  showArtists: !recommendations,
+                );
+              default:
+                return const SizedBox.shrink();
             }
-            if (!snapshot.hasData) {
-              return const SizedBox.shrink();
-            }
-            return _buildRecommendedContent(
-              context,
-              snapshot.data,
-              calculatedSize,
-            );
-          default:
-            return const SizedBox.shrink();
-        }
+          },
+        );
       },
     );
   }
@@ -252,38 +259,40 @@ class _HomePageState extends State<HomePage> {
   Widget _buildRecommendedContent(
     BuildContext context,
     List<dynamic> data,
-    double calculatedSize,
-  ) {
+    double calculatedSize, {
+    bool showArtists = true,
+  }) {
     return Column(
       children: <Widget>[
-        _buildSectionHeader(context.l10n!.suggestedArtists),
-        SizedBox(
-          height: calculatedSize,
-          child: ListView.separated(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            scrollDirection: Axis.horizontal,
-            separatorBuilder: (_, __) => const SizedBox(width: 15),
-            itemCount: 5,
-            itemBuilder: (context, index) {
-              final artist = data[index]['artist'].split('~')[0];
-              return GestureDetector(
-                onTap: () async {
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PlaylistPage(
-                        cubeIcon: FluentIcons.mic_sparkle_24_regular,
-                        playlistId: artist,
-                        isArtist: true,
+        if (showArtists) _buildSectionHeader(context.l10n!.suggestedArtists),
+        if (showArtists)
+          SizedBox(
+            height: calculatedSize,
+            child: ListView.separated(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              scrollDirection: Axis.horizontal,
+              separatorBuilder: (_, __) => const SizedBox(width: 15),
+              itemCount: 5,
+              itemBuilder: (context, index) {
+                final artist = data[index]['artist'].split('~')[0];
+                return GestureDetector(
+                  onTap: () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PlaylistPage(
+                          cubeIcon: FluentIcons.mic_sparkle_24_regular,
+                          playlistId: artist,
+                          isArtist: true,
+                        ),
                       ),
-                    ),
-                  );
-                },
-                child: ArtistCube(artist),
-              );
-            },
+                    );
+                  },
+                  child: ArtistCube(artist),
+                );
+              },
+            ),
           ),
-        ),
         _buildSectionHeader(
           context.l10n!.recommendedForYou,
           IconButton(

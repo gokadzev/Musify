@@ -31,6 +31,7 @@
   "copyLogsSuccess": "Loglar başarıyla kopyalandı.",
   "customPlaylistImgUrl": "Özel çalma listesi resim bağlantısı",
   "customPlaylistName": "Özel çalma listesi adı",
+  "defaultRecommendations": "Default recommendations algorithm",
   "download": "İndir",
   "downloadAppUpdate": "Uygulama Güncellemesini İndir",
   "dynamicColor": "Dinamik vurgu rengi (Android 12+)",

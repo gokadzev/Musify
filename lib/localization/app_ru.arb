@@ -31,6 +31,7 @@
   "copyLogsSuccess": "Логи успешно скопированы. ",
   "customPlaylistImgUrl": "Обложка плейлиста (ссылка на изображение)",
   "customPlaylistName": "Название плейлиста",
+  "defaultRecommendations": "Default recommendations algorithm",
   "download": "Загрузить",
   "downloadAppUpdate": "Скачать обновление",
   "dynamicColor": "Динамический цветовой акцент (Android 12+)",

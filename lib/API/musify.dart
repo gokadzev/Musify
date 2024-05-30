@@ -85,29 +85,40 @@ Future<List> fetchSongsList(String searchQuery) async {
 
 Future<List> getRecommendedSongs() async {
   try {
-    final playlistSongs = [...userLikedSongsList, ...userRecentlyPlayed];
-
-    if (globalSongs.isEmpty) {
-      const playlistId = 'PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx';
-      globalSongs = await getSongsFromPlaylist(playlistId);
-    }
-
-    playlistSongs.addAll(globalSongs.take(10));
-
-    if (userCustomPlaylists.isNotEmpty) {
-      for (final userPlaylist in userCustomPlaylists) {
-        final _list = userPlaylist['list'] as List;
-        _list.shuffle();
-        playlistSongs.addAll(_list.take(5));
+    if (defaultRecommendations.value && userRecentlyPlayed.isNotEmpty) {
+      final playlistSongs = [];
+      for (var i = 0; i < 3; i++) {
+        final song = await _yt.videos.get(userRecentlyPlayed[i]['ytid']);
+        final relatedSongs = await _yt.videos.getRelatedVideos(song) ?? [];
+        playlistSongs
+            .addAll(relatedSongs.take(3).map((s) => returnSongLayout(0, s)));
       }
+      return playlistSongs;
+    } else {
+      final playlistSongs = [...userLikedSongsList, ...userRecentlyPlayed];
+
+      if (globalSongs.isEmpty) {
+        const playlistId = 'PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx';
+        globalSongs = await getSongsFromPlaylist(playlistId);
+      }
+
+      playlistSongs.addAll(globalSongs.take(10));
+
+      if (userCustomPlaylists.isNotEmpty) {
+        for (final userPlaylist in userCustomPlaylists) {
+          final _list = userPlaylist['list'] as List;
+          _list.shuffle();
+          playlistSongs.addAll(_list.take(5));
+        }
+      }
+
+      playlistSongs.shuffle();
+
+      final seenYtIds = <String>{};
+      playlistSongs.removeWhere((song) => !seenYtIds.add(song['ytid']));
+
+      return playlistSongs.take(15).toList();
     }
-
-    playlistSongs.shuffle();
-
-    final seenYtIds = <String>{};
-    playlistSongs.removeWhere((song) => !seenYtIds.add(song['ytid']));
-
-    return playlistSongs.take(15).toList();
   } catch (e, stackTrace) {
     logger.log('Error in getRecommendedSongs', e, stackTrace);
     return [];

@@ -31,6 +31,7 @@
   "copyLogsSuccess": "Registros copiados exitosamente",
   "customPlaylistImgUrl": "Enlace de imagen de la lista de reproducción personalizada",
   "customPlaylistName": "Nombre de la lista de reproducción personalizada",
+  "defaultRecommendations": "Default recommendations algorithm",
   "download": "Descargar",
   "downloadAppUpdate": "Descargar actualización de la aplicación",
   "dynamicColor": "Color de acento dinámico (Android 12+)",

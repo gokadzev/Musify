@@ -31,6 +31,7 @@
   "copyLogsSuccess": "Logs copied successfully",
   "customPlaylistImgUrl": "Custom playlist image link",
   "customPlaylistName": "Custom playlist name",
+  "defaultRecommendations": "Default recommendations algorithm",
   "download": "Download",
   "downloadAppUpdate": "Download app update",
   "dynamicColor": "Dynamic accent color (Android 12+)",

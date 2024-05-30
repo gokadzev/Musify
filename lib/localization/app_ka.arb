@@ -31,6 +31,7 @@
   "copyLogsSuccess": "ლოგები დაკოპირდა წარმატებით. ",
   "customPlaylistImgUrl": "საკუთარი ფლეილისთის სურათის ბმული",
   "customPlaylistName": "საკუთარი ფლეილისთის სახელი",
+  "defaultRecommendations": "Default recommendations algorithm",
   "download": "ჩამოტვირთვა",
   "downloadAppUpdate": "აპლიკაციის განახლების ჩამოტვირთვა",
   "dynamicColor": "დინამიური აქცენტის ფერი (Android 12+)",

@@ -210,6 +210,51 @@ class SettingsPage extends StatelessWidget {
                 );
               },
             ),
+            SettingBar(
+              context.l10n!.audioQuality,
+              Icons.music_note,
+              () {
+                final availableQualities = ['low', 'medium', 'high'];
+
+                showCustomBottomSheet(
+                  context,
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: availableQualities.length,
+                    itemBuilder: (context, index) {
+                      final quality = availableQualities[index];
+                      final isCurrentQuality =
+                          audioQualitySetting.value == quality;
+
+                      return Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Card(
+                          elevation: isCurrentQuality ? 0 : 4,
+                          child: ListTile(
+                            title: Text(quality),
+                            onTap: () {
+                              addOrUpdateData(
+                                'settings',
+                                'audioQuality',
+                                quality,
+                              );
+                              audioQualitySetting.value = quality;
+
+                              showToast(
+                                context,
+                                context.l10n!.audioQualityMsg,
+                              );
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
             SettingSwitchBar(
               tileName: context.l10n!.dynamicColor,
               tileIcon: FluentIcons.toggle_left_24_filled,
@@ -279,48 +324,25 @@ class SettingsPage extends StatelessWidget {
                       );
                     },
                   ),
-                  SettingBar(
-                    context.l10n!.audioQuality,
-                    Icons.music_note,
-                    () {
-                      final availableQualities = ['low', 'medium', 'high'];
-
-                      showCustomBottomSheet(
-                        context,
-                        ListView.builder(
-                          shrinkWrap: true,
-                          physics: const BouncingScrollPhysics(),
-                          itemCount: availableQualities.length,
-                          itemBuilder: (context, index) {
-                            final quality = availableQualities[index];
-                            final isCurrentQuality =
-                                audioQualitySetting.value == quality;
-
-                            return Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: Card(
-                                elevation: isCurrentQuality ? 0 : 4,
-                                child: ListTile(
-                                  title: Text(quality),
-                                  onTap: () {
-                                    addOrUpdateData(
-                                      'settings',
-                                      'audioQuality',
-                                      quality,
-                                    );
-                                    audioQualitySetting.value = quality;
-
-                                    showToast(
-                                      context,
-                                      context.l10n!.audioQualityMsg,
-                                    );
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                              ),
-                            );
-                          },
-                        ),
+                  ValueListenableBuilder<bool>(
+                    valueListenable: defaultRecommendations,
+                    builder: (_, value, __) {
+                      return SettingSwitchBar(
+                        tileName: context.l10n!.defaultRecommendations,
+                        tileIcon: FluentIcons.channel_share_24_regular,
+                        value: value,
+                        onChanged: (value) {
+                          addOrUpdateData(
+                            'settings',
+                            'defaultRecommendations',
+                            value,
+                          );
+                          defaultRecommendations.value = value;
+                          showToast(
+                            context,
+                            context.l10n!.settingChangedMsg,
+                          );
+                        },
                       );
                     },
                   ),

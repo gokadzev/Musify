@@ -31,6 +31,7 @@
   "copyLogsSuccess": "Журнали успішно скопійовано",
   "customPlaylistImgUrl": "Посилання на зображення власного плейлиста",
   "customPlaylistName": "Назва власного плейлиста",
+  "defaultRecommendations": "Default recommendations algorithm",
   "download": "Завантажити",
   "downloadAppUpdate": "Завантажити оновлення програми",
   "dynamicColor": "Динамічний акцентний колір (Android 12+)",

@@ -31,6 +31,7 @@
   "copyLogsSuccess": "Copie des logs réussie. ",
   "customPlaylistImgUrl": "Lien d'image de la liste de lecture personnalisée",
   "customPlaylistName": "Nom de la liste de lecture personnalisée",
+  "defaultRecommendations": "Default recommendations algorithm",
   "download": "Télécharger",
   "downloadAppUpdate": "Télécharger la mise à jour",
   "dynamicColor": "Couleur d'accent dynamique (Android 12+)",

@@ -31,6 +31,7 @@
   "copyLogsSuccess": "تم نسخ السجلات بنجاح",
   "customPlaylistImgUrl": "رابط صورة قائمة التشغيل الخاصة",
   "customPlaylistName": "اسم قائمة التشغيل الخاصة",
+  "defaultRecommendations": "Default recommendations algorithm",
   "download": "تحميل",
   "downloadAppUpdate": "تنزيل تحديث التطبيق",
   "dynamicColor": "لون التمييز الدينامي (Android 12+)",

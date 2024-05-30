@@ -41,6 +41,10 @@ final sponsorBlockSupport = ValueNotifier<bool>(
   Hive.box('settings').get('sponsorBlockSupport', defaultValue: false),
 );
 
+final defaultRecommendations = ValueNotifier<bool>(
+  Hive.box('settings').get('defaultRecommendations', defaultValue: false),
+);
+
 final audioQualitySetting = ValueNotifier<String>(
   Hive.box('settings').get('audioQuality', defaultValue: 'high'),
 );

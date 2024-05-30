@@ -31,6 +31,7 @@
   "copyLogsSuccess": "Οι καταγραφές αντιγράφηκαν με επιτυχία.",
   "customPlaylistImgUrl": "Σύνδεσμος εικόνας προσαρμοσμένης λίστας αναπαραγωγής",
   "customPlaylistName": "Όνομα προσαρμοσμένης λίστας αναπαραγωγής",
+  "defaultRecommendations": "Default recommendations algorithm",
   "download": "Λήψη",
   "downloadAppUpdate": "Λήψη ενημέρωσης εφαρμογής",
   "dynamicColor": "Δυναμικό χρώμα έμφασης (Android 12+)",
