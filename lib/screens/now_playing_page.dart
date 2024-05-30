@@ -48,7 +48,7 @@ class NowPlayingPage extends StatelessWidget {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(backgroundColor: Colors.transparent),
       body: StreamBuilder<MediaItem?>(
         stream: audioHandler.mediaItem,
         builder: (context, snapshot) {
