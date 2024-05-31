@@ -27,7 +27,6 @@ import 'package:musify/main.dart';
 import 'package:musify/screens/playlist_page.dart';
 import 'package:musify/services/router_service.dart';
 import 'package:musify/services/settings_manager.dart';
-import 'package:musify/widgets/artist_cube.dart';
 import 'package:musify/widgets/marque.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/song_cube.dart';
@@ -288,7 +287,13 @@ class _HomePageState extends State<HomePage> {
                       ),
                     );
                   },
-                  child: ArtistCube(artist),
+                  child: PlaylistCube(
+                    title: artist,
+                    borderRadius: 150,
+                    onClickOpen: false,
+                    showFavoriteButton: false,
+                    cubeIcon: FluentIcons.mic_sparkle_24_regular,
+                  ),
                 );
               },
             ),
