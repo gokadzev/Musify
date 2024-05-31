@@ -103,8 +103,18 @@ class _HomePageState extends State<HomePage> {
               onPressed: () => NavigationManager.router.go(
                 '/home/userSongs/liked',
               ),
-              icon: const Icon(FluentIcons.heart_24_filled),
+              icon: const Icon(FluentIcons.music_note_2_24_regular),
               label: Text(context.l10n!.likedSongs),
+            ),
+            const SizedBox(width: 10),
+            FilledButton.tonalIcon(
+              onPressed: () => NavigationManager.router.go(
+                '/home/userLikedPlaylists',
+              ),
+              icon: const Icon(
+                FluentIcons.task_list_ltr_24_regular,
+              ),
+              label: Text(context.l10n!.likedPlaylists),
             ),
             const SizedBox(width: 10),
             FilledButton.tonalIcon(
@@ -113,16 +123,6 @@ class _HomePageState extends State<HomePage> {
               ),
               icon: const Icon(FluentIcons.cellular_off_24_filled),
               label: Text(context.l10n!.offlineSongs),
-            ),
-            const SizedBox(width: 10),
-            FilledButton.tonalIcon(
-              onPressed: () => NavigationManager.router.go(
-                '/home/userLikedPlaylists',
-              ),
-              icon: const Icon(
-                FluentIcons.star_24_filled,
-              ),
-              label: Text(context.l10n!.likedPlaylists),
             ),
           ],
         ),
