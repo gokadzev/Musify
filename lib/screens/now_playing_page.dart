@@ -488,8 +488,8 @@ class NowPlayingPage extends StatelessWidget {
               return IconButton.filledTonal(
                 icon: Icon(
                   value
-                      ? FluentIcons.star_24_filled
-                      : FluentIcons.star_24_regular,
+                      ? FluentIcons.heart_24_filled
+                      : FluentIcons.heart_24_regular,
                   color: _primaryColor,
                 ),
                 iconSize: iconSize,

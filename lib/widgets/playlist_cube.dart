@@ -54,8 +54,8 @@ class PlaylistCube extends StatelessWidget {
   final bool? isAlbum;
 
   final likeStatusToIconMapper = {
-    true: FluentIcons.star_24_filled,
-    false: FluentIcons.star_24_regular,
+    true: FluentIcons.heart_24_filled,
+    false: FluentIcons.heart_24_regular,
   };
 
   late final playlistLikeStatus =
