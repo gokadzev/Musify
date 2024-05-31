@@ -169,7 +169,7 @@ class SongBar extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (offlineMode.value)
+        if (!offlineMode.value)
           Row(
             children: [
               ValueListenableBuilder<bool>(
