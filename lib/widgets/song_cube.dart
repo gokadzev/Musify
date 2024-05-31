@@ -57,7 +57,8 @@ class SongCube extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _secondaryColor = Theme.of(context).colorScheme.secondary;
+    final _onSecondaryColor =
+        Theme.of(context).colorScheme.onSecondaryContainer;
     final _onPrimaryColor = Theme.of(context).colorScheme.onPrimary;
 
     final bool isOffline = song['isOffline'] ?? false;
@@ -117,7 +118,7 @@ class SongCube extends StatelessWidget {
                     right: 5,
                     child: DecoratedBox(
                       decoration: BoxDecoration(
-                        color: _secondaryColor,
+                        color: _onSecondaryColor,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: IconButton(
