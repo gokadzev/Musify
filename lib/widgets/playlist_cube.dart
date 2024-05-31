@@ -25,6 +25,7 @@ import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/screens/playlist_page.dart';
+import 'package:musify/widgets/like_button.dart';
 import 'package:musify/widgets/no_artwork_cube.dart';
 
 class PlaylistCube extends StatelessWidget {
@@ -63,7 +64,8 @@ class PlaylistCube extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _secondaryColor = Theme.of(context).colorScheme.secondary;
+    final _onSecondaryColor =
+        Theme.of(context).colorScheme.onSecondaryContainer;
     final _onPrimaryColor = Theme.of(context).colorScheme.onPrimary;
 
     return Stack(
@@ -113,30 +115,22 @@ class PlaylistCube extends StatelessWidget {
               return Positioned(
                 bottom: 5,
                 right: 5,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: _secondaryColor,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: IconButton(
-                    onPressed: () {
-                      playlistLikeStatus.value = !playlistLikeStatus.value;
-                      updatePlaylistLikeStatus(
-                        id!,
-                        image,
-                        title,
-                        playlistLikeStatus.value,
-                      );
-                      currentLikedPlaylistsLength.value = value
-                          ? currentLikedPlaylistsLength.value + 1
-                          : currentLikedPlaylistsLength.value - 1;
-                    },
-                    icon: Icon(
-                      likeStatusToIconMapper[value],
-                      color: _onPrimaryColor,
-                      size: 25,
-                    ),
-                  ),
+                child: LikeButton(
+                  onPrimaryColor: _onPrimaryColor,
+                  onSecondaryColor: _onSecondaryColor,
+                  isLiked: value,
+                  onPressed: () {
+                    playlistLikeStatus.value = !playlistLikeStatus.value;
+                    updatePlaylistLikeStatus(
+                      id!,
+                      image,
+                      title,
+                      playlistLikeStatus.value,
+                    );
+                    currentLikedPlaylistsLength.value = value
+                        ? currentLikedPlaylistsLength.value + 1
+                        : currentLikedPlaylistsLength.value - 1;
+                  },
                 ),
               );
             },
@@ -147,7 +141,7 @@ class PlaylistCube extends StatelessWidget {
             right: 5,
             child: Container(
               decoration: BoxDecoration(
-                color: _secondaryColor,
+                color: _onSecondaryColor,
                 borderRadius: BorderRadius.circular(5),
               ),
               padding: const EdgeInsets.all(4),
