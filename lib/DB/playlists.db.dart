@@ -107,12 +107,6 @@ List<Map<String, dynamic>> playlistsDB = [
     'list': [],
   },
   {
-    'ytid': 'PL4BVhGbFGTR8Ix-aSJdlmMM6kpWvaDM72',
-    'title': 'Unstoppable',
-    'image': 'https://i.scdn.co/image/ab67706c0000bebb0885e7a2c6186017bbb392a0',
-    'list': [],
-  },
-  {
     'ytid': 'PLt7y1FnPdz8xbIZIaAp5cee4ZGJyB-VU_',
     'title': 'Rock Adrenaline',
     'image': 'https://i.scdn.co/image/ab67616d0000b273bd0a1a068fe3b8e953682375',
