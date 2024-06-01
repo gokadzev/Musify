@@ -1,0 +1,9 @@
+Enhancements
+
+- Added the default recommendations
+- Added shuffle and sort options for playlists
+- Redesigned some components and improved overall UI
+- Improved add song to playlist dialog
+- Updated offline mode functionality, it now requires manual activation.
+- Boosted app stability and speed with quality and performance enhancements
+- For the full changelog, please visit the GitHub repository
