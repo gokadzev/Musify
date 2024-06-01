@@ -93,6 +93,7 @@ Future<List> getRecommendedSongs() async {
         playlistSongs
             .addAll(relatedSongs.take(3).map((s) => returnSongLayout(0, s)));
       }
+      playlistSongs.shuffle();
       return playlistSongs;
     } else {
       final playlistSongs = [...userLikedSongsList, ...userRecentlyPlayed];
