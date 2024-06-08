@@ -328,7 +328,7 @@ class SettingsPage extends StatelessWidget {
                     valueListenable: defaultRecommendations,
                     builder: (_, value, __) {
                       return SettingSwitchBar(
-                        tileName: context.l10n!.defaultRecommendations,
+                        tileName: context.l10n!.originalRecommendations,
                         tileIcon: FluentIcons.channel_share_24_regular,
                         value: value,
                         onChanged: (value) {
