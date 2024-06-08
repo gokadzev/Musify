@@ -48,7 +48,7 @@ List<Map<String, dynamic>> playlistsDB = [
   {
     'ytid': 'PLoumn5BIsUDd3IH7MVw2XiW9nQKzCFy4O',
     'title': 'Best Pop Music Playlist 2022',
-    'image': 'https://i.scdn.co/image/ab67706c0000bebbc14667db36e06ca21c2746fb',
+    'image': 'https://i.scdn.co/image/ab67616d0000b273d48b3ca7ced155aa46324088',
     'list': [],
   },
   {
