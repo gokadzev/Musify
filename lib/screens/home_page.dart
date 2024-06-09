@@ -183,9 +183,7 @@ class _HomePageState extends State<HomePage> {
             itemBuilder: (context, index) {
               final playlist = _suggestedPlaylists[index];
               return PlaylistCube(
-                id: playlist['ytid'],
-                image: playlist['image'],
-                title: playlist['title'],
+                playlist,
                 isAlbum: playlist['isAlbum'],
                 size: _suggestedPlaylistsSize,
               );
@@ -288,7 +286,7 @@ class _HomePageState extends State<HomePage> {
                     );
                   },
                   child: PlaylistCube(
-                    title: artist,
+                    {'artist': artist},
                     borderRadius: 150,
                     onClickOpen: false,
                     showFavoriteButton: false,

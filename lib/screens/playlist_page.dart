@@ -168,10 +168,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
   Widget _buildPlaylistImage() {
     return PlaylistCube(
-      id: _playlist['ytid'],
-      image: _playlist['image'],
-      title: _playlist['title'],
-      isAlbum: _playlist['isAlbum'],
+      _playlist,
       size: MediaQuery.of(context).size.width / 2.5,
       onClickOpen: false,
       cubeIcon: widget.cubeIcon,
@@ -202,12 +199,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
           iconSize: 26,
           onPressed: () {
             playlistLikeStatus.value = !playlistLikeStatus.value;
-            updatePlaylistLikeStatus(
-              _playlist['ytid'],
-              _playlist['image'],
-              _playlist['title'],
-              playlistLikeStatus.value,
-            );
+            updatePlaylistLikeStatus(_playlist, playlistLikeStatus.value);
             currentLikedPlaylistsLength.value = value
                 ? currentLikedPlaylistsLength.value + 1
                 : currentLikedPlaylistsLength.value - 1;

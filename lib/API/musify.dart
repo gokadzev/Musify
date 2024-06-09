@@ -70,7 +70,7 @@ final currentOfflineSongsLength = ValueNotifier<int>(userOfflineSongs.length);
 final lyrics = ValueNotifier<String?>(null);
 String? lastFetchedLyrics;
 
-int id = 0;
+int activeSongId = 0;
 
 Future<List> fetchSongsList(String searchQuery) async {
   try {
@@ -254,21 +254,14 @@ void moveLikedSong(int oldIndex, int newIndex) {
 }
 
 Future<void> updatePlaylistLikeStatus(
-  String playlistId,
-  String playlistImage,
-  String playlistTitle,
+  Map likedPlaylist,
   bool add,
 ) async {
   if (add) {
-    userLikedPlaylists.add({
-      'ytid': playlistId,
-      'title': playlistTitle,
-      'image': playlistImage,
-      'list': [],
-    });
+    userLikedPlaylists.add(likedPlaylist);
   } else {
     userLikedPlaylists
-        .removeWhere((playlist) => playlist['ytid'] == playlistId);
+        .removeWhere((playlist) => playlist['ytid'] == likedPlaylist['ytid']);
   }
   addOrUpdateData('user', 'likedPlaylists', userLikedPlaylists);
 }
@@ -457,9 +450,9 @@ int findPlaylistIndexByYtId(String ytid) {
 
 Future<void> setActivePlaylist(Map info) async {
   activePlaylist = info;
-  id = 0;
+  activeSongId = 0;
 
-  await audioHandler.playSong(activePlaylist['list'][id]);
+  await audioHandler.playSong(activePlaylist['list'][activeSongId]);
 }
 
 Future<Map<String, dynamic>?> getPlaylistInfoForWidget(

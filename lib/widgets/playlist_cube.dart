@@ -29,12 +29,10 @@ import 'package:musify/widgets/like_button.dart';
 import 'package:musify/widgets/no_artwork_cube.dart';
 
 class PlaylistCube extends StatelessWidget {
-  PlaylistCube({
+  PlaylistCube(
+    this.playlist, {
     super.key,
-    this.id,
     this.playlistData,
-    this.image,
-    required this.title,
     this.onClickOpen = true,
     this.showFavoriteButton = true,
     this.cubeIcon = FluentIcons.music_note_1_24_regular,
@@ -43,10 +41,8 @@ class PlaylistCube extends StatelessWidget {
     this.isAlbum = false,
   });
 
-  final String? id;
-  final dynamic playlistData;
-  final dynamic image;
-  final String title;
+  final Map? playlistData;
+  final Map playlist;
   final bool onClickOpen;
   final bool showFavoriteButton;
   final IconData cubeIcon;
@@ -60,7 +56,7 @@ class PlaylistCube extends StatelessWidget {
   };
 
   late final playlistLikeStatus =
-      ValueNotifier<bool>(isPlaylistAlreadyLiked(id));
+      ValueNotifier<bool>(isPlaylistAlreadyLiked(playlist['ytid']));
 
   @override
   Widget build(BuildContext context) {
@@ -71,44 +67,45 @@ class PlaylistCube extends StatelessWidget {
     return Stack(
       children: <Widget>[
         GestureDetector(
-          onTap: onClickOpen && (id != null || playlistData != null)
-              ? () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PlaylistPage(
-                        playlistId: id,
-                        playlistData: playlistData,
-                      ),
-                    ),
-                  );
-                }
-              : null,
+          onTap:
+              onClickOpen && (playlist['ytid'] != null || playlistData != null)
+                  ? () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PlaylistPage(
+                            playlistId: playlist['ytid'],
+                            playlistData: playlistData,
+                          ),
+                        ),
+                      );
+                    }
+                  : null,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(borderRadius),
-            child: image != null
+            child: playlist['image'] != null
                 ? CachedNetworkImage(
-                    key: Key(image.toString()),
+                    key: Key(playlist['image'].toString()),
                     height: size,
                     width: size,
-                    imageUrl: image.toString(),
+                    imageUrl: playlist['image'].toString(),
                     fit: BoxFit.cover,
                     errorWidget: (context, url, error) => NullArtworkWidget(
                       icon: cubeIcon,
                       iconSize: 30,
                       size: size,
-                      title: title,
+                      title: playlist['title'],
                     ),
                   )
                 : NullArtworkWidget(
                     icon: cubeIcon,
                     iconSize: 30,
                     size: size,
-                    title: title,
+                    title: playlist['title'],
                   ),
           ),
         ),
-        if (id != null && showFavoriteButton)
+        if (playlist['ytid'] != null && showFavoriteButton)
           ValueListenableBuilder<bool>(
             valueListenable: playlistLikeStatus,
             builder: (_, value, __) {
@@ -122,9 +119,7 @@ class PlaylistCube extends StatelessWidget {
                   onPressed: () {
                     playlistLikeStatus.value = !playlistLikeStatus.value;
                     updatePlaylistLikeStatus(
-                      id!,
-                      image,
-                      title,
+                      playlist,
                       playlistLikeStatus.value,
                     );
                     currentLikedPlaylistsLength.value = value

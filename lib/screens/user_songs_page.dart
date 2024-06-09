@@ -136,7 +136,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
 
   Widget _buildPlaylistImage(String title, IconData icon) {
     return PlaylistCube(
-      title: title,
+      {'title': title},
       onClickOpen: false,
       showFavoriteButton: false,
       size: MediaQuery.of(context).size.width / 2.5,

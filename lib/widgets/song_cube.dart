@@ -74,7 +74,7 @@ class SongCube extends StatelessWidget {
                         'image': '',
                         'list': [],
                       };
-                      id = 0;
+                      activeSongId = 0;
                     }
                   },
               child: ClipRRect(
