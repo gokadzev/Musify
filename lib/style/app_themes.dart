@@ -85,9 +85,15 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
       ? ThemeData.light()
       : ThemeData.dark();
 
+  final bgColor = colorScheme.brightness == Brightness.light
+      ? colorScheme.surfaceContainer
+      : null;
+
   return ThemeData(
+    scaffoldBackgroundColor: bgColor,
     colorScheme: colorScheme,
     appBarTheme: base.appBarTheme.copyWith(
+      backgroundColor: bgColor,
       iconTheme: IconThemeData(color: colorScheme.primary),
       centerTitle: true,
       titleTextStyle: TextStyle(
