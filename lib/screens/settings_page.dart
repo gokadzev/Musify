@@ -56,7 +56,7 @@ class SettingsPage extends StatelessWidget {
               primaryColor,
               context.l10n!.preferences,
             ),
-            SettingBar(
+            CustomListTile(
               context.l10n!.accentColor,
               FluentIcons.color_24_filled,
               onTap: () => showCustomBottomSheet(
@@ -112,7 +112,7 @@ class SettingsPage extends StatelessWidget {
                 ),
               ),
             ),
-            SettingBar(
+            CustomListTile(
               context.l10n!.themeMode,
               FluentIcons.weather_sunny_28_filled,
               onTap: () {
@@ -160,7 +160,7 @@ class SettingsPage extends StatelessWidget {
                 );
               },
             ),
-            SettingBar(
+            CustomListTile(
               context.l10n!.language,
               FluentIcons.translate_24_filled,
               onTap: () {
@@ -209,7 +209,7 @@ class SettingsPage extends StatelessWidget {
                 );
               },
             ),
-            SettingBar(
+            CustomListTile(
               context.l10n!.audioQuality,
               Icons.music_note,
               onTap: () {
@@ -254,7 +254,7 @@ class SettingsPage extends StatelessWidget {
                 );
               },
             ),
-            SettingBar(
+            CustomListTile(
               context.l10n!.dynamicColor,
               FluentIcons.toggle_left_24_filled,
               trailing: Switch(
@@ -281,7 +281,7 @@ class SettingsPage extends StatelessWidget {
             ValueListenableBuilder<bool>(
               valueListenable: offlineMode,
               builder: (_, value, __) {
-                return SettingBar(
+                return CustomListTile(
                   context.l10n!.offlineMode,
                   FluentIcons.cellular_off_24_regular,
                   trailing: Switch(
@@ -308,7 +308,7 @@ class SettingsPage extends StatelessWidget {
                   ValueListenableBuilder<bool>(
                     valueListenable: sponsorBlockSupport,
                     builder: (_, value, __) {
-                      return SettingBar(
+                      return CustomListTile(
                         'SponsorBlock',
                         FluentIcons.presence_blocked_24_regular,
                         trailing: Switch(
@@ -332,7 +332,7 @@ class SettingsPage extends StatelessWidget {
                   ValueListenableBuilder<bool>(
                     valueListenable: defaultRecommendations,
                     builder: (_, value, __) {
-                      return SettingBar(
+                      return CustomListTile(
                         context.l10n!.originalRecommendations,
                         FluentIcons.channel_share_24_regular,
                         trailing: Switch(
@@ -359,7 +359,7 @@ class SettingsPage extends StatelessWidget {
                     primaryColor,
                     context.l10n!.tools,
                   ),
-                  SettingBar(
+                  CustomListTile(
                     context.l10n!.clearCache,
                     FluentIcons.broom_24_filled,
                     onTap: () {
@@ -370,7 +370,7 @@ class SettingsPage extends StatelessWidget {
                       );
                     },
                   ),
-                  SettingBar(
+                  CustomListTile(
                     context.l10n!.clearSearchHistory,
                     FluentIcons.history_24_filled,
                     onTap: () {
@@ -396,7 +396,7 @@ class SettingsPage extends StatelessWidget {
                       );
                     },
                   ),
-                  SettingBar(
+                  CustomListTile(
                     context.l10n!.clearRecentlyPlayed,
                     FluentIcons.receipt_play_24_filled,
                     onTap: () {
@@ -422,7 +422,7 @@ class SettingsPage extends StatelessWidget {
                       );
                     },
                   ),
-                  SettingBar(
+                  CustomListTile(
                     context.l10n!.backupUserData,
                     FluentIcons.cloud_sync_24_filled,
                     onTap: () async {
@@ -449,7 +449,7 @@ class SettingsPage extends StatelessWidget {
                     },
                   ),
 
-                  SettingBar(
+                  CustomListTile(
                     context.l10n!.restoreUserData,
                     FluentIcons.cloud_add_24_filled,
                     onTap: () async {
@@ -459,7 +459,7 @@ class SettingsPage extends StatelessWidget {
                   ),
 
                   if (!isFdroidBuild)
-                    SettingBar(
+                    CustomListTile(
                       context.l10n!.downloadAppUpdate,
                       FluentIcons.arrow_download_24_filled,
                       onTap: checkAppUpdates,
@@ -504,20 +504,20 @@ class SettingsPage extends StatelessWidget {
               context.l10n!.others,
             ),
 
-            SettingBar(
+            CustomListTile(
               context.l10n!.licenses,
               FluentIcons.document_24_filled,
               onTap: () => NavigationManager.router.go(
                 '/settings/license',
               ),
             ),
-            SettingBar(
+            CustomListTile(
               '${context.l10n!.copyLogs} (${logger.getLogCount()})',
               FluentIcons.error_circle_24_filled,
               onTap: () async =>
                   showToast(context, await logger.copyLogs(context)),
             ),
-            SettingBar(
+            CustomListTile(
               context.l10n!.about,
               FluentIcons.book_information_24_filled,
               onTap: () => NavigationManager.router.go(

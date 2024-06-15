@@ -21,24 +21,26 @@
 
 import 'package:flutter/material.dart';
 
-class SettingBar extends StatelessWidget {
-  SettingBar(
+class CustomListTile extends StatelessWidget {
+  CustomListTile(
     this.tileName,
     this.tileIcon, {
     this.trailing,
     this.onTap,
+    this.onLongPress,
     super.key,
   });
 
   final String tileName;
   final IconData tileIcon;
   final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
   final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       child: Card(
         child: ListTile(
           minTileHeight: 65,
@@ -49,6 +51,7 @@ class SettingBar extends StatelessWidget {
           ),
           trailing: trailing,
           onTap: onTap,
+          onLongPress: onLongPress,
         ),
       ),
     );

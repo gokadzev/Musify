@@ -28,6 +28,7 @@ import 'package:musify/main.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/custom_search_bar.dart';
+import 'package:musify/widgets/setting_bar.dart';
 import 'package:musify/widgets/song_bar.dart';
 
 class SearchPage extends StatefulWidget {
@@ -126,33 +127,30 @@ class _SearchPageState extends State<SearchPage> {
                       ? searchHistory[index]
                       : _suggestionsList[index];
 
-                  return Card(
-                    margin: const EdgeInsets.all(10),
-                    child: ListTile(
-                      leading: const Icon(FluentIcons.search_24_regular),
-                      title: Text(query),
-                      onTap: () async {
-                        _searchBar.text = query;
-                        await search();
-                        _inputNode.unfocus();
-                      },
-                      onLongPress: () async {
-                        final confirm =
-                            await _showConfirmationDialog(context) ?? false;
+                  return CustomListTile(
+                    query,
+                    FluentIcons.search_24_regular,
+                    onTap: () async {
+                      _searchBar.text = query;
+                      await search();
+                      _inputNode.unfocus();
+                    },
+                    onLongPress: () async {
+                      final confirm =
+                          await _showConfirmationDialog(context) ?? false;
 
-                        if (confirm) {
-                          setState(() {
-                            searchHistory.remove(query);
-                          });
+                      if (confirm) {
+                        setState(() {
+                          searchHistory.remove(query);
+                        });
 
-                          addOrUpdateData(
-                            'user',
-                            'searchHistory',
-                            searchHistory,
-                          );
-                        }
-                      },
-                    ),
+                        addOrUpdateData(
+                          'user',
+                          'searchHistory',
+                          searchHistory,
+                        );
+                      }
+                    },
                   );
                 },
               )
