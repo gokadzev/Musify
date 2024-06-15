@@ -74,7 +74,7 @@ class _HomePageState extends State<HomePage> {
         scrollDirection: Axis.horizontal,
         child: Row(
           children: [
-            FilledButton.tonalIcon(
+            FilledButton.icon(
               onPressed: () => Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -90,7 +90,7 @@ class _HomePageState extends State<HomePage> {
               label: Text(context.l10n!.recentlyPlayed),
             ),
             const SizedBox(width: 10),
-            FilledButton.tonalIcon(
+            FilledButton.icon(
               onPressed: () => NavigationManager.router.go(
                 '/home/playlists',
               ),
@@ -98,7 +98,7 @@ class _HomePageState extends State<HomePage> {
               label: Text(context.l10n!.playlists),
             ),
             const SizedBox(width: 10),
-            FilledButton.tonalIcon(
+            FilledButton.icon(
               onPressed: () => NavigationManager.router.go(
                 '/home/userSongs/liked',
               ),
@@ -106,7 +106,7 @@ class _HomePageState extends State<HomePage> {
               label: Text(context.l10n!.likedSongs),
             ),
             const SizedBox(width: 10),
-            FilledButton.tonalIcon(
+            FilledButton.icon(
               onPressed: () => NavigationManager.router.go(
                 '/home/userLikedPlaylists',
               ),
@@ -116,7 +116,7 @@ class _HomePageState extends State<HomePage> {
               label: Text(context.l10n!.likedPlaylists),
             ),
             const SizedBox(width: 10),
-            FilledButton.tonalIcon(
+            FilledButton.icon(
               onPressed: () => NavigationManager.router.go(
                 '/home/userSongs/offline',
               ),

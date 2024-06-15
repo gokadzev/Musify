@@ -60,8 +60,7 @@ class PlaylistCube extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _onSecondaryColor =
-        Theme.of(context).colorScheme.onSecondaryContainer;
+    final _secondaryColor = Theme.of(context).colorScheme.secondary;
     final _onPrimaryColor = Theme.of(context).colorScheme.onPrimary;
 
     return Stack(
@@ -114,7 +113,7 @@ class PlaylistCube extends StatelessWidget {
                 right: 5,
                 child: LikeButton(
                   onPrimaryColor: _onPrimaryColor,
-                  onSecondaryColor: _onSecondaryColor,
+                  onSecondaryColor: _secondaryColor,
                   isLiked: value,
                   onPressed: () {
                     playlistLikeStatus.value = !playlistLikeStatus.value;
@@ -136,7 +135,7 @@ class PlaylistCube extends StatelessWidget {
             right: 5,
             child: Container(
               decoration: BoxDecoration(
-                color: _onSecondaryColor,
+                color: _secondaryColor,
                 borderRadius: BorderRadius.circular(5),
               ),
               padding: const EdgeInsets.all(4),
