@@ -36,7 +36,6 @@ import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/url_launcher.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/setting_bar.dart';
-import 'package:musify/widgets/setting_switch_bar.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -60,7 +59,7 @@ class SettingsPage extends StatelessWidget {
             SettingBar(
               context.l10n!.accentColor,
               FluentIcons.color_24_filled,
-              () => showCustomBottomSheet(
+              onTap: () => showCustomBottomSheet(
                 context,
                 GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -116,7 +115,7 @@ class SettingsPage extends StatelessWidget {
             SettingBar(
               context.l10n!.themeMode,
               FluentIcons.weather_sunny_28_filled,
-              () {
+              onTap: () {
                 final availableModes = [
                   ThemeMode.system,
                   ThemeMode.light,
@@ -164,7 +163,7 @@ class SettingsPage extends StatelessWidget {
             SettingBar(
               context.l10n!.language,
               FluentIcons.translate_24_filled,
-              () {
+              onTap: () {
                 final availableLanguages = appLanguages.keys.toList();
                 final activeLanguageCode =
                     Localizations.localeOf(context).languageCode;
@@ -213,7 +212,7 @@ class SettingsPage extends StatelessWidget {
             SettingBar(
               context.l10n!.audioQuality,
               Icons.music_note,
-              () {
+              onTap: () {
                 final availableQualities = ['low', 'medium', 'high'];
 
                 showCustomBottomSheet(
@@ -255,47 +254,51 @@ class SettingsPage extends StatelessWidget {
                 );
               },
             ),
-            SettingSwitchBar(
-              tileName: context.l10n!.dynamicColor,
-              tileIcon: FluentIcons.toggle_left_24_filled,
-              value: useSystemColor.value,
-              onChanged: (value) {
-                addOrUpdateData(
-                  'settings',
-                  'useSystemColor',
-                  value,
-                );
-                useSystemColor.value = value;
-                Musify.updateAppState(
-                  context,
-                  newAccentColor: primaryColorSetting,
-                  useSystemColor: value,
-                );
-                showToast(
-                  context,
-                  context.l10n!.settingChangedMsg,
-                );
-              },
+            SettingBar(
+              context.l10n!.dynamicColor,
+              FluentIcons.toggle_left_24_filled,
+              trailing: Switch(
+                value: useSystemColor.value,
+                onChanged: (value) {
+                  addOrUpdateData(
+                    'settings',
+                    'useSystemColor',
+                    value,
+                  );
+                  useSystemColor.value = value;
+                  Musify.updateAppState(
+                    context,
+                    newAccentColor: primaryColorSetting,
+                    useSystemColor: value,
+                  );
+                  showToast(
+                    context,
+                    context.l10n!.settingChangedMsg,
+                  );
+                },
+              ),
             ),
             ValueListenableBuilder<bool>(
               valueListenable: offlineMode,
               builder: (_, value, __) {
-                return SettingSwitchBar(
-                  tileName: context.l10n!.offlineMode,
-                  tileIcon: FluentIcons.cellular_off_24_regular,
-                  value: value,
-                  onChanged: (value) {
-                    addOrUpdateData(
-                      'settings',
-                      'offlineMode',
-                      value,
-                    );
-                    offlineMode.value = value;
-                    showToast(
-                      context,
-                      context.l10n!.restartAppMsg,
-                    );
-                  },
+                return SettingBar(
+                  context.l10n!.offlineMode,
+                  FluentIcons.cellular_off_24_regular,
+                  trailing: Switch(
+                    value: value,
+                    onChanged: (value) {
+                      addOrUpdateData(
+                        'settings',
+                        'offlineMode',
+                        value,
+                      );
+                      offlineMode.value = value;
+                      showToast(
+                        context,
+                        context.l10n!.restartAppMsg,
+                      );
+                    },
+                  ),
                 );
               },
             ),
@@ -305,44 +308,48 @@ class SettingsPage extends StatelessWidget {
                   ValueListenableBuilder<bool>(
                     valueListenable: sponsorBlockSupport,
                     builder: (_, value, __) {
-                      return SettingSwitchBar(
-                        tileName: 'SponsorBlock',
-                        tileIcon: FluentIcons.presence_blocked_24_regular,
-                        value: value,
-                        onChanged: (value) {
-                          addOrUpdateData(
-                            'settings',
-                            'sponsorBlockSupport',
-                            value,
-                          );
-                          sponsorBlockSupport.value = value;
-                          showToast(
-                            context,
-                            context.l10n!.settingChangedMsg,
-                          );
-                        },
+                      return SettingBar(
+                        'SponsorBlock',
+                        FluentIcons.presence_blocked_24_regular,
+                        trailing: Switch(
+                          value: value,
+                          onChanged: (value) {
+                            addOrUpdateData(
+                              'settings',
+                              'sponsorBlockSupport',
+                              value,
+                            );
+                            sponsorBlockSupport.value = value;
+                            showToast(
+                              context,
+                              context.l10n!.settingChangedMsg,
+                            );
+                          },
+                        ),
                       );
                     },
                   ),
                   ValueListenableBuilder<bool>(
                     valueListenable: defaultRecommendations,
                     builder: (_, value, __) {
-                      return SettingSwitchBar(
-                        tileName: context.l10n!.originalRecommendations,
-                        tileIcon: FluentIcons.channel_share_24_regular,
-                        value: value,
-                        onChanged: (value) {
-                          addOrUpdateData(
-                            'settings',
-                            'defaultRecommendations',
-                            value,
-                          );
-                          defaultRecommendations.value = value;
-                          showToast(
-                            context,
-                            context.l10n!.settingChangedMsg,
-                          );
-                        },
+                      return SettingBar(
+                        context.l10n!.originalRecommendations,
+                        FluentIcons.channel_share_24_regular,
+                        trailing: Switch(
+                          value: value,
+                          onChanged: (value) {
+                            addOrUpdateData(
+                              'settings',
+                              'defaultRecommendations',
+                              value,
+                            );
+                            defaultRecommendations.value = value;
+                            showToast(
+                              context,
+                              context.l10n!.settingChangedMsg,
+                            );
+                          },
+                        ),
                       );
                     },
                   ),
@@ -355,7 +362,7 @@ class SettingsPage extends StatelessWidget {
                   SettingBar(
                     context.l10n!.clearCache,
                     FluentIcons.broom_24_filled,
-                    () {
+                    onTap: () {
                       clearCache();
                       showToast(
                         context,
@@ -363,33 +370,36 @@ class SettingsPage extends StatelessWidget {
                       );
                     },
                   ),
-                  SettingBar(context.l10n!.clearSearchHistory,
-                      FluentIcons.history_24_filled, () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return ConfirmationDialog(
-                          submitMessage: context.l10n!.clear,
-                          confirmationMessage:
-                              context.l10n!.clearSearchHistoryQuestion,
-                          onCancel: () => {Navigator.of(context).pop()},
-                          onSubmit: () => {
-                            Navigator.of(context).pop(),
-                            searchHistory = [],
-                            deleteData('user', 'searchHistory'),
-                            showToast(
-                              context,
-                              '${context.l10n!.searchHistoryMsg}!',
-                            ),
-                          },
-                        );
-                      },
-                    );
-                  }),
+                  SettingBar(
+                    context.l10n!.clearSearchHistory,
+                    FluentIcons.history_24_filled,
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return ConfirmationDialog(
+                            submitMessage: context.l10n!.clear,
+                            confirmationMessage:
+                                context.l10n!.clearSearchHistoryQuestion,
+                            onCancel: () => {Navigator.of(context).pop()},
+                            onSubmit: () => {
+                              Navigator.of(context).pop(),
+                              searchHistory = [],
+                              deleteData('user', 'searchHistory'),
+                              showToast(
+                                context,
+                                '${context.l10n!.searchHistoryMsg}!',
+                              ),
+                            },
+                          );
+                        },
+                      );
+                    },
+                  ),
                   SettingBar(
                     context.l10n!.clearRecentlyPlayed,
                     FluentIcons.receipt_play_24_filled,
-                    () {
+                    onTap: () {
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
@@ -415,7 +425,7 @@ class SettingsPage extends StatelessWidget {
                   SettingBar(
                     context.l10n!.backupUserData,
                     FluentIcons.cloud_sync_24_filled,
-                    () async {
+                    onTap: () async {
                       await showDialog(
                         context: context,
                         builder: (BuildContext context) {
@@ -442,7 +452,7 @@ class SettingsPage extends StatelessWidget {
                   SettingBar(
                     context.l10n!.restoreUserData,
                     FluentIcons.cloud_add_24_filled,
-                    () async {
+                    onTap: () async {
                       final response = await restoreData(context);
                       showToast(context, response);
                     },
@@ -452,7 +462,7 @@ class SettingsPage extends StatelessWidget {
                     SettingBar(
                       context.l10n!.downloadAppUpdate,
                       FluentIcons.arrow_download_24_filled,
-                      checkAppUpdates,
+                      onTap: checkAppUpdates,
                     ),
                   // CATEGORY: BECOME A SPONSOR
 
@@ -461,10 +471,12 @@ class SettingsPage extends StatelessWidget {
                     context.l10n!.becomeSponsor,
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                     child: Card(
                       color: primaryColor,
                       child: ListTile(
+                        minTileHeight: 65,
                         leading: const Icon(
                           FluentIcons.heart_24_filled,
                           color: Colors.white,
@@ -495,19 +507,20 @@ class SettingsPage extends StatelessWidget {
             SettingBar(
               context.l10n!.licenses,
               FluentIcons.document_24_filled,
-              () => NavigationManager.router.go(
+              onTap: () => NavigationManager.router.go(
                 '/settings/license',
               ),
             ),
             SettingBar(
               '${context.l10n!.copyLogs} (${logger.getLogCount()})',
               FluentIcons.error_circle_24_filled,
-              () async => showToast(context, await logger.copyLogs(context)),
+              onTap: () async =>
+                  showToast(context, await logger.copyLogs(context)),
             ),
             SettingBar(
               context.l10n!.about,
               FluentIcons.book_information_24_filled,
-              () => NavigationManager.router.go(
+              onTap: () => NavigationManager.router.go(
                 '/settings/about',
               ),
             ),
@@ -522,13 +535,16 @@ class SettingsPage extends StatelessWidget {
 
   Widget _buildSectionTitle(Color primaryColor, String title) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Text(
-        title,
-        style: TextStyle(
-          color: primaryColor,
-          fontSize: 15,
-          fontWeight: FontWeight.w400,
+      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Text(
+          title,
+          style: TextStyle(
+            color: primaryColor,
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
     );
