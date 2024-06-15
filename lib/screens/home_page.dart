@@ -286,7 +286,7 @@ class _HomePageState extends State<HomePage> {
                     );
                   },
                   child: PlaylistCube(
-                    {'artist': artist},
+                    {'title': artist},
                     borderRadius: 150,
                     onClickOpen: false,
                     showFavoriteButton: false,
