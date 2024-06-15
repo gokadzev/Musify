@@ -58,7 +58,6 @@ final appLanguages = <String, String>{
   'Spanish': 'es',
   'Turkish': 'tr',
   'Ukrainian': 'uk',
-  'Vietnamese': 'vi',
 };
 
 final appSupportedLocales = appLanguages.values
