@@ -121,6 +121,16 @@ class _MusifyState extends State<Musify> {
   void initState() {
     super.initState();
 
+    // Some people said that Colors.transparent causes some issues, so better to use it this way
+    final trickyFixForTransparency = Colors.black.withOpacity(0.002);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor: trickyFixForTransparency,
+        systemNavigationBarColor: trickyFixForTransparency,
+      ),
+    );
+
     try {
       LicenseRegistry.addLicense(() async* {
         final license =

@@ -22,7 +22,6 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/services.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/style/dynamic_color_temp_fix.dart';
 
@@ -86,11 +85,6 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
       ? ThemeData.light()
       : ThemeData.dark();
 
-  // Some people said that Colors.transparent causes some issues, so better to use it this way
-  final trickyFixForTransparency = Colors.black.withOpacity(0.002);
-  final iconsBrightness =
-      brightness == Brightness.dark ? Brightness.light : Brightness.dark;
-
   return ThemeData(
     colorScheme: colorScheme,
     appBarTheme: base.appBarTheme.copyWith(
@@ -100,13 +94,6 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
         fontSize: 30,
         fontWeight: FontWeight.bold,
         color: colorScheme.primary,
-      ),
-      systemOverlayStyle: SystemUiOverlayStyle(
-        systemNavigationBarColor: trickyFixForTransparency,
-        systemNavigationBarDividerColor: trickyFixForTransparency,
-        statusBarColor: trickyFixForTransparency,
-        systemNavigationBarIconBrightness: iconsBrightness,
-        statusBarIconBrightness: iconsBrightness,
       ),
       elevation: 0,
     ),
