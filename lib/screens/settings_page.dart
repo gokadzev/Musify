@@ -43,6 +43,9 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final primaryColor = Theme.of(context).colorScheme.primary;
+    final activatedColor =
+        Theme.of(context).colorScheme.inversePrimary; // or primaryfixeddim
+    final inactivatedColor = Theme.of(context).colorScheme.secondaryContainer;
 
     return Scaffold(
       appBar: AppBar(
@@ -131,8 +134,11 @@ class SettingsPage extends StatelessWidget {
                       final mode = availableModes[index];
                       return Card(
                         margin: const EdgeInsets.all(10),
-                        elevation: themeMode == mode ? 0 : 4,
+                        color: themeMode == mode
+                            ? activatedColor
+                            : inactivatedColor,
                         child: ListTile(
+                          minTileHeight: 65,
                           title: Text(
                             mode.name,
                           ),
@@ -177,9 +183,12 @@ class SettingsPage extends StatelessWidget {
                       final language = availableLanguages[index];
                       final languageCode = appLanguages[language] ?? 'en';
                       return Card(
-                        elevation: activeLanguageCode == languageCode ? 0 : 4,
+                        color: activeLanguageCode == languageCode
+                            ? activatedColor
+                            : inactivatedColor,
                         margin: const EdgeInsets.all(10),
                         child: ListTile(
+                          minTileHeight: 65,
                           title: Text(
                             language,
                           ),
@@ -226,27 +235,28 @@ class SettingsPage extends StatelessWidget {
                       final isCurrentQuality =
                           audioQualitySetting.value == quality;
 
-                      return Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: Card(
-                          elevation: isCurrentQuality ? 0 : 4,
-                          child: ListTile(
-                            title: Text(quality),
-                            onTap: () {
-                              addOrUpdateData(
-                                'settings',
-                                'audioQuality',
-                                quality,
-                              );
-                              audioQualitySetting.value = quality;
+                      return Card(
+                        color: isCurrentQuality
+                            ? activatedColor
+                            : inactivatedColor,
+                        margin: const EdgeInsetsDirectional.all(10),
+                        child: ListTile(
+                          minTileHeight: 65,
+                          title: Text(quality),
+                          onTap: () {
+                            addOrUpdateData(
+                              'settings',
+                              'audioQuality',
+                              quality,
+                            );
+                            audioQualitySetting.value = quality;
 
-                              showToast(
-                                context,
-                                context.l10n!.audioQualityMsg,
-                              );
-                              Navigator.pop(context);
-                            },
-                          ),
+                            showToast(
+                              context,
+                              context.l10n!.audioQualityMsg,
+                            );
+                            Navigator.pop(context);
+                          },
                         ),
                       );
                     },
