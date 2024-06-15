@@ -144,7 +144,10 @@ class _PlaylistPageState extends State<PlaylistPage> {
                 ),
                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 20,
+                    ),
                     child: buildSongActionsRow(),
                   ),
                 ),
