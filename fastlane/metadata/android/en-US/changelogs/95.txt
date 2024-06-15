@@ -1,0 +1,9 @@
+Enhancements
+
+- Added 3 albums
+- Updated translations
+- Added Italian language
+- Improved light mode
+- Redesigned some components and give the app more material 3 vibe
+- Boosted app stability and speed with quality and performance enhancements
+- For the full changelog, please visit the GitHub repository

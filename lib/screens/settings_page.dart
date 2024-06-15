@@ -155,10 +155,6 @@ class SettingsPage extends StatelessWidget {
 
                             Navigator.pop(context);
                           },
-                          trailing: mode == ThemeMode.light ||
-                                  mode == ThemeMode.system
-                              ? const Text('BETA')
-                              : null,
                         ),
                       );
                     },
