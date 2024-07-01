@@ -38,6 +38,20 @@ class UserPlaylistsPage extends StatefulWidget {
 }
 
 class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
+  late Future<List> _playlistsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _playlistsFuture = getUserPlaylists();
+  }
+
+  Future<void> _refreshPlaylists() async {
+    setState(() {
+      _playlistsFuture = getUserPlaylists();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -146,9 +160,8 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                             );
                           }
 
-                          setState(() {
-                            Navigator.pop(context);
-                          });
+                          Navigator.pop(context);
+                          await _refreshPlaylists();
                         },
                       ),
                     ],
@@ -163,7 +176,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
       body: SingleChildScrollView(
         padding: const EdgeInsets.only(top: 15),
         child: FutureBuilder(
-          future: getUserPlaylists(),
+          future: _playlistsFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Spinner();
@@ -229,7 +242,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                               removeUserPlaylist(ytid);
                             }
 
-                            setState(() {});
+                            _refreshPlaylists();
                           },
                         );
                       },

@@ -241,12 +241,14 @@ void showAddToPlaylistDialog(BuildContext context, dynamic song) {
       return AlertDialog(
         icon: const Icon(FluentIcons.text_bullet_list_add_24_filled),
         title: Text(context.l10n!.addToPlaylist),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (userCustomPlaylists.isNotEmpty)
-                ListView.builder(
+        content: Container(
+          width: double.maxFinite,
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.6,
+          ),
+          child: userCustomPlaylists.isNotEmpty
+              ? ListView.builder(
+                  shrinkWrap: true,
                   itemCount: userCustomPlaylists.length,
                   itemBuilder: (context, index) {
                     final playlist = userCustomPlaylists[index];
@@ -264,16 +266,19 @@ void showAddToPlaylistDialog(BuildContext context, dynamic song) {
                     );
                   },
                 )
-              else
-                Center(
-                  child: Text(
-                    context.l10n!.noCustomPlaylists,
-                    textAlign: TextAlign.center,
-                  ),
+              : Text(
+                  context.l10n!.noCustomPlaylists,
+                  textAlign: TextAlign.center,
                 ),
-            ],
-          ),
         ),
+        actions: <Widget>[
+          TextButton(
+            child: Text(context.l10n!.cancel),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
       );
     },
   );
