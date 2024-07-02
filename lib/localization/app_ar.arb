@@ -10,6 +10,7 @@
   "artist": "Artist",
   "audioQuality": "جودة الصوت",
   "audioQualityMsg": "تم تغيير جودة الصوت",
+  "automaticSongPicker": "Automatic song picker",
   "backedupSuccess": "تم النسخ الاحتياطي بنجاح",
   "backupError": "خطأ أثناء النسخ الاحتياطي للبيانات",
   "backupUserData": "نسخ احتياطي لبيانات المستخدم",

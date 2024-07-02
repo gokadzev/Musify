@@ -336,6 +336,25 @@ class SettingsPage extends StatelessWidget {
                     },
                   ),
                   ValueListenableBuilder<bool>(
+                    valueListenable: playNextSongAutomatically,
+                    builder: (_, value, __) {
+                      return CustomListTile(
+                        context.l10n!.automaticSongPicker,
+                        FluentIcons.music_note_2_play_20_filled,
+                        trailing: Switch(
+                          value: value,
+                          onChanged: (value) {
+                            audioHandler.changeAutoPlayNextStatus();
+                            showToast(
+                              context,
+                              context.l10n!.settingChangedMsg,
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                  ValueListenableBuilder<bool>(
                     valueListenable: defaultRecommendations,
                     builder: (_, value, __) {
                       return CustomListTile(

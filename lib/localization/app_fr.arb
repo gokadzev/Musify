@@ -10,6 +10,7 @@
   "artist": "Artist",
   "audioQuality": "Qualité audio",
   "audioQualityMsg": "La qualité audio a été modifiée",
+  "automaticSongPicker": "Automatic song picker",
   "backedupSuccess": "Enregistrement réussi",
   "backupError": "Erreur pendant l'enregistrement",
   "backupUserData": "Sauvegarder les données utilisateur",

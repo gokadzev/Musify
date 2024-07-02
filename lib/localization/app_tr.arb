@@ -10,6 +10,7 @@
   "artist": "Sanatçı",
   "audioQuality": "Ses Kalitesi",
   "audioQualityMsg": "Ses kalitesi değiştirildi",
+  "automaticSongPicker": "Automatic song picker",
   "backedupSuccess": "Başarıyla Yedeklendi",
   "backupError": "Veri yedekleme sırasında hata oluştu",
   "backupUserData": "Kullanıcı verilerini yedekle",

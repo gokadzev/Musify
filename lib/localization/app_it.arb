@@ -10,6 +10,7 @@
   "artist": "Artista",
   "audioQuality": "Qualità audio",
   "audioQualityMsg": "Qualità audio cambiata con successo",
+  "automaticSongPicker": "Automatic song picker",
   "backedupSuccess": "Dati salvati con successo",
   "backupError": "Errore durante il salvataggio dei dati",
   "backupUserData": "Salva dati utente",
@@ -83,4 +84,4 @@
   "undo": "Annulla",
   "userPlaylists": "Playlist utente",
   "youtubePlaylistID": "ID playlist YouTube"
- }
+}

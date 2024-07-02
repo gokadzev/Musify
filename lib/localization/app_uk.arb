@@ -10,6 +10,7 @@
   "artist": "Artist",
   "audioQuality": "Якість аудіо",
   "audioQualityMsg": "Якість аудіо була змінена",
+  "automaticSongPicker": "Automatic song picker",
   "backedupSuccess": "Резервне копіювання виконано успішно",
   "backupError": "Помилка під час резервного копіювання даних",
   "backupUserData": "Резервне копіювання даних користувача",

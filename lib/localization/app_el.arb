@@ -10,6 +10,7 @@
   "artist": "Artist",
   "audioQuality": "Ποιότητα ήχου",
   "audioQualityMsg": "Η ποιότητα ήχου έχει αλλάξει",
+  "automaticSongPicker": "Automatic song picker",
   "backedupSuccess": "Επιτυχής δημιουργία αντιγράφου ασφαλείας",
   "backupError": "Σφάλμα κατά τη δημιουργία αντιγράφου ασφαλείας δεδομένων",
   "backupUserData": "Δημιουργία αντιγράφων ασφαλείας δεδομένων χρήστη",

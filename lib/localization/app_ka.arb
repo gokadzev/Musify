@@ -10,6 +10,7 @@
   "artist": "არტისტი",
   "audioQuality": "სიმღერის ხარისხი",
   "audioQualityMsg": "სიმღერის ხარისხი შეიცვალა",
+  "automaticSongPicker": "Automatic song picker",
   "backedupSuccess": "დარეზერვდა წარმატებით",
   "backupError": "შეცდომა ინფორმაციის დარეზერვებისას",
   "backupUserData": "მომხმარებლის ინფორმაციის დარეზერვება",

@@ -500,22 +500,6 @@ class NowPlayingPage extends StatelessWidget {
               );
             },
           ),
-        if (!offlineMode.value)
-          ValueListenableBuilder<bool>(
-            valueListenable: playNextSongAutomatically,
-            builder: (_, value, __) {
-              return IconButton.filledTonal(
-                icon: Icon(
-                  value
-                      ? FluentIcons.music_note_2_play_20_filled
-                      : FluentIcons.music_note_2_play_20_regular,
-                  color: _primaryColor,
-                ),
-                iconSize: iconSize,
-                onPressed: audioHandler.changeAutoPlayNextStatus,
-              );
-            },
-          ),
       ],
     );
   }
