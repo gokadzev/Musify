@@ -75,16 +75,8 @@ class _HomePageState extends State<HomePage> {
         child: Row(
           children: [
             FilledButton.icon(
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => PlaylistPage(
-                    playlistData: {
-                      'title': context.l10n!.recentlyPlayed,
-                      'list': userRecentlyPlayed,
-                    },
-                  ),
-                ),
+              onPressed: () => NavigationManager.router.go(
+                '/home/userSongs/recents',
               ),
               icon: const Icon(FluentIcons.history_24_filled),
               label: Text(context.l10n!.recentlyPlayed),

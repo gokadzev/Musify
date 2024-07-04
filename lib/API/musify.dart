@@ -66,6 +66,8 @@ final currentLikedSongsLength = ValueNotifier<int>(userLikedSongsList.length);
 final currentLikedPlaylistsLength =
     ValueNotifier<int>(userLikedPlaylists.length);
 final currentOfflineSongsLength = ValueNotifier<int>(userOfflineSongs.length);
+final currentRecentlyPlayedLength =
+    ValueNotifier<int>(userRecentlyPlayed.length);
 
 final lyrics = ValueNotifier<String?>(null);
 String? lastFetchedLyrics;
@@ -667,10 +669,12 @@ Future<void> updateRecentlyPlayed(dynamic songId) async {
     userRecentlyPlayed.removeLast();
   }
   userRecentlyPlayed.removeWhere((song) => song['ytid'] == songId);
+  currentRecentlyPlayedLength.value = userRecentlyPlayed.length;
 
   final newSongDetails =
       await getSongDetails(userRecentlyPlayed.length, songId);
 
   userRecentlyPlayed.insert(0, newSongDetails);
+  currentRecentlyPlayedLength.value = userRecentlyPlayed.length;
   addOrUpdateData('user', 'recentlyPlayedSongs', userRecentlyPlayed);
 }

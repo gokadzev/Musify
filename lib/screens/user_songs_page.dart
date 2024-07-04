@@ -98,6 +98,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
     return {
           'liked': context.l10n!.likedSongs,
           'offline': context.l10n!.offlineSongs,
+          'recents': context.l10n!.recentlyPlayed,
         }[page] ??
         context.l10n!.playlist;
   }
@@ -106,6 +107,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
     return {
           'liked': FluentIcons.heart_24_regular,
           'offline': FluentIcons.cellular_off_24_regular,
+          'recents': FluentIcons.history_24_regular,
         }[page] ??
         FluentIcons.heart_24_regular;
   }
@@ -114,6 +116,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
     return {
           'liked': userLikedSongsList,
           'offline': userOfflineSongs,
+          'recents': userRecentlyPlayed,
         }[page] ??
         userLikedSongsList;
   }
@@ -122,6 +125,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
     return {
           'liked': currentLikedSongsLength,
           'offline': currentOfflineSongsLength,
+          'recents': currentRecentlyPlayedLength,
         }[page] ??
         currentLikedSongsLength;
   }
