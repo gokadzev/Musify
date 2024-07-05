@@ -290,12 +290,6 @@ List<Map<String, dynamic>> playlistsDB = [
     'list': [],
   },
   {
-    'ytid': 'PL-_a53M3g7u3HgcEZX3AVlAvXxH2bvLdZ',
-    'title': 'New EDM Playlist 2023',
-    'image': 'https://i.scdn.co/image/ab67706c0000da84e606cabb25ef4e6f2687b564',
-    'list': [],
-  },
-  {
     'ytid': 'PL-_a53M3g7u3TuMekuhs2oTjUTyQlakb1',
     'title': 'Top Underrated Trap Songs 2023',
     'image': 'https://i.scdn.co/image/ab67616d0000b27317e0090dbb716696273c6c7c',
