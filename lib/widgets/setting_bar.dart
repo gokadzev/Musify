@@ -20,6 +20,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:musify/utilities/common_variables.dart';
 
 class CustomListTile extends StatelessWidget {
   CustomListTile(
@@ -40,7 +41,7 @@ class CustomListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: commonBarPadding,
       child: Card(
         child: ListTile(
           minTileHeight: 65,
