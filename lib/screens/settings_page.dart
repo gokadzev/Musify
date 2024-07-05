@@ -235,7 +235,7 @@ class SettingsPage extends StatelessWidget {
                         color: isCurrentQuality
                             ? activatedColor
                             : inactivatedColor,
-                        margin: const EdgeInsetsDirectional.all(10),
+                        margin: const EdgeInsets.all(10),
                         child: ListTile(
                           minTileHeight: 65,
                           title: Text(quality),
