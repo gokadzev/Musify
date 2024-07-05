@@ -495,31 +495,18 @@ class SettingsPage extends StatelessWidget {
                     primaryColor,
                     context.l10n!.becomeSponsor,
                   ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                    child: Card(
-                      color: primaryColor,
-                      child: ListTile(
-                        minTileHeight: 65,
-                        leading: const Icon(
-                          FluentIcons.heart_24_filled,
-                          color: Colors.white,
-                        ),
-                        title: Text(
-                          context.l10n!.sponsorProject,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
-                        ),
-                        onTap: () => {
-                          launchURL(
-                            Uri.parse('https://ko-fi.com/gokadzev'),
-                          ),
-                        },
+
+                  CustomBar(
+                    context.l10n!.sponsorProject,
+                    FluentIcons.heart_24_filled,
+                    backgroundColor: primaryColor,
+                    iconColor: Colors.white,
+                    textColor: Colors.white,
+                    onTap: () => {
+                      launchURL(
+                        Uri.parse('https://ko-fi.com/gokadzev'),
                       ),
-                    ),
+                    },
                   ),
                 ],
               ),

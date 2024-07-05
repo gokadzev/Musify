@@ -26,9 +26,12 @@ class CustomBar extends StatelessWidget {
   CustomBar(
     this.tileName,
     this.tileIcon, {
-    this.trailing,
     this.onTap,
     this.onLongPress,
+    this.trailing,
+    this.backgroundColor,
+    this.iconColor,
+    this.textColor,
     super.key,
   });
 
@@ -37,18 +40,25 @@ class CustomBar extends StatelessWidget {
   final VoidCallback? onTap;
   final VoidCallback? onLongPress;
   final Widget? trailing;
+  final Color? backgroundColor;
+  final Color? iconColor;
+  final Color? textColor;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: commonBarPadding,
       child: Card(
+        color: backgroundColor,
         child: ListTile(
           minTileHeight: 65,
-          leading: Icon(tileIcon),
+          leading: Icon(
+            tileIcon,
+            color: iconColor,
+          ),
           title: Text(
             tileName,
-            style: const TextStyle(fontWeight: FontWeight.w600),
+            style: TextStyle(fontWeight: FontWeight.w600, color: textColor),
           ),
           trailing: trailing,
           onTap: onTap,
