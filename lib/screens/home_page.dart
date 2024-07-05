@@ -29,7 +29,7 @@ import 'package:musify/services/router_service.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/widgets/marque.dart';
 import 'package:musify/widgets/playlist_cube.dart';
-import 'package:musify/widgets/song_cube.dart';
+import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/spinner.dart';
 
 class HomePage extends StatefulWidget {
@@ -304,20 +304,13 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ),
-        SizedBox(
-          height: calculatedSize + 50,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            separatorBuilder: (_, __) => const SizedBox(width: 15),
-            itemCount: data.length,
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            itemBuilder: (context, index) {
-              return SongCube(
-                data[index],
-                size: calculatedSize / 1.1,
-              );
-            },
-          ),
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const BouncingScrollPhysics(),
+          itemCount: data.length,
+          itemBuilder: (context, index) {
+            return SongBar(data[index], true);
+          },
         ),
       ],
     );
