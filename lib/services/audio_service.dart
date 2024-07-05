@@ -35,15 +35,13 @@ import 'package:rxdart/rxdart.dart';
 
 class MusifyAudioHandler extends BaseAudioHandler {
   MusifyAudioHandler() {
-    _initializeAudioPlayer();
     _setupEventSubscriptions();
     _updatePlaybackState();
 
     _initialize();
   }
 
-  late AudioPlayer audioPlayer;
-  late AndroidLoudnessEnhancer _loudnessEnhancer;
+  AudioPlayer audioPlayer = AudioPlayer();
 
   late StreamSubscription<PlaybackEvent> _playbackEventSubscription;
   late StreamSubscription<Duration?> _durationSubscription;
@@ -72,19 +70,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
     LoopMode.one: AudioServiceRepeatMode.one,
     LoopMode.all: AudioServiceRepeatMode.all,
   };
-
-  void _initializeAudioPlayer() {
-    _loudnessEnhancer = AndroidLoudnessEnhancer();
-    _loudnessEnhancer.setEnabled(true);
-    _loudnessEnhancer.setTargetGain(0.5);
-    audioPlayer = AudioPlayer(
-      audioPipeline: AudioPipeline(
-        androidAudioEffects: [
-          _loudnessEnhancer,
-        ],
-      ),
-    );
-  }
 
   void _handlePlaybackEvent(PlaybackEvent event) {
     try {
