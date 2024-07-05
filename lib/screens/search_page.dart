@@ -27,8 +27,8 @@ import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
+import 'package:musify/widgets/custom_bar.dart';
 import 'package:musify/widgets/custom_search_bar.dart';
-import 'package:musify/widgets/setting_bar.dart';
 import 'package:musify/widgets/song_bar.dart';
 
 class SearchPage extends StatefulWidget {
@@ -127,7 +127,7 @@ class _SearchPageState extends State<SearchPage> {
                       ? searchHistory[index]
                       : _suggestionsList[index];
 
-                  return CustomListTile(
+                  return CustomBar(
                     query,
                     FluentIcons.search_24_regular,
                     onTap: () async {

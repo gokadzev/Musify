@@ -22,8 +22,8 @@
 import 'package:flutter/material.dart';
 import 'package:musify/utilities/common_variables.dart';
 
-class CustomListTile extends StatelessWidget {
-  CustomListTile(
+class CustomBar extends StatelessWidget {
+  CustomBar(
     this.tileName,
     this.tileIcon, {
     this.trailing,
