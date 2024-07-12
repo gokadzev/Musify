@@ -33,6 +33,10 @@ final useSystemColor = ValueNotifier<bool>(
   Hive.box('settings').get('useSystemColor', defaultValue: true),
 );
 
+final usePureBlackColor = ValueNotifier<bool>(
+  Hive.box('settings').get('usePureBlackColor', defaultValue: false),
+);
+
 final offlineMode = ValueNotifier<bool>(
   Hive.box('settings').get('offlineMode', defaultValue: false),
 );

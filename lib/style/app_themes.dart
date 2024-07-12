@@ -85,9 +85,12 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
       ? ThemeData.light()
       : ThemeData.dark();
 
+  final isPureBlackUsable =
+      colorScheme.brightness == Brightness.dark && usePureBlackColor.value;
+
   final bgColor = colorScheme.brightness == Brightness.light
       ? colorScheme.surfaceContainer
-      : null;
+      : (isPureBlackUsable ? const Color(0xFF000000) : null);
 
   return ThemeData(
     scaffoldBackgroundColor: bgColor,
@@ -116,6 +119,9 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
       ),
       contentPadding: const EdgeInsets.fromLTRB(18, 14, 20, 14),
     ),
+    navigationBarTheme: isPureBlackUsable && bgColor != null
+        ? base.navigationBarTheme.copyWith(backgroundColor: bgColor)
+        : null,
     sliderTheme: const SliderThemeData(trackHeight: 1.8),
     visualDensity: VisualDensity.adaptivePlatformDensity,
     useMaterial3: true,

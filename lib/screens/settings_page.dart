@@ -284,6 +284,27 @@ class SettingsPage extends StatelessWidget {
                 },
               ),
             ),
+            if (themeMode == ThemeMode.dark)
+              CustomBar(
+                context.l10n!.usePureBlack,
+                FluentIcons.color_background_24_filled,
+                trailing: Switch(
+                  value: usePureBlackColor.value,
+                  onChanged: (value) {
+                    addOrUpdateData(
+                      'settings',
+                      'usePureBlackColor',
+                      value,
+                    );
+                    usePureBlackColor.value = value;
+                    Musify.updateAppState(context);
+                    showToast(
+                      context,
+                      context.l10n!.settingChangedMsg,
+                    );
+                  },
+                ),
+              ),
             ValueListenableBuilder<bool>(
               valueListenable: offlineMode,
               builder: (_, value, __) {
