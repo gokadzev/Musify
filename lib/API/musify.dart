@@ -55,6 +55,7 @@ List userRecentlyPlayed =
 List userOfflineSongs =
     Hive.box('userNoBackup').get('offlineSongs', defaultValue: []);
 List suggestedPlaylists = [];
+List onlinePlaylists = [];
 Map activePlaylist = {
   'ytid': '',
   'title': 'No Playlist',
@@ -292,13 +293,46 @@ Future<List> getPlaylists({
   // Filter playlists based on query and type if only query is specified
   if (query != null && playlistsNum == null) {
     final lowercaseQuery = query.toLowerCase();
-    return playlists.where((playlist) {
+    final filteredPlaylists = playlists.where((playlist) {
       final lowercaseTitle = playlist['title'].toLowerCase();
       return lowercaseTitle.contains(lowercaseQuery) &&
           ((type == 'all') ||
               (type == 'album' && playlist['isAlbum'] == true) ||
               (type == 'playlist' && playlist['isAlbum'] != true));
     }).toList();
+
+    final searchResults =
+        await _yt.search.searchContent(query, filter: TypeFilters.playlist);
+
+    final existingYtid =
+        onlinePlaylists.map((playlist) => playlist['ytid'] as String).toSet();
+
+    final newPlaylists = searchResults
+        .whereType<SearchPlaylist>()
+        .map((playlist) {
+          final playlistMap = {
+            'ytid': playlist.id.toString(),
+            'title': playlist.title,
+            'list': [],
+          };
+
+          if (!existingYtid.contains(playlistMap['ytid'])) {
+            existingYtid.add(playlistMap['ytid'].toString());
+            return playlistMap;
+          }
+          return null;
+        })
+        .whereType<Map<String, dynamic>>()
+        .toList();
+
+    onlinePlaylists.addAll(newPlaylists);
+    filteredPlaylists.addAll(
+      onlinePlaylists.where(
+        (playlist) => playlist['title'].toLowerCase().contains(lowercaseQuery),
+      ),
+    );
+
+    return filteredPlaylists;
   }
 
   // Return a subset of suggested playlists if playlistsNum is specified without a query
@@ -472,6 +506,11 @@ Future<Map<String, dynamic>?> getPlaylistInfoForWidget(
         orElse: () => null,
       );
     }
+
+    playlist ??= onlinePlaylists.firstWhere(
+      (list) => list['ytid'] == id,
+      orElse: () => null,
+    );
 
     if (playlist != null && playlist['list'].isEmpty) {
       playlist['list'] = await getSongsFromPlaylist(playlist['ytid']);
