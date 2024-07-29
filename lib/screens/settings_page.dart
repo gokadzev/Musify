@@ -200,7 +200,6 @@ class SettingsPage extends StatelessWidget {
                                 languageCode,
                               ),
                             );
-
                             showToast(
                               context,
                               context.l10n!.languageMsg,
