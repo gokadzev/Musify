@@ -122,7 +122,6 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
     navigationBarTheme: isPureBlackUsable && bgColor != null
         ? base.navigationBarTheme.copyWith(backgroundColor: bgColor)
         : null,
-    sliderTheme: const SliderThemeData(trackHeight: 1.8),
     visualDensity: VisualDensity.adaptivePlatformDensity,
     useMaterial3: true,
     pageTransitionsTheme: const PageTransitionsTheme(

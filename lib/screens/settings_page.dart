@@ -306,6 +306,30 @@ class SettingsPage extends StatelessWidget {
                 ),
               ),
             ValueListenableBuilder<bool>(
+              valueListenable: useSquigglySlider,
+              builder: (_, value, __) {
+                return CustomBar(
+                  context.l10n!.useSquigglySlider,
+                  FluentIcons.options_24_filled,
+                  trailing: Switch(
+                    value: useSquigglySlider.value,
+                    onChanged: (value) {
+                      addOrUpdateData(
+                        'settings',
+                        'useSquigglySlider',
+                        value,
+                      );
+                      useSquigglySlider.value = value;
+                      showToast(
+                        context,
+                        context.l10n!.settingChangedMsg,
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
+            ValueListenableBuilder<bool>(
               valueListenable: offlineMode,
               builder: (_, value, __) {
                 return CustomBar(

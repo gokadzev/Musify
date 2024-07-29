@@ -37,6 +37,10 @@ final usePureBlackColor = ValueNotifier<bool>(
   Hive.box('settings').get('usePureBlackColor', defaultValue: false),
 );
 
+final useSquigglySlider = ValueNotifier<bool>(
+  Hive.box('settings').get('useSquigglySlider', defaultValue: false),
+);
+
 final offlineMode = ValueNotifier<bool>(
   Hive.box('settings').get('offlineMode', defaultValue: false),
 );

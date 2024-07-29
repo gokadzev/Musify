@@ -31,12 +31,12 @@ import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/flutter_bottom_sheet.dart';
 import 'package:musify/utilities/formatter.dart';
 import 'package:musify/utilities/mediaitem.dart';
+import 'package:musify/widgets/custom_slider.dart';
 import 'package:musify/widgets/marque.dart';
 import 'package:musify/widgets/playback_icon_button.dart';
 import 'package:musify/widgets/song_artwork.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/spinner.dart';
-import 'package:musify/widgets/squiggly_slider.dart';
 
 final _lyricsController = FlipCardController();
 
@@ -238,7 +238,8 @@ class NowPlayingPage extends StatelessWidget {
   Widget buildSlider(
     PositionData positionData,
   ) {
-    return SquigglySlider(
+    return CustomSlider(
+      isSquiglySliderEnabled: useSquigglySlider.value,
       value: positionData.position.inSeconds.toDouble(),
       onChanged: (value) {
         audioHandler.seek(Duration(seconds: value.toInt()));
