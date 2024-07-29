@@ -44,7 +44,7 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final primaryColor = Theme.of(context).colorScheme.primary;
     final activatedColor =
-        Theme.of(context).colorScheme.inversePrimary; // or primaryfixeddim
+        Theme.of(context).colorScheme.surfaceContainerHighest;
     final inactivatedColor = Theme.of(context).colorScheme.secondaryContainer;
 
     return Scaffold(
