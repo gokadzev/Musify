@@ -24,6 +24,7 @@ import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
+import 'package:musify/services/settings_manager.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/playlist_header.dart';
 import 'package:musify/widgets/song_bar.dart';
@@ -52,7 +53,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: !isOnline ? Text(title) : null,
+        title: offlineMode.value ? Text(title) : null,
         actions: [
           if (title == context.l10n!.likedSongs)
             IconButton(
@@ -97,6 +98,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
     return {
           'liked': context.l10n!.likedSongs,
           'offline': context.l10n!.offlineSongs,
+          'recents': context.l10n!.recentlyPlayed,
         }[page] ??
         context.l10n!.playlist;
   }
@@ -105,6 +107,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
     return {
           'liked': FluentIcons.heart_24_regular,
           'offline': FluentIcons.cellular_off_24_regular,
+          'recents': FluentIcons.history_24_regular,
         }[page] ??
         FluentIcons.heart_24_regular;
   }
@@ -113,6 +116,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
     return {
           'liked': userLikedSongsList,
           'offline': userOfflineSongs,
+          'recents': userRecentlyPlayed,
         }[page] ??
         userLikedSongsList;
   }
@@ -121,6 +125,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
     return {
           'liked': currentLikedSongsLength,
           'offline': currentOfflineSongsLength,
+          'recents': currentRecentlyPlayedLength,
         }[page] ??
         currentLikedSongsLength;
   }
@@ -135,7 +140,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
 
   Widget _buildPlaylistImage(String title, IconData icon) {
     return PlaylistCube(
-      title: title,
+      {'title': title},
       onClickOpen: false,
       showFavoriteButton: false,
       size: MediaQuery.of(context).size.width / 2.5,

@@ -19,35 +19,39 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 
-class SettingSwitchBar extends StatelessWidget {
-  const SettingSwitchBar({
+class LikeButton extends StatelessWidget {
+  LikeButton({
     super.key,
-    required this.tileName,
-    required this.tileIcon,
-    required this.value,
-    required this.onChanged,
+    required this.onSecondaryColor,
+    required this.onPrimaryColor,
+    required this.isLiked,
+    required this.onPressed,
   });
-
-  final ValueChanged<bool> onChanged;
-  final bool value;
-  final String tileName;
-  final IconData tileIcon;
+  final Color onSecondaryColor;
+  final Color onPrimaryColor;
+  final bool isLiked;
+  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8),
-      child: Card(
-        child: SwitchListTile(
-          secondary: Icon(tileIcon),
-          title: Text(
-            tileName,
-            style: const TextStyle(fontWeight: FontWeight.w600),
-          ),
-          value: value,
-          onChanged: onChanged,
+    const likeStatusToIconMapper = {
+      true: FluentIcons.heart_24_filled,
+      false: FluentIcons.heart_24_regular,
+    };
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: onSecondaryColor,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: IconButton(
+        onPressed: onPressed,
+        icon: Icon(
+          likeStatusToIconMapper[isLiked],
+          color: onPrimaryColor,
+          size: 25,
         ),
       ),
     );

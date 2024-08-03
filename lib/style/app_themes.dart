@@ -22,7 +22,6 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/services.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/style/dynamic_color_temp_fix.dart';
 
@@ -86,27 +85,24 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
       ? ThemeData.light()
       : ThemeData.dark();
 
-  // Some people said that Colors.transparent causes some issues, so better to use it this way
-  final trickyFixForTransparency = Colors.black.withOpacity(0.002);
-  final iconsBrightness =
-      brightness == Brightness.dark ? Brightness.light : Brightness.dark;
+  final isPureBlackUsable =
+      colorScheme.brightness == Brightness.dark && usePureBlackColor.value;
+
+  final bgColor = colorScheme.brightness == Brightness.light
+      ? colorScheme.surfaceContainer
+      : (isPureBlackUsable ? const Color(0xFF000000) : null);
 
   return ThemeData(
+    scaffoldBackgroundColor: bgColor,
     colorScheme: colorScheme,
     appBarTheme: base.appBarTheme.copyWith(
+      backgroundColor: bgColor,
       iconTheme: IconThemeData(color: colorScheme.primary),
       centerTitle: true,
       titleTextStyle: TextStyle(
         fontSize: 30,
         fontWeight: FontWeight.bold,
         color: colorScheme.primary,
-      ),
-      systemOverlayStyle: SystemUiOverlayStyle(
-        systemNavigationBarColor: trickyFixForTransparency,
-        systemNavigationBarDividerColor: trickyFixForTransparency,
-        statusBarColor: trickyFixForTransparency,
-        systemNavigationBarIconBrightness: iconsBrightness,
-        statusBarIconBrightness: iconsBrightness,
       ),
       elevation: 0,
     ),
@@ -123,7 +119,9 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
       ),
       contentPadding: const EdgeInsets.fromLTRB(18, 14, 20, 14),
     ),
-    sliderTheme: const SliderThemeData(trackHeight: 1.8),
+    navigationBarTheme: isPureBlackUsable && bgColor != null
+        ? base.navigationBarTheme.copyWith(backgroundColor: bgColor)
+        : null,
     visualDensity: VisualDensity.adaptivePlatformDensity,
     useMaterial3: true,
     pageTransitionsTheme: const PageTransitionsTheme(

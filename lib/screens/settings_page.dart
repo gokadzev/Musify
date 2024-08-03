@@ -35,8 +35,7 @@ import 'package:musify/utilities/flutter_bottom_sheet.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/url_launcher.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
-import 'package:musify/widgets/setting_bar.dart';
-import 'package:musify/widgets/setting_switch_bar.dart';
+import 'package:musify/widgets/custom_bar.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -44,6 +43,9 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final primaryColor = Theme.of(context).colorScheme.primary;
+    final activatedColor =
+        Theme.of(context).colorScheme.surfaceContainerHighest;
+    final inactivatedColor = Theme.of(context).colorScheme.secondaryContainer;
 
     return Scaffold(
       appBar: AppBar(
@@ -57,10 +59,10 @@ class SettingsPage extends StatelessWidget {
               primaryColor,
               context.l10n!.preferences,
             ),
-            SettingBar(
+            CustomBar(
               context.l10n!.accentColor,
               FluentIcons.color_24_filled,
-              () => showCustomBottomSheet(
+              onTap: () => showCustomBottomSheet(
                 context,
                 GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -113,10 +115,10 @@ class SettingsPage extends StatelessWidget {
                 ),
               ),
             ),
-            SettingBar(
+            CustomBar(
               context.l10n!.themeMode,
               FluentIcons.weather_sunny_28_filled,
-              () {
+              onTap: () {
                 final availableModes = [
                   ThemeMode.system,
                   ThemeMode.light,
@@ -132,8 +134,11 @@ class SettingsPage extends StatelessWidget {
                       final mode = availableModes[index];
                       return Card(
                         margin: const EdgeInsets.all(10),
-                        elevation: themeMode == mode ? 0 : 4,
+                        color: themeMode == mode
+                            ? activatedColor
+                            : inactivatedColor,
                         child: ListTile(
+                          minTileHeight: 65,
                           title: Text(
                             mode.name,
                           ),
@@ -150,10 +155,6 @@ class SettingsPage extends StatelessWidget {
 
                             Navigator.pop(context);
                           },
-                          trailing: mode == ThemeMode.light ||
-                                  mode == ThemeMode.system
-                              ? const Text('BETA')
-                              : null,
                         ),
                       );
                     },
@@ -161,10 +162,10 @@ class SettingsPage extends StatelessWidget {
                 );
               },
             ),
-            SettingBar(
+            CustomBar(
               context.l10n!.language,
               FluentIcons.translate_24_filled,
-              () {
+              onTap: () {
                 final availableLanguages = appLanguages.keys.toList();
                 final activeLanguageCode =
                     Localizations.localeOf(context).languageCode;
@@ -178,9 +179,12 @@ class SettingsPage extends StatelessWidget {
                       final language = availableLanguages[index];
                       final languageCode = appLanguages[language] ?? 'en';
                       return Card(
-                        elevation: activeLanguageCode == languageCode ? 0 : 4,
+                        color: activeLanguageCode == languageCode
+                            ? activatedColor
+                            : inactivatedColor,
                         margin: const EdgeInsets.all(10),
                         child: ListTile(
+                          minTileHeight: 65,
                           title: Text(
                             language,
                           ),
@@ -196,7 +200,6 @@ class SettingsPage extends StatelessWidget {
                                 languageCode,
                               ),
                             );
-
                             showToast(
                               context,
                               context.l10n!.languageMsg,
@@ -210,92 +213,209 @@ class SettingsPage extends StatelessWidget {
                 );
               },
             ),
-            SettingSwitchBar(
-              tileName: context.l10n!.dynamicColor,
-              tileIcon: FluentIcons.toggle_left_24_filled,
-              value: useSystemColor.value,
-              onChanged: (value) {
-                addOrUpdateData(
-                  'settings',
-                  'useSystemColor',
-                  value,
-                );
-                useSystemColor.value = value;
-                Musify.updateAppState(
+            CustomBar(
+              context.l10n!.audioQuality,
+              Icons.music_note,
+              onTap: () {
+                final availableQualities = ['low', 'medium', 'high'];
+
+                showCustomBottomSheet(
                   context,
-                  newAccentColor: primaryColorSetting,
-                  useSystemColor: value,
-                );
-                showToast(
-                  context,
-                  context.l10n!.settingChangedMsg,
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: availableQualities.length,
+                    itemBuilder: (context, index) {
+                      final quality = availableQualities[index];
+                      final isCurrentQuality =
+                          audioQualitySetting.value == quality;
+
+                      return Card(
+                        color: isCurrentQuality
+                            ? activatedColor
+                            : inactivatedColor,
+                        margin: const EdgeInsets.all(10),
+                        child: ListTile(
+                          minTileHeight: 65,
+                          title: Text(quality),
+                          onTap: () {
+                            addOrUpdateData(
+                              'settings',
+                              'audioQuality',
+                              quality,
+                            );
+                            audioQualitySetting.value = quality;
+
+                            showToast(
+                              context,
+                              context.l10n!.audioQualityMsg,
+                            );
+                            Navigator.pop(context);
+                          },
+                        ),
+                      );
+                    },
+                  ),
                 );
               },
             ),
-            if (isOnline)
+            CustomBar(
+              context.l10n!.dynamicColor,
+              FluentIcons.toggle_left_24_filled,
+              trailing: Switch(
+                value: useSystemColor.value,
+                onChanged: (value) {
+                  addOrUpdateData(
+                    'settings',
+                    'useSystemColor',
+                    value,
+                  );
+                  useSystemColor.value = value;
+                  Musify.updateAppState(
+                    context,
+                    newAccentColor: primaryColorSetting,
+                    useSystemColor: value,
+                  );
+                  showToast(
+                    context,
+                    context.l10n!.settingChangedMsg,
+                  );
+                },
+              ),
+            ),
+            if (themeMode == ThemeMode.dark)
+              CustomBar(
+                context.l10n!.usePureBlack,
+                FluentIcons.color_background_24_filled,
+                trailing: Switch(
+                  value: usePureBlackColor.value,
+                  onChanged: (value) {
+                    addOrUpdateData(
+                      'settings',
+                      'usePureBlackColor',
+                      value,
+                    );
+                    usePureBlackColor.value = value;
+                    Musify.updateAppState(context);
+                    showToast(
+                      context,
+                      context.l10n!.settingChangedMsg,
+                    );
+                  },
+                ),
+              ),
+            ValueListenableBuilder<bool>(
+              valueListenable: useSquigglySlider,
+              builder: (_, value, __) {
+                return CustomBar(
+                  context.l10n!.useSquigglySlider,
+                  FluentIcons.options_24_filled,
+                  trailing: Switch(
+                    value: useSquigglySlider.value,
+                    onChanged: (value) {
+                      addOrUpdateData(
+                        'settings',
+                        'useSquigglySlider',
+                        value,
+                      );
+                      useSquigglySlider.value = value;
+                      showToast(
+                        context,
+                        context.l10n!.settingChangedMsg,
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
+            ValueListenableBuilder<bool>(
+              valueListenable: offlineMode,
+              builder: (_, value, __) {
+                return CustomBar(
+                  context.l10n!.offlineMode,
+                  FluentIcons.cellular_off_24_regular,
+                  trailing: Switch(
+                    value: value,
+                    onChanged: (value) {
+                      addOrUpdateData(
+                        'settings',
+                        'offlineMode',
+                        value,
+                      );
+                      offlineMode.value = value;
+                      showToast(
+                        context,
+                        context.l10n!.restartAppMsg,
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
+            if (!offlineMode.value)
               Column(
                 children: [
                   ValueListenableBuilder<bool>(
                     valueListenable: sponsorBlockSupport,
                     builder: (_, value, __) {
-                      return SettingSwitchBar(
-                        tileName: 'SponsorBlock',
-                        tileIcon: FluentIcons.presence_blocked_24_regular,
-                        value: value,
-                        onChanged: (value) {
-                          addOrUpdateData(
-                            'settings',
-                            'sponsorBlockSupport',
-                            value,
-                          );
-                          sponsorBlockSupport.value = value;
-                          showToast(
-                            context,
-                            context.l10n!.settingChangedMsg,
-                          );
-                        },
+                      return CustomBar(
+                        'SponsorBlock',
+                        FluentIcons.presence_blocked_24_regular,
+                        trailing: Switch(
+                          value: value,
+                          onChanged: (value) {
+                            addOrUpdateData(
+                              'settings',
+                              'sponsorBlockSupport',
+                              value,
+                            );
+                            sponsorBlockSupport.value = value;
+                            showToast(
+                              context,
+                              context.l10n!.settingChangedMsg,
+                            );
+                          },
+                        ),
                       );
                     },
                   ),
-                  SettingBar(
-                    context.l10n!.audioQuality,
-                    Icons.music_note,
-                    () {
-                      final availableQualities = ['low', 'medium', 'high'];
-
-                      showCustomBottomSheet(
-                        context,
-                        ListView.builder(
-                          shrinkWrap: true,
-                          physics: const BouncingScrollPhysics(),
-                          itemCount: availableQualities.length,
-                          itemBuilder: (context, index) {
-                            final quality = availableQualities[index];
-                            final isCurrentQuality =
-                                audioQualitySetting.value == quality;
-
-                            return Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: Card(
-                                elevation: isCurrentQuality ? 0 : 4,
-                                child: ListTile(
-                                  title: Text(quality),
-                                  onTap: () {
-                                    addOrUpdateData(
-                                      'settings',
-                                      'audioQuality',
-                                      quality,
-                                    );
-                                    audioQualitySetting.value = quality;
-
-                                    showToast(
-                                      context,
-                                      context.l10n!.audioQualityMsg,
-                                    );
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                              ),
+                  ValueListenableBuilder<bool>(
+                    valueListenable: playNextSongAutomatically,
+                    builder: (_, value, __) {
+                      return CustomBar(
+                        context.l10n!.automaticSongPicker,
+                        FluentIcons.music_note_2_play_20_filled,
+                        trailing: Switch(
+                          value: value,
+                          onChanged: (value) {
+                            audioHandler.changeAutoPlayNextStatus();
+                            showToast(
+                              context,
+                              context.l10n!.settingChangedMsg,
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                  ValueListenableBuilder<bool>(
+                    valueListenable: defaultRecommendations,
+                    builder: (_, value, __) {
+                      return CustomBar(
+                        context.l10n!.originalRecommendations,
+                        FluentIcons.channel_share_24_regular,
+                        trailing: Switch(
+                          value: value,
+                          onChanged: (value) {
+                            addOrUpdateData(
+                              'settings',
+                              'defaultRecommendations',
+                              value,
+                            );
+                            defaultRecommendations.value = value;
+                            showToast(
+                              context,
+                              context.l10n!.settingChangedMsg,
                             );
                           },
                         ),
@@ -308,10 +428,10 @@ class SettingsPage extends StatelessWidget {
                     primaryColor,
                     context.l10n!.tools,
                   ),
-                  SettingBar(
+                  CustomBar(
                     context.l10n!.clearCache,
                     FluentIcons.broom_24_filled,
-                    () {
+                    onTap: () {
                       clearCache();
                       showToast(
                         context,
@@ -319,33 +439,36 @@ class SettingsPage extends StatelessWidget {
                       );
                     },
                   ),
-                  SettingBar(context.l10n!.clearSearchHistory,
-                      FluentIcons.history_24_filled, () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return ConfirmationDialog(
-                          submitMessage: context.l10n!.clear,
-                          confirmationMessage:
-                              context.l10n!.clearSearchHistoryQuestion,
-                          onCancel: () => {Navigator.of(context).pop()},
-                          onSubmit: () => {
-                            Navigator.of(context).pop(),
-                            searchHistory = [],
-                            deleteData('user', 'searchHistory'),
-                            showToast(
-                              context,
-                              '${context.l10n!.searchHistoryMsg}!',
-                            ),
-                          },
-                        );
-                      },
-                    );
-                  }),
-                  SettingBar(
+                  CustomBar(
+                    context.l10n!.clearSearchHistory,
+                    FluentIcons.history_24_filled,
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return ConfirmationDialog(
+                            submitMessage: context.l10n!.clear,
+                            confirmationMessage:
+                                context.l10n!.clearSearchHistoryQuestion,
+                            onCancel: () => {Navigator.of(context).pop()},
+                            onSubmit: () => {
+                              Navigator.of(context).pop(),
+                              searchHistory = [],
+                              deleteData('user', 'searchHistory'),
+                              showToast(
+                                context,
+                                '${context.l10n!.searchHistoryMsg}!',
+                              ),
+                            },
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  CustomBar(
                     context.l10n!.clearRecentlyPlayed,
                     FluentIcons.receipt_play_24_filled,
-                    () {
+                    onTap: () {
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
@@ -369,10 +492,10 @@ class SettingsPage extends StatelessWidget {
                     },
                   ),
                   if (isAndroid)
-                    SettingBar(
+                    CustomBar(
                       context.l10n!.backupUserData,
                       FluentIcons.cloud_sync_24_filled,
-                      () async {
+                      onTap: () async {
                         await showDialog(
                           context: context,
                           builder: (BuildContext context) {
@@ -397,20 +520,20 @@ class SettingsPage extends StatelessWidget {
                     ),
 
                   if (isAndroid)
-                    SettingBar(
+                    CustomBar(
                       context.l10n!.restoreUserData,
                       FluentIcons.cloud_add_24_filled,
-                      () async {
+                      onTap: () async {
                         final response = await restoreData(context);
                         showToast(context, response);
                       },
                     ),
 
                   if (isAndroid && !isFdroidBuild)
-                    SettingBar(
+                    CustomBar(
                       context.l10n!.downloadAppUpdate,
                       FluentIcons.arrow_download_24_filled,
-                      checkAppUpdates,
+                      onTap: checkAppUpdates,
                     ),
                   // CATEGORY: BECOME A SPONSOR
 
@@ -418,29 +541,18 @@ class SettingsPage extends StatelessWidget {
                     primaryColor,
                     context.l10n!.becomeSponsor,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Card(
-                      color: primaryColor,
-                      child: ListTile(
-                        leading: const Icon(
-                          FluentIcons.heart_24_filled,
-                          color: Colors.white,
-                        ),
-                        title: Text(
-                          context.l10n!.sponsorProject,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
-                        ),
-                        onTap: () => {
-                          launchURL(
-                            Uri.parse('https://ko-fi.com/gokadzev'),
-                          ),
-                        },
+
+                  CustomBar(
+                    context.l10n!.sponsorProject,
+                    FluentIcons.heart_24_filled,
+                    backgroundColor: primaryColor,
+                    iconColor: Colors.white,
+                    textColor: Colors.white,
+                    onTap: () => {
+                      launchURL(
+                        Uri.parse('https://ko-fi.com/gokadzev'),
                       ),
-                    ),
+                    },
                   ),
                 ],
               ),
@@ -450,22 +562,23 @@ class SettingsPage extends StatelessWidget {
               context.l10n!.others,
             ),
 
-            SettingBar(
+            CustomBar(
               context.l10n!.licenses,
               FluentIcons.document_24_filled,
-              () => NavigationManager.router.go(
+              onTap: () => NavigationManager.router.go(
                 '/settings/license',
               ),
             ),
-            SettingBar(
+            CustomBar(
               '${context.l10n!.copyLogs} (${logger.getLogCount()})',
               FluentIcons.error_circle_24_filled,
-              () async => showToast(context, await logger.copyLogs(context)),
+              onTap: () async =>
+                  showToast(context, await logger.copyLogs(context)),
             ),
-            SettingBar(
+            CustomBar(
               context.l10n!.about,
               FluentIcons.book_information_24_filled,
-              () => NavigationManager.router.go(
+              onTap: () => NavigationManager.router.go(
                 '/settings/about',
               ),
             ),
@@ -480,13 +593,16 @@ class SettingsPage extends StatelessWidget {
 
   Widget _buildSectionTitle(Color primaryColor, String title) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Text(
-        title,
-        style: TextStyle(
-          color: primaryColor,
-          fontSize: 15,
-          fontWeight: FontWeight.w400,
+      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Text(
+          title,
+          style: TextStyle(
+            color: primaryColor,
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
     );

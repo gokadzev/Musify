@@ -58,7 +58,10 @@ class PlaylistHeader extends StatelessWidget {
               const SizedBox(height: 15),
               Text(
                 '$songsLength ${context.l10n!.songs}'.toUpperCase(),
-                style: const TextStyle(fontWeight: FontWeight.w500),
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
               ),
             ],
           ),

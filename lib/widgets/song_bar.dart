@@ -27,6 +27,8 @@ import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
+import 'package:musify/services/settings_manager.dart';
+import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/formatter.dart';
 import 'package:musify/widgets/no_artwork_cube.dart';
@@ -50,15 +52,15 @@ class SongBar extends StatelessWidget {
   final bool showMusicDuration;
 
   static const likeStatusToIconMapper = {
-    true: FluentIcons.star_24_filled,
-    false: FluentIcons.star_24_regular,
+    true: FluentIcons.heart_24_filled,
+    false: FluentIcons.heart_24_regular,
   };
 
   @override
   Widget build(BuildContext context) {
     final primaryColor = Theme.of(context).colorScheme.primary;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
+      padding: commonBarPadding,
       child: GestureDetector(
         onTap: onPlay ??
             () {
@@ -70,7 +72,7 @@ class SongBar extends StatelessWidget {
                   'image': '',
                   'list': [],
                 };
-                id = 0;
+                activeSongId = 0;
               }
             },
         child: Card(
@@ -168,7 +170,7 @@ class SongBar extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (isOnline)
+        if (!offlineMode.value)
           Row(
             children: [
               ValueListenableBuilder<bool>(
@@ -240,26 +242,44 @@ void showAddToPlaylistDialog(BuildContext context, dynamic song) {
       return AlertDialog(
         icon: const Icon(FluentIcons.text_bullet_list_add_24_filled),
         title: Text(context.l10n!.addToPlaylist),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              for (final playlist in userCustomPlaylists)
-                Card(
-                  color: Theme.of(context).colorScheme.secondaryContainer,
-                  elevation: 0,
-                  child: ListTile(
-                    title: Text(playlist['title']),
-                    onTap: () {
-                      addSongInCustomPlaylist(playlist['title'], song);
-                      showToast(context, context.l10n!.songAdded);
-                      Navigator.pop(context);
-                    },
-                  ),
-                ),
-            ],
+        content: Container(
+          width: double.maxFinite,
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.6,
           ),
+          child: userCustomPlaylists.isNotEmpty
+              ? ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: userCustomPlaylists.length,
+                  itemBuilder: (context, index) {
+                    final playlist = userCustomPlaylists[index];
+                    return Card(
+                      color: Theme.of(context).colorScheme.secondaryContainer,
+                      elevation: 0,
+                      child: ListTile(
+                        title: Text(playlist['title']),
+                        onTap: () {
+                          addSongInCustomPlaylist(playlist['title'], song);
+                          showToast(context, context.l10n!.songAdded);
+                          Navigator.pop(context);
+                        },
+                      ),
+                    );
+                  },
+                )
+              : Text(
+                  context.l10n!.noCustomPlaylists,
+                  textAlign: TextAlign.center,
+                ),
         ),
+        actions: <Widget>[
+          TextButton(
+            child: Text(context.l10n!.cancel),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
       );
     },
   );

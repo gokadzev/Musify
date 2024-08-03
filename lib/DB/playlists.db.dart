@@ -48,7 +48,7 @@ List<Map<String, dynamic>> playlistsDB = [
   {
     'ytid': 'PLoumn5BIsUDd3IH7MVw2XiW9nQKzCFy4O',
     'title': 'Best Pop Music Playlist 2022',
-    'image': 'https://i.scdn.co/image/ab67706c0000bebbc14667db36e06ca21c2746fb',
+    'image': 'https://i.scdn.co/image/ab67616d0000b273d48b3ca7ced155aa46324088',
     'list': [],
   },
   {
@@ -104,12 +104,6 @@ List<Map<String, dynamic>> playlistsDB = [
     'ytid': 'RDCLAK5uy_n0oLcyKJhNW8BmrnMySAoVuLjRZfgozG0',
     'title': 'Energizing EDM',
     'image': 'https://i.scdn.co/image/ab67706c0000bebb10d786ec8874e176f92c49d8',
-    'list': [],
-  },
-  {
-    'ytid': 'PL4BVhGbFGTR8Ix-aSJdlmMM6kpWvaDM72',
-    'title': 'Unstoppable',
-    'image': 'https://i.scdn.co/image/ab67706c0000bebb0885e7a2c6186017bbb392a0',
     'list': [],
   },
   {
@@ -293,12 +287,6 @@ List<Map<String, dynamic>> playlistsDB = [
     'ytid': 'PL-_a53M3g7u1jSV1qeQ8mrzEbsRF_dpB2',
     'title': 'Canzoni 2023 Estate Nuove',
     'image': 'https://i.scdn.co/image/ab67706c0000da8462b4a3b753cb26952188d703',
-    'list': [],
-  },
-  {
-    'ytid': 'PL-_a53M3g7u3HgcEZX3AVlAvXxH2bvLdZ',
-    'title': 'New EDM Playlist 2023',
-    'image': 'https://i.scdn.co/image/ab67706c0000da84e606cabb25ef4e6f2687b564',
     'list': [],
   },
   {

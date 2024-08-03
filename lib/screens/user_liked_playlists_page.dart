@@ -61,11 +61,7 @@ class UserLikedPlaylistsPage extends StatelessWidget {
                     itemCount: userLikedPlaylists.length,
                     padding: const EdgeInsets.all(16),
                     itemBuilder: (BuildContext context, index) {
-                      return PlaylistCube(
-                        id: userLikedPlaylists[index]['ytid'],
-                        image: userLikedPlaylists[index]['image'],
-                        title: userLikedPlaylists[index]['title'],
-                      );
+                      return PlaylistCube(userLikedPlaylists[index]);
                     },
                   ),
                 );

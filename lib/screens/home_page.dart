@@ -26,10 +26,10 @@ import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/screens/playlist_page.dart';
 import 'package:musify/services/router_service.dart';
-import 'package:musify/widgets/artist_cube.dart';
+import 'package:musify/services/settings_manager.dart';
 import 'package:musify/widgets/marque.dart';
 import 'package:musify/widgets/playlist_cube.dart';
-import 'package:musify/widgets/song_cube.dart';
+import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/spinner.dart';
 
 class HomePage extends StatefulWidget {
@@ -74,23 +74,15 @@ class _HomePageState extends State<HomePage> {
         scrollDirection: Axis.horizontal,
         child: Row(
           children: [
-            FilledButton.tonalIcon(
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => PlaylistPage(
-                    playlistData: {
-                      'title': context.l10n!.recentlyPlayed,
-                      'list': userRecentlyPlayed,
-                    },
-                  ),
-                ),
+            FilledButton.icon(
+              onPressed: () => NavigationManager.router.go(
+                '/home/userSongs/recents',
               ),
               icon: const Icon(FluentIcons.history_24_filled),
               label: Text(context.l10n!.recentlyPlayed),
             ),
             const SizedBox(width: 10),
-            FilledButton.tonalIcon(
+            FilledButton.icon(
               onPressed: () => NavigationManager.router.go(
                 '/home/playlists',
               ),
@@ -98,31 +90,30 @@ class _HomePageState extends State<HomePage> {
               label: Text(context.l10n!.playlists),
             ),
             const SizedBox(width: 10),
-            FilledButton.tonalIcon(
+            FilledButton.icon(
               onPressed: () => NavigationManager.router.go(
                 '/home/userSongs/liked',
               ),
-              icon: const Icon(FluentIcons.heart_24_filled),
+              icon: const Icon(FluentIcons.music_note_2_24_regular),
               label: Text(context.l10n!.likedSongs),
             ),
-            if (isAndroid) const SizedBox(width: 10),
-            if (isAndroid)
-              FilledButton.tonalIcon(
-                onPressed: () => NavigationManager.router.go(
-                  '/home/userSongs/offline',
-                ),
-                icon: const Icon(FluentIcons.cellular_off_24_filled),
-                label: Text(context.l10n!.offlineSongs),
-              ),
             const SizedBox(width: 10),
-            FilledButton.tonalIcon(
+            FilledButton.icon(
               onPressed: () => NavigationManager.router.go(
                 '/home/userLikedPlaylists',
               ),
               icon: const Icon(
-                FluentIcons.star_24_filled,
+                FluentIcons.task_list_ltr_24_regular,
               ),
               label: Text(context.l10n!.likedPlaylists),
+            ),
+            const SizedBox(width: 10),
+            FilledButton.icon(
+              onPressed: () => NavigationManager.router.go(
+                '/home/userSongs/offline',
+              ),
+              icon: const Icon(FluentIcons.cellular_off_24_filled),
+              label: Text(context.l10n!.offlineSongs),
             ),
           ],
         ),
@@ -184,9 +175,7 @@ class _HomePageState extends State<HomePage> {
             itemBuilder: (context, index) {
               final playlist = _suggestedPlaylists[index];
               return PlaylistCube(
-                id: playlist['ytid'],
-                image: playlist['image'],
-                title: playlist['title'],
+                playlist,
                 isAlbum: playlist['isAlbum'],
                 size: _suggestedPlaylistsSize,
               );
@@ -198,33 +187,39 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildRecommendedSongsAndArtists() {
-    return FutureBuilder(
-      future: getRecommendedSongs(),
-      builder: (context, AsyncSnapshot<dynamic> snapshot) {
-        final calculatedSize = MediaQuery.of(context).size.height * 0.25;
-        switch (snapshot.connectionState) {
-          case ConnectionState.waiting:
-            return _buildLoadingWidget();
-          case ConnectionState.done:
-            if (snapshot.hasError) {
-              logger.log(
-                'Error in _buildRecommendedSongsAndArtists',
-                snapshot.error,
-                snapshot.stackTrace,
-              );
-              return _buildErrorWidget(context);
+    return ValueListenableBuilder<bool>(
+      valueListenable: defaultRecommendations,
+      builder: (_, recommendations, __) {
+        return FutureBuilder(
+          future: getRecommendedSongs(),
+          builder: (context, AsyncSnapshot<dynamic> snapshot) {
+            final calculatedSize = MediaQuery.of(context).size.height * 0.25;
+            switch (snapshot.connectionState) {
+              case ConnectionState.waiting:
+                return _buildLoadingWidget();
+              case ConnectionState.done:
+                if (snapshot.hasError) {
+                  logger.log(
+                    'Error in _buildRecommendedSongsAndArtists',
+                    snapshot.error,
+                    snapshot.stackTrace,
+                  );
+                  return _buildErrorWidget(context);
+                }
+                if (!snapshot.hasData) {
+                  return const SizedBox.shrink();
+                }
+                return _buildRecommendedContent(
+                  context,
+                  snapshot.data,
+                  calculatedSize,
+                  showArtists: !recommendations,
+                );
+              default:
+                return const SizedBox.shrink();
             }
-            if (!snapshot.hasData) {
-              return const SizedBox.shrink();
-            }
-            return _buildRecommendedContent(
-              context,
-              snapshot.data,
-              calculatedSize,
-            );
-          default:
-            return const SizedBox.shrink();
-        }
+          },
+        );
       },
     );
   }
@@ -253,38 +248,46 @@ class _HomePageState extends State<HomePage> {
   Widget _buildRecommendedContent(
     BuildContext context,
     List<dynamic> data,
-    double calculatedSize,
-  ) {
+    double calculatedSize, {
+    bool showArtists = true,
+  }) {
     return Column(
       children: <Widget>[
-        _buildSectionHeader(context.l10n!.suggestedArtists),
-        SizedBox(
-          height: calculatedSize,
-          child: ListView.separated(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            scrollDirection: Axis.horizontal,
-            separatorBuilder: (_, __) => const SizedBox(width: 15),
-            itemCount: 5,
-            itemBuilder: (context, index) {
-              final artist = data[index]['artist'].split('~')[0];
-              return GestureDetector(
-                onTap: () async {
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PlaylistPage(
-                        cubeIcon: FluentIcons.mic_sparkle_24_regular,
-                        playlistId: artist,
-                        isArtist: true,
+        if (showArtists) _buildSectionHeader(context.l10n!.suggestedArtists),
+        if (showArtists)
+          SizedBox(
+            height: calculatedSize,
+            child: ListView.separated(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              scrollDirection: Axis.horizontal,
+              separatorBuilder: (_, __) => const SizedBox(width: 15),
+              itemCount: 5,
+              itemBuilder: (context, index) {
+                final artist = data[index]['artist'].split('~')[0];
+                return GestureDetector(
+                  onTap: () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PlaylistPage(
+                          cubeIcon: FluentIcons.mic_sparkle_24_regular,
+                          playlistId: artist,
+                          isArtist: true,
+                        ),
                       ),
-                    ),
-                  );
-                },
-                child: ArtistCube(artist),
-              );
-            },
+                    );
+                  },
+                  child: PlaylistCube(
+                    {'title': artist},
+                    borderRadius: 150,
+                    onClickOpen: false,
+                    showFavoriteButton: false,
+                    cubeIcon: FluentIcons.mic_sparkle_24_regular,
+                  ),
+                );
+              },
+            ),
           ),
-        ),
         _buildSectionHeader(
           context.l10n!.recommendedForYou,
           IconButton(
@@ -301,20 +304,13 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ),
-        SizedBox(
-          height: calculatedSize + 50,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            separatorBuilder: (_, __) => const SizedBox(width: 15),
-            itemCount: data.length,
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            itemBuilder: (context, index) {
-              return SongCube(
-                data[index],
-                size: calculatedSize / 1.1,
-              );
-            },
-          ),
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const BouncingScrollPhysics(),
+          itemCount: data.length,
+          itemBuilder: (context, index) {
+            return SongBar(data[index], true);
+          },
         ),
       ],
     );

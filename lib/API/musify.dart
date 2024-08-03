@@ -55,6 +55,7 @@ List userRecentlyPlayed =
 List userOfflineSongs =
     Hive.box('userNoBackup').get('offlineSongs', defaultValue: []);
 List suggestedPlaylists = [];
+List onlinePlaylists = [];
 Map activePlaylist = {
   'ytid': '',
   'title': 'No Playlist',
@@ -66,11 +67,13 @@ final currentLikedSongsLength = ValueNotifier<int>(userLikedSongsList.length);
 final currentLikedPlaylistsLength =
     ValueNotifier<int>(userLikedPlaylists.length);
 final currentOfflineSongsLength = ValueNotifier<int>(userOfflineSongs.length);
+final currentRecentlyPlayedLength =
+    ValueNotifier<int>(userRecentlyPlayed.length);
 
 final lyrics = ValueNotifier<String?>(null);
 String? lastFetchedLyrics;
 
-int id = 0;
+int activeSongId = 0;
 
 Future<List> fetchSongsList(String searchQuery) async {
   try {
@@ -85,29 +88,41 @@ Future<List> fetchSongsList(String searchQuery) async {
 
 Future<List> getRecommendedSongs() async {
   try {
-    final playlistSongs = [...userLikedSongsList, ...userRecentlyPlayed];
-
-    if (globalSongs.isEmpty) {
-      const playlistId = 'PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx';
-      globalSongs = await getSongsFromPlaylist(playlistId);
-    }
-
-    playlistSongs.addAll(globalSongs.take(10));
-
-    if (userCustomPlaylists.isNotEmpty) {
-      for (final userPlaylist in userCustomPlaylists) {
-        final _list = userPlaylist['list'] as List;
-        _list.shuffle();
-        playlistSongs.addAll(_list.take(5));
+    if (defaultRecommendations.value && userRecentlyPlayed.isNotEmpty) {
+      final playlistSongs = [];
+      for (var i = 0; i < 3; i++) {
+        final song = await _yt.videos.get(userRecentlyPlayed[i]['ytid']);
+        final relatedSongs = await _yt.videos.getRelatedVideos(song) ?? [];
+        playlistSongs
+            .addAll(relatedSongs.take(3).map((s) => returnSongLayout(0, s)));
       }
+      playlistSongs.shuffle();
+      return playlistSongs;
+    } else {
+      final playlistSongs = [...userLikedSongsList, ...userRecentlyPlayed];
+
+      if (globalSongs.isEmpty) {
+        const playlistId = 'PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx';
+        globalSongs = await getSongsFromPlaylist(playlistId);
+      }
+
+      playlistSongs.addAll(globalSongs.take(10));
+
+      if (userCustomPlaylists.isNotEmpty) {
+        for (final userPlaylist in userCustomPlaylists) {
+          final _list = userPlaylist['list'] as List;
+          _list.shuffle();
+          playlistSongs.addAll(_list.take(5));
+        }
+      }
+
+      playlistSongs.shuffle();
+
+      final seenYtIds = <String>{};
+      playlistSongs.removeWhere((song) => !seenYtIds.add(song['ytid']));
+
+      return playlistSongs.take(15).toList();
     }
-
-    playlistSongs.shuffle();
-
-    final seenYtIds = <String>{};
-    playlistSongs.removeWhere((song) => !seenYtIds.add(song['ytid']));
-
-    return playlistSongs.take(15).toList();
   } catch (e, stackTrace) {
     logger.log('Error in getRecommendedSongs', e, stackTrace);
     return [];
@@ -242,21 +257,14 @@ void moveLikedSong(int oldIndex, int newIndex) {
 }
 
 Future<void> updatePlaylistLikeStatus(
-  String playlistId,
-  String playlistImage,
-  String playlistTitle,
+  Map likedPlaylist,
   bool add,
 ) async {
   if (add) {
-    userLikedPlaylists.add({
-      'ytid': playlistId,
-      'title': playlistTitle,
-      'image': playlistImage,
-      'list': [],
-    });
+    userLikedPlaylists.add(likedPlaylist);
   } else {
     userLikedPlaylists
-        .removeWhere((playlist) => playlist['ytid'] == playlistId);
+        .removeWhere((playlist) => playlist['ytid'] == likedPlaylist['ytid']);
   }
   addOrUpdateData('user', 'likedPlaylists', userLikedPlaylists);
 }
@@ -285,13 +293,46 @@ Future<List> getPlaylists({
   // Filter playlists based on query and type if only query is specified
   if (query != null && playlistsNum == null) {
     final lowercaseQuery = query.toLowerCase();
-    return playlists.where((playlist) {
+    final filteredPlaylists = playlists.where((playlist) {
       final lowercaseTitle = playlist['title'].toLowerCase();
       return lowercaseTitle.contains(lowercaseQuery) &&
           ((type == 'all') ||
               (type == 'album' && playlist['isAlbum'] == true) ||
               (type == 'playlist' && playlist['isAlbum'] != true));
     }).toList();
+
+    final searchResults =
+        await _yt.search.searchContent(query, filter: TypeFilters.playlist);
+
+    final existingYtid =
+        onlinePlaylists.map((playlist) => playlist['ytid'] as String).toSet();
+
+    final newPlaylists = searchResults
+        .whereType<SearchPlaylist>()
+        .map((playlist) {
+          final playlistMap = {
+            'ytid': playlist.id.toString(),
+            'title': playlist.title,
+            'list': [],
+          };
+
+          if (!existingYtid.contains(playlistMap['ytid'])) {
+            existingYtid.add(playlistMap['ytid'].toString());
+            return playlistMap;
+          }
+          return null;
+        })
+        .whereType<Map<String, dynamic>>()
+        .toList();
+
+    onlinePlaylists.addAll(newPlaylists);
+    filteredPlaylists.addAll(
+      onlinePlaylists.where(
+        (playlist) => playlist['title'].toLowerCase().contains(lowercaseQuery),
+      ),
+    );
+
+    return filteredPlaylists;
   }
 
   // Return a subset of suggested playlists if playlistsNum is specified without a query
@@ -445,9 +486,9 @@ int findPlaylistIndexByYtId(String ytid) {
 
 Future<void> setActivePlaylist(Map info) async {
   activePlaylist = info;
-  id = 0;
+  activeSongId = 0;
 
-  await audioHandler.playSong(activePlaylist['list'][id]);
+  await audioHandler.playSong(activePlaylist['list'][activeSongId]);
 }
 
 Future<Map<String, dynamic>?> getPlaylistInfoForWidget(
@@ -465,6 +506,11 @@ Future<Map<String, dynamic>?> getPlaylistInfoForWidget(
         orElse: () => null,
       );
     }
+
+    playlist ??= onlinePlaylists.firstWhere(
+      (list) => list['ytid'] == id,
+      orElse: () => null,
+    );
 
     if (playlist != null && playlist['list'].isEmpty) {
       playlist['list'] = await getSongsFromPlaylist(playlist['ytid']);
@@ -662,10 +708,12 @@ Future<void> updateRecentlyPlayed(dynamic songId) async {
     userRecentlyPlayed.removeLast();
   }
   userRecentlyPlayed.removeWhere((song) => song['ytid'] == songId);
+  currentRecentlyPlayedLength.value = userRecentlyPlayed.length;
 
   final newSongDetails =
       await getSongDetails(userRecentlyPlayed.length, songId);
 
   userRecentlyPlayed.insert(0, newSongDetails);
+  currentRecentlyPlayedLength.value = userRecentlyPlayed.length;
   addOrUpdateData('user', 'recentlyPlayedSongs', userRecentlyPlayed);
 }

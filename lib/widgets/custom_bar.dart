@@ -20,26 +20,49 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:musify/utilities/common_variables.dart';
 
-class SettingBar extends StatelessWidget {
-  SettingBar(this.tileName, this.tileIcon, this.onTap, {super.key});
+class CustomBar extends StatelessWidget {
+  CustomBar(
+    this.tileName,
+    this.tileIcon, {
+    this.onTap,
+    this.onLongPress,
+    this.trailing,
+    this.backgroundColor,
+    this.iconColor,
+    this.textColor,
+    super.key,
+  });
 
-  final VoidCallback onTap;
   final String tileName;
   final IconData tileIcon;
+  final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
+  final Widget? trailing;
+  final Color? backgroundColor;
+  final Color? iconColor;
+  final Color? textColor;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8),
+      padding: commonBarPadding,
       child: Card(
+        color: backgroundColor,
         child: ListTile(
-          leading: Icon(tileIcon),
+          minTileHeight: 65,
+          leading: Icon(
+            tileIcon,
+            color: iconColor,
+          ),
           title: Text(
             tileName,
-            style: const TextStyle(fontWeight: FontWeight.w600),
+            style: TextStyle(fontWeight: FontWeight.w600, color: textColor),
           ),
+          trailing: trailing,
           onTap: onTap,
+          onLongPress: onLongPress,
         ),
       ),
     );

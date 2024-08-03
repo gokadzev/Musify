@@ -62,6 +62,8 @@ class NullArtworkWidget extends StatelessWidget {
                 title!,
                 textAlign: TextAlign.center,
                 style: TextStyle(color: colorScheme.onPrimary),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
               ),
             ),
         ],

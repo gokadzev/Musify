@@ -377,5 +377,26 @@ List albumsDB = [
     'image': 'https://i.scdn.co/image/ab67616d0000b2739b6ac98a52f62d5cb473da40',
     'isAlbum': true,
     'list': [],
+  },
+  {
+    'ytid': 'PLsCPTY_MPoPbEMmr8uZ7msRYcYtDz0g9g',
+    'title': 'HIT ME HARD AND SOFT - Billie Eilish',
+    'image': 'https://i.scdn.co/image/ab67616d0000b27371d62ea7ea8a5be92d3c1f62',
+    'isAlbum': true,
+    'list': [],
+  },
+  {
+    'ytid': 'OLAK5uy_m2MkFaiKAqsvU8RR3o1qAGMLkSCtIl8vU',
+    'title': '12 Notes - Alec Benjamin',
+    'image': 'https://i.scdn.co/image/ab67616d0000b27310937fa41a9718c72a59d85b',
+    'isAlbum': true,
+    'list': [],
+  },
+  {
+    'ytid': 'OLAK5uy_nH6vZsFvVyJt06PcH5O9SXqV5lT3-I5hY',
+    'title': 'Narrated For You - Alec Benjamin',
+    'image': 'https://i.scdn.co/image/ab67616d0000b273459d675aa0b6f3b211357370',
+    'isAlbum': true,
+    'list': [],
   }
 ];

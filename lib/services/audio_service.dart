@@ -35,15 +35,13 @@ import 'package:rxdart/rxdart.dart';
 
 class MusifyAudioHandler extends BaseAudioHandler {
   MusifyAudioHandler() {
-    _initializeAudioPlayer();
     _setupEventSubscriptions();
     _updatePlaybackState();
 
     _initialize();
   }
 
-  late AudioPlayer audioPlayer;
-  late AndroidLoudnessEnhancer _loudnessEnhancer;
+  AudioPlayer audioPlayer = AudioPlayer();
 
   late StreamSubscription<PlaybackEvent> _playbackEventSubscription;
   late StreamSubscription<Duration?> _durationSubscription;
@@ -72,19 +70,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
     LoopMode.one: AudioServiceRepeatMode.one,
     LoopMode.all: AudioServiceRepeatMode.all,
   };
-
-  void _initializeAudioPlayer() {
-    _loudnessEnhancer = AndroidLoudnessEnhancer();
-    _loudnessEnhancer.setEnabled(true);
-    _loudnessEnhancer.setTargetGain(0.5);
-    audioPlayer = AudioPlayer(
-      audioPipeline: AudioPipeline(
-        androidAudioEffects: [
-          _loudnessEnhancer,
-        ],
-      ),
-    );
-  }
 
   void _handlePlaybackEvent(PlaybackEvent event) {
     try {
@@ -243,10 +228,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   bool get hasNext => activePlaylist['list'].isEmpty
       ? audioPlayer.hasNext
-      : id + 1 < activePlaylist['list'].length;
+      : activeSongId + 1 < activePlaylist['list'].length;
 
-  bool get hasPrevious =>
-      activePlaylist['list'].isEmpty ? audioPlayer.hasPrevious : id > 0;
+  bool get hasPrevious => activePlaylist['list'].isEmpty
+      ? audioPlayer.hasPrevious
+      : activeSongId > 0;
 
   @override
   Future<void> play() => audioPlayer.play();
@@ -286,8 +272,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
     required int songIndex,
   }) async {
     if (playlist != null) activePlaylist = playlist;
-    id = songIndex;
-    await audioHandler.playSong(activePlaylist['list'][id]);
+    activeSongId = songIndex;
+    await audioHandler.playSong(activePlaylist['list'][activeSongId]);
   }
 
   Future<AudioSource> buildAudioSource(
@@ -321,7 +307,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
             ? Duration(seconds: segments[1]['start']!)
             : null;
 
-        return end != null && end != Duration.zero
+        return end != null && end != Duration.zero && start < end
             ? ClippingAudioSource(
                 child: audioSource,
                 start: start,
@@ -338,22 +324,22 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   Future<void> skipToSong(int newIndex) async {
     if (newIndex >= 0 && newIndex < activePlaylist['list'].length) {
-      id = shuffleNotifier.value
+      activeSongId = shuffleNotifier.value
           ? _generateRandomIndex(activePlaylist['list'].length)
           : newIndex;
 
-      await playSong(activePlaylist['list'][id]);
+      await playSong(activePlaylist['list'][activeSongId]);
     }
   }
 
   @override
   Future<void> skipToNext() async {
-    await skipToSong(id + 1);
+    await skipToSong(activeSongId + 1);
   }
 
   @override
   Future<void> skipToPrevious() async {
-    await skipToSong(id - 1);
+    await skipToSong(activeSongId - 1);
   }
 
   @override
@@ -388,16 +374,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
     );
   }
 
-  Future mute() async {
-    await audioPlayer.setVolume(audioPlayer.volume == 0 ? 1 : 0);
-    muteNotifier.value = audioPlayer.volume == 0;
-  }
-
   int _generateRandomIndex(int length) {
     final random = Random();
     var randomIndex = random.nextInt(length);
 
-    while (randomIndex == id) {
+    while (randomIndex == activeSongId) {
       randomIndex = random.nextInt(length);
     }
 

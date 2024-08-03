@@ -30,7 +30,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:musify/services/audio_service.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/logger_service.dart';
@@ -47,8 +46,6 @@ bool isAndroid = Platform.isAndroid;
 bool isFdroidBuild = false;
 bool isUpdateChecked = false;
 
-late bool isOnline;
-
 final appLanguages = <String, String>{
   'English': 'en',
   'Arabic': 'ar',
@@ -56,14 +53,13 @@ final appLanguages = <String, String>{
   'Georgian': 'ka',
   'German': 'de',
   'Greek': 'el',
-  'Hindi': 'hi',
+  'Italian': 'it',
   'Russian': 'ru',
   'Polish': 'pl',
   'Portuguese': 'pt',
   'Spanish': 'es',
   'Turkish': 'tr',
   'Ukrainian': 'uk',
-  'Vietnamese': 'vi',
 };
 
 final appSupportedLocales = appLanguages.values
@@ -127,6 +123,16 @@ class _MusifyState extends State<Musify> {
   void initState() {
     super.initState();
 
+    // Some people said that Colors.transparent causes some issues, so better to use it this way
+    final trickyFixForTransparency = Colors.black.withOpacity(0.002);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor: trickyFixForTransparency,
+        systemNavigationBarColor: trickyFixForTransparency,
+      ),
+    );
+
     try {
       LicenseRegistry.addLicense(() async* {
         final license =
@@ -139,8 +145,11 @@ class _MusifyState extends State<Musify> {
 
     if (isAndroid &&
         !isFdroidBuild &&
+
         !isUpdateChecked &&
-        isOnline &&
+
+        !offlineMode.value &&
+
         kReleaseMode) {
       Future.delayed(Duration.zero, () {
         checkAppUpdates();
@@ -207,8 +216,6 @@ Future<void> initialisation() async {
         androidShowNotificationBadge: true,
       ),
     );
-
-    isOnline = await InternetConnection().hasInternetAccess;
 
     // Init router
     NavigationManager.instance;
