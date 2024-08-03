@@ -24,11 +24,11 @@ import 'package:flutter/material.dart';
 
 class NullArtworkWidget extends StatelessWidget {
   const NullArtworkWidget({
+    super.key,
     this.icon = FluentIcons.music_note_1_24_regular,
     this.size = 220,
-    required this.iconSize,
+    this.iconSize = 64,
     this.title,
-    super.key,
   });
 
   final IconData icon;
@@ -36,37 +36,41 @@ class NullArtworkWidget extends StatelessWidget {
   final double size;
   final String? title;
 
+  static const double paddingValue = 10;
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Container(
+    return SizedBox(
       width: size,
       height: size,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: colorScheme.secondary,
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Icon(
-            icon,
-            size: iconSize,
-            color: colorScheme.onPrimary,
-          ),
-          if (title != null)
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: Text(
-                title!,
-                textAlign: TextAlign.center,
-                style: TextStyle(color: colorScheme.onPrimary),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 2,
-              ),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: colorScheme.secondary,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Icon(
+              icon,
+              size: iconSize,
+              color: colorScheme.onSecondary,
             ),
-        ],
+            if (title != null)
+              Padding(
+                padding: const EdgeInsets.all(paddingValue),
+                child: Text(
+                  title!,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: colorScheme.onSecondary),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
