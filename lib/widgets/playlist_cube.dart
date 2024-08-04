@@ -39,7 +39,9 @@ class PlaylistCube extends StatelessWidget {
     this.size = 220,
     this.borderRadius = 13,
     this.isAlbum = false,
-  });
+  }) : playlistLikeStatus = ValueNotifier<bool>(
+          isPlaylistAlreadyLiked(playlist['ytid']),
+        );
 
   final Map? playlistData;
   final Map playlist;
@@ -50,18 +52,23 @@ class PlaylistCube extends StatelessWidget {
   final double borderRadius;
   final bool? isAlbum;
 
-  final likeStatusToIconMapper = {
+  static const double paddingValue = 4;
+  static const double likeButtonOffset = 5;
+  static const double iconSize = 30;
+  static const double albumTextFontSize = 12;
+
+  final ValueNotifier<bool> playlistLikeStatus;
+
+  static const likeStatusToIconMapper = {
     true: FluentIcons.heart_24_filled,
     false: FluentIcons.heart_24_regular,
   };
 
-  late final playlistLikeStatus =
-      ValueNotifier<bool>(isPlaylistAlreadyLiked(playlist['ytid']));
-
   @override
   Widget build(BuildContext context) {
-    final _secondaryColor = Theme.of(context).colorScheme.secondary;
-    final _onPrimaryColor = Theme.of(context).colorScheme.onPrimary;
+    final colorScheme = Theme.of(context).colorScheme;
+    final secondaryColor = colorScheme.secondary;
+    final onSecondaryColor = colorScheme.onSecondary;
 
     return Stack(
       children: <Widget>[
@@ -91,14 +98,14 @@ class PlaylistCube extends StatelessWidget {
                     fit: BoxFit.cover,
                     errorWidget: (context, url, error) => NullArtworkWidget(
                       icon: cubeIcon,
-                      iconSize: 30,
+                      iconSize: iconSize,
                       size: size,
                       title: playlist['title'],
                     ),
                   )
                 : NullArtworkWidget(
                     icon: cubeIcon,
-                    iconSize: 30,
+                    iconSize: iconSize,
                     size: size,
                     title: playlist['title'],
                   ),
@@ -107,23 +114,19 @@ class PlaylistCube extends StatelessWidget {
         if (playlist['ytid'] != null && showFavoriteButton)
           ValueListenableBuilder<bool>(
             valueListenable: playlistLikeStatus,
-            builder: (_, value, __) {
+            builder: (_, isLiked, __) {
               return Positioned(
-                bottom: 5,
-                right: 5,
+                bottom: likeButtonOffset,
+                right: likeButtonOffset,
                 child: LikeButton(
-                  onPrimaryColor: _onPrimaryColor,
-                  onSecondaryColor: _secondaryColor,
-                  isLiked: value,
+                  onPrimaryColor: onSecondaryColor,
+                  onSecondaryColor: secondaryColor,
+                  isLiked: isLiked,
                   onPressed: () {
-                    playlistLikeStatus.value = !playlistLikeStatus.value;
-                    updatePlaylistLikeStatus(
-                      playlist,
-                      playlistLikeStatus.value,
-                    );
-                    currentLikedPlaylistsLength.value = value
-                        ? currentLikedPlaylistsLength.value + 1
-                        : currentLikedPlaylistsLength.value - 1;
+                    final newValue = !playlistLikeStatus.value;
+                    playlistLikeStatus.value = newValue;
+                    updatePlaylistLikeStatus(playlist, newValue);
+                    currentLikedPlaylistsLength.value += newValue ? 1 : -1;
                   },
                 ),
               );
@@ -131,19 +134,19 @@ class PlaylistCube extends StatelessWidget {
           ),
         if (isAlbum ?? false)
           Positioned(
-            top: 5,
-            right: 5,
+            top: likeButtonOffset,
+            right: likeButtonOffset,
             child: Container(
               decoration: BoxDecoration(
-                color: _secondaryColor,
-                borderRadius: BorderRadius.circular(5),
+                color: secondaryColor,
+                borderRadius: BorderRadius.circular(paddingValue),
               ),
-              padding: const EdgeInsets.all(4),
+              padding: const EdgeInsets.all(paddingValue),
               child: Text(
                 context.l10n!.album,
                 style: TextStyle(
-                  color: _onPrimaryColor,
-                  fontSize: 12,
+                  color: onSecondaryColor,
+                  fontSize: albumTextFontSize,
                 ),
               ),
             ),
