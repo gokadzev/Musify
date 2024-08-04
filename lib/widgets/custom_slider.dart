@@ -109,7 +109,7 @@ class _CustomSliderState extends State<CustomSlider>
 
   @override
   void dispose() {
-    phaseController.dispose();
+    if (widget.isSquiglySliderEnabled) phaseController.dispose();
     super.dispose();
   }
 
