@@ -704,9 +704,12 @@ Future<File?> _downloadAndSaveArtworkFile(String url, String filePath) async {
 }
 
 Future<void> updateRecentlyPlayed(dynamic songId) async {
+  if (userRecentlyPlayed.length == 1 && userRecentlyPlayed[0]['ytid'] == songId)
+    return;
   if (userRecentlyPlayed.length >= 20) {
     userRecentlyPlayed.removeLast();
   }
+
   userRecentlyPlayed.removeWhere((song) => song['ytid'] == songId);
   currentRecentlyPlayedLength.value = userRecentlyPlayed.length;
 
