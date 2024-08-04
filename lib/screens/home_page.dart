@@ -54,7 +54,7 @@ class _HomePageState extends State<HomePage> {
       ),
       body: SingleChildScrollView(
         child: Column(
-          children: <Widget>[
+          children: [
             _buildTopNavBar(),
             _buildSuggestedPlaylists(),
             _buildRecommendedSongsAndArtists(),
@@ -66,54 +66,39 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildTopNavBar() {
     return Padding(
-      padding: const EdgeInsetsDirectional.symmetric(
-        horizontal: 12,
-        vertical: 8,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
           children: [
-            FilledButton.icon(
-              onPressed: () => NavigationManager.router.go(
-                '/home/userSongs/recents',
-              ),
+            _buildNavButton(
+              onPressed: () =>
+                  NavigationManager.router.go('/home/userSongs/recents'),
               icon: const Icon(FluentIcons.history_24_filled),
-              label: Text(context.l10n!.recentlyPlayed),
+              label: context.l10n!.recentlyPlayed,
             ),
-            const SizedBox(width: 10),
-            FilledButton.icon(
-              onPressed: () => NavigationManager.router.go(
-                '/home/playlists',
-              ),
+            _buildNavButton(
+              onPressed: () => NavigationManager.router.go('/home/playlists'),
               icon: const Icon(FluentIcons.list_24_filled),
-              label: Text(context.l10n!.playlists),
+              label: context.l10n!.playlists,
             ),
-            const SizedBox(width: 10),
-            FilledButton.icon(
-              onPressed: () => NavigationManager.router.go(
-                '/home/userSongs/liked',
-              ),
+            _buildNavButton(
+              onPressed: () =>
+                  NavigationManager.router.go('/home/userSongs/liked'),
               icon: const Icon(FluentIcons.music_note_2_24_regular),
-              label: Text(context.l10n!.likedSongs),
+              label: context.l10n!.likedSongs,
             ),
-            const SizedBox(width: 10),
-            FilledButton.icon(
-              onPressed: () => NavigationManager.router.go(
-                '/home/userLikedPlaylists',
-              ),
-              icon: const Icon(
-                FluentIcons.task_list_ltr_24_regular,
-              ),
-              label: Text(context.l10n!.likedPlaylists),
+            _buildNavButton(
+              onPressed: () =>
+                  NavigationManager.router.go('/home/userLikedPlaylists'),
+              icon: const Icon(FluentIcons.task_list_ltr_24_regular),
+              label: context.l10n!.likedPlaylists,
             ),
-            const SizedBox(width: 10),
-            FilledButton.icon(
-              onPressed: () => NavigationManager.router.go(
-                '/home/userSongs/offline',
-              ),
+            _buildNavButton(
+              onPressed: () =>
+                  NavigationManager.router.go('/home/userSongs/offline'),
               icon: const Icon(FluentIcons.cellular_off_24_filled),
-              label: Text(context.l10n!.offlineSongs),
+              label: context.l10n!.offlineSongs,
             ),
           ],
         ),
@@ -121,44 +106,52 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildSuggestedPlaylists() {
-    return FutureBuilder(
-      future: getPlaylists(playlistsNum: 5),
-      builder: _buildSuggestedPlaylistsWidget,
+  Widget _buildNavButton({
+    required VoidCallback onPressed,
+    required Icon icon,
+    required String label,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 5),
+      child: FilledButton.icon(
+        onPressed: onPressed,
+        icon: icon,
+        label: Text(label),
+      ),
     );
   }
 
-  Widget _buildSuggestedPlaylistsWidget(
-    BuildContext context,
-    AsyncSnapshot<List<dynamic>> snapshot,
-  ) {
-    if (snapshot.connectionState == ConnectionState.waiting) {
-      return _buildLoadingWidget();
-    } else if (snapshot.hasError) {
-      logger.log(
-        'Error in _buildSuggestedPlaylistsWidget',
-        snapshot.error,
-        snapshot.stackTrace,
-      );
-      return _buildErrorWidget(context);
-    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-      return const SizedBox.shrink();
-    }
+  Widget _buildSuggestedPlaylists() {
+    return FutureBuilder<List<dynamic>>(
+      future: getPlaylists(playlistsNum: 5),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return _buildLoadingWidget();
+        } else if (snapshot.hasError) {
+          logger.log(
+            'Error in _buildSuggestedPlaylists',
+            snapshot.error,
+            snapshot.stackTrace,
+          );
+          return _buildErrorWidget(context);
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const SizedBox.shrink();
+        }
 
-    final _suggestedPlaylists = snapshot.data!;
-    final calculatedSize = MediaQuery.of(context).size.height * 0.25;
-    final _suggestedPlaylistsSize = calculatedSize / 1.1;
+        return _buildPlaylistSection(context, snapshot.data!);
+      },
+    );
+  }
+
+  Widget _buildPlaylistSection(BuildContext context, List<dynamic> playlists) {
+    final playlistHeight = MediaQuery.of(context).size.height * 0.25 / 1.1;
 
     return Column(
       children: [
         _buildSectionHeader(
-          context.l10n!.suggestedPlaylists,
-          IconButton(
-            onPressed: () {
-              NavigationManager.router.go(
-                '/home/playlists',
-              );
-            },
+          title: context.l10n!.suggestedPlaylists,
+          actionButton: IconButton(
+            onPressed: () => NavigationManager.router.go('/home/playlists'),
             icon: Icon(
               FluentIcons.more_horizontal_24_regular,
               color: Theme.of(context).colorScheme.primary,
@@ -166,18 +159,18 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         SizedBox(
-          height: _suggestedPlaylistsSize,
+          height: playlistHeight,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
-            separatorBuilder: (_, __) => const SizedBox(width: 15),
-            itemCount: _suggestedPlaylists.length,
             padding: const EdgeInsets.symmetric(horizontal: 15),
+            itemCount: playlists.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 15),
             itemBuilder: (context, index) {
-              final playlist = _suggestedPlaylists[index];
+              final playlist = playlists[index];
               return PlaylistCube(
                 playlist,
                 isAlbum: playlist['isAlbum'],
-                size: _suggestedPlaylistsSize,
+                size: playlistHeight,
               );
             },
           ),
@@ -190,33 +183,30 @@ class _HomePageState extends State<HomePage> {
     return ValueListenableBuilder<bool>(
       valueListenable: defaultRecommendations,
       builder: (_, recommendations, __) {
-        return FutureBuilder(
+        return FutureBuilder<dynamic>(
           future: getRecommendedSongs(),
-          builder: (context, AsyncSnapshot<dynamic> snapshot) {
-            final calculatedSize = MediaQuery.of(context).size.height * 0.25;
-            switch (snapshot.connectionState) {
-              case ConnectionState.waiting:
-                return _buildLoadingWidget();
-              case ConnectionState.done:
-                if (snapshot.hasError) {
-                  logger.log(
-                    'Error in _buildRecommendedSongsAndArtists',
-                    snapshot.error,
-                    snapshot.stackTrace,
-                  );
-                  return _buildErrorWidget(context);
-                }
-                if (!snapshot.hasData) {
-                  return const SizedBox.shrink();
-                }
-                return _buildRecommendedContent(
-                  context,
-                  snapshot.data,
-                  calculatedSize,
-                  showArtists: !recommendations,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return _buildLoadingWidget();
+            } else if (snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.hasError) {
+                logger.log(
+                  'Error in _buildRecommendedSongsAndArtists',
+                  snapshot.error,
+                  snapshot.stackTrace,
                 );
-              default:
+                return _buildErrorWidget(context);
+              } else if (!snapshot.hasData) {
                 return const SizedBox.shrink();
+              }
+
+              return _buildRecommendedContent(
+                context: context,
+                data: snapshot.data,
+                showArtists: !recommendations,
+              );
+            } else {
+              return const SizedBox.shrink();
             }
           },
         );
@@ -245,38 +235,38 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildRecommendedContent(
-    BuildContext context,
-    List<dynamic> data,
-    double calculatedSize, {
+  Widget _buildRecommendedContent({
+    required BuildContext context,
+    required List<dynamic> data,
     bool showArtists = true,
   }) {
+    final contentHeight = MediaQuery.of(context).size.height * 0.25;
+
     return Column(
-      children: <Widget>[
-        if (showArtists) _buildSectionHeader(context.l10n!.suggestedArtists),
+      children: [
+        if (showArtists)
+          _buildSectionHeader(title: context.l10n!.suggestedArtists),
         if (showArtists)
           SizedBox(
-            height: calculatedSize,
+            height: contentHeight,
             child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
               scrollDirection: Axis.horizontal,
-              separatorBuilder: (_, __) => const SizedBox(width: 15),
+              padding: const EdgeInsets.symmetric(horizontal: 15),
               itemCount: 5,
+              separatorBuilder: (_, __) => const SizedBox(width: 15),
               itemBuilder: (context, index) {
                 final artist = data[index]['artist'].split('~')[0];
                 return GestureDetector(
-                  onTap: () async {
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PlaylistPage(
-                          cubeIcon: FluentIcons.mic_sparkle_24_regular,
-                          playlistId: artist,
-                          isArtist: true,
-                        ),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PlaylistPage(
+                        cubeIcon: FluentIcons.mic_sparkle_24_regular,
+                        playlistId: artist,
+                        isArtist: true,
                       ),
-                    );
-                  },
+                    ),
+                  ),
                   child: PlaylistCube(
                     {'title': artist},
                     borderRadius: 150,
@@ -289,18 +279,18 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         _buildSectionHeader(
-          context.l10n!.recommendedForYou,
-          IconButton(
+          title: context.l10n!.recommendedForYou,
+          actionButton: IconButton(
             onPressed: () {
               setActivePlaylist({
                 'title': context.l10n!.recommendedForYou,
                 'list': data,
               });
             },
-            iconSize: 30,
             icon: Icon(
               FluentIcons.play_circle_24_filled,
               color: Theme.of(context).colorScheme.primary,
+              size: 30,
             ),
           ),
         ),
@@ -316,14 +306,14 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildSectionHeader(String title, [IconButton? actionButton]) {
+  Widget _buildSectionHeader({required String title, Widget? actionButton}) {
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           SizedBox(
-            width: MediaQuery.of(context).size.width / 1.4,
+            width: MediaQuery.of(context).size.width * 0.7,
             child: MarqueeWidget(
               child: Text(
                 title,
