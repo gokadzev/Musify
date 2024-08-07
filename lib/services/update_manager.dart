@@ -106,7 +106,7 @@ Future<void> checkAppUpdates() async {
             ],
           ),
           actions: <Widget>[
-            ButtonBar(
+            OverflowBar(
               alignment: MainAxisAlignment.center,
               children: [
                 TextButton(
