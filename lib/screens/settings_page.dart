@@ -304,6 +304,35 @@ class SettingsPage extends StatelessWidget {
                   },
                 ),
               ),
+
+            ValueListenableBuilder<bool>(
+              valueListenable: predictiveBack,
+              builder: (_, value, __) {
+                return CustomBar(
+                  context.l10n!.enablePredictiveBack,
+                  FluentIcons.position_backward_24_filled,
+                  trailing: Switch(
+                    value: predictiveBack.value,
+                    onChanged: (value) {
+                      addOrUpdateData(
+                        'settings',
+                        'predictiveBack',
+                        value,
+                      );
+                      predictiveBack.value = value;
+                      transitionsBuilder = value
+                          ? const PredictiveBackPageTransitionsBuilder()
+                          : const CupertinoPageTransitionsBuilder();
+                      Musify.updateAppState(context);
+                      showToast(
+                        context,
+                        context.l10n!.settingChangedMsg,
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
             ValueListenableBuilder<bool>(
               valueListenable: useSquigglySlider,
               builder: (_, value, __) {

@@ -35,6 +35,7 @@
   "download": "İndir",
   "downloadAppUpdate": "Uygulama Güncellemesini İndir",
   "dynamicColor": "Dinamik vurgu rengi (Android 12+)",
+  "enablePredictiveBack": "Enable predictive back animations",
   "error": "Bir hata oluştu",
   "folderRestrictions": "Android üzerindeki yeni kısıtlamalar nedeniyle, farklı dosya türleri için belirli ve uygun klasörleri seçmek önemlidir. Lütfen uygulama yedekleme için 'Belgeler' veya 'İndirilenler' klasörlerinden birini seçtiğinizden emin olun.",
   "home": "Ana Sayfa",

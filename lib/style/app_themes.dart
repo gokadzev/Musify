@@ -28,6 +28,10 @@ import 'package:musify/style/dynamic_color_temp_fix.dart';
 ThemeMode themeMode = getThemeMode(themeModeSetting);
 Brightness brightness = getBrightnessFromThemeMode(themeMode);
 
+PageTransitionsBuilder transitionsBuilder = predictiveBack.value
+    ? const PredictiveBackPageTransitionsBuilder()
+    : const CupertinoPageTransitionsBuilder();
+
 Brightness getBrightnessFromThemeMode(
   ThemeMode themeMode,
 ) {
@@ -124,9 +128,9 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
         : null,
     visualDensity: VisualDensity.adaptivePlatformDensity,
     useMaterial3: true,
-    pageTransitionsTheme: const PageTransitionsTheme(
-      builders: {
-        TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+    pageTransitionsTheme: PageTransitionsTheme(
+      builders: <TargetPlatform, PageTransitionsBuilder>{
+        TargetPlatform.android: transitionsBuilder,
       },
     ),
   );

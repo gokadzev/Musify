@@ -35,6 +35,7 @@
   "download": "Télécharger",
   "downloadAppUpdate": "Télécharger la mise à jour",
   "dynamicColor": "Couleur d'accent dynamique (Android 12+)",
+  "enablePredictiveBack": "Enable predictive back animations",
   "error": "Une erreur s'est produite",
   "folderRestrictions": "En raison des nouvelles restrictions sur Android, il est essentiel de sélectionner des dossiers spécifiques et appropriés pour différents types de fichiers. Assurez-vous de choisir soit le dossier 'Documents' soit le dossier 'Téléchargements' pour la sauvegarde de l'application.",
   "home": "Accueil",

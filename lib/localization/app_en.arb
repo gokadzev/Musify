@@ -35,6 +35,7 @@
   "download": "Download",
   "downloadAppUpdate": "Download app update",
   "dynamicColor": "Dynamic accent color (Android 12+)",
+  "enablePredictiveBack": "Enable predictive back animations",
   "error": "Something went wrong",
   "folderRestrictions": "Due to new restrictions on Android, it is essential to select specific and appropriate folders for different file types. Please ensure that you choose either the 'Documents' or 'Downloads' folder for the app backup.",
   "home": "Home",
