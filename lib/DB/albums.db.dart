@@ -398,5 +398,26 @@ List albumsDB = [
     'image': 'https://i.scdn.co/image/ab67616d0000b273459d675aa0b6f3b211357370',
     'isAlbum': true,
     'list': [],
+  },
+  {
+    'ytid': 'OLAK5uy_kClWWfWghQXro7ONQ-DfH3RZ1oxiu0kMA',
+    'title': 'Blonde - Frank Ocean',
+    'image': 'https://i.scdn.co/image/ab67616d0000b273c5649add07ed3720be9d5526',
+    'isAlbum': true,
+    'list': [],
+  },
+  {
+    'ytid': 'OLAK5uy_lhps_W4LDJGQ--XKY8-4s1-DT98XKn7PI',
+    'title': 'Cigarettes After Sex - Cigarettes After Sex',
+    'image': 'https://i.scdn.co/image/ab67616d0000b273ced182a9a86195e9ba2a5183',
+    'isAlbum': true,
+    'list': [],
+  },
+  {
+    'ytid': 'OLAK5uy_m4lOn8HJoLfTETxg2d6QouxcQd3nM4Gf0',
+    'title': 'Parachutes - Coldplay',
+    'image': 'https://i.scdn.co/image/ab67616d0000b2739164bafe9aaa168d93f4816a',
+    'isAlbum': true,
+    'list': [],
   }
 ];
