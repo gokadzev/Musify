@@ -35,7 +35,7 @@
   "download": "Загрузить",
   "downloadAppUpdate": "Скачать обновление",
   "dynamicColor": "Динамический цветовой акцент (Android 12+)",
-  "enablePredictiveBack": "Enable predictive back animations",
+  "enablePredictiveBack": "Анимация подсказки жеста \"Назад\" (Android 14+)",
   "error": "Что-то пошло не так",
   "folderRestrictions": "Ввиду ограничений Android, необходимо выбрать определённые папки для разных типов файлов. Пожалуйста убедитесь в том, что вы выбрали папку 'Документы' или 'Скачанные' для файлов восстановления.",
   "home": "Главная",
@@ -83,8 +83,8 @@
   "tools": "Инструменты",
   "understand": "Я понимаю",
   "undo": "отменить",
-  "usePureBlack": "Use pure black",
-  "useSquigglySlider": "Use squiggly slider",
+  "usePureBlack": "Ночная тема",
+  "useSquigglySlider": "Волнистый ползунок",
   "userPlaylists": "Ваши плейлисты",
   "youtubePlaylistID": "ID плейлиста Youtube"
 }
