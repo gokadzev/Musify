@@ -35,7 +35,7 @@
   "download": "Herunterladen",
   "downloadAppUpdate": "Update herunterladen",
   "dynamicColor": "Dynamische Akzentfarbe (Android 12+)",
-  "enablePredictiveBack": "Enable predictive back animations",
+  "enablePredictiveBack": "Enable predictive back animations (Android 14+)",
   "error": "Etwas ist schiefgelaufen",
   "folderRestrictions": "Aufgrund neuer Beschränkungen auf Android ist es wichtig, spezifische und geeignete Ordner für verschiedene Dateitypen auszuwählen. Stellen Sie sicher, dass Sie entweder den Ordner 'Dokumente' oder 'Downloads' für das App-Backup auswählen.",
   "home": "Startseite",

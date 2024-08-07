@@ -35,7 +35,7 @@
   "download": "Baixar",
   "downloadAppUpdate": "Baixar atualização do aplicativo",
   "dynamicColor": "A cor de destaque dinâmica (Android 12+)",
-  "enablePredictiveBack": "Enable predictive back animations",
+  "enablePredictiveBack": "Enable predictive back animations (Android 14+)",
   "error": "Algo deu errado",
   "folderRestrictions": "Devido às novas restrições no Android, é essencial selecionar pastas específicas e apropriadas para diferentes tipos de arquivo. Por favor, certifique-se de escolher a pasta 'Documentos' ou 'Downloads' para o backup do aplicativo.",
   "home": "Início",

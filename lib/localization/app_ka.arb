@@ -35,7 +35,7 @@
   "download": "ჩამოტვირთვა",
   "downloadAppUpdate": "აპლიკაციის განახლების ჩამოტვირთვა",
   "dynamicColor": "დინამიური აქცენტის ფერი (Android 12+)",
-  "enablePredictiveBack": "Enable predictive back animations",
+  "enablePredictiveBack": "Enable predictive back animations (Android 14+)",
   "error": "დაფიქსირდა შეცდომა",
   "folderRestrictions": "Android-ის ახალი შეზღუდვებიდან გამომდინარე, საჭიროა რომ აირჩიოთ კონკრეტული და შესაბამისი საქაღალდეები განსხვავებული ფაილის ტიპებისთვის. გთხოვთ დარწმუნდით რომ ირჩევთ 'Documents' ან 'Downloads' საქაღალდეს აპლიკაციის ინფორმაციის რეზერვისთვის.",
   "home": "მთავარი",

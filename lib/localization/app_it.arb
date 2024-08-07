@@ -35,7 +35,7 @@
   "download": "Scarica",
   "downloadAppUpdate": "Scarica aggiornamento app",
   "dynamicColor": "Colore dinamico (Android 12+)",
-  "enablePredictiveBack": "Enable predictive back animations",
+  "enablePredictiveBack": "Enable predictive back animations (Android 14+)",
   "error": "Qualcosa è andato storto",
   "folderRestrictions": "A causa delle nuove restrizioni su Android, è necessario selezionare cartelle specifiche e appropriate per diversi tipi di file. Assicurati di scegliere la cartella 'Documents' o 'Downloads' per il backup dell'app.",
   "home": "Home",
