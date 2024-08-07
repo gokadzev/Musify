@@ -1,0 +1,9 @@
+Enhancements
+
+- Added 3 albums
+- Added predictive back support
+- Improved accent color picker
+- Increase recently played songs history limit
+- Improved lyrics interface and performance
+- Boosted app stability and speed with quality and performance enhancements
+- For the full changelog, please visit the GitHub repository
