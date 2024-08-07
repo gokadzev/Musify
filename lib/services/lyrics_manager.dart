@@ -26,7 +26,7 @@ class LyricsManager {
   Future<String?> fetchLyrics(String artistName, String title) async {
     title = title.replaceAll('Lyrics', '').replaceAll('Karaoke', '');
     final lyricsFromParolesNet =
-        await _fetchLyricsFromParolesNet(artistName, title);
+        await _fetchLyricsFromParolesNet(artistName.split(',')[0], title);
     if (lyricsFromParolesNet != null) {
       return lyricsFromParolesNet;
     }
