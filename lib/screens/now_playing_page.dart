@@ -105,21 +105,27 @@ class NowPlayingPage extends StatelessWidget {
           color: Theme.of(context).colorScheme.secondaryContainer,
           borderRadius: BorderRadius.circular(_radius),
         ),
-        child: ValueListenableBuilder<String?>(
-          valueListenable: lyrics,
-          builder: (_, value, __) {
-            if (lastFetchedLyrics != '${metadata.artist} - ${metadata.title}') {
-              getSongLyrics(
-                metadata.artist ?? '',
-                metadata.title,
+        child: FutureBuilder<String?>(
+          future: getSongLyrics(metadata.artist ?? '', metadata.title),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Spinner();
+            } else if (snapshot.hasError) {
+              return Center(
+                child: Text(
+                  context.l10n!.lyricsNotAvailable,
+                  style: lyricsTextStyle.copyWith(
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
               );
-            }
-            if (value != null && value != 'not found') {
+            } else if (snapshot.hasData && snapshot.data != 'not found') {
               return SingleChildScrollView(
                 padding: const EdgeInsets.all(16),
                 child: Center(
                   child: Text(
-                    value,
+                    snapshot.data!,
                     style: lyricsTextStyle.copyWith(
                       color: Theme.of(context).colorScheme.secondary,
                     ),
@@ -127,8 +133,6 @@ class NowPlayingPage extends StatelessWidget {
                   ),
                 ),
               );
-            } else if (value == null) {
-              return const Spinner();
             } else {
               return Center(
                 child: Text(
