@@ -83,6 +83,10 @@ class NowPlayingPage extends StatelessWidget {
     const _radius = 17.0;
     final screen = (size.width + size.height) / 3.05;
     final imageSize = screen - _padding;
+    const lyricsTextStyle = TextStyle(
+      fontSize: 24,
+      fontWeight: FontWeight.w500,
+    );
 
     return FlipCard(
       rotateSide: RotateSide.right,
@@ -112,12 +116,12 @@ class NowPlayingPage extends StatelessWidget {
             }
             if (value != null && value != 'not found') {
               return SingleChildScrollView(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(16),
                 child: Center(
                   child: Text(
                     value,
-                    style: const TextStyle(
-                      fontSize: 16,
+                    style: lyricsTextStyle.copyWith(
+                      color: Theme.of(context).colorScheme.secondary,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -129,8 +133,8 @@ class NowPlayingPage extends StatelessWidget {
               return Center(
                 child: Text(
                   context.l10n!.lyricsNotAvailable,
-                  style: const TextStyle(
-                    fontSize: 25,
+                  style: lyricsTextStyle.copyWith(
+                    color: Theme.of(context).colorScheme.secondary,
                   ),
                   textAlign: TextAlign.center,
                 ),
