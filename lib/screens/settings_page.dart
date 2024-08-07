@@ -66,47 +66,46 @@ class SettingsPage extends StatelessWidget {
                 context,
                 GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
+                    crossAxisCount: 5,
                   ),
                   shrinkWrap: true,
                   physics: const BouncingScrollPhysics(),
                   itemCount: availableColors.length,
                   itemBuilder: (context, index) {
                     final color = availableColors[index];
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 15),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    final isSelected = color == primaryColorSetting;
+
+                    return GestureDetector(
+                      onTap: () {
+                        addOrUpdateData(
+                          'settings',
+                          'accentColor',
+                          color.value,
+                        );
+                        Musify.updateAppState(
+                          context,
+                          newAccentColor: color,
+                          useSystemColor: false,
+                        );
+                        showToast(
+                          context,
+                          context.l10n!.accentChangeMsg,
+                        );
+                        Navigator.pop(context);
+                      },
+                      child: Stack(
+                        alignment: Alignment.center,
                         children: [
-                          if (availableColors.length > index)
-                            GestureDetector(
-                              onTap: () {
-                                addOrUpdateData(
-                                  'settings',
-                                  'accentColor',
-                                  color.value,
-                                );
-                                Musify.updateAppState(
-                                  context,
-                                  newAccentColor: color,
-                                  useSystemColor: false,
-                                );
-                                showToast(
-                                  context,
-                                  context.l10n!.accentChangeMsg,
-                                );
-                                Navigator.pop(context);
-                              },
-                              child: Material(
-                                elevation: 4,
-                                shape: const CircleBorder(),
-                                child: CircleAvatar(
-                                  radius: 25,
-                                  backgroundColor: themeMode == ThemeMode.light
-                                      ? color.withAlpha(150)
-                                      : color,
-                                ),
-                              ),
+                          CircleAvatar(
+                            radius: 25,
+                            backgroundColor: themeMode == ThemeMode.light
+                                ? color.withAlpha(150)
+                                : color,
+                          ),
+                          if (isSelected)
+                            Icon(
+                              Icons.check,
+                              color: Theme.of(context).colorScheme.onPrimary,
                             ),
                         ],
                       ),
