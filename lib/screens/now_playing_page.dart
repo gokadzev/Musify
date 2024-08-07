@@ -464,20 +464,14 @@ class NowPlayingPage extends StatelessWidget {
                     BuildContext context,
                     int index,
                   ) {
-                    return Padding(
-                      padding: const EdgeInsets.only(
-                        top: 5,
-                        bottom: 5,
-                      ),
-                      child: SongBar(
-                        activePlaylist['list'][index],
-                        false,
-                        onPlay: () => {
-                          audioHandler.playPlaylistSong(songIndex: index),
-                        },
-                        backgroundColor:
-                            Theme.of(context).colorScheme.secondaryContainer,
-                      ),
+                    return SongBar(
+                      activePlaylist['list'][index],
+                      false,
+                      onPlay: () => {
+                        audioHandler.playPlaylistSong(songIndex: index),
+                      },
+                      backgroundColor:
+                          Theme.of(context).colorScheme.secondaryContainer,
                     );
                   },
                 ),
