@@ -31,10 +31,13 @@
 
     <link href="assets/favicon.ico" rel="icon" />
     <link
+      href="https://cdn.jsdelivr.net/npm/beercss@3.6.13/dist/cdn/beer.min.css"
       rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css"
     />
-    <link rel="stylesheet" type="text/css" href="assets/css/vendor.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+    />
     <link rel="stylesheet" type="text/css" href="style.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -43,232 +46,187 @@
       rel="stylesheet"
     />
   </head>
-  <body class="bg-dark">
-    <header id="header">
-      <nav class="primary-nav padding-small">
-        <div class="container">
-          <div class="row custom-flex align-items-center">
-            <div class="col-md-3">
-              <a href="index.html">
-                <img
-                  class="logo"
-                  src="https://github.com/gokadzev/Musify/raw/master/android/app/src/main/res/mipmap-xxxhdpi/launcher_icon.png"
-                  alt="Musify logo"
-                />
+  <body class="dark">
+    <nav id="navigation-bar">
+      <header>
+        <img
+          class="circle"
+          src="https://github.com/gokadzev/Musify/raw/master/android/app/src/main/res/mipmap-xxxhdpi/launcher_icon.png"
+        />
+      </header>
+      <a href="#" class="active">
+        <i>home</i>
+        <span>Home</span>
+      </a>
+      <a href="https://github.com/gokadzev/Musify">
+        <i>code</i>
+        <span>Code</span>
+      </a>
+      <a href="https://ko-fi.com/gokadzev">
+        <i>favorite</i>
+        <span>Sponsor</span>
+      </a>
+      <a href="https://github.com/gokadzev/Musify/discussions">
+        <i>forum</i>
+        <span>Forum</span>
+      </a>
+      <a href="https://github.com/gokadzev/Musify/discussions/112">
+        <i>help</i>
+        <span>F.A.Q</span>
+      </a>
+    </nav>
+    <main class="responsive center">
+      <article class="section center-align medium-padding">
+        <div>
+          <h5>Best Music Streaming and Downloading app.</h5>
+          <p>
+            Discover the ultimate music listening experience with our app. With
+            online song search, streaming and download support, custom
+            playlists, high-quality audio, lyrics support, and much more, you'll
+            never need another music app. Plus, enjoy it all ad-free and without
+            any subscriptions. Try it out today!
+          </p>
+          <div class="space"></div>
+          <nav class="center-align">
+            <a id="download">
+              <button class="small-round">
+                <i>download</i>
+                <span>Download <span id="version"></span></span>
+              </button>
+            </a>
+          </nav>
+        </div>
+      </article>
+
+      <article class="section" id="memberships">
+        <h2 class="section-title light">Memberships</h2>
+        <hr />
+        <section class="no-padding">
+          <div class="s6">
+            <div class="padding">
+              <h5>Basic</h5>
+              <p>Benefits:</p>
+              <p>
+                Thank You Mention: Get a shoutout on our website/app to show our
+                appreciation for your support.
+              </p>
+              <p>
+                Exclusive Updates: Stay in the loop with updates on new features
+                and developments, including sneak peeks at exclusive features
+                that might not make it to the free version.
+              </p>
+              <p>
+                Early Beta Access: Be the first to try out new features with
+                early access to beta versions of the app
+              </p>
+              <a href="https://ko-fi.com/gokadzev/tiers">
+                <button class="border round">Join</button>
               </a>
             </div>
-            <div class="col-md-9">
-              <div class="navbar">
-                <div class="main-menu">
-                  <ul class="menu-list list-unstyled d-flex">
-                    <li class="menu-item">
-                      <a href="#" class="item-anchor active" data-effect="Home"
-                        >Home</a
-                      >
-                    </li>
-                    <li class="menu-item">
-                      <a
-                        href="https://github.com/gokadzev/Musify"
-                        class="item-anchor"
-                        data-effect="Source"
-                        >Source Code</a
-                      >
-                    </li>
-                    <li class="menu-item">
-                      <a
-                        href="https://ko-fi.com/gokadzev"
-                        class="item-anchor"
-                        data-effect="Sponsorship"
-                        >Become Sponsor</a
-                      >
-                    </li>
-                    <li class="menu-item">
-                      <a
-                        href="https://github.com/gokadzev/Musify/discussions/112"
-                        class="item-anchor"
-                        data-effect="FAQ"
-                        >F.A.Q</a
-                      >
-                    </li>
-                    <li class="menu-item">
-                      <a href="https://github.com/gokadzev/Musify/discussions"
-                        >Discussions</a
-                      >
-                    </li>
-                  </ul>
-                </div>
-                <div class="hamburger">
-                  <span class="bar"></span>
-                  <span class="bar"></span>
-                  <span class="bar"></span>
-                </div>
-              </div>
+          </div>
+        </section>
+        <hr />
+        <section class="no-padding">
+          <div class="s6">
+            <div class="padding">
+              <h5>Premium</h5>
+              <p>Benefits:</p>
+              <p>All benefits from the Basic Supporter tier</p>
+              <p>
+                Ability to request new features or vote on upcoming features
+                (prioritized)
+              </p>
+              <a href="https://ko-fi.com/gokadzev/tiers">
+                <button class="border round">Join</button>
+              </a>
             </div>
           </div>
-        </div>
-      </nav>
-    </header>
-    <main>
-      <div class="overflow-hidden m-banner" style="padding-bottom: 4em">
-        <div class="container">
-          <div class="row d-flex flex-wrap align-items-center">
-            <div class="col-md-7">
-              <div class="banner-content content-light">
-                <h1 class="banner-title">
-                  Best Music Streaming and Downloading app.
-                </h1>
-                <p class="grey">
-                  Discover the ultimate music listening experience with our app.
-                  With online song search, streaming and download support,
-                  custom playlists, high-quality audio, lyrics support, and much
-                  more, you'll never need another music app. Plus, enjoy it all
-                  ad-free and without any subscriptions. Try it out today!
-                </p>
-                <div class="btn-wrap">
-                  <a id="download" href="" class="btn btn-linear btn-medium"
-                    >Download</a
-                  >
-                  <a href="#" class="btn btn-linear btn-medium"
-                    ><span id="version"></span
-                  ></a>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-5"></div>
-          </div>
-        </div>
-      </div>
+        </section>
+      </article>
 
-      <section id="downloads_count" class="padding-medium no-padding-top">
-        <div class="container">
-          <div class="row">
-            <div class="section-header text-center">
-              <h2 class="section-title light">Number of downloads</h2>
-              <h1
-                id="downloads_count_element"
-                class="numofdownloads light"
-              ></h1>
-            </div>
-          </div>
-        </div>
-      </section>
+      <article class="section medium-padding" id="Shoutouts">
+        <h2 class="section-title light">Shoutouts</h2>
+        <p class="light">Currently, there is no one to mention here...</p>
+        <!-- <p class="light">Special users of Musify:</p>
+        <a href="#">
+          <img class="circle extra" src="#" alt="Premium membership user" />
+        </a>
+        <br />
+        <hr />
+        <br />
+        <a href="#">
+          <img class="circle small" src="#" alt="Basic membership user" />
+        </a> -->
+      </article>
 
-      <section id="screenshots" class="padding-large no-padding-top">
-        <div class="container">
-          <div class="row">
-            <div class="section-header text-center">
-              <h2 class="section-title light">Screenshots</h2>
+      <article class="section medium-padding" id="downloads_count">
+        <h2 class="section-title light">Number of downloads</h2>
+        <h1 id="downloads_count_element" class="numofdownloads light"></h1>
+      </article>
+
+      <article class="section medium-padding" id="screenshots">
+        <h2 class="section-title light">Screenshots</h2>
+        <div class="swiper product-swiper">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide">
+              <div class="product-item">
+                <div class="image-holder">
+                  <img
+                    src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/01.jpg"
+                    alt="collection"
+                    class="rounded-shape"
+                  />
+                </div>
+              </div>
             </div>
-            <div class="swiper product-swiper">
-              <div class="swiper-wrapper">
-                <div class="swiper-slide">
-                  <div class="product-item">
-                    <div class="image-holder">
-                      <img
-                        src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/01.jpg"
-                        alt="collection"
-                        class="rounded-shape"
-                      />
-                    </div>
-                  </div>
+            <div class="swiper-slide">
+              <div class="product-item">
+                <div class="image-holder">
+                  <img
+                    src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/02.jpg"
+                    alt="collection"
+                    class="rounded-shape"
+                  />
                 </div>
-                <div class="swiper-slide">
-                  <div class="product-item">
-                    <div class="image-holder">
-                      <img
-                        src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/02.jpg"
-                        alt="collection"
-                        class="rounded-shape"
-                      />
-                    </div>
-                  </div>
+              </div>
+            </div>
+            <div class="swiper-slide">
+              <div class="product-item">
+                <div class="image-holder">
+                  <img
+                    src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/03.jpg"
+                    alt="collection"
+                    class="rounded-shape"
+                  />
                 </div>
-                <div class="swiper-slide">
-                  <div class="product-item">
-                    <div class="image-holder">
-                      <img
-                        src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/03.jpg"
-                        alt="collection"
-                        class="rounded-shape"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div class="swiper-slide">
-                  <div class="product-item">
-                    <div class="image-holder">
-                      <img
-                        src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/04.jpg"
-                        alt="collection"
-                        class="rounded-shape"
-                      />
-                    </div>
-                  </div>
+              </div>
+            </div>
+            <div class="swiper-slide">
+              <div class="product-item">
+                <div class="image-holder">
+                  <img
+                    src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/04.jpg"
+                    alt="collection"
+                    class="rounded-shape"
+                  />
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </section>
+      </article>
       <hr />
     </main>
-    <footer id="footer" class="padding-medium">
-      <div class="container">
-        <div class="row d-flex flex-wrap justify-content-between">
-          <div class="col-lg-4 col-md-6">
-            <div class="footer-item item-001">
-              <div class="social-media">
-                <ul class="d-flex list-unstyled">
-                  <li class="bg-blue-trans border-rounded-circle">
-                    <a href="https://github.com/gokadzev/Musify">
-                      <img
-                        src="assets/svg/github.svg"
-                        alt="GitHub Logo"
-                        class="icon"
-                        style="filter: invert(1)"
-                      />
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-2 col-md-6">
-            <div class="footer-item item-002 content-light">
-              <h4>Info</h4>
-              <ul class="footer-menu list-unstyled">
-                <li>
-                  <a href="https://github.com/gokadzev/Musify">Source Code</a>
-                </li>
-                <li>
-                  <a href="https://ko-fi.com/gokadzev">Become Sponsor</a>
-                </li>
-                <li>
-                  <a href="https://github.com/gokadzev/Musify/discussions/112"
-                    >F.A.Q</a
-                  >
-                </li>
-                <li>
-                  <a href="https://github.com/gokadzev/Musify/discussions"
-                    >Discussions</a
-                  >
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    </footer>
   </body>
-  <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script
+    type="module"
+    src="https://cdn.jsdelivr.net/npm/beercss@3.6.13/dist/cdn/beer.min.js"
+  ></script>
+  <script
+    type="module"
+    src="https://cdn.jsdelivr.net/npm/material-dynamic-colors@1.1.2/dist/cdn/material-dynamic-colors.min.js"
+  ></script>
+
   <script type="text/javascript" src="assets/js/script.js"></script>
-  <script src="https://storage.ko-fi.com/cdn/scripts/overlay-widget.js"></script>
-  <script>
-    kofiWidgetOverlay.draw('gokadzev', {
-      type: 'floating-chat',
-      'floating-chat.donateButton.text': 'Sponsor',
-      'floating-chat.donateButton.background-color': '#135abb',
-      'floating-chat.donateButton.text-color': '#fff',
-    })
-  </script>
 </html>

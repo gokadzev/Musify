@@ -28,46 +28,6 @@ function formatNumberAbbreviation(num) {
   return num
 }
 
-function initializeTabs() {
-  const tabs = document.querySelectorAll('[data-tab-target]')
-  const tabContents = document.querySelectorAll('[data-tab-content]')
-
-  tabs.forEach((tab) => {
-    tab.addEventListener('click', () => {
-      const target = document.querySelector(tab.dataset.tabTarget)
-      tabContents.forEach((tabContent) => {
-        tabContent.classList.remove('active')
-      })
-      tabs.forEach((tab) => {
-        tab.classList.remove('active')
-      })
-      tab.classList.add('active')
-      target.classList.add('active')
-    })
-  })
-}
-
-function initializeHamburgerMenu() {
-  const hamburger = document.querySelector('.hamburger')
-  const navMenu = document.querySelector('.menu-list')
-
-  hamburger.addEventListener('click', mobileMenu)
-
-  function mobileMenu() {
-    hamburger.classList.toggle('active')
-    navMenu.classList.toggle('responsive')
-  }
-
-  const navLink = document.querySelectorAll('.item-anchor')
-
-  navLink.forEach((n) => n.addEventListener('click', closeMenu))
-
-  function closeMenu() {
-    hamburger.classList.remove('active')
-    navMenu.classList.remove('responsive')
-  }
-}
-
 const swiper = new Swiper('.product-swiper', {
   slidesPerView: 3,
   spaceBetween: 50,
@@ -93,8 +53,8 @@ const swiper = new Swiper('.product-swiper', {
 })
 
 window.onload = function () {
-  initializeTabs()
-  initializeHamburgerMenu()
+  assignNavClass()
+  window.addEventListener('resize', assignNavClass)
 
   makeHttpRequest(checkApiUrl, (res) => {
     const response = JSON.parse(res)
@@ -116,4 +76,15 @@ window.onload = function () {
       downloadsCount.textContent = formattedDownloads
     }
   )
+}
+
+function assignNavClass() {
+  const nav = document.getElementById('navigation-bar')
+  if (window.innerWidth > 760) {
+    nav.classList.remove('bottom')
+    nav.classList.add('left')
+  } else {
+    nav.classList.remove('left')
+    nav.classList.add('bottom')
+  }
 }
