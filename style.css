@@ -17,3 +17,9 @@ body {
 .section-title {
   margin: 20px auto;
 }
+
+@media only screen and (max-width: 760px) {
+  .musify-nav-logo {
+    display: none;
+  }
+}
