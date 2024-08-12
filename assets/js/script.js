@@ -3,6 +3,7 @@ const checkApiUrl =
 const versionElement = document.getElementById('version')
 const downloadElement = document.getElementById('download')
 const downloadsCount = document.getElementById('downloads_count_element')
+const changelogElement = document.getElementById('changelog_element')
 
 function makeHttpRequest(url, callback) {
   const xmlHttp = new XMLHttpRequest()
@@ -62,8 +63,9 @@ window.onload = function () {
       'browser_download_url'
     ]
     const appVersion = response['tag_name']
-    versionElement.textContent += 'Current Version: ' + appVersion
+    versionElement.textContent += 'V' + appVersion
     downloadElement.setAttribute('href', appUrl)
+    parseChangelog(response['body'])
   })
 
   makeHttpRequest(
@@ -76,6 +78,23 @@ window.onload = function () {
       downloadsCount.textContent = formattedDownloads
     }
   )
+}
+
+function parseChangelog(text) {
+  const lines = text.split('\r\n').filter((line) => line.trim() !== '')
+
+  lines.forEach((line) => {
+    const match = line.match(/^\*\*(\w+):\*\*\s*(.+)$/)
+
+    if (match) {
+      const [, label, description] = match
+
+      const listItem = document.createElement('p')
+      listItem.innerHTML = `<strong>${label}:</strong> ${description}`
+
+      changelogElement.appendChild(listItem)
+    }
+  })
 }
 
 function assignNavClass() {
