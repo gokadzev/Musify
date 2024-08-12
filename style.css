@@ -1,3 +1,42 @@
+body.dark {
+  --primary: #7fd0ff;
+  --on-primary: #00344a;
+  --primary-container: #004c6a;
+  --on-primary-container: #c5e7ff;
+  --secondary: #b6c9d8;
+  --on-secondary: #20333e;
+  --secondary-container: #374955;
+  --on-secondary-container: #d2e5f4;
+  --tertiary: #cbc1e9;
+  --on-tertiary: #332c4c;
+  --tertiary-container: #494263;
+  --on-tertiary-container: #e7deff;
+  --error: #ffb4ab;
+  --on-error: #690005;
+  --error-container: #93000a;
+  --on-error-container: #ffb4ab;
+  --background: #191c1e;
+  --on-background: #e1e2e5;
+  --surface: #111416;
+  --on-surface: #e1e2e5;
+  --surface-variant: #41484d;
+  --on-surface-variant: #c1c7ce;
+  --outline: #8b9297;
+  --outline-variant: #41484d;
+  --shadow: #000000;
+  --scrim: #000000;
+  --inverse-surface: #e1e2e5;
+  --inverse-on-surface: #2e3133;
+  --inverse-primary: #00658c;
+  --surface-dim: #111416;
+  --surface-bright: #37393c;
+  --surface-container-lowest: #0c0e10;
+  --surface-container-low: #191c1e;
+  --surface-container: #1d2022;
+  --surface-container-high: #282a2c;
+  --surface-container-highest: #333537;
+}
+
 body {
   font-family: 'Montserrat', sans-serif;
   text-align: center;
