@@ -11,6 +11,13 @@ Unlock the full potential of music: Stream effortlessly with one app!
 [![GitHub release](https://img.shields.io/github/v/release/gokadzev/Musify?color=D3BEAB)](https://github.com/gokadzev/Musify/releases)
 [![License](https://img.shields.io/github/license/gokadzev/Musify?color=D3BEAB)](LICENSE)
 
+---
+
+<a href="https://ko-fi.com/gokadzev" target="_blank" title="ko-fi">
+  <img src="https://github.com/user-attachments/assets/1c204507-d124-4b34-878b-96c39c9bb3f8"  alt="ko-fi badge" style="width: 150px;">
+</a>
+
+
 
 ---
 
@@ -151,11 +158,3 @@ non-commercial purposes and in accordance with all applicable laws and regulatio
 ```
 
 ---
-
-## Do you like the project? Sponsor it!
-
-  <a href="https://ko-fi.com/gokadzev">
-    <img width="30%" src="https://storage.ko-fi.com/cdn/brandasset/logo_white_stroke.png" alt="ko-fi">
-  </a>
-
-</div>
