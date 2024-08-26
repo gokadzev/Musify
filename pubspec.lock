@@ -213,10 +213,10 @@ packages:
     dependency: "direct main"
     description:
       name: fluentui_system_icons
-      sha256: "7eb9efc7e6d572c37138b149c74332e8289a805933cd261acb15af089aba1ae5"
+      sha256: c8078acc222cfcfa2a1c8e881346961f2d846c8d4639f69ffda52865e9cb2913
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.251"
+    version: "1.1.254"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -297,10 +297,10 @@ packages:
     dependency: "direct main"
     description:
       name: go_router
-      sha256: ddc16d34b0d74cb313986918c0f0885a7ba2fc24d8fb8419de75f0015144ccfe
+      sha256: "2ddb88e9ad56ae15ee144ed10e33886777eb5ca2509a914850a5faa7b52ff459"
       url: "https://pub.dev"
     source: hosted
-    version: "14.2.3"
+    version: "14.2.7"
   hive:
     dependency: "direct main"
     description:
