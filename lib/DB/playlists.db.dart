@@ -213,7 +213,7 @@ List<Map<String, dynamic>> playlistsDB = [
   {
     'ytid': 'PL-_a53M3g7u2UQT5jfGpmhkMswdNJe-Gh',
     'title': 'New NCS Song 2023',
-    'image': 'https://i.scdn.co/image/ab6775700000ee857b70ef84af66d93faf460fb1',
+    'image': 'https://i.scdn.co/image/ab67616d0000b27324fc209a4bc5cf933d334ade',
     'list': [],
   },
   {
@@ -257,12 +257,6 @@ List<Map<String, dynamic>> playlistsDB = [
     'ytid': 'PL-_a53M3g7u31e2_YgqqgB7NJlj5tPNr1',
     'title': 'Fenomen Hit 2023',
     'image': 'https://i.scdn.co/image/ab67706c0000da8468c39a197c5fbdff54460834',
-    'list': [],
-  },
-  {
-    'ytid': 'PL-_a53M3g7u2D0E08dF-JKH70g46Nj7od',
-    'title': 'Instagram Music 2023',
-    'image': 'https://i.scdn.co/image/ab67706c0000da84cdf7cfa2e1fc93114a2afab9',
     'list': [],
   },
   {
