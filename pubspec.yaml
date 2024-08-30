@@ -14,10 +14,10 @@ environment:
 dependencies:
   audio_service: ^0.18.15
   audio_session: ^0.1.21
-  cached_network_image: ^3.4.0
+  cached_network_image: ^3.4.1
   dynamic_color: ^1.7.0
-  file_picker: ^8.0.7
-  fluentui_system_icons: ^1.1.254
+  file_picker: ^8.1.2
+  fluentui_system_icons: ^1.1.255
   flutter:
     sdk: flutter
   flutter_flip_card: ^0.0.6
@@ -29,7 +29,7 @@ dependencies:
   html: ^0.15.4
   http: ^1.2.2
   intl: ^0.19.0
-  just_audio: ^0.9.39
+  just_audio: ^0.9.40
   path_provider: ^2.1.4
   rxdart: ^0.28.0
   url_launcher: ^6.3.0
