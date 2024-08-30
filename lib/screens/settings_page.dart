@@ -199,11 +199,15 @@ class SettingsPage extends StatelessWidget {
                                 languageCode,
                               ),
                             );
-                            showToast(
-                              context,
-                              context.l10n!.languageMsg,
+                            WidgetsBinding.instance.addPostFrameCallback(
+                              (_) {
+                                showToast(
+                                  context,
+                                  context.l10n!.languageMsg,
+                                );
+                                Navigator.pop(context);
+                              },
                             );
-                            Navigator.pop(context);
                           },
                         ),
                       );
