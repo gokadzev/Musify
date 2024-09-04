@@ -245,7 +245,7 @@ void showAddToPlaylistDialog(BuildContext context, dynamic song) {
         content: Container(
           width: double.maxFinite,
           constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).size.height * 0.6,
+            maxHeight: MediaQuery.sizeOf(context).height * 0.6,
           ),
           child: userCustomPlaylists.isNotEmpty
               ? ListView.builder(

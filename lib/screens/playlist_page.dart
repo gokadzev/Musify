@@ -163,7 +163,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
               ],
             )
           : SizedBox(
-              height: MediaQuery.of(context).size.height - 100,
+              height: MediaQuery.sizeOf(context).height - 100,
               child: const Spinner(),
             ),
     );
@@ -172,7 +172,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
   Widget _buildPlaylistImage() {
     return PlaylistCube(
       _playlist,
-      size: MediaQuery.of(context).size.width / 2.5,
+      size: MediaQuery.sizeOf(context).width / 2.5,
       onClickOpen: false,
       cubeIcon: widget.cubeIcon,
       showFavoriteButton: false,

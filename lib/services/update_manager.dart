@@ -97,7 +97,7 @@ Future<void> checkAppUpdates() async {
               const SizedBox(height: 10),
               ConstrainedBox(
                 constraints: BoxConstraints(
-                  maxHeight: MediaQuery.of(context).size.height / 2.14,
+                  maxHeight: MediaQuery.sizeOf(context).height / 2.14,
                 ),
                 child: SingleChildScrollView(
                   child: AutoFormatText(text: releasesResponse['body']),

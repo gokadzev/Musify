@@ -144,7 +144,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildPlaylistSection(BuildContext context, List<dynamic> playlists) {
-    final playlistHeight = MediaQuery.of(context).size.height * 0.25 / 1.1;
+    final playlistHeight = MediaQuery.sizeOf(context).height * 0.25 / 1.1;
 
     return Column(
       children: [
@@ -240,7 +240,7 @@ class _HomePageState extends State<HomePage> {
     required List<dynamic> data,
     bool showArtists = true,
   }) {
-    final contentHeight = MediaQuery.of(context).size.height * 0.25;
+    final contentHeight = MediaQuery.sizeOf(context).height * 0.25;
 
     return Column(
       children: [
@@ -313,7 +313,7 @@ class _HomePageState extends State<HomePage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           SizedBox(
-            width: MediaQuery.of(context).size.width * 0.7,
+            width: MediaQuery.sizeOf(context).width * 0.7,
             child: MarqueeWidget(
               child: Text(
                 title,

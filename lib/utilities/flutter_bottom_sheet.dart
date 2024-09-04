@@ -23,7 +23,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 
 void showCustomBottomSheet(BuildContext context, Widget content) {
-  final size = MediaQuery.of(context).size;
+  final size = MediaQuery.sizeOf(context);
   showBottomSheet(
     enableDrag: true,
     context: context,

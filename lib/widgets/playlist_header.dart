@@ -43,7 +43,7 @@ class PlaylistHeader extends StatelessWidget {
         image,
         const SizedBox(width: 10),
         SizedBox(
-          width: MediaQuery.of(context).size.width / 2.3,
+          width: MediaQuery.sizeOf(context).width / 2.3,
           child: Column(
             children: [
               Text(

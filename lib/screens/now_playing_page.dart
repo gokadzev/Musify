@@ -45,7 +45,7 @@ class NowPlayingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+    final size = MediaQuery.sizeOf(context);
 
     return Scaffold(
       appBar: AppBar(backgroundColor: Colors.transparent),

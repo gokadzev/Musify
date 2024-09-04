@@ -143,7 +143,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
       {'title': title},
       onClickOpen: false,
       showFavoriteButton: false,
-      size: MediaQuery.of(context).size.width / 2.5,
+      size: MediaQuery.sizeOf(context).width / 2.5,
       cubeIcon: icon,
     );
   }
