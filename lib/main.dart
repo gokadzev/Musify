@@ -25,6 +25,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -146,7 +147,7 @@ class _MusifyState extends State<Musify> {
         !isUpdateChecked &&
         !offlineMode.value &&
         kReleaseMode) {
-      Future.delayed(Duration.zero, () {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
         checkAppUpdates();
         isUpdateChecked = true;
       });
