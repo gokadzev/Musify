@@ -83,9 +83,10 @@ Future<void> checkAppUpdates() async {
               Text(
                 context.l10n!.appUpdateIsAvailable,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 16,
+                style: TextStyle(
+                  fontSize: 24,
                   fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onPrimaryContainer,
                 ),
               ),
               const SizedBox(height: 10),
@@ -105,46 +106,24 @@ Future<void> checkAppUpdates() async {
               ),
             ],
           ),
+          actionsAlignment: MainAxisAlignment.center,
           actions: <Widget>[
-            OverflowBar(
-              alignment: MainAxisAlignment.center,
-              children: [
-                TextButton(
-                  style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 12,
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context);
+            OutlinedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text(context.l10n!.cancel.toUpperCase()),
+            ),
+            FilledButton(
+              onPressed: () {
+                getDownloadUrl(map).then(
+                  (url) => {
+                    launchURL(Uri.parse(url)),
+                    Navigator.pop(context),
                   },
-                  child: Text(
-                    context.l10n!.cancel.toUpperCase(),
-                  ),
-                ),
-                TextButton(
-                  style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 12,
-                    ),
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    foregroundColor: Theme.of(context).colorScheme.surface,
-                  ),
-                  onPressed: () {
-                    getDownloadUrl(map).then(
-                      (url) => {
-                        launchURL(Uri.parse(url)),
-                        Navigator.pop(context),
-                      },
-                    );
-                  },
-                  child: Text(
-                    context.l10n!.download.toUpperCase(),
-                  ),
-                ),
-              ],
+                );
+              },
+              child: Text(context.l10n!.download.toUpperCase()),
             ),
           ],
         );

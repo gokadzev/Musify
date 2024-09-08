@@ -31,6 +31,7 @@ class AutoFormatText extends StatelessWidget {
 
     final exp = RegExp(r'\*\*(.*?)\*\*');
     final matches = exp.allMatches(text);
+    final textStyle = Theme.of(context).textTheme.bodyMedium;
 
     var currentTextIndex = 0;
 
@@ -38,14 +39,14 @@ class AutoFormatText extends StatelessWidget {
       spans.add(
         TextSpan(
           text: text.substring(currentTextIndex, match.start),
-          style: const TextStyle(fontSize: 16),
+          style: textStyle,
         ),
       );
 
       spans.add(
         TextSpan(
           text: match.group(1),
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          style: textStyle?.copyWith(fontWeight: FontWeight.bold),
         ),
       );
 
@@ -53,10 +54,7 @@ class AutoFormatText extends StatelessWidget {
     }
 
     spans.add(
-      TextSpan(
-        text: text.substring(currentTextIndex),
-        style: const TextStyle(fontSize: 16),
-      ),
+      TextSpan(text: text.substring(currentTextIndex), style: textStyle),
     );
 
     return RichText(
