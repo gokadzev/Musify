@@ -25,6 +25,12 @@ import 'package:http/http.dart' as http;
 class LyricsManager {
   Future<String?> fetchLyrics(String artistName, String title) async {
     title = title.replaceAll('Lyrics', '').replaceAll('Karaoke', '');
+
+    final lyricsFromGoogle = await _fetchLyricsFromGoogle(artistName, title);
+    if (lyricsFromGoogle != null) {
+      return lyricsFromGoogle;
+    }
+
     final lyricsFromParolesNet =
         await _fetchLyricsFromParolesNet(artistName.split(',')[0], title);
     if (lyricsFromParolesNet != null) {
@@ -34,6 +40,39 @@ class LyricsManager {
     final lyricsFromLyricsMania1 =
         await _fetchLyricsFromLyricsMania1(artistName, title);
     return lyricsFromLyricsMania1;
+  }
+
+  Future<String?> _fetchLyricsFromGoogle(
+    String artistName,
+    String title,
+  ) async {
+    const url =
+        'https://www.google.com/search?client=safari&rls=en&ie=UTF-8&oe=UTF-8&q=';
+    const delimiter1 =
+        '</div></div></div></div><div class="hwc"><div class="BNeawe tAd8D AP7Wnd"><div><div class="BNeawe tAd8D AP7Wnd">';
+    const delimiter2 =
+        '</div></div></div></div></div><div><span class="hwc"><div class="BNeawe uEec3 AP7Wnd">';
+
+    try {
+      final res = await http
+          .get(Uri.parse(Uri.encodeFull('$url$artistName - $title lyrics')))
+          .timeout(const Duration(seconds: 10));
+      final body = res.body;
+      final lyricsRes = body.substring(
+        body.indexOf(delimiter1) + delimiter1.length,
+        body.lastIndexOf(delimiter2),
+      );
+      if (lyricsRes.contains('<meta charset="UTF-8">')) return null;
+      if (lyricsRes.contains('please enable javascript on your web browser'))
+        return null;
+      if (lyricsRes.contains('Error 500 (Server Error)')) return null;
+      if (lyricsRes.contains(
+        'systems have detected unusual traffic from your computer network',
+      )) return null;
+      return lyricsRes;
+    } catch (_) {
+      return null;
+    }
   }
 
   Future<String?> _fetchLyricsFromParolesNet(
