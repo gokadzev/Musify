@@ -2,7 +2,6 @@ const checkApiUrl =
   'https://api.github.com/repos/gokadzev/Musify/releases/latest'
 const versionElement = document.getElementById('version')
 const downloadElement = document.getElementById('download')
-const downloadsCount = document.getElementById('downloads_count_element')
 const changelogElement = document.getElementById('changelog_element')
 
 function makeHttpRequest(url, callback) {
@@ -14,19 +13,6 @@ function makeHttpRequest(url, callback) {
   }
   xmlHttp.open('GET', url, true)
   xmlHttp.send(null)
-}
-
-function formatNumberAbbreviation(num) {
-  if (num >= 1000000000) {
-    return (num / 1000000000).toFixed(1).replace(/\.0$/, '') + 'G'
-  }
-  if (num >= 1000000) {
-    return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M'
-  }
-  if (num >= 1000) {
-    return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K'
-  }
-  return num
 }
 
 const swiper = new Swiper('.product-swiper', {
@@ -67,17 +53,6 @@ window.onload = function () {
     downloadElement.setAttribute('href', appUrl)
     parseChangelog(response['body'])
   })
-
-  makeHttpRequest(
-    'https://raw.githubusercontent.com/gokadzev/Musify/update/downloads_count.json',
-    (res) => {
-      const response = JSON.parse(res)
-      const formattedDownloads = formatNumberAbbreviation(
-        response['downloads_count']
-      )
-      downloadsCount.textContent = formattedDownloads
-    }
-  )
 }
 
 function parseChangelog(text) {

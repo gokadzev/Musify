@@ -61,6 +61,15 @@ body {
   flex-wrap: wrap;
 }
 
+#statistics img {
+  border-radius: 0px;
+  zoom: 1.3;
+}
+
+#changelog_element {
+  font-size: 20px;
+}
+
 @media only screen and (max-width: 760px) {
   .musify-nav-logo {
     display: none;
