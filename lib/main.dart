@@ -54,6 +54,7 @@ final appLanguages = <String, String>{
   'Greek': 'el',
   'Italian': 'it',
   'Japanese': 'ja',
+  'Korean': 'ko',
   'Russian': 'ru',
   'Polish': 'pl',
   'Portuguese': 'pt',
