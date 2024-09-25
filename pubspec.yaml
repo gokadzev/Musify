@@ -23,7 +23,7 @@ dependencies:
   flutter_flip_card: ^0.0.6
   flutter_localizations:
     sdk: flutter
-  go_router: ^14.2.7
+  go_router: ^14.2.8
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   html: ^0.15.4
@@ -33,10 +33,10 @@ dependencies:
   path_provider: ^2.1.4
   rxdart: ^0.28.0
   url_launcher: ^6.3.0
-  youtube_explode_dart: ^2.2.1
+  youtube_explode_dart: ^2.2.2
 
 dev_dependencies:
-  flutter_launcher_icons: ^0.13.1
+  flutter_launcher_icons: ^0.14.1
   flutter_native_splash: ^2.4.1
   flutter_test:
     sdk: flutter
