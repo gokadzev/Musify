@@ -58,21 +58,19 @@ flutter:
         - asset: fonts/paytone/PaytoneOne-Regular.ttf
 
 flutter_native_splash:
-  color: '#ffffff'
-  image: assets/images/splash.png
+  color: '#f9fafd'
+  image: assets/images/ic_splash.png
   color_dark: '#151515'
-  image_dark: assets/images/splash.png
+  image_dark: assets/images/ic_splash.png
 
   android_12:
-    image: assets/images/splash.png
-    icon_background_color: '#ffffff'
-    image_dark: assets/images/splash.png
-    icon_background_color_dark: '#151515'
+    image: assets/images/ic_splash.png
+    image_dark: assets/images/ic_splash.png
 
 flutter_launcher_icons:
   android: true
   adaptive_icon_background: '#191919'
   adaptive_icon_foreground: 'assets/images/ic_launcher_foreground.png'
   adaptive_icon_round: 'assets/images/ic_launcher_round.png'
-  adaptive_icon_monochrome: 'assets/images/ic_launcher.png'
+  adaptive_icon_monochrome: 'assets/images/ic_launcher_foreground.png'
   image_path: 'assets/images/ic_launcher.png'
