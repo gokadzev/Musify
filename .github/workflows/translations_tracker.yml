@@ -1,0 +1,73 @@
+name: Notify Translators on Translation Changes
+
+on:
+  push:
+    paths:
+      - 'lib/localization/**'
+
+jobs:
+  notify-translators:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '14'
+
+    - name: Get the list of changed files
+      id: changes
+      run: |
+        # Check if the parent commit exists
+        if git rev-parse ${{ github.sha }}^ >/dev/null 2>&1; then
+          git diff --name-only ${{ github.sha }}^ ${{ github.sha }} | grep 'lib/localization/' > /tmp/changed_files.txt
+        else
+          # If no parent commit is available, just list the changes in the current commit
+          git diff --name-only ${{ github.sha }} | grep 'lib/localization/' > /tmp/changed_files.txt
+        fi
+
+    - name: Load Translator Info
+      id: load_translators
+      run: |
+        # Load the translator mapping from the JSON file into a temporary file
+        cp translators.json /tmp/translators.json
+
+    - name: Notify Translators
+      run: |
+        # Initialize a message variable
+        MESSAGE="The following translations have been updated:\n"
+        TRANSLATORS_NOTIFIED=""
+
+        # Read the changed files from the temporary file
+        CHANGED_FILES=$(cat /tmp/changed_files.txt)
+
+        # Loop through each changed file
+        while IFS= read -r FILE; do
+          # Get just the filename (e.g., app_es.arb from lib/localization/app_es.arb)
+          FILE_BASENAME=$(basename "$FILE")
+
+          # Use jq to find the translator for the changed file
+          TRANSLATOR=$(cat /tmp/translators.json | jq -r ".\"$FILE_BASENAME\"")
+
+          # If a translator exists for this file, accumulate the message
+          if [ "$TRANSLATOR" != "null" ]; then
+            TRANSLATORS_NOTIFIED="${TRANSLATORS_NOTIFIED} @${TRANSLATOR},"
+            MESSAGE="${MESSAGE} - '$FILE_BASENAME'\n"
+          fi
+        done < /tmp/changed_files.txt
+
+        # Check if any translators were notified
+        if [ -n "$TRANSLATORS_NOTIFIED" ]; then
+          # Remove the trailing comma
+          TRANSLATORS_NOTIFIED="${TRANSLATORS_NOTIFIED%,}"
+
+          # Post a single comment on the commit
+          curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -d "{\"body\": \"${TRANSLATORS_NOTIFIED}\n${MESSAGE}\"}" \
+            https://api.github.com/repos/${{ github.repository }}/commits/${{ github.sha }}/comments
+        fi
