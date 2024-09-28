@@ -23,12 +23,24 @@ jobs:
     - name: Get the list of changed files
       id: changes
       run: |
-        # Check if the parent commit exists
-        if git rev-parse ${{ github.sha }}^ >/dev/null 2>&1; then
+        # Get the number of parents for the commit
+        PARENT_COUNT=$(git rev-list --count ${{ github.sha }}^@ 2>/dev/null || echo 0)
+
+        if [ "$PARENT_COUNT" -eq 1 ]; then
+          # Single parent, perform a normal diff against the parent
           git diff --name-only ${{ github.sha }}^ ${{ github.sha }} | grep 'lib/localization/' > /tmp/changed_files.txt
+        elif [ "$PARENT_COUNT" -gt 1 ]; then
+          # Merge commit, diff against all parents
+          git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | grep 'lib/localization/' > /tmp/changed_files.txt
         else
-          # If no parent commit is available, just list the changes in the current commit
+          # No parent (initial commit or cherry-pick without parent in current branch), list changes in the current commit
           git diff --name-only ${{ github.sha }} | grep 'lib/localization/' > /tmp/changed_files.txt
+        fi
+
+        # Check if there are any changed files
+        if [ ! -s /tmp/changed_files.txt ]; then
+          echo "No translation files were changed."
+          exit 0
         fi
 
     - name: Load Translator Info
@@ -52,10 +64,10 @@ jobs:
           FILE_BASENAME=$(basename "$FILE")
 
           # Use jq to find the translator for the changed file
-          TRANSLATOR=$(cat /tmp/translators.json | jq -r ".\"$FILE_BASENAME\"")
+          TRANSLATOR=$(jq -r ".\"$FILE_BASENAME\" // \"No translator assigned\"" /tmp/translators.json)
 
           # If a translator exists for this file, accumulate the message
-          if [ "$TRANSLATOR" != "null" ]; then
+          if [ "$TRANSLATOR" != "No translator assigned" ]; then
             TRANSLATORS_NOTIFIED="${TRANSLATORS_NOTIFIED} @${TRANSLATOR},"
             MESSAGE="${MESSAGE} - '$FILE_BASENAME'\n"
           fi
@@ -67,7 +79,16 @@ jobs:
           TRANSLATORS_NOTIFIED="${TRANSLATORS_NOTIFIED%,}"
 
           # Post a single comment on the commit
-          curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          response=$(curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -d "{\"body\": \"${TRANSLATORS_NOTIFIED}\n${MESSAGE}\"}" \
-            https://api.github.com/repos/${{ github.repository }}/commits/${{ github.sha }}/comments
+            https://api.github.com/repos/${{ github.repository }}/commits/${{ github.sha }}/comments)
+
+          # Check if the notification was sent successfully
+          if [[ "$response" == *"created_at"* ]]; then
+            echo "Notification sent successfully."
+          else
+            echo "Failed to send notification. Response: $response"
+          fi
+        else
+          echo "No translators to notify."
         fi
