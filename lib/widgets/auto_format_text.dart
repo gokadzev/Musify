@@ -29,8 +29,8 @@ class AutoFormatText extends StatelessWidget {
   Widget build(BuildContext context) {
     final spans = <TextSpan>[];
 
-    final exp = RegExp(r'\*\*(.*?)\*\*');
-    final matches = exp.allMatches(text);
+    final boldExp = RegExp(r'\*\*(.*?)\*\*');
+    final matches = boldExp.allMatches(text);
     final textStyle = Theme.of(context).textTheme.bodyMedium;
 
     var currentTextIndex = 0;
@@ -38,7 +38,10 @@ class AutoFormatText extends StatelessWidget {
     for (final match in matches) {
       spans.add(
         TextSpan(
-          text: text.substring(currentTextIndex, match.start),
+          text: text.substring(currentTextIndex, match.start).replaceAll(
+                '* ',
+                '• ',
+              ),
           style: textStyle,
         ),
       );
@@ -54,7 +57,13 @@ class AutoFormatText extends StatelessWidget {
     }
 
     spans.add(
-      TextSpan(text: text.substring(currentTextIndex), style: textStyle),
+      TextSpan(
+        text: text.substring(currentTextIndex).replaceAll(
+              '* ',
+              '• ',
+            ),
+        style: textStyle,
+      ),
     );
 
     return RichText(
