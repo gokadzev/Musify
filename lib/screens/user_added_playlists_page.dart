@@ -39,6 +39,7 @@ class UserPlaylistsPage extends StatefulWidget {
 
 class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
   late Future<List> _playlistsFuture;
+  bool isYouTubeMode = true;
 
   @override
   void initState() {
@@ -66,50 +67,77 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
               var id = '';
               var customPlaylistName = '';
               String? imageUrl;
-              bool? isYouTubeMode;
 
               return StatefulBuilder(
                 builder: (context, setState) {
+                  final activeButtonBackground =
+                      Theme.of(context).colorScheme.surfaceContainer;
+                  final inactiveButtonBackground =
+                      Theme.of(context).colorScheme.secondaryContainer;
                   return AlertDialog(
                     backgroundColor: Theme.of(context).dialogBackgroundColor,
                     content: SingleChildScrollView(
                       child: Column(
+                        mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          if (isYouTubeMode == true || isYouTubeMode == null)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    isYouTubeMode = true;
+                                    id = '';
+                                    customPlaylistName = '';
+                                    imageUrl = null;
+                                  });
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: isYouTubeMode
+                                      ? inactiveButtonBackground
+                                      : activeButtonBackground,
+                                ),
+                                child:
+                                    const Icon(FluentIcons.globe_add_24_filled),
+                              ),
+                              const SizedBox(width: 10),
+                              ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    isYouTubeMode = false;
+                                    id = '';
+                                    customPlaylistName = '';
+                                    imageUrl = null;
+                                  });
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: isYouTubeMode
+                                      ? activeButtonBackground
+                                      : inactiveButtonBackground,
+                                ),
+                                child: const Icon(
+                                  FluentIcons.person_add_24_filled,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 15),
+                          if (isYouTubeMode)
                             TextField(
                               decoration: InputDecoration(
                                 labelText: context.l10n!.youtubePlaylistID,
                               ),
                               onChanged: (value) {
-                                setState(() {
-                                  id = value;
-                                  if (id.isNotEmpty) {
-                                    customPlaylistName = '';
-                                    imageUrl = null;
-                                    isYouTubeMode = true;
-                                  } else {
-                                    isYouTubeMode = null;
-                                  }
-                                });
+                                id = value;
                               },
-                            ),
-                          const SizedBox(height: 7),
-                          if (isYouTubeMode == false ||
-                              isYouTubeMode == null) ...[
+                            )
+                          else ...[
                             TextField(
                               decoration: InputDecoration(
                                 labelText: context.l10n!.customPlaylistName,
                               ),
                               onChanged: (value) {
-                                setState(() {
-                                  customPlaylistName = value;
-                                  if (customPlaylistName.isNotEmpty) {
-                                    id = '';
-                                    isYouTubeMode = false;
-                                  } else {
-                                    isYouTubeMode = null;
-                                  }
-                                });
+                                customPlaylistName = value;
                               },
                             ),
                             const SizedBox(height: 7),
@@ -118,15 +146,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                                 labelText: context.l10n!.customPlaylistImgUrl,
                               ),
                               onChanged: (value) {
-                                setState(() {
-                                  imageUrl = value;
-                                  if (imageUrl!.isNotEmpty) {
-                                    id = '';
-                                    isYouTubeMode = false;
-                                  } else {
-                                    isYouTubeMode = null;
-                                  }
-                                });
+                                imageUrl = value;
                               },
                             ),
                           ],
@@ -139,12 +159,13 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                           context.l10n!.add.toUpperCase(),
                         ),
                         onPressed: () async {
-                          if (id.isNotEmpty) {
+                          if (isYouTubeMode && id.isNotEmpty) {
                             showToast(
                               context,
                               await addUserPlaylist(id, context),
                             );
-                          } else if (customPlaylistName.isNotEmpty) {
+                          } else if (!isYouTubeMode &&
+                              customPlaylistName.isNotEmpty) {
                             showToast(
                               context,
                               createCustomPlaylist(
