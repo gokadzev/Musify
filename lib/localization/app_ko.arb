@@ -55,7 +55,7 @@
   "originalRecommendations": "추천을 위한 오리지널 알고리즘",
   "others": "기타",
   "playlist": "재생목록",
-  "playlistAlreadyExists": "Playlist already exists",
+  "playlistAlreadyExists": "재생목록이 이미 존재함",
   "playlistUpdated": "재생목록이 성공적으로 업데이트되었음",
   "playlists": "재생목록",
   "preferences": "환경 설정",
@@ -87,5 +87,5 @@
   "usePureBlack": "순수 검정색 사용",
   "useSquigglySlider": "굴곡 슬라이더 사용",
   "userPlaylists": "사용자 재생목록",
-  "youtubePlaylistLinkOrId": "YouTube playlist link or ID "
+  "youtubePlaylistLinkOrId": "유튜브 재생목록 링크 또는 ID "
 }
