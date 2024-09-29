@@ -10,6 +10,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Check Repository
+      run: |
+        if [ "${{ github.repository }}" != "gokadzev/Musify" ]; then
+          echo "Skipping workflow run as it's not the original repository."
+          exit 0
+        fi
+
     - name: Checkout Repository
       uses: actions/checkout@v3
       with:
