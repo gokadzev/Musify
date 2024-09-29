@@ -55,6 +55,7 @@
   "originalRecommendations": "Original algorithm for recommendations",
   "others": "Інше",
   "playlist": "Плейлист",
+  "playlistAlreadyExists": "Playlist already exists",
   "playlistUpdated": "Список відтворення успішно оновлено",
   "playlists": "Плейлисти",
   "preferences": "Preferences",
@@ -86,5 +87,5 @@
   "usePureBlack": "Use pure black",
   "useSquigglySlider": "Use squiggly slider",
   "userPlaylists": "Плейлисти користувача",
-  "youtubePlaylistID": "Ідентифікатор плейлиста YouTube"
+  "youtubePlaylistLinkOrId": "YouTube playlist link or ID "
 }

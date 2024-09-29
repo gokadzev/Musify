@@ -55,6 +55,7 @@
   "originalRecommendations": "Orjinal önerilenler algoritması",
   "others": "Diğerleri",
   "playlist": "Çalma Listesi",
+  "playlistAlreadyExists": "Playlist already exists",
   "playlistUpdated": "Çalma Listesi Başarıyla Güncellendi",
   "playlists": "Çalma Listeleri",
   "preferences": "Tercihler",
@@ -86,5 +87,5 @@
   "usePureBlack": "Use pure black",
   "useSquigglySlider": "Use squiggly slider",
   "userPlaylists": "Kullanıcı Çalma Listeleri",
-  "youtubePlaylistID": "YouTube Çalma Listesi Kimliği"
+  "youtubePlaylistLinkOrId": "YouTube playlist link or ID "
 }

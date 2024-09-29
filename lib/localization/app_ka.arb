@@ -55,6 +55,7 @@
   "originalRecommendations": "ორიგინალი ალგორითმი რეკომენდაციებისთვის",
   "others": "სხვა",
   "playlist": "ჩასართავი სია",
+  "playlistAlreadyExists": "Playlist already exists",
   "playlistUpdated": "ჩასართავი სია განახლდა წარმატებით",
   "playlists": "ჩასართავი სიები",
   "preferences": "უპირატესობები",
@@ -86,5 +87,5 @@
   "usePureBlack": "გამოიყენე სუფთა შავი",
   "useSquigglySlider": "გამოიყენე ტალღოვანი სლაიდერი",
   "userPlaylists": "მომხმარებლის ჩასართავი სიები",
-  "youtubePlaylistID": "YouTube ჩასართავი სიის აიდი"
+  "youtubePlaylistLinkOrId": "YouTube playlist link or ID "
 }

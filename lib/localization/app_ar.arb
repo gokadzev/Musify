@@ -55,6 +55,7 @@
   "originalRecommendations": "Original algorithm for recommendations",
   "others": "آخرون",
   "playlist": "قائمة تشغيل",
+  "playlistAlreadyExists": "Playlist already exists",
   "playlistUpdated": "تم تحديث القائمة بنجاح",
   "playlists": "قوائم التشغيل",
   "preferences": "Preferences",
@@ -86,5 +87,5 @@
   "usePureBlack": "Use pure black",
   "useSquigglySlider": "Use squiggly slider",
   "userPlaylists": "قوائم تشغيل المستخدم",
-  "youtubePlaylistID": "معرف قائمة تشغيل YouTube"
+  "youtubePlaylistLinkOrId": "YouTube playlist link or ID "
 }

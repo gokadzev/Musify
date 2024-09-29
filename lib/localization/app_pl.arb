@@ -55,6 +55,7 @@
   "originalRecommendations": "Oryginalny algorytm rekomendacji",
   "others": "Inne",
   "playlist": "Playlista",
+  "playlistAlreadyExists": "Playlist already exists",
   "playlistUpdated": "Playlista zaktualizowana pomyślnie",
   "playlists": "Playlisty",
   "preferences": "Preferencje",
@@ -86,5 +87,5 @@
   "usePureBlack": "Use pure black",
   "useSquigglySlider": "Use squiggly slider",
   "userPlaylists": "Playlisty użytkownika",
-  "youtubePlaylistID": "ID playlisty YouTube"
+  "youtubePlaylistLinkOrId": "YouTube playlist link or ID "
 }

@@ -125,7 +125,8 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                           if (isYouTubeMode)
                             TextField(
                               decoration: InputDecoration(
-                                labelText: context.l10n!.youtubePlaylistID,
+                                labelText:
+                                    context.l10n!.youtubePlaylistLinkOrId,
                               ),
                               onChanged: (value) {
                                 id = value;

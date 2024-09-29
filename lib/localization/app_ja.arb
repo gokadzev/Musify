@@ -55,6 +55,7 @@
   "originalRecommendations": "おすすめに独自アルゴリズムを使用",
   "others": "ほか",
   "playlist": "再生リスト",
+  "playlistAlreadyExists": "Playlist already exists",
   "playlistUpdated": "再生リストを更新しました",
   "playlists": "再生リスト",
   "preferences": "設定",
@@ -86,5 +87,5 @@
   "usePureBlack": "ピュアブラックを使用",
   "useSquigglySlider": "くねくねしたスライダーを使用",
   "userPlaylists": "再生リスト",
-  "youtubePlaylistID": "YouTube の再生リストの ID"
+  "youtubePlaylistLinkOrId": "YouTube playlist link or ID "
 }

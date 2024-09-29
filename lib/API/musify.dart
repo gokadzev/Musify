@@ -157,18 +157,47 @@ Future<List<dynamic>> getUserPlaylists() async {
   return playlistsByUser;
 }
 
-Future<String> addUserPlaylist(String playlistId, BuildContext context) async {
-  if (playlistId.startsWith('http://') || playlistId.startsWith('https://')) {
-    return '${context.l10n!.notYTlist}!';
-  } else {
-    try {
-      await _yt.playlists.get(playlistId);
-      userPlaylists.add(playlistId);
-      addOrUpdateData('user', 'playlists', userPlaylists);
-      return '${context.l10n!.addedSuccess}!';
-    } catch (e) {
-      return '${context.l10n!.error}!';
+bool youtubeValidate(String url) {
+  final regExp = RegExp(
+    r'^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.*(list=([a-zA-Z0-9_-]+)).*$',
+  );
+  return regExp.hasMatch(url);
+}
+
+String? youtubePlaylistParser(String url) {
+  if (!youtubeValidate(url)) {
+    return null;
+  }
+
+  final regExp = RegExp(r'[&?]list=([a-zA-Z0-9_-]+)');
+  final match = regExp.firstMatch(url);
+
+  return match?.group(1);
+}
+
+Future<String> addUserPlaylist(String input, BuildContext context) async {
+  String? playlistId = input;
+
+  if (input.startsWith('http://') || input.startsWith('https://')) {
+    playlistId = youtubePlaylistParser(input);
+
+    if (playlistId == null) {
+      return '${context.l10n!.notYTlist}!';
     }
+  }
+
+  try {
+    await _yt.playlists.get(playlistId);
+
+    if (userPlaylists.contains(playlistId)) {
+      return '${context.l10n!.playlistAlreadyExists}!';
+    }
+
+    userPlaylists.add(playlistId);
+    addOrUpdateData('user', 'playlists', userPlaylists);
+    return '${context.l10n!.addedSuccess}!';
+  } catch (e) {
+    return '${context.l10n!.error}: $e';
   }
 }
 

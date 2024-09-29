@@ -55,6 +55,7 @@
   "originalRecommendations": "Πρωτότυπος αλγόριθμος για συστάσεις",
   "others": "Άλλα",
   "playlist": "Λίστα αναπαραγωγής",
+  "playlistAlreadyExists": "Playlist already exists",
   "playlistUpdated": "Η λίστα αναπαραγωγής ενημερώθηκε επιτυχώς",
   "playlists": "Λίστες αναπαραγωγής",
   "preferences": "Preferences",
@@ -86,5 +87,5 @@
   "usePureBlack": "Use pure black",
   "useSquigglySlider": "Use squiggly slider",
   "userPlaylists": "Λίστες αναπαραγωγής χρήστη",
-  "youtubePlaylistID": "ID Λίστας Αναπαραγωγής YouTube"
+  "youtubePlaylistLinkOrId": "YouTube playlist link or ID "
 }

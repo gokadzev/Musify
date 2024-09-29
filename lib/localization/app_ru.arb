@@ -55,6 +55,7 @@
   "originalRecommendations": "Оригинальный алгоритм рекомендаций",
   "others": "Ещё",
   "playlist": "Плейлист",
+  "playlistAlreadyExists": "Playlist already exists",
   "playlistUpdated": "Плейлист успешно обновлён",
   "playlists": "Плейлисты",
   "preferences": "Настройки",
@@ -86,5 +87,5 @@
   "usePureBlack": "Ночная тема",
   "useSquigglySlider": "Волнистая полоса прокрутки",
   "userPlaylists": "Ваши плейлисты",
-  "youtubePlaylistID": "ID плейлиста Youtube"
+  "youtubePlaylistLinkOrId": "YouTube playlist link or ID "
 }
