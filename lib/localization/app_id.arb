@@ -55,7 +55,7 @@
   "originalRecommendations": "Algoritma asli untuk rekomendasi",
   "others": "Lainnya",
   "playlist": "Playlist",
-  "playlistAlreadyExists": "Playlist already exists",
+  "playlistAlreadyExists": "Playlist sudah ada",
   "playlistUpdated": "Playlist berhasil diperbarui",
   "playlists": "Playlist",
   "preferences": "Preferensi",
@@ -87,5 +87,5 @@
   "usePureBlack": "Gunakan hitam murni",
   "useSquigglySlider": "Gunakan slider bergelombang",
   "userPlaylists": "Playlist pengguna",
-  "youtubePlaylistLinkOrId": "YouTube playlist link or ID "
+  "youtubePlaylistLinkOrId": "Tautan atau ID playlist YouTube",
 }
