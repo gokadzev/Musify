@@ -55,11 +55,11 @@
   "originalRecommendations": "Оригинальный алгоритм рекомендаций",
   "others": "Ещё",
   "playlist": "Плейлист",
-  "playlistAlreadyExists": "Playlist already exists",
+  "playlistAlreadyExists": "Плейлист уже существует",
   "playlistUpdated": "Плейлист успешно обновлён",
   "playlists": "Плейлисты",
   "preferences": "Настройки",
-  "provideIdOrNameError": "Пожалуйста введите ID плейлиста YouTube или имя пользовательского плейлиска",
+  "provideIdOrNameError": "Пожалуйста введите ID плейлиста YouTube или имя пользовательского плейлиста",
   "recentlyPlayed": "Недавние треки",
   "recentlyPlayedMsg": "Недавние треки очищены",
   "recommendedForYou": "Рекомендовано вам",
@@ -87,5 +87,5 @@
   "usePureBlack": "Ночная тема",
   "useSquigglySlider": "Волнистая полоса прокрутки",
   "userPlaylists": "Ваши плейлисты",
-  "youtubePlaylistLinkOrId": "YouTube playlist link or ID "
+  "youtubePlaylistLinkOrId": "ID плейлиста YouTube или ссылка на него "
 }
