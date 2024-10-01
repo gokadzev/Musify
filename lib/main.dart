@@ -59,7 +59,6 @@ final appLanguages = <String, String>{
   'Russian': 'ru',
   'Polish': 'pl',
   'Portuguese': 'pt',
-  'Spanish': 'es',
   'Turkish': 'tr',
   'Ukrainian': 'uk',
 };
