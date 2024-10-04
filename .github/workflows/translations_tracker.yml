@@ -2,8 +2,13 @@ name: Notify Translators on Translation Changes
 
 on:
   push:
+    branches:
+      - master
     paths:
       - 'lib/localization/**'
+    tags-ignore:
+      - '*'
+
 
 jobs:
   notify-translators:
