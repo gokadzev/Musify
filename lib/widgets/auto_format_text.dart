@@ -36,22 +36,22 @@ class AutoFormatText extends StatelessWidget {
     var currentTextIndex = 0;
 
     for (final match in matches) {
-      spans.add(
-        TextSpan(
-          text: text.substring(currentTextIndex, match.start).replaceAll(
-                '* ',
-                '• ',
-              ),
-          style: textStyle,
-        ),
-      );
-
-      spans.add(
-        TextSpan(
-          text: match.group(1),
-          style: textStyle?.copyWith(fontWeight: FontWeight.bold),
-        ),
-      );
+      spans
+        ..add(
+          TextSpan(
+            text: text.substring(currentTextIndex, match.start).replaceAll(
+                  '* ',
+                  '• ',
+                ),
+            style: textStyle,
+          ),
+        )
+        ..add(
+          TextSpan(
+            text: match.group(1),
+            style: textStyle?.copyWith(fontWeight: FontWeight.bold),
+          ),
+        );
 
       currentTextIndex = match.end;
     }

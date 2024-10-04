@@ -98,14 +98,14 @@ class Material3SliderThumb extends SliderComponentShape {
     );
     final borderRRect =
         RRect.fromRectAndRadius(borderRect, const Radius.circular(6));
-    canvas.drawRRect(
-      borderRRect,
-      Paint()..color = borderColor,
-    );
-
-    canvas.drawRRect(
-      thumbRRect,
-      Paint()..color = color,
-    );
+    canvas
+      ..drawRRect(
+        borderRRect,
+        Paint()..color = borderColor,
+      )
+      ..drawRRect(
+        thumbRRect,
+        Paint()..color = color,
+      );
   }
 }

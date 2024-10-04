@@ -110,8 +110,7 @@ Future<List> getRecommendedSongs() async {
 
       if (userCustomPlaylists.isNotEmpty) {
         for (final userPlaylist in userCustomPlaylists) {
-          final _list = userPlaylist['list'] as List;
-          _list.shuffle();
+          final _list = (userPlaylist['list'] as List)..shuffle();
           playlistSongs.addAll(_list.take(5));
         }
       }
@@ -169,7 +168,7 @@ String? youtubePlaylistParser(String url) {
     return null;
   }
 
-  final regExp = RegExp(r'[&?]list=([a-zA-Z0-9_-]+)');
+  final regExp = RegExp('[&?]list=([a-zA-Z0-9_-]+)');
   final match = regExp.firstMatch(url);
 
   return match?.group(1);
@@ -279,8 +278,9 @@ Future<void> updateSongLikeStatus(dynamic songId, bool add) async {
 
 void moveLikedSong(int oldIndex, int newIndex) {
   final _song = userLikedSongsList[oldIndex];
-  userLikedSongsList.removeAt(oldIndex);
-  userLikedSongsList.insert(newIndex, _song);
+  userLikedSongsList
+    ..removeAt(oldIndex)
+    ..insert(newIndex, _song);
   currentLikedSongsLength.value = userLikedSongsList.length;
   addOrUpdateData('user', 'likedSongs', userLikedSongsList);
 }

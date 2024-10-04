@@ -77,13 +77,12 @@ class Musify extends StatefulWidget {
     Color? newAccentColor,
     bool? useSystemColor,
   }) async {
-    final state = context.findAncestorStateOfType<_MusifyState>()!;
-    state.changeSettings(
-      newThemeMode: newThemeMode,
-      newLocale: newLocale,
-      newAccentColor: newAccentColor,
-      systemColorStatus: useSystemColor,
-    );
+    context.findAncestorStateOfType<_MusifyState>()!.changeSettings(
+          newThemeMode: newThemeMode,
+          newLocale: newLocale,
+          newAccentColor: newAccentColor,
+          systemColorStatus: useSystemColor,
+        );
   }
 
   @override

@@ -1,6 +1,8 @@
 analyzer:
   exclude:
     - packages/**
+    - scripts/**
+    - test/**
 
 linter:
   rules:
@@ -27,6 +29,7 @@ linter:
     - await_only_futures
     - camel_case_types
     - cancel_subscriptions
+    - cascade_invocations
     - comment_references
     - constant_identifier_names
     - control_flow_in_finally
@@ -99,6 +102,7 @@ linter:
     - unnecessary_nullable_for_final_variable_declarations
     - unnecessary_overrides
     - unnecessary_parenthesis
+    - unnecessary_raw_strings
     - unnecessary_statements
     - unnecessary_string_escapes
     - unnecessary_string_interpolations
