@@ -91,3 +91,11 @@ body:
       description: Add any additional information or context that may be helpful in resolving the issue.
     validations:
       required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        > [!TIP]
+        > Stay connected on GitHub so you never miss an update 📢 : [Follow](https://github.com/gokadzev)
+        > Give the project a star to help it gain popularity ⭐ : [Star](https://github.com/gokadzev/Musify)
+        > Sponsor this and future projects to fuel continuous development 🤝 : [Sponsor](https://ko-fi.com/gokadzev)
