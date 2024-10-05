@@ -38,15 +38,15 @@ jobs:
         # Get the number of parents for the commit
         PARENT_COUNT=$(git rev-list --count ${{ github.sha }}^@ 2>/dev/null || echo 0)
 
-        if [ "$PARENT_COUNT" -eq 1 ]; then
+        if [ "$PARENT_COUNT" -eq 0 ]; then
+          echo "No parent commit found, exiting the workflow."
+          exit 0
+        elif [ "$PARENT_COUNT" -eq 1 ]; then
           # Single parent, perform a normal diff against the parent
           git diff --name-only ${{ github.sha }}^ ${{ github.sha }} | grep 'lib/localization/' > /tmp/changed_files.txt
-        elif [ "$PARENT_COUNT" -gt 1 ]; then
+        else
           # Merge commit, diff against all parents
           git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | grep 'lib/localization/' > /tmp/changed_files.txt
-        else
-          # No parent (initial commit or cherry-pick without parent in current branch), list changes in the current commit
-          git diff --name-only ${{ github.sha }} | grep 'lib/localization/' > /tmp/changed_files.txt
         fi
 
         # Check if there are any changed files
@@ -54,6 +54,7 @@ jobs:
           echo "No translation files were changed."
           exit 0
         fi
+
 
     - name: Load Translator Info
       id: load_translators
