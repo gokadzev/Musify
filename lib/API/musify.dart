@@ -562,7 +562,8 @@ Future<Map<String, dynamic>?> getPlaylistInfoForWidget(
 
 Future<AudioOnlyStreamInfo> getSongManifest(String songId) async {
   try {
-    final manifest = await _yt.videos.streamsClient.getManifest(songId);
+    final manifest = await _yt.videos.streamsClient
+        .getManifest(songId, requireWatchPage: false);
     final audioStream = manifest.audioOnly.withHighestBitrate();
     return audioStream;
   } catch (e, stackTrace) {
@@ -610,7 +611,8 @@ Future<String> getAudioUrl(
   String songId,
   String cacheKey,
 ) async {
-  final manifest = await _yt.videos.streamsClient.getManifest(songId);
+  final manifest = await _yt.videos.streamsClient
+      .getManifest(songId, requireWatchPage: false);
   final audioQuality = selectAudioQuality(manifest.audioOnly.sortByBitrate());
   final audioUrl = audioQuality.url.toString();
 
