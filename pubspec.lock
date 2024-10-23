@@ -197,10 +197,10 @@ packages:
     dependency: "direct main"
     description:
       name: file_picker
-      sha256: "167bb619cdddaa10ef2907609feb8a79c16dfa479d3afaf960f8e223f754bf12"
+      sha256: aac85f20436608e01a6ffd1fdd4e746a7f33c93a2c83752e626bdfaea139b877
       url: "https://pub.dev"
     source: hosted
-    version: "8.1.2"
+    version: "8.1.3"
   fixnum:
     dependency: transitive
     description:
@@ -255,10 +255,10 @@ packages:
     dependency: "direct dev"
     description:
       name: flutter_native_splash
-      sha256: aa06fec78de2190f3db4319dd60fdc8d12b2626e93ef9828633928c2dcaea840
+      sha256: ee5c9bd2b74ea8676442fd4ab876b5d41681df49276488854d6c81a5377c0ef1
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.1"
+    version: "2.4.2"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -830,10 +830,10 @@ packages:
     dependency: "direct main"
     description:
       name: youtube_explode_dart
-      sha256: "523a01ef948607d3e8fdcdcdcef1ce805c7d26480f609e3b209d1c73520a6c3c"
+      sha256: ea0a3ec53f752de42fffe75b929f30f24d02faa92207a00b9497cecd3faf40a4
       url: "https://pub.dev"
     source: hosted
-    version: "2.3.1"
+    version: "2.3.4"
 sdks:
   dart: ">=3.5.0 <4.0.0"
   flutter: ">=3.24.3"
