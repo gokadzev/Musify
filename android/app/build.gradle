@@ -32,7 +32,7 @@ if (keystorePropertiesFile.exists()) {
 android {
     namespace = "com.gokadzev.musify"
     compileSdk 34
-    ndkVersion "26.2.11394342"
+    ndkVersion "27.0.12077973"
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
@@ -93,6 +93,7 @@ android {
         release {
             signingConfig signingConfigs.release
             shrinkResources false
+            minifyEnabled false
         }
         debug {
             applicationIdSuffix '.debug'

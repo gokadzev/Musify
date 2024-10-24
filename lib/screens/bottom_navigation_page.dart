@@ -49,6 +49,7 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
     // body: SafeArea(
     //   child: widget.child,
     // ),
+    print('IN bottom nav  PAGE--------------------------------');
 
     return Scaffold(
       body: widget.child,
@@ -102,7 +103,7 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
                     NavigationDestination(
                       icon: const Icon(FluentIcons.book_24_regular),
                       selectedIcon: const Icon(FluentIcons.book_24_filled),
-                      label: context.l10n?.userPlaylists ?? 'User Playlists',
+                      label: context.l10n?.userPlaylists ?? 'Library',
                     ),
                     NavigationDestination(
                       icon: const Icon(

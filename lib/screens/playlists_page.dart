@@ -54,6 +54,8 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
 
   @override
   Widget build(BuildContext context) {
+    print('IN playlists PAGE--------------------------------');
+
     return Scaffold(
       appBar: AppBar(
         title: Text(context.l10n!.playlists),

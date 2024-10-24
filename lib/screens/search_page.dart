@@ -88,6 +88,8 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
+    print('IN search PAGE--------------------------------');
+
     return Scaffold(
       appBar: AppBar(
         title: Text(context.l10n!.search),

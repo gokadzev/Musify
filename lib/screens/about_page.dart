@@ -30,6 +30,8 @@ class AboutPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('IN ABOUT PAGE--------------------------------');
+
     return Scaffold(
       appBar: AppBar(
         title: Text(context.l10n!.about),

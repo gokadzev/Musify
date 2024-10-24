@@ -29,6 +29,8 @@ class UserLikedPlaylistsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('IN user liked playlists PAGE--------------------------------');
+
     return Scaffold(
       appBar: AppBar(
         title: Text(context.l10n!.likedPlaylists),

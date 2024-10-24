@@ -46,6 +46,7 @@ class SettingsPage extends StatelessWidget {
     final activatedColor =
         Theme.of(context).colorScheme.surfaceContainerHighest;
     final inactivatedColor = Theme.of(context).colorScheme.secondaryContainer;
+    print('IN settings PAGE--------------------------------');
 
     return Scaffold(
       appBar: AppBar(
