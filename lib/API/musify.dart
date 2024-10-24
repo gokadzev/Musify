@@ -22,7 +22,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:flutter/widgets.dart';
 import 'package:hive/hive.dart';
@@ -62,6 +61,8 @@ Map activePlaylist = {
   'image': '',
   'list': [],
 };
+
+dynamic nextRecommendedSong;
 
 final currentLikedSongsLength = ValueNotifier<int>(userLikedSongsList.length);
 final currentLikedPlaylistsLength =
@@ -468,13 +469,17 @@ Future<List<Map<String, int>>> getSkipSegments(String id) async {
   }
 }
 
-Future<Map> getRandomSong() async {
-  if (globalSongs.isEmpty) {
-    const playlistId = 'PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx';
-    globalSongs = await getSongsFromPlaylist(playlistId);
-  }
+void getSimilarSong(String songYtId) async {
+  try {
+    final song = await _yt.videos.get(songYtId);
+    final relatedSongs = await _yt.videos.getRelatedVideos(song) ?? [];
 
-  return globalSongs[Random().nextInt(globalSongs.length)];
+    if (relatedSongs.isNotEmpty) {
+      nextRecommendedSong = returnSongLayout(0, relatedSongs[0]);
+    }
+  } catch (e, stackTrace) {
+    logger.log('Error while fetching next similar song:', e, stackTrace);
+  }
 }
 
 Future<List> getSongsFromPlaylist(dynamic playlistId) async {
@@ -577,7 +582,6 @@ const Duration _cacheDuration = Duration(hours: 6);
 Future<String> getSong(String songId, bool isLive) async {
   try {
     final qualitySetting = audioQualitySetting.value;
-
     final cacheKey = 'song_${songId}_${qualitySetting}_url';
 
     final cachedUrl = await getData(
@@ -588,13 +592,19 @@ Future<String> getSong(String songId, bool isLive) async {
 
     unawaited(updateRecentlyPlayed(songId));
 
+    if (playNextSongAutomatically.value) {
+     getSimilarSong(songId);
+    }
+
     if (cachedUrl != null) {
       return cachedUrl;
-    } else if (isLive) {
-      return await getLiveStreamUrl(songId);
-    } else {
-      return await getAudioUrl(songId, cacheKey);
     }
+
+    if (isLive) {
+      return await getLiveStreamUrl(songId);
+    }
+
+    return await getAudioUrl(songId, cacheKey);
   } catch (e, stackTrace) {
     logger.log('Error while getting song streaming URL', e, stackTrace);
     rethrow;
