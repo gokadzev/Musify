@@ -36,7 +36,6 @@ class PlaylistCube extends StatelessWidget {
     this.cubeIcon = FluentIcons.music_note_1_24_regular,
     this.size = 220,
     this.borderRadius = 13,
-    this.isAlbum = false,
   }) : playlistLikeStatus = ValueNotifier<bool>(
           isPlaylistAlreadyLiked(playlist['ytid']),
         );
@@ -47,7 +46,6 @@ class PlaylistCube extends StatelessWidget {
   final IconData cubeIcon;
   final double size;
   final double borderRadius;
-  final bool? isAlbum;
 
   static const double paddingValue = 4;
   static const double likeButtonOffset = 5;
@@ -108,7 +106,7 @@ class PlaylistCube extends StatelessWidget {
                   ),
           ),
         ),
-        if (isAlbum ?? false)
+        if (borderRadius == 13 && playlist['image'] != null)
           Positioned(
             top: likeButtonOffset,
             right: likeButtonOffset,
@@ -119,7 +117,9 @@ class PlaylistCube extends StatelessWidget {
               ),
               padding: const EdgeInsets.all(paddingValue),
               child: Text(
-                context.l10n!.album,
+                playlist['isAlbum'] != null && playlist['isAlbum'] == true
+                    ? context.l10n!.album
+                    : context.l10n!.playlist,
                 style: TextStyle(
                   color: onSecondaryColor,
                   fontSize: albumTextFontSize,

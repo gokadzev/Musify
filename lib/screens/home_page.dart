@@ -111,7 +111,6 @@ class _HomePageState extends State<HomePage> {
               final playlist = playlists[index];
               return PlaylistCube(
                 playlist,
-                isAlbum: playlist['isAlbum'],
                 size: playlistHeight,
               );
             },
