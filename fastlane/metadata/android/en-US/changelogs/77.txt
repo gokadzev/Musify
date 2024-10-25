@@ -1,3 +1,0 @@
-Bug fixes
-
-- Fixed the "play all" button in user offline songs

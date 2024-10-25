@@ -1,5 +1,0 @@
-Enhancements
-
-- Exclude offline audio data from user data
-- Improved backup and restore features
-- Made various quality and performance improvements for app stability and speed

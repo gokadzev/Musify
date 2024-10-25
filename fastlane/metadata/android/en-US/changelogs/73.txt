@@ -1,3 +1,0 @@
-Bug fixes
-
-- HotFix: Fixed the issue of disappearing navbar and getting stuck after editing playlist details

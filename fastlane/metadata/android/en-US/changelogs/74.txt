@@ -1,9 +1,0 @@
-Bug fixes
-
-- Fixed the issue of adding some playlists
-
-Enhancements
-
-- Improved mini player (swipe up to expand)
-- Updated Portuguese translation
-- Made various quality and performance improvements for app stability and speed
