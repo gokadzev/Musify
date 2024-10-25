@@ -265,25 +265,25 @@ class _LibraryPageState extends State<LibraryPage> {
                         PlaylistBar(
                           context.l10n!.recentlyPlayed,
                           onPressed: () => NavigationManager.router
-                              .go('/playlists/userSongs/recents'),
+                              .go('/library/userSongs/recents'),
                           cubeIcon: FluentIcons.history_24_filled,
                         ),
                         PlaylistBar(
                           context.l10n!.likedSongs,
                           onPressed: () => NavigationManager.router
-                              .go('/playlists/userSongs/liked'),
+                              .go('/library/userSongs/liked'),
                           cubeIcon: FluentIcons.music_note_2_24_regular,
                         ),
                         PlaylistBar(
                           context.l10n!.likedPlaylists,
                           onPressed: () => NavigationManager.router
-                              .go('/playlists/userLikedPlaylists'),
+                              .go('/library/userLikedPlaylists'),
                           cubeIcon: FluentIcons.task_list_ltr_24_regular,
                         ),
                         PlaylistBar(
                           context.l10n!.offlineSongs,
                           onPressed: () => NavigationManager.router
-                              .go('/playlists/userSongs/offline'),
+                              .go('/library/userSongs/offline'),
                           cubeIcon: FluentIcons.cellular_off_24_filled,
                         ),
                       ],
