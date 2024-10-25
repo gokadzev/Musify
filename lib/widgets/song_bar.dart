@@ -121,7 +121,6 @@ class SongBar extends StatelessWidget {
 
   Widget _buildAlbumArt() {
     const size = 60.0;
-    const radius = 12.0;
 
     final bool isOffline = song['isOffline'] ?? false;
     final String? artworkPath = song['artworkPath'];
@@ -130,7 +129,7 @@ class SongBar extends StatelessWidget {
         width: size,
         height: size,
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(radius),
+          borderRadius: commonBarRadius,
           child: Image.file(
             File(artworkPath),
             fit: BoxFit.cover,
@@ -147,7 +146,7 @@ class SongBar extends StatelessWidget {
           width: size,
           height: size,
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(radius),
+            borderRadius: commonBarRadius,
             child: Image(
               image: imageProvider,
               centerSlice: const Rect.fromLTRB(1, 1, 1, 1),
