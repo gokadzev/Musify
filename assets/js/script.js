@@ -51,6 +51,7 @@ window.onload = function () {
     const appVersion = response['tag_name']
     versionElement.textContent += 'V' + appVersion
     downloadElement.setAttribute('href', appUrl)
+    console.log(response['body'])
     parseChangelog(response['body'])
   })
 }
@@ -59,14 +60,10 @@ function parseChangelog(text) {
   const lines = text.split('\r\n').filter((line) => line.trim() !== '')
 
   lines.forEach((line) => {
-    const match = line.match(/^\*\*(\w+):\*\*\s*(.+)$/)
-
-    if (match) {
-      const [, label, description] = match
-
+    const itemMatch = line.match(/^\*\s+(.+)$/)
+    if (itemMatch) {
       const listItem = document.createElement('p')
-      listItem.innerHTML = `<strong>${label}:</strong> ${description}`
-
+      listItem.textContent = `• ${itemMatch[1]}`
       changelogElement.appendChild(listItem)
     }
   })
