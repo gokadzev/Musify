@@ -15,6 +15,7 @@ class PlaylistBar extends StatelessWidget {
     this.playlistArtwork,
     this.playlistData,
     this.onPressed,
+    this.onLongPress,
     this.cubeIcon = FluentIcons.music_note_1_24_regular,
     this.borderRadius = 6,
     this.isAlbum = false,
@@ -27,6 +28,7 @@ class PlaylistBar extends StatelessWidget {
   final String playlistTitle;
   final String? playlistArtwork;
   final VoidCallback? onPressed;
+  final VoidCallback? onLongPress;
   final IconData cubeIcon;
   final double borderRadius;
   final bool? isAlbum;
@@ -62,6 +64,7 @@ class PlaylistBar extends StatelessWidget {
                 ),
               );
             },
+        onLongPress: onLongPress,
         child: Card(
           elevation: 1.5,
           child: Padding(

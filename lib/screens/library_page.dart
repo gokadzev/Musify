@@ -25,6 +25,8 @@ import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/router_service.dart';
+import 'package:musify/utilities/flutter_toast.dart';
+import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/custom_search_bar.dart';
 import 'package:musify/widgets/playlist_bar.dart';
 import 'package:musify/widgets/section_title.dart';
@@ -41,7 +43,16 @@ class _LibraryPageState extends State<LibraryPage> {
   final TextEditingController _searchBar = TextEditingController();
   final FocusNode _inputNode = FocusNode();
 
-  final List<bool> _visibleSections = List.filled(3, true);
+  Future<List> _userPlaylistsFuture = getUserPlaylists();
+
+  // user playlists / playlists / albums
+  final List<bool> _visibleSections = [true, false, false];
+
+  Future<void> _refreshUserPlaylists() async {
+    setState(() {
+      _userPlaylistsFuture = getUserPlaylists();
+    });
+  }
 
   @override
   void dispose() {
@@ -78,12 +89,176 @@ class _LibraryPageState extends State<LibraryPage> {
               ],
             ),
           ),
+          const SizedBox(height: 30),
           Expanded(
             child: SingleChildScrollView(
               child: Column(
                 children: [
                   if (_visibleSections[0])
-                    SectionTitle(context.l10n!.userPlaylists, primaryColor),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SectionTitle(context.l10n!.userPlaylists, primaryColor),
+                        IconButton(
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                var id = '';
+                                var customPlaylistName = '';
+                                var isYouTubeMode = true;
+                                String? imageUrl;
+
+                                return StatefulBuilder(
+                                  builder: (context, setState) {
+                                    final activeButtonBackground =
+                                        Theme.of(context)
+                                            .colorScheme
+                                            .surfaceContainer;
+                                    final inactiveButtonBackground =
+                                        Theme.of(context)
+                                            .colorScheme
+                                            .secondaryContainer;
+                                    return AlertDialog(
+                                      backgroundColor: Theme.of(context)
+                                          .dialogBackgroundColor,
+                                      content: SingleChildScrollView(
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                ElevatedButton(
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      isYouTubeMode = true;
+                                                      id = '';
+                                                      customPlaylistName = '';
+                                                      imageUrl = null;
+                                                    });
+                                                  },
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    backgroundColor: isYouTubeMode
+                                                        ? inactiveButtonBackground
+                                                        : activeButtonBackground,
+                                                  ),
+                                                  child: const Icon(
+                                                    FluentIcons
+                                                        .globe_add_24_filled,
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 10),
+                                                ElevatedButton(
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      isYouTubeMode = false;
+                                                      id = '';
+                                                      customPlaylistName = '';
+                                                      imageUrl = null;
+                                                    });
+                                                  },
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    backgroundColor: isYouTubeMode
+                                                        ? activeButtonBackground
+                                                        : inactiveButtonBackground,
+                                                  ),
+                                                  child: const Icon(
+                                                    FluentIcons
+                                                        .person_add_24_filled,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 15),
+                                            if (isYouTubeMode)
+                                              TextField(
+                                                decoration: InputDecoration(
+                                                  labelText: context.l10n!
+                                                      .youtubePlaylistLinkOrId,
+                                                ),
+                                                onChanged: (value) {
+                                                  id = value;
+                                                },
+                                              )
+                                            else ...[
+                                              TextField(
+                                                decoration: InputDecoration(
+                                                  labelText: context
+                                                      .l10n!.customPlaylistName,
+                                                ),
+                                                onChanged: (value) {
+                                                  customPlaylistName = value;
+                                                },
+                                              ),
+                                              const SizedBox(height: 7),
+                                              TextField(
+                                                decoration: InputDecoration(
+                                                  labelText: context.l10n!
+                                                      .customPlaylistImgUrl,
+                                                ),
+                                                onChanged: (value) {
+                                                  imageUrl = value;
+                                                },
+                                              ),
+                                            ],
+                                          ],
+                                        ),
+                                      ),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          child: Text(
+                                            context.l10n!.add.toUpperCase(),
+                                          ),
+                                          onPressed: () async {
+                                            if (isYouTubeMode &&
+                                                id.isNotEmpty) {
+                                              showToast(
+                                                context,
+                                                await addUserPlaylist(
+                                                  id,
+                                                  context,
+                                                ),
+                                              );
+                                            } else if (!isYouTubeMode &&
+                                                customPlaylistName.isNotEmpty) {
+                                              showToast(
+                                                context,
+                                                createCustomPlaylist(
+                                                  customPlaylistName,
+                                                  imageUrl,
+                                                  context,
+                                                ),
+                                              );
+                                            } else {
+                                              showToast(
+                                                context,
+                                                '${context.l10n!.provideIdOrNameError}.',
+                                              );
+                                            }
+
+                                            Navigator.pop(context);
+
+                                            await _refreshUserPlaylists();
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                            );
+                          },
+                          icon: Icon(
+                            FluentIcons.add_24_filled,
+                            color: primaryColor,
+                          ),
+                        ),
+                      ],
+                    ),
                   if (_visibleSections[0])
                     Column(
                       children: <Widget>[
@@ -113,6 +288,70 @@ class _LibraryPageState extends State<LibraryPage> {
                         ),
                       ],
                     ),
+                  if (_visibleSections[0])
+                    FutureBuilder(
+                      future: _userPlaylistsFuture,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Spinner();
+                        } else if (snapshot.hasError) {
+                          logger.log(
+                            'Error while fetching user playlists',
+                            snapshot.error,
+                            snapshot.stackTrace,
+                          );
+                          return Center(
+                            child: Text(context.l10n!.error),
+                          );
+                        }
+
+                        final _playlists = snapshot.data as List;
+
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: _playlists.length,
+                          itemBuilder: (BuildContext context, index) {
+                            final playlist = _playlists[index];
+
+                            return PlaylistBar(
+                              playlist['title'],
+                              playlistId: playlist['ytid'],
+                              playlistArtwork: playlist['image'],
+                              isAlbum: playlist['isAlbum'],
+                              onLongPress: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return ConfirmationDialog(
+                                      confirmationMessage:
+                                          context.l10n!.removePlaylistQuestion,
+                                      submitMessage: context.l10n!.remove,
+                                      onCancel: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      onSubmit: () {
+                                        Navigator.of(context).pop();
+
+                                        if (playlist['ytid'] == null &&
+                                            playlist['isCustom']) {
+                                          removeUserCustomPlaylist(playlist);
+                                        } else {
+                                          removeUserPlaylist(playlist['ytid']);
+                                        }
+
+                                        _refreshUserPlaylists();
+                                      },
+                                    );
+                                  },
+                                );
+                              },
+                            );
+                          },
+                        );
+                      },
+                    ),
                   if (_visibleSections[1])
                     SectionTitle(context.l10n!.playlists, primaryColor),
                   if (_visibleSections[1])
@@ -127,7 +366,7 @@ class _LibraryPageState extends State<LibraryPage> {
                           return const Spinner();
                         } else if (snapshot.hasError) {
                           logger.log(
-                            'Error on playlists page',
+                            'Error while fetching playlists',
                             snapshot.error,
                             snapshot.stackTrace,
                           );
@@ -169,7 +408,7 @@ class _LibraryPageState extends State<LibraryPage> {
                           return const Spinner();
                         } else if (snapshot.hasError) {
                           logger.log(
-                            'Error on playlists page',
+                            'Error while fetching albums',
                             snapshot.error,
                             snapshot.stackTrace,
                           );
