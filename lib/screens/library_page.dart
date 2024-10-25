@@ -320,6 +320,9 @@ class _LibraryPageState extends State<LibraryPage> {
                               playlistId: playlist['ytid'],
                               playlistArtwork: playlist['image'],
                               isAlbum: playlist['isAlbum'],
+                              playlistData: playlist['isCustom'] ?? false
+                                  ? playlist
+                                  : null,
                               onLongPress: () {
                                 showDialog(
                                   context: context,
