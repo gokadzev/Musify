@@ -24,6 +24,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
+import 'package:musify/screens/playlist_page.dart';
 import 'package:musify/widgets/no_artwork_cube.dart';
 
 class PlaylistCube extends StatelessWidget {
@@ -31,6 +32,7 @@ class PlaylistCube extends StatelessWidget {
     this.playlist, {
     super.key,
     this.playlistData,
+    this.onClickOpen = true,
     this.cubeIcon = FluentIcons.music_note_1_24_regular,
     this.size = 220,
     this.borderRadius = 13,
@@ -41,6 +43,7 @@ class PlaylistCube extends StatelessWidget {
 
   final Map? playlistData;
   final Map playlist;
+  final bool onClickOpen;
   final IconData cubeIcon;
   final double size;
   final double borderRadius;
@@ -66,28 +69,44 @@ class PlaylistCube extends StatelessWidget {
 
     return Stack(
       children: <Widget>[
-        ClipRRect(
-          borderRadius: BorderRadius.circular(borderRadius),
-          child: playlist['image'] != null
-              ? CachedNetworkImage(
-                  key: Key(playlist['image'].toString()),
-                  height: size,
-                  width: size,
-                  imageUrl: playlist['image'].toString(),
-                  fit: BoxFit.cover,
-                  errorWidget: (context, url, error) => NullArtworkWidget(
+        GestureDetector(
+          onTap:
+              onClickOpen && (playlist['ytid'] != null || playlistData != null)
+                  ? () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PlaylistPage(
+                            playlistId: playlist['ytid'],
+                            playlistData: playlistData,
+                          ),
+                        ),
+                      );
+                    }
+                  : null,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(borderRadius),
+            child: playlist['image'] != null
+                ? CachedNetworkImage(
+                    key: Key(playlist['image'].toString()),
+                    height: size,
+                    width: size,
+                    imageUrl: playlist['image'].toString(),
+                    fit: BoxFit.cover,
+                    errorWidget: (context, url, error) => NullArtworkWidget(
+                      icon: cubeIcon,
+                      iconSize: iconSize,
+                      size: size,
+                      title: playlist['title'],
+                    ),
+                  )
+                : NullArtworkWidget(
                     icon: cubeIcon,
                     iconSize: iconSize,
                     size: size,
                     title: playlist['title'],
                   ),
-                )
-              : NullArtworkWidget(
-                  icon: cubeIcon,
-                  iconSize: iconSize,
-                  size: size,
-                  title: playlist['title'],
-                ),
+          ),
         ),
         if (isAlbum ?? false)
           Positioned(

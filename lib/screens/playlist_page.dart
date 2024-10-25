@@ -174,6 +174,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
       _playlist,
       size: MediaQuery.sizeOf(context).width / 2.5,
       cubeIcon: widget.cubeIcon,
+      onClickOpen: false,
     );
   }
 
