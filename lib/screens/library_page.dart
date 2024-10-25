@@ -118,6 +118,7 @@ class _LibraryPageState extends State<LibraryPage> {
           children: [
             SectionTitle(context.l10n!.userPlaylists, primaryColor),
             IconButton(
+              padding: const EdgeInsets.only(right: 10),
               onPressed: _showAddPlaylistDialog,
               icon: Icon(
                 FluentIcons.add_24_filled,

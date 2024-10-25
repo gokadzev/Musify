@@ -27,8 +27,8 @@ import 'package:musify/main.dart';
 import 'package:musify/screens/playlist_page.dart';
 import 'package:musify/services/router_service.dart';
 import 'package:musify/services/settings_manager.dart';
-import 'package:musify/widgets/marque.dart';
 import 'package:musify/widgets/playlist_cube.dart';
+import 'package:musify/widgets/section_title.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/spinner.dart';
 
@@ -93,6 +93,7 @@ class _HomePageState extends State<HomePage> {
         _buildSectionHeader(
           title: context.l10n!.suggestedPlaylists,
           actionButton: IconButton(
+            padding: const EdgeInsets.only(right: 10),
             onPressed: () => NavigationManager.router.go('/home/library'),
             icon: Icon(
               FluentIcons.more_horizontal_24_regular,
@@ -220,6 +221,7 @@ class _HomePageState extends State<HomePage> {
         _buildSectionHeader(
           title: context.l10n!.recommendedForYou,
           actionButton: IconButton(
+            padding: const EdgeInsets.only(right: 10),
             onPressed: () {
               setActivePlaylist({
                 'title': context.l10n!.recommendedForYou,
@@ -246,27 +248,16 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildSectionHeader({required String title, Widget? actionButton}) {
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          SizedBox(
-            width: MediaQuery.sizeOf(context).width * 0.7,
-            child: MarqueeWidget(
-              child: Text(
-                title,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-          if (actionButton != null) actionButton,
-        ],
-      ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        SectionTitle(
+          title,
+          Theme.of(context).colorScheme.primary,
+          fontSize: 20,
+        ),
+        if (actionButton != null) actionButton,
+      ],
     );
   }
 }
