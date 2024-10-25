@@ -593,7 +593,7 @@ Future<String> getSong(String songId, bool isLive) async {
     unawaited(updateRecentlyPlayed(songId));
 
     if (playNextSongAutomatically.value) {
-     getSimilarSong(songId);
+      getSimilarSong(songId);
     }
 
     if (cachedUrl != null) {
