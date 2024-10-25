@@ -40,13 +40,8 @@ class LibraryPage extends StatefulWidget {
 class _LibraryPageState extends State<LibraryPage> {
   final TextEditingController _searchBar = TextEditingController();
   final FocusNode _inputNode = FocusNode();
-  bool _showOnlyAlbums = false;
 
-  void toggleShowOnlyAlbums(bool value) {
-    setState(() {
-      _showOnlyAlbums = value;
-    });
-  }
+  final List<bool> _visibleSections = List.filled(3, true);
 
   @override
   void dispose() {
@@ -74,22 +69,12 @@ class _LibraryPageState extends State<LibraryPage> {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                Switch(
-                  value: _showOnlyAlbums,
-                  onChanged: toggleShowOnlyAlbums,
-                  thumbIcon: WidgetStateProperty.resolveWith<Icon>(
-                    (Set<WidgetState> states) {
-                      return Icon(
-                        states.contains(WidgetState.selected)
-                            ? Icons.album
-                            : Icons.featured_play_list,
-                      );
-                    },
-                  ),
-                ),
+            child: Wrap(
+              spacing: 8,
+              children: [
+                _buildFilterChip(0, context.l10n!.userPlaylists),
+                _buildFilterChip(1, context.l10n!.playlists),
+                _buildFilterChip(2, context.l10n!.albums),
               ],
             ),
           ),
@@ -97,82 +82,139 @@ class _LibraryPageState extends State<LibraryPage> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  SectionTitle(context.l10n!.userPlaylists, primaryColor),
-                  Column(
-                    children: <Widget>[
-                      PlaylistBar(
-                        context.l10n!.recentlyPlayed,
-                        onPressed: () => NavigationManager.router
-                            .go('/playlists/userSongs/recents'),
-                        cubeIcon: FluentIcons.history_24_filled,
-                      ),
-                      PlaylistBar(
-                        context.l10n!.likedSongs,
-                        onPressed: () => NavigationManager.router
-                            .go('/playlists/userSongs/liked'),
-                        cubeIcon: FluentIcons.music_note_2_24_regular,
-                      ),
-                      PlaylistBar(
-                        context.l10n!.likedPlaylists,
-                        onPressed: () => NavigationManager.router
-                            .go('/playlists/userLikedPlaylists'),
-                        cubeIcon: FluentIcons.task_list_ltr_24_regular,
-                      ),
-                      PlaylistBar(
-                        context.l10n!.offlineSongs,
-                        onPressed: () => NavigationManager.router
-                            .go('/playlists/userSongs/offline'),
-                        cubeIcon: FluentIcons.cellular_off_24_filled,
-                      ),
-                    ],
-                  ),
-                  SectionTitle(context.l10n!.playlists, primaryColor),
-                  FutureBuilder(
-                    future: getPlaylists(
-                      query: _searchBar.text.isEmpty ? null : _searchBar.text,
-                      type: _showOnlyAlbums ? 'album' : 'playlist',
+                  if (_visibleSections[0])
+                    SectionTitle(context.l10n!.userPlaylists, primaryColor),
+                  if (_visibleSections[0])
+                    Column(
+                      children: <Widget>[
+                        PlaylistBar(
+                          context.l10n!.recentlyPlayed,
+                          onPressed: () => NavigationManager.router
+                              .go('/playlists/userSongs/recents'),
+                          cubeIcon: FluentIcons.history_24_filled,
+                        ),
+                        PlaylistBar(
+                          context.l10n!.likedSongs,
+                          onPressed: () => NavigationManager.router
+                              .go('/playlists/userSongs/liked'),
+                          cubeIcon: FluentIcons.music_note_2_24_regular,
+                        ),
+                        PlaylistBar(
+                          context.l10n!.likedPlaylists,
+                          onPressed: () => NavigationManager.router
+                              .go('/playlists/userLikedPlaylists'),
+                          cubeIcon: FluentIcons.task_list_ltr_24_regular,
+                        ),
+                        PlaylistBar(
+                          context.l10n!.offlineSongs,
+                          onPressed: () => NavigationManager.router
+                              .go('/playlists/userSongs/offline'),
+                          cubeIcon: FluentIcons.cellular_off_24_filled,
+                        ),
+                      ],
                     ),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Spinner();
-                      } else if (snapshot.hasError) {
-                        logger.log(
-                          'Error on playlists page',
-                          snapshot.error,
-                          snapshot.stackTrace,
-                        );
-                        return Center(
-                          child: Text(context.l10n!.error),
-                        );
-                      }
-
-                      final _playlists = snapshot.data as List;
-
-                      return ListView.builder(
-                        shrinkWrap:
-                            true, // Allows ListView to fit within SingleChildScrollView
-                        physics:
-                            const NeverScrollableScrollPhysics(), // Disable ListView scrolling
-                        itemCount: _playlists.length,
-                        itemBuilder: (BuildContext context, index) {
-                          final playlist = _playlists[index];
-
-                          return PlaylistBar(
-                            playlist['title'],
-                            playlistId: playlist['ytid'],
-                            playlistArtwork: playlist['image'],
-                            isAlbum: playlist['isAlbum'],
+                  if (_visibleSections[1])
+                    SectionTitle(context.l10n!.playlists, primaryColor),
+                  if (_visibleSections[1])
+                    FutureBuilder(
+                      future: getPlaylists(
+                        query: _searchBar.text.isEmpty ? null : _searchBar.text,
+                        type: 'playlist',
+                      ),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Spinner();
+                        } else if (snapshot.hasError) {
+                          logger.log(
+                            'Error on playlists page',
+                            snapshot.error,
+                            snapshot.stackTrace,
                           );
-                        },
-                      );
-                    },
-                  ),
+                          return Center(
+                            child: Text(context.l10n!.error),
+                          );
+                        }
+
+                        final _playlists = snapshot.data as List;
+
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: _playlists.length,
+                          itemBuilder: (BuildContext context, index) {
+                            final playlist = _playlists[index];
+
+                            return PlaylistBar(
+                              playlist['title'],
+                              playlistId: playlist['ytid'],
+                              playlistArtwork: playlist['image'],
+                              isAlbum: playlist['isAlbum'],
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  if (_visibleSections[2])
+                    SectionTitle(context.l10n!.albums, primaryColor),
+                  if (_visibleSections[2])
+                    FutureBuilder(
+                      future: getPlaylists(
+                        query: _searchBar.text.isEmpty ? null : _searchBar.text,
+                        type: 'album',
+                      ),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Spinner();
+                        } else if (snapshot.hasError) {
+                          logger.log(
+                            'Error on playlists page',
+                            snapshot.error,
+                            snapshot.stackTrace,
+                          );
+                          return Center(
+                            child: Text(context.l10n!.error),
+                          );
+                        }
+
+                        final _playlists = snapshot.data as List;
+
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: _playlists.length,
+                          itemBuilder: (BuildContext context, index) {
+                            final playlist = _playlists[index];
+
+                            return PlaylistBar(
+                              playlist['title'],
+                              playlistId: playlist['ytid'],
+                              playlistArtwork: playlist['image'],
+                              isAlbum: playlist['isAlbum'],
+                            );
+                          },
+                        );
+                      },
+                    ),
                 ],
               ),
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildFilterChip(int index, String label) {
+    return FilterChip(
+      selected: _visibleSections[index],
+      label: Text(label),
+      onSelected: (isSelected) {
+        setState(() {
+          _visibleSections[index] = isSelected;
+        });
+      },
     );
   }
 }
