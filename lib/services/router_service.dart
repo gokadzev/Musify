@@ -25,10 +25,9 @@ import 'package:musify/API/version.dart';
 import 'package:musify/screens/about_page.dart';
 import 'package:musify/screens/bottom_navigation_page.dart';
 import 'package:musify/screens/home_page.dart';
-import 'package:musify/screens/playlists_page.dart';
+import 'package:musify/screens/library_page.dart';
 import 'package:musify/screens/search_page.dart';
 import 'package:musify/screens/settings_page.dart';
-import 'package:musify/screens/user_added_playlists_page.dart';
 import 'package:musify/screens/user_liked_playlists_page.dart';
 import 'package:musify/screens/user_songs_page.dart';
 import 'package:musify/services/settings_manager.dart';
@@ -76,7 +75,7 @@ class NavigationManager {
       GlobalKey<NavigatorState>();
   static final GlobalKey<NavigatorState> searchTabNavigatorKey =
       GlobalKey<NavigatorState>();
-  static final GlobalKey<NavigatorState> userPlaylistsTabNavigatorKey =
+  static final GlobalKey<NavigatorState> libraryTabNavigatorKey =
       GlobalKey<NavigatorState>();
   static final GlobalKey<NavigatorState> settingsTabNavigatorKey =
       GlobalKey<NavigatorState>();
@@ -92,7 +91,7 @@ class NavigationManager {
   static const String homePath = '/home';
   static const String settingsPath = '/settings';
   static const String searchPath = '/search';
-  static const String userPlaylistsPath = '/userPlaylists';
+  static const String libraryPath = '/library';
 
   List<StatefulShellBranch> _onlineRoutes() {
     return [
@@ -109,18 +108,8 @@ class NavigationManager {
             },
             routes: [
               GoRoute(
-                path: 'userSongs/:page',
-                builder: (context, state) => UserSongsPage(
-                  page: state.pathParameters['page'] ?? 'liked',
-                ),
-              ),
-              GoRoute(
-                path: 'playlists',
-                builder: (context, state) => const PlaylistsPage(),
-              ),
-              GoRoute(
-                path: 'userLikedPlaylists',
-                builder: (context, state) => const UserLikedPlaylistsPage(),
+                path: 'library',
+                builder: (context, state) => const LibraryPage(),
               ),
             ],
           ),
@@ -141,16 +130,28 @@ class NavigationManager {
         ],
       ),
       StatefulShellBranch(
-        navigatorKey: userPlaylistsTabNavigatorKey,
+        navigatorKey: libraryTabNavigatorKey,
         routes: [
           GoRoute(
-            path: userPlaylistsPath,
+            path: libraryPath,
             pageBuilder: (context, GoRouterState state) {
               return getPage(
-                child: const UserPlaylistsPage(),
+                child: const LibraryPage(),
                 state: state,
               );
             },
+            routes: [
+              GoRoute(
+                path: 'userSongs/:page',
+                builder: (context, state) => UserSongsPage(
+                  page: state.pathParameters['page'] ?? 'liked',
+                ),
+              ),
+              GoRoute(
+                path: 'userLikedPlaylists',
+                builder: (context, state) => const UserLikedPlaylistsPage(),
+              ),
+            ],
           ),
         ],
       ),

@@ -36,6 +36,7 @@ import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/url_launcher.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/custom_bar.dart';
+import 'package:musify/widgets/section_title.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -55,9 +56,9 @@ class SettingsPage extends StatelessWidget {
         child: Column(
           children: <Widget>[
             // CATEGORY: PREFERENCES
-            _buildSectionTitle(
-              primaryColor,
+            SectionTitle(
               context.l10n!.preferences,
+              primaryColor,
             ),
             CustomBar(
               context.l10n!.accentColor,
@@ -456,9 +457,9 @@ class SettingsPage extends StatelessWidget {
                   ),
 
                   // CATEGORY: TOOLS
-                  _buildSectionTitle(
-                    primaryColor,
+                  SectionTitle(
                     context.l10n!.tools,
+                    primaryColor,
                   ),
                   CustomBar(
                     context.l10n!.clearCache,
@@ -567,9 +568,9 @@ class SettingsPage extends StatelessWidget {
                     ),
                   // CATEGORY: BECOME A SPONSOR
 
-                  _buildSectionTitle(
-                    primaryColor,
+                  SectionTitle(
                     context.l10n!.becomeSponsor,
+                    primaryColor,
                   ),
 
                   CustomBar(
@@ -587,9 +588,9 @@ class SettingsPage extends StatelessWidget {
                 ],
               ),
             // CATEGORY: OTHERS
-            _buildSectionTitle(
-              primaryColor,
+            SectionTitle(
               context.l10n!.others,
+              primaryColor,
             ),
 
             CustomBar(
@@ -616,23 +617,6 @@ class SettingsPage extends StatelessWidget {
               height: 20,
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSectionTitle(Color primaryColor, String title) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: Text(
-          title,
-          style: TextStyle(
-            color: primaryColor,
-            fontSize: 15,
-            fontWeight: FontWeight.w600,
-          ),
         ),
       ),
     );

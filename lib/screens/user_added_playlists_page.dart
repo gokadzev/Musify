@@ -27,7 +27,7 @@ import 'package:musify/main.dart';
 import 'package:musify/screens/playlist_page.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
-import 'package:musify/widgets/playlist_cube.dart';
+import 'package:musify/widgets/playlist_bar.dart';
 import 'package:musify/widgets/spinner.dart';
 
 class UserPlaylistsPage extends StatefulWidget {
@@ -270,11 +270,12 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                       },
                     );
                   },
-                  child: PlaylistCube(
-                    playlist,
+                  child: PlaylistBar(
+                    playlist['title'],
+                    playlistId: playlist['ytid'],
+                    playlistArtwork: playlist['artwork'],
                     playlistData:
                         playlist['isCustom'] ?? false ? playlist : null,
-                    onClickOpen: playlist['isCustom'] == null,
                   ),
                 );
               },

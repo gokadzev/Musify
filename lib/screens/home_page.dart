@@ -55,68 +55,10 @@ class _HomePageState extends State<HomePage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            _buildTopNavBar(),
             _buildSuggestedPlaylists(),
             _buildRecommendedSongsAndArtists(),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildTopNavBar() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: [
-            _buildNavButton(
-              onPressed: () =>
-                  NavigationManager.router.go('/home/userSongs/recents'),
-              icon: const Icon(FluentIcons.history_24_filled),
-              label: context.l10n!.recentlyPlayed,
-            ),
-            _buildNavButton(
-              onPressed: () => NavigationManager.router.go('/home/playlists'),
-              icon: const Icon(FluentIcons.list_24_filled),
-              label: context.l10n!.playlists,
-            ),
-            _buildNavButton(
-              onPressed: () =>
-                  NavigationManager.router.go('/home/userSongs/liked'),
-              icon: const Icon(FluentIcons.music_note_2_24_regular),
-              label: context.l10n!.likedSongs,
-            ),
-            _buildNavButton(
-              onPressed: () =>
-                  NavigationManager.router.go('/home/userLikedPlaylists'),
-              icon: const Icon(FluentIcons.task_list_ltr_24_regular),
-              label: context.l10n!.likedPlaylists,
-            ),
-            _buildNavButton(
-              onPressed: () =>
-                  NavigationManager.router.go('/home/userSongs/offline'),
-              icon: const Icon(FluentIcons.cellular_off_24_filled),
-              label: context.l10n!.offlineSongs,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNavButton({
-    required VoidCallback onPressed,
-    required Icon icon,
-    required String label,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 5),
-      child: FilledButton.icon(
-        onPressed: onPressed,
-        icon: icon,
-        label: Text(label),
       ),
     );
   }
@@ -151,7 +93,7 @@ class _HomePageState extends State<HomePage> {
         _buildSectionHeader(
           title: context.l10n!.suggestedPlaylists,
           actionButton: IconButton(
-            onPressed: () => NavigationManager.router.go('/home/playlists'),
+            onPressed: () => NavigationManager.router.go('/home/library'),
             icon: Icon(
               FluentIcons.more_horizontal_24_regular,
               color: Theme.of(context).colorScheme.primary,
@@ -270,8 +212,6 @@ class _HomePageState extends State<HomePage> {
                   child: PlaylistCube(
                     {'title': artist},
                     borderRadius: 150,
-                    onClickOpen: false,
-                    showFavoriteButton: false,
                     cubeIcon: FluentIcons.mic_sparkle_24_regular,
                   ),
                 );

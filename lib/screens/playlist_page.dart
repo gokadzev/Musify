@@ -173,9 +173,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
     return PlaylistCube(
       _playlist,
       size: MediaQuery.sizeOf(context).width / 2.5,
-      onClickOpen: false,
       cubeIcon: widget.cubeIcon,
-      showFavoriteButton: false,
     );
   }
 
