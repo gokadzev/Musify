@@ -113,7 +113,9 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
   @override
   Widget build(BuildContext context) {
-    print('IN playlist PAGE--------------------------------');
+    print(
+      'after clicking on the playlist page--------------------------------',
+    );
 
     return Scaffold(
       appBar: AppBar(

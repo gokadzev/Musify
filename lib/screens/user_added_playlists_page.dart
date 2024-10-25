@@ -24,6 +24,7 @@ import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
+import 'package:musify/screens/device_songs_page.dart';
 import 'package:musify/screens/playlist_page.dart';
 import 'package:musify/services/router_service.dart';
 import 'package:musify/utilities/flutter_toast.dart';
@@ -206,10 +207,24 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
         child: Column(
           children: [
             _buildSuggestedPlaylists(),
-            ElevatedButton(
-              onPressed: () => _checkPermissionAndScanDevice(context),
-              child: const Text(
-                'ON Device',
+            SizedBox(
+              width: 200,
+              height: 200,
+              child: ElevatedButton(
+                onPressed: () => _checkPermissionAndScanDevice(context),
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                      10,
+                    ),
+                  ),
+                ),
+                child: const Stack(
+                  alignment: Alignment.bottomRight,
+                  children: [
+                    Center(child: Text('ON Device')),
+                  ],
+                ),
               ),
             ),
             FutureBuilder(
@@ -294,6 +309,62 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                     );
                   },
                 );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOnDeviceButton(BuildContext context) {
+    return GestureDetector(
+      onTap: () => _checkPermissionAndScanDevice(context),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            const BoxShadow(
+              color: Colors.black26,
+              blurRadius: 4,
+              offset: Offset(0, 2), // changes position of shadow
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.all(16), // Padding inside the button
+        margin: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 8,
+        ), // Margin around the button
+        child: Stack(
+          alignment: Alignment.bottomRight, // Align the like button
+          children: [
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  FluentIcons.music_note_2_24_regular,
+                  size: 48,
+                ), // Example icon
+                const SizedBox(height: 8),
+                Text(
+                  'ON Device',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
+              ],
+            ),
+            IconButton(
+              icon: Icon(
+                FluentIcons.heart_24_filled,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              onPressed: () {
+                // Handle like action here
               },
             ),
           ],
@@ -410,16 +481,23 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
   final OnAudioQuery audioQuery = OnAudioQuery();
 
   Future<void> _checkPermissionAndScanDevice(BuildContext context) async {
-    print('IN check permission function --------------------------------');
     var status = await Permission.storage.status;
     if (!status.isGranted) {
       status = await Permission.storage.request();
     }
 
     if (status.isGranted) {
-      // Query for songs
       final songs = await audioQuery.querySongs();
-      _showDeviceSongsDialog(context, songs);
+      if (songs.isNotEmpty) {
+        await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const DeviceSongsPage(),
+          ),
+        );
+      } else {
+        showToast(context, 'No songs found on the device');
+      }
     } else {
       showToast(context, 'Storage permission denied');
     }
