@@ -28,7 +28,6 @@ import 'package:musify/screens/home_page.dart';
 import 'package:musify/screens/library_page.dart';
 import 'package:musify/screens/search_page.dart';
 import 'package:musify/screens/settings_page.dart';
-import 'package:musify/screens/user_liked_playlists_page.dart';
 import 'package:musify/screens/user_songs_page.dart';
 import 'package:musify/services/settings_manager.dart';
 
@@ -146,10 +145,6 @@ class NavigationManager {
                 builder: (context, state) => UserSongsPage(
                   page: state.pathParameters['page'] ?? 'liked',
                 ),
-              ),
-              GoRoute(
-                path: 'userLikedPlaylists',
-                builder: (context, state) => const UserLikedPlaylistsPage(),
               ),
             ],
           ),

@@ -44,8 +44,9 @@ class _LibraryPageState extends State<LibraryPage> {
   final FocusNode _inputNode = FocusNode();
 
   late Future<List> _userPlaylistsFuture = getUserPlaylists();
-  // user playlists / playlists / albums
-  final List<bool> _visibleSections = [true, false, false];
+
+  // user playlists / liked playlists / playlists / albums
+  final List<bool> _visibleSections = [true, true, false, false];
 
   Future<void> _refreshUserPlaylists() async {
     setState(() {
@@ -64,6 +65,13 @@ class _LibraryPageState extends State<LibraryPage> {
   Widget build(BuildContext context) {
     final primaryColor = Theme.of(context).colorScheme.primary;
 
+    final labels = [
+      context.l10n!.userPlaylists,
+      context.l10n!.likedPlaylists,
+      context.l10n!.playlists,
+      context.l10n!.albums,
+    ];
+
     return Scaffold(
       appBar: AppBar(
         title: Text(context.l10n!.library),
@@ -79,13 +87,10 @@ class _LibraryPageState extends State<LibraryPage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
             child: Wrap(
-              spacing: 8,
-              children: List.generate(3, (index) {
-                final labels = [
-                  context.l10n!.userPlaylists,
-                  context.l10n!.playlists,
-                  context.l10n!.albums,
-                ];
+              spacing: 10,
+              runSpacing: 8,
+              alignment: WrapAlignment.center,
+              children: List.generate(4, (index) {
                 return _buildFilterChip(index, labels[index]);
               }),
             ),
@@ -97,8 +102,10 @@ class _LibraryPageState extends State<LibraryPage> {
                   if (_visibleSections[0])
                     _buildUserPlaylistsSection(primaryColor),
                   if (_visibleSections[1])
-                    _buildPlaylistsSection(primaryColor, 'playlist'),
+                    _buildUserLikedPlaylistsSection(primaryColor),
                   if (_visibleSections[2])
+                    _buildPlaylistsSection(primaryColor, 'playlist'),
+                  if (_visibleSections[3])
                     _buildPlaylistsSection(primaryColor, 'album'),
                 ],
               ),
@@ -141,12 +148,6 @@ class _LibraryPageState extends State<LibraryPage> {
               cubeIcon: FluentIcons.music_note_2_24_regular,
             ),
             PlaylistBar(
-              context.l10n!.likedPlaylists,
-              onPressed: () =>
-                  NavigationManager.router.go('/library/userLikedPlaylists'),
-              cubeIcon: FluentIcons.task_list_ltr_24_regular,
-            ),
-            PlaylistBar(
               context.l10n!.offlineSongs,
               onPressed: () =>
                   NavigationManager.router.go('/library/userSongs/offline'),
@@ -180,6 +181,25 @@ class _LibraryPageState extends State<LibraryPage> {
     );
   }
 
+  Widget _buildUserLikedPlaylistsSection(Color primaryColor) {
+    return ValueListenableBuilder(
+      valueListenable: currentLikedPlaylistsLength,
+      builder: (_, value, __) {
+        return userLikedPlaylists.isNotEmpty
+            ? Column(
+                children: [
+                  SectionTitle(
+                    context.l10n!.likedPlaylists,
+                    primaryColor,
+                  ),
+                  _buildPlaylistListView(context, userLikedPlaylists),
+                ],
+              )
+            : const SizedBox();
+      },
+    );
+  }
+
   Widget _buildPlaylistsList(
     BuildContext context,
     AsyncSnapshot<List> snapshot,
@@ -187,15 +207,25 @@ class _LibraryPageState extends State<LibraryPage> {
     if (snapshot.connectionState == ConnectionState.waiting) {
       return const Spinner();
     } else if (snapshot.hasError) {
-      logger.log(
-        'Error while fetching playlists',
-        snapshot.error,
-        snapshot.stackTrace,
-      );
-      return Center(child: Text(context.l10n!.error));
+      return _handleSnapshotError(context, snapshot);
     }
 
-    final playlists = snapshot.data!;
+    return _buildPlaylistListView(context, snapshot.data!);
+  }
+
+  Widget _handleSnapshotError(
+    BuildContext context,
+    AsyncSnapshot<List> snapshot,
+  ) {
+    logger.log(
+      'Error while fetching playlists',
+      snapshot.error,
+      snapshot.stackTrace,
+    );
+    return Center(child: Text(context.l10n!.error));
+  }
+
+  Widget _buildPlaylistListView(BuildContext context, List playlists) {
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
