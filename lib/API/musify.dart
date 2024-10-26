@@ -287,15 +287,23 @@ void moveLikedSong(int oldIndex, int newIndex) {
 }
 
 Future<void> updatePlaylistLikeStatus(
-  Map likedPlaylist,
+  String playlistId,
   bool add,
 ) async {
   if (add) {
-    userLikedPlaylists.add(likedPlaylist);
+    final playlist = playlists.firstWhere(
+      (playlist) => playlist['ytid'] == playlistId,
+      orElse: () => {},
+    );
+
+    if (playlist.isNotEmpty) {
+      userLikedPlaylists.add(playlist);
+    }
   } else {
     userLikedPlaylists
-        .removeWhere((playlist) => playlist['ytid'] == likedPlaylist['ytid']);
+        .removeWhere((playlist) => playlist['ytid'] == playlistId);
   }
+
   addOrUpdateData('user', 'likedPlaylists', userLikedPlaylists);
 }
 

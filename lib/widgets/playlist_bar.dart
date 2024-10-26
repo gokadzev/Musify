@@ -141,10 +141,12 @@ class PlaylistBar extends StatelessWidget {
                     color: primaryColor,
                     icon: Icon(likeStatusToIconMapper[value]),
                     onPressed: () {
-                      final newValue = !playlistLikeStatus.value;
-                      playlistLikeStatus.value = newValue;
-                      // updatePlaylistLikeStatus(playlist, newValue);
-                      currentLikedPlaylistsLength.value += newValue ? 1 : -1;
+                      if (playlistId != null) {
+                        final newValue = !playlistLikeStatus.value;
+                        playlistLikeStatus.value = newValue;
+                        updatePlaylistLikeStatus(playlistId!, newValue);
+                        currentLikedPlaylistsLength.value += newValue ? 1 : -1;
+                      }
                     },
                   );
                 },
