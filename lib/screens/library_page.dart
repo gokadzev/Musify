@@ -77,7 +77,7 @@ class _LibraryPageState extends State<LibraryPage> {
             labelText: '${context.l10n!.search}...',
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
             child: Wrap(
               spacing: 8,
               children: List.generate(3, (index) {
@@ -90,7 +90,6 @@ class _LibraryPageState extends State<LibraryPage> {
               }),
             ),
           ),
-          const SizedBox(height: 30),
           Expanded(
             child: SingleChildScrollView(
               child: Column(
