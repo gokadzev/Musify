@@ -213,10 +213,10 @@ packages:
     dependency: "direct main"
     description:
       name: fluentui_system_icons
-      sha256: "0ff2d03ca3b388c41750abbe6214dbf455b57c215c489155c97989b0a9d3f78d"
+      sha256: "4f451b5512d5f28d0d671881e28519a2a05f252679f98ab41c32ff3da5dcc9cd"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.260"
+    version: "1.1.261"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -830,10 +830,10 @@ packages:
     dependency: "direct main"
     description:
       name: youtube_explode_dart
-      sha256: ea0a3ec53f752de42fffe75b929f30f24d02faa92207a00b9497cecd3faf40a4
+      sha256: "6d5f9a0a55d02743e59ca495887432814bddb6b11400b08ee0eeaf69c83d0089"
       url: "https://pub.dev"
     source: hosted
-    version: "2.3.4"
+    version: "2.3.5"
 sdks:
   dart: ">=3.5.0 <4.0.0"
   flutter: ">=3.24.3"
