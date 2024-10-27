@@ -20,6 +20,7 @@
  */
 
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:audio_service/audio_service.dart';
@@ -259,9 +260,28 @@ class MusifyAudioHandler extends BaseAudioHandler {
           : await getSong(song['ytid'], song['isLive']);
 
       final audioSource = await buildAudioSource(song, songUrl, isOffline);
-
       await audioPlayer.setAudioSource(audioSource, preload: false);
       await audioPlayer.play();
+    } catch (e, stackTrace) {
+      logger.log('Error playing song', e, stackTrace);
+    }
+  }
+
+  Future<void> playDeviceSong(Map song) async {
+    print('IN PLAY SONG FUNCTION');
+    print(song);
+    try {
+      final isOffline = song['isOffline'] ?? false;
+      final songUrl = song['filePath'];
+      final file = File(songUrl);
+      print('FILE EXISTS?:- $file');
+      print('SONGURL:- ' + songUrl);
+
+      final audioSource = await buildAudioSource(song, songUrl, isOffline);
+      print('audiosource: $audioSource');
+      await audioPlayer.setAudioSource(audioSource, preload: false);
+      await audioPlayer.play();
+      print('playing audio......');
     } catch (e, stackTrace) {
       logger.log('Error playing song', e, stackTrace);
     }

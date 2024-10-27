@@ -19,6 +19,8 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
+import 'dart:io';
+
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
@@ -26,10 +28,8 @@ import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/screens/device_songs_page.dart';
 import 'package:musify/screens/playlist_page.dart';
-import 'package:musify/services/router_service.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
-import 'package:musify/widgets/marque.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/spinner.dart';
 import 'package:on_audio_query/on_audio_query.dart';
@@ -206,7 +206,6 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
         padding: const EdgeInsets.only(top: 15),
         child: Column(
           children: [
-            _buildSuggestedPlaylists(),
             SizedBox(
               width: 200,
               height: 200,
@@ -317,224 +316,57 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
     );
   }
 
-  Widget _buildOnDeviceButton(BuildContext context) {
-    return GestureDetector(
-      onTap: () => _checkPermissionAndScanDevice(context),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            const BoxShadow(
-              color: Colors.black26,
-              blurRadius: 4,
-              offset: Offset(0, 2), // changes position of shadow
-            ),
-          ],
-        ),
-        padding: const EdgeInsets.all(16), // Padding inside the button
-        margin: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 8,
-        ), // Margin around the button
-        child: Stack(
-          alignment: Alignment.bottomRight, // Align the like button
-          children: [
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(
-                  FluentIcons.music_note_2_24_regular,
-                  size: 48,
-                ), // Example icon
-                const SizedBox(height: 8),
-                Text(
-                  'ON Device',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                ),
-              ],
-            ),
-            IconButton(
-              icon: Icon(
-                FluentIcons.heart_24_filled,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              onPressed: () {
-                // Handle like action here
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLoadingWidget() {
-    return const Center(
-      child: Padding(
-        padding: EdgeInsets.all(35),
-        child: Spinner(),
-      ),
-    );
-  }
-
-  Widget _buildErrorWidget(BuildContext context) {
-    return Center(
-      child: Text(
-        '${context.l10n!.error}!',
-        style: TextStyle(
-          color: Theme.of(context).colorScheme.primary,
-          fontSize: 18,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSuggestedPlaylists() {
-    return FutureBuilder<List<dynamic>>(
-      future: getPlaylists(playlistsNum: 5),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return _buildLoadingWidget();
-        } else if (snapshot.hasError) {
-          logger.log(
-            'Error in _buildSuggestedPlaylists',
-            snapshot.error,
-            snapshot.stackTrace,
-          );
-          return _buildErrorWidget(context);
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const SizedBox.shrink();
-        }
-
-        return _buildPlaylistSection(context, snapshot.data!);
-      },
-    );
-  }
-
-  Widget _buildPlaylistSection(BuildContext context, List<dynamic> playlists) {
-    final playlistHeight = MediaQuery.sizeOf(context).height * 0.25 / 1.1;
-
-    return Column(
-      children: [
-        _buildSectionHeader(
-          title: context.l10n!.suggestedPlaylists,
-          actionButton: IconButton(
-            onPressed: () => NavigationManager.router.go('/home/playlists'),
-            icon: Icon(
-              FluentIcons.more_horizontal_24_regular,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-          ),
-        ),
-        SizedBox(
-          height: playlistHeight,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            itemCount: playlists.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 15),
-            itemBuilder: (context, index) {
-              final playlist = playlists[index];
-              return PlaylistCube(
-                playlist,
-                isAlbum: playlist['isAlbum'],
-                size: playlistHeight,
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSectionHeader({required String title, Widget? actionButton}) {
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          SizedBox(
-            width: MediaQuery.sizeOf(context).width * 0.7,
-            child: MarqueeWidget(
-              child: Text(
-                title,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-          if (actionButton != null) actionButton,
-        ],
-      ),
-    );
-  }
-
 // Create an instance of OnAudioQuery
   final OnAudioQuery audioQuery = OnAudioQuery();
 
   Future<void> _checkPermissionAndScanDevice(BuildContext context) async {
-    var status = await Permission.storage.status;
-    if (!status.isGranted) {
-      status = await Permission.storage.request();
+    var isGranted = false;
+
+    final audioPermissionStatus = await Permission.audio.status;
+    if (!audioPermissionStatus.isGranted) {
+      await Permission.audio.request();
     }
 
-    if (status.isGranted) {
-      final songs = await audioQuery.querySongs();
-      if (songs.isNotEmpty) {
-        await Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const DeviceSongsPage(),
-          ),
-        );
-      } else {
-        showToast(context, 'No songs found on the device');
+    final externalStorageStatus = await Permission.storage.status;
+    if (!externalStorageStatus.isGranted) {
+      await Permission.storage.request();
+    }
+
+    isGranted =
+        audioPermissionStatus.isGranted && externalStorageStatus.isGranted;
+
+    // Check Android version to determine which permission to request
+    if (Platform.isAndroid && Platform.version.compareTo('30') >= 0) {
+      // For Android 11 and above (API 30+), use manageExternalStorage permission
+      var status = await Permission.manageExternalStorage.status;
+      if (!status.isGranted) {
+        status = await Permission.manageExternalStorage.request();
       }
+      isGranted = status.isGranted;
     } else {
-      showToast(context, 'Storage permission denied');
+      // For Android 10 and below, use storage permission
+      var status = await Permission.storage.status;
+      if (!status.isGranted) {
+        status = await Permission.storage.request();
+      }
+      isGranted = status.isGranted;
     }
-  }
 
-  void _showDeviceSongsDialog(BuildContext context, List<SongModel> songs) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Device Songs'),
-          content: SizedBox(
-            height: 400,
-            width: 300,
-            child: ListView.builder(
-              itemCount: songs.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(songs[index].title),
-                  subtitle: Text(songs[index].artist ?? 'Unknown artist'),
-                  onTap: () {
-                    // Handle song click, e.g., play the song
-                  },
-                );
-              },
-            ),
-          ),
-          actions: [
-            TextButton(
-              child: const Text('Close'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
+    // if (isGranted) {
+    // Fetch songs if permission is granted
+    final songs = await audioQuery.querySongs();
+    if (songs.isNotEmpty) {
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const DeviceSongsPage(),
+        ),
+      );
+    } else {
+      showToast(context, 'No songs found on the device');
+    }
+    // } else {
+    //   showToast(context, 'Storage permission denied');
+    // }
   }
 }

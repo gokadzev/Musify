@@ -206,7 +206,8 @@ Future<void> initialisation() async {
     audioHandler = await AudioService.init(
       builder: MusifyAudioHandler.new,
       config: const AudioServiceConfig(
-        androidNotificationChannelId: 'com.gokadzev.musify',
+        // change this to package name to make noti btns work
+        androidNotificationChannelId: 'com.gokadzev.musify.debug',
         androidNotificationChannelName: 'Musify',
         androidNotificationIcon: 'drawable/ic_launcher_foreground',
         androidShowNotificationBadge: true,
