@@ -30,7 +30,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.gokadzev.musify"
+    namespace = "com.ruchan.musify_fork"
     compileSdk 34
     ndkVersion "27.0.12077973"
 
@@ -53,25 +53,25 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.gokadzev.musify"
+        applicationId = "com.ruchan.musify_fork"
         minSdk 24
         targetSdk 34
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
 
-    flavorDimensions "flavor"
+    // flavorDimensions "flavor"
 
-    productFlavors {
-        github {
-            dimension "flavor"
-            applicationIdSuffix ""
-        }
-        fdroid {
-            dimension "flavor"
-            applicationIdSuffix ".fdroid"
-        }
-    }
+    // productFlavors {
+    //     github {
+    //         dimension "flavor"
+    //         applicationIdSuffix ""
+    //     }
+    //     fdroid {
+    //         dimension "flavor"
+    //         applicationIdSuffix ".fdroid"
+    //     }
+    // }
 
     signingConfigs {
         release {

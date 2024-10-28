@@ -32,6 +32,7 @@ dependencies:
   intl: ^0.19.0
   just_audio: ^0.9.40
   on_audio_query: ^2.9.0
+  package_rename: ^1.7.1
   path_provider: ^2.1.4
   permission_handler: ^11.3.1
   rxdart: ^0.28.0
@@ -77,3 +78,9 @@ flutter_launcher_icons:
   adaptive_icon_round: "assets/images/ic_launcher_round.png"
   adaptive_icon_monochrome: "assets/images/ic_launcher_foreground.png"
   image_path: "assets/images/ic_launcher.png"
+
+# dart run package_rename
+package_rename_config:
+  android:
+    app_name: Musify_fork
+    package_name: com.ruchan.musify_fork

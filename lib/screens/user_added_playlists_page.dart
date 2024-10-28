@@ -25,10 +25,15 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
+import 'package:musify/main.dart';
 import 'package:musify/screens/device_songs_page.dart';
+import 'package:musify/screens/playlist_page.dart';
 import 'package:musify/services/router_service.dart';
 import 'package:musify/utilities/flutter_toast.dart';
+import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/playlist_bar.dart';
+import 'package:musify/widgets/playlist_cube.dart';
+import 'package:musify/widgets/spinner.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -168,6 +173,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                               context,
                               await addUserPlaylist(id, context),
                             );
+                            await _refreshPlaylists();
                           } else if (!isYouTubeMode &&
                               customPlaylistName.isNotEmpty) {
                             showToast(
@@ -178,6 +184,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                                 context,
                               ),
                             );
+                            await _refreshPlaylists();
                           } else {
                             showToast(
                               context,
@@ -209,35 +216,119 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                 onPressed: () => NavigationManager.router
                     .go('/userPlaylists/userSongs/recents'),
                 cubeIcon: FluentIcons.history_24_filled,
+                showBtn: false,
               ),
               PlaylistBar(
                 context.l10n!.playlist,
                 onPressed: () =>
                     NavigationManager.router.go('/userPlaylists/playlists'),
                 cubeIcon: FluentIcons.list_24_filled,
+                showBtn: false,
               ),
               PlaylistBar(
                 context.l10n!.likedSongs,
                 onPressed: () => NavigationManager.router
                     .go('/userPlaylists/userSongs/liked'),
                 cubeIcon: FluentIcons.music_note_2_24_regular,
+                showBtn: false,
               ),
               PlaylistBar(
                 context.l10n!.likedPlaylists,
                 onPressed: () => NavigationManager.router
                     .go('/userPlaylists/userLikedPlaylists'),
                 cubeIcon: FluentIcons.task_list_ltr_24_regular,
-              ),
-              PlaylistBar(
-                context.l10n!.offlineSongs,
-                onPressed: () => NavigationManager.router
-                    .go('/userPlaylists/userSongs/offline'),
-                cubeIcon: FluentIcons.cellular_off_24_filled,
+                showBtn: false,
               ),
               PlaylistBar(
                 'Local Songs',
                 onPressed: () => _checkPermissionAndScanDevice(context),
                 cubeIcon: FluentIcons.music_note_1_20_filled,
+                showBtn: false,
+              ),
+              FutureBuilder(
+                future: _playlistsFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Spinner();
+                  } else if (snapshot.hasError) {
+                    logger.log(
+                      'Error on user playlists page',
+                      snapshot.error,
+                      snapshot.stackTrace,
+                    );
+                    return Center(
+                      child: Text(context.l10n!.error),
+                    );
+                  }
+
+                  final _playlists = snapshot.data as List;
+
+                  return GridView.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: 200,
+                      crossAxisSpacing: 20,
+                      mainAxisSpacing: 20,
+                    ),
+                    shrinkWrap: true,
+                    physics: const ScrollPhysics(),
+                    itemCount: _playlists.length,
+                    padding: const EdgeInsets.all(16),
+                    itemBuilder: (BuildContext context, index) {
+                      final playlist = _playlists[index];
+                      final ytid = playlist['ytid'];
+
+                      return GestureDetector(
+                        onTap: playlist['isCustom'] ?? false
+                            ? () async {
+                                final result = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        PlaylistPage(playlistData: playlist),
+                                  ),
+                                );
+                                if (result == false) {
+                                  setState(() {});
+                                }
+                              }
+                            : null,
+                        onLongPress: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return ConfirmationDialog(
+                                confirmationMessage:
+                                    context.l10n!.removePlaylistQuestion,
+                                submitMessage: context.l10n!.remove,
+                                onCancel: () {
+                                  Navigator.of(context).pop();
+                                },
+                                onSubmit: () {
+                                  Navigator.of(context).pop();
+
+                                  if (ytid == null && playlist['isCustom']) {
+                                    removeUserCustomPlaylist(playlist);
+                                  } else {
+                                    removeUserPlaylist(ytid);
+                                  }
+
+                                  _refreshPlaylists();
+                                },
+                              );
+                            },
+                          );
+                        },
+                        child: PlaylistCube(
+                          playlist,
+                          playlistData:
+                              playlist['isCustom'] ?? false ? playlist : null,
+                          onClickOpen: playlist['isCustom'] == null,
+                        ),
+                      );
+                    },
+                  );
+                },
               ),
             ],
           ),
@@ -286,93 +377,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
           //         ),
           //       ),
           //     ),
-          //     FutureBuilder(
-          //       future: _playlistsFuture,
-          //       builder: (context, snapshot) {
-          //         if (snapshot.connectionState == ConnectionState.waiting) {
-          //           return const Spinner();
-          //         } else if (snapshot.hasError) {
-          //           logger.log(
-          //             'Error on user playlists page',
-          //             snapshot.error,
-          //             snapshot.stackTrace,
-          //           );
-          //           return Center(
-          //             child: Text(context.l10n!.error),
-          //           );
-          //         }
 
-          //         final _playlists = snapshot.data as List;
-
-          //         return Expanded(
-          //           child: GridView.builder(
-          //             gridDelegate:
-          //                 const SliverGridDelegateWithMaxCrossAxisExtent(
-          //               maxCrossAxisExtent: 200,
-          //               crossAxisSpacing: 20,
-          //               mainAxisSpacing: 20,
-          //             ),
-          //             shrinkWrap: true,
-          //             physics: const ScrollPhysics(),
-          //             itemCount: _playlists.length,
-          //             padding: const EdgeInsets.all(16),
-          //             itemBuilder: (BuildContext context, index) {
-          //               final playlist = _playlists[index];
-          //               final ytid = playlist['ytid'];
-
-          //               return GestureDetector(
-          //                 onTap: playlist['isCustom'] ?? false
-          //                     ? () async {
-          //                         final result = await Navigator.push(
-          //                           context,
-          //                           MaterialPageRoute(
-          //                             builder: (context) =>
-          //                                 PlaylistPage(playlistData: playlist),
-          //                           ),
-          //                         );
-          //                         if (result == false) {
-          //                           setState(() {});
-          //                         }
-          //                       }
-          //                     : null,
-          //                 onLongPress: () {
-          //                   showDialog(
-          //                     context: context,
-          //                     builder: (BuildContext context) {
-          //                       return ConfirmationDialog(
-          //                         confirmationMessage:
-          //                             context.l10n!.removePlaylistQuestion,
-          //                         submitMessage: context.l10n!.remove,
-          //                         onCancel: () {
-          //                           Navigator.of(context).pop();
-          //                         },
-          //                         onSubmit: () {
-          //                           Navigator.of(context).pop();
-
-          //                           if (ytid == null && playlist['isCustom']) {
-          //                             removeUserCustomPlaylist(playlist);
-          //                           } else {
-          //                             removeUserPlaylist(ytid);
-          //                           }
-
-          //                           _refreshPlaylists();
-          //                         },
-          //                       );
-          //                     },
-          //                   );
-          //                 },
-          //                 child: PlaylistCube(
-          //                   playlist,
-          //                   playlistData:
-          //                       playlist['isCustom'] ?? false ? playlist : null,
-          //                   onClickOpen: playlist['isCustom'] == null,
-          //                 ),
-          //               );
-          //             },
-          //           ),
-          //         );
-          //       },
-          //     ),
           //   ],
           // ),
         ),

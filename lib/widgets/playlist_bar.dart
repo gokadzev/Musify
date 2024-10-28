@@ -3,7 +3,6 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/screens/playlist_page.dart';
-import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/widgets/no_artwork_cube.dart';
 
@@ -18,6 +17,7 @@ class PlaylistBar extends StatelessWidget {
     this.onLongPress,
     this.cubeIcon = FluentIcons.music_note_1_24_regular,
     this.isAlbum = false,
+    this.showBtn = true,
   }) : playlistLikeStatus = ValueNotifier<bool>(
           isPlaylistAlreadyLiked(playlistId),
         );
@@ -30,6 +30,7 @@ class PlaylistBar extends StatelessWidget {
   final VoidCallback? onLongPress;
   final IconData cubeIcon;
   final bool? isAlbum;
+  final bool showBtn;
 
   static const double paddingValue = 4;
   static const double likeButtonOffset = 5;
@@ -131,7 +132,7 @@ class PlaylistBar extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (!offlineMode.value)
+        if (showBtn)
           Row(
             children: [
               ValueListenableBuilder<bool>(

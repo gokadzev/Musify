@@ -96,12 +96,6 @@ class _HomePageState extends State<HomePage> {
               icon: const Icon(FluentIcons.task_list_ltr_24_regular),
               label: context.l10n!.likedPlaylists,
             ),
-            _buildNavButton(
-              onPressed: () =>
-                  NavigationManager.router.go('/home/userSongs/offline'),
-              icon: const Icon(FluentIcons.cellular_off_24_filled),
-              label: context.l10n!.offlineSongs,
-            ),
           ],
         ),
       ),

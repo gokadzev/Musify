@@ -361,30 +361,30 @@ class SettingsPage extends StatelessWidget {
                 );
               },
             ),
-            ValueListenableBuilder<bool>(
-              valueListenable: offlineMode,
-              builder: (_, value, __) {
-                return CustomBar(
-                  context.l10n!.offlineMode,
-                  FluentIcons.cellular_off_24_regular,
-                  trailing: Switch(
-                    value: value,
-                    onChanged: (value) {
-                      addOrUpdateData(
-                        'settings',
-                        'offlineMode',
-                        value,
-                      );
-                      offlineMode.value = value;
-                      showToast(
-                        context,
-                        context.l10n!.restartAppMsg,
-                      );
-                    },
-                  ),
-                );
-              },
-            ),
+            // ValueListenableBuilder<bool>(
+            //   valueListenable: offlineMode,
+            //   builder: (_, value, __) {
+            //     return CustomBar(
+            //       context.l10n!.offlineMode,
+            //       FluentIcons.cellular_off_24_regular,
+            //       trailing: Switch(
+            //         value: value,
+            //         onChanged: (value) {
+            //           addOrUpdateData(
+            //             'settings',
+            //             'offlineMode',
+            //             value,
+            //           );
+            //           offlineMode.value = value;
+            //           showToast(
+            //             context,
+            //             context.l10n!.restartAppMsg,
+            //           );
+            //         },
+            //       ),
+            //     );
+            //   },
+            // ),
             if (!offlineMode.value)
               Column(
                 children: [
