@@ -37,6 +37,8 @@
   "dynamicColor": "Dynamiczny kolor akcentu (Android 12+)",
   "enablePredictiveBack": "Enable predictive back animations (Android 14+)",
   "error": "Coś poszło nie tak",
+    "folders":"Foldery",
+
   "folderRestrictions": "Ze względu na nowe ograniczenia w systemie Android konieczne jest wybranie określonych i odpowiednich folderów dla różnych typów plików. Upewnij się, że wybrałeś folder „Dokumenty” lub „Pobrane” dla kopii zapasowej aplikacji.",
   "home": "Dom",
   "language": "Język",

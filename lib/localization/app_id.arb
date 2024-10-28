@@ -37,6 +37,8 @@
   "dynamicColor": "Warna dinamis (Android 12+)",
   "enablePredictiveBack": "Aktifkan prediksi kembali (Android 14+)",
   "error": "Kesalahan",
+    "folders":"Folder",
+
   "folderRestrictions": "Karena adanya pembatasan baru pada Android, penting untuk memilih folder yang spesifik dan sesuai untuk berbagai jenis file. Pastikan Anda memilih folder 'Dokumen' atau 'Unduhan' untuk pencadangan aplikasi.",
   "home": "Beranda",
   "language": "Bahasa",

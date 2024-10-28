@@ -62,7 +62,7 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
 
   @override
   Widget build(BuildContext context) {
-    print('IN EDIT THIS PAGE--------------------------------');
+    print('Library PAGE--------------------------------');
 
     return Scaffold(
       appBar: AppBar(

@@ -37,6 +37,8 @@
   "dynamicColor": "差し色を動的に変更 (Android 12以上)",
   "enablePredictiveBack": "予測的なバックアニメーションを使用 (Android 14以上)",
   "error": "不明のエラーが発生",
+    "folders":"フォルダ",
+
   "folderRestrictions": "Androidの新しい制約により、ファイルの種類に対して適切なフォルダを選択する必要があります。本アプリのバックアップには、「Documents」か「Downloads」フォルダを必ず選択してください。",
   "home": "ホーム",
   "language": "言語",

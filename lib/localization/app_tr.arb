@@ -37,6 +37,8 @@
   "dynamicColor": "Dinamik vurgu rengi (Android 12+)",
   "enablePredictiveBack": "Enable predictive back animations (Android 14+)",
   "error": "Bir hata oluştu",
+    "folders":"Klasörler",
+
   "folderRestrictions": "Android üzerindeki yeni kısıtlamalar nedeniyle, farklı dosya türleri için belirli ve uygun klasörleri seçmek önemlidir. Lütfen uygulama yedekleme için 'Belgeler' veya 'İndirilenler' klasörlerinden birini seçtiğinizden emin olun.",
   "home": "Ana Sayfa",
   "language": "Dil",

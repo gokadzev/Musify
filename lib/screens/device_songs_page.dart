@@ -113,38 +113,41 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
                   setState(() {
                     _showEverything = false;
                     displaySwitch = true;
-                    header = 'Folders';
+                    header = context.l10n!.folders;
                   });
                 },
               )
             : null,
         actions: [
           if (displaySwitch)
-            Row(
-              children: [
-                const Text('All Songs'),
-                Switch(
-                  value: _showEverything,
-                  onChanged: (value) {
-                    setState(() {
-                      _showEverything = value;
-                      if (value) {
-                        header = 'All Songs';
-                      } else {
-                        header = 'Folders';
-                      }
-                      _deviceSongsList = _showEverything
-                          ? _alldeviceSongsList
-                          : _folders.map((folder) {
-                              return {
-                                'title': folder['folder'].split('/').last,
-                                'folder': folder['folder'],
-                              };
-                            }).toList();
-                    });
-                  },
-                ),
-              ],
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 15, 0),
+              child: Row(
+                children: [
+                  Text('All ${context.l10n!.songs}'),
+                  Switch(
+                    value: _showEverything,
+                    onChanged: (value) {
+                      setState(() {
+                        _showEverything = value;
+                        if (value) {
+                          header = 'All ${context.l10n!.songs}';
+                        } else {
+                          header = 'Folders';
+                        }
+                        _deviceSongsList = _showEverything
+                            ? _alldeviceSongsList
+                            : _folders.map((folder) {
+                                return {
+                                  'title': folder['folder'].split('/').last,
+                                  'folder': folder['folder'],
+                                };
+                              }).toList();
+                      });
+                    },
+                  ),
+                ],
+              ),
             ),
         ],
       ),
@@ -333,7 +336,7 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
           }
 
           _playlist = {
-            'title': 'Local Songs',
+            'title': 'Local ${context.l10n!.songs}',
             'list': _deviceSongsList.map((song) {
               return {
                 'ytid': song['id'].toString(),

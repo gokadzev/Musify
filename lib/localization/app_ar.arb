@@ -37,6 +37,8 @@
   "dynamicColor": "لون التمييز الدينامي (Android 12+)",
   "enablePredictiveBack": "Enable predictive back animations (Android 14+)",
   "error": "حدث خطأ ما",
+    "folders":"مجلدات",
+
   "folderRestrictions": "نظرًا للقيود الجديدة على Android، فإنه من الضروري اختيار مجلدات محددة ومناسبة لأنواع الملفات المختلفة. يرجى التأكد من اختيار مجلد 'المستندات' أو 'التنزيلات' لنسخة احتياطية للتطبيق.",
   "home": "الرئيسية",
   "language": "اللغة",
