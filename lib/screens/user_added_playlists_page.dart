@@ -25,13 +25,10 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
-import 'package:musify/main.dart';
 import 'package:musify/screens/device_songs_page.dart';
-import 'package:musify/screens/playlist_page.dart';
+import 'package:musify/services/router_service.dart';
 import 'package:musify/utilities/flutter_toast.dart';
-import 'package:musify/widgets/confirmation_dialog.dart';
-import 'package:musify/widgets/playlist_cube.dart';
-import 'package:musify/widgets/spinner.dart';
+import 'package:musify/widgets/playlist_bar.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -205,117 +202,179 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
         padding: const EdgeInsets.only(top: 15),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
-          child: Row(
-            children: [
-              SizedBox(
-                width: 200,
-                height: 200,
-                child: ElevatedButton(
-                  onPressed: () => _checkPermissionAndScanDevice(context),
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                        10,
-                      ),
-                    ),
-                  ),
-                  child: const Stack(
-                    alignment: Alignment.bottomRight,
-                    children: [
-                      Center(child: Text('Local Songs')),
-                    ],
-                  ),
-                ),
+          child: Column(
+            children: <Widget>[
+              PlaylistBar(
+                context.l10n!.recentlyPlayed,
+                onPressed: () => NavigationManager.router
+                    .go('/userPlaylists/userSongs/recents'),
+                cubeIcon: FluentIcons.history_24_filled,
               ),
-              FutureBuilder(
-                future: _playlistsFuture,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Spinner();
-                  } else if (snapshot.hasError) {
-                    logger.log(
-                      'Error on user playlists page',
-                      snapshot.error,
-                      snapshot.stackTrace,
-                    );
-                    return Center(
-                      child: Text(context.l10n!.error),
-                    );
-                  }
-
-                  final _playlists = snapshot.data as List;
-
-                  return Expanded(
-                    child: GridView.builder(
-                      gridDelegate:
-                          const SliverGridDelegateWithMaxCrossAxisExtent(
-                        maxCrossAxisExtent: 200,
-                        crossAxisSpacing: 20,
-                        mainAxisSpacing: 20,
-                      ),
-                      shrinkWrap: true,
-                      physics: const ScrollPhysics(),
-                      itemCount: _playlists.length,
-                      padding: const EdgeInsets.all(16),
-                      itemBuilder: (BuildContext context, index) {
-                        final playlist = _playlists[index];
-                        final ytid = playlist['ytid'];
-
-                        return GestureDetector(
-                          onTap: playlist['isCustom'] ?? false
-                              ? () async {
-                                  final result = await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          PlaylistPage(playlistData: playlist),
-                                    ),
-                                  );
-                                  if (result == false) {
-                                    setState(() {});
-                                  }
-                                }
-                              : null,
-                          onLongPress: () {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return ConfirmationDialog(
-                                  confirmationMessage:
-                                      context.l10n!.removePlaylistQuestion,
-                                  submitMessage: context.l10n!.remove,
-                                  onCancel: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  onSubmit: () {
-                                    Navigator.of(context).pop();
-
-                                    if (ytid == null && playlist['isCustom']) {
-                                      removeUserCustomPlaylist(playlist);
-                                    } else {
-                                      removeUserPlaylist(ytid);
-                                    }
-
-                                    _refreshPlaylists();
-                                  },
-                                );
-                              },
-                            );
-                          },
-                          child: PlaylistCube(
-                            playlist,
-                            playlistData:
-                                playlist['isCustom'] ?? false ? playlist : null,
-                            onClickOpen: playlist['isCustom'] == null,
-                          ),
-                        );
-                      },
-                    ),
-                  );
-                },
+              PlaylistBar(
+                context.l10n!.playlist,
+                onPressed: () =>
+                    NavigationManager.router.go('/userPlaylists/playlists'),
+                cubeIcon: FluentIcons.list_24_filled,
+              ),
+              PlaylistBar(
+                context.l10n!.likedSongs,
+                onPressed: () => NavigationManager.router
+                    .go('/userPlaylists/userSongs/liked'),
+                cubeIcon: FluentIcons.music_note_2_24_regular,
+              ),
+              PlaylistBar(
+                context.l10n!.likedPlaylists,
+                onPressed: () => NavigationManager.router
+                    .go('/userPlaylists/userLikedPlaylists'),
+                cubeIcon: FluentIcons.task_list_ltr_24_regular,
+              ),
+              PlaylistBar(
+                context.l10n!.offlineSongs,
+                onPressed: () => NavigationManager.router
+                    .go('/userPlaylists/userSongs/offline'),
+                cubeIcon: FluentIcons.cellular_off_24_filled,
+              ),
+              PlaylistBar(
+                'Local Songs',
+                onPressed: () => _checkPermissionAndScanDevice(context),
+                cubeIcon: FluentIcons.music_note_1_20_filled,
               ),
             ],
           ),
+          // child: Row(
+          //   children: [
+
+          //     SizedBox(
+          //       width: 200,
+          //       height: 200,
+          //       child: ElevatedButton(
+          //         onPressed: () =>
+          //             NavigationManager.router.go('/home/playlists'),
+          //         style: ElevatedButton.styleFrom(
+          //           shape: RoundedRectangleBorder(
+          //             borderRadius: BorderRadius.circular(
+          //               10,
+          //             ),
+          //           ),
+          //         ),
+          //         child: Stack(
+          //           alignment: Alignment.bottomRight,
+          //           children: [
+          //             Center(child: Text(context.l10n!.playlist)),
+          //           ],
+          //         ),
+          //       ),
+          //     ),
+          //     const SizedBox(height: 20, width: 20),
+          //     SizedBox(
+          //       width: 200,
+          //       height: 200,
+          //       child: ElevatedButton(
+          //         onPressed: () => _checkPermissionAndScanDevice(context),
+          //         style: ElevatedButton.styleFrom(
+          //           shape: RoundedRectangleBorder(
+          //             borderRadius: BorderRadius.circular(
+          //               10,
+          //             ),
+          //           ),
+          //         ),
+          //         child: const Stack(
+          //           alignment: Alignment.bottomRight,
+          //           children: [
+          //             Center(child: Text('Local Songs')),
+          //           ],
+          //         ),
+          //       ),
+          //     ),
+          //     FutureBuilder(
+          //       future: _playlistsFuture,
+          //       builder: (context, snapshot) {
+          //         if (snapshot.connectionState == ConnectionState.waiting) {
+          //           return const Spinner();
+          //         } else if (snapshot.hasError) {
+          //           logger.log(
+          //             'Error on user playlists page',
+          //             snapshot.error,
+          //             snapshot.stackTrace,
+          //           );
+          //           return Center(
+          //             child: Text(context.l10n!.error),
+          //           );
+          //         }
+
+          //         final _playlists = snapshot.data as List;
+
+          //         return Expanded(
+          //           child: GridView.builder(
+          //             gridDelegate:
+          //                 const SliverGridDelegateWithMaxCrossAxisExtent(
+          //               maxCrossAxisExtent: 200,
+          //               crossAxisSpacing: 20,
+          //               mainAxisSpacing: 20,
+          //             ),
+          //             shrinkWrap: true,
+          //             physics: const ScrollPhysics(),
+          //             itemCount: _playlists.length,
+          //             padding: const EdgeInsets.all(16),
+          //             itemBuilder: (BuildContext context, index) {
+          //               final playlist = _playlists[index];
+          //               final ytid = playlist['ytid'];
+
+          //               return GestureDetector(
+          //                 onTap: playlist['isCustom'] ?? false
+          //                     ? () async {
+          //                         final result = await Navigator.push(
+          //                           context,
+          //                           MaterialPageRoute(
+          //                             builder: (context) =>
+          //                                 PlaylistPage(playlistData: playlist),
+          //                           ),
+          //                         );
+          //                         if (result == false) {
+          //                           setState(() {});
+          //                         }
+          //                       }
+          //                     : null,
+          //                 onLongPress: () {
+          //                   showDialog(
+          //                     context: context,
+          //                     builder: (BuildContext context) {
+          //                       return ConfirmationDialog(
+          //                         confirmationMessage:
+          //                             context.l10n!.removePlaylistQuestion,
+          //                         submitMessage: context.l10n!.remove,
+          //                         onCancel: () {
+          //                           Navigator.of(context).pop();
+          //                         },
+          //                         onSubmit: () {
+          //                           Navigator.of(context).pop();
+
+          //                           if (ytid == null && playlist['isCustom']) {
+          //                             removeUserCustomPlaylist(playlist);
+          //                           } else {
+          //                             removeUserPlaylist(ytid);
+          //                           }
+
+          //                           _refreshPlaylists();
+          //                         },
+          //                       );
+          //                     },
+          //                   );
+          //                 },
+          //                 child: PlaylistCube(
+          //                   playlist,
+          //                   playlistData:
+          //                       playlist['isCustom'] ?? false ? playlist : null,
+          //                   onClickOpen: playlist['isCustom'] == null,
+          //                 ),
+          //               );
+          //             },
+          //           ),
+          //         );
+          //       },
+          //     ),
+          //   ],
+          // ),
         ),
       ),
     );

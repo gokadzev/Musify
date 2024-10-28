@@ -1,0 +1,152 @@
+[33m14c2a375[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m trying to update
+[33me667fd25[m Working on library
+[33m37017f11[m device music works kinda
+[33m0f60cd7f[m[33m ([m[1;33mtag: [m[1;33m8.7.1[m[33m, [m[1;31mupstream/master[m[33m)[m Update: v8.7.1
+[33m003f8365[m docs: updated library page screenshot
+[33m3d871614[m feat(library): Move liked playlists to the library page
+[33mb72ef191[m fix(playlists): fixed broken like function
+[33m0fc59731[m fix(ui): use better spacing for library page
+[33md5b05c45[m build: update dependencies
+[33m5e23cf48[m[33m ([m[1;33mtag: [m[1;33m8.7.0[m[33m)[m Update: v8.7.0
+[33mfc556791[m format code
+[33m094de083[m Deleted old fastlane changelog files
+[33mf5aff7ef[m Updated screenshots
+[33m343a90a0[m Improve: Improved miscellaneous missed details
+[33m4dc4ffff[m Improved code
+[33m7b18cf90[m Improved code
+[33m0c7f695d[m Fix: Fixed wrong routes in library
+[33mf16c5e56[m Fix: Fixed suggested playlists not opening problem
+[33mf5b9aeba[m Fix: Fixed custom playlist opening problem
+[33mafd0ca08[m Improved code
+[33me105ede3[m Improve: Added missed user playlists section in library
+[33m75aee610[m Improve: Make sections in library controllable
+[33mf9a98a72[m Improve: Redesign and move playlists to library page
+[33m0a87e727[m working on device page
+[33mbf640be2[m Improve: Improved automatic song picker algorithm and playback code
+[33m64dfb75a[m Removed NDK version
+[33m49a98842[m working on on device song
+[33md9cfabc0[m Updated Android gradle plugin version
+[33mb196415a[m Updated the project kotlin version
+[33mcf1b1893[m Updated sub-dependencies
+[33m4aed2dbb[m Updated dependencies
+[33m4c0cdb88[m Improve: Updated Georgian translations
+[33m3aeafe81[m Updated sub-dependencies
+[33maceaf7fa[m Improve: Speed up the playback process by eliminating advanced streaming extraction from the watch page
+[33m69f2bcc1[m Updated dependencies
+[33m861e7892[m Improve: Updated Portuguese translation (#433)
+[33m63183c4d[m Update app_pt.arb
+[33m580b589f[m Updated dependencies
+[33mae95082b[m[33m ([m[1;33mtag: [m[1;33m8.6.5[m[33m)[m Update: v8.6.5
+[33m7fe9afb3[m Updated sub-dependencies
+[33m94f8ab5f[m Fixed format issue in the Indonesian translations
+[33mf036f3df[m Updated dependencies
+[33me20efb11[m Improved translation tracker workflow
+[33m2d261dd3[m Updated Indonesian translation (#427)
+[33m544220ac[m Update Russian translation (#429)
+[33mf494c81b[m Updated Korean translation (#425)
+[33mc49e5518[m Updated German translation (#424)
+[33m03ebf8df[m minor changes in the issue templates
+[33m76ce16ca[m Updated workflow
+[33m6d33b768[m Updated dependencies
+[33mb209d84f[m Improved code
+[33m05b98a28[m Improve: Updated playlist titles in database to match latest changes
+[33m22315147[m Remove: Removed Spanish language as it doesn't have a translator
+[33m88680802[m Update Russian translation
+[33m21ab01f3[m update app_id.arb Indonesian translation
+[33m3195e5a4[m Update app_ko.arb
+[33md1512a1a[m app_de.arb fixed punctuation marks
+[33m9b24fc34[m Update app_de.arb
+[33mce1ce9ad[m Add check of repository in translations tracker to avoid spam
+[33m3dd5d9a6[m Improve: Improved changelog format in the update dialog
+[33ma9d4eb77[m Add: Now you can add playlists using link
+[33m98ec794c[m Improve: Improved 'add user playlist' dialog
+[33m399db3da[m Updated workflow
+[33m47fdfc6e[m Add: Added Indonesian language (#421)
+[33m51d85595[m Create Indonesian Translation
+[33m5cd8774a[m Updated sub-dependencies
+[33m24a10b11[m Added new workflow
+[33m47cee53f[m Update: v8.6.0 [no ci]
+[33mde1e152f[m Improve: Improved launcher icon and splash screen
+[33m0ee283a8[m Updated sub-dependencies
+[33ma27eed86[m Updated dependencies
+[33m4dacae85[m Rename the launcher icon filenames
+[33m775a8adb[m Updated the project gradle version
+[33m6b096d3a[m Updated the project gradle version
+[33m02701ff6[m Add: Added Korean language (#419)
+[33mca36a3d8[m Merge pull request #419 from DDinghoya/patch-1
+[33mea75f585[m Create app_ko.arb
+[33mc8589757[m Upgraded the project flutter version
+[33mc941e725[m Removed extra workflow
+[33mab6013f5[m Minor change in Georgian translation
+[33md1da961c[m Disable opening blank issues
+[33m7ef5d912[m Upgraded the project flutter version
+[33m461fc828[m Updated dependencies
+[33m4125f985[m Improve: Improved and updated Georgian translations
+[33m413777d6[m Improved code
+[33m77709c97[m Updated the project kotlin version
+[33m2e07ce02[m Improve: Improved update dialog
+[33ma9028446[m Improved code
+[33me40469d8[m Fix: Fixed 1 playlist artwork url
+[33m82b9cf26[m Updated dependencies
+[33m1827a03a[m Fix: Show toast in selected language after change
+[33m4e1f20ae[m Add: Added Japanese language (#415)
+[33m46033f1a[m Merge pull request #415 from maboroshin/master
+[33m94693c93[m Create Japanese translation
+[33mcdb849a8[m Updated the project Gradle version
+[33m89886dee[m Updated sub-dependencies
+[33me242f3c8[m Updated dependencies
+[33mda96286a[m Upgraded the project flutter version
+[33m06cef99a[m Update README.md
+[33m3739a4a3[m Merge pull request #413 from GeovaneDev/patch-1
+[33m576c9c11[m Update Portuguese translation
+[33mcb2fb1e9[m Add: Added Android Auto support
+[33m765651f6[m Added downloads badge in README.md
+[33meb37fc0d[m Improve: specify supported Android version for predictive back animations
+[33m7599927e[m Merge pull request #409 from S0nter/master
+[33m6e3a9c1a[m Make setting more clear
+[33m1d872477[m Update app_ru.arb
+[33m406ea68a[m[33m ([m[1;33mtag: [m[1;33m8.5.0[m[33m)[m Update: v8.5.0
+[33m9ab73496[m Use the latest kotlin version
+[33ma49ad870[m Improve: Improved accent color picker
+[33m52e0f66c[m Improve: Increase recently played songs history limit
+[33meaca3804[m Fix: Removed extra padding from playlist bottom sheet
+[33mafbdb7c2[m Add: Added 3 albums
+[33m4b200539[m Improve: Improved lyrics fetching code for a better chance of matching lyrics
+[33m37d9a27d[m Improve: Improved lyrics code
+[33md2a6af22[m Improve: Improved lyrics UI
+[33ma6fa3132[m Add: Added predictive back support [BETA]
+[33mfc9cdef6[m Updated sub-dependencies
+[33mdbb0b13a[m Updated dependencies
+[33m71a614d7[m Upgraded the project flutter version
+[33m284d8eee[m Fix: Added missing condition in phaseController disposal
+[33m2a87760b[m Improve: Don't add a song again if it's the only one in the recent played list
+[33m03eeb374[m Improve: Improved home page code
+[33md825c6a3[m Improve: Improved playlist cube widget
+[33m6459ea60[m Improve: Improved no artwork cube widget
+[33mf2a00959[m Updated dependencies
+[33m1e95cf74[m[33m ([m[1;33mtag: [m[1;33m8.4.0[m[33m)[m Update: v8.4.0
+[33m40070b9e[m Updated dependencies
+[33m92c36dd6[m Improve: Improved active setting bar color
+[33m7e37f39d[m Add: Added Material 3 design slider with some changes
+[33mf7358b00[m Updated the project Kotlin version
+[33m0efdb6ef[m Updated rxdart to v0.28.0
+[33md418fc91[m Add: Added dynamic search feature for playlists [BETA]
+[33m94531ac0[m Updated the project Gradle version
+[33ma9689f8e[m Upgraded the project flutter version
+[33me1dbdfcf[m Updated sub-dependencies
+[33m9e996dd3[m Updated dependencies
+[33m303c9a35[m Add: Added pure black mode [BETA] (#403)
+[33m438547e2[m Updated dependencies
+[33m22b062fa[m[33m ([m[1;33mtag: [m[1;33m8.3.0[m[33m)[m Update: v8.3.0
+[33m95d2104c[m Merge pull request #400 from S0nter/master
+[33mceb49820[m Improve: Changed audio player initialization
+[33m0b1e4f87[m Improved code (minor change)
+[33m0cae8f22[m Improved code
+[33mec008552[m Renamed CustomListTile widget
+[33md7525bd3[m Improve: Improved bar paddings
+[33m4d664013[m Revert "Improve: Use only grids on home page [BETA]"
+[33m12d48908[m Removed 1 playlist
+[33m27f71eb2[m Updated dependencies
+[33m4fd7a087[m Fix: Fixed the issue with the recently played page not working correctly (#401)
+[33m680df968[m Update Russian translation
+[33m67a894f1[m Fix: Fix

@@ -77,11 +77,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
       if (event.processingState == ProcessingState.completed &&
           audioPlayer.playing) {
         if (!hasNext) {
-          if (playNextSongAutomatically.value) {
-            getRandomSong().then(playSong);
-          }
-        } else {
           skipToNext();
+        } else if (playNextSongAutomatically.value &&
+            nextRecommendedSong != null) {
+          playSong(nextRecommendedSong);
         }
       }
       _updatePlaybackState();

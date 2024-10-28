@@ -19,6 +19,9 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
   final OnAudioQuery _audioQuery = OnAudioQuery();
   bool _isLoading = true;
   List<Map<String, dynamic>> _deviceSongsList = [];
+  List<Map<String, dynamic>> _alldeviceSongsList = [];
+  List<Map<String, dynamic>> _folders = [];
+  String header = 'Folders';
   MusifyAudioHandler mah = MusifyAudioHandler();
   final bool _isSortedAscending = true;
   final bool _isShuffled = false;
@@ -26,6 +29,8 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
   final bool _hasMore = true;
   int songCount = 0;
   var selected = 'Name';
+  bool _showEverything = false;
+  bool displaySwitch = true;
 
   @override
   void initState() {
@@ -41,8 +46,27 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
 
     if (permissionStatus) {
       final songs = await _audioQuery.querySongs();
+
+      final folderMap = <String, List<Map<String, dynamic>>>{};
+      for (final song in songs) {
+        final folder = song.data
+            .split('/')
+            .sublist(0, song.data.split('/').length - 1)
+            .join('/');
+        folderMap.putIfAbsent(folder, () => []).add({
+          'id': song.id,
+          'title': song.title,
+          'artist': song.artist ?? 'Unknown Artist',
+          'album': song.album ?? 'Unknown Album',
+          'duration': song.duration ?? 0,
+          'filePath': song.data,
+          'size': song.size,
+          'dateModified': song.dateModified,
+        });
+      }
+
       setState(() {
-        _deviceSongsList = songs.map((song) {
+        _alldeviceSongsList = songs.map((song) {
           return {
             'id': song.id,
             'title': song.title,
@@ -54,8 +78,22 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
             'dateModified': song.dateModified,
           };
         }).toList();
-        songCount = _deviceSongsList.length;
+
+        _folders = folderMap.entries.map((entry) {
+          return {
+            'folder': entry.key,
+            'songs': entry.value,
+          };
+        }).toList();
+
+        songCount = _alldeviceSongsList.length;
         _isLoading = false;
+        _deviceSongsList = _folders.map((folder) {
+          return {
+            'title': folder['folder'].split('/').last,
+            'folder': folder['folder'],
+          };
+        }).toList();
       });
     } else {
       setState(() {
@@ -67,35 +105,82 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        leading: _showEverything
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  setState(() {
+                    _showEverything = false;
+                    displaySwitch = true;
+                    header = 'Folders';
+                  });
+                },
+              )
+            : null,
+        actions: [
+          if (displaySwitch)
+            Row(
+              children: [
+                const Text('All Songs'),
+                Switch(
+                  value: _showEverything,
+                  onChanged: (value) {
+                    setState(() {
+                      _showEverything = value;
+                      if (value) {
+                        header = 'All Songs';
+                      } else {
+                        header = 'Folders';
+                      }
+                      _deviceSongsList = _showEverything
+                          ? _alldeviceSongsList
+                          : _folders.map((folder) {
+                              return {
+                                'title': folder['folder'].split('/').last,
+                                'folder': folder['folder'],
+                              };
+                            }).toList();
+                    });
+                  },
+                ),
+              ],
+            ),
+        ],
+      ),
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.all(20),
               child: buildPlaylistHeader(
-                'Local Songs',
-                Icons.music_note_outlined,
+                header,
+                _showEverything
+                    ? Icons.music_note_outlined
+                    : Icons.folder_outlined,
                 songCount,
               ),
             ),
           ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: 10,
-                horizontal: 20,
+          if (_showEverything)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 10,
+                  horizontal: 20,
+                ),
+                child: buildSongActionsRow(),
               ),
-              child: buildSongActionsRow(),
             ),
-          ),
           if (_isLoading)
             const SliverToBoxAdapter(
               child: Center(child: CircularProgressIndicator()),
             )
           else
             _deviceSongsList.isNotEmpty
-                ? _buildSongsList()
+                ? _showEverything
+                    ? _buildSongsList()
+                    : _buildFolderList()
                 : const SliverToBoxAdapter(
                     child: Center(
                       child: Text(
@@ -105,6 +190,65 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
                     ),
                   ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildFolderList() {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final crossAxisCount = screenWidth > 600 ? 5 : 4;
+    final folderSize = screenWidth / crossAxisCount - 30;
+    return SliverPadding(
+      padding: const EdgeInsets.all(16),
+      sliver: SliverGrid(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: crossAxisCount,
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
+        ),
+        delegate: SliverChildBuilderDelegate(
+          (BuildContext context, int index) {
+            final folder = _folders[index];
+            return SizedBox(
+              width: folderSize,
+              height: folderSize,
+              child: ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _deviceSongsList = folder['songs'];
+                    displaySwitch = false;
+                    header = folder['folder'].split('/').last;
+                    _showEverything = true;
+                  });
+                },
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.folder,
+                      size: folderSize * 0.5,
+                      color: Colors.grey.withOpacity(0.3),
+                    ),
+                    Text(
+                      folder['folder'].split('/').last,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+          childCount: _folders.length,
+        ),
       ),
     );
   }

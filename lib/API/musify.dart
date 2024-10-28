@@ -22,7 +22,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:flutter/widgets.dart';
 import 'package:hive/hive.dart';
@@ -40,7 +39,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 final _yt = YoutubeExplode();
-
+dynamic nextRecommendedSong;
 List globalSongs = [];
 
 List playlists = [...playlistsDB, ...albumsDB];
@@ -298,6 +297,27 @@ Future<void> updatePlaylistLikeStatus(
   addOrUpdateData('user', 'likedPlaylists', userLikedPlaylists);
 }
 
+Future<void> updatePlaylistLikeStatus0(
+  String playlistId,
+  bool add,
+) async {
+  if (add) {
+    final playlist = playlists.firstWhere(
+      (playlist) => playlist['ytid'] == playlistId,
+      orElse: () => {},
+    );
+
+    if (playlist.isNotEmpty) {
+      userLikedPlaylists.add(playlist);
+    }
+  } else {
+    userLikedPlaylists
+        .removeWhere((playlist) => playlist['ytid'] == playlistId);
+  }
+
+  addOrUpdateData('user', 'likedPlaylists', userLikedPlaylists);
+}
+
 bool isSongAlreadyLiked(songIdToCheck) =>
     userLikedSongsList.any((song) => song['ytid'] == songIdToCheck);
 
@@ -468,13 +488,17 @@ Future<List<Map<String, int>>> getSkipSegments(String id) async {
   }
 }
 
-Future<Map> getRandomSong() async {
-  if (globalSongs.isEmpty) {
-    const playlistId = 'PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx';
-    globalSongs = await getSongsFromPlaylist(playlistId);
-  }
+void getSimilarSong(String songYtId) async {
+  try {
+    final song = await _yt.videos.get(songYtId);
+    final relatedSongs = await _yt.videos.getRelatedVideos(song) ?? [];
 
-  return globalSongs[Random().nextInt(globalSongs.length)];
+    if (relatedSongs.isNotEmpty) {
+      nextRecommendedSong = returnSongLayout(0, relatedSongs[0]);
+    }
+  } catch (e, stackTrace) {
+    logger.log('Error while fetching next similar song:', e, stackTrace);
+  }
 }
 
 Future<List> getSongsFromPlaylist(dynamic playlistId) async {
@@ -588,13 +612,17 @@ Future<String> getSong(String songId, bool isLive) async {
 
     unawaited(updateRecentlyPlayed(songId));
 
+    if (playNextSongAutomatically.value) {
+      getSimilarSong(songId);
+    }
+
     if (cachedUrl != null) {
       return cachedUrl;
-    } else if (isLive) {
-      return await getLiveStreamUrl(songId);
-    } else {
-      return await getAudioUrl(songId, cacheKey);
     }
+    if (isLive) {
+      return await getLiveStreamUrl(songId);
+    }
+    return await getAudioUrl(songId, cacheKey);
   } catch (e, stackTrace) {
     logger.log('Error while getting song streaming URL', e, stackTrace);
     rethrow;
