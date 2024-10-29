@@ -119,7 +119,6 @@ You can see frequently asked questions and their answers [here](https://github.c
 - [flutter](https://flutter.dev/): The Flutter SDK.
 - [flutter_localizations](https://flutter.dev/docs/development/accessibility-and-localization/internationalization): Internationalization and localization support for Flutter.
 - [flutter_flip_card](https://pub.dev/packages/flutter_flip_card): A component that provides a flip card animation.
-- [google_fonts](https://pub.dev/packages/google_fonts): A package to use Google Fonts in Flutter.
 - [hive](https://pub.dev/packages/hive): A lightweight and efficient key-value database for Flutter.
 - [hive_flutter](https://pub.dev/packages/hive_flutter): Hive database support for Flutter.
 - [http](https://pub.dev/packages/http): A package for making HTTP requests in Flutter.
