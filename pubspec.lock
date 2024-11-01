@@ -213,10 +213,10 @@ packages:
     dependency: "direct main"
     description:
       name: fluentui_system_icons
-      sha256: "4f451b5512d5f28d0d671881e28519a2a05f252679f98ab41c32ff3da5dcc9cd"
+      sha256: a9fd6c4dc23016d15a224151848f575f8466aba0665b41cce8a2d157e72c9f36
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.261"
+    version: "1.1.263"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -321,10 +321,10 @@ packages:
     dependency: "direct main"
     description:
       name: html
-      sha256: "3a7812d5bcd2894edf53dfaf8cd640876cf6cef50a8f238745c8b8120ea74d3a"
+      sha256: "1fc58edeaec4307368c60d59b7e15b9d658b57d7f3125098b6294153c75337ec"
       url: "https://pub.dev"
     source: hosted
-    version: "0.15.4"
+    version: "0.15.5"
   http:
     dependency: "direct main"
     description:
@@ -377,10 +377,10 @@ packages:
     dependency: "direct main"
     description:
       name: just_audio
-      sha256: b41646a8241688f1d99c2e69c4da2bb26aa4b3a99795f6ff205c2a165e033fda
+      sha256: a49e7120b95600bd357f37a2bb04cd1e88252f7cdea8f3368803779b925b1049
       url: "https://pub.dev"
     source: hosted
-    version: "0.9.41"
+    version: "0.9.42"
   just_audio_platform_interface:
     dependency: transitive
     description:
@@ -481,10 +481,10 @@ packages:
     dependency: "direct main"
     description:
       name: path_provider
-      sha256: fec0d61223fba3154d87759e3cc27fe2c8dc498f6386c6d6fc80d1afdd1bf378
+      sha256: "50c5dd5b6e1aaf6fb3a78b33f6aa3afca52bf903a8a5298f53101fdaee55bbcd"
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.4"
+    version: "2.1.5"
   path_provider_android:
     dependency: transitive
     description:
