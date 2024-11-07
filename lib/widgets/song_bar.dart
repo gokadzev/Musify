@@ -70,6 +70,7 @@ class SongBar extends StatelessWidget {
                   'ytid': '',
                   'title': 'No Playlist',
                   'image': '',
+                  'source': 'user-created',
                   'list': [],
                 };
                 activeSongId = 0;

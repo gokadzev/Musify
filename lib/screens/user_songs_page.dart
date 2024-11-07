@@ -154,6 +154,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
     final _playlist = {
       'ytid': '',
       'title': title,
+      'source': 'user-created',
       'list': songsList,
     };
     return ValueListenableBuilder(

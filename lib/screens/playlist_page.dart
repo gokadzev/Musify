@@ -125,9 +125,13 @@ class _PlaylistPageState extends State<PlaylistPage> {
             _buildLikeButton(),
           ],
           const SizedBox(width: 10),
-          _buildSyncButton(),
-          const SizedBox(width: 10),
-          if (_playlist != null && _playlist['isCustom'] == true) ...[
+          if (_playlist != null &&
+              (_playlist['source'] == 'user-youtube' ||
+                  _playlist['source'] == 'youtube')) ...[
+            _buildSyncButton(),
+            const SizedBox(width: 10),
+          ],
+          if (_playlist != null && _playlist['source'] == 'user-created') ...[
             _buildEditButton(),
             const SizedBox(width: 10),
           ],
@@ -154,7 +158,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
                 SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (BuildContext context, int index) {
-                      return _buildSongListItem(index);
+                      final isRemovable = _playlist['source'] == 'user-created';
+                      return _buildSongListItem(index, isRemovable);
                     },
                     childCount:
                         _hasMore ? _songsList.length + 1 : _songsList.length,
@@ -273,7 +278,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                     if (index != -1) {
                       final newPlaylist = {
                         'title': customPlaylistName,
-                        'isCustom': true,
+                        'source': 'user-created',
                         if (imageUrl != null) 'image': imageUrl,
                         'list': widget.playlistData['list'],
                       };
@@ -299,8 +304,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
   }
 
   void _handleSyncPlaylist() async {
-    if (_playlist['ytid'] != null &&
-        (_playlist['isCustom'] == null || !_playlist['isCustom']))
+    if (_playlist['ytid'] != null)
       _playlist = await updatePlaylistList(context, _playlist['ytid']);
     _hasMore = true;
     _songsList.clear();
@@ -409,7 +413,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
     );
   }
 
-  Widget _buildSongListItem(int index) {
+  Widget _buildSongListItem(int index, bool isRemovable) {
     if (index >= _songsList.length) {
       if (!_isLoading) {
         _loadMore();
@@ -419,7 +423,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
     return SongBar(
       _songsList[index],
       true,
-      onRemove: _playlist['isCustom'] == true
+      onRemove: isRemovable
           ? () => {
                 removeSongFromPlaylist(
                   _playlist,

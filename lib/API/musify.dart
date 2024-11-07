@@ -59,6 +59,7 @@ Map activePlaylist = {
   'ytid': '',
   'title': 'No Playlist',
   'image': '',
+  'source': 'user-created',
   'list': [],
 };
 
@@ -138,6 +139,7 @@ Future<List<dynamic>> getUserPlaylists() async {
         'ytid': plist.id.toString(),
         'title': plist.title,
         'image': null,
+        'source': 'user-youtube',
         'list': [],
       });
     } catch (e, stackTrace) {
@@ -145,6 +147,7 @@ Future<List<dynamic>> getUserPlaylists() async {
         'ytid': playlistID.toString(),
         'title': 'Failed playlist',
         'image': null,
+        'source': 'user-youtube',
         'list': [],
       });
       logger.log(
@@ -208,7 +211,7 @@ String createCustomPlaylist(
 ) {
   final customPlaylist = {
     'title': playlistName,
-    'isCustom': true,
+    'source': 'user-created',
     if (image != null) 'image': image,
     'list': [],
   };
@@ -251,7 +254,7 @@ void removeSongFromPlaylist(
       : playlistSongs
           .removeWhere((song) => song['ytid'] == songToRemove['ytid']);
   playlist['list'] = playlistSongs;
-  if (playlist['isCustom'])
+  if (playlist['source'] == 'user-created')
     addOrUpdateData('user', 'customPlaylists', userCustomPlaylists);
   else
     addOrUpdateData('user', 'playlists', userPlaylists);
@@ -351,6 +354,7 @@ Future<List> getPlaylists({
           final playlistMap = {
             'ytid': playlist.id.toString(),
             'title': playlist.title,
+            'source': 'youtube',
             'list': [],
           };
 

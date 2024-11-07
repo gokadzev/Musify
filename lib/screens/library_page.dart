@@ -240,8 +240,11 @@ class _LibraryPageState extends State<LibraryPage> {
           playlistId: playlist['ytid'],
           playlistArtwork: playlist['image'],
           isAlbum: playlist['isAlbum'],
-          playlistData: playlist['isCustom'] ?? false ? playlist : null,
-          onLongPress: () => _showRemovePlaylistDialog(playlist),
+          playlistData: playlist['source'] == 'user-created' ? playlist : null,
+          onLongPress: playlist['source'] == 'user-created' ||
+                  playlist['source'] == 'user-youtube'
+              ? () => _showRemovePlaylistDialog(playlist)
+              : null,
         );
       },
     );
@@ -408,7 +411,8 @@ class _LibraryPageState extends State<LibraryPage> {
             onSubmit: () {
               Navigator.of(context).pop();
 
-              if (playlist['ytid'] == null && playlist['isCustom']) {
+              if (playlist['ytid'] == null &&
+                  playlist['source'] == 'user-created') {
                 removeUserCustomPlaylist(playlist);
               } else {
                 removeUserPlaylist(playlist['ytid']);
