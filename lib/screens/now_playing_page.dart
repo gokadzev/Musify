@@ -57,13 +57,13 @@ class NowPlayingPage extends StatelessWidget {
           if (snapshot.data == null || !snapshot.hasData) {
             return const SizedBox.shrink();
           } else {
-            final metadata = snapshot.data!;
+            final metadata = snapshot.data;
             final screenHeight = size.height;
 
             return Column(
               children: [
                 SizedBox(height: screenHeight * 0.02),
-                buildArtwork(context, size, metadata),
+                buildArtwork(context, size, metadata!),
                 SizedBox(height: screenHeight * 0.01),
                 if (!(metadata.extras?['isLive'] ?? false))
                   _buildPlayer(
@@ -226,13 +226,13 @@ class NowPlayingPage extends StatelessWidget {
           if (!snapshot.hasData || snapshot.data == null) {
             return const SizedBox.shrink();
           }
-          final positionData = snapshot.data!;
+          final positionData = snapshot.data;
           final primaryColor = Theme.of(context).colorScheme.primary;
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               buildSlider(
-                positionData,
+                positionData!,
               ),
               buildPositionRow(
                 primaryColor,
@@ -334,7 +334,7 @@ class NowPlayingPage extends StatelessWidget {
                       : _secondaryColor,
                 ),
                 iconSize: screen * 0.14,
-                onPressed: () => audioHandler.skipToPrevious(),
+                onPressed: audioHandler.skipToPrevious,
                 splashColor: Colors.transparent,
               ),
               const SizedBox(width: 5),
@@ -358,7 +358,7 @@ class NowPlayingPage extends StatelessWidget {
                   color: audioHandler.hasNext ? _primaryColor : _secondaryColor,
                 ),
                 iconSize: screen * 0.14,
-                onPressed: () => audioHandler.skipToNext(),
+                onPressed: audioHandler.skipToNext,
                 splashColor: Colors.transparent,
               ),
             ],

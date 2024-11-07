@@ -41,16 +41,20 @@ class SongBar extends StatelessWidget {
     this.showMusicDuration = false,
     this.onPlay,
     this.onRemove,
+    this.showBtns = true,
     super.key,
+    this.artUri,
+    this.albumArt = const AssetImage('assets/images/music_icon.png'),
   });
-
+  final ImageProvider albumArt;
   final dynamic song;
   final bool clearPlaylist;
   final Color? backgroundColor;
   final VoidCallback? onRemove;
   final VoidCallback? onPlay;
   final bool showMusicDuration;
-
+  final bool showBtns;
+  final String? artUri;
   static const likeStatusToIconMapper = {
     true: FluentIcons.heart_24_filled,
     false: FluentIcons.heart_24_regular,
@@ -110,7 +114,7 @@ class SongBar extends StatelessWidget {
                     ],
                   ),
                 ),
-                _buildActionButtons(context, primaryColor),
+                if (showBtns) _buildActionButtons(context, primaryColor),
               ],
             ),
           ),
@@ -125,6 +129,14 @@ class SongBar extends StatelessWidget {
 
     final bool isOffline = song['isOffline'] ?? false;
     final String? artworkPath = song['artworkPath'];
+
+    final artUriString = artUri?.toString() ?? '';
+
+    // if (artUriString == 'assets/images/music_icon.png') {
+    //   print('TRUE TRUE TRUE TRUE');
+
+    // }
+
     if (isOffline && artworkPath != null) {
       return SizedBox(
         width: size,
@@ -137,12 +149,12 @@ class SongBar extends StatelessWidget {
           ),
         ),
       );
-    } else {
+    } else if (artUri != null && artUri!.isNotEmpty) {
       return CachedNetworkImage(
         key: Key(song['ytid'].toString()),
         width: size,
         height: size,
-        imageUrl: song['lowResImage'].toString(),
+        imageUrl: artUri!,
         imageBuilder: (context, imageProvider) => SizedBox(
           width: size,
           height: size,
@@ -156,6 +168,29 @@ class SongBar extends StatelessWidget {
         ),
         errorWidget: (context, url, error) => const NullArtworkWidget(
           iconSize: 30,
+        ),
+      );
+    } else {
+      // return SizedBox(
+      //   width: size,
+      //   height: size,
+      //   child: ClipRRect(
+      //     borderRadius: BorderRadius.circular(radius),
+      //     child: Image(
+      //       image: albumArt,
+      //       fit: BoxFit.cover,
+      //     ),
+      //   ),
+      // );
+      return SizedBox(
+        width: size,
+        height: size,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(radius),
+          child: Image.asset(
+            'assets/images/music_icon.png',
+            fit: BoxFit.cover,
+          ),
         ),
       );
     }

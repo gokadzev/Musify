@@ -2,7 +2,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
-import 'package:musify/services/audio_service.dart';
+import 'package:musify/services/audio_service_local.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/playlist_header.dart';
 import 'package:musify/widgets/song_bar.dart';
@@ -23,10 +23,8 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
   List<Map<String, dynamic>> _folders = [];
   String header = 'Folders';
   MusifyAudioHandler mah = MusifyAudioHandler();
-  final bool _isSortedAscending = true;
-  final bool _isShuffled = false;
+  late MusifyAudioHandler audioHandler;
   dynamic _playlist;
-  final bool _hasMore = true;
   int songCount = 0;
   var selected = 'Name';
   bool _showEverything = false;
@@ -61,6 +59,11 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
           'duration': song.duration ?? 0,
           'filePath': song.data,
           'size': song.size,
+          'artUri': 'assets/images/music_icon.png',
+          'highResImage': 'assets/images/music_icon.png',
+          'lowResImage': 'assets/images/music_icon.png',
+          'isLive': false,
+          'isOffline': true,
           'dateModified': song.dateModified,
         });
       }
@@ -75,6 +78,11 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
             'duration': song.duration ?? 0,
             'filePath': song.data,
             'size': song.size,
+            'artUri': 'assets/images/music_icon.png',
+            'highResImage': 'assets/images/music_icon.png',
+            'lowResImage': 'assets/images/music_icon.png',
+            'isLive': false,
+            'isOffline': true,
             'dateModified': song.dateModified,
           };
         }).toList();
@@ -397,6 +405,10 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
         'ytid': song['id'].toString(),
         'title': song['title'],
         'audioPath': song['filePath'],
+        'artUri': song['artUri'],
+        'highResImage': song['highResImage'],
+        'lowResImage': song['lowResImage'],
+        'isLive': false,
         'isOffline': true,
       };
     }).toList();
@@ -408,8 +420,11 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
 
     return SongBar(
       song,
+      showBtns: false,
       true,
-      onPlay: () => mah.playPlaylistSong(playlist: _playlist, songIndex: index),
+      artUri: song['artUri'],
+      onPlay: () =>
+          audioHandler.playPlaylistSong(playlist: _playlist, songIndex: index),
     );
   }
 

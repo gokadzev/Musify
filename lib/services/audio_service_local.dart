@@ -20,7 +20,6 @@
  */
 
 import 'dart:async';
-import 'dart:io';
 import 'dart:math';
 
 import 'package:audio_service/audio_service.dart';
@@ -71,23 +70,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
     LoopMode.one: AudioServiceRepeatMode.one,
     LoopMode.all: AudioServiceRepeatMode.all,
   };
-
-  void _handlePlaybackEvent(PlaybackEvent event) {
-    try {
-      if (event.processingState == ProcessingState.completed &&
-          audioPlayer.playing) {
-        if (!hasNext) {
-          skipToNext();
-        } else if (playNextSongAutomatically.value &&
-            nextRecommendedSong != null) {
-          playSong(nextRecommendedSong);
-        }
-      }
-      _updatePlaybackState();
-    } catch (e, stackTrace) {
-      logger.log('Error handling playback event', e, stackTrace);
-    }
-  }
 
   void _handleLocalPlaybackEvent(PlaybackEvent event) {
     try {
@@ -154,7 +136,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   void _setupEventSubscriptions() {
     _playbackEventSubscription =
-        audioPlayer.playbackEventStream.listen(_handlePlaybackEvent);
+        audioPlayer.playbackEventStream.listen(_handleLocalPlaybackEvent);
     _durationSubscription =
         audioPlayer.durationStream.listen(_handleDurationChange);
     _currentIndexSubscription =

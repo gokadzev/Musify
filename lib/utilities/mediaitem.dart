@@ -39,13 +39,6 @@ MediaItem mapToMediaItem(Map song, String songUrl) => MediaItem(
       album: '',
       artist: song['artist'].toString(),
       title: song['title'].toString(),
-      artUri: song['isOffline'] ?? false
-          ? Uri.file(
-              song['highResImage'].toString(),
-            )
-          : Uri.parse(
-              song['highResImage'].toString(),
-            ),
       extras: {
         'url': songUrl,
         'lowResImage': song['lowResImage'],

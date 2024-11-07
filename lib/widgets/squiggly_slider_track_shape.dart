@@ -109,9 +109,10 @@ class SquigglySliderTrackShape extends SliderTrackShape
       end: sliderTheme.inactiveTrackColor,
     );
     final activePaint = Paint()
-      ..color = activeTrackColorTween.evaluate(enableAnimation)!;
+      ..color = activeTrackColorTween.evaluate(enableAnimation) ?? Colors.white;
     final inactivePaint = Paint()
-      ..color = inactiveTrackColorTween.evaluate(enableAnimation)!;
+      ..color =
+          inactiveTrackColorTween.evaluate(enableAnimation) ?? Colors.white;
     final Paint leftTrackPaint;
     final Paint rightTrackPaint;
     switch (textDirection) {
@@ -226,7 +227,8 @@ class SquigglySliderTrackShape extends SliderTrackShape
         end: sliderTheme.secondaryActiveTrackColor,
       );
       final secondaryTrackPaint = Paint()
-        ..color = secondaryTrackColorTween.evaluate(enableAnimation)!;
+        ..color =
+            secondaryTrackColorTween.evaluate(enableAnimation) ?? Colors.white;
       if (textDirection == TextDirection.ltr) {
         context.canvas.drawRRect(
           RRect.fromLTRBAndCorners(

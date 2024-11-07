@@ -70,7 +70,7 @@ class Material3SliderThumb extends SliderComponentShape {
     final color = ColorTween(
       begin: sliderTheme.disabledThumbColor,
       end: sliderTheme.thumbColor,
-    ).evaluate(enableAnimation)!;
+    ).evaluate(enableAnimation);
 
     final evaluatedElevation = Tween<double>(
       begin: elevation,
@@ -105,7 +105,7 @@ class Material3SliderThumb extends SliderComponentShape {
       )
       ..drawRRect(
         thumbRRect,
-        Paint()..color = color,
+        Paint()..color = color ?? Colors.white,
       );
   }
 }
