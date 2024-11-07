@@ -14,6 +14,7 @@ environment:
 dependencies:
   audio_service: ^0.18.15
   audio_session: ^0.1.21
+  audiotagger: ^2.2.1
   cached_network_image: ^3.4.1
   cupertino_icons: ^1.0.8
   dynamic_color: ^1.7.0

@@ -89,7 +89,7 @@ class NowPlayingPage extends StatelessWidget {
       fontSize: 24,
       fontWeight: FontWeight.w500,
     );
-
+    print('in VUILD ARTWORK FUNCTION');
     return FlipCard(
       rotateSide: RotateSide.right,
       onTapFlipping: !offlineMode.value,
@@ -248,13 +248,16 @@ class NowPlayingPage extends StatelessWidget {
   Widget buildSlider(
     PositionData positionData,
   ) {
+    final maxDuration = positionData.duration.inSeconds.toDouble();
+    final currentPosition =
+        positionData.position.inSeconds.toDouble().clamp(0.0, maxDuration);
     return CustomSlider(
       isSquiglySliderEnabled: useSquigglySlider.value,
-      value: positionData.position.inSeconds.toDouble(),
+      value: currentPosition,
       onChanged: (value) {
         audioHandler.seek(Duration(seconds: value.toInt()));
       },
-      max: positionData.duration.inSeconds.toDouble(),
+      max: maxDuration,
       squiggleAmplitude: 3,
       squiggleWavelength: 5,
       squiggleSpeed: 0.1,

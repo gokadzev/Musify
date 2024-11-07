@@ -130,13 +130,6 @@ class SongBar extends StatelessWidget {
     final bool isOffline = song['isOffline'] ?? false;
     final String? artworkPath = song['artworkPath'];
 
-    final artUriString = artUri?.toString() ?? '';
-
-    // if (artUriString == 'assets/images/music_icon.png') {
-    //   print('TRUE TRUE TRUE TRUE');
-
-    // }
-
     if (isOffline && artworkPath != null) {
       return SizedBox(
         width: size,
@@ -149,12 +142,12 @@ class SongBar extends StatelessWidget {
           ),
         ),
       );
-    } else if (artUri != null && artUri!.isNotEmpty) {
+    } else {
       return CachedNetworkImage(
         key: Key(song['ytid'].toString()),
         width: size,
         height: size,
-        imageUrl: artUri!,
+        imageUrl: song['lowResImage'].toString(),
         imageBuilder: (context, imageProvider) => SizedBox(
           width: size,
           height: size,
@@ -168,29 +161,6 @@ class SongBar extends StatelessWidget {
         ),
         errorWidget: (context, url, error) => const NullArtworkWidget(
           iconSize: 30,
-        ),
-      );
-    } else {
-      // return SizedBox(
-      //   width: size,
-      //   height: size,
-      //   child: ClipRRect(
-      //     borderRadius: BorderRadius.circular(radius),
-      //     child: Image(
-      //       image: albumArt,
-      //       fit: BoxFit.cover,
-      //     ),
-      //   ),
-      // );
-      return SizedBox(
-        width: size,
-        height: size,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(radius),
-          child: Image.asset(
-            'assets/images/music_icon.png',
-            fit: BoxFit.cover,
-          ),
         ),
       );
     }

@@ -20,7 +20,6 @@
  */
 
 import 'dart:async';
-import 'dart:io';
 import 'dart:math';
 
 import 'package:audio_service/audio_service.dart';
@@ -89,24 +88,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
     }
   }
 
-  void _handleLocalPlaybackEvent(PlaybackEvent event) {
-    try {
-      if (event.processingState == ProcessingState.completed &&
-          audioPlayer.playing) {
-        if (audioPlayer.currentIndex == null ||
-            audioPlayer.currentIndex! >= queue.value.length - 1) {
-          stop();
-        } else {
-          skipToNext();
-        }
-      }
-
-      _updatePlaybackState();
-    } catch (e, stackTrace) {
-      logger.log('Error handling local playback event', e, stackTrace);
-    }
-  }
-
   void _handleDurationChange(Duration? duration) {
     try {
       final index = audioPlayer.currentIndex;
@@ -161,6 +142,12 @@ class MusifyAudioHandler extends BaseAudioHandler {
         audioPlayer.currentIndexStream.listen(_handleCurrentSongIndexChanged);
     _sequenceStateSubscription =
         audioPlayer.sequenceStateStream.listen(_handleSequenceStateChange);
+
+    audioPlayer.processingStateStream.listen((processingState) {
+      if (processingState == ProcessingState.completed) {
+        skipToNext();
+      }
+    });
   }
 
   void _updatePlaybackState() {
@@ -304,6 +291,30 @@ class MusifyAudioHandler extends BaseAudioHandler {
     if (playlist != null) activePlaylist = playlist;
     activeSongId = songIndex;
     await audioHandler.playSong(activePlaylist['list'][activeSongId]);
+  }
+
+  Future<void> playLocalPlaylistSong({
+    required Map<String, dynamic> playlist,
+    required int songIndex,
+  }) async {
+    print('PLAYED LOCL SONGS----------------');
+    try {
+      final songs = playlist['list'] as List<Map<String, dynamic>>;
+
+      final audioSources = songs.map((song) {
+        final songUrl = song['filePath'];
+        return AudioSource.uri(Uri.parse(songUrl), tag: song);
+      }).toList();
+
+      await audioPlayer.setAudioSource(
+        ConcatenatingAudioSource(children: audioSources),
+        initialIndex: songIndex,
+      );
+
+      await audioPlayer.play();
+    } catch (e, stackTrace) {
+      print('Error playing playlist song: $e');
+    }
   }
 
   Future<AudioSource> buildAudioSource(
