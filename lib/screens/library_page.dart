@@ -77,28 +77,31 @@ class _LibraryPageState extends State<LibraryPage> {
         title: Text(context.l10n!.library),
       ),
       body: Column(
-        children: <Widget>[
-          CustomSearchBar(
-            onSubmitted: (String value) => setState(() {}),
-            controller: _searchBar,
-            focusNode: _inputNode,
-            labelText: '${context.l10n!.search}...',
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-            child: Wrap(
-              spacing: 10,
-              runSpacing: 8,
-              alignment: WrapAlignment.center,
-              children: List.generate(4, (index) {
-                return _buildFilterChip(index, labels[index]);
-              }),
-            ),
-          ),
+        children: [
           Expanded(
             child: SingleChildScrollView(
               child: Column(
-                children: [
+                children: <Widget>[
+                  CustomSearchBar(
+                    onSubmitted: (String value) => setState(() {}),
+                    controller: _searchBar,
+                    focusNode: _inputNode,
+                    labelText: '${context.l10n!.search}...',
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 15,
+                      vertical: 20,
+                    ),
+                    child: Wrap(
+                      spacing: 10,
+                      runSpacing: 8,
+                      alignment: WrapAlignment.center,
+                      children: List.generate(4, (index) {
+                        return _buildFilterChip(index, labels[index]);
+                      }),
+                    ),
+                  ),
                   if (_visibleSections[0])
                     _buildUserPlaylistsSection(primaryColor),
                   if (_visibleSections[1])
