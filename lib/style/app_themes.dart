@@ -99,6 +99,7 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
   return ThemeData(
     scaffoldBackgroundColor: bgColor,
     colorScheme: colorScheme,
+    cardColor: bgColor,
     appBarTheme: base.appBarTheme.copyWith(
       backgroundColor: bgColor,
       iconTheme: IconThemeData(color: colorScheme.primary),
