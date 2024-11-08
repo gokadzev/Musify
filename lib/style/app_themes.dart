@@ -114,6 +114,7 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
       textColor: colorScheme.primary,
       iconColor: colorScheme.primary,
     ),
+    bottomSheetTheme: base.bottomSheetTheme.copyWith(backgroundColor: bgColor),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       isDense: true,
@@ -123,9 +124,8 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
       ),
       contentPadding: const EdgeInsets.fromLTRB(18, 14, 20, 14),
     ),
-    navigationBarTheme: isPureBlackUsable && bgColor != null
-        ? base.navigationBarTheme.copyWith(backgroundColor: bgColor)
-        : null,
+    navigationBarTheme:
+        base.navigationBarTheme.copyWith(backgroundColor: bgColor),
     visualDensity: VisualDensity.adaptivePlatformDensity,
     useMaterial3: true,
     pageTransitionsTheme: PageTransitionsTheme(
