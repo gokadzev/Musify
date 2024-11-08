@@ -54,7 +54,7 @@ android {
 
     defaultConfig {
         applicationId = "com.ruchan.musify_fork"
-        minSdk 24
+        minSdkVersion 34
         targetSdk 34
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName

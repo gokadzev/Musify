@@ -312,7 +312,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       );
 
       await audioPlayer.play();
-    } catch (e, stackTrace) {
+    } catch (e) {
       print('Error playing playlist song: $e');
     }
   }
