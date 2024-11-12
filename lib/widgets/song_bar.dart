@@ -31,7 +31,6 @@ import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/formatter.dart';
-import 'package:musify/widgets/no_artwork_cube.dart';
 
 class SongBar extends StatelessWidget {
   SongBar(
@@ -129,13 +128,16 @@ class SongBar extends StatelessWidget {
 
     final bool isOffline = song['isOffline'] ?? false;
     final String? artworkPath = song['artworkPath'];
-
+    print('IN BUILD ALBUM ART FUNCTIONS: ');
+    print(isOffline);
+    print('SONG');
+    print(song);
     if (isOffline && artworkPath != null) {
       return SizedBox(
         width: size,
         height: size,
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(radius),
+          borderRadius: commonBarRadius,
           child: Image.file(
             File(artworkPath),
             fit: BoxFit.cover,
@@ -143,6 +145,8 @@ class SongBar extends StatelessWidget {
         ),
       );
     } else {
+      print('Image URL: ${song['lowResImage']}');
+
       return CachedNetworkImage(
         key: Key(song['ytid'].toString()),
         width: size,
@@ -158,9 +162,6 @@ class SongBar extends StatelessWidget {
               centerSlice: const Rect.fromLTRB(1, 1, 1, 1),
             ),
           ),
-        ),
-        errorWidget: (context, url, error) => const NullArtworkWidget(
-          iconSize: 30,
         ),
       );
     }

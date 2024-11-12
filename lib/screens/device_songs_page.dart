@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/services/audio_service.dart';
+import 'package:musify/services/user_shared_pref.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/playlist_header.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:on_audio_query/on_audio_query.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DeviceSongsPage extends StatefulWidget {
   const DeviceSongsPage({super.key});
@@ -28,13 +30,27 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
   dynamic _playlist;
   int songCount = 0;
   var selected = 'Name';
-  bool _showEverything = false;
   bool displaySwitch = true;
+  UserSharedPrefs usp = UserSharedPrefs();
+  bool _showEverything = false;
 
   @override
   void initState() {
     super.initState();
     _fetchSongsFromDevice();
+  }
+
+  Future<void> _loadToggleState() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _showEverything = prefs.getBool('showEverything') ?? false;
+      header = _showEverything ? 'All Songs' : 'Folders';
+    });
+  }
+
+  Future<void> _saveToggleState(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('showEverything', value);
   }
 
   Future<void> _fetchSongsFromDevice() async {
@@ -53,19 +69,17 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
             .sublist(0, song.data.split('/').length - 1)
             .join('/');
 
-        final metadata = await _fetchSongMetadata(song.data);
-
         folderMap.putIfAbsent(folder, () => []).add({
           'id': song.id,
-          'title': metadata['title'],
-          'artist': metadata['artist'],
-          'album': metadata['album'],
+          'title': song.title,
+          'artist': song.artist ?? 'Unknown Artist',
+          'album': song.album ?? 'Unknown Album',
           'duration': song.duration ?? 0,
           'filePath': song.data,
           'size': song.size,
-          'artUri': metadata['artwork'],
-          'highResImage': metadata['artwork'],
-          'lowResImage': metadata['artwork'],
+          'artUri': 'assets/images/music_icon.png',
+          'highResImage': 'assets/images/music_icon.png',
+          'lowResImage': 'assets/images/music_icon.png',
           'isLive': false,
           'isOffline': true,
           'dateModified': song.dateModified,
@@ -73,28 +87,23 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
       }
 
       setState(() {
-        _alldeviceSongsList = songs
-            .map((song) async {
-              final metadata = await _fetchSongMetadata(song.data);
-
-              return {
-                'id': song.id,
-                'title': metadata['title'],
-                'artist': metadata['artist'],
-                'album': metadata['album'],
-                'duration': song.duration ?? 0,
-                'filePath': song.data,
-                'size': song.size,
-                'artUri': metadata['artwork'],
-                'highResImage': metadata['artwork'],
-                'lowResImage': metadata['artwork'],
-                'isLive': false,
-                'isOffline': true,
-                'dateModified': song.dateModified,
-              };
-            })
-            .cast<Map<String, dynamic>>()
-            .toList();
+        _alldeviceSongsList = songs.map((song) {
+          return {
+            'id': song.id,
+            'title': song.title,
+            'artist': song.artist ?? 'Unknown Artist',
+            'album': song.album ?? 'Unknown Album',
+            'duration': song.duration ?? 0,
+            'filePath': song.data,
+            'size': song.size,
+            'artUri': 'assets/images/music_icon.png',
+            'highResImage': 'assets/images/music_icon.png',
+            'lowResImage': 'assets/images/music_icon.png',
+            'isLive': false,
+            'isOffline': true,
+            'dateModified': song.dateModified,
+          };
+        }).toList();
 
         _folders = folderMap.entries.map((entry) {
           return {
@@ -117,24 +126,22 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
         _isLoading = false;
       });
     }
+    await _loadToggleState();
   }
 
   Future<Map<String, dynamic>> _fetchSongMetadata(String filePath) async {
     final tagger = Audiotagger();
 
     try {
-      // Fetch tags for the file
       final tag = await tagger.readTags(path: filePath);
 
-      // You can access fields such as title, artist, album, and artwork (cover)
       return {
         'title': tag?.title ?? 'Unknown Title',
         'artist': tag?.artist ?? 'Unknown Artist',
         'album': tag?.album ?? 'Unknown Album',
-        'artwork': tag?.artwork, // this is a base64 string
+        'artwork': tag?.artwork,
       };
     } catch (e) {
-      print('Error fetching metadata: $e');
       return {
         'title': 'Unknown Title',
         'artist': 'Unknown Artist',
@@ -154,8 +161,10 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
                 onPressed: () {
                   setState(() {
                     _showEverything = false;
+                    _saveToggleState(_showEverything);
                     displaySwitch = true;
                     header = context.l10n!.folders;
+                    songCount = _alldeviceSongsList.length;
                   });
                 },
               )
@@ -172,6 +181,7 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
                     onChanged: (value) {
                       setState(() {
                         _showEverything = value;
+                        _saveToggleState(_showEverything);
                         if (value) {
                           header = 'All ${context.l10n!.songs}';
                         } else {
@@ -220,7 +230,9 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
           if (_isLoading)
             const SliverToBoxAdapter(
               child: Center(child: CircularProgressIndicator()),
-            )
+            ),
+          if (_showEverything)
+            _buildSongsList()
           else
             _deviceSongsList.isNotEmpty
                 ? _showEverything
@@ -261,9 +273,11 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
                 onPressed: () {
                   setState(() {
                     _deviceSongsList = folder['songs'];
+                    songCount = _deviceSongsList.length;
                     displaySwitch = false;
                     header = folder['folder'].split('/').last;
                     _showEverything = true;
+                    _saveToggleState(_showEverything);
                   });
                 },
                 style: ElevatedButton.styleFrom(

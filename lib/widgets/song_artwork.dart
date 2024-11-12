@@ -44,10 +44,11 @@ class SongArtworkWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final artUri = metadata.artUri;
     final artUriString = metadata.artUri?.toString() ?? '';
-    if (artUri == null) {
-      return Container();
-    }
+
+    print('inside the if statement ----------');
+
     if (artUriString == 'assets/images/music_icon.png') {
+      print('inside the if statement ----------');
       return SizedBox(
         width: size,
         height: size,
@@ -61,7 +62,7 @@ class SongArtworkWidget extends StatelessWidget {
       );
     }
 
-    return artUri.scheme == 'file'
+    return metadata.artUri?.scheme == 'file'
         ? SizedBox(
             width: size,
             height: size,

@@ -1,24 +1,3 @@
-/*
- *     Copyright (C) 2024 Valeri Gokadze
- *
- *     Musify is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     Musify is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- *
- *     For more information about Musify, including how to contribute,
- *     please visit: https://github.com/gokadzev/Musify
- */
-
 import 'package:audio_service/audio_service.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
@@ -45,7 +24,7 @@ class NowPlayingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('IN now playing PAGE--------------------------------');
+    print('IN LOCAL now playing PAGE--------------------------------');
 
     final size = MediaQuery.sizeOf(context);
 
@@ -57,13 +36,13 @@ class NowPlayingPage extends StatelessWidget {
           if (snapshot.data == null || !snapshot.hasData) {
             return const SizedBox.shrink();
           } else {
-            final metadata = snapshot.data!;
+            final metadata = snapshot.data;
             final screenHeight = size.height;
 
             return Column(
               children: [
                 SizedBox(height: screenHeight * 0.02),
-                buildArtwork(context, size, metadata),
+                buildArtwork(context, size, metadata!),
                 SizedBox(height: screenHeight * 0.01),
                 if (!(metadata.extras?['isLive'] ?? false))
                   _buildPlayer(
@@ -81,9 +60,6 @@ class NowPlayingPage extends StatelessWidget {
   }
 
   Widget buildArtwork(BuildContext context, Size size, MediaItem metadata) {
-    print('IN BUILD ARTWORK FUNCTION-------');
-    print(size);
-    print(metadata);
     const _padding = 70;
     const _radius = 17.0;
     final screen = (size.width + size.height) / 3.05;
@@ -179,7 +155,6 @@ class NowPlayingPage extends StatelessWidget {
     dynamic audioId,
     MediaItem mediaItem,
   ) {
-    print('IN BUILD PLAYER FUNCTION-------');
     const iconSize = 20.0;
     final screenWidth = size.width;
     final screenHeight = size.height;

@@ -31,7 +31,7 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "com.ruchan.musify_fork"
-    compileSdk 34
+    compileSdkVersion 34
     ndkVersion "27.0.12077973"
 
     compileOptions {
@@ -54,8 +54,8 @@ android {
 
     defaultConfig {
         applicationId = "com.ruchan.musify_fork"
-        minSdkVersion 34
-        targetSdk 34
+        minSdkVersion 21
+        targetSdkVersion 30
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
