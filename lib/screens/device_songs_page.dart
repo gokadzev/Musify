@@ -33,6 +33,7 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
   bool displaySwitch = true;
   UserSharedPrefs usp = UserSharedPrefs();
   bool _showEverything = false;
+  bool _showFolderSongs = false;
 
   @override
   void initState() {
@@ -47,8 +48,8 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
       header = _showEverything ? 'All Songs' : 'Folders';
 
       final lastOpenedFolder = prefs.getString('lastOpenedFolder');
-      if (lastOpenedFolder != null && !_showEverything) {
-        // Check if the folder exists
+
+      if (lastOpenedFolder != null && lastOpenedFolder != 'null') {
         final folderExists =
             _folders.any((folder) => folder['folder'] == lastOpenedFolder);
         if (folderExists) {
@@ -57,6 +58,7 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
           )['songs'];
           songCount = _deviceSongsList.length;
           header = lastOpenedFolder.split('/').last;
+          _showFolderSongs = true;
         }
       }
     });
@@ -65,10 +67,9 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
   Future<void> _saveToggleState(bool value, {String? folderPath}) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('showEverything', value);
-    if (folderPath != null) {
-      // Save the last opened folder path
-      await prefs.setString('lastOpenedFolder', folderPath);
-    }
+    // if (folderPath != null) {
+    await prefs.setString('lastOpenedFolder', folderPath ?? 'null');
+    // }
   }
 
   Future<void> _fetchSongsFromDevice() async {
@@ -134,6 +135,7 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
         _isLoading = false;
 
         if (_showEverything) {
+          print('IN THE FI STATEMENT-------`');
           _deviceSongsList = _alldeviceSongsList;
           _buildSongsList();
         } else {
@@ -184,6 +186,7 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
                     displaySwitch = true;
                     header = context.l10n!.folders;
                     songCount = _alldeviceSongsList.length;
+                    _showFolderSongs = false;
                   });
                 },
               )
@@ -246,7 +249,15 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
             const SliverToBoxAdapter(
               child: Center(child: CircularProgressIndicator()),
             ),
-          if (_showEverything) _buildSongsList() else _buildFolderList(),
+          if (_showEverything) ...{
+            if (!_showFolderSongs) ...{
+              _buildAllSongsList(),
+            } else ...{
+              _buildSongsList(),
+            },
+          } else ...{
+            _buildFolderList(),
+          },
         ],
       ),
     );
@@ -272,17 +283,20 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
               height: folderSize,
               child: ElevatedButton(
                 onPressed: () async {
-                  final folderPath = folder['folder'];
-
-                  final prefs = await SharedPreferences.getInstance();
-                  await prefs.setString('lastOpenedFolder', folderPath);
+                  // final folderPath = folder['folder'];
+                  // final prefs = await SharedPreferences.getInstance();
+                  // await prefs.setString('lastOpenedFolder', folderPath);
                   setState(() {
                     _deviceSongsList = folder['songs'];
                     songCount = _deviceSongsList.length;
                     displaySwitch = false;
                     header = folder['folder'].split('/').last;
                     _showEverything = true;
-                    _saveToggleState(_showEverything);
+                    _showFolderSongs = true;
+                    _saveToggleState(
+                      false,
+                      folderPath: folder['folder'],
+                    );
                   });
                 },
                 style: ElevatedButton.styleFrom(
@@ -442,6 +456,18 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
   }
 
   Widget _buildSongsList() {
+    _showFolderSongs = false;
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (BuildContext context, int index) {
+          return _buildSongListItem(_deviceSongsList[index], index);
+        },
+        childCount: _deviceSongsList.length,
+      ),
+    );
+  }
+
+  Widget _buildAllSongsList() {
     _deviceSongsList = _alldeviceSongsList;
     return SliverList(
       delegate: SliverChildBuilderDelegate(

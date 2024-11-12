@@ -24,7 +24,6 @@ apply plugin: 'com.android.library'
 android {
     compileSdkVersion 34
     namespace 'com.ruchan.musify_fork.audiotagger'
-
     defaultConfig {
         minSdkVersion 21
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
