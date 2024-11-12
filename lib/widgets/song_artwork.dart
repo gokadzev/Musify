@@ -42,13 +42,9 @@ class SongArtworkWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final artUri = metadata.artUri;
     final artUriString = metadata.artUri?.toString() ?? '';
 
-    print('inside the if statement ----------');
-
     if (artUriString == 'assets/images/music_icon.png') {
-      print('inside the if statement ----------');
       return SizedBox(
         width: size,
         height: size,
@@ -62,6 +58,7 @@ class SongArtworkWidget extends StatelessWidget {
       );
     }
 
+    final String imgUrl = metadata.extras?['artWorkPath'];
     return metadata.artUri?.scheme == 'file'
         ? SizedBox(
             width: size,
@@ -77,7 +74,7 @@ class SongArtworkWidget extends StatelessWidget {
         : CachedNetworkImage(
             width: size,
             height: size,
-            imageUrl: metadata.artUri.toString(),
+            imageUrl: imgUrl,
             imageBuilder: (context, imageProvider) => ClipRRect(
               borderRadius: BorderRadius.circular(borderRadius),
               child: Image(

@@ -45,12 +45,30 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
     setState(() {
       _showEverything = prefs.getBool('showEverything') ?? false;
       header = _showEverything ? 'All Songs' : 'Folders';
+
+      final lastOpenedFolder = prefs.getString('lastOpenedFolder');
+      if (lastOpenedFolder != null && !_showEverything) {
+        // Check if the folder exists
+        final folderExists =
+            _folders.any((folder) => folder['folder'] == lastOpenedFolder);
+        if (folderExists) {
+          _deviceSongsList = _folders.firstWhere(
+            (folder) => folder['folder'] == lastOpenedFolder,
+          )['songs'];
+          songCount = _deviceSongsList.length;
+          header = lastOpenedFolder.split('/').last;
+        }
+      }
     });
   }
 
-  Future<void> _saveToggleState(bool value) async {
+  Future<void> _saveToggleState(bool value, {String? folderPath}) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('showEverything', value);
+    if (folderPath != null) {
+      // Save the last opened folder path
+      await prefs.setString('lastOpenedFolder', folderPath);
+    }
   }
 
   Future<void> _fetchSongsFromDevice() async {
@@ -114,12 +132,13 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
 
         songCount = _alldeviceSongsList.length;
         _isLoading = false;
-        _deviceSongsList = _folders.map((folder) {
-          return {
-            'title': folder['folder'].split('/').last,
-            'folder': folder['folder'],
-          };
-        }).toList();
+
+        if (_showEverything) {
+          _deviceSongsList = _alldeviceSongsList;
+          _buildSongsList();
+        } else {
+          _buildFolderList();
+        }
       });
     } else {
       setState(() {
@@ -184,17 +203,13 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
                         _saveToggleState(_showEverything);
                         if (value) {
                           header = 'All ${context.l10n!.songs}';
+                          _deviceSongsList = _alldeviceSongsList;
+
+                          _buildSongsList();
                         } else {
                           header = 'Folders';
+                          _buildFolderList();
                         }
-                        _deviceSongsList = _showEverything
-                            ? _alldeviceSongsList
-                            : _folders.map((folder) {
-                                return {
-                                  'title': folder['folder'].split('/').last,
-                                  'folder': folder['folder'],
-                                };
-                              }).toList();
                       });
                     },
                   ),
@@ -231,21 +246,7 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
             const SliverToBoxAdapter(
               child: Center(child: CircularProgressIndicator()),
             ),
-          if (_showEverything)
-            _buildSongsList()
-          else
-            _deviceSongsList.isNotEmpty
-                ? _showEverything
-                    ? _buildSongsList()
-                    : _buildFolderList()
-                : const SliverToBoxAdapter(
-                    child: Center(
-                      child: Text(
-                        'No songs found on device',
-                        style: TextStyle(fontSize: 18, color: Colors.grey),
-                      ),
-                    ),
-                  ),
+          if (_showEverything) _buildSongsList() else _buildFolderList(),
         ],
       ),
     );
@@ -270,7 +271,11 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
               width: folderSize,
               height: folderSize,
               child: ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
+                  final folderPath = folder['folder'];
+
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.setString('lastOpenedFolder', folderPath);
                   setState(() {
                     _deviceSongsList = folder['songs'];
                     songCount = _deviceSongsList.length;
@@ -437,6 +442,7 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
   }
 
   Widget _buildSongsList() {
+    _deviceSongsList = _alldeviceSongsList;
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (BuildContext context, int index) {

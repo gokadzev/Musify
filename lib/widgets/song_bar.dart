@@ -132,6 +132,7 @@ class SongBar extends StatelessWidget {
     print(isOffline);
     print('SONG');
     print(song);
+
     if (isOffline && artworkPath != null) {
       return SizedBox(
         width: size,
@@ -146,6 +147,15 @@ class SongBar extends StatelessWidget {
       );
     } else {
       print('Image URL: ${song['lowResImage']}');
+
+      if (song['lowResImage'] == 'assets/images/music_icon.png') {
+        return Image.asset(
+          song['lowResImage'],
+          width: size,
+          height: size,
+          fit: BoxFit.cover,
+        );
+      }
 
       return CachedNetworkImage(
         key: Key(song['ytid'].toString()),

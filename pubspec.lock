@@ -68,10 +68,9 @@ packages:
   audiotagger:
     dependency: "direct main"
     description:
-      name: audiotagger
-      sha256: "1be5df15f099a82282aa03602d5e8da155182d0a144b7bd0e82499a9f61d9b82"
-      url: "https://pub.dev"
-    source: hosted
+      path: "packages/audiotagger"
+      relative: true
+    source: path
     version: "2.2.1"
   boolean_selector:
     dependency: transitive
