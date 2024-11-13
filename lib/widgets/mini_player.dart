@@ -34,7 +34,7 @@ class MiniPlayer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var _isHandlingSwipe = false;
-
+    print('IN SMALL NOW PLAYING SONG BAR');
     return GestureDetector(
       onVerticalDragUpdate: (details) {
         if (details.primaryDelta! < 0) {
@@ -45,6 +45,12 @@ class MiniPlayer extends StatelessWidget {
             ),
           );
         }
+      },
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const NowPlayingPage()),
+        );
       },
       onHorizontalDragUpdate: audioHandler.hasNext
           ? (details) {

@@ -1,8 +1,12 @@
-import 'package:audiotagger/audiotagger.dart';
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_media_metadata/flutter_media_metadata.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
+import 'package:musify/main.dart';
 import 'package:musify/services/audio_service.dart';
 import 'package:musify/services/user_shared_pref.dart';
 import 'package:musify/widgets/playlist_cube.dart';
@@ -26,7 +30,6 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
   List<Map<String, dynamic>> _folders = [];
   String header = 'Folders';
   MusifyAudioHandler mah = MusifyAudioHandler();
-  late MusifyAudioHandler audioHandler;
   dynamic _playlist;
   int songCount = 0;
   var selected = 'Name';
@@ -82,11 +85,23 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
       final songs = await _audioQuery.querySongs();
 
       final folderMap = <String, List<Map<String, dynamic>>>{};
+
+      // Iterate over each song and retrieve metadata, including album art.
       for (final song in songs) {
         final folder = song.data
             .split('/')
             .sublist(0, song.data.split('/').length - 1)
             .join('/');
+
+        Uint8List? albumArt;
+        try {
+          // Retrieve metadata from the file
+          final metadata = await MetadataRetriever.fromFile(File(song.data));
+          albumArt = metadata.albumArt;
+        } catch (e) {
+          print('Error fetching metadata for ${song.title}: $e');
+          albumArt = null;
+        }
 
         folderMap.putIfAbsent(folder, () => []).add({
           'id': song.id,
@@ -99,14 +114,25 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
           'artUri': 'assets/images/music_icon.png',
           'highResImage': 'assets/images/music_icon.png',
           'lowResImage': 'assets/images/music_icon.png',
+          'albumArt': albumArt, // Add album art here
           'isLive': false,
           'isOffline': true,
           'dateModified': song.dateModified,
         });
       }
 
-      setState(() {
-        _alldeviceSongsList = songs.map((song) {
+      // Use Future.wait to process all songs concurrently and wait for them to complete.
+      final deviceSongsList = await Future.wait(
+        songs.map((song) async {
+          Uint8List? albumArt;
+          try {
+            final metadata = await MetadataRetriever.fromFile(File(song.data));
+            albumArt = metadata.albumArt;
+          } catch (e) {
+            print('Error fetching metadata for ${song.title}: $e');
+            albumArt = null;
+          }
+
           return {
             'id': song.id,
             'title': song.title,
@@ -118,11 +144,16 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
             'artUri': 'assets/images/music_icon.png',
             'highResImage': 'assets/images/music_icon.png',
             'lowResImage': 'assets/images/music_icon.png',
+            'albumArt': albumArt,
             'isLive': false,
             'isOffline': true,
             'dateModified': song.dateModified,
           };
-        }).toList();
+        }).toList(),
+      );
+
+      setState(() {
+        _alldeviceSongsList = deviceSongsList;
 
         _folders = folderMap.entries.map((entry) {
           return {
@@ -148,28 +179,6 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
       });
     }
     await _loadToggleState();
-  }
-
-  Future<Map<String, dynamic>> _fetchSongMetadata(String filePath) async {
-    final tagger = Audiotagger();
-
-    try {
-      final tag = await tagger.readTags(path: filePath);
-
-      return {
-        'title': tag?.title ?? 'Unknown Title',
-        'artist': tag?.artist ?? 'Unknown Artist',
-        'album': tag?.album ?? 'Unknown Album',
-        'artwork': tag?.artwork,
-      };
-    } catch (e) {
-      return {
-        'title': 'Unknown Title',
-        'artist': 'Unknown Artist',
-        'album': 'Unknown Album',
-        'artwork': null,
-      };
-    }
   }
 
   @override
@@ -229,7 +238,7 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
               child: buildPlaylistHeader(
                 header,
                 _showEverything
-                    ? Icons.music_note_outlined
+                    ? FluentIcons.music_note_1_24_regular
                     : Icons.folder_outlined,
                 songCount,
               ),
@@ -490,6 +499,7 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
         'lowResImage': song['lowResImage'],
         'isLive': false,
         'isOffline': true,
+        'albumArt': song['albumArt'],
       };
     }).toList();
 
@@ -501,7 +511,7 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
       song,
       showBtns: false,
       true,
-      onPlay: () => audioHandler.playLocalPlaylistSong(
+      onPlay: () => audioHandler.playPlaylistSong(
         playlist: _playlist,
         songIndex: index,
       ),

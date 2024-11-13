@@ -81,9 +81,6 @@ class NowPlayingPage extends StatelessWidget {
   }
 
   Widget buildArtwork(BuildContext context, Size size, MediaItem metadata) {
-    print('IN BUILD ARTWORK FUNCTION-------');
-    print(size);
-    print(metadata);
     const _padding = 70;
     const _radius = 17.0;
     final screen = (size.width + size.height) / 3.05;
@@ -179,7 +176,6 @@ class NowPlayingPage extends StatelessWidget {
     dynamic audioId,
     MediaItem mediaItem,
   ) {
-    print('IN BUILD PLAYER FUNCTION-------');
     const iconSize = 20.0;
     final screenWidth = size.width;
     final screenHeight = size.height;
@@ -290,6 +286,10 @@ class NowPlayingPage extends StatelessWidget {
     MediaItem mediaItem,
     double iconSize,
   ) {
+    print('MEDIA ITEM:- $mediaItem -------------------------');
+    print(mediaItem.extras!['artWorkPath']);
+    final showBtns =
+        mediaItem.extras!['artWorkPath'] != 'assets/images/music_icon.png';
     final _primaryColor = Theme.of(context).colorScheme.primary;
     final _secondaryColor = Theme.of(context).colorScheme.secondaryContainer;
 

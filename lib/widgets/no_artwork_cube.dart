@@ -41,7 +41,6 @@ class NullArtworkWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    print('IN NO ARTWORK WIDGET');
     return SizedBox(
       width: size,
       height: size,

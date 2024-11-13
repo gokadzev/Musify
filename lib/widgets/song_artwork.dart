@@ -44,7 +44,7 @@ class SongArtworkWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final artUriString = metadata.artUri?.toString() ?? '';
-
+    print('ON SONG ATRWORK FUNCTION');
     if (artUriString == 'assets/images/music_icon.png') {
       return SizedBox(
         width: size,

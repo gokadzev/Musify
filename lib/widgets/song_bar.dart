@@ -42,10 +42,7 @@ class SongBar extends StatelessWidget {
     this.onRemove,
     this.showBtns = true,
     super.key,
-    this.artUri,
-    this.albumArt = const AssetImage('assets/images/music_icon.png'),
   });
-  final ImageProvider albumArt;
   final dynamic song;
   final bool clearPlaylist;
   final Color? backgroundColor;
@@ -53,7 +50,6 @@ class SongBar extends StatelessWidget {
   final VoidCallback? onPlay;
   final bool showMusicDuration;
   final bool showBtns;
-  final String? artUri;
   static const likeStatusToIconMapper = {
     true: FluentIcons.heart_24_filled,
     false: FluentIcons.heart_24_regular,
@@ -128,10 +124,6 @@ class SongBar extends StatelessWidget {
 
     final bool isOffline = song['isOffline'] ?? false;
     final String? artworkPath = song['artworkPath'];
-    print('IN BUILD ALBUM ART FUNCTIONS: ');
-    print(isOffline);
-    print('SONG');
-    print(song);
 
     if (isOffline && artworkPath != null) {
       return SizedBox(
@@ -146,20 +138,19 @@ class SongBar extends StatelessWidget {
         ),
       );
     } else {
-      print('Image URL: ${song['lowResImage']}');
-
       if (song['lowResImage'] == 'assets/images/music_icon.png') {
-        // return Image.asset(
-        //   song['lowResImage'],
-        //   width: size,
-        //   height: size,
-        //   fit: BoxFit.cover,
-        // );
-        print('INSODE THE IF STAT OF ICON DATA===================');
-        return const Icon(
-          FluentIcons.music_note_1_24_regular,
-          size: size,
-        );
+        if (song['albumArt'] != null) {
+          return Image.memory(
+            song['albumArt'],
+            width: size,
+            height: size,
+          );
+        } else {
+          return const Icon(
+            FluentIcons.music_note_1_24_regular,
+            size: size,
+          );
+        }
       }
 
       return CachedNetworkImage(
