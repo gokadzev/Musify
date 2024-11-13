@@ -149,11 +149,16 @@ class SongBar extends StatelessWidget {
       print('Image URL: ${song['lowResImage']}');
 
       if (song['lowResImage'] == 'assets/images/music_icon.png') {
-        return Image.asset(
-          song['lowResImage'],
-          width: size,
-          height: size,
-          fit: BoxFit.cover,
+        // return Image.asset(
+        //   song['lowResImage'],
+        //   width: size,
+        //   height: size,
+        //   fit: BoxFit.cover,
+        // );
+        print('INSODE THE IF STAT OF ICON DATA===================');
+        return const Icon(
+          FluentIcons.music_note_1_24_regular,
+          size: size,
         );
       }
 

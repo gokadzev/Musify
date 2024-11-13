@@ -1,7 +1,7 @@
 leading: _showEverything
     ? IconButton(
-        icon: const Icon(Icons.arrow_back),
-        onPressed: () {
+        icon = const Icon(Icons.arrow_back),
+        onPressed = () {
           setState(() {
             // If showing everything, toggle back to folders view
             if (_showEverything) {

@@ -26,9 +26,6 @@ jobs:
       - name: Get Flutter dependencies
         run: flutter pub get
 
-      - run: | 
-         sed -i "/^android {/a\\    namespace 'com.ruchan.musify_fork.on_audio_query_android'" $HOME/.pub-cache/hosted/pub.dev/on_audio_query_android-1.1.0/android/build.gradle
-
       - name: Build APK
         run: flutter build apk --release
 
