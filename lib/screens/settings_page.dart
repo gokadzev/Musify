@@ -50,7 +50,14 @@ class SettingsPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(context.l10n!.settings),
+        title: Text(
+          context.l10n!.settings,
+          style: TextStyle(
+            color: primaryColor,
+            fontFamily: 'paytoneOne',
+            fontWeight: FontWeight.w300,
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(

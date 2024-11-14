@@ -74,7 +74,14 @@ class _LibraryPageState extends State<LibraryPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(context.l10n!.library),
+        title: Text(
+          context.l10n!.library,
+          style: TextStyle(
+            color: primaryColor,
+            fontFamily: 'paytoneOne',
+            fontWeight: FontWeight.w300,
+          ),
+        ),
       ),
       body: Column(
         children: [

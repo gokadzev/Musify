@@ -49,6 +49,7 @@ class _HomePageState extends State<HomePage> {
           style: TextStyle(
             color: Theme.of(context).colorScheme.primary,
             fontFamily: 'paytoneOne',
+            fontWeight: FontWeight.w300,
           ),
         ),
       ),
