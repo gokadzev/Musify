@@ -43,16 +43,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Musify.',
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.primary,
-            fontFamily: 'paytoneOne',
-            fontWeight: FontWeight.w300,
-          ),
-        ),
-      ),
+      appBar: AppBar(title: const Text('Musify.')),
       body: SingleChildScrollView(
         child: Column(
           children: [

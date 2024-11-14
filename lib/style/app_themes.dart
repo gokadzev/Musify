@@ -106,6 +106,7 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
       centerTitle: true,
       titleTextStyle: TextStyle(
         fontSize: 30,
+        fontFamily: 'paytoneOne',
         fontWeight: FontWeight.bold,
         color: colorScheme.primary,
       ),

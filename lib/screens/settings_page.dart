@@ -49,16 +49,7 @@ class SettingsPage extends StatelessWidget {
     final inactivatedColor = Theme.of(context).colorScheme.secondaryContainer;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          context.l10n!.settings,
-          style: TextStyle(
-            color: primaryColor,
-            fontFamily: 'paytoneOne',
-            fontWeight: FontWeight.w300,
-          ),
-        ),
-      ),
+      appBar: AppBar(title: Text(context.l10n!.settings)),
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
