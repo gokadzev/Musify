@@ -289,7 +289,7 @@ class SettingsPage extends StatelessWidget {
             ),
             if (themeMode == ThemeMode.dark)
               CustomBar(
-                context.l10n!.usePureBlack,
+                context.l10n!.pureBlackTheme,
                 FluentIcons.color_background_24_filled,
                 trailing: Switch(
                   value: usePureBlackColor.value,
@@ -313,7 +313,7 @@ class SettingsPage extends StatelessWidget {
               valueListenable: predictiveBack,
               builder: (_, value, __) {
                 return CustomBar(
-                  context.l10n!.enablePredictiveBack,
+                  context.l10n!.predictiveBack,
                   FluentIcons.position_backward_24_filled,
                   trailing: Switch(
                     value: predictiveBack.value,
