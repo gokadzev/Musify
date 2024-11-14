@@ -107,7 +107,7 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
       titleTextStyle: TextStyle(
         fontSize: 30,
         fontFamily: 'paytoneOne',
-        fontWeight: FontWeight.bold,
+        fontWeight: FontWeight.w300,
         color: colorScheme.primary,
       ),
       elevation: 0,
