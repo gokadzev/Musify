@@ -196,8 +196,8 @@ Future<String> addUserPlaylist(String input, BuildContext context) async {
       return '${context.l10n!.playlistAlreadyExists}!';
     }
 
-    if (_playlist.title == '' &&
-        _playlist.author == '' &&
+    if (_playlist.title.isEmpty &&
+        _playlist.author.isEmpty &&
         _playlist.videoCount == null) {
       return '${context.l10n!.invalidYouTubePlaylist}!';
     }
