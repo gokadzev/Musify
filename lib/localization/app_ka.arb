@@ -39,6 +39,7 @@
   "error": "დაფიქსირდა შეცდომა",
   "folderRestrictions": "Android-ის ახალი შეზღუდვებიდან გამომდინარე, საჭიროა რომ აირჩიოთ კონკრეტული და შესაბამისი საქაღალდეები განსხვავებული ფაილის ტიპებისთვის. გთხოვთ დარწმუნდით რომ ირჩევთ 'Documents' ან 'Downloads' საქაღალდეს აპლიკაციის ინფორმაციის რეზერვისთვის.",
   "home": "მთავარი",
+  "invalidYouTubePlaylist": "Invalid Youtube playlist",
   "language": "ენა",
   "languageMsg": "ენა შეიცვალა",
   "library": "Library",

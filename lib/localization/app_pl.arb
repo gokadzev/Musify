@@ -39,6 +39,7 @@
   "error": "Coś poszło nie tak",
   "folderRestrictions": "Ze względu na nowe ograniczenia w systemie Android konieczne jest wybranie określonych i odpowiednich folderów dla różnych typów plików. Upewnij się, że wybrałeś folder „Dokumenty” lub „Pobrane” dla kopii zapasowej aplikacji.",
   "home": "Dom",
+  "invalidYouTubePlaylist": "Invalid Youtube playlist",
   "language": "Język",
   "languageMsg": "Język został zmieniony",
   "library": "Library",

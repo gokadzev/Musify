@@ -39,6 +39,7 @@
   "error": "Etwas ist schiefgelaufen",
   "folderRestrictions": "Aufgrund neuer Beschränkungen auf Android ist es wichtig, spezifische und geeignete Ordner für verschiedene Dateitypen auszuwählen. Stelle sicher, dass du entweder den Ordner 'Dokumente' oder 'Downloads' für das App-Backup auswählst.",
   "home": "Startseite",
+  "invalidYouTubePlaylist": "Invalid Youtube playlist",
   "language": "Sprache",
   "languageMsg": "Sprache geändert",
   "library": "Bibliothek",

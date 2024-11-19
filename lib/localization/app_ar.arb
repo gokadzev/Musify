@@ -39,6 +39,7 @@
   "error": "حدث خطأ ما",
   "folderRestrictions": "نظرًا للقيود الجديدة على Android، فإنه من الضروري اختيار مجلدات محددة ومناسبة لأنواع الملفات المختلفة. يرجى التأكد من اختيار مجلد 'المستندات' أو 'التنزيلات' لنسخة احتياطية للتطبيق.",
   "home": "الرئيسية",
+  "invalidYouTubePlaylist": "Invalid Youtube playlist",
   "language": "اللغة",
   "languageMsg": "تم تغيير اللغة",
   "library": "Library",

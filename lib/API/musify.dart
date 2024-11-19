@@ -190,10 +190,16 @@ Future<String> addUserPlaylist(String input, BuildContext context) async {
   }
 
   try {
-    await _yt.playlists.get(playlistId);
+    final _playlist = await _yt.playlists.get(playlistId);
 
     if (userPlaylists.contains(playlistId)) {
       return '${context.l10n!.playlistAlreadyExists}!';
+    }
+
+    if (_playlist.title == '' &&
+        _playlist.author == '' &&
+        _playlist.videoCount == null) {
+      return '${context.l10n!.invalidYouTubePlaylist}!';
     }
 
     userPlaylists.add(playlistId);

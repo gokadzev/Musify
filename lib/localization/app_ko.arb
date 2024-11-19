@@ -39,6 +39,7 @@
   "error": "오류가 발생했습니다. 다시 시도해 주세요.",
   "folderRestrictions": "안드로이드 제한으로 인해 백업할 특정 폴더(예: 문서 또는 다운로드)를 선택해야 합니다.",
   "home": "홈",
+  "invalidYouTubePlaylist": "Invalid Youtube playlist",
   "language": "언어",
   "languageMsg": "언어가 성공적으로 변경되었음",
   "library": "라이브러리",

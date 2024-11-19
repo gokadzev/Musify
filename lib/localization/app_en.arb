@@ -39,6 +39,7 @@
   "error": "An error occurred. Please try again.",
   "folderRestrictions": "Android restrictions require selecting specific folders (e.g., Documents or Downloads) for backup.",
   "home": "Home",
+  "invalidYouTubePlaylist": "Invalid Youtube playlist",
   "language": "Language",
   "languageMsg": "Language updated",
   "library": "Library",

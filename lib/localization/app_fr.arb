@@ -39,6 +39,7 @@
   "error": "Une erreur s'est produite",
   "folderRestrictions": "En raison des nouvelles restrictions sur Android, il est essentiel de sélectionner des dossiers spécifiques et appropriés pour différents types de fichiers. Assurez-vous de choisir soit le dossier 'Documents' soit le dossier 'Téléchargements' pour la sauvegarde de l'application.",
   "home": "Accueil",
+  "invalidYouTubePlaylist": "Invalid Youtube playlist",
   "language": "Langue",
   "languageMsg": "Langue modifiée",
   "library": "Library",

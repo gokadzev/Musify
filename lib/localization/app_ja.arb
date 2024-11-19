@@ -39,6 +39,7 @@
   "error": "不明のエラーが発生",
   "folderRestrictions": "Androidの新しい制約により、ファイルの種類に対して適切なフォルダを選択する必要があります。本アプリのバックアップには、「Documents」か「Downloads」フォルダを必ず選択してください。",
   "home": "ホーム",
+  "invalidYouTubePlaylist": "Invalid Youtube playlist",
   "language": "言語",
   "languageMsg": "言語を変更しました",
   "library": "Library",

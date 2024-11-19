@@ -39,6 +39,7 @@
   "error": "Что-то пошло не так",
   "folderRestrictions": "Ввиду ограничений Android, необходимо выбрать определённые папки для разных типов файлов. Пожалуйста убедитесь в том, что вы выбрали папку 'Документы' или 'Скачанные' для файлов восстановления.",
   "home": "Главная",
+  "invalidYouTubePlaylist": "Invalid Youtube playlist",
   "language": "Язык",
   "languageMsg": "Язык изменён",
   "library": "Library",

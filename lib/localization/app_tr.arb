@@ -39,6 +39,7 @@
   "error": "Bir hata oluştu",
   "folderRestrictions": "Android üzerindeki yeni kısıtlamalar nedeniyle, farklı dosya türleri için belirli ve uygun klasörleri seçmek önemlidir. Lütfen uygulama yedekleme için 'Belgeler' veya 'İndirilenler' klasörlerinden birini seçtiğinizden emin olun.",
   "home": "Ana Sayfa",
+  "invalidYouTubePlaylist": "Invalid Youtube playlist",
   "language": "Dil",
   "languageMsg": "Dil değiştirildi",
   "library": "Library",

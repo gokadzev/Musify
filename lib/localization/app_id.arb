@@ -39,6 +39,7 @@
   "error": "Kesalahan",
   "folderRestrictions": "Karena adanya pembatasan baru pada Android, penting untuk memilih folder yang spesifik dan sesuai untuk berbagai jenis file. Pastikan Anda memilih folder 'Dokumen' atau 'Unduhan' untuk pencadangan aplikasi.",
   "home": "Beranda",
+  "invalidYouTubePlaylist": "Invalid Youtube playlist",
   "language": "Bahasa",
   "languageMsg": "Bahasa berhasil diubah",
   "library": "Library",
