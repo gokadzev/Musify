@@ -19,7 +19,7 @@
   "cacheMsg": "キャッシュを消去しました",
   "cancel": "キャンセル",
   "chooseBackupDir": "バックアップ先のフォルダを選択",
-  "chooseRestoreDir": "復元元のフォルダを選択",
+  "chooseBackupFiles": "Choose backup files",
   "clear": "消去",
   "clearCache": "キャッシュを削除",
   "clearRecentlyPlayed": "再生履歴を削除",

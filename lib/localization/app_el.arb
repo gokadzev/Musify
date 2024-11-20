@@ -19,7 +19,7 @@
   "cacheMsg": "Έγινε εκκαθάριση της cache",
   "cancel": "Ακύρωση",
   "chooseBackupDir": "Επιλογή καταλόγου αντιγράφων ασφαλείας",
-  "chooseRestoreDir": "Επιλογή καταλόγου επαναφοράς αρχείων",
+  "chooseBackupFiles": "Choose backup files",
   "clear": "Απαλοιφή",
   "clearCache": "Απαλοιφή cache",
   "clearRecentlyPlayed": "Καθαρισμός πρόσφατου ιστορικού αναπαραγωγής",

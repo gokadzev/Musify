@@ -19,7 +19,7 @@
   "cacheMsg": "캐시가 성공적으로 지워졌음",
   "cancel": "취소",
   "chooseBackupDir": "백업 디렉토리 선택",
-  "chooseRestoreDir": "복원 디렉토리 선택",
+  "chooseBackupFiles": "Choose backup files",
   "clear": "지우기",
   "clearCache": "캐시 지우기",
   "clearRecentlyPlayed": "최근 재생 기록 지우기",

@@ -19,7 +19,7 @@
   "cacheMsg": "Cache pulita con successo",
   "cancel": "Annulla",
   "chooseBackupDir": "Scegli directory di backup",
-  "chooseRestoreDir": "Scegli directory di ripristino",
+  "chooseBackupFiles": "Choose backup files",
   "clear": "Pulisci",
   "clearCache": "Pulisci cache",
   "clearRecentlyPlayed": "Cancella cronologia recenti",

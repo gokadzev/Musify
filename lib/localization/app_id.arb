@@ -19,7 +19,7 @@
   "cacheMsg": "Cache berhasil dihapus",
   "cancel": "Batal",
   "chooseBackupDir": "Pilih direktori backup",
-  "chooseRestoreDir": "Pilih direktori restore",
+  "chooseBackupFiles": "Choose backup files",
   "clear": "Hapus",
   "clearCache": "Hapus cache",
   "clearRecentlyPlayed": "Hapus riwayat terputar",

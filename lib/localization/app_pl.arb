@@ -19,7 +19,7 @@
   "cacheMsg": "Pamięć wyczyszczona",
   "cancel": "Anuluj",
   "chooseBackupDir": "Wybierz ścieżkę do pliku kopii",
-  "chooseRestoreDir": "Wybierz ścieżkę do pliku kopii",
+  "chooseBackupFiles": "Choose backup files",
   "clear": "Wyczyść",
   "clearCache": "Wyczyść pamięć podręczną",
   "clearRecentlyPlayed": "Wyczyść historię ostatnio odtworzonych utworów",

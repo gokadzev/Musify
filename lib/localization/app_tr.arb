@@ -19,7 +19,7 @@
   "cacheMsg": "Önbellek temizlendi",
   "cancel": "İptal",
   "chooseBackupDir": "Yedekleme Dizini Seç",
-  "chooseRestoreDir": "Geri Yükleme Dizini Seç",
+  "chooseBackupFiles": "Choose backup files",
   "clear": "Temizle",
   "clearCache": "Önbelleği Temizle",
   "clearRecentlyPlayed": "Yakında Oynatılanları Temizle",

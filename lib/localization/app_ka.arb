@@ -19,7 +19,7 @@
   "cacheMsg": "ნარჩენები გასუფთავდა",
   "cancel": "გაუქმება",
   "chooseBackupDir": "აირჩიეთ რეზერვის საქაღალდე",
-  "chooseRestoreDir": "აირჩიეთ რეზერვის დაბრუნების საქაღალდე",
+  "chooseBackupFiles": "Choose backup files",
   "clear": "გასუფთავება",
   "clearCache": "ნარჩენების გასუფთავება",
   "clearRecentlyPlayed": "ბოლოს ჩართული სიმღერების გასუფთავება",

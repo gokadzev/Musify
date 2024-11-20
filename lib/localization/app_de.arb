@@ -19,7 +19,7 @@
   "cacheMsg": "Cache gelöscht",
   "cancel": "Abbrechen",
   "chooseBackupDir": "Backup-Verzeichnis auswählen",
-  "chooseRestoreDir": "Verzeichnis zur Wiederherstellung auswählen",
+  "chooseBackupFiles": "Choose backup files",
   "clear": "Löschen",
   "clearCache": "Cache leeren",
   "clearRecentlyPlayed": "Wiedergabeverlauf löschen",

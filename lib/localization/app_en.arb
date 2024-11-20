@@ -19,7 +19,7 @@
   "cacheMsg": "Cache cleared",
   "cancel": "Cancel",
   "chooseBackupDir": "Choose backup folder",
-  "chooseRestoreDir": "Choose restore folder",
+  "chooseBackupFiles": "Choose backup files",
   "clear": "Clear",
   "clearCache": "Clear cache",
   "clearRecentlyPlayed": "Clear recently played",

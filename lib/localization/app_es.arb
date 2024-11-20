@@ -19,7 +19,7 @@
   "cacheMsg": "Caché eliminada",
   "cancel": "Cancelar",
   "chooseBackupDir": "Seleccionar carpeta de respaldo",
-  "chooseRestoreDir": "Seleccionar carpeta de restauración",
+  "chooseBackupFiles": "Choose backup files",
   "clear": "Borrar",
   "clearCache": "Borrar caché",
   "clearRecentlyPlayed": "Borrar reproducido recientemente",

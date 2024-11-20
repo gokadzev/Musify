@@ -19,7 +19,7 @@
   "cacheMsg": "Кеш очищений",
   "cancel": "Скасувати",
   "chooseBackupDir": "Виберіть каталог для резервного копіювання",
-  "chooseRestoreDir": "Виберіть каталог для відновлення файлів",
+  "chooseBackupFiles": "Choose backup files",
   "clear": "Очистити",
   "clearCache": "Очистити кеш",
   "clearRecentlyPlayed": "Clear recently played history",

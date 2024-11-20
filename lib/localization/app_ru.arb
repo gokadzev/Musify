@@ -19,7 +19,7 @@
   "cacheMsg": "Кэш очищен",
   "cancel": "Отмена",
   "chooseBackupDir": "Выберите каталог для сохранения",
-  "chooseRestoreDir": "Выберите каталог для восстановления данных",
+  "chooseBackupFiles": "Choose backup files",
   "clear": "Очистить",
   "clearCache": "Очистить кэш",
   "clearRecentlyPlayed": "Очистить недавние треки",

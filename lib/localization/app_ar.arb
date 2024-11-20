@@ -19,7 +19,7 @@
   "cacheMsg": "تم مسح ذاكرة التخزين المؤقت",
   "cancel": "إلغاء",
   "chooseBackupDir": "اختر دليل النسخ الاحتياطي",
-  "chooseRestoreDir": "اختر مسار الاستعادة",
+  "chooseBackupFiles": "Choose backup files",
   "clear": "مسح",
   "clearCache": "مسح ذاكرة التخزين المؤقت",
   "clearRecentlyPlayed": "Clear recently played history",
