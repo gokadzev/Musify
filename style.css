@@ -66,9 +66,9 @@ body {
   zoom: 1.3;
 }
 
-#changelog_element,
-#features_element {
-  font-size: 17px;
+#changelog_element p,
+#features_element p {
+  margin: 3px auto;
 }
 
 @media only screen and (max-width: 760px) {
