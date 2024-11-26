@@ -131,7 +131,7 @@ Future<List> getRecommendedSongs() async {
 }
 
 Future<List<dynamic>> getUserPlaylists() async {
-  // Remove after several releases, this is for smooth integration
+  //TODO: Remove after several releases, this is for smooth integration
   var _playlistsUpdated = false;
   for (final playlist in userCustomPlaylists) {
     if (!playlist.containsKey('source')) {
