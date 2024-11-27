@@ -234,6 +234,7 @@ class _LibraryPageState extends State<LibraryPage> {
       itemBuilder: (BuildContext context, index) {
         final playlist = playlists[index];
         return PlaylistBar(
+          key: ValueKey(playlist['ytid']),
           playlist['title'],
           playlistId: playlist['ytid'],
           playlistArtwork: playlist['image'],
