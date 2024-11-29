@@ -55,7 +55,7 @@ class LyricsManager {
           lyricsLines.removeAt(0);
 
           final finalLyrics =
-              addCopyright(lyricsLines.join('\n'), '© www.paroles.net');
+              addCopyright(lyricsLines.join('\n'), 'www.paroles.net');
           return _removeSpaces(finalLyrics);
         }
       }
@@ -80,7 +80,7 @@ class LyricsManager {
       if (lyricsBodyElements.isNotEmpty) {
         return addCopyright(
           lyricsBodyElements.first.text,
-          '© www.lyricsmania.com',
+          'www.lyricsmania.com',
         );
       }
     }
@@ -112,6 +112,6 @@ class LyricsManager {
   }
 
   String addCopyright(String input, String copyright) {
-    return '$input\n\nCopyright: $copyright';
+    return '$input\n\n© $copyright';
   }
 }
