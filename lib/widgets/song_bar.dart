@@ -83,7 +83,7 @@ class SongBar extends StatelessWidget {
             padding: const EdgeInsets.all(8),
             child: Row(
               children: [
-                _buildAlbumArt(),
+                _buildAlbumArt(primaryColor),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Column(
@@ -117,45 +117,83 @@ class SongBar extends StatelessWidget {
     );
   }
 
-  Widget _buildAlbumArt() {
+  Widget _buildAlbumArt(Color primaryColor) {
     const size = 60.0;
 
     final bool isOffline = song['isOffline'] ?? false;
     final String? artworkPath = song['artworkPath'];
+    final lowResImageUrl = song['lowResImage'].toString();
+    final isDurationAvailable = showMusicDuration && song['duration'] != null;
+
     if (isOffline && artworkPath != null) {
-      return SizedBox(
-        width: size,
-        height: size,
-        child: ClipRRect(
-          borderRadius: commonBarRadius,
-          child: Image.file(
-            File(artworkPath),
-            fit: BoxFit.cover,
-          ),
+      return _buildOfflineArtwork(artworkPath, size);
+    }
+
+    return _buildOnlineArtwork(
+      lowResImageUrl,
+      size,
+      isDurationAvailable,
+      primaryColor,
+    );
+  }
+
+  Widget _buildOfflineArtwork(String artworkPath, double size) {
+    return SizedBox(
+      width: size,
+      height: size,
+      child: ClipRRect(
+        borderRadius: commonBarRadius,
+        child: Image.file(
+          File(artworkPath),
+          fit: BoxFit.cover,
         ),
-      );
-    } else {
-      return CachedNetworkImage(
-        key: Key(song['ytid'].toString()),
-        width: size,
-        height: size,
-        imageUrl: song['lowResImage'].toString(),
-        imageBuilder: (context, imageProvider) => SizedBox(
+      ),
+    );
+  }
+
+  Widget _buildOnlineArtwork(
+    String lowResImageUrl,
+    double size,
+    bool isDurationAvailable,
+    Color primaryColor,
+  ) {
+    return Stack(
+      alignment: Alignment.center,
+      children: <Widget>[
+        CachedNetworkImage(
+          key: Key(song['ytid'].toString()),
           width: size,
           height: size,
-          child: ClipRRect(
-            borderRadius: commonBarRadius,
-            child: Image(
-              image: imageProvider,
-              centerSlice: const Rect.fromLTRB(1, 1, 1, 1),
+          imageUrl: lowResImageUrl,
+          imageBuilder: (context, imageProvider) => SizedBox(
+            width: size,
+            height: size,
+            child: ClipRRect(
+              borderRadius: commonBarRadius,
+              child: Image(
+                color: isDurationAvailable
+                    ? Theme.of(context).colorScheme.onPrimary
+                    : null,
+                colorBlendMode:
+                    isDurationAvailable ? BlendMode.colorBurn : null,
+                opacity: isDurationAvailable
+                    ? const AlwaysStoppedAnimation(0.35)
+                    : null,
+                image: imageProvider,
+                centerSlice: const Rect.fromLTRB(1, 1, 1, 1),
+              ),
             ),
           ),
+          errorWidget: (context, url, error) =>
+              const NullArtworkWidget(iconSize: 30),
         ),
-        errorWidget: (context, url, error) => const NullArtworkWidget(
-          iconSize: 30,
-        ),
-      );
-    }
+        if (isDurationAvailable)
+          Text(
+            '(${formatDuration(song['duration'])})',
+            style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
+          ),
+      ],
+    );
   }
 
   Widget _buildActionButtons(BuildContext context, Color primaryColor) {
@@ -229,9 +267,6 @@ class SongBar extends StatelessWidget {
             );
           },
         ),
-        const SizedBox(width: 8),
-        if (showMusicDuration && song['duration'] != null)
-          Text('(${formatDuration(song['duration'])})'),
       ],
     );
   }
