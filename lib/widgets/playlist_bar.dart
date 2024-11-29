@@ -78,11 +78,8 @@ class PlaylistBar extends StatelessWidget {
                       Text(
                         playlistTitle,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: primaryColor,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style:
+                            commonBarTitleStyle.copyWith(color: primaryColor),
                       ),
                     ],
                   ),

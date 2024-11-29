@@ -92,19 +92,16 @@ class SongBar extends StatelessWidget {
                       Text(
                         song['title'],
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: primaryColor,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style:
+                            commonBarTitleStyle.copyWith(color: primaryColor),
                       ),
-                      const SizedBox(height: 5),
+                      const SizedBox(height: 3),
                       Text(
                         song['artist'].toString(),
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontWeight: FontWeight.w400,
-                          fontSize: 14,
+                          fontSize: 13,
                           color: Theme.of(context).colorScheme.secondary,
                         ),
                       ),
@@ -170,16 +167,19 @@ class SongBar extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
+        const SizedBox(width: 8),
         if (!offlineMode.value)
           Row(
             children: [
               ValueListenableBuilder<bool>(
                 valueListenable: songLikeStatus,
                 builder: (_, value, __) {
-                  return IconButton(
-                    color: primaryColor,
-                    icon: Icon(likeStatusToIconMapper[value]),
-                    onPressed: () {
+                  return GestureDetector(
+                    child: Icon(
+                      likeStatusToIconMapper[value],
+                      color: primaryColor,
+                    ),
+                    onTap: () {
                       songLikeStatus.value = !songLikeStatus.value;
                       updateSongLikeStatus(
                         song['ytid'],
@@ -192,31 +192,32 @@ class SongBar extends StatelessWidget {
                   );
                 },
               ),
+              const SizedBox(width: 8),
               if (onRemove != null)
-                IconButton(
-                  color: primaryColor,
-                  icon: const Icon(FluentIcons.delete_24_filled),
-                  onPressed: () => onRemove!(),
+                GestureDetector(
+                  child:
+                      Icon(FluentIcons.delete_24_filled, color: primaryColor),
+                  onTap: () => onRemove!(),
                 )
               else
-                IconButton(
-                  color: primaryColor,
-                  icon: const Icon(FluentIcons.add_24_regular),
-                  onPressed: () => showAddToPlaylistDialog(context, song),
+                GestureDetector(
+                  child: Icon(FluentIcons.add_24_regular, color: primaryColor),
+                  onTap: () => showAddToPlaylistDialog(context, song),
                 ),
             ],
           ),
+        const SizedBox(width: 8),
         ValueListenableBuilder<bool>(
           valueListenable: songOfflineStatus,
           builder: (_, value, __) {
-            return IconButton(
-              color: primaryColor,
-              icon: Icon(
+            return GestureDetector(
+              child: Icon(
                 value
                     ? FluentIcons.cellular_off_24_regular
                     : FluentIcons.cellular_data_1_24_regular,
+                color: primaryColor,
               ),
-              onPressed: () {
+              onTap: () {
                 if (value) {
                   removeSongFromOffline(song['ytid']);
                 } else {
@@ -228,6 +229,7 @@ class SongBar extends StatelessWidget {
             );
           },
         ),
+        const SizedBox(width: 8),
         if (showMusicDuration && song['duration'] != null)
           Text('(${formatDuration(song['duration'])})'),
       ],
