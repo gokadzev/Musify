@@ -40,8 +40,23 @@ class MiniPlayer extends StatelessWidget {
         if (details.primaryDelta! < 0) {
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (context) => const NowPlayingPage(),
+            PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) {
+                return const NowPlayingPage();
+              },
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                const begin = Offset(0, 1);
+                const end = Offset.zero;
+
+                final tween = Tween(begin: begin, end: end);
+                final curve =
+                    CurvedAnimation(parent: animation, curve: Curves.easeInOut);
+
+                final offsetAnimation = tween.animate(curve);
+
+                return SlideTransition(position: offsetAnimation, child: child);
+              },
             ),
           );
         }
