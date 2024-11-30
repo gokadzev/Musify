@@ -21,33 +21,34 @@
 
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
+final wordsPatternForSongTitle = RegExp(
+  r'\b(official music video|official lyric video|official lyrics video|official video|official 4k video|official audio|lyric video|lyrics video|official hd video|lyric visualizer|lyric vizualizer|official visualizer|lyrics|lyric)\b',
+  caseSensitive: false,
+);
+
+final replacementsForSongTitle = {
+  '[': '',
+  ']': '',
+  '(': '',
+  ')': '',
+  '|': '',
+  '&amp;': '&',
+  '&#039;': "'",
+  '&quot;': '"',
+};
+
 String formatSongTitle(String title) {
-  final wordsPattern = RegExp(
-    r'\b(official music video|official lyric video|official lyrics video|official video|official 4k video|official audio|lyric video|lyrics video|official hd video|lyric visualizer|lyric vizualizer|official visualizer|lyrics|lyric)\b',
-    caseSensitive: false,
-  );
-
-  final replacements = {
-    '[': '',
-    ']': '',
-    '(': '',
-    ')': '',
-    '|': '',
-    '&amp;': '&',
-    '&#039;': "'",
-    '&quot;': '"',
-  };
-
-  final pattern = RegExp(replacements.keys.map(RegExp.escape).join('|'));
+  final pattern =
+      RegExp(replacementsForSongTitle.keys.map(RegExp.escape).join('|'));
 
   var finalTitle = title
       .replaceAllMapped(
         pattern,
-        (match) => replacements[match.group(0)] ?? '',
+        (match) => replacementsForSongTitle[match.group(0)] ?? '',
       )
       .trimLeft();
 
-  finalTitle = finalTitle.replaceAll(wordsPattern, '');
+  finalTitle = finalTitle.replaceAll(wordsPatternForSongTitle, '');
 
   return finalTitle;
 }
@@ -73,14 +74,9 @@ String formatDuration(int audioDurationInSeconds) {
   final minutes = duration.inMinutes.remainder(60);
   final seconds = duration.inSeconds.remainder(60);
 
-  var formattedDuration = '';
-
-  if (hours > 0) {
-    formattedDuration += '${hours.toString().padLeft(2, '0')}:';
-  }
-
-  formattedDuration += '${minutes.toString().padLeft(2, '0')}:';
-  formattedDuration += seconds.toString().padLeft(2, '0');
-
-  return formattedDuration;
+  return [
+    if (hours > 0) hours.toString().padLeft(2, '0'),
+    minutes.toString().padLeft(2, '0'),
+    seconds.toString().padLeft(2, '0'),
+  ].join(':');
 }
