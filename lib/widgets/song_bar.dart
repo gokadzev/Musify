@@ -172,12 +172,11 @@ class SongBar extends StatelessWidget {
               borderRadius: commonBarRadius,
               child: Image(
                 color: isDurationAvailable
-                    ? Theme.of(context).colorScheme.onPrimary
+                    ? Theme.of(context).colorScheme.primaryContainer
                     : null,
-                colorBlendMode:
-                    isDurationAvailable ? BlendMode.colorBurn : null,
+                colorBlendMode: isDurationAvailable ? BlendMode.multiply : null,
                 opacity: isDurationAvailable
-                    ? const AlwaysStoppedAnimation(0.35)
+                    ? const AlwaysStoppedAnimation(0.45)
                     : null,
                 image: imageProvider,
                 centerSlice: const Rect.fromLTRB(1, 1, 1, 1),
