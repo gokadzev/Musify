@@ -25,7 +25,6 @@ import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/screens/playlist_page.dart';
-import 'package:musify/services/router_service.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/section_title.dart';
@@ -82,17 +81,7 @@ class _HomePageState extends State<HomePage> {
 
     return Column(
       children: [
-        _buildSectionHeader(
-          title: context.l10n!.suggestedPlaylists,
-          actionButton: IconButton(
-            padding: const EdgeInsets.only(right: 10),
-            onPressed: () => NavigationManager.router.go('/home/library'),
-            icon: Icon(
-              FluentIcons.more_horizontal_24_regular,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-          ),
-        ),
+        _buildSectionHeader(title: context.l10n!.suggestedPlaylists),
         SizedBox(
           height: playlistHeight,
           child: ListView.separated(
