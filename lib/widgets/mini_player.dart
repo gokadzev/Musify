@@ -61,8 +61,7 @@ class MiniPlayer extends StatelessWidget {
           );
         }
       },
-      onHorizontalDragUpdate: audioHandler.hasNext
-          ? (details) {
+      onHorizontalDragUpdate: (details) {
               if (details.primaryDelta! > 0) {
                 if (!_isHandlingSwipe) {
                   _isHandlingSwipe = true;
@@ -78,8 +77,7 @@ class MiniPlayer extends StatelessWidget {
                   });
                 }
               }
-            }
-          : null,
+            },
       child: Container(
         padding: const EdgeInsets.only(left: 18),
         height: 75,
