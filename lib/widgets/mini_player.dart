@@ -59,16 +59,15 @@ class MiniPlayer extends StatelessWidget {
 					),
 				);
       },
-      onHorizontalDragUpdate: audioHandler.hasNext
-          ? (details) {
-              if (details.primaryDelta! > 0) {
+      onHorizontalDragUpdate: (details) {
+              if (details.primaryDelta! > 0 && audioHandler.hasPrevious) {
                 if (!_isHandlingSwipe) {
                   _isHandlingSwipe = true;
                   audioHandler.skipToPrevious().whenComplete(() {
                     _isHandlingSwipe = false;
                   });
                 }
-              } else if (details.primaryDelta! < 0) {
+              } else if (details.primaryDelta! < 0 && audioHandler.hasNext) {
                 if (!_isHandlingSwipe) {
                   _isHandlingSwipe = true;
                   audioHandler.skipToNext().whenComplete(() {
@@ -76,8 +75,7 @@ class MiniPlayer extends StatelessWidget {
                   });
                 }
               }
-            }
-          : null,
+            },
       child: Container(
         padding: const EdgeInsets.only(left: 18),
         height: 75,
