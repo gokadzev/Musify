@@ -1,0 +1,6 @@
+Enhancements
+
+- Updated Polish,Korean,and French translations
+- Added Galician language
+- Added custom slide-up page transition for mini player bar
+- Improved UI layout and styling on search page
