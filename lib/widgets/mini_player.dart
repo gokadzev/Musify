@@ -62,14 +62,14 @@ class MiniPlayer extends StatelessWidget {
         }
       },
       onHorizontalDragUpdate: (details) {
-              if (details.primaryDelta! > 0) {
+              if (details.primaryDelta! > 0 && audioHandler.hasPrevious) {
                 if (!_isHandlingSwipe) {
                   _isHandlingSwipe = true;
                   audioHandler.skipToPrevious().whenComplete(() {
                     _isHandlingSwipe = false;
                   });
                 }
-              } else if (details.primaryDelta! < 0) {
+              } else if (details.primaryDelta! < 0 && audioHandler.hasNext) {
                 if (!_isHandlingSwipe) {
                   _isHandlingSwipe = true;
                   audioHandler.skipToNext().whenComplete(() {
