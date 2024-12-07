@@ -78,6 +78,7 @@
   "settingChangedMsg": "تم تغيير الإعداد",
   "settings": "الإعدادات",
   "songAdded": "تمت إضافة الأغنية بنجاح!",
+  "songAlreadyInPlaylist": "Song is already in the playlist",
   "songRemoved": "تمت إزالة الأغنية بنجاح!",
   "songs": "الأغاني",
   "sponsorProject": "رعاية المشروع",

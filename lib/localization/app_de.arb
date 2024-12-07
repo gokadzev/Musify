@@ -78,6 +78,7 @@
   "settingChangedMsg": "Einstellung geändert",
   "settings": "Einstellungen",
   "songAdded": "Song erfolgreich hinzugefügt",
+  "songAlreadyInPlaylist": "Song is already in the playlist",
   "songRemoved": "Song erfolgreich entfernt",
   "songs": "Songs",
   "sponsorProject": "Projekt unterstützen",

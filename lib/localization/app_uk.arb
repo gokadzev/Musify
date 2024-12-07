@@ -78,6 +78,7 @@
   "settingChangedMsg": "Налаштування змінено",
   "settings": "Налаштування",
   "songAdded": "Пісня успішно додана!",
+  "songAlreadyInPlaylist": "Song is already in the playlist",
   "songRemoved": "Пісня успішно видалена!",
   "songs": "Пісні",
   "sponsorProject": "Стати спонсором проекту",

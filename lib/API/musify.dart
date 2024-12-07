@@ -240,6 +240,7 @@ String createCustomPlaylist(
 }
 
 String addSongInCustomPlaylist(
+  BuildContext context,
   String playlistName,
   Map song, {
   int? indexToInsert,
@@ -251,36 +252,54 @@ String addSongInCustomPlaylist(
 
   if (customPlaylist != null) {
     final List<dynamic> playlistSongs = customPlaylist['list'];
-    if (playlistSongs.any((playlistElement) =>
-      playlistElement['ytid'] == song['ytid'])) {
-      return 'Song is already in playlist';
+    if (playlistSongs
+        .any((playlistElement) => playlistElement['ytid'] == song['ytid'])) {
+      return context.l10n!.songAlreadyInPlaylist;
     }
     indexToInsert != null
         ? playlistSongs.insert(indexToInsert, song)
         : playlistSongs.add(song);
     addOrUpdateData('user', 'customPlaylists', userCustomPlaylists);
-    return 'Song added to custom playlist: $playlistName';
+    return context.l10n!.songAdded;
   } else {
-    return 'Custom playlist not found: $playlistName';
+    logger.log('Custom playlist not found: $playlistName', null, null);
+    return context.l10n!.error;
   }
 }
 
-void removeSongFromPlaylist(
+bool removeSongFromPlaylist(
   Map playlist,
   Map songToRemove, {
   int? removeOneAtIndex,
 }) {
-  if (playlist['list'] == null) return;
-  final playlistSongs = List<dynamic>.from(playlist['list']);
-  removeOneAtIndex != null
-      ? playlistSongs.removeAt(removeOneAtIndex)
-      : playlistSongs
-          .removeWhere((song) => song['ytid'] == songToRemove['ytid']);
-  playlist['list'] = playlistSongs;
-  if (playlist['source'] == 'user-created')
-    addOrUpdateData('user', 'customPlaylists', userCustomPlaylists);
-  else
-    addOrUpdateData('user', 'playlists', userPlaylists);
+  try {
+    if (playlist['list'] == null) return false;
+
+    final playlistSongs = List<dynamic>.from(playlist['list']);
+    if (removeOneAtIndex != null) {
+      if (removeOneAtIndex < 0 || removeOneAtIndex >= playlistSongs.length) {
+        return false;
+      }
+      playlistSongs.removeAt(removeOneAtIndex);
+    } else {
+      final initialLength = playlistSongs.length;
+      playlistSongs.removeWhere((song) => song['ytid'] == songToRemove['ytid']);
+      if (playlistSongs.length == initialLength) return false;
+    }
+
+    playlist['list'] = playlistSongs;
+
+    if (playlist['source'] == 'user-created') {
+      addOrUpdateData('user', 'customPlaylists', userCustomPlaylists);
+    } else {
+      addOrUpdateData('user', 'playlists', userPlaylists);
+    }
+
+    return true;
+  } catch (e, stackTrace) {
+    logger.log('Error while removing song from playlist: ', e, stackTrace);
+    return false;
+  }
 }
 
 void removeUserPlaylist(String playlistId) {

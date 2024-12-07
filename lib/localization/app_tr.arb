@@ -78,6 +78,7 @@
   "settingChangedMsg": "Ayar değişti",
   "settings": "Ayarlar",
   "songAdded": "Şarkı Başarıyla Eklendi!",
+  "songAlreadyInPlaylist": "Song is already in the playlist",
   "songRemoved": "Şarkı Başarıyla Kaldırıldı!",
   "songs": "Şarkılar",
   "sponsorProject": "Projeye Sponsor Ol",

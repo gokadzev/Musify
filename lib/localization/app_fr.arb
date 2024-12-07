@@ -78,6 +78,7 @@
   "settingChangedMsg": "Paramètre modifié",
   "settings": "Paramètres",
   "songAdded": "Titre ajouté avec succès!",
+  "songAlreadyInPlaylist": "Song is already in the playlist",
   "songRemoved": "Titre supprimé avec succès!",
   "songs": "Titres",
   "sponsorProject": "Financer le projet",

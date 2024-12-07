@@ -78,6 +78,7 @@
   "settingChangedMsg": "Ustawienie zostało zmienione",
   "settings": "Ustawienia",
   "songAdded": "Utwór pomyślnie dodany!",
+  "songAlreadyInPlaylist": "Song is already in the playlist",
   "songRemoved": "Utwór pomyślnie usunięty!",
   "songs": "Utwory",
   "sponsorProject": "Sponsorowanie projektu",
