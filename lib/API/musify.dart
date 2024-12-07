@@ -251,6 +251,10 @@ String addSongInCustomPlaylist(
 
   if (customPlaylist != null) {
     final List<dynamic> playlistSongs = customPlaylist['list'];
+    if (playlistSongs.any((playlistElement) =>
+      playlistElement['ytid'] == song['ytid'])) {
+      return 'Song is already in playlist';
+    }
     indexToInsert != null
         ? playlistSongs.insert(indexToInsert, song)
         : playlistSongs.add(song);
