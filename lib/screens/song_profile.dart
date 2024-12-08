@@ -37,26 +37,15 @@ class SongProfile extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          _buildSongProfileSetting(
-            'volume',
+          CustomBar(
+            context.l10n!.volumeSongProfile,
             FluentIcons.speaker_1_24_regular,
-            context,
-            () => {
+            onTap: () => {
               
             },
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildSongProfileSetting(String name, IconData icon, BuildContext context, VoidCallback onTap) {
-    return CustomBar(
-      context.l10n!.volumeSongProfile,
-      icon,
-      onTap: () => {
-        
-      },
     );
   }
 }
