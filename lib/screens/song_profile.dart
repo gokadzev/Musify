@@ -20,15 +20,8 @@
  */
 
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
-import 'package:musify/extensions/l10n.dart';
 import 'package:flutter/material.dart';
-import 'package:musify/main.dart';
-import 'package:musify/services/data_manager.dart';
-import 'package:musify/services/settings_manager.dart';
-import 'package:musify/style/app_colors.dart';
-import 'package:musify/style/app_themes.dart';
-import 'package:musify/utilities/flutter_bottom_sheet.dart';
-import 'package:musify/utilities/flutter_toast.dart';
+import 'package:musify/extensions/l10n.dart';
 import 'package:musify/widgets/custom_bar.dart';
 
 
