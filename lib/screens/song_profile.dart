@@ -1,32 +1,17 @@
-/*
- *     Copyright (C) 2024 Valeri Gokadze
- *
- *     Musify is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     Musify is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- *
- *     For more information about Musify, including how to contribute,
- *     please visit: https://github.com/gokadzev/Musify
- */
-
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/widgets/custom_bar.dart';
 
-
-class SongProfile extends StatelessWidget {
+class SongProfile extends StatefulWidget {
   const SongProfile({super.key});
+
+  @override
+  _SongProfileState createState() => _SongProfileState();
+}
+
+class _SongProfileState extends State<SongProfile> {
+  double _sliderValue = 1.0;
 
   @override
   Widget build(BuildContext context) {    
@@ -40,8 +25,21 @@ class SongProfile extends StatelessWidget {
           CustomBar(
             context.l10n!.volumeSongProfile,
             FluentIcons.speaker_1_24_regular,
-            onTap: () => {
-              
+            trailing: SizedBox(
+              width: 200,
+              child: Slider(
+                label: 'Select Volume',
+                value: _sliderValue,
+                onChanged: (value) {
+                  setState(() {
+                    _sliderValue = value;
+                  });
+                },
+                min: 0.1,
+                max: 3,
+              ),
+            ),
+            onTap: () {
             },
           ),
         ],
