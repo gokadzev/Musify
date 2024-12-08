@@ -27,6 +27,7 @@ import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/models/position_data.dart';
+import 'package:musify/screens/song_profile.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/flutter_bottom_sheet.dart';
 import 'package:musify/utilities/formatter.dart';
@@ -515,9 +516,22 @@ class NowPlayingPage extends StatelessWidget {
               );
             },
           ),
-          IconButton.filledTonal(onPressed: () => {
-
-          }, icon: Icon(FluentIcons.speaker_settings_24_regular, color: _primaryColor),)
+          IconButton.filledTonal(
+            onPressed: () => {
+              Navigator.push(
+                context, 
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) {
+                      return const SongProfile();
+                    },
+                  ),
+              ),
+            },
+            icon: Icon(
+              FluentIcons.speaker_settings_24_regular,
+              color: _primaryColor,
+            ),
+          ),
       ],
     );
   }
