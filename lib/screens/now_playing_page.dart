@@ -522,7 +522,7 @@ class NowPlayingPage extends StatelessWidget {
                 context, 
                   PageRouteBuilder(
                     pageBuilder: (context, animation, secondaryAnimation) {
-                      return const SongProfile();
+                      return SongProfile(songId: audioId);
                     },
                   ),
               ),
