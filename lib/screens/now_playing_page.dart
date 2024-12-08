@@ -515,6 +515,9 @@ class NowPlayingPage extends StatelessWidget {
               );
             },
           ),
+          IconButton.filledTonal(onPressed: () => {
+
+          }, icon: Icon(FluentIcons.speaker_settings_24_regular, color: _primaryColor),)
       ],
     );
   }
