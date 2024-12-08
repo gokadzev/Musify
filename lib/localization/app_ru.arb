@@ -78,6 +78,7 @@
   "settingChangedMsg": "Параметр изменён",
   "settings": "Настройки",
   "songAdded": "Трек успешно добавлен!",
+  "songAlreadyInPlaylist": "Song is already in the playlist",
   "songRemoved": "Трек успешно удалён!",
   "songs": "треки",
   "sponsorProject": "Поддержать проект",

@@ -78,6 +78,7 @@
   "settingChangedMsg": "Η ρύθμιση άλλαξε",
   "settings": "Ρυθμίσεις",
   "songAdded": "Το τραγούδι προστέθηκε με επιτυχία!",
+  "songAlreadyInPlaylist": "Song is already in the playlist",
   "songRemoved": "Το τραγούδι αφαιρέθηκε με επιτυχία!",
   "songs": "Τραγούδια",
   "sponsorProject": "Χορηγεία στον ιδιοκτήτη",

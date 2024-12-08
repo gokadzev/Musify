@@ -323,6 +323,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
       context.l10n!.undo.toUpperCase(),
       () {
         addSongInCustomPlaylist(
+          context,
           _playlist['title'],
           songToRemove,
           indexToInsert: indexOfRemovedSong,
@@ -425,12 +426,14 @@ class _PlaylistPageState extends State<PlaylistPage> {
       true,
       onRemove: isRemovable
           ? () => {
-                removeSongFromPlaylist(
+                if (removeSongFromPlaylist(
                   _playlist,
                   _songsList[index],
                   removeOneAtIndex: index,
-                ),
-                _updateSongsListOnRemove(index),
+                ))
+                  {
+                    _updateSongsListOnRemove(index),
+                  },
               }
           : null,
       onPlay: () => {

@@ -78,6 +78,7 @@
   "settingChangedMsg": "설정이 업데이트되었음",
   "settings": "설정",
   "songAdded": "노래가 추가되었음",
+  "songAlreadyInPlaylist": "Song is already in the playlist",
   "songRemoved": "노래가 삭제되었음",
   "songs": "노래",
   "sponsorProject": "프로젝트 후원",

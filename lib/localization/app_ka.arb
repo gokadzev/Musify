@@ -78,6 +78,7 @@
   "settingChangedMsg": "პარამეტრი განახლდა",
   "settings": "პარამეტრები",
   "songAdded": "სიმღერა დაემატა წარმატებით!",
+  "songAlreadyInPlaylist": "Song is already in the playlist",
   "songRemoved": "სიმღერა წაიშალა წარმატებით!",
   "songs": "სიმღერა",
   "sponsorProject": "პროექტის დასპონსორება",

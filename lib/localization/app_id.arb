@@ -78,6 +78,7 @@
   "settingChangedMsg": "Pengaturan diubah",
   "settings": "Pengaturan",
   "songAdded": "Lagu berhasil ditambahkan",
+  "songAlreadyInPlaylist": "Song is already in the playlist",
   "songRemoved": "Lagu berhasil dihapus",
   "songs": "lagu",
   "sponsorProject": "Sponsor proyek",

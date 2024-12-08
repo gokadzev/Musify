@@ -304,8 +304,14 @@ void showAddToPlaylistDialog(BuildContext context, dynamic song) {
                       child: ListTile(
                         title: Text(playlist['title']),
                         onTap: () {
-                          addSongInCustomPlaylist(playlist['title'], song);
-                          showToast(context, context.l10n!.songAdded);
+                          showToast(
+                            context,
+                            addSongInCustomPlaylist(
+                              context,
+                              playlist['title'],
+                              song,
+                            ),
+                          );
                           Navigator.pop(context);
                         },
                       ),

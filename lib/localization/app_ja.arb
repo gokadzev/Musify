@@ -78,6 +78,7 @@
   "settingChangedMsg": "設定を変更しました",
   "settings": "設定",
   "songAdded": "曲を追加しました",
+  "songAlreadyInPlaylist": "Song is already in the playlist",
   "songRemoved": "曲を除去しました",
   "songs": "曲",
   "sponsorProject": "このプロジェクトを支援",
