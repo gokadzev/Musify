@@ -11,7 +11,7 @@ class SongProfile extends StatefulWidget {
 }
 
 class _SongProfileState extends State<SongProfile> {
-  double _sliderValue = 1.0;
+  double _sliderValue = 1;
 
   @override
   Widget build(BuildContext context) {    
@@ -26,17 +26,27 @@ class _SongProfileState extends State<SongProfile> {
             context.l10n!.volumeSongProfile,
             FluentIcons.speaker_1_24_regular,
             trailing: SizedBox(
-              width: 200,
-              child: Slider(
-                label: 'Select Volume',
-                value: _sliderValue,
-                onChanged: (value) {
-                  setState(() {
-                    _sliderValue = value;
-                  });
-                },
-                min: 0.1,
-                max: 3,
+              width: 300,
+              child: Row(
+                children: [
+                  Slider(
+                    label: 'Select Volume',
+                    value: _sliderValue,
+                    onChanged: (value) {
+                      setState(() {
+                        _sliderValue = value;
+                      });
+                    },
+                    min: 0.1,
+                    max: 3,
+                  ),
+                  Text(
+                    _sliderValue.toStringAsFixed(2),
+                    style: const TextStyle(
+                      fontSize: 18,
+                    ),
+                  )
+                ],
               ),
             ),
             onTap: () {
