@@ -100,14 +100,22 @@ class _LibraryPageState extends State<LibraryPage> {
                       }),
                     ),
                   ),
-                  if (_visibleSections[0])
-                    _buildUserPlaylistsSection(primaryColor),
-                  if (_visibleSections[1])
-                    _buildUserLikedPlaylistsSection(primaryColor),
-                  if (_visibleSections[2])
-                    _buildPlaylistsSection(primaryColor, 'playlist'),
-                  if (_visibleSections[3])
-                    _buildPlaylistsSection(primaryColor, 'album'),
+                  _buildSectionIfVisible(
+                    _visibleSections[0],
+                    () => _buildUserPlaylistsSection(primaryColor),
+                  ),
+                  _buildSectionIfVisible(
+                    _visibleSections[1],
+                    () => _buildUserLikedPlaylistsSection(primaryColor),
+                  ),
+                  _buildSectionIfVisible(
+                    _visibleSections[2],
+                    () => _buildPlaylistsSection(primaryColor, 'playlist'),
+                  ),
+                  _buildSectionIfVisible(
+                    _visibleSections[3],
+                    () => _buildPlaylistsSection(primaryColor, 'album'),
+                  ),
                 ],
               ),
             ),
@@ -115,6 +123,21 @@ class _LibraryPageState extends State<LibraryPage> {
         ],
       ),
     );
+  }
+
+  Widget _buildSectionIfVisible(
+    bool isVisible,
+    Widget Function() sectionBuilder,
+  ) {
+    if (isVisible) {
+      return Column(
+        children: [
+          sectionBuilder(),
+          const SizedBox(height: 10),
+        ],
+      );
+    }
+    return const SizedBox.shrink();
   }
 
   Widget _buildUserPlaylistsSection(Color primaryColor) {
