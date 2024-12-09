@@ -16,8 +16,8 @@ class SongProfile extends StatefulWidget {
 }
 
 class _SongProfileState extends State<SongProfile> {
-  double _sliderValue = 1;
-  dynamic _songProfile;
+  double _volumeSliderValue = 1;
+  dynamic _songProfile = {};
 
   @override
   void initState() {
@@ -26,10 +26,16 @@ class _SongProfileState extends State<SongProfile> {
   }
 
   Future<void> _getSongProfiles() async {
-    final songProfile = await getData('songProfiles', widget.songId);
+    Map? songProfile = await getData('songProfiles', widget.songId);
+    if (songProfile == null) {
+      songProfile = {};
+      addOrUpdateData('songProfiles', widget.songId, {});
+    }
     setState(() {
       _songProfile = songProfile;
-      _sliderValue = songProfile;
+      if (songProfile?.containsKey('volume') ?? false) {
+        _volumeSliderValue = songProfile?['volume'];
+      }
     });
   }
 
@@ -51,21 +57,22 @@ class _SongProfileState extends State<SongProfile> {
                 children: [
                   Slider(
                     label: 'Select Volume',
-                    value: _sliderValue,
+                    value: _volumeSliderValue,
                     onChanged: (value) {
                       setState(() {
-                        _sliderValue = value;
+                        _volumeSliderValue = value;
                       });
                     },
                     onChangeEnd: (value) {
-                      addOrUpdateData('songProfiles', widget.songId, value);
+                      _songProfile['volume'] = value;
+                      addOrUpdateData('songProfiles', widget.songId, _songProfile);
                       _getSongProfiles();
                     },
                     min: 0.1,
                     max: 3,
                   ),
                   Text(
-                    _sliderValue.toStringAsFixed(2),
+                    _volumeSliderValue.toStringAsFixed(2),
                     style: const TextStyle(
                       fontSize: 18,
                     ),
