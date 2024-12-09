@@ -258,8 +258,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
           : await getSong(song['ytid'], song['isLive']);
 
       final audioSource = await buildAudioSource(song, songUrl, isOffline);
-
+      final Map songProfile = await getData('songProfiles', song['ytid']);
+      
       await audioPlayer.setAudioSource(audioSource, preload: false);
+      await audioPlayer.setVolume(songProfile.putIfAbsent('volume', () => 1));
       await audioPlayer.play();
     } catch (e, stackTrace) {
       logger.log('Error playing song', e, stackTrace);
