@@ -44,9 +44,8 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final primaryColor = Theme.of(context).colorScheme.primary;
-    final activatedColor =
-        Theme.of(context).colorScheme.surfaceContainerHighest;
-    final inactivatedColor = Theme.of(context).colorScheme.secondaryContainer;
+    final activatedColor = Theme.of(context).colorScheme.secondaryContainer;
+    final inactivatedColor = Theme.of(context).colorScheme.surfaceContainerHigh;
 
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n!.settings)),
