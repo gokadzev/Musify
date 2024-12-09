@@ -20,6 +20,7 @@
  */
 
 import 'package:audio_service/audio_service.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/main.dart';
 import 'package:musify/screens/now_playing_page.dart';
@@ -33,7 +34,7 @@ class MiniPlayer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var _isHandlingSwipe = false;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return GestureDetector(
       onVerticalDragUpdate: (details) {
@@ -61,45 +62,67 @@ class MiniPlayer extends StatelessWidget {
           );
         }
       },
-      onHorizontalDragUpdate: (details) {
-              if (details.primaryDelta! > 0 && audioHandler.hasPrevious) {
-                if (!_isHandlingSwipe) {
-                  _isHandlingSwipe = true;
-                  audioHandler.skipToPrevious().whenComplete(() {
-                    _isHandlingSwipe = false;
-                  });
-                }
-              } else if (details.primaryDelta! < 0 && audioHandler.hasNext) {
-                if (!_isHandlingSwipe) {
-                  _isHandlingSwipe = true;
-                  audioHandler.skipToNext().whenComplete(() {
-                    _isHandlingSwipe = false;
-                  });
-                }
-              }
-            },
+      onTap: () => Navigator.push(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) {
+            return const NowPlayingPage();
+          },
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            const begin = Offset(0, 1);
+            const end = Offset.zero;
+
+            final tween = Tween(begin: begin, end: end);
+            final curve =
+                CurvedAnimation(parent: animation, curve: Curves.easeInOut);
+
+            final offsetAnimation = tween.animate(curve);
+
+            return SlideTransition(position: offsetAnimation, child: child);
+          },
+        ),
+      ),
       child: Container(
-        padding: const EdgeInsets.only(left: 18),
+        padding: const EdgeInsets.symmetric(horizontal: 18),
         height: 75,
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.secondaryContainer,
+          color: colorScheme.surfaceContainerHigh,
         ),
         child: Row(
           children: <Widget>[
             _buildArtwork(),
-            _buildMetadata(Theme.of(context).colorScheme.primary),
-            StreamBuilder<PlaybackState>(
-              stream: audioHandler.playbackState,
-              builder: (context, snapshot) {
-                return buildPlaybackIconButton(
-                  snapshot.data,
-                  30,
-                  Theme.of(context).colorScheme.primary,
-                  Colors.transparent,
-                  elevation: 0,
-                  padding: EdgeInsets.zero,
-                );
-              },
+            _buildMetadata(colorScheme.onSurface, colorScheme.onSurfaceVariant),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                StreamBuilder<PlaybackState>(
+                  stream: audioHandler.playbackState,
+                  builder: (context, snapshot) {
+                    final processingState = snapshot.data?.processingState;
+                    final isPlaying = snapshot.data?.playing ?? false;
+                    final iconDataAndAction =
+                        getIconFromState(processingState, isPlaying);
+                    return GestureDetector(
+                      onTap: iconDataAndAction.onPressed,
+                      child: Icon(
+                        iconDataAndAction.iconData,
+                        color: colorScheme.primary,
+                        size: 35,
+                      ),
+                    );
+                  },
+                ),
+                if (audioHandler.hasNext) const SizedBox(width: 10),
+                if (audioHandler.hasNext)
+                  GestureDetector(
+                    onTap: () => audioHandler.skipToNext(),
+                    child: Icon(
+                      FluentIcons.next_24_filled,
+                      color: colorScheme.primary,
+                      size: 25,
+                    ),
+                  ),
+              ],
             ),
           ],
         ),
@@ -118,7 +141,7 @@ class MiniPlayer extends StatelessWidget {
     );
   }
 
-  Widget _buildMetadata(Color fontColor) {
+  Widget _buildMetadata(Color titleColor, Color artistColor) {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.only(right: 8),
@@ -126,15 +149,28 @@ class MiniPlayer extends StatelessWidget {
           alignment: Alignment.centerLeft,
           child: MarqueeWidget(
             manualScrollEnabled: false,
-            child: Text(
-              metadata.artist != null
-                  ? '${metadata.artist} - ${metadata.title}'
-                  : metadata.title,
-              style: TextStyle(
-                color: fontColor,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  metadata.title,
+                  style: TextStyle(
+                    color: titleColor,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                if (metadata.artist != null)
+                  Text(
+                    metadata.artist!,
+                    style: TextStyle(
+                      color: artistColor,
+                      fontSize: 14,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+              ],
             ),
           ),
         ),
