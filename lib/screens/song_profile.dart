@@ -5,11 +5,11 @@ import 'package:musify/services/data_manager.dart';
 import 'package:musify/widgets/custom_bar.dart';
 
 class SongProfile extends StatefulWidget {
-  final String songId;
   const SongProfile({
     super.key,
     required this.songId,
   });
+  final String songId;
 
   @override
   _SongProfileState createState() => _SongProfileState();
