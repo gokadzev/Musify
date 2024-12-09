@@ -33,38 +33,55 @@ Widget buildPlaybackIconButton(
   EdgeInsets padding = const EdgeInsets.all(15),
 }) {
   final processingState = playerState?.processingState;
-  final playing = playerState?.playing;
+  final isPlaying = playerState?.playing ?? false;
 
-  IconData icon;
-  VoidCallback? onPressed;
-
-  switch (processingState) {
-    case AudioProcessingState.buffering || AudioProcessingState.loading:
-      icon = FluentIcons.spinner_ios_16_filled;
-      onPressed = null;
-      break;
-    case AudioProcessingState.completed:
-      icon = FluentIcons.arrow_counterclockwise_24_filled;
-      onPressed = () => audioHandler.seek(Duration.zero);
-      break;
-    default:
-      icon = playing != true
-          ? FluentIcons.play_24_filled
-          : FluentIcons.pause_24_filled;
-      onPressed = playing != true ? audioHandler.play : audioHandler.pause;
-  }
+  final iconDataAndAction = getIconFromState(processingState, isPlaying);
 
   return RawMaterialButton(
     elevation: elevation,
-    onPressed: onPressed,
+    onPressed: iconDataAndAction.onPressed,
     fillColor: backgroundColor,
     splashColor: Colors.transparent,
     padding: padding,
     shape: const CircleBorder(),
     child: Icon(
-      icon,
+      iconDataAndAction.iconData,
       color: iconColor,
       size: iconSize,
     ),
   );
+}
+
+_IconDataAndAction getIconFromState(
+  AudioProcessingState? processingState,
+  bool isPlaying,
+) {
+  switch (processingState) {
+    case AudioProcessingState.buffering:
+    case AudioProcessingState.loading:
+      return _IconDataAndAction(
+        iconData: FluentIcons.spinner_ios_16_filled,
+      );
+    case AudioProcessingState.completed:
+      return _IconDataAndAction(
+        iconData: FluentIcons.arrow_counterclockwise_24_filled,
+        onPressed: () => audioHandler.seek(Duration.zero),
+      );
+    default:
+      return _IconDataAndAction(
+        iconData: isPlaying
+            ? FluentIcons.pause_24_filled
+            : FluentIcons.play_24_filled,
+        onPressed: isPlaying ? audioHandler.pause : audioHandler.play,
+      );
+  }
+}
+
+class _IconDataAndAction {
+  _IconDataAndAction({
+    required this.iconData,
+    this.onPressed,
+  });
+  final IconData iconData;
+  final VoidCallback? onPressed;
 }
