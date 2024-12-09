@@ -36,28 +36,30 @@ class MiniPlayer extends StatelessWidget {
     var _isHandlingSwipe = false;
 
     return GestureDetector(
-      onTap: () {
-				Navigator.push(
-					context,
-					PageRouteBuilder(
-						pageBuilder: (context, animation, secondaryAnimation) {
-							return const NowPlayingPage();
-						},
-						transitionsBuilder:
-								(context, animation, secondaryAnimation, child) {
-							const begin = Offset(0, 1);
-							const end = Offset.zero;
+      onVerticalDragUpdate: (details) {
+        if (details.primaryDelta! < 0) {
+          Navigator.push(
+            context,
+            PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) {
+                return const NowPlayingPage();
+              },
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                const begin = Offset(0, 1);
+                const end = Offset.zero;
 
-							final tween = Tween(begin: begin, end: end);
-							final curve =
-									CurvedAnimation(parent: animation, curve: Curves.easeInOut);
+                final tween = Tween(begin: begin, end: end);
+                final curve =
+                    CurvedAnimation(parent: animation, curve: Curves.easeInOut);
 
-							final offsetAnimation = tween.animate(curve);
+                final offsetAnimation = tween.animate(curve);
 
-							return SlideTransition(position: offsetAnimation, child: child);
-						},
-					),
-				);
+                return SlideTransition(position: offsetAnimation, child: child);
+              },
+            ),
+          );
+        }
       },
       onHorizontalDragUpdate: (details) {
               if (details.primaryDelta! > 0 && audioHandler.hasPrevious) {
