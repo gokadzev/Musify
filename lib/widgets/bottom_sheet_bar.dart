@@ -21,9 +21,27 @@
 
 import 'package:flutter/material.dart';
 
-const commonBarPadding = EdgeInsets.symmetric(horizontal: 10, vertical: 4);
-var commonBarRadius = BorderRadius.circular(12);
-var commonBarTitleStyle = const TextStyle(
-  fontSize: 15,
-  fontWeight: FontWeight.bold,
-);
+class BottomSheetBar extends StatelessWidget {
+  const BottomSheetBar(
+    this.title,
+    this.onTap,
+    this.backgroundColor, {
+    super.key,
+  });
+  final String title;
+  final VoidCallback onTap;
+  final Color backgroundColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: backgroundColor,
+      margin: const EdgeInsets.all(10),
+      child: ListTile(
+        minTileHeight: 65,
+        title: Text(title),
+        onTap: onTap,
+      ),
+    );
+  }
+}

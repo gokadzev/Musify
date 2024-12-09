@@ -34,6 +34,7 @@ import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/flutter_bottom_sheet.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/url_launcher.dart';
+import 'package:musify/widgets/bottom_sheet_bar.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/custom_bar.dart';
 import 'package:musify/widgets/section_title.dart';
@@ -129,30 +130,22 @@ class SettingsPage extends StatelessWidget {
                     itemCount: availableModes.length,
                     itemBuilder: (context, index) {
                       final mode = availableModes[index];
-                      return Card(
-                        margin: const EdgeInsets.all(10),
-                        color: themeMode == mode
-                            ? activatedColor
-                            : inactivatedColor,
-                        child: ListTile(
-                          minTileHeight: 65,
-                          title: Text(
+                      return BottomSheetBar(
+                        mode.name,
+                        () {
+                          addOrUpdateData(
+                            'settings',
+                            'themeMode',
                             mode.name,
-                          ),
-                          onTap: () {
-                            addOrUpdateData(
-                              'settings',
-                              'themeMode',
-                              mode.name,
-                            );
-                            Musify.updateAppState(
-                              context,
-                              newThemeMode: mode,
-                            );
+                          );
+                          Musify.updateAppState(
+                            context,
+                            newThemeMode: mode,
+                          );
 
-                            Navigator.pop(context);
-                          },
-                        ),
+                          Navigator.pop(context);
+                        },
+                        themeMode == mode ? activatedColor : inactivatedColor,
                       );
                     },
                   ),
@@ -175,39 +168,33 @@ class SettingsPage extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final language = availableLanguages[index];
                       final languageCode = appLanguages[language] ?? 'en';
-                      return Card(
-                        color: activeLanguageCode == languageCode
+                      return BottomSheetBar(
+                        language,
+                        () {
+                          addOrUpdateData(
+                            'settings',
+                            'language',
+                            language,
+                          );
+                          Musify.updateAppState(
+                            context,
+                            newLocale: Locale(
+                              languageCode,
+                            ),
+                          );
+                          WidgetsBinding.instance.addPostFrameCallback(
+                            (_) {
+                              showToast(
+                                context,
+                                context.l10n!.languageMsg,
+                              );
+                              Navigator.pop(context);
+                            },
+                          );
+                        },
+                        activeLanguageCode == languageCode
                             ? activatedColor
                             : inactivatedColor,
-                        margin: const EdgeInsets.all(10),
-                        child: ListTile(
-                          minTileHeight: 65,
-                          title: Text(
-                            language,
-                          ),
-                          onTap: () {
-                            addOrUpdateData(
-                              'settings',
-                              'language',
-                              language,
-                            );
-                            Musify.updateAppState(
-                              context,
-                              newLocale: Locale(
-                                languageCode,
-                              ),
-                            );
-                            WidgetsBinding.instance.addPostFrameCallback(
-                              (_) {
-                                showToast(
-                                  context,
-                                  context.l10n!.languageMsg,
-                                );
-                                Navigator.pop(context);
-                              },
-                            );
-                          },
-                        ),
                       );
                     },
                   ),
@@ -231,29 +218,23 @@ class SettingsPage extends StatelessWidget {
                       final isCurrentQuality =
                           audioQualitySetting.value == quality;
 
-                      return Card(
-                        color: isCurrentQuality
-                            ? activatedColor
-                            : inactivatedColor,
-                        margin: const EdgeInsets.all(10),
-                        child: ListTile(
-                          minTileHeight: 65,
-                          title: Text(quality),
-                          onTap: () {
-                            addOrUpdateData(
-                              'settings',
-                              'audioQuality',
-                              quality,
-                            );
-                            audioQualitySetting.value = quality;
+                      return BottomSheetBar(
+                        quality,
+                        () {
+                          addOrUpdateData(
+                            'settings',
+                            'audioQuality',
+                            quality,
+                          );
+                          audioQualitySetting.value = quality;
 
-                            showToast(
-                              context,
-                              context.l10n!.audioQualityMsg,
-                            );
-                            Navigator.pop(context);
-                          },
-                        ),
+                          showToast(
+                            context,
+                            context.l10n!.audioQualityMsg,
+                          );
+                          Navigator.pop(context);
+                        },
+                        isCurrentQuality ? activatedColor : inactivatedColor,
                       );
                     },
                   ),
