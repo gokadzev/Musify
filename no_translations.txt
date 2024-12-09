@@ -1,1 +1,65 @@
-{}
+{
+  "ar": [
+    "volumeSongProfile"
+  ],
+
+  "de": [
+    "volumeSongProfile"
+  ],
+
+  "el": [
+    "volumeSongProfile"
+  ],
+
+  "es": [
+    "volumeSongProfile"
+  ],
+
+  "fr": [
+    "volumeSongProfile"
+  ],
+
+  "gl": [
+    "volumeSongProfile"
+  ],
+
+  "id": [
+    "volumeSongProfile"
+  ],
+
+  "it": [
+    "volumeSongProfile"
+  ],
+
+  "ja": [
+    "volumeSongProfile"
+  ],
+
+  "ka": [
+    "volumeSongProfile"
+  ],
+
+  "ko": [
+    "volumeSongProfile"
+  ],
+
+  "pl": [
+    "volumeSongProfile"
+  ],
+
+  "pt": [
+    "volumeSongProfile"
+  ],
+
+  "ru": [
+    "volumeSongProfile"
+  ],
+
+  "tr": [
+    "volumeSongProfile"
+  ],
+
+  "uk": [
+    "volumeSongProfile"
+  ]
+}
