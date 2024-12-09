@@ -45,9 +45,6 @@ class _LibraryPageState extends State<LibraryPage> {
 
   late Future<List> _userPlaylistsFuture = getUserPlaylists();
 
-  // user playlists / liked playlists / playlists / albums
-  final List<bool> _visibleSections = [true, true, false, false];
-
   Future<void> _refreshUserPlaylists() async {
     setState(() {
       _userPlaylistsFuture = getUserPlaylists();
@@ -65,13 +62,6 @@ class _LibraryPageState extends State<LibraryPage> {
   Widget build(BuildContext context) {
     final primaryColor = Theme.of(context).colorScheme.primary;
 
-    final labels = [
-      context.l10n!.userPlaylists,
-      context.l10n!.likedPlaylists,
-      context.l10n!.playlists,
-      context.l10n!.albums,
-    ];
-
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n!.library)),
       body: Column(
@@ -86,36 +76,8 @@ class _LibraryPageState extends State<LibraryPage> {
                     focusNode: _inputNode,
                     labelText: '${context.l10n!.search}...',
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 15,
-                      vertical: 20,
-                    ),
-                    child: Wrap(
-                      spacing: 10,
-                      runSpacing: 8,
-                      alignment: WrapAlignment.center,
-                      children: List.generate(4, (index) {
-                        return _buildFilterChip(index, labels[index]);
-                      }),
-                    ),
-                  ),
-                  _buildSectionIfVisible(
-                    _visibleSections[0],
-                    () => _buildUserPlaylistsSection(primaryColor),
-                  ),
-                  _buildSectionIfVisible(
-                    _visibleSections[1],
-                    () => _buildUserLikedPlaylistsSection(primaryColor),
-                  ),
-                  _buildSectionIfVisible(
-                    _visibleSections[2],
-                    () => _buildPlaylistsSection(primaryColor, 'playlist'),
-                  ),
-                  _buildSectionIfVisible(
-                    _visibleSections[3],
-                    () => _buildPlaylistsSection(primaryColor, 'album'),
-                  ),
+                  _buildUserPlaylistsSection(primaryColor),
+                  _buildUserLikedPlaylistsSection(primaryColor),
                 ],
               ),
             ),
@@ -123,21 +85,6 @@ class _LibraryPageState extends State<LibraryPage> {
         ],
       ),
     );
-  }
-
-  Widget _buildSectionIfVisible(
-    bool isVisible,
-    Widget Function() sectionBuilder,
-  ) {
-    if (isVisible) {
-      return Column(
-        children: [
-          sectionBuilder(),
-          const SizedBox(height: 10),
-        ],
-      );
-    }
-    return const SizedBox.shrink();
   }
 
   Widget _buildUserPlaylistsSection(Color primaryColor) {
@@ -181,24 +128,6 @@ class _LibraryPageState extends State<LibraryPage> {
         ),
         FutureBuilder<List>(
           future: _userPlaylistsFuture,
-          builder: _buildPlaylistsList,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildPlaylistsSection(Color primaryColor, String type) {
-    return Column(
-      children: [
-        SectionTitle(
-          type == 'playlist' ? context.l10n!.playlists : context.l10n!.albums,
-          primaryColor,
-        ),
-        FutureBuilder<List>(
-          future: getPlaylists(
-            query: _searchBar.text.isEmpty ? null : _searchBar.text,
-            type: type,
-          ),
           builder: _buildPlaylistsList,
         ),
       ],
@@ -268,18 +197,6 @@ class _LibraryPageState extends State<LibraryPage> {
               ? () => _showRemovePlaylistDialog(playlist)
               : null,
         );
-      },
-    );
-  }
-
-  Widget _buildFilterChip(int index, String label) {
-    return FilterChip(
-      selected: _visibleSections[index],
-      label: Text(label),
-      onSelected: (isSelected) {
-        setState(() {
-          _visibleSections[index] = isSelected;
-        });
       },
     );
   }

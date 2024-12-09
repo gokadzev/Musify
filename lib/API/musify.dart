@@ -335,21 +335,27 @@ Future<void> updatePlaylistLikeStatus(
   String playlistId,
   bool add,
 ) async {
-  if (add) {
-    final playlist = playlists.firstWhere(
-      (playlist) => playlist['ytid'] == playlistId,
-      orElse: () => {},
-    );
+  try {
+    if (add) {
+      final playlist = playlists.firstWhere(
+        (playlist) => playlist['ytid'] == playlistId,
+        orElse: () => {},
+      );
 
-    if (playlist.isNotEmpty) {
-      userLikedPlaylists.add(playlist);
+      if (playlist.isNotEmpty) {
+        userLikedPlaylists.add(playlist);
+      } else {
+        userLikedPlaylists.add(await getPlaylistInfoForWidget(playlistId));
+      }
+    } else {
+      userLikedPlaylists
+          .removeWhere((playlist) => playlist['ytid'] == playlistId);
     }
-  } else {
-    userLikedPlaylists
-        .removeWhere((playlist) => playlist['ytid'] == playlistId);
-  }
 
-  addOrUpdateData('user', 'likedPlaylists', userLikedPlaylists);
+    addOrUpdateData('user', 'likedPlaylists', userLikedPlaylists);
+  } catch (e, stackTrace) {
+    logger.log('Error updating playlist like status: ', e, stackTrace);
+  }
 }
 
 bool isSongAlreadyLiked(songIdToCheck) =>
@@ -384,8 +390,10 @@ Future<List> getPlaylists({
               (type == 'playlist' && playlist['isAlbum'] != true));
     }).toList();
 
-    final searchResults =
-        await _yt.search.searchContent(query, filter: TypeFilters.playlist);
+    final searchResults = await _yt.search.searchContent(
+      type == 'album' ? '$query album' : query,
+      filter: TypeFilters.playlist,
+    );
 
     final existingYtid =
         onlinePlaylists.map((playlist) => playlist['ytid'] as String).toSet();

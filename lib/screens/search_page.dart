@@ -29,6 +29,8 @@ import 'package:musify/services/data_manager.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/custom_bar.dart';
 import 'package:musify/widgets/custom_search_bar.dart';
+import 'package:musify/widgets/playlist_bar.dart';
+import 'package:musify/widgets/section_title.dart';
 import 'package:musify/widgets/song_bar.dart';
 
 class SearchPage extends StatefulWidget {
@@ -44,7 +46,10 @@ class _SearchPageState extends State<SearchPage> {
   final TextEditingController _searchBar = TextEditingController();
   final FocusNode _inputNode = FocusNode();
   final ValueNotifier<bool> _fetchingSongs = ValueNotifier(false);
-  List _searchResult = [];
+  int maxSongsInList = 15;
+  List _songsSearchResult = [];
+  List _albumsSearchResult = [];
+  List _playlistsSearchResult = [];
   List _suggestionsList = [];
 
   @override
@@ -58,7 +63,9 @@ class _SearchPageState extends State<SearchPage> {
     final query = _searchBar.text;
 
     if (query.isEmpty) {
-      _searchResult = [];
+      _songsSearchResult = [];
+      _albumsSearchResult = [];
+      _playlistsSearchResult = [];
       _suggestionsList = [];
       setState(() {});
       return;
@@ -74,7 +81,15 @@ class _SearchPageState extends State<SearchPage> {
     }
 
     try {
-      _searchResult = await fetchSongsList(query);
+      _songsSearchResult = await fetchSongsList(query);
+      _albumsSearchResult = await getPlaylists(
+        query: query,
+        type: 'album',
+      );
+      _playlistsSearchResult = await getPlaylists(
+        query: query,
+        type: 'playlist',
+      );
     } catch (e, stackTrace) {
       logger.log('Error while searching online songs', e, stackTrace);
     }
@@ -88,6 +103,7 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
+    final primaryColor = Theme.of(context).colorScheme.primary;
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n!.search)),
       body: SingleChildScrollView(
@@ -112,7 +128,7 @@ class _SearchPageState extends State<SearchPage> {
                 _inputNode.unfocus();
               },
             ),
-            if (_searchResult.isEmpty)
+            if (_songsSearchResult.isEmpty && _albumsSearchResult.isEmpty)
               ListView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
@@ -153,17 +169,55 @@ class _SearchPageState extends State<SearchPage> {
                 },
               )
             else
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: _searchResult.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return SongBar(
-                    _searchResult[index],
-                    true,
-                    showMusicDuration: true,
-                  );
-                },
+              Column(
+                children: [
+                  SectionTitle(context.l10n!.songs, primaryColor),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: maxSongsInList,
+                    itemBuilder: (BuildContext context, int index) {
+                      return SongBar(
+                        _songsSearchResult[index],
+                        true,
+                        showMusicDuration: true,
+                      );
+                    },
+                  ),
+                  SectionTitle(context.l10n!.albums, primaryColor),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: maxSongsInList,
+                    itemBuilder: (BuildContext context, int index) {
+                      final playlist = _albumsSearchResult[index];
+                      return PlaylistBar(
+                        key: ValueKey(playlist['ytid']),
+                        playlist['title'],
+                        playlistId: playlist['ytid'],
+                        playlistArtwork: playlist['image'],
+                        cubeIcon: FluentIcons.cd_16_filled,
+                        isAlbum: true,
+                      );
+                    },
+                  ),
+                  SectionTitle(context.l10n!.playlists, primaryColor),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: maxSongsInList,
+                    itemBuilder: (BuildContext context, int index) {
+                      final playlist = _playlistsSearchResult[index];
+                      return PlaylistBar(
+                        key: ValueKey(playlist['ytid']),
+                        playlist['title'],
+                        playlistId: playlist['ytid'],
+                        playlistArtwork: playlist['image'],
+                        cubeIcon: FluentIcons.apps_list_24_filled,
+                      );
+                    },
+                  ),
+                ],
               ),
           ],
         ),
