@@ -175,7 +175,9 @@ class _SearchPageState extends State<SearchPage> {
                   ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    itemCount: maxSongsInList,
+                    itemCount: _songsSearchResult.length > maxSongsInList
+                        ? maxSongsInList
+                        : _songsSearchResult.length,
                     itemBuilder: (BuildContext context, int index) {
                       return SongBar(
                         _songsSearchResult[index],
@@ -188,7 +190,9 @@ class _SearchPageState extends State<SearchPage> {
                   ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    itemCount: maxSongsInList,
+                    itemCount: _albumsSearchResult.length > maxSongsInList
+                        ? maxSongsInList
+                        : _albumsSearchResult.length,
                     itemBuilder: (BuildContext context, int index) {
                       final playlist = _albumsSearchResult[index];
                       return PlaylistBar(
@@ -205,7 +209,9 @@ class _SearchPageState extends State<SearchPage> {
                   ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    itemCount: maxSongsInList,
+                    itemCount: _playlistsSearchResult.length > maxSongsInList
+                        ? maxSongsInList
+                        : _playlistsSearchResult.length,
                     itemBuilder: (BuildContext context, int index) {
                       final playlist = _playlistsSearchResult[index];
                       return PlaylistBar(
