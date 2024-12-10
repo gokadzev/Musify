@@ -52,7 +52,7 @@ class PlaylistPage extends StatefulWidget {
 }
 
 class _PlaylistPageState extends State<PlaylistPage> {
-  final List<dynamic> _songsList = [];
+  List<dynamic> _songsList = [];
   dynamic _playlist;
 
   bool _isLoading = true;
@@ -125,9 +125,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
             _buildLikeButton(),
           ],
           const SizedBox(width: 10),
-          if (_playlist != null &&
-              (_playlist['source'] == 'user-youtube' ||
-                  _playlist['source'] == 'youtube')) ...[
+          if (_playlist != null) ...[
             _buildSyncButton(),
             const SizedBox(width: 10),
           ],
@@ -304,15 +302,23 @@ class _PlaylistPageState extends State<PlaylistPage> {
   }
 
   void _handleSyncPlaylist() async {
-    if (_playlist['ytid'] != null)
+    if (_playlist['ytid'] != null) {
       _playlist = await updatePlaylistList(context, _playlist['ytid']);
-    _hasMore = true;
-    _songsList.clear();
-    setState(() {
-      _currentPage = 0;
-      _currentLastLoadedId = 0;
-      _loadMore();
-    });
+      _hasMore = true;
+      _songsList.clear();
+      setState(() {
+        _currentPage = 0;
+        _currentLastLoadedId = 0;
+        _loadMore();
+      });
+    } else {
+      final updatedPlaylist = await getPlaylistInfoForWidget(widget.playlistId);
+      if (updatedPlaylist != null) {
+        setState(() {
+          _songsList = updatedPlaylist['list'];
+        });
+      }
+    }
   }
 
   void _updateSongsListOnRemove(int indexOfRemovedSong) {

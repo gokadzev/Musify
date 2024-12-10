@@ -574,12 +574,12 @@ Future<void> setActivePlaylist(Map info) async {
   await audioHandler.playSong(activePlaylist['list'][activeSongId]);
 }
 
-Future<Map<String, dynamic>?> getPlaylistInfoForWidget(
+Future<Map?> getPlaylistInfoForWidget(
   dynamic id, {
   bool isArtist = false,
 }) async {
   if (!isArtist) {
-    Map<String, dynamic>? playlist =
+    Map? playlist =
         playlists.firstWhere((list) => list['ytid'] == id, orElse: () => null);
 
     if (playlist == null) {
