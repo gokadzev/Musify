@@ -423,70 +423,80 @@ List albumsDB = [
   {
     'ytid': 'OLAK5uy_mI1LaRKdjRV-QCXbqdSLwRgG7vHthQgnQ',
     'title': 'Ariana Grande - Positions',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/76/fa/23/76fa232c-2e97-88de-9558-3302ed9d6656/21UMGIM11941.rgb.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_nRIwFxK9HoO5lNT4THuPKYfit57ZgBxdM',
     'title': 'Clean Bandit - What Is Love?',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/3b/26/be/3b26bed0-2f02-0a84-b899-04d82fa27cbc/190295552596.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_k4LFwctseSNnXT0MyeNB1j9boPLFjO-ZI',
     'title': 'One Direction - Four',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/14/e4/98/14e49846-57a9-dc8d-6fa3-5e03ccf3606c/dj.ljogvxod.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_mJzZNV67c56hX-m1jSQ9wQImckazmxN5s',
     'title': 'Melanie Martinez - Cry Baby',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/4e/8a/da/4e8ada12-5602-fc2c-f75b-167697e140d8/075679921369.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_kTAMVwktrxHt4YYl0HVqtInDsZZu-842I',
     'title': 'Camila Cabello - Romance',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/c5/d5/7e/c5d57e36-4270-8730-d009-5e82a71016f7/886448121220.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_kgvDzTzHW2NHKXbZ6kzcoCY-XfVE0c-Sc',
     'title': 'Luis Fonsi - Vida',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/8f/3b/a7/8f3ba76c-1aa8-6409-db57-23210eb1ee1e/18UMGIM85289.rgb.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_k-LckFrVH6iHyG_RDQCBDQ-k9rJNnZ85c',
     'title': 'Rauw Alejandro - Vice Versa',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/58/13/c3/5813c326-a7fa-f792-77e1-8310d9c80742/886449738724.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_m6Sss1kO7j8so_ce3sDT8Xa5RZz6mERNQ',
     'title': 'Drake - Take Care',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/74/fb/d3/74fbd365-bd52-23b4-604b-7f164407b0a9/00602527899107.rgb.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_nUljIDktkB7qCIEoc-vn1J26T-nHtC1cM',
     'title': 'Peso Pluma - Genesis',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/a7/72/77/a77277f4-9b2e-0890-4707-31c1ac394c66/197189111396.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_kng4OEgFEJ1lxWRj7wjxewLbSAu6vmzzE',
     'title': 'One Direction - Made In The A.M.',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/45/ac/db/45acdb3d-1a85-52e3-43d5-195f8f58067d/mzm.qyfviqnb.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
@@ -500,182 +510,208 @@ List albumsDB = [
   {
     'ytid': 'OLAK5uy_keyJA-JsoAdfCylvyyIQMRjenzX6MzmnE',
     'title': 'Kanye West - The Life Of Pablo',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/ab/74/4a/ab744ae9-235f-0a2f-9f8a-74ddee3c339e/16UMGIM37046.rgb.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_nQNRQA99R_mdFaftHhYqCHyNLgWjUhHZ0',
     'title': 'Karol G - Kg0516',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/11/be/ca/11beca85-d1fa-ff53-b0be-ca07a6c29deb/21UMGIM20318.rgb.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_m-vSVOiVeY_z2lPgThmS6Nn0TJExXZtOg',
     'title': 'Taylor Swift - Evermore',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/44/e3/94/44e3945f-d613-09f8-538a-aba063d59358/20UM1IM14847.rgb.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_lHYbVGaxOAVNP1tAgVKXBAxnIJ-OqbfLQ',
     'title': 'Jonas Blue - Blue',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/a6/be/37/a6be37e2-0339-ebe1-fde5-ef213e9edf32/18UMGIM60565.rgb.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_nbgX8HX7Q8nc2RBTqm3EAxH38mt4be-qo',
     'title': 'James Arthur - Back From The Edge',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/9c/c2/89/9cc289cb-66fe-a754-8ec7-859d76d65c55/886445946789.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_llBNVDBNncoPNlOvXcZSny32SLEFepdwQ',
-    'title': "50 Cent - Get Rich Or Die Tryin'",
-    'image': null,
+    'title': '50 Cent - Get Rich Or Die Tryin',
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/51/a6/c9/51a6c989-f81d-42b3-c94c-e889a7c07885/06UMGIM15592.rgb.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_mJLUX067d816Ur3BYLtUFRVE5AkK6PR8U',
     'title': 'Calvin Harris - 18 Months',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/ab/af/22/abaf2296-ed4d-6da2-c24d-503cfdfa4c1f/0617465356858.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_nAZAs495Fuv7ij62C3N50Ga7TAp60sq0w',
     'title': 'Linkin Park - Meteora',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Features125/v4/dd/7d/72/dd7d7259-d27f-5b3e-ce64-9e304d2cb40f/dj.rxzrauer.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_kmtA2RV4sA_baCJwuaazeDtKmBM85j-yo',
     'title': 'Travis Scott - Utopia',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/09/7d/b0/097db06f-8403-3cf7-7510-139e570ca66b/196871341882.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_kPdPDkmggFWnDaTPs651iSKiz0gsp9R4s',
     'title': 'Macklemore & Ryan Lewis - The Heist',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/91/c1/b5/91c1b5cc-d4f1-da61-d3dc-2dd93e6b0a7d/707541525299.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_kFAycOAlgpI743eKRTeGG82mwcwDoV4mc',
     'title': 'Calvin Harris - Motion',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/da/50/cc/da50cc80-3515-a38d-369b-0d700ffd249d/886444820448.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_kvi6xfWSkfUFjGtPHjvxuOcNsdnIlSUr8',
     'title': 'Ariana Grande - Sweetener',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/7e/aa/71/7eaa717a-857e-6d7a-c03c-8d67b3719706/18UMGIM36924.rgb.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_k-fR8UG9108cSGptPFWTQpRabw7Kyzc5c',
     'title': 'One Direction - Midnight Memories',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Features125/v4/66/75/88/6675882c-3685-2b6b-f9de-c6d3e06602b5/dj.fuklqvvg.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_lmkszQnwSe59ADO4IPsiGylSTgz15P_yY',
     'title': 'Michael Jackson - Thriller',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/32/4f/fd/324ffda2-9e51-8f6a-0c2d-c6fd2b41ac55/074643811224.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_n13hmdsIozcCRyaY4cRDuuviphpfbzPrw',
     'title': "Guns N' Roses - Appetite For Destruction",
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/a0/4d/c4/a04dc484-03cc-02aa-fa82-5334fcb4bc16/18UMGIM24878.rgb.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_k0BfPls_ABfQsEcJfS4xxF81jXMHY3cjI',
     'title': 'The Neighbourhood - I Love You.',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/28/71/00/287100fb-5c31-0195-5343-e6b3625886d0/886443969834.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_lYlHqVN8M2AcghVbRCbX5rFHezLakV1Ds',
     'title': 'The Chainsmokers - Memories...Do Not Open',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/9d/56/6f/9d566f55-5253-bed6-5c31-df952dae649d/886446379289.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_nSf7ffoPgkzoAncS2eatbownOaZ2_X8i8',
     'title': 'David Guetta - Nothing But The Beat',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/99/b4/7b/99b47bd8-2b22-e1ef-2e60-c5147f27a861/dj.thrvmjqj.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_lQN_yR7RQie0jnpJ349k9psVApO4peUhc',
     'title': 'Dr. Dre - 2001',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/fd/63/ed/fd63ed6c-178c-7fa9-4844-29a7326bf655/06UMGIM01277.rgb.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_m4lOn8HJoLfTETxg2d6QouxcQd3nM4Gf0',
     'title': 'Coldplay - Parachutes',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/f5/93/8c/f5938c49-964c-31d1-4b33-78b634f71fb7/190295978075.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_nc7f_y7E_3cXhJmMkV8yq9CU2iqpnooug',
     'title': 'Sza - Ctrl',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/9c/ba/98/9cba98ea-e091-1058-fb14-4631085f8066/886446548432.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_mAGTQmYeosOR-Pp17OnnzkKHPeEbzSFOg',
     'title': 'Frank Ocean - Channel Orange',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/04/f8/63/04f863fc-2852-604f-c910-a97ac069506b/12UMGIM40339.rgb.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_l6QK8fTSEZec6_jvhhDu1fmdM7a7ieYf4',
     'title': 'Halsey - Manic',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/2d/22/b3/2d22b3a8-2666-d609-443f-dc6e348c7ef6/19UMGIM75011.rgb.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_nyRZBNr6_NOMq4osjNSBbB7xpS2L_AH8w',
     'title': 'Eminem - The Marshall Mathers Lp',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/f7/76/f4/f776f482-406b-301a-4145-14617d0b8cf5/00606949062927.rgb.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_nXEjdKtro80D3OQL2t0mnymJfQ6gTJGz4',
     'title': 'Shawn Mendes - Handwritten',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/ef/06/de/ef06deeb-3890-e06f-905c-5686e23c2b88/15UMGIM06404.rgb.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_m_LZ0LzQ487cBuuRehdrodyEkfoAUFiws',
     'title': "Luke Combs - This One'S For You",
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/3c/83/bf/3c83bf3e-bf4a-7e69-5668-d55f5a8e38e0/886446460840.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
@@ -689,98 +725,112 @@ List albumsDB = [
   {
     'ytid': 'OLAK5uy_mDdGJSv2u-3CO_Zb9Hm7rGGCo1e1L9_1s',
     'title': 'The Weeknd - Dawn Fm',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/2f/22/a9/2f22a9a6-5af1-5846-a44e-ba016724ed69/21UM1IM58860.rgb.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_lYFD0sDFxZ8cr9ttczB7pH1zYc8r16kkg',
     'title': 'Jung Kook - Golden',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/86/78/b4/8678b4b3-2341-7239-b6cb-bcfdaef0e4e0/196922656545_Cover.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_ltXJSKxGWPdvV31htBGb_B9iQcSF7DH1w',
     'title': 'Paulo Londra - Homerun',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/33/69/cb/3369cb74-7d05-eee3-4ea2-0672dc4ad567/190296871962.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_nBJRluT6ptlsBxn57aycyN-Fwh7k6_CAo',
     'title': 'David Guetta - 7',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/01/86/3e/01863e64-4f48-85d4-9777-9439397fc33b/190295570378.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_m_oiFQ5FK6PCTzskpi60YNQwxKZqkVD1M',
     'title': 'Eminem - Recovery',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/6a/da/5f/6ada5fd5-5e05-20bc-4bb0-6c0f1f0d91cd/10UMGIM14533.rgb.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_n64_SDF0otQBvjlDb_A5cSkkwT4R5ln00',
     'title': 'Cardi B - Invasion Of Privacy',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/6a/f7/6c/6af76c1c-4d8e-c761-8856-34d273b4703b/075679873682.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_mla7F1QRwv6mBD0XEgHWm4eS-wmdNf97s',
     'title': 'Rihanna - Unapologetic',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/d3/72/50/d3725004-0117-e76d-47f3-00b185e9dd82/12UMGIM59888.rgb.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_kDChrO3UQuY4qQfOfgLj22p69pwGA4m0c',
     'title': 'Avicii - Stories',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/e0/f4/25/e0f425ba-2848-f1c2-e102-9ddcef5e9d9d/15UMGIM35223.rgb.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_m1WZWUtrntyrrtCUSATYfs84K3ZnZl9P0',
     'title': 'Billie Eilish - Hit Me Hard And Soft',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/92/9f/69/929f69f1-9977-3a44-d674-11f70c852d1b/24UMGIM36186.rgb.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_mvRgYPh8u-KBTbU6mkGyrg5CBduos_LEY',
-    'title': "Taylor Swift - 1989 (Taylor'S Version)",
-    'image': null,
+    'title': "Taylor Swift - 1989 (Taylor's Version)",
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/c1/31/18/c131181b-ca3e-d945-16b2-48ea6bcd64d4/23UM1IM11868.rgb.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_m8NVy-6HVgRJ4e9gErhkY8LD0CRS1ORw8',
     'title': 'Khalid - Free Spirit',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/cd/cb/39/cdcb393c-14e6-786a-b120-320957c25699/886447501610.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_mDm6sHCjqUcRpQaPVAGHHEY6uobsh0fVc',
     'title': 'Avicii - True',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/63/e5/39/63e53993-0eff-18e2-d756-ce3d56d98270/00602537491377.rgb.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_mr6DjxLeVO2rPk8zAZx0F2_k5BaGuXlyQ',
     'title': "Sabrina Carpenter - Short N' Sweet",
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/f6/15/d0/f615d0ab-e0c4-575d-907e-1cc084642357/24UMGIM61704.rgb.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_k7FTSn7ydw3cNY9X5w2UJYVO7fLXPDTik',
     'title': 'Tame Impala - Currents',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/a8/2e/b4/a82eb490-f30a-a321-461a-0383c88fec95/15UMGIM23316.rgb.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
@@ -793,64 +843,73 @@ List albumsDB = [
   },
   {
     'ytid': 'OLAK5uy_lMaQ4IrRX4WFH9Kg2QBhJwMFFfnRx5wOE',
-    'title': "Oasis - (What'S The Story) Morning Glory?",
-    'image': null,
+    'title': "Oasis - (What's The Story) Morning Glory?",
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music113/v4/04/92/e0/0492e08b-cbcc-9969-9ad6-8f5a0888068c/5051961007107.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_k4igJBedQoNGRnRdPx2NP-ARZ64c03zHM',
     'title': 'Vance Joy - Dream Your Life Away',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/7a/1c/65/7a1c6571-34e9-bb77-32be-90c72ba003c0/075679920355.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_lUwH9j_s3ZEeayUSm5o93gtQVz0If_kd8',
-    'title': "Taylor Swift - Fearless (Taylor'S Version)",
-    'image': null,
+    'title': "Taylor Swift - Fearless (Taylor's Version)",
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/c3/d0/1c/c3d01c88-73e7-187e-fd62-e1744de979a6/21UMGIM09915.rgb.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_l3qf_fJNreo3L6_ZPIaLOquqfTda--gZc',
     'title': 'Metallica - Metallica (Black Album)',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/18/93/db/1893db5c-ddd1-b95c-3112-b9b83bcceab0/0093624986553.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_nN6ToczJSrgaKwaWT3jyvNgedNcs2D94Y',
     'title': 'Doja Cat - Hot Pink',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/5b/14/ea/5b14eabe-3fbd-4f00-273d-4760dfbb5aef/886447991824.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_mRFuqe0IIrexXkU7JOxo4rOb0WLEcwuz8',
     'title': 'Kanye West - My Beautiful Dark Twisted Fantasy',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/0a/0b/31/0a0b31cc-077c-31bf-e7fe-612191774948/10UMGIM30072.rgb.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_lbTwA-JDtWuF6vKJAtp98wZ512LtuqVoM',
     'title': 'Amy Winehouse - Back To Black',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/5a/72/3f/5a723fec-965d-3483-89f8-d66b79f88419/15UMGIM24224.rgb.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_nPamPQG3Yr23yUuXbMsvyHeIB6nnUjxak',
     'title': 'Lorde - Pure Heroine',
-    'image': 'https://i.scdn.co/image/ab67616d0000b273187331e276c898d39764cc98',
+    'image':
+        'https: //i.scdn.co/image/ab67616d0000b273187331e276c898d39764cc98',
     'isAlbum': true,
     'list': [],
   },
   {
     'ytid': 'OLAK5uy_lXRdq2EQXbT8pGSDQCSwKSXFt3LPVrWao',
     'title': 'Bryson Tiller - Trapsoul',
-    'image': null,
+    'image':
+        'https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/26/4a/f9/264af9b7-813d-4b08-2822-de8b26c0e188/886445447811.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   }
