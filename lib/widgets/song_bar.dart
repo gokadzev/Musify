@@ -76,7 +76,6 @@ class SongBar extends StatelessWidget {
               }
             },
         child: Card(
-          elevation: 1.5,
           color: backgroundColor,
           child: Padding(
             padding: const EdgeInsets.all(8),

@@ -64,7 +64,6 @@ class PlaylistBar extends StatelessWidget {
             },
         onLongPress: onLongPress,
         child: Card(
-          elevation: 1.5,
           child: Padding(
             padding: const EdgeInsets.all(8),
             child: Row(
