@@ -274,7 +274,7 @@ class SongBar extends StatelessWidget {
                 children: [
                   Icon(FluentIcons.delete_24_filled, color: primaryColor),
                   const SizedBox(width: 8),
-                  Text(context.l10n!.remove),
+                  Text(context.l10n!.removeFromPlaylist),
                 ],
               ),
             ),
