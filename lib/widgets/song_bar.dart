@@ -257,7 +257,11 @@ class SongBar extends StatelessWidget {
                       color: primaryColor,
                     ),
                     const SizedBox(width: 8),
-                    Text(value ? context.l10n!.unlike : context.l10n!.like),
+                    Text(
+                      value
+                          ? context.l10n!.removeFromLikedSongs
+                          : context.l10n!.addToLikedSongs,
+                    ),
                   ],
                 );
               },
