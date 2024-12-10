@@ -91,7 +91,7 @@ class MiniPlayer extends StatelessWidget {
         child: Row(
           children: <Widget>[
             _buildArtwork(),
-            _buildMetadata(colorScheme.onSurface, colorScheme.onSurfaceVariant),
+            _buildMetadata(colorScheme.primary, colorScheme.secondary),
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
