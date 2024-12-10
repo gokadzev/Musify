@@ -131,19 +131,6 @@ Future<List> getRecommendedSongs() async {
 }
 
 Future<List<dynamic>> getUserPlaylists() async {
-  //TODO: Remove after several releases, this is for smooth integration
-  var _playlistsUpdated = false;
-  for (final playlist in userCustomPlaylists) {
-    if (!playlist.containsKey('source')) {
-      playlist['source'] = 'user-created';
-      _playlistsUpdated = true;
-    }
-  }
-  // Only call addOrUpdateData once if any updates were made
-  if (_playlistsUpdated) {
-    addOrUpdateData('user', 'customPlaylists', userCustomPlaylists);
-  }
-
   final playlistsByUser = [...userCustomPlaylists];
   for (final playlistID in userPlaylists) {
     try {
