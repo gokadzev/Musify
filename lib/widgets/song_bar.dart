@@ -27,7 +27,6 @@ import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
-import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/formatter.dart';
@@ -92,8 +91,9 @@ class SongBar extends StatelessWidget {
                       Text(
                         song['title'],
                         overflow: TextOverflow.ellipsis,
-                        style:
-                            commonBarTitleStyle.copyWith(color: primaryColor),
+                        style: commonBarTitleStyle.copyWith(
+                          color: primaryColor,
+                        ),
                       ),
                       const SizedBox(height: 3),
                       Text(
@@ -210,72 +210,107 @@ class SongBar extends StatelessWidget {
     final songOfflineStatus =
         ValueNotifier<bool>(isSongAlreadyOffline(song['ytid']));
 
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const SizedBox(width: 8),
-        if (!offlineMode.value)
-          Row(
-            children: [
-              ValueListenableBuilder<bool>(
-                valueListenable: songLikeStatus,
-                builder: (_, value, __) {
-                  return GestureDetector(
-                    child: Icon(
+    return PopupMenuButton<String>(
+      icon: Icon(
+        FluentIcons.more_horizontal_24_filled,
+        color: primaryColor,
+      ),
+      onSelected: (String value) {
+        switch (value) {
+          case 'like':
+            songLikeStatus.value = !songLikeStatus.value;
+            updateSongLikeStatus(
+              song['ytid'],
+              songLikeStatus.value,
+            );
+            final likedSongsLength = currentLikedSongsLength.value;
+            currentLikedSongsLength.value = songLikeStatus.value
+                ? likedSongsLength + 1
+                : likedSongsLength - 1;
+            break;
+          case 'remove':
+            if (onRemove != null) onRemove!();
+            break;
+          case 'add_to_playlist':
+            showAddToPlaylistDialog(context, song);
+            break;
+          case 'offline':
+            if (songOfflineStatus.value) {
+              removeSongFromOffline(song['ytid']);
+            } else {
+              makeSongOffline(song);
+            }
+            songOfflineStatus.value = !songOfflineStatus.value;
+            break;
+        }
+      },
+      itemBuilder: (BuildContext context) {
+        return [
+          PopupMenuItem<String>(
+            value: 'like',
+            child: ValueListenableBuilder<bool>(
+              valueListenable: songLikeStatus,
+              builder: (_, value, __) {
+                return Row(
+                  children: [
+                    Icon(
                       likeStatusToIconMapper[value],
                       color: primaryColor,
                     ),
-                    onTap: () {
-                      songLikeStatus.value = !songLikeStatus.value;
-                      updateSongLikeStatus(
-                        song['ytid'],
-                        songLikeStatus.value,
-                      );
-                      final likedSongsLength = currentLikedSongsLength.value;
-                      currentLikedSongsLength.value =
-                          value ? likedSongsLength + 1 : likedSongsLength - 1;
-                    },
-                  );
-                },
-              ),
-              const SizedBox(width: 8),
-              if (onRemove != null)
-                GestureDetector(
-                  child:
-                      Icon(FluentIcons.delete_24_filled, color: primaryColor),
-                  onTap: () => onRemove!(),
-                )
-              else
-                GestureDetector(
-                  child: Icon(FluentIcons.add_24_regular, color: primaryColor),
-                  onTap: () => showAddToPlaylistDialog(context, song),
-                ),
-            ],
-          ),
-        const SizedBox(width: 8),
-        ValueListenableBuilder<bool>(
-          valueListenable: songOfflineStatus,
-          builder: (_, value, __) {
-            return GestureDetector(
-              child: Icon(
-                value
-                    ? FluentIcons.cellular_off_24_regular
-                    : FluentIcons.cellular_data_1_24_regular,
-                color: primaryColor,
-              ),
-              onTap: () {
-                if (value) {
-                  removeSongFromOffline(song['ytid']);
-                } else {
-                  makeSongOffline(song);
-                }
-
-                songOfflineStatus.value = !songOfflineStatus.value;
+                    const SizedBox(width: 8),
+                    Text(value ? context.l10n!.unlike : context.l10n!.like),
+                  ],
+                );
               },
-            );
-          },
-        ),
-      ],
+            ),
+          ),
+          if (onRemove != null)
+            PopupMenuItem<String>(
+              value: 'remove',
+              child: Row(
+                children: [
+                  Icon(FluentIcons.delete_24_filled, color: primaryColor),
+                  const SizedBox(width: 8),
+                  Text(context.l10n!.remove),
+                ],
+              ),
+            ),
+          PopupMenuItem<String>(
+            value: 'add_to_playlist',
+            child: Row(
+              children: [
+                Icon(FluentIcons.add_24_regular, color: primaryColor),
+                const SizedBox(width: 8),
+                Text(context.l10n!.addToPlaylist),
+              ],
+            ),
+          ),
+          PopupMenuItem<String>(
+            value: 'offline',
+            child: ValueListenableBuilder<bool>(
+              valueListenable: songOfflineStatus,
+              builder: (_, value, __) {
+                return Row(
+                  children: [
+                    Icon(
+                      value
+                          ? FluentIcons.cellular_off_24_regular
+                          : FluentIcons.cellular_data_1_24_regular,
+                      color: primaryColor,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      value
+                          ? context.l10n!.removeOffline
+                          : context.l10n!.makeOffline,
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+        ];
+      },
     );
   }
 }
