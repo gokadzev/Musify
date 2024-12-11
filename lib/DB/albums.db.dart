@@ -429,14 +429,6 @@ List albumsDB = [
     'list': [],
   },
   {
-    'ytid': 'OLAK5uy_nRIwFxK9HoO5lNT4THuPKYfit57ZgBxdM',
-    'title': 'Clean Bandit - What Is Love?',
-    'image':
-        'https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/3b/26/be/3b26bed0-2f02-0a84-b899-04d82fa27cbc/190295552596.jpg/250x250bb.jpg',
-    'isAlbum': true,
-    'list': [],
-  },
-  {
     'ytid': 'OLAK5uy_k4LFwctseSNnXT0MyeNB1j9boPLFjO-ZI',
     'title': 'One Direction - Four',
     'image':
@@ -572,14 +564,6 @@ List albumsDB = [
     'list': [],
   },
   {
-    'ytid': 'OLAK5uy_kmtA2RV4sA_baCJwuaazeDtKmBM85j-yo',
-    'title': 'Travis Scott - Utopia',
-    'image':
-        'https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/09/7d/b0/097db06f-8403-3cf7-7510-139e570ca66b/196871341882.jpg/250x250bb.jpg',
-    'isAlbum': true,
-    'list': [],
-  },
-  {
     'ytid': 'OLAK5uy_kPdPDkmggFWnDaTPs651iSKiz0gsp9R4s',
     'title': 'Macklemore & Ryan Lewis - The Heist',
     'image':
@@ -660,14 +644,6 @@ List albumsDB = [
     'list': [],
   },
   {
-    'ytid': 'OLAK5uy_m4lOn8HJoLfTETxg2d6QouxcQd3nM4Gf0',
-    'title': 'Coldplay - Parachutes',
-    'image':
-        'https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/f5/93/8c/f5938c49-964c-31d1-4b33-78b634f71fb7/190295978075.jpg/250x250bb.jpg',
-    'isAlbum': true,
-    'list': [],
-  },
-  {
     'ytid': 'OLAK5uy_nc7f_y7E_3cXhJmMkV8yq9CU2iqpnooug',
     'title': 'Sza - Ctrl',
     'image':
@@ -727,14 +703,6 @@ List albumsDB = [
     'title': 'The Weeknd - Dawn Fm',
     'image':
         'https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/2f/22/a9/2f22a9a6-5af1-5846-a44e-ba016724ed69/21UM1IM58860.rgb.jpg/250x250bb.jpg',
-    'isAlbum': true,
-    'list': [],
-  },
-  {
-    'ytid': 'OLAK5uy_lYFD0sDFxZ8cr9ttczB7pH1zYc8r16kkg',
-    'title': 'Jung Kook - Golden',
-    'image':
-        'https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/86/78/b4/8678b4b3-2341-7239-b6cb-bcfdaef0e4e0/196922656545_Cover.jpg/250x250bb.jpg',
     'isAlbum': true,
     'list': [],
   },
@@ -831,13 +799,6 @@ List albumsDB = [
     'title': 'Tame Impala - Currents',
     'image':
         'https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/a8/2e/b4/a82eb490-f30a-a321-461a-0383c88fec95/15UMGIM23316.rgb.jpg/250x250bb.jpg',
-    'isAlbum': true,
-    'list': [],
-  },
-  {
-    'ytid': 'OLAK5uy_lTUCPSiT_kZOCY1BlJ1t5T5nsxeG6v20s',
-    'title': 'Tiesto - Drive',
-    'image': null,
     'isAlbum': true,
     'list': [],
   },
