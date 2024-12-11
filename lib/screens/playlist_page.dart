@@ -27,7 +27,9 @@ import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/data_manager.dart';
+import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/flutter_toast.dart';
+import 'package:musify/utilities/utils.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/playlist_header.dart';
 import 'package:musify/widgets/song_bar.dart';
@@ -153,14 +155,18 @@ class _PlaylistPageState extends State<PlaylistPage> {
                     child: buildSongActionsRow(),
                   ),
                 ),
-                SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (BuildContext context, int index) {
-                      final isRemovable = _playlist['source'] == 'user-created';
-                      return _buildSongListItem(index, isRemovable);
-                    },
-                    childCount:
-                        _hasMore ? _songsList.length + 1 : _songsList.length,
+                SliverPadding(
+                  padding: commonListViewBottmomPadding,
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (BuildContext context, int index) {
+                        final isRemovable =
+                            _playlist['source'] == 'user-created';
+                        return _buildSongListItem(index, isRemovable);
+                      },
+                      childCount:
+                          _hasMore ? _songsList.length + 1 : _songsList.length,
+                    ),
                   ),
                 ),
               ],
@@ -427,6 +433,9 @@ class _PlaylistPageState extends State<PlaylistPage> {
       }
       return const Spinner();
     }
+
+    final borderRadius = getItemBorderRadius(index, _songsList.length);
+
     return SongBar(
       _songsList[index],
       true,
@@ -448,6 +457,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
           songIndex: index,
         ),
       },
+      borderRadius: borderRadius,
     );
   }
 }

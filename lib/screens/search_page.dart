@@ -26,6 +26,8 @@ import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/data_manager.dart';
+import 'package:musify/utilities/common_variables.dart';
+import 'package:musify/utilities/utils.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/custom_bar.dart';
 import 'package:musify/widgets/custom_search_bar.dart';
@@ -130,6 +132,7 @@ class _SearchPageState extends State<SearchPage> {
             ),
             if (_songsSearchResult.isEmpty && _albumsSearchResult.isEmpty)
               ListView.builder(
+                padding: const EdgeInsets.all(7),
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: _suggestionsList.isEmpty
@@ -141,9 +144,17 @@ class _SearchPageState extends State<SearchPage> {
                       ? searchHistory[index]
                       : _suggestionsList[index];
 
+                  final borderRadius = getItemBorderRadius(
+                    index,
+                    _suggestionsList.isEmpty
+                        ? searchHistory.length
+                        : _suggestionsList.length,
+                  );
+
                   return CustomBar(
                     query,
                     FluentIcons.search_24_regular,
+                    borderRadius: borderRadius,
                     onTap: () async {
                       _searchBar.text = query;
                       await search();
@@ -175,14 +186,23 @@ class _SearchPageState extends State<SearchPage> {
                   ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
+                    padding: const EdgeInsets.all(7),
                     itemCount: _songsSearchResult.length > maxSongsInList
                         ? maxSongsInList
                         : _songsSearchResult.length,
                     itemBuilder: (BuildContext context, int index) {
+                      final borderRadius = getItemBorderRadius(
+                        index,
+                        _songsSearchResult.length > maxSongsInList
+                            ? maxSongsInList
+                            : _songsSearchResult.length,
+                      );
+
                       return SongBar(
                         _songsSearchResult[index],
                         true,
                         showMusicDuration: true,
+                        borderRadius: borderRadius,
                       );
                     },
                   ),
@@ -195,6 +215,14 @@ class _SearchPageState extends State<SearchPage> {
                         : _albumsSearchResult.length,
                     itemBuilder: (BuildContext context, int index) {
                       final playlist = _albumsSearchResult[index];
+
+                      final borderRadius = getItemBorderRadius(
+                        index,
+                        _albumsSearchResult.length > maxSongsInList
+                            ? maxSongsInList
+                            : _albumsSearchResult.length,
+                      );
+
                       return PlaylistBar(
                         key: ValueKey(playlist['ytid']),
                         playlist['title'],
@@ -202,6 +230,7 @@ class _SearchPageState extends State<SearchPage> {
                         playlistArtwork: playlist['image'],
                         cubeIcon: FluentIcons.cd_16_filled,
                         isAlbum: true,
+                        borderRadius: borderRadius,
                       );
                     },
                   ),
@@ -209,6 +238,7 @@ class _SearchPageState extends State<SearchPage> {
                   ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
+                    padding: commonListViewBottmomPadding,
                     itemCount: _playlistsSearchResult.length > maxSongsInList
                         ? maxSongsInList
                         : _playlistsSearchResult.length,

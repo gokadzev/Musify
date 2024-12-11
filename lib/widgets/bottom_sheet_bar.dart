@@ -20,27 +20,34 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:musify/utilities/common_variables.dart';
 
 class BottomSheetBar extends StatelessWidget {
   const BottomSheetBar(
     this.title,
     this.onTap,
     this.backgroundColor, {
+    this.borderRadius = BorderRadius.zero,
     super.key,
   });
   final String title;
   final VoidCallback onTap;
   final Color backgroundColor;
+  final BorderRadius borderRadius;
 
   @override
   Widget build(BuildContext context) {
     return Card(
       color: backgroundColor,
-      margin: const EdgeInsets.all(10),
-      child: ListTile(
-        minTileHeight: 65,
-        title: Text(title),
-        onTap: onTap,
+      shape: RoundedRectangleBorder(borderRadius: borderRadius),
+      margin: const EdgeInsets.only(bottom: 3),
+      child: Padding(
+        padding: commonBarContentPadding,
+        child: ListTile(
+          minTileHeight: 45,
+          title: Text(title),
+          onTap: onTap,
+        ),
       ),
     );
   }

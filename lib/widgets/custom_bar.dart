@@ -32,6 +32,7 @@ class CustomBar extends StatelessWidget {
     this.backgroundColor,
     this.iconColor,
     this.textColor,
+    this.borderRadius = BorderRadius.zero,
     super.key,
   });
 
@@ -43,26 +44,34 @@ class CustomBar extends StatelessWidget {
   final Color? backgroundColor;
   final Color? iconColor;
   final Color? textColor;
+  final BorderRadius borderRadius;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: commonBarPadding,
       child: Card(
+        margin: const EdgeInsets.only(bottom: 3),
         color: backgroundColor,
-        child: ListTile(
-          minTileHeight: 65,
-          leading: Icon(
-            tileIcon,
-            color: iconColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: borderRadius,
+        ),
+        child: Padding(
+          padding: commonBarContentPadding,
+          child: ListTile(
+            minTileHeight: 45,
+            leading: Icon(
+              tileIcon,
+              color: iconColor,
+            ),
+            title: Text(
+              tileName,
+              style: TextStyle(fontWeight: FontWeight.w600, color: textColor),
+            ),
+            trailing: trailing,
+            onTap: onTap,
+            onLongPress: onLongPress,
           ),
-          title: Text(
-            tileName,
-            style: TextStyle(fontWeight: FontWeight.w600, color: textColor),
-          ),
-          trailing: trailing,
-          onTap: onTap,
-          onLongPress: onLongPress,
         ),
       ),
     );

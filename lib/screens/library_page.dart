@@ -25,7 +25,9 @@ import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/router_service.dart';
+import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/flutter_toast.dart';
+import 'package:musify/utilities/utils.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/custom_search_bar.dart';
 import 'package:musify/widgets/playlist_bar.dart';
@@ -111,6 +113,7 @@ class _LibraryPageState extends State<LibraryPage> {
               onPressed: () =>
                   NavigationManager.router.go('/library/userSongs/recents'),
               cubeIcon: FluentIcons.history_24_filled,
+              borderRadius: commonCustomBarRadiusFirst,
             ),
             PlaylistBar(
               context.l10n!.likedSongs,
@@ -123,6 +126,7 @@ class _LibraryPageState extends State<LibraryPage> {
               onPressed: () =>
                   NavigationManager.router.go('/library/userSongs/offline'),
               cubeIcon: FluentIcons.cellular_off_24_filled,
+              borderRadius: commonCustomBarRadiusLast,
             ),
           ],
         ),
@@ -183,8 +187,10 @@ class _LibraryPageState extends State<LibraryPage> {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: playlists.length,
+      padding: commonListViewBottmomPadding,
       itemBuilder: (BuildContext context, index) {
         final playlist = playlists[index];
+        final borderRadius = getItemBorderRadius(index, playlists.length);
         return PlaylistBar(
           key: ValueKey(playlist['ytid']),
           playlist['title'],
@@ -196,6 +202,7 @@ class _LibraryPageState extends State<LibraryPage> {
                   playlist['source'] == 'user-youtube'
               ? () => _showRemovePlaylistDialog(playlist)
               : null,
+          borderRadius: borderRadius,
         );
       },
     );

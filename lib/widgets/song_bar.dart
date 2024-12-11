@@ -40,6 +40,7 @@ class SongBar extends StatelessWidget {
     this.showMusicDuration = false,
     this.onPlay,
     this.onRemove,
+    this.borderRadius = BorderRadius.zero,
     super.key,
   });
 
@@ -49,6 +50,7 @@ class SongBar extends StatelessWidget {
   final VoidCallback? onRemove;
   final VoidCallback? onPlay;
   final bool showMusicDuration;
+  final BorderRadius borderRadius;
 
   static const likeStatusToIconMapper = {
     true: FluentIcons.heart_24_filled,
@@ -77,8 +79,10 @@ class SongBar extends StatelessWidget {
             },
         child: Card(
           color: backgroundColor,
+          shape: RoundedRectangleBorder(borderRadius: borderRadius),
+          margin: const EdgeInsets.only(bottom: 3),
           child: Padding(
-            padding: const EdgeInsets.all(8),
+            padding: commonBarContentPadding,
             child: Row(
               children: [
                 _buildAlbumArt(primaryColor),

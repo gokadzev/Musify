@@ -18,6 +18,7 @@ class PlaylistBar extends StatelessWidget {
     this.onLongPress,
     this.cubeIcon = FluentIcons.music_note_1_24_regular,
     this.isAlbum = false,
+    this.borderRadius = BorderRadius.zero,
   }) : playlistLikeStatus = ValueNotifier<bool>(
           isPlaylistAlreadyLiked(playlistId),
         );
@@ -30,6 +31,7 @@ class PlaylistBar extends StatelessWidget {
   final VoidCallback? onLongPress;
   final IconData cubeIcon;
   final bool? isAlbum;
+  final BorderRadius borderRadius;
 
   static const double paddingValue = 4;
   static const double likeButtonOffset = 5;
@@ -64,8 +66,12 @@ class PlaylistBar extends StatelessWidget {
             },
         onLongPress: onLongPress,
         child: Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: borderRadius,
+          ),
+          margin: const EdgeInsets.only(bottom: 3),
           child: Padding(
-            padding: const EdgeInsets.all(8),
+            padding: commonBarContentPadding,
             child: Row(
               children: [
                 _buildAlbumArt(),

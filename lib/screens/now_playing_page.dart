@@ -28,9 +28,11 @@ import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/models/position_data.dart';
 import 'package:musify/services/settings_manager.dart';
+import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/flutter_bottom_sheet.dart';
 import 'package:musify/utilities/formatter.dart';
 import 'package:musify/utilities/mediaitem.dart';
+import 'package:musify/utilities/utils.dart';
 import 'package:musify/widgets/custom_slider.dart';
 import 'package:musify/widgets/marque.dart';
 import 'package:musify/widgets/playback_icon_button.dart';
@@ -468,11 +470,16 @@ class NowPlayingPage extends StatelessWidget {
                 ListView.builder(
                   shrinkWrap: true,
                   physics: const BouncingScrollPhysics(),
+                  padding: commonListViewBottmomPadding,
                   itemCount: activePlaylist['list'].length,
                   itemBuilder: (
                     BuildContext context,
                     int index,
                   ) {
+                    final borderRadius = getItemBorderRadius(
+                      index,
+                      activePlaylist['list'].length,
+                    );
                     return SongBar(
                       activePlaylist['list'][index],
                       false,
@@ -480,7 +487,8 @@ class NowPlayingPage extends StatelessWidget {
                         audioHandler.playPlaylistSong(songIndex: index),
                       },
                       backgroundColor:
-                          Theme.of(context).colorScheme.secondaryContainer,
+                          Theme.of(context).colorScheme.surfaceContainerHigh,
+                      borderRadius: borderRadius,
                     );
                   },
                 ),

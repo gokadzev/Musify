@@ -26,6 +26,8 @@ import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/screens/playlist_page.dart';
 import 'package:musify/services/settings_manager.dart';
+import 'package:musify/utilities/common_variables.dart';
+import 'package:musify/utilities/utils.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/section_title.dart';
 import 'package:musify/widgets/song_bar.dart';
@@ -220,8 +222,14 @@ class _HomePageState extends State<HomePage> {
           shrinkWrap: true,
           physics: const BouncingScrollPhysics(),
           itemCount: data.length,
+          padding: commonListViewBottmomPadding,
           itemBuilder: (context, index) {
-            return SongBar(data[index], true);
+            final borderRadius = getItemBorderRadius(index, data.length);
+            return SongBar(
+              data[index],
+              true,
+              borderRadius: borderRadius,
+            );
           },
         ),
       ],

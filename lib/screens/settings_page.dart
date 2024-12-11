@@ -31,9 +31,11 @@ import 'package:musify/services/settings_manager.dart';
 import 'package:musify/services/update_manager.dart';
 import 'package:musify/style/app_colors.dart';
 import 'package:musify/style/app_themes.dart';
+import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/flutter_bottom_sheet.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/url_launcher.dart';
+import 'package:musify/utilities/utils.dart';
 import 'package:musify/widgets/bottom_sheet_bar.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/custom_bar.dart';
@@ -61,6 +63,7 @@ class SettingsPage extends StatelessWidget {
             CustomBar(
               context.l10n!.accentColor,
               FluentIcons.color_24_filled,
+              borderRadius: commonCustomBarRadiusFirst,
               onTap: () => showCustomBottomSheet(
                 context,
                 GridView.builder(
@@ -130,6 +133,12 @@ class SettingsPage extends StatelessWidget {
                     itemCount: availableModes.length,
                     itemBuilder: (context, index) {
                       final mode = availableModes[index];
+
+                      final borderRadius = getItemBorderRadius(
+                        index,
+                        availableModes.length,
+                      );
+
                       return BottomSheetBar(
                         mode.name,
                         () {
@@ -146,6 +155,7 @@ class SettingsPage extends StatelessWidget {
                           Navigator.pop(context);
                         },
                         themeMode == mode ? activatedColor : inactivatedColor,
+                        borderRadius: borderRadius,
                       );
                     },
                   ),
@@ -164,10 +174,17 @@ class SettingsPage extends StatelessWidget {
                   ListView.builder(
                     shrinkWrap: true,
                     physics: const BouncingScrollPhysics(),
+                    padding: commonListViewBottmomPadding,
                     itemCount: availableLanguages.length,
                     itemBuilder: (context, index) {
                       final language = availableLanguages[index];
                       final languageCode = appLanguages[language] ?? 'en';
+
+                      final borderRadius = getItemBorderRadius(
+                        index,
+                        availableLanguages.length,
+                      );
+
                       return BottomSheetBar(
                         language,
                         () {
@@ -195,6 +212,7 @@ class SettingsPage extends StatelessWidget {
                         activeLanguageCode == languageCode
                             ? activatedColor
                             : inactivatedColor,
+                        borderRadius: borderRadius,
                       );
                     },
                   ),
@@ -212,11 +230,17 @@ class SettingsPage extends StatelessWidget {
                   ListView.builder(
                     shrinkWrap: true,
                     physics: const BouncingScrollPhysics(),
+                    padding: commonListViewBottmomPadding,
                     itemCount: availableQualities.length,
                     itemBuilder: (context, index) {
                       final quality = availableQualities[index];
                       final isCurrentQuality =
                           audioQualitySetting.value == quality;
+
+                      final borderRadius = getItemBorderRadius(
+                        index,
+                        availableQualities.length,
+                      );
 
                       return BottomSheetBar(
                         quality,
@@ -235,6 +259,7 @@ class SettingsPage extends StatelessWidget {
                           Navigator.pop(context);
                         },
                         isCurrentQuality ? activatedColor : inactivatedColor,
+                        borderRadius: borderRadius,
                       );
                     },
                   ),
@@ -415,6 +440,7 @@ class SettingsPage extends StatelessWidget {
                       return CustomBar(
                         context.l10n!.originalRecommendations,
                         FluentIcons.channel_share_24_regular,
+                        borderRadius: commonCustomBarRadiusLast,
                         trailing: Switch(
                           value: value,
                           onChanged: (value) {
@@ -442,6 +468,7 @@ class SettingsPage extends StatelessWidget {
                   CustomBar(
                     context.l10n!.clearCache,
                     FluentIcons.broom_24_filled,
+                    borderRadius: commonCustomBarRadiusFirst,
                     onTap: () {
                       clearCache();
                       showToast(
@@ -542,6 +569,7 @@ class SettingsPage extends StatelessWidget {
                     CustomBar(
                       context.l10n!.downloadAppUpdate,
                       FluentIcons.arrow_download_24_filled,
+                      borderRadius: commonCustomBarRadiusLast,
                       onTap: checkAppUpdates,
                     ),
                   // CATEGORY: BECOME A SPONSOR
@@ -557,6 +585,7 @@ class SettingsPage extends StatelessWidget {
                     backgroundColor: primaryColor,
                     iconColor: Colors.white,
                     textColor: Colors.white,
+                    borderRadius: commonCustomBarRadius,
                     onTap: () => {
                       launchURL(
                         Uri.parse('https://ko-fi.com/gokadzev'),
@@ -574,6 +603,7 @@ class SettingsPage extends StatelessWidget {
             CustomBar(
               context.l10n!.licenses,
               FluentIcons.document_24_filled,
+              borderRadius: commonCustomBarRadiusFirst,
               onTap: () => NavigationManager.router.go(
                 '/settings/license',
               ),
@@ -587,6 +617,7 @@ class SettingsPage extends StatelessWidget {
             CustomBar(
               context.l10n!.about,
               FluentIcons.book_information_24_filled,
+              borderRadius: commonCustomBarRadiusLast,
               onTap: () => NavigationManager.router.go(
                 '/settings/about',
               ),
