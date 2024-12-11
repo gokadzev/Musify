@@ -206,53 +206,57 @@ class _SearchPageState extends State<SearchPage> {
                       );
                     },
                   ),
-                  SectionTitle(context.l10n!.albums, primaryColor),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: _albumsSearchResult.length > maxSongsInList
-                        ? maxSongsInList
-                        : _albumsSearchResult.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      final playlist = _albumsSearchResult[index];
+                  if (_albumsSearchResult.isNotEmpty)
+                    SectionTitle(context.l10n!.albums, primaryColor),
+                  if (_albumsSearchResult.isNotEmpty)
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: _albumsSearchResult.length > maxSongsInList
+                          ? maxSongsInList
+                          : _albumsSearchResult.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final playlist = _albumsSearchResult[index];
 
-                      final borderRadius = getItemBorderRadius(
-                        index,
-                        _albumsSearchResult.length > maxSongsInList
-                            ? maxSongsInList
-                            : _albumsSearchResult.length,
-                      );
+                        final borderRadius = getItemBorderRadius(
+                          index,
+                          _albumsSearchResult.length > maxSongsInList
+                              ? maxSongsInList
+                              : _albumsSearchResult.length,
+                        );
 
-                      return PlaylistBar(
-                        key: ValueKey(playlist['ytid']),
-                        playlist['title'],
-                        playlistId: playlist['ytid'],
-                        playlistArtwork: playlist['image'],
-                        cubeIcon: FluentIcons.cd_16_filled,
-                        isAlbum: true,
-                        borderRadius: borderRadius,
-                      );
-                    },
-                  ),
-                  SectionTitle(context.l10n!.playlists, primaryColor),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    padding: commonListViewBottmomPadding,
-                    itemCount: _playlistsSearchResult.length > maxSongsInList
-                        ? maxSongsInList
-                        : _playlistsSearchResult.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      final playlist = _playlistsSearchResult[index];
-                      return PlaylistBar(
-                        key: ValueKey(playlist['ytid']),
-                        playlist['title'],
-                        playlistId: playlist['ytid'],
-                        playlistArtwork: playlist['image'],
-                        cubeIcon: FluentIcons.apps_list_24_filled,
-                      );
-                    },
-                  ),
+                        return PlaylistBar(
+                          key: ValueKey(playlist['ytid']),
+                          playlist['title'],
+                          playlistId: playlist['ytid'],
+                          playlistArtwork: playlist['image'],
+                          cubeIcon: FluentIcons.cd_16_filled,
+                          isAlbum: true,
+                          borderRadius: borderRadius,
+                        );
+                      },
+                    ),
+                  if (_playlistsSearchResult.isNotEmpty)
+                    SectionTitle(context.l10n!.playlists, primaryColor),
+                  if (_playlistsSearchResult.isNotEmpty)
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: commonListViewBottmomPadding,
+                      itemCount: _playlistsSearchResult.length > maxSongsInList
+                          ? maxSongsInList
+                          : _playlistsSearchResult.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final playlist = _playlistsSearchResult[index];
+                        return PlaylistBar(
+                          key: ValueKey(playlist['ytid']),
+                          playlist['title'],
+                          playlistId: playlist['ytid'],
+                          playlistArtwork: playlist['image'],
+                          cubeIcon: FluentIcons.apps_list_24_filled,
+                        );
+                      },
+                    ),
                 ],
               ),
           ],
