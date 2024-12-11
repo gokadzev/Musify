@@ -77,3 +77,7 @@ Color primaryColorSetting =
 
 final shuffleNotifier = ValueNotifier<bool>(false);
 final repeatNotifier = ValueNotifier<bool>(false);
+
+// Server-Notifiers
+
+final announcementURL = ValueNotifier<String?>(null);

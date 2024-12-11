@@ -28,6 +28,7 @@ import 'package:musify/screens/playlist_page.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/utils.dart';
+import 'package:musify/widgets/announcement_box.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/section_title.dart';
 import 'package:musify/widgets/song_bar.dart';
@@ -48,6 +49,20 @@ class _HomePageState extends State<HomePage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            ValueListenableBuilder<String?>(
+              valueListenable: announcementURL,
+              builder: (_, _url, __) {
+                if (_url == null) return const SizedBox.shrink();
+
+                return AnnouncementBox(
+                  message: context.l10n!.newAnnouncement,
+                  backgroundColor:
+                      Theme.of(context).colorScheme.secondaryContainer,
+                  textColor: Theme.of(context).colorScheme.onSecondaryContainer,
+                  url: _url,
+                );
+              },
+            ),
             _buildSuggestedPlaylists(),
             _buildRecommendedSongsAndArtists(),
           ],
