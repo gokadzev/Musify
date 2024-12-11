@@ -1,5 +1,6 @@
 {
     "version": "8.7.5",
     "url": "https://github.com/gokadzev/Musify/releases/download/8.7.5/Musify.apk",
-    "arm64url" : "https://github.com/gokadzev/Musify/releases/download/8.7.5/Musify-arm64-v8a.apk"
+    "arm64url" : "https://github.com/gokadzev/Musify/releases/download/8.7.5/Musify-arm64-v8a.apk",
+    "announcementurl": null
 }
