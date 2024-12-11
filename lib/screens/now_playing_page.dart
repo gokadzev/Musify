@@ -340,17 +340,17 @@ class NowPlayingPage extends StatelessWidget {
                       ? _primaryColor
                       : _secondaryColor,
                 ),
-                iconSize: screen * 0.14,
+                iconSize: screen * 0.115,
                 onPressed: () => audioHandler.skipToPrevious(),
                 splashColor: Colors.transparent,
               ),
-              const SizedBox(width: 5),
+              const SizedBox(width: 10),
               StreamBuilder<PlaybackState>(
                 stream: audioHandler.playbackState,
                 builder: (context, snapshot) {
                   return buildPlaybackIconButton(
                     snapshot.data,
-                    screen * 0.15,
+                    screen * 0.125,
                     _primaryColor,
                     _secondaryColor,
                     elevation: 0,
@@ -358,13 +358,13 @@ class NowPlayingPage extends StatelessWidget {
                   );
                 },
               ),
-              const SizedBox(width: 5),
+              const SizedBox(width: 10),
               IconButton(
                 icon: Icon(
                   FluentIcons.next_24_filled,
                   color: audioHandler.hasNext ? _primaryColor : _secondaryColor,
                 ),
-                iconSize: screen * 0.14,
+                iconSize: screen * 0.115,
                 onPressed: () => audioHandler.skipToNext(),
                 splashColor: Colors.transparent,
               ),
