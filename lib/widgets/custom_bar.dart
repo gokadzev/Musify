@@ -58,19 +58,23 @@ class CustomBar extends StatelessWidget {
         ),
         child: Padding(
           padding: commonBarContentPadding,
-          child: ListTile(
-            minTileHeight: 45,
-            leading: Icon(
-              tileIcon,
-              color: iconColor,
-            ),
-            title: Text(
-              tileName,
-              style: TextStyle(fontWeight: FontWeight.w600, color: textColor),
-            ),
-            trailing: trailing,
+          child: InkWell(
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
             onTap: onTap,
             onLongPress: onLongPress,
+            child: ListTile(
+              minTileHeight: 45,
+              leading: Icon(
+                tileIcon,
+                color: iconColor,
+              ),
+              title: Text(
+                tileName,
+                style: TextStyle(fontWeight: FontWeight.w600, color: textColor),
+              ),
+              trailing: trailing,
+            ),
           ),
         ),
       ),

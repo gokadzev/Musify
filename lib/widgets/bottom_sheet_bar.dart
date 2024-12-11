@@ -43,10 +43,14 @@ class BottomSheetBar extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 3),
       child: Padding(
         padding: commonBarContentPadding,
-        child: ListTile(
-          minTileHeight: 45,
-          title: Text(title),
+        child: InkWell(
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
           onTap: onTap,
+          child: ListTile(
+            minTileHeight: 45,
+            title: Text(title),
+          ),
         ),
       ),
     );
