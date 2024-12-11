@@ -130,6 +130,7 @@ class SettingsPage extends StatelessWidget {
                   ListView.builder(
                     shrinkWrap: true,
                     physics: const BouncingScrollPhysics(),
+                    padding: commonListViewBottmomPadding,
                     itemCount: availableModes.length,
                     itemBuilder: (context, index) {
                       final mode = availableModes[index];
