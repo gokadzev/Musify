@@ -21,6 +21,8 @@
 
 import 'package:flutter/material.dart';
 
+const recommendedCubesNumber = 8;
+
 const commonBarPadding = EdgeInsets.symmetric(horizontal: 8);
 var commonBarRadius = BorderRadius.circular(18);
 var commonBarTitleStyle = const TextStyle(

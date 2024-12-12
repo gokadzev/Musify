@@ -73,7 +73,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildSuggestedPlaylists() {
     return FutureBuilder<List<dynamic>>(
-      future: getPlaylists(playlistsNum: 5),
+      future: getPlaylists(playlistsNum: recommendedCubesNumber),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return _buildLoadingWidget();
@@ -96,6 +96,10 @@ class _HomePageState extends State<HomePage> {
   Widget _buildPlaylistSection(BuildContext context, List<dynamic> playlists) {
     final playlistHeight = MediaQuery.sizeOf(context).height * 0.25 / 1.1;
 
+    final itemsNumber = playlists.length > recommendedCubesNumber
+        ? recommendedCubesNumber
+        : playlists.length;
+
     return Column(
       children: [
         _buildSectionHeader(title: context.l10n!.suggestedPlaylists),
@@ -111,7 +115,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            children: List.generate(5, (index) {
+            children: List.generate(itemsNumber, (index) {
               final playlist = playlists[index];
               return PlaylistCube(
                 playlist,
@@ -187,6 +191,10 @@ class _HomePageState extends State<HomePage> {
   }) {
     final contentHeight = MediaQuery.sizeOf(context).height * 0.25;
 
+    final itemsNumber = data.length > recommendedCubesNumber
+        ? recommendedCubesNumber
+        : data.length;
+
     return Column(
       children: [
         if (showArtists)
@@ -206,7 +214,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
-              children: List.generate(5, (index) {
+              children: List.generate(itemsNumber, (index) {
                 final artist = data[index]['artist'].split('~')[0];
                 return PlaylistCube(
                   {'title': artist},
