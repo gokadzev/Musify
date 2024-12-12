@@ -99,20 +99,25 @@ class _HomePageState extends State<HomePage> {
     return Column(
       children: [
         _buildSectionHeader(title: context.l10n!.suggestedPlaylists),
-        SizedBox(
-          height: playlistHeight,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            itemCount: playlists.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 15),
-            itemBuilder: (context, index) {
+        ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: playlistHeight),
+          child: CarouselView.weighted(
+            flexWeights: const <int>[3, 2, 1],
+            onTap: (index) => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PlaylistPage(
+                  playlistId: playlists[index]['ytid'],
+                ),
+              ),
+            ),
+            children: List.generate(5, (index) {
               final playlist = playlists[index];
               return PlaylistCube(
                 playlist,
                 size: playlistHeight,
               );
-            },
+            }),
           ),
         ),
       ],
@@ -187,33 +192,27 @@ class _HomePageState extends State<HomePage> {
         if (showArtists)
           _buildSectionHeader(title: context.l10n!.suggestedArtists),
         if (showArtists)
-          SizedBox(
-            height: contentHeight,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              itemCount: 5,
-              separatorBuilder: (_, __) => const SizedBox(width: 15),
-              itemBuilder: (context, index) {
-                final artist = data[index]['artist'].split('~')[0];
-                return GestureDetector(
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PlaylistPage(
-                        cubeIcon: FluentIcons.mic_sparkle_24_regular,
-                        playlistId: artist,
-                        isArtist: true,
-                      ),
-                    ),
-                  ),
-                  child: PlaylistCube(
-                    {'title': artist},
-                    borderRadius: 150,
+          ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: contentHeight),
+            child: CarouselView.weighted(
+              flexWeights: const <int>[3, 2, 1],
+              onTap: (index) => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PlaylistPage(
                     cubeIcon: FluentIcons.mic_sparkle_24_regular,
+                    playlistId: data[index]['artist'].split('~')[0],
+                    isArtist: true,
                   ),
+                ),
+              ),
+              children: List.generate(5, (index) {
+                final artist = data[index]['artist'].split('~')[0];
+                return PlaylistCube(
+                  {'title': artist},
+                  cubeIcon: FluentIcons.mic_sparkle_24_regular,
                 );
-              },
+              }),
             ),
           ),
         _buildSectionHeader(
