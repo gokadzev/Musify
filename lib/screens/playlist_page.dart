@@ -209,7 +209,10 @@ class _PlaylistPageState extends State<PlaylistPage> {
           iconSize: 26,
           onPressed: () {
             playlistLikeStatus.value = !playlistLikeStatus.value;
-            updatePlaylistLikeStatus(_playlist, playlistLikeStatus.value);
+            updatePlaylistLikeStatus(
+              _playlist['ytid'],
+              playlistLikeStatus.value,
+            );
             currentLikedPlaylistsLength.value = value
                 ? currentLikedPlaylistsLength.value + 1
                 : currentLikedPlaylistsLength.value - 1;
