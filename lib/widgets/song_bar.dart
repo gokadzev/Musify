@@ -214,6 +214,10 @@ class SongBar extends StatelessWidget {
         ValueNotifier<bool>(isSongAlreadyOffline(song['ytid']));
 
     return PopupMenuButton<String>(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      color: Theme.of(context).colorScheme.surface,
       icon: Icon(
         FluentIcons.more_horizontal_24_filled,
         color: primaryColor,
