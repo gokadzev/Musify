@@ -493,13 +493,6 @@ List albumsDB = [
     'list': [],
   },
   {
-    'ytid': 'OLAK5uy_kBgKPNpRX_z9Ecob9x9Q7qaEMCc5wvCvI',
-    'title': 'Imagine Dragons - Mercury - Act 1 / 2',
-    'image': null,
-    'isAlbum': true,
-    'list': [],
-  },
-  {
     'ytid': 'OLAK5uy_keyJA-JsoAdfCylvyyIQMRjenzX6MzmnE',
     'title': 'Kanye West - The Life Of Pablo',
     'image':
@@ -688,13 +681,6 @@ List albumsDB = [
     'title': "Luke Combs - This One'S For You",
     'image':
         'https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/3c/83/bf/3c83bf3e-bf4a-7e69-5668-d55f5a8e38e0/886446460840.jpg/250x250bb.jpg',
-    'isAlbum': true,
-    'list': [],
-  },
-  {
-    'ytid': 'OLAK5uy_nkz7DeiXZnCzKNS4Di0gZv_58M-NEZAUo',
-    'title': 'Kendrick Lamar & Various Artists - Black Panther',
-    'image': null,
     'isAlbum': true,
     'list': [],
   },
