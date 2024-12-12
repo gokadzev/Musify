@@ -83,6 +83,7 @@ class SettingsPage extends StatelessWidget {
                         addOrUpdateData(
                           'settings',
                           'accentColor',
+                          // ignore: deprecated_member_use
                           color.value,
                         );
                         Musify.updateAppState(
