@@ -8,15 +8,15 @@ publish_to: 'none'
 version: 8.7.5+106 # run update.sh after changing the version
 
 environment:
-  sdk: '>=3.5.0 <4.0.0'
-  flutter: ^3.24.5
+  sdk: '>=3.6.0 <4.0.0'
+  flutter: ^3.27.0
 
 dependencies:
   audio_service: ^0.18.15
   audio_session: ^0.1.21
   cached_network_image: ^3.4.1
   dynamic_color: ^1.7.0
-  file_picker: ^8.1.4
+  file_picker: 8.1.4
   fluentui_system_icons: ^1.1.265
   flutter:
     sdk: flutter

@@ -79,6 +79,7 @@ class SettingsPage extends StatelessWidget {
 
                     return GestureDetector(
                       onTap: () {
+                        //TODO: migrate this
                         addOrUpdateData(
                           'settings',
                           'accentColor',
