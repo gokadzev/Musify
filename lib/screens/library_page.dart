@@ -29,7 +29,6 @@ import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/utils.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
-import 'package:musify/widgets/custom_search_bar.dart';
 import 'package:musify/widgets/playlist_bar.dart';
 import 'package:musify/widgets/section_title.dart';
 import 'package:musify/widgets/spinner.dart';
@@ -42,9 +41,6 @@ class LibraryPage extends StatefulWidget {
 }
 
 class _LibraryPageState extends State<LibraryPage> {
-  final TextEditingController _searchBar = TextEditingController();
-  final FocusNode _inputNode = FocusNode();
-
   late Future<List> _userPlaylistsFuture = getUserPlaylists();
 
   Future<void> _refreshUserPlaylists() async {
@@ -55,8 +51,6 @@ class _LibraryPageState extends State<LibraryPage> {
 
   @override
   void dispose() {
-    _searchBar.dispose();
-    _inputNode.dispose();
     super.dispose();
   }
 
@@ -72,12 +66,6 @@ class _LibraryPageState extends State<LibraryPage> {
             child: SingleChildScrollView(
               child: Column(
                 children: <Widget>[
-                  CustomSearchBar(
-                    onSubmitted: (String value) => setState(() {}),
-                    controller: _searchBar,
-                    focusNode: _inputNode,
-                    labelText: '${context.l10n!.search}...',
-                  ),
                   _buildUserPlaylistsSection(primaryColor),
                   _buildUserLikedPlaylistsSection(primaryColor),
                 ],
