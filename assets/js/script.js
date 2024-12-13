@@ -103,17 +103,20 @@ function fetchAppFeatures(featuresUrl) {
 }
 
 function parseChangelog(text) {
-  const lines = text.split('\r\n').filter((line) => line.trim() !== '')
+  const lines = text.split('\r\n').filter((line) => line.trim() !== '');
 
   lines.forEach((line) => {
-    const itemMatch = line.match(/^\*\s+(.+)$/)
+    const itemMatch = line.match(/^\*\s+(.+)$/);
     if (itemMatch) {
-      const listItem = document.createElement('p')
-      listItem.textContent = `• ${itemMatch[1]}`
-      changelogElement.appendChild(listItem)
+      const processedText = itemMatch[1].replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+
+      const listItem = document.createElement('p');
+      listItem.innerHTML = `• ${processedText}`;
+      changelogElement.appendChild(listItem);
     }
-  })
+  });
 }
+
 
 function assignNavClass() {
   const nav = document.getElementById('navigation-bar')
