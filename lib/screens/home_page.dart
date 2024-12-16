@@ -26,6 +26,9 @@ import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/screens/playlist_page.dart';
 import 'package:musify/services/settings_manager.dart';
+import 'package:musify/utilities/common_variables.dart';
+import 'package:musify/utilities/utils.dart';
+import 'package:musify/widgets/announcement_box.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/section_title.dart';
 import 'package:musify/widgets/song_bar.dart';
@@ -46,6 +49,20 @@ class _HomePageState extends State<HomePage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            ValueListenableBuilder<String?>(
+              valueListenable: announcementURL,
+              builder: (_, _url, __) {
+                if (_url == null) return const SizedBox.shrink();
+
+                return AnnouncementBox(
+                  message: context.l10n!.newAnnouncement,
+                  backgroundColor:
+                      Theme.of(context).colorScheme.secondaryContainer,
+                  textColor: Theme.of(context).colorScheme.onSecondaryContainer,
+                  url: _url,
+                );
+              },
+            ),
             _buildSuggestedPlaylists(),
             _buildRecommendedSongsAndArtists(),
           ],
@@ -56,7 +73,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildSuggestedPlaylists() {
     return FutureBuilder<List<dynamic>>(
-      future: getPlaylists(playlistsNum: 5),
+      future: getPlaylists(playlistsNum: recommendedCubesNumber),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return _buildLoadingWidget();
@@ -79,23 +96,32 @@ class _HomePageState extends State<HomePage> {
   Widget _buildPlaylistSection(BuildContext context, List<dynamic> playlists) {
     final playlistHeight = MediaQuery.sizeOf(context).height * 0.25 / 1.1;
 
+    final itemsNumber = playlists.length > recommendedCubesNumber
+        ? recommendedCubesNumber
+        : playlists.length;
+
     return Column(
       children: [
         _buildSectionHeader(title: context.l10n!.suggestedPlaylists),
-        SizedBox(
-          height: playlistHeight,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            itemCount: playlists.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 15),
-            itemBuilder: (context, index) {
+        ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: playlistHeight),
+          child: CarouselView.weighted(
+            flexWeights: const <int>[3, 2, 1],
+            onTap: (index) => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PlaylistPage(
+                  playlistId: playlists[index]['ytid'],
+                ),
+              ),
+            ),
+            children: List.generate(itemsNumber, (index) {
               final playlist = playlists[index];
               return PlaylistCube(
                 playlist,
                 size: playlistHeight,
               );
-            },
+            }),
           ),
         ),
       ],
@@ -165,38 +191,36 @@ class _HomePageState extends State<HomePage> {
   }) {
     final contentHeight = MediaQuery.sizeOf(context).height * 0.25;
 
+    final itemsNumber = data.length > recommendedCubesNumber
+        ? recommendedCubesNumber
+        : data.length;
+
     return Column(
       children: [
         if (showArtists)
           _buildSectionHeader(title: context.l10n!.suggestedArtists),
         if (showArtists)
-          SizedBox(
-            height: contentHeight,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              itemCount: 5,
-              separatorBuilder: (_, __) => const SizedBox(width: 15),
-              itemBuilder: (context, index) {
-                final artist = data[index]['artist'].split('~')[0];
-                return GestureDetector(
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PlaylistPage(
-                        cubeIcon: FluentIcons.mic_sparkle_24_regular,
-                        playlistId: artist,
-                        isArtist: true,
-                      ),
-                    ),
-                  ),
-                  child: PlaylistCube(
-                    {'title': artist},
-                    borderRadius: 150,
+          ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: contentHeight),
+            child: CarouselView.weighted(
+              flexWeights: const <int>[3, 2, 1],
+              onTap: (index) => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PlaylistPage(
                     cubeIcon: FluentIcons.mic_sparkle_24_regular,
+                    playlistId: data[index]['artist'].split('~')[0],
+                    isArtist: true,
                   ),
+                ),
+              ),
+              children: List.generate(itemsNumber, (index) {
+                final artist = data[index]['artist'].split('~')[0];
+                return PlaylistCube(
+                  {'title': artist},
+                  cubeIcon: FluentIcons.mic_sparkle_24_regular,
                 );
-              },
+              }),
             ),
           ),
         _buildSectionHeader(
@@ -220,8 +244,14 @@ class _HomePageState extends State<HomePage> {
           shrinkWrap: true,
           physics: const BouncingScrollPhysics(),
           itemCount: data.length,
+          padding: commonListViewBottmomPadding,
           itemBuilder: (context, index) {
-            return SongBar(data[index], true);
+            final borderRadius = getItemBorderRadius(index, data.length);
+            return SongBar(
+              data[index],
+              true,
+              borderRadius: borderRadius,
+            );
           },
         ),
       ],

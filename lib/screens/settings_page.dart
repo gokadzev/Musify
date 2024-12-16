@@ -31,9 +31,12 @@ import 'package:musify/services/settings_manager.dart';
 import 'package:musify/services/update_manager.dart';
 import 'package:musify/style/app_colors.dart';
 import 'package:musify/style/app_themes.dart';
+import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/flutter_bottom_sheet.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/url_launcher.dart';
+import 'package:musify/utilities/utils.dart';
+import 'package:musify/widgets/bottom_sheet_bar.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/custom_bar.dart';
 import 'package:musify/widgets/section_title.dart';
@@ -44,9 +47,8 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final primaryColor = Theme.of(context).colorScheme.primary;
-    final activatedColor =
-        Theme.of(context).colorScheme.surfaceContainerHighest;
-    final inactivatedColor = Theme.of(context).colorScheme.secondaryContainer;
+    final activatedColor = Theme.of(context).colorScheme.secondaryContainer;
+    final inactivatedColor = Theme.of(context).colorScheme.surfaceContainerHigh;
 
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n!.settings)),
@@ -61,6 +63,7 @@ class SettingsPage extends StatelessWidget {
             CustomBar(
               context.l10n!.accentColor,
               FluentIcons.color_24_filled,
+              borderRadius: commonCustomBarRadiusFirst,
               onTap: () => showCustomBottomSheet(
                 context,
                 GridView.builder(
@@ -76,9 +79,11 @@ class SettingsPage extends StatelessWidget {
 
                     return GestureDetector(
                       onTap: () {
+                        //TODO: migrate this
                         addOrUpdateData(
                           'settings',
                           'accentColor',
+                          // ignore: deprecated_member_use
                           color.value,
                         );
                         Musify.updateAppState(
@@ -127,33 +132,33 @@ class SettingsPage extends StatelessWidget {
                   ListView.builder(
                     shrinkWrap: true,
                     physics: const BouncingScrollPhysics(),
+                    padding: commonListViewBottmomPadding,
                     itemCount: availableModes.length,
                     itemBuilder: (context, index) {
                       final mode = availableModes[index];
-                      return Card(
-                        margin: const EdgeInsets.all(10),
-                        color: themeMode == mode
-                            ? activatedColor
-                            : inactivatedColor,
-                        child: ListTile(
-                          minTileHeight: 65,
-                          title: Text(
-                            mode.name,
-                          ),
-                          onTap: () {
-                            addOrUpdateData(
-                              'settings',
-                              'themeMode',
-                              mode.name,
-                            );
-                            Musify.updateAppState(
-                              context,
-                              newThemeMode: mode,
-                            );
 
-                            Navigator.pop(context);
-                          },
-                        ),
+                      final borderRadius = getItemBorderRadius(
+                        index,
+                        availableModes.length,
+                      );
+
+                      return BottomSheetBar(
+                        mode.name,
+                        () {
+                          addOrUpdateData(
+                            'settings',
+                            'themeMode',
+                            mode.name,
+                          );
+                          Musify.updateAppState(
+                            context,
+                            newThemeMode: mode,
+                          );
+
+                          Navigator.pop(context);
+                        },
+                        themeMode == mode ? activatedColor : inactivatedColor,
+                        borderRadius: borderRadius,
                       );
                     },
                   ),
@@ -172,43 +177,45 @@ class SettingsPage extends StatelessWidget {
                   ListView.builder(
                     shrinkWrap: true,
                     physics: const BouncingScrollPhysics(),
+                    padding: commonListViewBottmomPadding,
                     itemCount: availableLanguages.length,
                     itemBuilder: (context, index) {
                       final language = availableLanguages[index];
                       final languageCode = appLanguages[language] ?? 'en';
-                      return Card(
-                        color: activeLanguageCode == languageCode
+
+                      final borderRadius = getItemBorderRadius(
+                        index,
+                        availableLanguages.length,
+                      );
+
+                      return BottomSheetBar(
+                        language,
+                        () {
+                          addOrUpdateData(
+                            'settings',
+                            'language',
+                            language,
+                          );
+                          Musify.updateAppState(
+                            context,
+                            newLocale: Locale(
+                              languageCode,
+                            ),
+                          );
+                          WidgetsBinding.instance.addPostFrameCallback(
+                            (_) {
+                              showToast(
+                                context,
+                                context.l10n!.languageMsg,
+                              );
+                              Navigator.pop(context);
+                            },
+                          );
+                        },
+                        activeLanguageCode == languageCode
                             ? activatedColor
                             : inactivatedColor,
-                        margin: const EdgeInsets.all(10),
-                        child: ListTile(
-                          minTileHeight: 65,
-                          title: Text(
-                            language,
-                          ),
-                          onTap: () {
-                            addOrUpdateData(
-                              'settings',
-                              'language',
-                              language,
-                            );
-                            Musify.updateAppState(
-                              context,
-                              newLocale: Locale(
-                                languageCode,
-                              ),
-                            );
-                            WidgetsBinding.instance.addPostFrameCallback(
-                              (_) {
-                                showToast(
-                                  context,
-                                  context.l10n!.languageMsg,
-                                );
-                                Navigator.pop(context);
-                              },
-                            );
-                          },
-                        ),
+                        borderRadius: borderRadius,
                       );
                     },
                   ),
@@ -226,35 +233,36 @@ class SettingsPage extends StatelessWidget {
                   ListView.builder(
                     shrinkWrap: true,
                     physics: const BouncingScrollPhysics(),
+                    padding: commonListViewBottmomPadding,
                     itemCount: availableQualities.length,
                     itemBuilder: (context, index) {
                       final quality = availableQualities[index];
                       final isCurrentQuality =
                           audioQualitySetting.value == quality;
 
-                      return Card(
-                        color: isCurrentQuality
-                            ? activatedColor
-                            : inactivatedColor,
-                        margin: const EdgeInsets.all(10),
-                        child: ListTile(
-                          minTileHeight: 65,
-                          title: Text(quality),
-                          onTap: () {
-                            addOrUpdateData(
-                              'settings',
-                              'audioQuality',
-                              quality,
-                            );
-                            audioQualitySetting.value = quality;
+                      final borderRadius = getItemBorderRadius(
+                        index,
+                        availableQualities.length,
+                      );
 
-                            showToast(
-                              context,
-                              context.l10n!.audioQualityMsg,
-                            );
-                            Navigator.pop(context);
-                          },
-                        ),
+                      return BottomSheetBar(
+                        quality,
+                        () {
+                          addOrUpdateData(
+                            'settings',
+                            'audioQuality',
+                            quality,
+                          );
+                          audioQualitySetting.value = quality;
+
+                          showToast(
+                            context,
+                            context.l10n!.audioQualityMsg,
+                          );
+                          Navigator.pop(context);
+                        },
+                        isCurrentQuality ? activatedColor : inactivatedColor,
+                        borderRadius: borderRadius,
                       );
                     },
                   ),
@@ -435,6 +443,7 @@ class SettingsPage extends StatelessWidget {
                       return CustomBar(
                         context.l10n!.originalRecommendations,
                         FluentIcons.channel_share_24_regular,
+                        borderRadius: commonCustomBarRadiusLast,
                         trailing: Switch(
                           value: value,
                           onChanged: (value) {
@@ -462,6 +471,7 @@ class SettingsPage extends StatelessWidget {
                   CustomBar(
                     context.l10n!.clearCache,
                     FluentIcons.broom_24_filled,
+                    borderRadius: commonCustomBarRadiusFirst,
                     onTap: () {
                       clearCache();
                       showToast(
@@ -562,6 +572,7 @@ class SettingsPage extends StatelessWidget {
                     CustomBar(
                       context.l10n!.downloadAppUpdate,
                       FluentIcons.arrow_download_24_filled,
+                      borderRadius: commonCustomBarRadiusLast,
                       onTap: checkAppUpdates,
                     ),
                   // CATEGORY: BECOME A SPONSOR
@@ -577,6 +588,7 @@ class SettingsPage extends StatelessWidget {
                     backgroundColor: primaryColor,
                     iconColor: Colors.white,
                     textColor: Colors.white,
+                    borderRadius: commonCustomBarRadius,
                     onTap: () => {
                       launchURL(
                         Uri.parse('https://ko-fi.com/gokadzev'),
@@ -594,6 +606,7 @@ class SettingsPage extends StatelessWidget {
             CustomBar(
               context.l10n!.licenses,
               FluentIcons.document_24_filled,
+              borderRadius: commonCustomBarRadiusFirst,
               onTap: () => NavigationManager.router.go(
                 '/settings/license',
               ),
@@ -607,6 +620,7 @@ class SettingsPage extends StatelessWidget {
             CustomBar(
               context.l10n!.about,
               FluentIcons.book_information_24_filled,
+              borderRadius: commonCustomBarRadiusLast,
               onTap: () => NavigationManager.router.go(
                 '/settings/about',
               ),

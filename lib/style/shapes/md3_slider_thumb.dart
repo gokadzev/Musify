@@ -27,9 +27,9 @@ class Material3SliderThumb extends SliderComponentShape {
     this.disabledThumbRadius,
     this.elevation = 1.0,
     this.pressedElevation = 6.0,
-    this.thumbWidth = 5.0,
-    this.thumbHeight = 23.5,
-    this.borderWidth = 1,
+    this.thumbWidth = 6.0,
+    this.thumbHeight = 24,
+    this.borderWidth = 2,
     this.borderColor = Colors.white,
   });
 

@@ -25,9 +25,10 @@ import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/router_service.dart';
+import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/flutter_toast.dart';
+import 'package:musify/utilities/utils.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
-import 'package:musify/widgets/custom_search_bar.dart';
 import 'package:musify/widgets/playlist_bar.dart';
 import 'package:musify/widgets/section_title.dart';
 import 'package:musify/widgets/spinner.dart';
@@ -40,13 +41,7 @@ class LibraryPage extends StatefulWidget {
 }
 
 class _LibraryPageState extends State<LibraryPage> {
-  final TextEditingController _searchBar = TextEditingController();
-  final FocusNode _inputNode = FocusNode();
-
   late Future<List> _userPlaylistsFuture = getUserPlaylists();
-
-  // user playlists / liked playlists / playlists / albums
-  final List<bool> _visibleSections = [true, true, false, false];
 
   Future<void> _refreshUserPlaylists() async {
     setState(() {
@@ -56,21 +51,12 @@ class _LibraryPageState extends State<LibraryPage> {
 
   @override
   void dispose() {
-    _searchBar.dispose();
-    _inputNode.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final primaryColor = Theme.of(context).colorScheme.primary;
-
-    final labels = [
-      context.l10n!.userPlaylists,
-      context.l10n!.likedPlaylists,
-      context.l10n!.playlists,
-      context.l10n!.albums,
-    ];
 
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n!.library)),
@@ -80,34 +66,8 @@ class _LibraryPageState extends State<LibraryPage> {
             child: SingleChildScrollView(
               child: Column(
                 children: <Widget>[
-                  CustomSearchBar(
-                    onSubmitted: (String value) => setState(() {}),
-                    controller: _searchBar,
-                    focusNode: _inputNode,
-                    labelText: '${context.l10n!.search}...',
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 15,
-                      vertical: 20,
-                    ),
-                    child: Wrap(
-                      spacing: 10,
-                      runSpacing: 8,
-                      alignment: WrapAlignment.center,
-                      children: List.generate(4, (index) {
-                        return _buildFilterChip(index, labels[index]);
-                      }),
-                    ),
-                  ),
-                  if (_visibleSections[0])
-                    _buildUserPlaylistsSection(primaryColor),
-                  if (_visibleSections[1])
-                    _buildUserLikedPlaylistsSection(primaryColor),
-                  if (_visibleSections[2])
-                    _buildPlaylistsSection(primaryColor, 'playlist'),
-                  if (_visibleSections[3])
-                    _buildPlaylistsSection(primaryColor, 'album'),
+                  _buildUserPlaylistsSection(primaryColor),
+                  _buildUserLikedPlaylistsSection(primaryColor),
                 ],
               ),
             ),
@@ -141,6 +101,7 @@ class _LibraryPageState extends State<LibraryPage> {
               onPressed: () =>
                   NavigationManager.router.go('/library/userSongs/recents'),
               cubeIcon: FluentIcons.history_24_filled,
+              borderRadius: commonCustomBarRadiusFirst,
             ),
             PlaylistBar(
               context.l10n!.likedSongs,
@@ -153,29 +114,12 @@ class _LibraryPageState extends State<LibraryPage> {
               onPressed: () =>
                   NavigationManager.router.go('/library/userSongs/offline'),
               cubeIcon: FluentIcons.cellular_off_24_filled,
+              borderRadius: commonCustomBarRadiusLast,
             ),
           ],
         ),
         FutureBuilder<List>(
           future: _userPlaylistsFuture,
-          builder: _buildPlaylistsList,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildPlaylistsSection(Color primaryColor, String type) {
-    return Column(
-      children: [
-        SectionTitle(
-          type == 'playlist' ? context.l10n!.playlists : context.l10n!.albums,
-          primaryColor,
-        ),
-        FutureBuilder<List>(
-          future: getPlaylists(
-            query: _searchBar.text.isEmpty ? null : _searchBar.text,
-            type: type,
-          ),
           builder: _buildPlaylistsList,
         ),
       ],
@@ -231,8 +175,10 @@ class _LibraryPageState extends State<LibraryPage> {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: playlists.length,
+      padding: commonListViewBottmomPadding,
       itemBuilder: (BuildContext context, index) {
         final playlist = playlists[index];
+        final borderRadius = getItemBorderRadius(index, playlists.length);
         return PlaylistBar(
           key: ValueKey(playlist['ytid']),
           playlist['title'],
@@ -244,19 +190,8 @@ class _LibraryPageState extends State<LibraryPage> {
                   playlist['source'] == 'user-youtube'
               ? () => _showRemovePlaylistDialog(playlist)
               : null,
+          borderRadius: borderRadius,
         );
-      },
-    );
-  }
-
-  Widget _buildFilterChip(int index, String label) {
-    return FilterChip(
-      selected: _visibleSections[index],
-      label: Text(label),
-      onSelected: (isSelected) {
-        setState(() {
-          _visibleSections[index] = isSelected;
-        });
       },
     );
   }

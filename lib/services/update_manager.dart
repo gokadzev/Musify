@@ -28,6 +28,7 @@ import 'package:musify/API/version.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/router_service.dart';
+import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/url_launcher.dart';
 import 'package:musify/widgets/auto_format_text.dart';
 
@@ -53,6 +54,7 @@ Future<void> checkAppUpdates() async {
     }
 
     final map = json.decode(response.body) as Map<String, dynamic>;
+    announcementURL.value = map['announcementurl'];
     final latestVersion = map['version'].toString();
 
     if (!isLatestVersionHigher(appVersion, latestVersion)) {

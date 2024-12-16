@@ -120,7 +120,7 @@ class _CustomSliderState extends State<CustomSlider>
         inactiveTrackColor: widget.isSquiglySliderEnabled
             ? null
             : Theme.of(context).colorScheme.secondaryContainer,
-        trackHeight: widget.isSquiglySliderEnabled ? null : 8.5,
+        trackHeight: widget.isSquiglySliderEnabled ? null : 8,
         thumbShape: widget.isSquiglySliderEnabled
             ? null
             : Material3SliderThumb(

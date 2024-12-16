@@ -259,7 +259,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
       final audioSource = await buildAudioSource(song, songUrl, isOffline);
 
-      await audioPlayer.setAudioSource(audioSource, preload: false);
+      await audioPlayer.setAudioSource(audioSource);
       await audioPlayer.play();
     } catch (e, stackTrace) {
       logger.log('Error playing song', e, stackTrace);
