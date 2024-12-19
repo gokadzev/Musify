@@ -43,7 +43,7 @@ class UserSongsPage extends StatefulWidget {
 }
 
 class _UserSongsPageState extends State<UserSongsPage> {
-  bool isEditEnabled = false;
+  bool _isEditEnabled = false;
 
   @override
   Widget build(BuildContext context) {
@@ -60,12 +60,12 @@ class _UserSongsPageState extends State<UserSongsPage> {
             IconButton(
               onPressed: () {
                 setState(() {
-                  isEditEnabled = !isEditEnabled;
+                  _isEditEnabled = !_isEditEnabled;
                 });
               },
               icon: Icon(
                 FluentIcons.re_order_24_filled,
-                color: isEditEnabled
+                color: _isEditEnabled
                     ? Theme.of(context).colorScheme.inversePrimary
                     : Theme.of(context).colorScheme.primary,
               ),
@@ -122,7 +122,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
         userLikedSongsList;
   }
 
-  ValueNotifier getLength(String page) {
+  ValueNotifier<int> getLength(String page) {
     return {
           'liked': currentLikedSongsLength,
           'offline': currentOfflineSongsLength,
@@ -170,7 +170,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
               final borderRadius = getItemBorderRadius(index, songsList.length);
 
               return ReorderableDragStartListener(
-                enabled: isEditEnabled,
+                enabled: _isEditEnabled,
                 key: Key(song['ytid'].toString()),
                 index: index,
                 child: SongBar(

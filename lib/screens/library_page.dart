@@ -206,12 +206,14 @@ class _LibraryPageState extends State<LibraryPage> {
 
           return StatefulBuilder(
             builder: (context, setState) {
-              final activeButtonBackground =
-                  Theme.of(context).colorScheme.surfaceContainer;
+              final theme = Theme.of(context);
+              final activeButtonBackground = theme.colorScheme.surfaceContainer;
               final inactiveButtonBackground =
-                  Theme.of(context).colorScheme.secondaryContainer;
+                  theme.colorScheme.secondaryContainer;
+              final dialogBackgroundColor = theme.dialogBackgroundColor;
+
               return AlertDialog(
-                backgroundColor: Theme.of(context).dialogBackgroundColor,
+                backgroundColor: dialogBackgroundColor,
                 content: SingleChildScrollView(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
