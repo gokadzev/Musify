@@ -134,6 +134,10 @@ class _MusifyState extends State<Musify> {
           systemNavigationBarColor: Colors.transparent,
         ),
       );
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+      ]);
     });
 
     try {

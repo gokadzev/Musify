@@ -293,8 +293,9 @@ class NowPlayingPage extends StatelessWidget {
     MediaItem mediaItem,
     double iconSize,
   ) {
-    final _primaryColor = Theme.of(context).colorScheme.primary;
-    final _secondaryColor = Theme.of(context).colorScheme.secondaryContainer;
+    final theme = Theme.of(context);
+    final _primaryColor = theme.colorScheme.primary;
+    final _secondaryColor = theme.colorScheme.secondaryContainer;
 
     final screen = ((size.width + size.height) / 4) - 10;
 
