@@ -626,7 +626,7 @@ Future<AudioOnlyStreamInfo> getSongManifest(String songId) async {
   }
 }
 
-const Duration _cacheDuration = Duration(hours: 6);
+const Duration _cacheDuration = Duration(hours: 3);
 
 Future<String> getSong(String songId, bool isLive) async {
   try {
