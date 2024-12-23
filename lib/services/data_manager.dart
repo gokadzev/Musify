@@ -68,7 +68,10 @@ Future<bool> isCacheValid(
   String key,
   Duration cachingDuration,
 ) async {
-  final date = box.get('${key}_date', defaultValue: DateTime.now());
+  final date = box.get('${key}_date');
+  if (date == null) {
+    return false;
+  }
   final age = DateTime.now().difference(date);
   return age < cachingDuration;
 }
