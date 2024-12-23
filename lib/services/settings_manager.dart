@@ -19,6 +19,7 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:musify/main.dart';
@@ -76,7 +77,8 @@ Color primaryColorSetting =
 // Non-Storage Notifiers
 
 final shuffleNotifier = ValueNotifier<bool>(false);
-final repeatNotifier = ValueNotifier<bool>(false);
+final repeatNotifier =
+    ValueNotifier<AudioServiceRepeatMode>(AudioServiceRepeatMode.none);
 
 // Server-Notifiers
 

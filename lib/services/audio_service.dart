@@ -41,7 +41,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
     _initialize();
   }
 
-  AudioPlayer audioPlayer = AudioPlayer();
+  final AudioPlayer audioPlayer = AudioPlayer();
 
   late StreamSubscription<PlaybackEvent> _playbackEventSubscription;
   late StreamSubscription<Duration?> _durationSubscription;
@@ -65,22 +65,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
     ProcessingState.completed: AudioProcessingState.completed,
   };
 
-  final repeatModeMap = {
-    LoopMode.off: AudioServiceRepeatMode.none,
-    LoopMode.one: AudioServiceRepeatMode.one,
-    LoopMode.all: AudioServiceRepeatMode.all,
-  };
-
   void _handlePlaybackEvent(PlaybackEvent event) {
     try {
       if (event.processingState == ProcessingState.completed &&
           audioPlayer.playing) {
-        if (hasNext) {
-          skipToNext();
-        } else if (playNextSongAutomatically.value &&
-            nextRecommendedSong != null) {
-          playSong(nextRecommendedSong);
-        }
+        skipToNext();
       }
       _updatePlaybackState();
     } catch (e, stackTrace) {
@@ -167,7 +156,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
         },
         androidCompactActionIndices: const [0, 1, 3],
         processingState: processingStateMap[audioPlayer.processingState]!,
-        repeatMode: repeatModeMap[audioPlayer.loopMode]!,
+        repeatMode: repeatNotifier.value,
         shuffleMode: audioPlayer.shuffleModeEnabled
             ? AudioServiceShuffleMode.all
             : AudioServiceShuffleMode.none,
@@ -333,7 +322,24 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   @override
   Future<void> skipToNext() async {
-    await skipToSong(activeSongId + 1);
+    if (repeatNotifier.value == AudioServiceRepeatMode.one) {
+      // If repeat mode is set to repeat the current song, play the current song again
+      await skipToSong(activeSongId);
+    } else if (!hasNext && repeatNotifier.value == AudioServiceRepeatMode.all) {
+      // If repeat mode is set to repeat the playlist, start from the beginning
+      await skipToSong(0);
+    } else if (!hasNext &&
+        playNextSongAutomatically.value &&
+        nextRecommendedSong != null) {
+      // If there's no next song but playNextSongAutomatically is enabled, play the recommended song
+      await playSong(nextRecommendedSong);
+    } else if (hasNext) {
+      // If there is a next song, skip to the next song
+      await skipToSong(activeSongId + 1);
+    } else {
+      // Handle end of playlist without repeat
+      await audioPlayer.stop();
+    }
   }
 
   @override
@@ -346,13 +352,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
     final shuffleEnabled = shuffleMode != AudioServiceShuffleMode.none;
     shuffleNotifier.value = shuffleEnabled;
     await audioPlayer.setShuffleModeEnabled(shuffleEnabled);
-  }
-
-  @override
-  Future<void> setRepeatMode(AudioServiceRepeatMode repeatMode) async {
-    final repeatEnabled = repeatMode != AudioServiceRepeatMode.none;
-    repeatNotifier.value = repeatEnabled;
-    await audioPlayer.setLoopMode(repeatEnabled ? LoopMode.one : LoopMode.off);
   }
 
   void changeSponsorBlockStatus() {

@@ -373,20 +373,23 @@ class NowPlayingPage extends StatelessWidget {
               ),
             ],
           ),
-          ValueListenableBuilder<bool>(
+          ValueListenableBuilder<AudioServiceRepeatMode>(
             valueListenable: repeatNotifier,
-            builder: (_, value, __) {
-              return value
+            builder: (_, repeatMode, __) {
+              return repeatMode != AudioServiceRepeatMode.none
                   ? IconButton.filled(
                       icon: Icon(
-                        FluentIcons.arrow_repeat_1_24_filled,
+                        repeatMode == AudioServiceRepeatMode.all
+                            ? FluentIcons.arrow_repeat_all_24_filled
+                            : FluentIcons.arrow_repeat_1_24_filled,
                         color: _secondaryColor,
                       ),
                       iconSize: iconSize,
                       onPressed: () {
-                        audioHandler.setRepeatMode(
-                          AudioServiceRepeatMode.none,
-                        );
+                        repeatNotifier.value =
+                            repeatMode == AudioServiceRepeatMode.all
+                                ? AudioServiceRepeatMode.one
+                                : AudioServiceRepeatMode.none;
                       },
                     )
                   : IconButton.filledTonal(
@@ -396,9 +399,7 @@ class NowPlayingPage extends StatelessWidget {
                       ),
                       iconSize: iconSize,
                       onPressed: () {
-                        audioHandler.setRepeatMode(
-                          AudioServiceRepeatMode.all,
-                        );
+                        repeatNotifier.value = AudioServiceRepeatMode.all;
                       },
                     );
             },
