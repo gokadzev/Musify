@@ -41,7 +41,15 @@ class MusifyAudioHandler extends BaseAudioHandler {
     _initialize();
   }
 
-  final AudioPlayer audioPlayer = AudioPlayer();
+  final AudioPlayer audioPlayer = AudioPlayer(
+    audioLoadConfiguration: const AudioLoadConfiguration(
+      androidLoadControl: AndroidLoadControl(
+        maxBufferDuration: Duration(seconds: 80),
+        bufferForPlaybackDuration: Duration(milliseconds: 500),
+        bufferForPlaybackAfterRebufferDuration: Duration(seconds: 2),
+      ),
+    ),
+  );
 
   late StreamSubscription<PlaybackEvent> _playbackEventSubscription;
   late StreamSubscription<Duration?> _durationSubscription;
@@ -154,7 +162,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
           MediaAction.seekForward,
           MediaAction.seekBackward,
         },
-        androidCompactActionIndices: const [0, 1, 3],
+        androidCompactActionIndices: const [0, 1, 2],
         processingState: processingStateMap[audioPlayer.processingState]!,
         repeatMode: repeatNotifier.value,
         shuffleMode: audioPlayer.shuffleModeEnabled
