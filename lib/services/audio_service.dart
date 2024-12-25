@@ -332,7 +332,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
   Future<void> skipToNext() async {
     if (repeatNotifier.value == AudioServiceRepeatMode.one) {
       // If repeat mode is set to repeat the current song, play the current song again
-      if (audioPlayer.playing) {
+      if (audioPlayer.playing &&
+          audioPlayer.processingState != ProcessingState.buffering) {
         await audioPlayer.seek(Duration.zero);
       }
     } else if (!hasNext && repeatNotifier.value == AudioServiceRepeatMode.all) {
