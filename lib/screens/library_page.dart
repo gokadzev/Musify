@@ -78,6 +78,8 @@ class _LibraryPageState extends State<LibraryPage> {
   }
 
   Widget _buildUserPlaylistsSection(Color primaryColor) {
+    final isUserPlaylistsEmpty =
+        userPlaylists.isEmpty && userCustomPlaylists.isEmpty;
     return Column(
       children: [
         Row(
@@ -114,7 +116,9 @@ class _LibraryPageState extends State<LibraryPage> {
               onPressed: () =>
                   NavigationManager.router.go('/library/userSongs/offline'),
               cubeIcon: FluentIcons.cellular_off_24_filled,
-              borderRadius: commonCustomBarRadiusLast,
+              borderRadius: isUserPlaylistsEmpty
+                  ? commonCustomBarRadiusLast
+                  : BorderRadius.zero,
             ),
           ],
         ),
@@ -171,6 +175,10 @@ class _LibraryPageState extends State<LibraryPage> {
   }
 
   Widget _buildPlaylistListView(BuildContext context, List playlists) {
+    final isUserPlaylists = playlists.isNotEmpty &&
+        (playlists[0]['source'] == 'user-created' ||
+            playlists[0]['source'] == 'user-youtube');
+    final _length = playlists.length + (isUserPlaylists ? 3 : 0);
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -178,7 +186,8 @@ class _LibraryPageState extends State<LibraryPage> {
       padding: commonListViewBottmomPadding,
       itemBuilder: (BuildContext context, index) {
         final playlist = playlists[index];
-        final borderRadius = getItemBorderRadius(index, playlists.length);
+        final _index = index + (isUserPlaylists ? 3 : 0);
+        final borderRadius = getItemBorderRadius(_index, _length);
         return PlaylistBar(
           key: ValueKey(playlist['ytid']),
           playlist['title'],
