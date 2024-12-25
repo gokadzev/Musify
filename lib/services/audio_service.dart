@@ -332,7 +332,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
   Future<void> skipToNext() async {
     if (repeatNotifier.value == AudioServiceRepeatMode.one) {
       // If repeat mode is set to repeat the current song, play the current song again
-      await skipToSong(activeSongId);
+      if (audioPlayer.playing) {
+        await audioPlayer.seek(Duration.zero);
+      }
     } else if (!hasNext && repeatNotifier.value == AudioServiceRepeatMode.all) {
       // If repeat mode is set to repeat the playlist, start from the beginning
       await skipToSong(0);
@@ -344,15 +346,24 @@ class MusifyAudioHandler extends BaseAudioHandler {
     } else if (hasNext) {
       // If there is a next song, skip to the next song
       await skipToSong(activeSongId + 1);
-    } else {
-      // Handle end of playlist without repeat
-      await audioPlayer.stop();
     }
   }
 
   @override
   Future<void> skipToPrevious() async {
-    await skipToSong(activeSongId - 1);
+    if (repeatNotifier.value == AudioServiceRepeatMode.one) {
+      // If repeat mode is set to repeat the current song, play the current song again
+      if (audioPlayer.playing) {
+        await audioPlayer.seek(Duration.zero);
+      }
+    } else if (!hasPrevious &&
+        repeatNotifier.value == AudioServiceRepeatMode.all) {
+      // If repeat mode is set to repeat the playlist, start from the end
+      await skipToSong(activePlaylist['list'].length - 1);
+    } else if (hasPrevious) {
+      // If there is a previous song, skip to the previous song
+      await skipToSong(activeSongId - 1);
+    }
   }
 
   @override
@@ -360,6 +371,13 @@ class MusifyAudioHandler extends BaseAudioHandler {
     final shuffleEnabled = shuffleMode != AudioServiceShuffleMode.none;
     shuffleNotifier.value = shuffleEnabled;
     await audioPlayer.setShuffleModeEnabled(shuffleEnabled);
+  }
+
+  @override
+  Future<void> setRepeatMode(AudioServiceRepeatMode repeatMode) async {
+    await audioPlayer.setLoopMode(
+      repeatMode == AudioServiceRepeatMode.all ? LoopMode.one : LoopMode.off,
+    );
   }
 
   void changeSponsorBlockStatus() {
