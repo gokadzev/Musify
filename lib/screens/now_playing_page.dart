@@ -408,7 +408,14 @@ class NowPlayingPage extends StatelessWidget {
                       ),
                       iconSize: iconSize,
                       onPressed: () {
-                        repeatNotifier.value = AudioServiceRepeatMode.all;
+                        final _isSingleSongPlaying =
+                            activePlaylist['list'].isEmpty;
+                        repeatNotifier.value = _isSingleSongPlaying
+                            ? AudioServiceRepeatMode.one
+                            : AudioServiceRepeatMode.all;
+
+                        if (repeatNotifier.value == AudioServiceRepeatMode.one)
+                          audioHandler.setRepeatMode(repeatNotifier.value);
                       },
                     );
             },

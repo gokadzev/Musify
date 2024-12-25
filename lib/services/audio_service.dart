@@ -375,6 +375,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   @override
   Future<void> setRepeatMode(AudioServiceRepeatMode repeatMode) async {
+    // we use this only when we want to loop single song
     await audioPlayer.setLoopMode(
       repeatMode == AudioServiceRepeatMode.all ? LoopMode.one : LoopMode.off,
     );
