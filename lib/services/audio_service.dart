@@ -341,6 +341,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
         nextRecommendedSong != null) {
       // If there's no next song but playNextSongAutomatically is enabled, play the recommended song
       await playSong(nextRecommendedSong);
+    } else if (shuffleNotifier.value) {
+      // This DOES play a random song. This does NOT play the 0th/1st song.
+      await skipToSong(0);
     } else if (hasNext) {
       // If there is a next song, skip to the next song
       await skipToSong(activeSongId + 1);
