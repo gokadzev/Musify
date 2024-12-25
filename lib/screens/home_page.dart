@@ -107,6 +107,7 @@ class _HomePageState extends State<HomePage> {
           constraints: BoxConstraints(maxHeight: playlistHeight),
           child: CarouselView.weighted(
             flexWeights: const <int>[3, 2, 1],
+            itemSnapping: true,
             onTap: (index) => Navigator.push(
               context,
               MaterialPageRoute(
@@ -204,6 +205,7 @@ class _HomePageState extends State<HomePage> {
             constraints: BoxConstraints(maxHeight: contentHeight),
             child: CarouselView.weighted(
               flexWeights: const <int>[3, 2, 1],
+              itemSnapping: true,
               onTap: (index) => Navigator.push(
                 context,
                 MaterialPageRoute(
