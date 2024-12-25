@@ -330,13 +330,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   @override
   Future<void> skipToNext() async {
-    if (repeatNotifier.value == AudioServiceRepeatMode.one) {
-      // If repeat mode is set to repeat the current song, play the current song again
-      if (audioPlayer.playing &&
-          audioPlayer.processingState != ProcessingState.buffering) {
-        await audioPlayer.seek(Duration.zero);
-      }
-    } else if (!hasNext && repeatNotifier.value == AudioServiceRepeatMode.all) {
+    if (!hasNext && repeatNotifier.value == AudioServiceRepeatMode.all) {
       // If repeat mode is set to repeat the playlist, start from the beginning
       await skipToSong(0);
     } else if (!hasNext &&
@@ -352,19 +346,17 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   @override
   Future<void> skipToPrevious() async {
-    if (repeatNotifier.value == AudioServiceRepeatMode.one) {
-      // If repeat mode is set to repeat the current song, play the current song again
-      if (audioPlayer.playing) {
-        await audioPlayer.seek(Duration.zero);
-      }
-    } else if (!hasPrevious &&
-        repeatNotifier.value == AudioServiceRepeatMode.all) {
+    if (!hasPrevious && repeatNotifier.value == AudioServiceRepeatMode.all) {
       // If repeat mode is set to repeat the playlist, start from the end
       await skipToSong(activePlaylist['list'].length - 1);
     } else if (hasPrevious) {
       // If there is a previous song, skip to the previous song
       await skipToSong(activeSongId - 1);
     }
+  }
+
+  Future<void> playAgain() async {
+    await audioPlayer.seek(Duration.zero);
   }
 
   @override

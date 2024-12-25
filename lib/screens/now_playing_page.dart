@@ -336,16 +336,24 @@ class NowPlayingPage extends StatelessWidget {
           ),
           Row(
             children: [
-              IconButton(
-                icon: Icon(
-                  FluentIcons.previous_24_filled,
-                  color: audioHandler.hasPrevious
-                      ? _primaryColor
-                      : _secondaryColor,
-                ),
-                iconSize: screen * 0.115,
-                onPressed: () => audioHandler.skipToPrevious(),
-                splashColor: Colors.transparent,
+              ValueListenableBuilder<AudioServiceRepeatMode>(
+                valueListenable: repeatNotifier,
+                builder: (_, repeatMode, __) {
+                  return IconButton(
+                    icon: Icon(
+                      FluentIcons.previous_24_filled,
+                      color: audioHandler.hasPrevious
+                          ? _primaryColor
+                          : _secondaryColor,
+                    ),
+                    iconSize: screen * 0.115,
+                    onPressed: () =>
+                        repeatNotifier.value == AudioServiceRepeatMode.one
+                            ? audioHandler.playAgain()
+                            : audioHandler.skipToPrevious(),
+                    splashColor: Colors.transparent,
+                  );
+                },
               ),
               const SizedBox(width: 10),
               StreamBuilder<PlaybackState>(
@@ -373,7 +381,10 @@ class NowPlayingPage extends StatelessWidget {
                           : _secondaryColor,
                     ),
                     iconSize: screen * 0.115,
-                    onPressed: () => audioHandler.skipToNext(),
+                    onPressed: () =>
+                        repeatNotifier.value == AudioServiceRepeatMode.one
+                            ? audioHandler.playAgain()
+                            : audioHandler.skipToNext(),
                     splashColor: Colors.transparent,
                   );
                 },
