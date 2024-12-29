@@ -104,12 +104,14 @@ class _LibraryPageState extends State<LibraryPage> {
                   NavigationManager.router.go('/library/userSongs/recents'),
               cubeIcon: FluentIcons.history_24_filled,
               borderRadius: commonCustomBarRadiusFirst,
+              showBuildActions: false,
             ),
             PlaylistBar(
               context.l10n!.likedSongs,
               onPressed: () =>
                   NavigationManager.router.go('/library/userSongs/liked'),
               cubeIcon: FluentIcons.music_note_2_24_regular,
+              showBuildActions: false,
             ),
             PlaylistBar(
               context.l10n!.offlineSongs,
@@ -119,6 +121,7 @@ class _LibraryPageState extends State<LibraryPage> {
               borderRadius: isUserPlaylistsEmpty
                   ? commonCustomBarRadiusLast
                   : BorderRadius.zero,
+              showBuildActions: false,
             ),
           ],
         ),
@@ -195,7 +198,7 @@ class _LibraryPageState extends State<LibraryPage> {
           playlistArtwork: playlist['image'],
           isAlbum: playlist['isAlbum'],
           playlistData: playlist['source'] == 'user-created' ? playlist : null,
-          onLongPress: playlist['source'] == 'user-created' ||
+          onDelete: playlist['source'] == 'user-created' ||
                   playlist['source'] == 'user-youtube'
               ? () => _showRemovePlaylistDialog(playlist)
               : null,

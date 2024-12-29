@@ -2,8 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
+import 'package:musify/extensions/l10n.dart';
 import 'package:musify/screens/playlist_page.dart';
-import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/widgets/no_artwork_cube.dart';
 
@@ -15,8 +15,9 @@ class PlaylistBar extends StatelessWidget {
     this.playlistArtwork,
     this.playlistData,
     this.onPressed,
-    this.onLongPress,
+    this.onDelete,
     this.cubeIcon = FluentIcons.music_note_1_24_regular,
+    this.showBuildActions = true,
     this.isAlbum = false,
     this.borderRadius = BorderRadius.zero,
   }) : playlistLikeStatus = ValueNotifier<bool>(
@@ -28,9 +29,10 @@ class PlaylistBar extends StatelessWidget {
   final String playlistTitle;
   final String? playlistArtwork;
   final VoidCallback? onPressed;
-  final VoidCallback? onLongPress;
+  final VoidCallback? onDelete;
   final IconData cubeIcon;
   final bool? isAlbum;
+  final bool showBuildActions;
   final BorderRadius borderRadius;
 
   static const double paddingValue = 4;
@@ -64,7 +66,6 @@ class PlaylistBar extends StatelessWidget {
                 ),
               );
             },
-        onLongPress: onLongPress,
         child: Card(
           shape: RoundedRectangleBorder(
             borderRadius: borderRadius,
@@ -89,7 +90,8 @@ class PlaylistBar extends StatelessWidget {
                     ],
                   ),
                 ),
-                _buildActionButtons(context, primaryColor),
+                if (showBuildActions)
+                  _buildActionButtons(context, primaryColor),
               ],
             ),
           ),
@@ -130,32 +132,63 @@ class PlaylistBar extends StatelessWidget {
   }
 
   Widget _buildActionButtons(BuildContext context, Color primaryColor) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (!offlineMode.value)
-          Row(
-            children: [
-              ValueListenableBuilder<bool>(
-                valueListenable: playlistLikeStatus,
-                builder: (_, value, __) {
-                  return IconButton(
+    return PopupMenuButton<String>(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      color: Theme.of(context).colorScheme.surface,
+      icon: Icon(
+        FluentIcons.more_horizontal_24_filled,
+        color: primaryColor,
+      ),
+      onSelected: (String value) {
+        switch (value) {
+          case 'like':
+            if (playlistId != null) {
+              final newValue = !playlistLikeStatus.value;
+              playlistLikeStatus.value = newValue;
+              updatePlaylistLikeStatus(playlistId!, newValue);
+              currentLikedPlaylistsLength.value += newValue ? 1 : -1;
+            }
+            break;
+          case 'remove':
+            if (onDelete != null) onDelete!();
+            break;
+        }
+      },
+      itemBuilder: (BuildContext context) {
+        return [
+          if (onDelete == null)
+            PopupMenuItem<String>(
+              value: 'like',
+              child: Row(
+                children: [
+                  Icon(
+                    likeStatusToIconMapper[playlistLikeStatus.value],
                     color: primaryColor,
-                    icon: Icon(likeStatusToIconMapper[value]),
-                    onPressed: () {
-                      if (playlistId != null) {
-                        final newValue = !playlistLikeStatus.value;
-                        playlistLikeStatus.value = newValue;
-                        updatePlaylistLikeStatus(playlistId!, newValue);
-                        currentLikedPlaylistsLength.value += newValue ? 1 : -1;
-                      }
-                    },
-                  );
-                },
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    playlistLikeStatus.value
+                        ? context.l10n!.removeFromLikedPlaylists
+                        : context.l10n!.addToLikedPlaylists,
+                  ),
+                ],
               ),
-            ],
-          ),
-      ],
+            ),
+          if (onDelete != null)
+            PopupMenuItem<String>(
+              value: 'remove',
+              child: Row(
+                children: [
+                  Icon(FluentIcons.delete_24_filled, color: primaryColor),
+                  const SizedBox(width: 8),
+                  Text(context.l10n!.deletePlaylist),
+                ],
+              ),
+            ),
+        ];
+      },
     );
   }
 }
