@@ -201,6 +201,10 @@ class _UserSongsPageState extends State<UserSongsPage> {
               (BuildContext context, int index) {
                 final song = songsList[index];
                 song['isOffline'] = title == context.l10n!.offlineSongs;
+
+                final borderRadius =
+                    getItemBorderRadius(index, songsList.length);
+
                 return SongBar(
                   song,
                   true,
@@ -210,6 +214,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
                       songIndex: index,
                     ),
                   },
+                  borderRadius: borderRadius,
                 );
               },
               childCount: songsList.length,
