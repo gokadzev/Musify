@@ -51,6 +51,7 @@ class PlaylistBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final primaryColor = Theme.of(context).colorScheme.primary;
+    Map<dynamic, dynamic>? updatedPlaylist;
     return Padding(
       padding: commonBarPadding,
       child: GestureDetector(
@@ -61,10 +62,18 @@ class PlaylistBar extends StatelessWidget {
                 MaterialPageRoute(
                   builder: (context) => PlaylistPage(
                     playlistId: playlistId,
-                    playlistData: playlistData,
+                    playlistData: updatedPlaylist ?? playlistData,
                   ),
                 ),
-              );
+              ).then((isPlaylistUpdated) {
+                if (isPlaylistUpdated != null && isPlaylistUpdated) {
+                  getPlaylistInfoForWidget(playlistId).then(
+                    (result) => {
+                      updatedPlaylist = result,
+                    },
+                  );
+                }
+              });
             },
         child: Card(
           shape: RoundedRectangleBorder(
