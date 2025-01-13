@@ -197,10 +197,10 @@ packages:
     dependency: "direct main"
     description:
       name: file_picker
-      sha256: c2376a6aae82358a9f9ccdd7d1f4006d08faa39a2767cce01031d9f593a8bd3b
+      sha256: c904b4ab56d53385563c7c39d8e9fa9af086f91495dfc48717ad84a42c3cf204
       url: "https://pub.dev"
     source: hosted
-    version: "8.1.6"
+    version: "8.1.7"
   fixnum:
     dependency: transitive
     description:
@@ -255,10 +255,10 @@ packages:
     dependency: "direct dev"
     description:
       name: flutter_native_splash
-      sha256: "1152ab0067ca5a2ebeb862fe0a762057202cceb22b7e62692dcbabf6483891bb"
+      sha256: "7062602e0dbd29141fb8eb19220b5871ca650be5197ab9c1f193a28b17537bc7"
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.3"
+    version: "2.4.4"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -297,10 +297,10 @@ packages:
     dependency: "direct main"
     description:
       name: go_router
-      sha256: "2fd11229f59e23e967b0775df8d5948a519cd7e1e8b6e849729e010587b46539"
+      sha256: "7c2d40b59890a929824f30d442e810116caf5088482629c894b9e4478c67472d"
       url: "https://pub.dev"
     source: hosted
-    version: "14.6.2"
+    version: "14.6.3"
   hive:
     dependency: "direct main"
     description:
@@ -377,10 +377,10 @@ packages:
     dependency: "direct main"
     description:
       name: just_audio
-      sha256: a49e7120b95600bd357f37a2bb04cd1e88252f7cdea8f3368803779b925b1049
+      sha256: "1a1eb86e7d81e69a1d36943f2b3efd62dece3dad2cafd9ec2e62e6db7c04d9b7"
       url: "https://pub.dev"
     source: hosted
-    version: "0.9.42"
+    version: "0.9.43"
   just_audio_platform_interface:
     dependency: transitive
     description:
