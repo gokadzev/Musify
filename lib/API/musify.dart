@@ -616,7 +616,14 @@ Future<Map?> getPlaylistInfoForWidget(
 
 Future<AudioOnlyStreamInfo> getSongManifest(String songId) async {
   try {
-    final manifest = await _yt.videos.streamsClient.getManifest(songId);
+    final manifest = await _yt.videos.streams.getManifest(
+      songId,
+      ytClients: [
+        YoutubeApiClient.tv,
+        YoutubeApiClient.androidVr,
+        YoutubeApiClient.safari,
+      ],
+    );
     final audioStream = manifest.audioOnly.withHighestBitrate();
     return audioStream;
   } catch (e, stackTrace) {
