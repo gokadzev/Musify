@@ -100,30 +100,47 @@ class _HomePageState extends State<HomePage> {
         ? recommendedCubesNumber
         : playlists.length;
 
+    final isLargeScreen = MediaQuery.of(context).size.width > 480;
+
     return Column(
       children: [
         _buildSectionHeader(title: context.l10n!.suggestedPlaylists),
         ConstrainedBox(
           constraints: BoxConstraints(maxHeight: playlistHeight),
-          child: CarouselView.weighted(
-            flexWeights: const <int>[3, 2, 1],
-            itemSnapping: true,
-            onTap: (index) => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => PlaylistPage(
-                  playlistId: playlists[index]['ytid'],
+          child: isLargeScreen
+              ? ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: itemsNumber,
+                  itemBuilder: (context, index) {
+                    final playlist = playlists[index];
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: PlaylistCube(
+                        playlist,
+                        size: playlistHeight,
+                      ),
+                    );
+                  },
+                )
+              : CarouselView.weighted(
+                  flexWeights: const <int>[3, 2, 1],
+                  itemSnapping: true,
+                  onTap: (index) => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PlaylistPage(
+                        playlistId: playlists[index]['ytid'],
+                      ),
+                    ),
+                  ),
+                  children: List.generate(itemsNumber, (index) {
+                    final playlist = playlists[index];
+                    return PlaylistCube(
+                      playlist,
+                      size: playlistHeight * 2,
+                    );
+                  }),
                 ),
-              ),
-            ),
-            children: List.generate(itemsNumber, (index) {
-              final playlist = playlists[index];
-              return PlaylistCube(
-                playlist,
-                size: playlistHeight,
-              );
-            }),
-          ),
         ),
       ],
     );
@@ -221,6 +238,7 @@ class _HomePageState extends State<HomePage> {
                 return PlaylistCube(
                   {'title': artist},
                   cubeIcon: FluentIcons.mic_sparkle_24_regular,
+                  size: contentHeight * 2,
                 );
               }),
             ),
