@@ -28,6 +28,7 @@
   "clearRecentlyPlayedQuestion": "¿Borrar el historial de reproducción reciente?",
   "clearSearchHistory": "Borrar historial de búsqueda",
   "clearSearchHistoryQuestion": "¿Borrar el historial de búsqueda?",
+  "client": "Client",
   "confirm": "Confirmar",
   "confirmation": "Confirmación",
   "copyLogs": "Copiar registros",

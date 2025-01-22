@@ -30,6 +30,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:musify/API/musify.dart';
 import 'package:musify/services/audio_service.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/logger_service.dart';
@@ -37,6 +38,7 @@ import 'package:musify/services/router_service.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/services/update_manager.dart';
 import 'package:musify/style/app_themes.dart';
+import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 late MusifyAudioHandler audioHandler;
 
@@ -222,6 +224,18 @@ Future<void> initialisation() async {
 
     // Init router
     NavigationManager.instance;
+
+    // Init clients
+    if (clientsSetting.value.isNotEmpty) {
+      final chosenClients = <YoutubeApiClient>[];
+      for (final client in clientsSetting.value) {
+        final _client = clients[client];
+        if (_client != null) {
+          chosenClients.add(_client);
+        }
+      }
+      userChosenClients = chosenClients;
+    }
   } catch (e, stackTrace) {
     logger.log('Initialization Error', e, stackTrace);
   }

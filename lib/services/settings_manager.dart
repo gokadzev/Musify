@@ -62,6 +62,10 @@ final audioQualitySetting = ValueNotifier<String>(
   Hive.box('settings').get('audioQuality', defaultValue: 'high'),
 );
 
+final clientsSetting = ValueNotifier<List>(
+  Hive.box('settings').get('clients', defaultValue: []),
+);
+
 Locale languageSetting = Locale(
   appLanguages[Hive.box('settings').get('language', defaultValue: 'English')
           as String] ??

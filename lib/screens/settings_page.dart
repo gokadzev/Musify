@@ -166,6 +166,61 @@ class SettingsPage extends StatelessWidget {
               },
             ),
             CustomBar(
+              context.l10n!.client,
+              FluentIcons.device_meeting_room_24_filled,
+              onTap: () {
+                final availableClients = clients.keys.toList();
+                showCustomBottomSheet(
+                  context,
+                  StatefulBuilder(
+                    builder: (context, setState) {
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        physics: const BouncingScrollPhysics(),
+                        padding: commonListViewBottmomPadding,
+                        itemCount: availableClients.length,
+                        itemBuilder: (context, index) {
+                          final client = availableClients[index];
+                          final _clientInModel = clients[client];
+                          final isSelected =
+                              userChosenClients.contains(_clientInModel);
+
+                          final borderRadius = getItemBorderRadius(
+                            index,
+                            availableClients.length,
+                          );
+
+                          return BottomSheetBar(
+                            client,
+                            () {
+                              setState(() {
+                                if (isSelected) {
+                                  clientsSetting.value.remove(client);
+                                  userChosenClients.remove(_clientInModel);
+                                } else {
+                                  if (_clientInModel != null) {
+                                    clientsSetting.value.add(client);
+                                    userChosenClients.add(_clientInModel);
+                                  }
+                                }
+                              });
+                              addOrUpdateData(
+                                'settings',
+                                'clients',
+                                clientsSetting.value,
+                              );
+                            },
+                            isSelected ? activatedColor : inactivatedColor,
+                            borderRadius: borderRadius,
+                          );
+                        },
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
+            CustomBar(
               context.l10n!.language,
               FluentIcons.translate_24_filled,
               onTap: () {
