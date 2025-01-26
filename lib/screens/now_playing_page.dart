@@ -48,6 +48,7 @@ class NowPlayingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
+    final isLargeScreen = size.width > 800;
 
     return Scaffold(
       appBar: AppBar(
@@ -67,33 +68,96 @@ class NowPlayingPage extends StatelessWidget {
             return const SizedBox.shrink();
           } else {
             final metadata = snapshot.data!;
-            final screenHeight = size.height;
 
-            return Column(
-              children: [
-                SizedBox(height: screenHeight * 0.02),
-                buildArtwork(context, size, metadata),
-                SizedBox(height: screenHeight * 0.01),
-                if (!(metadata.extras?['isLive'] ?? false))
-                  _buildPlayer(
-                    context,
-                    size,
-                    metadata.extras?['ytid'],
-                    metadata,
-                  ),
-              ],
-            );
+            return isLargeScreen
+                ? Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 5),
+                            buildArtwork(context, size, metadata),
+                            const SizedBox(height: 10),
+                            if (!(metadata.extras?['isLive'] ?? false))
+                              _buildPlayer(
+                                context,
+                                size,
+                                metadata.extras?['ytid'],
+                                metadata,
+                              ),
+                          ],
+                        ),
+                      ),
+                      const VerticalDivider(width: 1),
+                      Expanded(
+                        child: buildQueueList(context),
+                      ),
+                    ],
+                  )
+                : Column(
+                    children: [
+                      const SizedBox(height: 30),
+                      buildArtwork(context, size, metadata),
+                      const SizedBox(height: 10),
+                      if (!(metadata.extras?['isLive'] ?? false))
+                        _buildPlayer(
+                          context,
+                          size,
+                          metadata.extras?['ytid'],
+                          metadata,
+                        ),
+                    ],
+                  );
           }
         },
       ),
     );
   }
 
+  Widget buildQueueList(BuildContext context) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8),
+          child: Text(
+            context.l10n!.playlist,
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+          ),
+        ),
+        Expanded(
+          child: ListView.builder(
+            itemCount: activePlaylist['list'].length,
+            itemBuilder: (context, index) {
+              final borderRadius = getItemBorderRadius(
+                index,
+                activePlaylist['list'].length,
+              );
+              return SongBar(
+                activePlaylist['list'][index],
+                false,
+                onPlay: () => {
+                  audioHandler.playPlaylistSong(songIndex: index),
+                },
+                backgroundColor:
+                    Theme.of(context).colorScheme.surfaceContainerHigh,
+                borderRadius: borderRadius,
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget buildArtwork(BuildContext context, Size size, MediaItem metadata) {
     const _padding = 70;
     const _radius = 17.0;
-    final screen = (size.width + size.height) / 3.05;
-    final imageSize = screen - _padding;
+    final screenWidth = size.width;
+    final isLargeScreen = screenWidth > 800;
+    final screen = (screenWidth + size.height) / 3.05;
+    final imageSize = isLargeScreen ? 360.0 - _padding : screen - _padding;
     const lyricsTextStyle = TextStyle(
       fontSize: 24,
       fontWeight: FontWeight.w500,
@@ -186,9 +250,11 @@ class NowPlayingPage extends StatelessWidget {
     dynamic audioId,
     MediaItem mediaItem,
   ) {
-    const iconSize = 20.0;
     final screenWidth = size.width;
     final screenHeight = size.height;
+    final isLargeScreen = screenWidth > 800;
+    final adjustedIconSize = isLargeScreen ? 50.0 : 20.0;
+    final adjustedMiniIconSize = isLargeScreen ? 20.0 : 10.0;
 
     return Expanded(
       child: Column(
@@ -205,7 +271,7 @@ class NowPlayingPage extends StatelessWidget {
                   screenHeight * 0.028,
                   FontWeight.w600,
                 ),
-                SizedBox(height: screenHeight * 0.005),
+                const SizedBox(height: 10),
                 if (mediaItem.artist != null)
                   buildMarqueeText(
                     mediaItem.artist!,
@@ -218,9 +284,20 @@ class NowPlayingPage extends StatelessWidget {
           ),
           SizedBox(height: size.height * 0.01),
           buildPositionSlider(),
-          buildPlayerControls(context, size, mediaItem, iconSize),
+          buildPlayerControls(
+            context,
+            mediaItem,
+            adjustedIconSize,
+            adjustedMiniIconSize,
+          ),
           SizedBox(height: size.height * 0.055),
-          buildBottomActions(context, audioId, mediaItem, iconSize),
+          buildBottomActions(
+            context,
+            audioId,
+            mediaItem,
+            adjustedMiniIconSize,
+            isLargeScreen,
+          ),
         ],
       ),
     );
@@ -289,15 +366,13 @@ class NowPlayingPage extends StatelessWidget {
 
   Widget buildPlayerControls(
     BuildContext context,
-    Size size,
     MediaItem mediaItem,
-    double iconSize,
+    double playButtonIconSize,
+    double miniIconsSize,
   ) {
     final theme = Theme.of(context);
     final _primaryColor = theme.colorScheme.primary;
     final _secondaryColor = theme.colorScheme.secondaryContainer;
-
-    final screen = ((size.width + size.height) / 4) - 10;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 22),
@@ -313,7 +388,7 @@ class NowPlayingPage extends StatelessWidget {
                         FluentIcons.arrow_shuffle_24_filled,
                         color: _secondaryColor,
                       ),
-                      iconSize: iconSize,
+                      iconSize: miniIconsSize,
                       onPressed: () {
                         audioHandler.setShuffleMode(
                           AudioServiceShuffleMode.none,
@@ -325,7 +400,7 @@ class NowPlayingPage extends StatelessWidget {
                         FluentIcons.arrow_shuffle_off_24_filled,
                         color: _primaryColor,
                       ),
-                      iconSize: iconSize,
+                      iconSize: miniIconsSize,
                       onPressed: () {
                         audioHandler.setShuffleMode(
                           AudioServiceShuffleMode.all,
@@ -346,7 +421,7 @@ class NowPlayingPage extends StatelessWidget {
                           ? _primaryColor
                           : _secondaryColor,
                     ),
-                    iconSize: screen * 0.115,
+                    iconSize: playButtonIconSize / 1.7,
                     onPressed: () =>
                         repeatNotifier.value == AudioServiceRepeatMode.one
                             ? audioHandler.playAgain()
@@ -361,11 +436,11 @@ class NowPlayingPage extends StatelessWidget {
                 builder: (context, snapshot) {
                   return buildPlaybackIconButton(
                     snapshot.data,
-                    screen * 0.125,
+                    playButtonIconSize,
                     _primaryColor,
                     _secondaryColor,
                     elevation: 0,
-                    padding: EdgeInsets.all(screen * 0.08),
+                    padding: EdgeInsets.all(playButtonIconSize * 0.40),
                   );
                 },
               ),
@@ -380,7 +455,7 @@ class NowPlayingPage extends StatelessWidget {
                           ? _primaryColor
                           : _secondaryColor,
                     ),
-                    iconSize: screen * 0.115,
+                    iconSize: playButtonIconSize / 1.7,
                     onPressed: () =>
                         repeatNotifier.value == AudioServiceRepeatMode.one
                             ? audioHandler.playAgain()
@@ -402,7 +477,7 @@ class NowPlayingPage extends StatelessWidget {
                             : FluentIcons.arrow_repeat_1_24_filled,
                         color: _secondaryColor,
                       ),
-                      iconSize: iconSize,
+                      iconSize: miniIconsSize,
                       onPressed: () {
                         repeatNotifier.value =
                             repeatMode == AudioServiceRepeatMode.all
@@ -417,7 +492,7 @@ class NowPlayingPage extends StatelessWidget {
                         FluentIcons.arrow_repeat_all_off_24_filled,
                         color: _primaryColor,
                       ),
-                      iconSize: iconSize,
+                      iconSize: miniIconsSize,
                       onPressed: () {
                         final _isSingleSongPlaying =
                             activePlaylist['list'].isEmpty;
@@ -441,6 +516,7 @@ class NowPlayingPage extends StatelessWidget {
     dynamic audioId,
     MediaItem mediaItem,
     double iconSize,
+    bool isLargeScreen,
   ) {
     final songLikeStatus = ValueNotifier<bool>(isSongAlreadyLiked(audioId));
     late final songOfflineStatus =
@@ -486,7 +562,7 @@ class NowPlayingPage extends StatelessWidget {
               showAddToPlaylistDialog(context, mediaItemToMap(mediaItem));
             },
           ),
-        if (activePlaylist['list'].isNotEmpty)
+        if (activePlaylist['list'].isNotEmpty && !isLargeScreen)
           IconButton.filledTonal(
             icon: Icon(
               FluentIcons.apps_list_24_filled,

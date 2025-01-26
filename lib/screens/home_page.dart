@@ -115,9 +115,19 @@ class _HomePageState extends State<HomePage> {
                     final playlist = playlists[index];
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: PlaylistCube(
-                        playlist,
-                        size: playlistHeight,
+                      child: GestureDetector(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PlaylistPage(
+                              playlistId: playlist['ytid'],
+                            ),
+                          ),
+                        ),
+                        child: PlaylistCube(
+                          playlist,
+                          size: playlistHeight,
+                        ),
                       ),
                     );
                   },
@@ -230,10 +240,22 @@ class _HomePageState extends State<HomePage> {
                       final artist = data[index]['artist'].split('~')[0];
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: PlaylistCube(
-                          {'title': artist},
-                          cubeIcon: FluentIcons.mic_sparkle_24_regular,
-                          size: contentHeight,
+                        child: GestureDetector(
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => PlaylistPage(
+                                cubeIcon: FluentIcons.mic_sparkle_24_regular,
+                                playlistId: artist,
+                                isArtist: true,
+                              ),
+                            ),
+                          ),
+                          child: PlaylistCube(
+                            {'title': artist},
+                            cubeIcon: FluentIcons.mic_sparkle_24_regular,
+                            size: contentHeight,
+                          ),
                         ),
                       );
                     },
