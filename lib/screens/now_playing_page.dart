@@ -77,7 +77,7 @@ class NowPlayingPage extends StatelessWidget {
                           children: [
                             const SizedBox(height: 5),
                             buildArtwork(context, size, metadata),
-                            const SizedBox(height: 10),
+                            const SizedBox(height: 5),
                             if (!(metadata.extras?['isLive'] ?? false))
                               _buildPlayer(
                                 context,
@@ -255,7 +255,7 @@ class NowPlayingPage extends StatelessWidget {
     final screenWidth = size.width;
     final screenHeight = size.height;
     final isLargeScreen = screenWidth > 800;
-    final adjustedIconSize = isLargeScreen ? 50.0 : 30.0;
+    final adjustedIconSize = isLargeScreen ? 43.0 : 30.0;
     final adjustedMiniIconSize = isLargeScreen ? 20.0 : 15.0;
 
     return Expanded(
