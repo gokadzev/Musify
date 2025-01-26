@@ -179,9 +179,11 @@ class _PlaylistPageState extends State<PlaylistPage> {
   }
 
   Widget _buildPlaylistImage() {
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final isLandscape = screenWidth > MediaQuery.sizeOf(context).height;
     return PlaylistCube(
       _playlist,
-      size: MediaQuery.sizeOf(context).width / 2.5,
+      size: isLandscape ? 300 : screenWidth / 2.5,
       cubeIcon: widget.cubeIcon,
     );
   }
