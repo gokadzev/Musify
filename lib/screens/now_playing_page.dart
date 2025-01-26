@@ -49,8 +49,8 @@ class NowPlayingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
     final isLargeScreen = size.width > 800;
-    final adjustedIconSize = isLargeScreen ? 43.0 : 30.0;
-    final adjustedMiniIconSize = isLargeScreen ? 20.0 : 15.0;
+    const adjustedIconSize = 43.0;
+    const adjustedMiniIconSize = 20.0;
 
     return Scaffold(
       appBar: AppBar(
