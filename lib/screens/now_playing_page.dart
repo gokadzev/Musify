@@ -49,6 +49,8 @@ class NowPlayingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
     final isLargeScreen = size.width > 800;
+    final adjustedIconSize = isLargeScreen ? 43.0 : 30.0;
+    final adjustedMiniIconSize = isLargeScreen ? 20.0 : 15.0;
 
     return Scaffold(
       appBar: AppBar(
@@ -83,6 +85,8 @@ class NowPlayingPage extends StatelessWidget {
                                 context,
                                 size,
                                 metadata.extras?['ytid'],
+                                adjustedIconSize,
+                                adjustedMiniIconSize,
                                 metadata,
                               ),
                           ],
@@ -104,8 +108,19 @@ class NowPlayingPage extends StatelessWidget {
                           context,
                           size,
                           metadata.extras?['ytid'],
+                          adjustedIconSize,
+                          adjustedMiniIconSize,
                           metadata,
                         ),
+                      const SizedBox(height: 10),
+                      buildBottomActions(
+                        context,
+                        metadata.extras?['ytid'],
+                        metadata,
+                        adjustedMiniIconSize,
+                        isLargeScreen,
+                      ),
+                      const SizedBox(height: 35),
                     ],
                   );
           }
@@ -250,18 +265,18 @@ class NowPlayingPage extends StatelessWidget {
     BuildContext context,
     Size size,
     dynamic audioId,
+    double adjustedIconSize,
+    double adjustedMiniIconSize,
     MediaItem mediaItem,
   ) {
     final screenWidth = size.width;
     final screenHeight = size.height;
-    final isLargeScreen = screenWidth > 800;
-    final adjustedIconSize = isLargeScreen ? 43.0 : 30.0;
-    final adjustedMiniIconSize = isLargeScreen ? 20.0 : 15.0;
 
     return Expanded(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          const Spacer(),
           SizedBox(
             width: screenWidth * 0.85,
             child: Column(
@@ -284,22 +299,16 @@ class NowPlayingPage extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: size.height * 0.01),
+          const Spacer(),
           buildPositionSlider(),
+          const Spacer(),
           buildPlayerControls(
             context,
             mediaItem,
             adjustedIconSize,
             adjustedMiniIconSize,
           ),
-          SizedBox(height: size.height * 0.025),
-          buildBottomActions(
-            context,
-            audioId,
-            mediaItem,
-            adjustedMiniIconSize,
-            isLargeScreen,
-          ),
+          const Spacer(flex: 2),
         ],
       ),
     );
