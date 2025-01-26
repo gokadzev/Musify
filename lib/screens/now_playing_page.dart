@@ -112,15 +112,17 @@ class NowPlayingPage extends StatelessWidget {
                           adjustedMiniIconSize,
                           metadata,
                         ),
-                      const SizedBox(height: 10),
-                      buildBottomActions(
-                        context,
-                        metadata.extras?['ytid'],
-                        metadata,
-                        adjustedMiniIconSize,
-                        isLargeScreen,
-                      ),
-                      const SizedBox(height: 35),
+                      if (!isLargeScreen) ...[
+                        const SizedBox(height: 10),
+                        buildBottomActions(
+                          context,
+                          metadata.extras?['ytid'],
+                          metadata,
+                          adjustedMiniIconSize,
+                          isLargeScreen,
+                        ),
+                        const SizedBox(height: 35),
+                      ],
                     ],
                   );
           }
