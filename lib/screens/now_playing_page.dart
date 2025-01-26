@@ -96,7 +96,7 @@ class NowPlayingPage extends StatelessWidget {
                   )
                 : Column(
                     children: [
-                      const SizedBox(height: 30),
+                      const SizedBox(height: 10),
                       buildArtwork(context, size, metadata),
                       const SizedBox(height: 10),
                       if (!(metadata.extras?['isLive'] ?? false))
@@ -152,12 +152,14 @@ class NowPlayingPage extends StatelessWidget {
   }
 
   Widget buildArtwork(BuildContext context, Size size, MediaItem metadata) {
-    const _padding = 70;
+    const _padding = 50;
     const _radius = 17.0;
     final screenWidth = size.width;
-    final isLargeScreen = screenWidth > 800;
-    final screen = (screenWidth + size.height) / 3.05;
-    final imageSize = isLargeScreen ? 360.0 - _padding : screen - _padding;
+    final screenHeight = size.height;
+    final isLandscape = screenWidth > screenHeight;
+    final imageSize = isLandscape
+        ? screenHeight * 0.40
+        : (screenWidth + screenHeight) / 3.35 - _padding;
     const lyricsTextStyle = TextStyle(
       fontSize: 24,
       fontWeight: FontWeight.w500,
@@ -253,8 +255,8 @@ class NowPlayingPage extends StatelessWidget {
     final screenWidth = size.width;
     final screenHeight = size.height;
     final isLargeScreen = screenWidth > 800;
-    final adjustedIconSize = isLargeScreen ? 50.0 : 20.0;
-    final adjustedMiniIconSize = isLargeScreen ? 20.0 : 10.0;
+    final adjustedIconSize = isLargeScreen ? 50.0 : 30.0;
+    final adjustedMiniIconSize = isLargeScreen ? 20.0 : 15.0;
 
     return Expanded(
       child: Column(
@@ -290,7 +292,7 @@ class NowPlayingPage extends StatelessWidget {
             adjustedIconSize,
             adjustedMiniIconSize,
           ),
-          SizedBox(height: size.height * 0.055),
+          SizedBox(height: size.height * 0.025),
           buildBottomActions(
             context,
             audioId,
