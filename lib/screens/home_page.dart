@@ -213,6 +213,8 @@ class _HomePageState extends State<HomePage> {
         ? recommendedCubesNumber
         : data.length;
 
+    final isLargeScreen = MediaQuery.of(context).size.width > 480;
+
     return Column(
       children: [
         if (showArtists)
@@ -220,28 +222,44 @@ class _HomePageState extends State<HomePage> {
         if (showArtists)
           ConstrainedBox(
             constraints: BoxConstraints(maxHeight: contentHeight),
-            child: CarouselView.weighted(
-              flexWeights: const <int>[3, 2, 1],
-              itemSnapping: true,
-              onTap: (index) => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => PlaylistPage(
-                    cubeIcon: FluentIcons.mic_sparkle_24_regular,
-                    playlistId: data[index]['artist'].split('~')[0],
-                    isArtist: true,
+            child: isLargeScreen
+                ? ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: itemsNumber,
+                    itemBuilder: (context, index) {
+                      final artist = data[index]['artist'].split('~')[0];
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: PlaylistCube(
+                          {'title': artist},
+                          cubeIcon: FluentIcons.mic_sparkle_24_regular,
+                          size: contentHeight,
+                        ),
+                      );
+                    },
+                  )
+                : CarouselView.weighted(
+                    flexWeights: const <int>[3, 2, 1],
+                    itemSnapping: true,
+                    onTap: (index) => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PlaylistPage(
+                          cubeIcon: FluentIcons.mic_sparkle_24_regular,
+                          playlistId: data[index]['artist'].split('~')[0],
+                          isArtist: true,
+                        ),
+                      ),
+                    ),
+                    children: List.generate(itemsNumber, (index) {
+                      final artist = data[index]['artist'].split('~')[0];
+                      return PlaylistCube(
+                        {'title': artist},
+                        cubeIcon: FluentIcons.mic_sparkle_24_regular,
+                        size: contentHeight * 2,
+                      );
+                    }),
                   ),
-                ),
-              ),
-              children: List.generate(itemsNumber, (index) {
-                final artist = data[index]['artist'].split('~')[0];
-                return PlaylistCube(
-                  {'title': artist},
-                  cubeIcon: FluentIcons.mic_sparkle_24_regular,
-                  size: contentHeight * 2,
-                );
-              }),
-            ),
           ),
         _buildSectionHeader(
           title: context.l10n!.recommendedForYou,
