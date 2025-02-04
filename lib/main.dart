@@ -171,6 +171,7 @@ class _MusifyState extends State<Musify> {
           themeMode: themeMode,
           darkTheme: getAppTheme(colorScheme),
           theme: getAppTheme(colorScheme),
+          debugShowCheckedModeBanner: false,
           localizationsDelegates: const [
             AppLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,

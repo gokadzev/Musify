@@ -1,9 +1,17 @@
 ------------- FUTURE WORKS -------------
 
-4. remove buttons from local audio files and make shuffle and repeat work
+- music resumes after a call, even if it was paused before call
+- remove buttons from local audio files and make shuffle and repeat work
 - change offline icon to download icon
-- MAKE SONGS DOWNLOADABLE TO AUDIO files (Add where to save downloaded files)
+- MAKE SONGS DOWNLOADABLE TO AUDIO(FLAC) files (Add where to save downloaded files)
 - Add exclude folders
-- Just between search bar add sources like youtube and jioSavaan
+- Just below search bar in search page, add sources like youtube and jioSavaan
 - add a option to go to next song when song has 2 sec to finish
-- Get song artworks from the audio file in mini player and song artwork
+- Get song artworks from the audio file in mini player and in now playing page
+- pull to refresh
+- if a song fails to play skip to next one
+- able to dismiss mini bar
+- add skip to next or prev button on the mini bar 
+- store the played song, able to resume where user left
+- tapping on mini player should expand it 
+- get rid of mull

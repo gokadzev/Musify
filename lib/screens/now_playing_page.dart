@@ -42,10 +42,8 @@ final _lyricsController = FlipCardController();
 
 class NowPlayingPage extends StatelessWidget {
   const NowPlayingPage({super.key});
-
   @override
   Widget build(BuildContext context) {
-    print('IN now playing PAGE--------------------------------');
 
     final size = MediaQuery.sizeOf(context);
 
@@ -288,8 +286,7 @@ class NowPlayingPage extends StatelessWidget {
   ) {
     print('MEDIA ITEM:- $mediaItem -------------------------');
     print(mediaItem.extras!['artWorkPath']);
-    final showBtns =
-        mediaItem.extras!['artWorkPath'] != 'assets/images/music_icon.png';
+
     final _primaryColor = Theme.of(context).colorScheme.primary;
     final _secondaryColor = Theme.of(context).colorScheme.secondaryContainer;
 
@@ -416,33 +413,36 @@ class NowPlayingPage extends StatelessWidget {
 
     final _primaryColor = Theme.of(context).colorScheme.primary;
 
+    final showBtns =
+        mediaItem.extras!['artWorkPath'] != 'assets/images/music_icon.png';
     return Wrap(
       alignment: WrapAlignment.center,
       spacing: 8,
       children: [
-        ValueListenableBuilder<bool>(
-          valueListenable: songOfflineStatus,
-          builder: (_, value, __) {
-            return IconButton.filledTonal(
-              icon: Icon(
-                value
-                    ? FluentIcons.cellular_off_24_regular
-                    : FluentIcons.cellular_data_1_24_regular,
-                color: _primaryColor,
-              ),
-              iconSize: iconSize,
-              onPressed: () {
-                if (value) {
-                  removeSongFromOffline(audioId);
-                } else {
-                  makeSongOffline(mediaItemToMap(mediaItem));
-                }
+        if (showBtns)
+          ValueListenableBuilder<bool>(
+            valueListenable: songOfflineStatus,
+            builder: (_, value, __) {
+              return IconButton.filledTonal(
+                icon: Icon(
+                  value
+                      ? FluentIcons.cellular_off_24_regular
+                      : FluentIcons.cellular_data_1_24_regular,
+                  color: _primaryColor,
+                ),
+                iconSize: iconSize,
+                onPressed: () {
+                  if (value) {
+                    removeSongFromOffline(audioId);
+                  } else {
+                    makeSongOffline(mediaItemToMap(mediaItem));
+                  }
 
-                songOfflineStatus.value = !songOfflineStatus.value;
-              },
-            );
-          },
-        ),
+                  songOfflineStatus.value = !songOfflineStatus.value;
+                },
+              );
+            },
+          ),
         if (!offlineMode.value)
           IconButton.filledTonal(
             icon: Icon(
@@ -495,7 +495,7 @@ class NowPlayingPage extends StatelessWidget {
             iconSize: iconSize,
             onPressed: _lyricsController.flipcard,
           ),
-        if (!offlineMode.value)
+        if (!offlineMode.value && showBtns)
           ValueListenableBuilder<bool>(
             valueListenable: songLikeStatus,
             builder: (_, value, __) {
