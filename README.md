@@ -24,7 +24,7 @@ This fork of **Musify** brings **local song playback support**, allowing you to 
 ## 📸 **Screenshots**
 
 | <img src="https://raw.githubusercontent.com/Ruchan10/Musify_fork/main/fastlane/metadata/android/en-US/images/phoneScreenshots/flutter_01.png" width="45%"> | <img src="https://raw.githubusercontent.com/Ruchan10/Musify_fork/main/fastlane/metadata/android/en-US/images/phoneScreenshots/flutter_02.png" width="45%"> |
-|----------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------|
+
 | <img src="https://raw.githubusercontent.com/Ruchan10/Musify_fork/main/fastlane/metadata/android/en-US/images/phoneScreenshots/flutter_03.png" width="45%"> | <img src="https://raw.githubusercontent.com/Ruchan10/Musify_fork/main/fastlane/metadata/android/en-US/images/phoneScreenshots/flutter_04.png" width="45%"> |
 
 | <img src="https://raw.githubusercontent.com/Ruchan10/Musify_fork/main/fastlane/metadata/android/en-US/images/phoneScreenshots/flutter_05.png" width="45%"> | <img src="https://raw.githubusercontent.com/Ruchan10/Musify_fork/main/fastlane/metadata/android/en-US/images/phoneScreenshots/flutter_06.png" width="45%"> |
