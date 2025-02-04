@@ -21,9 +21,10 @@ This fork of **Musify** brings **local song playback support**, allowing you to 
 
 ---
 
+
 ## 📸 **Screenshots**
 
-| ![Screenshot 1](https://raw.githubusercontent.com/Ruchan10/Musify_fork/master/assets/screenshots/flutter_01.png) | ![Screenshot 2](https://raw.githubusercontent.com/Ruchan10/Musify_fork/master/assets/screenshots/flutter_02.png) | ![Screenshot 3](https://raw.githubusercontent.com/Ruchan10/Musify_fork/master/assets/screenshots/flutter_03.png) | ![Screenshot 4](https://raw.githubusercontent.com/Ruchan10/Musify_fork/master/assets/screenshots/flutter_04.png) | ![Screenshot 5](https://raw.githubusercontent.com/Ruchan10/Musify_fork/master/assets/screenshots/flutter_05.png) | ![Screenshot 6](https://raw.githubusercontent.com/Ruchan10/Musify_fork/master/assets/screenshots/flutter_06.png) |
+| ![Screenshot 1](https://raw.githubusercontent.com/Ruchan10/Musify_fork/master/fastlane/metadata/android/en-US/images/phoneScreenshots/flutter_01.png) | ![Screenshot 2](https://raw.githubusercontent.com/Ruchan10/Musify_fork/master/fastlane/metadata/android/en-US/images/phoneScreenshots/flutter_02.png) | ![Screenshot 3](https://raw.githubusercontent.com/Ruchan10/Musify_fork/master/fastlane/metadata/android/en-US/images/phoneScreenshots/flutter_03.png) | ![Screenshot 4](https://raw.githubusercontent.com/Ruchan10/Musify_fork/master/fastlane/metadata/android/en-US/images/phoneScreenshots/flutter_04.png) | ![Screenshot 5](https://raw.githubusercontent.com/Ruchan10/Musify_fork/master/fastlane/metadata/android/en-US/images/phoneScreenshots/flutter_05.png) | ![Screenshot 6](https://raw.githubusercontent.com/Ruchan10/Musify_fork/master/fastlane/metadata/android/en-US/images/phoneScreenshots/flutter_06.png) |
 |----------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------|
 
 ---
