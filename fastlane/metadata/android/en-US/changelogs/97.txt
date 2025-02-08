@@ -1,7 +1,0 @@
-Enhancements
-
-- Added pure black mode [BETA]
-- Added dynamic search feature for playlists [BETA]
-- Added Material 3 design slider with some changes
-- Boosted app stability and speed with quality and performance enhancements
-- For the full changelog, please visit the GitHub repository
