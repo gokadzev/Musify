@@ -224,7 +224,7 @@ List albumsDB = [
     'list': [],
   },
   {
-    'ytid': 'OLAK5uy_mUTfdj6ahy1pcLm_ocVbcWXrhB99Q0KmU',
+    'ytid': 'OLAK5uy_nDG2F1rgP_OVqXtQRjV260ZeuCiijByxs',
     'title': 'Thank u,next - Ariana Grande',
     'image': 'https://i.scdn.co/image/ab67616d0000b27356ac7b86e090f307e218e9c8',
     'isAlbum': true,
@@ -847,8 +847,7 @@ List albumsDB = [
   {
     'ytid': 'OLAK5uy_nPamPQG3Yr23yUuXbMsvyHeIB6nnUjxak',
     'title': 'Lorde - Pure Heroine',
-    'image':
-        'https: //i.scdn.co/image/ab67616d0000b273187331e276c898d39764cc98',
+    'image': 'https://i.scdn.co/image/ab67616d0000b273187331e276c898d39764cc98',
     'isAlbum': true,
     'list': [],
   },

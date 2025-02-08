@@ -90,8 +90,8 @@ List<Map<String, dynamic>> playlistsDB = [
   },
   {
     'ytid': 'PLgzTt0k8mXzHcKebL8d0uYHfawiARhQja',
-    'title': 'Best Sad and Emotional Songs 2024',
-    'image': 'https://i.scdn.co/image/ab67706c0000bebba7222f1f28cf4322f99585f1',
+    'title': 'Best Sad and Emotional Songs',
+    'image': 'https://i.scdn.co/image/ab67706f000000026a529b45bf70807cc16b1a88',
     'list': [],
   },
   {
@@ -337,14 +337,16 @@ List<Map<String, dynamic>> playlistsDB = [
   },
   {
     'ytid': 'PLXpMeQYR1ilK2M6PUwdA75st7uAUrH7Z_',
-    'title': 'Canciones 2024 Reggaeton',
-    'image': 'https://i.scdn.co/image/ab67706c0000da8440211c58b689be17578b406d',
+    'title': 'Canciones 2025 Reggaeton',
+    'image':
+        'https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da8448420cf3245a947f2200fb1a',
     'list': [],
   },
   {
     'ytid': 'PLXpMeQYR1ilIgQ0klpqWf7-RdfouCeJLj',
-    'title': 'Best Remixes of 2024',
-    'image': 'https://i.scdn.co/image/ab67706c0000da84dd30b4484aeabc40b213d921',
+    'title': 'Best Remixes of 2025',
+    'image':
+        'https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da84be56484cc9d25aa2af1ea3e4',
     'list': [],
   },
   {
@@ -506,7 +508,8 @@ List<Map<String, dynamic>> playlistsDB = [
   {
     'ytid': 'PLgzTt0k8mXzGjD1gQXkqC3bE0GzYwBnSD',
     'title': 'Best travel songs',
-    'image': 'https://i.scdn.co/image/ab67706c0000da8424979e795638ce02dfb72907',
+    'image':
+        'https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da84fa66fb0b18a66df9963b542b',
     'list': [],
   }
 ];
