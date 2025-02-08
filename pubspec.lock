@@ -37,10 +37,10 @@ packages:
     dependency: "direct main"
     description:
       name: audio_service
-      sha256: f6c8191bef6b843da34675dd0731ad11d06094c36b691ffcf3148a4feb2e585f
+      sha256: "887ddf15fce31fd12aa8044c3bffd14c58929fb20e31d96284fe3aaf48315ac6"
       url: "https://pub.dev"
     source: hosted
-    version: "0.18.16"
+    version: "0.18.17"
   audio_service_platform_interface:
     dependency: transitive
     description:
@@ -53,18 +53,18 @@ packages:
     dependency: transitive
     description:
       name: audio_service_web
-      sha256: "4cdc2127cd4562b957fb49227dc58e3303fafb09bde2573bc8241b938cf759d9"
+      sha256: b8ea9243201ee53383157fbccf13d5d2a866b5dda922ec19d866d1d5d70424df
       url: "https://pub.dev"
     source: hosted
-    version: "0.1.3"
+    version: "0.1.4"
   audio_session:
     dependency: "direct main"
     description:
       name: audio_session
-      sha256: b2a26ba8b7efa1790d6460e82971fde3e398cfbe2295df9dea22f3499d2c12a7
+      sha256: "2b7fff16a552486d078bfc09a8cde19f426dc6d6329262b684182597bec5b1ac"
       url: "https://pub.dev"
     source: hosted
-    version: "0.1.23"
+    version: "0.1.25"
   boolean_selector:
     dependency: transitive
     description:
@@ -197,10 +197,10 @@ packages:
     dependency: "direct main"
     description:
       name: file_picker
-      sha256: c904b4ab56d53385563c7c39d8e9fa9af086f91495dfc48717ad84a42c3cf204
+      sha256: cacfdc5abe93e64d418caa9256eef663499ad791bb688d9fd12c85a311968fba
       url: "https://pub.dev"
     source: hosted
-    version: "8.1.7"
+    version: "8.3.2"
   fixnum:
     dependency: transitive
     description:
@@ -213,10 +213,10 @@ packages:
     dependency: "direct main"
     description:
       name: fluentui_system_icons
-      sha256: "49caf0e5d02f22ddb2e08213a55512951e1f95c7c91d613e85c74840c15d712b"
+      sha256: "1592ae32dae75fb66741ab2c0607bc6554ef086f1c457e27ef937fb4901d33da"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.271"
+    version: "1.1.273"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -297,10 +297,10 @@ packages:
     dependency: "direct main"
     description:
       name: go_router
-      sha256: daf3ff5570f55396b2d2c9bf8136d7db3a8acf208ac0cef92a3ae2beb9a81550
+      sha256: "04539267a740931c6d4479a10d466717ca5901c6fdfd3fcda09391bbb8ebd651"
       url: "https://pub.dev"
     source: hosted
-    version: "14.7.1"
+    version: "14.8.0"
   hive:
     dependency: "direct main"
     description:
@@ -377,26 +377,26 @@ packages:
     dependency: "direct main"
     description:
       name: just_audio
-      sha256: "1a1eb86e7d81e69a1d36943f2b3efd62dece3dad2cafd9ec2e62e6db7c04d9b7"
+      sha256: f978d5b4ccea08f267dae0232ec5405c1b05d3f3cd63f82097ea46c015d5c09e
       url: "https://pub.dev"
     source: hosted
-    version: "0.9.43"
+    version: "0.9.46"
   just_audio_platform_interface:
     dependency: transitive
     description:
       name: just_audio_platform_interface
-      sha256: "0243828cce503c8366cc2090cefb2b3c871aa8ed2f520670d76fd47aa1ab2790"
+      sha256: "271b93b484c6f494ecd72a107fffbdb26b425f170c665b9777a0a24a726f2f24"
       url: "https://pub.dev"
     source: hosted
-    version: "4.3.0"
+    version: "4.4.0"
   just_audio_web:
     dependency: transitive
     description:
       name: just_audio_web
-      sha256: "9a98035b8b24b40749507687520ec5ab404e291d2b0937823ff45d92cb18d448"
+      sha256: "58915be64509a7683c44bf11cd1a23c15a48de104927bee116e3c63c8eeea0d4"
       url: "https://pub.dev"
     source: hosted
-    version: "0.4.13"
+    version: "0.4.14"
   leak_tracker:
     dependency: transitive
     description:
@@ -838,10 +838,10 @@ packages:
     dependency: "direct main"
     description:
       name: youtube_explode_dart
-      sha256: "51ca5b2c03bf56060143d4f87df90ec3227592d7ae8a8003532533ae019d4291"
+      sha256: "9f044feb602659392a7c7a160e74d373671c959373a199658d687fe18ba1ab07"
       url: "https://pub.dev"
     source: hosted
-    version: "2.3.6"
+    version: "2.3.9"
 sdks:
   dart: ">=3.6.0 <4.0.0"
   flutter: ">=3.27.3"
