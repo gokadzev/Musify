@@ -1,0 +1,5 @@
+Bug Fixes
+- Fixed issues with broken albums and their artworks
+
+Enhancements
+- Updated Japanese translations
