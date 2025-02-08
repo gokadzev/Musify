@@ -224,7 +224,7 @@ List albumsDB = [
     'list': [],
   },
   {
-    'ytid': 'OLAK5uy_mUTfdj6ahy1pcLm_ocVbcWXrhB99Q0KmU',
+    'ytid': 'OLAK5uy_nDG2F1rgP_OVqXtQRjV260ZeuCiijByxs',
     'title': 'Thank u,next - Ariana Grande',
     'image': 'https://i.scdn.co/image/ab67616d0000b27356ac7b86e090f307e218e9c8',
     'isAlbum': true,
@@ -375,13 +375,6 @@ List albumsDB = [
     'title':
         'Hard To Imagine The Neighbourhood Ever Changing - The Neighbourhood',
     'image': 'https://i.scdn.co/image/ab67616d0000b2739b6ac98a52f62d5cb473da40',
-    'isAlbum': true,
-    'list': [],
-  },
-  {
-    'ytid': 'PLsCPTY_MPoPbEMmr8uZ7msRYcYtDz0g9g',
-    'title': 'HIT ME HARD AND SOFT - Billie Eilish',
-    'image': 'https://i.scdn.co/image/ab67616d0000b27371d62ea7ea8a5be92d3c1f62',
     'isAlbum': true,
     'list': [],
   },
@@ -847,8 +840,7 @@ List albumsDB = [
   {
     'ytid': 'OLAK5uy_nPamPQG3Yr23yUuXbMsvyHeIB6nnUjxak',
     'title': 'Lorde - Pure Heroine',
-    'image':
-        'https: //i.scdn.co/image/ab67616d0000b273187331e276c898d39764cc98',
+    'image': 'https://i.scdn.co/image/ab67616d0000b273187331e276c898d39764cc98',
     'isAlbum': true,
     'list': [],
   },
@@ -857,6 +849,13 @@ List albumsDB = [
     'title': 'Bryson Tiller - Trapsoul',
     'image':
         'https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/26/4a/f9/264af9b7-813d-4b08-2822-de8b26c0e188/886445447811.jpg/250x250bb.jpg',
+    'isAlbum': true,
+    'list': [],
+  },
+  {
+    'ytid': 'PLK2zhq9oy0K7r-ypb3QN2L30rkLDZxYd5',
+    'title': 'The Weeknd - Hurry Up Tomorrow',
+    'image': 'https://i.scdn.co/image/ab67616d0000b2737e7f1d0bdb2bb5a2afc4fb25',
     'isAlbum': true,
     'list': [],
   }
