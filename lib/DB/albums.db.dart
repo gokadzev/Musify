@@ -379,13 +379,6 @@ List albumsDB = [
     'list': [],
   },
   {
-    'ytid': 'PLsCPTY_MPoPbEMmr8uZ7msRYcYtDz0g9g',
-    'title': 'HIT ME HARD AND SOFT - Billie Eilish',
-    'image': 'https://i.scdn.co/image/ab67616d0000b27371d62ea7ea8a5be92d3c1f62',
-    'isAlbum': true,
-    'list': [],
-  },
-  {
     'ytid': 'OLAK5uy_m2MkFaiKAqsvU8RR3o1qAGMLkSCtIl8vU',
     'title': '12 Notes - Alec Benjamin',
     'image': 'https://i.scdn.co/image/ab67616d0000b27310937fa41a9718c72a59d85b',
@@ -856,6 +849,13 @@ List albumsDB = [
     'title': 'Bryson Tiller - Trapsoul',
     'image':
         'https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/26/4a/f9/264af9b7-813d-4b08-2822-de8b26c0e188/886445447811.jpg/250x250bb.jpg',
+    'isAlbum': true,
+    'list': [],
+  },
+  {
+    'ytid': 'PLK2zhq9oy0K7r-ypb3QN2L30rkLDZxYd5',
+    'title': 'The Weeknd - Hurry Up Tomorrow',
+    'image': 'https://i.scdn.co/image/ab67616d0000b2737e7f1d0bdb2bb5a2afc4fb25',
     'isAlbum': true,
     'list': [],
   }
