@@ -41,3 +41,9 @@ app.*.map.json
 
 # Exceptions to above rules.
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
+
+# Android related
+android/app/.cxx/
+
+# Generated localization dart files
+lib/localization/app_*.dart

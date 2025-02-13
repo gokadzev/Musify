@@ -27,10 +27,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:musify/API/musify.dart';
+import 'package:musify/localization/app_localizations.dart';
 import 'package:musify/services/audio_service.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/logger_service.dart';
@@ -67,9 +67,10 @@ final appLanguages = <String, String>{
   'Ukrainian': 'uk',
 };
 
-final appSupportedLocales = appLanguages.values
-    .map((languageCode) => Locale.fromSubtags(languageCode: languageCode))
-    .toList();
+final appSupportedLocales =
+    appLanguages.values
+        .map((languageCode) => Locale.fromSubtags(languageCode: languageCode))
+        .toList();
 
 class Musify extends StatefulWidget {
   const Musify({super.key});
@@ -82,11 +83,11 @@ class Musify extends StatefulWidget {
     bool? useSystemColor,
   }) async {
     context.findAncestorStateOfType<_MusifyState>()!.changeSettings(
-          newThemeMode: newThemeMode,
-          newLocale: newLocale,
-          newAccentColor: newAccentColor,
-          systemColorStatus: useSystemColor,
-        );
+      newThemeMode: newThemeMode,
+      newLocale: newLocale,
+      newAccentColor: newAccentColor,
+      systemColorStatus: useSystemColor,
+    );
   }
 
   @override
@@ -112,11 +113,7 @@ class _MusifyState extends State<Musify> {
         if (systemColorStatus != null &&
             useSystemColor.value != systemColorStatus) {
           useSystemColor.value = systemColorStatus;
-          addOrUpdateData(
-            'settings',
-            'useSystemColor',
-            systemColorStatus,
-          );
+          addOrUpdateData('settings', 'useSystemColor', systemColorStatus);
         }
         primaryColorSetting = newAccentColor;
       }
@@ -140,8 +137,9 @@ class _MusifyState extends State<Musify> {
 
     try {
       LicenseRegistry.addLicense(() async* {
-        final license =
-            await rootBundle.loadString('assets/licenses/paytone.txt');
+        final license = await rootBundle.loadString(
+          'assets/licenses/paytone.txt',
+        );
         yield LicenseEntryWithLineBreaks(['paytoneOne'], license);
       });
     } catch (e, stackTrace) {
@@ -169,8 +167,10 @@ class _MusifyState extends State<Musify> {
   Widget build(BuildContext context) {
     return DynamicColorBuilder(
       builder: (lightColorScheme, darkColorScheme) {
-        final colorScheme =
-            getAppColorScheme(lightColorScheme, darkColorScheme);
+        final colorScheme = getAppColorScheme(
+          lightColorScheme,
+          darkColorScheme,
+        );
 
         return MaterialApp.router(
           themeMode: themeMode,
