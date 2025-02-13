@@ -56,6 +56,7 @@
   "name": "Nazwa",
   "newAnnouncement": "New announcement posted",
   "noCustomPlaylists": "Nie masz żadnej własnej playlisty",
+  "noSongsInQueue": "No songs in queue",
   "notYTlist": "To nie jest ID playlisty w YouTube",
   "offlineMode": "Tryb offline",
   "offlineSongs": "Utwory offline",

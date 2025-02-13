@@ -129,35 +129,47 @@ class NowPlayingPage extends StatelessWidget {
   }
 
   Widget buildQueueList(BuildContext context) {
+    final _textColor = Theme.of(context).colorScheme.secondary;
     return Column(
       children: [
         Padding(
           padding: const EdgeInsets.all(8),
           child: Text(
             context.l10n!.playlist,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              color: Theme.of(context).colorScheme.secondary,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineSmall?.copyWith(color: _textColor),
           ),
         ),
         Expanded(
-          child: ListView.builder(
-            itemCount: activePlaylist['list'].length,
-            itemBuilder: (context, index) {
-              final borderRadius = getItemBorderRadius(
-                index,
-                activePlaylist['list'].length,
-              );
-              return SongBar(
-                activePlaylist['list'][index],
-                false,
-                onPlay: () => {audioHandler.playPlaylistSong(songIndex: index)},
-                backgroundColor:
-                    Theme.of(context).colorScheme.surfaceContainerHigh,
-                borderRadius: borderRadius,
-              );
-            },
-          ),
+          child:
+              activePlaylist['list'].isEmpty
+                  ? Center(
+                    child: Text(
+                      context.l10n!.noSongsInQueue,
+                      style: TextStyle(color: _textColor),
+                    ),
+                  )
+                  : ListView.builder(
+                    itemCount: activePlaylist['list'].length,
+                    itemBuilder: (context, index) {
+                      final borderRadius = getItemBorderRadius(
+                        index,
+                        activePlaylist['list'].length,
+                      );
+                      return SongBar(
+                        activePlaylist['list'][index],
+                        false,
+                        onPlay:
+                            () => {
+                              audioHandler.playPlaylistSong(songIndex: index),
+                            },
+                        backgroundColor:
+                            Theme.of(context).colorScheme.surfaceContainerHigh,
+                        borderRadius: borderRadius,
+                      );
+                    },
+                  ),
         ),
       ],
     );

@@ -56,6 +56,7 @@
   "name": "Name",
   "newAnnouncement": "New announcement posted",
   "noCustomPlaylists": "Du hast noch keine eigene Playlist erstellt",
+  "noSongsInQueue": "No songs in queue",
   "notYTlist": "Das ist keine YouTube-Playlist-ID",
   "offlineMode": "Offline-Modus",
   "offlineSongs": "Offline-Songs",

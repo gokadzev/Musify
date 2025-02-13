@@ -56,6 +56,7 @@
   "name": "Nombre",
   "newAnnouncement": "New announcement posted",
   "noCustomPlaylists": "Aún no se han creado listas de reproducción personalizadas",
+  "noSongsInQueue": "No songs in queue",
   "notYTlist": "ID de lista de reproducción de YouTube no válido",
   "offlineMode": "Modo sin conexión",
   "offlineSongs": "Canciones sin conexión",

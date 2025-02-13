@@ -56,6 +56,7 @@
   "name": "名前",
   "newAnnouncement": "新しいお知らせを掲載",
   "noCustomPlaylists": "まだ再生リストを作成していません",
+  "noSongsInQueue": "No songs in queue",
   "notYTlist": "有効な YouTube 再生リスト ID ではありません",
   "offlineMode": "オフラインモード",
   "offlineSongs": "オフライン用の曲",

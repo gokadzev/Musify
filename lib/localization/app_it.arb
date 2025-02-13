@@ -56,6 +56,7 @@
   "name": "Nome",
   "newAnnouncement": "Nuovo annuncio pubblicato",
   "noCustomPlaylists": "Non hai ancora creato playlist personalizzate",
+  "noSongsInQueue": "No songs in queue",
   "notYTlist": "Questo non è un ID playlist di YouTube valido",
   "offlineMode": "Modalità offline",
   "offlineSongs": "Brani offline",
