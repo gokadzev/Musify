@@ -38,10 +38,6 @@ final usePureBlackColor = ValueNotifier<bool>(
   Hive.box('settings').get('usePureBlackColor', defaultValue: false),
 );
 
-final useSquigglySlider = ValueNotifier<bool>(
-  Hive.box('settings').get('useSquigglySlider', defaultValue: false),
-);
-
 final offlineMode = ValueNotifier<bool>(
   Hive.box('settings').get('offlineMode', defaultValue: false),
 );
@@ -75,14 +71,16 @@ Locale languageSetting = Locale(
 final themeModeSetting =
     Hive.box('settings').get('themeMode', defaultValue: 'dark') as String;
 
-Color primaryColorSetting =
-    Color(Hive.box('settings').get('accentColor', defaultValue: 0xff91cef4));
+Color primaryColorSetting = Color(
+  Hive.box('settings').get('accentColor', defaultValue: 0xff91cef4),
+);
 
 // Non-Storage Notifiers
 
 final shuffleNotifier = ValueNotifier<bool>(false);
-final repeatNotifier =
-    ValueNotifier<AudioServiceRepeatMode>(AudioServiceRepeatMode.none);
+final repeatNotifier = ValueNotifier<AudioServiceRepeatMode>(
+  AudioServiceRepeatMode.none,
+);
 
 // Server-Notifiers
 

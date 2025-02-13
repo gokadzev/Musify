@@ -56,67 +56,65 @@ class SettingsPage extends StatelessWidget {
         child: Column(
           children: <Widget>[
             // CATEGORY: PREFERENCES
-            SectionTitle(
-              context.l10n!.preferences,
-              primaryColor,
-            ),
+            SectionTitle(context.l10n!.preferences, primaryColor),
             CustomBar(
               context.l10n!.accentColor,
               FluentIcons.color_24_filled,
               borderRadius: commonCustomBarRadiusFirst,
-              onTap: () => showCustomBottomSheet(
-                context,
-                GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 5,
-                  ),
-                  shrinkWrap: true,
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: availableColors.length,
-                  itemBuilder: (context, index) {
-                    final color = availableColors[index];
-                    final isSelected = color == primaryColorSetting;
-
-                    return GestureDetector(
-                      onTap: () {
-                        //TODO: migrate this
-                        addOrUpdateData(
-                          'settings',
-                          'accentColor',
-                          // ignore: deprecated_member_use
-                          color.value,
-                        );
-                        Musify.updateAppState(
-                          context,
-                          newAccentColor: color,
-                          useSystemColor: false,
-                        );
-                        showToast(
-                          context,
-                          context.l10n!.accentChangeMsg,
-                        );
-                        Navigator.pop(context);
-                      },
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          CircleAvatar(
-                            radius: 25,
-                            backgroundColor: themeMode == ThemeMode.light
-                                ? color.withAlpha(150)
-                                : color,
+              onTap:
+                  () => showCustomBottomSheet(
+                    context,
+                    GridView.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 5,
                           ),
-                          if (isSelected)
-                            Icon(
-                              Icons.check,
-                              color: Theme.of(context).colorScheme.onPrimary,
-                            ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              ),
+                      shrinkWrap: true,
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: availableColors.length,
+                      itemBuilder: (context, index) {
+                        final color = availableColors[index];
+                        final isSelected = color == primaryColorSetting;
+
+                        return GestureDetector(
+                          onTap: () {
+                            //TODO: migrate this
+                            addOrUpdateData(
+                              'settings',
+                              'accentColor',
+                              // ignore: deprecated_member_use
+                              color.value,
+                            );
+                            Musify.updateAppState(
+                              context,
+                              newAccentColor: color,
+                              useSystemColor: false,
+                            );
+                            showToast(context, context.l10n!.accentChangeMsg);
+                            Navigator.pop(context);
+                          },
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              CircleAvatar(
+                                radius: 25,
+                                backgroundColor:
+                                    themeMode == ThemeMode.light
+                                        ? color.withAlpha(150)
+                                        : color,
+                              ),
+                              if (isSelected)
+                                Icon(
+                                  Icons.check,
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
+                                ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
             ),
             CustomBar(
               context.l10n!.themeMode,
@@ -145,15 +143,8 @@ class SettingsPage extends StatelessWidget {
                       return BottomSheetBar(
                         mode.name,
                         () {
-                          addOrUpdateData(
-                            'settings',
-                            'themeMode',
-                            mode.name,
-                          );
-                          Musify.updateAppState(
-                            context,
-                            newThemeMode: mode,
-                          );
+                          addOrUpdateData('settings', 'themeMode', mode.name);
+                          Musify.updateAppState(context, newThemeMode: mode);
 
                           Navigator.pop(context);
                         },
@@ -182,8 +173,9 @@ class SettingsPage extends StatelessWidget {
                         itemBuilder: (context, index) {
                           final client = availableClients[index];
                           final _clientInModel = clients[client];
-                          final isSelected =
-                              userChosenClients.contains(_clientInModel);
+                          final isSelected = userChosenClients.contains(
+                            _clientInModel,
+                          );
 
                           final borderRadius = getItemBorderRadius(
                             index,
@@ -246,26 +238,15 @@ class SettingsPage extends StatelessWidget {
                       return BottomSheetBar(
                         language,
                         () {
-                          addOrUpdateData(
-                            'settings',
-                            'language',
-                            language,
-                          );
+                          addOrUpdateData('settings', 'language', language);
                           Musify.updateAppState(
                             context,
-                            newLocale: Locale(
-                              languageCode,
-                            ),
+                            newLocale: Locale(languageCode),
                           );
-                          WidgetsBinding.instance.addPostFrameCallback(
-                            (_) {
-                              showToast(
-                                context,
-                                context.l10n!.languageMsg,
-                              );
-                              Navigator.pop(context);
-                            },
-                          );
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            showToast(context, context.l10n!.languageMsg);
+                            Navigator.pop(context);
+                          });
                         },
                         activeLanguageCode == languageCode
                             ? activatedColor
@@ -303,17 +284,10 @@ class SettingsPage extends StatelessWidget {
                       return BottomSheetBar(
                         quality,
                         () {
-                          addOrUpdateData(
-                            'settings',
-                            'audioQuality',
-                            quality,
-                          );
+                          addOrUpdateData('settings', 'audioQuality', quality);
                           audioQualitySetting.value = quality;
 
-                          showToast(
-                            context,
-                            context.l10n!.audioQualityMsg,
-                          );
+                          showToast(context, context.l10n!.audioQualityMsg);
                           Navigator.pop(context);
                         },
                         isCurrentQuality ? activatedColor : inactivatedColor,
@@ -330,21 +304,14 @@ class SettingsPage extends StatelessWidget {
               trailing: Switch(
                 value: useSystemColor.value,
                 onChanged: (value) {
-                  addOrUpdateData(
-                    'settings',
-                    'useSystemColor',
-                    value,
-                  );
+                  addOrUpdateData('settings', 'useSystemColor', value);
                   useSystemColor.value = value;
                   Musify.updateAppState(
                     context,
                     newAccentColor: primaryColorSetting,
                     useSystemColor: value,
                   );
-                  showToast(
-                    context,
-                    context.l10n!.settingChangedMsg,
-                  );
+                  showToast(context, context.l10n!.settingChangedMsg);
                 },
               ),
             ),
@@ -355,17 +322,10 @@ class SettingsPage extends StatelessWidget {
                 trailing: Switch(
                   value: usePureBlackColor.value,
                   onChanged: (value) {
-                    addOrUpdateData(
-                      'settings',
-                      'usePureBlackColor',
-                      value,
-                    );
+                    addOrUpdateData('settings', 'usePureBlackColor', value);
                     usePureBlackColor.value = value;
                     Musify.updateAppState(context);
-                    showToast(
-                      context,
-                      context.l10n!.settingChangedMsg,
-                    );
+                    showToast(context, context.l10n!.settingChangedMsg);
                   },
                 ),
               ),
@@ -379,49 +339,20 @@ class SettingsPage extends StatelessWidget {
                   trailing: Switch(
                     value: predictiveBack.value,
                     onChanged: (value) {
-                      addOrUpdateData(
-                        'settings',
-                        'predictiveBack',
-                        value,
-                      );
+                      addOrUpdateData('settings', 'predictiveBack', value);
                       predictiveBack.value = value;
-                      transitionsBuilder = value
-                          ? const PredictiveBackPageTransitionsBuilder()
-                          : const CupertinoPageTransitionsBuilder();
+                      transitionsBuilder =
+                          value
+                              ? const PredictiveBackPageTransitionsBuilder()
+                              : const CupertinoPageTransitionsBuilder();
                       Musify.updateAppState(context);
-                      showToast(
-                        context,
-                        context.l10n!.settingChangedMsg,
-                      );
+                      showToast(context, context.l10n!.settingChangedMsg);
                     },
                   ),
                 );
               },
             ),
-            ValueListenableBuilder<bool>(
-              valueListenable: useSquigglySlider,
-              builder: (_, value, __) {
-                return CustomBar(
-                  context.l10n!.useSquigglySlider,
-                  FluentIcons.options_24_filled,
-                  trailing: Switch(
-                    value: useSquigglySlider.value,
-                    onChanged: (value) {
-                      addOrUpdateData(
-                        'settings',
-                        'useSquigglySlider',
-                        value,
-                      );
-                      useSquigglySlider.value = value;
-                      showToast(
-                        context,
-                        context.l10n!.settingChangedMsg,
-                      );
-                    },
-                  ),
-                );
-              },
-            ),
+
             ValueListenableBuilder<bool>(
               valueListenable: offlineMode,
               builder: (_, value, __) {
@@ -431,16 +362,9 @@ class SettingsPage extends StatelessWidget {
                   trailing: Switch(
                     value: value,
                     onChanged: (value) {
-                      addOrUpdateData(
-                        'settings',
-                        'offlineMode',
-                        value,
-                      );
+                      addOrUpdateData('settings', 'offlineMode', value);
                       offlineMode.value = value;
-                      showToast(
-                        context,
-                        context.l10n!.restartAppMsg,
-                      );
+                      showToast(context, context.l10n!.restartAppMsg);
                     },
                   ),
                 );
@@ -464,10 +388,7 @@ class SettingsPage extends StatelessWidget {
                               value,
                             );
                             sponsorBlockSupport.value = value;
-                            showToast(
-                              context,
-                              context.l10n!.settingChangedMsg,
-                            );
+                            showToast(context, context.l10n!.settingChangedMsg);
                           },
                         ),
                       );
@@ -483,10 +404,7 @@ class SettingsPage extends StatelessWidget {
                           value: value,
                           onChanged: (value) {
                             audioHandler.changeAutoPlayNextStatus();
-                            showToast(
-                              context,
-                              context.l10n!.settingChangedMsg,
-                            );
+                            showToast(context, context.l10n!.settingChangedMsg);
                           },
                         ),
                       );
@@ -508,10 +426,7 @@ class SettingsPage extends StatelessWidget {
                               value,
                             );
                             defaultRecommendations.value = value;
-                            showToast(
-                              context,
-                              context.l10n!.settingChangedMsg,
-                            );
+                            showToast(context, context.l10n!.settingChangedMsg);
                           },
                         ),
                       );
@@ -519,20 +434,14 @@ class SettingsPage extends StatelessWidget {
                   ),
 
                   // CATEGORY: TOOLS
-                  SectionTitle(
-                    context.l10n!.tools,
-                    primaryColor,
-                  ),
+                  SectionTitle(context.l10n!.tools, primaryColor),
                   CustomBar(
                     context.l10n!.clearCache,
                     FluentIcons.broom_24_filled,
                     borderRadius: commonCustomBarRadiusFirst,
                     onTap: () {
                       clearCache();
-                      showToast(
-                        context,
-                        '${context.l10n!.cacheMsg}!',
-                      );
+                      showToast(context, '${context.l10n!.cacheMsg}!');
                     },
                   ),
                   CustomBar(
@@ -547,15 +456,16 @@ class SettingsPage extends StatelessWidget {
                             confirmationMessage:
                                 context.l10n!.clearSearchHistoryQuestion,
                             onCancel: () => {Navigator.of(context).pop()},
-                            onSubmit: () => {
-                              Navigator.of(context).pop(),
-                              searchHistory = [],
-                              deleteData('user', 'searchHistory'),
-                              showToast(
-                                context,
-                                '${context.l10n!.searchHistoryMsg}!',
-                              ),
-                            },
+                            onSubmit:
+                                () => {
+                                  Navigator.of(context).pop(),
+                                  searchHistory = [],
+                                  deleteData('user', 'searchHistory'),
+                                  showToast(
+                                    context,
+                                    '${context.l10n!.searchHistoryMsg}!',
+                                  ),
+                                },
                           );
                         },
                       );
@@ -573,15 +483,16 @@ class SettingsPage extends StatelessWidget {
                             confirmationMessage:
                                 context.l10n!.clearRecentlyPlayedQuestion,
                             onCancel: () => {Navigator.of(context).pop()},
-                            onSubmit: () => {
-                              Navigator.of(context).pop(),
-                              userRecentlyPlayed = [],
-                              deleteData('user', 'recentlyPlayedSongs'),
-                              showToast(
-                                context,
-                                '${context.l10n!.recentlyPlayedMsg}!',
-                              ),
-                            },
+                            onSubmit:
+                                () => {
+                                  Navigator.of(context).pop(),
+                                  userRecentlyPlayed = [],
+                                  deleteData('user', 'recentlyPlayedSongs'),
+                                  showToast(
+                                    context,
+                                    '${context.l10n!.recentlyPlayedMsg}!',
+                                  ),
+                                },
                           );
                         },
                       );
@@ -630,12 +541,9 @@ class SettingsPage extends StatelessWidget {
                       borderRadius: commonCustomBarRadiusLast,
                       onTap: checkAppUpdates,
                     ),
-                  // CATEGORY: BECOME A SPONSOR
 
-                  SectionTitle(
-                    context.l10n!.becomeSponsor,
-                    primaryColor,
-                  ),
+                  // CATEGORY: BECOME A SPONSOR
+                  SectionTitle(context.l10n!.becomeSponsor, primaryColor),
 
                   CustomBar(
                     context.l10n!.sponsorProject,
@@ -644,45 +552,36 @@ class SettingsPage extends StatelessWidget {
                     iconColor: Colors.white,
                     textColor: Colors.white,
                     borderRadius: commonCustomBarRadius,
-                    onTap: () => {
-                      launchURL(
-                        Uri.parse('https://ko-fi.com/gokadzev'),
-                      ),
-                    },
+                    onTap:
+                        () => {
+                          launchURL(Uri.parse('https://ko-fi.com/gokadzev')),
+                        },
                   ),
                 ],
               ),
             // CATEGORY: OTHERS
-            SectionTitle(
-              context.l10n!.others,
-              primaryColor,
-            ),
+            SectionTitle(context.l10n!.others, primaryColor),
 
             CustomBar(
               context.l10n!.licenses,
               FluentIcons.document_24_filled,
               borderRadius: commonCustomBarRadiusFirst,
-              onTap: () => NavigationManager.router.go(
-                '/settings/license',
-              ),
+              onTap: () => NavigationManager.router.go('/settings/license'),
             ),
             CustomBar(
               '${context.l10n!.copyLogs} (${logger.getLogCount()})',
               FluentIcons.error_circle_24_filled,
-              onTap: () async =>
-                  showToast(context, await logger.copyLogs(context)),
+              onTap:
+                  () async =>
+                      showToast(context, await logger.copyLogs(context)),
             ),
             CustomBar(
               context.l10n!.about,
               FluentIcons.book_information_24_filled,
               borderRadius: commonCustomBarRadiusLast,
-              onTap: () => NavigationManager.router.go(
-                '/settings/about',
-              ),
+              onTap: () => NavigationManager.router.go('/settings/about'),
             ),
-            const SizedBox(
-              height: 20,
-            ),
+            const SizedBox(height: 20),
           ],
         ),
       ),

@@ -28,13 +28,12 @@ import 'package:musify/style/dynamic_color_temp_fix.dart';
 ThemeMode themeMode = getThemeMode(themeModeSetting);
 Brightness brightness = getBrightnessFromThemeMode(themeMode);
 
-PageTransitionsBuilder transitionsBuilder = predictiveBack.value
-    ? const PredictiveBackPageTransitionsBuilder()
-    : const CupertinoPageTransitionsBuilder();
+PageTransitionsBuilder transitionsBuilder =
+    predictiveBack.value
+        ? const PredictiveBackPageTransitionsBuilder()
+        : const CupertinoPageTransitionsBuilder();
 
-Brightness getBrightnessFromThemeMode(
-  ThemeMode themeMode,
-) {
+Brightness getBrightnessFromThemeMode(ThemeMode themeMode) {
   final themeBrightnessMapping = {
     ThemeMode.light: Brightness.light,
     ThemeMode.dark: Brightness.dark,
@@ -67,8 +66,10 @@ ColorScheme getAppColorScheme(
       darkColorScheme != null) {
     // Temporary fix until this will be fixed: https://github.com/material-foundation/flutter-packages/issues/582
 
-    (lightColorScheme, darkColorScheme) =
-        tempGenerateDynamicColourSchemes(lightColorScheme, darkColorScheme);
+    (lightColorScheme, darkColorScheme) = tempGenerateDynamicColourSchemes(
+      lightColorScheme,
+      darkColorScheme,
+    );
   }
 
   final selectedScheme =
@@ -85,16 +86,18 @@ ColorScheme getAppColorScheme(
 }
 
 ThemeData getAppTheme(ColorScheme colorScheme) {
-  final base = colorScheme.brightness == Brightness.light
-      ? ThemeData.light()
-      : ThemeData.dark();
+  final base =
+      colorScheme.brightness == Brightness.light
+          ? ThemeData.light()
+          : ThemeData.dark();
 
   final isPureBlackUsable =
       colorScheme.brightness == Brightness.dark && usePureBlackColor.value;
 
-  final bgColor = colorScheme.brightness == Brightness.light
-      ? colorScheme.surfaceContainer
-      : (isPureBlackUsable ? const Color(0xFF000000) : null);
+  final bgColor =
+      colorScheme.brightness == Brightness.light
+          ? colorScheme.surfaceContainer
+          : (isPureBlackUsable ? const Color(0xFF000000) : null);
 
   return ThemeData(
     scaffoldBackgroundColor: bgColor,
@@ -117,6 +120,11 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
       textColor: colorScheme.primary,
       iconColor: colorScheme.primary,
     ),
+    sliderTheme: base.sliderTheme.copyWith(
+      year2023: false,
+      trackHeight: 12,
+      thumbSize: WidgetStateProperty.all(const Size(6, 30)),
+    ),
     bottomSheetTheme: base.bottomSheetTheme.copyWith(backgroundColor: bgColor),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
@@ -127,8 +135,9 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
       ),
       contentPadding: const EdgeInsets.fromLTRB(18, 14, 20, 14),
     ),
-    navigationBarTheme:
-        base.navigationBarTheme.copyWith(backgroundColor: bgColor),
+    navigationBarTheme: base.navigationBarTheme.copyWith(
+      backgroundColor: bgColor,
+    ),
     visualDensity: VisualDensity.adaptivePlatformDensity,
     useMaterial3: true,
     pageTransitionsTheme: PageTransitionsTheme(

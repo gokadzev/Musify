@@ -125,8 +125,7 @@ You can see frequently asked questions and their answers [here](https://github.c
 - [intl](https://pub.dev/packages/intl): Internationalization and localization support for Flutter.
 - [just_audio](https://pub.dev/packages/just_audio): A Flutter plugin for audio playback.
 - [path_provider](https://pub.dev/packages/path_provider): A Flutter plugin for getting the application's directories and paths.
-- [rxdart](https://pub.dev/packages/rxdart): Reactive Extensions for Dart.
-- [squiggly_slider](https://pub.dev/packages/squiggly_slider): Flutter Package to add the Squiggly Seekbar (introduced in Android 13 for the Media Player) as a Widget.
+- [rxdart](https://pub.dev/packages/rxdart): Reactive Extensions for Dart.Seekbar (introduced in Android 13 for the Media Player) as a Widget.
 - [url_launcher](https://pub.dev/packages/url_launcher): A Flutter plugin for launching URLs.
 - [youtube_explode_dart](https://pub.dev/packages/youtube_explode_dart): A Dart library for interacting with YouTube.
 
