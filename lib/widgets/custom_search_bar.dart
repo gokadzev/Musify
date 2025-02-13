@@ -56,13 +56,14 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
           widget.onSubmitted(value);
           widget.focusNode.unfocus();
         },
-        onChanged: widget.onChanged != null
-            ? (value) async {
-                widget.onChanged!(value);
+        onChanged:
+            widget.onChanged != null
+                ? (value) async {
+                  widget.onChanged!(value);
 
-                setState(() {});
-              }
-            : null,
+                  setState(() {});
+                }
+                : null,
         textInputAction: TextInputAction.search,
         controller: widget.controller,
         focusNode: widget.focusNode,
@@ -85,9 +86,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                   );
                 } else {
                   return IconButton(
-                    icon: const Icon(
-                      FluentIcons.search_20_regular,
-                    ),
+                    icon: const Icon(FluentIcons.search_20_regular),
                     onPressed: () {
                       widget.onSubmitted(widget.controller.text);
                       widget.focusNode.unfocus();
@@ -98,9 +97,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
             )
           else
             IconButton(
-              icon: const Icon(
-                FluentIcons.search_20_regular,
-              ),
+              icon: const Icon(FluentIcons.search_20_regular),
               onPressed: () {
                 widget.onSubmitted(widget.controller.text);
                 widget.focusNode.unfocus();

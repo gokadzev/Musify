@@ -108,11 +108,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
         mediaItem.add(playlist[index]);
       }
     } catch (e, stackTrace) {
-      logger.log(
-        'Error handling current song index change',
-        e,
-        stackTrace,
-      );
+      logger.log('Error handling current song index change', e, stackTrace);
     }
   }
 
@@ -131,14 +127,18 @@ class MusifyAudioHandler extends BaseAudioHandler {
   }
 
   void _setupEventSubscriptions() {
-    _playbackEventSubscription =
-        audioPlayer.playbackEventStream.listen(_handlePlaybackEvent);
-    _durationSubscription =
-        audioPlayer.durationStream.listen(_handleDurationChange);
-    _currentIndexSubscription =
-        audioPlayer.currentIndexStream.listen(_handleCurrentSongIndexChanged);
-    _sequenceStateSubscription =
-        audioPlayer.sequenceStateStream.listen(_handleSequenceStateChange);
+    _playbackEventSubscription = audioPlayer.playbackEventStream.listen(
+      _handlePlaybackEvent,
+    );
+    _durationSubscription = audioPlayer.durationStream.listen(
+      _handleDurationChange,
+    );
+    _currentIndexSubscription = audioPlayer.currentIndexStream.listen(
+      _handleCurrentSongIndexChanged,
+    );
+    _sequenceStateSubscription = audioPlayer.sequenceStateStream.listen(
+      _handleSequenceStateChange,
+    );
   }
 
   void _updatePlaybackState() {
@@ -165,9 +165,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
         androidCompactActionIndices: const [0, 1, 2],
         processingState: processingStateMap[audioPlayer.processingState]!,
         repeatMode: repeatNotifier.value,
-        shuffleMode: audioPlayer.shuffleModeEnabled
-            ? AudioServiceShuffleMode.all
-            : AudioServiceShuffleMode.none,
+        shuffleMode:
+            audioPlayer.shuffleModeEnabled
+                ? AudioServiceShuffleMode.all
+                : AudioServiceShuffleMode.none,
         playing: audioPlayer.playing,
         updatePosition: audioPlayer.position,
         bufferedPosition: audioPlayer.bufferedPosition,
@@ -222,13 +223,15 @@ class MusifyAudioHandler extends BaseAudioHandler {
     await super.onTaskRemoved();
   }
 
-  bool get hasNext => activePlaylist['list'].isEmpty
-      ? audioPlayer.hasNext
-      : activeSongId + 1 < activePlaylist['list'].length;
+  bool get hasNext =>
+      activePlaylist['list'].isEmpty
+          ? audioPlayer.hasNext
+          : activeSongId + 1 < activePlaylist['list'].length;
 
-  bool get hasPrevious => activePlaylist['list'].isEmpty
-      ? audioPlayer.hasPrevious
-      : activeSongId > 0;
+  bool get hasPrevious =>
+      activePlaylist['list'].isEmpty
+          ? audioPlayer.hasPrevious
+          : activeSongId > 0;
 
   @override
   Future<void> play() => audioPlayer.play();
@@ -250,9 +253,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
   Future<void> playSong(Map song) async {
     try {
       final isOffline = song['isOffline'] ?? false;
-      final songUrl = isOffline
-          ? song['audioPath']
-          : await getSong(song['ytid'], song['isLive']);
+      final songUrl =
+          isOffline
+              ? song['audioPath']
+              : await getSong(song['ytid'], song['isLive']);
 
       final audioSource = await buildAudioSource(song, songUrl, isOffline);
 
@@ -285,8 +289,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
       return audioSource;
     }
 
-    final spbAudioSource =
-        await checkIfSponsorBlockIsAvailable(audioSource, song['ytid']);
+    final spbAudioSource = await checkIfSponsorBlockIsAvailable(
+      audioSource,
+      song['ytid'],
+    );
     return spbAudioSource ?? audioSource;
   }
 
@@ -299,17 +305,18 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
       if (segments.isNotEmpty) {
         final start = Duration(seconds: segments[0]['end']!);
-        final end = segments.length > 1
-            ? Duration(seconds: segments[1]['start']!)
-            : null;
+        final end =
+            segments.length > 1
+                ? Duration(seconds: segments[1]['start']!)
+                : null;
 
         return end != null && end != Duration.zero && start < end
             ? ClippingAudioSource(
-                child: audioSource,
-                start: start,
-                end: end,
-                tag: audioSource.tag,
-              )
+              child: audioSource,
+              start: start,
+              end: end,
+              tag: audioSource.tag,
+            )
             : null;
       }
     } catch (e, stackTrace) {
@@ -320,9 +327,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   Future<void> skipToSong(int newIndex) async {
     if (newIndex >= 0 && newIndex < activePlaylist['list'].length) {
-      activeSongId = shuffleNotifier.value
-          ? _generateRandomIndex(activePlaylist['list'].length)
-          : newIndex;
+      activeSongId =
+          shuffleNotifier.value
+              ? _generateRandomIndex(activePlaylist['list'].length)
+              : newIndex;
 
       await playSong(activePlaylist['list'][activeSongId]);
     }

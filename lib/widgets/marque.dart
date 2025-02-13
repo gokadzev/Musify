@@ -61,9 +61,10 @@ class _MarqueeWidgetState extends State<MarqueeWidget> {
     return SingleChildScrollView(
       scrollDirection: widget.direction,
       controller: scrollController,
-      physics: widget.manualScrollEnabled
-          ? const AlwaysScrollableScrollPhysics()
-          : const NeverScrollableScrollPhysics(),
+      physics:
+          widget.manualScrollEnabled
+              ? const AlwaysScrollableScrollPhysics()
+              : const NeverScrollableScrollPhysics(),
       child: widget.child,
     );
   }

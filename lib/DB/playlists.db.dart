@@ -511,5 +511,5 @@ List<Map<String, dynamic>> playlistsDB = [
     'image':
         'https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da84fa66fb0b18a66df9963b542b',
     'list': [],
-  }
+  },
 ];

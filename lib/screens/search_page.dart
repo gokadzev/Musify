@@ -84,10 +84,7 @@ class _SearchPageState extends State<SearchPage> {
 
     try {
       _songsSearchResult = await fetchSongsList(query);
-      _albumsSearchResult = await getPlaylists(
-        query: query,
-        type: 'album',
-      );
+      _albumsSearchResult = await getPlaylists(query: query, type: 'album');
       _playlistsSearchResult = await getPlaylists(
         query: query,
         type: 'playlist',
@@ -135,14 +132,16 @@ class _SearchPageState extends State<SearchPage> {
                 padding: const EdgeInsets.all(7),
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                itemCount: _suggestionsList.isEmpty
-                    ? searchHistory.length
-                    : _suggestionsList.length,
+                itemCount:
+                    _suggestionsList.isEmpty
+                        ? searchHistory.length
+                        : _suggestionsList.length,
                 itemBuilder: (BuildContext context, int index) {
                   final suggestionsNotAvailable = _suggestionsList.isEmpty;
-                  final query = suggestionsNotAvailable
-                      ? searchHistory[index]
-                      : _suggestionsList[index];
+                  final query =
+                      suggestionsNotAvailable
+                          ? searchHistory[index]
+                          : _suggestionsList[index];
 
                   final borderRadius = getItemBorderRadius(
                     index,
@@ -169,11 +168,7 @@ class _SearchPageState extends State<SearchPage> {
                           searchHistory.remove(query);
                         });
 
-                        addOrUpdateData(
-                          'user',
-                          'searchHistory',
-                          searchHistory,
-                        );
+                        addOrUpdateData('user', 'searchHistory', searchHistory);
                       }
                     },
                   );
@@ -187,9 +182,10 @@ class _SearchPageState extends State<SearchPage> {
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     padding: const EdgeInsets.all(7),
-                    itemCount: _songsSearchResult.length > maxSongsInList
-                        ? maxSongsInList
-                        : _songsSearchResult.length,
+                    itemCount:
+                        _songsSearchResult.length > maxSongsInList
+                            ? maxSongsInList
+                            : _songsSearchResult.length,
                     itemBuilder: (BuildContext context, int index) {
                       final borderRadius = getItemBorderRadius(
                         index,
@@ -212,9 +208,10 @@ class _SearchPageState extends State<SearchPage> {
                     ListView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      itemCount: _albumsSearchResult.length > maxSongsInList
-                          ? maxSongsInList
-                          : _albumsSearchResult.length,
+                      itemCount:
+                          _albumsSearchResult.length > maxSongsInList
+                              ? maxSongsInList
+                              : _albumsSearchResult.length,
                       itemBuilder: (BuildContext context, int index) {
                         final playlist = _albumsSearchResult[index];
 
@@ -243,9 +240,10 @@ class _SearchPageState extends State<SearchPage> {
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       padding: commonListViewBottmomPadding,
-                      itemCount: _playlistsSearchResult.length > maxSongsInList
-                          ? maxSongsInList
-                          : _playlistsSearchResult.length,
+                      itemCount:
+                          _playlistsSearchResult.length > maxSongsInList
+                              ? maxSongsInList
+                              : _playlistsSearchResult.length,
                       itemBuilder: (BuildContext context, int index) {
                         final playlist = _playlistsSearchResult[index];
                         return PlaylistBar(

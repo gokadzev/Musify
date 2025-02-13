@@ -51,11 +51,7 @@ class AnnouncementBox extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
             child: Row(
               children: [
-                Icon(
-                  Icons.notifications,
-                  color: textColor,
-                  size: 32,
-                ),
+                Icon(Icons.notifications, color: textColor, size: 32),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Text(

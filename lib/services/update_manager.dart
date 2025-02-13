@@ -119,10 +119,7 @@ Future<void> checkAppUpdates() async {
             FilledButton(
               onPressed: () {
                 getDownloadUrl(map).then(
-                  (url) => {
-                    launchURL(Uri.parse(url)),
-                    Navigator.pop(context),
-                  },
+                  (url) => {launchURL(Uri.parse(url)), Navigator.pop(context)},
                 );
               },
               child: Text(context.l10n!.download.toUpperCase()),
@@ -139,15 +136,17 @@ Future<void> checkAppUpdates() async {
 bool isLatestVersionHigher(String appVersion, String latestVersion) {
   final parsedAppVersion = appVersion.split('.');
   final parsedAppLatestVersion = latestVersion.split('.');
-  final length = parsedAppVersion.length > parsedAppLatestVersion.length
-      ? parsedAppVersion.length
-      : parsedAppLatestVersion.length;
+  final length =
+      parsedAppVersion.length > parsedAppLatestVersion.length
+          ? parsedAppVersion.length
+          : parsedAppLatestVersion.length;
   for (var i = 0; i < length; i++) {
     final value1 =
         i < parsedAppVersion.length ? int.parse(parsedAppVersion[i]) : 0;
-    final value2 = i < parsedAppLatestVersion.length
-        ? int.parse(parsedAppLatestVersion[i])
-        : 0;
+    final value2 =
+        i < parsedAppLatestVersion.length
+            ? int.parse(parsedAppLatestVersion[i])
+            : 0;
     if (value2 > value1) {
       return true;
     } else if (value2 < value1) {
@@ -167,9 +166,10 @@ Future<String> getCPUArchitecture() async {
 
 Future<String> getDownloadUrl(Map<String, dynamic> map) async {
   final cpuArchitecture = await getCPUArchitecture();
-  final url = cpuArchitecture == 'aarch64'
-      ? map[downloadUrlArm64Key].toString()
-      : map[downloadUrlKey].toString();
+  final url =
+      cpuArchitecture == 'aarch64'
+          ? map[downloadUrlArm64Key].toString()
+          : map[downloadUrlKey].toString();
 
   return url;
 }

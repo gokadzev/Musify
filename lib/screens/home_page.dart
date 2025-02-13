@@ -96,9 +96,10 @@ class _HomePageState extends State<HomePage> {
   Widget _buildPlaylistSection(BuildContext context, List<dynamic> playlists) {
     final playlistHeight = MediaQuery.sizeOf(context).height * 0.25 / 1.1;
 
-    final itemsNumber = playlists.length > recommendedCubesNumber
-        ? recommendedCubesNumber
-        : playlists.length;
+    final itemsNumber =
+        playlists.length > recommendedCubesNumber
+            ? recommendedCubesNumber
+            : playlists.length;
 
     final isLargeScreen = MediaQuery.of(context).size.width > 480;
 
@@ -107,50 +108,49 @@ class _HomePageState extends State<HomePage> {
         _buildSectionHeader(title: context.l10n!.suggestedPlaylists),
         ConstrainedBox(
           constraints: BoxConstraints(maxHeight: playlistHeight),
-          child: isLargeScreen
-              ? ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: itemsNumber,
-                  itemBuilder: (context, index) {
-                    final playlist = playlists[index];
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: GestureDetector(
-                        onTap: () => Navigator.push(
+          child:
+              isLargeScreen
+                  ? ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: itemsNumber,
+                    itemBuilder: (context, index) {
+                      final playlist = playlists[index];
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: GestureDetector(
+                          onTap:
+                              () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) => PlaylistPage(
+                                        playlistId: playlist['ytid'],
+                                      ),
+                                ),
+                              ),
+                          child: PlaylistCube(playlist, size: playlistHeight),
+                        ),
+                      );
+                    },
+                  )
+                  : CarouselView.weighted(
+                    flexWeights: const <int>[3, 2, 1],
+                    itemSnapping: true,
+                    onTap:
+                        (index) => Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => PlaylistPage(
-                              playlistId: playlist['ytid'],
-                            ),
+                            builder:
+                                (context) => PlaylistPage(
+                                  playlistId: playlists[index]['ytid'],
+                                ),
                           ),
                         ),
-                        child: PlaylistCube(
-                          playlist,
-                          size: playlistHeight,
-                        ),
-                      ),
-                    );
-                  },
-                )
-              : CarouselView.weighted(
-                  flexWeights: const <int>[3, 2, 1],
-                  itemSnapping: true,
-                  onTap: (index) => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PlaylistPage(
-                        playlistId: playlists[index]['ytid'],
-                      ),
-                    ),
+                    children: List.generate(itemsNumber, (index) {
+                      final playlist = playlists[index];
+                      return PlaylistCube(playlist, size: playlistHeight * 2);
+                    }),
                   ),
-                  children: List.generate(itemsNumber, (index) {
-                    final playlist = playlists[index];
-                    return PlaylistCube(
-                      playlist,
-                      size: playlistHeight * 2,
-                    );
-                  }),
-                ),
         ),
       ],
     );
@@ -193,10 +193,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildLoadingWidget() {
     return const Center(
-      child: Padding(
-        padding: EdgeInsets.all(35),
-        child: Spinner(),
-      ),
+      child: Padding(padding: EdgeInsets.all(35), child: Spinner()),
     );
   }
 
@@ -219,9 +216,10 @@ class _HomePageState extends State<HomePage> {
   }) {
     final contentHeight = MediaQuery.sizeOf(context).height * 0.25;
 
-    final itemsNumber = data.length > recommendedCubesNumber
-        ? recommendedCubesNumber
-        : data.length;
+    final itemsNumber =
+        data.length > recommendedCubesNumber
+            ? recommendedCubesNumber
+            : data.length;
 
     final isLargeScreen = MediaQuery.of(context).size.width > 480;
 
@@ -232,56 +230,65 @@ class _HomePageState extends State<HomePage> {
         if (showArtists)
           ConstrainedBox(
             constraints: BoxConstraints(maxHeight: contentHeight),
-            child: isLargeScreen
-                ? ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: itemsNumber,
-                    itemBuilder: (context, index) {
-                      final artist = data[index]['artist'].split('~')[0];
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: GestureDetector(
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => PlaylistPage(
-                                cubeIcon: FluentIcons.mic_sparkle_24_regular,
-                                playlistId: artist,
-                                isArtist: true,
-                              ),
+            child:
+                isLargeScreen
+                    ? ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: itemsNumber,
+                      itemBuilder: (context, index) {
+                        final artist = data[index]['artist'].split('~')[0];
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: GestureDetector(
+                            onTap:
+                                () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (context) => PlaylistPage(
+                                          cubeIcon:
+                                              FluentIcons
+                                                  .mic_sparkle_24_regular,
+                                          playlistId: artist,
+                                          isArtist: true,
+                                        ),
+                                  ),
+                                ),
+                            child: PlaylistCube(
+                              {'title': artist},
+                              cubeIcon: FluentIcons.mic_sparkle_24_regular,
+                              size: contentHeight,
                             ),
                           ),
-                          child: PlaylistCube(
-                            {'title': artist},
-                            cubeIcon: FluentIcons.mic_sparkle_24_regular,
-                            size: contentHeight,
+                        );
+                      },
+                    )
+                    : CarouselView.weighted(
+                      flexWeights: const <int>[3, 2, 1],
+                      itemSnapping: true,
+                      onTap:
+                          (index) => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (context) => PlaylistPage(
+                                    cubeIcon:
+                                        FluentIcons.mic_sparkle_24_regular,
+                                    playlistId:
+                                        data[index]['artist'].split('~')[0],
+                                    isArtist: true,
+                                  ),
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                  )
-                : CarouselView.weighted(
-                    flexWeights: const <int>[3, 2, 1],
-                    itemSnapping: true,
-                    onTap: (index) => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PlaylistPage(
+                      children: List.generate(itemsNumber, (index) {
+                        final artist = data[index]['artist'].split('~')[0];
+                        return PlaylistCube(
+                          {'title': artist},
                           cubeIcon: FluentIcons.mic_sparkle_24_regular,
-                          playlistId: data[index]['artist'].split('~')[0],
-                          isArtist: true,
-                        ),
-                      ),
+                          size: contentHeight * 2,
+                        );
+                      }),
                     ),
-                    children: List.generate(itemsNumber, (index) {
-                      final artist = data[index]['artist'].split('~')[0];
-                      return PlaylistCube(
-                        {'title': artist},
-                        cubeIcon: FluentIcons.mic_sparkle_24_regular,
-                        size: contentHeight * 2,
-                      );
-                    }),
-                  ),
           ),
         _buildSectionHeader(
           title: context.l10n!.recommendedForYou,
@@ -307,11 +314,7 @@ class _HomePageState extends State<HomePage> {
           padding: commonListViewBottmomPadding,
           itemBuilder: (context, index) {
             final borderRadius = getItemBorderRadius(index, data.length);
-            return SongBar(
-              data[index],
-              true,
-              borderRadius: borderRadius,
-            );
+            return SongBar(data[index], true, borderRadius: borderRadius);
           },
         ),
       ],

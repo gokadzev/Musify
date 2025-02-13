@@ -31,10 +31,7 @@ import 'package:musify/widgets/playlist_header.dart';
 import 'package:musify/widgets/song_bar.dart';
 
 class UserSongsPage extends StatefulWidget {
-  const UserSongsPage({
-    super.key,
-    required this.page,
-  });
+  const UserSongsPage({super.key, required this.page});
 
   final String page;
 
@@ -65,9 +62,10 @@ class _UserSongsPageState extends State<UserSongsPage> {
               },
               icon: Icon(
                 FluentIcons.re_order_24_filled,
-                color: _isEditEnabled
-                    ? Theme.of(context).colorScheme.inversePrimary
-                    : Theme.of(context).colorScheme.primary,
+                color:
+                    _isEditEnabled
+                        ? Theme.of(context).colorScheme.inversePrimary
+                        : Theme.of(context).colorScheme.primary,
               ),
             ),
         ],
@@ -132,11 +130,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
   }
 
   Widget buildPlaylistHeader(String title, IconData icon, int songsLength) {
-    return PlaylistHeader(
-      _buildPlaylistImage(title, icon),
-      title,
-      songsLength,
-    );
+    return PlaylistHeader(_buildPlaylistImage(title, icon), title, songsLength);
   }
 
   Widget _buildPlaylistImage(String title, IconData icon) {
@@ -176,12 +170,14 @@ class _UserSongsPageState extends State<UserSongsPage> {
                 child: SongBar(
                   song,
                   true,
-                  onPlay: () => {
-                    audioHandler.playPlaylistSong(
-                      playlist: activePlaylist != _playlist ? _playlist : null,
-                      songIndex: index,
-                    ),
-                  },
+                  onPlay:
+                      () => {
+                        audioHandler.playPlaylistSong(
+                          playlist:
+                              activePlaylist != _playlist ? _playlist : null,
+                          songIndex: index,
+                        ),
+                      },
                   borderRadius: borderRadius,
                 ),
               );
@@ -197,28 +193,29 @@ class _UserSongsPageState extends State<UserSongsPage> {
           );
         } else {
           return SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (BuildContext context, int index) {
-                final song = songsList[index];
-                song['isOffline'] = title == context.l10n!.offlineSongs;
+            delegate: SliverChildBuilderDelegate((
+              BuildContext context,
+              int index,
+            ) {
+              final song = songsList[index];
+              song['isOffline'] = title == context.l10n!.offlineSongs;
 
-                final borderRadius =
-                    getItemBorderRadius(index, songsList.length);
+              final borderRadius = getItemBorderRadius(index, songsList.length);
 
-                return SongBar(
-                  song,
-                  true,
-                  onPlay: () => {
-                    audioHandler.playPlaylistSong(
-                      playlist: activePlaylist != _playlist ? _playlist : null,
-                      songIndex: index,
-                    ),
-                  },
-                  borderRadius: borderRadius,
-                );
-              },
-              childCount: songsList.length,
-            ),
+              return SongBar(
+                song,
+                true,
+                onPlay:
+                    () => {
+                      audioHandler.playPlaylistSong(
+                        playlist:
+                            activePlaylist != _playlist ? _playlist : null,
+                        songIndex: index,
+                      ),
+                    },
+                borderRadius: borderRadius,
+              );
+            }, childCount: songsList.length),
           );
         }
       },

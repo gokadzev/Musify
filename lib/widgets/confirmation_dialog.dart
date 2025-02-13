@@ -41,14 +41,8 @@ class ConfirmationDialog extends StatelessWidget {
       title: Text(context.l10n!.confirmation),
       content: confirmationMessage != null ? Text(confirmationMessage!) : null,
       actions: <Widget>[
-        TextButton(
-          onPressed: onCancel,
-          child: Text(context.l10n!.cancel),
-        ),
-        TextButton(
-          onPressed: onSubmit,
-          child: Text(context.l10n!.remove),
-        ),
+        TextButton(onPressed: onCancel, child: Text(context.l10n!.cancel)),
+        TextButton(onPressed: onSubmit, child: Text(context.l10n!.remove)),
       ],
     );
   }

@@ -45,14 +45,20 @@ class MiniPlayer extends StatelessWidget {
               pageBuilder: (context, animation, secondaryAnimation) {
                 return const NowPlayingPage();
               },
-              transitionsBuilder:
-                  (context, animation, secondaryAnimation, child) {
+              transitionsBuilder: (
+                context,
+                animation,
+                secondaryAnimation,
+                child,
+              ) {
                 const begin = Offset(0, 1);
                 const end = Offset.zero;
 
                 final tween = Tween(begin: begin, end: end);
-                final curve =
-                    CurvedAnimation(parent: animation, curve: Curves.easeInOut);
+                final curve = CurvedAnimation(
+                  parent: animation,
+                  curve: Curves.easeInOut,
+                );
 
                 final offsetAnimation = tween.animate(curve);
 
@@ -62,32 +68,38 @@ class MiniPlayer extends StatelessWidget {
           );
         }
       },
-      onTap: () => Navigator.push(
-        context,
-        PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) {
-            return const NowPlayingPage();
-          },
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            const begin = Offset(0, 1);
-            const end = Offset.zero;
+      onTap:
+          () => Navigator.push(
+            context,
+            PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) {
+                return const NowPlayingPage();
+              },
+              transitionsBuilder: (
+                context,
+                animation,
+                secondaryAnimation,
+                child,
+              ) {
+                const begin = Offset(0, 1);
+                const end = Offset.zero;
 
-            final tween = Tween(begin: begin, end: end);
-            final curve =
-                CurvedAnimation(parent: animation, curve: Curves.easeInOut);
+                final tween = Tween(begin: begin, end: end);
+                final curve = CurvedAnimation(
+                  parent: animation,
+                  curve: Curves.easeInOut,
+                );
 
-            final offsetAnimation = tween.animate(curve);
+                final offsetAnimation = tween.animate(curve);
 
-            return SlideTransition(position: offsetAnimation, child: child);
-          },
-        ),
-      ),
+                return SlideTransition(position: offsetAnimation, child: child);
+              },
+            ),
+          ),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 18),
         height: 75,
-        decoration: BoxDecoration(
-          color: colorScheme.surfaceContainerHigh,
-        ),
+        decoration: BoxDecoration(color: colorScheme.surfaceContainerHigh),
         child: Row(
           children: <Widget>[
             _buildArtwork(),
@@ -100,8 +112,10 @@ class MiniPlayer extends StatelessWidget {
                   builder: (context, snapshot) {
                     final processingState = snapshot.data?.processingState;
                     final isPlaying = snapshot.data?.playing ?? false;
-                    final iconDataAndAction =
-                        getIconFromState(processingState, isPlaying);
+                    final iconDataAndAction = getIconFromState(
+                      processingState,
+                      isPlaying,
+                    );
                     return GestureDetector(
                       onTap: iconDataAndAction.onPressed,
                       child: Icon(

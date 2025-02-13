@@ -63,11 +63,7 @@ void clearCache() async {
   await _cacheBox.clear();
 }
 
-Future<bool> isCacheValid(
-  Box box,
-  String key,
-  Duration cachingDuration,
-) async {
+Future<bool> isCacheValid(Box box, String key, Duration cachingDuration) async {
   final date = box.get('${key}_date');
   if (date == null) {
     return false;
@@ -112,9 +108,7 @@ Future<String> backupData(BuildContext context) async {
 
 Future<String> restoreData(BuildContext context) async {
   final boxNames = ['user', 'settings'];
-  final backupFiles = await FilePicker.platform.pickFiles(
-    allowMultiple: true,
-  );
+  final backupFiles = await FilePicker.platform.pickFiles(allowMultiple: true);
 
   if (backupFiles == null || backupFiles.files.isEmpty) {
     return '${context.l10n!.chooseBackupFiles}!';
@@ -124,10 +118,11 @@ Future<String> restoreData(BuildContext context) async {
     for (final boxName in boxNames) {
       final _file = backupFiles.files.firstWhere(
         (file) => file.name == '$boxName.hive',
-        orElse: () => PlatformFile(
-          name: '',
-          size: 0,
-        ), // Create a PlatformFile with null path if not found
+        orElse:
+            () => PlatformFile(
+              name: '',
+              size: 0,
+            ), // Create a PlatformFile with null path if not found
       );
 
       if (_file.path != null && _file.path!.isNotEmpty && _file.size != 0) {

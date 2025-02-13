@@ -47,9 +47,7 @@ class NavigationManager {
           StatefulNavigationShell navigationShell,
         ) {
           return getPage(
-            child: BottomNavigationPage(
-              child: navigationShell,
-            ),
+            child: BottomNavigationPage(child: navigationShell),
             state: state,
           );
         },
@@ -100,10 +98,7 @@ class NavigationManager {
           GoRoute(
             path: homePath,
             pageBuilder: (context, GoRouterState state) {
-              return getPage(
-                child: const HomePage(),
-                state: state,
-              );
+              return getPage(child: const HomePage(), state: state);
             },
             routes: [
               GoRoute(
@@ -120,10 +115,7 @@ class NavigationManager {
           GoRoute(
             path: searchPath,
             pageBuilder: (context, GoRouterState state) {
-              return getPage(
-                child: const SearchPage(),
-                state: state,
-              );
+              return getPage(child: const SearchPage(), state: state);
             },
           ),
         ],
@@ -134,17 +126,15 @@ class NavigationManager {
           GoRoute(
             path: libraryPath,
             pageBuilder: (context, GoRouterState state) {
-              return getPage(
-                child: const LibraryPage(),
-                state: state,
-              );
+              return getPage(child: const LibraryPage(), state: state);
             },
             routes: [
               GoRoute(
                 path: 'userSongs/:page',
-                builder: (context, state) => UserSongsPage(
-                  page: state.pathParameters['page'] ?? 'liked',
-                ),
+                builder:
+                    (context, state) => UserSongsPage(
+                      page: state.pathParameters['page'] ?? 'liked',
+                    ),
               ),
             ],
           ),
@@ -156,18 +146,16 @@ class NavigationManager {
           GoRoute(
             path: settingsPath,
             pageBuilder: (context, state) {
-              return getPage(
-                child: const SettingsPage(),
-                state: state,
-              );
+              return getPage(child: const SettingsPage(), state: state);
             },
             routes: [
               GoRoute(
                 path: 'license',
-                builder: (context, state) => const LicensePage(
-                  applicationName: 'Musify',
-                  applicationVersion: appVersion,
-                ),
+                builder:
+                    (context, state) => const LicensePage(
+                      applicationName: 'Musify',
+                      applicationVersion: appVersion,
+                    ),
               ),
               GoRoute(
                 path: 'about',
@@ -202,18 +190,16 @@ class NavigationManager {
           GoRoute(
             path: settingsPath,
             pageBuilder: (context, state) {
-              return getPage(
-                child: const SettingsPage(),
-                state: state,
-              );
+              return getPage(child: const SettingsPage(), state: state);
             },
             routes: [
               GoRoute(
                 path: 'license',
-                builder: (context, state) => const LicensePage(
-                  applicationName: 'Musify',
-                  applicationVersion: appVersion,
-                ),
+                builder:
+                    (context, state) => const LicensePage(
+                      applicationName: 'Musify',
+                      applicationVersion: appVersion,
+                    ),
               ),
               GoRoute(
                 path: 'about',
@@ -226,13 +212,7 @@ class NavigationManager {
     ];
   }
 
-  static Page getPage({
-    required Widget child,
-    required GoRouterState state,
-  }) {
-    return MaterialPage(
-      key: state.pageKey,
-      child: child,
-    );
+  static Page getPage({required Widget child, required GoRouterState state}) {
+    return MaterialPage(key: state.pageKey, child: child);
   }
 }

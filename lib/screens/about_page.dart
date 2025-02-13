@@ -31,9 +31,7 @@ class AboutPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(context.l10n!.about),
-      ),
+      appBar: AppBar(title: Text(context.l10n!.about)),
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
@@ -50,11 +48,7 @@ class AboutPage extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
             ),
-            const Divider(
-              color: Colors.white24,
-              thickness: 0.8,
-              height: 50,
-            ),
+            const Divider(color: Colors.white24, thickness: 0.8, height: 50),
             Card(
               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: ListTile(
@@ -83,18 +77,14 @@ class AboutPage extends StatelessWidget {
                       icon: const Icon(FluentIcons.code_24_filled),
                       tooltip: 'Github',
                       onPressed: () {
-                        launchURL(
-                          Uri.parse('https://github.com/gokadzev'),
-                        );
+                        launchURL(Uri.parse('https://github.com/gokadzev'));
                       },
                     ),
                     IconButton(
                       icon: const Icon(FluentIcons.globe_24_filled),
                       tooltip: 'Website',
                       onPressed: () {
-                        launchURL(
-                          Uri.parse('https://gokadzev.github.io'),
-                        );
+                        launchURL(Uri.parse('https://gokadzev.github.io'));
                       },
                     ),
                   ],

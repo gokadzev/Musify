@@ -47,10 +47,7 @@ class BottomSheetBar extends StatelessWidget {
           splashColor: Colors.transparent,
           highlightColor: Colors.transparent,
           onTap: onTap,
-          child: ListTile(
-            minTileHeight: 45,
-            title: Text(title),
-          ),
+          child: ListTile(minTileHeight: 45, title: Text(title)),
         ),
       ),
     );

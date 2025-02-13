@@ -858,5 +858,5 @@ List albumsDB = [
     'image': 'https://i.scdn.co/image/ab67616d0000b2737e7f1d0bdb2bb5a2afc4fb25',
     'isAlbum': true,
     'list': [],
-  }
+  },
 ];

@@ -35,8 +35,8 @@ class PlaylistCube extends StatelessWidget {
     this.size = 220,
     this.borderRadius = 13,
   }) : playlistLikeStatus = ValueNotifier<bool>(
-          isPlaylistAlreadyLiked(playlist['ytid']),
-        );
+         isPlaylistAlreadyLiked(playlist['ytid']),
+       );
 
   final Map? playlistData;
   final Map playlist;
@@ -78,24 +78,25 @@ class PlaylistCube extends StatelessWidget {
   Widget _buildImage(BuildContext context) {
     return playlist['image'] != null
         ? CachedNetworkImage(
-            key: Key(playlist['image'].toString()),
-            imageUrl: playlist['image'].toString(),
-            height: size,
-            width: size,
-            fit: BoxFit.cover,
-            errorWidget: (context, url, error) => NullArtworkWidget(
-              icon: cubeIcon,
-              iconSize: iconSize,
-              size: size,
-              title: playlist['title'],
-            ),
-          )
+          key: Key(playlist['image'].toString()),
+          imageUrl: playlist['image'].toString(),
+          height: size,
+          width: size,
+          fit: BoxFit.cover,
+          errorWidget:
+              (context, url, error) => NullArtworkWidget(
+                icon: cubeIcon,
+                iconSize: iconSize,
+                size: size,
+                title: playlist['title'],
+              ),
+        )
         : NullArtworkWidget(
-            icon: cubeIcon,
-            iconSize: iconSize,
-            size: size,
-            title: playlist['title'],
-          );
+          icon: cubeIcon,
+          iconSize: iconSize,
+          size: size,
+          title: playlist['title'],
+        );
   }
 
   Widget _buildLabel(BuildContext context) {
@@ -111,8 +112,8 @@ class PlaylistCube extends StatelessWidget {
             ? context.l10n!.album
             : context.l10n!.playlist,
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: colorScheme.onSecondaryContainer,
-            ),
+          color: colorScheme.onSecondaryContainer,
+        ),
       ),
     );
   }

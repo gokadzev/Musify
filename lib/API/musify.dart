@@ -44,15 +44,19 @@ List globalSongs = [];
 
 List playlists = [...playlistsDB, ...albumsDB];
 List userPlaylists = Hive.box('user').get('playlists', defaultValue: []);
-List userCustomPlaylists =
-    Hive.box('user').get('customPlaylists', defaultValue: []);
+List userCustomPlaylists = Hive.box(
+  'user',
+).get('customPlaylists', defaultValue: []);
 List userLikedSongsList = Hive.box('user').get('likedSongs', defaultValue: []);
-List userLikedPlaylists =
-    Hive.box('user').get('likedPlaylists', defaultValue: []);
-List userRecentlyPlayed =
-    Hive.box('user').get('recentlyPlayedSongs', defaultValue: []);
-List userOfflineSongs =
-    Hive.box('userNoBackup').get('offlineSongs', defaultValue: []);
+List userLikedPlaylists = Hive.box(
+  'user',
+).get('likedPlaylists', defaultValue: []);
+List userRecentlyPlayed = Hive.box(
+  'user',
+).get('recentlyPlayedSongs', defaultValue: []);
+List userOfflineSongs = Hive.box(
+  'userNoBackup',
+).get('offlineSongs', defaultValue: []);
 List suggestedPlaylists = [];
 List onlinePlaylists = [];
 Map activePlaylist = {
@@ -72,11 +76,13 @@ List<YoutubeApiClient> userChosenClients = [
 dynamic nextRecommendedSong;
 
 final currentLikedSongsLength = ValueNotifier<int>(userLikedSongsList.length);
-final currentLikedPlaylistsLength =
-    ValueNotifier<int>(userLikedPlaylists.length);
+final currentLikedPlaylistsLength = ValueNotifier<int>(
+  userLikedPlaylists.length,
+);
 final currentOfflineSongsLength = ValueNotifier<int>(userOfflineSongs.length);
-final currentRecentlyPlayedLength =
-    ValueNotifier<int>(userRecentlyPlayed.length);
+final currentRecentlyPlayedLength = ValueNotifier<int>(
+  userRecentlyPlayed.length,
+);
 
 final lyrics = ValueNotifier<String?>(null);
 String? lastFetchedLyrics;
@@ -101,8 +107,9 @@ Future<List> getRecommendedSongs() async {
       for (var i = 0; i < 3; i++) {
         final song = await _yt.videos.get(userRecentlyPlayed[i]['ytid']);
         final relatedSongs = await _yt.videos.getRelatedVideos(song) ?? [];
-        playlistSongs
-            .addAll(relatedSongs.take(3).map((s) => returnSongLayout(0, s)));
+        playlistSongs.addAll(
+          relatedSongs.take(3).map((s) => returnSongLayout(0, s)),
+        );
       }
       playlistSongs.shuffle();
       return playlistSongs;
@@ -156,11 +163,7 @@ Future<List<dynamic>> getUserPlaylists() async {
         'source': 'user-youtube',
         'list': [],
       });
-      logger.log(
-        'Error occurred while fetching the playlist:',
-        e,
-        stackTrace,
-      );
+      logger.log('Error occurred while fetching the playlist:', e, stackTrace);
     }
   }
   return playlistsByUser;
@@ -245,8 +248,9 @@ String addSongInCustomPlaylist(
 
   if (customPlaylist != null) {
     final List<dynamic> playlistSongs = customPlaylist['list'];
-    if (playlistSongs
-        .any((playlistElement) => playlistElement['ytid'] == song['ytid'])) {
+    if (playlistSongs.any(
+      (playlistElement) => playlistElement['ytid'] == song['ytid'],
+    )) {
       return context.l10n!.songAlreadyInPlaylist;
     }
     indexToInsert != null
@@ -307,8 +311,9 @@ void removeUserCustomPlaylist(dynamic playlist) {
 
 Future<void> updateSongLikeStatus(dynamic songId, bool add) async {
   if (add) {
-    userLikedSongsList
-        .add(await getSongDetails(userLikedSongsList.length, songId));
+    userLikedSongsList.add(
+      await getSongDetails(userLikedSongsList.length, songId),
+    );
   } else {
     userLikedSongsList.removeWhere((song) => song['ytid'] == songId);
   }
@@ -324,10 +329,7 @@ void moveLikedSong(int oldIndex, int newIndex) {
   addOrUpdateData('user', 'likedSongs', userLikedSongsList);
 }
 
-Future<void> updatePlaylistLikeStatus(
-  String playlistId,
-  bool add,
-) async {
+Future<void> updatePlaylistLikeStatus(String playlistId, bool add) async {
   try {
     if (add) {
       final playlist = playlists.firstWhere(
@@ -341,8 +343,9 @@ Future<void> updatePlaylistLikeStatus(
         userLikedPlaylists.add(await getPlaylistInfoForWidget(playlistId));
       }
     } else {
-      userLikedPlaylists
-          .removeWhere((playlist) => playlist['ytid'] == playlistId);
+      userLikedPlaylists.removeWhere(
+        (playlist) => playlist['ytid'] == playlistId,
+      );
     }
 
     addOrUpdateData('user', 'likedPlaylists', userLikedPlaylists);
@@ -375,13 +378,14 @@ Future<List> getPlaylists({
   // Filter playlists based on query and type if only query is specified
   if (query != null && playlistsNum == null) {
     final lowercaseQuery = query.toLowerCase();
-    final filteredPlaylists = playlists.where((playlist) {
-      final lowercaseTitle = playlist['title'].toLowerCase();
-      return lowercaseTitle.contains(lowercaseQuery) &&
-          ((type == 'all') ||
-              (type == 'album' && playlist['isAlbum'] == true) ||
-              (type == 'playlist' && playlist['isAlbum'] != true));
-    }).toList();
+    final filteredPlaylists =
+        playlists.where((playlist) {
+          final lowercaseTitle = playlist['title'].toLowerCase();
+          return lowercaseTitle.contains(lowercaseQuery) &&
+              ((type == 'all') ||
+                  (type == 'album' && playlist['isAlbum'] == true) ||
+                  (type == 'playlist' && playlist['isAlbum'] != true));
+        }).toList();
 
     final searchResults = await _yt.search.searchContent(
       type == 'album' ? '$query album' : query,
@@ -391,24 +395,25 @@ Future<List> getPlaylists({
     final existingYtid =
         onlinePlaylists.map((playlist) => playlist['ytid'] as String).toSet();
 
-    final newPlaylists = searchResults
-        .whereType<SearchPlaylist>()
-        .map((playlist) {
-          final playlistMap = {
-            'ytid': playlist.id.toString(),
-            'title': playlist.title,
-            'source': 'youtube',
-            'list': [],
-          };
+    final newPlaylists =
+        searchResults
+            .whereType<SearchPlaylist>()
+            .map((playlist) {
+              final playlistMap = {
+                'ytid': playlist.id.toString(),
+                'title': playlist.title,
+                'source': 'youtube',
+                'list': [],
+              };
 
-          if (!existingYtid.contains(playlistMap['ytid'])) {
-            existingYtid.add(playlistMap['ytid'].toString());
-            return playlistMap;
-          }
-          return null;
-        })
-        .whereType<Map<String, dynamic>>()
-        .toList();
+              if (!existingYtid.contains(playlistMap['ytid'])) {
+                existingYtid.add(playlistMap['ytid'].toString());
+                return playlistMap;
+              }
+              return null;
+            })
+            .whereType<Map<String, dynamic>>()
+            .toList();
 
     onlinePlaylists.addAll(newPlaylists);
     filteredPlaylists.addAll(
@@ -508,12 +513,13 @@ Future<List<Map<String, int>>> getSkipSegments(String id) async {
     );
     if (res.body != 'Not Found') {
       final data = jsonDecode(res.body);
-      final segments = data.map((obj) {
-        return Map.castFrom<String, dynamic, String, int>({
-          'start': obj['segment'].first.toInt(),
-          'end': obj['segment'].last.toInt(),
-        });
-      }).toList();
+      final segments =
+          data.map((obj) {
+            return Map.castFrom<String, dynamic, String, int>({
+              'start': obj['segment'].first.toInt(),
+              'end': obj['segment'].last.toInt(),
+            });
+          }).toList();
       return List.castFrom<dynamic, Map<String, int>>(segments);
     } else {
       return [];
@@ -551,10 +557,7 @@ Future<List> getSongsFromPlaylist(dynamic playlistId) async {
   return songList;
 }
 
-Future updatePlaylistList(
-  BuildContext context,
-  String playlistId,
-) async {
+Future updatePlaylistList(BuildContext context, String playlistId) async {
   final index = findPlaylistIndexByYtId(playlistId);
   if (index != -1) {
     final songList = [];
@@ -585,8 +588,10 @@ Future<Map?> getPlaylistInfoForWidget(
   bool isArtist = false,
 }) async {
   if (!isArtist) {
-    Map? playlist =
-        playlists.firstWhere((list) => list['ytid'] == id, orElse: () => null);
+    Map? playlist = playlists.firstWhere(
+      (list) => list['ytid'] == id,
+      orElse: () => null,
+    );
 
     if (playlist == null) {
       final usPlaylists = await getUserPlaylists();
@@ -610,9 +615,7 @@ Future<Map?> getPlaylistInfoForWidget(
 
     return playlist;
   } else {
-    final playlist = <String, dynamic>{
-      'title': id,
-    };
+    final playlist = <String, dynamic>{'title': id};
 
     playlist['list'] = await fetchSongsList(id);
 
@@ -680,15 +683,13 @@ Future<String> getSong(String songId, bool isLive) async {
 }
 
 Future<String> getLiveStreamUrl(String songId) async {
-  final streamInfo =
-      await _yt.videos.streamsClient.getHttpLiveStreamUrl(VideoId(songId));
+  final streamInfo = await _yt.videos.streamsClient.getHttpLiveStreamUrl(
+    VideoId(songId),
+  );
   return streamInfo;
 }
 
-Future<String> getAudioUrl(
-  String songId,
-  String cacheKey,
-) async {
+Future<String> getAudioUrl(String songId, String cacheKey) async {
   final manifest = await _yt.videos.streamsClient.getManifest(songId);
   final audioQuality = selectAudioQuality(manifest.audioOnly.sortByBitrate());
   final audioUrl = audioQuality.url.toString();
@@ -823,8 +824,10 @@ Future<void> updateRecentlyPlayed(dynamic songId) async {
   userRecentlyPlayed.removeWhere((song) => song['ytid'] == songId);
   currentRecentlyPlayedLength.value = userRecentlyPlayed.length;
 
-  final newSongDetails =
-      await getSongDetails(userRecentlyPlayed.length, songId);
+  final newSongDetails = await getSongDetails(
+    userRecentlyPlayed.length,
+    songId,
+  );
 
   userRecentlyPlayed.insert(0, newSongDetails);
   currentRecentlyPlayedLength.value = userRecentlyPlayed.length;

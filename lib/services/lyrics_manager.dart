@@ -31,14 +31,18 @@ class LyricsManager {
       return lyricsFromGoogle;
     }
 
-    final lyricsFromParolesNet =
-        await _fetchLyricsFromParolesNet(artistName.split(',')[0], title);
+    final lyricsFromParolesNet = await _fetchLyricsFromParolesNet(
+      artistName.split(',')[0],
+      title,
+    );
     if (lyricsFromParolesNet != null) {
       return lyricsFromParolesNet;
     }
 
-    final lyricsFromLyricsMania1 =
-        await _fetchLyricsFromLyricsMania1(artistName, title);
+    final lyricsFromLyricsMania1 = await _fetchLyricsFromLyricsMania1(
+      artistName,
+      title,
+    );
     return lyricsFromLyricsMania1;
   }
 
@@ -68,7 +72,8 @@ class LyricsManager {
       if (lyricsRes.contains('Error 500 (Server Error)')) return null;
       if (lyricsRes.contains(
         'systems have detected unusual traffic from your computer network',
-      )) return null;
+      ))
+        return null;
       return lyricsRes;
     } catch (_) {
       return null;
@@ -93,8 +98,10 @@ class LyricsManager {
         if (lyricsLines.length > 1) {
           lyricsLines.removeAt(0);
 
-          final finalLyrics =
-              addCopyright(lyricsLines.join('\n'), 'www.paroles.net');
+          final finalLyrics = addCopyright(
+            lyricsLines.join('\n'),
+            'www.paroles.net',
+          );
           return _removeSpaces(finalLyrics);
         }
       }

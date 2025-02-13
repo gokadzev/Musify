@@ -38,15 +38,17 @@ final replacementsForSongTitle = {
 };
 
 String formatSongTitle(String title) {
-  final pattern =
-      RegExp(replacementsForSongTitle.keys.map(RegExp.escape).join('|'));
+  final pattern = RegExp(
+    replacementsForSongTitle.keys.map(RegExp.escape).join('|'),
+  );
 
-  var finalTitle = title
-      .replaceAllMapped(
-        pattern,
-        (match) => replacementsForSongTitle[match.group(0)] ?? '',
-      )
-      .trimLeft();
+  var finalTitle =
+      title
+          .replaceAllMapped(
+            pattern,
+            (match) => replacementsForSongTitle[match.group(0)] ?? '',
+          )
+          .trimLeft();
 
   finalTitle = finalTitle.replaceAll(wordsPatternForSongTitle, '');
 
@@ -54,18 +56,18 @@ String formatSongTitle(String title) {
 }
 
 Map<String, dynamic> returnSongLayout(int index, Video song) => {
-      'id': index,
-      'ytid': song.id.toString(),
-      'title': formatSongTitle(
-        song.title.split('-')[song.title.split('-').length - 1],
-      ),
-      'artist': song.title.split('-')[0],
-      'image': song.thumbnails.standardResUrl,
-      'lowResImage': song.thumbnails.lowResUrl,
-      'highResImage': song.thumbnails.maxResUrl,
-      'duration': song.duration?.inSeconds,
-      'isLive': song.isLive,
-    };
+  'id': index,
+  'ytid': song.id.toString(),
+  'title': formatSongTitle(
+    song.title.split('-')[song.title.split('-').length - 1],
+  ),
+  'artist': song.title.split('-')[0],
+  'image': song.thumbnails.standardResUrl,
+  'lowResImage': song.thumbnails.lowResUrl,
+  'highResImage': song.thumbnails.maxResUrl,
+  'duration': song.duration?.inSeconds,
+  'isLive': song.isLive,
+};
 
 String formatDuration(int audioDurationInSeconds) {
   final duration = Duration(seconds: audioDurationInSeconds);

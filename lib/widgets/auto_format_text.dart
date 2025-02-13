@@ -39,10 +39,9 @@ class AutoFormatText extends StatelessWidget {
       spans
         ..add(
           TextSpan(
-            text: text.substring(currentTextIndex, match.start).replaceAll(
-                  '* ',
-                  '• ',
-                ),
+            text: text
+                .substring(currentTextIndex, match.start)
+                .replaceAll('* ', '• '),
             style: textStyle,
           ),
         )
@@ -58,10 +57,7 @@ class AutoFormatText extends StatelessWidget {
 
     spans.add(
       TextSpan(
-        text: text.substring(currentTextIndex).replaceAll(
-              '* ',
-              '• ',
-            ),
+        text: text.substring(currentTextIndex).replaceAll('* ', '• '),
         style: textStyle,
       ),
     );

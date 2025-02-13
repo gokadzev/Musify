@@ -29,10 +29,7 @@ import 'package:musify/services/settings_manager.dart';
 import 'package:musify/widgets/mini_player.dart';
 
 class BottomNavigationPage extends StatefulWidget {
-  const BottomNavigationPage({
-    super.key,
-    required this.child,
-  });
+  const BottomNavigationPage({super.key, required this.child});
 
   final StatefulNavigationShell child;
 
@@ -46,47 +43,39 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
   List<NavigationDestination> _getNavigationDestinations(BuildContext context) {
     return !offlineMode.value
         ? [
-            NavigationDestination(
-              icon: const Icon(FluentIcons.home_24_regular),
-              selectedIcon: const Icon(FluentIcons.home_24_filled),
-              label: context.l10n?.home ?? 'Home',
-            ),
-            NavigationDestination(
-              icon: const Icon(FluentIcons.search_24_regular),
-              selectedIcon: const Icon(FluentIcons.search_24_filled),
-              label: context.l10n?.search ?? 'Search',
-            ),
-            NavigationDestination(
-              icon: const Icon(FluentIcons.book_24_regular),
-              selectedIcon: const Icon(FluentIcons.book_24_filled),
-              label: context.l10n?.library ?? 'Library',
-            ),
-            NavigationDestination(
-              icon: const Icon(
-                FluentIcons.settings_24_regular,
-              ),
-              selectedIcon: const Icon(
-                FluentIcons.settings_24_filled,
-              ),
-              label: context.l10n?.settings ?? 'Settings',
-            ),
-          ]
+          NavigationDestination(
+            icon: const Icon(FluentIcons.home_24_regular),
+            selectedIcon: const Icon(FluentIcons.home_24_filled),
+            label: context.l10n?.home ?? 'Home',
+          ),
+          NavigationDestination(
+            icon: const Icon(FluentIcons.search_24_regular),
+            selectedIcon: const Icon(FluentIcons.search_24_filled),
+            label: context.l10n?.search ?? 'Search',
+          ),
+          NavigationDestination(
+            icon: const Icon(FluentIcons.book_24_regular),
+            selectedIcon: const Icon(FluentIcons.book_24_filled),
+            label: context.l10n?.library ?? 'Library',
+          ),
+          NavigationDestination(
+            icon: const Icon(FluentIcons.settings_24_regular),
+            selectedIcon: const Icon(FluentIcons.settings_24_filled),
+            label: context.l10n?.settings ?? 'Settings',
+          ),
+        ]
         : [
-            NavigationDestination(
-              icon: const Icon(FluentIcons.home_24_regular),
-              selectedIcon: const Icon(FluentIcons.home_24_filled),
-              label: context.l10n?.home ?? 'Home',
-            ),
-            NavigationDestination(
-              icon: const Icon(
-                FluentIcons.settings_24_regular,
-              ),
-              selectedIcon: const Icon(
-                FluentIcons.settings_24_filled,
-              ),
-              label: context.l10n?.settings ?? 'Settings',
-            ),
-          ];
+          NavigationDestination(
+            icon: const Icon(FluentIcons.home_24_regular),
+            selectedIcon: const Icon(FluentIcons.home_24_filled),
+            label: context.l10n?.home ?? 'Home',
+          ),
+          NavigationDestination(
+            icon: const Icon(FluentIcons.settings_24_regular),
+            selectedIcon: const Icon(FluentIcons.settings_24_filled),
+            label: context.l10n?.settings ?? 'Settings',
+          ),
+        ];
   }
 
   bool _isLargeScreen(BuildContext context) {
@@ -105,15 +94,16 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
               if (isLargeScreen)
                 NavigationRail(
                   labelType: NavigationRailLabelType.selected,
-                  destinations: _getNavigationDestinations(context)
-                      .map(
-                        (destination) => NavigationRailDestination(
-                          icon: destination.icon,
-                          selectedIcon: destination.selectedIcon,
-                          label: Text(destination.label),
-                        ),
-                      )
-                      .toList(),
+                  destinations:
+                      _getNavigationDestinations(context)
+                          .map(
+                            (destination) => NavigationRailDestination(
+                              icon: destination.icon,
+                              selectedIcon: destination.selectedIcon,
+                              label: Text(destination.label),
+                            ),
+                          )
+                          .toList(),
                   selectedIndex: _selectedIndex.value,
                   onDestinationSelected: (index) {
                     widget.child.goBranch(
@@ -144,24 +134,27 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
               ),
             ],
           ),
-          bottomNavigationBar: !isLargeScreen
-              ? NavigationBar(
-                  selectedIndex: _selectedIndex.value,
-                  labelBehavior: languageSetting == const Locale('en', '')
-                      ? NavigationDestinationLabelBehavior.onlyShowSelected
-                      : NavigationDestinationLabelBehavior.alwaysHide,
-                  onDestinationSelected: (index) {
-                    widget.child.goBranch(
-                      index,
-                      initialLocation: index == widget.child.currentIndex,
-                    );
-                    setState(() {
-                      _selectedIndex.value = index;
-                    });
-                  },
-                  destinations: _getNavigationDestinations(context),
-                )
-              : null,
+          bottomNavigationBar:
+              !isLargeScreen
+                  ? NavigationBar(
+                    selectedIndex: _selectedIndex.value,
+                    labelBehavior:
+                        languageSetting == const Locale('en', '')
+                            ? NavigationDestinationLabelBehavior
+                                .onlyShowSelected
+                            : NavigationDestinationLabelBehavior.alwaysHide,
+                    onDestinationSelected: (index) {
+                      widget.child.goBranch(
+                        index,
+                        initialLocation: index == widget.child.currentIndex,
+                      );
+                      setState(() {
+                        _selectedIndex.value = index;
+                      });
+                    },
+                    destinations: _getNavigationDestinations(context),
+                  )
+                  : null,
         );
       },
     );

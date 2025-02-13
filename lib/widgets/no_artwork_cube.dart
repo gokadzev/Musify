@@ -53,11 +53,7 @@ class NullArtworkWidget extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Icon(
-              icon,
-              size: iconSize,
-              color: colorScheme.onSecondary,
-            ),
+            Icon(icon, size: iconSize, color: colorScheme.onSecondary),
             if (title != null)
               Padding(
                 padding: const EdgeInsets.all(paddingValue),

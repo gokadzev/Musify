@@ -23,12 +23,7 @@ import 'package:flutter/material.dart';
 import 'package:musify/extensions/l10n.dart';
 
 class PlaylistHeader extends StatelessWidget {
-  const PlaylistHeader(
-    this.image,
-    this.title,
-    this.songsLength, {
-    super.key,
-  });
+  const PlaylistHeader(this.image, this.title, this.songsLength, {super.key});
 
   final Widget image;
   final String title;
@@ -44,10 +39,7 @@ class PlaylistHeader extends StatelessWidget {
       padding: const EdgeInsets.all(6),
       child: Row(
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: image,
-          ),
+          ClipRRect(borderRadius: BorderRadius.circular(8), child: image),
           const SizedBox(width: 16),
           Expanded(
             child: Column(

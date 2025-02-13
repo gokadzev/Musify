@@ -21,8 +21,8 @@ class PlaylistBar extends StatelessWidget {
     this.isAlbum = false,
     this.borderRadius = BorderRadius.zero,
   }) : playlistLikeStatus = ValueNotifier<bool>(
-          isPlaylistAlreadyLiked(playlistId),
-        );
+         isPlaylistAlreadyLiked(playlistId),
+       );
 
   final Map? playlistData;
   final String? playlistId;
@@ -55,30 +55,28 @@ class PlaylistBar extends StatelessWidget {
     return Padding(
       padding: commonBarPadding,
       child: GestureDetector(
-        onTap: onPressed ??
+        onTap:
+            onPressed ??
             () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => PlaylistPage(
-                    playlistId: playlistId,
-                    playlistData: updatedPlaylist ?? playlistData,
-                  ),
+                  builder:
+                      (context) => PlaylistPage(
+                        playlistId: playlistId,
+                        playlistData: updatedPlaylist ?? playlistData,
+                      ),
                 ),
               ).then((isPlaylistUpdated) {
                 if (isPlaylistUpdated != null && isPlaylistUpdated) {
-                  getPlaylistInfoForWidget(playlistId).then(
-                    (result) => {
-                      updatedPlaylist = result,
-                    },
-                  );
+                  getPlaylistInfoForWidget(
+                    playlistId,
+                  ).then((result) => {updatedPlaylist = result});
                 }
               });
             },
         child: Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: borderRadius,
-          ),
+          shape: RoundedRectangleBorder(borderRadius: borderRadius),
           margin: const EdgeInsets.only(bottom: 3),
           child: Padding(
             padding: commonBarContentPadding,
@@ -93,8 +91,9 @@ class PlaylistBar extends StatelessWidget {
                       Text(
                         playlistTitle,
                         overflow: TextOverflow.ellipsis,
-                        style:
-                            commonBarTitleStyle.copyWith(color: primaryColor),
+                        style: commonBarTitleStyle.copyWith(
+                          color: primaryColor,
+                        ),
                       ),
                     ],
                   ),
@@ -112,44 +111,39 @@ class PlaylistBar extends StatelessWidget {
   Widget _buildAlbumArt() {
     return playlistArtwork != null
         ? CachedNetworkImage(
-            key: Key(playlistArtwork.toString()),
-            height: artworkSize,
-            width: artworkSize,
-            imageUrl: playlistArtwork.toString(),
-            fit: BoxFit.cover,
-            imageBuilder: (context, imageProvider) => SizedBox(
-              width: artworkSize,
-              height: artworkSize,
-              child: ClipRRect(
-                borderRadius: commonBarRadius,
-                child: Image(
-                  image: imageProvider,
+          key: Key(playlistArtwork.toString()),
+          height: artworkSize,
+          width: artworkSize,
+          imageUrl: playlistArtwork.toString(),
+          fit: BoxFit.cover,
+          imageBuilder:
+              (context, imageProvider) => SizedBox(
+                width: artworkSize,
+                height: artworkSize,
+                child: ClipRRect(
+                  borderRadius: commonBarRadius,
+                  child: Image(image: imageProvider),
                 ),
               ),
-            ),
-            errorWidget: (context, url, error) => NullArtworkWidget(
-              icon: cubeIcon,
-              iconSize: iconSize,
-              size: artworkSize,
-            ),
-          )
+          errorWidget:
+              (context, url, error) => NullArtworkWidget(
+                icon: cubeIcon,
+                iconSize: iconSize,
+                size: artworkSize,
+              ),
+        )
         : NullArtworkWidget(
-            icon: cubeIcon,
-            iconSize: iconSize,
-            size: artworkSize,
-          );
+          icon: cubeIcon,
+          iconSize: iconSize,
+          size: artworkSize,
+        );
   }
 
   Widget _buildActionButtons(BuildContext context, Color primaryColor) {
     return PopupMenuButton<String>(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       color: Theme.of(context).colorScheme.surface,
-      icon: Icon(
-        FluentIcons.more_horizontal_24_filled,
-        color: primaryColor,
-      ),
+      icon: Icon(FluentIcons.more_horizontal_24_filled, color: primaryColor),
       onSelected: (String value) {
         switch (value) {
           case 'like':

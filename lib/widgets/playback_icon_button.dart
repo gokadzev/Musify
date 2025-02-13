@@ -44,11 +44,7 @@ Widget buildPlaybackIconButton(
     splashColor: Colors.transparent,
     padding: padding,
     shape: const CircleBorder(),
-    child: Icon(
-      iconDataAndAction.iconData,
-      color: iconColor,
-      size: iconSize,
-    ),
+    child: Icon(iconDataAndAction.iconData, color: iconColor, size: iconSize),
   );
 }
 
@@ -59,9 +55,7 @@ _IconDataAndAction getIconFromState(
   switch (processingState) {
     case AudioProcessingState.buffering:
     case AudioProcessingState.loading:
-      return _IconDataAndAction(
-        iconData: FluentIcons.spinner_ios_16_filled,
-      );
+      return _IconDataAndAction(iconData: FluentIcons.spinner_ios_16_filled);
     case AudioProcessingState.completed:
       return _IconDataAndAction(
         iconData: FluentIcons.arrow_counterclockwise_24_filled,
@@ -69,19 +63,17 @@ _IconDataAndAction getIconFromState(
       );
     default:
       return _IconDataAndAction(
-        iconData: isPlaying
-            ? FluentIcons.pause_24_filled
-            : FluentIcons.play_24_filled,
+        iconData:
+            isPlaying
+                ? FluentIcons.pause_24_filled
+                : FluentIcons.play_24_filled,
         onPressed: isPlaying ? audioHandler.pause : audioHandler.play,
       );
   }
 }
 
 class _IconDataAndAction {
-  _IconDataAndAction({
-    required this.iconData,
-    this.onPressed,
-  });
+  _IconDataAndAction({required this.iconData, this.onPressed});
   final IconData iconData;
   final VoidCallback? onPressed;
 }

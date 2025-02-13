@@ -53,9 +53,7 @@ class CustomBar extends StatelessWidget {
       child: Card(
         margin: const EdgeInsets.only(bottom: 3),
         color: backgroundColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: borderRadius,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: borderRadius),
         child: Padding(
           padding: commonBarContentPadding,
           child: InkWell(
@@ -65,10 +63,7 @@ class CustomBar extends StatelessWidget {
             onLongPress: onLongPress,
             child: ListTile(
               minTileHeight: 45,
-              leading: Icon(
-                tileIcon,
-                color: iconColor,
-              ),
+              leading: Icon(tileIcon, color: iconColor),
               title: Text(
                 tileName,
                 style: TextStyle(fontWeight: FontWeight.w600, color: textColor),
