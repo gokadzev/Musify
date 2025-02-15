@@ -39,7 +39,7 @@ import 'package:musify/utilities/utils.dart';
 import 'package:musify/widgets/bottom_sheet_bar.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/custom_bar.dart';
-import 'package:musify/widgets/section_title.dart';
+import 'package:musify/widgets/section_header.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -53,10 +53,11 @@ class SettingsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n!.settings)),
       body: SingleChildScrollView(
+        padding: commonSingleChildScrollViewPadding,
         child: Column(
           children: <Widget>[
             // CATEGORY: PREFERENCES
-            SectionTitle(context.l10n!.preferences, primaryColor),
+            SectionHeader(title: context.l10n!.preferences),
             CustomBar(
               context.l10n!.accentColor,
               FluentIcons.color_24_filled,
@@ -434,7 +435,7 @@ class SettingsPage extends StatelessWidget {
                   ),
 
                   // CATEGORY: TOOLS
-                  SectionTitle(context.l10n!.tools, primaryColor),
+                  SectionHeader(title: context.l10n!.tools),
                   CustomBar(
                     context.l10n!.clearCache,
                     FluentIcons.broom_24_filled,
@@ -543,7 +544,7 @@ class SettingsPage extends StatelessWidget {
                     ),
 
                   // CATEGORY: BECOME A SPONSOR
-                  SectionTitle(context.l10n!.becomeSponsor, primaryColor),
+                  SectionHeader(title: context.l10n!.becomeSponsor),
 
                   CustomBar(
                     context.l10n!.sponsorProject,
@@ -560,8 +561,7 @@ class SettingsPage extends StatelessWidget {
                 ],
               ),
             // CATEGORY: OTHERS
-            SectionTitle(context.l10n!.others, primaryColor),
-
+            SectionHeader(title: context.l10n!.others),
             CustomBar(
               context.l10n!.licenses,
               FluentIcons.document_24_filled,

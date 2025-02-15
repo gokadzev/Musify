@@ -48,7 +48,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 3),
       child: SearchBar(
         shadowColor: WidgetStateProperty.all(Colors.transparent),
         hintText: widget.labelText,

@@ -20,34 +20,21 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:musify/widgets/marque.dart';
+import 'package:musify/widgets/section_title.dart';
 
-class SectionTitle extends StatelessWidget {
-  const SectionTitle(this.title, this.primaryColor, {super.key});
-  final Color primaryColor;
+class SectionHeader extends StatelessWidget {
+  const SectionHeader({super.key, required this.title, this.actionButton});
   final String title;
+  final Widget? actionButton;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: SizedBox(
-          width: MediaQuery.sizeOf(context).width * 0.7,
-          child: MarqueeWidget(
-            child: Text(
-              title,
-              style: TextStyle(
-                color: primaryColor,
-                fontSize:
-                    Theme.of(context).textTheme.titleMedium?.fontSize ?? 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
-      ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        SectionTitle(title, Theme.of(context).colorScheme.primary),
+        if (actionButton != null) actionButton!,
+      ],
     );
   }
 }

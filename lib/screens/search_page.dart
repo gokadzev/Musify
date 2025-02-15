@@ -106,6 +106,7 @@ class _SearchPageState extends State<SearchPage> {
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n!.search)),
       body: SingleChildScrollView(
+        padding: commonSingleChildScrollViewPadding,
         child: Column(
           children: <Widget>[
             CustomSearchBar(
@@ -129,7 +130,7 @@ class _SearchPageState extends State<SearchPage> {
             ),
             if (_songsSearchResult.isEmpty && _albumsSearchResult.isEmpty)
               ListView.builder(
-                padding: const EdgeInsets.all(7),
+                padding: const EdgeInsets.symmetric(vertical: 7),
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount:

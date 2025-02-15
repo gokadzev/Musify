@@ -30,6 +30,7 @@ import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/utils.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/playlist_bar.dart';
+import 'package:musify/widgets/section_header.dart';
 import 'package:musify/widgets/section_title.dart';
 import 'package:musify/widgets/spinner.dart';
 
@@ -64,6 +65,7 @@ class _LibraryPageState extends State<LibraryPage> {
         children: [
           Expanded(
             child: SingleChildScrollView(
+              padding: commonSingleChildScrollViewPadding,
               child: Column(
                 children: <Widget>[
                   _buildUserPlaylistsSection(primaryColor),
@@ -82,16 +84,13 @@ class _LibraryPageState extends State<LibraryPage> {
         userPlaylists.isEmpty && userCustomPlaylists.isEmpty;
     return Column(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            SectionTitle(context.l10n!.userPlaylists, primaryColor),
-            IconButton(
-              padding: const EdgeInsets.only(right: 10),
-              onPressed: _showAddPlaylistDialog,
-              icon: Icon(FluentIcons.add_24_filled, color: primaryColor),
-            ),
-          ],
+        SectionHeader(
+          title: context.l10n!.userPlaylists,
+          actionButton: IconButton(
+            padding: const EdgeInsets.only(right: 5),
+            onPressed: _showAddPlaylistDialog,
+            icon: Icon(FluentIcons.add_24_filled, color: primaryColor),
+          ),
         ),
         Column(
           children: <Widget>[
