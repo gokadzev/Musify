@@ -262,6 +262,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
       await audioPlayer.setAudioSource(audioSource);
       await audioPlayer.play();
+
+      final cacheKey = 'song_${song['ytid']}_${audioQualitySetting.value}_url';
+      if (!isOffline) addOrUpdateData('cache', cacheKey, songUrl);
+      if (playNextSongAutomatically.value) getSimilarSong(song['ytid']);
     } catch (e, stackTrace) {
       logger.log('Error playing song', e, stackTrace);
     }

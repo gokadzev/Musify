@@ -664,10 +664,6 @@ Future<String> getSong(String songId, bool isLive) async {
 
     unawaited(updateRecentlyPlayed(songId));
 
-    if (playNextSongAutomatically.value) {
-      getSimilarSong(songId);
-    }
-
     if (cachedUrl != null) {
       return cachedUrl;
     }
@@ -676,7 +672,7 @@ Future<String> getSong(String songId, bool isLive) async {
       return await getLiveStreamUrl(songId);
     }
 
-    return await getAudioUrl(songId, cacheKey);
+    return await getAudioUrl(songId);
   } catch (e, stackTrace) {
     logger.log('Error while getting song streaming URL', e, stackTrace);
     rethrow;
@@ -690,12 +686,11 @@ Future<String> getLiveStreamUrl(String songId) async {
   return streamInfo;
 }
 
-Future<String> getAudioUrl(String songId, String cacheKey) async {
+Future<String> getAudioUrl(String songId) async {
   final manifest = await _yt.videos.streamsClient.getManifest(songId);
   final audioQuality = selectAudioQuality(manifest.audioOnly.sortByBitrate());
   final audioUrl = audioQuality.url.toString();
 
-  addOrUpdateData('cache', cacheKey, audioUrl);
   return audioUrl;
 }
 
