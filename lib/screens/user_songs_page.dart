@@ -215,6 +215,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
                     },
                 borderRadius: borderRadius,
               );
+              // ignore: require_trailing_commas
             }, childCount: songsList.length),
           );
         }
