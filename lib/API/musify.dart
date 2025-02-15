@@ -103,24 +103,27 @@ Future<List> fetchSongsList(String searchQuery) async {
 Future<List> getRecommendedSongs() async {
   try {
     if (defaultRecommendations.value && userRecentlyPlayed.isNotEmpty) {
-      final playlistSongs = [];
-      for (var i = 0; i < 3; i++) {
-        final song = await _yt.videos.get(userRecentlyPlayed[i]['ytid']);
-        final relatedSongs = await _yt.videos.getRelatedVideos(song) ?? [];
-        playlistSongs.addAll(
-          relatedSongs.take(3).map((s) => returnSongLayout(0, s)),
-        );
-      }
-      playlistSongs.shuffle();
+      final recent = userRecentlyPlayed.take(3).toList();
+
+      final futures =
+          recent.map((songData) async {
+            final song = await _yt.videos.get(songData['ytid']);
+            final relatedSongs = await _yt.videos.getRelatedVideos(song) ?? [];
+            return relatedSongs
+                .take(3)
+                .map((s) => returnSongLayout(0, s))
+                .toList();
+          }).toList();
+
+      final results = await Future.wait(futures);
+      final playlistSongs = results.expand((list) => list).toList()..shuffle();
       return playlistSongs;
     } else {
       final playlistSongs = [...userLikedSongsList, ...userRecentlyPlayed];
-
       if (globalSongs.isEmpty) {
         const playlistId = 'PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx';
         globalSongs = await getSongsFromPlaylist(playlistId);
       }
-
       playlistSongs.addAll(globalSongs.take(10));
 
       if (userCustomPlaylists.isNotEmpty) {
@@ -131,10 +134,8 @@ Future<List> getRecommendedSongs() async {
       }
 
       playlistSongs.shuffle();
-
       final seenYtIds = <String>{};
       playlistSongs.removeWhere((song) => !seenYtIds.add(song['ytid']));
-
       return playlistSongs.take(15).toList();
     }
   } catch (e, stackTrace) {
