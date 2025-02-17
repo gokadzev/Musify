@@ -16,7 +16,7 @@ dependencies:
   audio_session: ^0.1.25
   cached_network_image: ^3.4.1
   dynamic_color: ^1.7.0
-  file_picker: ^8.3.7
+  file_picker: ^9.0.0
   fluentui_system_icons: ^1.1.273
   flutter:
     sdk: flutter
@@ -33,11 +33,11 @@ dependencies:
   path_provider: ^2.1.5
   rxdart: ^0.28.0
   url_launcher: ^6.3.1
-  youtube_explode_dart: ^2.3.9
+  youtube_explode_dart: ^2.3.10
 
 dev_dependencies:
   flutter_launcher_icons: ^0.14.3
-  flutter_native_splash: ^2.4.4
+  flutter_native_splash: ^2.4.5
   flutter_test:
     sdk: flutter
   translations_cleaner: ^0.0.5
