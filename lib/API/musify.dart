@@ -35,6 +35,7 @@ import 'package:musify/services/lyrics_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/formatter.dart';
+import 'package:musify/utilities/parsing_helper.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
@@ -67,11 +68,7 @@ Map activePlaylist = {
   'list': [],
 };
 
-List<YoutubeApiClient> userChosenClients = [
-  YoutubeApiClient.tv,
-  YoutubeApiClient.androidVr,
-  YoutubeApiClient.safari,
-];
+List<YoutubeApiClient> userChosenClients = [];
 
 dynamic nextRecommendedSong;
 
@@ -639,7 +636,7 @@ Future<AudioOnlyStreamInfo> getSongManifest(String songId) async {
   try {
     final manifest = await _yt.videos.streams.getManifest(
       songId,
-      ytClients: userChosenClients,
+      ytClients: userChosenClients.isEmpty ? [iosNew] : userChosenClients,
     );
     final audioStream = manifest.audioOnly.withHighestBitrate();
     return audioStream;
