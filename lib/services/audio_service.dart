@@ -253,6 +253,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
   Future<void> playSong(Map song) async {
     try {
       final isOffline = song['isOffline'] ?? false;
+
+      final preliminaryTag = mapToMediaItem(song);
+      mediaItem.add(preliminaryTag);
+
       final songUrl =
           isOffline
               ? song['audioPath']
@@ -260,7 +264,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
       final audioSource = await buildAudioSource(song, songUrl, isOffline);
 
-      await audioPlayer.setAudioSource(audioSource);
+      await audioPlayer.setAudioSource(audioSource, preload: false);
       await audioPlayer.play();
 
       final cacheKey = 'song_${song['ytid']}_${audioQualitySetting.value}_url';
@@ -286,7 +290,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
     bool isOffline,
   ) async {
     final uri = Uri.parse(songUrl);
-    final tag = mapToMediaItem(song, songUrl);
+    final tag = mapToMediaItem(song);
     final audioSource = AudioSource.uri(uri, tag: tag);
 
     if (isOffline || !sponsorBlockSupport.value) {

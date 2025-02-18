@@ -20,7 +20,6 @@
  */
 
 import 'package:audio_service/audio_service.dart';
-import 'package:just_audio/just_audio.dart';
 
 Map mediaItemToMap(MediaItem mediaItem) => {
   'id': mediaItem.id,
@@ -30,11 +29,10 @@ Map mediaItemToMap(MediaItem mediaItem) => {
   'title': mediaItem.title,
   'highResImage': mediaItem.artUri.toString(),
   'lowResImage': mediaItem.extras!['lowResImage'],
-  'url': mediaItem.extras!['url'].toString(),
   'isLive': mediaItem.extras!['isLive'],
 };
 
-MediaItem mapToMediaItem(Map song, String songUrl) => MediaItem(
+MediaItem mapToMediaItem(Map song) => MediaItem(
   id: song['id'].toString(),
   album: '',
   artist: song['artist'].toString().trim(),
@@ -44,7 +42,6 @@ MediaItem mapToMediaItem(Map song, String songUrl) => MediaItem(
           ? Uri.file(song['highResImage'].toString())
           : Uri.parse(song['highResImage'].toString()),
   extras: {
-    'url': songUrl,
     'lowResImage': song['lowResImage'],
     'ytid': song['ytid'],
     'isLive': song['isLive'],
@@ -52,19 +49,3 @@ MediaItem mapToMediaItem(Map song, String songUrl) => MediaItem(
     'artWorkPath': song['highResImage'].toString(),
   },
 );
-
-UriAudioSource createAudioSource(MediaItem mediaItem) => AudioSource.uri(
-  Uri.parse(mediaItem.extras!['url'].toString()),
-  tag: mediaItem,
-);
-
-List<UriAudioSource> createAudioSources(List<MediaItem> mediaItems) {
-  return mediaItems
-      .map(
-        (mediaItem) => AudioSource.uri(
-          Uri.parse(mediaItem.extras!['url'].toString()),
-          tag: mediaItem,
-        ),
-      )
-      .toList();
-}
