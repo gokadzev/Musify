@@ -25,18 +25,18 @@ Unlock the full potential of music: Stream effortlessly with one app!
 
 <center>
 
-Online Song Search With Suggestions <br/>
-Streaming Support <br/>
-Offline Listening Support <br/>
-Import & Export Your Data And Never Lose It <br/>
-Add Custom Playlists With Link <br/>
-Optimized Sound Experience <br/>
-Lyrics Support <br/>
-No Ads <br/>
-No Subscriptions <br/>
-Inbuilt Updater <br/>
-17 Supported Languages <br/>
-Material UI & Accent Colors & Dynamic Colors (Android 12+) <br/>
+Online song search with suggestions <br/>
+Offline listening support <br/>
+Import & export your data and never lose it <br/>
+Add custom playlists with link <br/>
+Optimized sound experience <br/>
+SponsorBlock support <br/>
+Lyrics support <br/>
+No ads <br/>
+No subscriptions <br/>
+Inbuilt updater <br/>
+17 supported languages <br/>
+Material UI & accent colors & dynamic colors (Android 12+) <br/>
 
 </center>
 
