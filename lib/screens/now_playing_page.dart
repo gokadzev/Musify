@@ -30,6 +30,7 @@ import 'package:musify/models/position_data.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/flutter_bottom_sheet.dart';
+import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/formatter.dart';
 import 'package:musify/utilities/mediaitem.dart';
 import 'package:musify/utilities/utils.dart';
@@ -526,8 +527,9 @@ class NowPlayingPage extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) {
-        var hours = 0;
-        var minutes = 10;
+        final duration = sleepTimerNotifier.value ?? Duration.zero;
+        var hours = duration.inMinutes ~/ 60;
+        var minutes = duration.inMinutes % 60;
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
@@ -537,7 +539,6 @@ class NowPlayingPage extends StatelessWidget {
                 children: [
                   Text(context.l10n!.selectDuration),
                   const SizedBox(height: 16),
-
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -548,7 +549,9 @@ class NowPlayingPage extends StatelessWidget {
                             icon: const Icon(Icons.remove),
                             onPressed: () {
                               if (hours > 0) {
-                                setState(() => hours--);
+                                setState(() {
+                                  hours--;
+                                });
                               }
                             },
                           ),
@@ -556,7 +559,9 @@ class NowPlayingPage extends StatelessWidget {
                           IconButton(
                             icon: const Icon(Icons.add),
                             onPressed: () {
-                              setState(() => hours++);
+                              setState(() {
+                                hours++;
+                              });
                             },
                           ),
                         ],
@@ -574,7 +579,9 @@ class NowPlayingPage extends StatelessWidget {
                             icon: const Icon(Icons.remove),
                             onPressed: () {
                               if (minutes > 0) {
-                                setState(() => minutes--);
+                                setState(() {
+                                  minutes--;
+                                });
                               }
                             },
                           ),
@@ -582,7 +589,9 @@ class NowPlayingPage extends StatelessWidget {
                           IconButton(
                             icon: const Icon(Icons.add),
                             onPressed: () {
-                              setState(() => minutes++);
+                              setState(() {
+                                minutes++;
+                              });
                             },
                           ),
                         ],
@@ -601,6 +610,11 @@ class NowPlayingPage extends StatelessWidget {
                     final duration = Duration(hours: hours, minutes: minutes);
                     if (duration.inSeconds > 0) {
                       audioHandler.setSleepTimer(duration);
+                      sleepTimerNotifier.value = Duration(
+                        hours: hours,
+                        minutes: minutes,
+                      );
+                      showToast(context, context.l10n!.addedSuccess);
                     }
                     Navigator.pop(context);
                   },
@@ -702,10 +716,27 @@ class NowPlayingPage extends StatelessWidget {
             iconSize: iconSize,
             onPressed: _lyricsController.flipcard,
           ),
-          IconButton.filledTonal(
-            icon: Icon(FluentIcons.timer_24_regular, color: _primaryColor),
-            iconSize: iconSize,
-            onPressed: () => _showSleepTimerDialog(context),
+          ValueListenableBuilder<Duration?>(
+            valueListenable: sleepTimerNotifier,
+            builder: (_, value, __) {
+              return IconButton.filledTonal(
+                icon: Icon(
+                  value != null
+                      ? FluentIcons.timer_24_filled
+                      : FluentIcons.timer_24_regular,
+                  color: _primaryColor,
+                ),
+                iconSize: iconSize,
+                onPressed: () {
+                  if (value != null) {
+                    audioHandler.cancelSleepTimer();
+                    sleepTimerNotifier.value = null;
+                  } else {
+                    _showSleepTimerDialog(context);
+                  }
+                },
+              );
+            },
           ),
           ValueListenableBuilder<bool>(
             valueListenable: songLikeStatus,

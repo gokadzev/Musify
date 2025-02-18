@@ -82,6 +82,8 @@ final repeatNotifier = ValueNotifier<AudioServiceRepeatMode>(
   AudioServiceRepeatMode.none,
 );
 
+var sleepTimerNotifier = ValueNotifier<Duration?>(null);
+
 // Server-Notifiers
 
 final announcementURL = ValueNotifier<String?>(null);
