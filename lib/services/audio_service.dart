@@ -51,6 +51,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
     ),
   );
 
+  Timer? _sleepTimer;
+  bool sleepTimerExpired = false;
+
   late StreamSubscription<PlaybackEvent> _playbackEventSubscription;
   late StreamSubscription<Duration?> _durationSubscription;
   late StreamSubscription<int?> _currentIndexSubscription;
@@ -76,7 +79,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
   void _handlePlaybackEvent(PlaybackEvent event) {
     try {
       if (event.processingState == ProcessingState.completed &&
-          audioPlayer.playing) {
+          audioPlayer.playing &&
+          !sleepTimerExpired) {
         skipToNext();
       }
       _updatePlaybackState();
@@ -388,6 +392,25 @@ class MusifyAudioHandler extends BaseAudioHandler {
     await audioPlayer.setLoopMode(
       repeatMode == AudioServiceRepeatMode.all ? LoopMode.one : LoopMode.off,
     );
+  }
+
+  Future<void> setSleepTimer(Duration duration) async {
+    _sleepTimer?.cancel();
+    sleepTimerExpired = false;
+    _sleepTimer = Timer(duration, () async {
+      await stop();
+      playNextSongAutomatically.value = false;
+      sleepTimerExpired = true;
+      _sleepTimer = null;
+    });
+  }
+
+  void cancelSleepTimer() {
+    if (_sleepTimer != null) {
+      _sleepTimer!.cancel();
+      _sleepTimer = null;
+      sleepTimerExpired = false;
+    }
   }
 
   void changeSponsorBlockStatus() {

@@ -522,6 +522,98 @@ class NowPlayingPage extends StatelessWidget {
     );
   }
 
+  void _showSleepTimerDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        var hours = 0;
+        var minutes = 10;
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text(context.l10n!.setSleepTimer),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(context.l10n!.selectDuration),
+                  const SizedBox(height: 16),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(context.l10n!.hours),
+                      Row(
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.remove),
+                            onPressed: () {
+                              if (hours > 0) {
+                                setState(() => hours--);
+                              }
+                            },
+                          ),
+                          Text('$hours'),
+                          IconButton(
+                            icon: const Icon(Icons.add),
+                            onPressed: () {
+                              setState(() => hours++);
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(context.l10n!.minutes),
+                      Row(
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.remove),
+                            onPressed: () {
+                              if (minutes > 0) {
+                                setState(() => minutes--);
+                              }
+                            },
+                          ),
+                          Text('$minutes'),
+                          IconButton(
+                            icon: const Icon(Icons.add),
+                            onPressed: () {
+                              setState(() => minutes++);
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(context.l10n!.cancel),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    final duration = Duration(hours: hours, minutes: minutes);
+                    if (duration.inSeconds > 0) {
+                      audioHandler.setSleepTimer(duration);
+                    }
+                    Navigator.pop(context);
+                  },
+                  child: Text(context.l10n!.setTimer),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   Widget buildBottomActions(
     BuildContext context,
     dynamic audioId,
@@ -604,13 +696,17 @@ class NowPlayingPage extends StatelessWidget {
               );
             },
           ),
-        if (!offlineMode.value)
+        if (!offlineMode.value) ...[
           IconButton.filledTonal(
             icon: Icon(FluentIcons.text_32_filled, color: _primaryColor),
             iconSize: iconSize,
             onPressed: _lyricsController.flipcard,
           ),
-        if (!offlineMode.value)
+          IconButton.filledTonal(
+            icon: Icon(FluentIcons.timer_24_regular, color: _primaryColor),
+            iconSize: iconSize,
+            onPressed: () => _showSleepTimerDialog(context),
+          ),
           ValueListenableBuilder<bool>(
             valueListenable: songLikeStatus,
             builder: (_, value, __) {
@@ -629,6 +725,7 @@ class NowPlayingPage extends StatelessWidget {
               );
             },
           ),
+        ],
       ],
     );
   }
