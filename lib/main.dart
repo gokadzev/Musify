@@ -51,8 +51,6 @@ final appLanguages = <String, String>{
   'English': 'en',
   'Arabic': 'ar',
   'French': 'fr',
-  'Galician': 'gl',
-  'Georgian': 'ka',
   'German': 'de',
   'Greek': 'el',
   'Indonesian': 'id',
@@ -63,7 +61,6 @@ final appLanguages = <String, String>{
   'Polish': 'pl',
   'Portuguese': 'pt',
   'Spanish': 'es',
-  'Turkish': 'tr',
   'Ukrainian': 'uk',
 };
 
