@@ -13,6 +13,8 @@ body:
       options:
         - label: I have searched the existing issues and confirmed that this feature is not already requested.
           required: true
+        - label: I read the [FAQ section](https://github.com/gokadzev/Musify/discussions/340) and there's nothing mentioned about this feature.
+          required: true
 
   - type: dropdown
     attributes:
@@ -56,11 +58,3 @@ body:
       description: Provide any useful resources or references that can help in implementing your suggested solution.
     validations:
       required: false
-
-  - type: markdown
-    attributes:
-      value: |
-        > [!TIP]
-        > Stay connected on GitHub so you never miss an update 📢 : [Follow](https://github.com/gokadzev)
-        > Give the project a star to help it gain popularity ⭐ : [Star](https://github.com/gokadzev/Musify)
-        > Sponsor this and future projects to fuel continuous development 🤝 : [Sponsor](https://ko-fi.com/gokadzev)
