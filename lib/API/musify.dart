@@ -335,13 +335,16 @@ Future<void> updatePlaylistLikeStatus(String playlistId, bool add) async {
     if (add) {
       final playlist = playlists.firstWhere(
         (playlist) => playlist['ytid'] == playlistId,
-        orElse: () => {},
+        orElse: () => <String, dynamic>{},
       );
 
       if (playlist.isNotEmpty) {
         userLikedPlaylists.add(playlist);
       } else {
-        userLikedPlaylists.add(await getPlaylistInfoForWidget(playlistId));
+        final playlistInfo = await getPlaylistInfoForWidget(playlistId);
+        if (playlistInfo != null) {
+          userLikedPlaylists.add(playlistInfo);
+        }
       }
     } else {
       userLikedPlaylists.removeWhere(
