@@ -1,5 +1,5 @@
 /*
- *     Copyright (C) 2024 Valeri Gokadze
+ *     Copyright (C) 2025 Valeri Gokadze
  *
  *     Musify is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -39,10 +39,9 @@ class AutoFormatText extends StatelessWidget {
       spans
         ..add(
           TextSpan(
-            text: text.substring(currentTextIndex, match.start).replaceAll(
-                  '* ',
-                  '• ',
-                ),
+            text: text
+                .substring(currentTextIndex, match.start)
+                .replaceAll('* ', '• '),
             style: textStyle,
           ),
         )
@@ -58,10 +57,7 @@ class AutoFormatText extends StatelessWidget {
 
     spans.add(
       TextSpan(
-        text: text.substring(currentTextIndex).replaceAll(
-              '* ',
-              '• ',
-            ),
+        text: text.substring(currentTextIndex).replaceAll('* ', '• '),
         style: textStyle,
       ),
     );

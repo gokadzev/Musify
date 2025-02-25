@@ -1,6 +1,9 @@
 Bug Fixes
+
 - Fixed broken like playlist function
+
+
 Enhancements
-- Able to play songs in device
+
 - Moved liked playlists to the library page
 - Improved library page UI

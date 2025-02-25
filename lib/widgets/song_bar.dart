@@ -1,5 +1,5 @@
 /*
- *     Copyright (C) 2024 Valeri Gokadze
+ *     Copyright (C) 2025 Valeri Gokadze
  *
  *     Musify is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -27,10 +27,10 @@ import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
-import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/formatter.dart';
+import 'package:musify/widgets/no_artwork_cube.dart';
 
 class SongBar extends StatelessWidget {
   SongBar(
@@ -40,6 +40,7 @@ class SongBar extends StatelessWidget {
     this.showMusicDuration = false,
     this.onPlay,
     this.onRemove,
+    this.borderRadius = BorderRadius.zero,
     this.showBtns = true,
     super.key,
   });
@@ -50,6 +51,8 @@ class SongBar extends StatelessWidget {
   final VoidCallback? onPlay;
   final bool showMusicDuration;
   final bool showBtns;
+  final BorderRadius borderRadius;
+
   static const likeStatusToIconMapper = {
     true: FluentIcons.heart_24_filled,
     false: FluentIcons.heart_24_regular,
@@ -69,19 +72,21 @@ class SongBar extends StatelessWidget {
                   'ytid': '',
                   'title': 'No Playlist',
                   'image': '',
+                  'source': 'user-created',
                   'list': [],
                 };
                 activeSongId = 0;
               }
             },
         child: Card(
-          elevation: 1.5,
           color: backgroundColor,
+          shape: RoundedRectangleBorder(borderRadius: borderRadius),
+          margin: const EdgeInsets.only(bottom: 3),
           child: Padding(
-            padding: const EdgeInsets.all(8),
+            padding: commonBarContentPadding,
             child: Row(
               children: [
-                _buildAlbumArt(),
+                _buildAlbumArt(primaryColor),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Column(
@@ -90,19 +95,17 @@ class SongBar extends StatelessWidget {
                       Text(
                         song['title'],
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
+                        style: commonBarTitleStyle.copyWith(
                           color: primaryColor,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(height: 5),
+                      const SizedBox(height: 3),
                       Text(
                         song['artist'].toString(),
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontWeight: FontWeight.w400,
-                          fontSize: 14,
+                          fontSize: 13,
                           color: Theme.of(context).colorScheme.secondary,
                         ),
                       ),
@@ -118,131 +121,196 @@ class SongBar extends StatelessWidget {
     );
   }
 
-  Widget _buildAlbumArt() {
-    const size = 60.0;
-    const radius = 12.0;
+  Widget _buildAlbumArt(Color primaryColor) {
+    const size = 55.0;
 
     final bool isOffline = song['isOffline'] ?? false;
     final String? artworkPath = song['artworkPath'];
+    final lowResImageUrl = song['lowResImage'].toString();
+    final isDurationAvailable = showMusicDuration && song['duration'] != null;
 
     if (isOffline && artworkPath != null) {
-      return SizedBox(
-        width: size,
-        height: size,
-        child: ClipRRect(
-          borderRadius: commonBarRadius,
-          child: Image.file(
-            File(artworkPath),
-            fit: BoxFit.cover,
-          ),
-        ),
-      );
-    } else {
-      if (song['lowResImage'] == 'assets/images/music_icon.png') {
-        if (song['albumArt'] != null) {
-          return Image.memory(
-            song['albumArt'],
-            width: size,
-            height: size,
-          );
-        } else {
-          return const Icon(
-            FluentIcons.music_note_1_24_regular,
-            size: size,
-          );
-        }
-      }
+      return _buildOfflineArtwork(artworkPath, size);
+    }
 
-      return CachedNetworkImage(
-        key: Key(song['ytid'].toString()),
-        width: size,
-        height: size,
-        imageUrl: song['lowResImage'].toString(),
-        imageBuilder: (context, imageProvider) => SizedBox(
+    return _buildOnlineArtwork(
+      lowResImageUrl,
+      size,
+      isDurationAvailable,
+      primaryColor,
+    );
+  }
+
+  Widget _buildOfflineArtwork(String artworkPath, double size) {
+    return SizedBox(
+      width: size,
+      height: size,
+      child: ClipRRect(
+        borderRadius: commonBarRadius,
+        child: Image.file(File(artworkPath), fit: BoxFit.cover),
+      ),
+    );
+  }
+
+  Widget _buildOnlineArtwork(
+    String lowResImageUrl,
+    double size,
+    bool isDurationAvailable,
+    Color primaryColor,
+  ) {
+    return Stack(
+      alignment: Alignment.center,
+      children: <Widget>[
+        CachedNetworkImage(
+          key: Key(song['ytid'].toString()),
           width: size,
           height: size,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(radius),
-            child: Image(
-              image: imageProvider,
-              centerSlice: const Rect.fromLTRB(1, 1, 1, 1),
+          imageUrl: lowResImageUrl,
+          imageBuilder: (context, imageProvider) => SizedBox(
+            width: size,
+            height: size,
+            child: ClipRRect(
+              borderRadius: commonBarRadius,
+              child: Image(
+                color: isDurationAvailable
+                    ? Theme.of(context).colorScheme.primaryContainer
+                    : null,
+                colorBlendMode: isDurationAvailable ? BlendMode.multiply : null,
+                opacity: isDurationAvailable
+                    ? const AlwaysStoppedAnimation(0.45)
+                    : null,
+                image: imageProvider,
+                centerSlice: const Rect.fromLTRB(1, 1, 1, 1),
+              ),
             ),
           ),
+          errorWidget: (context, url, error) =>
+              const NullArtworkWidget(iconSize: 30),
         ),
-      );
-    }
+        if (isDurationAvailable)
+          SizedBox(
+            width: size - 10,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                '(${formatDuration(song['duration'])})',
+                style: TextStyle(
+                  color: primaryColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
   }
 
   Widget _buildActionButtons(BuildContext context, Color primaryColor) {
-    final songLikeStatus =
-        ValueNotifier<bool>(isSongAlreadyLiked(song['ytid']));
-    final songOfflineStatus =
-        ValueNotifier<bool>(isSongAlreadyOffline(song['ytid']));
+    final songLikeStatus = ValueNotifier<bool>(
+      isSongAlreadyLiked(song['ytid']),
+    );
+    final songOfflineStatus = ValueNotifier<bool>(
+      isSongAlreadyOffline(song['ytid']),
+    );
 
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (!offlineMode.value)
-          Row(
-            children: [
-              ValueListenableBuilder<bool>(
-                valueListenable: songLikeStatus,
-                builder: (_, value, __) {
-                  return IconButton(
-                    color: primaryColor,
-                    icon: Icon(likeStatusToIconMapper[value]),
-                    onPressed: () {
-                      songLikeStatus.value = !songLikeStatus.value;
-                      updateSongLikeStatus(
-                        song['ytid'],
-                        songLikeStatus.value,
-                      );
-                      final likedSongsLength = currentLikedSongsLength.value;
-                      currentLikedSongsLength.value =
-                          value ? likedSongsLength + 1 : likedSongsLength - 1;
-                    },
-                  );
-                },
-              ),
-              if (onRemove != null)
-                IconButton(
-                  color: primaryColor,
-                  icon: const Icon(FluentIcons.delete_24_filled),
-                  onPressed: () => onRemove!(),
-                )
-              else
-                IconButton(
-                  color: primaryColor,
-                  icon: const Icon(FluentIcons.add_24_regular),
-                  onPressed: () => showAddToPlaylistDialog(context, song),
-                ),
-            ],
-          ),
-        ValueListenableBuilder<bool>(
-          valueListenable: songOfflineStatus,
-          builder: (_, value, __) {
-            return IconButton(
-              color: primaryColor,
-              icon: Icon(
-                value
-                    ? FluentIcons.cellular_off_24_regular
-                    : FluentIcons.cellular_data_1_24_regular,
-              ),
-              onPressed: () {
-                if (value) {
-                  removeSongFromOffline(song['ytid']);
-                } else {
-                  makeSongOffline(song);
-                }
-
-                songOfflineStatus.value = !songOfflineStatus.value;
+    return PopupMenuButton<String>(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      color: Theme.of(context).colorScheme.surface,
+      icon: Icon(FluentIcons.more_horizontal_24_filled, color: primaryColor),
+      onSelected: (String value) {
+        switch (value) {
+          case 'like':
+            songLikeStatus.value = !songLikeStatus.value;
+            updateSongLikeStatus(song['ytid'], songLikeStatus.value);
+            final likedSongsLength = currentLikedSongsLength.value;
+            currentLikedSongsLength.value = songLikeStatus.value
+                ? likedSongsLength + 1
+                : likedSongsLength - 1;
+            break;
+          case 'remove':
+            if (onRemove != null) onRemove!();
+            break;
+          case 'add_to_playlist':
+            showAddToPlaylistDialog(context, song);
+            break;
+          case 'offline':
+            if (songOfflineStatus.value) {
+              removeSongFromOffline(song['ytid']);
+            } else {
+              makeSongOffline(song);
+            }
+            songOfflineStatus.value = !songOfflineStatus.value;
+            break;
+        }
+      },
+      itemBuilder: (BuildContext context) {
+        return [
+          PopupMenuItem<String>(
+            value: 'like',
+            child: ValueListenableBuilder<bool>(
+              valueListenable: songLikeStatus,
+              builder: (_, value, __) {
+                return Row(
+                  children: [
+                    Icon(likeStatusToIconMapper[value], color: primaryColor),
+                    const SizedBox(width: 8),
+                    Text(
+                      value
+                          ? context.l10n!.removeFromLikedSongs
+                          : context.l10n!.addToLikedSongs,
+                    ),
+                  ],
+                );
               },
-            );
-          },
-        ),
-        if (showMusicDuration && song['duration'] != null)
-          Text('(${formatDuration(song['duration'])})'),
-      ],
+            ),
+          ),
+          if (onRemove != null)
+            PopupMenuItem<String>(
+              value: 'remove',
+              child: Row(
+                children: [
+                  Icon(FluentIcons.delete_24_filled, color: primaryColor),
+                  const SizedBox(width: 8),
+                  Text(context.l10n!.removeFromPlaylist),
+                ],
+              ),
+            ),
+          PopupMenuItem<String>(
+            value: 'add_to_playlist',
+            child: Row(
+              children: [
+                Icon(FluentIcons.add_24_regular, color: primaryColor),
+                const SizedBox(width: 8),
+                Text(context.l10n!.addToPlaylist),
+              ],
+            ),
+          ),
+          PopupMenuItem<String>(
+            value: 'offline',
+            child: ValueListenableBuilder<bool>(
+              valueListenable: songOfflineStatus,
+              builder: (_, value, __) {
+                return Row(
+                  children: [
+                    Icon(
+                      value
+                          ? FluentIcons.cellular_off_24_regular
+                          : FluentIcons.cellular_data_1_24_regular,
+                      color: primaryColor,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      value
+                          ? context.l10n!.removeOffline
+                          : context.l10n!.makeOffline,
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+        ];
+      },
     );
   }
 }
@@ -271,8 +339,14 @@ void showAddToPlaylistDialog(BuildContext context, dynamic song) {
                       child: ListTile(
                         title: Text(playlist['title']),
                         onTap: () {
-                          addSongInCustomPlaylist(playlist['title'], song);
-                          showToast(context, context.l10n!.songAdded);
+                          showToast(
+                            context,
+                            addSongInCustomPlaylist(
+                              context,
+                              playlist['title'],
+                              song,
+                            ),
+                          );
                           Navigator.pop(context);
                         },
                       ),

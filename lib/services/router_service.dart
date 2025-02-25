@@ -1,5 +1,5 @@
 /*
- *     Copyright (C) 2024 Valeri Gokadze
+ *     Copyright (C) 2025 Valeri Gokadze
  *
  *     Musify is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -25,11 +25,9 @@ import 'package:musify/API/version.dart';
 import 'package:musify/screens/about_page.dart';
 import 'package:musify/screens/bottom_navigation_page.dart';
 import 'package:musify/screens/home_page.dart';
-import 'package:musify/screens/playlists_page.dart';
+import 'package:musify/screens/library_page.dart';
 import 'package:musify/screens/search_page.dart';
 import 'package:musify/screens/settings_page.dart';
-import 'package:musify/screens/user_added_playlists_page.dart';
-import 'package:musify/screens/user_liked_playlists_page.dart';
 import 'package:musify/screens/user_songs_page.dart';
 import 'package:musify/services/settings_manager.dart';
 
@@ -49,9 +47,7 @@ class NavigationManager {
           StatefulNavigationShell navigationShell,
         ) {
           return getPage(
-            child: BottomNavigationPage(
-              child: navigationShell,
-            ),
+            child: BottomNavigationPage(child: navigationShell),
             state: state,
           );
         },
@@ -76,7 +72,7 @@ class NavigationManager {
       GlobalKey<NavigatorState>();
   static final GlobalKey<NavigatorState> searchTabNavigatorKey =
       GlobalKey<NavigatorState>();
-  static final GlobalKey<NavigatorState> userPlaylistsTabNavigatorKey =
+  static final GlobalKey<NavigatorState> libraryTabNavigatorKey =
       GlobalKey<NavigatorState>();
   static final GlobalKey<NavigatorState> settingsTabNavigatorKey =
       GlobalKey<NavigatorState>();
@@ -92,7 +88,7 @@ class NavigationManager {
   static const String homePath = '/home';
   static const String settingsPath = '/settings';
   static const String searchPath = '/search';
-  static const String userPlaylistsPath = '/userPlaylists';
+  static const String libraryPath = '/library';
 
   List<StatefulShellBranch> _onlineRoutes() {
     return [
@@ -102,25 +98,12 @@ class NavigationManager {
           GoRoute(
             path: homePath,
             pageBuilder: (context, GoRouterState state) {
-              return getPage(
-                child: const HomePage(),
-                state: state,
-              );
+              return getPage(child: const HomePage(), state: state);
             },
             routes: [
               GoRoute(
-                path: 'userSongs/:page',
-                builder: (context, state) => UserSongsPage(
-                  page: state.pathParameters['page'] ?? 'liked',
-                ),
-              ),
-              GoRoute(
-                path: 'playlists',
-                builder: (context, state) => const PlaylistsPage(),
-              ),
-              GoRoute(
-                path: 'userLikedPlaylists',
-                builder: (context, state) => const UserLikedPlaylistsPage(),
+                path: 'library',
+                builder: (context, state) => const LibraryPage(),
               ),
             ],
           ),
@@ -132,39 +115,26 @@ class NavigationManager {
           GoRoute(
             path: searchPath,
             pageBuilder: (context, GoRouterState state) {
-              return getPage(
-                child: const SearchPage(),
-                state: state,
-              );
+              return getPage(child: const SearchPage(), state: state);
             },
           ),
         ],
       ),
       StatefulShellBranch(
-        navigatorKey: userPlaylistsTabNavigatorKey,
+        navigatorKey: libraryTabNavigatorKey,
         routes: [
           GoRoute(
-            path: userPlaylistsPath,
+            path: libraryPath,
             pageBuilder: (context, GoRouterState state) {
-              return getPage(
-                child: const UserPlaylistsPage(),
-                state: state,
-              );
+              return getPage(child: const LibraryPage(), state: state);
             },
             routes: [
               GoRoute(
                 path: 'userSongs/:page',
-                builder: (context, state) => UserSongsPage(
-                  page: state.pathParameters['page'] ?? 'liked',
-                ),
-              ),
-              GoRoute(
-                path: 'playlists',
-                builder: (context, state) => const PlaylistsPage(),
-              ),
-              GoRoute(
-                path: 'userLikedPlaylists',
-                builder: (context, state) => const UserLikedPlaylistsPage(),
+                builder:
+                    (context, state) => UserSongsPage(
+                      page: state.pathParameters['page'] ?? 'liked',
+                    ),
               ),
             ],
           ),
@@ -176,18 +146,16 @@ class NavigationManager {
           GoRoute(
             path: settingsPath,
             pageBuilder: (context, state) {
-              return getPage(
-                child: const SettingsPage(),
-                state: state,
-              );
+              return getPage(child: const SettingsPage(), state: state);
             },
             routes: [
               GoRoute(
                 path: 'license',
-                builder: (context, state) => const LicensePage(
-                  applicationName: 'Musify',
-                  applicationVersion: appVersion,
-                ),
+                builder:
+                    (context, state) => const LicensePage(
+                      applicationName: 'Musify',
+                      applicationVersion: appVersion,
+                    ),
               ),
               GoRoute(
                 path: 'about',
@@ -222,18 +190,16 @@ class NavigationManager {
           GoRoute(
             path: settingsPath,
             pageBuilder: (context, state) {
-              return getPage(
-                child: const SettingsPage(),
-                state: state,
-              );
+              return getPage(child: const SettingsPage(), state: state);
             },
             routes: [
               GoRoute(
                 path: 'license',
-                builder: (context, state) => const LicensePage(
-                  applicationName: 'Musify',
-                  applicationVersion: appVersion,
-                ),
+                builder:
+                    (context, state) => const LicensePage(
+                      applicationName: 'Musify',
+                      applicationVersion: appVersion,
+                    ),
               ),
               GoRoute(
                 path: 'about',
@@ -246,13 +212,7 @@ class NavigationManager {
     ];
   }
 
-  static Page getPage({
-    required Widget child,
-    required GoRouterState state,
-  }) {
-    return MaterialPage(
-      key: state.pageKey,
-      child: child,
-    );
+  static Page getPage({required Widget child, required GoRouterState state}) {
+    return MaterialPage(key: state.pageKey, child: child);
   }
 }

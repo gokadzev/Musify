@@ -1,0 +1,6 @@
+Bug Fixes
+- Corrected playlist display logic and border radius handling
+
+Enhancements
+- Enhance audio playback controls with repeat mode functionality
+- Updated Korean translations

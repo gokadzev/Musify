@@ -1,5 +1,5 @@
 /*
- *     Copyright (C) 2024 Valeri Gokadze
+ *     Copyright (C) 2025 Valeri Gokadze
  *
  *     Musify is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@ import 'package:musify/API/version.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/router_service.dart';
+import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/url_launcher.dart';
 import 'package:musify/widgets/auto_format_text.dart';
 
@@ -53,6 +54,7 @@ Future<void> checkAppUpdates() async {
     }
 
     final map = json.decode(response.body) as Map<String, dynamic>;
+    announcementURL.value = map['announcementurl'];
     final latestVersion = map['version'].toString();
 
     if (!isLatestVersionHigher(appVersion, latestVersion)) {
@@ -117,10 +119,7 @@ Future<void> checkAppUpdates() async {
             FilledButton(
               onPressed: () {
                 getDownloadUrl(map).then(
-                  (url) => {
-                    launchURL(Uri.parse(url)),
-                    Navigator.pop(context),
-                  },
+                  (url) => {launchURL(Uri.parse(url)), Navigator.pop(context)},
                 );
               },
               child: Text(context.l10n!.download.toUpperCase()),
@@ -137,15 +136,17 @@ Future<void> checkAppUpdates() async {
 bool isLatestVersionHigher(String appVersion, String latestVersion) {
   final parsedAppVersion = appVersion.split('.');
   final parsedAppLatestVersion = latestVersion.split('.');
-  final length = parsedAppVersion.length > parsedAppLatestVersion.length
-      ? parsedAppVersion.length
-      : parsedAppLatestVersion.length;
+  final length =
+      parsedAppVersion.length > parsedAppLatestVersion.length
+          ? parsedAppVersion.length
+          : parsedAppLatestVersion.length;
   for (var i = 0; i < length; i++) {
     final value1 =
         i < parsedAppVersion.length ? int.parse(parsedAppVersion[i]) : 0;
-    final value2 = i < parsedAppLatestVersion.length
-        ? int.parse(parsedAppLatestVersion[i])
-        : 0;
+    final value2 =
+        i < parsedAppLatestVersion.length
+            ? int.parse(parsedAppLatestVersion[i])
+            : 0;
     if (value2 > value1) {
       return true;
     } else if (value2 < value1) {
@@ -165,9 +166,10 @@ Future<String> getCPUArchitecture() async {
 
 Future<String> getDownloadUrl(Map<String, dynamic> map) async {
   final cpuArchitecture = await getCPUArchitecture();
-  final url = cpuArchitecture == 'aarch64'
-      ? map[downloadUrlArm64Key].toString()
-      : map[downloadUrlKey].toString();
+  final url =
+      cpuArchitecture == 'aarch64'
+          ? map[downloadUrlArm64Key].toString()
+          : map[downloadUrlKey].toString();
 
   return url;
 }

@@ -1,5 +1,5 @@
 /*
- *     Copyright (C) 2024 Valeri Gokadze
+ *     Copyright (C) 2025 Valeri Gokadze
  *
  *     Musify is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:musify/extensions/l10n.dart';
+import 'package:musify/main.dart';
 
 void addOrUpdateData(String category, String key, dynamic value) async {
   final _box = await _openBox(category);
@@ -62,12 +63,11 @@ void clearCache() async {
   await _cacheBox.clear();
 }
 
-Future<bool> isCacheValid(
-  Box box,
-  String key,
-  Duration cachingDuration,
-) async {
-  final date = box.get('${key}_date', defaultValue: DateTime.now());
+Future<bool> isCacheValid(Box box, String key, Duration cachingDuration) async {
+  final date = box.get('${key}_date');
+  if (date == null) {
+    return false;
+  }
   final age = DateTime.now().difference(date);
   return age < cachingDuration;
 }
@@ -108,22 +108,46 @@ Future<String> backupData(BuildContext context) async {
 
 Future<String> restoreData(BuildContext context) async {
   final boxNames = ['user', 'settings'];
-  final uplPath = await FilePicker.platform.getDirectoryPath();
+  final backupFiles = await FilePicker.platform.pickFiles(allowMultiple: true);
 
-  if (uplPath == null) {
-    return '${context.l10n!.chooseRestoreDir}!';
+  if (backupFiles == null || backupFiles.files.isEmpty) {
+    return '${context.l10n!.chooseBackupFiles}!';
   }
 
   try {
     for (final boxName in boxNames) {
-      final sourceFile = File('$uplPath/$boxName.hive');
-      final box = await _openBox(boxName);
+      final _file = backupFiles.files.firstWhere(
+        (file) => file.name == '$boxName.hive',
+        orElse:
+            () => PlatformFile(
+              name: '',
+              size: 0,
+            ), // Create a PlatformFile with null path if not found
+      );
 
-      final boxPath = box.path;
-      await sourceFile.copy(boxPath!);
+      if (_file.path != null && _file.path!.isNotEmpty && _file.size != 0) {
+        final sourceFilePath = _file.path!;
+        final sourceFile = File(sourceFilePath);
+
+        final box = await _openBox(boxName);
+        final boxPath = box.path;
+        await box.close();
+
+        if (boxPath != null) {
+          await sourceFile.copy(boxPath);
+        }
+      } else {
+        logger.log(
+          'Source file for $boxName not found while restoring data.',
+          null,
+          null,
+        );
+      }
     }
+
     return '${context.l10n!.restoredSuccess}!';
   } catch (e, stackTrace) {
+    logger.log('${context.l10n!.restoreError}:', e, stackTrace);
     return '${context.l10n!.restoreError}: $e\n$stackTrace';
   }
 }

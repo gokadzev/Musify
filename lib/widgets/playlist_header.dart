@@ -1,5 +1,5 @@
 /*
- *     Copyright (C) 2024 Valeri Gokadze
+ *     Copyright (C) 2025 Valeri Gokadze
  *
  *     Musify is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -23,12 +23,7 @@ import 'package:flutter/material.dart';
 import 'package:musify/extensions/l10n.dart';
 
 class PlaylistHeader extends StatelessWidget {
-  PlaylistHeader(
-    this.image,
-    this.title,
-    this.songsLength, {
-    super.key,
-  });
+  const PlaylistHeader(this.image, this.title, this.songsLength, {super.key});
 
   final Widget image;
   final String title;
@@ -36,37 +31,43 @@ class PlaylistHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _primaryColor = Theme.of(context).colorScheme.primary;
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        image,
-        const SizedBox(width: 10),
-        SizedBox(
-          width: MediaQuery.sizeOf(context).width / 2.3,
-          child: Column(
-            children: [
-              Text(
-                title,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: _primaryColor,
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
+
+    return Padding(
+      padding: const EdgeInsets.all(6),
+      child: Row(
+        children: [
+          ClipRRect(borderRadius: BorderRadius.circular(8), child: image),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              children: [
+                Text(
+                  title,
+                  style: textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.onSurface,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                  textAlign: TextAlign.center,
                 ),
-              ),
-              const SizedBox(height: 15),
-              Text(
-                '$songsLength ${context.l10n!.songs}'.toUpperCase(),
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  color: Theme.of(context).colorScheme.secondary,
+                const SizedBox(height: 8),
+                Text(
+                  '$songsLength ${context.l10n!.songs}'.toUpperCase(),
+                  style: textTheme.bodySmall?.copyWith(
+                    fontWeight: FontWeight.w500,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

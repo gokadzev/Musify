@@ -1,5 +1,5 @@
 /*
- *     Copyright (C) 2024 Valeri Gokadze
+ *     Copyright (C) 2025 Valeri Gokadze
  *
  *     Musify is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -52,11 +52,7 @@ class NullArtworkWidget extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Icon(
-              icon,
-              size: iconSize,
-              color: colorScheme.onSecondary,
-            ),
+            Icon(icon, size: iconSize, color: colorScheme.onSecondary),
             if (title != null)
               Padding(
                 padding: const EdgeInsets.all(paddingValue),

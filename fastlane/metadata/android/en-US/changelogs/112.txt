@@ -1,0 +1,3 @@
+Enhancements
+- Introduced a client-switching feature to address potential streaming issues. This allows you to seamlessly switch between clients when needed.
+- Recommendation: Avoid selecting all available clients simultaneously. Instead, select 2-3 clients for optimal performance during streaming issues, and leave the settings unchanged if no issues arise.

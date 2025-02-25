@@ -1,5 +1,5 @@
 /*
- *     Copyright (C) 2024 Valeri Gokadze
+ *     Copyright (C) 2025 Valeri Gokadze
  *
  *     Musify is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -19,39 +19,35 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:musify/utilities/common_variables.dart';
 
-class LikeButton extends StatelessWidget {
-  LikeButton({
+class BottomSheetBar extends StatelessWidget {
+  const BottomSheetBar(
+    this.title,
+    this.onTap,
+    this.backgroundColor, {
+    this.borderRadius = BorderRadius.zero,
     super.key,
-    required this.onSecondaryColor,
-    required this.onPrimaryColor,
-    required this.isLiked,
-    required this.onPressed,
   });
-  final Color onSecondaryColor;
-  final Color onPrimaryColor;
-  final bool isLiked;
-  final VoidCallback onPressed;
+  final String title;
+  final VoidCallback onTap;
+  final Color backgroundColor;
+  final BorderRadius borderRadius;
 
   @override
   Widget build(BuildContext context) {
-    const likeStatusToIconMapper = {
-      true: FluentIcons.heart_24_filled,
-      false: FluentIcons.heart_24_regular,
-    };
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: onSecondaryColor,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: IconButton(
-        onPressed: onPressed,
-        icon: Icon(
-          likeStatusToIconMapper[isLiked],
-          color: onPrimaryColor,
-          size: 25,
+    return Card(
+      color: backgroundColor,
+      shape: RoundedRectangleBorder(borderRadius: borderRadius),
+      margin: const EdgeInsets.only(bottom: 3),
+      child: Padding(
+        padding: commonBarContentPadding,
+        child: InkWell(
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          onTap: onTap,
+          child: ListTile(minTileHeight: 45, title: Text(title)),
         ),
       ),
     );

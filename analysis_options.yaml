@@ -52,7 +52,6 @@ linter:
     - null_closures
     - omit_local_variable_types
     - overridden_fields
-    - package_api_docs
     - package_names
     - package_prefixed_library_names
     - prefer_adjacent_string_concatenation

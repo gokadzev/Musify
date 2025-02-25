@@ -1,5 +1,5 @@
 /*
- *     Copyright (C) 2024 Valeri Gokadze
+ *     Copyright (C) 2025 Valeri Gokadze
  *
  *     Musify is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -24,8 +24,6 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
-import 'package:musify/screens/playlist_page.dart';
-import 'package:musify/widgets/like_button.dart';
 import 'package:musify/widgets/no_artwork_cube.dart';
 
 class PlaylistCube extends StatelessWidget {
@@ -33,29 +31,26 @@ class PlaylistCube extends StatelessWidget {
     this.playlist, {
     super.key,
     this.playlistData,
-    this.onClickOpen = true,
-    this.showFavoriteButton = true,
     this.cubeIcon = FluentIcons.music_note_1_24_regular,
     this.size = 220,
+        this.onClickOpen = true,
+
     this.borderRadius = 13,
-    this.isAlbum = false,
   }) : playlistLikeStatus = ValueNotifier<bool>(
-          isPlaylistAlreadyLiked(playlist['ytid']),
-        );
+         isPlaylistAlreadyLiked(playlist['ytid']),
+       );
 
   final Map? playlistData;
   final Map playlist;
-  final bool onClickOpen;
-  final bool showFavoriteButton;
   final IconData cubeIcon;
   final double size;
+    final bool onClickOpen;
+
   final double borderRadius;
-  final bool? isAlbum;
 
   static const double paddingValue = 4;
-  static const double likeButtonOffset = 5;
+  static const double typeLabelOffset = 10;
   static const double iconSize = 30;
-  static const double albumTextFontSize = 12;
 
   final ValueNotifier<bool> playlistLikeStatus;
 
@@ -66,92 +61,64 @@ class PlaylistCube extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final secondaryColor = colorScheme.secondary;
-    final onSecondaryColor = colorScheme.onSecondary;
-
-    return Stack(
-      children: <Widget>[
-        GestureDetector(
-          onTap:
-              onClickOpen && (playlist['ytid'] != null || playlistData != null)
-                  ? () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PlaylistPage(
-                            playlistId: playlist['ytid'],
-                            playlistData: playlistData,
-                          ),
-                        ),
-                      );
-                    }
-                  : null,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(borderRadius),
-            child: playlist['image'] != null
-                ? CachedNetworkImage(
-                    key: Key(playlist['image'].toString()),
-                    height: size,
-                    width: size,
-                    imageUrl: playlist['image'].toString(),
-                    fit: BoxFit.cover,
-                    errorWidget: (context, url, error) => NullArtworkWidget(
-                      icon: cubeIcon,
-                      iconSize: iconSize,
-                      size: size,
-                      title: playlist['title'],
-                    ),
-                  )
-                : NullArtworkWidget(
-                    icon: cubeIcon,
-                    iconSize: iconSize,
-                    size: size,
-                    title: playlist['title'],
-                  ),
-          ),
-        ),
-        if (playlist['ytid'] != null && showFavoriteButton)
-          ValueListenableBuilder<bool>(
-            valueListenable: playlistLikeStatus,
-            builder: (_, isLiked, __) {
-              return Positioned(
-                bottom: likeButtonOffset,
-                right: likeButtonOffset,
-                child: LikeButton(
-                  onPrimaryColor: onSecondaryColor,
-                  onSecondaryColor: secondaryColor,
-                  isLiked: isLiked,
-                  onPressed: () {
-                    final newValue = !playlistLikeStatus.value;
-                    playlistLikeStatus.value = newValue;
-                    updatePlaylistLikeStatus(playlist, newValue);
-                    currentLikedPlaylistsLength.value += newValue ? 1 : -1;
-                  },
-                ),
-              );
-            },
-          ),
-        if (isAlbum ?? false)
-          Positioned(
-            top: likeButtonOffset,
-            right: likeButtonOffset,
-            child: Container(
-              decoration: BoxDecoration(
-                color: secondaryColor,
-                borderRadius: BorderRadius.circular(paddingValue),
-              ),
-              padding: const EdgeInsets.all(paddingValue),
-              child: Text(
-                context.l10n!.album,
-                style: TextStyle(
-                  color: onSecondaryColor,
-                  fontSize: albumTextFontSize,
-                ),
-              ),
+    return Material(
+      elevation: 4,
+      borderRadius: BorderRadius.circular(borderRadius),
+      clipBehavior: Clip.antiAlias,
+      child: Stack(
+        children: [
+          _buildImage(context),
+          if (borderRadius == 13 && playlist['image'] != null)
+            Positioned(
+              top: typeLabelOffset,
+              right: typeLabelOffset,
+              child: _buildLabel(context),
             ),
-          ),
-      ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildImage(BuildContext context) {
+    return playlist['image'] != null
+        ? CachedNetworkImage(
+          key: Key(playlist['image'].toString()),
+          imageUrl: playlist['image'].toString(),
+          height: size,
+          width: size,
+          fit: BoxFit.cover,
+          errorWidget:
+              (context, url, error) => NullArtworkWidget(
+                icon: cubeIcon,
+                iconSize: iconSize,
+                size: size,
+                title: playlist['title'],
+              ),
+        )
+        : NullArtworkWidget(
+          icon: cubeIcon,
+          iconSize: iconSize,
+          size: size,
+          title: playlist['title'],
+        );
+  }
+
+  Widget _buildLabel(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Container(
+      decoration: BoxDecoration(
+        color: colorScheme.secondaryContainer,
+        borderRadius: BorderRadius.circular(paddingValue),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      child: Text(
+        playlist['isAlbum'] != null && playlist['isAlbum'] == true
+            ? context.l10n!.album
+            : context.l10n!.playlist,
+        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+          color: colorScheme.onSecondaryContainer,
+        ),
+      ),
     );
   }
 }

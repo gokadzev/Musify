@@ -1,5 +1,5 @@
 /*
- *     Copyright (C) 2024 Valeri Gokadze
+ *     Copyright (C) 2025 Valeri Gokadze
  *
  *     Musify is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 3),
       child: SearchBar(
         shadowColor: WidgetStateProperty.all(Colors.transparent),
         hintText: widget.labelText,
@@ -56,13 +56,14 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
           widget.onSubmitted(value);
           widget.focusNode.unfocus();
         },
-        onChanged: widget.onChanged != null
-            ? (value) async {
-                widget.onChanged!(value);
+        onChanged:
+            widget.onChanged != null
+                ? (value) async {
+                  widget.onChanged!(value);
 
-                setState(() {});
-              }
-            : null,
+                  setState(() {});
+                }
+                : null,
         textInputAction: TextInputAction.search,
         controller: widget.controller,
         focusNode: widget.focusNode,
@@ -85,9 +86,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                   );
                 } else {
                   return IconButton(
-                    icon: const Icon(
-                      FluentIcons.search_20_regular,
-                    ),
+                    icon: const Icon(FluentIcons.search_20_regular),
                     onPressed: () {
                       widget.onSubmitted(widget.controller.text);
                       widget.focusNode.unfocus();
@@ -98,9 +97,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
             )
           else
             IconButton(
-              icon: const Icon(
-                FluentIcons.search_20_regular,
-              ),
+              icon: const Icon(FluentIcons.search_20_regular),
               onPressed: () {
                 widget.onSubmitted(widget.controller.text);
                 widget.focusNode.unfocus();

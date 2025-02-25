@@ -230,7 +230,7 @@ class NowPlayingPage extends StatelessWidget {
     final currentPosition =
         positionData.position.inSeconds.toDouble().clamp(0.0, maxDuration);
     return CustomSlider(
-      isSquiglySliderEnabled: useSquigglySlider.value,
+      isSquiglySliderEnabled: true,
       value: currentPosition,
       onChanged: (value) {
         audioHandler.seek(Duration(seconds: value.toInt()));
@@ -345,7 +345,7 @@ class NowPlayingPage extends StatelessWidget {
             ],
           ),
           ValueListenableBuilder<bool>(
-            valueListenable: repeatNotifier,
+            valueListenable: shuffleNotifier,
             builder: (_, value, __) {
               return value
                   ? IconButton.filled(

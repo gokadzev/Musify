@@ -1,5 +1,5 @@
 /*
- *     Copyright (C) 2024 Valeri Gokadze
+ *     Copyright (C) 2025 Valeri Gokadze
  *
  *     Musify is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -27,9 +27,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:musify/API/musify.dart';
 import 'package:musify/services/audio_service.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/logger_service.dart';
@@ -37,6 +37,7 @@ import 'package:musify/services/router_service.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/services/update_manager.dart';
 import 'package:musify/style/app_themes.dart';
+import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 late MusifyAudioHandler audioHandler;
 
@@ -49,7 +50,6 @@ final appLanguages = <String, String>{
   'English': 'en',
   'Arabic': 'ar',
   'French': 'fr',
-  'Georgian': 'ka',
   'German': 'de',
   'Greek': 'el',
   'Indonesian': 'id',
@@ -59,13 +59,14 @@ final appLanguages = <String, String>{
   'Russian': 'ru',
   'Polish': 'pl',
   'Portuguese': 'pt',
-  'Turkish': 'tr',
+  'Spanish': 'es',
   'Ukrainian': 'uk',
 };
 
-final appSupportedLocales = appLanguages.values
-    .map((languageCode) => Locale.fromSubtags(languageCode: languageCode))
-    .toList();
+final appSupportedLocales =
+    appLanguages.values
+        .map((languageCode) => Locale.fromSubtags(languageCode: languageCode))
+        .toList();
 
 class Musify extends StatefulWidget {
   const Musify({super.key});
@@ -78,11 +79,11 @@ class Musify extends StatefulWidget {
     bool? useSystemColor,
   }) async {
     context.findAncestorStateOfType<_MusifyState>()!.changeSettings(
-          newThemeMode: newThemeMode,
-          newLocale: newLocale,
-          newAccentColor: newAccentColor,
-          systemColorStatus: useSystemColor,
-        );
+      newThemeMode: newThemeMode,
+      newLocale: newLocale,
+      newAccentColor: newAccentColor,
+      systemColorStatus: useSystemColor,
+    );
   }
 
   @override
@@ -108,11 +109,7 @@ class _MusifyState extends State<Musify> {
         if (systemColorStatus != null &&
             useSystemColor.value != systemColorStatus) {
           useSystemColor.value = systemColorStatus;
-          addOrUpdateData(
-            'settings',
-            'useSystemColor',
-            systemColorStatus,
-          );
+          addOrUpdateData('settings', 'useSystemColor', systemColorStatus);
         }
         primaryColorSetting = newAccentColor;
       }
@@ -123,20 +120,22 @@ class _MusifyState extends State<Musify> {
   void initState() {
     super.initState();
 
-    // Some people said that Colors.transparent causes some issues, so better to use it this way
-    final trickyFixForTransparency = Colors.black.withOpacity(0.002);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-    SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle(
-        statusBarColor: trickyFixForTransparency,
-        systemNavigationBarColor: trickyFixForTransparency,
-      ),
-    );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      SystemChrome.setSystemUIOverlayStyle(
+        const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          systemNavigationBarColor: Colors.transparent,
+        ),
+      );
+    });
 
     try {
       LicenseRegistry.addLicense(() async* {
-        final license =
-            await rootBundle.loadString('assets/licenses/paytone.txt');
+        final license = await rootBundle.loadString(
+          'assets/licenses/paytone.txt',
+        );
         yield LicenseEntryWithLineBreaks(['paytoneOne'], license);
       });
     } catch (e, stackTrace) {
@@ -164,8 +163,10 @@ class _MusifyState extends State<Musify> {
   Widget build(BuildContext context) {
     return DynamicColorBuilder(
       builder: (lightColorScheme, darkColorScheme) {
-        final colorScheme =
-            getAppColorScheme(lightColorScheme, darkColorScheme);
+        final colorScheme = getAppColorScheme(
+          lightColorScheme,
+          darkColorScheme,
+        );
 
         return MaterialApp.router(
           themeMode: themeMode,
@@ -173,7 +174,6 @@ class _MusifyState extends State<Musify> {
           theme: getAppTheme(colorScheme),
           debugShowCheckedModeBanner: false,
           localizationsDelegates: const [
-            AppLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
@@ -217,6 +217,18 @@ Future<void> initialisation() async {
 
     // Init router
     NavigationManager.instance;
+
+    // Init clients
+    if (clientsSetting.value.isNotEmpty) {
+      final chosenClients = <YoutubeApiClient>[];
+      for (final client in clientsSetting.value) {
+        final _client = clients[client];
+        if (_client != null) {
+          chosenClients.add(_client);
+        }
+      }
+      userChosenClients = chosenClients;
+    }
   } catch (e, stackTrace) {
     logger.log('Initialization Error', e, stackTrace);
   }

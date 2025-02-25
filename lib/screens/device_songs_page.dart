@@ -114,7 +114,7 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
           'artUri': 'assets/images/music_icon.png',
           'highResImage': 'assets/images/music_icon.png',
           'lowResImage': 'assets/images/music_icon.png',
-          'albumArt': albumArt, 
+          'albumArt': albumArt,
           'isLive': false,
           'isOffline': true,
           'dateModified': song.dateModified,
@@ -457,7 +457,6 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
     return PlaylistCube(
       {'title': title},
       onClickOpen: false,
-      showFavoriteButton: false,
       size: MediaQuery.sizeOf(context).width / 2.5,
       cubeIcon: icon,
     );

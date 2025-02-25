@@ -62,7 +62,6 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: Text(context.l10n!.userPlaylists),
@@ -215,34 +214,34 @@ class _UserPlaylistsPageState extends State<UserPlaylistsPage> {
                 onPressed: () => NavigationManager.router
                     .go('/userPlaylists/userSongs/recents'),
                 cubeIcon: FluentIcons.history_24_filled,
-                showBtn: false,
+                showBuildActions: false,
               ),
               PlaylistBar(
                 context.l10n!.playlist,
                 onPressed: () =>
                     NavigationManager.router.go('/userPlaylists/playlists'),
                 cubeIcon: FluentIcons.list_24_filled,
-                showBtn: false,
+                showBuildActions: false,
               ),
               PlaylistBar(
                 context.l10n!.likedSongs,
                 onPressed: () => NavigationManager.router
                     .go('/userPlaylists/userSongs/liked'),
                 cubeIcon: FluentIcons.music_note_2_24_regular,
-                showBtn: false,
+                showBuildActions: false,
               ),
               PlaylistBar(
                 context.l10n!.likedPlaylists,
                 onPressed: () => NavigationManager.router
                     .go('/userPlaylists/userLikedPlaylists'),
                 cubeIcon: FluentIcons.task_list_ltr_24_regular,
-                showBtn: false,
+                showBuildActions: false,
               ),
               PlaylistBar(
                 'Local Songs',
                 onPressed: () => _checkPermissionAndScanDevice(context),
                 cubeIcon: FluentIcons.music_note_1_20_filled,
-                showBtn: false,
+                showBuildActions: false,
               ),
               FutureBuilder(
                 future: _playlistsFuture,

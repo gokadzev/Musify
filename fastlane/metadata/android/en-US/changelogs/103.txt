@@ -1,0 +1,8 @@
+Bug Fixes
+
+- Fixed UI issues
+- Resolved layout issue with scrolling content and fixed issues related to unremovable playlists
+
+Enhancements
+
+- Improved grammar and clarity in translations

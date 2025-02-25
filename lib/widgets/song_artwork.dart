@@ -1,5 +1,5 @@
 /*
- *     Copyright (C) 2024 Valeri Gokadze
+ *     Copyright (C) 2025 Valeri Gokadze
  *
  *     Musify is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -60,31 +60,29 @@ class SongArtworkWidget extends StatelessWidget {
     final String imgUrl = metadata.extras?['artWorkPath'];
     return metadata.artUri?.scheme == 'file'
         ? SizedBox(
-            width: size,
-            height: size,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(borderRadius),
-              child: Image.file(
-                File(metadata.extras?['artWorkPath']),
-                fit: BoxFit.cover,
-              ),
+          width: size,
+          height: size,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(borderRadius),
+            child: Image.file(
+              File(metadata.extras?['artWorkPath']),
+              fit: BoxFit.cover,
             ),
-          )
+          ),
+        )
         : CachedNetworkImage(
-            width: size,
-            height: size,
-            imageUrl: imgUrl,
-            imageBuilder: (context, imageProvider) => ClipRRect(
-              borderRadius: BorderRadius.circular(borderRadius),
-              child: Image(
-                image: imageProvider,
-                fit: BoxFit.cover,
+          width: size,
+          height: size,
+          imageUrl: imgUrl,
+          imageBuilder:
+              (context, imageProvider) => ClipRRect(
+                borderRadius: BorderRadius.circular(borderRadius),
+                child: Image(image: imageProvider, fit: BoxFit.cover),
               ),
-            ),
-            placeholder: (context, url) => const Spinner(),
-            errorWidget: (context, url, error) => NullArtworkWidget(
-              iconSize: errorWidgetIconSize,
-            ),
-          );
+          placeholder: (context, url) => const Spinner(),
+          errorWidget:
+              (context, url, error) =>
+                  NullArtworkWidget(iconSize: errorWidgetIconSize),
+        );
   }
 }

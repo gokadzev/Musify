@@ -126,7 +126,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
 
                     return PlaylistCube(
                       playlist,
-                      isAlbum: playlist['isAlbum'],
+                      // isAlbum: playlist['isAlbum'],
                     );
                   },
                 );

@@ -30,9 +30,8 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.ruchan.musify_fork"
-    compileSdkVersion 34
-    ndkVersion "27.0.12077973"
+    namespace = "com.gokadzev.musify"
+    compileSdk 35
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
@@ -53,9 +52,9 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.ruchan.musify_fork"
-        minSdkVersion 21
-        targetSdkVersion 34
+        applicationId "com.gokadzev.musify"
+        minSdk 24
+        targetSdk 35
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
@@ -87,6 +86,13 @@ android {
 
     buildFeatures {
         buildConfig = true
+    }
+
+    dependenciesInfo {
+        // Disables dependency metadata when building APKs.
+        includeInApk = false
+        // Disables dependency metadata when building Android App Bundles.
+        includeInBundle = false
     }
 
     buildTypes {

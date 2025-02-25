@@ -1,5 +1,5 @@
 /*
- *     Copyright (C) 2024 Valeri Gokadze
+ *     Copyright (C) 2025 Valeri Gokadze
  *
  *     Musify is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -28,13 +28,12 @@ import 'package:musify/style/dynamic_color_temp_fix.dart';
 ThemeMode themeMode = getThemeMode(themeModeSetting);
 Brightness brightness = getBrightnessFromThemeMode(themeMode);
 
-PageTransitionsBuilder transitionsBuilder = predictiveBack.value
-    ? const PredictiveBackPageTransitionsBuilder()
-    : const CupertinoPageTransitionsBuilder();
+PageTransitionsBuilder transitionsBuilder =
+    predictiveBack.value
+        ? const PredictiveBackPageTransitionsBuilder()
+        : const CupertinoPageTransitionsBuilder();
 
-Brightness getBrightnessFromThemeMode(
-  ThemeMode themeMode,
-) {
+Brightness getBrightnessFromThemeMode(ThemeMode themeMode) {
   final themeBrightnessMapping = {
     ThemeMode.light: Brightness.light,
     ThemeMode.dark: Brightness.dark,
@@ -67,8 +66,10 @@ ColorScheme getAppColorScheme(
       darkColorScheme != null) {
     // Temporary fix until this will be fixed: https://github.com/material-foundation/flutter-packages/issues/582
 
-    (lightColorScheme, darkColorScheme) =
-        tempGenerateDynamicColourSchemes(lightColorScheme, darkColorScheme);
+    (lightColorScheme, darkColorScheme) = tempGenerateDynamicColourSchemes(
+      lightColorScheme,
+      darkColorScheme,
+    );
   }
 
   final selectedScheme =
@@ -85,27 +86,32 @@ ColorScheme getAppColorScheme(
 }
 
 ThemeData getAppTheme(ColorScheme colorScheme) {
-  final base = colorScheme.brightness == Brightness.light
-      ? ThemeData.light()
-      : ThemeData.dark();
+  final base =
+      colorScheme.brightness == Brightness.light
+          ? ThemeData.light()
+          : ThemeData.dark();
 
   final isPureBlackUsable =
       colorScheme.brightness == Brightness.dark && usePureBlackColor.value;
 
-  final bgColor = colorScheme.brightness == Brightness.light
-      ? colorScheme.surfaceContainer
-      : (isPureBlackUsable ? const Color(0xFF000000) : null);
+  final bgColor =
+      colorScheme.brightness == Brightness.light
+          ? colorScheme.surfaceContainer
+          : (isPureBlackUsable ? const Color(0xFF000000) : null);
 
   return ThemeData(
     scaffoldBackgroundColor: bgColor,
     colorScheme: colorScheme,
+    cardColor: bgColor,
+    cardTheme: base.cardTheme.copyWith(elevation: 0.1),
     appBarTheme: base.appBarTheme.copyWith(
       backgroundColor: bgColor,
       iconTheme: IconThemeData(color: colorScheme.primary),
       centerTitle: true,
       titleTextStyle: TextStyle(
         fontSize: 30,
-        fontWeight: FontWeight.bold,
+        fontFamily: 'paytoneOne',
+        fontWeight: FontWeight.w300,
         color: colorScheme.primary,
       ),
       elevation: 0,
@@ -114,6 +120,12 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
       textColor: colorScheme.primary,
       iconColor: colorScheme.primary,
     ),
+    sliderTheme: base.sliderTheme.copyWith(
+      year2023: false,
+      trackHeight: 12,
+      thumbSize: WidgetStateProperty.all(const Size(6, 30)),
+    ),
+    bottomSheetTheme: base.bottomSheetTheme.copyWith(backgroundColor: bgColor),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       isDense: true,
@@ -123,9 +135,9 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
       ),
       contentPadding: const EdgeInsets.fromLTRB(18, 14, 20, 14),
     ),
-    navigationBarTheme: isPureBlackUsable && bgColor != null
-        ? base.navigationBarTheme.copyWith(backgroundColor: bgColor)
-        : null,
+    navigationBarTheme: base.navigationBarTheme.copyWith(
+      backgroundColor: bgColor,
+    ),
     visualDensity: VisualDensity.adaptivePlatformDensity,
     useMaterial3: true,
     pageTransitionsTheme: PageTransitionsTheme(

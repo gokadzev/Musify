@@ -1,5 +1,5 @@
 /*
- *     Copyright (C) 2024 Valeri Gokadze
+ *     Copyright (C) 2025 Valeri Gokadze
  *
  *     Musify is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -30,9 +30,7 @@ void showToast(BuildContext context, String text) {
       behavior: SnackBarBehavior.floating,
       content: Text(
         text,
-        style: TextStyle(
-          color: Theme.of(context).colorScheme.inverseSurface,
-        ),
+        style: TextStyle(color: Theme.of(context).colorScheme.inverseSurface),
       ),
       duration: _toastDuration,
     ),
@@ -50,9 +48,7 @@ void showToastWithButton(
       backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
       content: Text(
         text,
-        style: TextStyle(
-          color: Theme.of(context).colorScheme.inverseSurface,
-        ),
+        style: TextStyle(color: Theme.of(context).colorScheme.inverseSurface),
       ),
       action: SnackBarAction(
         label: buttonName,

@@ -42,8 +42,8 @@ app.*.map.json
 # Exceptions to above rules.
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 
-# Ignore Gradle project-specific cache directory
-.gradle
+# Android related
+android/app/.cxx/
 
-# Ignore Gradle build output directory
-build
+# Generated localization dart files
+lib/localization/app_*.dart
