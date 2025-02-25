@@ -591,40 +591,55 @@ Future<Map?> getPlaylistInfoForWidget(
   dynamic id, {
   bool isArtist = false,
 }) async {
-  if (!isArtist) {
-    Map? playlist = playlists.firstWhere(
-      (list) => list['ytid'] == id,
-      orElse: () => null,
-    );
-
-    if (playlist == null) {
-      final usPlaylists = await getUserPlaylists();
-      playlist = usPlaylists.firstWhere(
-        (list) => list['ytid'] == id,
-        orElse: () => null,
-      );
-    }
-
-    playlist ??= onlinePlaylists.firstWhere(
-      (list) => list['ytid'] == id,
-      orElse: () => null,
-    );
-
-    if (playlist != null && playlist['list'].isEmpty) {
-      playlist['list'] = await getSongsFromPlaylist(playlist['ytid']);
-      if (!playlists.contains(playlist)) {
-        playlists.add(playlist);
-      }
-    }
-
-    return playlist;
-  } else {
-    final playlist = <String, dynamic>{'title': id};
-
-    playlist['list'] = await fetchSongsList(id);
-
-    return playlist;
+  if (isArtist) {
+    return {'title': id, 'list': await fetchSongsList(id)};
   }
+
+  Map? playlist;
+
+  // Check in local playlists.
+  playlist = playlists.firstWhere((p) => p['ytid'] == id, orElse: () => null);
+
+  // Check in user playlists if not found.
+  if (playlist == null) {
+    final userPl = await getUserPlaylists();
+    playlist = userPl.firstWhere((p) => p['ytid'] == id, orElse: () => null);
+  }
+
+  // Check in cached online playlists if still not found.
+  playlist ??= onlinePlaylists.firstWhere(
+    (p) => p['ytid'] == id,
+    orElse: () => null,
+  );
+
+  // If still not found, attempt to fetch playlist info.
+  if (playlist == null) {
+    try {
+      final ytPlaylist = await _yt.playlists.get(id);
+      playlist = {
+        'ytid': ytPlaylist.id.toString(),
+        'title': ytPlaylist.title,
+        'image': null,
+        'source': 'user-youtube',
+        'list': [],
+      };
+      onlinePlaylists.add(playlist);
+    } catch (e, stackTrace) {
+      logger.log('Failed to fetch playlist info for id $id', e, stackTrace);
+      return null;
+    }
+  }
+
+  // If the playlist exists but its song list is empty, fetch and cache the songs.
+  if (playlist['list'] == null ||
+      (playlist['list'] is List && (playlist['list'] as List).isEmpty)) {
+    playlist['list'] = await getSongsFromPlaylist(playlist['ytid']);
+    if (!playlists.contains(playlist)) {
+      playlists.add(playlist);
+    }
+  }
+
+  return playlist;
 }
 
 final clients = {
