@@ -373,31 +373,36 @@ Future<List> getPlaylists({
   bool onlyLiked = false,
   String type = 'all',
 }) async {
-  // Early exit if playlists or suggestedPlaylists is empty
+  // Early exit if there are no playlists to process.
   if (playlists.isEmpty ||
       (playlistsNum == null && query == null && suggestedPlaylists.isEmpty)) {
     return [];
   }
 
-  // Filter playlists based on query and type if only query is specified
+  // If a query is provided (without a limit), filter playlists based on the query and type,
+  // and augment with online search results.
   if (query != null && playlistsNum == null) {
     final lowercaseQuery = query.toLowerCase();
     final filteredPlaylists =
         playlists.where((playlist) {
-          final lowercaseTitle = playlist['title'].toLowerCase();
-          return lowercaseTitle.contains(lowercaseQuery) &&
-              ((type == 'all') ||
-                  (type == 'album' && playlist['isAlbum'] == true) ||
-                  (type == 'playlist' && playlist['isAlbum'] != true));
+          final title = playlist['title'].toLowerCase();
+          final matchesQuery = title.contains(lowercaseQuery);
+          final matchesType =
+              type == 'all' ||
+              (type == 'album' && playlist['isAlbum'] == true) ||
+              (type == 'playlist' && playlist['isAlbum'] != true);
+          return matchesQuery && matchesType;
         }).toList();
 
+    final searchTerm = type == 'album' ? '$query album' : query;
     final searchResults = await _yt.search.searchContent(
-      type == 'album' ? '$query album' : query,
+      searchTerm,
       filter: TypeFilters.playlist,
     );
 
-    final existingYtid =
-        onlinePlaylists.map((playlist) => playlist['ytid'] as String).toSet();
+    // Avoid duplicate online playlists.
+    final existingYtIds =
+        onlinePlaylists.map((p) => p['ytid'] as String).toSet();
 
     final newPlaylists =
         searchResults
@@ -409,51 +414,49 @@ Future<List> getPlaylists({
                 'source': 'youtube',
                 'list': [],
               };
-
-              if (!existingYtid.contains(playlistMap['ytid'])) {
-                existingYtid.add(playlistMap['ytid'].toString());
+              if (!existingYtIds.contains(playlistMap['ytid'])) {
+                existingYtIds.add(playlistMap['ytid'].toString());
                 return playlistMap;
               }
               return null;
             })
             .whereType<Map<String, dynamic>>()
             .toList();
-
     onlinePlaylists.addAll(newPlaylists);
+
+    // Merge online playlists that match the query.
     filteredPlaylists.addAll(
       onlinePlaylists.where(
-        (playlist) => playlist['title'].toLowerCase().contains(lowercaseQuery),
+        (p) => p['title'].toLowerCase().contains(lowercaseQuery),
       ),
     );
-
     return filteredPlaylists;
   }
 
-  // Return a subset of suggested playlists if playlistsNum is specified without a query
+  // If a specific number of playlists is requested (without a query),
+  // return a shuffled subset of suggested playlists.
   if (playlistsNum != null && query == null) {
     if (suggestedPlaylists.isEmpty) {
-      suggestedPlaylists = playlists.toList()..shuffle();
+      suggestedPlaylists = List.from(playlists)..shuffle();
     }
     return suggestedPlaylists.take(playlistsNum).toList();
   }
 
-  // Return userLikedPlaylists if onlyLiked flag is set and no query or playlistsNum is specified
+  // If only liked playlists should be returned, ignore other parameters.
   if (onlyLiked && playlistsNum == null && query == null) {
     return userLikedPlaylists;
   }
 
-  // Filter playlists by type
+  // If a specific type is requested, filter accordingly.
   if (type != 'all') {
-    return playlists
-        .where(
-          (playlist) =>
-              (type == 'album' && playlist['isAlbum'] == true) ||
-              (type == 'playlist' && playlist['isAlbum'] != true),
-        )
-        .toList();
+    return playlists.where((playlist) {
+      return type == 'album'
+          ? playlist['isAlbum'] == true
+          : playlist['isAlbum'] != true;
+    }).toList();
   }
 
-  // Return playlists directly if type is 'all'
+  // Default to returning all playlists.
   return playlists;
 }
 
