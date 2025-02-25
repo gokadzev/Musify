@@ -41,6 +41,7 @@
   "downloadAppUpdate": "Unduh pembaruan aplikasi",
   "dynamicColor": "Warna aksen dinamis (Android 12+)",
   "error": "Terjadi kesalahan. Silakan coba lagi.",
+  "folders":"Folder",
   "folderRestrictions": "Pembatasan Android mengharuskan memilih folder tertentu (misalnya, Dokumen atau Unduhan) untuk pencadangan.",
   "home": "Beranda",
   "hours": "Jam",

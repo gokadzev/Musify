@@ -57,7 +57,7 @@ class _HomePageState extends State<HomePage> {
                 if (_url == null) return const SizedBox.shrink();
 
                 return AnnouncementBox(
-                  message: context.l10n!.newAnnouncement,
+                  message: 'Announcements',
                   backgroundColor:
                       Theme.of(context).colorScheme.secondaryContainer,
                   textColor: Theme.of(context).colorScheme.onSecondaryContainer,
@@ -82,7 +82,7 @@ class _HomePageState extends State<HomePage> {
   Widget _buildErrorWidget(BuildContext context) {
     return Center(
       child: Text(
-        '${context.l10n!.error}!',
+        'ERROR',
         style: TextStyle(
           color: Theme.of(context).colorScheme.primary,
           fontSize: 18,
@@ -107,17 +107,18 @@ class _HomePageState extends State<HomePage> {
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return const SizedBox.shrink();
         }
-
         final playlists = snapshot.data!;
         final itemsNumber =
             playlists.length > recommendedCubesNumber
                 ? recommendedCubesNumber
                 : playlists.length;
-        final isLargeScreen = MediaQuery.of(context).size.width > 480;
 
+        final isLargeScreen = MediaQuery.of(context).size.width > 480;
+        print('TESTING L10n-------------------');
+        print(context.l10n!.newAnnouncement);
         return Column(
           children: [
-            SectionHeader(title: context.l10n!.suggestedPlaylists),
+            const SectionHeader(title: 'Suggested playlists'),
             ConstrainedBox(
               constraints: BoxConstraints(maxHeight: playlistHeight),
               child:
@@ -207,7 +208,7 @@ class _HomePageState extends State<HomePage> {
               return Column(
                 children: [
                   if (!recommendations) ...[
-                    SectionHeader(title: context.l10n!.suggestedArtists),
+                    const SectionHeader(title: 'Suggested artists'),
                     ConstrainedBox(
                       constraints: BoxConstraints(maxHeight: playlistHeight),
                       child:
@@ -299,13 +300,10 @@ class _HomePageState extends State<HomePage> {
     return Column(
       children: [
         SectionHeader(
-          title: context.l10n!.recommendedForYou,
+          title: 'Recommended',
           actionButton: IconButton(
             onPressed: () {
-              setActivePlaylist({
-                'title': context.l10n!.recommendedForYou,
-                'list': data,
-              });
+              setActivePlaylist({'title': 'Recommended', 'list': data});
             },
             icon: Icon(
               FluentIcons.play_circle_24_filled,

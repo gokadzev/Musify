@@ -1,6 +1,8 @@
 ------------- FUTURE WORKS -------------
 
 - music resumes after a call, even if it was paused before call
+- scans for device files everytime
+
 - remove buttons from local audio files and make shuffle and repeat work
 - change offline icon to download icon
 - MAKE SONGS DOWNLOADABLE TO AUDIO(FLAC) files (Add where to save downloaded files)

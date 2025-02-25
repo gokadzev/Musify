@@ -41,6 +41,7 @@
   "downloadAppUpdate": "Descargar actualización de la aplicación",
   "dynamicColor": "Color de acento dinámico (Android 12+)",
   "error": "Ocurrió un error. Por favor, inténtalo nuevamente.",
+  "folders":"Folders",
   "folderRestrictions": "Las restricciones de Android requieren seleccionar carpetas específicas (p. ej., Documentos o Descargas) para respaldos.",
   "home": "Inicio",
   "hours": "Hours",

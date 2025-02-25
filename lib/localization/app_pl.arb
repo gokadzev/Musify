@@ -41,8 +41,7 @@
   "downloadAppUpdate": "Pobierz aktualizację aplikacji",
   "dynamicColor": "Dynamiczny kolor akcentu (Android 12+)",
   "error": "Coś poszło nie tak",
-    "folders":"Foldery",
-
+  "folders":"Foldery",
   "folderRestrictions": "Ze względu na nowe ograniczenia w systemie Android konieczne jest wybranie określonych i odpowiednich folderów dla różnych typów plików. Upewnij się, że wybrałeś folder „Dokumenty” lub „Pobrane” dla kopii zapasowej aplikacji.",
   "home": "Dom",
   "hours": "Hours",

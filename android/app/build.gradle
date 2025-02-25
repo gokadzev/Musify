@@ -30,7 +30,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.gokadzev.musify"
+    namespace = "com.ruchan.musify_fork"
     compileSdk 35
 
     compileOptions {
@@ -52,7 +52,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.gokadzev.musify"
+        applicationId "com.ruchan.musify_fork"
         minSdk 24
         targetSdk 35
         versionCode flutterVersionCode.toInteger()

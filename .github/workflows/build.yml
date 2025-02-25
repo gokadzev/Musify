@@ -1,36 +1,75 @@
-name: Build APK
+name: Build and Release APK
 
 on:
   push:
     branches:
-      - main
+      - main  
+  workflow_dispatch: 
 
 jobs:
   build:
+    name: Build APK
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Set up JDK
-        uses: actions/setup-java@v1
+      - name: Set up Java
+        uses: actions/setup-java@v3
         with:
-          java-version: "17"
+          java-version: '17' 
+          distribution: temurin
 
-      - name: Install Flutter
+      - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.24.3"
+          flutter-version: '3.29.0' 
+          channel: 'stable'
+          cache: false
 
-      - name: Get Flutter dependencies
+      - name: Install dependencies
         run: flutter pub get
 
       - name: Build APK
         run: flutter build apk --release
 
+      - name: Build Appbundle
+        run: flutter build appbundle --release
+
+      - name: Rename APK with Custom Name
+        run: mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/MusifyForkv${{ github.run_number }}.apk
+
       - name: Upload APK
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: app-release.apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          name: release-apk
+          path: build/app/outputs/flutter-apk/MusifyForkv${{ github.run_number }}.apk
+
+  release:
+    name: Release APK
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download APK artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: release-apk
+
+      - name: Download AAB artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: release-aab
+
+      - name: Create APK Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: MusifyForkv${{ github.run_number }}.apk
+          token: ${{ secrets.GH_TOKEN }}
+          tag: v-${{ github.run_number }}
+          name: APK Release v-${{ github.run_number }}
+          body: "Musify_Fork"
+          draft: false
+          prerelease: false
+      

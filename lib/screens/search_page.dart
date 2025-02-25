@@ -104,7 +104,7 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     final primaryColor = Theme.of(context).colorScheme.primary;
     return Scaffold(
-      appBar: AppBar(title: Text(context.l10n!.search)),
+      appBar: AppBar(title: const Text('Search')),
       body: SingleChildScrollView(
         padding: commonSingleChildScrollViewPadding,
         child: Column(
@@ -113,7 +113,7 @@ class _SearchPageState extends State<SearchPage> {
               loadingProgressNotifier: _fetchingSongs,
               controller: _searchBar,
               focusNode: _inputNode,
-              labelText: '${context.l10n!.search}...',
+              labelText: 'Search...',
               onChanged: (value) async {
                 if (value.isNotEmpty) {
                   _suggestionsList = await getSearchSuggestions(value);
@@ -178,7 +178,7 @@ class _SearchPageState extends State<SearchPage> {
             else
               Column(
                 children: [
-                  SectionTitle(context.l10n!.songs, primaryColor),
+                  SectionTitle('Songs', primaryColor),
                   ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -204,7 +204,7 @@ class _SearchPageState extends State<SearchPage> {
                     },
                   ),
                   if (_albumsSearchResult.isNotEmpty)
-                    SectionTitle(context.l10n!.albums, primaryColor),
+                    SectionTitle('Albums', primaryColor),
                   if (_albumsSearchResult.isNotEmpty)
                     ListView.builder(
                       shrinkWrap: true,

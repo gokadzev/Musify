@@ -105,11 +105,15 @@ Future<List> getRecommendedSongs() async {
     if (defaultRecommendations.value && userRecentlyPlayed.isNotEmpty) {
       final recent = userRecentlyPlayed.take(3).toList();
 
-      final futures = recent.map((songData) async {
-        final song = await _yt.videos.get(songData['ytid']);
-        final relatedSongs = await _yt.videos.getRelatedVideos(song) ?? [];
-        return relatedSongs.take(3).map((s) => returnSongLayout(0, s)).toList();
-      }).toList();
+      final futures =
+          recent.map((songData) async {
+            final song = await _yt.videos.get(songData['ytid']);
+            final relatedSongs = await _yt.videos.getRelatedVideos(song) ?? [];
+            return relatedSongs
+                .take(3)
+                .map((s) => returnSongLayout(0, s))
+                .toList();
+          }).toList();
 
       final results = await Future.wait(futures);
       final playlistSongs = results.expand((list) => list).toList()..shuffle();
@@ -375,13 +379,14 @@ Future<List> getPlaylists({
   // Filter playlists based on query and type if only query is specified
   if (query != null && playlistsNum == null) {
     final lowercaseQuery = query.toLowerCase();
-    final filteredPlaylists = playlists.where((playlist) {
-      final lowercaseTitle = playlist['title'].toLowerCase();
-      return lowercaseTitle.contains(lowercaseQuery) &&
-          ((type == 'all') ||
-              (type == 'album' && playlist['isAlbum'] == true) ||
-              (type == 'playlist' && playlist['isAlbum'] != true));
-    }).toList();
+    final filteredPlaylists =
+        playlists.where((playlist) {
+          final lowercaseTitle = playlist['title'].toLowerCase();
+          return lowercaseTitle.contains(lowercaseQuery) &&
+              ((type == 'all') ||
+                  (type == 'album' && playlist['isAlbum'] == true) ||
+                  (type == 'playlist' && playlist['isAlbum'] != true));
+        }).toList();
 
     final searchResults = await _yt.search.searchContent(
       type == 'album' ? '$query album' : query,
@@ -391,24 +396,25 @@ Future<List> getPlaylists({
     final existingYtid =
         onlinePlaylists.map((playlist) => playlist['ytid'] as String).toSet();
 
-    final newPlaylists = searchResults
-        .whereType<SearchPlaylist>()
-        .map((playlist) {
-          final playlistMap = {
-            'ytid': playlist.id.toString(),
-            'title': playlist.title,
-            'source': 'youtube',
-            'list': [],
-          };
+    final newPlaylists =
+        searchResults
+            .whereType<SearchPlaylist>()
+            .map((playlist) {
+              final playlistMap = {
+                'ytid': playlist.id.toString(),
+                'title': playlist.title,
+                'source': 'youtube',
+                'list': [],
+              };
 
-          if (!existingYtid.contains(playlistMap['ytid'])) {
-            existingYtid.add(playlistMap['ytid'].toString());
-            return playlistMap;
-          }
-          return null;
-        })
-        .whereType<Map<String, dynamic>>()
-        .toList();
+              if (!existingYtid.contains(playlistMap['ytid'])) {
+                existingYtid.add(playlistMap['ytid'].toString());
+                return playlistMap;
+              }
+              return null;
+            })
+            .whereType<Map<String, dynamic>>()
+            .toList();
 
     onlinePlaylists.addAll(newPlaylists);
     filteredPlaylists.addAll(
@@ -508,12 +514,13 @@ Future<List<Map<String, int>>> getSkipSegments(String id) async {
     );
     if (res.body != 'Not Found') {
       final data = jsonDecode(res.body);
-      final segments = data.map((obj) {
-        return Map.castFrom<String, dynamic, String, int>({
-          'start': obj['segment'].first.toInt(),
-          'end': obj['segment'].last.toInt(),
-        });
-      }).toList();
+      final segments =
+          data.map((obj) {
+            return Map.castFrom<String, dynamic, String, int>({
+              'start': obj['segment'].first.toInt(),
+              'end': obj['segment'].last.toInt(),
+            });
+          }).toList();
       return List.castFrom<dynamic, Map<String, int>>(segments);
     } else {
       return [];

@@ -33,8 +33,7 @@ class PlaylistCube extends StatelessWidget {
     this.playlistData,
     this.cubeIcon = FluentIcons.music_note_1_24_regular,
     this.size = 220,
-        this.onClickOpen = true,
-
+    this.onClickOpen = true,
     this.borderRadius = 13,
   }) : playlistLikeStatus = ValueNotifier<bool>(
          isPlaylistAlreadyLiked(playlist['ytid']),
@@ -44,7 +43,7 @@ class PlaylistCube extends StatelessWidget {
   final Map playlist;
   final IconData cubeIcon;
   final double size;
-    final bool onClickOpen;
+  final bool onClickOpen;
 
   final double borderRadius;
 
@@ -113,8 +112,8 @@ class PlaylistCube extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       child: Text(
         playlist['isAlbum'] != null && playlist['isAlbum'] == true
-            ? context.l10n!.album
-            : context.l10n!.playlist,
+            ? 'Album'
+            : 'Playlist',
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
           color: colorScheme.onSecondaryContainer,
         ),

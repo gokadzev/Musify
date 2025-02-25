@@ -32,41 +32,38 @@ class UserLikedPlaylistsPage extends StatelessWidget {
     print('IN user liked playlists PAGE--------------------------------');
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(context.l10n!.likedPlaylists),
-      ),
+      appBar: AppBar(title: Text(context.l10n!.likedPlaylists)),
       body: ValueListenableBuilder(
         valueListenable: currentLikedPlaylistsLength,
         builder: (_, value, __) {
           return userLikedPlaylists.isEmpty
               ? Center(
-                  child: Text(
-                    context.l10n!.noLikedPlaylists,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
+                child: Text(
+                  "You haven't liked any playlists yet",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
-                )
+                ),
+              )
               : SingleChildScrollView(
-                  child: GridView.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithMaxCrossAxisExtent(
-                      maxCrossAxisExtent: 200,
-                      crossAxisSpacing: 20,
-                      mainAxisSpacing: 20,
-                    ),
-                    shrinkWrap: true,
-                    physics: const ScrollPhysics(),
-                    itemCount: userLikedPlaylists.length,
-                    padding: const EdgeInsets.all(16),
-                    itemBuilder: (BuildContext context, index) {
-                      return PlaylistCube(userLikedPlaylists[index]);
-                    },
+                child: GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 200,
+                    crossAxisSpacing: 20,
+                    mainAxisSpacing: 20,
                   ),
-                );
+                  shrinkWrap: true,
+                  physics: const ScrollPhysics(),
+                  itemCount: userLikedPlaylists.length,
+                  padding: const EdgeInsets.all(16),
+                  itemBuilder: (BuildContext context, index) {
+                    return PlaylistCube(userLikedPlaylists[index]);
+                  },
+                ),
+              );
         },
       ),
     );

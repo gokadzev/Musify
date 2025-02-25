@@ -41,8 +41,7 @@
   "downloadAppUpdate": "Baixar atualização do aplicativo",
   "dynamicColor": "Cor de destaque dinâmica (Android 12+)",
   "error": "Algo deu errado",
-    "folders":"Pastas",
-
+  "folders":"Pastas",
   "folderRestrictions": "Devido às novas restrições no Android, é essencial selecionar pastas específicas e apropriadas para diferentes tipos de arquivo. Por favor, certifique-se de escolher a pasta 'Documentos' ou 'Downloads' para o backup do aplicativo.",
   "home": "Início",
   "hours": "Hours",
