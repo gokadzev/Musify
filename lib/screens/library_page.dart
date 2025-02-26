@@ -19,12 +19,16 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
+import 'dart:io';
+
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
+import 'package:musify/screens/device_songs_page.dart';
 import 'package:musify/services/router_service.dart';
+import 'package:musify/services/user_shared_pref.dart';
 import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/utils.dart';
@@ -33,6 +37,8 @@ import 'package:musify/widgets/playlist_bar.dart';
 import 'package:musify/widgets/section_header.dart';
 import 'package:musify/widgets/section_title.dart';
 import 'package:musify/widgets/spinner.dart';
+import 'package:on_audio_query/on_audio_query.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class LibraryPage extends StatefulWidget {
   const LibraryPage({super.key});
@@ -120,6 +126,12 @@ class _LibraryPageState extends State<LibraryPage> {
                   isUserPlaylistsEmpty
                       ? commonCustomBarRadiusLast
                       : BorderRadius.zero,
+              showBuildActions: false,
+            ),
+            PlaylistBar(
+              'Local Songs',
+              onPressed: () => _checkPermissionAndScanDevice(context),
+              cubeIcon: FluentIcons.music_note_1_20_filled,
               showBuildActions: false,
             ),
           ],
@@ -357,4 +369,62 @@ class _LibraryPageState extends State<LibraryPage> {
       );
     },
   );
+  final OnAudioQuery audioQuery = OnAudioQuery();
+
+  Future<void> _checkPermissionAndScanDevice(BuildContext context) async {
+    final usp = UserSharedPrefs();
+    var isGranted = false;
+
+    final audioPermissionStatus = await Permission.audio.status;
+    if (!audioPermissionStatus.isGranted) {
+      await Permission.audio.request();
+    }
+
+    final externalStorageStatus = await Permission.storage.status;
+    if (!externalStorageStatus.isGranted) {
+      await Permission.storage.request();
+    }
+
+    isGranted =
+        audioPermissionStatus.isGranted && externalStorageStatus.isGranted;
+
+    if (Platform.isAndroid && Platform.version.compareTo('30') >= 0) {
+      // For Android 11 and above (API 30+), use manageExternalStorage permission
+      var status = await Permission.manageExternalStorage.status;
+      print('status--------------- $status');
+
+      if (!status.isGranted) {
+        status = await Permission.manageExternalStorage.request();
+      }
+      isGranted = status.isGranted;
+      print('GRANTED--------------- $isGranted');
+    } else {
+      // For Android 10 and below, use storage permission
+      var status = await Permission.storage.status;
+      print('status--------------- $status');
+
+      if (!status.isGranted) {
+        status = await Permission.storage.request();
+      }
+      isGranted = status.isGranted;
+      print('GRANTED--------------- $isGranted');
+    }
+    // final songs = await audioQuery.querySongs();
+    // await usp.setSongsScanned(true);
+    print('GRANTED--------------- $isGranted');
+    // if (isGranted) {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const DeviceSongsPage()),
+    );
+    // } else {
+    //   showToast(context, 'Permission not granted');
+    // }
+
+    // Fetch songs if permission is granted
+
+    // } else {
+    //   showToast(context, 'Storage permission denied');
+    // }
+  }
 }

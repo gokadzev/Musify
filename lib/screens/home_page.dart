@@ -114,11 +114,10 @@ class _HomePageState extends State<HomePage> {
                 : playlists.length;
 
         final isLargeScreen = MediaQuery.of(context).size.width > 480;
-        print('TESTING L10n-------------------');
-        print(context.l10n!.newAnnouncement);
+
         return Column(
           children: [
-            const SectionHeader(title: 'Suggested playlists'),
+             SectionHeader(title: context.l10n!.suggestedPlaylists),
             ConstrainedBox(
               constraints: BoxConstraints(maxHeight: playlistHeight),
               child:
@@ -208,7 +207,7 @@ class _HomePageState extends State<HomePage> {
               return Column(
                 children: [
                   if (!recommendations) ...[
-                    const SectionHeader(title: 'Suggested artists'),
+                    SectionHeader(title: context.l10n!.suggestedArtists),
                     ConstrainedBox(
                       constraints: BoxConstraints(maxHeight: playlistHeight),
                       child:
@@ -300,7 +299,7 @@ class _HomePageState extends State<HomePage> {
     return Column(
       children: [
         SectionHeader(
-          title: 'Recommended',
+          title: context.l10n!.recommendedForYou,
           actionButton: IconButton(
             onPressed: () {
               setActivePlaylist({'title': 'Recommended', 'list': data});

@@ -173,7 +173,6 @@ class _MusifyState extends State<Musify> {
           themeMode: themeMode,
           darkTheme: getAppTheme(colorScheme),
           theme: getAppTheme(colorScheme),
-          debugShowCheckedModeBanner: false,
           localizationsDelegates: const [
             AppLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,
@@ -209,8 +208,7 @@ Future<void> initialisation() async {
     audioHandler = await AudioService.init(
       builder: MusifyAudioHandler.new,
       config: const AudioServiceConfig(
-        // change this to package name to make noti btns work
-        androidNotificationChannelId: 'com.ruchan.musify_fork.debug',
+        androidNotificationChannelId: 'com.gokadzev.musify',
         androidNotificationChannelName: 'Musify',
         androidNotificationIcon: 'drawable/ic_launcher_foreground',
         androidShowNotificationBadge: true,
