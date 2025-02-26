@@ -50,6 +50,8 @@ bool isUpdateChecked = false;
 final appLanguages = <String, String>{
   'English': 'en',
   'Arabic': 'ar',
+  'Chinese Simplified': 'zh-Hans',
+  'Chinese Traditional': 'zh-Hant',
   'French': 'fr',
   'German': 'de',
   'Greek': 'el',
