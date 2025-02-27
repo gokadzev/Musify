@@ -66,15 +66,14 @@ const appLanguages = <String, String>{
   'Ukrainian': 'uk',
 };
 
-final List<Locale> appSupportedLocales = [
-  for (final languageCode in appLanguages.values)
-    languageCode.contains('-')
-        ? Locale.fromSubtags(
-          languageCode: languageCode.split('-')[0],
-          scriptCode: languageCode.split('-')[1],
-        )
-        : Locale.fromSubtags(languageCode: languageCode),
-];
+final List<Locale> appSupportedLocales =
+    appLanguages.values.map((languageCode) {
+      final parts = languageCode.split('-');
+      if (parts.length > 1) {
+        return Locale.fromSubtags(languageCode: parts[0], scriptCode: parts[1]);
+      }
+      return Locale(languageCode);
+    }).toList();
 
 class Musify extends StatefulWidget {
   const Musify({super.key});

@@ -15,18 +15,35 @@ BorderRadius getItemBorderRadius(int index, int totalLength) {
 }
 
 Locale getLocaleFromLanguageCode(String? languageCode) {
+  // Early return for null case
   if (languageCode == null) {
     return const Locale('en');
   }
 
-  return languageCode.contains('-')
-      ? appSupportedLocales.firstWhere((locale) {
-        final parts = languageCode.split('-');
-        return locale.languageCode == parts[0] &&
-            (locale.scriptCode == parts[1] || locale.countryCode == parts[1]);
-      }, orElse: () => Locale(languageCode.split('-')[0]))
-      : appSupportedLocales.firstWhere(
-        (locale) => locale.languageCode == languageCode,
-        orElse: () => const Locale('en'),
-      );
+  // Handle codes with script parts
+  if (languageCode.contains('-')) {
+    final parts = languageCode.split('-');
+    final baseLanguage = parts[0];
+    final script = parts[1];
+
+    // Try to find exact match with script
+    for (final locale in appSupportedLocales) {
+      if (locale.languageCode == baseLanguage && locale.scriptCode == script) {
+        return locale;
+      }
+    }
+
+    // Fall back to base language only
+    return Locale(baseLanguage);
+  }
+
+  // Handle simple language codes
+  for (final locale in appSupportedLocales) {
+    if (locale.languageCode == languageCode) {
+      return locale;
+    }
+  }
+
+  // Default fallback
+  return const Locale('en');
 }
