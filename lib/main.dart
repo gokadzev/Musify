@@ -47,11 +47,11 @@ final logger = Logger();
 bool isFdroidBuild = false;
 bool isUpdateChecked = false;
 
-final appLanguages = <String, String>{
+const appLanguages = <String, String>{
   'English': 'en',
   'Arabic': 'ar',
-  'Chinese Simplified': 'zh-Hans',
-  'Chinese Traditional': 'zh-Hant',
+  'Chinese (Simplified)': 'zh',
+  'Chinese (Traditional)': 'zh-Hant',
   'French': 'fr',
   'German': 'de',
   'Greek': 'el',
@@ -66,10 +66,15 @@ final appLanguages = <String, String>{
   'Ukrainian': 'uk',
 };
 
-final appSupportedLocales =
-    appLanguages.values
-        .map((languageCode) => Locale.fromSubtags(languageCode: languageCode))
-        .toList();
+final List<Locale> appSupportedLocales = [
+  for (final languageCode in appLanguages.values)
+    languageCode.contains('-')
+        ? Locale.fromSubtags(
+          languageCode: languageCode.split('-')[0],
+          scriptCode: languageCode.split('-')[1],
+        )
+        : Locale.fromSubtags(languageCode: languageCode),
+];
 
 class Musify extends StatefulWidget {
   const Musify({super.key});

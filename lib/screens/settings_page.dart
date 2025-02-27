@@ -220,6 +220,12 @@ class SettingsPage extends StatelessWidget {
                 final availableLanguages = appLanguages.keys.toList();
                 final activeLanguageCode =
                     Localizations.localeOf(context).languageCode;
+                final activeScriptCode =
+                    Localizations.localeOf(context).scriptCode;
+                final activeLanguageFullCode =
+                    activeScriptCode != null
+                        ? '$activeLanguageCode-$activeScriptCode'
+                        : activeLanguageCode;
                 showCustomBottomSheet(
                   context,
                   ListView.builder(
@@ -229,7 +235,13 @@ class SettingsPage extends StatelessWidget {
                     itemCount: availableLanguages.length,
                     itemBuilder: (context, index) {
                       final language = availableLanguages[index];
-                      final languageCode = appLanguages[language] ?? 'en';
+                      final newLocale = getLocaleFromLanguageCode(
+                        appLanguages[language],
+                      );
+                      final newLocaleFullCode =
+                          newLocale.scriptCode != null
+                              ? '${newLocale.languageCode}-${newLocale.scriptCode}'
+                              : newLocale.languageCode;
 
                       final borderRadius = getItemBorderRadius(
                         index,
@@ -239,17 +251,17 @@ class SettingsPage extends StatelessWidget {
                       return BottomSheetBar(
                         language,
                         () {
-                          addOrUpdateData('settings', 'language', language);
-                          Musify.updateAppState(
-                            context,
-                            newLocale: Locale(languageCode),
+                          addOrUpdateData(
+                            'settings',
+                            'language',
+                            newLocaleFullCode,
                           );
-                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                            showToast(context, context.l10n!.languageMsg);
-                            Navigator.pop(context);
-                          });
+                          Musify.updateAppState(context, newLocale: newLocale);
+                          showToast(context, context.l10n!.languageMsg);
+                          Navigator.pop(context);
                         },
-                        activeLanguageCode == languageCode
+
+                        activeLanguageFullCode == newLocaleFullCode
                             ? activatedColor
                             : inactivatedColor,
                         borderRadius: borderRadius,
