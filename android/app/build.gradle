@@ -74,7 +74,7 @@ android {
 
     signingConfigs {
         release {
-            //From decoded key
+            // FOr testing 
             // storeFile = file('key.jks')
 
             // //From key.properties
@@ -82,6 +82,7 @@ android {
             // keyPassword keystoreProperties['keyPassword']
             // storePassword keystoreProperties['storePassword']
 
+            // Before github push 
             storeFile file("${rootProject.projectDir}/app/key.jks")
             storePassword System.getenv("KEY_PASSWORD") ?: ""
             keyAlias System.getenv("KEY_ALIAS") ?: ""

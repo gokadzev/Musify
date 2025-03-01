@@ -661,7 +661,6 @@ Future<String> getSong(String songId, bool isLive) async {
       cacheKey,
       cachingDuration: _cacheDuration,
     );
-
     unawaited(updateRecentlyPlayed(songId));
 
     if (cachedUrl != null) {
@@ -669,6 +668,8 @@ Future<String> getSong(String songId, bool isLive) async {
     }
 
     if (isLive) {
+      print('IF isLive truegetsong function after unawaited -----------------');
+
       return await getLiveStreamUrl(songId);
     }
 
@@ -687,7 +688,11 @@ Future<String> getLiveStreamUrl(String songId) async {
 }
 
 Future<String> getAudioUrl(String songId) async {
+  print('getAudioUrl function after unawaited -----------------');
+
   final manifest = await _yt.videos.streamsClient.getManifest(songId);
+  print('$manifest getsong function after unawaited -----------------');
+
   final audioQuality = selectAudioQuality(manifest.audioOnly.sortByBitrate());
   final audioUrl = audioQuality.url.toString();
 

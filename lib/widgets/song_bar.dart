@@ -64,8 +64,11 @@ class SongBar extends StatelessWidget {
     return Padding(
       padding: commonBarPadding,
       child: GestureDetector(
-        onTap: onPlay ??
+        onTap:
+            onPlay ??
             () {
+              print('----------------------------------------song_bar');
+              print('----------------------------------------$song');
               audioHandler.playSong(song);
               if (activePlaylist.isNotEmpty && clearPlaylist) {
                 activePlaylist = {
@@ -166,26 +169,30 @@ class SongBar extends StatelessWidget {
           width: size,
           height: size,
           imageUrl: lowResImageUrl,
-          imageBuilder: (context, imageProvider) => SizedBox(
-            width: size,
-            height: size,
-            child: ClipRRect(
-              borderRadius: commonBarRadius,
-              child: Image(
-                color: isDurationAvailable
-                    ? Theme.of(context).colorScheme.primaryContainer
-                    : null,
-                colorBlendMode: isDurationAvailable ? BlendMode.multiply : null,
-                opacity: isDurationAvailable
-                    ? const AlwaysStoppedAnimation(0.45)
-                    : null,
-                image: imageProvider,
-                centerSlice: const Rect.fromLTRB(1, 1, 1, 1),
+          imageBuilder:
+              (context, imageProvider) => SizedBox(
+                width: size,
+                height: size,
+                child: ClipRRect(
+                  borderRadius: commonBarRadius,
+                  child: Image(
+                    color:
+                        isDurationAvailable
+                            ? Theme.of(context).colorScheme.primaryContainer
+                            : null,
+                    colorBlendMode:
+                        isDurationAvailable ? BlendMode.multiply : null,
+                    opacity:
+                        isDurationAvailable
+                            ? const AlwaysStoppedAnimation(0.45)
+                            : null,
+                    image: imageProvider,
+                    centerSlice: const Rect.fromLTRB(1, 1, 1, 1),
+                  ),
+                ),
               ),
-            ),
-          ),
-          errorWidget: (context, url, error) =>
-              const NullArtworkWidget(iconSize: 30),
+          errorWidget:
+              (context, url, error) => const NullArtworkWidget(iconSize: 30),
         ),
         if (isDurationAvailable)
           SizedBox(
@@ -223,9 +230,10 @@ class SongBar extends StatelessWidget {
             songLikeStatus.value = !songLikeStatus.value;
             updateSongLikeStatus(song['ytid'], songLikeStatus.value);
             final likedSongsLength = currentLikedSongsLength.value;
-            currentLikedSongsLength.value = songLikeStatus.value
-                ? likedSongsLength + 1
-                : likedSongsLength - 1;
+            currentLikedSongsLength.value =
+                songLikeStatus.value
+                    ? likedSongsLength + 1
+                    : likedSongsLength - 1;
             break;
           case 'remove':
             if (onRemove != null) onRemove!();
@@ -327,36 +335,37 @@ void showAddToPlaylistDialog(BuildContext context, dynamic song) {
           constraints: BoxConstraints(
             maxHeight: MediaQuery.sizeOf(context).height * 0.6,
           ),
-          child: userCustomPlaylists.isNotEmpty
-              ? ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: userCustomPlaylists.length,
-                  itemBuilder: (context, index) {
-                    final playlist = userCustomPlaylists[index];
-                    return Card(
-                      color: Theme.of(context).colorScheme.secondaryContainer,
-                      elevation: 0,
-                      child: ListTile(
-                        title: Text(playlist['title']),
-                        onTap: () {
-                          showToast(
-                            context,
-                            addSongInCustomPlaylist(
+          child:
+              userCustomPlaylists.isNotEmpty
+                  ? ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: userCustomPlaylists.length,
+                    itemBuilder: (context, index) {
+                      final playlist = userCustomPlaylists[index];
+                      return Card(
+                        color: Theme.of(context).colorScheme.secondaryContainer,
+                        elevation: 0,
+                        child: ListTile(
+                          title: Text(playlist['title']),
+                          onTap: () {
+                            showToast(
                               context,
-                              playlist['title'],
-                              song,
-                            ),
-                          );
-                          Navigator.pop(context);
-                        },
-                      ),
-                    );
-                  },
-                )
-              : Text(
-                  context.l10n!.noCustomPlaylists,
-                  textAlign: TextAlign.center,
-                ),
+                              addSongInCustomPlaylist(
+                                context,
+                                playlist['title'],
+                                song,
+                              ),
+                            );
+                            Navigator.pop(context);
+                          },
+                        ),
+                      );
+                    },
+                  )
+                  : Text(
+                    context.l10n!.noCustomPlaylists,
+                    textAlign: TextAlign.center,
+                  ),
         ),
         actions: <Widget>[
           TextButton(

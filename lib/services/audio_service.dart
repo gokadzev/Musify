@@ -260,11 +260,17 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
       final preliminaryTag = mapToMediaItem(song);
       mediaItem.add(preliminaryTag);
+      print('playsong function after tag ------------------');
+      print('$isOffline ------------------');
+      final songUrl0 = await getSong(song['ytid'], song['isLive']);
+      print('$songUrl0 ------------------');
 
       final songUrl =
           isOffline
               ? song['audioPath']
               : await getSong(song['ytid'], song['isLive']);
+      print('songUrl ------------------');
+      print('$songUrl ------------------');
 
       final audioSource = await buildAudioSource(song, songUrl, isOffline);
       await audioPlayer.setAudioSource(audioSource, preload: false);
@@ -308,10 +314,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
     try {
       final songs = playlist['list'] as List<Map<String, dynamic>>;
 
-      final audioSources = songs.map((song) {
-        final songUrl = song['filePath'];
-        return AudioSource.uri(Uri.parse(songUrl), tag: song);
-      }).toList();
+      final audioSources =
+          songs.map((song) {
+            final songUrl = song['filePath'];
+            return AudioSource.uri(Uri.parse(songUrl), tag: song);
+          }).toList();
 
       await audioPlayer.setAudioSource(
         ConcatenatingAudioSource(children: audioSources),
