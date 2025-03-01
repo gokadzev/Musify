@@ -28,7 +28,6 @@ import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/screens/device_songs_page.dart';
 import 'package:musify/services/router_service.dart';
-import 'package:musify/services/user_shared_pref.dart';
 import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/utils.dart';
@@ -372,7 +371,6 @@ class _LibraryPageState extends State<LibraryPage> {
   final OnAudioQuery audioQuery = OnAudioQuery();
 
   Future<void> _checkPermissionAndScanDevice(BuildContext context) async {
-    final usp = UserSharedPrefs();
     var isGranted = false;
 
     final audioPermissionStatus = await Permission.audio.status;
@@ -388,43 +386,30 @@ class _LibraryPageState extends State<LibraryPage> {
     isGranted =
         audioPermissionStatus.isGranted && externalStorageStatus.isGranted;
 
-    if (Platform.isAndroid && Platform.version.compareTo('30') >= 0) {
+    if (Platform.isAndroid && Platform.version.compareTo('30') <= 0) {
       // For Android 11 and above (API 30+), use manageExternalStorage permission
       var status = await Permission.manageExternalStorage.status;
-      print('status--------------- $status');
 
       if (!status.isGranted) {
         status = await Permission.manageExternalStorage.request();
       }
       isGranted = status.isGranted;
-      print('GRANTED--------------- $isGranted');
     } else {
       // For Android 10 and below, use storage permission
       var status = await Permission.storage.status;
-      print('status--------------- $status');
 
       if (!status.isGranted) {
         status = await Permission.storage.request();
       }
       isGranted = status.isGranted;
-      print('GRANTED--------------- $isGranted');
     }
-    // final songs = await audioQuery.querySongs();
-    // await usp.setSongsScanned(true);
-    print('GRANTED--------------- $isGranted');
-    // if (isGranted) {
-    await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const DeviceSongsPage()),
-    );
-    // } else {
-    //   showToast(context, 'Permission not granted');
-    // }
-
-    // Fetch songs if permission is granted
-
-    // } else {
-    //   showToast(context, 'Storage permission denied');
-    // }
+    if (isGranted) {
+      await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const DeviceSongsPage()),
+      );
+    } else {
+      showToast(context, 'Permission not granted');
+    }
   }
 }

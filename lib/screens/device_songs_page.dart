@@ -1,9 +1,7 @@
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_media_metadata/flutter_media_metadata.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
@@ -72,9 +70,7 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
   Future<void> _saveToggleState(bool value, {String? folderPath}) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('showEverything', value);
-    // if (folderPath != null) {
     await prefs.setString('lastOpenedFolder', folderPath ?? 'null');
-    // }
   }
 
   Future<void> _fetchSongsFromDevice() async {
@@ -84,17 +80,9 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
     }
 
     if (permissionStatus) {
-      final deviceSongs = await usp.getDeviceSongs();
       List<SongModel> songs;
-      if (deviceSongs.isEmpty) {
-        print(' iN IF -------------------');
-        songs = await _audioQuery.querySongs();
-        await usp.setDeviceSongs(songs);
-      } else {
-        print('IN ELSE------------');
-        songs = deviceSongs;
-      }
-      print(songs);
+      songs = await _audioQuery.querySongs();
+
       final folderMap = <String, List<Map<String, dynamic>>>{};
 
       // Iterate over each song and retrieve metadata, including album art.
@@ -105,14 +93,7 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
             .join('/');
 
         Uint8List? albumArt;
-        try {
-          // Retrieve metadata from the file
-          final metadata = await MetadataRetriever.fromFile(File(song.data));
-          albumArt = metadata.albumArt;
-        } catch (e) {
-          print('Error fetching metadata for ${song.title}: $e');
-          albumArt = null;
-        }
+        albumArt = null;
 
         folderMap.putIfAbsent(folder, () => []).add({
           'id': song.id,
@@ -125,7 +106,7 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
           'artUri': 'assets/images/music_icon.png',
           'highResImage': 'assets/images/music_icon.png',
           'lowResImage': 'assets/images/music_icon.png',
-          'albumArt': albumArt,
+          'albumArt': albumArt ?? Uint8List(0),
           'isLive': false,
           'isOffline': true,
           'dateModified': song.dateModified,
@@ -136,13 +117,7 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
       final deviceSongsList = await Future.wait(
         songs.map((song) async {
           Uint8List? albumArt;
-          try {
-            final metadata = await MetadataRetriever.fromFile(File(song.data));
-            albumArt = metadata.albumArt;
-          } catch (e) {
-            print('Error fetching metadata for ${song.title}: $e');
-            albumArt = null;
-          }
+          albumArt = null;
 
           return {
             'id': song.id,

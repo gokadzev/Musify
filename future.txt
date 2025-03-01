@@ -1,9 +1,7 @@
 ------------- FUTURE WORKS -------------
 
 - music resumes after a call, even if it was paused before call
-- scans for device files everytime, takes a lot of time either ask user to select a folder
 - add a icon to rescan songs
-- make the local songs page load faster
 
 
 - remove buttons from local audio files and make shuffle and repeat work
