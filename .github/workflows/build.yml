@@ -24,9 +24,13 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.29.0' 
           channel: 'stable'
-          cache: false
+
+      - name: Decode and Set Up Keystore
+        run: |
+          echo "${{ secrets.KEYSTORE2 }}" | base64 --decode > android/app/key.jks
+          echo "KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}" >> $GITHUB_ENV
+          echo "KEY_ALIAS=${{ secrets.KEY_ALIAS }}" >> $GITHUB_ENV
 
       - name: Install dependencies
         run: flutter pub get
@@ -34,17 +38,14 @@ jobs:
       - name: Build APK
         run: flutter build apk --release
 
-      - name: Build Appbundle
-        run: flutter build appbundle --release
-
       - name: Rename APK with Custom Name
-        run: mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/MusifyForkv${{ github.run_number }}.apk
+        run: mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/MusifyFork.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: release-apk
-          path: build/app/outputs/flutter-apk/MusifyForkv${{ github.run_number }}.apk
+          path: build/app/outputs/flutter-apk/MusifyFork.apk
 
   release:
     name: Release APK
@@ -57,19 +58,13 @@ jobs:
         with:
           name: release-apk
 
-      - name: Download AAB artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: release-aab
-
       - name: Create APK Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: MusifyForkv${{ github.run_number }}.apk
+          artifacts: MusifyFork.apk
           token: ${{ secrets.GH_TOKEN }}
-          tag: v-${{ github.run_number }}
+          tag: 9.1.1
           name: APK Release v-${{ github.run_number }}
           body: "Musify_Fork"
           draft: false
           prerelease: false
-      

@@ -33,12 +33,12 @@ import 'package:musify/utilities/url_launcher.dart';
 import 'package:musify/widgets/auto_format_text.dart';
 
 const String checkUrl =
-    'https://raw.githubusercontent.com/gokadzev/Musify/update/check.json';
+    'https://raw.githubusercontent.com/Ruchan10/Musify_fork/master/check.json';
 const String releasesUrl =
-    'https://api.github.com/repos/gokadzev/Musify/releases/latest';
+    'https://api.github.com/repos/Ruchan10/Musify_fork/releases/latest';
 const String downloadUrlKey = 'url';
 const String downloadUrlArm64Key = 'arm64url';
-const String downloadFilename = 'Musify.apk';
+const String downloadFilename = 'musify_fork.apk';
 
 Future<void> checkAppUpdates() async {
   try {

@@ -1,8 +1,6 @@
 ------------- FUTURE WORKS -------------
 
 - music resumes after a call, even if it was paused before call
-- add a icon to rescan songs
-
 
 - remove buttons from local audio files and make shuffle and repeat work
 - change offline icon to download icon
