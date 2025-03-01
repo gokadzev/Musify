@@ -1,0 +1,40 @@
+group 'com.alexmercerind.flutter_media_metadata'
+version '1.0'
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.2.1'
+    }
+}
+
+rootProject.allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 32
+    namespace 'com.ruchan.musify_fork.flutter_media_metadata'
+
+    defaultConfig {
+        minSdkVersion 16
+    }
+    lintOptions {
+        disable 'InvalidPackage'
+    }
+    dependencies {
+        // compile 'net.sourceforge.streamsupport:android-retrofuture:1.7.2'
+        implementation 'net.sourceforge.streamsupport:android-retrofuture:1.7.4'
+
+    }
+    
+}
