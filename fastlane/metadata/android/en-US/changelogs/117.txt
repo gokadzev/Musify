@@ -1,0 +1,7 @@
+Bug Fixes
+- Fixed issues with playlist states
+
+Enhancements
+- Added playlist sharing feature [BETA]
+- Improved playing performance
+- Added Chinese traditional and simplified translations
