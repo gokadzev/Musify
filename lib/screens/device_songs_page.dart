@@ -313,7 +313,7 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
               ),
             ),
           );
-        }, childCount: _folders.length,),
+        }, childCount: _folders.length),
       ),
     );
   }
@@ -441,7 +441,7 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
     return SliverList(
       delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
         return _buildSongListItem(_deviceSongsList[index], index);
-      }, childCount: _deviceSongsList.length,),
+      }, childCount: _deviceSongsList.length),
     );
   }
 
@@ -450,7 +450,7 @@ class _DeviceSongsPageState extends State<DeviceSongsPage> {
     return SliverList(
       delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
         return _buildSongListItem(_deviceSongsList[index], index);
-      }, childCount: _deviceSongsList.length,),
+      }, childCount: _deviceSongsList.length),
     );
   }
 

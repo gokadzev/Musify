@@ -37,7 +37,6 @@ const String checkUrl =
 const String releasesUrl =
     'https://api.github.com/repos/Ruchan10/Musify_fork/releases/latest';
 const String downloadUrlKey = 'url';
-const String downloadUrlArm64Key = 'arm64url';
 const String downloadFilename = 'musify_fork.apk';
 
 Future<void> checkAppUpdates() async {
@@ -157,19 +156,10 @@ bool isLatestVersionHigher(String appVersion, String latestVersion) {
   return false;
 }
 
-Future<String> getCPUArchitecture() async {
-  final info = await Process.run('uname', ['-m']);
-  final cpu = info.stdout.toString().replaceAll('\n', '');
 
-  return cpu;
-}
 
 Future<String> getDownloadUrl(Map<String, dynamic> map) async {
-  final cpuArchitecture = await getCPUArchitecture();
-  final url =
-      cpuArchitecture == 'aarch64'
-          ? map[downloadUrlArm64Key].toString()
-          : map[downloadUrlKey].toString();
+  final url = map[downloadUrlKey].toString();
 
   return url;
 }
