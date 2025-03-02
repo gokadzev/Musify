@@ -31,6 +31,7 @@ jobs:
           echo "${{ secrets.KEYSTORE2 }}" | base64 --decode > android/app/key.jks
           echo "KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}" >> $GITHUB_ENV
           echo "KEY_ALIAS=${{ secrets.KEY_ALIAS }}" >> $GITHUB_ENV
+          echo "STORE_PASSWORD=${{ secrets.STORE_PASSWORD }}" >> $GITHUB_ENV
 
       - name: Install dependencies
         run: flutter pub get

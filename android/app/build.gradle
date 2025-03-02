@@ -84,9 +84,9 @@ android {
 
 //github push
             storeFile file("${rootProject.projectDir}/app/key.jks")
-            storePassword System.getenv("KEY_PASSWORD") ?: ""
+            storePassword System.getenv("STORE_PASSWORD") ?: ""
             keyAlias System.getenv("KEY_ALIAS") ?: ""
-            keyPassword System.getenv("KEY_STORE") ?: ""
+            keyPassword System.getenv("KEY_PASSWORD") ?: ""
         }
     }
 
