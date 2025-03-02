@@ -33,7 +33,10 @@ dependencies:
   path_provider: ^2.1.5
   rxdart: ^0.28.0
   url_launcher: ^6.3.1
-  youtube_explode_dart: ^2.3.10
+  youtube_explode_dart:
+    git:
+      url: https://github.com/gokadzev/yt_explode_dart.git
+      ref: 5f01ddb776dc2f64da7f734373f4f7bcdced64af
 
 dev_dependencies:
   flutter_launcher_icons: ^0.14.3
