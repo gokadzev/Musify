@@ -44,9 +44,9 @@ List globalSongs = [];
 
 List playlists = [...playlistsDB, ...albumsDB];
 List userPlaylists = Hive.box('user').get('playlists', defaultValue: []);
-List userCustomPlaylists = Hive.box(
-  'user',
-).get('customPlaylists', defaultValue: []);
+final userCustomPlaylists = ValueNotifier<List>(
+  Hive.box('user').get('customPlaylists', defaultValue: []),
+);
 List userLikedSongsList = Hive.box('user').get('likedSongs', defaultValue: []);
 List userLikedPlaylists = Hive.box(
   'user',
@@ -126,8 +126,8 @@ Future<List> getRecommendedSongs() async {
       }
       playlistSongs.addAll(globalSongs.take(10));
 
-      if (userCustomPlaylists.isNotEmpty) {
-        for (final userPlaylist in userCustomPlaylists) {
+      if (userCustomPlaylists.value.isNotEmpty) {
+        for (final userPlaylist in userCustomPlaylists.value) {
           final _list = (userPlaylist['list'] as List)..shuffle();
           playlistSongs.addAll(_list.take(5));
         }
@@ -145,7 +145,7 @@ Future<List> getRecommendedSongs() async {
 }
 
 Future<List<dynamic>> getUserPlaylists() async {
-  final playlistsByUser = [...userCustomPlaylists];
+  final playlistsByUser = [...userCustomPlaylists.value];
   for (final playlistID in userPlaylists) {
     try {
       final plist = await _yt.playlists.get(playlistID);
@@ -231,8 +231,8 @@ String createCustomPlaylist(
     if (image != null) 'image': image,
     'list': [],
   };
-  userCustomPlaylists.add(customPlaylist);
-  addOrUpdateData('user', 'customPlaylists', userCustomPlaylists);
+  userCustomPlaylists.value = [...userCustomPlaylists.value, customPlaylist];
+  addOrUpdateData('user', 'customPlaylists', userCustomPlaylists.value);
   return '${context.l10n!.addedSuccess}!';
 }
 
@@ -242,7 +242,7 @@ String addSongInCustomPlaylist(
   Map song, {
   int? indexToInsert,
 }) {
-  final customPlaylist = userCustomPlaylists.firstWhere(
+  final customPlaylist = userCustomPlaylists.value.firstWhere(
     (playlist) => playlist['title'] == playlistName,
     orElse: () => null,
   );
@@ -257,7 +257,7 @@ String addSongInCustomPlaylist(
     indexToInsert != null
         ? playlistSongs.insert(indexToInsert, song)
         : playlistSongs.add(song);
-    addOrUpdateData('user', 'customPlaylists', userCustomPlaylists);
+    addOrUpdateData('user', 'customPlaylists', userCustomPlaylists.value);
     return context.l10n!.songAdded;
   } else {
     logger.log('Custom playlist not found: $playlistName', null, null);
@@ -288,7 +288,7 @@ bool removeSongFromPlaylist(
     playlist['list'] = playlistSongs;
 
     if (playlist['source'] == 'user-created') {
-      addOrUpdateData('user', 'customPlaylists', userCustomPlaylists);
+      addOrUpdateData('user', 'customPlaylists', userCustomPlaylists.value);
     } else {
       addOrUpdateData('user', 'playlists', userPlaylists);
     }
@@ -306,8 +306,10 @@ void removeUserPlaylist(String playlistId) {
 }
 
 void removeUserCustomPlaylist(dynamic playlist) {
-  userCustomPlaylists.remove(playlist);
-  addOrUpdateData('user', 'customPlaylists', userCustomPlaylists);
+  final updatedPlaylists = List.from(userCustomPlaylists.value)
+    ..remove(playlist);
+  userCustomPlaylists.value = updatedPlaylists;
+  addOrUpdateData('user', 'customPlaylists', userCustomPlaylists.value);
 }
 
 Future<void> updateSongLikeStatus(dynamic songId, bool add) async {

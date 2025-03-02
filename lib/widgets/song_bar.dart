@@ -333,12 +333,12 @@ void showAddToPlaylistDialog(BuildContext context, dynamic song) {
             maxHeight: MediaQuery.sizeOf(context).height * 0.6,
           ),
           child:
-              userCustomPlaylists.isNotEmpty
+              userCustomPlaylists.value.isNotEmpty
                   ? ListView.builder(
                     shrinkWrap: true,
-                    itemCount: userCustomPlaylists.length,
+                    itemCount: userCustomPlaylists.value.length,
                     itemBuilder: (context, index) {
-                      final playlist = userCustomPlaylists[index];
+                      final playlist = userCustomPlaylists.value[index];
                       return Card(
                         color: Theme.of(context).colorScheme.secondaryContainer,
                         elevation: 0,

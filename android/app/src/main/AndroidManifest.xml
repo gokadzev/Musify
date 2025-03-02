@@ -57,10 +57,23 @@
                 android:name="io.flutter.embedding.android.NormalTheme"
                 android:resource="@style/NormalTheme" />
 
+
+            <meta-data android:name="flutter_deeplinking_enabled" android:value="false" />
+
             <!-- Main activity intent filter -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="musify"
+                    android:host="playlist"
+                    android:pathPattern="/custom/.*" />
             </intent-filter>
         </activity>
 

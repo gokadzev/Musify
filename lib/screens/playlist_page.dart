@@ -23,10 +23,12 @@ import 'dart:math';
 
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/data_manager.dart';
+import 'package:musify/services/playlist_sharing.dart';
 import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/utils.dart';
@@ -129,6 +131,19 @@ class _PlaylistPageState extends State<PlaylistPage> {
           const SizedBox(width: 10),
           if (_playlist != null) ...[
             _buildSyncButton(),
+            const SizedBox(width: 10),
+            if (_playlist['source'] == 'user-created')
+              IconButton(
+                icon: const Icon(FluentIcons.share_24_regular),
+                onPressed: () async {
+                  final encodedPlaylist = PlaylistSharingService.encodePlaylist(
+                    _playlist,
+                  );
+
+                  final url = 'musify://playlist/custom/$encodedPlaylist';
+                  await Clipboard.setData(ClipboardData(text: url));
+                },
+              ),
             const SizedBox(width: 10),
           ],
           if (_playlist != null && _playlist['source'] == 'user-created') ...[
@@ -286,7 +301,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                     child: Text(context.l10n!.add.toUpperCase()),
                     onPressed: () {
                       setState(() {
-                        final index = userCustomPlaylists.indexOf(
+                        final index = userCustomPlaylists.value.indexOf(
                           widget.playlistData,
                         );
 
@@ -297,7 +312,11 @@ class _PlaylistPageState extends State<PlaylistPage> {
                             if (imageUrl != null) 'image': imageUrl,
                             'list': widget.playlistData['list'],
                           };
-                          userCustomPlaylists[index] = newPlaylist;
+                          final updatedPlaylists = List<Map>.from(
+                            userCustomPlaylists.value,
+                          );
+                          updatedPlaylists[index] = newPlaylist;
+                          userCustomPlaylists.value = updatedPlaylists;
                           addOrUpdateData(
                             'user',
                             'customPlaylists',

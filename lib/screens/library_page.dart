@@ -23,7 +23,6 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
-import 'package:musify/main.dart';
 import 'package:musify/services/router_service.dart';
 import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/flutter_toast.dart';
@@ -32,7 +31,6 @@ import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/playlist_bar.dart';
 import 'package:musify/widgets/section_header.dart';
 import 'package:musify/widgets/section_title.dart';
-import 'package:musify/widgets/spinner.dart';
 
 class LibraryPage extends StatefulWidget {
   const LibraryPage({super.key});
@@ -42,19 +40,6 @@ class LibraryPage extends StatefulWidget {
 }
 
 class _LibraryPageState extends State<LibraryPage> {
-  late Future<List> _userPlaylistsFuture = getUserPlaylists();
-
-  Future<void> _refreshUserPlaylists() async {
-    setState(() {
-      _userPlaylistsFuture = getUserPlaylists();
-    });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     final primaryColor = Theme.of(context).colorScheme.primary;
@@ -81,7 +66,7 @@ class _LibraryPageState extends State<LibraryPage> {
 
   Widget _buildUserPlaylistsSection(Color primaryColor) {
     final isUserPlaylistsEmpty =
-        userPlaylists.isEmpty && userCustomPlaylists.isEmpty;
+        userPlaylists.isEmpty && userCustomPlaylists.value.isEmpty;
     return Column(
       children: [
         SectionHeader(
@@ -124,9 +109,14 @@ class _LibraryPageState extends State<LibraryPage> {
             ),
           ],
         ),
-        FutureBuilder<List>(
-          future: _userPlaylistsFuture,
-          builder: _buildPlaylistsList,
+        ValueListenableBuilder<List>(
+          valueListenable: userCustomPlaylists,
+          builder: (context, playlists, _) {
+            if (playlists.isEmpty) {
+              return const SizedBox();
+            }
+            return _buildPlaylistListView(context, playlists);
+          },
         ),
       ],
     );
@@ -146,31 +136,6 @@ class _LibraryPageState extends State<LibraryPage> {
             : const SizedBox();
       },
     );
-  }
-
-  Widget _buildPlaylistsList(
-    BuildContext context,
-    AsyncSnapshot<List> snapshot,
-  ) {
-    if (snapshot.connectionState == ConnectionState.waiting) {
-      return const Spinner();
-    } else if (snapshot.hasError) {
-      return _handleSnapshotError(context, snapshot);
-    }
-
-    return _buildPlaylistListView(context, snapshot.data!);
-  }
-
-  Widget _handleSnapshotError(
-    BuildContext context,
-    AsyncSnapshot<List> snapshot,
-  ) {
-    logger.log(
-      'Error while fetching playlists',
-      snapshot.error,
-      snapshot.stackTrace,
-    );
-    return Center(child: Text(context.l10n!.error));
   }
 
   Widget _buildPlaylistListView(BuildContext context, List playlists) {
@@ -322,8 +287,6 @@ class _LibraryPageState extends State<LibraryPage> {
                   }
 
                   Navigator.pop(context);
-
-                  await _refreshUserPlaylists();
                 },
               ),
             ],
@@ -351,8 +314,6 @@ class _LibraryPageState extends State<LibraryPage> {
           } else {
             removeUserPlaylist(playlist['ytid']);
           }
-
-          _refreshUserPlaylists();
         },
       );
     },

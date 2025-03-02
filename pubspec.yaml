@@ -12,6 +12,7 @@ environment:
   flutter: ^3.29.0
 
 dependencies:
+  app_links: ^6.3.3
   audio_service: ^0.18.17
   audio_session: ^0.1.25
   cached_network_image: ^3.4.1
