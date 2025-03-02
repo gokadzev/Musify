@@ -56,11 +56,8 @@ class PlaylistBar extends StatelessWidget {
   final bool showBuildActions;
   final BorderRadius borderRadius;
 
-  static const double paddingValue = 4;
-  static const double likeButtonOffset = 5;
   static const double artworkSize = 60;
   static const double iconSize = 27;
-  static const double albumTextFontSize = 12;
 
   final ValueNotifier<bool> playlistLikeStatus;
 
