@@ -75,18 +75,18 @@ android {
     signingConfigs {
         release {
             // For testing 
-            // storeFile file("key.jks")
+            storeFile file("key.jks")
 
-            // //From key.properties
-            // keyAlias keystoreProperties['keyAlias']
-            // keyPassword keystoreProperties['keyPassword']
-            // storePassword keystoreProperties['storePassword']
+            //From key.properties
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storePassword keystoreProperties['storePassword']
 
             //github push
-            storeFile file("${rootProject.projectDir}/app/key.jks")
-            storePassword System.getenv("STORE_PASSWORD") ?: ""
-            keyAlias System.getenv("KEY_ALIAS") ?: ""
-            keyPassword System.getenv("KEY_PASSWORD") ?: ""
+            // storeFile file("${rootProject.projectDir}/app/key.jks")
+            // storePassword System.getenv("STORE_PASSWORD") ?: ""
+            // keyAlias System.getenv("KEY_ALIAS") ?: ""
+            // keyPassword System.getenv("KEY_PASSWORD") ?: ""
         }
     }
 

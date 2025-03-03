@@ -25,7 +25,6 @@ dependencies:
   flutter_flip_card: ^0.0.6
   flutter_localizations:
     sdk: flutter
-  go_router: ^14.8.1
   flutter_media_metadata: 
     path: ./packages/flutter_media_metadata
   go_router: ^14.8.1

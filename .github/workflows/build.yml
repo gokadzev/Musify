@@ -7,7 +7,7 @@ on:
   workflow_dispatch: 
 
 env:
-  VERSION: "9.1.1" 
+  VERSION: "9.2.0" 
   CHANGES: |
     - Play on device music 
 

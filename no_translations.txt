@@ -49,5 +49,13 @@
     "setSleepTimer",
     "setTimer",
     "songAlreadyInPlaylist"
+  ],
+
+  "zh": [
+    "folders"
+  ],
+
+  "zh_Hant": [
+    "folders"
   ]
 }
