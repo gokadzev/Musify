@@ -28,8 +28,8 @@ import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/router_service.dart';
 import 'package:musify/services/settings_manager.dart';
-import 'package:musify/utilities/url_launcher.dart';
 import 'package:musify/widgets/auto_format_text.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 const String checkUrl =
     'https://raw.githubusercontent.com/Ruchan10/Musify_fork/main/check.json';
@@ -129,6 +129,14 @@ Future<void> checkAppUpdates() async {
   } catch (e, stackTrace) {
     logger.log('Error in checkAppUpdates', e, stackTrace);
   }
+}
+
+Future<void> launchURL(Uri url) async {
+  // if (await canLaunchUrl(url)) {
+  await launchUrl(url, mode: LaunchMode.externalApplication);
+  // } else {
+  //   throw 'Could not launch $url';
+  // }
 }
 
 bool isLatestVersionHigher(String appVersion, String latestVersion) {

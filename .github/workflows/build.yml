@@ -7,9 +7,10 @@ on:
   workflow_dispatch: 
 
 env:
-  VERSION: "9.2.0" 
+  VERSION: "9.2.1" 
   CHANGES: |
     - Play on device music 
+    - Minor issue with launchUrl
 
 jobs:
   build:

@@ -34,7 +34,6 @@ import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/flutter_bottom_sheet.dart';
 import 'package:musify/utilities/flutter_toast.dart';
-import 'package:musify/utilities/url_launcher.dart';
 import 'package:musify/utilities/utils.dart';
 import 'package:musify/widgets/bottom_sheet_bar.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';

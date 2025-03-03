@@ -23,15 +23,14 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/version.dart';
 import 'package:musify/extensions/l10n.dart';
+import 'package:musify/services/update_manager.dart';
 import 'package:musify/utilities/common_variables.dart';
-import 'package:musify/utilities/url_launcher.dart';
 
 class AboutPage extends StatelessWidget {
   const AboutPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    print('IN ABOUT PAGE--------------------------------');
 
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n!.about)),
@@ -70,24 +69,24 @@ class AboutPage extends StatelessWidget {
                   ),
                 ),
                 title: const Text(
-                  'Valeri Gokadze',
+                  'Ruchan Kayastha',
                   style: TextStyle(fontWeight: FontWeight.w600),
                 ),
-                subtitle: const Text('WEB & APP Developer'),
+                subtitle: const Text('APP Developer'),
                 trailing: Wrap(
                   children: <Widget>[
                     IconButton(
                       icon: const Icon(FluentIcons.code_24_filled),
                       tooltip: 'Github',
                       onPressed: () {
-                        launchURL(Uri.parse('https://github.com/gokadzev'));
+                        launchURL(Uri.parse('https://github.com/ruchan10'));
                       },
                     ),
                     IconButton(
                       icon: const Icon(FluentIcons.globe_24_filled),
                       tooltip: 'Website',
                       onPressed: () {
-                        launchURL(Uri.parse('https://gokadzev.github.io'));
+                        launchURL(Uri.parse('hhttps://ruchan10.github.io/portfolio/'));
                       },
                     ),
                   ],
