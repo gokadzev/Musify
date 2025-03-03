@@ -43,5 +43,5 @@ const commonListViewBottmomPadding = EdgeInsets.only(bottom: 8);
 
 const commonBarContentPadding = EdgeInsets.symmetric(
   vertical: 12,
-  horizontal: 3,
+  horizontal: 10,
 );

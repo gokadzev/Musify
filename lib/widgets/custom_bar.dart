@@ -55,7 +55,7 @@ class CustomBar extends StatelessWidget {
         color: backgroundColor,
         shape: RoundedRectangleBorder(borderRadius: borderRadius),
         child: Padding(
-          padding: commonBarContentPadding,
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 3),
           child: InkWell(
             splashColor: Colors.transparent,
             highlightColor: Colors.transparent,

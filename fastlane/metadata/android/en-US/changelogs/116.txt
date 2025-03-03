@@ -1,0 +1,6 @@
+Bug Fixes
+- Fixed issues with liked playlists
+
+Enhancements
+- Improved sleep timer feature
+- Updated Korean and Indonesian translations

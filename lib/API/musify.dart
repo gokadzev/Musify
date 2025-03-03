@@ -44,9 +44,9 @@ List globalSongs = [];
 
 List playlists = [...playlistsDB, ...albumsDB];
 List userPlaylists = Hive.box('user').get('playlists', defaultValue: []);
-List userCustomPlaylists = Hive.box(
-  'user',
-).get('customPlaylists', defaultValue: []);
+final userCustomPlaylists = ValueNotifier<List>(
+  Hive.box('user').get('customPlaylists', defaultValue: []),
+);
 List userLikedSongsList = Hive.box('user').get('likedSongs', defaultValue: []);
 List userLikedPlaylists = Hive.box(
   'user',
@@ -126,8 +126,8 @@ Future<List> getRecommendedSongs() async {
       }
       playlistSongs.addAll(globalSongs.take(10));
 
-      if (userCustomPlaylists.isNotEmpty) {
-        for (final userPlaylist in userCustomPlaylists) {
+      if (userCustomPlaylists.value.isNotEmpty) {
+        for (final userPlaylist in userCustomPlaylists.value) {
           final _list = (userPlaylist['list'] as List)..shuffle();
           playlistSongs.addAll(_list.take(5));
         }
@@ -145,7 +145,7 @@ Future<List> getRecommendedSongs() async {
 }
 
 Future<List<dynamic>> getUserPlaylists() async {
-  final playlistsByUser = [...userCustomPlaylists];
+  final playlistsByUser = [...userCustomPlaylists.value];
   for (final playlistID in userPlaylists) {
     try {
       final plist = await _yt.playlists.get(playlistID);
@@ -231,8 +231,8 @@ String createCustomPlaylist(
     if (image != null) 'image': image,
     'list': [],
   };
-  userCustomPlaylists.add(customPlaylist);
-  addOrUpdateData('user', 'customPlaylists', userCustomPlaylists);
+  userCustomPlaylists.value = [...userCustomPlaylists.value, customPlaylist];
+  addOrUpdateData('user', 'customPlaylists', userCustomPlaylists.value);
   return '${context.l10n!.addedSuccess}!';
 }
 
@@ -242,7 +242,7 @@ String addSongInCustomPlaylist(
   Map song, {
   int? indexToInsert,
 }) {
-  final customPlaylist = userCustomPlaylists.firstWhere(
+  final customPlaylist = userCustomPlaylists.value.firstWhere(
     (playlist) => playlist['title'] == playlistName,
     orElse: () => null,
   );
@@ -257,7 +257,7 @@ String addSongInCustomPlaylist(
     indexToInsert != null
         ? playlistSongs.insert(indexToInsert, song)
         : playlistSongs.add(song);
-    addOrUpdateData('user', 'customPlaylists', userCustomPlaylists);
+    addOrUpdateData('user', 'customPlaylists', userCustomPlaylists.value);
     return context.l10n!.songAdded;
   } else {
     logger.log('Custom playlist not found: $playlistName', null, null);
@@ -288,7 +288,7 @@ bool removeSongFromPlaylist(
     playlist['list'] = playlistSongs;
 
     if (playlist['source'] == 'user-created') {
-      addOrUpdateData('user', 'customPlaylists', userCustomPlaylists);
+      addOrUpdateData('user', 'customPlaylists', userCustomPlaylists.value);
     } else {
       addOrUpdateData('user', 'playlists', userPlaylists);
     }
@@ -306,8 +306,10 @@ void removeUserPlaylist(String playlistId) {
 }
 
 void removeUserCustomPlaylist(dynamic playlist) {
-  userCustomPlaylists.remove(playlist);
-  addOrUpdateData('user', 'customPlaylists', userCustomPlaylists);
+  final updatedPlaylists = List.from(userCustomPlaylists.value)
+    ..remove(playlist);
+  userCustomPlaylists.value = updatedPlaylists;
+  addOrUpdateData('user', 'customPlaylists', userCustomPlaylists.value);
 }
 
 Future<void> updateSongLikeStatus(dynamic songId, bool add) async {
@@ -335,13 +337,16 @@ Future<void> updatePlaylistLikeStatus(String playlistId, bool add) async {
     if (add) {
       final playlist = playlists.firstWhere(
         (playlist) => playlist['ytid'] == playlistId,
-        orElse: () => {},
+        orElse: () => <String, dynamic>{},
       );
 
       if (playlist.isNotEmpty) {
         userLikedPlaylists.add(playlist);
       } else {
-        userLikedPlaylists.add(await getPlaylistInfoForWidget(playlistId));
+        final playlistInfo = await getPlaylistInfoForWidget(playlistId);
+        if (playlistInfo != null) {
+          userLikedPlaylists.add(playlistInfo);
+        }
       }
     } else {
       userLikedPlaylists.removeWhere(
@@ -370,31 +375,36 @@ Future<List> getPlaylists({
   bool onlyLiked = false,
   String type = 'all',
 }) async {
-  // Early exit if playlists or suggestedPlaylists is empty
+  // Early exit if there are no playlists to process.
   if (playlists.isEmpty ||
       (playlistsNum == null && query == null && suggestedPlaylists.isEmpty)) {
     return [];
   }
 
-  // Filter playlists based on query and type if only query is specified
+  // If a query is provided (without a limit), filter playlists based on the query and type,
+  // and augment with online search results.
   if (query != null && playlistsNum == null) {
     final lowercaseQuery = query.toLowerCase();
     final filteredPlaylists =
         playlists.where((playlist) {
-          final lowercaseTitle = playlist['title'].toLowerCase();
-          return lowercaseTitle.contains(lowercaseQuery) &&
-              ((type == 'all') ||
-                  (type == 'album' && playlist['isAlbum'] == true) ||
-                  (type == 'playlist' && playlist['isAlbum'] != true));
+          final title = playlist['title'].toLowerCase();
+          final matchesQuery = title.contains(lowercaseQuery);
+          final matchesType =
+              type == 'all' ||
+              (type == 'album' && playlist['isAlbum'] == true) ||
+              (type == 'playlist' && playlist['isAlbum'] != true);
+          return matchesQuery && matchesType;
         }).toList();
 
+    final searchTerm = type == 'album' ? '$query album' : query;
     final searchResults = await _yt.search.searchContent(
-      type == 'album' ? '$query album' : query,
+      searchTerm,
       filter: TypeFilters.playlist,
     );
 
-    final existingYtid =
-        onlinePlaylists.map((playlist) => playlist['ytid'] as String).toSet();
+    // Avoid duplicate online playlists.
+    final existingYtIds =
+        onlinePlaylists.map((p) => p['ytid'] as String).toSet();
 
     final newPlaylists =
         searchResults
@@ -406,51 +416,49 @@ Future<List> getPlaylists({
                 'source': 'youtube',
                 'list': [],
               };
-
-              if (!existingYtid.contains(playlistMap['ytid'])) {
-                existingYtid.add(playlistMap['ytid'].toString());
+              if (!existingYtIds.contains(playlistMap['ytid'])) {
+                existingYtIds.add(playlistMap['ytid'].toString());
                 return playlistMap;
               }
               return null;
             })
             .whereType<Map<String, dynamic>>()
             .toList();
-
     onlinePlaylists.addAll(newPlaylists);
+
+    // Merge online playlists that match the query.
     filteredPlaylists.addAll(
       onlinePlaylists.where(
-        (playlist) => playlist['title'].toLowerCase().contains(lowercaseQuery),
+        (p) => p['title'].toLowerCase().contains(lowercaseQuery),
       ),
     );
-
     return filteredPlaylists;
   }
 
-  // Return a subset of suggested playlists if playlistsNum is specified without a query
+  // If a specific number of playlists is requested (without a query),
+  // return a shuffled subset of suggested playlists.
   if (playlistsNum != null && query == null) {
     if (suggestedPlaylists.isEmpty) {
-      suggestedPlaylists = playlists.toList()..shuffle();
+      suggestedPlaylists = List.from(playlists)..shuffle();
     }
     return suggestedPlaylists.take(playlistsNum).toList();
   }
 
-  // Return userLikedPlaylists if onlyLiked flag is set and no query or playlistsNum is specified
+  // If only liked playlists should be returned, ignore other parameters.
   if (onlyLiked && playlistsNum == null && query == null) {
     return userLikedPlaylists;
   }
 
-  // Filter playlists by type
+  // If a specific type is requested, filter accordingly.
   if (type != 'all') {
-    return playlists
-        .where(
-          (playlist) =>
-              (type == 'album' && playlist['isAlbum'] == true) ||
-              (type == 'playlist' && playlist['isAlbum'] != true),
-        )
-        .toList();
+    return playlists.where((playlist) {
+      return type == 'album'
+          ? playlist['isAlbum'] == true
+          : playlist['isAlbum'] != true;
+    }).toList();
   }
 
-  // Return playlists directly if type is 'all'
+  // Default to returning all playlists.
   return playlists;
 }
 
@@ -588,40 +596,55 @@ Future<Map?> getPlaylistInfoForWidget(
   dynamic id, {
   bool isArtist = false,
 }) async {
-  if (!isArtist) {
-    Map? playlist = playlists.firstWhere(
-      (list) => list['ytid'] == id,
-      orElse: () => null,
-    );
-
-    if (playlist == null) {
-      final usPlaylists = await getUserPlaylists();
-      playlist = usPlaylists.firstWhere(
-        (list) => list['ytid'] == id,
-        orElse: () => null,
-      );
-    }
-
-    playlist ??= onlinePlaylists.firstWhere(
-      (list) => list['ytid'] == id,
-      orElse: () => null,
-    );
-
-    if (playlist != null && playlist['list'].isEmpty) {
-      playlist['list'] = await getSongsFromPlaylist(playlist['ytid']);
-      if (!playlists.contains(playlist)) {
-        playlists.add(playlist);
-      }
-    }
-
-    return playlist;
-  } else {
-    final playlist = <String, dynamic>{'title': id};
-
-    playlist['list'] = await fetchSongsList(id);
-
-    return playlist;
+  if (isArtist) {
+    return {'title': id, 'list': await fetchSongsList(id)};
   }
+
+  Map? playlist;
+
+  // Check in local playlists.
+  playlist = playlists.firstWhere((p) => p['ytid'] == id, orElse: () => null);
+
+  // Check in user playlists if not found.
+  if (playlist == null) {
+    final userPl = await getUserPlaylists();
+    playlist = userPl.firstWhere((p) => p['ytid'] == id, orElse: () => null);
+  }
+
+  // Check in cached online playlists if still not found.
+  playlist ??= onlinePlaylists.firstWhere(
+    (p) => p['ytid'] == id,
+    orElse: () => null,
+  );
+
+  // If still not found, attempt to fetch playlist info.
+  if (playlist == null) {
+    try {
+      final ytPlaylist = await _yt.playlists.get(id);
+      playlist = {
+        'ytid': ytPlaylist.id.toString(),
+        'title': ytPlaylist.title,
+        'image': null,
+        'source': 'user-youtube',
+        'list': [],
+      };
+      onlinePlaylists.add(playlist);
+    } catch (e, stackTrace) {
+      logger.log('Failed to fetch playlist info for id $id', e, stackTrace);
+      return null;
+    }
+  }
+
+  // If the playlist exists but its song list is empty, fetch and cache the songs.
+  if (playlist['list'] == null ||
+      (playlist['list'] is List && (playlist['list'] as List).isEmpty)) {
+    playlist['list'] = await getSongsFromPlaylist(playlist['ytid']);
+    if (!playlists.contains(playlist)) {
+      playlists.add(playlist);
+    }
+  }
+
+  return playlist;
 }
 
 final clients = {

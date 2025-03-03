@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:musify/main.dart';
 import 'package:musify/utilities/common_variables.dart';
 
 BorderRadius getItemBorderRadius(int index, int totalLength) {
@@ -11,4 +12,38 @@ BorderRadius getItemBorderRadius(int index, int totalLength) {
     return commonCustomBarRadiusLast; // Last item
   }
   return defaultRadius; // Default for middle items
+}
+
+Locale getLocaleFromLanguageCode(String? languageCode) {
+  // Early return for null case
+  if (languageCode == null) {
+    return const Locale('en');
+  }
+
+  // Handle codes with script parts
+  if (languageCode.contains('-')) {
+    final parts = languageCode.split('-');
+    final baseLanguage = parts[0];
+    final script = parts[1];
+
+    // Try to find exact match with script
+    for (final locale in appSupportedLocales) {
+      if (locale.languageCode == baseLanguage && locale.scriptCode == script) {
+        return locale;
+      }
+    }
+
+    // Fall back to base language only
+    return Locale(baseLanguage);
+  }
+
+  // Handle simple language codes
+  for (final locale in appSupportedLocales) {
+    if (locale.languageCode == languageCode) {
+      return locale;
+    }
+  }
+
+  // Default fallback
+  return const Locale('en');
 }

@@ -5,28 +5,30 @@ repository: https://github.com/gokadzev/Musify
 issue_tracker: https://github.com/gokadzev/Musify/issues
 
 publish_to: 'none'
-version: 9.1.1+115 # run update.sh after changing the version
+version: 9.2.0+117 # run update.sh after changing the version
 
 environment:
   sdk: '>=3.7.0 <4.0.0'
   flutter: ^3.29.0
 
 dependencies:
+  app_links: ^6.4.0
   audio_service: ^0.18.17
   audio_session: ^0.1.25
   cached_network_image: ^3.4.1
   cupertino_icons: ^1.0.8
   dynamic_color: ^1.7.0
-  file_picker: ^9.0.0
+  file_picker: ^9.0.2
   fluentui_system_icons: ^1.1.273
   flutter:
     sdk: flutter
   flutter_flip_card: ^0.0.6
   flutter_localizations:
     sdk: flutter
+  go_router: ^14.8.1
   flutter_media_metadata: 
     path: ./packages/flutter_media_metadata
-  go_router: ^14.8.0
+  go_router: ^14.8.1
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   html: ^0.15.5
@@ -41,7 +43,10 @@ dependencies:
   rxdart: ^0.28.0
   shared_preferences: ^2.3.2
   url_launcher: ^6.3.1
-  youtube_explode_dart: ^2.3.10
+  youtube_explode_dart:
+    git:
+      url: https://github.com/gokadzev/yt_explode_dart.git
+      ref: 5f01ddb776dc2f64da7f734373f4f7bcdced64af
 
 dev_dependencies:
   flutter_launcher_icons: ^0.14.3
