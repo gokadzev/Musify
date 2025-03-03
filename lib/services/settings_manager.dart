@@ -27,7 +27,7 @@ import 'package:musify/main.dart';
 // Preferences
 
 final playNextSongAutomatically = ValueNotifier<bool>(
-  Hive.box('settings').get('playNextSongAutomatically', defaultValue: false),
+  Hive.box('settings').get('playNextSongAutomatically', defaultValue: true),
 );
 
 final useSystemColor = ValueNotifier<bool>(
@@ -35,7 +35,7 @@ final useSystemColor = ValueNotifier<bool>(
 );
 
 final usePureBlackColor = ValueNotifier<bool>(
-  Hive.box('settings').get('usePureBlackColor', defaultValue: false),
+  Hive.box('settings').get('usePureBlackColor', defaultValue: true),
 );
 
 final offlineMode = ValueNotifier<bool>(
@@ -43,11 +43,11 @@ final offlineMode = ValueNotifier<bool>(
 );
 
 final predictiveBack = ValueNotifier<bool>(
-  Hive.box('settings').get('predictiveBack', defaultValue: false),
+  Hive.box('settings').get('predictiveBack', defaultValue: true),
 );
 
 final sponsorBlockSupport = ValueNotifier<bool>(
-  Hive.box('settings').get('sponsorBlockSupport', defaultValue: false),
+  Hive.box('settings').get('sponsorBlockSupport', defaultValue: true),
 );
 
 final defaultRecommendations = ValueNotifier<bool>(

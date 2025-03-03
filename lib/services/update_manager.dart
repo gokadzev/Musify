@@ -20,7 +20,6 @@
  */
 
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -33,11 +32,11 @@ import 'package:musify/utilities/url_launcher.dart';
 import 'package:musify/widgets/auto_format_text.dart';
 
 const String checkUrl =
-    'https://raw.githubusercontent.com/Ruchan10/Musify_fork/master/check.json';
+    'https://raw.githubusercontent.com/Ruchan10/Musify_fork/main/check.json';
 const String releasesUrl =
     'https://api.github.com/repos/Ruchan10/Musify_fork/releases/latest';
 const String downloadUrlKey = 'url';
-const String downloadFilename = 'musify_fork.apk';
+const String downloadFilename = 'MusifyFork.apk';
 
 Future<void> checkAppUpdates() async {
   try {
@@ -155,8 +154,6 @@ bool isLatestVersionHigher(String appVersion, String latestVersion) {
 
   return false;
 }
-
-
 
 Future<String> getDownloadUrl(Map<String, dynamic> map) async {
   final url = map[downloadUrlKey].toString();

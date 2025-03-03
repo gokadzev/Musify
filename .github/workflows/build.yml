@@ -6,6 +6,11 @@ on:
       - main  
   workflow_dispatch: 
 
+env:
+  VERSION: "9.1.1" 
+  CHANGES: |
+    - Play on device music 
+
 jobs:
   build:
     name: Build APK
@@ -28,10 +33,11 @@ jobs:
 
       - name: Decode and Set Up Keystore
         run: |
-          echo "${{ secrets.KEYSTORE2 }}" | base64 --decode > android/app/key.jks
-          echo "KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}" >> $GITHUB_ENV
-          echo "KEY_ALIAS=${{ secrets.KEY_ALIAS }}" >> $GITHUB_ENV
-          echo "STORE_PASSWORD=${{ secrets.STORE_PASSWORD }}" >> $GITHUB_ENV
+            echo "${{ secrets.KEYSTORE2 }}" | base64 --decode > android/app/key.jks
+            echo "KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}" >> $GITHUB_ENV
+            echo "KEY_ALIAS=${{ secrets.KEY_ALIAS }}" >> $GITHUB_ENV
+            echo "STORE_PASSWORD=${{ secrets.STORE_PASSWORD }}" >> $GITHUB_ENV
+        
 
       - name: Install dependencies
         run: flutter pub get
@@ -64,8 +70,8 @@ jobs:
         with:
           artifacts: MusifyFork.apk
           token: ${{ secrets.GH_TOKEN }}
-          tag: 9.1.1
-          name: APK Release v-${{ github.run_number }}
-          body: "Musify_Fork"
+          tag: ${{ env.VERSION }}
+          name: ${{ env.VERSION }}
+          body: ${{ env.CHANGES }}
           draft: false
           prerelease: false
