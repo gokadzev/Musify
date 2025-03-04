@@ -7,10 +7,10 @@ on:
   workflow_dispatch: 
 
 env:
-  VERSION: "9.2.1" 
+  VERSION: "9.2.2" 
   CHANGES: |
     - Play on device music 
-    - Minor issue with launchUrl
+    - Now the app remembers music state before call and retains it after call ends
 
 jobs:
   build:

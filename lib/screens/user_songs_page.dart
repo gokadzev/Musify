@@ -48,7 +48,6 @@ class _UserSongsPageState extends State<UserSongsPage> {
     final icon = getIcon(widget.page);
     final songsList = getSongsList(widget.page);
     final length = getLength(widget.page);
-    print('this is OFFLINE songs PAGE--------------------------------');
 
     return Scaffold(
       appBar: AppBar(

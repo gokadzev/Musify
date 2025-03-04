@@ -184,10 +184,14 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   Future<void> _initialize() async {
     final session = await AudioSession.instance;
+    var wasPlayingBeforeInterruption = false;
+
     try {
       await session.configure(const AudioSessionConfiguration.music());
       session.interruptionEventStream.listen((event) async {
         if (event.begin) {
+          wasPlayingBeforeInterruption = audioPlayer.playing;
+
           switch (event.type) {
             case AudioInterruptionType.duck:
               await audioPlayer.setVolume(0.5);
@@ -203,7 +207,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
               await audioPlayer.setVolume(1);
               break;
             case AudioInterruptionType.pause:
-              await audioPlayer.play();
+              if (wasPlayingBeforeInterruption) {
+                await audioPlayer.play();
+              }
               break;
             case AudioInterruptionType.unknown:
               break;

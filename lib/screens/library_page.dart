@@ -112,6 +112,12 @@ class _LibraryPageState extends State<LibraryPage> {
                       : BorderRadius.zero,
               showBuildActions: false,
             ),
+            PlaylistBar(
+              'Local Songs',
+              onPressed: () => _checkPermissionAndScanDevice(context),
+              cubeIcon: FluentIcons.music_note_1_20_filled,
+              showBuildActions: false,
+            ),
           ],
         ),
         ValueListenableBuilder<List>(

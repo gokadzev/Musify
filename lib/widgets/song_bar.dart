@@ -67,8 +67,6 @@ class SongBar extends StatelessWidget {
         onTap:
             onPlay ??
             () {
-              print('----------------------------------------song_bar');
-              print('----------------------------------------$song');
               audioHandler.playSong(song);
               if (activePlaylist.isNotEmpty && clearPlaylist) {
                 activePlaylist = {

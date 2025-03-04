@@ -1,10 +1,9 @@
 ------------- FUTURE WORKS -------------
 
-- music resumes after a call, even if it was paused before call
+- MAKE SONGS DOWNLOADABLE TO AUDIO(FLAC) files (Add where to save downloaded files)
+- automatically play next song after one finishes
 
 - remove buttons from local audio files and make shuffle and repeat work
-- change offline icon to download icon
-- MAKE SONGS DOWNLOADABLE TO AUDIO(FLAC) files (Add where to save downloaded files)
 - Add exclude folders
 - Just below search bar in search page, add sources like youtube and jioSavaan
 - add a option to go to next song when song has 2 sec to finish

@@ -24,8 +24,6 @@ class NowPlayingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('IN LOCAL now playing PAGE--------------------------------');
-
     final size = MediaQuery.sizeOf(context);
 
     return Scaffold(
