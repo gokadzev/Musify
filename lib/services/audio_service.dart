@@ -293,11 +293,17 @@ class MusifyAudioHandler extends BaseAudioHandler {
     String songUrl,
     bool isOffline,
   ) async {
-    final uri = Uri.parse(songUrl);
     final tag = mapToMediaItem(song);
+
+    if (isOffline) {
+      final uri = Uri.file(songUrl);
+      return AudioSource.uri(uri, tag: tag);
+    }
+
+    final uri = Uri.parse(songUrl);
     final audioSource = AudioSource.uri(uri, tag: tag);
 
-    if (isOffline || !sponsorBlockSupport.value) {
+    if (!sponsorBlockSupport.value) {
       return audioSource;
     }
 
