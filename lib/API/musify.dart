@@ -43,7 +43,9 @@ final _yt = YoutubeExplode();
 List globalSongs = [];
 
 List playlists = [...playlistsDB, ...albumsDB];
-List userPlaylists = Hive.box('user').get('playlists', defaultValue: []);
+final userPlaylists = ValueNotifier<List>(
+  Hive.box('user').get('playlists', defaultValue: []),
+);
 final userCustomPlaylists = ValueNotifier<List>(
   Hive.box('user').get('customPlaylists', defaultValue: []),
 );
@@ -145,8 +147,8 @@ Future<List> getRecommendedSongs() async {
 }
 
 Future<List<dynamic>> getUserPlaylists() async {
-  final playlistsByUser = [...userCustomPlaylists.value];
-  for (final playlistID in userPlaylists) {
+  final playlistsByUser = [];
+  for (final playlistID in userPlaylists.value) {
     try {
       final plist = await _yt.playlists.get(playlistID);
       playlistsByUser.add({
@@ -202,7 +204,7 @@ Future<String> addUserPlaylist(String input, BuildContext context) async {
   try {
     final _playlist = await _yt.playlists.get(playlistId);
 
-    if (userPlaylists.contains(playlistId)) {
+    if (userPlaylists.value.contains(playlistId)) {
       return '${context.l10n!.playlistAlreadyExists}!';
     }
 
@@ -212,8 +214,8 @@ Future<String> addUserPlaylist(String input, BuildContext context) async {
       return '${context.l10n!.invalidYouTubePlaylist}!';
     }
 
-    userPlaylists.add(playlistId);
-    addOrUpdateData('user', 'playlists', userPlaylists);
+    userPlaylists.value = [...userPlaylists.value, playlistId];
+    addOrUpdateData('user', 'playlists', userPlaylists.value);
     return '${context.l10n!.addedSuccess}!';
   } catch (e) {
     return '${context.l10n!.error}: $e';
@@ -290,7 +292,7 @@ bool removeSongFromPlaylist(
     if (playlist['source'] == 'user-created') {
       addOrUpdateData('user', 'customPlaylists', userCustomPlaylists.value);
     } else {
-      addOrUpdateData('user', 'playlists', userPlaylists);
+      addOrUpdateData('user', 'playlists', userPlaylists.value);
     }
 
     return true;
@@ -301,8 +303,9 @@ bool removeSongFromPlaylist(
 }
 
 void removeUserPlaylist(String playlistId) {
-  userPlaylists.remove(playlistId);
-  addOrUpdateData('user', 'playlists', userPlaylists);
+  final updatedPlaylists = List.from(userPlaylists.value)..remove(playlistId);
+  userPlaylists.value = updatedPlaylists;
+  addOrUpdateData('user', 'playlists', userPlaylists.value);
 }
 
 void removeUserCustomPlaylist(dynamic playlist) {
@@ -607,7 +610,7 @@ Future<Map?> getPlaylistInfoForWidget(
 
   // Check in user playlists if not found.
   if (playlist == null) {
-    final userPl = await getUserPlaylists();
+    final userPl = [...await getUserPlaylists(), userCustomPlaylists.value];
     playlist = userPl.firstWhere((p) => p['ytid'] == id, orElse: () => null);
   }
 

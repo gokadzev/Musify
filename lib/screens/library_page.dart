@@ -66,48 +66,43 @@ class _LibraryPageState extends State<LibraryPage> {
 
   Widget _buildUserPlaylistsSection(Color primaryColor) {
     final isUserPlaylistsEmpty =
-        userPlaylists.isEmpty && userCustomPlaylists.value.isEmpty;
+        userPlaylists.value.isEmpty && userCustomPlaylists.value.isEmpty;
     return Column(
       children: [
         SectionHeader(
-          title: context.l10n!.userPlaylists,
+          title: context.l10n!.customPlaylists,
           actionButton: IconButton(
             padding: const EdgeInsets.only(right: 5),
             onPressed: _showAddPlaylistDialog,
             icon: Icon(FluentIcons.add_24_filled, color: primaryColor),
           ),
         ),
-        Column(
-          children: <Widget>[
-            PlaylistBar(
-              context.l10n!.recentlyPlayed,
-              onPressed:
-                  () =>
-                      NavigationManager.router.go('/library/userSongs/recents'),
-              cubeIcon: FluentIcons.history_24_filled,
-              borderRadius: commonCustomBarRadiusFirst,
-              showBuildActions: false,
-            ),
-            PlaylistBar(
-              context.l10n!.likedSongs,
-              onPressed:
-                  () => NavigationManager.router.go('/library/userSongs/liked'),
-              cubeIcon: FluentIcons.music_note_2_24_regular,
-              showBuildActions: false,
-            ),
-            PlaylistBar(
-              context.l10n!.offlineSongs,
-              onPressed:
-                  () =>
-                      NavigationManager.router.go('/library/userSongs/offline'),
-              cubeIcon: FluentIcons.cellular_off_24_filled,
-              borderRadius:
-                  isUserPlaylistsEmpty
-                      ? commonCustomBarRadiusLast
-                      : BorderRadius.zero,
-              showBuildActions: false,
-            ),
-          ],
+
+        PlaylistBar(
+          context.l10n!.recentlyPlayed,
+          onPressed:
+              () => NavigationManager.router.go('/library/userSongs/recents'),
+          cubeIcon: FluentIcons.history_24_filled,
+          borderRadius: commonCustomBarRadiusFirst,
+          showBuildActions: false,
+        ),
+        PlaylistBar(
+          context.l10n!.likedSongs,
+          onPressed:
+              () => NavigationManager.router.go('/library/userSongs/liked'),
+          cubeIcon: FluentIcons.music_note_2_24_regular,
+          showBuildActions: false,
+        ),
+        PlaylistBar(
+          context.l10n!.offlineSongs,
+          onPressed:
+              () => NavigationManager.router.go('/library/userSongs/offline'),
+          cubeIcon: FluentIcons.cellular_off_24_filled,
+          borderRadius:
+              isUserPlaylistsEmpty
+                  ? commonCustomBarRadiusLast
+                  : BorderRadius.zero,
+          showBuildActions: false,
         ),
         ValueListenableBuilder<List>(
           valueListenable: userCustomPlaylists,
@@ -116,6 +111,41 @@ class _LibraryPageState extends State<LibraryPage> {
               return const SizedBox();
             }
             return _buildPlaylistListView(context, playlists);
+          },
+        ),
+
+        ValueListenableBuilder<List>(
+          valueListenable: userPlaylists,
+          builder: (context, playlists, _) {
+            if (userPlaylists.value.isEmpty) {
+              return const SizedBox();
+            }
+            return Column(
+              children: [
+                SectionHeader(
+                  title: context.l10n!.addedPlaylists,
+                  actionButton: IconButton(
+                    padding: const EdgeInsets.only(right: 5),
+                    onPressed: _showAddPlaylistDialog,
+                    icon: Icon(FluentIcons.add_24_filled, color: primaryColor),
+                  ),
+                ),
+                FutureBuilder(
+                  future: getUserPlaylists(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                      return _buildPlaylistListView(context, snapshot.data!);
+                    } else {
+                      return const SizedBox();
+                    }
+                  },
+                ),
+              ],
+            );
           },
         ),
       ],
@@ -139,11 +169,6 @@ class _LibraryPageState extends State<LibraryPage> {
   }
 
   Widget _buildPlaylistListView(BuildContext context, List playlists) {
-    final isUserPlaylists =
-        playlists.isNotEmpty &&
-        (playlists[0]['source'] == 'user-created' ||
-            playlists[0]['source'] == 'user-youtube');
-    final _length = playlists.length + (isUserPlaylists ? 3 : 0);
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -151,8 +176,7 @@ class _LibraryPageState extends State<LibraryPage> {
       padding: commonListViewBottmomPadding,
       itemBuilder: (BuildContext context, index) {
         final playlist = playlists[index];
-        final _index = index + (isUserPlaylists ? 3 : 0);
-        final borderRadius = getItemBorderRadius(_index, _length);
+        final borderRadius = getItemBorderRadius(index, playlists.length);
         return PlaylistBar(
           key: ValueKey(playlist['ytid']),
           playlist['title'],
