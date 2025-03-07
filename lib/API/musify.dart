@@ -610,7 +610,7 @@ Future<Map?> getPlaylistInfoForWidget(
 
   // Check in user playlists if not found.
   if (playlist == null) {
-    final userPl = [...await getUserPlaylists(), userCustomPlaylists.value];
+    final userPl = await getUserPlaylists();
     playlist = userPl.firstWhere((p) => p['ytid'] == id, orElse: () => null);
   }
 
