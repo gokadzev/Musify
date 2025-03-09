@@ -60,6 +60,7 @@ const appLanguages = <String, String>{
   'French': 'fr',
   'German': 'de',
   'Greek': 'el',
+  'Hindi': 'hi',
   'Indonesian': 'id',
   'Italian': 'it',
   'Japanese': 'ja',
@@ -181,6 +182,7 @@ class _MusifyState extends State<Musify> {
         );
 
         return MaterialApp.router(
+          debugShowCheckedModeBanner: false,
           themeMode: themeMode,
           darkTheme: getAppTheme(colorScheme),
           theme: getAppTheme(colorScheme),

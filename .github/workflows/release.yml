@@ -1,9 +1,9 @@
+name: Test, Build and Release APK
+
 on:
   push:
     branches:
-      - master
-
-name: Test, Build and Release apk
+      - master  # Trigger on push to the master branch
 
 env:
   PROPERTIES_PATH: './android/key.properties'
@@ -11,7 +11,7 @@ env:
 jobs:
   build:
     name: Build APK
-    if: "contains(github.event.head_commit.message, 'Update:')"
+    if: "contains(github.event.head_commit.message, 'Update:')"  # Trigger only if commit message contains 'Update:'
     runs-on: ubuntu-latest
 
     steps:
@@ -25,14 +25,14 @@ jobs:
           version=$(echo ${{ github.event.head_commit.message }} | grep -oP '(?<=Update: v)\d+\.\d+\.\d+')
           echo "version=${version}" >> $GITHUB_OUTPUT
 
-      # Setup Java environment in order to build the Android app.
+      # Setup Java environment for building Android app
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '17.x'
 
-      # Gradle cache for faster builds
+      # Cache Gradle dependencies
       - name: Cache Gradle dependencies
         uses: actions/cache@v4
         with:
@@ -43,29 +43,26 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      # Setup the Flutter environment.
+      # Setup Flutter environment
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
 
-      #
+      # Add keystore properties to android/key.properties
       - run: |
-          echo keyPassword=\${{ secrets.KEY_STORE }} > ${{env.PROPERTIES_PATH}}
-          echo storePassword=\${{ secrets.KEY_PASSWORD }} >> ${{env.PROPERTIES_PATH}}
-          echo keyAlias=\${{ secrets.KEY_ALIAS }} >> ${{env.PROPERTIES_PATH}}
-      #
+          echo keyPassword=\${{ secrets.KEY_STORE }} > ${{ env.PROPERTIES_PATH }}
+          echo storePassword=\${{ secrets.KEY_PASSWORD }} >> ${{ env.PROPERTIES_PATH }}
+          echo keyAlias=\${{ secrets.KEY_ALIAS }} >> ${{ env.PROPERTIES_PATH }}
+
+      # Decode keystore file
       - run: echo "${{ secrets.KEYSTORE2 }}" | base64 --decode > android/app/key.jks
 
-      # Get Flutter dependencies.
+      # Get Flutter dependencies
       - name: Get Flutter dependencies
         run: flutter pub get
 
-      # # Check for any formatting issues in the code.
-      # - name: Check code formatting
-      #   run: dart format --set-exit-if-changed .
-
-      # Statically analyze the Dart code for any errors.
+      # Analyze Dart code
       - name: Analyze Dart code
         run: flutter analyze .
 
@@ -73,7 +70,7 @@ jobs:
       - name: Build arm64 APK
         run: flutter build apk --release --split-per-abi --target-platform="android-arm64" --flavor github
 
-      # Release arm64 generated APK
+      # Release arm64 APK to GitHub release
       - name: Release arm64 APK
         uses: svenstaro/upload-release-action@v2
         with:
@@ -89,7 +86,7 @@ jobs:
       - name: Build universal APK
         run: flutter build apk --release --flavor github
 
-      # Release universal generated APK
+      # Release universal APK to GitHub release
       - name: Release universal APK
         uses: svenstaro/upload-release-action@v2
         with:
