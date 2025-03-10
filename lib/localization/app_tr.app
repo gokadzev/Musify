@@ -100,7 +100,7 @@
   "songAlreadyInPlaylist": "Bu parça zaten listede var",
   "songRemoved": "Parça kaldırıldı",
   "songRemovedFromOffline": "Şarkı artık çevrimdışında kullanılamaz",
-  "songs": "Parçalar",
+  "songs": "Parça",
   "sponsorProject": "Bu Projeyi Destekle",
   "suggestedArtists": "Önerilen Sanatçılar",
   "suggestedPlaylists": "Önerilen Listeler",
