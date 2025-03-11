@@ -9,5 +9,5 @@
 * Lyrics support
 * No ads
 * No subscriptions
-* 14 supported languages
+* 17 supported languages
 * Material UI & accent colors & dynamic colors (Android 12+)
