@@ -69,6 +69,7 @@ const appLanguages = <String, String>{
   'Polish': 'pl',
   'Portuguese': 'pt',
   'Spanish': 'es',
+  'Turkish': 'tr',
   'Ukrainian': 'uk',
 };
 
