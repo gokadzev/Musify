@@ -183,33 +183,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
   }
 
   Future<void> _initialize() async {
-    final session = await AudioSession.instance;
     try {
+      final session = await AudioSession.instance;
       await session.configure(const AudioSessionConfiguration.music());
-      session.interruptionEventStream.listen((event) async {
-        if (event.begin) {
-          switch (event.type) {
-            case AudioInterruptionType.duck:
-              await audioPlayer.setVolume(0.5);
-              break;
-            case AudioInterruptionType.pause:
-            case AudioInterruptionType.unknown:
-              await audioPlayer.pause();
-              break;
-          }
-        } else {
-          switch (event.type) {
-            case AudioInterruptionType.duck:
-              await audioPlayer.setVolume(1);
-              break;
-            case AudioInterruptionType.pause:
-              await audioPlayer.play();
-              break;
-            case AudioInterruptionType.unknown:
-              break;
-          }
-        }
-      });
     } catch (e, stackTrace) {
       logger.log('Error initializing audio session', e, stackTrace);
     }
