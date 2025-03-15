@@ -877,11 +877,12 @@ packages:
   youtube_explode_dart:
     dependency: "direct main"
     description:
-      name: youtube_explode_dart
-      sha256: f226459955b3de3e4cdd88bb4098dd7fed0261ac3f41485e2b8bbfb2f7c9ddc5
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.3.10"
+      path: "."
+      ref: "5ed5f6a502cd4c07e7b93b8066673d055d435a37"
+      resolved-ref: "5ed5f6a502cd4c07e7b93b8066673d055d435a37"
+      url: "https://github.com/gokadzev/yt_explode_dart.git"
+    source: git
+    version: "2.4.0-dev.1"
 sdks:
   dart: ">=3.7.0 <4.0.0"
   flutter: ">=3.29.0"
