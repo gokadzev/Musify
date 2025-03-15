@@ -92,14 +92,17 @@ class MusifyAudioHandler extends BaseAudioHandler {
   void _handleDurationChange(Duration? duration) {
     try {
       final index = audioPlayer.currentIndex;
-      if (index != null && queue.value.isNotEmpty) {
-        final newQueue = List<MediaItem>.from(queue.value);
-        final oldMediaItem = newQueue[index];
-        final newMediaItem = oldMediaItem.copyWith(duration: duration);
-        newQueue[index] = newMediaItem;
-        queue.add(newQueue);
-        mediaItem.add(newMediaItem);
-      }
+      if (index == null || queue.value.isEmpty) return;
+
+      final newMediaItem = queue.value[index].copyWith(duration: duration);
+      mediaItem.add(newMediaItem);
+
+      // Update the queue item with the new duration
+      final newQueue = List<MediaItem>.from(queue.value);
+      newQueue[index] = newMediaItem;
+      queue.add(newQueue);
+
+      _updatePlaybackState();
     } catch (e, stackTrace) {
       logger.log('Error handling duration change', e, stackTrace);
     }
