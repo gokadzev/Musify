@@ -259,9 +259,20 @@ class MusifyAudioHandler extends BaseAudioHandler {
     Map<dynamic, dynamic>? playlist,
     required int songIndex,
   }) async {
-    if (playlist != null) activePlaylist = playlist;
-    activeSongId = songIndex;
-    await audioHandler.playSong(activePlaylist['list'][activeSongId]);
+    try {
+      if (playlist != null) {
+        activePlaylist = playlist;
+      } else if (activePlaylist['list'].isEmpty) {
+        logger.log('Error: Attempted to play empty playlist', null, null);
+        return;
+      }
+
+      activeSongId = songIndex;
+
+      await playSong(activePlaylist['list'][activeSongId]);
+    } catch (e, stackTrace) {
+      logger.log('Error playing playlist', e, stackTrace);
+    }
   }
 
   Future<AudioSource> buildAudioSource(
