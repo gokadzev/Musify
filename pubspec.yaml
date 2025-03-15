@@ -40,7 +40,6 @@ dependencies:
       ref: 5ed5f6a502cd4c07e7b93b8066673d055d435a37
 
 dev_dependencies:
-  flutter_native_splash: ^2.4.5
   flutter_test:
     sdk: flutter
   translations_cleaner: ^0.0.5
@@ -59,13 +58,3 @@ flutter:
     - family: paytoneOne
       fonts:
         - asset: fonts/paytone/PaytoneOne-Regular.ttf
-
-flutter_native_splash:
-  color: '#f9fafd'
-  image: assets/images/ic_splash.png
-  color_dark: '#151515'
-  image_dark: assets/images/ic_splash.png
-
-  android_12:
-    image: assets/images/ic_splash.png
-    image_dark: assets/images/ic_splash.png
