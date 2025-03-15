@@ -69,12 +69,6 @@ Map activePlaylist = {
   'list': [],
 };
 
-List<YoutubeApiClient> userChosenClients = [
-  YoutubeApiClient.tv,
-  YoutubeApiClient.androidVr,
-  YoutubeApiClient.safari,
-];
-
 dynamic nextRecommendedSong;
 
 final currentLikedSongsLength = ValueNotifier<int>(userLikedSongsList.length);
@@ -663,10 +657,7 @@ final clients = {
 
 Future<AudioOnlyStreamInfo> getSongManifest(String songId) async {
   try {
-    final manifest = await _yt.videos.streams.getManifest(
-      songId,
-      ytClients: userChosenClients,
-    );
+    final manifest = await _yt.videos.streams.getManifest(songId);
     final audioStream = manifest.audioOnly.withHighestBitrate();
     return audioStream;
   } catch (e, stackTrace) {
