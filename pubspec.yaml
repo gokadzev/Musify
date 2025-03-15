@@ -40,7 +40,6 @@ dependencies:
       ref: 5ed5f6a502cd4c07e7b93b8066673d055d435a37
 
 dev_dependencies:
-  flutter_launcher_icons: ^0.14.3
   flutter_native_splash: ^2.4.5
   flutter_test:
     sdk: flutter
@@ -70,11 +69,3 @@ flutter_native_splash:
   android_12:
     image: assets/images/ic_splash.png
     image_dark: assets/images/ic_splash.png
-
-flutter_launcher_icons:
-  android: true
-  adaptive_icon_background: '#191919'
-  adaptive_icon_foreground: 'assets/images/ic_launcher_foreground.png'
-  adaptive_icon_round: 'assets/images/ic_launcher_round.png'
-  adaptive_icon_monochrome: 'assets/images/ic_launcher_foreground.png'
-  image_path: 'assets/images/ic_launcher.png'
