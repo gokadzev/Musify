@@ -644,17 +644,6 @@ Future<Map?> getPlaylistInfoForWidget(
   return playlist;
 }
 
-final clients = {
-  'tv': YoutubeApiClient.tv,
-  'androidVr': YoutubeApiClient.androidVr,
-  'safari': YoutubeApiClient.safari,
-  'ios': YoutubeApiClient.ios,
-  'android': YoutubeApiClient.android,
-  'androidMusic': YoutubeApiClient.androidMusic,
-  'mediaConnect': YoutubeApiClient.mediaConnect,
-  'web': YoutubeApiClient.mweb,
-};
-
 Future<AudioOnlyStreamInfo> getSongManifest(String songId) async {
   try {
     final manifest = await _yt.videos.streams.getManifest(songId);

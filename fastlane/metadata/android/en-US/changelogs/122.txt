@@ -1,0 +1,5 @@
+Bug Fixes
+- Fixed notification icon appearance
+
+Enhancements
+- Miscellaneous improvements in code
