@@ -1,8 +1,0 @@
-Bug Fixes
-
-- Prevent adding playlists with empty properties
-
-Enhancements
-
-- Updated Indonesian and Korean translations
-- Re-added Spanish language

@@ -1,8 +1,0 @@
-Bug Fixes
-- Fixed various bugs and layout issues
-
-Enhancements
-- Redesigned key app components
-- Improved performance and UI elements
-
-- Full changelog available in the GitHub repository

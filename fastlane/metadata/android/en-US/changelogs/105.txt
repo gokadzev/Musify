@@ -1,8 +1,0 @@
-Bug Fixes
-
-- Ensure smooth integration for legacy custom playlists
-- Fixed handling of missing backup files during restoration
-
-Enhancements
-
-- Updated Portuguese Translation

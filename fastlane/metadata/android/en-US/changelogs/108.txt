@@ -1,3 +1,0 @@
-Enhancements
-- Add repeat playlist feature
-- Improved performance and UI elements

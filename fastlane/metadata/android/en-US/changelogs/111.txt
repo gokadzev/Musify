@@ -1,5 +1,0 @@
-Bug Fixes
-- Streaming issues should be fixed or better at least
-- Add dynamic border radius to recent played songs too
-- Update playlist data handling after navigation
-- Improve UI consistency for bars

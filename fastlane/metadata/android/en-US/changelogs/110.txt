@@ -1,7 +1,0 @@
-Bug Fixes
-- Prevented skipping to the next track while buffering in repeat mode.
-- Miscellaneous fixes connected to the repeat function.
-
-Enhancements
-- Enabled item snapping in carousel views on the home page.
-- Updated target SDK to 35 for Android 15 support.

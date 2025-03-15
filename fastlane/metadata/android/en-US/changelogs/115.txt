@@ -1,3 +1,0 @@
-Enhancements
-- Added sleep timer feature
-- Instantly update playback state in mini-player on song play

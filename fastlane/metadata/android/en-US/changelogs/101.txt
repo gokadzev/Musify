@@ -1,7 +1,0 @@
-Enhancements
-
-- Updated Portuguese translations by @GeovaneDev
-- Improved playback speed for a smoother experience
-- Enhanced automatic song picker algorithm and playback code
-- Redesigned and relocated playlists to the library page
-- Other improvements and fixes related to performance and UI

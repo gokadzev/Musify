@@ -1,5 +1,0 @@
-Bug Fixes
-- Fixed added playlists not showing problem
-
-Enhancements
-- Updated Portuguese translations

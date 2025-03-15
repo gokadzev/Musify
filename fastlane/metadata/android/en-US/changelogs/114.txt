@@ -1,5 +1,0 @@
-Enhancements
-- Added support for larger screen devices
-- Improved lyrics formatting
-- Enahnce UI for better consistency
-- Updated Indonesian and Italian translations

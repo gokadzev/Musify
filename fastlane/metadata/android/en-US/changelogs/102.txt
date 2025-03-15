@@ -1,9 +1,0 @@
-Bug Fixes
-
-- Fixed broken like playlist function
-
-
-Enhancements
-
-- Moved liked playlists to the library page
-- Improved library page UI

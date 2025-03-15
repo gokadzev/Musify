@@ -1,2 +1,0 @@
-Bug Fixes
-- Fixed playlist opening problem
