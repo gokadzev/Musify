@@ -224,6 +224,7 @@ Future<void> initialisation() async {
         androidNotificationChannelName: 'Musify',
         androidNotificationIcon: 'drawable/ic_launcher_foreground',
         androidShowNotificationBadge: true,
+        androidStopForegroundOnPause: false,
       ),
     );
 
