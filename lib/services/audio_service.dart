@@ -172,7 +172,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
           MediaAction.seekBackward,
         },
         androidCompactActionIndices: const [0, 1, 2],
-        processingState: processingStateMap[audioPlayer.processingState]!,
+        processingState:
+            processingStateMap[audioPlayer.processingState] ??
+            AudioProcessingState.idle,
         repeatMode: repeatNotifier.value,
         shuffleMode:
             audioPlayer.shuffleModeEnabled
