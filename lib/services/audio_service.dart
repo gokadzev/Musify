@@ -54,6 +54,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
   Timer? _sleepTimer;
   bool sleepTimerExpired = false;
 
+  bool _playInterrupted = false;
+
   late StreamSubscription<PlaybackEvent> _playbackEventSubscription;
   late StreamSubscription<Duration?> _durationSubscription;
   late StreamSubscription<int?> _currentIndexSubscription;
@@ -189,6 +191,42 @@ class MusifyAudioHandler extends BaseAudioHandler {
     try {
       final session = await AudioSession.instance;
       await session.configure(const AudioSessionConfiguration.music());
+      session.interruptionEventStream.listen((event) {
+        if (event.begin) {
+          if (!audioPlayer.playing) return;
+          switch (event.type) {
+            case AudioInterruptionType.duck:
+              audioPlayer.setVolume(audioPlayer.volume * 0.5);
+              break;
+            case AudioInterruptionType.pause:
+              pause();
+              _playInterrupted = true;
+              break;
+            case AudioInterruptionType.unknown:
+              pause();
+              _playInterrupted = true;
+              break;
+          }
+        } else {
+          switch (event.type) {
+            case AudioInterruptionType.duck:
+              audioPlayer.setVolume(audioPlayer.volume * 2);
+              break;
+            case AudioInterruptionType.pause:
+              if (_playInterrupted) play();
+              break;
+            case AudioInterruptionType.unknown:
+              break;
+          }
+          _playInterrupted = false;
+        }
+      });
+
+      session.becomingNoisyEventStream.listen((_) {
+        if (audioPlayer.playing) {
+          audioPlayer.pause();
+        }
+      });
     } catch (e, stackTrace) {
       logger.log('Error initializing audio session', e, stackTrace);
     }
