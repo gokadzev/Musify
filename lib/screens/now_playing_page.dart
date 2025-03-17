@@ -617,12 +617,14 @@ class PlayerControlButtons extends StatelessWidget {
               ),
               iconSize: iconSize,
               onPressed: () {
-                repeatNotifier.value =
+                final newRepeatMode =
                     repeatMode == AudioServiceRepeatMode.all
                         ? AudioServiceRepeatMode.one
                         : AudioServiceRepeatMode.none;
 
-                audioHandler.setRepeatMode(repeatMode);
+                repeatNotifier.value = newRepeatMode;
+
+                audioHandler.setRepeatMode(newRepeatMode);
               },
             )
             : IconButton.filledTonal(
@@ -633,13 +635,15 @@ class PlayerControlButtons extends StatelessWidget {
               iconSize: iconSize,
               onPressed: () {
                 final _isSingleSongPlaying = activePlaylist['list'].isEmpty;
-                repeatNotifier.value =
+                final newRepeatMode =
                     _isSingleSongPlaying
                         ? AudioServiceRepeatMode.one
                         : AudioServiceRepeatMode.all;
 
+                repeatNotifier.value = newRepeatMode;
+
                 if (repeatNotifier.value == AudioServiceRepeatMode.one)
-                  audioHandler.setRepeatMode(repeatNotifier.value);
+                  audioHandler.setRepeatMode(newRepeatMode);
               },
             );
       },
