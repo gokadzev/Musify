@@ -406,25 +406,34 @@ class PositionSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final primaryColor = Theme.of(context).colorScheme.primary;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: StreamBuilder<PositionData>(
         stream: audioHandler.positionDataStream,
         builder: (context, snapshot) {
-          if (!snapshot.hasData || snapshot.data == null) {
-            return const SizedBox.shrink();
-          }
-          final positionData = snapshot.data!;
-          final primaryColor = Theme.of(context).colorScheme.primary;
+          final hasData = snapshot.hasData && snapshot.data != null;
+          final positionData =
+              hasData
+                  ? snapshot.data!
+                  : PositionData(Duration.zero, Duration.zero, Duration.zero);
+
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Slider(
                 value: positionData.position.inSeconds.toDouble(),
-                onChanged: (value) {
-                  audioHandler.seek(Duration(seconds: value.toInt()));
-                },
-                max: positionData.duration.inSeconds.toDouble(),
+                onChanged:
+                    hasData
+                        ? (value) {
+                          audioHandler.seek(Duration(seconds: value.toInt()));
+                        }
+                        : null,
+                max:
+                    positionData.duration.inSeconds > 0
+                        ? positionData.duration.inSeconds.toDouble()
+                        : 1.0,
               ),
               _buildPositionRow(context, primaryColor, positionData),
             ],
