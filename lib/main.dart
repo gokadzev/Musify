@@ -144,6 +144,17 @@ class _MusifyState extends State<Musify> {
       );
     });
 
+    final platformDispatcher = PlatformDispatcher.instance;
+
+    // This callback is called every time the brightness changes.
+    platformDispatcher.onPlatformBrightnessChanged = () {
+      if (themeMode == ThemeMode.system) {
+        setState(() {
+          brightness = platformDispatcher.platformBrightness;
+        });
+      }
+    };
+
     try {
       LicenseRegistry.addLicense(() async* {
         final license = await rootBundle.loadString(
