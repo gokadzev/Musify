@@ -280,6 +280,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
       final preliminaryTag = mapToMediaItem(song);
       mediaItem.add(preliminaryTag);
 
+      if (audioPlayer.playing) await audioPlayer.stop();
+
       final songUrl =
           isOffline
               ? song['audioPath']
