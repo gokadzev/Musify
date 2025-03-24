@@ -36,6 +36,7 @@ import 'package:musify/localization/app_localizations.dart';
 import 'package:musify/services/audio_service.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/logger_service.dart';
+import 'package:musify/services/persistence_service.dart';
 import 'package:musify/services/playlist_sharing.dart';
 import 'package:musify/services/router_service.dart';
 import 'package:musify/services/settings_manager.dart';
@@ -215,6 +216,16 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initialisation();
 
+  // Add a shutdown hook to ensure data is saved
+  WidgetsBinding.instance.addObserver(
+    LifecycleEventHandler(
+      resumeCallBack: () async => {},
+      suspendingCallBack: () async {
+        PersistenceService().forceSaveAll();
+      },
+    ),
+  );
+
   runApp(const Musify());
 }
 
@@ -281,6 +292,32 @@ void handleIncomingLink(Uri? uri) async {
       }
     } catch (e) {
       showToast(NavigationManager().context, 'Failed to load playlist');
+    }
+  }
+}
+
+class LifecycleEventHandler extends WidgetsBindingObserver {
+  LifecycleEventHandler({
+    required this.resumeCallBack,
+    required this.suspendingCallBack,
+  });
+  final AsyncCallback resumeCallBack;
+  final AsyncCallback suspendingCallBack;
+
+  @override
+  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        await resumeCallBack();
+        break;
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.paused:
+      case AppLifecycleState.detached:
+        await suspendingCallBack();
+        break;
+      case AppLifecycleState.hidden:
+        // Handle hidden state if needed
+        break;
     }
   }
 }

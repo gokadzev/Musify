@@ -26,10 +26,22 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
+import 'package:musify/services/persistence_service.dart';
 
-void addOrUpdateData(String category, String key, dynamic value) async {
+final _persistenceService = PersistenceService();
+
+void addOrUpdateData(
+  String category,
+  String key,
+  dynamic value, {
+  bool immediate = false,
+}) async {
   final _box = await _openBox(category);
-  await _box.put(key, value);
+  if (immediate) {
+    await _box.put(key, value);
+  } else {
+    _persistenceService.saveData(category, key, value);
+  }
   if (category == 'cache') {
     await _box.put('${key}_date', DateTime.now());
   }
@@ -78,6 +90,14 @@ Future<Box> _openBox(String category) async {
   } else {
     return Hive.openBox(category);
   }
+}
+
+void forceSaveData(String boxName, String key) {
+  _persistenceService.forceSave(boxName, key);
+}
+
+void forceSaveAllData() {
+  _persistenceService.forceSaveAll();
 }
 
 Future<String> backupData(BuildContext context) async {
