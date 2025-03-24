@@ -655,49 +655,59 @@ Future<AudioOnlyStreamInfo> getSongManifest(String songId) async {
   }
 }
 
-const Duration _cacheDuration = Duration(hours: 3);
-
-Future<String> getSong(String songId, bool isLive) async {
+Future<String?> getSong(String songId, bool isLive) async {
   try {
-    final qualitySetting = audioQualitySetting.value;
-    final cacheKey = 'song_${songId}_${qualitySetting}_url';
+    if (isLive) {
+      final streamInfo = await _yt.videos.streamsClient.getHttpLiveStreamUrl(
+        VideoId(songId),
+      );
+      unawaited(updateRecentlyPlayed(songId));
+      return streamInfo;
+    }
 
+    const _cacheDuration = Duration(hours: 3);
+    final cacheKey = 'song_${songId}_${audioQualitySetting.value}_url';
+
+    // Try to get from cache
     final cachedUrl = await getData(
       'cache',
       cacheKey,
       cachingDuration: _cacheDuration,
     );
 
+    if (cachedUrl != null) {
+      // Validate cached URL is still working
+      try {
+        final response = await http.head(Uri.parse(cachedUrl));
+        if (response.statusCode >= 200 && response.statusCode < 300) {
+          unawaited(updateRecentlyPlayed(songId));
+          return cachedUrl;
+        }
+        // If validation fails, remove from cache
+        deleteData('cache', cacheKey);
+        deleteData('cache', '${cacheKey}_date');
+      } catch (_) {
+        // URL validation failed, remove from cache
+        deleteData('cache', cacheKey);
+        deleteData('cache', '${cacheKey}_date');
+      }
+    }
+
+    // Get fresh URL
+    final manifest = await _yt.videos.streamsClient.getManifest(songId);
+    final audioStreams = manifest.audioOnly;
+    if (audioStreams.isEmpty) {
+      throw Exception('No audio streams available for this video');
+    }
+
     unawaited(updateRecentlyPlayed(songId));
 
-    if (cachedUrl != null) {
-      return cachedUrl;
-    }
-
-    if (isLive) {
-      return await getLiveStreamUrl(songId);
-    }
-
-    return await getAudioUrl(songId);
+    final selectedStream = selectAudioQuality(audioStreams.sortByBitrate());
+    return selectedStream.url.toString();
   } catch (e, stackTrace) {
-    logger.log('Error while getting song streaming URL', e, stackTrace);
-    rethrow;
+    logger.log('Error in getSong for songId $songId:', e, stackTrace);
+    return null;
   }
-}
-
-Future<String> getLiveStreamUrl(String songId) async {
-  final streamInfo = await _yt.videos.streamsClient.getHttpLiveStreamUrl(
-    VideoId(songId),
-  );
-  return streamInfo;
-}
-
-Future<String> getAudioUrl(String songId) async {
-  final manifest = await _yt.videos.streamsClient.getManifest(songId);
-  final audioQuality = selectAudioQuality(manifest.audioOnly.sortByBitrate());
-  final audioUrl = audioQuality.url.toString();
-
-  return audioUrl;
 }
 
 AudioStreamInfo selectAudioQuality(List<AudioStreamInfo> availableSources) {
@@ -707,11 +717,9 @@ AudioStreamInfo selectAudioQuality(List<AudioStreamInfo> availableSources) {
     return availableSources.last;
   } else if (qualitySetting == 'medium') {
     return availableSources[availableSources.length ~/ 2];
-  } else if (qualitySetting == 'high') {
-    return availableSources.first;
-  } else {
-    return availableSources.withHighestBitrate();
   }
+
+  return availableSources.withHighestBitrate();
 }
 
 Future<Map<String, dynamic>> getSongDetails(
