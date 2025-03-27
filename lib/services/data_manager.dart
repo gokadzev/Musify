@@ -58,9 +58,15 @@ void deleteData(String category, String key) async {
   await _box.delete(key);
 }
 
-void clearCache() async {
-  final _cacheBox = await _openBox('cache');
-  await _cacheBox.clear();
+Future<bool> clearCache() async {
+  try {
+    final cacheBox = await _openBox('cache');
+    await cacheBox.clear();
+    return true;
+  } catch (e, stackTrace) {
+    logger.log('Failed to clear cache', e, stackTrace);
+    return false;
+  }
 }
 
 Future<bool> isCacheValid(Box box, String key, Duration cachingDuration) async {

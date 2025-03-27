@@ -41,7 +41,7 @@
   "download": "Download",
   "downloadAppUpdate": "Download app update",
   "dynamicColor": "Dynamic accent color (Android 12+)",
-  "error": "An error occurred. Please try again.",
+  "error": "An error occurred. Check logs or try again.",
   "folderRestrictions": "Android restrictions require selecting specific folders (e.g., Documents or Downloads) for backup.",
   "home": "Home",
   "hours": "Hours",

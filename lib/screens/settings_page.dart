@@ -236,9 +236,12 @@ class SettingsPage extends StatelessWidget {
           context.l10n!.clearCache,
           FluentIcons.broom_24_filled,
           borderRadius: commonCustomBarRadiusFirst,
-          onTap: () {
-            clearCache();
-            showToast(context, '${context.l10n!.cacheMsg}!');
+          onTap: () async {
+            final cleared = await clearCache();
+            showToast(
+              context,
+              cleared ? '${context.l10n!.cacheMsg}!' : context.l10n!.error,
+            );
           },
         ),
         CustomBar(
