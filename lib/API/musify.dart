@@ -756,16 +756,11 @@ Future<String?> getSongLyrics(String artist, String title) async {
 
 Future<void> makeSongOffline(dynamic song) async {
   try {
-    final _audioDirPath = '$applicationDirPath/tracks';
-    final _artworkDirPath = '$applicationDirPath/artworks';
     final String ytid = song['ytid'];
     final audioPath = FilePaths.getAudioPath(ytid);
     final audioFile = File(audioPath);
     final artworkPath = FilePaths.getArtworkPath(ytid);
     final artworkFile = File(artworkPath);
-
-    await Directory(_audioDirPath).create(recursive: true);
-    await Directory(_artworkDirPath).create(recursive: true);
 
     try {
       final audioManifest = await getSongManifest(ytid);
@@ -805,13 +800,13 @@ Future<void> makeSongOffline(dynamic song) async {
 }
 
 Future<void> removeSongFromOffline(dynamic songId) async {
-  final _audioDirPath = '$applicationDirPath/tracks';
-  final _artworkDirPath = '$applicationDirPath/artworks';
-  final _audioFile = File('$_audioDirPath/$songId.m4a');
-  final _artworkFile = File('$_artworkDirPath/$songId.jpg');
+  final audioPath = FilePaths.getAudioPath(songId);
+  final audioFile = File(audioPath);
+  final artworkPath = FilePaths.getArtworkPath(songId);
+  final artworkFile = File(artworkPath);
 
-  if (await _audioFile.exists()) await _audioFile.delete(recursive: true);
-  if (await _artworkFile.exists()) await _artworkFile.delete(recursive: true);
+  if (await audioFile.exists()) await audioFile.delete(recursive: true);
+  if (await artworkFile.exists()) await artworkFile.delete(recursive: true);
 
   userOfflineSongs.removeWhere((song) => song['ytid'] == songId);
   currentOfflineSongsLength.value = userOfflineSongs.length;
