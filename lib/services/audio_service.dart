@@ -20,6 +20,7 @@
  */
 
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:audio_service/audio_service.dart';
@@ -29,6 +30,8 @@ import 'package:musify/API/musify.dart';
 import 'package:musify/main.dart';
 import 'package:musify/models/position_data.dart';
 import 'package:musify/services/data_manager.dart';
+import 'package:musify/services/io_service.dart';
+import 'package:musify/services/playlist_download_service.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/mediaitem.dart';
 import 'package:rxdart/rxdart.dart';
@@ -308,7 +311,39 @@ class MusifyAudioHandler extends BaseAudioHandler {
   }) async {
     try {
       if (playlist != null) {
-        activePlaylist = playlist;
+        final playlistId = playlist['ytid'] ?? playlist['title'];
+        final isOffline = offlinePlaylistService.isPlaylistDownloaded(
+          playlistId,
+        );
+
+        if (isOffline) {
+          // For offline playlists, mark each song as offline
+          final playlistWithOfflineSongs = Map<String, dynamic>.from(playlist);
+          final updatedSongs =
+              List.from(playlist['list']).map((song) {
+                final updatedSong = Map<dynamic, dynamic>.from(song);
+                final audioPath = FilePaths.getAudioPath(song['ytid']);
+                final artWorkFilePath = FilePaths.getArtworkPath(song['ytid']);
+                final audioFile = File(audioPath);
+                final artworkFile = File(artWorkFilePath);
+
+                updatedSong['isOffline'] = audioFile.existsSync();
+
+                if (artworkFile.existsSync()) {
+                  updatedSong['artworkPath'] = artWorkFilePath;
+                  updatedSong['highResImage'] = artWorkFilePath;
+                  updatedSong['lowResImage'] = artWorkFilePath;
+                }
+
+                updatedSong['audioPath'] = audioPath;
+
+                return updatedSong;
+              }).toList();
+          playlistWithOfflineSongs['list'] = updatedSongs;
+          activePlaylist = playlistWithOfflineSongs;
+        } else {
+          activePlaylist = playlist;
+        }
       } else if (activePlaylist['list'].isEmpty) {
         logger.log('Error: Attempted to play empty playlist', null, null);
         return;

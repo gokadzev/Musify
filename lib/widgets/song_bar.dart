@@ -124,12 +124,11 @@ class SongBar extends StatelessWidget {
   Widget _buildAlbumArt(Color primaryColor) {
     const size = 55.0;
 
-    final bool isOffline = song['isOffline'] ?? false;
     final String? artworkPath = song['artworkPath'];
     final lowResImageUrl = song['lowResImage'].toString();
     final isDurationAvailable = showMusicDuration && song['duration'] != null;
 
-    if (isOffline && artworkPath != null) {
+    if (artworkPath != null) {
       return _buildOfflineArtwork(artworkPath, size);
     }
 

@@ -23,6 +23,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
+import 'package:musify/services/playlist_download_service.dart';
 import 'package:musify/services/router_service.dart';
 import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/flutter_toast.dart';
@@ -114,6 +115,8 @@ class _LibraryPageState extends State<LibraryPage> {
           },
         ),
 
+        _buildOfflinePlaylistsSection(),
+
         ValueListenableBuilder<List>(
           valueListenable: userPlaylists,
           builder: (context, playlists, _) {
@@ -164,6 +167,24 @@ class _LibraryPageState extends State<LibraryPage> {
               ],
             )
             : const SizedBox();
+      },
+    );
+  }
+
+  Widget _buildOfflinePlaylistsSection() {
+    return ValueListenableBuilder<List<dynamic>>(
+      valueListenable: offlinePlaylistService.offlinePlaylists,
+      builder: (context, offlinePlaylists, _) {
+        if (offlinePlaylists.isEmpty) {
+          return const SizedBox.shrink();
+        }
+
+        return Column(
+          children: [
+            SectionHeader(title: context.l10n!.offlinePlaylists),
+            _buildPlaylistListView(context, offlinePlaylists),
+          ],
+        );
       },
     );
   }

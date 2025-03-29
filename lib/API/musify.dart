@@ -31,11 +31,11 @@ import 'package:musify/DB/playlists.db.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/data_manager.dart';
+import 'package:musify/services/io_service.dart';
 import 'package:musify/services/lyrics_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/formatter.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 final _yt = YoutubeExplode();
@@ -756,12 +756,13 @@ Future<String?> getSongLyrics(String artist, String title) async {
 
 Future<void> makeSongOffline(dynamic song) async {
   try {
-    final _dir = await getApplicationSupportDirectory();
-    final _audioDirPath = '${_dir.path}/tracks';
-    final _artworkDirPath = '${_dir.path}/artworks';
+    final _audioDirPath = '$applicationDirPath/tracks';
+    final _artworkDirPath = '$applicationDirPath/artworks';
     final String ytid = song['ytid'];
-    final _audioFile = File('$_audioDirPath/$ytid.m4a');
-    final _artworkFile = File('$_artworkDirPath/$ytid.jpg');
+    final audioPath = FilePaths.getAudioPath(ytid);
+    final audioFile = File(audioPath);
+    final artworkPath = FilePaths.getArtworkPath(ytid);
+    final artworkFile = File(artworkPath);
 
     await Directory(_audioDirPath).create(recursive: true);
     await Directory(_artworkDirPath).create(recursive: true);
@@ -769,7 +770,7 @@ Future<void> makeSongOffline(dynamic song) async {
     try {
       final audioManifest = await getSongManifest(ytid);
       final stream = _yt.videos.streamsClient.get(audioManifest);
-      final fileStream = _audioFile.openWrite();
+      final fileStream = audioFile.openWrite();
       await stream.pipe(fileStream);
       await fileStream.flush();
       await fileStream.close();
@@ -779,12 +780,12 @@ Future<void> makeSongOffline(dynamic song) async {
     }
 
     try {
-      final artworkFile = await _downloadAndSaveArtworkFile(
+      final _artworkFile = await _downloadAndSaveArtworkFile(
         song['highResImage'],
-        _artworkFile.path,
+        artworkFile.path,
       );
 
-      if (artworkFile != null) {
+      if (_artworkFile != null) {
         song['artworkPath'] = artworkFile.path;
         song['highResImage'] = artworkFile.path;
         song['lowResImage'] = artworkFile.path;
@@ -793,7 +794,7 @@ Future<void> makeSongOffline(dynamic song) async {
       logger.log('Error downloading artwork', e, stackTrace);
     }
 
-    song['audioPath'] = _audioFile.path;
+    song['audioPath'] = audioFile.path;
     userOfflineSongs.add(song);
     addOrUpdateData('userNoBackup', 'offlineSongs', userOfflineSongs);
     currentOfflineSongsLength.value = userOfflineSongs.length;
@@ -804,9 +805,8 @@ Future<void> makeSongOffline(dynamic song) async {
 }
 
 Future<void> removeSongFromOffline(dynamic songId) async {
-  final _dir = await getApplicationSupportDirectory();
-  final _audioDirPath = '${_dir.path}/tracks';
-  final _artworkDirPath = '${_dir.path}/artworks';
+  final _audioDirPath = '$applicationDirPath/tracks';
+  final _artworkDirPath = '$applicationDirPath/artworks';
   final _audioFile = File('$_audioDirPath/$songId.m4a');
   final _artworkFile = File('$_artworkDirPath/$songId.jpg');
 

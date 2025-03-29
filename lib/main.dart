@@ -35,6 +35,7 @@ import 'package:musify/extensions/l10n.dart';
 import 'package:musify/localization/app_localizations.dart';
 import 'package:musify/services/audio_service.dart';
 import 'package:musify/services/data_manager.dart';
+import 'package:musify/services/io_service.dart';
 import 'package:musify/services/logger_service.dart';
 import 'package:musify/services/playlist_sharing.dart';
 import 'package:musify/services/router_service.dart';
@@ -42,6 +43,7 @@ import 'package:musify/services/settings_manager.dart';
 import 'package:musify/services/update_manager.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/flutter_toast.dart';
+import 'package:path_provider/path_provider.dart';
 
 late MusifyAudioHandler audioHandler;
 
@@ -256,6 +258,9 @@ Future<void> initialisation() async {
   } catch (e, stackTrace) {
     logger.log('Initialization Error', e, stackTrace);
   }
+
+  applicationDirPath = (await getApplicationDocumentsDirectory()).path;
+  await FilePaths.ensureDirectoriesExist();
 }
 
 void handleIncomingLink(Uri? uri) async {

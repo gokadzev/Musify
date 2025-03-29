@@ -28,6 +28,7 @@ import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/data_manager.dart';
+import 'package:musify/services/playlist_download_service.dart';
 import 'package:musify/services/playlist_sharing.dart';
 import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/flutter_toast.dart';
@@ -67,6 +68,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
   late final playlistLikeStatus = ValueNotifier<bool>(
     isPlaylistAlreadyLiked(widget.playlistId),
   );
+  bool playlistOfflineStatus = false;
 
   @override
   void initState() {
@@ -131,6 +133,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
           const SizedBox(width: 10),
           if (_playlist != null) ...[
             _buildSyncButton(),
+            const SizedBox(width: 10),
+            _buildDownloadButton(),
             const SizedBox(width: 10),
             if (_playlist['source'] == 'user-created')
               IconButton(
@@ -334,6 +338,108 @@ class _PlaylistPageState extends State<PlaylistPage> {
               );
             },
           ),
+    );
+  }
+
+  Widget _buildDownloadButton() {
+    final playlistId = widget.playlistId ?? _playlist['title'];
+
+    return ValueListenableBuilder<List<dynamic>>(
+      valueListenable: offlinePlaylistService.offlinePlaylists,
+      builder: (context, offlinePlaylists, _) {
+        playlistOfflineStatus = offlinePlaylistService.isPlaylistDownloaded(
+          playlistId,
+        );
+
+        if (playlistOfflineStatus) {
+          return IconButton(
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            icon: const Icon(FluentIcons.arrow_download_off_24_filled),
+            iconSize: 26,
+            onPressed: () => _showRemoveOfflineDialog(playlistId),
+            tooltip: context.l10n!.removeOffline,
+          );
+        }
+
+        return ValueListenableBuilder<DownloadProgress>(
+          valueListenable: offlinePlaylistService.getProgressNotifier(
+            playlistId,
+          ),
+          builder: (context, progress, _) {
+            final isDownloading = offlinePlaylistService.isPlaylistDownloading(
+              playlistId,
+            );
+
+            if (isDownloading) {
+              return Stack(
+                alignment: Alignment.center,
+                children: [
+                  CircularProgressIndicator(
+                    value: progress.progress,
+                    strokeWidth: 2,
+                    backgroundColor: Colors.grey.withValues(alpha: .3),
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                  IconButton(
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    icon: const Icon(FluentIcons.dismiss_24_filled),
+                    iconSize: 14,
+                    onPressed:
+                        () => offlinePlaylistService.cancelDownload(
+                          context,
+                          playlistId,
+                        ),
+                    tooltip: context.l10n!.cancel,
+                  ),
+                ],
+              );
+            }
+
+            return IconButton(
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              icon: const Icon(FluentIcons.arrow_download_24_filled),
+              iconSize: 26,
+              onPressed:
+                  () => offlinePlaylistService.downloadPlaylist(
+                    context,
+                    _playlist,
+                  ),
+              tooltip: context.l10n!.downloadPlaylist,
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _showRemoveOfflineDialog(String playlistId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(context.l10n!.removeOfflinePlaylist),
+          content: Text(context.l10n!.removeOfflinePlaylistConfirm),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(context.l10n!.cancel.toUpperCase()),
+            ),
+            TextButton(
+              onPressed: () {
+                offlinePlaylistService.removeOfflinePlaylist(playlistId);
+                Navigator.pop(context);
+                showToast(context, context.l10n!.playlistRemovedFromOffline);
+              },
+              child: Text(context.l10n!.remove.toUpperCase()),
+            ),
+          ],
+        );
+      },
     );
   }
 
