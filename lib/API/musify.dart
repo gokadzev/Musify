@@ -579,7 +579,12 @@ Future updatePlaylistList(BuildContext context, String playlistId) async {
 }
 
 int findPlaylistIndexByYtId(String ytid) {
-  return playlists.indexWhere((playlist) => playlist['ytid'] == ytid);
+  for (var i = 0; i < playlists.length; i++) {
+    if (playlists[i]['ytid'] == ytid) {
+      return i;
+    }
+  }
+  return -1;
 }
 
 Future<void> setActivePlaylist(Map info) async {
