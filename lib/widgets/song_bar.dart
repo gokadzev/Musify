@@ -222,6 +222,10 @@ class SongBar extends StatelessWidget {
       icon: Icon(FluentIcons.more_horizontal_24_filled, color: primaryColor),
       onSelected: (String value) {
         switch (value) {
+          case 'play_next':
+            audioHandler.playNext(song);
+            showToast(context, context.l10n!.songAdded);
+            break;
           case 'like':
             songLikeStatus.value = !songLikeStatus.value;
             updateSongLikeStatus(song['ytid'], songLikeStatus.value);
@@ -251,6 +255,16 @@ class SongBar extends StatelessWidget {
       },
       itemBuilder: (BuildContext context) {
         return [
+          PopupMenuItem<String>(
+            value: 'play_next',
+            child: Row(
+              children: [
+                Icon(FluentIcons.receipt_play_24_regular, color: primaryColor),
+                const SizedBox(width: 8),
+                Text(context.l10n!.playNext),
+              ],
+            ),
+          ),
           PopupMenuItem<String>(
             value: 'like',
             child: ValueListenableBuilder<bool>(

@@ -305,6 +305,25 @@ class MusifyAudioHandler extends BaseAudioHandler {
     }
   }
 
+  Future<void> playNext(Map song) async {
+    try {
+      if (activePlaylist['title'] != 'User queue' &&
+          activePlaylist['list'].isEmpty) {
+        activePlaylist = {
+          'ytid': '',
+          'title': 'No Playlist',
+          'source': 'user-created',
+          'list': [song],
+        };
+        return playSong(song);
+      } else {
+        activePlaylist['list'].insert(activeSongId + 1, song);
+      }
+    } catch (e, stackTrace) {
+      logger.log('Error adding song to play next', e, stackTrace);
+    }
+  }
+
   Future<void> playPlaylistSong({
     Map<dynamic, dynamic>? playlist,
     required int songIndex,
