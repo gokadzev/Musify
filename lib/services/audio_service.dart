@@ -47,9 +47,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
   final AudioPlayer audioPlayer = AudioPlayer(
     audioLoadConfiguration: const AudioLoadConfiguration(
       androidLoadControl: AndroidLoadControl(
-        maxBufferDuration: Duration(seconds: 80),
+        maxBufferDuration: Duration(seconds: 60),
         bufferForPlaybackDuration: Duration(milliseconds: 500),
-        bufferForPlaybackAfterRebufferDuration: Duration(seconds: 2),
+        bufferForPlaybackAfterRebufferDuration: Duration(seconds: 3),
       ),
     ),
   );
@@ -292,7 +292,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
       final audioSource = await buildAudioSource(song, songUrl, isOffline);
 
-      await audioPlayer.setAudioSource(audioSource, preload: false);
+      await audioPlayer.setAudioSource(audioSource);
       await audioPlayer.play();
       if (!isOffline) {
         final cacheKey =
