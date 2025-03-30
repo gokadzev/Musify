@@ -773,13 +773,12 @@ Future<String?> getSongLyrics(String artist, String title) async {
   return lyrics.value;
 }
 
-Future<void> makeSongOffline(dynamic song) async {
+Future<void> makeSongOffline(dynamic song, {bool fromPlaylist = false}) async {
   try {
     final String ytid = song['ytid'];
     final audioPath = FilePaths.getAudioPath(ytid);
     final audioFile = File(audioPath);
     final artworkPath = FilePaths.getArtworkPath(ytid);
-    final artworkFile = File(artworkPath);
 
     try {
       final audioManifest = await getSongManifest(ytid);
@@ -796,29 +795,34 @@ Future<void> makeSongOffline(dynamic song) async {
     try {
       final _artworkFile = await _downloadAndSaveArtworkFile(
         song['highResImage'],
-        artworkFile.path,
+        artworkPath,
       );
 
       if (_artworkFile != null) {
-        song['artworkPath'] = artworkFile.path;
-        song['highResImage'] = artworkFile.path;
-        song['lowResImage'] = artworkFile.path;
+        song['artworkPath'] = artworkPath;
+        song['highResImage'] = artworkPath;
+        song['lowResImage'] = artworkPath;
       }
     } catch (e, stackTrace) {
       logger.log('Error downloading artwork', e, stackTrace);
     }
 
     song['audioPath'] = audioFile.path;
-    userOfflineSongs.add(song);
-    await addOrUpdateData('userNoBackup', 'offlineSongs', userOfflineSongs);
-    currentOfflineSongsLength.value = userOfflineSongs.length;
+    if (!fromPlaylist) {
+      userOfflineSongs.add(song);
+      await addOrUpdateData('userNoBackup', 'offlineSongs', userOfflineSongs);
+      currentOfflineSongsLength.value = userOfflineSongs.length;
+    }
   } catch (e, stackTrace) {
     logger.log('Error making song offline', e, stackTrace);
     rethrow;
   }
 }
 
-Future<void> removeSongFromOffline(dynamic songId) async {
+Future<void> removeSongFromOffline(
+  dynamic songId, {
+  bool fromPlaylist = false,
+}) async {
   final audioPath = FilePaths.getAudioPath(songId);
   final audioFile = File(audioPath);
   final artworkPath = FilePaths.getArtworkPath(songId);
@@ -827,9 +831,11 @@ Future<void> removeSongFromOffline(dynamic songId) async {
   if (await audioFile.exists()) await audioFile.delete(recursive: true);
   if (await artworkFile.exists()) await artworkFile.delete(recursive: true);
 
-  userOfflineSongs.removeWhere((song) => song['ytid'] == songId);
-  currentOfflineSongsLength.value = userOfflineSongs.length;
-  await addOrUpdateData('userNoBackup', 'offlineSongs', userOfflineSongs);
+  if (!fromPlaylist) {
+    userOfflineSongs.removeWhere((song) => song['ytid'] == songId);
+    currentOfflineSongsLength.value = userOfflineSongs.length;
+    await addOrUpdateData('userNoBackup', 'offlineSongs', userOfflineSongs);
+  }
 }
 
 Future<File?> _downloadAndSaveArtworkFile(String url, String filePath) async {

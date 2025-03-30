@@ -39,6 +39,7 @@ class SongBar extends StatelessWidget {
     this.backgroundColor,
     this.showMusicDuration = false,
     this.onPlay,
+    this.isSongOffline,
     this.onRemove,
     this.borderRadius = BorderRadius.zero,
     super.key,
@@ -49,6 +50,7 @@ class SongBar extends StatelessWidget {
   final Color? backgroundColor;
   final VoidCallback? onRemove;
   final VoidCallback? onPlay;
+  final bool? isSongOffline;
   final bool showMusicDuration;
   final BorderRadius borderRadius;
 
@@ -213,7 +215,7 @@ class SongBar extends StatelessWidget {
       isSongAlreadyLiked(song['ytid']),
     );
     final songOfflineStatus = ValueNotifier<bool>(
-      isSongAlreadyOffline(song['ytid']),
+      isSongOffline ?? isSongAlreadyOffline(song['ytid']),
     );
 
     return PopupMenuButton<String>(

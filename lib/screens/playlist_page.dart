@@ -592,6 +592,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
               songIndex: index,
             ),
           },
+      isSongOffline: playlistOfflineStatus,
       borderRadius: borderRadius,
     );
   }
