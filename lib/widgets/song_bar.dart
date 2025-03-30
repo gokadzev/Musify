@@ -224,7 +224,11 @@ class SongBar extends StatelessWidget {
         switch (value) {
           case 'play_next':
             audioHandler.playNext(song);
-            showToast(context, context.l10n!.songAdded);
+            showToast(
+              context,
+              context.l10n!.songAdded,
+              duration: const Duration(seconds: 1),
+            );
             break;
           case 'like':
             songLikeStatus.value = !songLikeStatus.value;
