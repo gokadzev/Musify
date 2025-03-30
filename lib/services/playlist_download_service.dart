@@ -172,7 +172,7 @@ class OfflinePlaylistService {
       final updatedPlaylists = List<dynamic>.from(offlinePlaylists.value)
         ..add(offlinePlaylist);
       offlinePlaylists.value = updatedPlaylists;
-      addOrUpdateData(
+      await addOrUpdateData(
         'userNoBackup',
         'offlinePlaylists',
         offlinePlaylists.value,
@@ -238,7 +238,11 @@ class OfflinePlaylistService {
     final updatedPlaylists = List<dynamic>.from(offlinePlaylists.value)
       ..removeWhere((p) => p['ytid'] == playlistId);
     offlinePlaylists.value = updatedPlaylists;
-    addOrUpdateData('userNoBackup', 'offlinePlaylists', offlinePlaylists.value);
+    await addOrUpdateData(
+      'userNoBackup',
+      'offlinePlaylists',
+      offlinePlaylists.value,
+    );
   }
 }
 

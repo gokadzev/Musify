@@ -79,7 +79,7 @@ class _SearchPageState extends State<SearchPage> {
 
     if (!searchHistory.contains(query)) {
       searchHistory.insert(0, query);
-      addOrUpdateData('user', 'searchHistory', searchHistory);
+      await addOrUpdateData('user', 'searchHistory', searchHistory);
     }
 
     try {
@@ -169,7 +169,11 @@ class _SearchPageState extends State<SearchPage> {
                           searchHistory.remove(query);
                         });
 
-                        addOrUpdateData('user', 'searchHistory', searchHistory);
+                        await addOrUpdateData(
+                          'user',
+                          'searchHistory',
+                          searchHistory,
+                        );
                       }
                     },
                   );

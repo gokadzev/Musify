@@ -297,7 +297,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       if (!isOffline) {
         final cacheKey =
             'song_${song['ytid']}_${audioQualitySetting.value}_url';
-        addOrUpdateData('cache', cacheKey, songUrl);
+        await addOrUpdateData('cache', cacheKey, songUrl);
       }
       if (playNextSongAutomatically.value) getSimilarSong(song['ytid']);
     } catch (e, stackTrace) {

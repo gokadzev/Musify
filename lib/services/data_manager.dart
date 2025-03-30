@@ -27,45 +27,126 @@ import 'package:hive/hive.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 
-void addOrUpdateData(String category, String key, dynamic value) async {
-  final _box = await _openBox(category);
-  await _box.put(key, value);
-  if (category == 'cache') {
-    await _box.put('${key}_date', DateTime.now());
+// Cache durations for different types of data
+const Duration songCacheDuration = Duration(hours: 1, minutes: 30);
+const Duration playlistCacheDuration = Duration(hours: 5);
+const Duration defaultCacheDuration = Duration(days: 7);
+
+// In-memory cache for frequently accessed items
+final _memoryCache = <String, _CacheEntry>{};
+
+class _CacheEntry {
+  _CacheEntry(this.data, this.timestamp);
+  final dynamic data;
+  final DateTime timestamp;
+
+  bool isValid(Duration cacheDuration) {
+    return DateTime.now().difference(timestamp) < cacheDuration;
   }
 }
 
-Future getData(
+Future<void> addOrUpdateData(String category, String key, dynamic value) async {
+  final _box = await _openBox(category);
+  await _box.put(key, value);
+
+  if (category == 'cache') {
+    await _box.put('${key}_date', DateTime.now());
+
+    // Update memory cache too
+    final cacheKey = '${category}_$key';
+    _memoryCache[cacheKey] = _CacheEntry(value, DateTime.now());
+  }
+}
+
+Future<dynamic> getData(
   String category,
   String key, {
   dynamic defaultValue,
-  Duration cachingDuration = const Duration(days: 30),
+  Duration? cachingDuration,
 }) async {
+  // Set appropriate cache duration based on key
+  cachingDuration ??= _getCacheDurationForKey(key);
+
+  // Check memory cache first
+  final cacheKey = '${category}_$key';
+  final memCacheEntry = _memoryCache[cacheKey];
+  if (memCacheEntry != null && memCacheEntry.isValid(cachingDuration)) {
+    return memCacheEntry.data;
+  }
+
   final _box = await _openBox(category);
   if (category == 'cache') {
     final cacheIsValid = await isCacheValid(_box, key, cachingDuration);
     if (!cacheIsValid) {
-      deleteData(category, key);
-      deleteData(category, '${key}_date');
-      return null;
+      await deleteData(category, key);
+      await deleteData(category, '${key}_date');
+      return defaultValue;
     }
   }
-  return await _box.get(key, defaultValue: defaultValue);
+
+  final data = await _box.get(key, defaultValue: defaultValue);
+
+  // Store in memory cache for faster access next time
+  if (data != null && category == 'cache') {
+    final timestamp = await _box.get('${key}_date') ?? DateTime.now();
+    _memoryCache[cacheKey] = _CacheEntry(data, timestamp);
+  }
+
+  return data;
 }
 
-void deleteData(String category, String key) async {
+Future<void> deleteData(String category, String key) async {
+  // Remove from memory cache
+  _memoryCache
+    ..remove('${category}_$key')
+    ..remove('${category}_${key}_date');
+
   final _box = await _openBox(category);
   await _box.delete(key);
 }
 
 Future<bool> clearCache() async {
   try {
+    // Clear memory cache
+    _memoryCache.clear();
+
     final cacheBox = await _openBox('cache');
     await cacheBox.clear();
     return true;
   } catch (e, stackTrace) {
     logger.log('Failed to clear cache', e, stackTrace);
     return false;
+  }
+}
+
+// Clean up old cache entries to prevent excessive storage usage
+Future<void> cleanupOldCacheEntries() async {
+  try {
+    final cacheBox = await _openBox('cache');
+    final now = DateTime.now();
+
+    // Get all keys except the ones with _date suffix
+    final keys =
+        cacheBox.keys.where((k) => !k.toString().endsWith('_date')).toList();
+
+    for (final key in keys) {
+      final dateKey = '${key}_date';
+      final date = cacheBox.get(dateKey);
+
+      if (date == null) {
+        await cacheBox.delete(key);
+        continue;
+      }
+
+      final age = now.difference(date);
+      // Very old cache entries (older than 30 days) should be removed
+      if (age > const Duration(days: 30)) {
+        await cacheBox.delete(key);
+        await cacheBox.delete(dateKey);
+      }
+    }
+  } catch (e, stackTrace) {
+    logger.log('Error cleaning up old cache entries', e, stackTrace);
   }
 }
 
@@ -78,6 +159,15 @@ Future<bool> isCacheValid(Box box, String key, Duration cachingDuration) async {
   return age < cachingDuration;
 }
 
+Duration _getCacheDurationForKey(String key) {
+  if (key.startsWith('song_') || key.contains('manifest_')) {
+    return songCacheDuration;
+  } else if (key.startsWith('playlist_') || key.contains('playlistSongs')) {
+    return playlistCacheDuration;
+  }
+  return defaultCacheDuration;
+}
+
 Future<Box> _openBox(String category) async {
   if (Hive.isBoxOpen(category)) {
     return Hive.box(category);
@@ -86,6 +176,7 @@ Future<Box> _openBox(String category) async {
   }
 }
 
+// Existing backup/restore code remains unchanged
 Future<String> backupData(BuildContext context) async {
   final boxNames = ['user', 'settings'];
   final dlPath = await FilePicker.platform.getDirectoryPath();
@@ -124,11 +215,7 @@ Future<String> restoreData(BuildContext context) async {
     for (final boxName in boxNames) {
       final _file = backupFiles.files.firstWhere(
         (file) => file.name == '$boxName.hive',
-        orElse:
-            () => PlatformFile(
-              name: '',
-              size: 0,
-            ), // Create a PlatformFile with null path if not found
+        orElse: () => PlatformFile(name: '', size: 0),
       );
 
       if (_file.path != null && _file.path!.isNotEmpty && _file.size != 0) {

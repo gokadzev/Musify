@@ -275,7 +275,11 @@ void handleIncomingLink(Uri? uri) async {
 
         if (playlist != null) {
           userCustomPlaylists.value = [...userCustomPlaylists.value, playlist];
-          addOrUpdateData('user', 'customPlaylists', userCustomPlaylists.value);
+          await addOrUpdateData(
+            'user',
+            'customPlaylists',
+            userCustomPlaylists.value,
+          );
           showToast(
             NavigationManager().context,
             '${NavigationManager().context.l10n!.addedSuccess}!',

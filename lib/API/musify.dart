@@ -209,7 +209,7 @@ Future<String> addUserPlaylist(String input, BuildContext context) async {
     }
 
     userPlaylists.value = [...userPlaylists.value, playlistId];
-    addOrUpdateData('user', 'playlists', userPlaylists.value);
+    await addOrUpdateData('user', 'playlists', userPlaylists.value);
     return '${context.l10n!.addedSuccess}!';
   } catch (e) {
     return '${context.l10n!.error}: $e';
@@ -317,7 +317,7 @@ Future<void> updateSongLikeStatus(dynamic songId, bool add) async {
   } else {
     userLikedSongsList.removeWhere((song) => song['ytid'] == songId);
   }
-  addOrUpdateData('user', 'likedSongs', userLikedSongsList);
+  await addOrUpdateData('user', 'likedSongs', userLikedSongsList);
 }
 
 void moveLikedSong(int oldIndex, int newIndex) {
@@ -351,7 +351,7 @@ Future<void> updatePlaylistLikeStatus(String playlistId, bool add) async {
       );
     }
 
-    addOrUpdateData('user', 'likedPlaylists', userLikedPlaylists);
+    await addOrUpdateData('user', 'likedPlaylists', userLikedPlaylists);
   } catch (e, stackTrace) {
     logger.log('Error updating playlist like status: ', e, stackTrace);
   }
@@ -557,7 +557,7 @@ Future<List> getSongsFromPlaylist(dynamic playlistId) async {
       songList.add(returnSongLayout(songList.length, song));
     }
 
-    addOrUpdateData('cache', 'playlistSongs$playlistId', songList);
+    await addOrUpdateData('cache', 'playlistSongs$playlistId', songList);
   }
 
   return songList;
@@ -572,7 +572,7 @@ Future updatePlaylistList(BuildContext context, String playlistId) async {
     }
 
     playlists[index]['list'] = songList;
-    addOrUpdateData('cache', 'playlistSongs$playlistId', songList);
+    await addOrUpdateData('cache', 'playlistSongs$playlistId', songList);
     showToast(context, context.l10n!.playlistUpdated);
   }
   return playlists[index];
@@ -684,12 +684,12 @@ Future<String?> getSong(String songId, bool isLive) async {
           return cachedUrl;
         }
         // If validation fails, remove from cache
-        deleteData('cache', cacheKey);
-        deleteData('cache', '${cacheKey}_date');
+        await deleteData('cache', cacheKey);
+        await deleteData('cache', '${cacheKey}_date');
       } catch (_) {
         // URL validation failed, remove from cache
-        deleteData('cache', cacheKey);
-        deleteData('cache', '${cacheKey}_date');
+        await deleteData('cache', cacheKey);
+        await deleteData('cache', '${cacheKey}_date');
       }
     }
 
@@ -791,7 +791,7 @@ Future<void> makeSongOffline(dynamic song) async {
 
     song['audioPath'] = audioFile.path;
     userOfflineSongs.add(song);
-    addOrUpdateData('userNoBackup', 'offlineSongs', userOfflineSongs);
+    await addOrUpdateData('userNoBackup', 'offlineSongs', userOfflineSongs);
     currentOfflineSongsLength.value = userOfflineSongs.length;
   } catch (e, stackTrace) {
     logger.log('Error making song offline', e, stackTrace);
@@ -810,7 +810,7 @@ Future<void> removeSongFromOffline(dynamic songId) async {
 
   userOfflineSongs.removeWhere((song) => song['ytid'] == songId);
   currentOfflineSongsLength.value = userOfflineSongs.length;
-  addOrUpdateData('userNoBackup', 'offlineSongs', userOfflineSongs);
+  await addOrUpdateData('userNoBackup', 'offlineSongs', userOfflineSongs);
 }
 
 Future<File?> _downloadAndSaveArtworkFile(String url, String filePath) async {
@@ -854,5 +854,5 @@ Future<void> updateRecentlyPlayed(dynamic songId) async {
 
   userRecentlyPlayed.insert(0, newSongDetails);
   currentRecentlyPlayedLength.value = userRecentlyPlayed.length;
-  addOrUpdateData('user', 'recentlyPlayedSongs', userRecentlyPlayed);
+  await addOrUpdateData('user', 'recentlyPlayedSongs', userRecentlyPlayed);
 }
