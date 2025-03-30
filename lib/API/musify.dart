@@ -87,9 +87,23 @@ int activeSongId = 0;
 
 Future<List> fetchSongsList(String searchQuery) async {
   try {
-    final List<Video> searchResults = await _yt.search.search(searchQuery);
+    // Try to get data from cache first
+    final cacheKey = 'search_$searchQuery';
+    final cachedResults = await getData('cache', cacheKey);
 
-    return searchResults.map((video) => returnSongLayout(0, video)).toList();
+    if (cachedResults != null) {
+      return cachedResults;
+    }
+
+    // If not in cache, perform the search
+    final List<Video> searchResults = await _yt.search.search(searchQuery);
+    final songsList =
+        searchResults.map((video) => returnSongLayout(0, video)).toList();
+
+    // Cache the results
+    await addOrUpdateData('cache', cacheKey, songsList);
+
+    return songsList;
   } catch (e, stackTrace) {
     logger.log('Error in fetchSongsList', e, stackTrace);
     return [];

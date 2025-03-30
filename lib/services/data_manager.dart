@@ -30,6 +30,7 @@ import 'package:musify/main.dart';
 // Cache durations for different types of data
 const Duration songCacheDuration = Duration(hours: 1, minutes: 30);
 const Duration playlistCacheDuration = Duration(hours: 5);
+const Duration searchCacheDuration = Duration(days: 4);
 const Duration defaultCacheDuration = Duration(days: 7);
 
 // In-memory cache for frequently accessed items
@@ -164,6 +165,8 @@ Duration _getCacheDurationForKey(String key) {
     return songCacheDuration;
   } else if (key.startsWith('playlist_') || key.contains('playlistSongs')) {
     return playlistCacheDuration;
+  } else if (key.startsWith('search_')) {
+    return searchCacheDuration;
   }
   return defaultCacheDuration;
 }
