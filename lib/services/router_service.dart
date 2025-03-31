@@ -19,6 +19,7 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:musify/API/version.dart';
@@ -37,15 +38,15 @@ class NavigationManager {
   }
 
   NavigationManager._internal() {
+    _setupRouter();
+  }
+
+  void _setupRouter() {
     final routes = [
       StatefulShellRoute.indexedStack(
         parentNavigatorKey: parentNavigatorKey,
         branches: !offlineMode.value ? _onlineRoutes() : _offlineRoutes(),
-        pageBuilder: (
-          BuildContext context,
-          GoRouterState state,
-          StatefulNavigationShell navigationShell,
-        ) {
+        pageBuilder: (context, state, navigationShell) {
           return getPage(
             child: BottomNavigationPage(child: navigationShell),
             state: state,
@@ -58,8 +59,12 @@ class NavigationManager {
       navigatorKey: parentNavigatorKey,
       initialLocation: homePath,
       routes: routes,
+      restorationScopeId: 'router',
+      debugLogDiagnostics: kDebugMode,
+      routerNeglect: true, // Not sure about this
     );
   }
+
   static final NavigationManager _instance = NavigationManager._internal();
 
   static NavigationManager get instance => _instance;
