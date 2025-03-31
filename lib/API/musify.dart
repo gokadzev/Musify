@@ -36,6 +36,7 @@ import 'package:musify/services/lyrics_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/formatter.dart';
+import 'package:musify/utilities/utils.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 final _yt = YoutubeExplode();
@@ -200,29 +201,11 @@ Future<List<dynamic>> getUserPlaylists() async {
   return playlistsByUser;
 }
 
-bool youtubeValidate(String url) {
-  final regExp = RegExp(
-    r'^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.*(list=([a-zA-Z0-9_-]+)).*$',
-  );
-  return regExp.hasMatch(url);
-}
-
-String? youtubePlaylistParser(String url) {
-  if (!youtubeValidate(url)) {
-    return null;
-  }
-
-  final regExp = RegExp('[&?]list=([a-zA-Z0-9_-]+)');
-  final match = regExp.firstMatch(url);
-
-  return match?.group(1);
-}
-
 Future<String> addUserPlaylist(String input, BuildContext context) async {
   String? playlistId = input;
 
   if (input.startsWith('http://') || input.startsWith('https://')) {
-    playlistId = youtubePlaylistParser(input);
+    playlistId = extractYoutubePlaylistId(input);
 
     if (playlistId == null) {
       return '${context.l10n!.notYTlist}!';

@@ -47,3 +47,23 @@ Locale getLocaleFromLanguageCode(String? languageCode) {
   // Default fallback
   return const Locale('en');
 }
+
+/// Validates if a URL is a YouTube playlist URL
+bool isYoutubePlaylistUrl(String url) {
+  final playlistRegExp = RegExp(
+    r'^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.*(list=([a-zA-Z0-9_-]+)).*$',
+  );
+  return playlistRegExp.hasMatch(url);
+}
+
+/// Extracts the playlist ID from a YouTube playlist URL
+String? extractYoutubePlaylistId(String url) {
+  if (!isYoutubePlaylistUrl(url)) {
+    return null;
+  }
+
+  final playlistIdRegExp = RegExp('[&?]list=([a-zA-Z0-9_-]+)');
+  final match = playlistIdRegExp.firstMatch(url);
+
+  return match?.group(1);
+}
