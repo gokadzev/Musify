@@ -507,11 +507,26 @@ class MusifyAudioHandler extends BaseAudioHandler {
   Future<void> setSleepTimer(Duration duration) async {
     _sleepTimer?.cancel();
     sleepTimerExpired = false;
+    sleepTimerNotifier.value = duration;
     _sleepTimer = Timer(duration, () async {
+      // Fade out the volume
+      final originalVolume = audioPlayer.volume;
+      const fadeSteps = 10;
+
+      for (var i = fadeSteps; i > 0; i--) {
+        await audioPlayer.setVolume(originalVolume * i / fadeSteps);
+        await Future.delayed(const Duration(milliseconds: 100));
+      }
+
       await stop();
+
+      // Reset volume for next playback
+      await audioPlayer.setVolume(originalVolume);
+
       playNextSongAutomatically.value = false;
       sleepTimerExpired = true;
       _sleepTimer = null;
+      sleepTimerNotifier.value = null;
     });
   }
 
@@ -520,6 +535,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       _sleepTimer!.cancel();
       _sleepTimer = null;
       sleepTimerExpired = false;
+      sleepTimerNotifier.value = null;
     }
   }
 

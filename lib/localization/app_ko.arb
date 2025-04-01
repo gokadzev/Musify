@@ -106,6 +106,8 @@
   "setTimer": "타이머 설정",
   "settingChangedMsg": "설정이 업데이트되었음",
   "settings": "설정",
+  "sleepTimerCancelled": "Sleep timer cancelled",
+  "sleepTimerSet": "Sleep timer set",
   "songAdded": "노래가 추가되었음",
   "songAddedToOffline": "이제 노래는 오프라인에서 사용할 수 있음",
   "songAlreadyInPlaylist": "노래가 이미 재생목록에 있음",

@@ -106,6 +106,8 @@
   "setTimer": "Atur pewaktu",
   "settingChangedMsg": "Pengaturan berhasil diubah",
   "settings": "Pengaturan",
+  "sleepTimerCancelled": "Sleep timer cancelled",
+  "sleepTimerSet": "Sleep timer set",
   "songAdded": "Lagu berhasil ditambahkan",
   "songAddedToOffline": "Song is now available offline",
   "songAlreadyInPlaylist": "Lagu sudah ada dalam playlist",

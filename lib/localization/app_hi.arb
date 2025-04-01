@@ -106,6 +106,8 @@
   "setTimer": "टाइमर सेट करें",
   "settingChangedMsg": "सेटिंग्स सफलतापूर्वक अपडेट हुईं",
   "settings": "सेटिंग्स",
+  "sleepTimerCancelled": "Sleep timer cancelled",
+  "sleepTimerSet": "Sleep timer set",
   "songAdded": "गाना जोड़ा गया",
   "songAddedToOffline": "गाना अब ऑफ़लाइन उपलब्ध है",
   "songAlreadyInPlaylist": "गाना पहले से ही प्लेलिस्ट में है",

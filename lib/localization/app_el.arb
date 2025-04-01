@@ -106,6 +106,8 @@
   "setTimer": "Set timer",
   "settingChangedMsg": "Η ρύθμιση άλλαξε",
   "settings": "Ρυθμίσεις",
+  "sleepTimerCancelled": "Sleep timer cancelled",
+  "sleepTimerSet": "Sleep timer set",
   "songAdded": "Το τραγούδι προστέθηκε με επιτυχία!",
   "songAddedToOffline": "Song is now available offline",
   "songAlreadyInPlaylist": "Song is already in the playlist",

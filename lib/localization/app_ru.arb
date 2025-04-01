@@ -106,6 +106,8 @@
   "setTimer": "Установить таймер",
   "settingChangedMsg": "Параметр изменён",
   "settings": "Настройки",
+  "sleepTimerCancelled": "Sleep timer cancelled",
+  "sleepTimerSet": "Sleep timer set",
   "songAdded": "Трек успешно добавлен!",
   "songAddedToOffline": "Трек теперь доступен офлайн",
   "songAlreadyInPlaylist": "Трек уже в плейлисте",

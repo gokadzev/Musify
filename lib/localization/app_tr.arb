@@ -106,6 +106,8 @@
   "setTimer": "Zamanlayıcı Ayarla",
   "settingChangedMsg": "Ayarlar başarıyla güncellendi",
   "settings": "Ayarlar",
+  "sleepTimerCancelled": "Sleep timer cancelled",
+  "sleepTimerSet": "Sleep timer set",
   "songAdded": "Parça Eklendi",
   "songAddedToOffline": "Parça artık çevrimdışında kullanılabilir",
   "songAlreadyInPlaylist": "Bu parça zaten listede var",

@@ -106,6 +106,8 @@
   "setTimer": "タイマーを設定",
   "settingChangedMsg": "設定を変更しました",
   "settings": "設定",
+  "sleepTimerCancelled": "Sleep timer cancelled",
+  "sleepTimerSet": "Sleep timer set",
   "songAdded": "曲を追加しました",
   "songAddedToOffline": "曲がオフラインで利用可能になりました",
   "songAlreadyInPlaylist": "曲は既に再生リストに含まれます",

@@ -793,6 +793,11 @@ class BottomActionsRow extends StatelessWidget {
             if (value != null) {
               audioHandler.cancelSleepTimer();
               sleepTimerNotifier.value = null;
+              showToast(
+                context,
+                context.l10n!.sleepTimerCancelled,
+                duration: const Duration(seconds: 1, milliseconds: 500),
+              );
             } else {
               _showSleepTimerDialog(context);
             }
@@ -806,11 +811,11 @@ class BottomActionsRow extends StatelessWidget {
     return ValueListenableBuilder<bool>(
       valueListenable: status,
       builder: (_, value, __) {
+        final icon =
+            value ? FluentIcons.heart_24_filled : FluentIcons.heart_24_regular;
+
         return IconButton.filledTonal(
-          icon: Icon(
-            value ? FluentIcons.heart_24_filled : FluentIcons.heart_24_regular,
-            color: primaryColor,
-          ),
+          icon: Icon(icon, color: primaryColor),
           iconSize: iconSize,
           onPressed: () {
             updateSongLikeStatus(audioId, !status.value);
@@ -908,11 +913,11 @@ class BottomActionsRow extends StatelessWidget {
                     final duration = Duration(hours: hours, minutes: minutes);
                     if (duration.inSeconds > 0) {
                       audioHandler.setSleepTimer(duration);
-                      sleepTimerNotifier.value = Duration(
-                        hours: hours,
-                        minutes: minutes,
+                      showToast(
+                        context,
+                        context.l10n!.sleepTimerSet,
+                        duration: const Duration(seconds: 1, milliseconds: 500),
                       );
-                      showToast(context, context.l10n!.addedSuccess);
                     }
                     Navigator.pop(context);
                   },

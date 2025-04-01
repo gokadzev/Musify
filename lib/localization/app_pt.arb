@@ -106,6 +106,8 @@
   "setTimer": "Definir tempo",
   "settingChangedMsg": "Configurações atualizadas",
   "settings": "Configurações",
+  "sleepTimerCancelled": "Sleep timer cancelled",
+  "sleepTimerSet": "Sleep timer set",
   "songAdded": "Música adicionada",
   "songAddedToOffline": "Song is now available offline",
   "songAlreadyInPlaylist": "Já está na playlist",

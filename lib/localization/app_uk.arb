@@ -106,6 +106,8 @@
   "setTimer": "Set timer",
   "settingChangedMsg": "Налаштування змінено",
   "settings": "Налаштування",
+  "sleepTimerCancelled": "Sleep timer cancelled",
+  "sleepTimerSet": "Sleep timer set",
   "songAdded": "Пісня успішно додана!",
   "songAddedToOffline": "Song is now available offline",
   "songAlreadyInPlaylist": "Song is already in the playlist",

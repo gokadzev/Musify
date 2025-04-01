@@ -106,6 +106,8 @@
   "setTimer": "设置计时器",
   "settingChangedMsg": "设置更新成功",
   "settings": "设置",
+  "sleepTimerCancelled": "Sleep timer cancelled",
+  "sleepTimerSet": "Sleep timer set",
   "songAdded": "歌曲已添加",
   "songAddedToOffline": "Song is now available offline",
   "songAlreadyInPlaylist": "歌曲已在播放列表中",

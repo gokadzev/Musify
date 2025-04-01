@@ -106,6 +106,8 @@
   "setTimer": "Set timer",
   "settingChangedMsg": "Einstellung geändert",
   "settings": "Einstellungen",
+  "sleepTimerCancelled": "Sleep timer cancelled",
+  "sleepTimerSet": "Sleep timer set",
   "songAdded": "Song erfolgreich hinzugefügt",
   "songAddedToOffline": "Song is now available offline",
   "songAlreadyInPlaylist": "Song is already in the playlist",
