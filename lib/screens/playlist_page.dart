@@ -77,46 +77,69 @@ class _PlaylistPageState extends State<PlaylistPage> {
   }
 
   Future<void> _initializePlaylist() async {
-    _playlist =
-        (widget.playlistId != null)
-            ? await getPlaylistInfoForWidget(
-              widget.playlistId,
-              isArtist: widget.isArtist,
-            )
-            : widget.playlistData;
+    try {
+      _playlist =
+          (widget.playlistId != null)
+              ? await getPlaylistInfoForWidget(
+                widget.playlistId,
+                isArtist: widget.isArtist,
+              )
+              : widget.playlistData;
 
-    if (_playlist != null) {
-      _loadMore();
+      if (_playlist != null) {
+        _loadMore();
+      }
+    } catch (e, stackTrace) {
+      logger.log('Error initializing playlist:', e, stackTrace);
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        showToast(context, context.l10n!.error);
+      }
     }
   }
 
   void _loadMore() {
     _isLoading = true;
-    fetch().then((List<dynamic> fetchedList) {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-          if (fetchedList.isEmpty) {
-            _hasMore = false;
-          } else {
-            _songsList.addAll(fetchedList);
+    fetch()
+        .then((List<dynamic> fetchedList) {
+          if (mounted) {
+            setState(() {
+              _isLoading = false;
+              if (fetchedList.isEmpty) {
+                _hasMore = false;
+              } else {
+                _songsList.addAll(fetchedList);
+              }
+            });
+          }
+        })
+        .catchError((error) {
+          if (mounted) {
+            setState(() {
+              _isLoading = false;
+            });
           }
         });
-      }
-    });
   }
 
   Future<List<dynamic>> fetch() async {
-    final list = <dynamic>[];
-    final _count = _playlist['list'].length as int;
-    final n = min(_itemsPerPage, _count - _currentPage * _itemsPerPage);
-    for (var i = 0; i < n; i++) {
-      list.add(_playlist['list'][_currentLastLoadedId]);
-      _currentLastLoadedId++;
-    }
+    try {
+      final list = <dynamic>[];
+      final _count = _playlist['list'].length as int;
+      final n = min(_itemsPerPage, _count - _currentPage * _itemsPerPage);
+      for (var i = 0; i < n; i++) {
+        list.add(_playlist['list'][_currentLastLoadedId]);
+        _currentLastLoadedId++;
+      }
 
-    _currentPage++;
-    return list;
+      _currentPage++;
+      return list;
+    } catch (e, stackTrace) {
+      logger.log('Error fetching playlist songs:', e, stackTrace);
+      return [];
+    }
   }
 
   @override
