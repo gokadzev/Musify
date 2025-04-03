@@ -616,54 +616,76 @@ Future<Map?> getPlaylistInfoForWidget(
   bool isArtist = false,
 }) async {
   if (isArtist) {
-    return {'title': id, 'list': await fetchSongsList(id)};
+    try {
+      return {'title': id, 'list': await fetchSongsList(id)};
+    } catch (e, stackTrace) {
+      logger.log('Error fetching artist songs for $id', e, stackTrace);
+      return {'title': id, 'list': []};
+    }
   }
 
   Map? playlist;
 
-  // Check in local playlists.
-  playlist = playlists.firstWhere((p) => p['ytid'] == id, orElse: () => null);
+  try {
+    playlist = playlists.firstWhere((p) => p['ytid'] == id, orElse: () => null);
 
-  // Check in user playlists if not found.
-  if (playlist == null) {
-    final userPl = await getUserPlaylists();
-    playlist = userPl.firstWhere((p) => p['ytid'] == id, orElse: () => null);
-  }
-
-  // Check in cached online playlists if still not found.
-  playlist ??= onlinePlaylists.firstWhere(
-    (p) => p['ytid'] == id,
-    orElse: () => null,
-  );
-
-  // If still not found, attempt to fetch playlist info.
-  if (playlist == null) {
-    try {
-      final ytPlaylist = await _yt.playlists.get(id);
-      playlist = {
-        'ytid': ytPlaylist.id.toString(),
-        'title': ytPlaylist.title,
-        'image': null,
-        'source': 'user-youtube',
-        'list': [],
-      };
-      onlinePlaylists.add(playlist);
-    } catch (e, stackTrace) {
-      logger.log('Failed to fetch playlist info for id $id', e, stackTrace);
-      return null;
+    // Check in user playlists if not found.
+    if (playlist == null) {
+      final userPl = await getUserPlaylists();
+      playlist = userPl.firstWhere((p) => p['ytid'] == id, orElse: () => null);
     }
-  }
 
-  // If the playlist exists but its song list is empty, fetch and cache the songs.
-  if (playlist['list'] == null ||
-      (playlist['list'] is List && (playlist['list'] as List).isEmpty)) {
-    playlist['list'] = await getSongsFromPlaylist(playlist['ytid']);
-    if (!playlists.contains(playlist)) {
-      playlists.add(playlist);
+    // Check in cached online playlists if still not found.
+    playlist ??= onlinePlaylists.firstWhere(
+      (p) => p['ytid'] == id,
+      orElse: () => null,
+    );
+
+    // If still not found, attempt to fetch playlist info.
+    if (playlist == null) {
+      try {
+        final ytPlaylist = await _yt.playlists.get(id);
+        playlist = {
+          'ytid': ytPlaylist.id.toString(),
+          'title': ytPlaylist.title,
+          'image': null,
+          'source': 'user-youtube',
+          'list': [],
+        };
+        onlinePlaylists.add(playlist);
+      } catch (e, stackTrace) {
+        logger.log('Failed to fetch playlist info for id $id', e, stackTrace);
+        return null;
+      }
     }
-  }
 
-  return playlist;
+    // If the playlist exists but its song list is empty, fetch and cache the songs.
+    if (playlist['list'] == null ||
+        (playlist['list'] is List && (playlist['list'] as List).isEmpty)) {
+      try {
+        playlist['list'] = await getSongsFromPlaylist(playlist['ytid']);
+        if (!playlists.contains(playlist)) {
+          playlists.add(playlist);
+        }
+      } catch (e, stackTrace) {
+        logger.log(
+          'Error fetching songs for playlist ${playlist['ytid']}',
+          e,
+          stackTrace,
+        );
+        playlist['list'] = [];
+      }
+    }
+
+    return playlist;
+  } catch (e, stackTrace) {
+    logger.log(
+      'Unexpected error in getPlaylistInfoForWidget for id $id',
+      e,
+      stackTrace,
+    );
+    return null;
+  }
 }
 
 Future<AudioOnlyStreamInfo> getSongManifest(String songId) async {
