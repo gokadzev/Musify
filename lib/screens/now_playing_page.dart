@@ -246,7 +246,7 @@ class NowPlayingArtwork extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 child: Center(
                   child: Text(
-                    snapshot.data!,
+                    snapshot.data ?? context.l10n!.lyricsNotAvailable,
                     style: lyricsTextStyle.copyWith(
                       color: Theme.of(context).colorScheme.secondary,
                     ),
