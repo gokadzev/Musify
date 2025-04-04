@@ -120,7 +120,13 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
                   children: [
                     Expanded(child: widget.child),
                     StreamBuilder<MediaItem?>(
-                      stream: audioHandler.mediaItem,
+                      stream: audioHandler.mediaItem.distinct((prev, curr) {
+                        if (prev == null || curr == null) return false;
+                        return prev.id == curr.id &&
+                            prev.title == curr.title &&
+                            prev.artist == curr.artist &&
+                            prev.artUri == curr.artUri;
+                      }),
                       builder: (context, snapshot) {
                         final metadata = snapshot.data;
                         if (metadata == null) {

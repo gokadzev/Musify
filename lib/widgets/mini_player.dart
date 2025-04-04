@@ -108,7 +108,14 @@ class MiniPlayer extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 StreamBuilder<PlaybackState>(
-                  stream: audioHandler.playbackState,
+                  stream: audioHandler.playbackState.distinct((
+                    previous,
+                    current,
+                  ) {
+                    // Only rebuild if playing state or processing state changes
+                    return previous.playing == current.playing &&
+                        previous.processingState == current.processingState;
+                  }),
                   builder: (context, snapshot) {
                     final processingState = snapshot.data?.processingState;
                     final isPlaying = snapshot.data?.playing ?? false;

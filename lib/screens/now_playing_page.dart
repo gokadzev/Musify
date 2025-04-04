@@ -64,7 +64,13 @@ class NowPlayingPage extends StatelessWidget {
         ),
       ),
       body: StreamBuilder<MediaItem?>(
-        stream: audioHandler.mediaItem,
+        stream: audioHandler.mediaItem.distinct((prev, curr) {
+          if (prev == null || curr == null) return false;
+          return prev.id == curr.id &&
+              prev.title == curr.title &&
+              prev.artist == curr.artist &&
+              prev.artUri == curr.artUri;
+        }),
         builder: (context, snapshot) {
           if (snapshot.data == null || !snapshot.hasData) {
             return const SizedBox.shrink();
@@ -411,7 +417,7 @@ class PositionSlider extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: StreamBuilder<PositionData>(
-        stream: audioHandler.positionDataStream,
+        stream: audioHandler.positionDataStream.distinct(),
         builder: (context, snapshot) {
           final hasData = snapshot.hasData && snapshot.data != null;
           final positionData =
@@ -569,7 +575,11 @@ class PlayerControlButtons extends StatelessWidget {
     double iconSize,
   ) {
     return StreamBuilder<PlaybackState>(
-      stream: audioHandler.playbackState,
+      stream: audioHandler.playbackState.distinct((previous, current) {
+        // Only rebuild if playing state or processing state changes
+        return previous.playing == current.playing &&
+            previous.processingState == current.processingState;
+      }),
       builder: (context, snapshot) {
         return buildPlaybackIconButton(
           snapshot.data,
