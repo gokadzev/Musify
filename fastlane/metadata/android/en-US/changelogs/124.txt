@@ -6,3 +6,4 @@ Enhancements
 - Added play next feature
 - Added fade out effect to sleep timer
 - Miscellaneous improvements and fixes related to performance and UI
+- Full changelog: https://github.com/gokadzev/Musify/releases
