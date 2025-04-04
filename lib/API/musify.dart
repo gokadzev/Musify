@@ -779,7 +779,8 @@ Future<Map<String, dynamic>> getSongDetails(
   }
 }
 
-Future<String?> getSongLyrics(String artist, String title) async {
+Future<String?> getSongLyrics(String? artist, String title) async {
+  if (artist == null) return null;
   if (lastFetchedLyrics != '$artist - $title') {
     lyrics.value = null;
     var _lyrics = await LyricsManager().fetchLyrics(artist, title);
@@ -788,7 +789,7 @@ Future<String?> getSongLyrics(String artist, String title) async {
       _lyrics = _lyrics.replaceAll(RegExp(r'\n{4}'), '\n\n');
       lyrics.value = _lyrics;
     } else {
-      lyrics.value = 'not found';
+      return null;
     }
 
     lastFetchedLyrics = '$artist - $title';

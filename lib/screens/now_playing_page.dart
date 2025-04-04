@@ -227,11 +227,11 @@ class NowPlayingArtwork extends StatelessWidget {
           borderRadius: BorderRadius.circular(_radius),
         ),
         child: FutureBuilder<String?>(
-          future: getSongLyrics(metadata.artist ?? '', metadata.title),
+          future: getSongLyrics(metadata.artist, metadata.title),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Spinner();
-            } else if (snapshot.hasError || snapshot.data == 'not found') {
+            } else if (snapshot.hasError || snapshot.data == null) {
               return Center(
                 child: Text(
                   context.l10n!.lyricsNotAvailable,
