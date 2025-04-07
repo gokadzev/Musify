@@ -90,6 +90,7 @@
   "removeFromLikedPlaylists": "Rimuovi dalle playlist aggiunte ai preferiti",
   "removeFromLikedSongs": "Rimuovi dai brani aggiunti ai preferiti",
   "removeFromPlaylist": "Rimuovi dalla playlist",
+  "removeFromRecentlyPlayed": "Remove from recently played",
   "removeOffline": "Rimuovi dai brani disponibili offline",
   "removeOfflinePlaylist": "Remove Offline Playlist",
   "removeOfflinePlaylistConfirm": "This will remove the playlist from offline storage. Songs that are used in other playlists will still be available.",

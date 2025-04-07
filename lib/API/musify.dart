@@ -907,3 +907,11 @@ Future<void> updateRecentlyPlayed(dynamic songId) async {
   currentRecentlyPlayedLength.value = userRecentlyPlayed.length;
   await addOrUpdateData('user', 'recentlyPlayedSongs', userRecentlyPlayed);
 }
+
+Future<void> removeFromRecentlyPlayed(dynamic songId) async {
+  if (userRecentlyPlayed.any((song) => song['ytid'] == songId)) {
+    userRecentlyPlayed.removeWhere((song) => song['ytid'] == songId);
+    currentRecentlyPlayedLength.value = userRecentlyPlayed.length;
+    await addOrUpdateData('user', 'recentlyPlayedSongs', userRecentlyPlayed);
+  }
+}

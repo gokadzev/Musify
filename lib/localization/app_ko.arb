@@ -90,6 +90,7 @@
   "removeFromLikedPlaylists": "좋아요 재생목록에서 제거",
   "removeFromLikedSongs": "좋아요 노래에서 삭제",
   "removeFromPlaylist": "재생목록에서 삭제",
+  "removeFromRecentlyPlayed": "Remove from recently played",
   "removeOffline": "오프라인에서 삭제",
   "removeOfflinePlaylist": "Remove Offline Playlist",
   "removeOfflinePlaylistConfirm": "This will remove the playlist from offline storage. Songs that are used in other playlists will still be available.",

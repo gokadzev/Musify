@@ -90,6 +90,7 @@
   "removeFromLikedPlaylists": "從喜愛播放列表中移除",
   "removeFromLikedSongs": "從喜愛歌曲中移除",
   "removeFromPlaylist": "從播放列表中移除",
+  "removeFromRecentlyPlayed": "Remove from recently played",
   "removeOffline": "刪除離線緩存",
   "removeOfflinePlaylist": "Remove Offline Playlist",
   "removeOfflinePlaylistConfirm": "This will remove the playlist from offline storage. Songs that are used in other playlists will still be available.",

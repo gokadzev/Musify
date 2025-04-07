@@ -90,6 +90,7 @@
   "removeFromLikedPlaylists": "いいねした再生リストから削除",
   "removeFromLikedSongs": "いいねした曲から削除",
   "removeFromPlaylist": "再生リストから削除",
+  "removeFromRecentlyPlayed": "Remove from recently played",
   "removeOffline": "オフラインから削除",
   "removeOfflinePlaylist": "Remove Offline Playlist",
   "removeOfflinePlaylistConfirm": "This will remove the playlist from offline storage. Songs that are used in other playlists will still be available.",

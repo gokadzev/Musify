@@ -90,6 +90,7 @@
   "removeFromLikedPlaylists": "Remover das playlists",
   "removeFromLikedSongs": "Remover das músicas",
   "removeFromPlaylist": "Remover da playlist",
+  "removeFromRecentlyPlayed": "Remove from recently played",
   "removeOffline": "Remover offline",
   "removeOfflinePlaylist": "Remove Offline Playlist",
   "removeOfflinePlaylistConfirm": "This will remove the playlist from offline storage. Songs that are used in other playlists will still be available.",

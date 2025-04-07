@@ -90,6 +90,7 @@
   "removeFromLikedPlaylists": "Hapus dari playlist yang disukai",
   "removeFromLikedSongs": "Hapus dari lagu yang disukai",
   "removeFromPlaylist": "Hapus dari playlist",
+  "removeFromRecentlyPlayed": "Remove from recently played",
   "removeOffline": "Hapus dari offline",
   "removeOfflinePlaylist": "Remove Offline Playlist",
   "removeOfflinePlaylistConfirm": "This will remove the playlist from offline storage. Songs that are used in other playlists will still be available.",

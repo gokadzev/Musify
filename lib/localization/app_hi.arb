@@ -90,6 +90,7 @@
   "removeFromLikedPlaylists": "पसंदीदा प्लेलिस्ट से हटाएं",
   "removeFromLikedSongs": "पसंदीदा गानों से हटाएं",
   "removeFromPlaylist": "प्लेलिस्ट से हटाएं",
+  "removeFromRecentlyPlayed": "Remove from recently played",
   "removeOffline": "ऑफ़लाइन से हटाएं",
   "removeOfflinePlaylist": "Remove Offline Playlist",
   "removeOfflinePlaylistConfirm": "This will remove the playlist from offline storage. Songs that are used in other playlists will still be available.",

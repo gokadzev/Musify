@@ -40,6 +40,7 @@ class SongBar extends StatelessWidget {
     this.showMusicDuration = false,
     this.onPlay,
     this.isSongOffline,
+    this.isRecentSong,
     this.onRemove,
     this.borderRadius = BorderRadius.zero,
     super.key,
@@ -51,6 +52,7 @@ class SongBar extends StatelessWidget {
   final VoidCallback? onRemove;
   final VoidCallback? onPlay;
   final bool? isSongOffline;
+  final bool? isRecentSong;
   final bool showMusicDuration;
   final BorderRadius borderRadius;
 
@@ -247,6 +249,8 @@ class SongBar extends StatelessWidget {
           case 'add_to_playlist':
             showAddToPlaylistDialog(context, song);
             break;
+          case 'remove_from_recents':
+            removeFromRecentlyPlayed(song['ytid']);
           case 'offline':
             if (songOfflineStatus.value) {
               removeSongFromOffline(song['ytid']);
@@ -311,6 +315,17 @@ class SongBar extends StatelessWidget {
               ],
             ),
           ),
+          if (isRecentSong == true)
+            PopupMenuItem<String>(
+              value: 'remove_from_recents',
+              child: Row(
+                children: [
+                  Icon(FluentIcons.delete_24_filled, color: primaryColor),
+                  const SizedBox(width: 8),
+                  Text(context.l10n!.removeFromRecentlyPlayed),
+                ],
+              ),
+            ),
           PopupMenuItem<String>(
             value: 'offline',
             child: ValueListenableBuilder<bool>(

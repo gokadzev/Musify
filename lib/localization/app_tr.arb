@@ -90,6 +90,7 @@
   "removeFromLikedPlaylists": "Beğenilen çalma listelerinden çıkar",
   "removeFromLikedSongs": "Beğenilen Parçalardan Çıkar",
   "removeFromPlaylist": "Çalma listesinden çıkar",
+  "removeFromRecentlyPlayed": "Remove from recently played",
   "removeOffline": "Çevrimdışından çıkar",
   "removeOfflinePlaylist": "Remove Offline Playlist",
   "removeOfflinePlaylistConfirm": "This will remove the playlist from offline storage. Songs that are used in other playlists will still be available.",
