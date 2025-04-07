@@ -25,6 +25,7 @@ import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/services/playlist_download_service.dart';
 import 'package:musify/services/router_service.dart';
+import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/utils.dart';
@@ -55,7 +56,8 @@ class _LibraryPageState extends State<LibraryPage> {
               child: Column(
                 children: <Widget>[
                   _buildUserPlaylistsSection(primaryColor),
-                  _buildUserLikedPlaylistsSection(primaryColor),
+                  if (!offlineMode.value)
+                    _buildUserLikedPlaylistsSection(primaryColor),
                 ],
               ),
             ),
@@ -70,87 +72,94 @@ class _LibraryPageState extends State<LibraryPage> {
         userPlaylists.value.isEmpty && userCustomPlaylists.value.isEmpty;
     return Column(
       children: [
-        SectionHeader(
-          title: context.l10n!.customPlaylists,
-          actionButton: IconButton(
-            padding: const EdgeInsets.only(right: 5),
-            onPressed: _showAddPlaylistDialog,
-            icon: Icon(FluentIcons.add_24_filled, color: primaryColor),
+        if (!offlineMode.value) ...[
+          SectionHeader(
+            title: context.l10n!.customPlaylists,
+            actionButton: IconButton(
+              padding: const EdgeInsets.only(right: 5),
+              onPressed: _showAddPlaylistDialog,
+              icon: Icon(FluentIcons.add_24_filled, color: primaryColor),
+            ),
           ),
-        ),
+          PlaylistBar(
+            context.l10n!.recentlyPlayed,
+            onPressed:
+                () => NavigationManager.router.go('/library/userSongs/recents'),
+            cubeIcon: FluentIcons.history_24_filled,
+            borderRadius: commonCustomBarRadiusFirst,
+            showBuildActions: false,
+          ),
+          PlaylistBar(
+            context.l10n!.likedSongs,
+            onPressed:
+                () => NavigationManager.router.go('/library/userSongs/liked'),
+            cubeIcon: FluentIcons.music_note_2_24_regular,
+            showBuildActions: false,
+          ),
+          PlaylistBar(
+            context.l10n!.offlineSongs,
+            onPressed:
+                () => NavigationManager.router.go('/library/userSongs/offline'),
+            cubeIcon: FluentIcons.cellular_off_24_filled,
+            borderRadius:
+                isUserPlaylistsEmpty
+                    ? commonCustomBarRadiusLast
+                    : BorderRadius.zero,
+            showBuildActions: false,
+          ),
 
-        PlaylistBar(
-          context.l10n!.recentlyPlayed,
-          onPressed:
-              () => NavigationManager.router.go('/library/userSongs/recents'),
-          cubeIcon: FluentIcons.history_24_filled,
-          borderRadius: commonCustomBarRadiusFirst,
-          showBuildActions: false,
-        ),
-        PlaylistBar(
-          context.l10n!.likedSongs,
-          onPressed:
-              () => NavigationManager.router.go('/library/userSongs/liked'),
-          cubeIcon: FluentIcons.music_note_2_24_regular,
-          showBuildActions: false,
-        ),
-        PlaylistBar(
-          context.l10n!.offlineSongs,
-          onPressed:
-              () => NavigationManager.router.go('/library/userSongs/offline'),
-          cubeIcon: FluentIcons.cellular_off_24_filled,
-          borderRadius:
-              isUserPlaylistsEmpty
-                  ? commonCustomBarRadiusLast
-                  : BorderRadius.zero,
-          showBuildActions: false,
-        ),
-        ValueListenableBuilder<List>(
-          valueListenable: userCustomPlaylists,
-          builder: (context, playlists, _) {
-            if (playlists.isEmpty) {
-              return const SizedBox();
-            }
-            return _buildPlaylistListView(context, playlists);
-          },
-        ),
+          ValueListenableBuilder<List>(
+            valueListenable: userCustomPlaylists,
+            builder: (context, playlists, _) {
+              if (playlists.isEmpty) {
+                return const SizedBox();
+              }
+              return _buildPlaylistListView(context, playlists);
+            },
+          ),
+        ],
 
         _buildOfflinePlaylistsSection(),
 
-        ValueListenableBuilder<List>(
-          valueListenable: userPlaylists,
-          builder: (context, playlists, _) {
-            if (userPlaylists.value.isEmpty) {
-              return const SizedBox();
-            }
-            return Column(
-              children: [
-                SectionHeader(
-                  title: context.l10n!.addedPlaylists,
-                  actionButton: IconButton(
-                    padding: const EdgeInsets.only(right: 5),
-                    onPressed: _showAddPlaylistDialog,
-                    icon: Icon(FluentIcons.add_24_filled, color: primaryColor),
+        if (!offlineMode.value)
+          ValueListenableBuilder<List>(
+            valueListenable: userPlaylists,
+            builder: (context, playlists, _) {
+              if (userPlaylists.value.isEmpty) {
+                return const SizedBox();
+              }
+              return Column(
+                children: [
+                  SectionHeader(
+                    title: context.l10n!.addedPlaylists,
+                    actionButton: IconButton(
+                      padding: const EdgeInsets.only(right: 5),
+                      onPressed: _showAddPlaylistDialog,
+                      icon: Icon(
+                        FluentIcons.add_24_filled,
+                        color: primaryColor,
+                      ),
+                    ),
                   ),
-                ),
-                FutureBuilder(
-                  future: getUserPlaylists(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
-                    } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                      return _buildPlaylistListView(context, snapshot.data!);
-                    } else {
-                      return const SizedBox();
-                    }
-                  },
-                ),
-              ],
-            );
-          },
-        ),
+                  FutureBuilder(
+                    future: getUserPlaylists(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text('Error: ${snapshot.error}'));
+                      } else if (snapshot.hasData &&
+                          snapshot.data!.isNotEmpty) {
+                        return _buildPlaylistListView(context, snapshot.data!);
+                      } else {
+                        return const SizedBox();
+                      }
+                    },
+                  ),
+                ],
+              );
+            },
+          ),
       ],
     );
   }

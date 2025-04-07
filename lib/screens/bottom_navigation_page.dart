@@ -71,6 +71,11 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
             label: context.l10n?.home ?? 'Home',
           ),
           NavigationDestination(
+            icon: const Icon(FluentIcons.book_24_regular),
+            selectedIcon: const Icon(FluentIcons.book_24_filled),
+            label: context.l10n?.library ?? 'Library',
+          ),
+          NavigationDestination(
             icon: const Icon(FluentIcons.settings_24_regular),
             selectedIcon: const Icon(FluentIcons.settings_24_filled),
             label: context.l10n?.settings ?? 'Settings',

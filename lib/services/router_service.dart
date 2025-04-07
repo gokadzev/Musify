@@ -190,6 +190,17 @@ class NavigationManager {
         ],
       ),
       StatefulShellBranch(
+        navigatorKey: libraryTabNavigatorKey,
+        routes: [
+          GoRoute(
+            path: libraryPath,
+            pageBuilder: (context, GoRouterState state) {
+              return getPage(child: const LibraryPage(), state: state);
+            },
+          ),
+        ],
+      ),
+      StatefulShellBranch(
         navigatorKey: settingsTabNavigatorKey,
         routes: [
           GoRoute(
