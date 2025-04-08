@@ -814,11 +814,11 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: "5ed5f6a502cd4c07e7b93b8066673d055d435a37"
-      resolved-ref: "5ed5f6a502cd4c07e7b93b8066673d055d435a37"
+      ref: b98f2bd4738f1dc471ab598af9695732620ea4ea
+      resolved-ref: b98f2bd4738f1dc471ab598af9695732620ea4ea
       url: "https://github.com/gokadzev/yt_explode_dart.git"
     source: git
-    version: "2.4.0-dev.1"
+    version: "2.4.0"
 sdks:
   dart: ">=3.7.0 <4.0.0"
   flutter: ">=3.29.2"

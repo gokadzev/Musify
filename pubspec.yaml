@@ -37,7 +37,7 @@ dependencies:
   youtube_explode_dart:
     git:
       url: https://github.com/gokadzev/yt_explode_dart.git
-      ref: 5ed5f6a502cd4c07e7b93b8066673d055d435a37
+      ref: b98f2bd4738f1dc471ab598af9695732620ea4ea
 
 dev_dependencies:
   flutter_test:
