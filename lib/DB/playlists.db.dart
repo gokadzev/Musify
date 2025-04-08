@@ -149,12 +149,6 @@ List<Map<String, dynamic>> playlistsDB = [
     'list': [],
   },
   {
-    'ytid': 'PLfQAe5M2BkwCKimscRq-F9wkO5tUPY9TS',
-    'title': 'Mood Booster',
-    'image': 'https://i.scdn.co/image/ab67706f00000003bd0e19e810bb4b55ab164a95',
-    'list': [],
-  },
-  {
     'ytid': 'PLmYULo-LwF9Lsx-JRO0UN-dJWk_0pbd-L',
     'title': 'Best of MrSuicideSheep',
     'image': 'https://i.scdn.co/image/ab67706c0000da843d24ef512b7d370dcb045df9',
