@@ -130,7 +130,6 @@ class _SearchPageState extends State<SearchPage> {
             ),
             if (_songsSearchResult.isEmpty && _albumsSearchResult.isEmpty)
               ListView.builder(
-                padding: const EdgeInsets.symmetric(vertical: 7),
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount:
@@ -186,7 +185,6 @@ class _SearchPageState extends State<SearchPage> {
                   ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    padding: const EdgeInsets.all(7),
                     itemCount:
                         _songsSearchResult.length > maxSongsInList
                             ? maxSongsInList
