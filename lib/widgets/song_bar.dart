@@ -161,11 +161,12 @@ class SongBar extends StatelessWidget {
     bool isDurationAvailable,
     Color primaryColor,
   ) {
+    final isImageSmall = lowResImageUrl.contains('default.jpg');
     return Stack(
       alignment: Alignment.center,
       children: <Widget>[
         CachedNetworkImage(
-          key: Key(song['ytid'].toString()),
+          key: ValueKey(lowResImageUrl),
           width: size,
           height: size,
           imageUrl: lowResImageUrl,
@@ -187,7 +188,8 @@ class SongBar extends StatelessWidget {
                             ? const AlwaysStoppedAnimation(0.45)
                             : null,
                     image: imageProvider,
-                    centerSlice: const Rect.fromLTRB(1, 1, 1, 1),
+                    centerSlice:
+                        isImageSmall ? const Rect.fromLTRB(1, 1, 1, 1) : null,
                   ),
                 ),
               ),

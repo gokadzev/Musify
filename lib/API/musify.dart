@@ -566,12 +566,17 @@ void getSimilarSong(String songYtId) async {
   }
 }
 
-Future<List> getSongsFromPlaylist(dynamic playlistId) async {
+Future<List> getSongsFromPlaylist(
+  dynamic playlistId, {
+  String? playlistImage,
+}) async {
   final songList = await getData('cache', 'playlistSongs$playlistId') ?? [];
 
   if (songList.isEmpty) {
     await for (final song in _yt.playlists.getVideos(playlistId)) {
-      songList.add(returnSongLayout(songList.length, song));
+      songList.add(
+        returnSongLayout(songList.length, song, playlistImage: playlistImage),
+      );
     }
 
     await addOrUpdateData('cache', 'playlistSongs$playlistId', songList);
@@ -663,7 +668,12 @@ Future<Map?> getPlaylistInfoForWidget(
     if (playlist['list'] == null ||
         (playlist['list'] is List && (playlist['list'] as List).isEmpty)) {
       try {
-        playlist['list'] = await getSongsFromPlaylist(playlist['ytid']);
+        final playlistImage =
+            playlist['isAlbum'] == true ? playlist['image'] : null;
+        playlist['list'] = await getSongsFromPlaylist(
+          playlist['ytid'],
+          playlistImage: playlistImage,
+        );
         if (!playlists.contains(playlist)) {
           playlists.add(playlist);
         }

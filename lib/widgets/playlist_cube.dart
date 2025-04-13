@@ -78,7 +78,7 @@ class PlaylistCube extends StatelessWidget {
   Widget _buildImage(BuildContext context) {
     return playlist['image'] != null
         ? CachedNetworkImage(
-          key: Key(playlist['image'].toString()),
+          key: ValueKey(playlist['image'].toString()),
           imageUrl: playlist['image'].toString(),
           height: size,
           width: size,

@@ -55,6 +55,7 @@ class SongArtworkWidget extends StatelessWidget {
           ),
         )
         : CachedNetworkImage(
+          key: ValueKey(metadata.artUri.toString()),
           width: size,
           height: size,
           imageUrl: metadata.artUri.toString(),
