@@ -1,0 +1,3 @@
+Enhancements
+- Updated Turkish, Indonesian and Korean translations
+- Full changelog: https://github.com/gokadzev/Musify/releases
