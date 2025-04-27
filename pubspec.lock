@@ -369,10 +369,10 @@ packages:
     dependency: "direct main"
     description:
       name: just_audio
-      sha256: "451d7995b122da6c22fadf0e430280aaf2ad629f77ea7e82c39987b99e8bc7a2"
+      sha256: "369100a808395fc863d304cce97b920efcca71157b9705b0b3d21d415af344fd"
       url: "https://pub.dev"
     source: hosted
-    version: "0.10.0"
+    version: "0.10.1"
   just_audio_platform_interface:
     dependency: transitive
     description:
