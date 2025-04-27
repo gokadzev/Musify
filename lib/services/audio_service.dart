@@ -280,9 +280,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
     try {
       final isOffline = song['isOffline'] ?? false;
 
-      final preliminaryTag = mapToMediaItem(song);
-      mediaItem.add(preliminaryTag);
-
       if (audioPlayer.playing) await audioPlayer.stop();
 
       final songUrl =
@@ -293,6 +290,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       final audioSource = await buildAudioSource(song, songUrl, isOffline);
 
       await audioPlayer.setAudioSource(audioSource);
+
       await audioPlayer.play();
       if (!isOffline) {
         final cacheKey =

@@ -41,6 +41,8 @@ MediaItem mapToMediaItem(Map song) => MediaItem(
       song['isOffline'] ?? false
           ? Uri.file(song['highResImage'].toString())
           : Uri.parse(song['highResImage'].toString()),
+  duration:
+      song['duration'] != null ? Duration(seconds: song['duration']) : null,
   extras: {
     'lowResImage': song['lowResImage'],
     'ytid': song['ytid'],
