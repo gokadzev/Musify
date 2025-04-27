@@ -19,9 +19,6 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
-import 'dart:convert';
-
-import 'package:file_picker/file_picker.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
@@ -31,6 +28,7 @@ import 'package:musify/services/router_service.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/flutter_toast.dart';
+import 'package:musify/utilities/playlist_image_picker.dart';
 import 'package:musify/utilities/utils.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/playlist_bar.dart';
@@ -245,73 +243,20 @@ class _LibraryPageState extends State<LibraryPage> {
           final dialogBackgroundColor = theme.dialogTheme.backgroundColor;
 
           Future<void> _pickImage() async {
-            final result = await FilePicker.platform.pickFiles(
-              type: FileType.image,
-              withData: true,
-            );
-            if (result != null && result.files.single.bytes != null) {
-              final file = result.files.single;
-              String? mimeType;
-              if (file.extension != null) {
-                switch (file.extension!.toLowerCase()) {
-                  case 'jpg':
-                  case 'jpeg':
-                    mimeType = 'image/jpeg';
-                    break;
-                  case 'png':
-                    mimeType = 'image/png';
-                    break;
-                  case 'gif':
-                    mimeType = 'image/gif';
-                    break;
-                  case 'bmp':
-                    mimeType = 'image/bmp';
-                    break;
-                  case 'webp':
-                    mimeType = 'image/webp';
-                    break;
-                  default:
-                    mimeType = 'application/octet-stream';
-                }
-              } else {
-                mimeType = 'application/octet-stream';
-              }
+            final result = await pickImage();
+            if (result != null) {
               setState(() {
-                imageBase64 =
-                    'data:$mimeType;base64,${base64Encode(file.bytes!)}';
+                imageBase64 = result;
                 imageUrl = null;
               });
             }
           }
 
           Widget _imagePreview() {
-            if (imageBase64 != null) {
-              final base64Data =
-                  imageBase64!.contains(',')
-                      ? imageBase64!.split(',').last
-                      : imageBase64!;
-              return Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: Image.memory(
-                  base64Decode(base64Data),
-                  width: 80,
-                  height: 80,
-                  fit: BoxFit.cover,
-                ),
-              );
-            } else if (imageUrl != null && imageUrl!.isNotEmpty) {
-              return Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: Image.network(
-                  imageUrl!,
-                  width: 80,
-                  height: 80,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => const Icon(Icons.broken_image),
-                ),
-              );
-            }
-            return const SizedBox.shrink();
+            return buildImagePreview(
+              imageBase64: imageBase64,
+              imageUrl: imageUrl,
+            );
           }
 
           return AlertDialog(
@@ -396,22 +341,10 @@ class _LibraryPageState extends State<LibraryPage> {
                     ],
                     const SizedBox(height: 7),
                     if (imageUrl == null) ...[
-                      Row(
-                        children: [
-                          ElevatedButton.icon(
-                            onPressed: _pickImage,
-                            icon: const Icon(Icons.image),
-                            label: Text(context.l10n!.pickImageFromDevice),
-                          ),
-                          if (imageBase64 != null)
-                            Padding(
-                              padding: const EdgeInsets.only(left: 8),
-                              child: Icon(
-                                Icons.check_circle,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                            ),
-                        ],
+                      buildImagePickerRow(
+                        context,
+                        _pickImage,
+                        imageBase64 != null,
                       ),
                       _imagePreview(),
                     ],
