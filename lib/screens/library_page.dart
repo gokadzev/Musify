@@ -236,7 +236,7 @@ class _LibraryPageState extends State<LibraryPage> {
       String? imageBase64;
 
       return StatefulBuilder(
-        builder: (context, setState) {
+        builder: (context, dialogSetState) {
           final theme = Theme.of(context);
           final activeButtonBackground = theme.colorScheme.surfaceContainer;
           final inactiveButtonBackground = theme.colorScheme.secondaryContainer;
@@ -245,7 +245,7 @@ class _LibraryPageState extends State<LibraryPage> {
           Future<void> _pickImage() async {
             final result = await pickImage();
             if (result != null) {
-              setState(() {
+              dialogSetState(() {
                 imageBase64 = result;
                 imageUrl = null;
               });
@@ -335,7 +335,7 @@ class _LibraryPageState extends State<LibraryPage> {
                         onChanged: (value) {
                           imageUrl = value;
                           imageBase64 = null;
-                          setState(() {});
+                          dialogSetState(() {});
                         },
                       ),
                     ],
