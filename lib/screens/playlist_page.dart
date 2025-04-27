@@ -301,11 +301,11 @@ class _PlaylistPageState extends State<PlaylistPage> {
               if (imageBase64 != null) imageUrl = null;
 
               return StatefulBuilder(
-                builder: (context, setState) {
+                builder: (context, dialogSetState) {
                   Future<void> _pickImage() async {
                     final result = await pickImage();
                     if (result != null) {
-                      setState(() {
+                      dialogSetState(() {
                         imageBase64 = result;
                         imageUrl = null;
                       });
@@ -345,7 +345,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                               onChanged: (value) {
                                 imageUrl = value;
                                 imageBase64 = null;
-                                setState(() {});
+                                dialogSetState(() {});
                               },
                             ),
                           ],
@@ -363,39 +363,39 @@ class _PlaylistPageState extends State<PlaylistPage> {
                     ),
                     actions: <Widget>[
                       TextButton(
-                        child: Text(context.l10n!.add.toUpperCase()),
+                        child: Text(context.l10n!.update.toUpperCase()),
                         onPressed: () {
-                          setState(() {
-                            final index = userCustomPlaylists.value.indexOf(
-                              widget.playlistData,
+                          final index = userCustomPlaylists.value.indexOf(
+                            widget.playlistData,
+                          );
+
+                          if (index != -1) {
+                            final newPlaylist = {
+                              'title': customPlaylistName,
+                              'source': 'user-created',
+                              if (imageBase64 != null)
+                                'image': imageBase64
+                              else if (imageUrl != null)
+                                'image': imageUrl,
+                              'list': widget.playlistData['list'],
+                            };
+                            final updatedPlaylists = List<Map>.from(
+                              userCustomPlaylists.value,
                             );
-
-                            if (index != -1) {
-                              final newPlaylist = {
-                                'title': customPlaylistName,
-                                'source': 'user-created',
-                                if (imageBase64 != null)
-                                  'image': imageBase64
-                                else if (imageUrl != null)
-                                  'image': imageUrl,
-                                'list': widget.playlistData['list'],
-                              };
-                              final updatedPlaylists = List<Map>.from(
-                                userCustomPlaylists.value,
-                              );
-                              updatedPlaylists[index] = newPlaylist;
-                              userCustomPlaylists.value = updatedPlaylists;
-                              addOrUpdateData(
-                                'user',
-                                'customPlaylists',
-                                userCustomPlaylists.value,
-                              );
+                            updatedPlaylists[index] = newPlaylist;
+                            userCustomPlaylists.value = updatedPlaylists;
+                            addOrUpdateData(
+                              'user',
+                              'customPlaylists',
+                              userCustomPlaylists.value,
+                            );
+                            setState(() {
                               _playlist = newPlaylist;
-                              showToast(context, context.l10n!.playlistUpdated);
-                            }
+                            });
+                            showToast(context, context.l10n!.playlistUpdated);
+                          }
 
-                            Navigator.pop(context);
-                          });
+                          Navigator.pop(context);
                         },
                       ),
                     ],
