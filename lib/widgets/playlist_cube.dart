@@ -19,12 +19,11 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
-import 'package:musify/widgets/no_artwork_cube.dart';
+import 'package:musify/widgets/playlist_artwork.dart';
 
 class PlaylistCube extends StatelessWidget {
   PlaylistCube(
@@ -46,7 +45,6 @@ class PlaylistCube extends StatelessWidget {
 
   static const double paddingValue = 4;
   static const double typeLabelOffset = 10;
-  static const double iconSize = 30;
 
   final ValueNotifier<bool> playlistLikeStatus;
 
@@ -63,7 +61,11 @@ class PlaylistCube extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: Stack(
         children: [
-          _buildImage(context),
+          PlaylistArtwork(
+            playlistArtwork: playlist['image'],
+            size: size,
+            cubeIcon: cubeIcon,
+          ),
           if (borderRadius == 13 && playlist['image'] != null)
             Positioned(
               top: typeLabelOffset,
@@ -73,30 +75,6 @@ class PlaylistCube extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  Widget _buildImage(BuildContext context) {
-    return playlist['image'] != null
-        ? CachedNetworkImage(
-          key: ValueKey(playlist['image'].toString()),
-          imageUrl: playlist['image'].toString(),
-          height: size,
-          width: size,
-          fit: BoxFit.cover,
-          errorWidget:
-              (context, url, error) => NullArtworkWidget(
-                icon: cubeIcon,
-                iconSize: iconSize,
-                size: size,
-                title: playlist['title'],
-              ),
-        )
-        : NullArtworkWidget(
-          icon: cubeIcon,
-          iconSize: iconSize,
-          size: size,
-          title: playlist['title'],
-        );
   }
 
   Widget _buildLabel(BuildContext context) {

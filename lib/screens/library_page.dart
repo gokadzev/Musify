@@ -19,6 +19,9 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
+import 'dart:convert';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
@@ -232,6 +235,7 @@ class _LibraryPageState extends State<LibraryPage> {
       var customPlaylistName = '';
       var isYouTubeMode = true;
       String? imageUrl;
+      String? imageBase64;
 
       return StatefulBuilder(
         builder: (context, setState) {
@@ -239,6 +243,76 @@ class _LibraryPageState extends State<LibraryPage> {
           final activeButtonBackground = theme.colorScheme.surfaceContainer;
           final inactiveButtonBackground = theme.colorScheme.secondaryContainer;
           final dialogBackgroundColor = theme.dialogTheme.backgroundColor;
+
+          Future<void> _pickImage() async {
+            final result = await FilePicker.platform.pickFiles(
+              type: FileType.image,
+              withData: true,
+            );
+            if (result != null && result.files.single.bytes != null) {
+              final file = result.files.single;
+              String? mimeType;
+              if (file.extension != null) {
+                switch (file.extension!.toLowerCase()) {
+                  case 'jpg':
+                  case 'jpeg':
+                    mimeType = 'image/jpeg';
+                    break;
+                  case 'png':
+                    mimeType = 'image/png';
+                    break;
+                  case 'gif':
+                    mimeType = 'image/gif';
+                    break;
+                  case 'bmp':
+                    mimeType = 'image/bmp';
+                    break;
+                  case 'webp':
+                    mimeType = 'image/webp';
+                    break;
+                  default:
+                    mimeType = 'application/octet-stream';
+                }
+              } else {
+                mimeType = 'application/octet-stream';
+              }
+              setState(() {
+                imageBase64 =
+                    'data:$mimeType;base64,${base64Encode(file.bytes!)}';
+                imageUrl = null;
+              });
+            }
+          }
+
+          Widget _imagePreview() {
+            if (imageBase64 != null) {
+              final base64Data =
+                  imageBase64!.contains(',')
+                      ? imageBase64!.split(',').last
+                      : imageBase64!;
+              return Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Image.memory(
+                  base64Decode(base64Data),
+                  width: 80,
+                  height: 80,
+                  fit: BoxFit.cover,
+                ),
+              );
+            } else if (imageUrl != null && imageUrl!.isNotEmpty) {
+              return Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Image.network(
+                  imageUrl!,
+                  width: 80,
+                  height: 80,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => const Icon(Icons.broken_image),
+                ),
+              );
+            }
+            return const SizedBox.shrink();
+          }
 
           return AlertDialog(
             backgroundColor: dialogBackgroundColor,
@@ -256,6 +330,7 @@ class _LibraryPageState extends State<LibraryPage> {
                             id = '';
                             customPlaylistName = '';
                             imageUrl = null;
+                            imageBase64 = null;
                           });
                         },
                         style: ElevatedButton.styleFrom(
@@ -274,6 +349,7 @@ class _LibraryPageState extends State<LibraryPage> {
                             id = '';
                             customPlaylistName = '';
                             imageUrl = null;
+                            imageBase64 = null;
                           });
                         },
                         style: ElevatedButton.styleFrom(
@@ -305,15 +381,40 @@ class _LibraryPageState extends State<LibraryPage> {
                         customPlaylistName = value;
                       },
                     ),
-                    const SizedBox(height: 7),
-                    TextField(
-                      decoration: InputDecoration(
-                        labelText: context.l10n!.customPlaylistImgUrl,
+                    if (imageBase64 == null) ...[
+                      const SizedBox(height: 7),
+                      TextField(
+                        decoration: InputDecoration(
+                          labelText: context.l10n!.customPlaylistImgUrl,
+                        ),
+                        onChanged: (value) {
+                          imageUrl = value;
+                          imageBase64 = null;
+                          setState(() {});
+                        },
                       ),
-                      onChanged: (value) {
-                        imageUrl = value;
-                      },
-                    ),
+                    ],
+                    const SizedBox(height: 7),
+                    if (imageUrl == null) ...[
+                      Row(
+                        children: [
+                          ElevatedButton.icon(
+                            onPressed: _pickImage,
+                            icon: const Icon(Icons.image),
+                            label: Text(context.l10n!.pickImageFromDevice),
+                          ),
+                          if (imageBase64 != null)
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8),
+                              child: Icon(
+                                Icons.check_circle,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                        ],
+                      ),
+                      _imagePreview(),
+                    ],
                   ],
                 ],
               ),
@@ -329,7 +430,7 @@ class _LibraryPageState extends State<LibraryPage> {
                       context,
                       createCustomPlaylist(
                         customPlaylistName,
-                        imageUrl,
+                        imageBase64 ?? imageUrl,
                         context,
                       ),
                     );

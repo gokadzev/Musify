@@ -19,14 +19,13 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/screens/playlist_page.dart';
 import 'package:musify/utilities/common_variables.dart';
-import 'package:musify/widgets/no_artwork_cube.dart';
+import 'package:musify/widgets/playlist_artwork.dart';
 
 class PlaylistBar extends StatelessWidget {
   PlaylistBar(
@@ -100,7 +99,12 @@ class PlaylistBar extends StatelessWidget {
             padding: commonBarContentPadding,
             child: Row(
               children: [
-                _buildAlbumArt(),
+                PlaylistArtwork(
+                  playlistArtwork: playlistArtwork,
+                  size: artworkSize,
+                  iconSize: iconSize,
+                  cubeIcon: cubeIcon,
+                ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Column(
@@ -124,37 +128,6 @@ class PlaylistBar extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Widget _buildAlbumArt() {
-    return playlistArtwork != null
-        ? CachedNetworkImage(
-          key: Key(playlistArtwork.toString()),
-          height: artworkSize,
-          width: artworkSize,
-          imageUrl: playlistArtwork.toString(),
-          fit: BoxFit.cover,
-          imageBuilder:
-              (context, imageProvider) => SizedBox(
-                width: artworkSize,
-                height: artworkSize,
-                child: ClipRRect(
-                  borderRadius: commonBarRadius,
-                  child: Image(image: imageProvider),
-                ),
-              ),
-          errorWidget:
-              (context, url, error) => NullArtworkWidget(
-                icon: cubeIcon,
-                iconSize: iconSize,
-                size: artworkSize,
-              ),
-        )
-        : NullArtworkWidget(
-          icon: cubeIcon,
-          iconSize: iconSize,
-          size: artworkSize,
-        );
   }
 
   Widget _buildActionButtons(BuildContext context, Color primaryColor) {
