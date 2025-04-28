@@ -17,6 +17,7 @@
   "audioQualityMsg": "오디오 품질이 성공적으로 변경되었음",
   "automaticSongPicker": "자동 노래 선택기",
   "backedupSuccess": "데이터가 성공적으로 백업되었음",
+  "backgroundPlay": "Background play",
   "backupError": "데이터 백업 중 오류가 발생하였음",
   "backupUserData": "사용자 데이터 백업",
   "becomeSponsor": "후원하기",

@@ -239,12 +239,14 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   @override
   Future<void> onTaskRemoved() async {
-    await audioPlayer.stop().then((_) => audioPlayer.dispose());
+    if (!backgroundPlay.value) {
+      await audioPlayer.stop().then((_) => audioPlayer.dispose());
 
-    await _playbackEventSubscription.cancel();
-    await _durationSubscription.cancel();
-    await _currentIndexSubscription.cancel();
-    await _sequenceStateSubscription.cancel();
+      await _playbackEventSubscription.cancel();
+      await _durationSubscription.cancel();
+      await _currentIndexSubscription.cancel();
+      await _sequenceStateSubscription.cancel();
+    }
 
     await super.onTaskRemoved();
   }

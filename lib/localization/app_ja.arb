@@ -17,6 +17,7 @@
   "audioQualityMsg": "音質を変更しました",
   "automaticSongPicker": "自動で曲選択",
   "backedupSuccess": "データを正常にバックアップしました",
+  "backgroundPlay": "Background play",
   "backupError": "データのバックアップ中にエラーが発生しました",
   "backupUserData": "ユーザーデータをバックアップ",
   "becomeSponsor": "開発を支援",

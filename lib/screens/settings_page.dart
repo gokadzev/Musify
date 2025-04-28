@@ -165,6 +165,19 @@ class SettingsPage extends StatelessWidget {
             );
           },
         ),
+        ValueListenableBuilder<bool>(
+          valueListenable: backgroundPlay,
+          builder: (_, value, __) {
+            return CustomBar(
+              context.l10n!.backgroundPlay,
+              FluentIcons.dual_screen_tablet_24_filled,
+              trailing: Switch(
+                value: value,
+                onChanged: (value) => _toggleBackgroundPlay(context, value),
+              ),
+            );
+          },
+        ),
       ],
     );
   }
@@ -524,6 +537,12 @@ class SettingsPage extends StatelessWidget {
             ? const PredictiveBackPageTransitionsBuilder()
             : const CupertinoPageTransitionsBuilder();
     Musify.updateAppState(context);
+    showToast(context, context.l10n!.settingChangedMsg);
+  }
+
+  void _toggleBackgroundPlay(BuildContext context, bool value) {
+    addOrUpdateData('settings', 'backgroundPlay', value);
+    backgroundPlay.value = value;
     showToast(context, context.l10n!.settingChangedMsg);
   }
 
