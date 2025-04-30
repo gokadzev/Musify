@@ -92,7 +92,12 @@ class PlaylistArtwork extends StatelessWidget {
               height: size,
               child: ClipRRect(
                 borderRadius: commonBarRadius,
-                child: Image(image: imageProvider),
+                child: Image(
+                  image: imageProvider,
+                  height: size,
+                  width: size,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
         errorWidget: (_, __, ___) => _nullArtwork(),
