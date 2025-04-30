@@ -41,6 +41,13 @@ class MusifyAudioHandler extends BaseAudioHandler {
     _setupEventSubscriptions();
     _updatePlaybackState();
 
+    audioPlayer.setAndroidAudioAttributes(
+      const AndroidAudioAttributes(
+        contentType: AndroidAudioContentType.music,
+        usage: AndroidAudioUsage.media,
+      ),
+    );
+
     _initialize();
   }
 
