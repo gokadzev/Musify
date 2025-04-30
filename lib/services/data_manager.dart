@@ -97,7 +97,6 @@ Future<dynamic> getData(
 }
 
 Future<void> deleteData(String category, String key) async {
-  // Remove from memory cache
   _memoryCache
     ..remove('${category}_$key')
     ..remove('${category}_${key}_date');
@@ -151,6 +150,7 @@ Future<void> cleanupOldCacheEntries() async {
   }
 }
 
+// Check if the cache is still valid based on the caching duration
 Future<bool> isCacheValid(Box box, String key, Duration cachingDuration) async {
   final date = box.get('${key}_date');
   if (date == null) {
@@ -179,7 +179,6 @@ Future<Box> _openBox(String category) async {
   }
 }
 
-// Existing backup/restore code remains unchanged
 Future<String> backupData(BuildContext context) async {
   final boxNames = ['user', 'settings'];
   final dlPath = await FilePicker.platform.getDirectoryPath();
