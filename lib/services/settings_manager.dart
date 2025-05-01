@@ -27,7 +27,7 @@ import 'package:musify/utilities/utils.dart';
 // Preferences
 
 final backgroundPlay = ValueNotifier<bool>(
-  Hive.box('settings').get('backgroundPlay', defaultValue: true),
+  Hive.box('settings').get('backgroundPlay', defaultValue: false),
 );
 
 final playNextSongAutomatically = ValueNotifier<bool>(
