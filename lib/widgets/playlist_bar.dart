@@ -85,7 +85,9 @@ class PlaylistBar extends StatelessWidget {
                       ),
                 ),
               ).then((isPlaylistUpdated) {
-                if (isPlaylistUpdated != null && isPlaylistUpdated) {
+                if (playlistId != null &&
+                    isPlaylistUpdated != null &&
+                    isPlaylistUpdated) {
                   getPlaylistInfoForWidget(
                     playlistId,
                   ).then((result) => {updatedPlaylist = result});
