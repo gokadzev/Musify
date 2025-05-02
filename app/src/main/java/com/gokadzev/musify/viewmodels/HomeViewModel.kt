@@ -58,7 +58,6 @@ class HomeViewModel
         private val continuation = MutableStateFlow<String?>(null)
         val homeFirstContinuation = MutableStateFlow<List<HomePlayList>?>(null)
         val homeSecondContinuation = MutableStateFlow<List<HomePlayList>?>(null)
-        val homeThirdContinuation = MutableStateFlow<List<HomePlayList>?>(null)
 
         private val songsAlbumRecommendation = MutableStateFlow<List<Song>?>(null)
         val homeFirstAlbumRecommendation = MutableStateFlow<HomeAlbumRecommendation?>(null)
@@ -67,7 +66,6 @@ class HomeViewModel
         private val artistRecommendation = MutableStateFlow<List<Artist>?>(null)
         val homeFirstArtistRecommendation = MutableStateFlow<HomeArtistRecommendation?>(null)
         val homeSecondArtistRecommendation = MutableStateFlow<HomeArtistRecommendation?>(null)
-        val homeThirdArtistRecommendation = MutableStateFlow<HomeArtistRecommendation?>(null)
 
         val youtubePlaylists = MutableStateFlow<List<PlaylistItem>?>(null)
 
@@ -203,12 +201,7 @@ class HomeViewModel
             }
             artistLoad(artistRecommendation.value?.getOrNull(1), homeSecondArtistRecommendation)
 
-            continuation.value?.run {
-                continuation(this, homeThirdContinuation)
-            }
             albumLoad(songsAlbumRecommendation.value?.getOrNull(1), homeSecondAlbumRecommendation)
-
-            artistLoad(artistRecommendation.value?.getOrNull(2), homeThirdArtistRecommendation)
         }
 
         private suspend fun songLoad() {
