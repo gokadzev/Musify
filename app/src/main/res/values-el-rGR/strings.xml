@@ -1,0 +1,308 @@
+<resources>
+    <!-- Bottom navigation -->
+    <string name="home">Αρχική</string>
+    <string name="songs">Τραγούδια</string>
+    <string name="artists">Καλλιτέχνες</string>
+    <string name="albums">Άλμπουμ</string>
+    <string name="playlists">Playlists</string>
+    <string name="explore">Εξερεύνηση</string>
+
+    <!-- Top bar -->
+    <plurals name="n_selected">
+        <item quantity="one">επιλέχτηκε 1</item>
+        <item quantity="other">επιλέχθηκαν %d</item>
+    </plurals>
+
+    <!-- Home -->
+    <string name="history">Ιστορία</string>
+    <string name="stats">Στατιστικά</string>
+    <string name="mood_and_genres">Διάθεση και Είδη</string>
+    <string name="account">Λογαριασμός</string>
+    <string name="quick_picks">Γρήγορη επιλογή</string>
+    <string name="quick_picks_empty">Ακούστε τραγούδια για να δημιουργήσετε τις γρήγορες επιλογές</string>
+    <string name="new_release_albums">Νέες κυκλοφορίες</string>
+    <string name="forgotten_favorites">Ξεχασμένα</string>
+    <string name="similar_to">Παρόμοια με</string>
+    <string name="keep_listening">Συνέχισε να ακούς</string>
+    <string name="your_ytb_playlists">Το YouTube playlist σου</string>
+
+    <!-- History -->
+    <string name="today">Σήμερα</string>
+    <string name="yesterday">Εχθές</string>
+    <string name="this_week">Αυτήν την εβδομάδα</string>
+    <string name="last_week">Την προηγούμενη εβδομάδα</string>
+
+    <!-- Stats -->
+    <string name="most_played_songs">Τραγούδια που παίχτηκαν περισσότερο</string>
+    <string name="most_played_artists">Καλλιτέχνες που παίχτηκαν περισσότερο</string>
+    <string name="most_played_albums">Άλμπουμ που παίχτηκαν περισσότερο</string>
+
+    <!-- Search -->
+    <string name="search">Αναζήτηση</string>
+    <string name="search_yt_music">Αναζήτηση στο YouTube Μουσική…</string>
+    <string name="search_library">Αναζήτηση βιβλιοθήκης…</string>
+    <string name="filter_library">Βιβλιοθήκη</string>
+    <string name="filter_liked">Αγαπημένα</string>
+    <string name="filter_downloaded">Κατεβασμένα</string>
+    <string name="filter_all">Όλα</string>
+    <string name="filter_songs">Τραγούδια</string>
+    <string name="filter_videos">Βίντεο</string>
+    <string name="filter_albums">Άλμπουμ</string>
+    <string name="filter_artists">Καλλιτέχνες</string>
+    <string name="filter_playlists">Playlists</string>
+    <string name="filter_community_playlists">Playlists κοινότητας</string>
+    <string name="filter_featured_playlists">Επιλεγμένα playlists</string>
+    <string name="filter_bookmarked">Σελιδοδείκτη</string>
+    <string name="no_results_found">Κανένα αποτέλεσμα</string>
+
+    <!-- Artist screen -->
+    <string name="from_your_library">Από την βιβλιοθήκη σας</string>
+
+    <!-- Album screen -->
+    <string name="other_versions">Άλλες Εκδόσεις</string>
+
+    <!-- Library -->
+    <string name="liked">Αγαπημένα</string>
+    <string name="offline">Κατεβασμένα</string>
+    <string name="my_top">Τα Top μου</string>
+
+
+    <!-- Playlist -->
+    <string name="liked_songs">Αγαπημένα τραγούδια</string>
+    <string name="downloaded_songs">Κατεβασμένα τραγούδια</string>
+    <string name="playlist_is_empty">Το playlist είναι άδειο</string>
+    <string name="remove_download_playlist_confirm">Θέλετε να καταργήσετε όλα τα τραγούδια του playlist \"%s\" από τον χώρο αποθήκευσης Κατεβασμένων Τραγουδιών;</string>
+    <string name="delete_playlist_confirm">Θέλετε να διαγράψετε το playlist \"%s\";</string>
+
+    <!-- Button -->
+    <string name="retry">Επαναδοκιμή</string>
+    <string name="radio">Ράδιο</string>
+    <string name="shuffle">Ανάμιξη</string>
+    <string name="reset">Επαναφορά</string>
+
+    <!-- Menu -->
+    <string name="details">Λεπτομέρειες</string>
+    <string name="edit">Επεξεργασία</string>
+    <string name="start_radio">Έναρξη ραδίου</string>
+    <string name="play">Αναπαραγωγή</string>
+    <string name="play_next">Παίξε το επόμενο</string>
+    <string name="add_to_queue">Προσθήκη στην ουρά</string>
+    <string name="add_to_library">Προσθήκη στην βιβλιοθήκη</string>
+    <string name="remove_from_library">Αφαίρεση από την βιβλιοθήκη</string>
+    <string name="download">Λήψη</string>
+    <string name="downloading">Κατεβαίνει</string>
+    <string name="remove_download">Αφαίρεση κατεβασμένου</string>
+    <string name="import_playlist">Εισαγωγή playlist</string>
+    <string name="add_to_playlist">Προσθήκη σε playlist</string>
+    <string name="view_artist">Προβολή καλλιτέχνη</string>
+    <string name="view_album">Προβολή άλμπουμ</string>
+    <string name="refetch">Επανάκτηση</string>
+    <string name="share">Κοινοποίηση</string>
+    <string name="delete">Διαγραφή</string>
+    <string name="remove_from_history">Διαγραφή από την ιστορία</string>
+    <string name="search_online">Αναζήτηση</string>
+    <string name="sync">Συγχρονισμό</string>
+    <string name="advanced">Προχωρημένο</string>
+    <string name="select">επιλογή όλων</string>
+    <string name="like_all">Αγαπημένα όλα</string>
+
+    <!-- Sort menu -->
+    <string name="sort_by_create_date">Ημερομηνία προσθήκης</string>
+    <string name="sort_by_last_updated">Ημερομηνία ενημέρωσης</string>
+    <string name="sort_by_name">Όνομα</string>
+    <string name="sort_by_artist">Καλλιτέχνες</string>
+    <string name="sort_by_year">Χρόνος</string>
+    <string name="sort_by_song_count">Πλήθος τραγουδιών</string>
+    <string name="sort_by_length">Μέγεθος</string>
+    <string name="sort_by_play_time">Χρόνος αναπαραγωγής</string>
+    <string name="sort_by_custom">Προσαρμοσμένη σειρά</string>
+
+    <!-- Dialog -->
+    <string name="media_id">Id μέσου</string>
+    <string name="mime_type">Τύπος MIME</string>
+    <string name="codecs">Κωδικοποιητές</string>
+    <string name="bitrate">Bitrate</string>
+    <string name="sample_rate">Ρυθμός δειγματοληψίας</string>
+    <string name="loudness">Ηχηρότητα</string>
+    <string name="volume">Ένταση ήχου</string>
+    <string name="file_size">Μέγεθος αρχείου</string>
+    <string name="unknown">Άγνωστο</string>
+    <string name="copied">Αντιγράφηκε στο πρόχειρο</string>
+
+    <string name="edit_lyrics">Επεξεργασία στίχων</string>
+    <string name="search_lyrics">Αναζήτηση στίχων</string>
+
+    <string name="edit_song">Επεξεργασία τραγουδιού</string>
+    <string name="song_title">Τίτλος τραγουδιού</string>
+    <string name="song_artists">Καλλιτέχνης τραγουδιού</string>
+    <string name="error_song_title_empty">Ο τίτλος τραγουδιού δεν μπορεί να είναι άδειος.</string>
+    <string name="error_song_artist_empty">Ο καλλιτέχνης τραγουδιού δεν μπορεί να είναι άδειος.</string>
+    <string name="save">Αποθήκευση</string>
+
+    <string name="choose_playlist">Επιλογή playlist</string>
+    <string name="edit_playlist">Επεξεργασία playlist</string>
+    <string name="create_playlist">Δημιουργία playlist</string>
+    <string name="playlist_name">Όνομα playlist</string>
+    <string name="error_playlist_name_empty">Το όνομα του playlist δεν μπορεί να είναι άδειο.</string>
+    <string name="already_in_playlist">Ήδη στο playlist:</string>
+
+    <string name="edit_artist">Επεξεργασία καλλιτέχνη</string>
+    <string name="artist_name">Όνομα καλλιτέχνη</string>
+    <string name="error_artist_name_empty">Το όνομα του καλλιτέχνη δεν μπορεί να είναι άδειο.</string>
+
+    <!-- Noun -->
+    <plurals name="n_song">
+        <item quantity="one">%d τραγούδι</item>
+        <item quantity="other">%d τραγούδια</item>
+    </plurals>
+    <plurals name="n_artist">
+        <item quantity="one">%d καλλιτέχνης</item>
+        <item quantity="other">%d καλλιτέχνες</item>
+    </plurals>
+    <plurals name="n_album">
+        <item quantity="one">%d άλμπουμ</item>
+        <item quantity="other">%d άλμπουμ</item>
+    </plurals>
+    <plurals name="n_playlist">
+        <item quantity="one">%d playlist</item>
+        <item quantity="other">%d playlists</item>
+    </plurals>
+    <plurals name="n_week">
+        <item quantity="one">%d εβδομάδα</item>
+        <item quantity="other">%d εβδομάδες</item>
+    </plurals>
+    <plurals name="n_month">
+        <item quantity="one">%d μήνας</item>
+        <item quantity="other">%d μήνες</item>
+    </plurals>
+    <plurals name="n_year">
+        <item quantity="one">%d χρόνος</item>
+        <item quantity="other">%d χρόνια</item>
+    </plurals>
+
+    <!-- Snackbar -->
+    <string name="playlist_imported">Το playlist εισαχθεί</string>
+    <string name="removed_song_from_playlist">Αφαιρέθηκε το \"%s\" απο το playlist</string>
+    <string name="playlist_synced">Έγινε συγχρονισμός playlist</string>
+    <string name="undo">Αναίρεση</string>
+
+    <!-- Player -->
+    <string name="lyrics_not_found">Δεν βρέθηκαν στίχοι</string>
+    <string name="sleep_timer">Χρονόμετρο ύπνου</string>
+    <string name="end_of_song">Τέλος τραγουδιού</string>
+    <plurals name="minute">
+        <item quantity="one">1 λεπτό</item>
+        <item quantity="other">%d λεπτά</item>
+    </plurals>
+    <string name="error_no_stream">Δεν υπάρχει διαθέσιμη ροή</string>
+    <string name="error_no_internet">Δεν έχετε σύνδεση στο διαδίκτυο</string>
+    <string name="error_timeout">Τέλος χρόνου</string>
+    <string name="error_unknown">Άγνωστο σφάλμα</string>
+
+    <!-- Player action -->
+    <string name="action_like">Μου αρέσει</string>
+    <string name="action_remove_like">Αφαίρεση μου αρέσει</string>
+    <string name="action_shuffle_on">Ανάμιξη ενεργή</string>
+    <string name="action_shuffle_off">Ανάμιξη ανενεργή</string>
+    <string name="repeat_mode_off">Επανάληψη ενεργή</string>
+    <string name="repeat_mode_one">Επανάληψη τρέχοντος τραγουδιού</string>
+    <string name="repeat_mode_all">Επανάληψη ροής</string>
+
+    <!-- Queue Title -->
+    <string name="queue_all_songs">Όλα τα τραγούδια</string>
+    <string name="queue_searched_songs">Τραγούδια που αναζητήθηκαν</string>
+
+    <!-- Notification name -->
+    <string name="music_player">Αναπαραγωγή Μουσικής</string>
+
+    <!-- Settings -->
+    <string name="settings">Ρυθμίσεις</string>
+    <string name="appearance">Εμφάνιση</string>
+    <string name="enable_dynamic_theme">Ενεργοποίηση δυναμικού θέματος</string>
+    <string name="dark_theme">Σκούρο θέμα</string>
+    <string name="dark_theme_on">Ενεργό</string>
+    <string name="dark_theme_off">Ανενεργό</string>
+    <string name="dark_theme_follow_system">Συστήματος</string>
+    <string name="player_background_style">Στυλ φόντου αναπαραγωγητή</string>
+    <string name="follow_theme">Συστήματος</string>
+    <string name="gradient">Βαθμίδα</string>
+    <string name="enable_squiggly_slider">Ενεργοποίηση κυματιστών γραμμών</string>
+    <string name="pure_black">Καθαρό μαύρο</string>
+    <string name="default_open_tab">Προεπιλεγμένη ανοιχτή ταμπέλα</string>
+    <string name="customize_navigation_tabs">Προσαρμογή καρτέλας εξερεύνησης</string>
+    <string name="lyrics_text_position">Θέση στίχων</string>
+    <string name="left">Αριστερά</string>
+    <string name="center">Κέντρο</string>
+    <string name="right">Δεξιά</string>
+
+    <string name="content">Περιεχόμενο</string>
+    <string name="login">Σύνδεση</string>
+    <string name="content_language">Προεπιλεγμένη γλώσσα περιεχομένου</string>
+    <string name="content_country">Προεπιλεγμένη χώρα περιεχομένου</string>
+    <string name="system_default">Συστήματος</string>
+    <string name="proxy">Proxy</string>
+    <string name="enable_proxy">Ενεργοποίηση proxy</string>
+    <string name="proxy_type">Τύπος proxy</string>
+    <string name="proxy_url">Σύνδεσμος Proxy</string>
+    <string name="default_lib_chips">Αλλαγή προεπιλεγμένων τσιπ βιβλιοθήκης</string>
+    <string name="set_quick_picks">Ορισμό Γρήγορων Επιλογών</string>
+    <string name="last_song_listened">Βασισμένο στο τελευταίο τραγούδι που ακούσατε</string>
+    <string name="restart_to_take_effect">Επανεκκίνηση για εφαρμογή αλλαγών</string>
+
+    <string name="player_and_audio">Αναπαραγωγητής και ήχος</string>
+    <string name="audio_quality">Ποιότητα ήχου</string>
+    <string name="audio_quality_auto">Αυτόματο</string>
+    <string name="audio_quality_high">Υψηλή</string>
+    <string name="audio_quality_low">Χαμηλή</string>
+    <string name="persistent_queue">Μόνιμη ουρά</string>
+    <string name="skip_silence">Παραλήψεις σιωπής</string>
+    <string name="audio_normalization">Κανονικοποίηση ήχου</string>
+    <string name="equalizer">Εξισωτής</string>
+
+    <string name="storage">Αποθήκευση</string>
+    <string name="cache">Προσωρινή Μνήμη</string>
+    <string name="image_cache">Προσωρινή Μνήμη Φωτογραφίων</string>
+    <string name="song_cache">Προσωρινή Μνήμη Τραγουδιών</string>
+    <string name="max_cache_size">Μέγιστη προσωρινή μνήμη</string>
+    <string name="unlimited">Απεριόριστη</string>
+    <string name="clear_all_downloads">Εκκαθάριση όλων των κατεβασμένων</string>
+    <string name="max_image_cache_size">Μέγιστη προσωρινή μνήμη φωτογραφιών</string>
+    <string name="clear_image_cache">Εκκαθάριση προσωρινής μνήμης</string>
+    <string name="max_song_cache_size">Μέγιστη προσωρινής μνήμης τραγουδιών</string>
+    <string name="clear_song_cache">Εκκαθάριση προσωρινής μνήμης τραγουδιών</string>
+    <string name="size_used">%s χρησιμοποιούνται</string>
+
+    <string name="privacy">Απόρρητο</string>
+    <string name="pause_listen_history">Παύση ιστορικού ακρόασης</string>
+    <string name="clear_listen_history">Εκκαθάριση ιστορικού ακρόασης</string>
+    <string name="clear_listen_history_confirm">Είστε σίγουροι να διαγραφεί όλο το ιστορικό ακρόασης;</string>
+    <string name="pause_search_history">Παύση ιστορικού αναζήτησης</string>
+    <string name="clear_search_history">Εκκαθάριση ιστορικού αναζήτησης</string>
+    <string name="clear_search_history_confirm">Είστε σίγουροι να διαγραφεί όλο το ιστορικό αναζήτησης;</string>
+    <string name="enable_kugou">Ενεργοποίηση στίχων KuGou</string>
+    <string name="enable_lrclib">Ενεργοποίηση στίχων LrcLib</string>
+
+    <string name="backup_restore">Αντίγραφο και επαναφορά</string>
+    <string name="backup">Αντίγραφο ασφάλειας</string>
+    <string name="restore">Επαναφορά</string>
+    <string name="imported_playlist">Εισαχθεί playlist</string>
+    <string name="backup_create_success">Αντιγράφο ασφαλείας δημιουργήθηκε επιτυχώς</string>
+    <string name="backup_create_failed">Δεν ήταν δυνατή η δημιουργία αντιγράφου ασφαλείας</string>
+    <string name="restore_failed">Αποτυχία επαναφοράς</string>
+
+    <string name="about">Σχετικά</string>
+    <string name="app_version">Έκδοση εφαρμογής</string>
+
+    <string name="new_version_available">Μια νέα έκδοση είναι διαθέσιμη</string>
+    <string name="translation_models">Μοντέλα Μετάφρασης</string>
+    <string name="clear_translation_models">Εκκαθάριση μοντέλων μετάφρασης</string>
+
+    <string name="all_time">Συνεχώς</string>
+    <string name="past_24_hours">Τελευταίες 24 ώρες</string>
+    <string name="past_week">Τελευταία εβδομάδα</string>
+    <string name="past_month">Τελευταίο μήνα</string>
+    <string name="past_year">Τελευταίο χρόνο</string>
+    <string name="top_length">Το μήκος της Top λίστας μου</string>
+</resources>
+
+      

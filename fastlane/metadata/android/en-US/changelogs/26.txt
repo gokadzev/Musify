@@ -1,0 +1,11 @@
+- Fix radio not working
+- Added other versions of albums
+- Fix offline mode
+- Updated languages
+- Black player in pure black mode
+- Better UI for multiselect
+- Undo button after removing from queue
+- Swipe on thumbnails to change song
+- Better gradient
+- Small animations
+- Other small fix

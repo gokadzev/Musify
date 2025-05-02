@@ -1,0 +1,8 @@
+<br><b>Improved</b>
+
+- Use cookie in priority if user logged in
+
+<br><b>Fixed</b>
+
+- Fix songs can't be played
+- Fix logo on media player
