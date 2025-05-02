@@ -1,3 +1,0 @@
-<br><b>Fixed</b>
-
-- Fix songs can't be played

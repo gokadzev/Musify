@@ -1,7 +1,0 @@
-- Download fix
-- Discord RPC fix
-- Song not playing
-- new Icon thanks to @JPGuillemin
-- fix crash on playlist order change
-- fix deleted liked in albums
-- remove empty section artist

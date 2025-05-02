@@ -242,7 +242,7 @@ fun RichPresence(song: Song?) {
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
-                text = "Listening to InnerTune",
+                text = "Listening to Musify",
                 style = MaterialTheme.typography.labelLarge,
                 textAlign = TextAlign.Start,
                 fontWeight = FontWeight.ExtraBold,
@@ -344,12 +344,12 @@ fun RichPresence(song: Song?) {
 
             OutlinedButton(
                 onClick = {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Malopieds/InnerTune"))
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/gokadzev/Musify"))
                     context.startActivity(intent)
                 },
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text("Visit InnerTune")
+                Text("Visit Musify")
             }
         }
     }

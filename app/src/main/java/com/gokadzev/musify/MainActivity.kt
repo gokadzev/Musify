@@ -114,7 +114,7 @@ import com.gokadzev.musify.ui.screens.search.OnlineSearchScreen
 import com.gokadzev.musify.ui.screens.settings.*
 import com.gokadzev.musify.ui.theme.ColorSaver
 import com.gokadzev.musify.ui.theme.DefaultThemeColor
-import com.gokadzev.musify.ui.theme.InnerTuneTheme
+import com.gokadzev.musify.ui.theme.MusifyTheme
 import com.gokadzev.musify.ui.theme.extractThemeColor
 import com.gokadzev.musify.ui.utils.appBarScrollBehavior
 import com.gokadzev.musify.ui.utils.backToMain
@@ -258,7 +258,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
-            InnerTuneTheme(
+            MusifyTheme(
                 darkTheme = useDarkTheme,
                 pureBlack = pureBlack,
                 themeColor = themeColor,

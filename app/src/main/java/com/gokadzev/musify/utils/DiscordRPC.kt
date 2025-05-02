@@ -27,7 +27,7 @@ class DiscordRPC(
                 buttons =
                     listOf(
                         "Listen on YouTube Music" to "https://music.youtube.com/watch?v=${song.song.id}",
-                        "Visit InnerTune" to "https://github.com/Malopieds/InnerTune",
+                        "Visit Musify" to "https://github.com/gokadzev/Musify",
                     ),
                 type = Type.LISTENING,
                 since = System.currentTimeMillis(),

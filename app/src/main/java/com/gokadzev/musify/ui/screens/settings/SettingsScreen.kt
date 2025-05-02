@@ -99,7 +99,7 @@ fun SettingsScreen(
                     }
                 },
                 onClick = {
-                    uriHandler.openUri("https://github.com/Malopieds/InnerTune/releases/latest")
+                    uriHandler.openUri("https://github.com/gokadzev/Musify/releases/latest")
                 },
             )
         }
