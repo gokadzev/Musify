@@ -1,42 +1,51 @@
-name: Build debug APK
+name: Test, Build and Release APK
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - '**'
-    paths-ignore:
-      - 'README.md'
-      - 'fastlane/**'
-      - 'assets/**'
-      - '.github/**/*.md'
-      - '.github/FUNDING.yml'
-      - '.github/ISSUE_TEMPLATE/**'
+
+env:
+  PROPERTIES_PATH: './app/key.properties'
 
 jobs:
   build:
+    name: Build APK
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Decode Keystore
-        run: echo ${{ secrets.KEYSTORE }} | base64 -d >> app/music-debug.jks
-
-      - name: set up JDK 17
-        uses: actions/setup-java@v3
+      # Setup Java environment
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
         with:
-          java-version: 17
-          distribution: "zulu"
+          java-version: '17'
+          distribution: 'zulu'
           cache: 'gradle'
 
-      - name: Build debug APK and run jvm tests
-        run: ./gradlew assembleDebug lintFossDebug testFossDebugUnitTest --stacktrace -DskipFormatKtlint
-        env:
-          MUSIC_DEBUG_KEYSTORE_FILE: 'music-debug.jks'
-          MUSIC_DEBUG_SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
-          MUSIC_DEBUG_SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+      # Create properties file
+      - run: |
+          echo keyPassword=${{ secrets.SIGNING_KEY_PASSWORD }} > ${{env.PROPERTIES_PATH}}
+          echo storePassword=${{ secrets.SIGNING_STORE_PASSWORD }} >> ${{env.PROPERTIES_PATH}}
+          echo keyAlias=${{ secrets.KEY_ALIAS }} >> ${{env.PROPERTIES_PATH}}
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+      # Decode Keystore
+      - name: Decode Keystore
+        run: echo ${{ secrets.KEYSTORE }} | base64 -d > app/musify.jks
+
+      # Build release APK and run tests
+      - name: Build release APK and run tests
+        run: ./gradlew assembleRelease lintFossRelease testFossReleaseUnitTest --stacktrace -DskipFormatKtlint
+        env:
+          MUSIC_RELEASE_KEYSTORE_FILE: 'musify.jks'
+          MUSIC_RELEASE_SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+          MUSIC_RELEASE_SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+
+      # Release APK
+      - name: Release APK
+        uses: svenstaro/upload-release-action@v2
         with:
-          name: app
-          path: app/build/outputs/apk/foss/debug/*.apk
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: app/build/outputs/apk/foss/release/*.apk
+          asset_name: Musify-release.apk
+          tag: rebase
+          prerelease: false
+          overwrite: true
