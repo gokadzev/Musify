@@ -109,7 +109,7 @@ You can see frequently asked questions and their answers [here](https://github.c
 
 ## Credits
 
-[Musify](https://github.com/Harsh-23/Musify) - Original inspiration for the concept and app name, while our implementation took a different direction with a complete rewrite, a rebranded logo, and a redesigned layout and UI.
+[InnerTune](https://github.com/z-huang/InnerTune) & [InnerTune Fork](https://github.com/Malopieds/InnerTune)
 
 ---
 
