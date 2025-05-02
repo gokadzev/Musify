@@ -1,4 +1,4 @@
-import com.malopieds.kugou.KuGou
+import com.gokadzev.kugou.KuGou
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertTrue
 import org.junit.Test

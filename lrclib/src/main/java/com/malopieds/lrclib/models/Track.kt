@@ -1,4 +1,4 @@
-package com.malopieds.lrclib.models
+package com.gokadzev.lrclib.models
 
 import kotlinx.serialization.Serializable
 import kotlin.math.abs

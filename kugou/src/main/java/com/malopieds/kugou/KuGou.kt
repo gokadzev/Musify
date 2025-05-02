@@ -1,8 +1,8 @@
-package com.malopieds.kugou
+package com.gokadzev.kugou
 
-import com.malopieds.kugou.models.DownloadLyricsResponse
-import com.malopieds.kugou.models.SearchLyricsResponse
-import com.malopieds.kugou.models.SearchSongResponse
+import com.gokadzev.kugou.models.DownloadLyricsResponse
+import com.gokadzev.kugou.models.SearchLyricsResponse
+import com.gokadzev.kugou.models.SearchSongResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.okhttp.OkHttp

@@ -1,4 +1,4 @@
-package com.malopieds.kugou.models
+package com.gokadzev.kugou.models
 
 import kotlinx.serialization.Serializable
 

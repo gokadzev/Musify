@@ -1,7 +1,7 @@
-package com.malopieds.lrclib
+package com.gokadzev.lrclib
 
-import com.malopieds.lrclib.models.Track
-import com.malopieds.lrclib.models.bestMatchingFor
+import com.gokadzev.lrclib.models.Track
+import com.gokadzev.lrclib.models.bestMatchingFor
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO

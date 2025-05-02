@@ -6,9 +6,9 @@
         android:icon="@drawable/shortcut_search"
         android:shortcutShortLabel="@string/search">
         <intent
-            android:targetClass="com.malopieds.innertune.MainActivity"
-            android:targetPackage="com.malopieds.innertune"
-            android:action="com.malopieds.innertune.action.SEARCH" />
+            android:targetClass="com.gokadzev.musify.MainActivity"
+            android:targetPackage="com.gokadzev.musify"
+            android:action="com.gokadzev.musify.action.SEARCH" />
     </shortcut>
     <shortcut
         android:shortcutId="explore"
@@ -16,9 +16,9 @@
         android:icon="@drawable/shortcut_explore"
         android:shortcutShortLabel="@string/explore">
         <intent
-            android:targetClass="com.malopieds.innertune.MainActivity"
-            android:targetPackage="com.malopieds.innertune"
-            android:action="com.malopieds.innertune.action.EXPLORE" />
+            android:targetClass="com.gokadzev.musify.MainActivity"
+            android:targetPackage="com.gokadzev.musify"
+            android:action="com.gokadzev.musify.action.EXPLORE" />
     </shortcut>
     <shortcut
         android:shortcutId="library"
@@ -26,8 +26,8 @@
         android:icon="@drawable/shortcut_library"
         android:shortcutShortLabel="@string/filter_library">
         <intent
-            android:targetClass="com.malopieds.innertune.MainActivity"
-            android:targetPackage="com.malopieds.innertune"
-            android:action="com.malopieds.innertune.action.LIBRARY" />
+            android:targetClass="com.gokadzev.musify.MainActivity"
+            android:targetPackage="com.gokadzev.musify"
+            android:action="com.gokadzev.musify.action.LIBRARY" />
     </shortcut>
 </shortcuts>

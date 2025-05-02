@@ -1,12 +1,12 @@
-package com.malopieds.innertube
+package com.gokadzev.innertube
 
-import com.malopieds.innertube.YouTube.SearchFilter.Companion.FILTER_ALBUM
-import com.malopieds.innertube.YouTube.SearchFilter.Companion.FILTER_ARTIST
-import com.malopieds.innertube.YouTube.SearchFilter.Companion.FILTER_COMMUNITY_PLAYLIST
-import com.malopieds.innertube.YouTube.SearchFilter.Companion.FILTER_FEATURED_PLAYLIST
-import com.malopieds.innertube.YouTube.SearchFilter.Companion.FILTER_SONG
-import com.malopieds.innertube.YouTube.SearchFilter.Companion.FILTER_VIDEO
-import com.malopieds.innertube.models.WatchEndpoint
+import com.gokadzev.innertube.YouTube.SearchFilter.Companion.FILTER_ALBUM
+import com.gokadzev.innertube.YouTube.SearchFilter.Companion.FILTER_ARTIST
+import com.gokadzev.innertube.YouTube.SearchFilter.Companion.FILTER_COMMUNITY_PLAYLIST
+import com.gokadzev.innertube.YouTube.SearchFilter.Companion.FILTER_FEATURED_PLAYLIST
+import com.gokadzev.innertube.YouTube.SearchFilter.Companion.FILTER_SONG
+import com.gokadzev.innertube.YouTube.SearchFilter.Companion.FILTER_VIDEO
+import com.gokadzev.innertube.models.WatchEndpoint
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.request.get
