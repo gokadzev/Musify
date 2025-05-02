@@ -1,8 +1,0 @@
-Bug Fixes
-- Made offline playlists available for offline mode
-- Fixed spacing in search page
-
-Enhancements
-- Added option to remove songs from recently played list
-- Implemented applying the same album cover to all songs in an album
-- Full changelog: https://github.com/gokadzev/Musify/releases

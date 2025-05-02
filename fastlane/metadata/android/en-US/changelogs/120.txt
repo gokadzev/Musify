@@ -1,5 +1,0 @@
-Bug Fixes
-- Fixed playback problem
-
-Enhancements
-- Added and updated translations
