@@ -251,6 +251,46 @@ fun LibraryPlaylistsScreen(
                     }
 
                     item(
+                        key = "historyPlaylist",
+                        contentType = { CONTENT_TYPE_PLAYLIST },
+                    ) {
+                        PlaylistListItem(
+                            playlist = Playlist(
+                                playlist = PlaylistEntity(id = UUID.randomUUID().toString(), name = stringResource(R.string.history)),
+                                songCount = 0,
+                                thumbnails = emptyList(),
+                            ),
+                            autoPlaylist = true,
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        navController.navigate("history")
+                                    }.animateItem(),
+                        )
+                    }
+
+                    item(
+                        key = "statsPlaylist",
+                        contentType = { CONTENT_TYPE_PLAYLIST },
+                    ) {
+                        PlaylistListItem(
+                            playlist = Playlist(
+                                playlist = PlaylistEntity(id = UUID.randomUUID().toString(), name = stringResource(R.string.stats)),
+                                songCount = 0,
+                                thumbnails = emptyList(),
+                            ),
+                            autoPlaylist = true,
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        navController.navigate("stats")
+                                    }.animateItem(),
+                        )
+                    }
+
+                    item(
                         key = "TopPlaylist",
                         contentType = { CONTENT_TYPE_PLAYLIST },
                     ) {
@@ -384,6 +424,49 @@ fun LibraryPlaylistsScreen(
                                     ).animateItem(),
                         )
                     }
+
+                    item(
+                        key = "historyPlaylist",
+                        contentType = { CONTENT_TYPE_PLAYLIST },
+                    ) {
+                        PlaylistGridItem(
+                            playlist = Playlist(
+                                playlist = PlaylistEntity(id = UUID.randomUUID().toString(), name = stringResource(R.string.history)),
+                                songCount = 0,
+                                thumbnails = emptyList(),
+                            ),
+                            fillMaxWidth = true,
+                            autoPlaylist = true,
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        navController.navigate("history")
+                                    }.animateItem(),
+                        )
+                    }
+
+                    item(
+                        key = "statsPlaylist",
+                        contentType = { CONTENT_TYPE_PLAYLIST },
+                    ) {
+                        PlaylistGridItem(
+                            playlist = Playlist(
+                                playlist = PlaylistEntity(id = UUID.randomUUID().toString(), name = stringResource(R.string.stats)),
+                                songCount = 0,
+                                thumbnails = emptyList(),
+                            ),
+                            autoPlaylist = true,
+                            fillMaxWidth = true,
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        navController.navigate("stats")
+                                    }.animateItem(),
+                        )
+                    }
+
 
                     item(
                         key = "TopPlaylist",

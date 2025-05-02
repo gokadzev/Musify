@@ -193,19 +193,6 @@ fun HomeScreen(
                             .padding(horizontal = 12.dp, vertical = 6.dp)
                             .fillMaxWidth(),
                 ) {
-                    NavigationTile(
-                        title = stringResource(R.string.history),
-                        icon = R.drawable.history,
-                        onClick = { navController.navigate("history") },
-                        modifier = Modifier.weight(1f),
-                    )
-
-                    NavigationTile(
-                        title = stringResource(R.string.stats),
-                        icon = R.drawable.trending_up,
-                        onClick = { navController.navigate("stats") },
-                        modifier = Modifier.weight(1f),
-                    )
 
                     if (isLoggedIn) {
                         NavigationTile(
