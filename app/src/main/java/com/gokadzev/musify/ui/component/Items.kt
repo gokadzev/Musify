@@ -978,9 +978,11 @@ fun PlaylistListItem(
             when (playlist.playlist.name) {
                 stringResource(R.string.liked) -> R.drawable.favorite
                 stringResource(R.string.offline) -> R.drawable.offline
+                stringResource(R.string.history) -> R.drawable.history
+                stringResource(R.string.stats) -> R.drawable.trending_up
                 else -> {
                     if (autoPlaylist) {
-                        R.drawable.trending_up
+                        R.drawable.media3_icon_star_filled
                     } else {
                         R.drawable.queue_music
                     }
