@@ -145,7 +145,6 @@ inline fun ListItem(
                 overflow = TextOverflow.Ellipsis,
                 modifier =
                     Modifier
-                        .basicMarquee()
                         .fillMaxWidth(),
             )
 
@@ -237,7 +236,6 @@ fun GridItem(
             textAlign = TextAlign.Start,
             modifier =
                 Modifier
-                    .basicMarquee()
                     .fillMaxWidth(),
         )
 
@@ -299,7 +297,6 @@ fun SmallGridItem(
                 textAlign = TextAlign.Start,
                 modifier =
                     Modifier
-                        .basicMarquee()
                         .fillMaxWidth(),
             )
         }
@@ -1567,7 +1564,6 @@ fun YouTubeGridItem(
             textAlign = if (item is ArtistItem) TextAlign.Center else TextAlign.Start,
             modifier =
                 Modifier
-                    .basicMarquee(iterations = 3)
                     .fillMaxWidth(),
         )
 
