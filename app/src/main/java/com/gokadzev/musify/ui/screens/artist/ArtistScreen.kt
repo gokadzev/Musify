@@ -278,7 +278,7 @@ fun ArtistScreen(
                                                 )
                                             }
                                         },
-                                    ).animateItemPlacement(),
+                                    ).animateItem(fadeInSpec = null, fadeOutSpec = null),
                         )
                     }
                 }
@@ -349,7 +349,7 @@ fun ArtistScreen(
                                                     )
                                                 }
                                             },
-                                        ).animateItemPlacement(),
+                                        ).animateItem(fadeInSpec = null, fadeOutSpec = null),
                             )
                         }
                     } else {
@@ -416,7 +416,7 @@ fun ArtistScreen(
                                                             }
                                                         }
                                                     },
-                                                ).animateItemPlacement(),
+                                                ).animateItem(fadeInSpec = null, fadeOutSpec = null),
                                     )
                                 }
                             }

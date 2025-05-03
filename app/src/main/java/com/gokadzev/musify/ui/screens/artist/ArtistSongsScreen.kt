@@ -167,7 +167,7 @@ fun ArtistSongsScreen(
                                         )
                                     }
                                 },
-                            ).animateItemPlacement(),
+                            ).animateItem(fadeInSpec = null, fadeOutSpec = null),
                 )
             }
         }

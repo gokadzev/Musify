@@ -141,7 +141,7 @@ fun HistoryScreen(
                                             )
                                         }
                                     },
-                                ).animateItemPlacement(),
+                                ).animateItem(fadeInSpec = null, fadeOutSpec = null),
                     )
                 }
                 prev = event

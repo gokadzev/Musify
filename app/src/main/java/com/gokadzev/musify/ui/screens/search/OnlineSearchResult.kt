@@ -171,7 +171,7 @@ fun OnlineSearchResult(
                             }
                         },
                         onLongClick = longClick,
-                    ).animateItemPlacement(),
+                    ).animateItem(fadeInSpec = null, fadeOutSpec = null),
         )
     }
 

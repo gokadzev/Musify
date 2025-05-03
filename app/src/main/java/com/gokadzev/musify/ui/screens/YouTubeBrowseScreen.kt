@@ -175,7 +175,7 @@ fun YouTubeBrowseScreen(
                                                                 ),
                                                             )
                                                         }
-                                                    }.animateItemPlacement(),
+                                                    }.animateItem(fadeInSpec = null, fadeOutSpec = null),
                                         )
                                     }
                                 }
@@ -248,7 +248,7 @@ fun YouTubeBrowseScreen(
                                                             }
                                                         }
                                                     },
-                                                ).animateItemPlacement(),
+                                                ).animateItem(fadeInSpec = null, fadeOutSpec = null),
                                     )
                                 }
                             }

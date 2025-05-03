@@ -439,7 +439,7 @@ fun HomeScreen(
                                                             }
                                                         }
                                                     },
-                                                ).animateItemPlacement(),
+                                                ).animateItem(fadeInSpec = null, fadeOutSpec = null),
                                     )
                                 }
                             }
@@ -576,7 +576,7 @@ fun HomeScreen(
                                                             )
                                                         }
                                                     },
-                                                ).animateItemPlacement(),
+                                                ).animateItem(fadeInSpec = null, fadeOutSpec = null),
                                     )
                                 }
                             }
@@ -624,7 +624,7 @@ fun HomeScreen(
                                                             )
                                                         }
                                                     },
-                                                ).animateItemPlacement(),
+                                                ).animateItem(fadeInSpec = null, fadeOutSpec = null),
                                     )
                                 }
                             }
@@ -676,7 +676,7 @@ fun HomeScreen(
                                                             )
                                                         }
                                                     },
-                                                ).animateItemPlacement(),
+                                                ).animateItem(fadeInSpec = null, fadeOutSpec = null),
                                     )
                                 }
                             }
@@ -775,7 +775,7 @@ fun HomeScreen(
                                                             }
                                                         }
                                                     },
-                                                ).animateItemPlacement(),
+                                                ).animateItem(fadeInSpec = null, fadeOutSpec = null),
                                     )
                                 }
                             }
@@ -827,7 +827,7 @@ fun HomeScreen(
                                                             )
                                                         }
                                                     },
-                                                ).animateItemPlacement(),
+                                                ).animateItem(fadeInSpec = null, fadeOutSpec = null),
                                     )
                                 }
                             }
@@ -875,7 +875,7 @@ fun HomeScreen(
                                                             )
                                                         }
                                                     },
-                                                ).animateItemPlacement(),
+                                                ).animateItem(fadeInSpec = null, fadeOutSpec = null),
                                     )
                                 }
                             }
@@ -922,7 +922,7 @@ fun HomeScreen(
                                                     )
                                                 }
                                             },
-                                        ).animateItemPlacement(),
+                                        ).animateItem(fadeInSpec = null, fadeOutSpec = null),
                             )
                         }
                     }

@@ -286,7 +286,7 @@ fun LibrarySongsScreen(
                                         )
                                     }
                                 },
-                            ).animateItemPlacement(),
+                            ).animateItem(fadeInSpec = null, fadeOutSpec = null),
                 )
             }
         }
