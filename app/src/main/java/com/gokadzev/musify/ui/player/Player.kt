@@ -47,6 +47,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -877,6 +878,19 @@ fun BottomSheetPlayer(
                                 position = it
                             }
                             sliderPosition = null
+                        },
+                        thumb = {
+                            SliderDefaults.Thumb(
+                                modifier = Modifier.size(width = 5.5.dp, height = 30.dp),
+                                interactionSource = remember { MutableInteractionSource() }
+                            )
+                        },
+                        track = { sliderState ->
+                            SliderDefaults.Track(
+                                sliderState = sliderState,
+                                modifier = Modifier,
+                                thumbTrackGapSize = 3.dp
+                            )
                         },
                         modifier = Modifier.padding(horizontal = PlayerHorizontalPadding),
                     )
