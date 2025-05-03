@@ -17,7 +17,7 @@
   "audioQualityMsg": "Kualitas audio diperbarui",
   "automaticSongPicker": "Pemilih lagu otomatis",
   "backedupSuccess": "Data berhasil dicadangkan",
-  "backgroundPlay": "Background play",
+  "backgroundPlay": "Pemutar latar belakang",
   "backupError": "Terjadi kesalahan saat mencadangkan data",
   "backupUserData": "Cadangkan data pengguna",
   "becomeSponsor": "Menjadi sponsor",
@@ -71,7 +71,7 @@
   "offlineSongs": "Lagu offline",
   "originalRecommendations": "Algoritma rekomendasi asli",
   "others": "Lainnya",
-  "pickImageFromDevice": "Pick image from device",
+  "pickImageFromDevice": "Pilih gambar dari perangkat",
   "playNext": "Putar berikutnya",
   "playlist": "Playlist",
   "playlistAlreadyDownloaded": "Playlist sudah diunduh",
@@ -124,7 +124,7 @@
   "tools": "Alat",
   "understand": "Saya mengerti",
   "undo": "Batalkan",
-  "update": "Update",
+  "update": "Perbarui",
   "userPlaylists": "Playlist pengguna",
   "youtubePlaylistLinkOrId": "Tautan atau ID playlist YouTube"
 }
