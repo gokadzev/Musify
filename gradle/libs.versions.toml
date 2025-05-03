@@ -17,12 +17,12 @@ newpipeExtractor = "0.24.4"
 [libraries]
 annotation = { module = "androidx.annotation:annotation", version.ref = "annotation" }
 guava = { group = "com.google.guava", name = "guava", version = "33.0.0-android" }
-coroutines-guava = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-guava", version = "1.7.3" }
+coroutines-guava = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-guava", version = "1.10.1" }
 concurrent-futures = { group = "androidx.concurrent", name = "concurrent-futures-ktx", version = "1.2.0" }
 
 gradle = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
-activity = { group = "androidx.activity", name = "activity-compose", version = "1.9.1" }
-navigation = { group = "androidx.navigation", name = "navigation-compose", version = "2.8.0-rc01" }
+activity = { group = "androidx.activity", name = "activity-compose", version = "1.9.3" }
+navigation = { group = "androidx.navigation", name = "navigation-compose", version = "2.8.9" }
 hilt-navigation = { group = "androidx.hilt", name = "hilt-navigation-compose", version = "1.2.0" }
 datastore = { group = "androidx.datastore", name = "datastore-preferences", version = "1.1.1" }
 
@@ -76,7 +76,7 @@ brotli = { group = "org.brotli", name = "dec", version = "0.1.2" }
 
 opencc4j = { group = "com.github.houbb", name = "opencc4j", version = "1.8.1" }
 
-desugaring = { group = "com.android.tools", name = "desugar_jdk_libs", version = "2.0.4" }
+desugaring = { group = "com.android.tools", name = "desugar_jdk_libs", version = "2.1.5" }
 
 junit = { group = "junit", name = "junit", version = "4.13.2" }
 
