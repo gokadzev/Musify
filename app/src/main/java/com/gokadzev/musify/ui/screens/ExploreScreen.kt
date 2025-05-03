@@ -74,51 +74,6 @@ fun ExploreScreen(
                     LocalPlayerAwareWindowInsets.current.asPaddingValues().calculateTopPadding(),
                 ),
             )
-            explorePage?.newReleaseAlbums?.let { newReleaseAlbums ->
-                NavigationTitle(
-                    title = stringResource(R.string.new_release_albums),
-                    onClick = {
-                        navController.navigate("new_release")
-                    },
-                )
-
-                LazyRow(
-                    contentPadding =
-                        WindowInsets.systemBars
-                            .only(WindowInsetsSides.Horizontal)
-                            .asPaddingValues(),
-                ) {
-                    items(
-                        items = newReleaseAlbums,
-                        key = { it.id },
-                    ) { album ->
-                        YouTubeGridItem(
-                            item = album,
-                            isActive = mediaMetadata?.album?.id == album.id,
-                            isPlaying = isPlaying,
-                            coroutineScope = coroutineScope,
-                            modifier =
-                                Modifier
-                                    .combinedClickable(
-                                        onClick = {
-                                            navController.navigate("album/${album.id}")
-                                        },
-                                        onLongClick = {
-                                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                            menuState.show {
-                                                YouTubeAlbumMenu(
-                                                    albumItem = album,
-                                                    navController = navController,
-                                                    onDismiss = menuState::dismiss,
-                                                )
-                                            }
-                                        },
-                                    ).animateItemPlacement(),
-                        )
-                    }
-                }
-            }
-
             explorePage?.moodAndGenres?.let { moodAndGenres ->
                 NavigationTitle(
                     title = stringResource(R.string.mood_and_genres),
@@ -142,6 +97,52 @@ fun ExploreScreen(
                                 Modifier
                                     .padding(6.dp)
                                     .width(180.dp),
+                        )
+                    }
+                }
+            }
+
+            explorePage?.newReleaseAlbums?.let { newReleaseAlbums ->
+                NavigationTitle(
+                    title = stringResource(R.string.new_release_albums),
+                    onClick = {
+                        navController.navigate("new_release")
+                    },
+                )
+
+                LazyRow(
+                    contentPadding =
+                        WindowInsets.systemBars
+                            .only(WindowInsetsSides.Horizontal)
+                            .asPaddingValues(),
+                ) {
+                    items(
+                        items = newReleaseAlbums,
+                        key = { it.id },
+                    ) { album ->
+                        Modifier
+                            .combinedClickable(
+                                onClick = {
+                                    navController.navigate("album/${album.id}")
+                                },
+                                onLongClick = {
+                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                    menuState.show {
+                                        YouTubeAlbumMenu(
+                                            albumItem = album,
+                                            navController = navController,
+                                            onDismiss = menuState::dismiss,
+                                        )
+                                    }
+                                },
+                            )
+                        YouTubeGridItem(
+                            item = album,
+                            isActive = mediaMetadata?.album?.id == album.id,
+                            isPlaying = isPlaying,
+                            coroutineScope = coroutineScope,
+                            modifier =
+                                Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null),
                         )
                     }
                 }
