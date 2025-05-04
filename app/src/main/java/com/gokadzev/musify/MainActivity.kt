@@ -531,44 +531,10 @@ class MainActivity : ComponentActivity() {
                                     NavigationTab.EXPLORE -> Screens.Explore
                                     NavigationTab.LIBRARY -> Screens.Library
                                 }.route,
-                            enterTransition = {
-                                if (initialState.destination.route in topLevelScreens && targetState.destination.route in topLevelScreens) {
-                                    fadeIn(tween(250))
-                                } else {
-                                    fadeIn(tween(250)) + slideInHorizontally { it / 2 }
-                                }
-                            },
-                            exitTransition = {
-                                if (initialState.destination.route in topLevelScreens && targetState.destination.route in topLevelScreens) {
-                                    fadeOut(tween(200))
-                                } else {
-                                    fadeOut(tween(200)) + slideOutHorizontally { -it / 2 }
-                                }
-                            },
-                            popEnterTransition = {
-                                if ((
-                                        initialState.destination.route in topLevelScreens ||
-                                            initialState.destination.route?.startsWith("search/") == true
-                                    ) &&
-                                    targetState.destination.route in topLevelScreens
-                                ) {
-                                    fadeIn(tween(250))
-                                } else {
-                                    fadeIn(tween(250)) + slideInHorizontally { -it / 2 }
-                                }
-                            },
-                            popExitTransition = {
-                                if ((
-                                        initialState.destination.route in topLevelScreens ||
-                                            initialState.destination.route?.startsWith("search/") == true
-                                    ) &&
-                                    targetState.destination.route in topLevelScreens
-                                ) {
-                                    fadeOut(tween(200))
-                                } else {
-                                    fadeOut(tween(200)) + slideOutHorizontally { it / 2 }
-                                }
-                            },
+                            enterTransition = { slideInHorizontally { fullWidth -> fullWidth } + fadeIn() },
+                            exitTransition = { slideOutHorizontally { fullWidth -> -fullWidth } + fadeOut() },
+                            popEnterTransition = { slideInHorizontally { fullWidth -> -fullWidth } + fadeIn() },
+                            popExitTransition = { slideOutHorizontally { fullWidth -> fullWidth } + fadeOut() },
                             modifier =
                                 Modifier.nestedScroll(
                                     if (navigationItems.fastAny { it.route == navBackStackEntry?.destination?.route } ||
