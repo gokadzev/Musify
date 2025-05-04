@@ -211,7 +211,7 @@ fun SearchBar(
                     placeholder = placeholder,
                     leadingIcon = leadingIcon,
                     trailingIcon = trailingIcon,
-                    colors = colors.inputFieldColors,
+                    colors = SearchBarDefaults.inputFieldColors(),
                     interactionSource = interactionSource,
                     focusRequester = focusRequester,
                 )
@@ -330,7 +330,7 @@ private fun SearchBarInputField(
 }
 
 // Measurement specs
-val InputFieldHeight = 48.dp
+val InputFieldHeight = 54.dp
 private val SearchBarCornerRadius: Dp = InputFieldHeight / 2
 internal val SearchBarMinWidth: Dp = 360.dp
 private val SearchBarMaxWidth: Dp = 720.dp

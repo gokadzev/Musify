@@ -681,7 +681,7 @@ class MainActivity : ComponentActivity() {
                                             contentAlignment = Alignment.Center,
                                             modifier =
                                                 Modifier
-                                                    .size(48.dp)
+                                                    .size(54.dp)
                                                     .clip(CircleShape)
                                                     .clickable {
                                                         navController.navigate("settings")
