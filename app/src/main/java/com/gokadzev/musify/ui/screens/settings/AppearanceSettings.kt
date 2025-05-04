@@ -235,7 +235,7 @@ fun AppearanceSettings(
                 icon = { Icon(painterResource(R.drawable.dark_mode), null) },
                 selectedValue = darkMode,
                 onValueSelected = onDarkModeChange,
-                isLastInGroup = true,
+                isLastInGroup = !useDarkTheme,
                 valueText = {
                     when (it) {
                         DarkMode.ON -> stringResource(R.string.dark_theme_on)
@@ -251,6 +251,7 @@ fun AppearanceSettings(
                     icon = { Icon(painterResource(R.drawable.contrast), null) },
                     checked = pureBlack,
                     onCheckedChange = onPureBlackChange,
+                    isLastInGroup = true,
                 )
             }
         }
