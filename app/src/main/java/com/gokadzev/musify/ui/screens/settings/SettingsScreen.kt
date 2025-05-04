@@ -25,6 +25,7 @@ import com.gokadzev.musify.LocalPlayerAwareWindowInsets
 import com.gokadzev.musify.R
 import com.gokadzev.musify.ui.component.IconButton
 import com.gokadzev.musify.ui.component.PreferenceEntry
+import com.gokadzev.musify.ui.component.PreferenceGroup
 import com.gokadzev.musify.ui.utils.backToMain
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,65 +44,70 @@ fun SettingsScreen(
     ) {
         Spacer(Modifier.windowInsetsPadding(LocalPlayerAwareWindowInsets.current.only(WindowInsetsSides.Top)))
 
-        PreferenceEntry(
-            title = { Text(stringResource(R.string.appearance)) },
-            icon = { Icon(painterResource(R.drawable.palette), null) },
-            onClick = { navController.navigate("settings/appearance") },
-        )
-        PreferenceEntry(
-            title = { Text(stringResource(R.string.content)) },
-            icon = { Icon(painterResource(R.drawable.language), null) },
-            onClick = { navController.navigate("settings/content") },
-        )
-        PreferenceEntry(
-            title = { Text(stringResource(R.string.player_and_audio)) },
-            icon = { Icon(painterResource(R.drawable.play), null) },
-            onClick = { navController.navigate("settings/player") },
-        )
-        PreferenceEntry(
-            title = { Text(stringResource(R.string.storage)) },
-            icon = { Icon(painterResource(R.drawable.storage), null) },
-            onClick = { navController.navigate("settings/storage") },
-        )
-        PreferenceEntry(
-            title = { Text(stringResource(R.string.privacy)) },
-            icon = { Icon(painterResource(R.drawable.security), null) },
-            onClick = { navController.navigate("settings/privacy") },
-        )
-        PreferenceEntry(
-            title = { Text(stringResource(R.string.discord_integration)) },
-            icon = { Icon(painterResource(R.drawable.discord), null) },
-            onClick = { navController.navigate("settings/discord") },
-        )
-        PreferenceEntry(
-            title = { Text(stringResource(R.string.backup_restore)) },
-            icon = { Icon(painterResource(R.drawable.restore), null) },
-            onClick = { navController.navigate("settings/backup_restore") },
-        )
-        PreferenceEntry(
-            title = { Text(stringResource(R.string.about)) },
-            icon = { Icon(painterResource(R.drawable.info), null) },
-            onClick = { navController.navigate("settings/about") },
-        )
-        if (latestVersionName != "v${BuildConfig.VERSION_NAME}") {
+        PreferenceGroup {
             PreferenceEntry(
-                title = {
-                    Text(
-                        text = stringResource(R.string.new_version_available),
-                    )
-                },
-                description = latestVersionName,
-                icon = {
-                    BadgedBox(
-                        badge = { Badge() },
-                    ) {
-                        Icon(painterResource(R.drawable.update), null)
-                    }
-                },
-                onClick = {
-                    uriHandler.openUri("https://github.com/gokadzev/Musify/releases/latest")
-                },
+                title = { Text(stringResource(R.string.appearance)) },
+                icon = { Icon(painterResource(R.drawable.palette), null) },
+                onClick = { navController.navigate("settings/appearance") },
+                isFirstInGroup = true,
             )
+            PreferenceEntry(
+                title = { Text(stringResource(R.string.content)) },
+                icon = { Icon(painterResource(R.drawable.language), null) },
+                onClick = { navController.navigate("settings/content") },
+            )
+            PreferenceEntry(
+                title = { Text(stringResource(R.string.player_and_audio)) },
+                icon = { Icon(painterResource(R.drawable.play), null) },
+                onClick = { navController.navigate("settings/player") },
+            )
+            PreferenceEntry(
+                title = { Text(stringResource(R.string.storage)) },
+                icon = { Icon(painterResource(R.drawable.storage), null) },
+                onClick = { navController.navigate("settings/storage") },
+            )
+            PreferenceEntry(
+                title = { Text(stringResource(R.string.privacy)) },
+                icon = { Icon(painterResource(R.drawable.security), null) },
+                onClick = { navController.navigate("settings/privacy") },
+            )
+            PreferenceEntry(
+                title = { Text(stringResource(R.string.discord_integration)) },
+                icon = { Icon(painterResource(R.drawable.discord), null) },
+                onClick = { navController.navigate("settings/discord") },
+            )
+            PreferenceEntry(
+                title = { Text(stringResource(R.string.backup_restore)) },
+                icon = { Icon(painterResource(R.drawable.restore), null) },
+                onClick = { navController.navigate("settings/backup_restore") },
+            )
+            PreferenceEntry(
+                title = { Text(stringResource(R.string.about)) },
+                icon = { Icon(painterResource(R.drawable.info), null) },
+                onClick = { navController.navigate("settings/about") },
+                isLastInGroup = latestVersionName == "v${BuildConfig.VERSION_NAME}",
+            )
+            if (latestVersionName != "v${BuildConfig.VERSION_NAME}") {
+                PreferenceEntry(
+                    title = {
+                        Text(
+                            text = stringResource(R.string.new_version_available),
+                        )
+                    },
+                    description = latestVersionName,
+                    icon = {
+                        BadgedBox(
+                            badge = { Badge() },
+                        ) {
+                            Icon(painterResource(R.drawable.update), null)
+                        }
+                    },
+                    onClick = {
+                        uriHandler.openUri("https://github.com/gokadzev/Musify/releases/latest")
+                    },
+                    isLastInGroup = true,
+                )
+            }
         }
     }
 

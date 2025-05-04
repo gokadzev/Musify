@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -26,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.gokadzev.innertube.utils.parseCookieString
 import com.gokadzev.musify.LocalPlayerAwareWindowInsets
@@ -54,6 +56,7 @@ import com.gokadzev.musify.ui.component.EditTextPreference
 import com.gokadzev.musify.ui.component.IconButton
 import com.gokadzev.musify.ui.component.ListPreference
 import com.gokadzev.musify.ui.component.PreferenceEntry
+import com.gokadzev.musify.ui.component.PreferenceGroup
 import com.gokadzev.musify.ui.component.PreferenceGroupTitle
 import com.gokadzev.musify.ui.component.SliderPreference
 import com.gokadzev.musify.ui.component.SwitchPreference
@@ -96,170 +99,179 @@ fun ContentSettings(
     ) {
         Spacer(Modifier.windowInsetsPadding(LocalPlayerAwareWindowInsets.current.only(WindowInsetsSides.Top)))
 
-        PreferenceEntry(
-            title = { Text(if (isLoggedIn) accountName else stringResource(R.string.login)) },
-            description =
-                if (isLoggedIn) {
-                    accountEmail.takeIf { it.isNotEmpty() }
-                        ?: accountChannelHandle.takeIf { it.isNotEmpty() }
-                } else {
-                    null
-                },
-            icon = { Icon(painterResource(R.drawable.person), null) },
-            onClick = { navController.navigate("login") },
-        )
-
-        ListPreference(
-            title = { Text(stringResource(R.string.content_language)) },
-            icon = { Icon(painterResource(R.drawable.language), null) },
-            selectedValue = contentLanguage,
-            values = listOf(SYSTEM_DEFAULT) + LanguageCodeToName.keys.toList(),
-            valueText = {
-                LanguageCodeToName.getOrElse(it) {
-                    stringResource(R.string.system_default)
-                }
-            },
-            onValueSelected = onContentLanguageChange,
-        )
-        ListPreference(
-            title = { Text(stringResource(R.string.content_country)) },
-            icon = { Icon(painterResource(R.drawable.location_on), null) },
-            selectedValue = contentCountry,
-            values = listOf(SYSTEM_DEFAULT) + CountryCodeToName.keys.toList(),
-            valueText = {
-                CountryCodeToName.getOrElse(it) {
-                    stringResource(R.string.system_default)
-                }
-            },
-            onValueSelected = onContentCountryChange,
-        )
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        PreferenceGroup {
             PreferenceEntry(
-                title = { Text(stringResource(R.string.app_language)) },
-                description = stringResource(R.string.configure_app_language),
+                title = { Text(if (isLoggedIn) accountName else stringResource(R.string.login)) },
+                description =
+                    if (isLoggedIn) {
+                        accountEmail.takeIf { it.isNotEmpty() }
+                            ?: accountChannelHandle.takeIf { it.isNotEmpty() }
+                    } else {
+                        null
+                    },
+                icon = { Icon(painterResource(R.drawable.person), null) },
+                onClick = { navController.navigate("login") },
+                isFirstInGroup = true,
+            )
+
+            ListPreference(
+                title = { Text(stringResource(R.string.content_language)) },
                 icon = { Icon(painterResource(R.drawable.language), null) },
-                onClick = {
-                    try {
-                        context.startActivity(
-                            Intent(Settings.ACTION_APPLICATION_SETTINGS, Uri.parse("package:${context.packageName}")),
-                        )
-                    } catch (e: ActivityNotFoundException) {
-                        Toast.makeText(context, R.string.intent_app_language_not_found, Toast.LENGTH_LONG).show()
+                selectedValue = contentLanguage,
+                values = listOf(SYSTEM_DEFAULT) + LanguageCodeToName.keys.toList(),
+                valueText = {
+                    LanguageCodeToName.getOrElse(it) {
+                        stringResource(R.string.system_default)
                     }
                 },
+                onValueSelected = onContentLanguageChange,
             )
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            PreferenceEntry(
-                title = { Text(stringResource(R.string.open_supported_links)) },
-                description = stringResource(R.string.configure_supported_links),
-                icon = { Icon(painterResource(R.drawable.add_link), null) },
-                onClick = {
-                    try {
-                        context.startActivity(
-                            Intent(Settings.ACTION_APP_OPEN_BY_DEFAULT_SETTINGS, Uri.parse("package:${context.packageName}")),
-                        )
-                    } catch (e: ActivityNotFoundException) {
-                        Toast.makeText(context, R.string.intent_supported_links_not_found, Toast.LENGTH_LONG).show()
+            ListPreference(
+                title = { Text(stringResource(R.string.content_country)) },
+                icon = { Icon(painterResource(R.drawable.location_on), null) },
+                selectedValue = contentCountry,
+                values = listOf(SYSTEM_DEFAULT) + CountryCodeToName.keys.toList(),
+                valueText = {
+                    CountryCodeToName.getOrElse(it) {
+                        stringResource(R.string.system_default)
                     }
                 },
+                onValueSelected = onContentCountryChange,
+            )
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                PreferenceEntry(
+                    title = { Text(stringResource(R.string.app_language)) },
+                    description = stringResource(R.string.configure_app_language),
+                    icon = { Icon(painterResource(R.drawable.language), null) },
+                    onClick = {
+                        try {
+                            context.startActivity(
+                                Intent(Settings.ACTION_APPLICATION_SETTINGS, Uri.parse("package:${context.packageName}")),
+                            )
+                        } catch (e: ActivityNotFoundException) {
+                            Toast.makeText(context, R.string.intent_app_language_not_found, Toast.LENGTH_LONG).show()
+                        }
+                    },
+                )
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                PreferenceEntry(
+                    title = { Text(stringResource(R.string.open_supported_links)) },
+                    description = stringResource(R.string.configure_supported_links),
+                    icon = { Icon(painterResource(R.drawable.add_link), null) },
+                    onClick = {
+                        try {
+                            context.startActivity(
+                                Intent(Settings.ACTION_APP_OPEN_BY_DEFAULT_SETTINGS, Uri.parse("package:${context.packageName}")),
+                            )
+                        } catch (e: ActivityNotFoundException) {
+                            Toast.makeText(context, R.string.intent_supported_links_not_found, Toast.LENGTH_LONG).show()
+                        }
+                    },
+                )
+            }
+
+            SwitchPreference(
+                title = { Text(stringResource(R.string.hide_explicit)) },
+                icon = { Icon(painterResource(R.drawable.explicit), null) },
+                checked = hideExplicit,
+                onCheckedChange = onHideExplicitChange,
+                isLastInGroup = true,
             )
         }
-
-        SwitchPreference(
-            title = { Text(stringResource(R.string.hide_explicit)) },
-            icon = { Icon(painterResource(R.drawable.explicit), null) },
-            checked = hideExplicit,
-            onCheckedChange = onHideExplicitChange,
-        )
 
         PreferenceGroupTitle(
             title = stringResource(R.string.proxy),
         )
 
-        SwitchPreference(
-            title = { Text(stringResource(R.string.enable_proxy)) },
-            icon = { Icon(painterResource(R.drawable.wifi_proxy), null) },
-            checked = proxyEnabled,
-            onCheckedChange = onProxyEnabledChange,
-        )
+        PreferenceGroup {
+            SwitchPreference(
+                title = { Text(stringResource(R.string.enable_proxy)) },
+                icon = { Icon(painterResource(R.drawable.wifi_proxy), null) },
+                checked = proxyEnabled,
+                onCheckedChange = onProxyEnabledChange,
+                isFirstInGroup = true
+            )
 
-        AnimatedVisibility(proxyEnabled) {
-            Column {
-                ListPreference(
-                    title = { Text(stringResource(R.string.proxy_type)) },
-                    selectedValue = proxyType,
-                    values = listOf(Proxy.Type.HTTP, Proxy.Type.SOCKS),
-                    valueText = { it.name },
-                    onValueSelected = onProxyTypeChange,
-                )
-                EditTextPreference(
-                    title = { Text(stringResource(R.string.proxy_url)) },
-                    value = proxyUrl,
-                    onValueChange = onProxyUrlChange,
-                )
+            AnimatedVisibility(proxyEnabled) {
+                Column {
+                    ListPreference(
+                        title = { Text(stringResource(R.string.proxy_type)) },
+                        selectedValue = proxyType,
+                        values = listOf(Proxy.Type.HTTP, Proxy.Type.SOCKS),
+                        valueText = { it.name },
+                        onValueSelected = onProxyTypeChange,
+                    )
+                    EditTextPreference(
+                        title = { Text(stringResource(R.string.proxy_url)) },
+                        value = proxyUrl,
+                        onValueChange = onProxyUrlChange,
+                    )
+                }
             }
+
+            EditTextPreference(
+                title = { Text(stringResource(R.string.top_length)) },
+                value = lengthTop,
+                isInputValid = {
+                    val number = it.toIntOrNull()
+                    number != null && it.isNotEmpty() && number > 0
+                },
+                onValueChange = onLengthTopChange,
+            )
+
+            ListPreference(
+                title = { Text(stringResource(R.string.default_lib_chips)) },
+                selectedValue = defaultChip,
+                values =
+                    listOf(
+                        LibraryFilter.LIBRARY,
+                        LibraryFilter.PLAYLISTS,
+                        LibraryFilter.SONGS,
+                        LibraryFilter.ALBUMS,
+                        LibraryFilter.ARTISTS,
+                    ),
+                valueText = {
+                    when (it) {
+                        LibraryFilter.SONGS -> stringResource(R.string.songs)
+                        LibraryFilter.ARTISTS -> stringResource(R.string.artists)
+                        LibraryFilter.ALBUMS -> stringResource(R.string.albums)
+                        LibraryFilter.PLAYLISTS -> stringResource(R.string.playlists)
+                        LibraryFilter.LIBRARY -> stringResource(R.string.filter_library)
+                    }
+                },
+                onValueSelected = onDefaultChipChange,
+            )
+
+            ListPreference(
+                title = { Text(stringResource(R.string.set_quick_picks)) },
+                selectedValue = quickPicks,
+                values = listOf(QuickPicks.QUICK_PICKS, QuickPicks.LAST_LISTEN),
+                valueText = {
+                    when (it) {
+                        QuickPicks.QUICK_PICKS -> stringResource(R.string.quick_picks)
+                        QuickPicks.LAST_LISTEN -> stringResource(R.string.last_song_listened)
+                    }
+                },
+                onValueSelected = onQuickPicksChange,
+            )
+
+            SliderPreference(
+                title = { Text(stringResource(R.string.history_duration)) },
+                value = historyDuration,
+                onValueChange = onHistoryDurationChange,
+            )
+
+            SwitchPreference(
+                title = { Text(stringResource(R.string.enable_similar_content)) },
+                checked = similarContentEnabled,
+                onCheckedChange = similarContentEnabledChange,
+                isLastInGroup = true,
+            )
         }
-
-        EditTextPreference(
-            title = { Text(stringResource(R.string.top_length)) },
-            value = lengthTop,
-            isInputValid = {
-                val number = it.toIntOrNull()
-                number != null && it.isNotEmpty() && number > 0
-            },
-            onValueChange = onLengthTopChange,
-        )
-
-        ListPreference(
-            title = { Text(stringResource(R.string.default_lib_chips)) },
-            selectedValue = defaultChip,
-            values =
-                listOf(
-                    LibraryFilter.LIBRARY,
-                    LibraryFilter.PLAYLISTS,
-                    LibraryFilter.SONGS,
-                    LibraryFilter.ALBUMS,
-                    LibraryFilter.ARTISTS,
-                ),
-            valueText = {
-                when (it) {
-                    LibraryFilter.SONGS -> stringResource(R.string.songs)
-                    LibraryFilter.ARTISTS -> stringResource(R.string.artists)
-                    LibraryFilter.ALBUMS -> stringResource(R.string.albums)
-                    LibraryFilter.PLAYLISTS -> stringResource(R.string.playlists)
-                    LibraryFilter.LIBRARY -> stringResource(R.string.filter_library)
-                }
-            },
-            onValueSelected = onDefaultChipChange,
-        )
-
-        ListPreference(
-            title = { Text(stringResource(R.string.set_quick_picks)) },
-            selectedValue = quickPicks,
-            values = listOf(QuickPicks.QUICK_PICKS, QuickPicks.LAST_LISTEN),
-            valueText = {
-                when (it) {
-                    QuickPicks.QUICK_PICKS -> stringResource(R.string.quick_picks)
-                    QuickPicks.LAST_LISTEN -> stringResource(R.string.last_song_listened)
-                }
-            },
-            onValueSelected = onQuickPicksChange,
-        )
-
-        SliderPreference(
-            title = { Text(stringResource(R.string.history_duration)) },
-            value = historyDuration,
-            onValueChange = onHistoryDurationChange,
-        )
-
-        SwitchPreference(
-            title = { Text(stringResource(R.string.enable_similar_content)) },
-            checked = similarContentEnabled,
-            onCheckedChange = similarContentEnabledChange,
-        )
+        Spacer(modifier = Modifier.padding(bottom = 16.dp))
     }
 
     TopAppBar(

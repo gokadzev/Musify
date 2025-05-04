@@ -1,15 +1,19 @@
 package com.gokadzev.musify.ui.component
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -28,6 +32,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -37,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.gokadzev.musify.R
 import kotlin.math.roundToInt
+
 
 @Composable
 fun PreferenceEntry(
@@ -48,26 +55,53 @@ fun PreferenceEntry(
     trailingContent: (@Composable () -> Unit)? = null,
     onClick: (() -> Unit)? = null,
     isEnabled: Boolean = true,
+    isFirstInGroup: Boolean = false,
+    isLastInGroup: Boolean = false,
 ) {
+    val cornerRadius = 16.dp
+
+    val shape = when {
+        isFirstInGroup && isLastInGroup -> RoundedCornerShape(cornerRadius)
+        isFirstInGroup -> RoundedCornerShape(
+            topStart = cornerRadius,
+            topEnd = cornerRadius,
+            bottomStart = 0.dp,
+            bottomEnd = 0.dp
+        )
+        isLastInGroup -> RoundedCornerShape(
+            topStart = 0.dp,
+            topEnd = 0.dp,
+            bottomStart = cornerRadius,
+            bottomEnd = cornerRadius
+        )
+        else -> RectangleShape
+    }
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .clickable(
-                    enabled = isEnabled && onClick != null,
-                    onClick = onClick ?: {},
-                ).alpha(if (isEnabled) 1f else 0.5f)
-                .padding(horizontal = 16.dp, vertical = 16.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .background(
+                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
+                shape = shape
+            )
+            .clip(shape)
+            .clickable(
+                enabled = isEnabled && onClick != null,
+                onClick = onClick ?: {},
+            )
+            .alpha(if (isEnabled) 1f else 0.5f)
+            .padding(horizontal = 16.dp, vertical = 16.dp),
     ) {
         if (icon != null) {
             Box(
-                modifier = Modifier.padding(horizontal = 4.dp),
+                modifier = Modifier
+                    .padding(end = 16.dp)
+                    .size(24.dp),
+                contentAlignment = Alignment.Center
             ) {
                 icon()
             }
-
-            Spacer(Modifier.width(12.dp))
         }
 
         Column(
@@ -81,8 +115,8 @@ fun PreferenceEntry(
             if (description != null) {
                 Text(
                     text = description,
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.secondary,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
 
@@ -91,9 +125,24 @@ fun PreferenceEntry(
 
         if (trailingContent != null) {
             Spacer(Modifier.width(12.dp))
-
             trailingContent()
         }
+    }
+}
+
+
+@Composable
+fun PreferenceGroup(
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(2.dp)
+    ) {
+        content()
     }
 }
 
@@ -107,6 +156,8 @@ fun <T> ListPreference(
     valueText: @Composable (T) -> String,
     onValueSelected: (T) -> Unit,
     isEnabled: Boolean = true,
+    isFirstInGroup: Boolean = false,
+    isLastInGroup: Boolean = false,
 ) {
     var showDialog by remember {
         mutableStateOf(false)
@@ -148,6 +199,8 @@ fun <T> ListPreference(
         icon = icon,
         onClick = { showDialog = true },
         isEnabled = isEnabled,
+        isFirstInGroup = isFirstInGroup,
+        isLastInGroup = isLastInGroup,
     )
 }
 
@@ -160,6 +213,8 @@ inline fun <reified T : Enum<T>> EnumListPreference(
     noinline valueText: @Composable (T) -> String,
     noinline onValueSelected: (T) -> Unit,
     isEnabled: Boolean = true,
+    isFirstInGroup: Boolean = false,
+    isLastInGroup: Boolean = false,
 ) {
     ListPreference(
         modifier = modifier,
@@ -170,6 +225,8 @@ inline fun <reified T : Enum<T>> EnumListPreference(
         valueText = valueText,
         onValueSelected = onValueSelected,
         isEnabled = isEnabled,
+        isFirstInGroup = isFirstInGroup,
+        isLastInGroup = isLastInGroup,
     )
 }
 
@@ -182,6 +239,8 @@ fun SwitchPreference(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
     isEnabled: Boolean = true,
+    isFirstInGroup: Boolean = false,
+    isLastInGroup: Boolean = false,
 ) {
     PreferenceEntry(
         modifier = modifier,
@@ -192,10 +251,13 @@ fun SwitchPreference(
             Switch(
                 checked = checked,
                 onCheckedChange = onCheckedChange,
+                modifier = Modifier.padding(start = 8.dp)
             )
         },
-        onClick = { onCheckedChange(!checked) },
+        onClick = { if (isEnabled) onCheckedChange(!checked) },
         isEnabled = isEnabled,
+        isFirstInGroup = isFirstInGroup,
+        isLastInGroup = isLastInGroup,
     )
 }
 
@@ -209,6 +271,8 @@ fun EditTextPreference(
     singleLine: Boolean = true,
     isInputValid: (String) -> Boolean = { it.isNotEmpty() },
     isEnabled: Boolean = true,
+    isFirstInGroup: Boolean = false,
+    isLastInGroup: Boolean = false,
 ) {
     var showDialog by remember {
         mutableStateOf(false)
@@ -235,6 +299,8 @@ fun EditTextPreference(
         icon = icon,
         onClick = { showDialog = true },
         isEnabled = isEnabled,
+        isFirstInGroup = isFirstInGroup,
+        isLastInGroup = isLastInGroup,
     )
 }
 
@@ -246,6 +312,8 @@ fun SliderPreference(
     value: Float,
     onValueChange: (Float) -> Unit,
     isEnabled: Boolean = true,
+    isFirstInGroup: Boolean = false,
+    isLastInGroup: Boolean = false,
 ) {
     var showDialog by remember {
         mutableStateOf(false)
@@ -305,6 +373,8 @@ fun SliderPreference(
         icon = icon,
         onClick = { showDialog = true },
         isEnabled = isEnabled,
+        isFirstInGroup = isFirstInGroup,
+        isLastInGroup = isLastInGroup,
     )
 }
 

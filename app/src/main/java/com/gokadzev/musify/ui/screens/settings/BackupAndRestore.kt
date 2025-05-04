@@ -25,6 +25,7 @@ import com.gokadzev.musify.LocalPlayerAwareWindowInsets
 import com.gokadzev.musify.R
 import com.gokadzev.musify.ui.component.IconButton
 import com.gokadzev.musify.ui.component.PreferenceEntry
+import com.gokadzev.musify.ui.component.PreferenceGroup
 import com.gokadzev.musify.ui.utils.backToMain
 import com.gokadzev.musify.viewmodels.BackupRestoreViewModel
 import java.time.LocalDateTime
@@ -58,21 +59,29 @@ fun BackupAndRestore(
     ) {
         Spacer(Modifier.windowInsetsPadding(LocalPlayerAwareWindowInsets.current.only(WindowInsetsSides.Top)))
 
-        PreferenceEntry(
-            title = { Text(stringResource(R.string.backup)) },
-            icon = { Icon(painterResource(R.drawable.backup), null) },
-            onClick = {
-                val formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss")
-                backupLauncher.launch("${context.getString(R.string.app_name)}_${LocalDateTime.now().format(formatter)}.backup")
-            },
-        )
-        PreferenceEntry(
-            title = { Text(stringResource(R.string.restore)) },
-            icon = { Icon(painterResource(R.drawable.restore), null) },
-            onClick = {
-                restoreLauncher.launch(arrayOf("application/octet-stream"))
-            },
-        )
+        PreferenceGroup {
+            PreferenceEntry(
+                title = { Text(stringResource(R.string.backup)) },
+                icon = { Icon(painterResource(R.drawable.backup), null) },
+                onClick = {
+                    val formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss")
+                    backupLauncher.launch(
+                        "${context.getString(R.string.app_name)}_${
+                            LocalDateTime.now().format(formatter)
+                        }.backup"
+                    )
+                },
+                isFirstInGroup = true,
+            )
+            PreferenceEntry(
+                title = { Text(stringResource(R.string.restore)) },
+                icon = { Icon(painterResource(R.drawable.restore), null) },
+                onClick = {
+                    restoreLauncher.launch(arrayOf("application/octet-stream"))
+                },
+                isLastInGroup = true,
+            )
+        }
     }
 
     TopAppBar(

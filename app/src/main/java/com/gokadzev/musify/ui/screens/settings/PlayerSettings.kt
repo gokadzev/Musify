@@ -28,6 +28,7 @@ import com.gokadzev.musify.constants.SkipSilenceKey
 import com.gokadzev.musify.constants.StopMusicOnTaskClearKey
 import com.gokadzev.musify.ui.component.EnumListPreference
 import com.gokadzev.musify.ui.component.IconButton
+import com.gokadzev.musify.ui.component.PreferenceGroup
 import com.gokadzev.musify.ui.component.SwitchPreference
 import com.gokadzev.musify.ui.utils.backToMain
 import com.gokadzev.musify.utils.rememberEnumPreference
@@ -52,52 +53,55 @@ fun PlayerSettings(
             .verticalScroll(rememberScrollState()),
     ) {
         Spacer(Modifier.windowInsetsPadding(LocalPlayerAwareWindowInsets.current.only(WindowInsetsSides.Top)))
-
-        EnumListPreference(
-            title = { Text(stringResource(R.string.audio_quality)) },
-            icon = { Icon(painterResource(R.drawable.graphic_eq), null) },
-            selectedValue = audioQuality,
-            onValueSelected = onAudioQualityChange,
-            valueText = {
-                when (it) {
-                    AudioQuality.AUTO -> stringResource(R.string.audio_quality_auto)
-                    AudioQuality.HIGH -> stringResource(R.string.audio_quality_high)
-                    AudioQuality.LOW -> stringResource(R.string.audio_quality_low)
-                }
-            },
-        )
-        SwitchPreference(
-            title = { Text(stringResource(R.string.persistent_queue)) },
-            description = stringResource(R.string.persistent_queue_desc),
-            icon = { Icon(painterResource(R.drawable.queue_music), null) },
-            checked = persistentQueue,
-            onCheckedChange = onPersistentQueueChange,
-        )
-        SwitchPreference(
-            title = { Text(stringResource(R.string.skip_silence)) },
-            icon = { Icon(painterResource(R.drawable.fast_forward), null) },
-            checked = skipSilence,
-            onCheckedChange = onSkipSilenceChange,
-        )
-        SwitchPreference(
-            title = { Text(stringResource(R.string.audio_normalization)) },
-            icon = { Icon(painterResource(R.drawable.volume_up), null) },
-            checked = audioNormalization,
-            onCheckedChange = onAudioNormalizationChange,
-        )
-        SwitchPreference(
-            title = { Text(stringResource(R.string.auto_skip_next_on_error)) },
-            description = stringResource(R.string.auto_skip_next_on_error_desc),
-            icon = { Icon(painterResource(R.drawable.skip_next), null) },
-            checked = autoSkipNextOnError,
-            onCheckedChange = onAutoSkipNextOnErrorChange,
-        )
-        SwitchPreference(
-            title = { Text(stringResource(R.string.stop_music_on_task_clear)) },
-            icon = { Icon(painterResource(R.drawable.clear_all), null) },
-            checked = stopMusicOnTaskClear,
-            onCheckedChange = onStopMusicOnTaskClearChange,
-        )
+        PreferenceGroup {
+            EnumListPreference(
+                title = { Text(stringResource(R.string.audio_quality)) },
+                icon = { Icon(painterResource(R.drawable.graphic_eq), null) },
+                selectedValue = audioQuality,
+                onValueSelected = onAudioQualityChange,
+                isFirstInGroup = true,
+                valueText = {
+                    when (it) {
+                        AudioQuality.AUTO -> stringResource(R.string.audio_quality_auto)
+                        AudioQuality.HIGH -> stringResource(R.string.audio_quality_high)
+                        AudioQuality.LOW -> stringResource(R.string.audio_quality_low)
+                    }
+                },
+            )
+            SwitchPreference(
+                title = { Text(stringResource(R.string.persistent_queue)) },
+                description = stringResource(R.string.persistent_queue_desc),
+                icon = { Icon(painterResource(R.drawable.queue_music), null) },
+                checked = persistentQueue,
+                onCheckedChange = onPersistentQueueChange,
+            )
+            SwitchPreference(
+                title = { Text(stringResource(R.string.skip_silence)) },
+                icon = { Icon(painterResource(R.drawable.fast_forward), null) },
+                checked = skipSilence,
+                onCheckedChange = onSkipSilenceChange,
+            )
+            SwitchPreference(
+                title = { Text(stringResource(R.string.audio_normalization)) },
+                icon = { Icon(painterResource(R.drawable.volume_up), null) },
+                checked = audioNormalization,
+                onCheckedChange = onAudioNormalizationChange,
+            )
+            SwitchPreference(
+                title = { Text(stringResource(R.string.auto_skip_next_on_error)) },
+                description = stringResource(R.string.auto_skip_next_on_error_desc),
+                icon = { Icon(painterResource(R.drawable.skip_next), null) },
+                checked = autoSkipNextOnError,
+                onCheckedChange = onAutoSkipNextOnErrorChange,
+            )
+            SwitchPreference(
+                title = { Text(stringResource(R.string.stop_music_on_task_clear)) },
+                icon = { Icon(painterResource(R.drawable.clear_all), null) },
+                checked = stopMusicOnTaskClear,
+                onCheckedChange = onStopMusicOnTaskClearChange,
+                isLastInGroup = true,
+            )
+        }
     }
 
     TopAppBar(

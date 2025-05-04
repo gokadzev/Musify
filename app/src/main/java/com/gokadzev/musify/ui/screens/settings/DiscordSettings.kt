@@ -62,6 +62,7 @@ import com.gokadzev.musify.constants.EnableDiscordRPCKey
 import com.gokadzev.musify.db.entities.Song
 import com.gokadzev.musify.ui.component.IconButton
 import com.gokadzev.musify.ui.component.PreferenceEntry
+import com.gokadzev.musify.ui.component.PreferenceGroup
 import com.gokadzev.musify.ui.component.PreferenceGroupTitle
 import com.gokadzev.musify.ui.component.SwitchPreference
 import com.gokadzev.musify.ui.utils.backToMain
@@ -156,49 +157,57 @@ fun DiscordSettings(
             title = stringResource(R.string.account),
         )
 
-        PreferenceEntry(
-            title = {
-                Text(
-                    text = if (isLoggedIn) discordName else stringResource(R.string.not_logged_in),
-                    modifier = Modifier.alpha(if (isLoggedIn) 1f else 0.5f),
-                )
-            },
-            description =
-                if (discordUsername.isNotEmpty()) {
-                    "@$discordUsername"
-                } else {
-                    null
+        PreferenceGroup {
+            PreferenceEntry(
+                title = {
+                    Text(
+                        text = if (isLoggedIn) discordName else stringResource(R.string.not_logged_in),
+                        modifier = Modifier.alpha(if (isLoggedIn) 1f else 0.5f),
+                    )
                 },
-            icon = { Icon(painterResource(R.drawable.discord), null) },
-            trailingContent = {
-                if (isLoggedIn) {
-                    OutlinedButton(onClick = {
-                        discordName = ""
-                        discordToken = ""
-                        discordUsername = ""
-                    }) {
-                        Text(stringResource(R.string.logout))
+                description =
+                    if (discordUsername.isNotEmpty()) {
+                        "@$discordUsername"
+                    } else {
+                        null
+                    },
+                icon = { Icon(painterResource(R.drawable.discord), null) },
+                trailingContent = {
+                    if (isLoggedIn) {
+                        OutlinedButton(onClick = {
+                            discordName = ""
+                            discordToken = ""
+                            discordUsername = ""
+                        }) {
+                            Text(stringResource(R.string.logout))
+                        }
+                    } else {
+                        OutlinedButton(onClick = {
+                            navController.navigate("settings/discord/login")
+                        }) {
+                            Text(stringResource(R.string.login))
+                        }
                     }
-                } else {
-                    OutlinedButton(onClick = {
-                        navController.navigate("settings/discord/login")
-                    }) {
-                        Text(stringResource(R.string.login))
-                    }
-                }
-            },
-        )
+                },
+                isFirstInGroup = true,
+                isLastInGroup = true,
+            )
+        }
 
         PreferenceGroupTitle(
             title = stringResource(R.string.options),
         )
 
-        SwitchPreference(
-            title = { Text(stringResource(R.string.enable_discord_rpc)) },
-            checked = discordRPC,
-            onCheckedChange = onDiscordRPCChange,
-            isEnabled = isLoggedIn,
-        )
+        PreferenceGroup {
+            SwitchPreference(
+                title = { Text(stringResource(R.string.enable_discord_rpc)) },
+                checked = discordRPC,
+                onCheckedChange = onDiscordRPCChange,
+                isEnabled = isLoggedIn,
+                isFirstInGroup = true,
+                isLastInGroup = true,
+            )
+        }
 
         PreferenceGroupTitle(
             title = stringResource(R.string.preview),

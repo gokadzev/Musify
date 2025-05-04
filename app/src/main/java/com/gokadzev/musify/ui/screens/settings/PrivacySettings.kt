@@ -42,6 +42,7 @@ import com.gokadzev.musify.ui.component.DefaultDialog
 import com.gokadzev.musify.ui.component.IconButton
 import com.gokadzev.musify.ui.component.ListPreference
 import com.gokadzev.musify.ui.component.PreferenceEntry
+import com.gokadzev.musify.ui.component.PreferenceGroup
 import com.gokadzev.musify.ui.component.PreferenceGroupTitle
 import com.gokadzev.musify.ui.component.SwitchPreference
 import com.gokadzev.musify.ui.utils.backToMain
@@ -141,67 +142,81 @@ fun PrivacySettings(
             title = stringResource(R.string.listen_history),
         )
 
-        SwitchPreference(
-            title = { Text(stringResource(R.string.pause_listen_history)) },
-            icon = { Icon(painterResource(R.drawable.history), null) },
-            checked = pauseListenHistory,
-            onCheckedChange = onPauseListenHistoryChange,
-        )
+        PreferenceGroup {
 
-        PreferenceEntry(
-            title = { Text(stringResource(R.string.clear_listen_history)) },
-            icon = { Icon(painterResource(R.drawable.delete_history), null) },
-            onClick = { showClearListenHistoryDialog = true },
-        )
+            SwitchPreference(
+                title = { Text(stringResource(R.string.pause_listen_history)) },
+                icon = { Icon(painterResource(R.drawable.history), null) },
+                checked = pauseListenHistory,
+                onCheckedChange = onPauseListenHistoryChange,
+                isFirstInGroup = true,
+            )
+
+            PreferenceEntry(
+                title = { Text(stringResource(R.string.clear_listen_history)) },
+                icon = { Icon(painterResource(R.drawable.delete_history), null) },
+                onClick = { showClearListenHistoryDialog = true },
+                isLastInGroup = true,
+            )
+        }
 
         PreferenceGroupTitle(
             title = stringResource(R.string.search_history),
         )
 
-        SwitchPreference(
-            title = { Text(stringResource(R.string.pause_search_history)) },
-            icon = { Icon(painterResource(R.drawable.search_off), null) },
-            checked = pauseSearchHistory,
-            onCheckedChange = onPauseSearchHistoryChange,
-        )
+        PreferenceGroup {
+            SwitchPreference(
+                title = { Text(stringResource(R.string.pause_search_history)) },
+                icon = { Icon(painterResource(R.drawable.search_off), null) },
+                checked = pauseSearchHistory,
+                onCheckedChange = onPauseSearchHistoryChange,
+                isFirstInGroup = true,
+            )
 
-        PreferenceEntry(
-            title = { Text(stringResource(R.string.clear_search_history)) },
-            icon = { Icon(painterResource(R.drawable.clear_all), null) },
-            onClick = { showClearSearchHistoryDialog = true },
-        )
-        SwitchPreference(
-            title = { Text(stringResource(R.string.enable_kugou)) },
-            icon = { Icon(painterResource(R.drawable.lyrics), null) },
-            checked = enableKugou,
-            onCheckedChange = onEnableKugouChange,
-        )
-        SwitchPreference(
-            title = { Text(stringResource(R.string.enable_lrclib)) },
-            icon = { Icon(painterResource(R.drawable.lyrics), null) },
-            checked = enableLrclib,
-            onCheckedChange = onEnableLrclibChange,
-        )
+            PreferenceEntry(
+                title = { Text(stringResource(R.string.clear_search_history)) },
+                icon = { Icon(painterResource(R.drawable.clear_all), null) },
+                onClick = { showClearSearchHistoryDialog = true },
+            )
+            SwitchPreference(
+                title = { Text(stringResource(R.string.enable_kugou)) },
+                icon = { Icon(painterResource(R.drawable.lyrics), null) },
+                checked = enableKugou,
+                onCheckedChange = onEnableKugouChange,
+            )
+            SwitchPreference(
+                title = { Text(stringResource(R.string.enable_lrclib)) },
+                icon = { Icon(painterResource(R.drawable.lyrics), null) },
+                checked = enableLrclib,
+                onCheckedChange = onEnableLrclibChange,
+            )
 
-        ListPreference(
-            title = { Text(stringResource(R.string.set_first_lyrics_provider)) },
-            selectedValue = preferredProvider,
-            values = listOf(PreferredLyricsProvider.KUGOU, PreferredLyricsProvider.LRCLIB),
-            valueText = { it.name.toLowerCase(Locale.current).capitalize(Locale.current) },
-            onValueSelected = onPreferredProviderChange,
-        )
+            ListPreference(
+                title = { Text(stringResource(R.string.set_first_lyrics_provider)) },
+                selectedValue = preferredProvider,
+                values = listOf(PreferredLyricsProvider.KUGOU, PreferredLyricsProvider.LRCLIB),
+                valueText = { it.name.toLowerCase(Locale.current).capitalize(Locale.current) },
+                onValueSelected = onPreferredProviderChange,
+                isLastInGroup = true,
+            )
+        }
 
         PreferenceGroupTitle(
             title = stringResource(R.string.misc),
         )
 
-        SwitchPreference(
-            title = { Text(stringResource(R.string.disable_screenshot)) },
-            description = stringResource(R.string.disable_screenshot_desc),
-            icon = { Icon(painterResource(R.drawable.screenshot), null) },
-            checked = disableScreenshot,
-            onCheckedChange = onDisableScreenshotChange,
-        )
+        PreferenceGroup {
+            SwitchPreference(
+                title = { Text(stringResource(R.string.disable_screenshot)) },
+                description = stringResource(R.string.disable_screenshot_desc),
+                icon = { Icon(painterResource(R.drawable.screenshot), null) },
+                checked = disableScreenshot,
+                onCheckedChange = onDisableScreenshotChange,
+                isFirstInGroup = true,
+                isLastInGroup = true,
+            )
+        }
+        Spacer(modifier = Modifier.padding(bottom = 16.dp))
     }
 
     TopAppBar(

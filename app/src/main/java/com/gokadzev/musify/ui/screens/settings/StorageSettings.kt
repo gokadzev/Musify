@@ -41,6 +41,7 @@ import com.gokadzev.musify.extensions.tryOrNull
 import com.gokadzev.musify.ui.component.IconButton
 import com.gokadzev.musify.ui.component.ListPreference
 import com.gokadzev.musify.ui.component.PreferenceEntry
+import com.gokadzev.musify.ui.component.PreferenceGroup
 import com.gokadzev.musify.ui.component.PreferenceGroupTitle
 import com.gokadzev.musify.ui.utils.backToMain
 import com.gokadzev.musify.ui.utils.formatFileSize
@@ -113,36 +114,94 @@ fun StorageSettings(
             title = stringResource(R.string.downloaded_songs),
         )
 
-        Text(
-            text = stringResource(R.string.size_used, formatFileSize(downloadCacheSize)),
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
-        )
+        PreferenceGroup {
 
-        PreferenceEntry(
-            title = { Text(stringResource(R.string.clear_all_downloads)) },
-            onClick = {
-                coroutineScope.launch(Dispatchers.IO) {
-                    downloadCache.keys.forEach { key ->
-                        downloadCache.removeResource(key)
+            Text(
+                text = stringResource(R.string.size_used, formatFileSize(downloadCacheSize)),
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+            )
+
+            PreferenceEntry(
+                title = { Text(stringResource(R.string.clear_all_downloads)) },
+                isFirstInGroup = true,
+                isLastInGroup = true,
+                onClick = {
+                    coroutineScope.launch(Dispatchers.IO) {
+                        downloadCache.keys.forEach { key ->
+                            downloadCache.removeResource(key)
+                        }
                     }
-                }
-            },
-        )
+                },
+            )
+        }
 
         PreferenceGroupTitle(
             title = stringResource(R.string.song_cache),
         )
 
-        if (maxSongCacheSize == -1) {
-            Text(
-                text = stringResource(R.string.size_used, formatFileSize(playerCacheSize)),
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+        PreferenceGroup {
+            if (maxSongCacheSize == -1) {
+                Text(
+                    text = stringResource(R.string.size_used, formatFileSize(playerCacheSize)),
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+                )
+            } else {
+                LinearProgressIndicator(
+                    progress = { playerCacheProgress },
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 6.dp),
+                )
+
+                Text(
+                    text =
+                        stringResource(
+                            R.string.size_used,
+                            "${formatFileSize(playerCacheSize)} / ${
+                                formatFileSize(
+                                    maxSongCacheSize * 1024 * 1024L,
+                                )
+                            }",
+                        ),
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+                )
+            }
+
+            ListPreference(
+                title = { Text(stringResource(R.string.max_cache_size)) },
+                selectedValue = maxSongCacheSize,
+                values = listOf(128, 256, 512, 1024, 2048, 4096, 8192, -1),
+                valueText = {
+                    if (it == -1) stringResource(R.string.unlimited) else formatFileSize(it * 1024 * 1024L)
+                },
+                isFirstInGroup = true,
+                onValueSelected = onMaxSongCacheSizeChange,
             )
-        } else {
+
+            PreferenceEntry(
+                title = { Text(stringResource(R.string.clear_song_cache)) },
+                onClick = {
+                    coroutineScope.launch(Dispatchers.IO) {
+                        playerCache.keys.forEach { key ->
+                            playerCache.removeResource(key)
+                        }
+                    }
+                },
+                isLastInGroup = true,
+            )
+        }
+
+        PreferenceGroupTitle(
+            title = stringResource(R.string.image_cache),
+        )
+
+        PreferenceGroup {
             LinearProgressIndicator(
-                progress = { playerCacheProgress },
+                progress = { imageCacheProgress },
                 modifier =
                     Modifier
                         .fillMaxWidth()
@@ -150,73 +209,33 @@ fun StorageSettings(
             )
 
             Text(
-                text =
-                    stringResource(
-                        R.string.size_used,
-                        "${formatFileSize(playerCacheSize)} / ${formatFileSize(
-                            maxSongCacheSize * 1024 * 1024L,
-                        )}",
-                    ),
+                text = stringResource(
+                    R.string.size_used,
+                    "${formatFileSize(imageCacheSize)} / ${formatFileSize(imageDiskCache.maxSize)}"
+                ),
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
             )
-        }
 
-        ListPreference(
-            title = { Text(stringResource(R.string.max_cache_size)) },
-            selectedValue = maxSongCacheSize,
-            values = listOf(128, 256, 512, 1024, 2048, 4096, 8192, -1),
-            valueText = {
-                if (it == -1) stringResource(R.string.unlimited) else formatFileSize(it * 1024 * 1024L)
-            },
-            onValueSelected = onMaxSongCacheSizeChange,
-        )
+            ListPreference(
+                title = { Text(stringResource(R.string.max_cache_size)) },
+                selectedValue = maxImageCacheSize,
+                values = listOf(128, 256, 512, 1024, 2048, 4096, 8192),
+                valueText = { formatFileSize(it * 1024 * 1024L) },
+                onValueSelected = onMaxImageCacheSizeChange,
+                isFirstInGroup = true,
+            )
 
-        PreferenceEntry(
-            title = { Text(stringResource(R.string.clear_song_cache)) },
-            onClick = {
-                coroutineScope.launch(Dispatchers.IO) {
-                    playerCache.keys.forEach { key ->
-                        playerCache.removeResource(key)
+            PreferenceEntry(
+                title = { Text(stringResource(R.string.clear_image_cache)) },
+                onClick = {
+                    coroutineScope.launch(Dispatchers.IO) {
+                        imageDiskCache.clear()
                     }
-                }
-            },
-        )
-
-        PreferenceGroupTitle(
-            title = stringResource(R.string.image_cache),
-        )
-
-        LinearProgressIndicator(
-            progress = { imageCacheProgress },
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 6.dp),
-        )
-
-        Text(
-            text = stringResource(R.string.size_used, "${formatFileSize(imageCacheSize)} / ${formatFileSize(imageDiskCache.maxSize)}"),
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
-        )
-
-        ListPreference(
-            title = { Text(stringResource(R.string.max_cache_size)) },
-            selectedValue = maxImageCacheSize,
-            values = listOf(128, 256, 512, 1024, 2048, 4096, 8192),
-            valueText = { formatFileSize(it * 1024 * 1024L) },
-            onValueSelected = onMaxImageCacheSizeChange,
-        )
-
-        PreferenceEntry(
-            title = { Text(stringResource(R.string.clear_image_cache)) },
-            onClick = {
-                coroutineScope.launch(Dispatchers.IO) {
-                    imageDiskCache.clear()
-                }
-            },
-        )
+                },
+                isLastInGroup = true,
+            )
+        }
     }
 
     TopAppBar(
