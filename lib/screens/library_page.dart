@@ -270,7 +270,7 @@ class _LibraryPageState extends State<LibraryPage> {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          setState(() {
+                          dialogSetState(() {
                             isYouTubeMode = true;
                             id = '';
                             customPlaylistName = '';
@@ -289,7 +289,7 @@ class _LibraryPageState extends State<LibraryPage> {
                       const SizedBox(width: 10),
                       ElevatedButton(
                         onPressed: () {
-                          setState(() {
+                          dialogSetState(() {
                             isYouTubeMode = false;
                             id = '';
                             customPlaylistName = '';
