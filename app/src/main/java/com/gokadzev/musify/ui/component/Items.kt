@@ -982,7 +982,7 @@ fun PlaylistListItem(
                 stringResource(R.string.stats) -> R.drawable.trending_up
                 else -> {
                     if (autoPlaylist) {
-                        R.drawable.media3_icon_star_filled
+                        R.drawable.favorite
                     } else {
                         R.drawable.queue_music
                     }
@@ -1059,7 +1059,7 @@ fun PlaylistGridItem(
                 stringResource(R.string.stats) -> R.drawable.trending_up
                 else -> {
                     if (autoPlaylist) {
-                        R.drawable.media3_icon_star_filled
+                        R.drawable.favorite
                     } else {
                         R.drawable.queue_music
                     }

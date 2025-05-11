@@ -214,7 +214,7 @@ fun TopPlaylistScreen(
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 Icon(
-                                    painter = painterResource(R.drawable.media3_icon_star_filled),
+                                    painter = painterResource(R.drawable.favorite),
                                     contentDescription = null,
                                     tint = LocalContentColor.current.copy(alpha = 0.8f),
                                     modifier =
