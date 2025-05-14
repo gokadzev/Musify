@@ -698,19 +698,31 @@ Future<Map?> getPlaylistInfoForWidget(
   }
 }
 
-Future<AudioOnlyStreamInfo> getSongManifest(String songId) async {
+Future<AudioOnlyStreamInfo?> getSongManifest(String? songId) async {
   try {
+    if (songId == null || songId.isEmpty) {
+      logger.log('getSongManifest: songId is null or empty', null, null);
+      return null;
+    }
     final manifest = await _yt.videos.streams.getManifest(songId);
-    final audioStream = manifest.audioOnly.withHighestBitrate();
-    return audioStream;
+    final audioStream = manifest.audioOnly;
+    if (audioStream.isEmpty) {
+      logger.log('getSongManifest: no audio streams for $songId', null, null);
+      return null;
+    }
+    return audioStream.withHighestBitrate();
   } catch (e, stackTrace) {
     logger.log('Error while getting song streaming manifest', e, stackTrace);
-    rethrow; // Rethrow the exception to allow the caller to handle it
+    return null;
   }
 }
 
 Future<String?> getSong(String songId, bool isLive) async {
   try {
+    if (songId.isEmpty) {
+      logger.log('getSong: songId is empty', null, null);
+      return null;
+    }
     if (isLive) {
       final streamInfo = await _yt.videos.streamsClient.getHttpLiveStreamUrl(
         VideoId(songId),
@@ -751,7 +763,8 @@ Future<String?> getSong(String songId, bool isLive) async {
     final manifest = await _yt.videos.streamsClient.getManifest(songId);
     final audioStreams = manifest.audioOnly;
     if (audioStreams.isEmpty) {
-      throw Exception('No audio streams available for this video');
+      logger.log('getSong: no audio streams for $songId', null, null);
+      return null;
     }
 
     unawaited(updateRecentlyPlayed(songId));
@@ -818,6 +831,14 @@ Future<bool> makeSongOffline(dynamic song, {bool fromPlaylist = false}) async {
 
     try {
       final audioManifest = await getSongManifest(ytid);
+      if (audioManifest == null) {
+        logger.log(
+          'makeSongOffline: audioManifest is null for $ytid',
+          null,
+          null,
+        );
+        return false;
+      }
       final stream = _yt.videos.streamsClient.get(audioManifest);
       final fileStream = audioFile.openWrite();
       await stream.pipe(fileStream);
