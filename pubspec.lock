@@ -813,11 +813,10 @@ packages:
   youtube_explode_dart:
     dependency: "direct main"
     description:
-      path: "."
-      ref: b98f2bd4738f1dc471ab598af9695732620ea4ea
-      resolved-ref: b98f2bd4738f1dc471ab598af9695732620ea4ea
-      url: "https://github.com/gokadzev/yt_explode_dart.git"
-    source: git
+      name: youtube_explode_dart
+      sha256: "7be30342df5bebc3e50cc0d142284db18ffd134104257e74e168742676e5ba15"
+      url: "https://pub.dev"
+    source: hosted
     version: "2.4.0"
 sdks:
   dart: ">=3.7.0 <4.0.0"
