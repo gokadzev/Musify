@@ -70,6 +70,23 @@ Map activePlaylist = {
   'list': [],
 };
 
+final clients = {
+  'tv': YoutubeApiClient.tv,
+  'androidVr': YoutubeApiClient.androidVr,
+  'safari': YoutubeApiClient.safari,
+  'ios': YoutubeApiClient.ios,
+  'android': YoutubeApiClient.android,
+  'androidMusic': YoutubeApiClient.androidMusic,
+  'mediaConnect': YoutubeApiClient.mediaConnect,
+  'web': YoutubeApiClient.mweb,
+};
+
+List<YoutubeApiClient> userChosenClients = [
+  YoutubeApiClient.tv,
+  YoutubeApiClient.androidVr,
+  YoutubeApiClient.safari,
+];
+
 dynamic nextRecommendedSong;
 
 final currentLikedSongsLength = ValueNotifier<int>(userLikedSongsList.length);
@@ -704,7 +721,10 @@ Future<AudioOnlyStreamInfo?> getSongManifest(String? songId) async {
       logger.log('getSongManifest: songId is null or empty', null, null);
       return null;
     }
-    final manifest = await _yt.videos.streams.getManifest(songId);
+    final manifest = await _yt.videos.streams.getManifest(
+      songId,
+      ytClients: userChosenClients,
+    );
     final audioStream = manifest.audioOnly;
     if (audioStream.isEmpty) {
       logger.log('getSongManifest: no audio streams for $songId', null, null);
