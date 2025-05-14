@@ -299,6 +299,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
               ? song['audioPath']
               : await getSong(song['ytid'], song['isLive']);
 
+      if (songUrl == null) {
+        logger.log('Failed to get song URL for ${song['ytid']}', null, null);
+        return;
+      }
+
       final audioSource = await buildAudioSource(song, songUrl, isOffline);
 
       await audioPlayer.setAudioSource(audioSource);
