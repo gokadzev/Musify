@@ -44,6 +44,7 @@ import 'package:musify/services/update_manager.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 late MusifyAudioHandler audioHandler;
 
@@ -243,6 +244,18 @@ Future<void> initialisation() async {
 
     // Init router
     NavigationManager.instance;
+
+    // Init clients
+    if (clientsSetting.value.isNotEmpty) {
+      final chosenClients = <YoutubeApiClient>[];
+      for (final client in clientsSetting.value) {
+        final _client = clients[client];
+        if (_client != null) {
+          chosenClients.add(_client);
+        }
+      }
+      userChosenClients = chosenClients;
+    }
 
     try {
       // Listen to incoming links while app is running
