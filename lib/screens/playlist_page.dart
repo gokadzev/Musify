@@ -80,7 +80,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
   Future<void> _initializePlaylist() async {
     try {
       _playlist =
-          (widget.playlistId != null)
+          widget.playlistData == null
               ? await getPlaylistInfoForWidget(
                 widget.playlistId,
                 isArtist: widget.isArtist,

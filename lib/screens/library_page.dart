@@ -192,14 +192,22 @@ class _LibraryPageState extends State<LibraryPage> {
         return Column(
           children: [
             SectionHeader(title: context.l10n!.offlinePlaylists),
-            _buildPlaylistListView(context, offlinePlaylists),
+            _buildPlaylistListView(
+              context,
+              offlinePlaylists,
+              isOfflinePlaylists: true,
+            ),
           ],
         );
       },
     );
   }
 
-  Widget _buildPlaylistListView(BuildContext context, List playlists) {
+  Widget _buildPlaylistListView(
+    BuildContext context,
+    List playlists, {
+    bool isOfflinePlaylists = false,
+  }) {
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -214,7 +222,10 @@ class _LibraryPageState extends State<LibraryPage> {
           playlistId: playlist['ytid'],
           playlistArtwork: playlist['image'],
           isAlbum: playlist['isAlbum'],
-          playlistData: playlist['source'] == 'user-created' ? playlist : null,
+          playlistData:
+              playlist['source'] == 'user-created' || isOfflinePlaylists
+                  ? playlist
+                  : null,
           onDelete:
               playlist['source'] == 'user-created' ||
                       playlist['source'] == 'user-youtube'
