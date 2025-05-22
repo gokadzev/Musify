@@ -20,6 +20,7 @@
  */
 
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:audio_service/audio_service.dart';
@@ -291,10 +292,41 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
       if (audioPlayer.playing) await audioPlayer.stop();
 
-      final songUrl =
-          isOffline
-              ? song['audioPath']
-              : await getSong(song['ytid'], song['isLive']);
+      String? songUrl;
+      if (isOffline) {
+        final audioPath = song['audioPath'];
+        if (audioPath == null || audioPath.isEmpty) {
+          logger.log(
+            'Missing audioPath for offline song: ${song['ytid']}',
+            null,
+            null,
+          );
+          return;
+        }
+
+        // Verify that the file exists
+        final file = File(audioPath);
+        if (!await file.exists()) {
+          logger.log('Offline audio file not found: $audioPath', null, null);
+          // Try to find the song in userOfflineSongs and update its path
+          final offlineSong = userOfflineSongs.firstWhere(
+            (s) => s['ytid'] == song['ytid'],
+            orElse: () => null,
+          );
+
+          if (offlineSong != null && offlineSong['audioPath'] != null) {
+            song['audioPath'] = offlineSong['audioPath'];
+            songUrl = offlineSong['audioPath'];
+          } else {
+            // If song not found in offline songs, try to get it online
+            songUrl = await getSong(song['ytid'], song['isLive'] ?? false);
+          }
+        } else {
+          songUrl = audioPath;
+        }
+      } else {
+        songUrl = await getSong(song['ytid'], song['isLive'] ?? false);
+      }
 
       if (songUrl == null) {
         logger.log('Failed to get song URL for ${song['ytid']}', null, null);
@@ -303,15 +335,37 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
       final audioSource = await buildAudioSource(song, songUrl, isOffline);
 
-      await audioPlayer.setAudioSource(audioSource);
+      try {
+        await audioPlayer.setAudioSource(audioSource);
+        await audioPlayer.play();
 
-      await audioPlayer.play();
-      if (!isOffline) {
-        final cacheKey =
-            'song_${song['ytid']}_${audioQualitySetting.value}_url';
-        await addOrUpdateData('cache', cacheKey, songUrl);
+        if (!isOffline) {
+          final cacheKey =
+              'song_${song['ytid']}_${audioQualitySetting.value}_url';
+          await addOrUpdateData('cache', cacheKey, songUrl);
+        }
+
+        if (playNextSongAutomatically.value) getSimilarSong(song['ytid']);
+      } catch (e, stackTrace) {
+        logger.log('Error setting audio source', e, stackTrace);
+        // If playing offline song fails, try to get it online as fallback
+        if (isOffline) {
+          logger.log(
+            'Attempting to play online version as fallback',
+            null,
+            null,
+          );
+          final onlineUrl = await getSong(
+            song['ytid'],
+            song['isLive'] ?? false,
+          );
+          if (onlineUrl != null) {
+            final onlineSource = await buildAudioSource(song, onlineUrl, false);
+            await audioPlayer.setAudioSource(onlineSource);
+            await audioPlayer.play();
+          }
+        }
       }
-      if (playNextSongAutomatically.value) getSimilarSong(song['ytid']);
     } catch (e, stackTrace) {
       logger.log('Error playing song', e, stackTrace);
     }

@@ -824,7 +824,13 @@ Future<String?> getSongLyrics(String? artist, String title) async {
 
 Future<bool> makeSongOffline(dynamic song, {bool fromPlaylist = false}) async {
   try {
-    final String ytid = song['ytid'];
+    final String? ytid = song['ytid'];
+
+    if (ytid == null || ytid.isEmpty) {
+      logger.log('makeSongOffline: song["ytid"] is null or empty', null, null);
+      return false;
+    }
+
     final audioPath = FilePaths.getAudioPath(ytid);
     final audioFile = File(audioPath);
     final artworkPath = FilePaths.getArtworkPath(ytid);
