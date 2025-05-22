@@ -67,10 +67,7 @@ class OfflinePlaylistService {
     return activeDownloads.contains(playlistId);
   }
 
-  Future<void> downloadPlaylist(
-    BuildContext context,
-    Map<String, dynamic> playlist,
-  ) async {
+  Future<void> downloadPlaylist(BuildContext context, Map playlist) async {
     final playlistId = playlist['ytid'] as String? ?? playlist['title'];
 
     // Check if already downloading
