@@ -66,7 +66,7 @@ class _HomePageState extends State<HomePage> {
               },
             ),
             _buildSuggestedPlaylists(playlistHeight),
-            _buildRecommendedSongsAndArtists(playlistHeight),
+            _buildRecommendedSongsSection(playlistHeight),
           ],
         ),
       ),
@@ -187,7 +187,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildRecommendedSongsAndArtists(double playlistHeight) {
+  Widget _buildRecommendedSongsSection(double playlistHeight) {
     return ValueListenableBuilder<bool>(
       valueListenable: defaultRecommendations,
       builder: (_, recommendations, __) {
@@ -204,7 +204,7 @@ class _HomePageState extends State<HomePage> {
 
             if (snapshot.hasError) {
               logger.log(
-                'Error in _buildRecommendedSongsAndArtists',
+                'Error in _buildRecommendedSongsSection',
                 snapshot.error,
                 snapshot.stackTrace,
               );
@@ -218,102 +218,10 @@ class _HomePageState extends State<HomePage> {
             final data = snapshot.data as List<dynamic>;
             if (data.isEmpty) return const SizedBox.shrink();
 
-            final itemsNumber = data.length.clamp(0, recommendedCubesNumber);
-            final isLargeScreen = MediaQuery.of(context).size.width > 480;
-
-            return Column(
-              children: [
-                if (!recommendations) ...[
-                  SectionHeader(title: context.l10n!.suggestedArtists),
-                  ConstrainedBox(
-                    constraints: BoxConstraints(maxHeight: playlistHeight),
-                    child:
-                        isLargeScreen
-                            ? _buildArtistHorizontalList(
-                              data,
-                              itemsNumber,
-                              playlistHeight,
-                            )
-                            : _buildArtistCarouselView(
-                              data,
-                              itemsNumber,
-                              playlistHeight,
-                            ),
-                  ),
-                ],
-                _buildRecommendedForYouSection(context, data),
-              ],
-            );
+            return _buildRecommendedForYouSection(context, data);
           },
         );
       },
-    );
-  }
-
-  Widget _buildArtistHorizontalList(
-    List<dynamic> data,
-    int itemCount,
-    double height,
-  ) {
-    return ListView.builder(
-      scrollDirection: Axis.horizontal,
-      itemCount: itemCount,
-      itemBuilder: (context, index) {
-        final artist = data[index]['artist'].split('~')[0];
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: GestureDetector(
-            onTap:
-                () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder:
-                        (context) => PlaylistPage(
-                          cubeIcon: FluentIcons.mic_sparkle_24_regular,
-                          playlistId: artist,
-                          isArtist: true,
-                        ),
-                  ),
-                ),
-            child: PlaylistCube(
-              {'title': artist},
-              cubeIcon: FluentIcons.mic_sparkle_24_regular,
-              size: height,
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildArtistCarouselView(
-    List<dynamic> data,
-    int itemCount,
-    double height,
-  ) {
-    return CarouselView.weighted(
-      flexWeights: const <int>[3, 2, 1],
-      itemSnapping: true,
-      onTap:
-          (index) => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder:
-                  (context) => PlaylistPage(
-                    cubeIcon: FluentIcons.mic_sparkle_24_regular,
-                    playlistId: data[index]['artist'].split('~')[0],
-                    isArtist: true,
-                  ),
-            ),
-          ),
-      children: List.generate(itemCount, (index) {
-        final artist = data[index]['artist'].split('~')[0];
-        return PlaylistCube(
-          {'title': artist},
-          cubeIcon: FluentIcons.mic_sparkle_24_regular,
-          size: height * 2,
-        );
-      }),
     );
   }
 
