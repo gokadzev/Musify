@@ -102,7 +102,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
   void _handleDurationChange(Duration? duration) {
     try {
       final index = audioPlayer.currentIndex;
-      if (index == null || queue.value.isEmpty) return;
+      if (index == null || queue.value.isEmpty || index >= queue.value.length)
+        return;
 
       final newMediaItem = queue.value[index].copyWith(duration: duration);
       mediaItem.add(newMediaItem);
@@ -120,7 +121,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   void _handleCurrentSongIndexChanged(int? index) {
     try {
-      if (index != null && queue.value.isNotEmpty) {
+      if (index != null &&
+          queue.value.isNotEmpty &&
+          index < queue.value.length) {
         final playlist = queue.value;
         mediaItem.add(playlist[index]);
       }
@@ -220,7 +223,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
         } else {
           switch (event.type) {
             case AudioInterruptionType.duck:
-              audioPlayer.setVolume(audioPlayer.volume * 2);
+              final newVolume = min(audioPlayer.volume * 2, 1).toDouble();
+              audioPlayer.setVolume(newVolume);
               break;
             case AudioInterruptionType.pause:
               if (_playInterrupted) play();
@@ -244,30 +248,34 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   @override
   Future<void> onTaskRemoved() async {
-    if (!backgroundPlay.value) {
-      await stop();
+    try {
+      if (!backgroundPlay.value) {
+        await stop();
 
-      final session = await AudioSession.instance;
-      await session.setActive(false);
+        final session = await AudioSession.instance;
+        await session.setActive(false);
 
-      await _playbackEventSubscription.cancel();
-      await _durationSubscription.cancel();
-      await _currentIndexSubscription.cancel();
-      await _sequenceStateSubscription.cancel();
+        await _playbackEventSubscription.cancel();
+        await _durationSubscription.cancel();
+        await _currentIndexSubscription.cancel();
+        await _sequenceStateSubscription.cancel();
+      }
+    } catch (e, stackTrace) {
+      logger.log('Error in onTaskRemoved', e, stackTrace);
     }
 
     await super.onTaskRemoved();
   }
 
   bool get hasNext =>
-      activePlaylist['list'].isEmpty
-          ? audioPlayer.hasNext
-          : activeSongId + 1 < activePlaylist['list'].length;
+      activePlaylist['list'] != null && activePlaylist['list'].isNotEmpty
+          ? activeSongId + 1 < activePlaylist['list'].length
+          : audioPlayer.hasNext;
 
   bool get hasPrevious =>
-      activePlaylist['list'].isEmpty
-          ? audioPlayer.hasPrevious
-          : activeSongId > 0;
+      activePlaylist['list'] != null && activePlaylist['list'].isNotEmpty
+          ? activeSongId > 0
+          : audioPlayer.hasPrevious;
 
   @override
   Future<void> play() => audioPlayer.play();
@@ -288,6 +296,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   Future<void> playSong(Map song) async {
     try {
+      if (song['ytid'] == null || song['ytid'].toString().isEmpty) {
+        logger.log('Invalid song data: missing ytid', null, null);
+        return;
+      }
+
       final isOffline = song['isOffline'] ?? false;
 
       if (audioPlayer.playing) await audioPlayer.stop();
@@ -328,7 +341,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
         songUrl = await getSong(song['ytid'], song['isLive'] ?? false);
       }
 
-      if (songUrl == null) {
+      if (songUrl == null || songUrl.isEmpty) {
         logger.log('Failed to get song URL for ${song['ytid']}', null, null);
         return;
       }
@@ -359,7 +372,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
             song['ytid'],
             song['isLive'] ?? false,
           );
-          if (onlineUrl != null) {
+          if (onlineUrl != null && onlineUrl.isNotEmpty) {
             final onlineSource = await buildAudioSource(song, onlineUrl, false);
             await audioPlayer.setAudioSource(onlineSource);
             await audioPlayer.play();
@@ -373,17 +386,31 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   Future<void> playNext(Map song) async {
     try {
+      if (song['ytid'] == null || song['ytid'].toString().isEmpty) {
+        logger.log('Invalid song data for playNext', null, null);
+        return;
+      }
+
       if (activePlaylist['title'] != 'User queue' &&
-          activePlaylist['list'].isEmpty) {
+          (activePlaylist['list'] == null || activePlaylist['list'].isEmpty)) {
         activePlaylist = {
           'ytid': '',
           'title': 'No Playlist',
           'source': 'user-created',
           'list': [song],
         };
+        activeSongId = 0;
         return playSong(song);
       } else {
-        activePlaylist['list'].insert(activeSongId + 1, song);
+        if (activePlaylist['list'] == null) {
+          activePlaylist['list'] = [];
+        }
+
+        final insertIndex = min(
+          activeSongId + 1,
+          activePlaylist['list'].length,
+        );
+        activePlaylist['list'].insert(insertIndex, song);
       }
     } catch (e, stackTrace) {
       logger.log('Error adding song to play next', e, stackTrace);
@@ -397,8 +424,15 @@ class MusifyAudioHandler extends BaseAudioHandler {
     try {
       if (playlist != null) {
         activePlaylist = playlist;
-      } else if (activePlaylist['list'].isEmpty) {
+      }
+
+      if (activePlaylist['list'] == null || activePlaylist['list'].isEmpty) {
         logger.log('Error: Attempted to play empty playlist', null, null);
+        return;
+      }
+
+      if (songIndex < 0 || songIndex >= activePlaylist['list'].length) {
+        logger.log('Error: Invalid song index $songIndex', null, null);
         return;
       }
 
@@ -449,14 +483,17 @@ class MusifyAudioHandler extends BaseAudioHandler {
     try {
       final segments = await getSkipSegments(songId);
 
-      if (segments.isNotEmpty) {
+      if (segments.isNotEmpty && segments[0]['end'] != null) {
         final start = Duration(seconds: segments[0]['end']!);
         final end =
-            segments.length > 1
+            segments.length > 1 && segments[1]['start'] != null
                 ? Duration(seconds: segments[1]['start']!)
                 : null;
 
-        return end != null && end != Duration.zero && start < end
+        return end != null &&
+                end != Duration.zero &&
+                start < end &&
+                start.inSeconds > 0
             ? ClippingAudioSource(
               child: audioSource,
               start: start,
@@ -472,40 +509,58 @@ class MusifyAudioHandler extends BaseAudioHandler {
   }
 
   Future<void> skipToSong(int newIndex) async {
-    if (newIndex >= 0 && newIndex < activePlaylist['list'].length) {
+    try {
+      if (activePlaylist['list'] == null ||
+          newIndex < 0 ||
+          newIndex >= activePlaylist['list'].length) {
+        logger.log('Invalid song index: $newIndex', null, null);
+        return;
+      }
+
       activeSongId =
           shuffleNotifier.value
               ? _generateRandomIndex(activePlaylist['list'].length)
               : newIndex;
 
       await playSong(activePlaylist['list'][activeSongId]);
+    } catch (e, stackTrace) {
+      logger.log('Error skipping to song', e, stackTrace);
     }
   }
 
   @override
   Future<void> skipToNext() async {
-    if (!hasNext && repeatNotifier.value == AudioServiceRepeatMode.all) {
-      // If repeat mode is set to repeat the playlist, start from the beginning
-      await skipToSong(0);
-    } else if (!hasNext &&
-        playNextSongAutomatically.value &&
-        nextRecommendedSong != null) {
-      // If there's no next song but playNextSongAutomatically is enabled, play the recommended song
-      await playSong(nextRecommendedSong);
-    } else if (hasNext) {
-      // If there is a next song, skip to the next song
-      await skipToSong(activeSongId + 1);
+    try {
+      if (!hasNext && repeatNotifier.value == AudioServiceRepeatMode.all) {
+        // If repeat mode is set to repeat the playlist, start from the beginning
+        await skipToSong(0);
+      } else if (!hasNext &&
+          playNextSongAutomatically.value &&
+          nextRecommendedSong != null) {
+        // If there's no next song but playNextSongAutomatically is enabled, play the recommended song
+        await playSong(nextRecommendedSong);
+      } else if (hasNext) {
+        // If there is a next song, skip to the next song
+        await skipToSong(activeSongId + 1);
+      }
+    } catch (e, stackTrace) {
+      logger.log('Error skipping to next song', e, stackTrace);
     }
   }
 
   @override
   Future<void> skipToPrevious() async {
-    if (!hasPrevious && repeatNotifier.value == AudioServiceRepeatMode.all) {
-      // If repeat mode is set to repeat the playlist, start from the end
-      await skipToSong(activePlaylist['list'].length - 1);
-    } else if (hasPrevious) {
-      // If there is a previous song, skip to the previous song
-      await skipToSong(activeSongId - 1);
+    try {
+      if (!hasPrevious && repeatNotifier.value == AudioServiceRepeatMode.all) {
+        // If repeat mode is set to repeat the playlist, start from the end
+        final lastIndex = (activePlaylist['list']?.length ?? 1) - 1;
+        await skipToSong(max(0, lastIndex));
+      } else if (hasPrevious) {
+        // If there is a previous song, skip to the previous song
+        await skipToSong(activeSongId - 1);
+      }
+    } catch (e, stackTrace) {
+      logger.log('Error skipping to previous song', e, stackTrace);
     }
   }
 
@@ -522,54 +577,70 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   @override
   Future<void> setRepeatMode(AudioServiceRepeatMode repeatMode) async {
-    switch (repeatMode) {
-      case AudioServiceRepeatMode.none:
-        await audioPlayer.setLoopMode(LoopMode.off);
-        break;
-      case AudioServiceRepeatMode.one:
-        await audioPlayer.setLoopMode(LoopMode.one);
-        break;
-      case AudioServiceRepeatMode.all:
-        await audioPlayer.setLoopMode(LoopMode.all);
-        break;
-      case AudioServiceRepeatMode.group:
-        await audioPlayer.setLoopMode(LoopMode.all);
-        break;
+    try {
+      repeatNotifier.value = repeatMode;
+      switch (repeatMode) {
+        case AudioServiceRepeatMode.none:
+          await audioPlayer.setLoopMode(LoopMode.off);
+          break;
+        case AudioServiceRepeatMode.one:
+          await audioPlayer.setLoopMode(LoopMode.one);
+          break;
+        case AudioServiceRepeatMode.all:
+        case AudioServiceRepeatMode.group:
+          await audioPlayer.setLoopMode(LoopMode.all);
+          break;
+      }
+    } catch (e, stackTrace) {
+      logger.log('Error setting repeat mode', e, stackTrace);
     }
   }
 
   Future<void> setSleepTimer(Duration duration) async {
-    _sleepTimer?.cancel();
-    sleepTimerExpired = false;
-    sleepTimerNotifier.value = duration;
-    _sleepTimer = Timer(duration, () async {
-      // Fade out the volume
-      final originalVolume = audioPlayer.volume;
-      const fadeSteps = 10;
+    try {
+      _sleepTimer?.cancel();
+      sleepTimerExpired = false;
+      sleepTimerNotifier.value = duration;
 
-      for (var i = fadeSteps; i > 0; i--) {
-        await audioPlayer.setVolume(originalVolume * i / fadeSteps);
-        await Future.delayed(const Duration(milliseconds: 100));
-      }
+      _sleepTimer = Timer(duration, () async {
+        try {
+          // Fade out the volume
+          final originalVolume = audioPlayer.volume;
+          const fadeSteps = 10;
 
-      await stop();
+          for (var i = fadeSteps; i > 0; i--) {
+            await audioPlayer.setVolume(originalVolume * i / fadeSteps);
+            await Future.delayed(const Duration(milliseconds: 100));
+          }
 
-      // Reset volume for next playback
-      await audioPlayer.setVolume(originalVolume);
+          await stop();
 
-      playNextSongAutomatically.value = false;
-      sleepTimerExpired = true;
-      _sleepTimer = null;
-      sleepTimerNotifier.value = null;
-    });
+          // Reset volume for next playback
+          await audioPlayer.setVolume(originalVolume);
+
+          playNextSongAutomatically.value = false;
+          sleepTimerExpired = true;
+          _sleepTimer = null;
+          sleepTimerNotifier.value = null;
+        } catch (e, stackTrace) {
+          logger.log('Error in sleep timer callback', e, stackTrace);
+        }
+      });
+    } catch (e, stackTrace) {
+      logger.log('Error setting sleep timer', e, stackTrace);
+    }
   }
 
   void cancelSleepTimer() {
-    if (_sleepTimer != null) {
-      _sleepTimer!.cancel();
-      _sleepTimer = null;
-      sleepTimerExpired = false;
-      sleepTimerNotifier.value = null;
+    try {
+      if (_sleepTimer != null) {
+        _sleepTimer!.cancel();
+        _sleepTimer = null;
+        sleepTimerExpired = false;
+        sleepTimerNotifier.value = null;
+      }
+    } catch (e, stackTrace) {
+      logger.log('Error canceling sleep timer', e, stackTrace);
     }
   }
 
@@ -592,13 +663,22 @@ class MusifyAudioHandler extends BaseAudioHandler {
   }
 
   int _generateRandomIndex(int length) {
-    final random = Random();
-    var randomIndex = random.nextInt(length);
+    try {
+      if (length <= 1) return 0;
 
-    while (randomIndex == activeSongId) {
-      randomIndex = random.nextInt(length);
+      final random = Random();
+      var randomIndex = random.nextInt(length);
+
+      var attempts = 0;
+      while (randomIndex == activeSongId && attempts < 10) {
+        randomIndex = random.nextInt(length);
+        attempts++;
+      }
+
+      return randomIndex;
+    } catch (e, stackTrace) {
+      logger.log('Error generating random index', e, stackTrace);
+      return 0;
     }
-
-    return randomIndex;
   }
 }
