@@ -16,6 +16,7 @@
   "audioQuality": "Calidad de audio",
   "audioQualityMsg": "Calidad de audio actualizada",
   "automaticSongPicker": "Selector automático de canciones",
+  "backToFavorites": "Back to favorites",
   "backedupSuccess": "Datos respaldados correctamente",
   "backgroundPlay": "Background play",
   "backupError": "Error al respaldar los datos",

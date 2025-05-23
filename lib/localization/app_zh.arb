@@ -16,6 +16,7 @@
   "audioQuality": "音质",
   "audioQualityMsg": "音质更新成功",
   "automaticSongPicker": "自动歌曲选择器",
+  "backToFavorites": "Back to favorites",
   "backedupSuccess": "数据备份成功",
   "backgroundPlay": "Background play",
   "backupError": "备份数据时发生错误",

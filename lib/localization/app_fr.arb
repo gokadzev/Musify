@@ -16,6 +16,7 @@
   "audioQuality": "Qualité audio",
   "audioQualityMsg": "La qualité audio a été modifiée",
   "automaticSongPicker": "Sélection automatique de titres",
+  "backToFavorites": "Back to favorites",
   "backedupSuccess": "Enregistrement réussi",
   "backgroundPlay": "Background play",
   "backupError": "Erreur pendant l'enregistrement",

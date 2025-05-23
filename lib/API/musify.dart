@@ -395,6 +395,14 @@ Future<List> getPlaylists({
     return [];
   }
 
+  // If only liked playlists should be returned, ignore other parameters.
+  if (onlyLiked) {
+    if (playlistsNum != null) {
+      return userLikedPlaylists.take(playlistsNum).toList();
+    }
+    return userLikedPlaylists;
+  }
+
   // If a query is provided (without a limit), filter playlists based on the query and type,
   // and augment with online search results.
   if (query != null && playlistsNum == null) {
@@ -456,11 +464,6 @@ Future<List> getPlaylists({
       suggestedPlaylists = List.from(playlists)..shuffle();
     }
     return suggestedPlaylists.take(playlistsNum).toList();
-  }
-
-  // If only liked playlists should be returned, ignore other parameters.
-  if (onlyLiked && playlistsNum == null && query == null) {
-    return userLikedPlaylists;
   }
 
   // If a specific type is requested, filter accordingly.

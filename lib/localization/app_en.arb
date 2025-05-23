@@ -16,6 +16,7 @@
   "audioQuality": "Audio quality",
   "audioQualityMsg": "Audio quality updated",
   "automaticSongPicker": "Automatic song picker",
+  "backToFavorites": "Back to favorites",
   "backedupSuccess": "Data successfully backed up",
   "backgroundPlay": "Background play",
   "backupError": "Error occurred while backing up data",

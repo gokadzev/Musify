@@ -66,6 +66,7 @@ class _HomePageState extends State<HomePage> {
               },
             ),
             _buildSuggestedPlaylists(playlistHeight),
+            _buildBackToFavoritesPlaylists(playlistHeight),
             _buildRecommendedSongsSection(playlistHeight),
           ],
         ),
@@ -115,6 +116,54 @@ class _HomePageState extends State<HomePage> {
         return Column(
           children: [
             SectionHeader(title: context.l10n!.suggestedPlaylists),
+            ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: playlistHeight),
+              child:
+                  isLargeScreen
+                      ? _buildHorizontalList(
+                        playlists,
+                        itemsNumber,
+                        playlistHeight,
+                      )
+                      : _buildCarouselView(
+                        playlists,
+                        itemsNumber,
+                        playlistHeight,
+                      ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildBackToFavoritesPlaylists(double playlistHeight) {
+    return FutureBuilder<List<dynamic>>(
+      future: getPlaylists(
+        playlistsNum: recommendedCubesNumber,
+        onlyLiked: true,
+      ),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return _buildLoadingWidget();
+        } else if (snapshot.hasError) {
+          logger.log(
+            'Error in _buildSuggestedPlaylists',
+            snapshot.error,
+            snapshot.stackTrace,
+          );
+          return _buildErrorWidget(context);
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const SizedBox.shrink();
+        }
+
+        final playlists = snapshot.data!;
+        final itemsNumber = playlists.length.clamp(0, recommendedCubesNumber);
+        final isLargeScreen = MediaQuery.of(context).size.width > 480;
+
+        return Column(
+          children: [
+            SectionHeader(title: context.l10n!.backToFavorites),
             ConstrainedBox(
               constraints: BoxConstraints(maxHeight: playlistHeight),
               child:
