@@ -66,7 +66,7 @@ class _HomePageState extends State<HomePage> {
               },
             ),
             _buildSuggestedPlaylists(playlistHeight),
-            _buildBackToFavoritesPlaylists(playlistHeight),
+            _buildSuggestedPlaylists(playlistHeight, showOnlyLiked: true),
             _buildRecommendedSongsSection(playlistHeight),
           ],
         ),
@@ -92,56 +92,18 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildSuggestedPlaylists(double playlistHeight) {
-    return FutureBuilder<List<dynamic>>(
-      future: getPlaylists(playlistsNum: recommendedCubesNumber),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return _buildLoadingWidget();
-        } else if (snapshot.hasError) {
-          logger.log(
-            'Error in _buildSuggestedPlaylists',
-            snapshot.error,
-            snapshot.stackTrace,
-          );
-          return _buildErrorWidget(context);
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const SizedBox.shrink();
-        }
-
-        final playlists = snapshot.data!;
-        final itemsNumber = playlists.length.clamp(0, recommendedCubesNumber);
-        final isLargeScreen = MediaQuery.of(context).size.width > 480;
-
-        return Column(
-          children: [
-            SectionHeader(title: context.l10n!.suggestedPlaylists),
-            ConstrainedBox(
-              constraints: BoxConstraints(maxHeight: playlistHeight),
-              child:
-                  isLargeScreen
-                      ? _buildHorizontalList(
-                        playlists,
-                        itemsNumber,
-                        playlistHeight,
-                      )
-                      : _buildCarouselView(
-                        playlists,
-                        itemsNumber,
-                        playlistHeight,
-                      ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildBackToFavoritesPlaylists(double playlistHeight) {
+  Widget _buildSuggestedPlaylists(
+    double playlistHeight, {
+    bool showOnlyLiked = false,
+  }) {
+    final sectionTitle =
+        showOnlyLiked
+            ? context.l10n!.backToFavorites
+            : context.l10n!.suggestedPlaylists;
     return FutureBuilder<List<dynamic>>(
       future: getPlaylists(
         playlistsNum: recommendedCubesNumber,
-        onlyLiked: true,
+        onlyLiked: showOnlyLiked,
       ),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -163,7 +125,7 @@ class _HomePageState extends State<HomePage> {
 
         return Column(
           children: [
-            SectionHeader(title: context.l10n!.backToFavorites),
+            SectionHeader(title: sectionTitle),
             ConstrainedBox(
               constraints: BoxConstraints(maxHeight: playlistHeight),
               child:
