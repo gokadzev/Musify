@@ -119,7 +119,7 @@ class _HomePageState extends State<HomePage> {
           return const SizedBox.shrink();
         }
 
-        final playlists = snapshot.data!;
+        final playlists = snapshot.data ?? [];
         final itemsNumber = playlists.length.clamp(0, recommendedCubesNumber);
         final isLargeScreen = MediaQuery.of(context).size.width > 480;
 
