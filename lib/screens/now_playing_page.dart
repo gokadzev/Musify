@@ -140,7 +140,6 @@ class _DesktopLayout extends StatelessWidget {
   }
 }
 
-// ! ----------------------------------------
 class _MobileLayout extends StatelessWidget {
   const _MobileLayout({
     required this.metadata,
@@ -157,42 +156,32 @@ class _MobileLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.green, width: 2),
-      ),
-      child: Column(
-        children: [
+    return Column(
+      children: [
+        const SizedBox(height: 10),
+        NowPlayingArtwork(size: size, metadata: metadata),
+        const SizedBox(height: 10),
+        if (!(metadata.extras?['isLive'] ?? false))
+          NowPlayingControls(
+            context: context,
+            size: size,
+            audioId: metadata.extras?['ytid'],
+            adjustedIconSize: adjustedIconSize,
+            adjustedMiniIconSize: adjustedMiniIconSize,
+            metadata: metadata,
+          ),
+        if (!isLargeScreen) ...[
           const SizedBox(height: 10),
-          NowPlayingArtwork(size: size, metadata: metadata),
-          const SizedBox(height: 10),
-          if (!(metadata.extras?['isLive'] ?? false))
-            NowPlayingControls(
-              context: context,
-              size: size,
-              audioId: metadata.extras?['ytid'],
-              adjustedIconSize: adjustedIconSize,
-              adjustedMiniIconSize: adjustedMiniIconSize,
-              metadata: metadata,
-            ),
-          if (!isLargeScreen) ...[
-            const SizedBox(height: 10),
-            Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.red, width: 2),
-              ),
-              child: BottomActionsRow(
-                context: context,
-                audioId: metadata.extras?['ytid'],
-                metadata: metadata,
-                iconSize: adjustedMiniIconSize,
-                isLargeScreen: isLargeScreen,
-              ),
-            ),
-            // const SizedBox(height: 50),
-          ],
+          BottomActionsRow(
+            context: context,
+            audioId: metadata.extras?['ytid'],
+            metadata: metadata,
+            iconSize: adjustedMiniIconSize,
+            isLargeScreen: isLargeScreen,
+          ),
+          // const SizedBox(height: 50),
         ],
-      ),
+      ],
     );
   }
 }

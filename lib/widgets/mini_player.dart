@@ -23,7 +23,6 @@ import 'package:audio_service/audio_service.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/main.dart';
-import 'package:musify/screens/custom_now_playing_page.dart';
 import 'package:musify/screens/now_playing_page.dart';
 import 'package:musify/widgets/marque.dart';
 import 'package:musify/widgets/playback_icon_button.dart';
@@ -44,7 +43,7 @@ class MiniPlayer extends StatelessWidget {
             context,
             PageRouteBuilder(
               pageBuilder: (context, animation, secondaryAnimation) {
-                return const CustomNowPlayingPage();
+                return const NowPlayingPage();
               },
               transitionsBuilder: (
                 context,
@@ -74,7 +73,7 @@ class MiniPlayer extends StatelessWidget {
             context,
             PageRouteBuilder(
               pageBuilder: (context, animation, secondaryAnimation) {
-                return const CustomNowPlayingPage();
+                return const NowPlayingPage();
               },
               transitionsBuilder: (
                 context,
