@@ -218,10 +218,6 @@ Future<String> addUserPlaylist(String input, BuildContext context) async {
 
   if (input.startsWith('http://') || input.startsWith('https://')) {
     playlistId = extractYoutubePlaylistId(input);
-
-    if (playlistId == null) {
-      return '${context.l10n!.notYTlist}!';
-    }
   }
 
   try {

@@ -150,10 +150,12 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
                   ? NavigationBar(
                     selectedIndex: _selectedIndex.value,
                     labelBehavior:
-                        languageSetting == const Locale('en', '')
-                            ? NavigationDestinationLabelBehavior
-                                .onlyShowSelected
-                            : NavigationDestinationLabelBehavior.alwaysHide,
+                        NavigationDestinationLabelBehavior.onlyShowSelected,
+                    // labelBehavior:
+                    //     languageSetting == const Locale('en', '')
+                    //         ? NavigationDestinationLabelBehavior
+                    //             .onlyShowSelected
+                    //         : NavigationDestinationLabelBehavior.alwaysHide,
                     onDestinationSelected: (index) {
                       widget.child.goBranch(
                         index,

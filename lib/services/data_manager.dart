@@ -221,8 +221,8 @@ Future<String> restoreData(BuildContext context) async {
       );
 
       if (_file.path != null && _file.path!.isNotEmpty && _file.size != 0) {
-        final sourceFilePath = _file.path!;
-        final sourceFile = File(sourceFilePath);
+        final sourceFilePath = _file.path;
+        final sourceFile = File(sourceFilePath!);
 
         final box = await _openBox(boxName);
         final boxPath = box.path;

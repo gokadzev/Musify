@@ -23,6 +23,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/main.dart';
+import 'package:musify/screens/custom_now_playing_page.dart';
 import 'package:musify/screens/now_playing_page.dart';
 import 'package:musify/widgets/marque.dart';
 import 'package:musify/widgets/playback_icon_button.dart';
@@ -43,7 +44,7 @@ class MiniPlayer extends StatelessWidget {
             context,
             PageRouteBuilder(
               pageBuilder: (context, animation, secondaryAnimation) {
-                return const NowPlayingPage();
+                return const CustomNowPlayingPage();
               },
               transitionsBuilder: (
                 context,
@@ -73,7 +74,7 @@ class MiniPlayer extends StatelessWidget {
             context,
             PageRouteBuilder(
               pageBuilder: (context, animation, secondaryAnimation) {
-                return const NowPlayingPage();
+                return const CustomNowPlayingPage();
               },
               transitionsBuilder: (
                 context,
@@ -136,7 +137,7 @@ class MiniPlayer extends StatelessWidget {
                 if (audioHandler.hasNext) const SizedBox(width: 10),
                 if (audioHandler.hasNext)
                   GestureDetector(
-                    onTap: () => audioHandler.skipToNext(),
+                    onTap: audioHandler.skipToNext,
                     child: Icon(
                       FluentIcons.next_24_filled,
                       color: colorScheme.primary,
