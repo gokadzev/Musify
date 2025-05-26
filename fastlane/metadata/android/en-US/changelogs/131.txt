@@ -1,0 +1,10 @@
+Bug Fixes
+- Fixed queue and auto play next song
+- Other miscellaneous fixes
+
+
+Enhancements
+- Added progress bar to mini player
+- Added Hebrew and Swedish languages support
+- Updated French translations
+- Full changelog: https://github.com/gokadzev/Musify/releases
