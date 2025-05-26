@@ -180,8 +180,7 @@ class _MusifyState extends State<Musify> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: DynamicColorBuilder(
+    return DynamicColorBuilder(
         builder: (lightColorScheme, darkColorScheme) {
           final colorScheme = getAppColorScheme(
             lightColorScheme,
@@ -222,7 +221,6 @@ class _MusifyState extends State<Musify> {
             ),
           );
         },
-      ),
     );
   }
 }
