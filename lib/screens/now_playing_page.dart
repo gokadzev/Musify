@@ -63,35 +63,37 @@ class NowPlayingPage extends StatelessWidget {
           },
         ),
       ),
-      body: StreamBuilder<MediaItem?>(
-        stream: audioHandler.mediaItem.distinct((prev, curr) {
-          if (prev == null || curr == null) return false;
-          return prev.id == curr.id &&
-              prev.title == curr.title &&
-              prev.artist == curr.artist &&
-              prev.artUri == curr.artUri;
-        }),
-        builder: (context, snapshot) {
-          if (snapshot.data == null || !snapshot.hasData) {
-            return const SizedBox.shrink();
-          } else {
-            final metadata = snapshot.data!;
-            return isLargeScreen
-                ? _DesktopLayout(
-                  metadata: metadata,
-                  size: size,
-                  adjustedIconSize: adjustedIconSize,
-                  adjustedMiniIconSize: adjustedMiniIconSize,
-                )
-                : _MobileLayout(
-                  metadata: metadata,
-                  size: size,
-                  adjustedIconSize: adjustedIconSize,
-                  adjustedMiniIconSize: adjustedMiniIconSize,
-                  isLargeScreen: isLargeScreen,
-                );
-          }
-        },
+      body: SafeArea(
+        child: StreamBuilder<MediaItem?>(
+          stream: audioHandler.mediaItem.distinct((prev, curr) {
+            if (prev == null || curr == null) return false;
+            return prev.id == curr.id &&
+                prev.title == curr.title &&
+                prev.artist == curr.artist &&
+                prev.artUri == curr.artUri;
+          }),
+          builder: (context, snapshot) {
+            if (snapshot.data == null || !snapshot.hasData) {
+              return const SizedBox.shrink();
+            } else {
+              final metadata = snapshot.data!;
+              return isLargeScreen
+                  ? _DesktopLayout(
+                    metadata: metadata,
+                    size: size,
+                    adjustedIconSize: adjustedIconSize,
+                    adjustedMiniIconSize: adjustedMiniIconSize,
+                  )
+                  : _MobileLayout(
+                    metadata: metadata,
+                    size: size,
+                    adjustedIconSize: adjustedIconSize,
+                    adjustedMiniIconSize: adjustedMiniIconSize,
+                    isLargeScreen: isLargeScreen,
+                  );
+            }
+          },
+        ),
       ),
     );
   }
