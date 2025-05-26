@@ -139,15 +139,6 @@ class _MusifyState extends State<Musify> {
 
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      SystemChrome.setSystemUIOverlayStyle(
-        const SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          systemNavigationBarColor: Colors.transparent,
-        ),
-      );
-    });
-
     final platformDispatcher = PlatformDispatcher.instance;
 
     // This callback is called every time the brightness changes.
@@ -196,19 +187,38 @@ class _MusifyState extends State<Musify> {
           darkColorScheme,
         );
 
-        return MaterialApp.router(
-          themeMode: themeMode,
-          darkTheme: getAppTheme(colorScheme),
-          theme: getAppTheme(colorScheme),
-          localizationsDelegates: const [
-            AppLocalizations.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: appSupportedLocales,
-          locale: languageSetting,
-          routerConfig: NavigationManager.router,
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            systemNavigationBarColor: Colors.transparent,
+            systemNavigationBarContrastEnforced: false,
+            statusBarBrightness:
+                brightness == Brightness.dark
+                    ? Brightness.light
+                    : Brightness.dark,
+            statusBarIconBrightness:
+                brightness == Brightness.dark
+                    ? Brightness.light
+                    : Brightness.dark,
+            systemNavigationBarIconBrightness:
+                brightness == Brightness.dark
+                    ? Brightness.light
+                    : Brightness.dark,
+          ),
+          child: MaterialApp.router(
+            themeMode: themeMode,
+            darkTheme: getAppTheme(colorScheme),
+            theme: getAppTheme(colorScheme),
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: appSupportedLocales,
+            locale: languageSetting,
+            routerConfig: NavigationManager.router,
+          ),
         );
       },
     );
