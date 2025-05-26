@@ -38,8 +38,6 @@ class BottomNavigationPage extends StatefulWidget {
 }
 
 class _BottomNavigationPageState extends State<BottomNavigationPage> {
-  final _selectedIndex = ValueNotifier<int>(0);
-
   List<NavigationDestination> _getNavigationDestinations(BuildContext context) {
     return !offlineMode.value
         ? [
@@ -87,85 +85,117 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
     return MediaQuery.of(context).size.width >= 600;
   }
 
+  // Maps the visible destination index to the correct branch index in the navigation shell
+  // TODO: This mapping is hardcoded for the current navigation structure. Refactor if navigation destinations change.
+  int _visibleToBranchIndex(int visibleIndex, bool isOffline) {
+    if (!isOffline) {
+      return visibleIndex;
+    } else {
+      if (visibleIndex == 0) return 0; // Home
+      if (visibleIndex == 1) return 2; // Library
+      if (visibleIndex == 2) return 3; // Settings
+      throw Exception('Invalid visible index for offline mode');
+    }
+  }
+
+  // Maps the navigation shell's branch index to the visible destination index
+  // TODO: This mapping is hardcoded for the current navigation structure. Refactor if navigation destinations change.
+  int _branchToVisibleIndex(int branchIndex, bool isOffline) {
+    if (!isOffline) {
+      return branchIndex;
+    } else {
+      if (branchIndex == 0) return 0; // Home
+      if (branchIndex == 2) return 1; // Library
+      if (branchIndex == 3) return 2; // Settings
+      // If branchIndex is 1 (Search), not visible in offline mode
+      return 0; // Default to Home if invalid
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final isLargeScreen = _isLargeScreen(context);
+    return ValueListenableBuilder<bool>(
+      valueListenable: offlineMode,
+      builder: (context, isOffline, _) {
+        final destinations = _getNavigationDestinations(context);
+        final selectedIndex = _branchToVisibleIndex(widget.child.currentIndex, isOffline);
 
-        return Scaffold(
-          body: Row(
-            children: [
-              if (isLargeScreen)
-                NavigationRail(
-                  labelType: NavigationRailLabelType.selected,
-                  destinations:
-                      _getNavigationDestinations(context)
-                          .map(
-                            (destination) => NavigationRailDestination(
-                              icon: destination.icon,
-                              selectedIcon: destination.selectedIcon,
-                              label: Text(destination.label),
-                            ),
-                          )
-                          .toList(),
-                  selectedIndex: _selectedIndex.value,
-                  onDestinationSelected: (index) {
-                    widget.child.goBranch(
-                      index,
-                      initialLocation: index == widget.child.currentIndex,
-                    );
-                    setState(() {
-                      _selectedIndex.value = index;
-                    });
-                  },
-                ),
-              Expanded(
-                child: Column(
-                  children: [
-                    Expanded(child: widget.child),
-                    StreamBuilder<MediaItem?>(
-                      stream: audioHandler.mediaItem.distinct((prev, curr) {
-                        if (prev == null || curr == null) return false;
-                        return prev.id == curr.id &&
-                            prev.title == curr.title &&
-                            prev.artist == curr.artist &&
-                            prev.artUri == curr.artUri;
-                      }),
-                      builder: (context, snapshot) {
-                        final metadata = snapshot.data;
-                        if (metadata == null) {
-                          return const SizedBox.shrink();
-                        }
-                        return MiniPlayer(metadata: metadata);
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final isLargeScreen = _isLargeScreen(context);
+            return Scaffold(
+              body: Row(
+                children: [
+                  if (isLargeScreen)
+                    NavigationRail(
+                      labelType: NavigationRailLabelType.selected,
+                      destinations:
+                          destinations
+                              .map(
+                                (destination) => NavigationRailDestination(
+                                  icon: destination.icon,
+                                  selectedIcon: destination.selectedIcon,
+                                  label: Text(destination.label),
+                                ),
+                              )
+                              .toList(),
+                      selectedIndex: selectedIndex,
+                      onDestinationSelected: (index) {
+                        final branchIndex = _visibleToBranchIndex(index, isOffline);
+                        widget.child.goBranch(
+                          branchIndex,
+                          initialLocation: branchIndex != widget.child.currentIndex,
+                        );
+                        setState(() {});
                       },
                     ),
-                  ],
-                ),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Expanded(child: widget.child),
+                        StreamBuilder<MediaItem?>(
+                          stream: audioHandler.mediaItem.distinct((prev, curr) {
+                            if (prev == null || curr == null) return false;
+                            return prev.id == curr.id &&
+                                prev.title == curr.title &&
+                                prev.artist == curr.artist &&
+                                prev.artUri == curr.artUri;
+                          }),
+                          builder: (context, snapshot) {
+                            final metadata = snapshot.data;
+                            if (metadata == null) {
+                              return const SizedBox.shrink();
+                            }
+                            return MiniPlayer(metadata: metadata);
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-          bottomNavigationBar:
-              !isLargeScreen
-                  ? NavigationBar(
-                    selectedIndex: _selectedIndex.value,
-                    labelBehavior:
-                        languageSetting == const Locale('en', '')
-                            ? NavigationDestinationLabelBehavior
-                                .onlyShowSelected
-                            : NavigationDestinationLabelBehavior.alwaysHide,
-                    onDestinationSelected: (index) {
-                      widget.child.goBranch(
-                        index,
-                        initialLocation: index == widget.child.currentIndex,
-                      );
-                      setState(() {
-                        _selectedIndex.value = index;
-                      });
-                    },
-                    destinations: _getNavigationDestinations(context),
-                  )
-                  : null,
+              bottomNavigationBar:
+                  !isLargeScreen
+                      ? NavigationBar(
+                        selectedIndex: selectedIndex,
+                        labelBehavior:
+                            languageSetting == const Locale('en', '')
+                                ? NavigationDestinationLabelBehavior
+                                    .onlyShowSelected
+                                : NavigationDestinationLabelBehavior.alwaysHide,
+                        onDestinationSelected: (index) {
+                          final branchIndex = _visibleToBranchIndex(index, isOffline);
+                          widget.child.goBranch(
+                            branchIndex,
+                            initialLocation: branchIndex != widget.child.currentIndex,
+                          );
+                          setState(() {});
+                        },
+                        destinations: destinations,
+                      )
+                      : null,
+            );
+          },
         );
       },
     );
