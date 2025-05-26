@@ -63,35 +63,37 @@ class NowPlayingPage extends StatelessWidget {
           },
         ),
       ),
-      body: StreamBuilder<MediaItem?>(
-        stream: audioHandler.mediaItem.distinct((prev, curr) {
-          if (prev == null || curr == null) return false;
-          return prev.id == curr.id &&
-              prev.title == curr.title &&
-              prev.artist == curr.artist &&
-              prev.artUri == curr.artUri;
-        }),
-        builder: (context, snapshot) {
-          if (snapshot.data == null || !snapshot.hasData) {
-            return const SizedBox.shrink();
-          } else {
-            final metadata = snapshot.data!;
-            return isLargeScreen
-                ? _DesktopLayout(
-                  metadata: metadata,
-                  size: size,
-                  adjustedIconSize: adjustedIconSize,
-                  adjustedMiniIconSize: adjustedMiniIconSize,
-                )
-                : _MobileLayout(
-                  metadata: metadata,
-                  size: size,
-                  adjustedIconSize: adjustedIconSize,
-                  adjustedMiniIconSize: adjustedMiniIconSize,
-                  isLargeScreen: isLargeScreen,
-                );
-          }
-        },
+      body: SafeArea(
+        child: StreamBuilder<MediaItem?>(
+          stream: audioHandler.mediaItem.distinct((prev, curr) {
+            if (prev == null || curr == null) return false;
+            return prev.id == curr.id &&
+                prev.title == curr.title &&
+                prev.artist == curr.artist &&
+                prev.artUri == curr.artUri;
+          }),
+          builder: (context, snapshot) {
+            if (snapshot.data == null || !snapshot.hasData) {
+              return const SizedBox.shrink();
+            } else {
+              final metadata = snapshot.data!;
+              return isLargeScreen
+                  ? _DesktopLayout(
+                    metadata: metadata,
+                    size: size,
+                    adjustedIconSize: adjustedIconSize,
+                    adjustedMiniIconSize: adjustedMiniIconSize,
+                  )
+                  : _MobileLayout(
+                    metadata: metadata,
+                    size: size,
+                    adjustedIconSize: adjustedIconSize,
+                    adjustedMiniIconSize: adjustedMiniIconSize,
+                    isLargeScreen: isLargeScreen,
+                  );
+            }
+          },
+        ),
       ),
     );
   }
@@ -155,10 +157,9 @@ class _MobileLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      spacing: 10,
       children: [
-        const SizedBox(height: 10),
         NowPlayingArtwork(size: size, metadata: metadata),
-        const SizedBox(height: 10),
         if (!(metadata.extras?['isLive'] ?? false))
           NowPlayingControls(
             context: context,
@@ -169,7 +170,6 @@ class _MobileLayout extends StatelessWidget {
             metadata: metadata,
           ),
         if (!isLargeScreen) ...[
-          const SizedBox(height: 10),
           BottomActionsRow(
             context: context,
             audioId: metadata.extras?['ytid'],
@@ -177,7 +177,7 @@ class _MobileLayout extends StatelessWidget {
             iconSize: adjustedMiniIconSize,
             isLargeScreen: isLargeScreen,
           ),
-          const SizedBox(height: 35),
+          const SizedBox(height: 2),
         ],
       ],
     );
