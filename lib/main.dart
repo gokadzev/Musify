@@ -187,28 +187,30 @@ class _MusifyState extends State<Musify> {
 
   @override
   Widget build(BuildContext context) {
-    return DynamicColorBuilder(
-      builder: (lightColorScheme, darkColorScheme) {
-        final colorScheme = getAppColorScheme(
-          lightColorScheme,
-          darkColorScheme,
-        );
+    return SafeArea(
+      child: DynamicColorBuilder(
+        builder: (lightColorScheme, darkColorScheme) {
+          final colorScheme = getAppColorScheme(
+            lightColorScheme,
+            darkColorScheme,
+          );
 
-        return MaterialApp.router(
-          themeMode: themeMode,
-          darkTheme: getAppTheme(colorScheme),
-          theme: getAppTheme(colorScheme),
-          localizationsDelegates: const [
-            AppLocalizations.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: appSupportedLocales,
-          locale: languageSetting,
-          routerConfig: NavigationManager.router,
-        );
-      },
+          return MaterialApp.router(
+            themeMode: themeMode,
+            darkTheme: getAppTheme(colorScheme),
+            theme: getAppTheme(colorScheme),
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: appSupportedLocales,
+            locale: languageSetting,
+            routerConfig: NavigationManager.router,
+          );
+        },
+      ),
     );
   }
 }

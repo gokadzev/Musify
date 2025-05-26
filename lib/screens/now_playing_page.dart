@@ -177,7 +177,7 @@ class _MobileLayout extends StatelessWidget {
             iconSize: adjustedMiniIconSize,
             isLargeScreen: isLargeScreen,
           ),
-          const SizedBox(height: 35),
+          // const SizedBox(height: 35),
         ],
       ],
     );
