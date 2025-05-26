@@ -62,7 +62,7 @@ const appLanguages = <String, String>{
   'German': 'de',
   'Greek': 'el',
   'Hindi': 'hi',
-  'hebrew': 'he',
+  'Hebrew': 'he',
   'Indonesian': 'id',
   'Italian': 'it',
   'Japanese': 'ja',
