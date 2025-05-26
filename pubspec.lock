@@ -814,10 +814,10 @@ packages:
     dependency: "direct main"
     description:
       name: youtube_explode_dart
-      sha256: "7be30342df5bebc3e50cc0d142284db18ffd134104257e74e168742676e5ba15"
+      sha256: "8db47e0f947598f6aa29d2862efb98b92af0c78990d4b23c224f3475c556b47b"
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.0"
+    version: "2.4.2"
 sdks:
   dart: ">=3.7.0 <4.0.0"
   flutter: ">=3.32.0"
