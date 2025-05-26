@@ -181,46 +181,46 @@ class _MusifyState extends State<Musify> {
   @override
   Widget build(BuildContext context) {
     return DynamicColorBuilder(
-        builder: (lightColorScheme, darkColorScheme) {
-          final colorScheme = getAppColorScheme(
-            lightColorScheme,
-            darkColorScheme,
-          );
+      builder: (lightColorScheme, darkColorScheme) {
+        final colorScheme = getAppColorScheme(
+          lightColorScheme,
+          darkColorScheme,
+        );
 
-          return AnnotatedRegion<SystemUiOverlayStyle>(
-            value: SystemUiOverlayStyle(
-              statusBarColor: Colors.transparent,
-              systemNavigationBarColor: Colors.transparent,
-              systemNavigationBarContrastEnforced: true,
-              statusBarBrightness:
-                  brightness == Brightness.dark
-                      ? Brightness.light
-                      : Brightness.dark,
-              statusBarIconBrightness:
-                  brightness == Brightness.dark
-                      ? Brightness.light
-                      : Brightness.dark,
-              systemNavigationBarIconBrightness:
-                  brightness == Brightness.dark
-                      ? Brightness.light
-                      : Brightness.dark,
-            ),
-            child: MaterialApp.router(
-              themeMode: themeMode,
-              darkTheme: getAppTheme(colorScheme),
-              theme: getAppTheme(colorScheme),
-              localizationsDelegates: const [
-                AppLocalizations.delegate,
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
-              ],
-              supportedLocales: appSupportedLocales,
-              locale: languageSetting,
-              routerConfig: NavigationManager.router,
-            ),
-          );
-        },
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            systemNavigationBarColor: Colors.transparent,
+            systemNavigationBarContrastEnforced: true,
+            statusBarBrightness:
+                brightness == Brightness.dark
+                    ? Brightness.light
+                    : Brightness.dark,
+            statusBarIconBrightness:
+                brightness == Brightness.dark
+                    ? Brightness.light
+                    : Brightness.dark,
+            systemNavigationBarIconBrightness:
+                brightness == Brightness.dark
+                    ? Brightness.light
+                    : Brightness.dark,
+          ),
+          child: MaterialApp.router(
+            themeMode: themeMode,
+            darkTheme: getAppTheme(colorScheme),
+            theme: getAppTheme(colorScheme),
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: appSupportedLocales,
+            locale: languageSetting,
+            routerConfig: NavigationManager.router,
+          ),
+        );
+      },
     );
   }
 }
