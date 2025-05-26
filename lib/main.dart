@@ -142,6 +142,7 @@ class _MusifyState extends State<Musify> {
         const SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
           systemNavigationBarColor: Colors.transparent,
+          systemStatusBarContrastEnforced: true,
         ),
       );
     });
