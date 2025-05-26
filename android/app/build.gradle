@@ -38,6 +38,12 @@ android {
         targetCompatibility JavaVersion.VERSION_17
     }
 
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging true
+        }
+    }
+
     kotlinOptions {
         jvmTarget = '17'
     }
@@ -57,6 +63,7 @@ android {
         targetSdk 35
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        multiDexEnabled = true
     }
 
     flavorDimensions "flavor"
@@ -98,7 +105,12 @@ android {
     buildTypes {
         release {
             signingConfig signingConfigs.release
-            shrinkResources false
+            minifyEnabled = true
+            shrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
         }
         debug {
             applicationIdSuffix '.debug'
@@ -110,5 +122,10 @@ android {
 
 flutter {
     source '../..'
+}
+
+
+dependencies {
+    implementation("androidx.multidex:multidex:2.0.1")
 }
 
