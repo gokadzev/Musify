@@ -155,10 +155,9 @@ class _MobileLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      spacing: 10,
       children: [
-        const SizedBox(height: 10),
         NowPlayingArtwork(size: size, metadata: metadata),
-        const SizedBox(height: 10),
         if (!(metadata.extras?['isLive'] ?? false))
           NowPlayingControls(
             context: context,
@@ -169,7 +168,6 @@ class _MobileLayout extends StatelessWidget {
             metadata: metadata,
           ),
         if (!isLargeScreen) ...[
-          const SizedBox(height: 10),
           BottomActionsRow(
             context: context,
             audioId: metadata.extras?['ytid'],
@@ -177,7 +175,7 @@ class _MobileLayout extends StatelessWidget {
             iconSize: adjustedMiniIconSize,
             isLargeScreen: isLargeScreen,
           ),
-          // const SizedBox(height: 35),
+          const SizedBox(height: 2),
         ],
       ],
     );
