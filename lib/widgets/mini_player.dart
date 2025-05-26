@@ -96,57 +96,82 @@ class MiniPlayer extends StatelessWidget {
               },
             ),
           ),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 18),
-        height: 75,
-        decoration: BoxDecoration(color: colorScheme.surfaceContainerHigh),
-        child: Row(
-          children: <Widget>[
-            _buildArtwork(),
-            _buildMetadata(colorScheme.primary, colorScheme.secondary),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                StreamBuilder<PlaybackState>(
-                  stream: audioHandler.playbackState.distinct((
-                    previous,
-                    current,
-                  ) {
-                    // Only rebuild if playing state or processing state changes
-                    return previous.playing == current.playing &&
-                        previous.processingState == current.processingState;
-                  }),
-                  builder: (context, snapshot) {
-                    final processingState = snapshot.data?.processingState;
-                    final isPlaying = snapshot.data?.playing ?? false;
-                    final iconDataAndAction = getIconFromState(
-                      processingState,
-                      isPlaying,
-                    );
-                    return GestureDetector(
-                      onTap: iconDataAndAction.onPressed,
-                      child: Icon(
-                        iconDataAndAction.iconData,
-                        color: colorScheme.primary,
-                        size: 35,
-                      ),
-                    );
-                  },
-                ),
-                if (audioHandler.hasNext) const SizedBox(width: 10),
-                if (audioHandler.hasNext)
-                  GestureDetector(
-                    onTap: () => audioHandler.skipToNext(),
-                    child: Icon(
-                      FluentIcons.next_24_filled,
-                      color: colorScheme.primary,
-                      size: 25,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 18),
+            height: 75,
+            decoration: BoxDecoration(color: colorScheme.surfaceContainerHigh),
+            child: Row(
+              children: <Widget>[
+                _buildArtwork(),
+                _buildMetadata(colorScheme.primary, colorScheme.secondary),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    StreamBuilder<PlaybackState>(
+                      stream: audioHandler.playbackState.distinct((
+                        previous,
+                        current,
+                      ) {
+                        // Only rebuild if playing state or processing state changes
+                        return previous.playing == current.playing &&
+                            previous.processingState == current.processingState;
+                      }),
+                      builder: (context, snapshot) {
+                        final processingState = snapshot.data?.processingState;
+                        final isPlaying = snapshot.data?.playing ?? false;
+                        final iconDataAndAction = getIconFromState(
+                          processingState,
+                          isPlaying,
+                        );
+                        return GestureDetector(
+                          onTap: iconDataAndAction.onPressed,
+                          child: Icon(
+                            iconDataAndAction.iconData,
+                            color: colorScheme.primary,
+                            size: 35,
+                          ),
+                        );
+                      },
                     ),
-                  ),
+                    if (audioHandler.hasNext) const SizedBox(width: 10),
+                    if (audioHandler.hasNext)
+                      GestureDetector(
+                        onTap: () => audioHandler.skipToNext(),
+                        child: Icon(
+                          FluentIcons.next_24_filled,
+                          color: colorScheme.primary,
+                          size: 25,
+                        ),
+                      ),
+                  ],
+                ),
               ],
             ),
-          ],
-        ),
+          ),
+          // Progress bar for current music
+          StreamBuilder<PlaybackState>(
+            stream: audioHandler.playbackState,
+            builder: (context, snapshot) {
+              final position = snapshot.data?.position ?? Duration.zero;
+              final duration =
+                  audioHandler.mediaItem.value?.duration ?? Duration.zero;
+              double progress = 0;
+              if (duration.inMilliseconds > 0) {
+                progress = position.inMilliseconds / duration.inMilliseconds;
+                progress = progress.clamp(0.0, 1.0);
+              }
+              return LinearProgressIndicator(
+                value: progress,
+                minHeight: 2,
+                backgroundColor: colorScheme.surfaceContainer,
+                valueColor: AlwaysStoppedAnimation<Color>(colorScheme.primary),
+              );
+            },
+          ),
+        ],
       ),
     );
   }
