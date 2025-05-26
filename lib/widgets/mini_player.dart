@@ -23,6 +23,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/main.dart';
+import 'package:musify/models/position_data.dart';
 import 'package:musify/screens/now_playing_page.dart';
 import 'package:musify/widgets/marque.dart';
 import 'package:musify/widgets/playback_icon_button.dart';
@@ -152,17 +153,23 @@ class MiniPlayer extends StatelessWidget {
             ),
           ),
           // Progress bar for current music
-          StreamBuilder<PlaybackState>(
-            stream: audioHandler.playbackState,
+          StreamBuilder<PositionData>(
+            stream: audioHandler.positionDataStream.distinct(),
             builder: (context, snapshot) {
-              final position = snapshot.data?.position ?? Duration.zero;
-              final duration =
-                  audioHandler.mediaItem.value?.duration ?? Duration.zero;
-              double progress = 0;
-              if (duration.inMilliseconds > 0) {
-                progress = position.inMilliseconds / duration.inMilliseconds;
-                progress = progress.clamp(0.0, 1.0);
+              if (!snapshot.hasData || snapshot.hasError) {
+                return const SizedBox.shrink();
               }
+
+              final positionData =
+                  snapshot.data ??
+                  PositionData(Duration.zero, Duration.zero, Duration.zero);
+
+              final duration = positionData.duration;
+              final progress =
+                  duration > Duration.zero
+                      ? (positionData.position.inSeconds / duration.inSeconds)
+                          .clamp(0.0, 1.0)
+                      : 0.0;
               return LinearProgressIndicator(
                 value: progress,
                 minHeight: 2,
