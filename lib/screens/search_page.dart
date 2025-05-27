@@ -272,7 +272,7 @@ class _SearchPageState extends State<SearchPage> {
       builder: (BuildContext context) {
         return ConfirmationDialog(
           confirmationMessage: context.l10n!.removeSearchQueryQuestion,
-          submitMessage: context.l10n!.confirm,
+          submitBtnText: context.l10n!.remove,
           onCancel: () {
             Navigator.of(context).pop(false);
           },

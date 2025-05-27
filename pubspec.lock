@@ -541,6 +541,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.0.2"
+  restart_app:
+    dependency: "direct main"
+    description:
+      name: restart_app
+      sha256: "00d5ec3e9de871cedbe552fc41e615b042b5ec654385e090e0983f6d02f655ed"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.3.2"
   rxdart:
     dependency: "direct main"
     description:
