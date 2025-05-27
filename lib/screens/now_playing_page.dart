@@ -407,8 +407,16 @@ class NowPlayingControls extends StatelessWidget {
   }
 }
 
-class PositionSlider extends StatelessWidget {
+class PositionSlider extends StatefulWidget {
   const PositionSlider({super.key});
+
+  @override
+  State<PositionSlider> createState() => _PositionSliderState();
+}
+
+class _PositionSliderState extends State<PositionSlider> {
+  bool _isDragging = false;
+  double _dragValue = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -425,21 +433,40 @@ class PositionSlider extends StatelessWidget {
                   ? snapshot.data!
                   : PositionData(Duration.zero, Duration.zero, Duration.zero);
 
+          final maxDuration =
+              positionData.duration.inSeconds > 0
+                  ? positionData.duration.inSeconds.toDouble()
+                  : 1.0;
+
+          final currentValue =
+              _isDragging
+                  ? _dragValue
+                  : positionData.position.inSeconds.toDouble();
+
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Slider(
-                value: positionData.position.inSeconds.toDouble(),
+                value: currentValue.clamp(0.0, maxDuration),
                 onChanged:
                     hasData
                         ? (value) {
-                          audioHandler.seek(Duration(seconds: value.toInt()));
+                          setState(() {
+                            _isDragging = true;
+                            _dragValue = value;
+                          });
                         }
                         : null,
-                max:
-                    positionData.duration.inSeconds > 0
-                        ? positionData.duration.inSeconds.toDouble()
-                        : 1.0,
+                onChangeEnd:
+                    hasData
+                        ? (value) {
+                          audioHandler.seek(Duration(seconds: value.toInt()));
+                          setState(() {
+                            _isDragging = false;
+                          });
+                        }
+                        : null,
+                max: maxDuration,
               ),
               _buildPositionRow(context, primaryColor, positionData),
             ],
