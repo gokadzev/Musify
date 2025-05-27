@@ -527,7 +527,11 @@ class PlayerControlButtons extends StatelessWidget {
             children: [
               _buildPreviousButton(_primaryColor, _secondaryColor, iconSize),
               const SizedBox(width: 10),
-              _buildPlayPauseButton(_primaryColor, _secondaryColor, iconSize),
+              PlaybackIconButton(
+                iconColor: _primaryColor,
+                backgroundColor: _secondaryColor,
+                iconSize: iconSize,
+              ),
               const SizedBox(width: 10),
               _buildNextButton(_primaryColor, _secondaryColor, iconSize),
             ],
@@ -591,30 +595,6 @@ class PlayerControlButtons extends StatelessWidget {
                       ? audioHandler.playAgain()
                       : audioHandler.skipToPrevious(),
           splashColor: Colors.transparent,
-        );
-      },
-    );
-  }
-
-  Widget _buildPlayPauseButton(
-    Color primaryColor,
-    Color secondaryColor,
-    double iconSize,
-  ) {
-    return StreamBuilder<PlaybackState>(
-      stream: audioHandler.playbackState.distinct((previous, current) {
-        // Only rebuild if playing state or processing state changes
-        return previous.playing == current.playing &&
-            previous.processingState == current.processingState;
-      }),
-      builder: (context, snapshot) {
-        return buildPlaybackIconButton(
-          snapshot.data,
-          iconSize,
-          primaryColor,
-          secondaryColor,
-          elevation: 0,
-          padding: EdgeInsets.all(iconSize * 0.40),
         );
       },
     );
