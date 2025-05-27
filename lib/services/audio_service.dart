@@ -486,32 +486,86 @@ class MusifyAudioHandler extends BaseAudioHandler {
   }
 
   void _preloadUpcomingSongs() {
-    try {
-      for (var i = 1; i <= _queueLookahead; i++) {
-        final nextIndex = _currentQueueIndex + i;
-        if (nextIndex < _queueList.length) {
-          final nextSong = _queueList[nextIndex];
-          if (nextSong['ytid'] != null && !(nextSong['isOffline'] ?? false)) {
-            getSong(nextSong['ytid'], nextSong['isLive'] ?? false)
-                .then((url) {
-                  if (url != null) {
-                    final cacheKey =
-                        'song_${nextSong['ytid']}_${audioQualitySetting.value}_url';
-                    addOrUpdateData('cache', cacheKey, url);
-                  }
-                })
-                .catchError((e) {
-                  logger.log(
-                    'Error preloading song ${nextSong['ytid']}',
-                    e,
-                    null,
-                  );
-                });
+    // Don't block UI - run preloading in background without awaiting
+    Future.microtask(() async {
+      try {
+        final preloadTasks = <Future<void>>[];
+
+        for (var i = 1; i <= _queueLookahead; i++) {
+          final nextIndex = _currentQueueIndex + i;
+          if (nextIndex < _queueList.length) {
+            final nextSong = _queueList[nextIndex];
+            if (nextSong['ytid'] != null && !(nextSong['isOffline'] ?? false)) {
+              // Create preload task with timeout and error handling
+              final preloadTask = _preloadSingleSong(nextSong)
+                  .timeout(
+                    const Duration(seconds: 10),
+                    onTimeout: () {
+                      logger.log(
+                        'Preload timeout for song ${nextSong['ytid']}',
+                        null,
+                        null,
+                      );
+                    },
+                  )
+                  .catchError((e) {
+                    // Silently catch and log preload errors to prevent UI lag
+                    logger.log(
+                      'Error preloading song ${nextSong['ytid']}',
+                      e,
+                      null,
+                    );
+                  });
+
+              preloadTasks.add(preloadTask);
+            }
           }
         }
+
+        // Run all preload tasks concurrently with overall timeout
+        if (preloadTasks.isNotEmpty) {
+          await Future.wait(preloadTasks)
+              .timeout(
+                const Duration(seconds: 15),
+                onTimeout: () {
+                  logger.log('Preloading batch timeout', null, null);
+                  return <void>[];
+                },
+              )
+              .catchError((e) {
+                logger.log('Error in preload batch', e, null);
+                return <void>[];
+              });
+        }
+      } catch (e, stackTrace) {
+        logger.log('Error in _preloadUpcomingSongs', e, stackTrace);
       }
-    } catch (e, stackTrace) {
-      logger.log('Error preloading upcoming songs', e, stackTrace);
+    });
+  }
+
+  Future<void> _preloadSingleSong(Map nextSong) async {
+    try {
+      final cacheKey =
+          'song_${nextSong['ytid']}_${audioQualitySetting.value}_url';
+
+      // Check if already cached
+      final cachedUrl = getData('cache', cacheKey);
+      if (cachedUrl.toString().isNotEmpty) {
+        return; // Already cached, skip
+      }
+
+      final url = await getSong(nextSong['ytid'], nextSong['isLive'] ?? false);
+      if (url != null && url.isNotEmpty) {
+        await addOrUpdateData('cache', cacheKey, url);
+        logger.log(
+          'Successfully preloaded song ${nextSong['ytid']}',
+          null,
+          null,
+        );
+      }
+    } catch (e) {
+      // Don't rethrow - let parent handle
+      logger.log('Failed to preload song ${nextSong['ytid']}: $e', null, null);
     }
   }
 
@@ -710,6 +764,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
         getSimilarSong(song['ytid']);
       }
 
+      // Start preloading AFTER current song is playing to avoid blocking
+      Future.delayed(const Duration(seconds: 2), _preloadUpcomingSongs);
+
       return true;
     } catch (e, stackTrace) {
       logger.log('Error setting audio source', e, stackTrace);
@@ -736,6 +793,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
               await audioPlayer.play();
               _updatePlaybackState();
+
+              // Start preloading after successful fallback
+              Future.delayed(const Duration(seconds: 2), _preloadUpcomingSongs);
+
               return true;
             } catch (fallbackError, fallbackStackTrace) {
               logger.log(
