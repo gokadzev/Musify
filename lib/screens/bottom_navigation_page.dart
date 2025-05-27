@@ -89,83 +89,109 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final isLargeScreen = _isLargeScreen(context);
-
-        return Scaffold(
-          body: Row(
-            children: [
-              if (isLargeScreen)
-                NavigationRail(
-                  labelType: NavigationRailLabelType.selected,
-                  destinations:
-                      _getNavigationDestinations(context)
-                          .map(
-                            (destination) => NavigationRailDestination(
-                              icon: destination.icon,
-                              selectedIcon: destination.selectedIcon,
-                              label: Text(destination.label),
-                            ),
-                          )
-                          .toList(),
-                  selectedIndex: _selectedIndex.value,
-                  onDestinationSelected: (index) {
-                    widget.child.goBranch(
-                      index,
-                      initialLocation: index == widget.child.currentIndex,
-                    );
-                    setState(() {
-                      _selectedIndex.value = index;
-                    });
-                  },
-                ),
-              Expanded(
-                child: Column(
-                  children: [
-                    Expanded(child: widget.child),
-                    StreamBuilder<MediaItem?>(
-                      stream: audioHandler.mediaItem.distinct((prev, curr) {
-                        if (prev == null || curr == null) return false;
-                        return prev.id == curr.id &&
-                            prev.title == curr.title &&
-                            prev.artist == curr.artist &&
-                            prev.artUri == curr.artUri;
-                      }),
-                      builder: (context, snapshot) {
-                        final metadata = snapshot.data;
-                        if (metadata == null) {
-                          return const SizedBox.shrink();
-                        }
-                        return MiniPlayer(metadata: metadata);
+    return ValueListenableBuilder<bool>(
+      valueListenable: offlineMode,
+      builder: (context, isOffline, _) {
+        // Reset _selectedIndex if it is out of range for the new destinations
+        final destinations = _getNavigationDestinations(context);
+        // If the selected index is out of range (e.g., after toggling offline mode),
+        // set it to the last index to keep the user on the Settings tab.
+        if (_selectedIndex.value >= destinations.length) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _selectedIndex.value = destinations.length - 1;
+          });
+        }
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final isLargeScreen = _isLargeScreen(context);
+            return Scaffold(
+              body: Row(
+                children: [
+                  if (isLargeScreen)
+                    NavigationRail(
+                      labelType: NavigationRailLabelType.selected,
+                      destinations:
+                          destinations
+                              .map(
+                                (destination) => NavigationRailDestination(
+                                  icon: destination.icon,
+                                  selectedIcon: destination.selectedIcon,
+                                  label: Text(destination.label),
+                                ),
+                              )
+                              .toList(),
+                      selectedIndex:
+                          _selectedIndex.value < destinations.length
+                              ? _selectedIndex.value
+                              : destinations.length - 1,
+                      onDestinationSelected: (index) {
+                        widget.child.goBranch(
+                          index,
+                          initialLocation: index == widget.child.currentIndex,
+                        );
+                        _selectedIndex.value = index;
                       },
                     ),
-                  ],
-                ),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Expanded(child: widget.child),
+                        StreamBuilder<MediaItem?>(
+                          stream: audioHandler.mediaItem.distinct((prev, curr) {
+                            if (prev == null || curr == null) return false;
+                            return prev.id == curr.id &&
+                                prev.title == curr.title &&
+                                prev.artist == curr.artist &&
+                                prev.artUri == curr.artUri;
+                          }),
+                          builder: (context, snapshot) {
+                            final metadata = snapshot.data;
+                            if (metadata == null) {
+                              return const SizedBox.shrink();
+                            }
+                            return MiniPlayer(metadata: metadata);
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-          bottomNavigationBar:
-              !isLargeScreen
-                  ? NavigationBar(
-                    selectedIndex: _selectedIndex.value,
-                    labelBehavior:
-                        languageSetting == const Locale('en', '')
-                            ? NavigationDestinationLabelBehavior
-                                .onlyShowSelected
-                            : NavigationDestinationLabelBehavior.alwaysHide,
-                    onDestinationSelected: (index) {
-                      widget.child.goBranch(
-                        index,
-                        initialLocation: index == widget.child.currentIndex,
-                      );
-                      setState(() {
-                        _selectedIndex.value = index;
-                      });
-                    },
-                    destinations: _getNavigationDestinations(context),
-                  )
-                  : null,
+              bottomNavigationBar:
+                  !isLargeScreen
+                      ? ValueListenableBuilder<int>(
+                        valueListenable: _selectedIndex,
+                        builder: (context, selectedIndex, _) {
+                          final destinations = _getNavigationDestinations(
+                            context,
+                          );
+                          final safeIndex =
+                              selectedIndex < destinations.length
+                                  ? selectedIndex
+                                  : destinations.length - 1;
+                          return NavigationBar(
+                            selectedIndex: safeIndex,
+                            labelBehavior:
+                                languageSetting == const Locale('en', '')
+                                    ? NavigationDestinationLabelBehavior
+                                        .onlyShowSelected
+                                    : NavigationDestinationLabelBehavior
+                                        .alwaysHide,
+                            onDestinationSelected: (index) {
+                              widget.child.goBranch(
+                                index,
+                                initialLocation:
+                                    index == widget.child.currentIndex,
+                              );
+                              _selectedIndex.value = index;
+                            },
+                            destinations: destinations,
+                          );
+                        },
+                      )
+                      : null,
+            );
+          },
         );
       },
     );
