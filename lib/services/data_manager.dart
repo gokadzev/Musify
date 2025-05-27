@@ -189,60 +189,158 @@ Future<String> backupData(BuildContext context) async {
 
   try {
     for (final boxName in boxNames) {
-      final sourceFile = File('$dlPath/$boxName.hive');
       final box = await _openBox(boxName);
 
-      if (await sourceFile.exists()) {
-        await sourceFile.delete();
+      if (box.path == null) {
+        logger.log('Box path is null for $boxName', null, null);
+        continue;
       }
 
-      await box.compact();
-      await File(box.path!).copy(sourceFile.path);
-    }
-    return '${context.l10n!.backedupSuccess}!';
-  } catch (e, stackTrace) {
-    return '${context.l10n!.backupError}: $e\n$stackTrace';
-  }
-}
+      final sourceFile = File(box.path!);
+      final targetFile = File('$dlPath/$boxName.hive');
 
-Future<String> restoreData(BuildContext context) async {
-  final boxNames = ['user', 'settings'];
-  final backupFiles = await FilePicker.platform.pickFiles(allowMultiple: true);
+      // Ensure the target directory exists
+      await targetFile.parent.create(recursive: true);
 
-  if (backupFiles == null || backupFiles.files.isEmpty) {
-    return '${context.l10n!.chooseBackupFiles}!';
-  }
-
-  try {
-    for (final boxName in boxNames) {
-      final _file = backupFiles.files.firstWhere(
-        (file) => file.name == '$boxName.hive',
-        orElse: () => PlatformFile(name: '', size: 0),
-      );
-
-      if (_file.path != null && _file.path!.isNotEmpty && _file.size != 0) {
-        final sourceFilePath = _file.path!;
-        final sourceFile = File(sourceFilePath);
-
-        final box = await _openBox(boxName);
-        final boxPath = box.path;
-        await box.close();
-
-        if (boxPath != null) {
-          await sourceFile.copy(boxPath);
+      // Safely handle existing backup file
+      if (await targetFile.exists()) {
+        try {
+          await targetFile.delete();
+        } catch (e) {
+          // If delete fails, try with a timestamp suffix
+          final timestamp = DateTime.now().millisecondsSinceEpoch;
+          final newTargetFile = File('$dlPath/${boxName}_$timestamp.hive');
+          await sourceFile.copy(newTargetFile.path);
+          continue;
         }
+      }
+
+      // Compact the box before copying
+      try {
+        await box.compact();
+      } catch (e) {
+        logger.log('Failed to compact box $boxName: $e', null, null);
+      }
+
+      // Copy the box file to backup location
+      if (await sourceFile.exists()) {
+        await sourceFile.copy(targetFile.path);
       } else {
         logger.log(
-          'Source file for $boxName not found while restoring data.',
+          'Source file does not exist for $boxName at ${sourceFile.path}',
           null,
           null,
         );
       }
     }
 
+    return '${context.l10n!.backedupSuccess}!';
+  } catch (e, stackTrace) {
+    logger.log('Backup error', e, stackTrace);
+    return '${context.l10n!.backupError}: $e';
+  }
+}
+
+Future<String> restoreData(BuildContext context) async {
+  final boxNames = ['user', 'settings'];
+  final result = await FilePicker.platform.pickFiles(allowMultiple: true);
+
+  if (result == null || result.files.isEmpty) {
+    return '${context.l10n!.chooseBackupFiles}!';
+  }
+
+  try {
+    // Close all boxes before restoring to avoid conflicts
+    for (final boxName in boxNames) {
+      if (Hive.isBoxOpen(boxName)) {
+        try {
+          await Hive.box(boxName).close();
+        } catch (e) {
+          logger.log('Failed to close box $boxName: $e', null, null);
+        }
+      }
+    }
+
+    // Small delay to ensure boxes are properly closed
+    await Future.delayed(const Duration(milliseconds: 100));
+
+    for (final boxName in boxNames) {
+      final backupFile =
+          result.files
+              .where(
+                (file) =>
+                    file.name == '$boxName.hive' ||
+                    file.name.startsWith('${boxName}_'),
+              )
+              .firstOrNull;
+
+      if (backupFile?.path != null) {
+        final sourceFile = File(backupFile!.path!);
+
+        if (await sourceFile.exists()) {
+          try {
+            // Get the original box path by temporarily opening the box
+            final tempBox = await Hive.openBox(boxName);
+            final boxPath = tempBox.path;
+            await tempBox.close();
+
+            if (boxPath != null) {
+              final targetFile = File(boxPath);
+
+              // Ensure target directory exists
+              await targetFile.parent.create(recursive: true);
+
+              // Delete existing file if it exists
+              if (await targetFile.exists()) {
+                try {
+                  await targetFile.delete();
+                } catch (e) {
+                  logger.log('Failed to delete existing file: $e', null, null);
+                }
+              }
+
+              // Copy backup file to original location
+              await sourceFile.copy(targetFile.path);
+              logger.log(
+                'Restored $boxName from ${sourceFile.path} to ${targetFile.path}',
+                null,
+                null,
+              );
+            }
+          } catch (e) {
+            logger.log('Failed to restore $boxName: $e', null, null);
+          }
+        } else {
+          logger.log(
+            'Backup file does not exist: ${sourceFile.path}',
+            null,
+            null,
+          );
+        }
+      } else {
+        logger.log(
+          'Backup file for $boxName not found in selection',
+          null,
+          null,
+        );
+      }
+    }
+
+    // Small delay before reopening boxes
+    await Future.delayed(const Duration(milliseconds: 100));
+
+    // Reopen boxes after restore
+    for (final boxName in boxNames) {
+      try {
+        await _openBox(boxName);
+      } catch (e) {
+        logger.log('Failed to reopen box $boxName: $e', null, null);
+      }
+    }
+
     return '${context.l10n!.restoredSuccess}!';
   } catch (e, stackTrace) {
-    logger.log('${context.l10n!.restoreError}:', e, stackTrace);
-    return '${context.l10n!.restoreError}: $e\n$stackTrace';
+    logger.log('Restore error', e, stackTrace);
+    return '${context.l10n!.restoreError}: $e';
   }
 }
