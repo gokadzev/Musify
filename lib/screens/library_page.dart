@@ -400,7 +400,7 @@ class _LibraryPageState extends State<LibraryPage> {
     builder: (BuildContext context) {
       return ConfirmationDialog(
         confirmationMessage: context.l10n!.removePlaylistQuestion,
-        submitMessage: context.l10n!.remove,
+        submitBtnText: context.l10n!.remove,
         onCancel: () {
           Navigator.of(context).pop();
         },

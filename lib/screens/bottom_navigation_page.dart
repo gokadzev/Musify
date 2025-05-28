@@ -38,49 +38,59 @@ class BottomNavigationPage extends StatefulWidget {
 }
 
 class _BottomNavigationPageState extends State<BottomNavigationPage> {
-  final _selectedIndex = ValueNotifier<int>(0);
+  ({
+    List<NavigationDestination> destinations,
+    int selectedIndex,
+    List<int> visibleIndexes,
+  })
+  _getNavigationDestinations(
+    BuildContext context,
+    bool isOffline,
+    int currentBranchIndex,
+  ) {
+    final allDestinations = <NavigationDestination>[
+      NavigationDestination(
+        icon: const Icon(FluentIcons.home_24_regular),
+        selectedIcon: const Icon(FluentIcons.home_24_filled),
+        label: context.l10n?.home ?? 'Home',
+      ),
+      NavigationDestination(
+        icon: const Icon(FluentIcons.search_24_regular),
+        selectedIcon: const Icon(FluentIcons.search_24_filled),
+        label: context.l10n?.search ?? 'Search',
+      ),
+      NavigationDestination(
+        icon: const Icon(FluentIcons.book_24_regular),
+        selectedIcon: const Icon(FluentIcons.book_24_filled),
+        label: context.l10n?.library ?? 'Library',
+      ),
+      NavigationDestination(
+        icon: const Icon(FluentIcons.settings_24_regular),
+        selectedIcon: const Icon(FluentIcons.settings_24_filled),
+        label: context.l10n?.settings ?? 'Settings',
+      ),
+    ];
+    // The branch index always maps to the original allDestinations index (0:home, 1:search, 2:library, 3:settings)
+    // visibleIndexes is the list of branch indexes to show
+    final visibleIndexes = !isOffline ? [0, 1, 2, 3] : [0, 2, 3];
+    final destinations = visibleIndexes.map((i) => allDestinations[i]).toList();
+    // selectedIndex is the index in visibleIndexes that matches the current branch index
+    var selectedIndex = visibleIndexes.indexOf(currentBranchIndex);
+    // If not found (e.g. current branch is search but offline), fallback to first
+    if (selectedIndex == -1) selectedIndex = 0;
+    return (
+      destinations: destinations,
+      selectedIndex: selectedIndex,
+      visibleIndexes: visibleIndexes,
+    );
+  }
 
-  List<NavigationDestination> _getNavigationDestinations(BuildContext context) {
-    return !offlineMode.value
-        ? [
-          NavigationDestination(
-            icon: const Icon(FluentIcons.home_24_regular),
-            selectedIcon: const Icon(FluentIcons.home_24_filled),
-            label: context.l10n?.home ?? 'Home',
-          ),
-          NavigationDestination(
-            icon: const Icon(FluentIcons.search_24_regular),
-            selectedIcon: const Icon(FluentIcons.search_24_filled),
-            label: context.l10n?.search ?? 'Search',
-          ),
-          NavigationDestination(
-            icon: const Icon(FluentIcons.book_24_regular),
-            selectedIcon: const Icon(FluentIcons.book_24_filled),
-            label: context.l10n?.library ?? 'Library',
-          ),
-          NavigationDestination(
-            icon: const Icon(FluentIcons.settings_24_regular),
-            selectedIcon: const Icon(FluentIcons.settings_24_filled),
-            label: context.l10n?.settings ?? 'Settings',
-          ),
-        ]
-        : [
-          NavigationDestination(
-            icon: const Icon(FluentIcons.home_24_regular),
-            selectedIcon: const Icon(FluentIcons.home_24_filled),
-            label: context.l10n?.home ?? 'Home',
-          ),
-          NavigationDestination(
-            icon: const Icon(FluentIcons.book_24_regular),
-            selectedIcon: const Icon(FluentIcons.book_24_filled),
-            label: context.l10n?.library ?? 'Library',
-          ),
-          NavigationDestination(
-            icon: const Icon(FluentIcons.settings_24_regular),
-            selectedIcon: const Icon(FluentIcons.settings_24_filled),
-            label: context.l10n?.settings ?? 'Settings',
-          ),
-        ];
+  void _onDestinationSelected(int visibleIndex, List<int> visibleIndexes) {
+    final branchIndex = visibleIndexes[visibleIndex];
+    widget.child.goBranch(
+      branchIndex,
+      initialLocation: branchIndex != widget.child.currentIndex,
+    );
   }
 
   bool _isLargeScreen(BuildContext context) {
@@ -89,83 +99,84 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final isLargeScreen = _isLargeScreen(context);
+    return ValueListenableBuilder<bool>(
+      valueListenable: offlineMode,
+      builder: (context, isOffline, _) {
+        final navigationData = _getNavigationDestinations(
+          context,
+          isOffline,
+          widget.child.currentIndex,
+        );
+        final destinations = navigationData.destinations;
+        final visibleIndexes = navigationData.visibleIndexes;
+        final selectedVisibleIndex = navigationData.selectedIndex;
 
-        return Scaffold(
-          body: Row(
-            children: [
-              if (isLargeScreen)
-                NavigationRail(
-                  labelType: NavigationRailLabelType.selected,
-                  destinations:
-                      _getNavigationDestinations(context)
-                          .map(
-                            (destination) => NavigationRailDestination(
-                              icon: destination.icon,
-                              selectedIcon: destination.selectedIcon,
-                              label: Text(destination.label),
-                            ),
-                          )
-                          .toList(),
-                  selectedIndex: _selectedIndex.value,
-                  onDestinationSelected: (index) {
-                    widget.child.goBranch(
-                      index,
-                      initialLocation: index == widget.child.currentIndex,
-                    );
-                    setState(() {
-                      _selectedIndex.value = index;
-                    });
-                  },
-                ),
-              Expanded(
-                child: Column(
-                  children: [
-                    Expanded(child: widget.child),
-                    StreamBuilder<MediaItem?>(
-                      stream: audioHandler.mediaItem.distinct((prev, curr) {
-                        if (prev == null || curr == null) return false;
-                        return prev.id == curr.id &&
-                            prev.title == curr.title &&
-                            prev.artist == curr.artist &&
-                            prev.artUri == curr.artUri;
-                      }),
-                      builder: (context, snapshot) {
-                        final metadata = snapshot.data;
-                        if (metadata == null) {
-                          return const SizedBox.shrink();
-                        }
-                        return MiniPlayer(metadata: metadata);
-                      },
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final isLargeScreen = _isLargeScreen(context);
+            return Scaffold(
+              body: Row(
+                children: [
+                  if (isLargeScreen)
+                    NavigationRail(
+                      labelType: NavigationRailLabelType.selected,
+                      destinations:
+                          destinations
+                              .map(
+                                (destination) => NavigationRailDestination(
+                                  icon: destination.icon,
+                                  selectedIcon: destination.selectedIcon,
+                                  label: Text(destination.label),
+                                ),
+                              )
+                              .toList(),
+                      selectedIndex: selectedVisibleIndex,
+                      onDestinationSelected:
+                          (index) =>
+                              _onDestinationSelected(index, visibleIndexes),
                     ),
-                  ],
-                ),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Expanded(child: widget.child),
+                        StreamBuilder<MediaItem?>(
+                          stream: audioHandler.mediaItem.distinct((prev, curr) {
+                            if (prev == null || curr == null) return false;
+                            return prev.id == curr.id &&
+                                prev.title == curr.title &&
+                                prev.artist == curr.artist &&
+                                prev.artUri == curr.artUri;
+                          }),
+                          builder: (context, snapshot) {
+                            final metadata = snapshot.data;
+                            if (metadata == null) {
+                              return const SizedBox.shrink();
+                            }
+                            return MiniPlayer(metadata: metadata);
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-          bottomNavigationBar:
-              !isLargeScreen
-                  ? NavigationBar(
-                    selectedIndex: _selectedIndex.value,
-                    labelBehavior:
-                        languageSetting == const Locale('en', '')
-                            ? NavigationDestinationLabelBehavior
-                                .onlyShowSelected
-                            : NavigationDestinationLabelBehavior.alwaysHide,
-                    onDestinationSelected: (index) {
-                      widget.child.goBranch(
-                        index,
-                        initialLocation: index == widget.child.currentIndex,
-                      );
-                      setState(() {
-                        _selectedIndex.value = index;
-                      });
-                    },
-                    destinations: _getNavigationDestinations(context),
-                  )
-                  : null,
+              bottomNavigationBar:
+                  !isLargeScreen
+                      ? NavigationBar(
+                        selectedIndex: selectedVisibleIndex,
+                        labelBehavior:
+                            languageSetting == const Locale('en', '')
+                                ? NavigationDestinationLabelBehavior
+                                    .onlyShowSelected
+                                : NavigationDestinationLabelBehavior.alwaysHide,
+                        onDestinationSelected:
+                            (index) =>
+                                _onDestinationSelected(index, visibleIndexes),
+                        destinations: destinations,
+                      )
+                      : null,
+            );
+          },
         );
       },
     );

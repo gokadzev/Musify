@@ -26,12 +26,12 @@ class ConfirmationDialog extends StatelessWidget {
   const ConfirmationDialog({
     super.key,
     this.confirmationMessage,
-    required this.submitMessage,
+    this.submitBtnText,
     required this.onCancel,
     required this.onSubmit,
   });
   final String? confirmationMessage;
-  final String submitMessage;
+  final String? submitBtnText;
   final VoidCallback? onCancel;
   final VoidCallback? onSubmit;
 
@@ -42,7 +42,10 @@ class ConfirmationDialog extends StatelessWidget {
       content: confirmationMessage != null ? Text(confirmationMessage!) : null,
       actions: <Widget>[
         TextButton(onPressed: onCancel, child: Text(context.l10n!.cancel)),
-        TextButton(onPressed: onSubmit, child: Text(context.l10n!.remove)),
+        TextButton(
+          onPressed: onSubmit,
+          child: Text(submitBtnText ?? context.l10n!.remove),
+        ),
       ],
     );
   }

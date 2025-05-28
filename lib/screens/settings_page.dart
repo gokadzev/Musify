@@ -40,6 +40,7 @@ import 'package:musify/widgets/bottom_sheet_bar.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/custom_bar.dart';
 import 'package:musify/widgets/section_header.dart';
+import 'package:restart_app/restart_app.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -547,9 +548,23 @@ class SettingsPage extends StatelessWidget {
   }
 
   void _toggleOfflineMode(BuildContext context, bool value) {
-    addOrUpdateData('settings', 'offlineMode', value);
-    offlineMode.value = value;
-    showToast(context, context.l10n!.restartAppMsg);
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return ConfirmationDialog(
+          submitBtnText: context.l10n!.confirm,
+          confirmationMessage: context.l10n!.restartAppMsg,
+          onCancel: () => Navigator.of(context).pop(),
+          onSubmit: () async {
+            await addOrUpdateData('settings', 'offlineMode', value);
+            offlineMode.value = value;
+            // Restart the app using the restart_app package (no await, as restartApp returns void)
+            await Restart.restartApp();
+            Navigator.of(context).pop();
+          },
+        );
+      },
+    );
   }
 
   void _toggleSponsorBlock(BuildContext context, bool value) {
@@ -569,7 +584,7 @@ class SettingsPage extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return ConfirmationDialog(
-          submitMessage: context.l10n!.clear,
+          submitBtnText: context.l10n!.clear,
           confirmationMessage: context.l10n!.clearSearchHistoryQuestion,
           onCancel: () => {Navigator.of(context).pop()},
           onSubmit:
@@ -589,7 +604,7 @@ class SettingsPage extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return ConfirmationDialog(
-          submitMessage: context.l10n!.clear,
+          submitBtnText: context.l10n!.clear,
           confirmationMessage: context.l10n!.clearRecentlyPlayedQuestion,
           onCancel: () => {Navigator.of(context).pop()},
           onSubmit:
