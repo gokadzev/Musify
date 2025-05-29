@@ -26,175 +26,200 @@ import 'package:musify/main.dart';
 import 'package:musify/models/position_data.dart';
 import 'package:musify/screens/now_playing_page.dart';
 import 'package:musify/widgets/marque.dart';
-import 'package:musify/widgets/playback_icon_button.dart';
 import 'package:musify/widgets/song_artwork.dart';
 
-class MiniPlayer extends StatelessWidget {
-  MiniPlayer({super.key, required this.metadata});
+class MiniPlayer extends StatefulWidget {
+  const MiniPlayer({super.key, required this.metadata});
+
   final MediaItem metadata;
+
+  @override
+  State<MiniPlayer> createState() => _MiniPlayerState();
+}
+
+class _MiniPlayerState extends State<MiniPlayer>
+    with SingleTickerProviderStateMixin {
+  static const _playerHeight = 75.0;
+  static const _progressBarHeight = 2.0;
+  static const _artworkSize = 55.0;
+  static const _artworkIconSize = 30.0;
+
+  // Animation controller for smooth transitions
+  late AnimationController _animationController;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Setup animation controller for visual feedback
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 100),
+      vsync: this,
+    );
+
+    _scaleAnimation = Tween<double>(begin: 1, end: 0.98).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return GestureDetector(
-      onVerticalDragUpdate: (details) {
-        if (details.primaryDelta! < 0) {
-          Navigator.push(
-            context,
-            PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) {
-                return const NowPlayingPage();
-              },
-              transitionsBuilder: (
-                context,
-                animation,
-                secondaryAnimation,
-                child,
-              ) {
-                const begin = Offset(0, 1);
-                const end = Offset.zero;
-
-                final tween = Tween(begin: begin, end: end);
-                final curve = CurvedAnimation(
-                  parent: animation,
-                  curve: Curves.easeInOut,
-                );
-
-                final offsetAnimation = tween.animate(curve);
-
-                return SlideTransition(position: offsetAnimation, child: child);
-              },
-            ),
-          );
-        }
-      },
-      onTap:
-          () => Navigator.push(
-            context,
-            PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) {
-                return const NowPlayingPage();
-              },
-              transitionsBuilder: (
-                context,
-                animation,
-                secondaryAnimation,
-                child,
-              ) {
-                const begin = Offset(0, 1);
-                const end = Offset.zero;
-
-                final tween = Tween(begin: begin, end: end);
-                final curve = CurvedAnimation(
-                  parent: animation,
-                  curve: Curves.easeInOut,
-                );
-
-                final offsetAnimation = tween.animate(curve);
-
-                return SlideTransition(position: offsetAnimation, child: child);
-              },
-            ),
-          ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 18),
-            height: 75,
-            decoration: BoxDecoration(color: colorScheme.surfaceContainerHigh),
-            child: Row(
-              children: <Widget>[
-                _buildArtwork(),
-                _buildMetadata(colorScheme.primary, colorScheme.secondary),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    StreamBuilder<PlaybackState>(
-                      stream: audioHandler.playbackState.distinct((
-                        previous,
-                        current,
-                      ) {
-                        // Only rebuild if playing state or processing state changes
-                        return previous.playing == current.playing &&
-                            previous.processingState == current.processingState;
-                      }),
-                      builder: (context, snapshot) {
-                        final processingState = snapshot.data?.processingState;
-                        final isPlaying = snapshot.data?.playing ?? false;
-                        final iconDataAndAction = getIconFromState(
-                          processingState,
-                          isPlaying,
-                        );
-                        return GestureDetector(
-                          onTap: iconDataAndAction.onPressed,
-                          child: Icon(
-                            iconDataAndAction.iconData,
-                            color: colorScheme.primary,
-                            size: 35,
-                          ),
-                        );
-                      },
-                    ),
-                    if (audioHandler.hasNext) const SizedBox(width: 10),
-                    if (audioHandler.hasNext)
-                      GestureDetector(
-                        onTap: () => audioHandler.skipToNext(),
-                        child: Icon(
-                          FluentIcons.next_24_filled,
-                          color: colorScheme.primary,
-                          size: 25,
-                        ),
-                      ),
-                  ],
-                ),
+    return AnimatedBuilder(
+      animation: _scaleAnimation,
+      builder: (context, child) {
+        return Transform.scale(
+          scale: _scaleAnimation.value,
+          child: GestureDetector(
+            onTapDown: (_) => _animationController.forward(),
+            onTapUp: (_) => _animationController.reverse(),
+            onTapCancel: () => _animationController.reverse(),
+            onVerticalDragUpdate: _handleVerticalDrag,
+            onTap: _navigateToNowPlaying,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildPlayerBody(colorScheme),
+                _buildProgressBar(colorScheme),
               ],
             ),
           ),
-          // Progress bar for current music
-          StreamBuilder<PositionData>(
-            stream: audioHandler.positionDataStream.distinct(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData || snapshot.hasError) {
-                return const SizedBox.shrink();
-              }
+        );
+      },
+    );
+  }
 
-              final positionData =
-                  snapshot.data ??
-                  PositionData(Duration.zero, Duration.zero, Duration.zero);
-
-              final duration = positionData.duration;
-              final progress =
-                  duration > Duration.zero
-                      ? (positionData.position.inSeconds / duration.inSeconds)
-                          .clamp(0.0, 1.0)
-                      : 0.0;
-              return LinearProgressIndicator(
-                value: progress,
-                minHeight: 2,
-                backgroundColor: colorScheme.surfaceContainer,
-                valueColor: AlwaysStoppedAnimation<Color>(colorScheme.primary),
-              );
-            },
+  Widget _buildPlayerBody(ColorScheme colorScheme) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 18),
+      height: _playerHeight,
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerHigh,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 4,
+            offset: const Offset(0, -2),
           ),
+        ],
+      ),
+      child: Row(
+        children: [
+          _ArtworkWidget(metadata: widget.metadata),
+          _MetadataWidget(
+            title: widget.metadata.title,
+            artist: widget.metadata.artist,
+            titleColor: colorScheme.primary,
+            artistColor: colorScheme.secondary,
+          ),
+          _ControlsWidget(colorScheme: colorScheme),
         ],
       ),
     );
   }
 
-  Widget _buildArtwork() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 7, bottom: 7, right: 15),
-      child: SongArtworkWidget(
-        metadata: metadata,
-        size: 55,
-        errorWidgetIconSize: 30,
-      ),
+  Widget _buildProgressBar(ColorScheme colorScheme) {
+    return StreamBuilder<PositionData>(
+      stream: audioHandler.positionDataStream,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData || snapshot.hasError) {
+          return const SizedBox.shrink();
+        }
+
+        final positionData =
+            snapshot.data ??
+            PositionData(Duration.zero, Duration.zero, Duration.zero);
+        final duration = positionData.duration;
+
+        final progress = (positionData.position.inSeconds / duration.inSeconds)
+            .clamp(0.0, 1.0);
+
+        return LinearProgressIndicator(
+          value: progress,
+          minHeight: _progressBarHeight,
+          backgroundColor: colorScheme.surfaceContainer,
+          valueColor: AlwaysStoppedAnimation<Color>(colorScheme.primary),
+        );
+      },
     );
   }
 
-  Widget _buildMetadata(Color titleColor, Color artistColor) {
+  void _handleVerticalDrag(DragUpdateDetails details) {
+    // Only navigate on upward swipe
+    if (details.primaryDelta! < -10) {
+      _navigateToNowPlaying();
+    }
+  }
+
+  void _navigateToNowPlaying() {
+    Navigator.push(context, _createSlideTransition());
+  }
+
+  PageRoute _createSlideTransition() {
+    return PageRouteBuilder<void>(
+      pageBuilder: (context, animation, _) => const NowPlayingPage(),
+      reverseTransitionDuration: const Duration(milliseconds: 250),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(0, 1);
+        const end = Offset.zero;
+        const curve = Curves.easeInOut;
+
+        final tween = Tween(
+          begin: begin,
+          end: end,
+        ).chain(CurveTween(curve: curve));
+
+        return SlideTransition(position: animation.drive(tween), child: child);
+      },
+    );
+  }
+}
+
+class _ArtworkWidget extends StatelessWidget {
+  const _ArtworkWidget({required this.metadata});
+
+  final MediaItem metadata;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 7, bottom: 7, right: 15),
+      child: Hero(
+        tag: 'now_playing_artwork',
+        child: SongArtworkWidget(
+          metadata: metadata,
+          size: _MiniPlayerState._artworkSize,
+          errorWidgetIconSize: _MiniPlayerState._artworkIconSize,
+          borderRadius: 8,
+        ),
+      ),
+    );
+  }
+}
+
+class _MetadataWidget extends StatelessWidget {
+  const _MetadataWidget({
+    required this.title,
+    required this.artist,
+    required this.titleColor,
+    required this.artistColor,
+  });
+
+  final String title;
+  final String? artist;
+  final Color titleColor;
+  final Color artistColor;
+
+  @override
+  Widget build(BuildContext context) {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.only(right: 8),
@@ -202,32 +227,147 @@ class MiniPlayer extends StatelessWidget {
           alignment: Alignment.centerLeft,
           child: MarqueeWidget(
             manualScrollEnabled: false,
+            animationDuration: const Duration(seconds: 8),
+            backDuration: const Duration(seconds: 2),
+            pauseDuration: const Duration(seconds: 2),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  metadata.title,
+                  title,
                   style: TextStyle(
                     color: titleColor,
                     fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w600,
+                    height: 1.2,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                if (metadata.artist != null)
+                if (artist != null && artist!.isNotEmpty) ...[
+                  const SizedBox(height: 2),
                   Text(
-                    metadata.artist!,
+                    artist!,
                     style: TextStyle(
                       color: artistColor,
                       fontSize: 14,
                       fontWeight: FontWeight.normal,
+                      height: 1.2,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
+                ],
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+}
+
+class _ControlsWidget extends StatelessWidget {
+  const _ControlsWidget({required this.colorScheme});
+
+  final ColorScheme colorScheme;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _PlayPauseButton(colorScheme: colorScheme),
+        _NextButton(colorScheme: colorScheme),
+      ],
+    );
+  }
+}
+
+class _PlayPauseButton extends StatelessWidget {
+  const _PlayPauseButton({required this.colorScheme});
+
+  final ColorScheme colorScheme;
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<PlaybackState>(
+      stream: audioHandler.playbackState.distinct((previous, current) {
+        // Only rebuild if relevant state changes
+        return previous.playing == current.playing &&
+            previous.processingState == current.processingState;
+      }),
+      builder: (context, snapshot) {
+        final playbackState = snapshot.data;
+        final processingState = playbackState?.processingState;
+        final isPlaying = playbackState?.playing ?? false;
+
+        Widget iconWidget;
+        VoidCallback? onPressed;
+
+        if (processingState == AudioProcessingState.loading ||
+            processingState == AudioProcessingState.buffering) {
+          iconWidget = SizedBox(
+            width: 35,
+            height: 35,
+            child: CircularProgressIndicator(
+              strokeWidth: 2.5,
+              valueColor: AlwaysStoppedAnimation<Color>(colorScheme.primary),
+            ),
+          );
+          onPressed = null;
+        } else {
+          final iconData =
+              isPlaying
+                  ? FluentIcons.pause_24_filled
+                  : FluentIcons.play_24_filled;
+
+          iconWidget = Icon(iconData, color: colorScheme.primary, size: 35);
+
+          onPressed = isPlaying ? audioHandler.pause : audioHandler.play;
+        }
+
+        return GestureDetector(
+          onTap: onPressed,
+          child: Container(padding: const EdgeInsets.all(4), child: iconWidget),
+        );
+      },
+    );
+  }
+}
+
+class _NextButton extends StatelessWidget {
+  const _NextButton({required this.colorScheme});
+
+  final ColorScheme colorScheme;
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<List<MediaItem>>(
+      stream: audioHandler.queue,
+      builder: (context, snapshot) {
+        final hasNext = audioHandler.hasNext;
+
+        if (!hasNext) {
+          return const SizedBox.shrink();
+        }
+
+        return Padding(
+          padding: const EdgeInsets.only(left: 10),
+          child: GestureDetector(
+            onTap: audioHandler.skipToNext,
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              child: Icon(
+                FluentIcons.next_24_filled,
+                color: colorScheme.primary,
+                size: 25,
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

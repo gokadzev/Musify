@@ -32,8 +32,8 @@ import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/formatter.dart';
 import 'package:musify/widgets/no_artwork_cube.dart';
 
-class SongBar extends StatelessWidget {
-  SongBar(
+class SongBar extends StatefulWidget {
+  const SongBar(
     this.song,
     this.clearPlaylist, {
     this.backgroundColor,
@@ -56,35 +56,61 @@ class SongBar extends StatelessWidget {
   final bool showMusicDuration;
   final BorderRadius borderRadius;
 
+  @override
+  State<SongBar> createState() => _SongBarState();
+}
+
+class _SongBarState extends State<SongBar> {
   static const likeStatusToIconMapper = {
     true: FluentIcons.heart_24_filled,
     false: FluentIcons.heart_24_regular,
   };
 
+  late final ValueNotifier<bool> _songLikeStatus;
+  late final ValueNotifier<bool> _songOfflineStatus;
+  late final String _songTitle;
+  late final String _songArtist;
+  late final String? _artworkPath;
+  late final String _lowResImageUrl;
+  late final String _ytid;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Cache frequently accessed values
+    _songTitle = widget.song['title'] ?? '';
+    _songArtist = widget.song['artist']?.toString() ?? '';
+    _artworkPath = widget.song['artworkPath'];
+    _lowResImageUrl = widget.song['lowResImage']?.toString() ?? '';
+    _ytid = widget.song['ytid'] ?? '';
+
+    // Initialize ValueNotifiers only once
+    _songLikeStatus = ValueNotifier(isSongAlreadyLiked(_ytid));
+    _songOfflineStatus = ValueNotifier(
+      widget.isSongOffline ?? isSongAlreadyOffline(_ytid),
+    );
+  }
+
+  @override
+  void dispose() {
+    _songLikeStatus.dispose();
+    _songOfflineStatus.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final primaryColor = Theme.of(context).colorScheme.primary;
+    final theme = Theme.of(context);
+    final primaryColor = theme.colorScheme.primary;
+
     return Padding(
       padding: commonBarPadding,
       child: GestureDetector(
-        onTap:
-            onPlay ??
-            () {
-              audioHandler.playSong(song);
-              if (activePlaylist.isNotEmpty && clearPlaylist) {
-                activePlaylist = {
-                  'ytid': '',
-                  'title': 'No Playlist',
-                  'image': '',
-                  'source': 'user-created',
-                  'list': [],
-                };
-                activeSongId = 0;
-              }
-            },
+        onTap: _handleSongTap,
         child: Card(
-          color: backgroundColor,
-          shape: RoundedRectangleBorder(borderRadius: borderRadius),
+          color: widget.backgroundColor,
+          shape: RoundedRectangleBorder(borderRadius: widget.borderRadius),
           margin: const EdgeInsets.only(bottom: 3),
           child: Padding(
             padding: commonBarContentPadding,
@@ -93,27 +119,11 @@ class SongBar extends StatelessWidget {
                 _buildAlbumArt(primaryColor),
                 const SizedBox(width: 8),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        song['title'],
-                        overflow: TextOverflow.ellipsis,
-                        style: commonBarTitleStyle.copyWith(
-                          color: primaryColor,
-                        ),
-                      ),
-                      const SizedBox(height: 3),
-                      Text(
-                        song['artist'].toString(),
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w400,
-                          fontSize: 13,
-                          color: Theme.of(context).colorScheme.secondary,
-                        ),
-                      ),
-                    ],
+                  child: _SongInfo(
+                    title: _songTitle,
+                    artist: _songArtist,
+                    primaryColor: primaryColor,
+                    secondaryColor: theme.colorScheme.secondary,
                   ),
                 ),
                 _buildActionButtons(context, primaryColor),
@@ -125,26 +135,242 @@ class SongBar extends StatelessWidget {
     );
   }
 
-  Widget _buildAlbumArt(Color primaryColor) {
-    const size = 55.0;
-
-    final String? artworkPath = song['artworkPath'];
-    final lowResImageUrl = song['lowResImage'].toString();
-    final isDurationAvailable = showMusicDuration && song['duration'] != null;
-
-    if (artworkPath != null) {
-      return _buildOfflineArtwork(artworkPath, size);
+  void _handleSongTap() {
+    if (widget.onPlay != null) {
+      widget.onPlay!();
+      return;
     }
 
-    return _buildOnlineArtwork(
-      lowResImageUrl,
-      size,
-      isDurationAvailable,
-      primaryColor,
+    audioHandler.playSong(widget.song);
+    if (activePlaylist.isNotEmpty && widget.clearPlaylist) {
+      activePlaylist = {
+        'ytid': '',
+        'title': 'No Playlist',
+        'image': '',
+        'source': 'user-created',
+        'list': [],
+      };
+      activeSongId = 0;
+    }
+  }
+
+  Widget _buildAlbumArt(Color primaryColor) {
+    const size = 55.0;
+    final isDurationAvailable =
+        widget.showMusicDuration && widget.song['duration'] != null;
+
+    if (_artworkPath != null) {
+      return _OfflineArtwork(artworkPath: _artworkPath, size: size);
+    }
+
+    return _OnlineArtwork(
+      lowResImageUrl: _lowResImageUrl,
+      size: size,
+      isDurationAvailable: isDurationAvailable,
+      primaryColor: primaryColor,
+      duration: widget.song['duration'],
     );
   }
 
-  Widget _buildOfflineArtwork(String artworkPath, double size) {
+  Widget _buildActionButtons(BuildContext context, Color primaryColor) {
+    return PopupMenuButton<String>(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      color: Theme.of(context).colorScheme.surface,
+      icon: Icon(FluentIcons.more_horizontal_24_filled, color: primaryColor),
+      onSelected: (value) => _handleMenuAction(context, value),
+      itemBuilder: (context) => _buildMenuItems(context, primaryColor),
+    );
+  }
+
+  void _handleMenuAction(BuildContext context, String value) {
+    switch (value) {
+      case 'play_next':
+        audioHandler.playNext(widget.song);
+        showToast(
+          context,
+          context.l10n!.songAdded,
+          duration: const Duration(seconds: 1),
+        );
+        break;
+      case 'like':
+        _songLikeStatus.value = !_songLikeStatus.value;
+        updateSongLikeStatus(_ytid, _songLikeStatus.value);
+        final likedSongsLength = currentLikedSongsLength.value;
+        currentLikedSongsLength.value =
+            _songLikeStatus.value ? likedSongsLength + 1 : likedSongsLength - 1;
+        break;
+      case 'remove':
+        widget.onRemove?.call();
+        break;
+      case 'add_to_playlist':
+        showAddToPlaylistDialog(context, widget.song);
+        break;
+      case 'remove_from_recents':
+        removeFromRecentlyPlayed(_ytid);
+        break;
+      case 'offline':
+        _handleOfflineToggle(context);
+        break;
+    }
+  }
+
+  void _handleOfflineToggle(BuildContext context) {
+    if (_songOfflineStatus.value) {
+      removeSongFromOffline(_ytid).then((success) {
+        if (success) {
+          showToast(context, context.l10n!.songRemovedFromOffline);
+        }
+      });
+    } else {
+      makeSongOffline(widget.song).then((success) {
+        if (success) {
+          showToast(context, context.l10n!.songAddedToOffline);
+        }
+      });
+    }
+    _songOfflineStatus.value = !_songOfflineStatus.value;
+  }
+
+  List<PopupMenuEntry<String>> _buildMenuItems(
+    BuildContext context,
+    Color primaryColor,
+  ) {
+    return [
+      PopupMenuItem<String>(
+        value: 'play_next',
+        child: Row(
+          children: [
+            Icon(FluentIcons.receipt_play_24_regular, color: primaryColor),
+            const SizedBox(width: 8),
+            Text(context.l10n!.playNext),
+          ],
+        ),
+      ),
+      PopupMenuItem<String>(
+        value: 'like',
+        child: ValueListenableBuilder<bool>(
+          valueListenable: _songLikeStatus,
+          builder: (_, value, __) {
+            return Row(
+              children: [
+                Icon(likeStatusToIconMapper[value], color: primaryColor),
+                const SizedBox(width: 8),
+                Text(
+                  value
+                      ? context.l10n!.removeFromLikedSongs
+                      : context.l10n!.addToLikedSongs,
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+      if (widget.onRemove != null)
+        PopupMenuItem<String>(
+          value: 'remove',
+          child: Row(
+            children: [
+              Icon(FluentIcons.delete_24_filled, color: primaryColor),
+              const SizedBox(width: 8),
+              Text(context.l10n!.removeFromPlaylist),
+            ],
+          ),
+        ),
+      PopupMenuItem<String>(
+        value: 'add_to_playlist',
+        child: Row(
+          children: [
+            Icon(FluentIcons.add_24_regular, color: primaryColor),
+            const SizedBox(width: 8),
+            Text(context.l10n!.addToPlaylist),
+          ],
+        ),
+      ),
+      if (widget.isRecentSong == true)
+        PopupMenuItem<String>(
+          value: 'remove_from_recents',
+          child: Row(
+            children: [
+              Icon(FluentIcons.delete_24_filled, color: primaryColor),
+              const SizedBox(width: 8),
+              Text(context.l10n!.removeFromRecentlyPlayed),
+            ],
+          ),
+        ),
+      PopupMenuItem<String>(
+        value: 'offline',
+        child: ValueListenableBuilder<bool>(
+          valueListenable: _songOfflineStatus,
+          builder: (_, value, __) {
+            return Row(
+              children: [
+                Icon(
+                  value
+                      ? FluentIcons.cellular_off_24_regular
+                      : FluentIcons.cellular_data_1_24_regular,
+                  color: primaryColor,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  value
+                      ? context.l10n!.removeOffline
+                      : context.l10n!.makeOffline,
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    ];
+  }
+}
+
+class _SongInfo extends StatelessWidget {
+  const _SongInfo({
+    required this.title,
+    required this.artist,
+    required this.primaryColor,
+    required this.secondaryColor,
+  });
+
+  final String title;
+  final String artist;
+  final Color primaryColor;
+  final Color secondaryColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          title,
+          overflow: TextOverflow.ellipsis,
+          style: commonBarTitleStyle.copyWith(color: primaryColor),
+        ),
+        const SizedBox(height: 3),
+        Text(
+          artist,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontWeight: FontWeight.w400,
+            fontSize: 13,
+            color: secondaryColor,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _OfflineArtwork extends StatelessWidget {
+  const _OfflineArtwork({required this.artworkPath, required this.size});
+
+  final String artworkPath;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
     return SizedBox(
       width: size,
       height: size,
@@ -154,14 +380,27 @@ class SongBar extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _buildOnlineArtwork(
-    String lowResImageUrl,
-    double size,
-    bool isDurationAvailable,
-    Color primaryColor,
-  ) {
+class _OnlineArtwork extends StatelessWidget {
+  const _OnlineArtwork({
+    required this.lowResImageUrl,
+    required this.size,
+    required this.isDurationAvailable,
+    required this.primaryColor,
+    required this.duration,
+  });
+
+  final String lowResImageUrl;
+  final double size;
+  final bool isDurationAvailable;
+  final Color primaryColor;
+  final dynamic duration;
+
+  @override
+  Widget build(BuildContext context) {
     final isImageSmall = lowResImageUrl.contains('default.jpg');
+
     return Stack(
       alignment: Alignment.center,
       children: <Widget>[
@@ -170,6 +409,10 @@ class SongBar extends StatelessWidget {
           width: size,
           height: size,
           imageUrl: lowResImageUrl,
+          memCacheWidth:
+              (size * MediaQuery.of(context).devicePixelRatio).round(),
+          memCacheHeight:
+              (size * MediaQuery.of(context).devicePixelRatio).round(),
           imageBuilder:
               (context, imageProvider) => SizedBox(
                 width: size,
@@ -202,7 +445,7 @@ class SongBar extends StatelessWidget {
             child: FittedBox(
               fit: BoxFit.scaleDown,
               child: Text(
-                '(${formatDuration(song['duration'])})',
+                '(${formatDuration(duration)})',
                 style: TextStyle(
                   color: primaryColor,
                   fontWeight: FontWeight.bold,
@@ -211,155 +454,6 @@ class SongBar extends StatelessWidget {
             ),
           ),
       ],
-    );
-  }
-
-  Widget _buildActionButtons(BuildContext context, Color primaryColor) {
-    final songLikeStatus = ValueNotifier<bool>(
-      isSongAlreadyLiked(song['ytid']),
-    );
-    final songOfflineStatus = ValueNotifier<bool>(
-      isSongOffline ?? isSongAlreadyOffline(song['ytid']),
-    );
-
-    return PopupMenuButton<String>(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      color: Theme.of(context).colorScheme.surface,
-      icon: Icon(FluentIcons.more_horizontal_24_filled, color: primaryColor),
-      onSelected: (String value) {
-        switch (value) {
-          case 'play_next':
-            audioHandler.playNext(song);
-            showToast(
-              context,
-              context.l10n!.songAdded,
-              duration: const Duration(seconds: 1),
-            );
-            break;
-          case 'like':
-            songLikeStatus.value = !songLikeStatus.value;
-            updateSongLikeStatus(song['ytid'], songLikeStatus.value);
-            final likedSongsLength = currentLikedSongsLength.value;
-            currentLikedSongsLength.value =
-                songLikeStatus.value
-                    ? likedSongsLength + 1
-                    : likedSongsLength - 1;
-            break;
-          case 'remove':
-            if (onRemove != null) onRemove!();
-            break;
-          case 'add_to_playlist':
-            showAddToPlaylistDialog(context, song);
-            break;
-          case 'remove_from_recents':
-            removeFromRecentlyPlayed(song['ytid']);
-          case 'offline':
-            if (songOfflineStatus.value) {
-              removeSongFromOffline(song['ytid']).then((success) {
-                if (success) {
-                  showToast(context, context.l10n!.songRemovedFromOffline);
-                }
-              });
-            } else {
-              makeSongOffline(song).then((success) {
-                if (success) {
-                  showToast(context, context.l10n!.songAddedToOffline);
-                }
-              });
-            }
-            songOfflineStatus.value = !songOfflineStatus.value;
-            break;
-        }
-      },
-      itemBuilder: (BuildContext context) {
-        return [
-          PopupMenuItem<String>(
-            value: 'play_next',
-            child: Row(
-              children: [
-                Icon(FluentIcons.receipt_play_24_regular, color: primaryColor),
-                const SizedBox(width: 8),
-                Text(context.l10n!.playNext),
-              ],
-            ),
-          ),
-          PopupMenuItem<String>(
-            value: 'like',
-            child: ValueListenableBuilder<bool>(
-              valueListenable: songLikeStatus,
-              builder: (_, value, __) {
-                return Row(
-                  children: [
-                    Icon(likeStatusToIconMapper[value], color: primaryColor),
-                    const SizedBox(width: 8),
-                    Text(
-                      value
-                          ? context.l10n!.removeFromLikedSongs
-                          : context.l10n!.addToLikedSongs,
-                    ),
-                  ],
-                );
-              },
-            ),
-          ),
-          if (onRemove != null)
-            PopupMenuItem<String>(
-              value: 'remove',
-              child: Row(
-                children: [
-                  Icon(FluentIcons.delete_24_filled, color: primaryColor),
-                  const SizedBox(width: 8),
-                  Text(context.l10n!.removeFromPlaylist),
-                ],
-              ),
-            ),
-          PopupMenuItem<String>(
-            value: 'add_to_playlist',
-            child: Row(
-              children: [
-                Icon(FluentIcons.add_24_regular, color: primaryColor),
-                const SizedBox(width: 8),
-                Text(context.l10n!.addToPlaylist),
-              ],
-            ),
-          ),
-          if (isRecentSong == true)
-            PopupMenuItem<String>(
-              value: 'remove_from_recents',
-              child: Row(
-                children: [
-                  Icon(FluentIcons.delete_24_filled, color: primaryColor),
-                  const SizedBox(width: 8),
-                  Text(context.l10n!.removeFromRecentlyPlayed),
-                ],
-              ),
-            ),
-          PopupMenuItem<String>(
-            value: 'offline',
-            child: ValueListenableBuilder<bool>(
-              valueListenable: songOfflineStatus,
-              builder: (_, value, __) {
-                return Row(
-                  children: [
-                    Icon(
-                      value
-                          ? FluentIcons.cellular_off_24_regular
-                          : FluentIcons.cellular_data_1_24_regular,
-                      color: primaryColor,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      value
-                          ? context.l10n!.removeOffline
-                          : context.l10n!.makeOffline,
-                    ),
-                  ],
-                );
-              },
-            ),
-          ),
-        ];
-      },
     );
   }
 }
