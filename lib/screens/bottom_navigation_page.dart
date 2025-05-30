@@ -149,8 +149,10 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
               !isLargeScreen
                   ? NavigationBar(
                     selectedIndex: _selectedIndex.value,
-                    labelBehavior: NavigationDestinationLabelBehavior
-                                .onlyShowSelected, 
+                    labelBehavior: languageSetting == const Locale('en', '')
+                            ? NavigationDestinationLabelBehavior
+                                .onlyShowSelected
+                            : NavigationDestinationLabelBehavior.alwaysHide, 
                     onDestinationSelected: (index) {
                       widget.child.goBranch(
                         index,
