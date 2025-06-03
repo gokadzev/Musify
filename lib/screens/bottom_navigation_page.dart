@@ -94,56 +94,58 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
         final isLargeScreen = _isLargeScreen(context);
 
         return Scaffold(
-          body: Row(
-            children: [
-              if (isLargeScreen)
-                NavigationRail(
-                  labelType: NavigationRailLabelType.selected,
-                  destinations:
-                      _getNavigationDestinations(context)
-                          .map(
-                            (destination) => NavigationRailDestination(
-                              icon: destination.icon,
-                              selectedIcon: destination.selectedIcon,
-                              label: Text(destination.label),
-                            ),
-                          )
-                          .toList(),
-                  selectedIndex: _selectedIndex.value,
-                  onDestinationSelected: (index) {
-                    widget.child.goBranch(
-                      index,
-                      initialLocation: index == widget.child.currentIndex,
-                    );
-                    setState(() {
-                      _selectedIndex.value = index;
-                    });
-                  },
+          body: SafeArea(
+            child: Row(
+              children: [
+                if (isLargeScreen)
+                  NavigationRail(
+                    labelType: NavigationRailLabelType.selected,
+                    destinations:
+                        _getNavigationDestinations(context)
+                            .map(
+                              (destination) => NavigationRailDestination(
+                                icon: destination.icon,
+                                selectedIcon: destination.selectedIcon,
+                                label: Text(destination.label),
+                              ),
+                            )
+                            .toList(),
+                    selectedIndex: _selectedIndex.value,
+                    onDestinationSelected: (index) {
+                      widget.child.goBranch(
+                        index,
+                        initialLocation: index == widget.child.currentIndex,
+                      );
+                      setState(() {
+                        _selectedIndex.value = index;
+                      });
+                    },
+                  ),
+                Expanded(
+                  child: Column(
+                    children: [
+                      Expanded(child: widget.child),
+                      StreamBuilder<MediaItem?>(
+                        stream: audioHandler.mediaItem.distinct((prev, curr) {
+                          if (prev == null || curr == null) return false;
+                          return prev.id == curr.id &&
+                              prev.title == curr.title &&
+                              prev.artist == curr.artist &&
+                              prev.artUri == curr.artUri;
+                        }),
+                        builder: (context, snapshot) {
+                          final metadata = snapshot.data;
+                          if (metadata == null) {
+                            return const SizedBox.shrink();
+                          }
+                          return MiniPlayer(metadata: metadata);
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-              Expanded(
-                child: Column(
-                  children: [
-                    Expanded(child: widget.child),
-                    StreamBuilder<MediaItem?>(
-                      stream: audioHandler.mediaItem.distinct((prev, curr) {
-                        if (prev == null || curr == null) return false;
-                        return prev.id == curr.id &&
-                            prev.title == curr.title &&
-                            prev.artist == curr.artist &&
-                            prev.artUri == curr.artUri;
-                      }),
-                      builder: (context, snapshot) {
-                        final metadata = snapshot.data;
-                        if (metadata == null) {
-                          return const SizedBox.shrink();
-                        }
-                        return MiniPlayer(metadata: metadata);
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
           bottomNavigationBar:
               !isLargeScreen
