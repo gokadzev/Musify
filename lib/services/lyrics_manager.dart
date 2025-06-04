@@ -19,7 +19,6 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
-import 'package:genius_lyrics/genius_lyrics.dart';
 import 'package:html/parser.dart' as html_parser;
 import 'package:http/http.dart' as http;
 import 'package:musify/API/keys.dart';
@@ -30,13 +29,6 @@ final isGeniusEnabled =
 class LyricsManager {
   Future<String?> fetchLyrics(String artistName, String title) async {
     title = title.replaceAll('Lyrics', '').replaceAll('Karaoke', '');
-
-    if (isGeniusEnabled) {
-      final lyricsFromGenius = await _fetchLyricsFromGenius(artistName, title);
-      if (lyricsFromGenius != null) {
-        return lyricsFromGenius;
-      }
-    }
 
     final lyricsFromGoogle = await _fetchLyricsFromGoogle(artistName, title);
     if (lyricsFromGoogle != null) {
@@ -87,16 +79,6 @@ class LyricsManager {
       ))
         return null;
       return lyricsRes;
-    } catch (_) {
-      return null;
-    }
-  }
-
-  Future<String?> _fetchLyricsFromGenius(String artist, String title) async {
-    final genius = Genius(accessToken: ApiKeys.geniusAccessToken!);
-    try {
-      final song = await genius.searchSong(title: title, artist: artist);
-      return song?.lyrics?.isNotEmpty == true ? song!.lyrics : null;
     } catch (_) {
       return null;
     }
