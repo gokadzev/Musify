@@ -34,26 +34,13 @@ jobs:
           channel: 'stable'
           flutter-version: "${{ env.FLUTTER_VERSION }}"
 
-      # Create key.properties file for signing the APK.
+      #
       - run: |
           echo keyPassword=\${{ secrets.KEY_STORE }} > ${{env.PROPERTIES_PATH}}
           echo storePassword=\${{ secrets.KEY_PASSWORD }} >> ${{env.PROPERTIES_PATH}}
           echo keyAlias=\${{ secrets.KEY_ALIAS }} >> ${{env.PROPERTIES_PATH}}
-
-      # Create keystore file for signing the APK.
+      #
       - run: echo "${{ secrets.KEYSTORE2 }}" | base64 --decode > android/app/key.jks
-
-      # Replace API keys with secrets during build
-      - name: Configure API keys
-        run: |
-          cat > lib/API/keys.dart << 'EOL'
-          class ApiKeys {
-            // Genius API access token - injected during CI build
-            static String? geniusAccessToken = '${{ secrets.GENIUS_API_TOKEN }}';
-
-            // Add other API keys here as needed
-          }
-          EOL
 
       # Get flutter dependencies.
       - run: flutter pub get

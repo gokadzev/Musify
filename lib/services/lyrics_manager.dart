@@ -21,10 +21,6 @@
 
 import 'package:html/parser.dart' as html_parser;
 import 'package:http/http.dart' as http;
-import 'package:musify/API/keys.dart';
-
-final isGeniusEnabled =
-    ApiKeys.geniusAccessToken != null && ApiKeys.geniusAccessToken!.isNotEmpty;
 
 class LyricsManager {
   Future<String?> fetchLyrics(String artistName, String title) async {
