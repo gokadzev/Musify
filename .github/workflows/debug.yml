@@ -28,6 +28,19 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
+
+      # Replace API keys with secrets during build
+      - name: Configure API keys
+        run: |
+          cat > lib/API/keys.dart << 'EOL'
+          class ApiKeys {
+            // Genius API access token - injected during CI build
+            static String? geniusAccessToken = '${{ secrets.GENIUS_API_TOKEN }}';
+
+            // Add other API keys here as needed
+          }
+          EOL
+
       # Get flutter dependencies.
       - run: flutter pub get
       # # Check for any formatting issues in the code.
