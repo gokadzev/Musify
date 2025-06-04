@@ -89,14 +89,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.2"
-  beautiful_soup_dart:
-    dependency: transitive
-    description:
-      name: beautiful_soup_dart
-      sha256: "57e23946c85776dd9515a4e9a14263fff37dbedbd559bc4412bf565886e12b10"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.3.0"
   boolean_selector:
     dependency: transitive
     description:
@@ -285,14 +277,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.0"
-  genius_lyrics:
-    dependency: "direct main"
-    description:
-      name: genius_lyrics
-      sha256: e03b1219810a8281533904b57d9b15dfadf7cdafe223576161383652d62d633e
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.1"
   glob:
     dependency: transitive
     description:
@@ -706,14 +690,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.8"
-  universal_io:
-    dependency: transitive
-    description:
-      name: universal_io
-      sha256: "1722b2dcc462b4b2f3ee7d188dad008b6eb4c40bbd03a3de451d82c78bba9aad"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.2.2"
   url_launcher:
     dependency: "direct main"
     description:
