@@ -99,7 +99,6 @@
   "removeOfflinePlaylistConfirm": "Bu listeyi depolamadan kaldıracak. Farklı listelerde olan parçalar hâla kullanıllanılabilir olacak.",
   "removePlaylistQuestion": "Bu parçayı gerçekten çalma listenden çıkaracak mısın?",
   "removeSearchQueryQuestion": "Bu aramayı gerçekten silmek istiyor musun?",
-  "restartAppMsg": "Değişiklikleri uygulamak için uygulamayı yeniden başlat",
   "restoreError": "Hata: Veri geri yüklenemedi",
   "restoreUserData": "Kullanıcı Verilerini Geri Yükle",
   "restoredSuccess": "Veri başarıyla yeniden yüklendi",

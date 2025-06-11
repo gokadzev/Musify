@@ -99,7 +99,6 @@
   "removeOfflinePlaylistConfirm": "Detta tar bort spellistan från offlinelagringen. Låtar som används i andra spellistor kommer fortfarande att vara tillgängliga.",
   "removePlaylistQuestion": "Är du säker på att du vill ta bort den här spellistan?",
   "removeSearchQueryQuestion": "Är du säker på att du vill ta bort den här sökfrågan?",
-  "restartAppMsg": "Starta om appen för att verkställa ändringarna",
   "restoreError": "Fel vid återställning av data",
   "restoreUserData": "Återställ användardata",
   "restoredSuccess": "Data har återställts",

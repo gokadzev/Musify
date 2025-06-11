@@ -99,7 +99,6 @@
   "removeOfflinePlaylistConfirm": "This will remove the playlist from offline storage. Songs that are used in other playlists will still be available.",
   "removePlaylistQuestion": "您確定要移除此播放列表嗎？",
   "removeSearchQueryQuestion": "您確定要移除此搜索歷史嗎？",
-  "restartAppMsg": "重啟應用以生效",
   "restoreError": "恢復數據時發生錯誤",
   "restoreUserData": "恢復用戶數據",
   "restoredSuccess": "數據恢復成功",

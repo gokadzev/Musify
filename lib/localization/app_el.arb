@@ -99,7 +99,6 @@
   "removeOfflinePlaylistConfirm": "This will remove the playlist from offline storage. Songs that are used in other playlists will still be available.",
   "removePlaylistQuestion": "Κατάργηση αυτής της λίστας αναπαραγωγής;",
   "removeSearchQueryQuestion": "Να καταργηθεί αυτό το ερώτημα αναζήτησης;",
-  "restartAppMsg": "Επανεκκινήστε την εφαρμογή για να εφαρμόσετε τις αλλαγές",
   "restoreError": "Σφάλμα κατά την επαναφορά δεδομένων",
   "restoreUserData": "Επαναφορά δεδομένων χρήστη",
   "restoredSuccess": "Η επαναφορά ολοκληρώθηκε με επιτυχία",

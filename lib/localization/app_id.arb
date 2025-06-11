@@ -99,7 +99,6 @@
   "removeOfflinePlaylistConfirm": "Ini akan menghapus playlist dari penyimpanan offline. Lagu-lagu yang digunakan di playlist lain akan tetap tersedia.",
   "removePlaylistQuestion": "Apakah Anda yakin ingin menghapus playlist ini?",
   "removeSearchQueryQuestion": "Apakah Anda yakin ingin menghapus permintaan pencarian ini?",
-  "restartAppMsg": "Mulai ulang aplikasi untuk menerapkan perubahan",
   "restoreError": "Terjadi kesalahan saat memulihkan data",
   "restoreUserData": "Pulihkan data pengguna",
   "restoredSuccess": "Data berhasil dipulihkan",

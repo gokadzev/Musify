@@ -99,7 +99,6 @@
   "removeOfflinePlaylistConfirm": "This will remove the playlist from offline storage. Songs that are used in other playlists will still be available.",
   "removePlaylistQuestion": "क्या आप इस प्लेलिस्ट को हटाना चाहते हैं?",
   "removeSearchQueryQuestion": "क्या आप इस खोज क्वेरी को हटाना चाहते हैं?",
-  "restartAppMsg": "परिवर्तनों को लागू करने के लिए ऐप पुनः प्रारंभ करें",
   "restoreError": "डेटा पुनर्स्थापित करने में त्रुटि",
   "restoreUserData": "उपयोगकर्ता डेटा पुनर्स्थापित करें",
   "restoredSuccess": "डेटा सफलतापूर्वक पुनर्स्थापित हुआ",

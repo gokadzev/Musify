@@ -99,7 +99,6 @@
   "removeOfflinePlaylistConfirm": "This will remove the playlist from offline storage. Songs that are used in other playlists will still be available.",
   "removePlaylistQuestion": "Playlist löschen?",
   "removeSearchQueryQuestion": "Suchanfrage löschen?",
-  "restartAppMsg": "Die App muss neugestartet werden, um Änderungen anzuwenden",
   "restoreError": "Fehler bei der Datenwiederherstellung",
   "restoreUserData": "Benutzerdaten wiederherstellen",
   "restoredSuccess": "Erfolgreich wiederhergestellt",
