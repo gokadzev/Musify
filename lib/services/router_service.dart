@@ -23,6 +23,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:musify/API/version.dart';
+import 'package:musify/extensions/l10n.dart';
 import 'package:musify/screens/about_page.dart';
 import 'package:musify/screens/bottom_navigation_page.dart';
 import 'package:musify/screens/home_page.dart';
@@ -45,10 +46,18 @@ class NavigationManager {
     final routes = [
       StatefulShellRoute.indexedStack(
         parentNavigatorKey: parentNavigatorKey,
-        branches: !offlineMode.value ? _onlineRoutes() : _offlineRoutes(),
+        branches: _getRouteBranches(),
         pageBuilder: (context, state, navigationShell) {
           return getPage(
-            child: BottomNavigationPage(child: navigationShell),
+            child: ValueListenableBuilder<bool>(
+              valueListenable: offlineMode,
+              builder: (context, isOffline, _) {
+                return BottomNavigationPage(
+                  isOfflineMode: isOffline,
+                  child: navigationShell,
+                );
+              },
+            ),
             state: state,
           );
         },
@@ -61,7 +70,19 @@ class NavigationManager {
       routes: routes,
       restorationScopeId: 'router',
       debugLogDiagnostics: kDebugMode,
-      routerNeglect: true, // Not sure about this
+      routerNeglect: true,
+      redirect: (context, state) {
+        // Handle offline mode redirects
+        final isOffline = offlineMode.value;
+        final currentPath = state.matchedLocation;
+
+        if (isOffline && currentPath == searchPath) {
+          // Redirect search to home in offline mode
+          return homePath;
+        }
+
+        return null; // No redirect needed
+      },
     );
   }
 
@@ -95,15 +116,33 @@ class NavigationManager {
   static const String searchPath = '/search';
   static const String libraryPath = '/library';
 
-  List<StatefulShellBranch> _onlineRoutes() {
+  /// Refresh the router configuration when offline mode changes
+  static void refreshRouter() {
+    // Force router to re-evaluate redirect logic
+    router.refresh();
+  }
+
+  List<StatefulShellBranch> _getRouteBranches() {
+    // Always return all branches, but handle visibility in the UI
     return [
+      // Branch 0: Home
       StatefulShellBranch(
         navigatorKey: homeTabNavigatorKey,
         routes: [
           GoRoute(
             path: homePath,
             pageBuilder: (context, GoRouterState state) {
-              return getPage(child: const HomePage(), state: state);
+              return getPage(
+                child: ValueListenableBuilder<bool>(
+                  valueListenable: offlineMode,
+                  builder: (context, isOffline, _) {
+                    return isOffline
+                        ? const UserSongsPage(page: 'offline')
+                        : const HomePage();
+                  },
+                ),
+                state: state,
+              );
             },
             routes: [
               GoRoute(
@@ -114,17 +153,29 @@ class NavigationManager {
           ),
         ],
       ),
+      // Branch 1: Search
       StatefulShellBranch(
         navigatorKey: searchTabNavigatorKey,
         routes: [
           GoRoute(
             path: searchPath,
             pageBuilder: (context, GoRouterState state) {
-              return getPage(child: const SearchPage(), state: state);
+              return getPage(
+                child: ValueListenableBuilder<bool>(
+                  valueListenable: offlineMode,
+                  builder: (context, isOffline, _) {
+                    return isOffline
+                        ? const _OfflineSearchPlaceholder()
+                        : const SearchPage();
+                  },
+                ),
+                state: state,
+              );
             },
           ),
         ],
       ),
+      // Branch 2: Library
       StatefulShellBranch(
         navigatorKey: libraryTabNavigatorKey,
         routes: [
@@ -145,61 +196,7 @@ class NavigationManager {
           ),
         ],
       ),
-      StatefulShellBranch(
-        navigatorKey: settingsTabNavigatorKey,
-        routes: [
-          GoRoute(
-            path: settingsPath,
-            pageBuilder: (context, state) {
-              return getPage(child: const SettingsPage(), state: state);
-            },
-            routes: [
-              GoRoute(
-                path: 'license',
-                builder:
-                    (context, state) => const LicensePage(
-                      applicationName: 'Musify',
-                      applicationVersion: appVersion,
-                    ),
-              ),
-              GoRoute(
-                path: 'about',
-                builder: (context, state) => const AboutPage(),
-              ),
-            ],
-          ),
-        ],
-      ),
-    ];
-  }
-
-  List<StatefulShellBranch> _offlineRoutes() {
-    return [
-      StatefulShellBranch(
-        navigatorKey: homeTabNavigatorKey,
-        routes: [
-          GoRoute(
-            path: homePath,
-            pageBuilder: (context, GoRouterState state) {
-              return getPage(
-                child: const UserSongsPage(page: 'offline'),
-                state: state,
-              );
-            },
-          ),
-        ],
-      ),
-      StatefulShellBranch(
-        navigatorKey: libraryTabNavigatorKey,
-        routes: [
-          GoRoute(
-            path: libraryPath,
-            pageBuilder: (context, GoRouterState state) {
-              return getPage(child: const LibraryPage(), state: state);
-            },
-          ),
-        ],
-      ),
+      // Branch 3: Settings
       StatefulShellBranch(
         navigatorKey: settingsTabNavigatorKey,
         routes: [
@@ -230,5 +227,39 @@ class NavigationManager {
 
   static Page getPage({required Widget child, required GoRouterState state}) {
     return MaterialPage(key: state.pageKey, child: child);
+  }
+}
+
+class _OfflineSearchPlaceholder extends StatelessWidget {
+  const _OfflineSearchPlaceholder();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(context.l10n!.search)),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.cloud_off,
+              size: 64,
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.5),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              context.l10n!.error,
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.7),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

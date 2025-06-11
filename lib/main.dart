@@ -150,6 +150,8 @@ class _MusifyState extends State<Musify> {
       }
     };
 
+    offlineModeChangeNotifier.addListener(_onOfflineModeChanged);
+
     try {
       LicenseRegistry.addLicense(() async* {
         final license = await rootBundle.loadString(
@@ -174,8 +176,15 @@ class _MusifyState extends State<Musify> {
 
   @override
   void dispose() {
+    offlineModeChangeNotifier.removeListener(_onOfflineModeChanged);
+
     Hive.close();
     super.dispose();
+  }
+
+  void _onOfflineModeChanged() {
+    // Force rebuild when offline mode changes
+    setState(() {});
   }
 
   @override

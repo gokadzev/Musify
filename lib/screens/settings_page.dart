@@ -549,7 +549,12 @@ class SettingsPage extends StatelessWidget {
   void _toggleOfflineMode(BuildContext context, bool value) {
     addOrUpdateData('settings', 'offlineMode', value);
     offlineMode.value = value;
-    showToast(context, context.l10n!.restartAppMsg);
+
+    // Trigger router refresh and notify about the change
+    NavigationManager.refreshRouter();
+    offlineModeChangeNotifier.value = !offlineModeChangeNotifier.value;
+
+    showToast(context, context.l10n!.settingChangedMsg);
   }
 
   void _toggleSponsorBlock(BuildContext context, bool value) {
