@@ -49,15 +49,7 @@ class NavigationManager {
         branches: _getRouteBranches(),
         pageBuilder: (context, state, navigationShell) {
           return getPage(
-            child: ValueListenableBuilder<bool>(
-              valueListenable: offlineMode,
-              builder: (context, isOffline, _) {
-                return BottomNavigationPage(
-                  isOfflineMode: isOffline,
-                  child: navigationShell,
-                );
-              },
-            ),
+            child: BottomNavigationPage(child: navigationShell),
             state: state,
           );
         },

@@ -30,101 +30,110 @@ import 'package:musify/services/settings_manager.dart';
 import 'package:musify/widgets/mini_player.dart';
 
 class BottomNavigationPage extends StatefulWidget {
-  const BottomNavigationPage({
-    required this.child,
-    this.isOfflineMode = false,
-    super.key,
-  });
+  const BottomNavigationPage({required this.child, super.key});
 
   final StatefulNavigationShell child;
-  final bool isOfflineMode;
 
   @override
   State<BottomNavigationPage> createState() => _BottomNavigationPageState();
 }
 
 class _BottomNavigationPageState extends State<BottomNavigationPage> {
+  bool? _previousOfflineMode;
+
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final isLargeScreen = MediaQuery.of(context).size.width >= 600;
-        final items = _getNavigationItems;
+    return ValueListenableBuilder<bool>(
+      valueListenable: offlineMode,
+      builder: (context, isOfflineMode, _) {
+        // Handle offline mode changes
+        if (_previousOfflineMode != null &&
+            _previousOfflineMode != isOfflineMode) {
+          SchedulerBinding.instance.addPostFrameCallback((_) {
+            _handleOfflineModeChange(isOfflineMode);
+          });
+        }
+        _previousOfflineMode = isOfflineMode;
 
-        return Scaffold(
-          body: SafeArea(
-            child: Row(
-              children: [
-                if (isLargeScreen)
-                  NavigationRail(
-                    labelType: NavigationRailLabelType.selected,
-                    destinations:
-                        items
-                            .map(
-                              (item) => NavigationRailDestination(
-                                icon: Icon(item.icon),
-                                selectedIcon: Icon(item.icon),
-                                label: Text(item.label),
-                              ),
-                            )
-                            .toList(),
-                    selectedIndex: _getCurrentIndex,
-                    onDestinationSelected: _onTabTapped,
-                  ),
-                Expanded(
-                  child: Column(
-                    children: [
-                      Expanded(child: widget.child),
-                      StreamBuilder<MediaItem?>(
-                        stream: audioHandler.mediaItem.distinct((prev, curr) {
-                          if (prev == null || curr == null) return false;
-                          return prev.id == curr.id &&
-                              prev.title == curr.title &&
-                              prev.artist == curr.artist &&
-                              prev.artUri == curr.artUri;
-                        }),
-                        builder: (context, snapshot) {
-                          final metadata = snapshot.data;
-                          if (metadata == null) {
-                            return const SizedBox.shrink();
-                          }
-                          return MiniPlayer(metadata: metadata);
-                        },
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final isLargeScreen = MediaQuery.of(context).size.width >= 600;
+            final items = _getNavigationItems(isOfflineMode);
+
+            return Scaffold(
+              body: SafeArea(
+                child: Row(
+                  children: [
+                    if (isLargeScreen)
+                      NavigationRail(
+                        labelType: NavigationRailLabelType.selected,
+                        destinations:
+                            items
+                                .map(
+                                  (item) => NavigationRailDestination(
+                                    icon: Icon(item.icon),
+                                    selectedIcon: Icon(item.selectedIcon),
+                                    label: Text(item.label),
+                                  ),
+                                )
+                                .toList(),
+                        selectedIndex: _getCurrentIndex(items, isOfflineMode),
+                        onDestinationSelected:
+                            (index) => _onTabTapped(index, items),
                       ),
-                    ],
-                  ),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Expanded(child: widget.child),
+                          StreamBuilder<MediaItem?>(
+                            stream: audioHandler.mediaItem.distinct(
+                              _mediaItemEquals,
+                            ),
+                            builder: (context, snapshot) {
+                              final metadata = snapshot.data;
+                              if (metadata == null) {
+                                return const SizedBox.shrink();
+                              }
+                              return MiniPlayer(metadata: metadata);
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
-          bottomNavigationBar:
-              !isLargeScreen
-                  ? NavigationBar(
-                    selectedIndex: _getCurrentIndex,
-                    labelBehavior:
-                        languageSetting == const Locale('en', '')
-                            ? NavigationDestinationLabelBehavior
-                                .onlyShowSelected
-                            : NavigationDestinationLabelBehavior.alwaysHide,
-                    onDestinationSelected: _onTabTapped,
-                    destinations:
-                        items
-                            .map(
-                              (item) => NavigationDestination(
-                                icon: Icon(item.icon),
-                                selectedIcon: Icon(item.icon),
-                                label: item.label,
-                              ),
-                            )
-                            .toList(),
-                  )
-                  : null,
+              ),
+              bottomNavigationBar:
+                  !isLargeScreen
+                      ? NavigationBar(
+                        selectedIndex: _getCurrentIndex(items, isOfflineMode),
+                        labelBehavior:
+                            languageSetting == const Locale('en', '')
+                                ? NavigationDestinationLabelBehavior
+                                    .onlyShowSelected
+                                : NavigationDestinationLabelBehavior.alwaysHide,
+                        onDestinationSelected:
+                            (index) => _onTabTapped(index, items),
+                        destinations:
+                            items
+                                .map(
+                                  (item) => NavigationDestination(
+                                    icon: Icon(item.icon),
+                                    selectedIcon: Icon(item.selectedIcon),
+                                    label: item.label,
+                                  ),
+                                )
+                                .toList(),
+                      )
+                      : null,
+            );
+          },
         );
       },
     );
   }
 
-  List<_NavigationItem> get _getNavigationItems {
+  List<_NavigationItem> _getNavigationItems(bool isOfflineMode) {
     final items = <_NavigationItem>[
       _NavigationItem(
         icon: FluentIcons.home_24_regular,
@@ -136,7 +145,7 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
     ];
 
     // Only add search tab in online mode
-    if (!widget.isOfflineMode) {
+    if (!isOfflineMode) {
       items.add(
         _NavigationItem(
           icon: FluentIcons.search_24_regular,
@@ -149,8 +158,8 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
     }
 
     // Adjust indices based on whether search is included
-    final libraryIndex = widget.isOfflineMode ? 1 : 2;
-    final settingsIndex = widget.isOfflineMode ? 2 : 3;
+    final libraryIndex = isOfflineMode ? 1 : 2;
+    final settingsIndex = isOfflineMode ? 2 : 3;
 
     items.addAll([
       _NavigationItem(
@@ -172,32 +181,19 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
     return items;
   }
 
-  @override
-  void didUpdateWidget(BottomNavigationPage oldWidget) {
-    super.didUpdateWidget(oldWidget);
+  void _handleOfflineModeChange(bool isOfflineMode) {
+    if (!mounted) return;
 
-    // Handle offline mode transition
-    if (oldWidget.isOfflineMode != widget.isOfflineMode) {
-      _handleOfflineModeChange();
-    }
-  }
-
-  void _handleOfflineModeChange() {
     final currentRoute = GoRouterState.of(context).matchedLocation;
 
     // If we're switching to offline mode and currently on search tab
-    if (widget.isOfflineMode && currentRoute.startsWith('/search')) {
+    if (isOfflineMode && currentRoute.startsWith('/search')) {
       // Navigate to home
-      SchedulerBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
-          widget.child.goBranch(0);
-        }
-      });
+      widget.child.goBranch(0);
     }
   }
 
-  void _onTabTapped(int index) {
-    final items = _getNavigationItems;
+  void _onTabTapped(int index, List<_NavigationItem> items) {
     if (index < items.length) {
       final item = items[index];
       // Use the shell navigation index instead of the route
@@ -205,8 +201,7 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
     }
   }
 
-  int get _getCurrentIndex {
-    final items = _getNavigationItems;
+  int _getCurrentIndex(List<_NavigationItem> items, bool isOfflineMode) {
     final currentIndex = widget.child.currentIndex;
 
     // Add bounds checking
@@ -222,15 +217,25 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
     }
 
     // Handle edge cases more robustly
-    if (widget.isOfflineMode && currentIndex == 1) {
+    if (isOfflineMode && currentIndex == 1) {
       return 0; // Search -> Home
     }
 
-    if (widget.isOfflineMode && currentIndex > 1) {
+    if (isOfflineMode && currentIndex > 1) {
       return (currentIndex - 1).clamp(0, items.length - 1);
     }
 
     return currentIndex.clamp(0, items.length - 1);
+  }
+
+  static bool _mediaItemEquals(MediaItem? prev, MediaItem? curr) {
+    if (prev == curr) return true;
+    if (prev == null || curr == null) return false;
+
+    return prev.id == curr.id &&
+        prev.title == curr.title &&
+        prev.artist == curr.artist &&
+        prev.artUri == curr.artUri;
   }
 }
 
