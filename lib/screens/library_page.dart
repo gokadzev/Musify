@@ -94,7 +94,7 @@ class _LibraryPageState extends State<LibraryPage> {
             context.l10n!.likedSongs,
             onPressed:
                 () => NavigationManager.router.go('/library/userSongs/liked'),
-            cubeIcon: FluentIcons.music_note_2_24_regular,
+            cubeIcon: FluentIcons.heart_24_filled,
             showBuildActions: false,
           ),
           PlaylistBar(
