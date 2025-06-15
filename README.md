@@ -17,11 +17,7 @@ Unlock the full potential of music: Stream effortlessly with one app!
   <img src="https://github.com/user-attachments/assets/1c204507-d124-4b34-878b-96c39c9bb3f8"  alt="ko-fi badge" style="width: 150px;">
 </a>
 
----
 
-<a href="https://discord.gg/BRc5jKgTSZ" target="_blank" title="Discord">
-  <img src="https://discord.com/api/guilds/1365771744027218052/widget.png?style=banner2" alt="Discord Banner 2"/>
-</a>
 
 ---
 
