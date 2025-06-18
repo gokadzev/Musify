@@ -16,6 +16,7 @@ dependencies:
   audio_service: ^0.18.18
   audio_session: ^0.2.2
   cached_network_image: ^3.4.1
+  curved_navigation_bar: ^1.0.6
   dynamic_color: ^1.7.0
   file_picker: ^10.1.9
   fluentui_system_icons: ^1.1.273

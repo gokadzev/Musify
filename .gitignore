@@ -47,3 +47,4 @@ android/app/.cxx/
 
 # Generated localization dart files
 lib/localization/app_*.dart
+.vscode/settings.json

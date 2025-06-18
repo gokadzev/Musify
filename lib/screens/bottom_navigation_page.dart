@@ -20,6 +20,7 @@
  */
 
 import 'package:audio_service/audio_service.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -59,6 +60,12 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
           builder: (context, constraints) {
             final isLargeScreen = MediaQuery.of(context).size.width >= 600;
             final items = _getNavigationItems(isOfflineMode);
+
+            IconData _getIconForItem(dynamic item) {
+              final currentIndex = _getCurrentIndex(items, isOfflineMode);
+              final itemIndex = items.indexOf(item);
+              return currentIndex == itemIndex ? item.selectedIcon : item.icon;
+            }
 
             return Scaffold(
               body: SafeArea(
@@ -105,25 +112,38 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
               ),
               bottomNavigationBar:
                   !isLargeScreen
-                      ? NavigationBar(
-                        selectedIndex: _getCurrentIndex(items, isOfflineMode),
-                        labelBehavior:
-                            languageSetting == const Locale('en', '')
-                                ? NavigationDestinationLabelBehavior
-                                    .onlyShowSelected
-                                : NavigationDestinationLabelBehavior.alwaysHide,
-                        onDestinationSelected:
-                            (index) => _onTabTapped(index, items),
-                        destinations:
-                            items
-                                .map(
-                                  (item) => NavigationDestination(
-                                    icon: Icon(item.icon),
-                                    selectedIcon: Icon(item.selectedIcon),
-                                    label: item.label,
-                                  ),
-                                )
-                                .toList(),
+                      ? AnimatedSize(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                        child: Theme(
+                          data: Theme.of(context).copyWith(
+                            iconTheme: const IconThemeData(color: Colors.white),
+                          ),
+                          child: CurvedNavigationBar(
+                            backgroundColor: Theme.of(context).cardColor,
+                            color: Theme.of(context).primaryColorLight,
+                            buttonBackgroundColor:
+                                Theme.of(context).primaryColor,
+                            height: 60,
+                            index: _getCurrentIndex(items, isOfflineMode),
+                            animationCurve: Curves.easeInOut,
+                            animationDuration: const Duration(
+                              milliseconds: 300,
+                            ),
+                            items:
+                                items.map((item) {
+                                  return Padding(
+                                    padding: const EdgeInsets.all(8),
+                                    child: Icon(
+                                      _getIconForItem(item),
+                                      size: 24,
+                                      color: Colors.white,
+                                    ),
+                                  );
+                                }).toList(),
+                            onTap: (index) => _onTabTapped(index, items),
+                          ),
+                        ),
                       )
                       : null,
             );
