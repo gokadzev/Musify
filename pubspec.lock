@@ -205,10 +205,10 @@ packages:
     dependency: "direct main"
     description:
       name: file_picker
-      sha256: "77f8e81d22d2a07d0dee2c62e1dda71dc1da73bf43bb2d45af09727406167964"
+      sha256: ef9908739bdd9c476353d6adff72e88fd00c625f5b959ae23f7567bd5137db0a
       url: "https://pub.dev"
     source: hosted
-    version: "10.1.9"
+    version: "10.2.0"
   fixnum:
     dependency: transitive
     description:
@@ -289,10 +289,10 @@ packages:
     dependency: "direct main"
     description:
       name: go_router
-      sha256: b453934c36e289cef06525734d1e676c1f91da9e22e2017d9dcab6ce0f999175
+      sha256: ac294be30ba841830cfa146e5a3b22bb09f8dc5a0fdd9ca9332b04b0bde99ebf
       url: "https://pub.dev"
     source: hosted
-    version: "15.1.3"
+    version: "15.2.4"
   gtk:
     dependency: transitive
     description:
@@ -814,11 +814,11 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: master
-      resolved-ref: d850577797836620c54829b4776447af5f11ac65
+      ref: beta
+      resolved-ref: b77f0638b232cceab4104fa369fe3eb54c89f1e6
       url: "https://github.com/gokadzev/yt_explode_dart"
     source: git
-    version: "2.4.2"
+    version: "2.5.0"
 sdks:
   dart: ">=3.7.0 <4.0.0"
   flutter: ">=3.32.5"

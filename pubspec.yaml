@@ -17,14 +17,14 @@ dependencies:
   audio_session: ^0.2.2
   cached_network_image: ^3.4.1
   dynamic_color: ^1.7.0
-  file_picker: ^10.1.9
+  file_picker: ^10.2.0
   fluentui_system_icons: ^1.1.273
   flutter:
     sdk: flutter
   flutter_flip_card: ^0.0.6
   flutter_localizations:
     sdk: flutter
-  go_router: ^15.1.3
+  go_router: ^15.2.4
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   html: ^0.15.6
@@ -37,7 +37,7 @@ dependencies:
   youtube_explode_dart:
     git:
       url: https://github.com/gokadzev/yt_explode_dart
-      ref: master
+      ref: beta
 
 dev_dependencies:
   flutter_test:
