@@ -163,12 +163,11 @@ class _MusifyState extends State<Musify> {
       logger.log('License Registration Error', e, stackTrace);
     }
 
-    if (!isFdroidBuild &&
-        !isUpdateChecked &&
-        !offlineMode.value &&
-        kReleaseMode) {
+    if (!isFdroidBuild && !isUpdateChecked && kReleaseMode) {
       SchedulerBinding.instance.addPostFrameCallback((_) {
-        checkAppUpdates();
+        if (!offlineMode.value) {
+          checkAppUpdates();
+        }
         isUpdateChecked = true;
       });
     }
