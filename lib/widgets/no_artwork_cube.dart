@@ -27,12 +27,12 @@ class NullArtworkWidget extends StatelessWidget {
     super.key,
     this.icon = FluentIcons.music_note_1_24_regular,
     this.size = 220,
-    this.iconSize = 64,
+    this.iconSize,
     this.title,
   });
 
   final IconData icon;
-  final double iconSize;
+  final double? iconSize;
   final double size;
   final String? title;
 
@@ -41,26 +41,30 @@ class NullArtworkWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final primaryColor = colorScheme.primary;
+    
+    // Calculate icon size based on container size if not provided
+    final calculatedIconSize = iconSize ?? (size * 0.29);
 
     return SizedBox(
       width: size,
       height: size,
       child: DecoratedBox(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: colorScheme.secondary,
+          borderRadius: BorderRadius.circular(12),
+          color: primaryColor.withAlpha(30),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Icon(icon, size: iconSize, color: colorScheme.onSecondary),
+            Icon(icon, size: calculatedIconSize, color: primaryColor),
             if (title != null)
               Padding(
                 padding: const EdgeInsets.all(paddingValue),
                 child: Text(
                   title!,
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: colorScheme.onSecondary),
+                  style: TextStyle(color: primaryColor),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 2,
                 ),
