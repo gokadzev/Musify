@@ -69,28 +69,29 @@ class _PlaylistFolderPageState extends State<PlaylistFolderPage> {
               borderRadius: BorderRadius.circular(12),
             ),
             color: Theme.of(context).colorScheme.surface,
-            itemBuilder: (context) => [
-              PopupMenuItem<String>(
-                value: 'delete',
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      FluentIcons.delete_24_regular,
-                      color: Theme.of(context).colorScheme.error,
-                      size: 18,
+            itemBuilder:
+                (context) => [
+                  PopupMenuItem<String>(
+                    value: 'delete',
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          FluentIcons.delete_24_regular,
+                          color: Theme.of(context).colorScheme.error,
+                          size: 18,
+                        ),
+                        const SizedBox(width: 10),
+                        Text(
+                          context.l10n!.deleteFolder,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.error,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 10),
-                    Text(
-                      context.l10n!.deleteFolder,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.error,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+                  ),
+                ],
             onSelected: (value) {
               if (value == 'delete') {
                 _showDeleteFolderDialog();
@@ -99,16 +100,13 @@ class _PlaylistFolderPageState extends State<PlaylistFolderPage> {
           ),
         ],
       ),
-      body: _playlists.isEmpty
-          ? _buildEmptyState()
-          : SingleChildScrollView(
-              padding: commonSingleChildScrollViewPadding,
-              child: Column(
-                children: [
-                  _buildPlaylistList(),
-                ],
+      body:
+          _playlists.isEmpty
+              ? _buildEmptyState()
+              : SingleChildScrollView(
+                padding: commonSingleChildScrollViewPadding,
+                child: Column(children: [_buildPlaylistList()]),
               ),
-            ),
     );
   }
 
@@ -148,7 +146,7 @@ class _PlaylistFolderPageState extends State<PlaylistFolderPage> {
       itemBuilder: (context, index) {
         final playlist = _playlists[index];
         final borderRadius = getItemBorderRadius(index, _playlists.length);
-        
+
         return PlaylistBar(
           key: ValueKey(playlist['ytid']),
           playlist['title'],
@@ -165,32 +163,34 @@ class _PlaylistFolderPageState extends State<PlaylistFolderPage> {
   void _showRemovePlaylistDialog(Map playlist) {
     showDialog(
       context: context,
-      builder: (context) => ConfirmationDialog(
-        submitMessage: context.l10n!.remove,
-        confirmationMessage: context.l10n!.removeFromFolder,
-        onCancel: () => Navigator.of(context).pop(),
-        onSubmit: () {
-          Navigator.of(context).pop();
-          movePlaylistToFolder(playlist, null, context);
-          _loadPlaylists();
-        },
-      ),
+      builder:
+          (context) => ConfirmationDialog(
+            submitMessage: context.l10n!.remove,
+            confirmationMessage: context.l10n!.removeFromFolder,
+            onCancel: () => Navigator.of(context).pop(),
+            onSubmit: () {
+              Navigator.of(context).pop();
+              movePlaylistToFolder(playlist, null, context);
+              _loadPlaylists();
+            },
+          ),
     );
   }
 
   void _showDeleteFolderDialog() {
     showDialog(
       context: context,
-      builder: (context) => ConfirmationDialog(
-        submitMessage: context.l10n!.delete,
-        confirmationMessage: context.l10n!.deleteFolderQuestion,
-        onCancel: () => Navigator.of(context).pop(),
-        onSubmit: () {
-          Navigator.of(context).pop();
-          deletePlaylistFolder(widget.folderId, context);
-          Navigator.of(context).pop(); // Go back to library
-        },
-      ),
+      builder:
+          (context) => ConfirmationDialog(
+            submitMessage: context.l10n!.delete,
+            confirmationMessage: context.l10n!.deleteFolderQuestion,
+            onCancel: () => Navigator.of(context).pop(),
+            onSubmit: () {
+              Navigator.of(context).pop();
+              deletePlaylistFolder(widget.folderId, context);
+              Navigator.of(context).pop(); // Go back to library
+            },
+          ),
     );
   }
 }

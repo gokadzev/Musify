@@ -42,7 +42,7 @@ class NullArtworkWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final primaryColor = colorScheme.primary;
-    
+
     // Calculate icon size based on container size if not provided
     final calculatedIconSize = iconSize ?? (size * 0.29);
 

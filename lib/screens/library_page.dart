@@ -182,7 +182,21 @@ class _LibraryPageState extends State<LibraryPage> {
                           snapshot.data!.isNotEmpty) {
                         return _buildPlaylistListView(context, snapshot.data!);
                       } else {
-                        return const SizedBox();
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          child: Text(
+                            context.l10n!.noPlaylistsAdded,
+                            style: Theme.of(
+                              context,
+                            ).textTheme.bodyMedium?.copyWith(
+                              color:
+                                  Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        );
                       }
                     },
                   ),
@@ -268,7 +282,11 @@ class _LibraryPageState extends State<LibraryPage> {
     );
   }
 
-  Widget _buildFolderListView(BuildContext context, List folders, bool hasPlaylistsAfter) {
+  Widget _buildFolderListView(
+    BuildContext context,
+    List folders,
+    bool hasPlaylistsAfter,
+  ) {
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -277,9 +295,10 @@ class _LibraryPageState extends State<LibraryPage> {
       itemBuilder: (BuildContext context, index) {
         final folder = folders[index];
         final isLastFolder = index == folders.length - 1;
-        final borderRadius = isLastFolder && !hasPlaylistsAfter
-            ? commonCustomBarRadiusLast  // Only bottom radius for last item
-            : BorderRadius.zero;  // No radius for middle items
+        final borderRadius =
+            isLastFolder && !hasPlaylistsAfter
+                ? commonCustomBarRadiusLast // Only bottom radius for last item
+                : BorderRadius.zero; // No radius for middle items
         return PlaylistBar(
           folder['name'],
           playlistData: folder,

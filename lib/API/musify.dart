@@ -357,7 +357,8 @@ String createPlaylistFolder(String folderName, [BuildContext? context]) {
 
   // Check if folder already exists
   final exists = userPlaylistFolders.value.any(
-    (folder) => folder['name'].toString().toLowerCase() == 
+    (folder) =>
+        folder['name'].toString().toLowerCase() ==
         folderName.trim().toLowerCase(),
   );
 
@@ -378,8 +379,8 @@ String createPlaylistFolder(String folderName, [BuildContext? context]) {
 }
 
 String movePlaylistToFolder(
-  Map playlist, 
-  String? folderId, 
+  Map playlist,
+  String? folderId,
   BuildContext context,
 ) {
   try {
@@ -389,8 +390,9 @@ String movePlaylistToFolder(
 
     // Remove playlist from any existing folder
     for (final folder in updatedFolders) {
-      final folderPlaylists = List<Map>.from(folder['playlists'] ?? [])
-        ..removeWhere((p) => p['ytid'] != null && p['ytid'] == playlist['ytid']);
+      final folderPlaylists = List<Map>.from(
+        folder['playlists'] ?? [],
+      )..removeWhere((p) => p['ytid'] != null && p['ytid'] == playlist['ytid']);
       folder['playlists'] = folderPlaylists;
     }
 
@@ -408,7 +410,9 @@ String movePlaylistToFolder(
 
         // Remove from main list based on playlist type
         if (playlist['source'] == 'user-created') {
-          updatedCustomPlaylists.removeWhere((p) => p['ytid'] == playlist['ytid']);
+          updatedCustomPlaylists.removeWhere(
+            (p) => p['ytid'] == playlist['ytid'],
+          );
         } else if (playlist['source'] == 'user-youtube') {
           updatedYoutubePlaylists.removeWhere((p) => p == playlist['ytid']);
         }
@@ -429,11 +433,11 @@ String movePlaylistToFolder(
     userPlaylistFolders.value = updatedFolders;
     userCustomPlaylists.value = updatedCustomPlaylists;
     userPlaylists.value = updatedYoutubePlaylists;
-    
+
     addOrUpdateData('user', 'playlistFolders', userPlaylistFolders.value);
     addOrUpdateData('user', 'customPlaylists', userCustomPlaylists.value);
     addOrUpdateData('user', 'playlists', userPlaylists.value);
-    
+
     return '${context.l10n!.addedSuccess}!';
   } catch (e, stackTrace) {
     logger.log('Error moving playlist to folder', e, stackTrace);
@@ -454,14 +458,18 @@ String deletePlaylistFolder(String folderId, [BuildContext? context]) {
       final folderPlaylists = List<Map>.from(folderToDelete['playlists'] ?? []);
       final updatedCustomPlaylists = List<Map>.from(userCustomPlaylists.value);
       final updatedYoutubePlaylists = List.from(userPlaylists.value);
-      
+
       for (final playlist in folderPlaylists) {
         if (playlist['source'] == 'user-created') {
-          if (playlist['ytid'] != null && !updatedCustomPlaylists.any((p) => p['ytid'] == playlist['ytid'])) {
+          if (playlist['ytid'] != null &&
+              !updatedCustomPlaylists.any(
+                (p) => p['ytid'] == playlist['ytid'],
+              )) {
             updatedCustomPlaylists.add(playlist);
           }
         } else if (playlist['source'] == 'user-youtube') {
-          if (playlist['ytid'] != null && !updatedYoutubePlaylists.contains(playlist['ytid'])) {
+          if (playlist['ytid'] != null &&
+              !updatedYoutubePlaylists.contains(playlist['ytid'])) {
             updatedYoutubePlaylists.add(playlist['ytid']);
           }
         }
@@ -473,11 +481,11 @@ String deletePlaylistFolder(String folderId, [BuildContext? context]) {
       userPlaylistFolders.value = updatedFolders;
       userCustomPlaylists.value = updatedCustomPlaylists;
       userPlaylists.value = updatedYoutubePlaylists;
-      
+
       addOrUpdateData('user', 'playlistFolders', userPlaylistFolders.value);
       addOrUpdateData('user', 'customPlaylists', userCustomPlaylists.value);
       addOrUpdateData('user', 'playlists', userPlaylists.value);
-      
+
       return context?.l10n?.folderDeleted ?? 'Folder deleted successfully';
     }
     return context?.l10n?.error ?? 'Error';
@@ -510,12 +518,15 @@ List<Map> getPlaylistsNotInFolders() {
       }
     }
   }
-  
+
   // Filter out playlists that are in folders
-  return userCustomPlaylists.value.where((playlist) {
-    final playlistId = playlist['ytid'];
-    return playlistId == null || !playlistsInFolders.contains(playlistId);
-  }).toList().cast<Map>();
+  return userCustomPlaylists.value
+      .where((playlist) {
+        final playlistId = playlist['ytid'];
+        return playlistId == null || !playlistsInFolders.contains(playlistId);
+      })
+      .toList()
+      .cast<Map>();
 }
 
 Future<void> updateSongLikeStatus(dynamic songId, bool add) async {
@@ -1203,9 +1214,9 @@ Future<void> removeFromRecentlyPlayed(dynamic songId) async {
 
 // Helper function to check if a playlist is a custom playlist
 bool isCustomPlaylist(Map playlist) {
-  return playlist['source'] == 'user-created' && 
-         playlist['ytid'] != null && 
-         playlist['ytid'].toString().startsWith('customId-');
+  return playlist['source'] == 'user-created' &&
+      playlist['ytid'] != null &&
+      playlist['ytid'].toString().startsWith('customId-');
 }
 
 // Helper function to get a unique identifier for playlists (custom or YouTube)
@@ -1224,7 +1235,7 @@ Future<List<dynamic>> getUserPlaylistsNotInFolders() async {
       }
     }
   }
-  
+
   // Get all YouTube playlists and filter out those in folders
   final allUserPlaylists = await getUserPlaylists();
   return allUserPlaylists.where((playlist) {
@@ -1238,19 +1249,21 @@ bool playlistExistsAnywhere(String playlistId) {
   if (userPlaylists.value.contains(playlistId)) {
     return true;
   }
-  
+
   // Check in custom playlists
   if (userCustomPlaylists.value.any((p) => p['ytid'] == playlistId)) {
     return true;
   }
-  
+
   // Check in folders
   for (final folder in userPlaylistFolders.value) {
     final folderPlaylists = folder['playlists'] as List<dynamic>? ?? [];
-    if (folderPlaylists.any((p) => p['ytid'] != null && p['ytid'] == playlistId)) {
+    if (folderPlaylists.any(
+      (p) => p['ytid'] != null && p['ytid'] == playlistId,
+    )) {
       return true;
     }
   }
-  
+
   return false;
 }
