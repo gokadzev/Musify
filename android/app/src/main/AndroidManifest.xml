@@ -57,7 +57,6 @@
                 android:name="io.flutter.embedding.android.NormalTheme"
                 android:resource="@style/NormalTheme" />
 
-
             <meta-data android:name="flutter_deeplinking_enabled" android:value="false" />
 
             <!-- Main activity intent filter -->
@@ -81,6 +80,11 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
+        <!-- Disable Impeller rendering engine -->
+        <meta-data
+            android:name="io.flutter.embedding.android.EnableImpeller"
+            android:value="false" />
 
         <!-- AudioService -->
         <service android:name="com.ryanheise.audioservice.AudioService"
