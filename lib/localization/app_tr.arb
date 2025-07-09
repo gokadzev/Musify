@@ -126,5 +126,19 @@
   "undo": "Geri Al",
   "update": "Update",
   "userPlaylists": "Kullanıcı Listeleri",
-  "youtubePlaylistLinkOrId": "YouTube listesi bağlantısı veya ID'si"
+  "youtubePlaylistLinkOrId": "YouTube listesi bağlantısı veya ID'si",
+  "createFolder": "Create folder",
+  "folderName": "Folder name",
+  "newFolder": "New folder",
+  "playlistFolders": "Playlist folders",
+  "moveToFolder": "Move to folder",
+  "removeFromFolder": "Remove from folder",
+  "deleteFolder": "Delete folder",
+  "deleteFolderQuestion": "Are you sure you want to delete this folder? Playlists inside will be moved to the main library.",
+  "emptyFolderMsg": "This folder is empty. Add playlists to organize your music.",
+  "folderAlreadyExists": "A folder with this name already exists",
+  "enterFolderName": "Please enter a folder name",
+  "create": "Create",
+  "delete": "Delete",
+  "folderDeleted": "Folder deleted successfully"
 }

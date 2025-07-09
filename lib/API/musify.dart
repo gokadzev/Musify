@@ -50,6 +50,9 @@ final userPlaylists = ValueNotifier<List>(
 final userCustomPlaylists = ValueNotifier<List>(
   Hive.box('user').get('customPlaylists', defaultValue: []),
 );
+final userPlaylistFolders = ValueNotifier<List>(
+  Hive.box('user').get('playlistFolders', defaultValue: []),
+);
 List userLikedSongsList = Hive.box('user').get('likedSongs', defaultValue: []);
 List userLikedPlaylists = Hive.box(
   'user',
@@ -227,7 +230,7 @@ Future<String> addUserPlaylist(String input, BuildContext context) async {
   try {
     final _playlist = await _yt.playlists.get(playlistId);
 
-    if (userPlaylists.value.contains(playlistId)) {
+    if (playlistExistsAnywhere(playlistId)) {
       return '${context.l10n!.playlistAlreadyExists}!';
     }
 
@@ -249,11 +252,14 @@ String createCustomPlaylist(
   String? image,
   BuildContext context,
 ) {
+  final creationTime = DateTime.now().millisecondsSinceEpoch;
   final customPlaylist = {
+    'ytid': 'customId-$creationTime',
     'title': playlistName,
     'source': 'user-created',
     if (image != null) 'image': image,
     'list': [],
+    'createdAt': creationTime,
   };
   userCustomPlaylists.value = [...userCustomPlaylists.value, customPlaylist];
   addOrUpdateData('user', 'customPlaylists', userCustomPlaylists.value);
@@ -340,6 +346,176 @@ void removeUserCustomPlaylist(dynamic playlist) {
     ..remove(playlist);
   userCustomPlaylists.value = updatedPlaylists;
   addOrUpdateData('user', 'customPlaylists', userCustomPlaylists.value);
+}
+
+// Playlist Folders Management Functions
+
+String createPlaylistFolder(String folderName, [BuildContext? context]) {
+  if (folderName.trim().isEmpty) {
+    return context?.l10n?.enterFolderName ?? 'Please enter a folder name';
+  }
+
+  // Check if folder already exists
+  final exists = userPlaylistFolders.value.any(
+    (folder) => folder['name'].toString().toLowerCase() == 
+        folderName.trim().toLowerCase(),
+  );
+
+  if (exists) {
+    return context?.l10n?.folderAlreadyExists ?? 'Folder already exists';
+  }
+
+  final newFolder = {
+    'id': DateTime.now().millisecondsSinceEpoch.toString(),
+    'name': folderName.trim(),
+    'playlists': <Map>[],
+    'createdAt': DateTime.now().millisecondsSinceEpoch,
+  };
+
+  userPlaylistFolders.value = [...userPlaylistFolders.value, newFolder];
+  addOrUpdateData('user', 'playlistFolders', userPlaylistFolders.value);
+  return context?.l10n?.addedSuccess ?? 'Added successfully';
+}
+
+String movePlaylistToFolder(
+  Map playlist, 
+  String? folderId, 
+  BuildContext context,
+) {
+  try {
+    final updatedFolders = List<Map>.from(userPlaylistFolders.value);
+    final updatedCustomPlaylists = List<Map>.from(userCustomPlaylists.value);
+    final updatedYoutubePlaylists = List.from(userPlaylists.value);
+
+    // Remove playlist from any existing folder
+    for (final folder in updatedFolders) {
+      final folderPlaylists = List<Map>.from(folder['playlists'] ?? [])
+        ..removeWhere((p) => p['ytid'] != null && p['ytid'] == playlist['ytid']);
+      folder['playlists'] = folderPlaylists;
+    }
+
+    // Remove from main playlists if moving to a folder
+    if (folderId != null) {
+      final targetFolder = updatedFolders.firstWhere(
+        (folder) => folder['id'] == folderId,
+        orElse: () => {},
+      );
+
+      if (targetFolder.isNotEmpty) {
+        final folderPlaylists = List<Map>.from(targetFolder['playlists'] ?? [])
+          ..add(playlist);
+        targetFolder['playlists'] = folderPlaylists;
+
+        // Remove from main list based on playlist type
+        if (playlist['source'] == 'user-created') {
+          updatedCustomPlaylists.removeWhere((p) => p['ytid'] == playlist['ytid']);
+        } else if (playlist['source'] == 'user-youtube') {
+          updatedYoutubePlaylists.removeWhere((p) => p == playlist['ytid']);
+        }
+      }
+    } else {
+      // Moving out of folder to main list
+      if (playlist['source'] == 'user-created') {
+        if (!updatedCustomPlaylists.any((p) => p['ytid'] == playlist['ytid'])) {
+          updatedCustomPlaylists.add(playlist);
+        }
+      } else if (playlist['source'] == 'user-youtube') {
+        if (!updatedYoutubePlaylists.contains(playlist['ytid'])) {
+          updatedYoutubePlaylists.add(playlist['ytid']);
+        }
+      }
+    }
+
+    userPlaylistFolders.value = updatedFolders;
+    userCustomPlaylists.value = updatedCustomPlaylists;
+    userPlaylists.value = updatedYoutubePlaylists;
+    
+    addOrUpdateData('user', 'playlistFolders', userPlaylistFolders.value);
+    addOrUpdateData('user', 'customPlaylists', userCustomPlaylists.value);
+    addOrUpdateData('user', 'playlists', userPlaylists.value);
+    
+    return '${context.l10n!.addedSuccess}!';
+  } catch (e, stackTrace) {
+    logger.log('Error moving playlist to folder', e, stackTrace);
+    return context.l10n!.error;
+  }
+}
+
+String deletePlaylistFolder(String folderId, [BuildContext? context]) {
+  try {
+    final updatedFolders = List<Map>.from(userPlaylistFolders.value);
+    final folderToDelete = updatedFolders.firstWhere(
+      (folder) => folder['id'] == folderId,
+      orElse: () => {},
+    );
+
+    if (folderToDelete.isNotEmpty) {
+      // Move all playlists from folder back to main list
+      final folderPlaylists = List<Map>.from(folderToDelete['playlists'] ?? []);
+      final updatedCustomPlaylists = List<Map>.from(userCustomPlaylists.value);
+      final updatedYoutubePlaylists = List.from(userPlaylists.value);
+      
+      for (final playlist in folderPlaylists) {
+        if (playlist['source'] == 'user-created') {
+          if (playlist['ytid'] != null && !updatedCustomPlaylists.any((p) => p['ytid'] == playlist['ytid'])) {
+            updatedCustomPlaylists.add(playlist);
+          }
+        } else if (playlist['source'] == 'user-youtube') {
+          if (playlist['ytid'] != null && !updatedYoutubePlaylists.contains(playlist['ytid'])) {
+            updatedYoutubePlaylists.add(playlist['ytid']);
+          }
+        }
+      }
+
+      // Remove the folder
+      updatedFolders.removeWhere((folder) => folder['id'] == folderId);
+
+      userPlaylistFolders.value = updatedFolders;
+      userCustomPlaylists.value = updatedCustomPlaylists;
+      userPlaylists.value = updatedYoutubePlaylists;
+      
+      addOrUpdateData('user', 'playlistFolders', userPlaylistFolders.value);
+      addOrUpdateData('user', 'customPlaylists', userCustomPlaylists.value);
+      addOrUpdateData('user', 'playlists', userPlaylists.value);
+      
+      return context?.l10n?.folderDeleted ?? 'Folder deleted successfully';
+    }
+    return context?.l10n?.error ?? 'Error';
+  } catch (e, stackTrace) {
+    logger.log('Error deleting playlist folder', e, stackTrace);
+    return context?.l10n?.error ?? 'Error';
+  }
+}
+
+List<Map> getPlaylistsInFolder(String folderId) {
+  try {
+    final folder = userPlaylistFolders.value.firstWhere(
+      (folder) => folder['id'] == folderId,
+      orElse: () => {},
+    );
+    return List<Map>.from(folder['playlists'] ?? []);
+  } catch (e) {
+    return [];
+  }
+}
+
+List<Map> getPlaylistsNotInFolders() {
+  // Get all playlist IDs that are in folders
+  final playlistsInFolders = <String>{};
+  for (final folder in userPlaylistFolders.value) {
+    final folderPlaylists = folder['playlists'] as List<dynamic>? ?? [];
+    for (final playlist in folderPlaylists) {
+      if (playlist['ytid'] != null) {
+        playlistsInFolders.add(playlist['ytid']);
+      }
+    }
+  }
+  
+  // Filter out playlists that are in folders
+  return userCustomPlaylists.value.where((playlist) {
+    final playlistId = playlist['ytid'];
+    return playlistId == null || !playlistsInFolders.contains(playlistId);
+  }).toList().cast<Map>();
 }
 
 Future<void> updateSongLikeStatus(dynamic songId, bool add) async {
@@ -1023,4 +1199,58 @@ Future<void> removeFromRecentlyPlayed(dynamic songId) async {
     currentRecentlyPlayedLength.value = userRecentlyPlayed.length;
     await addOrUpdateData('user', 'recentlyPlayedSongs', userRecentlyPlayed);
   }
+}
+
+// Helper function to check if a playlist is a custom playlist
+bool isCustomPlaylist(Map playlist) {
+  return playlist['source'] == 'user-created' && 
+         playlist['ytid'] != null && 
+         playlist['ytid'].toString().startsWith('customId-');
+}
+
+// Helper function to get a unique identifier for playlists (custom or YouTube)
+String getPlaylistId(Map playlist) {
+  return playlist['ytid'] ?? '';
+}
+
+Future<List<dynamic>> getUserPlaylistsNotInFolders() async {
+  // Get all playlist IDs that are in folders
+  final playlistsInFolders = <String>{};
+  for (final folder in userPlaylistFolders.value) {
+    final folderPlaylists = folder['playlists'] as List<dynamic>? ?? [];
+    for (final playlist in folderPlaylists) {
+      if (playlist['ytid'] != null && playlist['source'] == 'user-youtube') {
+        playlistsInFolders.add(playlist['ytid']);
+      }
+    }
+  }
+  
+  // Get all YouTube playlists and filter out those in folders
+  final allUserPlaylists = await getUserPlaylists();
+  return allUserPlaylists.where((playlist) {
+    return !playlistsInFolders.contains(playlist['ytid']);
+  }).toList();
+}
+
+// Helper function to check if a playlist exists anywhere (main lists or folders)
+bool playlistExistsAnywhere(String playlistId) {
+  // Check in main YouTube playlists
+  if (userPlaylists.value.contains(playlistId)) {
+    return true;
+  }
+  
+  // Check in custom playlists
+  if (userCustomPlaylists.value.any((p) => p['ytid'] == playlistId)) {
+    return true;
+  }
+  
+  // Check in folders
+  for (final folder in userPlaylistFolders.value) {
+    final folderPlaylists = folder['playlists'] as List<dynamic>? ?? [];
+    if (folderPlaylists.any((p) => p['ytid'] != null && p['ytid'] == playlistId)) {
+      return true;
+    }
+  }
+  
+  return false;
 }

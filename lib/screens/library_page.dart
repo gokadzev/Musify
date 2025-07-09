@@ -76,10 +76,24 @@ class _LibraryPageState extends State<LibraryPage> {
         if (!offlineMode.value) ...[
           SectionHeader(
             title: context.l10n!.customPlaylists,
-            actionButton: IconButton(
-              padding: const EdgeInsets.only(right: 5),
-              onPressed: _showAddPlaylistDialog,
-              icon: Icon(FluentIcons.add_24_filled, color: primaryColor),
+            actionButton: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  padding: const EdgeInsets.symmetric(horizontal: 2),
+                  onPressed: _showCreateFolderDialog,
+                  icon: Icon(
+                    FluentIcons.folder_add_24_filled,
+                    color: primaryColor,
+                  ),
+                  tooltip: context.l10n!.createFolder,
+                ),
+                IconButton(
+                  padding: const EdgeInsets.symmetric(horizontal: 2),
+                  onPressed: _showAddPlaylistDialog,
+                  icon: Icon(FluentIcons.add_24_filled, color: primaryColor),
+                ),
+              ],
             ),
           ),
           PlaylistBar(
@@ -109,13 +123,28 @@ class _LibraryPageState extends State<LibraryPage> {
             showBuildActions: false,
           ),
 
+          // Display folders
+          ValueListenableBuilder<List>(
+            valueListenable: userPlaylistFolders,
+            builder: (context, folders, _) {
+              if (folders.isEmpty) {
+                return const SizedBox();
+              }
+              final playlistsNotInFolders = getPlaylistsNotInFolders();
+              final hasPlaylistsAfter = playlistsNotInFolders.isNotEmpty;
+              return _buildFolderListView(context, folders, hasPlaylistsAfter);
+            },
+          ),
+
+          // Display playlists not in folders
           ValueListenableBuilder<List>(
             valueListenable: userCustomPlaylists,
             builder: (context, playlists, _) {
-              if (playlists.isEmpty) {
+              final playlistsNotInFolders = getPlaylistsNotInFolders();
+              if (playlistsNotInFolders.isEmpty) {
                 return const SizedBox();
               }
-              return _buildPlaylistListView(context, playlists);
+              return _buildPlaylistListView(context, playlistsNotInFolders);
             },
           ),
         ],
@@ -143,7 +172,7 @@ class _LibraryPageState extends State<LibraryPage> {
                     ),
                   ),
                   FutureBuilder(
-                    future: getUserPlaylists(),
+                    future: getUserPlaylistsNotInFolders(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());
@@ -223,7 +252,9 @@ class _LibraryPageState extends State<LibraryPage> {
           playlistArtwork: playlist['image'],
           isAlbum: playlist['isAlbum'],
           playlistData:
-              playlist['source'] == 'user-created' || isOfflinePlaylists
+              playlist['source'] == 'user-created' ||
+                      playlist['source'] == 'user-youtube' ||
+                      isOfflinePlaylists
                   ? playlist
                   : null,
           onDelete:
@@ -232,6 +263,28 @@ class _LibraryPageState extends State<LibraryPage> {
                   ? () => _showRemovePlaylistDialog(playlist)
                   : null,
           borderRadius: borderRadius,
+        );
+      },
+    );
+  }
+
+  Widget _buildFolderListView(BuildContext context, List folders, bool hasPlaylistsAfter) {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: folders.length,
+      padding: EdgeInsets.zero,
+      itemBuilder: (BuildContext context, index) {
+        final folder = folders[index];
+        final isLastFolder = index == folders.length - 1;
+        final borderRadius = isLastFolder && !hasPlaylistsAfter
+            ? commonCustomBarRadiusLast  // Only bottom radius for last item
+            : BorderRadius.zero;  // No radius for middle items
+        return PlaylistBar(
+          folder['name'],
+          playlistData: folder,
+          borderRadius: borderRadius,
+          onDelete: () => _showDeleteFolderDialog(folder),
         );
       },
     );
@@ -407,12 +460,71 @@ class _LibraryPageState extends State<LibraryPage> {
         onSubmit: () {
           Navigator.of(context).pop();
 
-          if (playlist['ytid'] == null &&
+          if (playlist['ytid'] != null &&
+              playlist['ytid'].toString().startsWith('customId-') &&
               playlist['source'] == 'user-created') {
             removeUserCustomPlaylist(playlist);
           } else {
             removeUserPlaylist(playlist['ytid']);
           }
+        },
+      );
+    },
+  );
+
+  void _showCreateFolderDialog() => showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      var folderName = '';
+
+      return AlertDialog(
+        title: Text(context.l10n!.createFolder),
+        content: TextField(
+          decoration: InputDecoration(
+            labelText: context.l10n!.folderName,
+            hintText: context.l10n!.newFolder,
+          ),
+          onChanged: (value) {
+            folderName = value;
+          },
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: Text(context.l10n!.cancel.toUpperCase()),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          TextButton(
+            child: Text(context.l10n!.create.toUpperCase()),
+            onPressed: () {
+              if (folderName.trim().isNotEmpty) {
+                final result = createPlaylistFolder(folderName.trim());
+                showToast(context, result);
+              } else {
+                showToast(context, context.l10n!.enterFolderName);
+              }
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      );
+    },
+  );
+
+  void _showDeleteFolderDialog(Map folder) => showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return ConfirmationDialog(
+        confirmationMessage: context.l10n!.deleteFolderQuestion,
+        submitMessage: context.l10n!.delete,
+        onCancel: () {
+          Navigator.of(context).pop();
+        },
+        onSubmit: () {
+          Navigator.of(context).pop();
+          final result = deletePlaylistFolder(folder['id']);
+          showToast(context, result);
         },
       );
     },
