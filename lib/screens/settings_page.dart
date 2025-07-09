@@ -292,17 +292,101 @@ class SettingsPage extends StatelessWidget {
   }
 
   Widget _buildSponsorSection(BuildContext context, Color primaryColor) {
+    final gradientEnd = Color.lerp(primaryColor, Colors.pink, 0.3)!;
+    final shadowColor = primaryColor.withValues(alpha: 0.3);
+    final iconBgColor = Colors.white.withValues(alpha: 0.2);
+    final arrowBgColor = Colors.white.withValues(alpha: 0.15);
+    final arrowColor = Colors.white.withValues(alpha: 0.9);
+
     return Column(
       children: [
         SectionHeader(title: context.l10n!.becomeSponsor),
-        CustomBar(
-          context.l10n!.sponsorProject,
-          FluentIcons.heart_24_filled,
-          backgroundColor: primaryColor,
-          iconColor: Colors.white,
-          textColor: Colors.white,
-          borderRadius: commonCustomBarRadius,
-          onTap: () => launchURL(Uri.parse('https://ko-fi.com/gokadzev')),
+        Padding(
+          padding: commonBarPadding,
+          child: Card(
+            margin: const EdgeInsets.only(bottom: 3),
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    primaryColor,
+                    primaryColor.withValues(alpha: 0.8),
+                    gradientEnd,
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(15),
+                boxShadow: [
+                  BoxShadow(
+                    color: shadowColor,
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(15),
+                  onTap:
+                      () => launchURL(Uri.parse('https://ko-fi.com/gokadzev')),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 16,
+                    ),
+                    child: SizedBox(
+                      height: 45, // Match CustomBar's minTileHeight
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: iconBgColor,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              FluentIcons.heart_24_filled,
+                              color: Colors.white,
+                              size: 24,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Text(
+                              context.l10n!.sponsorProject,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600, // Match CustomBar
+                              ),
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: arrowBgColor,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Icon(
+                              FluentIcons.arrow_right_24_filled,
+                              color: arrowColor,
+                              size: 16,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
         ),
       ],
     );
