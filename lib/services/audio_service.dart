@@ -937,6 +937,16 @@ class MusifyAudioHandler extends BaseAudioHandler {
   @override
   Future<void> skipToPrevious() async {
     try {
+      // Get current playback position
+      final currentPosition = audioPlayer.position;
+
+      // If the song has been playing for more than 3 seconds, restart it
+      if (currentPosition.inSeconds > 3) {
+        await audioPlayer.seek(Duration.zero);
+        return;
+      }
+
+      // Otherwise, go to previous song
       if (_currentQueueIndex > 0) {
         await _playFromQueue(_currentQueueIndex - 1);
       } else if (_historyList.isNotEmpty) {

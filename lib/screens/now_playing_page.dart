@@ -589,11 +589,7 @@ class PlayerControlButtons extends StatelessWidget {
             color: audioHandler.hasPrevious ? primaryColor : secondaryColor,
           ),
           iconSize: iconSize / 1.7,
-          onPressed:
-              () =>
-                  repeatNotifier.value == AudioServiceRepeatMode.one
-                      ? audioHandler.playAgain()
-                      : audioHandler.skipToPrevious(),
+          onPressed: () => audioHandler.skipToPrevious(),
           splashColor: Colors.transparent,
         );
       },
