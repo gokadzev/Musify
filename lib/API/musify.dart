@@ -925,13 +925,19 @@ Future<AudioOnlyStreamInfo?> getSongManifest(String? songId) async {
       logger.log('getSongManifest: songId is null or empty', null, null);
       return null;
     }
-    final manifest = await _yt.videos.streams.getManifest(songId);
+    final manifest = await _yt.videos.streams
+        .getManifest(songId)
+        .timeout(const Duration(seconds: 12));
+
     final audioStream = manifest.audioOnly;
     if (audioStream.isEmpty) {
       logger.log('getSongManifest: no audio streams for $songId', null, null);
       return null;
     }
     return audioStream.withHighestBitrate();
+  } on TimeoutException catch (_) {
+    logger.log('getSongManifest request timed out for $songId', null, null);
+    return null;
   } catch (e, stackTrace) {
     logger.log('Error while getting song streaming manifest', e, stackTrace);
     return null;
@@ -981,7 +987,9 @@ Future<String?> getSong(String songId, bool isLive) async {
     }
 
     // Get fresh URL
-    final manifest = await _yt.videos.streamsClient.getManifest(songId);
+    final manifest = await _yt.videos.streamsClient
+        .getManifest(songId)
+        .timeout(const Duration(seconds: 12));
     final audioStreams = manifest.audioOnly;
     if (audioStreams.isEmpty) {
       logger.log('getSong: no audio streams for $songId', null, null);
@@ -995,6 +1003,9 @@ Future<String?> getSong(String songId, bool isLive) async {
 
     unawaited(updateRecentlyPlayed(songId));
     return url;
+  } on TimeoutException catch (_) {
+    logger.log('getSongManifest request timed out for $songId', null, null);
+    return null;
   } catch (e, stackTrace) {
     logger.log('Error in getSong for songId $songId:', e, stackTrace);
     return null;
