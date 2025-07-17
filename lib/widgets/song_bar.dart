@@ -376,7 +376,12 @@ class _OfflineArtwork extends StatelessWidget {
       height: size,
       child: ClipRRect(
         borderRadius: commonBarRadius,
-        child: Image.file(File(artworkPath), fit: BoxFit.cover),
+        child: Image.file(
+          File(artworkPath),
+          fit: BoxFit.cover,
+          cacheWidth: 256,
+          cacheHeight: 256,
+        ),
       ),
     );
   }
@@ -409,10 +414,8 @@ class _OnlineArtwork extends StatelessWidget {
           width: size,
           height: size,
           imageUrl: lowResImageUrl,
-          memCacheWidth:
-              (size * MediaQuery.of(context).devicePixelRatio).round(),
-          memCacheHeight:
-              (size * MediaQuery.of(context).devicePixelRatio).round(),
+          memCacheWidth: 256,
+          memCacheHeight: 256,
           imageBuilder:
               (context, imageProvider) => SizedBox(
                 width: size,

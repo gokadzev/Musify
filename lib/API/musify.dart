@@ -130,27 +130,25 @@ Future<List> getRecommendedSongs() async {
 Future<List> _getRecommendationsFromRecentlyPlayed() async {
   final recent = userRecentlyPlayed.take(3).toList();
 
-  final futures =
-      recent.map((songData) async {
-        try {
-          final song = await _yt.videos.get(songData['ytid']);
-          final relatedSongs = await _yt.videos.getRelatedVideos(song) ?? [];
-          return relatedSongs
-              .take(3)
-              .map((s) => returnSongLayout(0, s))
-              .toList();
-        } catch (e, stackTrace) {
-          logger.log(
-            'Error getting related videos for ${songData['ytid']}',
-            e,
-            stackTrace,
-          );
-          return <Map>[];
-        }
-      }).toList();
+  final futures = recent.map((songData) async {
+    try {
+      final song = await _yt.videos.get(songData['ytid']);
+      final relatedSongs = await _yt.videos.getRelatedVideos(song) ?? [];
+      return relatedSongs.take(3).map((s) => returnSongLayout(0, s)).toList();
+    } catch (e, stackTrace) {
+      logger.log(
+        'Error getting related videos for ${songData['ytid']}',
+        e,
+        stackTrace,
+      );
+      return <Map>[];
+    }
+  }).toList();
 
   final results = await Future.wait(futures);
-  final playlistSongs = results.expand((list) => list).toList()..shuffle();
+  // Limit to 15 items max for performance
+  final playlistSongs = results.expand((list) => list).take(15).toList();
+  playlistSongs.shuffle();
   return playlistSongs;
 }
 
