@@ -140,6 +140,7 @@
   "understand": "理解しました",
   "undo": "元に戻す",
   "update": "更新",
+  "useProxy": "Use proxy",
   "userPlaylists": "再生リスト",
   "youtubePlaylistLinkOrId": "YouTube 再生リストのリンクかID "
 }

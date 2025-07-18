@@ -33,6 +33,7 @@ import 'package:musify/main.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/io_service.dart';
 import 'package:musify/services/lyrics_manager.dart';
+import 'package:musify/services/proxy_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/formatter.dart';
@@ -130,25 +131,29 @@ Future<List> getRecommendedSongs() async {
 Future<List> _getRecommendationsFromRecentlyPlayed() async {
   final recent = userRecentlyPlayed.take(3).toList();
 
-  final futures = recent.map((songData) async {
-    try {
-      final song = await _yt.videos.get(songData['ytid']);
-      final relatedSongs = await _yt.videos.getRelatedVideos(song) ?? [];
-      return relatedSongs.take(3).map((s) => returnSongLayout(0, s)).toList();
-    } catch (e, stackTrace) {
-      logger.log(
-        'Error getting related videos for ${songData['ytid']}',
-        e,
-        stackTrace,
-      );
-      return <Map>[];
-    }
-  }).toList();
+  final futures =
+      recent.map((songData) async {
+        try {
+          final song = await _yt.videos.get(songData['ytid']);
+          final relatedSongs = await _yt.videos.getRelatedVideos(song) ?? [];
+          return relatedSongs
+              .take(3)
+              .map((s) => returnSongLayout(0, s))
+              .toList();
+        } catch (e, stackTrace) {
+          logger.log(
+            'Error getting related videos for ${songData['ytid']}',
+            e,
+            stackTrace,
+          );
+          return <Map>[];
+        }
+      }).toList();
 
   final results = await Future.wait(futures);
   // Limit to 15 items max for performance
-  final playlistSongs = results.expand((list) => list).take(15).toList();
-  playlistSongs.shuffle();
+  final playlistSongs =
+      results.expand((list) => list).take(15).toList()..shuffle();
   return playlistSongs;
 }
 
@@ -923,12 +928,15 @@ Future<AudioOnlyStreamInfo?> getSongManifest(String? songId) async {
       logger.log('getSongManifest: songId is null or empty', null, null);
       return null;
     }
-    final manifest = await _yt.videos.streams
-        .getManifest(songId)
-        .timeout(const Duration(seconds: 12));
-
-    final audioStream = manifest.audioOnly;
-    if (audioStream.isEmpty) {
+    final useProxySetting = Hive.box('settings').get('useProxy', defaultValue: false);
+    StreamManifest? manifest;
+    if (useProxySetting) {
+      manifest = await ProxyManager().getSongManifest(songId).timeout(const Duration(seconds: 12));
+    } else {
+      manifest = await _yt.videos.streams.getManifest(songId).timeout(const Duration(seconds: 12));
+    }
+    final audioStream = manifest?.audioOnly;
+    if (audioStream == null || audioStream.isEmpty) {
       logger.log('getSongManifest: no audio streams for $songId', null, null);
       return null;
     }
@@ -985,11 +993,15 @@ Future<String?> getSong(String songId, bool isLive) async {
     }
 
     // Get fresh URL
-    final manifest = await _yt.videos.streamsClient
-        .getManifest(songId)
-        .timeout(const Duration(seconds: 12));
-    final audioStreams = manifest.audioOnly;
-    if (audioStreams.isEmpty) {
+    final useProxySetting = Hive.box('settings').get('useProxy', defaultValue: false);
+    StreamManifest? manifest;
+    if (useProxySetting) {
+      manifest = await ProxyManager().getSongManifest(songId).timeout(const Duration(seconds: 12));
+    } else {
+      manifest = await _yt.videos.streams.getManifest(songId).timeout(const Duration(seconds: 12));
+    }
+    final audioStreams = manifest?.audioOnly;
+    if (audioStreams == null || audioStreams.isEmpty) {
       logger.log('getSong: no audio streams for $songId', null, null);
       return null;
     }

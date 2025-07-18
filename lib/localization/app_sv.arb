@@ -140,6 +140,7 @@
   "understand": "Jag förstår",
   "undo": "Ångra",
   "update": "Uppdatera",
+  "useProxy": "Use proxy",
   "userPlaylists": "Användarspellistor",
   "youtubePlaylistLinkOrId": "Länk eller ID för YouTube-spellista"
 }

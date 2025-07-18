@@ -62,6 +62,10 @@ final defaultRecommendations = ValueNotifier<bool>(
   Hive.box('settings').get('defaultRecommendations', defaultValue: false),
 );
 
+final useProxy = ValueNotifier<bool>(
+  Hive.box('settings').get('useProxy', defaultValue: false),
+);
+
 final audioQualitySetting = ValueNotifier<String>(
   Hive.box('settings').get('audioQuality', defaultValue: 'high'),
 );

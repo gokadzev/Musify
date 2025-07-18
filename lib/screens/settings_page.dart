@@ -122,6 +122,23 @@ class SettingsPage extends StatelessWidget {
                 inactivatedColor,
               ),
         ),
+        ValueListenableBuilder<bool>(
+          valueListenable: useProxy,
+          builder: (_, value, __) {
+            return CustomBar(
+              context.l10n!.useProxy,
+              FluentIcons.shield_24_filled,
+              trailing: Switch(
+                value: value,
+                onChanged: (value) {
+                  useProxy.value = value;
+                  addOrUpdateData('settings', 'useProxy', value);
+                  showToast(context, context.l10n!.settingChangedMsg);
+                },
+              ),
+            );
+          },
+        ),
         CustomBar(
           context.l10n!.dynamicColor,
           FluentIcons.toggle_left_24_filled,

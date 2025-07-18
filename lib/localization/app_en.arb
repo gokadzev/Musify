@@ -140,6 +140,7 @@
   "understand": "I understand",
   "undo": "Undo",
   "update": "Update",
+  "useProxy": "Use proxy",
   "userPlaylists": "User playlists",
   "youtubePlaylistLinkOrId": "YouTube playlist link or ID"
 }
