@@ -59,12 +59,16 @@ class MusifyAudioHandler extends BaseAudioHandler {
   );
 
   Timer? _sleepTimer;
+  Timer? _debounceTimer;
   bool sleepTimerExpired = false;
 
   final List<Map> _queueList = [];
   final List<Map> _historyList = [];
   int _currentQueueIndex = 0;
   bool _isLoadingNextSong = false;
+  bool _isUpdatingState = false;
+  int _songTransitionCounter =
+      0; // Track song transitions to prevent race conditions
 
   // Error handling
   String? _lastError;
@@ -76,6 +80,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
   static const int _queueLookahead = 3;
   static const Duration _errorRetryDelay = Duration(seconds: 2);
   static const Duration _songTransitionTimeout = Duration(seconds: 30);
+  static const Duration _debounceInterval = Duration(milliseconds: 150);
 
   Stream<PositionData> get positionDataStream =>
       Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
@@ -85,10 +90,29 @@ class MusifyAudioHandler extends BaseAudioHandler {
         (position, bufferedPosition, duration) =>
             PositionData(position, bufferedPosition, duration ?? Duration.zero),
       ).distinct((prev, curr) {
-        // Reduce stream updates for better performance
-        return (prev.position.inSeconds - curr.position.inSeconds).abs() < 1 &&
-            prev.duration == curr.duration;
+        const threshold = Duration(milliseconds: 500);
+        return (prev.position - curr.position).abs() < threshold &&
+            prev.duration == curr.duration &&
+            (prev.bufferedPosition - curr.bufferedPosition).abs() < threshold;
       });
+
+  /// Optimized PlaybackState stream for UI consumption
+  ///
+  /// This stream provides efficient PlaybackState updates with filtering
+  /// to prevent unnecessary rebuilds when only irrelevant properties change.
+  Stream<PlaybackState> get playbackStateStream => playbackState.distinct(
+    (prev, curr) =>
+        prev.playing == curr.playing &&
+        prev.processingState == curr.processingState &&
+        prev.queueIndex == curr.queueIndex,
+  );
+
+  /// Optimized Queue stream for UI consumption
+  ///
+  /// This stream provides efficient queue updates with basic throttling
+  /// to prevent excessive rebuilds during rapid queue modifications.
+  Stream<List<MediaItem>> get queueStream =>
+      queue.throttleTime(const Duration(milliseconds: 100));
 
   final processingStateMap = {
     ProcessingState.idle: AudioProcessingState.idle,
@@ -99,52 +123,119 @@ class MusifyAudioHandler extends BaseAudioHandler {
   };
 
   void _setupEventSubscriptions() {
-    audioPlayer.playbackEventStream.listen(_handlePlaybackEvent);
+    // Playback event stream - triggers state updates and handles song completion
+    audioPlayer.playbackEventStream
+        .throttleTime(const Duration(milliseconds: 100))
+        .listen(
+          (event) {
+            _handlePlaybackEvent(event);
+            // Playback events need immediate state updates (not debounced)
+            _updatePlaybackState();
+          },
+          onError: (error, stackTrace) {
+            logger.log('Playback event stream error', error, stackTrace);
+          },
+        );
 
-    audioPlayer.durationStream.listen((duration) {
-      _updatePlaybackState();
-      if (_currentQueueIndex < _queueList.length && duration != null) {
-        _updateCurrentMediaItemWithDuration(duration);
-      }
-    });
+    // Duration stream - updates media items with duration info
+    audioPlayer.durationStream
+        .distinct()
+        .throttleTime(const Duration(milliseconds: 200))
+        .listen(
+          (duration) {
+            if (_currentQueueIndex < _queueList.length && duration != null) {
+              _updateCurrentMediaItemWithDuration(duration);
+            }
+            // Duration changes don't need immediate playback state updates
+          },
+          onError: (error, stackTrace) {
+            logger.log('Duration stream error', error, stackTrace);
+          },
+        );
 
-    audioPlayer.currentIndexStream.listen((index) {
-      _updatePlaybackState();
-    });
+    // Player state stream - handles state changes and errors
+    audioPlayer.playerStateStream
+        .distinct()
+        .throttleTime(const Duration(milliseconds: 100))
+        .listen(
+          (state) {
+            if (state.processingState == ProcessingState.idle &&
+                !state.playing &&
+                _lastError != null) {
+              // Handle errors in background to prevent blocking
+              Future.microtask(_handlePlaybackError);
+            }
+            _debouncedStateUpdate();
+          },
+          onError: (error, stackTrace) {
+            logger.log('Player state stream error', error, stackTrace);
+          },
+        );
 
-    audioPlayer.sequenceStateStream.listen((state) {
-      _updatePlaybackState();
-    });
+    // Combine index and sequence streams as they both indicate structural changes
+    Rx.combineLatest2(
+          audioPlayer.currentIndexStream.distinct(),
+          audioPlayer.sequenceStateStream.distinct(),
+          (index, sequence) => {'index': index, 'sequence': sequence},
+        )
+        .throttleTime(const Duration(milliseconds: 100))
+        .listen(
+          (_) => _debouncedStateUpdate(),
+          onError: (error, stackTrace) {
+            logger.log('Index/sequence stream error', error, stackTrace);
+          },
+        );
+  }
 
-    // Listen for player errors
-    audioPlayer.playerStateStream.listen((state) {
-      if (state.processingState == ProcessingState.idle &&
-          !state.playing &&
-          _lastError != null) {
-        _handlePlaybackError();
+  void _debouncedStateUpdate() {
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(_debounceInterval, () {
+      if (!_isUpdatingState) {
+        _updatePlaybackState();
       }
     });
   }
 
   void _updateCurrentMediaItemWithDuration(Duration duration) {
-    try {
-      final currentSong = _queueList[_currentQueueIndex];
-      final currentMediaItem = mapToMediaItem(currentSong);
-      mediaItem.add(currentMediaItem.copyWith(duration: duration));
+    Future.microtask(() async {
+      try {
+        if (_currentQueueIndex >= _queueList.length) return;
 
-      final mediaItems =
-          _queueList.asMap().entries.map((entry) {
-            final song = entry.value;
-            final mediaItem = mapToMediaItem(song);
-            return entry.key == _currentQueueIndex
-                ? mediaItem.copyWith(duration: duration)
-                : mediaItem;
-          }).toList();
+        // Capture current state to avoid race conditions
+        final capturedQueueIndex = _currentQueueIndex;
+        final capturedTransitionCounter = _songTransitionCounter;
+        final currentSong = _queueList[capturedQueueIndex];
+        final currentMediaItem = mapToMediaItem(currentSong);
 
-      queue.add(mediaItems);
-    } catch (e, stackTrace) {
-      logger.log('Error updating media item with duration', e, stackTrace);
-    }
+        // Only update if we're still on the same song and haven't had new transitions
+        final currentItem = mediaItem.valueOrNull;
+        if (currentItem != null &&
+            currentItem.id == currentMediaItem.id &&
+            capturedQueueIndex == _currentQueueIndex &&
+            capturedTransitionCounter == _songTransitionCounter &&
+            (currentItem.duration == null ||
+                !durationEquals(currentItem.duration, duration))) {
+          mediaItem.add(currentMediaItem.copyWith(duration: duration));
+        }
+
+        // Update queue with duration info only if we're still on the same song
+        if (capturedQueueIndex == _currentQueueIndex &&
+            capturedTransitionCounter == _songTransitionCounter) {
+          final mediaItems =
+              _queueList.asMap().entries.map((entry) {
+                final song = entry.value;
+                final mediaItem = mapToMediaItem(song);
+                return entry.key == capturedQueueIndex
+                    ? mediaItem.copyWith(duration: duration)
+                    : mediaItem;
+              }).toList();
+
+          queue.add(mediaItems);
+        }
+      } catch (e, stackTrace) {
+        logger.log('Error updating media item with duration', e, stackTrace);
+      }
+    });
   }
 
   Future<void> _initialize() async {
@@ -157,50 +248,57 @@ class MusifyAudioHandler extends BaseAudioHandler {
   }
 
   void _updatePlaybackState() {
-    try {
-      final currentState = playbackState.valueOrNull;
-      final newProcessingState =
-          processingStateMap[audioPlayer.processingState] ??
-          AudioProcessingState.idle;
+    if (_isUpdatingState) return;
 
-      // Only update if state actually changed to reduce rebuilds
-      if (currentState == null ||
-          currentState.playing != audioPlayer.playing ||
-          currentState.processingState != newProcessingState ||
-          currentState.queueIndex != _currentQueueIndex) {
-        playbackState.add(
-          PlaybackState(
-            controls: [
-              MediaControl.skipToPrevious,
-              if (audioPlayer.playing)
-                MediaControl.pause
-              else
-                MediaControl.play,
-              MediaControl.stop,
-              MediaControl.skipToNext,
-            ],
-            systemActions: const {
-              MediaAction.seek,
-              MediaAction.seekForward,
-              MediaAction.seekBackward,
-            },
-            androidCompactActionIndices: const [0, 1, 3],
-            processingState: newProcessingState,
-            playing: audioPlayer.playing,
-            updatePosition: audioPlayer.position,
-            bufferedPosition: audioPlayer.bufferedPosition,
-            speed: audioPlayer.speed,
-            queueIndex:
-                _currentQueueIndex < _queueList.length
-                    ? _currentQueueIndex
-                    : null,
-            updateTime: DateTime.now(),
-          ),
-        );
+    _isUpdatingState = true;
+
+    Future.microtask(() {
+      try {
+        final currentState = playbackState.valueOrNull;
+        final newProcessingState =
+            processingStateMap[audioPlayer.processingState] ??
+            AudioProcessingState.idle;
+
+        if (currentState == null ||
+            currentState.playing != audioPlayer.playing ||
+            currentState.processingState != newProcessingState ||
+            currentState.queueIndex != _currentQueueIndex) {
+          playbackState.add(
+            PlaybackState(
+              controls: [
+                MediaControl.skipToPrevious,
+                if (audioPlayer.playing)
+                  MediaControl.pause
+                else
+                  MediaControl.play,
+                MediaControl.stop,
+                MediaControl.skipToNext,
+              ],
+              systemActions: const {
+                MediaAction.seek,
+                MediaAction.seekForward,
+                MediaAction.seekBackward,
+              },
+              androidCompactActionIndices: const [0, 1, 3],
+              processingState: newProcessingState,
+              playing: audioPlayer.playing,
+              updatePosition: audioPlayer.position,
+              bufferedPosition: audioPlayer.bufferedPosition,
+              speed: audioPlayer.speed,
+              queueIndex:
+                  _currentQueueIndex < _queueList.length
+                      ? _currentQueueIndex
+                      : null,
+              updateTime: DateTime.now(),
+            ),
+          );
+        }
+      } catch (e, stackTrace) {
+        logger.log('Error updating playback state', e, stackTrace);
+      } finally {
+        _isUpdatingState = false;
       }
-    } catch (e, stackTrace) {
-      logger.log('Error updating playback state', e, stackTrace);
-    }
+    });
   }
 
   void _handlePlaybackEvent(PlaybackEvent event) {
@@ -212,7 +310,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
           _handleSongCompletion,
         );
       }
-      _updatePlaybackState();
     } catch (e, stackTrace) {
       logger.log('Error handling playback event', e, stackTrace);
     }
@@ -454,10 +551,20 @@ class MusifyAudioHandler extends BaseAudioHandler {
       queue.add(mediaItems);
 
       if (_currentQueueIndex < mediaItems.length) {
-        mediaItem.add(mediaItems[_currentQueueIndex]);
+        final currentMediaItem = mediaItems[_currentQueueIndex];
+        mediaItem.add(currentMediaItem);
       }
     } catch (e, stackTrace) {
       logger.log('Error updating queue media items', e, stackTrace);
+    }
+  }
+
+  void _updateQueueOnly() {
+    try {
+      final mediaItems = _queueList.map(mapToMediaItem).toList();
+      queue.add(mediaItems);
+    } catch (e, stackTrace) {
+      logger.log('Error updating queue', e, stackTrace);
     }
   }
 
@@ -468,13 +575,34 @@ class MusifyAudioHandler extends BaseAudioHandler {
         return;
       }
 
+      // Prevent overlapping song loads
+      if (_isLoadingNextSong) {
+        logger.log(
+          'Song already loading, skipping request for index: $index',
+          null,
+          null,
+        );
+        return;
+      }
+
+      _isLoadingNextSong = true;
       _currentQueueIndex = index;
-      _updateQueueMediaItems();
+      _songTransitionCounter++;
+
+      final currentSong = _queueList[_currentQueueIndex];
+      final currentMediaItem = mapToMediaItem(currentSong);
+
+      scheduleMicrotask(() {
+        mediaItem.add(currentMediaItem);
+      });
+
+      // Update queue
+      _updateQueueOnly();
 
       final success = await playSong(_queueList[index]);
 
       if (success) {
-        _consecutiveErrors = 0; // Reset error counter on success
+        _consecutiveErrors = 0;
         _preloadUpcomingSongs();
       } else {
         _handlePlaybackError();
@@ -482,11 +610,12 @@ class MusifyAudioHandler extends BaseAudioHandler {
     } catch (e, stackTrace) {
       logger.log('Error playing from queue', e, stackTrace);
       _handlePlaybackError();
+    } finally {
+      _isLoadingNextSong = false;
     }
   }
 
   void _preloadUpcomingSongs() {
-    // Don't block UI - run preloading in background without awaiting
     Future.microtask(() async {
       try {
         final preloadTasks = <Future<void>>[];
@@ -496,7 +625,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
           if (nextIndex < _queueList.length) {
             final nextSong = _queueList[nextIndex];
             if (nextSong['ytid'] != null && !(nextSong['isOffline'] ?? false)) {
-              // Create preload task with timeout and error handling
               final preloadTask = _preloadSingleSong(nextSong)
                   .timeout(
                     const Duration(seconds: 10),
@@ -509,7 +637,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
                     },
                   )
                   .catchError((e) {
-                    // Silently catch and log preload errors to prevent UI lag
                     logger.log(
                       'Error preloading song ${nextSong['ytid']}',
                       e,
@@ -743,6 +870,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
           .timeout(_songTransitionTimeout);
       await Future.delayed(const Duration(milliseconds: 100));
 
+      // Update media item only with duration if available (media item base was set in _playFromQueue)
       if (audioPlayer.duration != null) {
         final currentMediaItem = mapToMediaItem(song);
         mediaItem.add(

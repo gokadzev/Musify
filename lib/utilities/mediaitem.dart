@@ -51,3 +51,15 @@ MediaItem mapToMediaItem(Map song) => MediaItem(
     'artWorkPath': song['highResImage'].toString(),
   },
 );
+
+/// Compares two Duration objects with tolerance for minor differences.
+///
+/// This prevents unnecessary updates when duration values have minor variations
+/// (e.g., due to buffering or precision differences).
+bool durationEquals(Duration? prev, Duration? curr) {
+  if (prev == curr) return true;
+  if (prev == null || curr == null) return prev == curr;
+
+  // Consider durations equal if they differ by less than 1 second
+  return (prev - curr).abs() < const Duration(seconds: 1);
+}

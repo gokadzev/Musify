@@ -65,13 +65,7 @@ class NowPlayingPage extends StatelessWidget {
       ),
       body: SafeArea(
         child: StreamBuilder<MediaItem?>(
-          stream: audioHandler.mediaItem.distinct((prev, curr) {
-            if (prev == null || curr == null) return false;
-            return prev.id == curr.id &&
-                prev.title == curr.title &&
-                prev.artist == curr.artist &&
-                prev.artUri == curr.artUri;
-          }),
+          stream: audioHandler.mediaItem,
           builder: (context, snapshot) {
             if (snapshot.data == null || !snapshot.hasData) {
               return const SizedBox.shrink();
@@ -425,7 +419,7 @@ class _PositionSliderState extends State<PositionSlider> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: StreamBuilder<PositionData>(
-        stream: audioHandler.positionDataStream.distinct(),
+        stream: audioHandler.positionDataStream,
         builder: (context, snapshot) {
           final hasData = snapshot.hasData && snapshot.data != null;
           final positionData =
@@ -523,18 +517,55 @@ class PlayerControlButtons extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           _buildShuffleButton(_primaryColor, _secondaryColor, miniIconSize),
-          Row(
-            children: [
-              _buildPreviousButton(_primaryColor, _secondaryColor, iconSize),
-              const SizedBox(width: 10),
-              PlaybackIconButton(
-                iconColor: _primaryColor,
-                backgroundColor: _secondaryColor,
-                iconSize: iconSize,
-              ),
-              const SizedBox(width: 10),
-              _buildNextButton(_primaryColor, _secondaryColor, iconSize),
-            ],
+          StreamBuilder<List<MediaItem>>(
+            stream: audioHandler.queueStream,
+            builder: (context, snapshot) {
+              return ValueListenableBuilder<AudioServiceRepeatMode>(
+                valueListenable: repeatNotifier,
+                builder: (_, repeatMode, __) {
+                  return Row(
+                    children: [
+                      IconButton(
+                        icon: Icon(
+                          FluentIcons.previous_24_filled,
+                          color:
+                              audioHandler.hasPrevious
+                                  ? _primaryColor
+                                  : _secondaryColor,
+                        ),
+                        iconSize: iconSize / 1.7,
+                        onPressed: () => audioHandler.skipToPrevious(),
+                        splashColor: Colors.transparent,
+                      ),
+                      const SizedBox(width: 10),
+                      PlaybackIconButton(
+                        iconColor: _primaryColor,
+                        backgroundColor: _secondaryColor,
+                        iconSize: iconSize,
+                      ),
+                      const SizedBox(width: 10),
+                      IconButton(
+                        icon: Icon(
+                          FluentIcons.next_24_filled,
+                          color:
+                              audioHandler.hasNext
+                                  ? _primaryColor
+                                  : _secondaryColor,
+                        ),
+                        iconSize: iconSize / 1.7,
+                        onPressed:
+                            () =>
+                                repeatNotifier.value ==
+                                        AudioServiceRepeatMode.one
+                                    ? audioHandler.playAgain()
+                                    : audioHandler.skipToNext(),
+                        splashColor: Colors.transparent,
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
           ),
           _buildRepeatButton(_primaryColor, _secondaryColor, miniIconSize),
         ],
@@ -571,52 +602,6 @@ class PlayerControlButtons extends StatelessWidget {
                 audioHandler.setShuffleMode(AudioServiceShuffleMode.all);
               },
             );
-      },
-    );
-  }
-
-  Widget _buildPreviousButton(
-    Color primaryColor,
-    Color secondaryColor,
-    double iconSize,
-  ) {
-    return ValueListenableBuilder<AudioServiceRepeatMode>(
-      valueListenable: repeatNotifier,
-      builder: (_, repeatMode, __) {
-        return IconButton(
-          icon: Icon(
-            FluentIcons.previous_24_filled,
-            color: audioHandler.hasPrevious ? primaryColor : secondaryColor,
-          ),
-          iconSize: iconSize / 1.7,
-          onPressed: () => audioHandler.skipToPrevious(),
-          splashColor: Colors.transparent,
-        );
-      },
-    );
-  }
-
-  Widget _buildNextButton(
-    Color primaryColor,
-    Color secondaryColor,
-    double iconSize,
-  ) {
-    return ValueListenableBuilder<AudioServiceRepeatMode>(
-      valueListenable: repeatNotifier,
-      builder: (_, repeatMode, __) {
-        return IconButton(
-          icon: Icon(
-            FluentIcons.next_24_filled,
-            color: audioHandler.hasNext ? primaryColor : secondaryColor,
-          ),
-          iconSize: iconSize / 1.7,
-          onPressed:
-              () =>
-                  repeatNotifier.value == AudioServiceRepeatMode.one
-                      ? audioHandler.playAgain()
-                      : audioHandler.skipToNext(),
-          splashColor: Colors.transparent,
-        );
       },
     );
   }

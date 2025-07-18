@@ -19,13 +19,11 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
-import 'package:audio_service/audio_service.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:go_router/go_router.dart';
 import 'package:musify/extensions/l10n.dart';
-import 'package:musify/main.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/widgets/mini_player.dart';
 
@@ -85,18 +83,7 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
                       child: Column(
                         children: [
                           Expanded(child: widget.child),
-                          StreamBuilder<MediaItem?>(
-                            stream: audioHandler.mediaItem.distinct(
-                              _mediaItemEquals,
-                            ),
-                            builder: (context, snapshot) {
-                              final metadata = snapshot.data;
-                              if (metadata == null) {
-                                return const SizedBox.shrink();
-                              }
-                              return MiniPlayer(metadata: metadata);
-                            },
-                          ),
+                          const MiniPlayer(),
                         ],
                       ),
                     ),
@@ -226,16 +213,6 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
     }
 
     return currentIndex.clamp(0, items.length - 1);
-  }
-
-  static bool _mediaItemEquals(MediaItem? prev, MediaItem? curr) {
-    if (prev == curr) return true;
-    if (prev == null || curr == null) return false;
-
-    return prev.id == curr.id &&
-        prev.title == curr.title &&
-        prev.artist == curr.artist &&
-        prev.artUri == curr.artUri;
   }
 }
 
