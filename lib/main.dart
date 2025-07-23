@@ -58,6 +58,7 @@ const appLanguages = <String, String>{
   'Arabic': 'ar',
   'Chinese (Simplified)': 'zh',
   'Chinese (Traditional)': 'zh-Hant',
+  'Estonian': 'et',
   'French': 'fr',
   'German': 'de',
   'Greek': 'el',
