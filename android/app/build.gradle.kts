@@ -15,9 +15,6 @@ if (localPropertiesFile.exists()) {
     }
 }
 
-val flutterVersionCode = localProperties.getProperty("flutter.versionCode") ?: "1"
-val flutterVersionName = localProperties.getProperty("flutter.versionName") ?: "1.0"
-
 val keystoreProperties = Properties()
 val keystorePropertiesFile = rootProject.file("key.properties")
 if (keystorePropertiesFile.exists()) {
@@ -52,8 +49,8 @@ android {
         applicationId = "com.gokadzev.musify"
         minSdk = 24
         targetSdk = 35
-        versionCode = flutterVersionCode.toInt()
-        versionName = flutterVersionName
+        versionCode = flutter.versionCode
+        versionName = flutter.versionName
     }
 
     flavorDimensions += "flavor"
