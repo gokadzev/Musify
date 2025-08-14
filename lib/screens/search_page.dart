@@ -96,7 +96,6 @@ class _SearchPageState extends State<SearchPage> {
     if (_fetchingSongs.value) {
       _fetchingSongs.value = false;
     }
-
     setState(() {});
   }
 
@@ -183,6 +182,7 @@ class _SearchPageState extends State<SearchPage> {
                 children: [
                   SectionTitle(context.l10n!.songs, primaryColor),
                   ListView.builder(
+                    key: ValueKey(_songsSearchResult[0]['ytid'].toString()),
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount:
