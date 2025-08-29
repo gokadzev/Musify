@@ -41,7 +41,7 @@
   "createFolder": "Créer un dossier",
   "customPlaylistImgUrl": "Lien d'image de la playlist personnalisée",
   "customPlaylistName": "Nom de la playlist personnalisée",
-  "customPlaylists": "Playlists personnalisés",
+  "customPlaylists": "Playlists personnalisées",
   "delete": "Supprimer",
   "deleteFolder": "Supprimer le dossier",
   "deleteFolderQuestion": "Êtes-vous sûr de vouloir supprimer ce dossier ? Les playlists qu'il contient seront déplacées vers la bibliothèque principale.",
