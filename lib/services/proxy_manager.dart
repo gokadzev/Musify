@@ -32,7 +32,43 @@ import 'package:musify/services/settings_manager.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 class ProxyManager {
-  ProxyManager();
+  // Singleton
+  factory ProxyManager() => _instance;
+  ProxyManager._internal() {
+    // initialize default youtube client and subscribe to proxy toggle
+    _defaultYt = YoutubeExplode();
+    _sharedYt = _defaultYt;
+    // If proxy is already enabled at startup, initialize the shared proxy-backed client.
+    if (useProxy.value) {
+      // Fire-and-forget initialization; listener will also handle future toggles.
+      _initSharedProxyClient();
+    }
+    // react to proxy setting changes
+    useProxy.addListener(() async {
+        if (useProxy.value) {
+        await _initSharedProxyClient();
+      } else {
+        // switch back to default client
+        if (_sharedYt != _defaultYt) {
+          try {
+            _sharedYt?.close();
+          } catch (_) {}
+          _sharedYt = _defaultYt;
+        }
+      }
+    });
+  }
+
+  static final ProxyManager _instance = ProxyManager._internal();
+
+  /// Default non-proxy YoutubeExplode instance (long-lived)
+  late final YoutubeExplode _defaultYt;
+
+  /// Currently active shared YoutubeExplode - either [_defaultYt] or a
+  /// proxy-backed client. Use [getClientSync] to access.
+  YoutubeExplode? _sharedYt;
+
+  bool _initializingSharedClient = false;
 
   Future<void>? _fetchingProxiesFuture;
   bool _hasFetched = false;
@@ -58,6 +94,63 @@ class ProxyManager {
       logger.log('ProxyManager: Error fetching proxies: $e', null, null);
     }
   }
+
+  /// Initialize a shared YoutubeExplode client that uses a working proxy.
+  Future<void> _initSharedProxyClient({int timeoutSeconds = 5}) async {
+    if (_initializingSharedClient) return;
+    _initializingSharedClient = true;
+    try {
+      // Ensure proxies available
+      if (!_hasFetched) await _fetchProxies();
+      if (_proxiesByCountry.isEmpty) await _fetchProxies();
+
+      // Try to acquire a working proxy and create a client
+      do {
+        final proxy = await _getRandomProxy();
+        if (proxy == null) break;
+        HttpClient? httpClient;
+        IOClient? ioClient;
+        try {
+          httpClient =
+              HttpClient()
+                ..connectionTimeout = Duration(seconds: timeoutSeconds)
+                ..findProxy = (_) {
+                  return 'PROXY ${proxy.address}; DIRECT';
+                }
+                ..badCertificateCallback = (context, _context, ___) {
+                  return false;
+                };
+
+          ioClient = IOClient(httpClient);
+          final ytClient = YoutubeExplode(YoutubeHttpClient(ioClient));
+
+          // Set as shared client
+          // Close previous shared proxy-backed client if any (but keep default)
+          if (_sharedYt != null && _sharedYt != _defaultYt) {
+            try {
+              _sharedYt?.close();
+            } catch (_) {}
+          }
+          _sharedYt = ytClient;
+          _workingProxies.add(proxy);
+          break;
+        } catch (e) {
+          try {
+            ioClient?.close();
+          } catch (_) {}
+          try {
+            httpClient?.close(force: true);
+          } catch (_) {}
+          continue;
+        }
+      } while (true);
+    } finally {
+      _initializingSharedClient = false;
+    }
+  }
+
+  /// Returns the currently active YoutubeExplode client. Never null.
+  YoutubeExplode getClientSync() => _sharedYt ?? _defaultYt;
 
   Future<StreamManifest?> _validateDirect(
     String songId,

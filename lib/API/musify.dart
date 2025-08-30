@@ -40,7 +40,8 @@ import 'package:musify/utilities/formatter.dart';
 import 'package:musify/utilities/utils.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
-final _yt = YoutubeExplode();
+// Use ProxyManager's shared client so the global _yt respects the proxy setting.
+YoutubeExplode get _yt => ProxyManager().getClientSync();
 
 List globalSongs = [];
 
@@ -946,11 +947,9 @@ Future<AudioOnlyStreamInfo?> getSongManifest(String? songId) async {
       logger.log('getSongManifest: songId is null or empty', null, null);
       return null;
     }
-    final useProxySetting = Hive.box(
-      'settings',
-    ).get('useProxy', defaultValue: false);
+
     StreamManifest? manifest;
-    if (useProxySetting) {
+    if (useProxy.value) {
       manifest = await ProxyManager()
           .getSongManifest(songId)
           .timeout(const Duration(seconds: 12));
@@ -1017,11 +1016,8 @@ Future<String?> getSong(String songId, bool isLive) async {
     }
 
     // Get fresh URL
-    final useProxySetting = Hive.box(
-      'settings',
-    ).get('useProxy', defaultValue: false);
     StreamManifest? manifest;
-    if (useProxySetting) {
+    if (useProxy.value) {
       manifest = await ProxyManager()
           .getSongManifest(songId)
           .timeout(const Duration(seconds: 12));
@@ -1126,6 +1122,7 @@ Future<bool> makeSongOffline(dynamic song, {bool fromPlaylist = false}) async {
         );
         return false;
       }
+
       final stream = _yt.videos.streamsClient.get(audioManifest);
       final fileStream = audioFile.openWrite();
       await stream.pipe(fileStream);

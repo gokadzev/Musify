@@ -4,17 +4,27 @@ import 'package:http/http.dart' as http;
 import 'package:musify/DB/albums.db.dart';
 import 'package:musify/DB/playlists.db.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
+import 'package:musify/services/proxy_manager.dart';
+import 'package:musify/services/settings_manager.dart';
 
-final _yt = YoutubeExplode();
 List playlists = [...playlistsDB, ...albumsDB];
 
 void main() async {
   print('PLAYLISTS AND ALBUMS CHECKING RESULT:');
   print('      ');
 
-  for (final playlist in playlists) {
+  // Obtain a YoutubeExplode client that respects proxy setting.
+  YoutubeExplode? ytClient;
+  try {
+    if (useProxy.value) {
+      ytClient = await ProxyManager().getYoutubeExplodeClient();
+    } else {
+      ytClient = ProxyManager().getClientSync();
+    }
+
+    for (final playlist in playlists) {
     try {
-      final plist = await _yt.playlists.get(playlist['ytid']);
+      final plist = await ytClient!.playlists.get(playlist['ytid']);
 
       if (plist.videoCount == null) {
         if (playlist['isAlbum'] != null && playlist['isAlbum']) {
@@ -43,6 +53,11 @@ void main() async {
         'An error occurred while checking playlist ${playlist['title']}: $e',
       );
     }
+    }
+  } finally {
+    try {
+      if (useProxy.value) ytClient?.close();
+    } catch (_) {}
   }
 
   print('      ');
