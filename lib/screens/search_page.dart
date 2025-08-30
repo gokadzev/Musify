@@ -19,6 +19,8 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
+import 'dart:async';
+
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -42,22 +44,33 @@ class SearchPage extends StatefulWidget {
   _SearchPageState createState() => _SearchPageState();
 }
 
-List searchHistory = Hive.box('user').get('searchHistory', defaultValue: []);
+// Global ValueNotifier for search history to make it reactive
+final ValueNotifier<List> searchHistoryNotifier = ValueNotifier<List>(
+  Hive.box('user').get('searchHistory', defaultValue: []),
+);
+
+// Backward compatibility - keep the global variable for existing code
+List get searchHistory => searchHistoryNotifier.value;
+set searchHistory(List value) {
+  searchHistoryNotifier.value = value;
+}
 
 class _SearchPageState extends State<SearchPage> {
   final TextEditingController _searchBar = TextEditingController();
   final FocusNode _inputNode = FocusNode();
   final ValueNotifier<bool> _fetchingSongs = ValueNotifier(false);
   int maxSongsInList = 15;
-  List _songsSearchResult = [];
-  List _albumsSearchResult = [];
-  List _playlistsSearchResult = [];
-  List _suggestionsList = [];
+  List<dynamic> _songsSearchResult = [];
+  List<dynamic> _albumsSearchResult = [];
+  List<dynamic> _playlistsSearchResult = [];
+  List<String> _suggestionsList = [];
+  Timer? _debounce;
 
   @override
   void dispose() {
     _searchBar.dispose();
     _inputNode.dispose();
+    _debounce?.cancel();
     super.dispose();
   }
 
@@ -69,17 +82,15 @@ class _SearchPageState extends State<SearchPage> {
       _albumsSearchResult = [];
       _playlistsSearchResult = [];
       _suggestionsList = [];
-      setState(() {});
+      if (mounted) setState(() {});
       return;
     }
-
-    if (!_fetchingSongs.value) {
-      _fetchingSongs.value = true;
-    }
+    _fetchingSongs.value = true;
 
     if (!searchHistory.contains(query)) {
-      searchHistory.insert(0, query);
-      await addOrUpdateData('user', 'searchHistory', searchHistory);
+      final updatedHistory = List.from(searchHistory)..insert(0, query);
+      searchHistoryNotifier.value = updatedHistory;
+      await addOrUpdateData('user', 'searchHistory', updatedHistory);
     }
 
     try {
@@ -91,13 +102,10 @@ class _SearchPageState extends State<SearchPage> {
       );
     } catch (e, stackTrace) {
       logger.log('Error while searching online songs', e, stackTrace);
-    }
-
-    if (_fetchingSongs.value) {
+    } finally {
       _fetchingSongs.value = false;
+      if (mounted) setState(() {});
     }
-
-    setState(() {});
   }
 
   @override
@@ -114,13 +122,18 @@ class _SearchPageState extends State<SearchPage> {
               controller: _searchBar,
               focusNode: _inputNode,
               labelText: '${context.l10n!.search}...',
-              onChanged: (value) async {
-                if (value.isNotEmpty) {
-                  _suggestionsList = await getSearchSuggestions(value);
-                } else {
-                  _suggestionsList = [];
-                }
-                setState(() {});
+              onChanged: (value) {
+                // debounce suggestions to avoid rapid API calls
+                _debounce?.cancel();
+                _debounce = Timer(const Duration(milliseconds: 300), () async {
+                  if (value.isNotEmpty) {
+                    final s = await getSearchSuggestions(value);
+                    _suggestionsList = List<String>.from(s);
+                  } else {
+                    _suggestionsList = [];
+                  }
+                  if (mounted) setState(() {});
+                });
               },
               onSubmitted: (String value) {
                 search();
@@ -128,138 +141,155 @@ class _SearchPageState extends State<SearchPage> {
                 _inputNode.unfocus();
               },
             ),
-            if (_songsSearchResult.isEmpty && _albumsSearchResult.isEmpty)
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount:
-                    _suggestionsList.isEmpty
-                        ? searchHistory.length
-                        : _suggestionsList.length,
-                itemBuilder: (BuildContext context, int index) {
-                  final suggestionsNotAvailable = _suggestionsList.isEmpty;
-                  final query =
-                      suggestionsNotAvailable
-                          ? searchHistory[index]
-                          : _suggestionsList[index];
 
-                  final borderRadius = getItemBorderRadius(
-                    index,
-                    _suggestionsList.isEmpty
-                        ? searchHistory.length
-                        : _suggestionsList.length,
-                  );
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 200),
+              child:
+                  (_songsSearchResult.isEmpty && _albumsSearchResult.isEmpty)
+                      ? ValueListenableBuilder<List>(
+                        valueListenable: searchHistoryNotifier,
+                        builder: (context, searchHistory, _) {
+                          return ListView.builder(
+                            key: ValueKey(
+                              'history-${_suggestionsList.length}-${_searchBar.text}-${searchHistory.length}',
+                            ),
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount:
+                                _suggestionsList.isEmpty
+                                    ? searchHistory.length
+                                    : _suggestionsList.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              final suggestionsNotAvailable =
+                                  _suggestionsList.isEmpty;
+                              final query =
+                                  suggestionsNotAvailable
+                                      ? searchHistory[index]
+                                      : _suggestionsList[index];
 
-                  return CustomBar(
-                    query,
-                    FluentIcons.search_24_regular,
-                    borderRadius: borderRadius,
-                    onTap: () async {
-                      _searchBar.text = query;
-                      await search();
-                      _inputNode.unfocus();
-                    },
-                    onLongPress: () async {
-                      final confirm =
-                          await _showConfirmationDialog(context) ?? false;
+                              final borderRadius = getItemBorderRadius(
+                                index,
+                                _suggestionsList.isEmpty
+                                    ? searchHistory.length
+                                    : _suggestionsList.length,
+                              );
 
-                      if (confirm) {
-                        setState(() {
-                          searchHistory.remove(query);
-                        });
+                              return CustomBar(
+                                query,
+                                FluentIcons.search_24_regular,
+                                borderRadius: borderRadius,
+                                onTap: () async {
+                                  _searchBar.text = query;
+                                  await search();
+                                  _inputNode.unfocus();
+                                },
+                                onLongPress: () async {
+                                  final confirm =
+                                      await _showConfirmationDialog(context) ??
+                                      false;
+                                  if (confirm) {
+                                    final updatedHistory = List.from(
+                                      searchHistory,
+                                    )..remove(query);
+                                    searchHistoryNotifier.value =
+                                        updatedHistory;
+                                    await addOrUpdateData(
+                                      'user',
+                                      'searchHistory',
+                                      updatedHistory,
+                                    );
+                                  }
+                                },
+                              );
+                            },
+                          );
+                        },
+                      )
+                      : Column(
+                        key: ValueKey(
+                          'results-${_songsSearchResult.length}-${_albumsSearchResult.length}-${_playlistsSearchResult.length}',
+                        ),
+                        children: [
+                          SectionTitle(context.l10n!.songs, primaryColor),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount:
+                                _songsSearchResult.length > maxSongsInList
+                                    ? maxSongsInList
+                                    : _songsSearchResult.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              final borderRadius = getItemBorderRadius(
+                                index,
+                                _songsSearchResult.length > maxSongsInList
+                                    ? maxSongsInList
+                                    : _songsSearchResult.length,
+                              );
 
-                        await addOrUpdateData(
-                          'user',
-                          'searchHistory',
-                          searchHistory,
-                        );
-                      }
-                    },
-                  );
-                },
-              )
-            else
-              Column(
-                children: [
-                  SectionTitle(context.l10n!.songs, primaryColor),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount:
-                        _songsSearchResult.length > maxSongsInList
-                            ? maxSongsInList
-                            : _songsSearchResult.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      final borderRadius = getItemBorderRadius(
-                        index,
-                        _songsSearchResult.length > maxSongsInList
-                            ? maxSongsInList
-                            : _songsSearchResult.length,
-                      );
+                              return SongBar(
+                                _songsSearchResult[index],
+                                true,
+                                showMusicDuration: true,
+                                borderRadius: borderRadius,
+                              );
+                            },
+                          ),
+                          if (_albumsSearchResult.isNotEmpty)
+                            SectionTitle(context.l10n!.albums, primaryColor),
+                          if (_albumsSearchResult.isNotEmpty)
+                            ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount:
+                                  _albumsSearchResult.length > maxSongsInList
+                                      ? maxSongsInList
+                                      : _albumsSearchResult.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                final playlist = _albumsSearchResult[index];
 
-                      return SongBar(
-                        _songsSearchResult[index],
-                        true,
-                        showMusicDuration: true,
-                        borderRadius: borderRadius,
-                      );
-                    },
-                  ),
-                  if (_albumsSearchResult.isNotEmpty)
-                    SectionTitle(context.l10n!.albums, primaryColor),
-                  if (_albumsSearchResult.isNotEmpty)
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount:
-                          _albumsSearchResult.length > maxSongsInList
-                              ? maxSongsInList
-                              : _albumsSearchResult.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final playlist = _albumsSearchResult[index];
+                                final borderRadius = getItemBorderRadius(
+                                  index,
+                                  _albumsSearchResult.length > maxSongsInList
+                                      ? maxSongsInList
+                                      : _albumsSearchResult.length,
+                                );
 
-                        final borderRadius = getItemBorderRadius(
-                          index,
-                          _albumsSearchResult.length > maxSongsInList
-                              ? maxSongsInList
-                              : _albumsSearchResult.length,
-                        );
-
-                        return PlaylistBar(
-                          key: ValueKey(playlist['ytid']),
-                          playlist['title'],
-                          playlistId: playlist['ytid'],
-                          playlistArtwork: playlist['image'],
-                          cubeIcon: FluentIcons.cd_16_filled,
-                          isAlbum: true,
-                          borderRadius: borderRadius,
-                        );
-                      },
-                    ),
-                  if (_playlistsSearchResult.isNotEmpty)
-                    SectionTitle(context.l10n!.playlists, primaryColor),
-                  if (_playlistsSearchResult.isNotEmpty)
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      padding: commonListViewBottmomPadding,
-                      itemCount:
-                          _playlistsSearchResult.length > maxSongsInList
-                              ? maxSongsInList
-                              : _playlistsSearchResult.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final playlist = _playlistsSearchResult[index];
-                        return PlaylistBar(
-                          key: ValueKey(playlist['ytid']),
-                          playlist['title'],
-                          playlistId: playlist['ytid'],
-                          playlistArtwork: playlist['image'],
-                          cubeIcon: FluentIcons.apps_list_24_filled,
-                        );
-                      },
-                    ),
-                ],
-              ),
+                                return PlaylistBar(
+                                  key: ValueKey(playlist['ytid']),
+                                  playlist['title'],
+                                  playlistId: playlist['ytid'],
+                                  playlistArtwork: playlist['image'],
+                                  cubeIcon: FluentIcons.cd_16_filled,
+                                  isAlbum: true,
+                                  borderRadius: borderRadius,
+                                );
+                              },
+                            ),
+                          if (_playlistsSearchResult.isNotEmpty)
+                            SectionTitle(context.l10n!.playlists, primaryColor),
+                          if (_playlistsSearchResult.isNotEmpty)
+                            ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              padding: commonListViewBottmomPadding,
+                              itemCount:
+                                  _playlistsSearchResult.length > maxSongsInList
+                                      ? maxSongsInList
+                                      : _playlistsSearchResult.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                final playlist = _playlistsSearchResult[index];
+                                return PlaylistBar(
+                                  key: ValueKey(playlist['ytid']),
+                                  playlist['title'],
+                                  playlistId: playlist['ytid'],
+                                  playlistArtwork: playlist['image'],
+                                  cubeIcon: FluentIcons.apps_list_24_filled,
+                                );
+                              },
+                            ),
+                        ],
+                      ),
+            ),
           ],
         ),
       ),

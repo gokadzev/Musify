@@ -681,7 +681,7 @@ class SettingsPage extends StatelessWidget {
           onSubmit:
               () => {
                 Navigator.of(context).pop(),
-                searchHistory = [],
+                searchHistoryNotifier.value = [],
                 deleteData('user', 'searchHistory'),
                 showToast(context, '${context.l10n!.searchHistoryMsg}!'),
               },

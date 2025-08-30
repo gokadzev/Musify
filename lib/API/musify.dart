@@ -629,8 +629,7 @@ Future<List> getPlaylists({
         }).toList();
 
     final searchTerm = type == 'album' ? '$query album' : query;
-    // Try direct search first, fall back to a proxied YoutubeExplode client
-    // when Google/Youtube blocks with redirect limits or client exceptions.
+
     late final Iterable searchResultsIterable;
     try {
       searchResultsIterable = await _yt.search.searchContent(
