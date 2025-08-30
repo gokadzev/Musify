@@ -170,6 +170,65 @@ class ProxyManager {
     return manifest;
   }
 
+  /// Try to create a [YoutubeExplode] client that routes requests through a
+  /// working proxy. Returns null if no proxy client could be created.
+  ///
+  /// Caller is responsible for calling `close()` on the returned
+  /// [YoutubeExplode] when finished to free resources.
+  Future<YoutubeExplode?> getYoutubeExplodeClient({
+    int timeoutSeconds = 5,
+  }) async {
+    if (!useProxy.value) return null;
+    // Ensure proxies have been fetched
+    if (!_hasFetched) await _fetchProxies();
+
+    // If there are no proxies available, try fetching once more
+    if (_proxiesByCountry.isEmpty) await _fetchProxies();
+
+    if (_proxiesByCountry.isEmpty) return null;
+
+    // Try proxies until we can construct a client that can perform a simple
+    // request (we won't perform a heavy request here, the caller will use
+    // the returned client for operations like search).
+    do {
+      final proxy = await _getRandomProxy();
+      if (proxy == null) break;
+
+      HttpClient? httpClient;
+      IOClient? ioClient;
+      try {
+        httpClient =
+            HttpClient()
+              ..connectionTimeout = Duration(seconds: timeoutSeconds)
+              ..findProxy = (_) {
+                return 'PROXY ${proxy.address}; DIRECT';
+              }
+              ..badCertificateCallback = (context, _context, ___) {
+                return false;
+              };
+
+        ioClient = IOClient(httpClient);
+        final ytClient = YoutubeExplode(YoutubeHttpClient(ioClient));
+
+        // Don't run a test request here to keep it lightweight. Assume proxy
+        // is usable; if caller experiences errors they can close and retry.
+        _workingProxies.add(proxy);
+        return ytClient;
+      } catch (e) {
+        // Clean up on failure and try another proxy
+        try {
+          ioClient?.close();
+        } catch (_) {}
+        try {
+          httpClient?.close(force: true);
+        } catch (_) {}
+        continue;
+      }
+    } while (true);
+
+    return null;
+  }
+
   Future<void> _fetchSpysMe() async {
     if (!useProxy.value) return;
     try {

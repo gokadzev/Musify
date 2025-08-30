@@ -25,7 +25,7 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "com.gokadzev.musify"
-    compileSdk = 35
+    compileSdk = 36
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -48,7 +48,7 @@ android {
     defaultConfig {
         applicationId = "com.gokadzev.musify"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 36
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }

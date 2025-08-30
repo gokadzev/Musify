@@ -2,4 +2,3 @@ arb-dir: lib/localization
 template-arb-file: app_en.arb
 output-localization-file: app_localizations.dart
 untranslated-messages-file: no_translations.txt
-synthetic-package: false

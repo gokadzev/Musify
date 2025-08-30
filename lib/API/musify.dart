@@ -92,21 +92,10 @@ int activeSongId = 0;
 
 Future<List> fetchSongsList(String searchQuery) async {
   try {
-    // Try to get data from cache first
-    final cacheKey = 'search_$searchQuery';
-    final cachedResults = await getData('cache', cacheKey);
-
-    if (cachedResults != null) {
-      return cachedResults;
-    }
-
     // If not in cache, perform the search
     final List<Video> searchResults = await _yt.search.search(searchQuery);
     final songsList =
         searchResults.map((video) => returnSongLayout(0, video)).toList();
-
-    // Cache the results
-    await addOrUpdateData('cache', cacheKey, songsList);
 
     return songsList;
   } catch (e, stackTrace) {
@@ -640,17 +629,47 @@ Future<List> getPlaylists({
         }).toList();
 
     final searchTerm = type == 'album' ? '$query album' : query;
-    final searchResults = await _yt.search.searchContent(
-      searchTerm,
-      filter: TypeFilters.playlist,
-    );
+    // Try direct search first, fall back to a proxied YoutubeExplode client
+    // when Google/Youtube blocks with redirect limits or client exceptions.
+    late final Iterable searchResultsIterable;
+    try {
+      searchResultsIterable = await _yt.search.searchContent(
+        searchTerm,
+        filter: TypeFilters.playlist,
+      );
+    } catch (e, st) {
+      logger.log('Error while searching online songs:$e', e, st);
+      // Attempt proxy fallback if enabled
+      if (useProxy.value) {
+        final proxyYt = await ProxyManager().getYoutubeExplodeClient();
+        if (proxyYt != null) {
+          try {
+            searchResultsIterable = await proxyYt.search.searchContent(
+              searchTerm,
+              filter: TypeFilters.playlist,
+            );
+          } catch (e2, st2) {
+            logger.log('Proxy search failed:$e2', e2, st2);
+            searchResultsIterable = <dynamic>[];
+          } finally {
+            try {
+              proxyYt.close();
+            } catch (_) {}
+          }
+        } else {
+          searchResultsIterable = <dynamic>[];
+        }
+      } else {
+        searchResultsIterable = <dynamic>[];
+      }
+    }
 
     // Avoid duplicate online playlists.
     final existingYtIds =
         onlinePlaylists.map((p) => p['ytid'] as String).toSet();
 
     final newPlaylists =
-        searchResults
+        searchResultsIterable
             .whereType<SearchPlaylist>()
             .map((playlist) {
               final playlistMap = {
@@ -928,12 +947,18 @@ Future<AudioOnlyStreamInfo?> getSongManifest(String? songId) async {
       logger.log('getSongManifest: songId is null or empty', null, null);
       return null;
     }
-    final useProxySetting = Hive.box('settings').get('useProxy', defaultValue: false);
+    final useProxySetting = Hive.box(
+      'settings',
+    ).get('useProxy', defaultValue: false);
     StreamManifest? manifest;
     if (useProxySetting) {
-      manifest = await ProxyManager().getSongManifest(songId).timeout(const Duration(seconds: 12));
+      manifest = await ProxyManager()
+          .getSongManifest(songId)
+          .timeout(const Duration(seconds: 12));
     } else {
-      manifest = await _yt.videos.streams.getManifest(songId).timeout(const Duration(seconds: 12));
+      manifest = await _yt.videos.streams
+          .getManifest(songId)
+          .timeout(const Duration(seconds: 12));
     }
     final audioStream = manifest?.audioOnly;
     if (audioStream == null || audioStream.isEmpty) {
@@ -993,12 +1018,18 @@ Future<String?> getSong(String songId, bool isLive) async {
     }
 
     // Get fresh URL
-    final useProxySetting = Hive.box('settings').get('useProxy', defaultValue: false);
+    final useProxySetting = Hive.box(
+      'settings',
+    ).get('useProxy', defaultValue: false);
     StreamManifest? manifest;
     if (useProxySetting) {
-      manifest = await ProxyManager().getSongManifest(songId).timeout(const Duration(seconds: 12));
+      manifest = await ProxyManager()
+          .getSongManifest(songId)
+          .timeout(const Duration(seconds: 12));
     } else {
-      manifest = await _yt.videos.streams.getManifest(songId).timeout(const Duration(seconds: 12));
+      manifest = await _yt.videos.streams
+          .getManifest(songId)
+          .timeout(const Duration(seconds: 12));
     }
     final audioStreams = manifest?.audioOnly;
     if (audioStreams == null || audioStreams.isEmpty) {
