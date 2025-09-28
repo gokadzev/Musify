@@ -45,7 +45,7 @@ class ProxyManager {
     }
     // react to proxy setting changes
     useProxy.addListener(() async {
-        if (useProxy.value) {
+      if (useProxy.value) {
         await _initSharedProxyClient();
       } else {
         // switch back to default client
@@ -80,11 +80,10 @@ class ProxyManager {
   Future<void> _fetchProxies() async {
     if (!useProxy.value) return;
     try {
-      final fetchTasks =
-          <Future>[]
-            ..add(_fetchSpysMe())
-            ..add(_fetchProxyScrape())
-            ..add(_fetchOpenProxyList());
+      final fetchTasks = <Future>[]
+        ..add(_fetchSpysMe())
+        ..add(_fetchProxyScrape())
+        ..add(_fetchOpenProxyList());
       _fetchingProxiesFuture = Future.wait(fetchTasks);
       await _fetchingProxiesFuture?.whenComplete(() {
         _hasFetched = true;
@@ -111,15 +110,14 @@ class ProxyManager {
         HttpClient? httpClient;
         IOClient? ioClient;
         try {
-          httpClient =
-              HttpClient()
-                ..connectionTimeout = Duration(seconds: timeoutSeconds)
-                ..findProxy = (_) {
-                  return 'PROXY ${proxy.address}; DIRECT';
-                }
-                ..badCertificateCallback = (context, _context, ___) {
-                  return false;
-                };
+          httpClient = HttpClient()
+            ..connectionTimeout = Duration(seconds: timeoutSeconds)
+            ..findProxy = (_) {
+              return 'PROXY ${proxy.address}; DIRECT';
+            }
+            ..badCertificateCallback = (context, _context, ___) {
+              return false;
+            };
 
           ioClient = IOClient(httpClient);
           final ytClient = YoutubeExplode(YoutubeHttpClient(ioClient));
@@ -158,7 +156,7 @@ class ProxyManager {
   ) async {
     try {
       final manifest = await YoutubeExplode().videos.streams
-          .getManifest(songId)
+          .getManifest(songId, ytClients: [YoutubeApiClient.androidVr])
           .timeout(Duration(seconds: timeoutSeconds));
       return manifest;
     } catch (e) {
@@ -175,19 +173,18 @@ class ProxyManager {
     IOClient? ioClient;
     HttpClient? httpClient;
     try {
-      httpClient =
-          HttpClient()
-            ..connectionTimeout = Duration(seconds: timeoutSeconds)
-            ..findProxy = (_) {
-              return 'PROXY ${proxy.address}; DIRECT';
-            }
-            ..badCertificateCallback = (context, _context, ___) {
-              return false;
-            };
+      httpClient = HttpClient()
+        ..connectionTimeout = Duration(seconds: timeoutSeconds)
+        ..findProxy = (_) {
+          return 'PROXY ${proxy.address}; DIRECT';
+        }
+        ..badCertificateCallback = (context, _context, ___) {
+          return false;
+        };
       ioClient = IOClient(httpClient);
       final ytClient = YoutubeExplode(YoutubeHttpClient(ioClient));
       final manifest = await ytClient.videos.streams
-          .getManifest(songId)
+          .getManifest(songId, ytClients: [YoutubeApiClient.androidVr])
           .timeout(Duration(seconds: timeoutSeconds));
       _workingProxies.add(proxy);
       return manifest;
@@ -207,10 +204,9 @@ class ProxyManager {
       ProxyInfo proxy;
       String countryCode;
       if (_workingProxies.isNotEmpty) {
-        final idx =
-            _workingProxies.length == 1
-                ? 0
-                : _random.nextInt(_workingProxies.length);
+        final idx = _workingProxies.length == 1
+            ? 0
+            : _random.nextInt(_workingProxies.length);
         proxy = _workingProxies.elementAt(idx);
         _workingProxies.remove(proxy);
       } else {
@@ -290,15 +286,14 @@ class ProxyManager {
       HttpClient? httpClient;
       IOClient? ioClient;
       try {
-        httpClient =
-            HttpClient()
-              ..connectionTimeout = Duration(seconds: timeoutSeconds)
-              ..findProxy = (_) {
-                return 'PROXY ${proxy.address}; DIRECT';
-              }
-              ..badCertificateCallback = (context, _context, ___) {
-                return false;
-              };
+        httpClient = HttpClient()
+          ..connectionTimeout = Duration(seconds: timeoutSeconds)
+          ..findProxy = (_) {
+            return 'PROXY ${proxy.address}; DIRECT';
+          }
+          ..badCertificateCallback = (context, _context, ___) {
+            return false;
+          };
 
         ioClient = IOClient(httpClient);
         final ytClient = YoutubeExplode(YoutubeHttpClient(ioClient));

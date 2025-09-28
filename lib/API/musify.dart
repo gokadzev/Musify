@@ -95,8 +95,9 @@ Future<List> fetchSongsList(String searchQuery) async {
   try {
     // If not in cache, perform the search
     final List<Video> searchResults = await _yt.search.search(searchQuery);
-    final songsList =
-        searchResults.map((video) => returnSongLayout(0, video)).toList();
+    final songsList = searchResults
+        .map((video) => returnSongLayout(0, video))
+        .toList();
 
     return songsList;
   } catch (e, stackTrace) {
@@ -121,29 +122,25 @@ Future<List> getRecommendedSongs() async {
 Future<List> _getRecommendationsFromRecentlyPlayed() async {
   final recent = userRecentlyPlayed.take(3).toList();
 
-  final futures =
-      recent.map((songData) async {
-        try {
-          final song = await _yt.videos.get(songData['ytid']);
-          final relatedSongs = await _yt.videos.getRelatedVideos(song) ?? [];
-          return relatedSongs
-              .take(3)
-              .map((s) => returnSongLayout(0, s))
-              .toList();
-        } catch (e, stackTrace) {
-          logger.log(
-            'Error getting related videos for ${songData['ytid']}',
-            e,
-            stackTrace,
-          );
-          return <Map>[];
-        }
-      }).toList();
+  final futures = recent.map((songData) async {
+    try {
+      final song = await _yt.videos.get(songData['ytid']);
+      final relatedSongs = await _yt.videos.getRelatedVideos(song) ?? [];
+      return relatedSongs.take(3).map((s) => returnSongLayout(0, s)).toList();
+    } catch (e, stackTrace) {
+      logger.log(
+        'Error getting related videos for ${songData['ytid']}',
+        e,
+        stackTrace,
+      );
+      return <Map>[];
+    }
+  }).toList();
 
   final results = await Future.wait(futures);
   // Limit to 15 items max for performance
-  final playlistSongs =
-      results.expand((list) => list).take(15).toList()..shuffle();
+  final playlistSongs = results.expand((list) => list).take(15).toList()
+    ..shuffle();
   return playlistSongs;
 }
 
@@ -618,16 +615,15 @@ Future<List> getPlaylists({
   // and augment with online search results.
   if (query != null && playlistsNum == null) {
     final lowercaseQuery = query.toLowerCase();
-    final filteredPlaylists =
-        playlists.where((playlist) {
-          final title = playlist['title'].toLowerCase();
-          final matchesQuery = title.contains(lowercaseQuery);
-          final matchesType =
-              type == 'all' ||
-              (type == 'album' && playlist['isAlbum'] == true) ||
-              (type == 'playlist' && playlist['isAlbum'] != true);
-          return matchesQuery && matchesType;
-        }).toList();
+    final filteredPlaylists = playlists.where((playlist) {
+      final title = playlist['title'].toLowerCase();
+      final matchesQuery = title.contains(lowercaseQuery);
+      final matchesType =
+          type == 'all' ||
+          (type == 'album' && playlist['isAlbum'] == true) ||
+          (type == 'playlist' && playlist['isAlbum'] != true);
+      return matchesQuery && matchesType;
+    }).toList();
 
     final searchTerm = type == 'album' ? '$query album' : query;
 
@@ -665,27 +661,27 @@ Future<List> getPlaylists({
     }
 
     // Avoid duplicate online playlists.
-    final existingYtIds =
-        onlinePlaylists.map((p) => p['ytid'] as String).toSet();
+    final existingYtIds = onlinePlaylists
+        .map((p) => p['ytid'] as String)
+        .toSet();
 
-    final newPlaylists =
-        searchResultsIterable
-            .whereType<SearchPlaylist>()
-            .map((playlist) {
-              final playlistMap = {
-                'ytid': playlist.id.toString(),
-                'title': playlist.title,
-                'source': 'youtube',
-                'list': [],
-              };
-              if (!existingYtIds.contains(playlistMap['ytid'])) {
-                existingYtIds.add(playlistMap['ytid'].toString());
-                return playlistMap;
-              }
-              return null;
-            })
-            .whereType<Map<String, dynamic>>()
-            .toList();
+    final newPlaylists = searchResultsIterable
+        .whereType<SearchPlaylist>()
+        .map((playlist) {
+          final playlistMap = {
+            'ytid': playlist.id.toString(),
+            'title': playlist.title,
+            'source': 'youtube',
+            'list': [],
+          };
+          if (!existingYtIds.contains(playlistMap['ytid'])) {
+            existingYtIds.add(playlistMap['ytid'].toString());
+            return playlistMap;
+          }
+          return null;
+        })
+        .whereType<Map<String, dynamic>>()
+        .toList();
     onlinePlaylists.addAll(newPlaylists);
 
     // Merge online playlists that match the query.
@@ -779,13 +775,12 @@ Future<List<Map<String, int>>> getSkipSegments(String id) async {
     );
     if (res.body != 'Not Found') {
       final data = jsonDecode(res.body);
-      final segments =
-          data.map((obj) {
-            return Map.castFrom<String, dynamic, String, int>({
-              'start': obj['segment'].first.toInt(),
-              'end': obj['segment'].last.toInt(),
-            });
-          }).toList();
+      final segments = data.map((obj) {
+        return Map.castFrom<String, dynamic, String, int>({
+          'start': obj['segment'].first.toInt(),
+          'end': obj['segment'].last.toInt(),
+        });
+      }).toList();
       return List.castFrom<dynamic, Map<String, int>>(segments);
     } else {
       return [];
@@ -911,8 +906,9 @@ Future<Map?> getPlaylistInfoForWidget(
     if (playlist['list'] == null ||
         (playlist['list'] is List && (playlist['list'] as List).isEmpty)) {
       try {
-        final playlistImage =
-            playlist['isAlbum'] == true ? playlist['image'] : null;
+        final playlistImage = playlist['isAlbum'] == true
+            ? playlist['image']
+            : null;
         playlist['list'] = await getSongsFromPlaylist(
           playlist['ytid'],
           playlistImage: playlistImage,
@@ -955,7 +951,7 @@ Future<AudioOnlyStreamInfo?> getSongManifest(String? songId) async {
           .timeout(const Duration(seconds: 12));
     } else {
       manifest = await _yt.videos.streams
-          .getManifest(songId)
+          .getManifest(songId, ytClients: [YoutubeApiClient.androidVr])
           .timeout(const Duration(seconds: 12));
     }
     final audioStream = manifest?.audioOnly;
@@ -1023,7 +1019,7 @@ Future<String?> getSong(String songId, bool isLive) async {
           .timeout(const Duration(seconds: 12));
     } else {
       manifest = await _yt.videos.streams
-          .getManifest(songId)
+          .getManifest(songId, ytClients: [YoutubeApiClient.androidVr])
           .timeout(const Duration(seconds: 12));
     }
     final audioStreams = manifest?.audioOnly;
