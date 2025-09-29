@@ -24,6 +24,7 @@
   "becomeSponsor": "Γίνετε χορηγός",
   "cacheMsg": "Έγινε εκκαθάριση της cache",
   "cancel": "Ακύρωση",
+  "checkForUpdates": "Check for Updates?",
   "chooseBackupDir": "Επιλογή καταλόγου αντιγράφων ασφαλείας",
   "chooseBackupFiles": "Choose backup files",
   "clear": "Απαλοιφή",
@@ -53,6 +54,7 @@
   "downloadPlaylist": "Download playlist",
   "dynamicColor": "Δυναμικό χρώμα έμφασης (Android 12+)",
   "emptyFolderMsg": "This folder is empty. Add playlists to organize your music.",
+  "enableUpdateChecksDescription": "Would you like Musify to check for updates automatically? You can always check for updates manually from the settings",
   "enterFolderName": "Please enter a folder name",
   "error": "Παρουσιάστηκε κάποιο πρόβλημα",
   "folderAlreadyExists": "A folder with this name already exists",
@@ -76,6 +78,7 @@
   "name": "Name",
   "newAnnouncement": "New announcement posted",
   "newFolder": "New folder",
+  "no": "No",
   "noCustomPlaylists": "Δεν έχετε δημιουργήσει ακόμα λίστες αναπαραγωγής",
   "noPlaylistsAdded": "No playlists added yet",
   "noSongsInQueue": "No songs in queue",
@@ -142,5 +145,6 @@
   "update": "Update",
   "useProxy": "Use proxy",
   "userPlaylists": "Λίστες αναπαραγωγής χρήστη",
+  "yes": "Yes",
   "youtubePlaylistLinkOrId": "YouTube playlist link or ID "
 }

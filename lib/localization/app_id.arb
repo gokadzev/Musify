@@ -24,6 +24,7 @@
   "becomeSponsor": "Menjadi sponsor",
   "cacheMsg": "Cache dihapus",
   "cancel": "Batal",
+  "checkForUpdates": "Check for Updates?",
   "chooseBackupDir": "Pilih folder pencadangan",
   "chooseBackupFiles": "Pilih berkas cadangan",
   "clear": "Hapus",
@@ -53,6 +54,7 @@
   "downloadPlaylist": "Unduh playlist",
   "dynamicColor": "Warna aksen dinamis (Android 12+)",
   "emptyFolderMsg": "This folder is empty. Add playlists to organize your music.",
+  "enableUpdateChecksDescription": "Would you like Musify to check for updates automatically? You can always check for updates manually from the settings",
   "enterFolderName": "Please enter a folder name",
   "error": "Terjadi kesalahan. Silakan coba lagi.",
   "folderAlreadyExists": "A folder with this name already exists",
@@ -76,6 +78,7 @@
   "name": "Nama",
   "newAnnouncement": "Pengumuman baru saja diposting",
   "newFolder": "New folder",
+  "no": "No",
   "noCustomPlaylists": "Belum ada daftar putar khusus yang dibuat",
   "noPlaylistsAdded": "No playlists added yet",
   "noSongsInQueue": "Tidak ada lagu dalam antrean",
@@ -142,5 +145,6 @@
   "update": "Perbarui",
   "useProxy": "Use proxy",
   "userPlaylists": "Playlist pengguna",
+  "yes": "Yes",
   "youtubePlaylistLinkOrId": "Tautan atau ID playlist YouTube"
 }

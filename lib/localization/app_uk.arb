@@ -24,6 +24,7 @@
   "becomeSponsor": "Стати спонсором",
   "cacheMsg": "Кеш очищений",
   "cancel": "Скасувати",
+  "checkForUpdates": "Check for Updates?",
   "chooseBackupDir": "Виберіть каталог для резервного копіювання",
   "chooseBackupFiles": "Choose backup files",
   "clear": "Очистити",
@@ -53,6 +54,7 @@
   "downloadPlaylist": "Download playlist",
   "dynamicColor": "Динамічний акцентний колір (Android 12+)",
   "emptyFolderMsg": "This folder is empty. Add playlists to organize your music.",
+  "enableUpdateChecksDescription": "Would you like Musify to check for updates automatically? You can always check for updates manually from the settings",
   "enterFolderName": "Please enter a folder name",
   "error": "Щось пішло не так",
   "folderAlreadyExists": "A folder with this name already exists",
@@ -76,6 +78,7 @@
   "name": "Name",
   "newAnnouncement": "New announcement posted",
   "newFolder": "New folder",
+  "no": "No",
   "noCustomPlaylists": "You haven't created any custom playlists yet",
   "noPlaylistsAdded": "No playlists added yet",
   "noSongsInQueue": "No songs in queue",
@@ -142,5 +145,6 @@
   "update": "Update",
   "useProxy": "Use proxy",
   "userPlaylists": "Плейлисти користувача",
+  "yes": "Yes",
   "youtubePlaylistLinkOrId": "YouTube playlist link or ID "
 }

@@ -24,6 +24,7 @@
   "becomeSponsor": "הפוך לתומך",
   "cacheMsg": "המטמון נוקה",
   "cancel": "בטל",
+  "checkForUpdates": "Check for Updates?",
   "chooseBackupDir": "בחר תקיית גיבוי",
   "chooseBackupFiles": "בחר קבצים לגיבוי",
   "clear": "נקה",
@@ -53,6 +54,7 @@
   "downloadPlaylist": "הורד רשימת השמעה",
   "dynamicColor": "צבע הדגשה דינמי (אנדרואיד 12+)",
   "emptyFolderMsg": "This folder is empty. Add playlists to organize your music.",
+  "enableUpdateChecksDescription": "Would you like Musify to check for updates automatically? You can always check for updates manually from the settings",
   "enterFolderName": "Please enter a folder name",
   "error": "אירעה שגיאה. בדוק יומנים או נסה שוב.",
   "folderAlreadyExists": "A folder with this name already exists",
@@ -76,6 +78,7 @@
   "name": "שם",
   "newAnnouncement": "הודעה חדשה פורסמה",
   "newFolder": "New folder",
+  "no": "No",
   "noCustomPlaylists": "עדיין לא נוצרו פלייליסטים מותאמים אישית.",
   "noPlaylistsAdded": "No playlists added yet",
   "noSongsInQueue": "אין שירים בתור",
@@ -142,5 +145,6 @@
   "update": "עדכון",
   "useProxy": "Use proxy",
   "userPlaylists": "רשימות השמעה של המשתמש",
+  "yes": "Yes",
   "youtubePlaylistLinkOrId": "קישור או מזהה של רשימת השמעה מיוטיוב"
 }

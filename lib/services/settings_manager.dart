@@ -26,6 +26,10 @@ import 'package:musify/utilities/utils.dart';
 
 // Preferences
 
+final shouldWeCheckUpdates = ValueNotifier<bool?>(
+  Hive.box('settings').get('shouldWeCheckUpdates', defaultValue: null),
+);
+
 final backgroundPlay = ValueNotifier<bool>(
   Hive.box('settings').get('backgroundPlay', defaultValue: false),
 );

@@ -24,6 +24,7 @@
   "becomeSponsor": "प्रायोजक बनें",
   "cacheMsg": "कैश साफ़ कर दिया गया",
   "cancel": "रद्द करें",
+  "checkForUpdates": "Check for Updates?",
   "chooseBackupDir": "बैकअप फ़ोल्डर चुनें",
   "chooseBackupFiles": "बैकअप के लिए फ़ाइलें चुनें",
   "clear": "साफ़ करें",
@@ -53,6 +54,7 @@
   "downloadPlaylist": "Download playlist",
   "dynamicColor": "डायनेमिक एक्सेंट रंग (Android 12+)",
   "emptyFolderMsg": "This folder is empty. Add playlists to organize your music.",
+  "enableUpdateChecksDescription": "Would you like Musify to check for updates automatically? You can always check for updates manually from the settings",
   "enterFolderName": "Please enter a folder name",
   "error": "कुछ गलत हो गया, कृपया पुनः प्रयास करें।",
   "folderAlreadyExists": "A folder with this name already exists",
@@ -76,6 +78,7 @@
   "name": "नाम",
   "newAnnouncement": "नया घोषणा पोस्ट किया गया",
   "newFolder": "New folder",
+  "no": "No",
   "noCustomPlaylists": "अभी तक कोई कस्टम प्लेलिस्ट नहीं बनाई गई",
   "noPlaylistsAdded": "No playlists added yet",
   "noSongsInQueue": "क्यू में कोई गाने नहीं हैं",
@@ -142,5 +145,6 @@
   "update": "Update",
   "useProxy": "Use proxy",
   "userPlaylists": "उपयोगकर्ता की प्लेलिस्ट्स",
+  "yes": "Yes",
   "youtubePlaylistLinkOrId": "YouTube प्लेलिस्ट लिंक या ID"
 }

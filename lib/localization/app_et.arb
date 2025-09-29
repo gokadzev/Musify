@@ -24,6 +24,7 @@
   "becomeSponsor": "Hakka sponsoreks",
   "cacheMsg": "Puhver tühjendatud",
   "cancel": "Tühista",
+  "checkForUpdates": "Check for Updates?",
   "chooseBackupDir": "Vali varunduskaust",
   "chooseBackupFiles": "Vali varundatavad failid",
   "clear": "Tühjenda",
@@ -53,6 +54,7 @@
   "downloadPlaylist": "Laadi nimekiri alla",
   "dynamicColor": "Dünaamiline aktsentvärv (Android 12+)",
   "emptyFolderMsg": "See kaust on tühi. Lisa nimekirju, et oma muusikat korraldada.",
+  "enableUpdateChecksDescription": "Would you like Musify to check for updates automatically? You can always check for updates manually from the settings",
   "enterFolderName": "Sisesta kausta nimi",
   "error": "Tekkis viga. Kontrolli logisid või proovi uuesti.",
   "folderAlreadyExists": "Sellise nimega kaust on juba olemas",
@@ -76,6 +78,7 @@
   "name": "Nimi",
   "newAnnouncement": "Uus teadaanne postitatud",
   "newFolder": "Uus kaust",
+  "no": "No",
   "noCustomPlaylists": "Kohandatud nimekirju pole veel loodud",
   "noPlaylistsAdded": "Nimekirju pole veel lisatud",
   "noSongsInQueue": "Järjekorras pole laule",
@@ -142,5 +145,6 @@
   "update": "Uuenda",
   "useProxy": "Kasuta proksit",
   "userPlaylists": "Kasutaja nimekirjad",
+  "yes": "Yes",
   "youtubePlaylistLinkOrId": "YouTube'i nimekirja link või ID"
 }

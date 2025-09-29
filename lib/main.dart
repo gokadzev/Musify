@@ -78,14 +78,15 @@ const appLanguages = <String, String>{
   'Ukrainian': 'uk',
 };
 
-final List<Locale> appSupportedLocales =
-    appLanguages.values.map((languageCode) {
-      final parts = languageCode.split('-');
-      if (parts.length > 1) {
-        return Locale.fromSubtags(languageCode: parts[0], scriptCode: parts[1]);
-      }
-      return Locale(languageCode);
-    }).toList();
+final List<Locale> appSupportedLocales = appLanguages.values.map((
+  languageCode,
+) {
+  final parts = languageCode.split('-');
+  if (parts.length > 1) {
+    return Locale.fromSubtags(languageCode: parts[0], scriptCode: parts[1]);
+  }
+  return Locale(languageCode);
+}).toList();
 
 class Musify extends StatefulWidget {
   const Musify({super.key});
@@ -165,13 +166,22 @@ class _MusifyState extends State<Musify> {
       logger.log('License Registration Error', e, stackTrace);
     }
 
-    if (!isFdroidBuild && !isUpdateChecked && kReleaseMode) {
-      SchedulerBinding.instance.addPostFrameCallback((_) {
-        if (!offlineMode.value) {
-          checkAppUpdates();
-        }
-        isUpdateChecked = true;
-      });
+    if (shouldWeCheckUpdates.value == true) {
+      if (!isFdroidBuild && !isUpdateChecked && kReleaseMode) {
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          if (!offlineMode.value) {
+            checkAppUpdates();
+          }
+          isUpdateChecked = true;
+        });
+      }
+    } else {
+      if (shouldWeCheckUpdates.value == null) {
+        // show dialog that asks user if they want to enable update checks
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          showUpdateCheckDialog(NavigationManager().context);
+        });
+      }
     }
   }
 
@@ -181,6 +191,40 @@ class _MusifyState extends State<Musify> {
 
     Hive.close();
     super.dispose();
+  }
+
+  void showUpdateCheckDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(context.l10n!.checkForUpdates),
+          content: Text(context.l10n!.enableUpdateChecksDescription),
+          actions: [
+            TextButton(
+              onPressed: () {
+                shouldWeCheckUpdates.value = false;
+                addOrUpdateData('settings', 'shouldWeCheckUpdates', false);
+                Navigator.of(context).pop();
+              },
+              child: Text(context.l10n!.no),
+            ),
+            TextButton(
+              onPressed: () {
+                shouldWeCheckUpdates.value = true;
+                addOrUpdateData('settings', 'shouldWeCheckUpdates', true);
+                if (!isFdroidBuild && kReleaseMode && !offlineMode.value) {
+                  checkAppUpdates();
+                  isUpdateChecked = true;
+                }
+                Navigator.of(context).pop();
+              },
+              child: Text(context.l10n!.yes),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _onOfflineModeChanged() {
@@ -202,18 +246,15 @@ class _MusifyState extends State<Musify> {
             statusBarColor: Colors.transparent,
             systemNavigationBarColor: Colors.transparent,
             systemNavigationBarContrastEnforced: true,
-            statusBarBrightness:
-                brightness == Brightness.dark
-                    ? Brightness.light
-                    : Brightness.dark,
-            statusBarIconBrightness:
-                brightness == Brightness.dark
-                    ? Brightness.light
-                    : Brightness.dark,
-            systemNavigationBarIconBrightness:
-                brightness == Brightness.dark
-                    ? Brightness.light
-                    : Brightness.dark,
+            statusBarBrightness: brightness == Brightness.dark
+                ? Brightness.light
+                : Brightness.dark,
+            statusBarIconBrightness: brightness == Brightness.dark
+                ? Brightness.light
+                : Brightness.dark,
+            systemNavigationBarIconBrightness: brightness == Brightness.dark
+                ? Brightness.light
+                : Brightness.dark,
           ),
           child: MaterialApp.router(
             themeMode: themeMode,

@@ -24,6 +24,7 @@
   "becomeSponsor": "Se torne um apoiador",
   "cacheMsg": "Cache limpo com sucesso",
   "cancel": "Cancelar",
+  "checkForUpdates": "Check for Updates?",
   "chooseBackupDir": "Escolher pasta",
   "chooseBackupFiles": "Selecionar arquivos",
   "clear": "Limpar",
@@ -53,6 +54,7 @@
   "downloadPlaylist": "Baixar playlist",
   "dynamicColor": "Cor dinâmica (Android 12+)",
   "emptyFolderMsg": "This folder is empty. Add playlists to organize your music.",
+  "enableUpdateChecksDescription": "Would you like Musify to check for updates automatically? You can always check for updates manually from the settings",
   "enterFolderName": "Please enter a folder name",
   "error": "Algo deu errado",
   "folderAlreadyExists": "A folder with this name already exists",
@@ -76,6 +78,7 @@
   "name": "Nome",
   "newAnnouncement": "Novo anúncio",
   "newFolder": "New folder",
+  "no": "No",
   "noCustomPlaylists": "Nenhuma playlist customizada criada",
   "noPlaylistsAdded": "No playlists added yet",
   "noSongsInQueue": "Fila vazia",
@@ -142,5 +145,6 @@
   "update": "Atualizar",
   "useProxy": "Use proxy",
   "userPlaylists": "Minhas playlists",
+  "yes": "Yes",
   "youtubePlaylistLinkOrId": "Link ou ID do YouTube"
 }
