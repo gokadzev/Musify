@@ -54,7 +54,7 @@
   "downloadPlaylist": "再生リストをダウンロード",
   "dynamicColor": "差し色を動的に変更 (Android 12以上)",
   "emptyFolderMsg": "このフォルダーは空です。再生リストを追加して好きな音楽を整理しよう。",
-  "enableUpdateChecksDescription": "Would you like Musify to check for updates automatically? You can always check for updates manually from the settings",
+  "enableUpdateChecksDescription": "Would you like Musify to check for updates automatically from GitHub releases? You can always check for updates manually from the settings",
   "enterFolderName": "フォルダー名を入力してください",
   "error": "不明のエラーが発生",
   "folderAlreadyExists": "このフォルダー名は既にあります",

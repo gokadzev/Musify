@@ -54,7 +54,7 @@
   "downloadPlaylist": "재생목록 다운로드",
   "dynamicColor": "동적 강조색 (안드로이드 12+)",
   "emptyFolderMsg": "이 폴더는 비어 있어요. 재생목록을 추가하여 음악을 정리하세요.",
-  "enableUpdateChecksDescription": "Would you like Musify to check for updates automatically? You can always check for updates manually from the settings",
+  "enableUpdateChecksDescription": "Would you like Musify to check for updates automatically from GitHub releases? You can always check for updates manually from the settings",
   "enterFolderName": "폴더 이름을 입력하세요",
   "error": "오류가 발생했습니다. 다시 시도해 주세요.",
   "folderAlreadyExists": "이 이름을 가진 폴더가 이미 존재해요",

@@ -54,7 +54,7 @@
   "downloadPlaylist": "Télécharger la playlist",
   "dynamicColor": "Couleur d'accent dynamique (Android 12+)",
   "emptyFolderMsg": "Ce dossier est vide. Ajoutez des playlists pour organiser votre musique.",
-  "enableUpdateChecksDescription": "Would you like Musify to check for updates automatically? You can always check for updates manually from the settings",
+  "enableUpdateChecksDescription": "Would you like Musify to check for updates automatically from GitHub releases? You can always check for updates manually from the settings",
   "enterFolderName": "Veuillez saisir un nom de dossier",
   "error": "Une erreur s'est produite",
   "folderAlreadyExists": "Un dossier portant ce nom existe déjà",

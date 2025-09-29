@@ -54,7 +54,7 @@
   "downloadPlaylist": "Lejátszási lista letöltése",
   "dynamicColor": "Dinamikus kiemelési szín (Android 12+)",
   "emptyFolderMsg": "Ez a mappa üres. Adjon hozzá lejátszási listákat hogy rendszerezze a zenéit.",
-  "enableUpdateChecksDescription": "Would you like Musify to check for updates automatically? You can always check for updates manually from the settings",
+  "enableUpdateChecksDescription": "Would you like Musify to check for updates automatically from GitHub releases? You can always check for updates manually from the settings",
   "enterFolderName": "Adja meg a mappa nevét",
   "error": "Egy hiba lépett fel. Ellenőrizze a naplót.",
   "folderAlreadyExists": "Már létezik mappa ezzel a névvel",

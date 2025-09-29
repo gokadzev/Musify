@@ -54,7 +54,7 @@
   "downloadPlaylist": "Laadi nimekiri alla",
   "dynamicColor": "Dünaamiline aktsentvärv (Android 12+)",
   "emptyFolderMsg": "See kaust on tühi. Lisa nimekirju, et oma muusikat korraldada.",
-  "enableUpdateChecksDescription": "Would you like Musify to check for updates automatically? You can always check for updates manually from the settings",
+  "enableUpdateChecksDescription": "Would you like Musify to check for updates automatically from GitHub releases? You can always check for updates manually from the settings",
   "enterFolderName": "Sisesta kausta nimi",
   "error": "Tekkis viga. Kontrolli logisid või proovi uuesti.",
   "folderAlreadyExists": "Sellise nimega kaust on juba olemas",
