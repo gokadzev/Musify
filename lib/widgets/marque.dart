@@ -31,62 +31,90 @@ class MarqueeWidget extends StatefulWidget {
     this.pauseDuration = const Duration(milliseconds: 800),
     this.manualScrollEnabled = true,
   });
+
   final Widget child;
   final Axis direction;
   final Duration animationDuration, backDuration, pauseDuration;
   final bool manualScrollEnabled;
 
   @override
-  _MarqueeWidgetState createState() => _MarqueeWidgetState();
+  State<MarqueeWidget> createState() => _MarqueeWidgetState();
 }
 
-class _MarqueeWidgetState extends State<MarqueeWidget> {
-  late ScrollController scrollController;
+class _MarqueeWidgetState extends State<MarqueeWidget>
+    with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
+  late ScrollController _scrollController;
+  bool _isAnimating = false;
+  bool _isDisposed = false;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
-    scrollController = ScrollController(initialScrollOffset: 50);
-    WidgetsBinding.instance.addPostFrameCallback(scroll);
     super.initState();
+    _scrollController = ScrollController();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _startAnimation());
   }
 
   @override
   void dispose() {
-    scrollController.dispose();
+    _isDisposed = true;
+    _scrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: widget.direction,
-      controller: scrollController,
-      physics:
-          widget.manualScrollEnabled
-              ? const AlwaysScrollableScrollPhysics()
-              : const NeverScrollableScrollPhysics(),
-      child: widget.child,
+    super.build(context);
+    return RepaintBoundary(
+      child: SingleChildScrollView(
+        scrollDirection: widget.direction,
+        controller: _scrollController,
+        physics: widget.manualScrollEnabled
+            ? const AlwaysScrollableScrollPhysics()
+            : const NeverScrollableScrollPhysics(),
+        child: widget.child,
+      ),
     );
   }
 
-  void scroll(_) async {
-    while (scrollController.hasClients) {
-      await Future.delayed(widget.pauseDuration);
-      if (scrollController.hasClients) {
-        await scrollController.animateTo(
-          scrollController.position.maxScrollExtent,
+  Future<void> _startAnimation() async {
+    if (_isDisposed || _isAnimating) return;
+
+    _isAnimating = true;
+
+    while (_scrollController.hasClients && !_isDisposed) {
+      try {
+        // Check if content actually needs scrolling
+        if (_scrollController.position.maxScrollExtent <= 0) {
+          await Future.delayed(const Duration(seconds: 1));
+          continue;
+        }
+
+        await Future.delayed(widget.pauseDuration);
+        if (_isDisposed || !_scrollController.hasClients) break;
+
+        await _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
           duration: widget.animationDuration,
-          curve: Curves.ease,
+          curve: Curves.linear,
         );
-      }
-      await Future.delayed(widget.pauseDuration);
-      if (scrollController.hasClients) {
-        await scrollController.animateTo(
+
+        await Future.delayed(widget.pauseDuration);
+        if (_isDisposed || !_scrollController.hasClients) break;
+
+        await _scrollController.animateTo(
           0,
           duration: widget.backDuration,
           curve: Curves.easeOut,
         );
+      } catch (e) {
+        // Handle animation interruptions gracefully
+        break;
       }
     }
+
+    _isAnimating = false;
   }
 }
