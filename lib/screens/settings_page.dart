@@ -95,32 +95,23 @@ class SettingsPage extends StatelessWidget {
         CustomBar(
           context.l10n!.themeMode,
           FluentIcons.weather_sunny_28_filled,
-          onTap:
-              () => _showThemeModePicker(
-                context,
-                activatedColor,
-                inactivatedColor,
-              ),
+          onTap: () =>
+              _showThemeModePicker(context, activatedColor, inactivatedColor),
         ),
         CustomBar(
           context.l10n!.language,
           FluentIcons.translate_24_filled,
-          onTap:
-              () => _showLanguagePicker(
-                context,
-                activatedColor,
-                inactivatedColor,
-              ),
+          onTap: () =>
+              _showLanguagePicker(context, activatedColor, inactivatedColor),
         ),
         CustomBar(
           context.l10n!.audioQuality,
           Icons.music_note,
-          onTap:
-              () => _showAudioQualityPicker(
-                context,
-                activatedColor,
-                inactivatedColor,
-              ),
+          onTap: () => _showAudioQualityPicker(
+            context,
+            activatedColor,
+            inactivatedColor,
+          ),
         ),
         ValueListenableBuilder<bool>(
           valueListenable: useProxy,
@@ -195,6 +186,22 @@ class SettingsPage extends StatelessWidget {
             );
           },
         ),
+        if (!isFdroidBuild)
+          ValueListenableBuilder<bool?>(
+            valueListenable: shouldWeCheckUpdates,
+            builder: (_, value, __) {
+              return CustomBar(
+                context.l10n!.automaticUpdateChecks,
+                FluentIcons.arrow_sync_24_filled,
+                borderRadius: commonCustomBarRadiusLast,
+                trailing: Switch(
+                  value: value ?? false,
+                  onChanged: (value) =>
+                      _toggleAutomaticUpdateChecks(context, value),
+                ),
+              );
+            },
+          ),
       ],
     );
   }
@@ -245,8 +252,8 @@ class SettingsPage extends StatelessWidget {
               borderRadius: commonCustomBarRadiusLast,
               trailing: Switch(
                 value: value,
-                onChanged:
-                    (value) => _toggleDefaultRecommendations(context, value),
+                onChanged: (value) =>
+                    _toggleDefaultRecommendations(context, value),
               ),
             );
           },
@@ -350,8 +357,8 @@ class SettingsPage extends StatelessWidget {
                 color: Colors.transparent,
                 child: InkWell(
                   borderRadius: BorderRadius.circular(15),
-                  onTap:
-                      () => launchURL(Uri.parse('https://ko-fi.com/gokadzev')),
+                  onTap: () =>
+                      launchURL(Uri.parse('https://ko-fi.com/gokadzev')),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                       vertical: 12,
@@ -470,10 +477,9 @@ class SettingsPage extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 25,
-                  backgroundColor:
-                      themeMode == ThemeMode.light
-                          ? color.withAlpha(150)
-                          : color,
+                  backgroundColor: themeMode == ThemeMode.light
+                      ? color.withAlpha(150)
+                      : color,
                 ),
                 if (isSelected)
                   Icon(
@@ -531,10 +537,9 @@ class SettingsPage extends StatelessWidget {
     final availableLanguages = appLanguages.keys.toList();
     final activeLanguageCode = Localizations.localeOf(context).languageCode;
     final activeScriptCode = Localizations.localeOf(context).scriptCode;
-    final activeLanguageFullCode =
-        activeScriptCode != null
-            ? '$activeLanguageCode-$activeScriptCode'
-            : activeLanguageCode;
+    final activeLanguageFullCode = activeScriptCode != null
+        ? '$activeLanguageCode-$activeScriptCode'
+        : activeLanguageCode;
 
     showCustomBottomSheet(
       context,
@@ -546,10 +551,9 @@ class SettingsPage extends StatelessWidget {
         itemBuilder: (context, index) {
           final language = availableLanguages[index];
           final newLocale = getLocaleFromLanguageCode(appLanguages[language]);
-          final newLocaleFullCode =
-              newLocale.scriptCode != null
-                  ? '${newLocale.languageCode}-${newLocale.scriptCode}'
-                  : newLocale.languageCode;
+          final newLocaleFullCode = newLocale.scriptCode != null
+              ? '${newLocale.languageCode}-${newLocale.scriptCode}'
+              : newLocale.languageCode;
 
           final borderRadius = getItemBorderRadius(
             index,
@@ -633,10 +637,9 @@ class SettingsPage extends StatelessWidget {
   void _togglePredictiveBack(BuildContext context, bool value) {
     addOrUpdateData('settings', 'predictiveBack', value);
     predictiveBack.value = value;
-    transitionsBuilder =
-        value
-            ? const PredictiveBackPageTransitionsBuilder()
-            : const CupertinoPageTransitionsBuilder();
+    transitionsBuilder = value
+        ? const PredictiveBackPageTransitionsBuilder()
+        : const CupertinoPageTransitionsBuilder();
     Musify.updateAppState(context);
     showToast(context, context.l10n!.settingChangedMsg);
   }
@@ -664,6 +667,12 @@ class SettingsPage extends StatelessWidget {
     showToast(context, context.l10n!.settingChangedMsg);
   }
 
+  void _toggleAutomaticUpdateChecks(BuildContext context, bool value) {
+    addOrUpdateData('settings', 'shouldWeCheckUpdates', value);
+    shouldWeCheckUpdates.value = value;
+    showToast(context, context.l10n!.settingChangedMsg);
+  }
+
   void _toggleDefaultRecommendations(BuildContext context, bool value) {
     addOrUpdateData('settings', 'defaultRecommendations', value);
     defaultRecommendations.value = value;
@@ -678,13 +687,12 @@ class SettingsPage extends StatelessWidget {
           submitMessage: context.l10n!.clear,
           confirmationMessage: context.l10n!.clearSearchHistoryQuestion,
           onCancel: () => {Navigator.of(context).pop()},
-          onSubmit:
-              () => {
-                Navigator.of(context).pop(),
-                searchHistoryNotifier.value = [],
-                deleteData('user', 'searchHistory'),
-                showToast(context, '${context.l10n!.searchHistoryMsg}!'),
-              },
+          onSubmit: () => {
+            Navigator.of(context).pop(),
+            searchHistoryNotifier.value = [],
+            deleteData('user', 'searchHistory'),
+            showToast(context, '${context.l10n!.searchHistoryMsg}!'),
+          },
         );
       },
     );
@@ -698,13 +706,12 @@ class SettingsPage extends StatelessWidget {
           submitMessage: context.l10n!.clear,
           confirmationMessage: context.l10n!.clearRecentlyPlayedQuestion,
           onCancel: () => {Navigator.of(context).pop()},
-          onSubmit:
-              () => {
-                Navigator.of(context).pop(),
-                userRecentlyPlayed = [],
-                deleteData('user', 'recentlyPlayedSongs'),
-                showToast(context, '${context.l10n!.recentlyPlayedMsg}!'),
-              },
+          onSubmit: () => {
+            Navigator.of(context).pop(),
+            userRecentlyPlayed = [],
+            deleteData('user', 'recentlyPlayedSongs'),
+            showToast(context, '${context.l10n!.recentlyPlayedMsg}!'),
+          },
         );
       },
     );

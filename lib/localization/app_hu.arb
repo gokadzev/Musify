@@ -16,6 +16,7 @@
   "audioQuality": "Hangminőség",
   "audioQualityMsg": "Hang minősége frissítva",
   "automaticSongPicker": "Automatikus zene választó",
+  "automaticUpdateChecks": "Automatic update checks",
   "backToFavorites": "Vissza a kedvencekhez",
   "backedupSuccess": "Adatok sikeresen biztonsági mentve",
   "backgroundPlay": "Lejátszás a háttérben",

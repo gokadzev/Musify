@@ -16,6 +16,7 @@
   "audioQuality": "Качество звука",
   "audioQualityMsg": "Качество звука изменено",
   "automaticSongPicker": "Автовыбор следующего трека",
+  "automaticUpdateChecks": "Automatic update checks",
   "backToFavorites": "Back to favorites",
   "backedupSuccess": "Резервное копирование успешно выполнено",
   "backgroundPlay": "Background play",

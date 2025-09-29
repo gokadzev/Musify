@@ -16,6 +16,7 @@
   "audioQuality": "오디오 품질",
   "audioQualityMsg": "오디오 품질이 성공적으로 변경되었음",
   "automaticSongPicker": "자동 노래 선택기",
+  "automaticUpdateChecks": "Automatic update checks",
   "backToFavorites": "즐겨찾기로 돌아가기",
   "backedupSuccess": "데이터가 성공적으로 백업되었음",
   "backgroundPlay": "백그라운드 재생",

@@ -16,6 +16,7 @@
   "audioQuality": "音質",
   "audioQualityMsg": "音質更新成功",
   "automaticSongPicker": "自動歌曲選擇器",
+  "automaticUpdateChecks": "Automatic update checks",
   "backToFavorites": "Back to favorites",
   "backedupSuccess": "數據備份成功",
   "backgroundPlay": "Background play",

@@ -16,6 +16,7 @@
   "audioQuality": "音質",
   "audioQualityMsg": "音質を変更しました",
   "automaticSongPicker": "自動で曲選択",
+  "automaticUpdateChecks": "Automatic update checks",
   "backToFavorites": "お気に入りに戻す",
   "backedupSuccess": "データを正常にバックアップしました",
   "backgroundPlay": "バックグラウンド再生",

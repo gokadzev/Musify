@@ -16,6 +16,7 @@
   "audioQuality": "Ljudkvalitet",
   "audioQualityMsg": "Ljudkvaliteten uppdaterad",
   "automaticSongPicker": "Automatisk låtväljare",
+  "automaticUpdateChecks": "Automatic update checks",
   "backToFavorites": "Tillbaka till favoriter",
   "backedupSuccess": "Data har säkerhetskopierats",
   "backgroundPlay": "Bakgrundsuppspelning",
