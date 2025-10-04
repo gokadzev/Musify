@@ -26,6 +26,7 @@ import 'dart:io';
 import 'package:flutter/widgets.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
+import 'package:musify/API/clients.dart';
 import 'package:musify/DB/albums.db.dart';
 import 'package:musify/DB/playlists.db.dart';
 import 'package:musify/extensions/l10n.dart';
@@ -90,6 +91,8 @@ final lyrics = ValueNotifier<String?>(null);
 String? lastFetchedLyrics;
 
 int activeSongId = 0;
+
+final _clients = [customAndroidVr];
 
 Future<List> fetchSongsList(String searchQuery) async {
   try {
@@ -951,7 +954,7 @@ Future<AudioOnlyStreamInfo?> getSongManifest(String? songId) async {
           .timeout(const Duration(seconds: 12));
     } else {
       manifest = await _yt.videos.streams
-          .getManifest(songId, ytClients: [YoutubeApiClient.androidVr])
+          .getManifest(songId, ytClients: _clients)
           .timeout(const Duration(seconds: 12));
     }
     final audioStream = manifest?.audioOnly;
@@ -1019,7 +1022,7 @@ Future<String?> getSong(String songId, bool isLive) async {
           .timeout(const Duration(seconds: 12));
     } else {
       manifest = await _yt.videos.streams
-          .getManifest(songId, ytClients: [YoutubeApiClient.androidVr])
+          .getManifest(songId, ytClients: _clients)
           .timeout(const Duration(seconds: 12));
     }
     final audioStreams = manifest?.audioOnly;
