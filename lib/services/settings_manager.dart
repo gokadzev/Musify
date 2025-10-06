@@ -22,6 +22,7 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:musify/screens/playlist_page.dart';
 import 'package:musify/utilities/utils.dart';
 
 // Preferences
@@ -80,6 +81,10 @@ Locale languageSetting = getLocaleFromLanguageCode(
 
 final themeModeSetting =
     Hive.box('settings').get('themeMode', defaultValue: 'dark') as String;
+
+String playlistSortSetting = Hive.box(
+  'settings',
+).get('playlistSortType', defaultValue: PlaylistSortType.title.name);
 
 Color primaryColorSetting = Color(
   Hive.box('settings').get('accentColor', defaultValue: 0xff91cef4),

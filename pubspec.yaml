@@ -29,6 +29,7 @@ dependencies:
   hive_flutter: ^1.1.0
   html: ^0.15.6
   http: ^1.5.0
+  infinite_scroll_pagination: ^5.1.1
   intl: ^0.20.2
   just_audio: 0.10.5
   path_provider: ^2.1.5
