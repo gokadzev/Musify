@@ -16,6 +16,7 @@
   "audioQuality": "音質",
   "audioQualityMsg": "音質を変更しました",
   "automaticSongPicker": "自動で曲選択",
+  "automaticUpdateChecks": "Automatic update checks",
   "backToFavorites": "お気に入りに戻す",
   "backedupSuccess": "データを正常にバックアップしました",
   "backgroundPlay": "バックグラウンド再生",
@@ -24,6 +25,7 @@
   "becomeSponsor": "開発を支援",
   "cacheMsg": "キャッシュを消去しました",
   "cancel": "キャンセル",
+  "checkForUpdates": "Check for Updates?",
   "chooseBackupDir": "バックアップ先のフォルダを選択",
   "chooseBackupFiles": "バックアップファイルを選択",
   "clear": "消去",
@@ -53,6 +55,7 @@
   "downloadPlaylist": "再生リストをダウンロード",
   "dynamicColor": "差し色を動的に変更 (Android 12以上)",
   "emptyFolderMsg": "このフォルダーは空です。再生リストを追加して好きな音楽を整理しよう。",
+  "enableUpdateChecksDescription": "Would you like Musify to check for updates automatically from GitHub releases? You can always check for updates manually from the settings",
   "enterFolderName": "フォルダー名を入力してください",
   "error": "不明のエラーが発生",
   "folderAlreadyExists": "このフォルダー名は既にあります",
@@ -76,6 +79,7 @@
   "name": "名前",
   "newAnnouncement": "新しいお知らせを掲載",
   "newFolder": "新規フォルダー",
+  "no": "No",
   "noCustomPlaylists": "まだ再生リストを作成していません",
   "noPlaylistsAdded": "まだ再生リストは追加されていません",
   "noSongsInQueue": "キュー内に曲なし",
@@ -142,5 +146,6 @@
   "update": "更新",
   "useProxy": "Use proxy",
   "userPlaylists": "再生リスト",
+  "yes": "Yes",
   "youtubePlaylistLinkOrId": "YouTube 再生リストのリンクかID "
 }

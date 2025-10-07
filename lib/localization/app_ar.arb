@@ -16,6 +16,7 @@
   "audioQuality": "جودة الصوت",
   "audioQualityMsg": "تم تغيير جودة الصوت",
   "automaticSongPicker": "Automatic song picker",
+  "automaticUpdateChecks": "Automatic update checks",
   "backToFavorites": "Back to favorites",
   "backedupSuccess": "تم النسخ الاحتياطي بنجاح",
   "backgroundPlay": "Background play",
@@ -24,6 +25,7 @@
   "becomeSponsor": "كن راعيًا",
   "cacheMsg": "تم مسح ذاكرة التخزين المؤقت",
   "cancel": "إلغاء",
+  "checkForUpdates": "Check for Updates?",
   "chooseBackupDir": "اختر دليل النسخ الاحتياطي",
   "chooseBackupFiles": "Choose backup files",
   "clear": "مسح",
@@ -53,6 +55,7 @@
   "downloadPlaylist": "Download playlist",
   "dynamicColor": "لون التمييز الدينامي (Android 12+)",
   "emptyFolderMsg": "This folder is empty. Add playlists to organize your music.",
+  "enableUpdateChecksDescription": "Would you like Musify to check for updates automatically from GitHub releases? You can always check for updates manually from the settings",
   "enterFolderName": "Please enter a folder name",
   "error": "حدث خطأ ما",
   "folderAlreadyExists": "A folder with this name already exists",
@@ -76,6 +79,7 @@
   "name": "Name",
   "newAnnouncement": "New announcement posted",
   "newFolder": "New folder",
+  "no": "No",
   "noCustomPlaylists": "You haven't created any custom playlists yet",
   "noPlaylistsAdded": "No playlists added yet",
   "noSongsInQueue": "No songs in queue",
@@ -142,5 +146,6 @@
   "update": "Update",
   "useProxy": "Use proxy",
   "userPlaylists": "قوائم تشغيل المستخدم",
+  "yes": "Yes",
   "youtubePlaylistLinkOrId": "YouTube playlist link or ID "
 }

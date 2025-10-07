@@ -117,7 +117,6 @@ class _DesktopLayout extends StatelessWidget {
               const SizedBox(height: 5),
               if (!(metadata.extras?['isLive'] ?? false))
                 NowPlayingControls(
-                  context: context,
                   size: size,
                   audioId: metadata.extras?['ytid'],
                   adjustedIconSize: adjustedIconSize,
@@ -156,7 +155,6 @@ class _MobileLayout extends StatelessWidget {
         NowPlayingArtwork(size: size, metadata: metadata),
         if (!(metadata.extras?['isLive'] ?? false))
           NowPlayingControls(
-            context: context,
             size: size,
             audioId: metadata.extras?['ytid'],
             adjustedIconSize: adjustedIconSize,
@@ -165,7 +163,6 @@ class _MobileLayout extends StatelessWidget {
           ),
         if (!isLargeScreen) ...[
           BottomActionsRow(
-            context: context,
             audioId: metadata.extras?['ytid'],
             metadata: metadata,
             iconSize: adjustedMiniIconSize,
@@ -339,14 +336,12 @@ class MarqueeTextWidget extends StatelessWidget {
 class NowPlayingControls extends StatelessWidget {
   const NowPlayingControls({
     super.key,
-    required this.context,
     required this.size,
     required this.audioId,
     required this.adjustedIconSize,
     required this.adjustedMiniIconSize,
     required this.metadata,
   });
-  final BuildContext context;
   final Size size;
   final dynamic audioId;
   final double adjustedIconSize;
@@ -389,7 +384,6 @@ class NowPlayingControls extends StatelessWidget {
           const PositionSlider(),
           const Spacer(),
           PlayerControlButtons(
-            context: context,
             metadata: metadata,
             iconSize: adjustedIconSize,
             miniIconSize: adjustedMiniIconSize,
@@ -495,12 +489,10 @@ class _PositionSliderState extends State<PositionSlider> {
 class PlayerControlButtons extends StatelessWidget {
   const PlayerControlButtons({
     super.key,
-    required this.context,
     required this.metadata,
     required this.iconSize,
     required this.miniIconSize,
   });
-  final BuildContext context;
   final MediaItem metadata;
   final double iconSize;
   final double miniIconSize;
@@ -661,13 +653,11 @@ class PlayerControlButtons extends StatelessWidget {
 class BottomActionsRow extends StatelessWidget {
   const BottomActionsRow({
     super.key,
-    required this.context,
     required this.audioId,
     required this.metadata,
     required this.iconSize,
     required this.isLargeScreen,
   });
-  final BuildContext context;
   final dynamic audioId;
   final MediaItem metadata;
   final double iconSize;
@@ -724,12 +714,15 @@ class BottomActionsRow extends StatelessWidget {
   }
 
   Widget _buildAddToPlaylistButton(Color primaryColor) {
-    return IconButton.filledTonal(
-      icon: Icon(Icons.add, color: primaryColor),
-      iconSize: iconSize,
-      onPressed: () {
-        showAddToPlaylistDialog(context, mediaItemToMap(metadata));
-      },
+    return Builder(
+      builder:
+          (ctx) => IconButton.filledTonal(
+            icon: Icon(Icons.add, color: primaryColor),
+            iconSize: iconSize,
+            onPressed: () {
+              showAddToPlaylistDialog(ctx, mediaItemToMap(metadata));
+            },
+          ),
     );
   }
 

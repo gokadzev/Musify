@@ -78,9 +78,15 @@ class MusifyAudioHandler extends BaseAudioHandler {
   // Performance constants
   static const int _maxHistorySize = 50;
   static const int _queueLookahead = 3;
+  static const int _maxConcurrentPreloads = 2;
   static const Duration _errorRetryDelay = Duration(seconds: 2);
   static const Duration _songTransitionTimeout = Duration(seconds: 30);
   static const Duration _debounceInterval = Duration(milliseconds: 150);
+
+  // Preloading state management
+  int _activePreloadCount = 0;
+  final Set<String> _preloadingYtIds = <String>{};
+  final Set<String> _preloadedYtIds = <String>{};
 
   Stream<PositionData> get positionDataStream =>
       Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
@@ -221,14 +227,13 @@ class MusifyAudioHandler extends BaseAudioHandler {
         // Update queue with duration info only if we're still on the same song
         if (capturedQueueIndex == _currentQueueIndex &&
             capturedTransitionCounter == _songTransitionCounter) {
-          final mediaItems =
-              _queueList.asMap().entries.map((entry) {
-                final song = entry.value;
-                final mediaItem = mapToMediaItem(song);
-                return entry.key == capturedQueueIndex
-                    ? mediaItem.copyWith(duration: duration)
-                    : mediaItem;
-              }).toList();
+          final mediaItems = _queueList.asMap().entries.map((entry) {
+            final song = entry.value;
+            final mediaItem = mapToMediaItem(song);
+            return entry.key == capturedQueueIndex
+                ? mediaItem.copyWith(duration: duration)
+                : mediaItem;
+          }).toList();
 
           queue.add(mediaItems);
         }
@@ -285,10 +290,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
               updatePosition: audioPlayer.position,
               bufferedPosition: audioPlayer.bufferedPosition,
               speed: audioPlayer.speed,
-              queueIndex:
-                  _currentQueueIndex < _queueList.length
-                      ? _currentQueueIndex
-                      : null,
+              queueIndex: _currentQueueIndex < _queueList.length
+                  ? _currentQueueIndex
+                  : null,
               updateTime: DateTime.now(),
             ),
           );
@@ -364,10 +368,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
     _isLoadingNextSong = true;
 
     try {
-      final currentSong =
-          _currentQueueIndex < _queueList.length
-              ? _queueList[_currentQueueIndex]
-              : null;
+      final currentSong = _currentQueueIndex < _queueList.length
+          ? _queueList[_currentQueueIndex]
+          : null;
 
       if (currentSong != null && currentSong['ytid'] != null) {
         getSimilarSong(currentSong['ytid']);
@@ -447,6 +450,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       }
 
       _updateQueueMediaItems();
+      _cleanupOldPreloadedSongs(); // Clean up songs no longer in queue
 
       if (!audioPlayer.playing && _queueList.length == 1) {
         await _playFromQueue(0);
@@ -454,6 +458,51 @@ class MusifyAudioHandler extends BaseAudioHandler {
     } catch (e, stackTrace) {
       logger.log('Error adding to queue', e, stackTrace);
     }
+  }
+
+  void _cleanupOldPreloadedSongs() {
+    Future.microtask(() async {
+      try {
+        // Get ytids of songs currently in queue
+        final queueYtIds = _queueList
+            .map((song) => song['ytid']?.toString())
+            .where((ytid) => ytid != null)
+            .toSet();
+
+        // Find preloaded songs no longer in queue
+        final oldPreloadedSongs = _preloadedYtIds
+            .where((ytid) => !queueYtIds.contains(ytid))
+            .toList();
+
+        // Clean up old preloaded songs (keep cache but remove from tracking)
+        for (final ytid in oldPreloadedSongs) {
+          _preloadedYtIds.remove(ytid);
+        }
+
+        // Also clean up any stale preloading entries
+        final stalePrelodingEntries = _preloadingYtIds
+            .where((ytid) => !queueYtIds.contains(ytid))
+            .toList();
+
+        for (final ytid in stalePrelodingEntries) {
+          _preloadingYtIds.remove(ytid);
+          _activePreloadCount = (_activePreloadCount - 1).clamp(
+            0,
+            _maxConcurrentPreloads,
+          );
+        }
+
+        if (oldPreloadedSongs.isNotEmpty || stalePrelodingEntries.isNotEmpty) {
+          logger.log(
+            'Cleaned up ${oldPreloadedSongs.length + stalePrelodingEntries.length} old preload entries',
+            null,
+            null,
+          );
+        }
+      } catch (e, stackTrace) {
+        logger.log('Error cleaning up preloaded songs', e, stackTrace);
+      }
+    });
   }
 
   Future<void> addPlaylistToQueue(
@@ -465,6 +514,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       if (replace) {
         _queueList.clear();
         _currentQueueIndex = 0;
+        _resetPreloadingState();
       }
 
       for (final song in songs) {
@@ -539,6 +589,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
     try {
       _queueList.clear();
       _currentQueueIndex = 0;
+      _resetPreloadingState();
       _updateQueueMediaItems();
     } catch (e, stackTrace) {
       logger.log('Error clearing queue', e, stackTrace);
@@ -618,81 +669,96 @@ class MusifyAudioHandler extends BaseAudioHandler {
   void _preloadUpcomingSongs() {
     Future.microtask(() async {
       try {
-        final preloadTasks = <Future<void>>[];
+        // Get songs to preload (next 2-3 in queue)
+        final songsToPreload = <Map>[];
 
         for (var i = 1; i <= _queueLookahead; i++) {
           final nextIndex = _currentQueueIndex + i;
           if (nextIndex < _queueList.length) {
             final nextSong = _queueList[nextIndex];
-            if (nextSong['ytid'] != null && !(nextSong['isOffline'] ?? false)) {
-              final preloadTask = _preloadSingleSong(nextSong)
-                  .timeout(
-                    const Duration(seconds: 10),
-                    onTimeout: () {
-                      logger.log(
-                        'Preload timeout for song ${nextSong['ytid']}',
-                        null,
-                        null,
-                      );
-                    },
-                  )
-                  .catchError((e) {
-                    logger.log(
-                      'Error preloading song ${nextSong['ytid']}',
-                      e,
-                      null,
-                    );
-                  });
+            final ytid = nextSong['ytid'];
 
-              preloadTasks.add(preloadTask);
+            // Only preload if:
+            // 1. Song has valid ytid
+            // 2. Not an offline song
+            // 3. Not already preloaded or preloading
+            if (ytid != null &&
+                !(nextSong['isOffline'] ?? false) &&
+                !_preloadedYtIds.contains(ytid) &&
+                !_preloadingYtIds.contains(ytid)) {
+              songsToPreload.add(nextSong);
             }
           }
         }
 
-        // Run all preload tasks concurrently with overall timeout
-        if (preloadTasks.isNotEmpty) {
-          await Future.wait(preloadTasks)
-              .timeout(
-                const Duration(seconds: 15),
-                onTimeout: () {
-                  logger.log('Preloading batch timeout', null, null);
-                  return <void>[];
-                },
-              )
-              .catchError((e) {
-                logger.log('Error in preload batch', e, null);
-                return <void>[];
-              });
-        }
+        // Preload songs sequentially with concurrency control
+        await _preloadSongsSequentially(songsToPreload);
       } catch (e, stackTrace) {
         logger.log('Error in _preloadUpcomingSongs', e, stackTrace);
       }
     });
   }
 
-  Future<void> _preloadSingleSong(Map nextSong) async {
-    try {
-      final cacheKey =
-          'song_${nextSong['ytid']}_${audioQualitySetting.value}_url';
-
-      // Check if already cached
-      final cachedUrl = getData('cache', cacheKey);
-      if (cachedUrl.toString().isNotEmpty) {
-        return; // Already cached, skip
+  Future<void> _preloadSongsSequentially(List<Map> songsToPreload) async {
+    for (final song in songsToPreload) {
+      // Wait for available slot if at capacity
+      while (_activePreloadCount >= _maxConcurrentPreloads) {
+        await Future.delayed(const Duration(milliseconds: 100));
       }
 
-      final url = await getSong(nextSong['ytid'], nextSong['isLive'] ?? false);
-      if (url != null && url.isNotEmpty) {
-        await addOrUpdateData('cache', cacheKey, url);
-        logger.log(
-          'Successfully preloaded song ${nextSong['ytid']}',
-          null,
-          null,
+      final ytid = song['ytid'];
+      if (ytid == null || _preloadingYtIds.contains(ytid)) {
+        continue;
+      }
+
+      // Start preloading this song (don't await - let it run in background)
+      _preloadSingleSongControlled(song);
+    }
+  }
+
+  void _preloadSingleSongControlled(Map nextSong) {
+    final ytid = nextSong['ytid'];
+    if (ytid == null) return;
+
+    // Mark as preloading
+    _preloadingYtIds.add(ytid);
+    _activePreloadCount++;
+
+    Future.microtask(() async {
+      try {
+        await _preloadSingleSong(nextSong).timeout(
+          const Duration(seconds: 8),
+          onTimeout: () {
+            logger.log('Preload timeout for song $ytid', null, null);
+          },
         );
+      } catch (e) {
+        logger.log('Error preloading song $ytid', e, null);
+      } finally {
+        // Clean up state
+        _preloadingYtIds.remove(ytid);
+        _activePreloadCount--;
+        _preloadedYtIds.add(ytid); // Mark as attempted (success or failure)
       }
-    } catch (e) {
-      // Don't rethrow - let parent handle
-      logger.log('Failed to preload song ${nextSong['ytid']}: $e', null, null);
+    });
+  }
+
+  Future<void> _preloadSingleSong(Map nextSong) async {
+    final ytid = nextSong['ytid'];
+    if (ytid == null) return;
+
+    final cacheKey = 'song_${ytid}_${audioQualitySetting.value}_url';
+
+    // Check if already cached
+    final cachedUrl = await getData('cache', cacheKey);
+    if (cachedUrl != null && cachedUrl.toString().isNotEmpty) return;
+
+    // Fetch and cache the song URL
+    final url = await getSong(ytid, nextSong['isLive'] ?? false);
+    if (url != null && url.isNotEmpty) {
+      await addOrUpdateData('cache', cacheKey, url);
+    } else {
+      logger.log('Preload: Failed to get URL for song $ytid', null, null);
     }
   }
 
@@ -700,10 +766,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
   List<Map> get currentQueue => List.unmodifiable(_queueList);
   List<Map> get playHistory => List.unmodifiable(_historyList);
   int get currentQueueIndex => _currentQueueIndex;
-  Map? get currentSong =>
-      _currentQueueIndex < _queueList.length
-          ? _queueList[_currentQueueIndex]
-          : null;
+  Map? get currentSong => _currentQueueIndex < _queueList.length
+      ? _queueList[_currentQueueIndex]
+      : null;
   bool get hasNext =>
       _currentQueueIndex < _queueList.length - 1 ||
       (playNextSongAutomatically.value && !_isLoadingNextSong);
@@ -748,9 +813,16 @@ class MusifyAudioHandler extends BaseAudioHandler {
       await audioPlayer.stop();
       _lastError = null;
       _consecutiveErrors = 0;
+      _resetPreloadingState();
     } catch (e, stackTrace) {
       logger.log('Error in stop()', e, stackTrace);
     }
+  }
+
+  void _resetPreloadingState() {
+    _activePreloadCount = 0;
+    _preloadingYtIds.clear();
+    _preloadedYtIds.clear();
   }
 
   @override
@@ -1035,6 +1107,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
       } else if (playNextSongAutomatically.value && !_isLoadingNextSong) {
         await _handleAutoPlayNext();
       }
+
+      // Clean up preloaded songs that are now behind us
+      _cleanupOldPreloadedSongs();
     } catch (e, stackTrace) {
       logger.log('Error skipping to next song', e, stackTrace);
     }
@@ -1065,26 +1140,16 @@ class MusifyAudioHandler extends BaseAudioHandler {
   @override
   Future<void> skipToPrevious() async {
     try {
-      // Get current playback position
-      final currentPosition = audioPlayer.position;
-
-      // If the song has been playing for more than 3 seconds, restart it
-      if (currentPosition.inSeconds > 3) {
-        await audioPlayer.seek(Duration.zero);
-        return;
-      }
-
-      // Otherwise, go to previous song
       if (_currentQueueIndex > 0) {
         await _playFromQueue(_currentQueueIndex - 1);
       } else if (_historyList.isNotEmpty) {
-        final previousSong = _historyList.removeAt(0);
-        _queueList.insert(0, previousSong);
+        final lastSong = _historyList.removeLast();
+        _queueList.insert(0, lastSong);
         await _playFromQueue(0);
-      } else if (repeatNotifier.value == AudioServiceRepeatMode.all &&
-          _queueList.isNotEmpty) {
-        await _playFromQueue(_queueList.length - 1);
       }
+
+      // Clean up preloaded songs that are now ahead of us
+      _cleanupOldPreloadedSongs();
     } catch (e, stackTrace) {
       logger.log('Error skipping to previous song', e, stackTrace);
     }

@@ -16,6 +16,7 @@
   "audioQuality": "Ses Kalitesi",
   "audioQualityMsg": "Ses kalitesi değiştirildi",
   "automaticSongPicker": "Otomatik parça seçici",
+  "automaticUpdateChecks": "Automatic update checks",
   "backToFavorites": "Back to favorites",
   "backedupSuccess": "Veri yedeklendi",
   "backgroundPlay": "Background play",
@@ -24,6 +25,7 @@
   "becomeSponsor": "Destek Ol",
   "cacheMsg": "Bellek Temizlendi",
   "cancel": "İptal",
+  "checkForUpdates": "Check for Updates?",
   "chooseBackupDir": "Yedeklemek için klasör seç",
   "chooseBackupFiles": "Yedeklemek için dosyaları seç",
   "clear": "Temizle",
@@ -53,6 +55,7 @@
   "downloadPlaylist": "Çalma Listesini İndir",
   "dynamicColor": "Değişken Vurgu Rengi (Android 12+)",
   "emptyFolderMsg": "This folder is empty. Add playlists to organize your music.",
+  "enableUpdateChecksDescription": "Would you like Musify to check for updates automatically from GitHub releases? You can always check for updates manually from the settings",
   "enterFolderName": "Please enter a folder name",
   "error": "Bir hata oluştu.",
   "folderAlreadyExists": "A folder with this name already exists",
@@ -76,6 +79,7 @@
   "name": "İsim",
   "newAnnouncement": "Yeni duyuru yayımlandı",
   "newFolder": "New folder",
+  "no": "No",
   "noCustomPlaylists": "Henüz çalma listesi oluşturulmadı.",
   "noPlaylistsAdded": "No playlists added yet",
   "noSongsInQueue": "Sırada parça yok",
@@ -142,5 +146,6 @@
   "update": "Update",
   "useProxy": "Use proxy",
   "userPlaylists": "Kullanıcı Listeleri",
+  "yes": "Yes",
   "youtubePlaylistLinkOrId": "YouTube listesi bağlantısı veya ID'si"
 }

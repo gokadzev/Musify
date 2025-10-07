@@ -22,6 +22,8 @@
 import 'dart:convert';
 
 import 'package:musify/main.dart';
+import 'package:musify/services/proxy_manager.dart';
+import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/formatter.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
@@ -37,23 +39,37 @@ class PlaylistSharingService {
 
   static Future<Map> expandCompactPlaylist(Map compactPlaylist) async {
     final List<dynamic> songIds = compactPlaylist['list'];
-    final _yt = YoutubeExplode();
-    final expandedSongs = await Future.wait(
-      songIds.map((ytid) async {
-        try {
-          final video = await _yt.videos.get(ytid);
-          return returnSongLayout(songIds.indexOf(ytid), video);
-        } catch (e, stackTrace) {
-          logger.log('Error expanding song: $ytid', e, stackTrace);
-          return null;
-        }
-      }),
-    );
+    YoutubeExplode? ytClient;
+    try {
+      if (useProxy.value) {
+        ytClient = await ProxyManager().getYoutubeExplodeClient();
+      } else {
+        ytClient = ProxyManager().getClientSync();
+      }
 
-    return {
-      ...compactPlaylist,
-      'list': expandedSongs.where((song) => song != null).toList(),
-    };
+      final expandedSongs = await Future.wait(
+        songIds.map((ytid) async {
+          try {
+            final video = await ytClient!.videos.get(ytid);
+            return returnSongLayout(songIds.indexOf(ytid), video);
+          } catch (e, stackTrace) {
+            logger.log('Error expanding song: $ytid', e, stackTrace);
+            return null;
+          }
+        }),
+      );
+
+      return {
+        ...compactPlaylist,
+        'list': expandedSongs.where((song) => song != null).toList(),
+      };
+    } finally {
+      try {
+        if (useProxy.value) {
+          ytClient?.close();
+        }
+      } catch (_) {}
+    }
   }
 
   static String encodePlaylist(Map playlist) {

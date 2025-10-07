@@ -26,6 +26,7 @@ import 'dart:io';
 import 'package:flutter/widgets.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
+import 'package:musify/API/clients.dart';
 import 'package:musify/DB/albums.db.dart';
 import 'package:musify/DB/playlists.db.dart';
 import 'package:musify/extensions/l10n.dart';
@@ -40,7 +41,8 @@ import 'package:musify/utilities/formatter.dart';
 import 'package:musify/utilities/utils.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
-final _yt = YoutubeExplode();
+// Use ProxyManager's shared client so the global _yt respects the proxy setting.
+YoutubeExplode get _yt => ProxyManager().getClientSync();
 
 List globalSongs = [];
 
@@ -90,23 +92,15 @@ String? lastFetchedLyrics;
 
 int activeSongId = 0;
 
+final _clients = [customAndroidVr];
+
 Future<List> fetchSongsList(String searchQuery) async {
   try {
-    // Try to get data from cache first
-    final cacheKey = 'search_$searchQuery';
-    final cachedResults = await getData('cache', cacheKey);
-
-    if (cachedResults != null) {
-      return cachedResults;
-    }
-
     // If not in cache, perform the search
     final List<Video> searchResults = await _yt.search.search(searchQuery);
-    final songsList =
-        searchResults.map((video) => returnSongLayout(0, video)).toList();
-
-    // Cache the results
-    await addOrUpdateData('cache', cacheKey, songsList);
+    final songsList = searchResults
+        .map((video) => returnSongLayout(0, video))
+        .toList();
 
     return songsList;
   } catch (e, stackTrace) {
@@ -131,29 +125,25 @@ Future<List> getRecommendedSongs() async {
 Future<List> _getRecommendationsFromRecentlyPlayed() async {
   final recent = userRecentlyPlayed.take(3).toList();
 
-  final futures =
-      recent.map((songData) async {
-        try {
-          final song = await _yt.videos.get(songData['ytid']);
-          final relatedSongs = await _yt.videos.getRelatedVideos(song) ?? [];
-          return relatedSongs
-              .take(3)
-              .map((s) => returnSongLayout(0, s))
-              .toList();
-        } catch (e, stackTrace) {
-          logger.log(
-            'Error getting related videos for ${songData['ytid']}',
-            e,
-            stackTrace,
-          );
-          return <Map>[];
-        }
-      }).toList();
+  final futures = recent.map((songData) async {
+    try {
+      final song = await _yt.videos.get(songData['ytid']);
+      final relatedSongs = await _yt.videos.getRelatedVideos(song) ?? [];
+      return relatedSongs.take(3).map((s) => returnSongLayout(0, s)).toList();
+    } catch (e, stackTrace) {
+      logger.log(
+        'Error getting related videos for ${songData['ytid']}',
+        e,
+        stackTrace,
+      );
+      return <Map>[];
+    }
+  }).toList();
 
   final results = await Future.wait(futures);
   // Limit to 15 items max for performance
-  final playlistSongs =
-      results.expand((list) => list).take(15).toList()..shuffle();
+  final playlistSongs = results.expand((list) => list).take(15).toList()
+    ..shuffle();
   return playlistSongs;
 }
 
@@ -628,45 +618,73 @@ Future<List> getPlaylists({
   // and augment with online search results.
   if (query != null && playlistsNum == null) {
     final lowercaseQuery = query.toLowerCase();
-    final filteredPlaylists =
-        playlists.where((playlist) {
-          final title = playlist['title'].toLowerCase();
-          final matchesQuery = title.contains(lowercaseQuery);
-          final matchesType =
-              type == 'all' ||
-              (type == 'album' && playlist['isAlbum'] == true) ||
-              (type == 'playlist' && playlist['isAlbum'] != true);
-          return matchesQuery && matchesType;
-        }).toList();
+    final filteredPlaylists = playlists.where((playlist) {
+      final title = playlist['title'].toLowerCase();
+      final matchesQuery = title.contains(lowercaseQuery);
+      final matchesType =
+          type == 'all' ||
+          (type == 'album' && playlist['isAlbum'] == true) ||
+          (type == 'playlist' && playlist['isAlbum'] != true);
+      return matchesQuery && matchesType;
+    }).toList();
 
     final searchTerm = type == 'album' ? '$query album' : query;
-    final searchResults = await _yt.search.searchContent(
-      searchTerm,
-      filter: TypeFilters.playlist,
-    );
+
+    late final Iterable searchResultsIterable;
+    try {
+      searchResultsIterable = await _yt.search.searchContent(
+        searchTerm,
+        filter: TypeFilters.playlist,
+      );
+    } catch (e, st) {
+      logger.log('Error while searching online songs:$e', e, st);
+      // Attempt proxy fallback if enabled
+      if (useProxy.value) {
+        final proxyYt = await ProxyManager().getYoutubeExplodeClient();
+        if (proxyYt != null) {
+          try {
+            searchResultsIterable = await proxyYt.search.searchContent(
+              searchTerm,
+              filter: TypeFilters.playlist,
+            );
+          } catch (e2, st2) {
+            logger.log('Proxy search failed:$e2', e2, st2);
+            searchResultsIterable = <dynamic>[];
+          } finally {
+            try {
+              proxyYt.close();
+            } catch (_) {}
+          }
+        } else {
+          searchResultsIterable = <dynamic>[];
+        }
+      } else {
+        searchResultsIterable = <dynamic>[];
+      }
+    }
 
     // Avoid duplicate online playlists.
-    final existingYtIds =
-        onlinePlaylists.map((p) => p['ytid'] as String).toSet();
+    final existingYtIds = onlinePlaylists
+        .map((p) => p['ytid'] as String)
+        .toSet();
 
-    final newPlaylists =
-        searchResults
-            .whereType<SearchPlaylist>()
-            .map((playlist) {
-              final playlistMap = {
-                'ytid': playlist.id.toString(),
-                'title': playlist.title,
-                'source': 'youtube',
-                'list': [],
-              };
-              if (!existingYtIds.contains(playlistMap['ytid'])) {
-                existingYtIds.add(playlistMap['ytid'].toString());
-                return playlistMap;
-              }
-              return null;
-            })
-            .whereType<Map<String, dynamic>>()
-            .toList();
+    final newPlaylists = searchResultsIterable
+        .whereType<SearchPlaylist>()
+        .map((playlist) {
+          final playlistMap = {
+            'ytid': playlist.id.toString(),
+            'title': playlist.title,
+            'source': 'youtube',
+            'list': [],
+          };
+          if (!existingYtIds.contains(playlistMap['ytid'])) {
+            existingYtIds.add(playlistMap['ytid'].toString());
+            return playlistMap;
+          }
+          return null;
+        })
+        .whereType<Map<String, dynamic>>()
+        .toList();
     onlinePlaylists.addAll(newPlaylists);
 
     // Merge online playlists that match the query.
@@ -760,13 +778,12 @@ Future<List<Map<String, int>>> getSkipSegments(String id) async {
     );
     if (res.body != 'Not Found') {
       final data = jsonDecode(res.body);
-      final segments =
-          data.map((obj) {
-            return Map.castFrom<String, dynamic, String, int>({
-              'start': obj['segment'].first.toInt(),
-              'end': obj['segment'].last.toInt(),
-            });
-          }).toList();
+      final segments = data.map((obj) {
+        return Map.castFrom<String, dynamic, String, int>({
+          'start': obj['segment'].first.toInt(),
+          'end': obj['segment'].last.toInt(),
+        });
+      }).toList();
       return List.castFrom<dynamic, Map<String, int>>(segments);
     } else {
       return [];
@@ -892,8 +909,9 @@ Future<Map?> getPlaylistInfoForWidget(
     if (playlist['list'] == null ||
         (playlist['list'] is List && (playlist['list'] as List).isEmpty)) {
       try {
-        final playlistImage =
-            playlist['isAlbum'] == true ? playlist['image'] : null;
+        final playlistImage = playlist['isAlbum'] == true
+            ? playlist['image']
+            : null;
         playlist['list'] = await getSongsFromPlaylist(
           playlist['ytid'],
           playlistImage: playlistImage,
@@ -928,12 +946,16 @@ Future<AudioOnlyStreamInfo?> getSongManifest(String? songId) async {
       logger.log('getSongManifest: songId is null or empty', null, null);
       return null;
     }
-    final useProxySetting = Hive.box('settings').get('useProxy', defaultValue: false);
+
     StreamManifest? manifest;
-    if (useProxySetting) {
-      manifest = await ProxyManager().getSongManifest(songId).timeout(const Duration(seconds: 12));
+    if (useProxy.value) {
+      manifest = await ProxyManager()
+          .getSongManifest(songId)
+          .timeout(const Duration(seconds: 12));
     } else {
-      manifest = await _yt.videos.streams.getManifest(songId).timeout(const Duration(seconds: 12));
+      manifest = await _yt.videos.streams
+          .getManifest(songId, ytClients: _clients)
+          .timeout(const Duration(seconds: 12));
     }
     final audioStream = manifest?.audioOnly;
     if (audioStream == null || audioStream.isEmpty) {
@@ -993,12 +1015,15 @@ Future<String?> getSong(String songId, bool isLive) async {
     }
 
     // Get fresh URL
-    final useProxySetting = Hive.box('settings').get('useProxy', defaultValue: false);
     StreamManifest? manifest;
-    if (useProxySetting) {
-      manifest = await ProxyManager().getSongManifest(songId).timeout(const Duration(seconds: 12));
+    if (useProxy.value) {
+      manifest = await ProxyManager()
+          .getSongManifest(songId)
+          .timeout(const Duration(seconds: 12));
     } else {
-      manifest = await _yt.videos.streams.getManifest(songId).timeout(const Duration(seconds: 12));
+      manifest = await _yt.videos.streams
+          .getManifest(songId, ytClients: _clients)
+          .timeout(const Duration(seconds: 12));
     }
     final audioStreams = manifest?.audioOnly;
     if (audioStreams == null || audioStreams.isEmpty) {
@@ -1096,6 +1121,7 @@ Future<bool> makeSongOffline(dynamic song, {bool fromPlaylist = false}) async {
         );
         return false;
       }
+
       final stream = _yt.videos.streamsClient.get(audioManifest);
       final fileStream = audioFile.openWrite();
       await stream.pipe(fileStream);

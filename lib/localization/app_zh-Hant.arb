@@ -16,6 +16,7 @@
   "audioQuality": "音質",
   "audioQualityMsg": "音質更新成功",
   "automaticSongPicker": "自動歌曲選擇器",
+  "automaticUpdateChecks": "Automatic update checks",
   "backToFavorites": "Back to favorites",
   "backedupSuccess": "數據備份成功",
   "backgroundPlay": "Background play",
@@ -24,6 +25,7 @@
   "becomeSponsor": "成為贊助商",
   "cacheMsg": "緩存已清除",
   "cancel": "取消",
+  "checkForUpdates": "Check for Updates?",
   "chooseBackupDir": "選擇備份文件夾",
   "chooseBackupFiles": "選擇備份文件",
   "clear": "清除",
@@ -53,6 +55,7 @@
   "downloadPlaylist": "Download playlist",
   "dynamicColor": "動態顏色（安卓 12+）",
   "emptyFolderMsg": "This folder is empty. Add playlists to organize your music.",
+  "enableUpdateChecksDescription": "Would you like Musify to check for updates automatically from GitHub releases? You can always check for updates manually from the settings",
   "enterFolderName": "Please enter a folder name",
   "error": "發生錯誤，請重試。",
   "folderAlreadyExists": "A folder with this name already exists",
@@ -76,6 +79,7 @@
   "name": "名稱",
   "newAnnouncement": "發布了新公告",
   "newFolder": "New folder",
+  "no": "No",
   "noCustomPlaylists": "尚未創建任何自定義播放列表",
   "noPlaylistsAdded": "No playlists added yet",
   "noSongsInQueue": "隊列中沒有歌曲",
@@ -142,5 +146,6 @@
   "update": "Update",
   "useProxy": "Use proxy",
   "userPlaylists": "我的播放列表",
+  "yes": "Yes",
   "youtubePlaylistLinkOrId": "YouTube 播放列表鏈接或 ID"
 }

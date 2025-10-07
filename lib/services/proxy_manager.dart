@@ -32,7 +32,43 @@ import 'package:musify/services/settings_manager.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 class ProxyManager {
-  ProxyManager();
+  // Singleton
+  factory ProxyManager() => _instance;
+  ProxyManager._internal() {
+    // initialize default youtube client and subscribe to proxy toggle
+    _defaultYt = YoutubeExplode();
+    _sharedYt = _defaultYt;
+    // If proxy is already enabled at startup, initialize the shared proxy-backed client.
+    if (useProxy.value) {
+      // Fire-and-forget initialization; listener will also handle future toggles.
+      _initSharedProxyClient();
+    }
+    // react to proxy setting changes
+    useProxy.addListener(() async {
+      if (useProxy.value) {
+        await _initSharedProxyClient();
+      } else {
+        // switch back to default client
+        if (_sharedYt != _defaultYt) {
+          try {
+            _sharedYt?.close();
+          } catch (_) {}
+          _sharedYt = _defaultYt;
+        }
+      }
+    });
+  }
+
+  static final ProxyManager _instance = ProxyManager._internal();
+
+  /// Default non-proxy YoutubeExplode instance (long-lived)
+  late final YoutubeExplode _defaultYt;
+
+  /// Currently active shared YoutubeExplode - either [_defaultYt] or a
+  /// proxy-backed client. Use [getClientSync] to access.
+  YoutubeExplode? _sharedYt;
+
+  bool _initializingSharedClient = false;
 
   Future<void>? _fetchingProxiesFuture;
   bool _hasFetched = false;
@@ -44,11 +80,10 @@ class ProxyManager {
   Future<void> _fetchProxies() async {
     if (!useProxy.value) return;
     try {
-      final fetchTasks =
-          <Future>[]
-            ..add(_fetchSpysMe())
-            ..add(_fetchProxyScrape())
-            ..add(_fetchOpenProxyList());
+      final fetchTasks = <Future>[]
+        ..add(_fetchSpysMe())
+        ..add(_fetchProxyScrape())
+        ..add(_fetchOpenProxyList());
       _fetchingProxiesFuture = Future.wait(fetchTasks);
       await _fetchingProxiesFuture?.whenComplete(() {
         _hasFetched = true;
@@ -59,13 +94,69 @@ class ProxyManager {
     }
   }
 
+  /// Initialize a shared YoutubeExplode client that uses a working proxy.
+  Future<void> _initSharedProxyClient({int timeoutSeconds = 5}) async {
+    if (_initializingSharedClient) return;
+    _initializingSharedClient = true;
+    try {
+      // Ensure proxies available
+      if (!_hasFetched) await _fetchProxies();
+      if (_proxiesByCountry.isEmpty) await _fetchProxies();
+
+      // Try to acquire a working proxy and create a client
+      do {
+        final proxy = await _getRandomProxy();
+        if (proxy == null) break;
+        HttpClient? httpClient;
+        IOClient? ioClient;
+        try {
+          httpClient = HttpClient()
+            ..connectionTimeout = Duration(seconds: timeoutSeconds)
+            ..findProxy = (_) {
+              return 'PROXY ${proxy.address}; DIRECT';
+            }
+            ..badCertificateCallback = (context, _context, ___) {
+              return false;
+            };
+
+          ioClient = IOClient(httpClient);
+          final ytClient = YoutubeExplode(YoutubeHttpClient(ioClient));
+
+          // Set as shared client
+          // Close previous shared proxy-backed client if any (but keep default)
+          if (_sharedYt != null && _sharedYt != _defaultYt) {
+            try {
+              _sharedYt?.close();
+            } catch (_) {}
+          }
+          _sharedYt = ytClient;
+          _workingProxies.add(proxy);
+          break;
+        } catch (e) {
+          try {
+            ioClient?.close();
+          } catch (_) {}
+          try {
+            httpClient?.close(force: true);
+          } catch (_) {}
+          continue;
+        }
+      } while (true);
+    } finally {
+      _initializingSharedClient = false;
+    }
+  }
+
+  /// Returns the currently active YoutubeExplode client. Never null.
+  YoutubeExplode getClientSync() => _sharedYt ?? _defaultYt;
+
   Future<StreamManifest?> _validateDirect(
     String songId,
     int timeoutSeconds,
   ) async {
     try {
       final manifest = await YoutubeExplode().videos.streams
-          .getManifest(songId)
+          .getManifest(songId, ytClients: [YoutubeApiClient.androidVr])
           .timeout(Duration(seconds: timeoutSeconds));
       return manifest;
     } catch (e) {
@@ -82,19 +173,18 @@ class ProxyManager {
     IOClient? ioClient;
     HttpClient? httpClient;
     try {
-      httpClient =
-          HttpClient()
-            ..connectionTimeout = Duration(seconds: timeoutSeconds)
-            ..findProxy = (_) {
-              return 'PROXY ${proxy.address}; DIRECT';
-            }
-            ..badCertificateCallback = (context, _context, ___) {
-              return false;
-            };
+      httpClient = HttpClient()
+        ..connectionTimeout = Duration(seconds: timeoutSeconds)
+        ..findProxy = (_) {
+          return 'PROXY ${proxy.address}; DIRECT';
+        }
+        ..badCertificateCallback = (context, _context, ___) {
+          return false;
+        };
       ioClient = IOClient(httpClient);
       final ytClient = YoutubeExplode(YoutubeHttpClient(ioClient));
       final manifest = await ytClient.videos.streams
-          .getManifest(songId)
+          .getManifest(songId, ytClients: [YoutubeApiClient.androidVr])
           .timeout(Duration(seconds: timeoutSeconds));
       _workingProxies.add(proxy);
       return manifest;
@@ -114,10 +204,9 @@ class ProxyManager {
       ProxyInfo proxy;
       String countryCode;
       if (_workingProxies.isNotEmpty) {
-        final idx =
-            _workingProxies.length == 1
-                ? 0
-                : _random.nextInt(_workingProxies.length);
+        final idx = _workingProxies.length == 1
+            ? 0
+            : _random.nextInt(_workingProxies.length);
         proxy = _workingProxies.elementAt(idx);
         _workingProxies.remove(proxy);
       } else {
@@ -168,6 +257,64 @@ class ProxyManager {
       manifest = await _validateProxy(proxy, songId, 5);
     } while (manifest == null);
     return manifest;
+  }
+
+  /// Try to create a [YoutubeExplode] client that routes requests through a
+  /// working proxy. Returns null if no proxy client could be created.
+  ///
+  /// Caller is responsible for calling `close()` on the returned
+  /// [YoutubeExplode] when finished to free resources.
+  Future<YoutubeExplode?> getYoutubeExplodeClient({
+    int timeoutSeconds = 5,
+  }) async {
+    if (!useProxy.value) return null;
+    // Ensure proxies have been fetched
+    if (!_hasFetched) await _fetchProxies();
+
+    // If there are no proxies available, try fetching once more
+    if (_proxiesByCountry.isEmpty) await _fetchProxies();
+
+    if (_proxiesByCountry.isEmpty) return null;
+
+    // Try proxies until we can construct a client that can perform a simple
+    // request (we won't perform a heavy request here, the caller will use
+    // the returned client for operations like search).
+    do {
+      final proxy = await _getRandomProxy();
+      if (proxy == null) break;
+
+      HttpClient? httpClient;
+      IOClient? ioClient;
+      try {
+        httpClient = HttpClient()
+          ..connectionTimeout = Duration(seconds: timeoutSeconds)
+          ..findProxy = (_) {
+            return 'PROXY ${proxy.address}; DIRECT';
+          }
+          ..badCertificateCallback = (context, _context, ___) {
+            return false;
+          };
+
+        ioClient = IOClient(httpClient);
+        final ytClient = YoutubeExplode(YoutubeHttpClient(ioClient));
+
+        // Don't run a test request here to keep it lightweight. Assume proxy
+        // is usable; if caller experiences errors they can close and retry.
+        _workingProxies.add(proxy);
+        return ytClient;
+      } catch (e) {
+        // Clean up on failure and try another proxy
+        try {
+          ioClient?.close();
+        } catch (_) {}
+        try {
+          httpClient?.close(force: true);
+        } catch (_) {}
+        continue;
+      }
+    } while (true);
+
+    return null;
   }
 
   Future<void> _fetchSpysMe() async {

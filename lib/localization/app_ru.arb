@@ -16,6 +16,7 @@
   "audioQuality": "Качество звука",
   "audioQualityMsg": "Качество звука изменено",
   "automaticSongPicker": "Автовыбор следующего трека",
+  "automaticUpdateChecks": "Automatic update checks",
   "backToFavorites": "Back to favorites",
   "backedupSuccess": "Резервное копирование успешно выполнено",
   "backgroundPlay": "Background play",
@@ -24,6 +25,7 @@
   "becomeSponsor": "Стать спонсором",
   "cacheMsg": "Кэш очищен",
   "cancel": "Отмена",
+  "checkForUpdates": "Check for Updates?",
   "chooseBackupDir": "Выберите каталог для сохранения",
   "chooseBackupFiles": "Выбрать файлы для сохранения",
   "clear": "Очистить",
@@ -53,6 +55,7 @@
   "downloadPlaylist": "Download playlist",
   "dynamicColor": "Динамический цветовой акцент (Android 12+)",
   "emptyFolderMsg": "This folder is empty. Add playlists to organize your music.",
+  "enableUpdateChecksDescription": "Would you like Musify to check for updates automatically from GitHub releases? You can always check for updates manually from the settings",
   "enterFolderName": "Please enter a folder name",
   "error": "Что-то пошло не так",
   "folderAlreadyExists": "A folder with this name already exists",
@@ -76,6 +79,7 @@
   "name": "Имя",
   "newAnnouncement": "Новое объявление размещено",
   "newFolder": "New folder",
+  "no": "No",
   "noCustomPlaylists": "Вы ещё не создали свои плейлисты",
   "noPlaylistsAdded": "No playlists added yet",
   "noSongsInQueue": "Нет треков в очереди",
@@ -142,5 +146,6 @@
   "update": "Update",
   "useProxy": "Use proxy",
   "userPlaylists": "Ваши плейлисты",
+  "yes": "Yes",
   "youtubePlaylistLinkOrId": "ID плейлиста YouTube или ссылка на него "
 }
