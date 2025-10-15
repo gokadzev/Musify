@@ -834,11 +834,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
   @override
   Future<void> onTaskRemoved() async {
     try {
-      if (!backgroundPlay.value) {
-        await stop();
-        final session = await AudioSession.instance;
-        await session.setActive(false);
-      }
+      await stop();
+      final session = await AudioSession.instance;
+      await session.setActive(false);
     } catch (e, stackTrace) {
       logger.log('Error in onTaskRemoved', e, stackTrace);
     }

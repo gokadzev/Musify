@@ -31,10 +31,6 @@ final shouldWeCheckUpdates = ValueNotifier<bool?>(
   Hive.box('settings').get('shouldWeCheckUpdates', defaultValue: null),
 );
 
-final backgroundPlay = ValueNotifier<bool>(
-  Hive.box('settings').get('backgroundPlay', defaultValue: false),
-);
-
 final playNextSongAutomatically = ValueNotifier<bool>(
   Hive.box('settings').get('playNextSongAutomatically', defaultValue: false),
 );
