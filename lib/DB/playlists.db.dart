@@ -333,7 +333,7 @@ List<Map<String, dynamic>> playlistsDB = [
     'ytid': 'PLXpMeQYR1ilK2M6PUwdA75st7uAUrH7Z_',
     'title': 'Canciones 2025 Reggaeton',
     'image':
-        'https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da8448420cf3245a947f2200fb1a',
+        'https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da8428450fba04bfd105d51c7486',
     'list': [],
   },
   {
@@ -382,7 +382,8 @@ List<Map<String, dynamic>> playlistsDB = [
   {
     'ytid': 'PLXpMeQYR1ilL_qsEr9Z9aaTlcOq2oQhe8',
     'title': 'New Song 2024 Dance',
-    'image': 'https://i.scdn.co/image/ab67706c0000da84958dfdf2e46ba62b0ba2c38e',
+    'image':
+        'https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da8414b2741de5d2163184ecb459',
     'list': [],
   },
   {

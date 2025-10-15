@@ -4,8 +4,6 @@ import 'package:http/http.dart' as http;
 import 'package:musify/DB/albums.db.dart';
 import 'package:musify/DB/playlists.db.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
-import 'package:musify/services/proxy_manager.dart';
-import 'package:musify/services/settings_manager.dart';
 
 List playlists = [...playlistsDB, ...albumsDB];
 
@@ -13,51 +11,45 @@ void main() async {
   print('PLAYLISTS AND ALBUMS CHECKING RESULT:');
   print('      ');
 
-  // Obtain a YoutubeExplode client that respects proxy setting.
-  YoutubeExplode? ytClient;
   try {
-    if (useProxy.value) {
-      ytClient = await ProxyManager().getYoutubeExplodeClient();
-    } else {
-      ytClient = ProxyManager().getClientSync();
-    }
+    YoutubeExplode? ytClient = await YoutubeExplode();
 
     for (final playlist in playlists) {
-    try {
-      final plist = await ytClient!.playlists.get(playlist['ytid']);
+      try {
+        final plist = await ytClient!.playlists.get(playlist['ytid']);
 
-      if (plist.videoCount == null) {
-        if (playlist['isAlbum'] != null && playlist['isAlbum']) {
-          print('> The album with the ID ${playlist['ytid']} does not exist.');
-        } else {
-          print(
-            '> The playlist with the ID ${playlist['ytid']} does not exist.',
-          );
+        if (plist.videoCount == null) {
+          if (playlist['isAlbum'] != null && playlist['isAlbum']) {
+            print(
+              '> The album with the ID ${playlist['ytid']} does not exist.',
+            );
+          } else {
+            print(
+              '> The playlist with the ID ${playlist['ytid']} does not exist.',
+            );
+          }
         }
-      }
 
-      final imageAvailability = await isImageAvailable(playlist['image']);
-      if (!imageAvailability) {
-        if (playlist['isAlbum'] != null && playlist['isAlbum']) {
-          print(
-            '> The album artwork with the URL ${playlist['image']} is not available.',
-          );
-        } else {
-          print(
-            '> The playlist artwork with the URL ${playlist['image']} is not available.',
-          );
+        final imageAvailability = await isImageAvailable(playlist['image']);
+        if (!imageAvailability) {
+          if (playlist['isAlbum'] != null && playlist['isAlbum']) {
+            print(
+              '> The album artwork with the URL ${playlist['image']} is not available.',
+            );
+          } else {
+            print(
+              '> The playlist artwork with the URL ${playlist['image']} is not available.',
+            );
+          }
         }
+      } catch (e) {
+        print(
+          'An error occurred while checking playlist ${playlist['title']}: $e',
+        );
       }
-    } catch (e) {
-      print(
-        'An error occurred while checking playlist ${playlist['title']}: $e',
-      );
     }
-    }
-  } finally {
-    try {
-      if (useProxy.value) ytClient?.close();
-    } catch (_) {}
+  } catch (e) {
+    print('An error occurred while initializing YoutubeExplode: $e');
   }
 
   print('      ');
