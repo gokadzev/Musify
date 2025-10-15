@@ -63,6 +63,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
   bool sleepTimerExpired = false;
 
   final List<Map> _queueList = [];
+  final List<Map> _originalQueueList = [];
   final List<Map> _historyList = [];
   int _currentQueueIndex = 0;
   bool _isLoadingNextSong = false;
@@ -450,7 +451,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       }
 
       _updateQueueMediaItems();
-      _cleanupOldPreloadedSongs(); // Clean up songs no longer in queue
+      _cleanupOldPreloadedSongs();
 
       if (!audioPlayer.playing && _queueList.length == 1) {
         await _playFromQueue(0);
@@ -463,13 +464,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
   void _cleanupOldPreloadedSongs() {
     Future.microtask(() async {
       try {
-        // Get ytids of songs currently in queue
         final queueYtIds = _queueList
             .map((song) => song['ytid']?.toString())
             .where((ytid) => ytid != null)
             .toSet();
 
-        // Find preloaded songs no longer in queue
         final oldPreloadedSongs = _preloadedYtIds
             .where((ytid) => !queueYtIds.contains(ytid))
             .toList();
@@ -513,8 +512,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
     try {
       if (replace) {
         _queueList.clear();
+        _originalQueueList.clear();
         _currentQueueIndex = 0;
         _resetPreloadingState();
+        shuffleNotifier.value = false;
+        await audioPlayer.setShuffleModeEnabled(false);
       }
 
       for (final song in songs) {
@@ -588,6 +590,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
   void clearQueue() {
     try {
       _queueList.clear();
+      _originalQueueList.clear();
       _currentQueueIndex = 0;
       _resetPreloadingState();
       _updateQueueMediaItems();
@@ -769,9 +772,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
   Map? get currentSong => _currentQueueIndex < _queueList.length
       ? _queueList[_currentQueueIndex]
       : null;
+
   bool get hasNext =>
       _currentQueueIndex < _queueList.length - 1 ||
       (playNextSongAutomatically.value && !_isLoadingNextSong);
+
   bool get hasPrevious => _currentQueueIndex > 0 || _historyList.isNotEmpty;
 
   @override
@@ -1108,7 +1113,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
         await _handleAutoPlayNext();
       }
 
-      // Clean up preloaded songs that are now behind us
       _cleanupOldPreloadedSongs();
     } catch (e, stackTrace) {
       logger.log('Error skipping to next song', e, stackTrace);
@@ -1148,7 +1152,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
         await _playFromQueue(0);
       }
 
-      // Clean up preloaded songs that are now ahead of us
       _cleanupOldPreloadedSongs();
     } catch (e, stackTrace) {
       logger.log('Error skipping to previous song', e, stackTrace);
@@ -1167,8 +1170,54 @@ class MusifyAudioHandler extends BaseAudioHandler {
   Future<void> setShuffleMode(AudioServiceShuffleMode shuffleMode) async {
     try {
       final shuffleEnabled = shuffleMode != AudioServiceShuffleMode.none;
+      final wasShuffled = shuffleNotifier.value;
+
       shuffleNotifier.value = shuffleEnabled;
       await audioPlayer.setShuffleModeEnabled(shuffleEnabled);
+
+      if (_queueList.isEmpty) return;
+
+      if (shuffleEnabled && !wasShuffled) {
+        _originalQueueList
+          ..clear()
+          ..addAll(_queueList);
+
+        final currentSong = _queueList[_currentQueueIndex];
+
+        _queueList.shuffle();
+
+        final newCurrentIndex = _queueList.indexWhere(
+          (song) => song['ytid'] == currentSong['ytid'],
+        );
+
+        if (newCurrentIndex != -1 && newCurrentIndex != 0) {
+          _queueList
+            ..removeAt(newCurrentIndex)
+            ..insert(0, currentSong);
+        }
+
+        _currentQueueIndex = 0;
+        _updateQueueMediaItems();
+      } else if (!shuffleEnabled && wasShuffled) {
+        if (_originalQueueList.isNotEmpty) {
+          final currentSong = _queueList[_currentQueueIndex];
+
+          _queueList
+            ..clear()
+            ..addAll(_originalQueueList);
+
+          _currentQueueIndex = _queueList.indexWhere(
+            (song) => song['ytid'] == currentSong['ytid'],
+          );
+
+          if (_currentQueueIndex == -1) {
+            _currentQueueIndex = 0;
+          }
+
+          _originalQueueList.clear();
+          _updateQueueMediaItems();
+        }
+      }
     } catch (e, stackTrace) {
       logger.log('Error setting shuffle mode', e, stackTrace);
     }

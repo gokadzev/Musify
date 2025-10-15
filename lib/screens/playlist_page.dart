@@ -554,24 +554,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
     _pagingController.refresh();
   }
 
-  Widget _buildShuffleSongActionButton() {
-    return IconButton(
-      color: Theme.of(context).colorScheme.primary,
-      splashColor: Colors.transparent,
-      highlightColor: Colors.transparent,
-      icon: const Icon(FluentIcons.arrow_shuffle_16_filled),
-      iconSize: 25,
-      onPressed: () {
-        final _newList = List.of(_playlist['list'])..shuffle();
-        setActivePlaylist({
-          'title': _playlist['title'],
-          'image': _playlist['image'],
-          'list': _newList,
-        });
-      },
-    );
-  }
-
   String _getSortTypeDisplayText(PlaylistSortType type) {
     switch (type) {
       case PlaylistSortType.title:
@@ -631,11 +613,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
   Widget buildSongActionsRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        _buildSortSongActionButton(),
-        const SizedBox(width: 5),
-        _buildShuffleSongActionButton(),
-      ],
+      children: [_buildSortSongActionButton()],
     );
   }
 
