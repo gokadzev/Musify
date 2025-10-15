@@ -356,64 +356,116 @@ class MusifyAudioHandler extends BaseAudioHandler {
           _queueList.isNotEmpty) {
         await _playFromQueue(0);
       } else if (playNextSongAutomatically.value) {
-        await _playRecommendedSong();
+        await _playNextRecommendedSong();
       }
     } catch (e, stackTrace) {
       logger.log('Error handling song completion', e, stackTrace);
     }
   }
 
-  Future<void> _playRecommendedSong() async {
-    if (_isLoadingNextSong) return;
-
-    _isLoadingNextSong = true;
+  Future<void> _playNextRecommendedSong() async {
+    if (_isLoadingNextSong) {
+      logger.log('Already loading next song, skipping', null, null);
+      return;
+    }
 
     try {
-      final currentSong = _currentQueueIndex < _queueList.length
-          ? _queueList[_currentQueueIndex]
-          : null;
+      final baseSong = _getCurrentSongForRecommendations();
+      if (baseSong == null) {
+        logger.log('No valid song for recommendations', null, null);
+        return;
+      }
 
-      if (currentSong != null && currentSong['ytid'] != null) {
-        getSimilarSong(currentSong['ytid']);
+      if (nextRecommendedSong == null) {
+        await _fetchRecommendedSong(baseSong);
+      }
 
-        // Wait for recommendation with timeout
-        final completer = Completer<void>();
-        Timer? timeoutTimer;
-
-        void checkRecommendation() {
-          if (nextRecommendedSong != null) {
-            timeoutTimer?.cancel();
-            if (!completer.isCompleted) completer.complete();
-          }
-        }
-
-        // Check every 100ms for recommendation
-        final checkTimer = Timer.periodic(const Duration(milliseconds: 100), (
-          _,
-        ) {
-          checkRecommendation();
-        });
-
-        // Timeout after 3 seconds
-        timeoutTimer = Timer(const Duration(seconds: 3), () {
-          checkTimer.cancel();
-          if (!completer.isCompleted) completer.complete();
-        });
-
-        await completer.future;
-        checkTimer.cancel();
-
-        if (nextRecommendedSong != null) {
-          await addToQueue(nextRecommendedSong!);
-          await _playFromQueue(_queueList.length - 1);
-          nextRecommendedSong = null;
-        }
+      if (nextRecommendedSong != null) {
+        await _playRecommendation();
+      } else {
+        logger.log(
+          'No recommendations available for "${baseSong['title']}"',
+          null,
+          null,
+        );
       }
     } catch (e, stackTrace) {
       logger.log('Error playing recommended song', e, stackTrace);
-    } finally {
-      _isLoadingNextSong = false;
     }
+  }
+
+  Map? _getCurrentSongForRecommendations() {
+    if (_currentQueueIndex >= _queueList.length) {
+      logger.log(
+        'Invalid queue index: $_currentQueueIndex >= ${_queueList.length}',
+        null,
+        null,
+      );
+      return null;
+    }
+
+    final song = _queueList[_currentQueueIndex];
+
+    if (song['ytid'] == null) {
+      logger.log('Song has no ytid: ${song['title']}', null, null);
+      return null;
+    }
+
+    return song;
+  }
+
+  Future<void> _fetchRecommendedSong(Map baseSong) async {
+    logger.log(
+      'Fetching recommendation for "${baseSong['title']}" (${baseSong['ytid']})',
+      null,
+      null,
+    );
+
+    try {
+      await getSimilarSong(baseSong['ytid']).timeout(
+        const Duration(seconds: 5),
+        onTimeout: () {
+          logger.log('Recommendation fetch timed out', null, null);
+        },
+      );
+    } catch (e, stackTrace) {
+      logger.log('Error fetching recommendation', e, stackTrace);
+    }
+  }
+
+  Future<void> _playRecommendation() async {
+    if (nextRecommendedSong == null) return;
+
+    final recommendedSong = nextRecommendedSong;
+    nextRecommendedSong = null;
+
+    logger.log(
+      'Playing recommendation: "${recommendedSong['title']}"',
+      null,
+      null,
+    );
+
+    await addToQueue(recommendedSong);
+    await _playFromQueue(_queueList.length - 1);
+  }
+
+  void _prefetchNextRecommendation(String currentSongYtid) {
+    if (nextRecommendedSong != null) {
+      return;
+    }
+
+    Future.microtask(() async {
+      try {
+        await getSimilarSong(currentSongYtid).timeout(
+          const Duration(seconds: 5),
+          onTimeout: () {
+            logger.log('Prefetch recommendation timed out', null, null);
+          },
+        );
+      } catch (e, stackTrace) {
+        logger.log('Error prefetching recommendation', e, stackTrace);
+      }
+    });
   }
 
   void _addToHistory(Map song) {
@@ -859,6 +911,20 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
       if (audioPlayer.playing) await audioPlayer.stop();
 
+      // Ensure the song is in the queue for auto-play recommendations to work
+      if (_queueList.isEmpty ||
+          _queueList.every((s) => s['ytid'] != song['ytid'])) {
+        _queueList
+          ..clear()
+          ..add(song);
+        _currentQueueIndex = 0;
+        _updateQueueMediaItems();
+      } else {
+        _currentQueueIndex = _queueList.indexWhere(
+          (s) => s['ytid'] == song['ytid'],
+        );
+      }
+
       final songUrl = await _getSongUrl(song, isOffline);
 
       if (songUrl == null || songUrl.isEmpty) {
@@ -966,10 +1032,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
       _updatePlaybackState();
 
       if (playNextSongAutomatically.value) {
-        getSimilarSong(song['ytid']);
+        _prefetchNextRecommendation(song['ytid']);
       }
 
-      // Start preloading AFTER current song is playing to avoid blocking
       Future.delayed(const Duration(seconds: 2), _preloadUpcomingSongs);
 
       return true;
@@ -1109,35 +1174,19 @@ class MusifyAudioHandler extends BaseAudioHandler {
       } else if (repeatNotifier.value == AudioServiceRepeatMode.all &&
           _queueList.isNotEmpty) {
         await _playFromQueue(0);
-      } else if (playNextSongAutomatically.value && !_isLoadingNextSong) {
-        await _handleAutoPlayNext();
+      } else if (playNextSongAutomatically.value) {
+        if (!_isLoadingNextSong) {
+          await _playNextRecommendedSong();
+        } else {
+          logger.log('Already loading next song', null, null);
+        }
+      } else {
+        logger.log('No next song available', null, null);
       }
 
       _cleanupOldPreloadedSongs();
     } catch (e, stackTrace) {
       logger.log('Error skipping to next song', e, stackTrace);
-    }
-  }
-
-  Future<void> _handleAutoPlayNext() async {
-    if (nextRecommendedSong == null && _queueList.isNotEmpty) {
-      final currentSong = _queueList[_currentQueueIndex];
-      if (currentSong['ytid'] != null) {
-        getSimilarSong(currentSong['ytid']);
-
-        // Wait for recommendation with timeout
-        final maxWaitTime = DateTime.now().add(const Duration(seconds: 3));
-        while (nextRecommendedSong == null &&
-            DateTime.now().isBefore(maxWaitTime)) {
-          await Future.delayed(const Duration(milliseconds: 100));
-        }
-      }
-    }
-
-    if (nextRecommendedSong != null) {
-      await addToQueue(nextRecommendedSong!);
-      await _playFromQueue(_queueList.length - 1);
-      nextRecommendedSong = null;
     }
   }
 
