@@ -22,6 +22,7 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/services/settings_manager.dart';
@@ -41,82 +42,90 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<bool>(
-      valueListenable: offlineMode,
-      builder: (context, isOfflineMode, _) {
-        // Handle offline mode changes
-        if (_previousOfflineMode != null &&
-            _previousOfflineMode != isOfflineMode) {
-          SchedulerBinding.instance.addPostFrameCallback((_) {
-            _handleOfflineModeChange(isOfflineMode);
-          });
+    return PopScope(
+      canPop: widget.child.currentIndex == 0,
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) return;
+
+        final currentIndex = widget.child.currentIndex;
+        if (currentIndex != 0) {
+          widget.child.goBranch(0);
+        } else {
+          SystemNavigator.pop();
         }
-        _previousOfflineMode = isOfflineMode;
-
-        return LayoutBuilder(
-          builder: (context, constraints) {
-            final isLargeScreen = MediaQuery.of(context).size.width >= 600;
-            final items = _getNavigationItems(isOfflineMode);
-
-            return Scaffold(
-              body: SafeArea(
-                child: Row(
-                  children: [
-                    if (isLargeScreen)
-                      NavigationRail(
-                        labelType: NavigationRailLabelType.selected,
-                        destinations:
-                            items
-                                .map(
-                                  (item) => NavigationRailDestination(
-                                    icon: Icon(item.icon),
-                                    selectedIcon: Icon(item.selectedIcon),
-                                    label: Text(item.label),
-                                  ),
-                                )
-                                .toList(),
-                        selectedIndex: _getCurrentIndex(items, isOfflineMode),
-                        onDestinationSelected:
-                            (index) => _onTabTapped(index, items),
-                      ),
-                    Expanded(
-                      child: Column(
-                        children: [
-                          Expanded(child: widget.child),
-                          const MiniPlayer(),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              bottomNavigationBar:
-                  !isLargeScreen
-                      ? NavigationBar(
-                        selectedIndex: _getCurrentIndex(items, isOfflineMode),
-                        labelBehavior:
-                            languageSetting == const Locale('en', '')
-                                ? NavigationDestinationLabelBehavior
-                                    .onlyShowSelected
-                                : NavigationDestinationLabelBehavior.alwaysHide,
-                        onDestinationSelected:
-                            (index) => _onTabTapped(index, items),
-                        destinations:
-                            items
-                                .map(
-                                  (item) => NavigationDestination(
-                                    icon: Icon(item.icon),
-                                    selectedIcon: Icon(item.selectedIcon),
-                                    label: item.label,
-                                  ),
-                                )
-                                .toList(),
-                      )
-                      : null,
-            );
-          },
-        );
       },
+      child: ValueListenableBuilder<bool>(
+        valueListenable: offlineMode,
+        builder: (context, isOfflineMode, _) {
+          if (_previousOfflineMode != null &&
+              _previousOfflineMode != isOfflineMode) {
+            SchedulerBinding.instance.addPostFrameCallback((_) {
+              _handleOfflineModeChange(isOfflineMode);
+            });
+          }
+          _previousOfflineMode = isOfflineMode;
+
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              final isLargeScreen = MediaQuery.of(context).size.width >= 600;
+              final items = _getNavigationItems(isOfflineMode);
+
+              return Scaffold(
+                body: SafeArea(
+                  child: Row(
+                    children: [
+                      if (isLargeScreen)
+                        NavigationRail(
+                          labelType: NavigationRailLabelType.selected,
+                          destinations: items
+                              .map(
+                                (item) => NavigationRailDestination(
+                                  icon: Icon(item.icon),
+                                  selectedIcon: Icon(item.selectedIcon),
+                                  label: Text(item.label),
+                                ),
+                              )
+                              .toList(),
+                          selectedIndex: _getCurrentIndex(items, isOfflineMode),
+                          onDestinationSelected: (index) =>
+                              _onTabTapped(index, items),
+                        ),
+                      Expanded(
+                        child: Column(
+                          children: [
+                            Expanded(child: widget.child),
+                            const MiniPlayer(),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                bottomNavigationBar: !isLargeScreen
+                    ? NavigationBar(
+                        selectedIndex: _getCurrentIndex(items, isOfflineMode),
+                        labelBehavior: languageSetting == const Locale('en', '')
+                            ? NavigationDestinationLabelBehavior
+                                  .onlyShowSelected
+                            : NavigationDestinationLabelBehavior.alwaysHide,
+                        onDestinationSelected: (index) =>
+                            _onTabTapped(index, items),
+                        destinations: items
+                            .map(
+                              (item) => NavigationDestination(
+                                icon: Icon(item.icon),
+                                selectedIcon: Icon(item.selectedIcon),
+                                label: item.label,
+                              ),
+                            )
+                            .toList(),
+                      )
+                    : null,
+              );
+            },
+          );
+        },
+      ),
     );
   }
 
