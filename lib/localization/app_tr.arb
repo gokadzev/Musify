@@ -43,6 +43,7 @@
   "customPlaylistImgUrl": "Çalma Listesi Kapağı Linki",
   "customPlaylistName": "Çalma Listesi İsmi",
   "customPlaylists": "Kişisel Çalma Listeleri",
+  "dateAdded": "Date Added",
   "delete": "Delete",
   "deleteFolder": "Delete folder",
   "deleteFolderQuestion": "Are you sure you want to delete this folder? Playlists inside will be moved to the main library.",

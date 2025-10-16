@@ -43,6 +43,7 @@
   "customPlaylistImgUrl": "Kohandatud nimekirja pildi URL",
   "customPlaylistName": "Kohandatud nimekirja nimi",
   "customPlaylists": "Kohandatud nimekirjad",
+  "dateAdded": "Date Added",
   "delete": "Kustuta",
   "deleteFolder": "Kustuta kaust",
   "deleteFolderQuestion": "Kas olete kindel, et soovite selle kausta kustutada? Kaustas olevad nimekirjad liigutatakse peamise teeki.",

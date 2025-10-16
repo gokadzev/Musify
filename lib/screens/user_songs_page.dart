@@ -24,11 +24,14 @@ import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
+import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/utils.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/playlist_header.dart';
 import 'package:musify/widgets/song_bar.dart';
+
+enum OfflineSortType { title, artist, dateAdded }
 
 class UserSongsPage extends StatefulWidget {
   const UserSongsPage({super.key, required this.page});
@@ -49,6 +52,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
     final songsList = getSongsList(widget.page);
     final length = getLength(widget.page);
     final isLikedSongs = title == context.l10n!.likedSongs;
+    final isOfflineSongs = title == context.l10n!.offlineSongs;
 
     return Scaffold(
       appBar: AppBar(
@@ -59,15 +63,20 @@ class _UserSongsPageState extends State<UserSongsPage> {
               onPressed: _toggleEditMode,
               icon: Icon(
                 FluentIcons.re_order_24_filled,
-                color:
-                    _isEditEnabled
-                        ? Theme.of(context).colorScheme.inversePrimary
-                        : Theme.of(context).colorScheme.primary,
+                color: _isEditEnabled
+                    ? Theme.of(context).colorScheme.inversePrimary
+                    : Theme.of(context).colorScheme.primary,
               ),
             ),
         ],
       ),
-      body: _buildCustomScrollView(title, icon, songsList, length),
+      body: _buildCustomScrollView(
+        title,
+        icon,
+        songsList,
+        length,
+        isOfflineSongs,
+      ),
     );
   }
 
@@ -75,11 +84,19 @@ class _UserSongsPageState extends State<UserSongsPage> {
     setState(() => _isEditEnabled = !_isEditEnabled);
   }
 
+  OfflineSortType _getCurrentOfflineSortType() {
+    return OfflineSortType.values.firstWhere(
+      (e) => e.name == offlineSortSetting,
+      orElse: () => OfflineSortType.title,
+    );
+  }
+
   Widget _buildCustomScrollView(
     String title,
     IconData icon,
     List songsList,
     ValueNotifier<int> length,
+    bool isOfflineSongs,
   ) {
     return CustomScrollView(
       slivers: [
@@ -89,6 +106,13 @@ class _UserSongsPageState extends State<UserSongsPage> {
             child: buildPlaylistHeader(title, icon, songsList.length),
           ),
         ),
+        if (isOfflineSongs)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+              child: buildSongActionsRow(),
+            ),
+          ),
         buildSongList(title, songsList, length),
       ],
     );
@@ -155,6 +179,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
     };
     final isLikedSongs = title == context.l10n!.likedSongs;
     final isRecentlyPlayed = title == context.l10n!.recentlyPlayed;
+    final isOfflineSongs = title == context.l10n!.offlineSongs;
 
     return ValueListenableBuilder(
       valueListenable: currentSongsLength,
@@ -190,6 +215,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
           );
         } else {
           return SliverList(
+            key: isOfflineSongs ? ValueKey(_getCurrentOfflineSortType()) : null,
             delegate: SliverChildBuilderDelegate((context, index) {
               final song = songsList[index];
               song['isOffline'] = title == context.l10n!.offlineSongs;
@@ -229,5 +255,117 @@ class _UserSongsPageState extends State<UserSongsPage> {
       borderRadius: borderRadius,
       isRecentSong: isRecentSong,
     );
+  }
+
+  Widget buildSongActionsRow() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [_buildSortButton()],
+    );
+  }
+
+  Widget _buildSortButton() {
+    return PopupMenuButton<OfflineSortType>(
+      padding: EdgeInsets.zero,
+      color: Theme.of(context).colorScheme.secondaryContainer,
+      elevation: 2,
+      offset: const Offset(0, 40),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            FluentIcons.filter_16_filled,
+            color: Theme.of(context).colorScheme.primary,
+            size: 20,
+          ),
+          const SizedBox(width: 8),
+          Text(
+            _getSortTypeDisplayText(_getCurrentOfflineSortType()),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSecondaryContainer,
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.15,
+              height: 1.2,
+            ),
+          ),
+        ],
+      ),
+      itemBuilder: (context) {
+        return OfflineSortType.values.map((type) {
+          return PopupMenuItem<OfflineSortType>(
+            value: type,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    _getSortTypeDisplayText(type),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSecondaryContainer,
+                      fontWeight: type == _getCurrentOfflineSortType()
+                          ? FontWeight.w700
+                          : FontWeight.w500,
+                    ),
+                  ),
+                ),
+                if (type == _getCurrentOfflineSortType())
+                  Icon(
+                    Icons.check,
+                    size: 18,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+              ],
+            ),
+          );
+        }).toList();
+      },
+      onSelected: (type) {
+        if (type == _getCurrentOfflineSortType()) return;
+
+        setState(() {
+          addOrUpdateData('settings', 'offlineSortType', type.name);
+          offlineSortSetting = type.name;
+        });
+
+        _sortOfflineSongs(type);
+      },
+    );
+  }
+
+  String _getSortTypeDisplayText(OfflineSortType type) {
+    return switch (type) {
+      OfflineSortType.title => context.l10n!.name,
+      OfflineSortType.artist => context.l10n!.artist,
+      OfflineSortType.dateAdded => context.l10n!.dateAdded,
+    };
+  }
+
+  void _sortOfflineSongs(OfflineSortType type) {
+    switch (type) {
+      case OfflineSortType.title:
+        userOfflineSongs.sort((a, b) {
+          final titleA = (a['title'] ?? '').toString().toLowerCase();
+          final titleB = (b['title'] ?? '').toString().toLowerCase();
+          return titleA.compareTo(titleB);
+        });
+        break;
+      case OfflineSortType.artist:
+        userOfflineSongs.sort((a, b) {
+          final artistA = (a['artist'] ?? '').toString().toLowerCase();
+          final artistB = (b['artist'] ?? '').toString().toLowerCase();
+          return artistA.compareTo(artistB);
+        });
+        break;
+      case OfflineSortType.dateAdded:
+        userOfflineSongs.sort((a, b) {
+          final dateA = a['dateAdded'] as int? ?? 0;
+          final dateB = b['dateAdded'] as int? ?? 0;
+          return dateB.compareTo(dateA);
+        });
+        break;
+    }
+
+    // Save the sorted list
+    addOrUpdateData('userNoBackup', 'offlineSongs', userOfflineSongs);
   }
 }

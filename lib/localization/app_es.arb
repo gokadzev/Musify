@@ -43,6 +43,7 @@
   "customPlaylistImgUrl": "URL de imagen personalizada para la lista de reproducción",
   "customPlaylistName": "Nombre personalizado de la lista de reproducción",
   "customPlaylists": "Listas de reproducción personalizadas",
+  "dateAdded": "Date Added",
   "delete": "Eliminar",
   "deleteFolder": "Eliminar carpeta",
   "deleteFolderQuestion": "¿Estás seguro de que deseas eliminar esta carpeta? Las listas de reproducción que contiene se moverán a la biblioteca principal.",

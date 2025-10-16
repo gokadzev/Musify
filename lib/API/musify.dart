@@ -1157,6 +1157,7 @@ Future<bool> makeSongOffline(dynamic song, {bool fromPlaylist = false}) async {
 
     song['audioPath'] = audioFile.path;
     song['isOffline'] = true;
+    song['dateAdded'] = DateTime.now().millisecondsSinceEpoch;
     if (!fromPlaylist) {
       userOfflineSongs.add(song);
       await addOrUpdateData('userNoBackup', 'offlineSongs', userOfflineSongs);

@@ -43,6 +43,7 @@
   "customPlaylistImgUrl": "自定義播放列表封面 URL",
   "customPlaylistName": "新建播放列表名稱",
   "customPlaylists": "Custom playlists",
+  "dateAdded": "Date Added",
   "delete": "Delete",
   "deleteFolder": "Delete folder",
   "deleteFolderQuestion": "Are you sure you want to delete this folder? Playlists inside will be moved to the main library.",

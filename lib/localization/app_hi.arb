@@ -43,6 +43,7 @@
   "customPlaylistImgUrl": "कस्टम प्लेलिस्ट छवि URL",
   "customPlaylistName": "कस्टम प्लेलिस्ट नाम",
   "customPlaylists": "कस्टम प्लेलिस्ट",
+  "dateAdded": "Date Added",
   "delete": "Delete",
   "deleteFolder": "Delete folder",
   "deleteFolderQuestion": "Are you sure you want to delete this folder? Playlists inside will be moved to the main library.",

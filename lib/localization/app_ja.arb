@@ -43,6 +43,7 @@
   "customPlaylistImgUrl": "リスト用の画像のリンク",
   "customPlaylistName": "リスト名の指定",
   "customPlaylists": "あなたの再生リスト",
+  "dateAdded": "Date Added",
   "delete": "削除",
   "deleteFolder": "フォルダーを削除",
   "deleteFolderQuestion": "このフォルダーを削除しますか? 中身の再生リストは、メインのライブラリに移動されます。",

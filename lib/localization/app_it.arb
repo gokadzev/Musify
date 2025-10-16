@@ -43,6 +43,7 @@
   "customPlaylistImgUrl": "Link immagine playlist personalizzata",
   "customPlaylistName": "Nome playlist personalizzata",
   "customPlaylists": "Custom playlists",
+  "dateAdded": "Date Added",
   "delete": "Delete",
   "deleteFolder": "Delete folder",
   "deleteFolderQuestion": "Are you sure you want to delete this folder? Playlists inside will be moved to the main library.",
