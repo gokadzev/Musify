@@ -35,10 +35,12 @@ import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/playlist_image_picker.dart';
+import 'package:musify/utilities/sort_utils.dart';
 import 'package:musify/utilities/utils.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/playlist_header.dart';
 import 'package:musify/widgets/song_bar.dart';
+import 'package:musify/widgets/sort_button.dart';
 import 'package:musify/widgets/spinner.dart';
 
 enum PlaylistSortType { title, artist }
@@ -564,63 +566,11 @@ class _PlaylistPageState extends State<PlaylistPage> {
   }
 
   Widget _buildSortSongActionButton() {
-    return PopupMenuButton<PlaylistSortType>(
-      padding: EdgeInsets.zero,
-      color: Theme.of(context).colorScheme.secondaryContainer,
-      elevation: 2,
-      offset: const Offset(0, 40),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            FluentIcons.filter_16_filled,
-            color: Theme.of(context).colorScheme.primary,
-            size: 20,
-          ),
-          const SizedBox(width: 8),
-          Text(
-            _getSortTypeDisplayText(_sortType),
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSecondaryContainer,
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.15,
-              height: 1.2,
-            ),
-          ),
-        ],
-      ),
-      itemBuilder: (context) {
-        return PlaylistSortType.values.map((type) {
-          return PopupMenuItem<PlaylistSortType>(
-            value: type,
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    _getSortTypeDisplayText(type),
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSecondaryContainer,
-                      fontWeight: type == _sortType
-                          ? FontWeight.w700
-                          : FontWeight.w500,
-                    ),
-                  ),
-                ),
-                if (type == _sortType)
-                  Icon(
-                    Icons.check,
-                    size: 18,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-              ],
-            ),
-          );
-        }).toList();
-      },
+    return SortButton<PlaylistSortType>(
+      currentSortType: _sortType,
+      sortTypes: PlaylistSortType.values,
+      sortTypeToString: _getSortTypeDisplayText,
       onSelected: (type) {
-        if (type == _sortType) return;
-
         setState(() {
           _sortType = type;
           addOrUpdateData('settings', 'playlistSortType', type.name);
@@ -640,12 +590,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
     final playlist = _playlist['list'] as List;
     final sortKey = type == PlaylistSortType.title ? 'title' : 'artist';
 
-    playlist.sort((a, b) {
-      final valueA = (a[sortKey] ?? '').toString().toLowerCase();
-      final valueB = (b[sortKey] ?? '').toString().toLowerCase();
-      return valueA.compareTo(valueB);
-    });
-
+    sortSongsByKey(playlist, sortKey);
     _playlist['list'] = playlist;
   }
 

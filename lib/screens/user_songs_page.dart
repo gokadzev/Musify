@@ -30,6 +30,7 @@ import 'package:musify/utilities/utils.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/playlist_header.dart';
 import 'package:musify/widgets/song_bar.dart';
+import 'package:musify/widgets/sort_button.dart';
 
 enum OfflineSortType { title, artist, dateAdded }
 
@@ -265,63 +266,11 @@ class _UserSongsPageState extends State<UserSongsPage> {
   }
 
   Widget _buildSortButton() {
-    return PopupMenuButton<OfflineSortType>(
-      padding: EdgeInsets.zero,
-      color: Theme.of(context).colorScheme.secondaryContainer,
-      elevation: 2,
-      offset: const Offset(0, 40),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            FluentIcons.filter_16_filled,
-            color: Theme.of(context).colorScheme.primary,
-            size: 20,
-          ),
-          const SizedBox(width: 8),
-          Text(
-            _getSortTypeDisplayText(_getCurrentOfflineSortType()),
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSecondaryContainer,
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.15,
-              height: 1.2,
-            ),
-          ),
-        ],
-      ),
-      itemBuilder: (context) {
-        return OfflineSortType.values.map((type) {
-          return PopupMenuItem<OfflineSortType>(
-            value: type,
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    _getSortTypeDisplayText(type),
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSecondaryContainer,
-                      fontWeight: type == _getCurrentOfflineSortType()
-                          ? FontWeight.w700
-                          : FontWeight.w500,
-                    ),
-                  ),
-                ),
-                if (type == _getCurrentOfflineSortType())
-                  Icon(
-                    Icons.check,
-                    size: 18,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-              ],
-            ),
-          );
-        }).toList();
-      },
+    return SortButton<OfflineSortType>(
+      currentSortType: _getCurrentOfflineSortType(),
+      sortTypes: OfflineSortType.values,
+      sortTypeToString: _getSortTypeDisplayText,
       onSelected: (type) {
-        if (type == _getCurrentOfflineSortType()) return;
-
         setState(() {
           addOrUpdateData('settings', 'offlineSortType', type.name);
           offlineSortSetting = type.name;
