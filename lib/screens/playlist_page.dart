@@ -564,23 +564,62 @@ class _PlaylistPageState extends State<PlaylistPage> {
   }
 
   Widget _buildSortSongActionButton() {
-    return DropdownButton<PlaylistSortType>(
-      value: _sortType,
-      borderRadius: BorderRadius.circular(5),
-      dropdownColor: Theme.of(context).colorScheme.secondaryContainer,
-      underline: const SizedBox.shrink(),
-      iconEnabledColor: Theme.of(context).colorScheme.primary,
-      elevation: 0,
-      iconSize: 25,
-      icon: const Icon(FluentIcons.filter_16_filled),
-      items: PlaylistSortType.values.map((type) {
-        return DropdownMenuItem<PlaylistSortType>(
-          value: type,
-          child: Text(_getSortTypeDisplayText(type)),
-        );
-      }).toList(),
-      onChanged: (type) {
-        if (type == null || type == _sortType) return;
+    return PopupMenuButton<PlaylistSortType>(
+      padding: EdgeInsets.zero,
+      color: Theme.of(context).colorScheme.secondaryContainer,
+      elevation: 2,
+      offset: const Offset(0, 40),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            FluentIcons.filter_16_filled,
+            color: Theme.of(context).colorScheme.primary,
+            size: 20,
+          ),
+          const SizedBox(width: 8),
+          Text(
+            _getSortTypeDisplayText(_sortType),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSecondaryContainer,
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.15,
+              height: 1.2,
+            ),
+          ),
+        ],
+      ),
+      itemBuilder: (context) {
+        return PlaylistSortType.values.map((type) {
+          return PopupMenuItem<PlaylistSortType>(
+            value: type,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    _getSortTypeDisplayText(type),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSecondaryContainer,
+                      fontWeight: type == _sortType
+                          ? FontWeight.w700
+                          : FontWeight.w500,
+                    ),
+                  ),
+                ),
+                if (type == _sortType)
+                  Icon(
+                    Icons.check,
+                    size: 18,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+              ],
+            ),
+          );
+        }).toList();
+      },
+      onSelected: (type) {
+        if (type == _sortType) return;
 
         setState(() {
           _sortType = type;
