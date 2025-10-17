@@ -37,18 +37,19 @@ jobs:
 
     # Get flutter dependencies.
     - run: flutter pub get
-    # # Check for any formatting issues in the code.
-    # - run: dart format --set-exit-if-changed .
     # Statically analyze the Dart code for any errors.
     - run: flutter analyze .
-    # Build universal apk.
-    - run: flutter build apk --release --flavor github
-    - uses: svenstaro/upload-release-action@v2
+     # Build arm64 APK for GitHub pre-release
+    - name: Build arm64 APK
+      run: flutter build apk --release --split-per-abi --target-platform="android-arm64" --flavor github
+    # Pre-release arm64 generated APK
+    - name: Release arm64 APK
+      uses: svenstaro/upload-release-action@v2
       with:
         repo_name: gokadzev/Musify
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: build/app/outputs/flutter-apk/app-github-release.apk
-        asset_name: Musify.apk
+        file: build/app/outputs/flutter-apk/app-arm64-v8a-github-release.apk
+        asset_name: Musify-arm64-v8a.apk
         tag: ${{ github.ref }}
         prerelease: true
         overwrite: true
