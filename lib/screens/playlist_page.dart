@@ -589,14 +589,12 @@ class _PlaylistPageState extends State<PlaylistPage> {
   void _sortPlaylist(PlaylistSortType type) {
     if (_playlist == null || _playlist['list'] == null) return;
 
-    // Skip sorting if using default order
-    if (type == PlaylistSortType.default_) return;
-
     final playlist = _playlist['list'] as List;
 
     switch (type) {
       case PlaylistSortType.default_:
-        // Should not reach here due to early return above
+        // Restore original order by re-fetching the playlist
+        _playlist = widget.playlistData;
         break;
       case PlaylistSortType.title:
         sortSongsByKey(playlist, 'title');
