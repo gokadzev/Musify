@@ -81,11 +81,11 @@ final themeModeSetting =
 
 String playlistSortSetting = Hive.box(
   'settings',
-).get('playlistSortType', defaultValue: PlaylistSortType.title.name);
+).get('playlistSortType', defaultValue: PlaylistSortType.default_.name);
 
 String offlineSortSetting = Hive.box(
   'settings',
-).get('offlineSortType', defaultValue: OfflineSortType.title.name);
+).get('offlineSortType', defaultValue: OfflineSortType.default_.name);
 
 Color primaryColorSetting = Color(
   Hive.box('settings').get('accentColor', defaultValue: 0xff91cef4),

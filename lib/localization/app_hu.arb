@@ -44,6 +44,7 @@
   "customPlaylistName": "Saját lejátszási lista neve",
   "customPlaylists": "Saját lejátszási listák",
   "dateAdded": "Date Added",
+  "default_": "Default",
   "delete": "Törlés",
   "deleteFolder": "Mappa törlése",
   "deleteFolderQuestion": "Biztos törölni akarod a mappát? A benne lévő lejátszási listák átkerülnek a fő könyvtárba.",

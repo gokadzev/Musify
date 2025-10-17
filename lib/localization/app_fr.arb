@@ -44,6 +44,7 @@
   "customPlaylistName": "Nom de la playlist personnalisée",
   "customPlaylists": "Playlists personnalisées",
   "dateAdded": "Date Added",
+  "default_": "Default",
   "delete": "Supprimer",
   "deleteFolder": "Supprimer le dossier",
   "deleteFolderQuestion": "Êtes-vous sûr de vouloir supprimer ce dossier ? Les playlists qu'il contient seront déplacées vers la bibliothèque principale.",

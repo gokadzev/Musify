@@ -32,7 +32,7 @@ import 'package:musify/widgets/playlist_header.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/sort_button.dart';
 
-enum OfflineSortType { title, artist, dateAdded }
+enum OfflineSortType { default_, title, artist, dateAdded }
 
 class UserSongsPage extends StatefulWidget {
   const UserSongsPage({super.key, required this.page});
@@ -88,7 +88,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
   OfflineSortType _getCurrentOfflineSortType() {
     return OfflineSortType.values.firstWhere(
       (e) => e.name == offlineSortSetting,
-      orElse: () => OfflineSortType.title,
+      orElse: () => OfflineSortType.default_,
     );
   }
 
@@ -283,6 +283,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
 
   String _getSortTypeDisplayText(OfflineSortType type) {
     return switch (type) {
+      OfflineSortType.default_ => context.l10n!.default_,
       OfflineSortType.title => context.l10n!.name,
       OfflineSortType.artist => context.l10n!.artist,
       OfflineSortType.dateAdded => context.l10n!.dateAdded,
@@ -290,7 +291,13 @@ class _UserSongsPageState extends State<UserSongsPage> {
   }
 
   void _sortOfflineSongs(OfflineSortType type) {
+    // Skip sorting and saving if using default order
+    if (type == OfflineSortType.default_) return;
+
     switch (type) {
+      case OfflineSortType.default_:
+        // Should not reach here due to early return above
+        break;
       case OfflineSortType.title:
         userOfflineSongs.sort((a, b) {
           final titleA = (a['title'] ?? '').toString().toLowerCase();

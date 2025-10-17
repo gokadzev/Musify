@@ -43,7 +43,7 @@ import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/sort_button.dart';
 import 'package:musify/widgets/spinner.dart';
 
-enum PlaylistSortType { title, artist }
+enum PlaylistSortType { default_, title, artist }
 
 class PlaylistPage extends StatefulWidget {
   const PlaylistPage({
@@ -77,7 +77,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
   // Sorting
   late PlaylistSortType _sortType = PlaylistSortType.values.firstWhere(
     (e) => e.name == playlistSortSetting,
-    orElse: () => PlaylistSortType.title,
+    orElse: () => PlaylistSortType.default_,
   );
 
   @override
@@ -558,6 +558,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
   String _getSortTypeDisplayText(PlaylistSortType type) {
     switch (type) {
+      case PlaylistSortType.default_:
+        return context.l10n!.default_;
       case PlaylistSortType.title:
         return context.l10n!.name;
       case PlaylistSortType.artist:
@@ -587,10 +589,23 @@ class _PlaylistPageState extends State<PlaylistPage> {
   void _sortPlaylist(PlaylistSortType type) {
     if (_playlist == null || _playlist['list'] == null) return;
 
-    final playlist = _playlist['list'] as List;
-    final sortKey = type == PlaylistSortType.title ? 'title' : 'artist';
+    // Skip sorting if using default order
+    if (type == PlaylistSortType.default_) return;
 
-    sortSongsByKey(playlist, sortKey);
+    final playlist = _playlist['list'] as List;
+
+    switch (type) {
+      case PlaylistSortType.default_:
+        // Should not reach here due to early return above
+        break;
+      case PlaylistSortType.title:
+        sortSongsByKey(playlist, 'title');
+        break;
+      case PlaylistSortType.artist:
+        sortSongsByKey(playlist, 'artist');
+        break;
+    }
+
     _playlist['list'] = playlist;
   }
 

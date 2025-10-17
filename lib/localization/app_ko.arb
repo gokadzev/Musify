@@ -44,6 +44,7 @@
   "customPlaylistName": "커스텀 재생목록 이름",
   "customPlaylists": "커스텀 재생목록",
   "dateAdded": "Date Added",
+  "default_": "Default",
   "delete": "삭제",
   "deleteFolder": "폴더 삭제",
   "deleteFolderQuestion": "이 폴더를 삭제할까요? 폴더 안의 재생목록이 기본 라이브러리로 이동합니다.",

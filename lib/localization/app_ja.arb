@@ -44,6 +44,7 @@
   "customPlaylistName": "リスト名の指定",
   "customPlaylists": "あなたの再生リスト",
   "dateAdded": "Date Added",
+  "default_": "Default",
   "delete": "削除",
   "deleteFolder": "フォルダーを削除",
   "deleteFolderQuestion": "このフォルダーを削除しますか? 中身の再生リストは、メインのライブラリに移動されます。",

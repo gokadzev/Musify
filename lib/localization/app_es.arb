@@ -44,6 +44,7 @@
   "customPlaylistName": "Nombre personalizado de la lista de reproducción",
   "customPlaylists": "Listas de reproducción personalizadas",
   "dateAdded": "Date Added",
+  "default_": "Default",
   "delete": "Eliminar",
   "deleteFolder": "Eliminar carpeta",
   "deleteFolderQuestion": "¿Estás seguro de que deseas eliminar esta carpeta? Las listas de reproducción que contiene se moverán a la biblioteca principal.",

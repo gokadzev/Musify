@@ -44,6 +44,7 @@
   "customPlaylistName": "Anpassat spellistsnamn",
   "customPlaylists": "Anpassade spellistor",
   "dateAdded": "Date Added",
+  "default_": "Default",
   "delete": "Delete",
   "deleteFolder": "Delete folder",
   "deleteFolderQuestion": "Are you sure you want to delete this folder? Playlists inside will be moved to the main library.",
