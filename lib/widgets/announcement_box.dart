@@ -19,6 +19,7 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/utilities/url_launcher.dart';
 
@@ -69,7 +70,7 @@ class AnnouncementBox extends StatelessWidget {
                 ),
                 if (onDismiss != null)
                   IconButton(
-                    icon: Icon(Icons.close, color: textColor),
+                    icon: Icon(FluentIcons.dismiss_24_filled, color: textColor),
                     onPressed: onDismiss,
                   ),
               ],
