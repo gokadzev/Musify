@@ -166,21 +166,23 @@ class _MusifyState extends State<Musify> {
       logger.log('License Registration Error', e, stackTrace);
     }
 
-    if (shouldWeCheckUpdates.value == true) {
-      if (!isFdroidBuild && !isUpdateChecked && kReleaseMode) {
-        SchedulerBinding.instance.addPostFrameCallback((_) {
-          if (!offlineMode.value) {
-            checkAppUpdates();
-          }
-          isUpdateChecked = true;
-        });
-      }
-    } else {
-      if (shouldWeCheckUpdates.value == null) {
-        // show dialog that asks user if they want to enable update checks
-        SchedulerBinding.instance.addPostFrameCallback((_) {
-          showUpdateCheckDialog(NavigationManager().context);
-        });
+    if (!isFdroidBuild) {
+      if (shouldWeCheckUpdates.value == true) {
+        if (!isUpdateChecked && kReleaseMode) {
+          SchedulerBinding.instance.addPostFrameCallback((_) {
+            if (!offlineMode.value) {
+              checkAppUpdates();
+            }
+            isUpdateChecked = true;
+          });
+        }
+      } else {
+        if (shouldWeCheckUpdates.value == null) {
+          // show dialog that asks user if they want to enable update checks
+          SchedulerBinding.instance.addPostFrameCallback((_) {
+            showUpdateCheckDialog(NavigationManager().context);
+          });
+        }
       }
     }
   }
