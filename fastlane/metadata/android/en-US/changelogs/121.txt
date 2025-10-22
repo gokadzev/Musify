@@ -1,2 +1,0 @@
-Bug Fixes
-- Fixed Turkish translation problems

@@ -1,7 +1,0 @@
-Bug Fixes
-- Fixed song repeat function
-- Resolved issues with foreground service
-
-Enhancements
-- Added automatic theme adjustment based on brightness changes
-- Improved playback stability during interruptions

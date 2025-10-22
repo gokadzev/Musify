@@ -1,6 +1,0 @@
-Bug Fixes
-- Fixed type switcher when creating a playlist
-
-Enhancements
-- Updated Portuguese and Indonesian translations
-- Full changelog: https://github.com/gokadzev/Musify/releases

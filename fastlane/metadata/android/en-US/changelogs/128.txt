@@ -1,2 +1,0 @@
-Enhancements
-- Fixed F-Droid build
