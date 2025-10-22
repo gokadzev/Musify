@@ -136,17 +136,16 @@ Future<void> checkAppUpdates() async {
 bool isLatestVersionHigher(String appVersion, String latestVersion) {
   final parsedAppVersion = appVersion.split('.');
   final parsedAppLatestVersion = latestVersion.split('.');
-  final length =
-      parsedAppVersion.length > parsedAppLatestVersion.length
-          ? parsedAppVersion.length
-          : parsedAppLatestVersion.length;
+  final length = parsedAppVersion.length > parsedAppLatestVersion.length
+      ? parsedAppVersion.length
+      : parsedAppLatestVersion.length;
   for (var i = 0; i < length; i++) {
-    final value1 =
-        i < parsedAppVersion.length ? int.parse(parsedAppVersion[i]) : 0;
-    final value2 =
-        i < parsedAppLatestVersion.length
-            ? int.parse(parsedAppLatestVersion[i])
-            : 0;
+    final value1 = i < parsedAppVersion.length
+        ? int.parse(parsedAppVersion[i])
+        : 0;
+    final value2 = i < parsedAppLatestVersion.length
+        ? int.parse(parsedAppLatestVersion[i])
+        : 0;
     if (value2 > value1) {
       return true;
     } else if (value2 < value1) {
@@ -166,10 +165,36 @@ Future<String> getCPUArchitecture() async {
 
 Future<String> getDownloadUrl(Map<String, dynamic> map) async {
   final cpuArchitecture = await getCPUArchitecture();
-  final url =
-      cpuArchitecture == 'aarch64'
-          ? map[downloadUrlArm64Key].toString()
-          : map[downloadUrlKey].toString();
+  final url = cpuArchitecture == 'aarch64'
+      ? map[downloadUrlArm64Key].toString()
+      : map[downloadUrlKey].toString();
 
   return url;
+}
+
+/// Fetch only the announcement URL from the `check.json` file and set the
+/// global `announcementURL` ValueNotifier. This does not trigger releases
+/// fetching or any update dialogs/downloads and is safe to call for F‑Droid
+/// builds where update prompts are not allowed.
+Future<void> fetchAnnouncementOnly() async {
+  try {
+    final response = await http.get(Uri.parse(checkUrl));
+
+    if (response.statusCode != 200) {
+      logger.log(
+        'Fetch announcement (checkUrl) call returned status code ${response.statusCode}',
+        null,
+        null,
+      );
+      return;
+    }
+
+    final map = json.decode(response.body) as Map<String, dynamic>;
+    final ann = map['announcementurl'];
+    if (ann != null) {
+      announcementURL.value = ann.toString();
+    }
+  } catch (e, stackTrace) {
+    logger.log('Error in fetchAnnouncementOnly', e, stackTrace);
+  }
 }

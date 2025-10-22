@@ -324,6 +324,10 @@ Future<void> initialisation() async {
     } on PlatformException {
       logger.log('Failed to get initial uri', null, null);
     }
+
+    if (isFdroidBuild && !offlineMode.value) {
+      await fetchAnnouncementOnly();
+    }
   } catch (e, stackTrace) {
     logger.log('Initialization Error', e, stackTrace);
   }
