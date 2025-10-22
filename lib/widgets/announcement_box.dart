@@ -29,11 +29,13 @@ class AnnouncementBox extends StatelessWidget {
     required this.backgroundColor,
     required this.textColor,
     required this.url,
+    this.onDismiss,
   });
   final String message;
   final Color backgroundColor;
   final Color textColor;
   final String url;
+  final VoidCallback? onDismiss;
 
   @override
   Widget build(BuildContext context) {
@@ -65,6 +67,11 @@ class AnnouncementBox extends StatelessWidget {
                     maxLines: 2,
                   ),
                 ),
+                if (onDismiss != null)
+                  IconButton(
+                    icon: Icon(Icons.close, color: textColor),
+                    onPressed: onDismiss,
+                  ),
               ],
             ),
           ),

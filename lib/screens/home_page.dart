@@ -58,10 +58,14 @@ class _HomePageState extends State<HomePage> {
 
                 return AnnouncementBox(
                   message: context.l10n!.newAnnouncement,
-                  backgroundColor:
-                      Theme.of(context).colorScheme.secondaryContainer,
+                  backgroundColor: Theme.of(
+                    context,
+                  ).colorScheme.secondaryContainer,
                   textColor: Theme.of(context).colorScheme.onSecondaryContainer,
                   url: _url,
+                  onDismiss: () async {
+                    announcementURL.value = null;
+                  },
                 );
               },
             ),
@@ -96,10 +100,9 @@ class _HomePageState extends State<HomePage> {
     double playlistHeight, {
     bool showOnlyLiked = false,
   }) {
-    final sectionTitle =
-        showOnlyLiked
-            ? context.l10n!.backToFavorites
-            : context.l10n!.suggestedPlaylists;
+    final sectionTitle = showOnlyLiked
+        ? context.l10n!.backToFavorites
+        : context.l10n!.suggestedPlaylists;
     return FutureBuilder<List<dynamic>>(
       future: getPlaylists(
         playlistsNum: recommendedCubesNumber,
@@ -128,18 +131,9 @@ class _HomePageState extends State<HomePage> {
             SectionHeader(title: sectionTitle),
             ConstrainedBox(
               constraints: BoxConstraints(maxHeight: playlistHeight),
-              child:
-                  isLargeScreen
-                      ? _buildHorizontalList(
-                        playlists,
-                        itemsNumber,
-                        playlistHeight,
-                      )
-                      : _buildCarouselView(
-                        playlists,
-                        itemsNumber,
-                        playlistHeight,
-                      ),
+              child: isLargeScreen
+                  ? _buildHorizontalList(playlists, itemsNumber, playlistHeight)
+                  : _buildCarouselView(playlists, itemsNumber, playlistHeight),
             ),
           ],
         );
@@ -160,14 +154,13 @@ class _HomePageState extends State<HomePage> {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: GestureDetector(
-            onTap:
-                () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder:
-                        (context) => PlaylistPage(playlistId: playlist['ytid']),
-                  ),
-                ),
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    PlaylistPage(playlistId: playlist['ytid']),
+              ),
+            ),
             child: PlaylistCube(playlist, size: height),
           ),
         );
@@ -183,15 +176,13 @@ class _HomePageState extends State<HomePage> {
     return CarouselView.weighted(
       flexWeights: const <int>[3, 2, 1],
       itemSnapping: true,
-      onTap:
-          (index) => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder:
-                  (context) =>
-                      PlaylistPage(playlistId: playlists[index]['ytid']),
-            ),
-          ),
+      onTap: (index) => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+              PlaylistPage(playlistId: playlists[index]['ytid']),
+        ),
+      ),
       children: List.generate(itemCount, (index) {
         return PlaylistCube(playlists[index], size: height * 2);
       }),
