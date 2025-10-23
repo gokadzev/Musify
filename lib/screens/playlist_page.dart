@@ -589,22 +589,27 @@ class _PlaylistPageState extends State<PlaylistPage> {
   void _sortPlaylist(PlaylistSortType type) {
     if (_playlist == null || _playlist['list'] == null) return;
 
-    final playlist = _playlist['list'] as List;
-
     switch (type) {
       case PlaylistSortType.default_:
-        // Restore original order by re-fetching the playlist
-        _playlist = widget.playlistData;
+        // Restore original order - keep the current playlist as-is if widget.playlistData is null
+        if (widget.playlistData != null) {
+          _playlist = widget.playlistData;
+        }
         break;
       case PlaylistSortType.title:
+        final playlist = _playlist['list'] as List;
         sortSongsByKey(playlist, 'title');
+        _playlist['list'] = playlist;
         break;
       case PlaylistSortType.artist:
+        final playlist = _playlist['list'] as List;
         sortSongsByKey(playlist, 'artist');
+        _playlist['list'] = playlist;
         break;
     }
 
-    _playlist['list'] = playlist;
+    // Reset paging controller to top
+    _pagingController.refresh();
   }
 
   Widget buildSongActionsRow() {
