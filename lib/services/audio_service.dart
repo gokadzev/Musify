@@ -310,10 +310,13 @@ class MusifyAudioHandler extends BaseAudioHandler {
     try {
       if (event.processingState == ProcessingState.completed &&
           !sleepTimerExpired) {
-        Future.delayed(
-          const Duration(milliseconds: 100),
-          _handleSongCompletion,
-        );
+        // Schedule the completion handler with slight delay
+        Future.delayed(const Duration(milliseconds: 100), () {
+          // Double-check sleep timer state before handling completion
+          if (!sleepTimerExpired) {
+            _handleSongCompletion();
+          }
+        });
       }
     } catch (e, stackTrace) {
       logger.log('Error handling playback event', e, stackTrace);
@@ -350,14 +353,18 @@ class MusifyAudioHandler extends BaseAudioHandler {
         _addToHistory(_queueList[_currentQueueIndex]);
       }
 
-      if (hasNext) {
+      // Check if there's a next song in the queue (not considering auto-play here)
+      if (_currentQueueIndex < _queueList.length - 1) {
         await skipToNext();
       } else if (repeatNotifier.value == AudioServiceRepeatMode.all &&
           _queueList.isNotEmpty) {
+        // Loop back to start
         await _playFromQueue(0);
       } else if (playNextSongAutomatically.value) {
+        // Try to play auto-recommended song
         await _playNextRecommendedSong();
       }
+      // Otherwise, playback ends naturally
     } catch (e, stackTrace) {
       logger.log('Error handling song completion', e, stackTrace);
     }
@@ -692,6 +699,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
       }
 
       _isLoadingNextSong = true;
+
+      // Save old index for recovery in case of failure
+      final previousQueueIndex = _currentQueueIndex;
       _currentQueueIndex = index;
       _songTransitionCounter++;
 
@@ -711,6 +721,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
         _consecutiveErrors = 0;
         _preloadUpcomingSongs();
       } else {
+        // Restore previous index on failure
+        _currentQueueIndex = previousQueueIndex;
         _handlePlaybackError();
       }
     } catch (e, stackTrace) {
@@ -825,9 +837,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       ? _queueList[_currentQueueIndex]
       : null;
 
-  bool get hasNext =>
-      _currentQueueIndex < _queueList.length - 1 ||
-      (playNextSongAutomatically.value && !_isLoadingNextSong);
+  bool get hasNext => _currentQueueIndex < _queueList.length - 1;
 
   bool get hasPrevious => _currentQueueIndex > 0 || _historyList.isNotEmpty;
 
@@ -908,20 +918,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
       final isOffline = song['isOffline'] ?? false;
 
       if (audioPlayer.playing) await audioPlayer.stop();
-
-      // Ensure the song is in the queue for auto-play recommendations to work
-      if (_queueList.isEmpty ||
-          _queueList.every((s) => s['ytid'] != song['ytid'])) {
-        _queueList
-          ..clear()
-          ..add(song);
-        _currentQueueIndex = 0;
-        _updateQueueMediaItems();
-      } else {
-        _currentQueueIndex = _queueList.indexWhere(
-          (s) => s['ytid'] == song['ytid'],
-        );
-      }
 
       final songUrl = await _getSongUrl(song, isOffline);
 
@@ -1168,16 +1164,15 @@ class MusifyAudioHandler extends BaseAudioHandler {
   Future<void> skipToNext() async {
     try {
       if (_currentQueueIndex < _queueList.length - 1) {
+        // Next song exists in queue
         await _playFromQueue(_currentQueueIndex + 1);
       } else if (repeatNotifier.value == AudioServiceRepeatMode.all &&
           _queueList.isNotEmpty) {
+        // Loop back to start
         await _playFromQueue(0);
-      } else if (playNextSongAutomatically.value) {
-        if (!_isLoadingNextSong) {
-          await _playNextRecommendedSong();
-        } else {
-          logger.log('Already loading next song', null, null);
-        }
+      } else if (playNextSongAutomatically.value && !_isLoadingNextSong) {
+        // Try to play auto-recommended song
+        await _playNextRecommendedSong();
       } else {
         logger.log('No next song available', null, null);
       }
@@ -1196,6 +1191,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
       } else if (_historyList.isNotEmpty) {
         final lastSong = _historyList.removeLast();
         _queueList.insert(0, lastSong);
+        // Ensure index is valid
+        _currentQueueIndex = 0;
+        _updateQueueMediaItems();
         await _playFromQueue(0);
       }
 
