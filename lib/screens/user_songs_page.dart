@@ -45,6 +45,7 @@ class UserSongsPage extends StatefulWidget {
 
 class _UserSongsPageState extends State<UserSongsPage> {
   bool _isEditEnabled = false;
+  late List<dynamic> _originalOfflineSongsList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +55,11 @@ class _UserSongsPageState extends State<UserSongsPage> {
     final length = getLength(widget.page);
     final isLikedSongs = title == context.l10n!.likedSongs;
     final isOfflineSongs = title == context.l10n!.offlineSongs;
+
+    // Initialize backup for offline songs on first open
+    if (isOfflineSongs && _originalOfflineSongsList.isEmpty) {
+      _originalOfflineSongsList = List<dynamic>.from(userOfflineSongs);
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -291,13 +297,12 @@ class _UserSongsPageState extends State<UserSongsPage> {
   }
 
   void _sortOfflineSongs(OfflineSortType type) {
-    // Skip sorting and saving if using default order
-    if (type == OfflineSortType.default_) return;
-
     switch (type) {
       case OfflineSortType.default_:
-        // Should not reach here due to early return above
-        break;
+        userOfflineSongs
+          ..clear()
+          ..addAll(_originalOfflineSongsList);
+        return;
       case OfflineSortType.title:
         userOfflineSongs.sort((a, b) {
           final titleA = (a['title'] ?? '').toString().toLowerCase();
@@ -320,8 +325,5 @@ class _UserSongsPageState extends State<UserSongsPage> {
         });
         break;
     }
-
-    // Save the sorted list
-    addOrUpdateData('userNoBackup', 'offlineSongs', userOfflineSongs);
   }
 }

@@ -65,6 +65,8 @@ class PlaylistPage extends StatefulWidget {
 
 class _PlaylistPageState extends State<PlaylistPage> {
   dynamic _playlist;
+  late final List<dynamic>
+  _originalPlaylistList; // Keep original order separately
 
   final int _itemsPerPage = 35;
   late final PagingController<int, dynamic> _pagingController;
@@ -130,6 +132,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
       }
 
       if (_playlist != null) {
+        _originalPlaylistList = List<dynamic>.from(_playlist['list'] as List);
         _sortPlaylist(_sortType);
         if (mounted) {
           setState(() {});
@@ -580,7 +583,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
           _sortPlaylist(type);
         });
 
-        // Refresh pagination with newly sorted playlist
+        // Refresh pagination inside setState ensures UI updates properly
         _pagingController.refresh();
       },
     );
@@ -591,18 +594,16 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
     switch (type) {
       case PlaylistSortType.default_:
-        // Restore original order - keep the current playlist as-is if widget.playlistData is null
-        if (widget.playlistData != null) {
-          _playlist = widget.playlistData;
-        }
+        // Restore original order from backup
+        _playlist['list'] = List<dynamic>.from(_originalPlaylistList);
         break;
       case PlaylistSortType.title:
-        final playlist = _playlist['list'] as List;
+        final playlist = List<dynamic>.from(_playlist['list']);
         sortSongsByKey(playlist, 'title');
         _playlist['list'] = playlist;
         break;
       case PlaylistSortType.artist:
-        final playlist = _playlist['list'] as List;
+        final playlist = List<dynamic>.from(_playlist['list']);
         sortSongsByKey(playlist, 'artist');
         _playlist['list'] = playlist;
         break;
