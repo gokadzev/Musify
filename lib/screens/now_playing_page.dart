@@ -73,18 +73,18 @@ class NowPlayingPage extends StatelessWidget {
               final metadata = snapshot.data!;
               return isLargeScreen
                   ? _DesktopLayout(
-                    metadata: metadata,
-                    size: size,
-                    adjustedIconSize: adjustedIconSize,
-                    adjustedMiniIconSize: adjustedMiniIconSize,
-                  )
+                      metadata: metadata,
+                      size: size,
+                      adjustedIconSize: adjustedIconSize,
+                      adjustedMiniIconSize: adjustedMiniIconSize,
+                    )
                   : _MobileLayout(
-                    metadata: metadata,
-                    size: size,
-                    adjustedIconSize: adjustedIconSize,
-                    adjustedMiniIconSize: adjustedMiniIconSize,
-                    isLargeScreen: isLargeScreen,
-                  );
+                      metadata: metadata,
+                      size: size,
+                      adjustedIconSize: adjustedIconSize,
+                      adjustedMiniIconSize: adjustedMiniIconSize,
+                      isLargeScreen: isLargeScreen,
+                    );
             }
           },
         ),
@@ -191,10 +191,9 @@ class NowPlayingArtwork extends StatelessWidget {
     final screenWidth = size.width;
     final screenHeight = size.height;
     final isLandscape = screenWidth > screenHeight;
-    final imageSize =
-        isLandscape
-            ? screenHeight * 0.40
-            : (screenWidth + screenHeight) / 3.35 - _padding;
+    final imageSize = isLandscape
+        ? screenHeight * 0.40
+        : (screenWidth + screenHeight) / 3.35 - _padding;
     const lyricsTextStyle = TextStyle(
       fontSize: 24,
       fontWeight: FontWeight.w500,
@@ -259,47 +258,56 @@ class QueueListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final _textColor = Theme.of(context).colorScheme.secondary;
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8),
-          child: Text(
-            context.l10n!.playlist,
-            style: Theme.of(
-              context,
-            ).textTheme.headlineSmall?.copyWith(color: _textColor),
-          ),
-        ),
-        Expanded(
-          child:
-              activePlaylist['list'].isEmpty
+    return StreamBuilder<List<MediaItem>>(
+      stream: audioHandler.queueStream,
+      builder: (context, snapshot) {
+        final queue = snapshot.data ?? [];
+        final mappedQueue = queue.isNotEmpty
+            ? queue.map(mediaItemToMap).toList()
+            : [];
+        return Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: Text(
+                context.l10n!.playlist,
+                style: Theme.of(
+                  context,
+                ).textTheme.headlineSmall?.copyWith(color: _textColor),
+              ),
+            ),
+            Expanded(
+              child: mappedQueue.isEmpty
                   ? Center(
-                    child: Text(
-                      context.l10n!.noSongsInQueue,
-                      style: TextStyle(color: _textColor),
-                    ),
-                  )
+                      child: Text(
+                        context.l10n!.noSongsInQueue,
+                        style: TextStyle(color: _textColor),
+                      ),
+                    )
                   : ListView.builder(
-                    itemCount: activePlaylist['list'].length,
-                    itemBuilder: (context, index) {
-                      final borderRadius = getItemBorderRadius(
-                        index,
-                        activePlaylist['list'].length,
-                      );
-                      return SongBar(
-                        activePlaylist['list'][index],
-                        false,
-                        onPlay: () {
-                          audioHandler.playPlaylistSong(songIndex: index);
-                        },
-                        backgroundColor:
-                            Theme.of(context).colorScheme.surfaceContainerHigh,
-                        borderRadius: borderRadius,
-                      );
-                    },
-                  ),
-        ),
-      ],
+                      itemCount: mappedQueue.length,
+                      itemBuilder: (context, index) {
+                        final borderRadius = getItemBorderRadius(
+                          index,
+                          mappedQueue.length,
+                        );
+                        return SongBar(
+                          mappedQueue[index],
+                          false,
+                          onPlay: () {
+                            audioHandler.playPlaylistSong(songIndex: index);
+                          },
+                          backgroundColor: Theme.of(
+                            context,
+                          ).colorScheme.surfaceContainerHigh,
+                          borderRadius: borderRadius,
+                        );
+                      },
+                    ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
@@ -416,44 +424,39 @@ class _PositionSliderState extends State<PositionSlider> {
         stream: audioHandler.positionDataStream,
         builder: (context, snapshot) {
           final hasData = snapshot.hasData && snapshot.data != null;
-          final positionData =
-              hasData
-                  ? snapshot.data!
-                  : PositionData(Duration.zero, Duration.zero, Duration.zero);
+          final positionData = hasData
+              ? snapshot.data!
+              : PositionData(Duration.zero, Duration.zero, Duration.zero);
 
-          final maxDuration =
-              positionData.duration.inSeconds > 0
-                  ? positionData.duration.inSeconds.toDouble()
-                  : 1.0;
+          final maxDuration = positionData.duration.inSeconds > 0
+              ? positionData.duration.inSeconds.toDouble()
+              : 1.0;
 
-          final currentValue =
-              _isDragging
-                  ? _dragValue
-                  : positionData.position.inSeconds.toDouble();
+          final currentValue = _isDragging
+              ? _dragValue
+              : positionData.position.inSeconds.toDouble();
 
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Slider(
                 value: currentValue.clamp(0.0, maxDuration),
-                onChanged:
-                    hasData
-                        ? (value) {
-                          setState(() {
-                            _isDragging = true;
-                            _dragValue = value;
-                          });
-                        }
-                        : null,
-                onChangeEnd:
-                    hasData
-                        ? (value) {
-                          audioHandler.seek(Duration(seconds: value.toInt()));
-                          setState(() {
-                            _isDragging = false;
-                          });
-                        }
-                        : null,
+                onChanged: hasData
+                    ? (value) {
+                        setState(() {
+                          _isDragging = true;
+                          _dragValue = value;
+                        });
+                      }
+                    : null,
+                onChangeEnd: hasData
+                    ? (value) {
+                        audioHandler.seek(Duration(seconds: value.toInt()));
+                        setState(() {
+                          _isDragging = false;
+                        });
+                      }
+                    : null,
                 max: maxDuration,
               ),
               _buildPositionRow(context, primaryColor, positionData),
@@ -520,10 +523,9 @@ class PlayerControlButtons extends StatelessWidget {
                       IconButton(
                         icon: Icon(
                           FluentIcons.previous_24_filled,
-                          color:
-                              audioHandler.hasPrevious
-                                  ? _primaryColor
-                                  : _secondaryColor,
+                          color: audioHandler.hasPrevious
+                              ? _primaryColor
+                              : _secondaryColor,
                         ),
                         iconSize: iconSize / 1.7,
                         onPressed: () => audioHandler.skipToPrevious(),
@@ -539,18 +541,15 @@ class PlayerControlButtons extends StatelessWidget {
                       IconButton(
                         icon: Icon(
                           FluentIcons.next_24_filled,
-                          color:
-                              audioHandler.hasNext
-                                  ? _primaryColor
-                                  : _secondaryColor,
+                          color: audioHandler.hasNext
+                              ? _primaryColor
+                              : _secondaryColor,
                         ),
                         iconSize: iconSize / 1.7,
-                        onPressed:
-                            () =>
-                                repeatNotifier.value ==
-                                        AudioServiceRepeatMode.one
-                                    ? audioHandler.playAgain()
-                                    : audioHandler.skipToNext(),
+                        onPressed: () =>
+                            repeatNotifier.value == AudioServiceRepeatMode.one
+                            ? audioHandler.playAgain()
+                            : audioHandler.skipToNext(),
                         splashColor: Colors.transparent,
                       ),
                     ],
@@ -575,25 +574,25 @@ class PlayerControlButtons extends StatelessWidget {
       builder: (_, value, __) {
         return value
             ? IconButton.filled(
-              icon: Icon(
-                FluentIcons.arrow_shuffle_24_filled,
-                color: secondaryColor,
-              ),
-              iconSize: iconSize,
-              onPressed: () {
-                audioHandler.setShuffleMode(AudioServiceShuffleMode.none);
-              },
-            )
+                icon: Icon(
+                  FluentIcons.arrow_shuffle_24_filled,
+                  color: secondaryColor,
+                ),
+                iconSize: iconSize,
+                onPressed: () {
+                  audioHandler.setShuffleMode(AudioServiceShuffleMode.none);
+                },
+              )
             : IconButton.filledTonal(
-              icon: Icon(
-                FluentIcons.arrow_shuffle_off_24_filled,
-                color: primaryColor,
-              ),
-              iconSize: iconSize,
-              onPressed: () {
-                audioHandler.setShuffleMode(AudioServiceShuffleMode.all);
-              },
-            );
+                icon: Icon(
+                  FluentIcons.arrow_shuffle_off_24_filled,
+                  color: primaryColor,
+                ),
+                iconSize: iconSize,
+                onPressed: () {
+                  audioHandler.setShuffleMode(AudioServiceShuffleMode.all);
+                },
+              );
       },
     );
   }
@@ -603,48 +602,50 @@ class PlayerControlButtons extends StatelessWidget {
     Color secondaryColor,
     double iconSize,
   ) {
-    return ValueListenableBuilder<AudioServiceRepeatMode>(
-      valueListenable: repeatNotifier,
-      builder: (_, repeatMode, __) {
-        return repeatMode != AudioServiceRepeatMode.none
-            ? IconButton.filled(
-              icon: Icon(
-                repeatMode == AudioServiceRepeatMode.all
-                    ? FluentIcons.arrow_repeat_all_24_filled
-                    : FluentIcons.arrow_repeat_1_24_filled,
-                color: secondaryColor,
-              ),
-              iconSize: iconSize,
-              onPressed: () {
-                final newRepeatMode =
-                    repeatMode == AudioServiceRepeatMode.all
-                        ? AudioServiceRepeatMode.one
-                        : AudioServiceRepeatMode.none;
+    return StreamBuilder<List<MediaItem>>(
+      stream: audioHandler.queueStream,
+      builder: (context, snapshot) {
+        final queue = snapshot.data ?? [];
+        return ValueListenableBuilder<AudioServiceRepeatMode>(
+          valueListenable: repeatNotifier,
+          builder: (_, repeatMode, __) {
+            return repeatMode != AudioServiceRepeatMode.none
+                ? IconButton.filled(
+                    icon: Icon(
+                      repeatMode == AudioServiceRepeatMode.all
+                          ? FluentIcons.arrow_repeat_all_24_filled
+                          : FluentIcons.arrow_repeat_1_24_filled,
+                      color: secondaryColor,
+                    ),
+                    iconSize: iconSize,
+                    onPressed: () {
+                      final newRepeatMode =
+                          repeatMode == AudioServiceRepeatMode.all
+                          ? AudioServiceRepeatMode.one
+                          : AudioServiceRepeatMode.none;
 
-                repeatNotifier.value = newRepeatMode;
+                      repeatNotifier.value = newRepeatMode;
+                      audioHandler.setRepeatMode(newRepeatMode);
+                    },
+                  )
+                : IconButton.filledTonal(
+                    icon: Icon(
+                      FluentIcons.arrow_repeat_all_off_24_filled,
+                      color: primaryColor,
+                    ),
+                    iconSize: iconSize,
+                    onPressed: () {
+                      final _isSingleSongPlaying = queue.length <= 1;
+                      final newRepeatMode = _isSingleSongPlaying
+                          ? AudioServiceRepeatMode.one
+                          : AudioServiceRepeatMode.all;
 
-                audioHandler.setRepeatMode(newRepeatMode);
-              },
-            )
-            : IconButton.filledTonal(
-              icon: Icon(
-                FluentIcons.arrow_repeat_all_off_24_filled,
-                color: primaryColor,
-              ),
-              iconSize: iconSize,
-              onPressed: () {
-                final _isSingleSongPlaying = activePlaylist['list'].isEmpty;
-                final newRepeatMode =
-                    _isSingleSongPlaying
-                        ? AudioServiceRepeatMode.one
-                        : AudioServiceRepeatMode.all;
-
-                repeatNotifier.value = newRepeatMode;
-
-                if (repeatNotifier.value == AudioServiceRepeatMode.one)
-                  audioHandler.setRepeatMode(newRepeatMode);
-              },
-            );
+                      repeatNotifier.value = newRepeatMode;
+                      audioHandler.setRepeatMode(newRepeatMode);
+                    },
+                  );
+          },
+        );
       },
     );
   }
@@ -662,31 +663,6 @@ class BottomActionsRow extends StatelessWidget {
   final MediaItem metadata;
   final double iconSize;
   final bool isLargeScreen;
-
-  @override
-  Widget build(BuildContext context) {
-    final songLikeStatus = ValueNotifier<bool>(isSongAlreadyLiked(audioId));
-    final songOfflineStatus = ValueNotifier<bool>(
-      isSongAlreadyOffline(audioId),
-    );
-    final _primaryColor = Theme.of(context).colorScheme.primary;
-
-    return Wrap(
-      alignment: WrapAlignment.center,
-      spacing: 8,
-      children: [
-        _buildOfflineButton(songOfflineStatus, _primaryColor),
-        if (!offlineMode.value) _buildAddToPlaylistButton(_primaryColor),
-        if (activePlaylist['list'].isNotEmpty && !isLargeScreen)
-          _buildQueueButton(context, _primaryColor),
-        if (!offlineMode.value) ...[
-          _buildLyricsButton(_primaryColor),
-          _buildSleepTimerButton(context, _primaryColor),
-          _buildLikeButton(songLikeStatus, _primaryColor),
-        ],
-      ],
-    );
-  }
 
   Widget _buildOfflineButton(ValueNotifier<bool> status, Color primaryColor) {
     return ValueListenableBuilder<bool>(
@@ -715,46 +691,79 @@ class BottomActionsRow extends StatelessWidget {
 
   Widget _buildAddToPlaylistButton(Color primaryColor) {
     return Builder(
-      builder:
-          (ctx) => IconButton.filledTonal(
-            icon: Icon(Icons.add, color: primaryColor),
-            iconSize: iconSize,
-            onPressed: () {
-              showAddToPlaylistDialog(ctx, mediaItemToMap(metadata));
-            },
-          ),
+      builder: (ctx) => IconButton.filledTonal(
+        icon: Icon(Icons.add, color: primaryColor),
+        iconSize: iconSize,
+        onPressed: () {
+          showAddToPlaylistDialog(ctx, mediaItemToMap(metadata));
+        },
+      ),
     );
   }
 
-  Widget _buildQueueButton(BuildContext context, Color primaryColor) {
-    return IconButton.filledTonal(
-      icon: Icon(FluentIcons.apps_list_24_filled, color: primaryColor),
-      iconSize: iconSize,
-      onPressed: () {
-        showCustomBottomSheet(
-          context,
-          ListView.builder(
-            shrinkWrap: true,
-            physics: const BouncingScrollPhysics(),
-            padding: commonListViewBottmomPadding,
-            itemCount: activePlaylist['list'].length,
-            itemBuilder: (BuildContext context, int index) {
-              final borderRadius = getItemBorderRadius(
-                index,
-                activePlaylist['list'].length,
-              );
-              return SongBar(
-                activePlaylist['list'][index],
-                false,
-                onPlay: () {
-                  audioHandler.playPlaylistSong(songIndex: index);
+  @override
+  Widget build(BuildContext context) {
+    final songLikeStatus = ValueNotifier<bool>(isSongAlreadyLiked(audioId));
+    final songOfflineStatus = ValueNotifier<bool>(
+      isSongAlreadyOffline(audioId),
+    );
+    final _primaryColor = Theme.of(context).colorScheme.primary;
+
+    return StreamBuilder<List<MediaItem>>(
+      stream: audioHandler.queueStream,
+      builder: (context, snapshot) {
+        final queue = snapshot.data ?? [];
+        final mappedQueue = queue.isNotEmpty
+            ? queue.map(mediaItemToMap).toList()
+            : [];
+        return Wrap(
+          alignment: WrapAlignment.center,
+          spacing: 8,
+          children: [
+            _buildOfflineButton(songOfflineStatus, _primaryColor),
+            if (!offlineMode.value) _buildAddToPlaylistButton(_primaryColor),
+            if (queue.isNotEmpty && !isLargeScreen)
+              IconButton.filledTonal(
+                icon: Icon(
+                  FluentIcons.apps_list_24_filled,
+                  color: _primaryColor,
+                ),
+                iconSize: iconSize,
+                onPressed: () {
+                  showCustomBottomSheet(
+                    context,
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const BouncingScrollPhysics(),
+                      padding: commonListViewBottmomPadding,
+                      itemCount: mappedQueue.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final borderRadius = getItemBorderRadius(
+                          index,
+                          mappedQueue.length,
+                        );
+                        return SongBar(
+                          mappedQueue[index],
+                          false,
+                          onPlay: () {
+                            audioHandler.playPlaylistSong(songIndex: index);
+                          },
+                          backgroundColor: Theme.of(
+                            context,
+                          ).colorScheme.surfaceContainerHigh,
+                          borderRadius: borderRadius,
+                        );
+                      },
+                    ),
+                  );
                 },
-                backgroundColor:
-                    Theme.of(context).colorScheme.surfaceContainerHigh,
-                borderRadius: borderRadius,
-              );
-            },
-          ),
+              ),
+            if (!offlineMode.value) ...[
+              _buildLyricsButton(_primaryColor),
+              _buildSleepTimerButton(context, _primaryColor),
+              _buildLikeButton(songLikeStatus, _primaryColor),
+            ],
+          ],
         );
       },
     );
@@ -802,8 +811,9 @@ class BottomActionsRow extends StatelessWidget {
     return ValueListenableBuilder<bool>(
       valueListenable: status,
       builder: (_, value, __) {
-        final icon =
-            value ? FluentIcons.heart_24_filled : FluentIcons.heart_24_regular;
+        final icon = value
+            ? FluentIcons.heart_24_filled
+            : FluentIcons.heart_24_regular;
 
         return IconButton.filledTonal(
           icon: Icon(icon, color: primaryColor),
