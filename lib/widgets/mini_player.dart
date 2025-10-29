@@ -9,7 +9,7 @@ import 'package:musify/widgets/marque.dart';
 import 'package:musify/widgets/song_artwork.dart';
 import 'package:rxdart/rxdart.dart';
 
-final Stream<FullPlayerState> fullPlayerStateStream = Rx.combineLatest3(
+Stream<FullPlayerState> _createFullPlayerStateStream() => Rx.combineLatest3(
   audioHandler.playbackStateStream.distinct(),
   audioHandler.queueStream.distinct(),
   audioHandler.positionDataStream,
@@ -36,7 +36,7 @@ class MiniPlayer extends StatelessWidget {
         if (metadata == null) return const SizedBox.shrink();
 
         return StreamBuilder<FullPlayerState>(
-          stream: fullPlayerStateStream,
+          stream: _createFullPlayerStateStream(),
           builder: (context, stateSnapshot) {
             final state = stateSnapshot.data;
             if (state == null) return const SizedBox.shrink();
@@ -91,8 +91,12 @@ class _MiniPlayerBodyState extends State<_MiniPlayerBody>
     super.dispose();
   }
 
+  static const double _dragThresholdForNavigation = 10;
+
   void _handleVerticalDrag(DragUpdateDetails details) {
-    if (details.primaryDelta! < -10) _navigateToNowPlaying();
+    if ((details.primaryDelta ?? 0) < -_dragThresholdForNavigation) {
+      _navigateToNowPlaying();
+    }
   }
 
   void _navigateToNowPlaying() {
@@ -330,8 +334,9 @@ class _PlayPauseButton extends StatelessWidget {
       );
     }
 
-    final iconData =
-        isPlaying ? FluentIcons.pause_24_filled : FluentIcons.play_24_filled;
+    final iconData = isPlaying
+        ? FluentIcons.pause_24_filled
+        : FluentIcons.play_24_filled;
 
     return GestureDetector(
       onTap: isPlaying ? audioHandler.pause : audioHandler.play,
@@ -357,12 +362,10 @@ class _ProgressBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final totalDuration = duration ?? Duration.zero;
-    final progress =
-        totalDuration.inMilliseconds == 0
-            ? 0.0
-            : (positionData.position.inMilliseconds /
-                    totalDuration.inMilliseconds)
-                .clamp(0.0, 1.0);
+    final progress = totalDuration.inMilliseconds == 0
+        ? 0.0
+        : (positionData.position.inMilliseconds / totalDuration.inMilliseconds)
+              .clamp(0.0, 1.0);
 
     return LinearProgressIndicator(
       value: progress,
