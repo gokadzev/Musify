@@ -142,15 +142,8 @@ class _SongBarState extends State<SongBar> {
     }
 
     audioHandler.playSong(widget.song);
-    if (activePlaylist.isNotEmpty && widget.clearPlaylist) {
-      activePlaylist = {
-        'ytid': '',
-        'title': 'No Playlist',
-        'image': '',
-        'source': 'user-created',
-        'list': [],
-      };
-      activeSongId = 0;
+    if (audioHandler.queue.hasValue && widget.clearPlaylist) {
+      audioHandler.clearQueue();
     }
   }
 
@@ -196,8 +189,9 @@ class _SongBarState extends State<SongBar> {
         _songLikeStatus.value = !_songLikeStatus.value;
         updateSongLikeStatus(_ytid, _songLikeStatus.value);
         final likedSongsLength = currentLikedSongsLength.value;
-        currentLikedSongsLength.value =
-            _songLikeStatus.value ? likedSongsLength + 1 : likedSongsLength - 1;
+        currentLikedSongsLength.value = _songLikeStatus.value
+            ? likedSongsLength + 1
+            : likedSongsLength - 1;
         break;
       case 'remove':
         widget.onRemove?.call();
@@ -416,31 +410,28 @@ class _OnlineArtwork extends StatelessWidget {
           imageUrl: lowResImageUrl,
           memCacheWidth: 256,
           memCacheHeight: 256,
-          imageBuilder:
-              (context, imageProvider) => SizedBox(
-                width: size,
-                height: size,
-                child: ClipRRect(
-                  borderRadius: commonBarRadius,
-                  child: Image(
-                    color:
-                        isDurationAvailable
-                            ? Theme.of(context).colorScheme.primaryContainer
-                            : null,
-                    colorBlendMode:
-                        isDurationAvailable ? BlendMode.multiply : null,
-                    opacity:
-                        isDurationAvailable
-                            ? const AlwaysStoppedAnimation(0.45)
-                            : null,
-                    image: imageProvider,
-                    centerSlice:
-                        isImageSmall ? const Rect.fromLTRB(1, 1, 1, 1) : null,
-                  ),
-                ),
+          imageBuilder: (context, imageProvider) => SizedBox(
+            width: size,
+            height: size,
+            child: ClipRRect(
+              borderRadius: commonBarRadius,
+              child: Image(
+                color: isDurationAvailable
+                    ? Theme.of(context).colorScheme.primaryContainer
+                    : null,
+                colorBlendMode: isDurationAvailable ? BlendMode.multiply : null,
+                opacity: isDurationAvailable
+                    ? const AlwaysStoppedAnimation(0.45)
+                    : null,
+                image: imageProvider,
+                centerSlice: isImageSmall
+                    ? const Rect.fromLTRB(1, 1, 1, 1)
+                    : null,
               ),
-          errorWidget:
-              (context, url, error) => const NullArtworkWidget(iconSize: 30),
+            ),
+          ),
+          errorWidget: (context, url, error) =>
+              const NullArtworkWidget(iconSize: 30),
         ),
         if (isDurationAvailable)
           SizedBox(
@@ -473,37 +464,36 @@ void showAddToPlaylistDialog(BuildContext context, dynamic song) {
           constraints: BoxConstraints(
             maxHeight: MediaQuery.sizeOf(context).height * 0.6,
           ),
-          child:
-              userCustomPlaylists.value.isNotEmpty
-                  ? ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: userCustomPlaylists.value.length,
-                    itemBuilder: (context, index) {
-                      final playlist = userCustomPlaylists.value[index];
-                      return Card(
-                        color: Theme.of(context).colorScheme.secondaryContainer,
-                        elevation: 0,
-                        child: ListTile(
-                          title: Text(playlist['title']),
-                          onTap: () {
-                            showToast(
+          child: userCustomPlaylists.value.isNotEmpty
+              ? ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: userCustomPlaylists.value.length,
+                  itemBuilder: (context, index) {
+                    final playlist = userCustomPlaylists.value[index];
+                    return Card(
+                      color: Theme.of(context).colorScheme.secondaryContainer,
+                      elevation: 0,
+                      child: ListTile(
+                        title: Text(playlist['title']),
+                        onTap: () {
+                          showToast(
+                            context,
+                            addSongInCustomPlaylist(
                               context,
-                              addSongInCustomPlaylist(
-                                context,
-                                playlist['title'],
-                                song,
-                              ),
-                            );
-                            Navigator.pop(context);
-                          },
-                        ),
-                      );
-                    },
-                  )
-                  : Text(
-                    context.l10n!.noCustomPlaylists,
-                    textAlign: TextAlign.center,
-                  ),
+                              playlist['title'],
+                              song,
+                            ),
+                          );
+                          Navigator.pop(context);
+                        },
+                      ),
+                    );
+                  },
+                )
+              : Text(
+                  context.l10n!.noCustomPlaylists,
+                  textAlign: TextAlign.center,
+                ),
         ),
         actions: <Widget>[
           TextButton(

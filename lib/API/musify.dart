@@ -68,13 +68,6 @@ List userOfflineSongs = Hive.box(
 ).get('offlineSongs', defaultValue: []);
 List suggestedPlaylists = [];
 List onlinePlaylists = [];
-Map activePlaylist = {
-  'ytid': '',
-  'title': 'No Playlist',
-  'image': '',
-  'source': 'user-created',
-  'list': [],
-};
 
 dynamic nextRecommendedSong;
 
@@ -89,8 +82,6 @@ final currentRecentlyPlayedLength = ValueNotifier<int>(
 
 final lyrics = ValueNotifier<String?>(null);
 String? lastFetchedLyrics;
-
-int activeSongId = 0;
 
 final _clients = [customAndroidVr];
 
@@ -850,13 +841,6 @@ int findPlaylistIndexByYtId(String ytid) {
     }
   }
   return -1;
-}
-
-Future<void> setActivePlaylist(Map info) async {
-  activePlaylist = info;
-  activeSongId = 0;
-
-  await audioHandler.playSong(activePlaylist['list'][activeSongId]);
 }
 
 Future<Map?> getPlaylistInfoForWidget(

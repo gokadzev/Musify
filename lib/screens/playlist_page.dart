@@ -639,10 +639,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
             }
           : null,
       onPlay: () => {
-        audioHandler.playPlaylistSong(
-          playlist: activePlaylist != _playlist ? _playlist : null,
-          songIndex: index,
-        ),
+        audioHandler.playPlaylistSong(playlist: _playlist, songIndex: index),
       },
       isSongOffline: playlistOfflineStatus,
       borderRadius: borderRadius,

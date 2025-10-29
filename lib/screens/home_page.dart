@@ -238,10 +238,13 @@ class _HomePageState extends State<HomePage> {
           actionButton: IconButton(
             onPressed: () async {
               await Future.microtask(
-                () => setActivePlaylist({
-                  'title': context.l10n!.recommendedForYou,
-                  'list': data,
-                }),
+                () => audioHandler.playPlaylistSong(
+                  playlist: {
+                    'title': context.l10n!.recommendedForYou,
+                    'list': data,
+                  },
+                  songIndex: 0,
+                ),
               );
             },
             icon: Icon(
