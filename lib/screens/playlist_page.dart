@@ -114,7 +114,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
     try {
       if (widget.playlistData != null) {
         _playlist = widget.playlistData;
-        final playlistList = _playlist!['list'] as List?;
+        final playlistList = _playlist?['list'] as List?;
         if (playlistList == null || playlistList.isEmpty) {
           final fullPlaylist = await getPlaylistInfoForWidget(
             widget.playlistId,
@@ -131,7 +131,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
         );
       }
 
-      if (_playlist != null) {
+      if (_playlist != null && _playlist['list'] != null) {
         _originalPlaylistList = List<dynamic>.from(_playlist['list'] as List);
         _sortPlaylist(_sortType);
         if (mounted) {
