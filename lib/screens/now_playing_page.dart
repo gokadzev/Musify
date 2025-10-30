@@ -295,7 +295,7 @@ class QueueListView extends StatelessWidget {
                           mappedQueue[index],
                           false,
                           onPlay: () {
-                            audioHandler.playPlaylistSong(songIndex: index);
+                            audioHandler.skipToSong(index);
                           },
                           backgroundColor: Theme.of(
                             context,
@@ -746,7 +746,7 @@ class BottomActionsRow extends StatelessWidget {
                           mappedQueue[index],
                           false,
                           onPlay: () {
-                            audioHandler.playPlaylistSong(songIndex: index);
+                            audioHandler.skipToSong(index);
                           },
                           backgroundColor: Theme.of(
                             context,

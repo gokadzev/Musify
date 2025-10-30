@@ -688,8 +688,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
         return;
       }
 
-      // Prevent overlapping song loads
-      if (_isLoadingNextSong) {
+      // If a song is already loading and it's the same index, skip
+      if (_isLoadingNextSong && _currentQueueIndex == index) {
         logger.log(
           'Song already loading, skipping request for index: $index',
           null,
@@ -1258,9 +1258,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
           // Find current song in original queue, default to 0 if not found or ytid is null
           _currentQueueIndex = currentYtId != null
-              ? _queueList.indexWhere(
-                  (song) => song['ytid'] == currentYtId,
-                )
+              ? _queueList.indexWhere((song) => song['ytid'] == currentYtId)
               : 0;
 
           if (_currentQueueIndex == -1) {
