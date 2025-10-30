@@ -787,11 +787,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
     final ytid = nextSong['ytid'];
     if (ytid == null) return;
 
-    // Mark as preloading
+    // Mark as preloading synchronously
     _preloadingYtIds.add(ytid);
-    _activePreloadCount++;
 
     Future.microtask(() async {
+      _activePreloadCount++;
       try {
         await _preloadSingleSong(nextSong).timeout(
           const Duration(seconds: 8),
