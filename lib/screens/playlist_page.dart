@@ -211,29 +211,32 @@ class _PlaylistPageState extends State<PlaylistPage> {
                       child: buildPlaylistHeader(),
                     ),
                   ),
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 10,
-                        horizontal: 20,
-                      ),
-                      child: buildSongActionsRow(),
-                    ),
-                  ),
-                  SliverPadding(
-                    padding: commonListViewBottmomPadding,
-                    sliver: PagedSliverList(
-                      state: state,
-                      fetchNextPage: fetchNextPage,
-                      builderDelegate: PagedChildBuilderDelegate<dynamic>(
-                        itemBuilder: (context, item, index) {
-                          final isRemovable =
-                              _playlist['source'] == 'user-created';
-                          return _buildSongListItem(item, index, isRemovable);
-                        },
+                  if (_playlist['list'].isNotEmpty) ...[
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 10,
+                          horizontal: 20,
+                        ),
+                        child: buildSongActionsRow(),
                       ),
                     ),
-                  ),
+                    SliverPadding(
+                      padding: commonListViewBottmomPadding,
+                      sliver: PagedSliverList(
+                        state: state,
+                        fetchNextPage: fetchNextPage,
+                        builderDelegate: PagedChildBuilderDelegate<dynamic>(
+                          itemBuilder: (context, item, index) {
+                            final isRemovable =
+                                _playlist['source'] == 'user-created';
+                            return _buildSongListItem(item, index, isRemovable);
+                          },
+                        ),
+                      ),
+                    ),
+                  ] else
+                    const SliverFillRemaining(child: SizedBox.expand()),
                 ],
               ),
             )
