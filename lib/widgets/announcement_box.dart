@@ -41,41 +41,36 @@ class AnnouncementBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: commonBarPadding,
-      child: GestureDetector(
-        onTap: () => launchURL(Uri.parse(url)),
-        child: Card(
-          color: backgroundColor,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(18)),
-          ),
-          elevation: 0.1,
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                Icon(Icons.notifications, color: textColor, size: 32),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Text(
-                    message,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: textColor,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 2,
+    return GestureDetector(
+      onTap: () => launchURL(Uri.parse(url)),
+      child: Card(
+        color: backgroundColor,
+        shape: RoundedRectangleBorder(borderRadius: commonBarRadius),
+        elevation: 0.1,
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Row(
+            children: [
+              Icon(Icons.notifications, color: textColor, size: 32),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  message,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: textColor,
                   ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
                 ),
-                if (onDismiss != null)
-                  IconButton(
-                    icon: Icon(FluentIcons.dismiss_24_filled, color: textColor),
-                    onPressed: onDismiss,
-                  ),
-              ],
-            ),
+              ),
+              if (onDismiss != null)
+                IconButton(
+                  icon: Icon(FluentIcons.dismiss_24_filled, color: textColor),
+                  onPressed: onDismiss,
+                ),
+            ],
           ),
         ),
       ),
