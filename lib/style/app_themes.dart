@@ -119,7 +119,7 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
       thumbSize: WidgetStateProperty.all(const Size(6, 30)),
     ),
     bottomSheetTheme: base.bottomSheetTheme.copyWith(backgroundColor: bgColor),
-    inputDecorationTheme: InputDecorationTheme(
+    inputDecorationTheme: base.inputDecorationTheme.copyWith(
       filled: true,
       isDense: true,
       border: OutlineInputBorder(

@@ -451,9 +451,8 @@ class _OnlineArtwork extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isImageSmall = lowResImageUrl.contains('default.jpg');
-    final overlayColor = Theme.of(context).brightness == Brightness.dark
-        ? Colors.black.withValues(alpha: 0.6)
-        : Colors.white.withValues(alpha: 0.7);
+    final shouldOverlayBeShown =
+        (isDurationAvailable && !isOffline) || isOffline;
 
     return SizedBox(
       width: size,
@@ -475,13 +474,13 @@ class _OnlineArtwork extends StatelessWidget {
                 alignment: Alignment.center,
                 children: [
                   Image(
-                    color: isDurationAvailable
+                    color: shouldOverlayBeShown
                         ? Theme.of(context).colorScheme.primaryContainer
                         : null,
-                    colorBlendMode: isDurationAvailable
+                    colorBlendMode: shouldOverlayBeShown
                         ? BlendMode.multiply
                         : null,
-                    opacity: isDurationAvailable
+                    opacity: shouldOverlayBeShown
                         ? const AlwaysStoppedAnimation(0.45)
                         : null,
                     image: imageProvider,
@@ -493,15 +492,14 @@ class _OnlineArtwork extends StatelessWidget {
                         : null,
                   ),
                   if (isOffline)
-                    Positioned.fill(
-                      child: ColoredBox(
-                        color: overlayColor,
-                        child: Center(
-                          child: Icon(
-                            FluentIcons.cellular_off_24_filled,
-                            size: 24,
-                            color: primaryColor,
-                          ),
+                    SizedBox(
+                      width: size - 10,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Icon(
+                          FluentIcons.cellular_off_24_filled,
+                          size: 24,
+                          color: primaryColor,
                         ),
                       ),
                     ),
@@ -511,7 +509,7 @@ class _OnlineArtwork extends StatelessWidget {
             errorWidget: (context, url, error) =>
                 const NullArtworkWidget(iconSize: 30),
           ),
-          if (isDurationAvailable)
+          if (isDurationAvailable && !isOffline)
             SizedBox(
               width: size - 10,
               child: FittedBox(
