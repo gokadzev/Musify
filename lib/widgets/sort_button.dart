@@ -43,7 +43,6 @@ class SortButton<T extends Enum> extends StatelessWidget {
   Widget build(BuildContext context) {
     return PopupMenuButton<T>(
       padding: EdgeInsets.zero,
-      color: Theme.of(context).colorScheme.secondaryContainer,
       elevation: 2,
       offset: const Offset(0, 40),
       child: Row(
@@ -58,7 +57,7 @@ class SortButton<T extends Enum> extends StatelessWidget {
           Text(
             sortTypeToString(currentSortType),
             style: TextStyle(
-              color: Theme.of(context).colorScheme.onSecondaryContainer,
+              color: Theme.of(context).colorScheme.onSurface,
               fontSize: 15,
               fontWeight: FontWeight.w600,
               letterSpacing: 0.15,
@@ -77,7 +76,7 @@ class SortButton<T extends Enum> extends StatelessWidget {
                   child: Text(
                     sortTypeToString(type),
                     style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSecondaryContainer,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontWeight: type == currentSortType
                           ? FontWeight.w700
                           : FontWeight.w500,

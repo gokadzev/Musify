@@ -131,6 +131,9 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
     navigationBarTheme: base.navigationBarTheme.copyWith(
       backgroundColor: bgColor,
     ),
+    popupMenuTheme: base.popupMenuTheme.copyWith(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    ),
     visualDensity: VisualDensity.adaptivePlatformDensity,
     useMaterial3: true,
     pageTransitionsTheme: PageTransitionsTheme(

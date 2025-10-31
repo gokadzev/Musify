@@ -178,8 +178,6 @@ class _SongBarState extends State<SongBar> {
 
   Widget _buildActionButtons(BuildContext context, Color primaryColor) {
     return PopupMenuButton<String>(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      color: Theme.of(context).colorScheme.surface,
       icon: Icon(FluentIcons.more_horizontal_24_filled, color: primaryColor),
       onSelected: (value) => _handleMenuAction(context, value),
       itemBuilder: (context) => _buildMenuItems(context, primaryColor),
