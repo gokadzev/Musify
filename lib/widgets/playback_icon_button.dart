@@ -28,7 +28,6 @@ Widget buildPlaybackIconButton(
   double iconSize,
   Color iconColor,
   Color backgroundColor, {
-  double elevation = 2,
   EdgeInsets? padding,
 }) {
   return StreamBuilder<PlaybackState>(
@@ -73,7 +72,7 @@ Widget buildPlaybackIconButton(
       }
 
       return RawMaterialButton(
-        elevation: elevation,
+        elevation: 0,
         onPressed: onPressed,
         fillColor: backgroundColor,
         splashColor: Colors.transparent,
@@ -91,14 +90,12 @@ class PlaybackIconButton extends StatelessWidget {
     required this.iconSize,
     required this.iconColor,
     required this.backgroundColor,
-    this.elevation = 2,
     this.padding,
   });
 
   final double iconSize;
   final Color iconColor;
   final Color backgroundColor;
-  final double elevation;
   final EdgeInsets? padding;
 
   @override
@@ -107,7 +104,6 @@ class PlaybackIconButton extends StatelessWidget {
       iconSize,
       iconColor,
       backgroundColor,
-      elevation: elevation,
       padding: padding,
     );
   }
