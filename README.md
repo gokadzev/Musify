@@ -13,13 +13,6 @@ Unlock the full potential of music: Stream effortlessly with one app!
 
 ---
 
-> ⚠️ **Warning**  
-> App development is currently **slowed down due to API-side changes**.  
-> Once [`youtube_explode_dart`](https://pub.dev/packages/youtube_explode_dart) gets fixes, they will be integrated.  
-> In the meantime, you may experience **severe lagging and streaming issues**.
-
----
-
 <a href="https://ko-fi.com/gokadzev" target="_blank" title="ko-fi">
   <img src="https://github.com/user-attachments/assets/1c204507-d124-4b34-878b-96c39c9bb3f8"  alt="ko-fi badge" style="width: 150px;">
 </a>
