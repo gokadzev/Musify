@@ -83,7 +83,7 @@ final currentRecentlyPlayedLength = ValueNotifier<int>(
 final lyrics = ValueNotifier<String?>(null);
 String? lastFetchedLyrics;
 
-final _clients = [customAndroidVr];
+final _clients = [customAndroidVr, customAndroidSdkless];
 
 Future<List> fetchSongsList(String searchQuery) async {
   try {
