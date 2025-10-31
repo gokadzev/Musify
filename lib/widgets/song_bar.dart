@@ -394,13 +394,13 @@ class _OfflineArtwork extends StatelessWidget {
         ? Colors.black.withValues(alpha: 0.6)
         : Colors.white.withValues(alpha: 0.7);
 
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        SizedBox(
-          width: size,
-          height: size,
-          child: ClipRRect(
+    return SizedBox(
+      width: size,
+      height: size,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          ClipRRect(
             borderRadius: commonBarRadius,
             child: Image.file(
               File(artworkPath),
@@ -409,24 +409,24 @@ class _OfflineArtwork extends StatelessWidget {
               cacheHeight: 256,
             ),
           ),
-        ),
-        if (isOffline)
-          Positioned.fill(
-            child: ClipRRect(
-              borderRadius: commonBarRadius,
-              child: ColoredBox(
-                color: overlayColor,
-                child: Center(
-                  child: Icon(
-                    FluentIcons.cellular_off_24_filled,
-                    size: 24,
-                    color: primaryColor,
+          if (isOffline)
+            Positioned.fill(
+              child: ClipRRect(
+                borderRadius: commonBarRadius,
+                child: ColoredBox(
+                  color: overlayColor,
+                  child: Center(
+                    child: Icon(
+                      FluentIcons.cellular_off_24_filled,
+                      size: 24,
+                      color: primaryColor,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -455,25 +455,26 @@ class _OnlineArtwork extends StatelessWidget {
         ? Colors.black.withValues(alpha: 0.6)
         : Colors.white.withValues(alpha: 0.7);
 
-    return Stack(
-      alignment: Alignment.center,
-      children: <Widget>[
-        CachedNetworkImage(
-          key: ValueKey(lowResImageUrl),
-          width: size,
-          height: size,
-          imageUrl: lowResImageUrl,
-          memCacheWidth: 256,
-          memCacheHeight: 256,
-          imageBuilder: (context, imageProvider) => SizedBox(
+    return SizedBox(
+      width: size,
+      height: size,
+      child: Stack(
+        alignment: Alignment.center,
+        children: <Widget>[
+          CachedNetworkImage(
+            key: ValueKey(lowResImageUrl),
+            imageUrl: lowResImageUrl,
             width: size,
             height: size,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                ClipRRect(
-                  borderRadius: commonBarRadius,
-                  child: Image(
+            fit: BoxFit.cover,
+            memCacheWidth: 256,
+            memCacheHeight: 256,
+            imageBuilder: (context, imageProvider) => ClipRRect(
+              borderRadius: commonBarRadius,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Image(
                     color: isDurationAvailable
                         ? Theme.of(context).colorScheme.primaryContainer
                         : null,
@@ -484,15 +485,15 @@ class _OnlineArtwork extends StatelessWidget {
                         ? const AlwaysStoppedAnimation(0.45)
                         : null,
                     image: imageProvider,
+                    fit: isImageSmall ? BoxFit.fill : BoxFit.cover,
+                    width: size,
+                    height: size,
                     centerSlice: isImageSmall
                         ? const Rect.fromLTRB(1, 1, 1, 1)
                         : null,
                   ),
-                ),
-                if (isOffline)
-                  Positioned.fill(
-                    child: ClipRRect(
-                      borderRadius: commonBarRadius,
+                  if (isOffline)
+                    Positioned.fill(
                       child: ColoredBox(
                         color: overlayColor,
                         child: Center(
@@ -504,28 +505,28 @@ class _OnlineArtwork extends StatelessWidget {
                         ),
                       ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
+            errorWidget: (context, url, error) =>
+                const NullArtworkWidget(iconSize: 30),
           ),
-          errorWidget: (context, url, error) =>
-              const NullArtworkWidget(iconSize: 30),
-        ),
-        if (isDurationAvailable)
-          SizedBox(
-            width: size - 10,
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                '(${formatDuration(duration)})',
-                style: TextStyle(
-                  color: primaryColor,
-                  fontWeight: FontWeight.bold,
+          if (isDurationAvailable)
+            SizedBox(
+              width: size - 10,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  '(${formatDuration(duration)})',
+                  style: TextStyle(
+                    color: primaryColor,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
-          ),
-      ],
+        ],
+      ),
     );
   }
 }
