@@ -99,15 +99,15 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
     cardTheme: base.cardTheme.copyWith(elevation: 0.1),
     appBarTheme: base.appBarTheme.copyWith(
       backgroundColor: bgColor,
-      iconTheme: IconThemeData(color: colorScheme.primary),
+      foregroundColor: colorScheme.primary,
+      elevation: 0,
       centerTitle: true,
       titleTextStyle: TextStyle(
-        fontSize: 30,
+        fontSize: 28,
         fontFamily: 'paytoneOne',
-        fontWeight: FontWeight.w300,
+        fontWeight: FontWeight.w400,
         color: colorScheme.primary,
       ),
-      elevation: 0,
     ),
     listTileTheme: base.listTileTheme.copyWith(
       textColor: colorScheme.primary,
