@@ -501,10 +501,16 @@ class SettingsPage extends StatelessWidget {
             availableModes.length,
           );
 
+          final modeNames = [
+            context.l10n!.themeModeSystem,
+            context.l10n!.themeModeLight,
+            context.l10n!.themeModeDark,
+          ];
+
           return BottomSheetBar(
-            mode.name,
+            modeNames[mode.index],
             () {
-              addOrUpdateData('settings', 'themeMode', mode.name);
+              addOrUpdateData('settings', 'themeIndex', mode.index);
               Musify.updateAppState(context, newThemeMode: mode);
               Navigator.pop(context);
             },
@@ -571,6 +577,11 @@ class SettingsPage extends StatelessWidget {
     Color inactivatedColor,
   ) {
     final availableQualities = ['low', 'medium', 'high'];
+    final qualityNames = [
+      context.l10n!.audioQualityLow,
+      context.l10n!.audioQualityMedium,
+      context.l10n!.audioQualityHigh,
+    ];
 
     showCustomBottomSheet(
       context,
@@ -588,7 +599,7 @@ class SettingsPage extends StatelessWidget {
           );
 
           return BottomSheetBar(
-            quality,
+            qualityNames[index],
             () {
               addOrUpdateData('settings', 'audioQuality', quality);
               audioQualitySetting.value = quality;

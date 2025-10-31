@@ -28,10 +28,9 @@ import 'package:musify/style/dynamic_color_temp_fix.dart';
 ThemeMode themeMode = getThemeMode(themeModeSetting);
 Brightness brightness = getBrightnessFromThemeMode(themeMode);
 
-PageTransitionsBuilder transitionsBuilder =
-    predictiveBack.value
-        ? const PredictiveBackPageTransitionsBuilder()
-        : const CupertinoPageTransitionsBuilder();
+PageTransitionsBuilder transitionsBuilder = predictiveBack.value
+    ? const PredictiveBackPageTransitionsBuilder()
+    : const CupertinoPageTransitionsBuilder();
 
 Brightness getBrightnessFromThemeMode(ThemeMode themeMode) {
   final themeBrightnessMapping = {
@@ -44,17 +43,12 @@ Brightness getBrightnessFromThemeMode(ThemeMode themeMode) {
   return themeBrightnessMapping[themeMode] ?? Brightness.dark;
 }
 
-ThemeMode getThemeMode(String themeModeString) {
-  switch (themeModeString) {
-    case 'system':
-      return ThemeMode.system;
-    case 'light':
-      return ThemeMode.light;
-    case 'dark':
-      return ThemeMode.dark;
-    default:
-      return ThemeMode.system;
+ThemeMode getThemeMode(int themeModeIndex) {
+  const themeModes = ThemeMode.values;
+  if (themeModeIndex >= 0 && themeModeIndex < themeModes.length) {
+    return themeModes[themeModeIndex];
   }
+  return ThemeMode.system;
 }
 
 ColorScheme getAppColorScheme(
@@ -72,8 +66,9 @@ ColorScheme getAppColorScheme(
     );
   }
 
-  final selectedScheme =
-      (brightness == Brightness.light) ? lightColorScheme : darkColorScheme;
+  final selectedScheme = (brightness == Brightness.light)
+      ? lightColorScheme
+      : darkColorScheme;
 
   if (useSystemColor.value && selectedScheme != null) {
     return selectedScheme;
@@ -86,18 +81,16 @@ ColorScheme getAppColorScheme(
 }
 
 ThemeData getAppTheme(ColorScheme colorScheme) {
-  final base =
-      colorScheme.brightness == Brightness.light
-          ? ThemeData.light()
-          : ThemeData.dark();
+  final base = colorScheme.brightness == Brightness.light
+      ? ThemeData.light()
+      : ThemeData.dark();
 
   final isPureBlackUsable =
       colorScheme.brightness == Brightness.dark && usePureBlackColor.value;
 
-  final bgColor =
-      colorScheme.brightness == Brightness.light
-          ? colorScheme.surfaceContainer
-          : (isPureBlackUsable ? const Color(0xFF000000) : null);
+  final bgColor = colorScheme.brightness == Brightness.light
+      ? colorScheme.surfaceContainer
+      : (isPureBlackUsable ? const Color(0xFF000000) : null);
 
   return ThemeData(
     scaffoldBackgroundColor: bgColor,
