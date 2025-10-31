@@ -82,11 +82,10 @@ class PlaylistBar extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder:
-                      (context) => PlaylistPage(
-                        playlistId: playlistId,
-                        playlistData: updatedPlaylist ?? playlistData,
-                      ),
+                  builder: (context) => PlaylistPage(
+                    playlistId: playlistId,
+                    playlistData: updatedPlaylist ?? playlistData,
+                  ),
                 ),
               ).then((isPlaylistUpdated) {
                 if (playlistId != null &&
@@ -103,20 +102,18 @@ class PlaylistBar extends StatelessWidget {
           margin: const EdgeInsets.only(bottom: 3),
           child: ListTile(
             contentPadding: commonBarContentPadding,
-            leading:
-                isFolder
-                    ? _buildFolderIcon(primaryColor)
-                    : _buildPlaylistIcon(primaryColor),
+            leading: isFolder
+                ? _buildFolderIcon(primaryColor)
+                : _buildPlaylistIcon(primaryColor),
             title: Text(
               playlistTitle,
               style: commonBarTitleStyle.copyWith(color: primaryColor),
               overflow: TextOverflow.ellipsis,
             ),
             subtitle: isFolder ? _buildFolderSubtitle(context) : null,
-            trailing:
-                showBuildActions
-                    ? _buildActionButtons(context, primaryColor)
-                    : null,
+            trailing: showBuildActions
+                ? _buildActionButtons(context, primaryColor)
+                : null,
             onTap: onPressed ?? _getDefaultOnPressed(context, updatedPlaylist),
           ),
         ),
@@ -133,10 +130,9 @@ class PlaylistBar extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           image: DecorationImage(
-            image:
-                playlistArtwork!.startsWith('http')
-                    ? NetworkImage(playlistArtwork!) as ImageProvider
-                    : AssetImage(playlistArtwork!),
+            image: playlistArtwork!.startsWith('http')
+                ? NetworkImage(playlistArtwork!) as ImageProvider
+                : AssetImage(playlistArtwork!),
             fit: BoxFit.cover,
           ),
         ),
@@ -219,22 +215,18 @@ class PlaylistBar extends StatelessWidget {
                 children: [
                   Icon(
                     FluentIcons.delete_24_filled,
-                    color:
-                        isFolder
-                            ? Theme.of(context).colorScheme.error
-                            : primaryColor,
+                    color: isFolder
+                        ? Theme.of(context).colorScheme.error
+                        : primaryColor,
                   ),
                   const SizedBox(width: 8),
                   Text(
                     isFolder
                         ? context.l10n!.deleteFolder
                         : context.l10n!.deletePlaylist,
-                    style:
-                        isFolder
-                            ? TextStyle(
-                              color: Theme.of(context).colorScheme.error,
-                            )
-                            : null,
+                    style: isFolder
+                        ? TextStyle(color: Theme.of(context).colorScheme.error)
+                        : null,
                   ),
                 ],
               ),
@@ -299,11 +291,7 @@ class PlaylistBar extends StatelessWidget {
                         padding: const EdgeInsets.all(16),
                         child: Text(
                           context.l10n!.noCustomPlaylists,
-                          style: TextStyle(
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.onSurface.withAlpha(180),
-                          ),
+                          style: TextStyle(color: Theme.of(context).hintColor),
                         ),
                       ),
                   ],
@@ -359,11 +347,10 @@ class PlaylistBar extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder:
-                (context) => PlaylistFolderPage(
-                  folderId: playlistData!['id'],
-                  folderName: playlistTitle,
-                ),
+            builder: (context) => PlaylistFolderPage(
+              folderId: playlistData!['id'],
+              folderName: playlistTitle,
+            ),
           ),
         );
       };
@@ -372,11 +359,10 @@ class PlaylistBar extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder:
-                (context) => PlaylistPage(
-                  playlistId: playlistId,
-                  playlistData: updatedPlaylist ?? playlistData,
-                ),
+            builder: (context) => PlaylistPage(
+              playlistId: playlistId,
+              playlistData: updatedPlaylist ?? playlistData,
+            ),
           ),
         ).then((isPlaylistUpdated) {
           if (playlistId != null &&
