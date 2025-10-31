@@ -214,11 +214,15 @@ class _PlaylistPageState extends State<PlaylistPage> {
                   if (_playlist['list'].isNotEmpty) ...[
                     SliverToBoxAdapter(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 10,
-                          horizontal: 20,
+                        padding: const EdgeInsets.only(
+                          top: 15,
+                          bottom: 20,
+                          right: 20,
                         ),
-                        child: buildSongActionsRow(),
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: _buildSortSongActionButton(),
+                        ),
                       ),
                     ),
                     SliverPadding(
@@ -614,13 +618,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
     // Reset paging controller to top
     _pagingController.refresh();
-  }
-
-  Widget buildSongActionsRow() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [_buildSortSongActionButton()],
-    );
   }
 
   Widget _buildSongListItem(dynamic song, int index, bool isRemovable) {
