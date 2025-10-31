@@ -141,7 +141,7 @@ class _MiniPlayerBodyState extends State<_MiniPlayerBody>
                   padding: const EdgeInsets.symmetric(horizontal: 18),
                   height: MiniPlayer._playerHeight,
                   decoration: BoxDecoration(
-                    color: colorScheme.surfaceContainerHigh,
+                    color: colorScheme.surfaceContainerLow,
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withAlpha(25),
@@ -370,7 +370,7 @@ class _ProgressBar extends StatelessWidget {
     return LinearProgressIndicator(
       value: progress,
       minHeight: MiniPlayer._progressBarHeight,
-      backgroundColor: colorScheme.surfaceContainer,
+      backgroundColor: colorScheme.outline.withValues(alpha: 0.1),
       valueColor: AlwaysStoppedAnimation<Color>(colorScheme.primary),
     );
   }

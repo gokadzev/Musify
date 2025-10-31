@@ -55,6 +55,7 @@ class NowPlayingPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
+        elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_downward),
           splashColor: Colors.transparent,
@@ -63,6 +64,7 @@ class NowPlayingPage extends StatelessWidget {
           },
         ),
       ),
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
       body: SafeArea(
         child: StreamBuilder<MediaItem?>(
           stream: audioHandler.mediaItem,
