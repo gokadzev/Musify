@@ -126,8 +126,9 @@ Future<void> cleanupOldCacheEntries() async {
     final now = DateTime.now();
 
     // Get all keys except the ones with _date suffix
-    final keys =
-        cacheBox.keys.where((k) => !k.toString().endsWith('_date')).toList();
+    final keys = cacheBox.keys
+        .where((k) => !k.toString().endsWith('_date'))
+        .toList();
 
     for (final key in keys) {
       final dateKey = '${key}_date';
@@ -185,6 +186,10 @@ Future<String> backupData(BuildContext context) async {
 
   if (dlPath == null) {
     return '${context.l10n!.chooseBackupDir}!';
+  }
+
+  if (!dlPath.contains('Documents') && !dlPath.contains('Download')) {
+    return context.l10n!.folderRestrictions;
   }
 
   try {
@@ -265,14 +270,13 @@ Future<String> restoreData(BuildContext context) async {
     await Future.delayed(const Duration(milliseconds: 100));
 
     for (final boxName in boxNames) {
-      final backupFile =
-          result.files
-              .where(
-                (file) =>
-                    file.name == '$boxName.hive' ||
-                    file.name.startsWith('${boxName}_'),
-              )
-              .firstOrNull;
+      final backupFile = result.files
+          .where(
+            (file) =>
+                file.name == '$boxName.hive' ||
+                file.name.startsWith('${boxName}_'),
+          )
+          .firstOrNull;
 
       if (backupFile?.path != null) {
         final sourceFile = File(backupFile!.path!);
