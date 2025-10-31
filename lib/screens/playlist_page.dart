@@ -641,7 +641,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
       onPlay: () => {
         audioHandler.playPlaylistSong(playlist: _playlist, songIndex: index),
       },
-      isSongOffline: playlistOfflineStatus,
       borderRadius: borderRadius,
     );
   }
