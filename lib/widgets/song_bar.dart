@@ -153,23 +153,17 @@ class _SongBarState extends State<SongBar> {
     final isDurationAvailable =
         widget.showMusicDuration && widget.song['duration'] != null;
 
-    if (_artworkPath != null) {
-      return ValueListenableBuilder<bool>(
-        valueListenable: _songOfflineStatus,
-        builder: (_, isOffline, __) {
-          return _OfflineArtwork(
-            artworkPath: _artworkPath,
-            size: size,
-            isOffline: isOffline,
-            primaryColor: primaryColor,
-          );
-        },
-      );
-    }
-
     return ValueListenableBuilder<bool>(
       valueListenable: _songOfflineStatus,
       builder: (_, isOffline, __) {
+        if (isOffline && _artworkPath != null) {
+          return _OfflineArtwork(
+            artworkPath: _artworkPath,
+            size: size,
+            primaryColor: primaryColor,
+          );
+        }
+
         return _OnlineArtwork(
           lowResImageUrl: _lowResImageUrl,
           size: size,
@@ -379,21 +373,15 @@ class _OfflineArtwork extends StatelessWidget {
   const _OfflineArtwork({
     required this.artworkPath,
     required this.size,
-    required this.isOffline,
     required this.primaryColor,
   });
 
   final String artworkPath;
   final double size;
-  final bool isOffline;
   final Color primaryColor;
 
   @override
   Widget build(BuildContext context) {
-    final overlayColor = Theme.of(context).brightness == Brightness.dark
-        ? Colors.black.withValues(alpha: 0.6)
-        : Colors.white.withValues(alpha: 0.7);
-
     return SizedBox(
       width: size,
       height: size,
@@ -401,30 +389,30 @@ class _OfflineArtwork extends StatelessWidget {
         alignment: Alignment.center,
         children: [
           ClipRRect(
-            borderRadius: commonBarRadius,
+            borderRadius: BorderRadiusGeometry.circular(
+              commonMiniArtworkRadius,
+            ),
             child: Image.file(
               File(artworkPath),
               fit: BoxFit.cover,
               cacheWidth: 256,
               cacheHeight: 256,
+              color: Theme.of(context).colorScheme.primaryContainer,
+              colorBlendMode: BlendMode.multiply,
+              opacity: const AlwaysStoppedAnimation(0.45),
             ),
           ),
-          if (isOffline)
-            Positioned.fill(
-              child: ClipRRect(
-                borderRadius: commonBarRadius,
-                child: ColoredBox(
-                  color: overlayColor,
-                  child: Center(
-                    child: Icon(
-                      FluentIcons.cellular_off_24_filled,
-                      size: 24,
-                      color: primaryColor,
-                    ),
-                  ),
-                ),
+          SizedBox(
+            width: size - 10,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Icon(
+                FluentIcons.cellular_off_24_filled,
+                size: 24,
+                color: primaryColor,
               ),
             ),
+          ),
         ],
       ),
     );
@@ -469,7 +457,9 @@ class _OnlineArtwork extends StatelessWidget {
             memCacheWidth: 256,
             memCacheHeight: 256,
             imageBuilder: (context, imageProvider) => ClipRRect(
-              borderRadius: commonBarRadius,
+              borderRadius: BorderRadiusGeometry.circular(
+                commonMiniArtworkRadius,
+              ),
               child: Stack(
                 alignment: Alignment.center,
                 children: [

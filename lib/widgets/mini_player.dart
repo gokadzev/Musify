@@ -5,6 +5,7 @@ import 'package:musify/main.dart';
 import 'package:musify/models/full_player_state.dart';
 import 'package:musify/models/position_data.dart';
 import 'package:musify/screens/now_playing_page.dart';
+import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/widgets/marque.dart';
 import 'package:musify/widgets/song_artwork.dart';
 import 'package:rxdart/rxdart.dart';
@@ -195,7 +196,7 @@ class _ArtworkWidget extends StatelessWidget {
           metadata: metadata,
           size: MiniPlayer._artworkSize,
           errorWidgetIconSize: MiniPlayer._artworkIconSize,
-          borderRadius: 8,
+          borderRadius: commonMiniArtworkRadius,
         ),
       ),
     );
