@@ -56,7 +56,6 @@ class PlaylistCube extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      elevation: 4,
       borderRadius: BorderRadius.circular(borderRadius),
       clipBehavior: Clip.antiAlias,
       child: Stack(
