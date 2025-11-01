@@ -65,7 +65,7 @@
   "folderAlreadyExists": "Папка з таким ім'ям вже існує",
   "folderDeleted": "Папка успішно видалена",
   "folderName": "Ім'я папки",
-  "folderRestrictions": "Android restrictions require selecting a backup folder from Downloads or Documents",
+  "folderRestrictions": "У зв'язку з новими обмеженнями на Android, обирається конкретні та відповідні теки для різних типів файлів. Будь ласка, переконайтеся, що ви вибрали теку 'Документи' або 'Завантаження' для резервного копіювання програми",
   "home": "Головна",
   "hours": "Годин",
   "invalidYouTubePlaylist": "Invalid Youtube playlist",
