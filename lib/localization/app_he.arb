@@ -65,7 +65,7 @@
   "folderAlreadyExists": "A folder with this name already exists",
   "folderDeleted": "Folder deleted successfully",
   "folderName": "Folder name",
-  "folderRestrictions": "Android restrictions require selecting a backup folder from Downloads or Documents",
+  "folderRestrictions": "הגבלות אנדרואיד דורשות בחירה של תיקיות ספציפיות (לדוגמה, מסמכים או הורדות) לגיבוי.",
   "home": "בית",
   "hours": "שעות",
   "invalidYouTubePlaylist": "רשימת השמעה של יוטיוב לא חוקית",
