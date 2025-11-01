@@ -21,6 +21,7 @@
 
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:musify/utilities/common_variables.dart';
 
 typedef SortTypeToStringConverter<T> = String Function(T type);
 typedef OnSortTypeSelected<T> = void Function(T type);
@@ -42,30 +43,33 @@ class SortButton<T extends Enum> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton<T>(
-      padding: EdgeInsets.zero,
-      color: Theme.of(context).colorScheme.secondaryContainer,
-      elevation: 2,
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      elevation: 1,
       offset: const Offset(0, 40),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            FluentIcons.filter_16_filled,
-            color: Theme.of(context).colorScheme.primary,
-            size: 20,
-          ),
-          const SizedBox(width: 8),
-          Text(
-            sortTypeToString(currentSortType),
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSecondaryContainer,
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.15,
-              height: 1.2,
+      borderRadius: commonBarRadius,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              FluentIcons.filter_16_filled,
+              color: Theme.of(context).colorScheme.primary,
+              size: 20,
             ),
-          ),
-        ],
+            const SizedBox(width: 8),
+            Text(
+              sortTypeToString(currentSortType),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurface,
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.15,
+                height: 1.2,
+              ),
+            ),
+          ],
+        ),
       ),
       itemBuilder: (context) {
         return sortTypes.map((type) {
@@ -77,7 +81,7 @@ class SortButton<T extends Enum> extends StatelessWidget {
                   child: Text(
                     sortTypeToString(type),
                     style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSecondaryContainer,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontWeight: type == currentSortType
                           ? FontWeight.w700
                           : FontWeight.w500,

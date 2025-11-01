@@ -83,7 +83,7 @@ final currentRecentlyPlayedLength = ValueNotifier<int>(
 final lyrics = ValueNotifier<String?>(null);
 String? lastFetchedLyrics;
 
-final _clients = [customAndroidVr];
+final _clients = [customAndroidVr, customAndroidSdkless];
 
 Future<List> fetchSongsList(String searchQuery) async {
   try {
@@ -859,6 +859,19 @@ Future<Map?> getPlaylistInfoForWidget(
   Map? playlist;
 
   try {
+    // Check in custom playlists first
+    if (id != null && id.toString().startsWith('customId-')) {
+      playlist = userCustomPlaylists.value.firstWhere(
+        (p) => p['ytid'] == id,
+        orElse: () => null,
+      );
+      if (playlist != null) {
+        return playlist;
+      }
+    }
+
+    // Check in existing playlists.
+
     playlist = playlists.firstWhere((p) => p['ytid'] == id, orElse: () => null);
 
     // Check in user playlists if not found.

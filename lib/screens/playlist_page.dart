@@ -211,29 +211,36 @@ class _PlaylistPageState extends State<PlaylistPage> {
                       child: buildPlaylistHeader(),
                     ),
                   ),
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 10,
-                        horizontal: 20,
-                      ),
-                      child: buildSongActionsRow(),
-                    ),
-                  ),
-                  SliverPadding(
-                    padding: commonListViewBottmomPadding,
-                    sliver: PagedSliverList(
-                      state: state,
-                      fetchNextPage: fetchNextPage,
-                      builderDelegate: PagedChildBuilderDelegate<dynamic>(
-                        itemBuilder: (context, item, index) {
-                          final isRemovable =
-                              _playlist['source'] == 'user-created';
-                          return _buildSongListItem(item, index, isRemovable);
-                        },
+                  if (_playlist['list'].isNotEmpty) ...[
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          top: 15,
+                          bottom: 20,
+                          right: 20,
+                        ),
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: _buildSortSongActionButton(),
+                        ),
                       ),
                     ),
-                  ),
+                    SliverPadding(
+                      padding: commonListViewBottmomPadding,
+                      sliver: PagedSliverList(
+                        state: state,
+                        fetchNextPage: fetchNextPage,
+                        builderDelegate: PagedChildBuilderDelegate<dynamic>(
+                          itemBuilder: (context, item, index) {
+                            final isRemovable =
+                                _playlist['source'] == 'user-created';
+                            return _buildSongListItem(item, index, isRemovable);
+                          },
+                        ),
+                      ),
+                    ),
+                  ] else
+                    const SliverFillRemaining(child: SizedBox.expand()),
                 ],
               ),
             )
@@ -611,13 +618,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
     // Reset paging controller to top
     _pagingController.refresh();
-  }
-
-  Widget buildSongActionsRow() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [_buildSortSongActionButton()],
-    );
   }
 
   Widget _buildSongListItem(dynamic song, int index, bool isRemovable) {

@@ -16,5 +16,22 @@ const customAndroidVr = YoutubeApiClient({
       'timeZone': 'UTC',
       'utcOffsetMinutes': 0,
     },
+    'contextClientName': 28,
+    'requireJsPlayer': false,
   },
+}, 'https://www.youtube.com/youtubei/v1/player?prettyPrint=false');
+
+const customAndroidSdkless = YoutubeApiClient({
+  'context': {
+    'client': {
+      'clientName': 'ANDROID',
+      'clientVersion': '20.10.38',
+      'userAgent':
+          'com.google.android.youtube/20.10.38 (Linux; U; Android 11) gzip',
+      'osName': 'Android',
+      'osVersion': '11',
+    },
+  },
+  'contextClientName': 3,
+  'requireJsPlayer': false,
 }, 'https://www.youtube.com/youtubei/v1/player?prettyPrint=false');
