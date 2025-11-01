@@ -65,7 +65,7 @@
   "folderAlreadyExists": "A folder with this name already exists",
   "folderDeleted": "Folder deleted successfully",
   "folderName": "Folder name",
-  "folderRestrictions": "Android restrictions require selecting a backup folder from Downloads or Documents",
+  "folderRestrictions": "Pembatasan Android mengharuskan memilih folder tertentu (misalnya, Dokumen atau Unduhan) untuk pencadangan.",
   "home": "Beranda",
   "hours": "Jam",
   "invalidYouTubePlaylist": "Playlist YouTube tidak sah",
