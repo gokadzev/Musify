@@ -65,7 +65,7 @@
   "folderAlreadyExists": "A folder with this name already exists",
   "folderDeleted": "Folder deleted successfully",
   "folderName": "Folder name",
-  "folderRestrictions": "Android restrictions require selecting a backup folder from Downloads or Documents",
+  "folderRestrictions": "Android प्रतिबंधों के कारण, केवल चयनित फ़ोल्डरों (जैसे, दस्तावेज़ या डाउनलोड) का उपयोग बैकअप के लिए किया जा सकता है।",
   "home": "होम",
   "hours": "घंटे",
   "invalidYouTubePlaylist": "अमान्य YouTube प्लेलिस्ट",
