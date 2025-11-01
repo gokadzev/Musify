@@ -65,7 +65,7 @@
   "folderAlreadyExists": "Ya existe una carpeta con este nombre",
   "folderDeleted": "Carpeta eliminada correctamente",
   "folderName": "Nombre de la carpeta",
-  "folderRestrictions": "Las restricciones de Android requieren seleccionar carpetas específicas (p. ej., Documentos o Descargas) para respaldos.",
+  "folderRestrictions": "Android restrictions require selecting a backup folder from Downloads or Documents",
   "home": "Inicio",
   "hours": "Horas",
   "invalidYouTubePlaylist": "Lista de reproducción de YouTube no válida",
