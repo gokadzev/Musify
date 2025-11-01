@@ -65,7 +65,7 @@
   "folderAlreadyExists": "Ein Ordner mit diesem Namen existiert bereits",
   "folderDeleted": "Ordner erfolgreich gelöscht",
   "folderName": "Ordnername",
-  "folderRestrictions": "Aufgrund neuer Beschränkungen auf Android ist es wichtig, spezifische und geeignete Ordner für verschiedene Dateitypen auszuwählen. Stelle sicher, dass du entweder den Ordner 'Dokumente' oder 'Downloads' für das App-Backup auswählst.",
+  "folderRestrictions": "Android restrictions require selecting a backup folder from Downloads or Documents",
   "home": "Startseite",
   "hours": "Stunden",
   "invalidYouTubePlaylist": "Invalid Youtube playlist",
