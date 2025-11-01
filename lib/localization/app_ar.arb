@@ -65,7 +65,7 @@
   "folderAlreadyExists": "يوجد مجلد بهذا الاسم مسبقاً",
   "folderDeleted": "تم حذف المجلد بنجاح",
   "folderName": "اسم المجلد",
-  "folderRestrictions": "Android restrictions require selecting a backup folder from Downloads or Documents",
+  "folderRestrictions": "نظرًا للقيود الجديدة على Android، فإنه من الضروري اختيار مجلدات محددة ومناسبة لأنواع الملفات المختلفة. يرجى التأكد من اختيار مجلد 'المستندات' أو 'التنزيلات' لنسخة احتياطية للتطبيق.",
   "home": "الرئيسية",
   "hours": "الساعات",
   "invalidYouTubePlaylist": "Invalid Youtube playlist",
