@@ -65,7 +65,7 @@
   "folderAlreadyExists": "A folder with this name already exists",
   "folderDeleted": "Folder deleted successfully",
   "folderName": "Folder name",
-  "folderRestrictions": "Android restrictions require selecting a backup folder from Downloads or Documents",
+  "folderRestrictions": "Ввиду ограничений Android, необходимо выбрать определённые папки для разных типов файлов. Пожалуйста убедитесь в том, что вы выбрали папку 'Документы' или 'Скачанные' для файлов восстановления.",
   "home": "Главная",
   "hours": "Часов",
   "invalidYouTubePlaylist": "Недействительный плейлист YouTube",
