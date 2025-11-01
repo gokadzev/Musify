@@ -65,7 +65,7 @@
   "folderAlreadyExists": "Sellise nimega kaust on juba olemas",
   "folderDeleted": "Kaust edukalt kustutatud",
   "folderName": "Kausta nimi",
-  "folderRestrictions": "Android restrictions require selecting a backup folder from Downloads or Documents",
+  "folderRestrictions": "Androidi piirangud nõuavad varundamiseks spetsiifiliste kaustade (nt Dokumendid või Allalaadimised) valimist.",
   "home": "Kodu",
   "hours": "Tundi",
   "invalidYouTubePlaylist": "Vigane YouTube'i nimekiri",
