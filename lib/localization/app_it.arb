@@ -65,7 +65,7 @@
   "folderAlreadyExists": "A folder with this name already exists",
   "folderDeleted": "Folder deleted successfully",
   "folderName": "Folder name",
-  "folderRestrictions": "Android restrictions require selecting a backup folder from Downloads or Documents",
+  "folderRestrictions": "A causa delle nuove restrizioni su Android, è necessario selezionare cartelle specifiche e appropriate per diversi tipi di file. Assicurati di scegliere la cartella 'Documents' o 'Downloads' per il backup dell'app.",
   "home": "Home",
   "hours": "Hours",
   "invalidYouTubePlaylist": "Playlist YouTube non valida",
