@@ -65,7 +65,7 @@
   "folderAlreadyExists": "Folder o tej nazwie już istnieje",
   "folderDeleted": "Folder usunięty pomyślnie",
   "folderName": "Nazwa folderu",
-  "folderRestrictions": "Android restrictions require selecting a backup folder from Downloads or Documents",
+  "folderRestrictions": "Ze względu na nowe ograniczenia w systemie Android konieczne jest wybranie określonych i odpowiednich folderów dla różnych typów plików. Upewnij się, że wybrałeś folder „Dokumenty” lub „Pobrane” dla kopii zapasowej aplikacji.",
   "home": "Dom",
   "hours": "Godziny",
   "invalidYouTubePlaylist": "Nieprawidłowa playlista Youtube",
