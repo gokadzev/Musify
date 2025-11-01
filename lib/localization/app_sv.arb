@@ -65,7 +65,7 @@
   "folderAlreadyExists": "A folder with this name already exists",
   "folderDeleted": "Folder deleted successfully",
   "folderName": "Folder name",
-  "folderRestrictions": "Android restrictions require selecting a backup folder from Downloads or Documents",
+  "folderRestrictions": "Android-begränsningar kräver att specifika mappar väljs (t.ex Dokument eller Nerladdningar) för säkerhetskopiering.",
   "home": "Hem",
   "hours": "Timmar",
   "invalidYouTubePlaylist": "Ogiltig YouTube-spellista",
