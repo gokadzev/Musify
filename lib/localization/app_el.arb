@@ -65,7 +65,7 @@
   "folderAlreadyExists": "Υπάρχει ήδη ένας φάκελος με αυτό το όνομα",
   "folderDeleted": "Ο φάκελος διαγράφηκε επιτυχώς",
   "folderName": "Όνομα φακέλου",
-  "folderRestrictions": "Android restrictions require selecting a backup folder from Downloads or Documents",
+  "folderRestrictions": "Λόγω νέων περιορισμών στο Android, είναι απαραίτητο να επιλέξετε συγκεκριμένους και κατάλληλους φακέλους για διάφορους τύπους αρχείων. Βεβαιωθείτε ότι επιλέγετε είτε τον φάκελο 'Έγγραφα' είτε τον φάκελο 'Λήψεις' για τη δημιουργία αντιγράφου ασφαλείας της εφαρμογής.",
   "home": "Κεντρική",
   "hours": "Ώρες",
   "invalidYouTubePlaylist": "Invalid Youtube playlist",
