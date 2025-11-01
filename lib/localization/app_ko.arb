@@ -65,7 +65,7 @@
   "folderAlreadyExists": "이 이름을 가진 폴더가 이미 존재해요",
   "folderDeleted": "폴더가 성공적으로 삭제되었어요",
   "folderName": "폴더명",
-  "folderRestrictions": "안드로이드 제한으로 인해 백업할 특정 폴더(예: 문서 또는 다운로드)를 선택해야 합니다.",
+  "folderRestrictions": "Android restrictions require selecting a backup folder from Downloads or Documents",
   "home": "홈",
   "hours": "시간",
   "invalidYouTubePlaylist": "잘못된 유튜브 재생목록",
