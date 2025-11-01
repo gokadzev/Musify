@@ -65,7 +65,7 @@
   "folderAlreadyExists": "このフォルダー名は既にあります",
   "folderDeleted": "フォルダーを削除しました",
   "folderName": "フォルダー名",
-  "folderRestrictions": "Android restrictions require selecting a backup folder from Downloads or Documents",
+  "folderRestrictions": "Androidの新しい制約により、ファイルの種類に対して適切なフォルダを選択する必要があります。本アプリのバックアップには、「Documents」か「Downloads」フォルダを必ず選択してください。",
   "home": "ホーム",
   "hours": "時間",
   "invalidYouTubePlaylist": "無効な Youtube 再生リスト",
