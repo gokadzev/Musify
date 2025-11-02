@@ -71,6 +71,10 @@ body {
   margin: 3px auto;
 }
 
+.musify-nav-logo img {
+  filter: invert(1) sepia(1) hue-rotate(345deg) saturate(0.8) brightness(1.05) contrast(1.1);
+}
+
 @media only screen and (max-width: 760px) {
   .musify-nav-logo {
     display: none;
