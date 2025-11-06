@@ -88,10 +88,12 @@ class LyricsManager {
       final uri = Uri.parse(
         'https://www.paroles.net/${_lyricsUrl(artistName)}/paroles-${_lyricsUrl(title)}',
       );
-      final response = await http.get(uri).timeout(
-        const Duration(seconds: 10),
-        onTimeout: () => http.Response('', 408),
-      );
+      final response = await http
+          .get(uri)
+          .timeout(
+            const Duration(seconds: 10),
+            onTimeout: () => http.Response('', 408),
+          );
 
       if (response.statusCode == 200) {
         final document = html_parser.parse(response.body);
@@ -126,10 +128,12 @@ class LyricsManager {
       final uri = Uri.parse(
         'https://www.lyricsmania.com/${_lyricsManiaUrl(title)}_lyrics_${_lyricsManiaUrl(artistName)}.html',
       );
-      final response = await http.get(uri).timeout(
-        const Duration(seconds: 10),
-        onTimeout: () => http.Response('', 408),
-      );
+      final response = await http
+          .get(uri)
+          .timeout(
+            const Duration(seconds: 10),
+            onTimeout: () => http.Response('', 408),
+          );
 
       if (response.statusCode == 200) {
         final document = html_parser.parse(response.body);

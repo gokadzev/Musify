@@ -56,14 +56,13 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
           widget.onSubmitted(value);
           widget.focusNode.unfocus();
         },
-        onChanged:
-            widget.onChanged != null
-                ? (value) async {
-                  widget.onChanged!(value);
+        onChanged: widget.onChanged != null
+            ? (value) async {
+                widget.onChanged!(value);
 
-                  setState(() {});
-                }
-                : null,
+                setState(() {});
+              }
+            : null,
         textInputAction: TextInputAction.search,
         controller: widget.controller,
         focusNode: widget.focusNode,

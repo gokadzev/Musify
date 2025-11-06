@@ -98,28 +98,27 @@ class _LibraryPageState extends State<LibraryPage> {
           ),
           PlaylistBar(
             context.l10n!.recentlyPlayed,
-            onPressed:
-                () => NavigationManager.router.go('/library/userSongs/recents'),
+            onPressed: () =>
+                NavigationManager.router.go('/library/userSongs/recents'),
             cubeIcon: FluentIcons.history_24_filled,
             borderRadius: commonCustomBarRadiusFirst,
             showBuildActions: false,
           ),
           PlaylistBar(
             context.l10n!.likedSongs,
-            onPressed:
-                () => NavigationManager.router.go('/library/userSongs/liked'),
+            onPressed: () =>
+                NavigationManager.router.go('/library/userSongs/liked'),
             cubeIcon: FluentIcons.heart_24_filled,
             showBuildActions: false,
           ),
           PlaylistBar(
             context.l10n!.offlineSongs,
-            onPressed:
-                () => NavigationManager.router.go('/library/userSongs/offline'),
+            onPressed: () =>
+                NavigationManager.router.go('/library/userSongs/offline'),
             cubeIcon: FluentIcons.cellular_off_24_filled,
-            borderRadius:
-                isUserPlaylistsEmpty
-                    ? commonCustomBarRadiusLast
-                    : BorderRadius.zero,
+            borderRadius: isUserPlaylistsEmpty
+                ? commonCustomBarRadiusLast
+                : BorderRadius.zero,
             showBuildActions: false,
           ),
 
@@ -186,14 +185,12 @@ class _LibraryPageState extends State<LibraryPage> {
                           padding: const EdgeInsets.symmetric(vertical: 20),
                           child: Text(
                             context.l10n!.noPlaylistsAdded,
-                            style: Theme.of(
-                              context,
-                            ).textTheme.bodyMedium?.copyWith(
-                              color:
-                                  Theme.of(
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(
+                                  color: Theme.of(
                                     context,
                                   ).colorScheme.onSurfaceVariant,
-                            ),
+                                ),
                             textAlign: TextAlign.center,
                           ),
                         );
@@ -214,11 +211,11 @@ class _LibraryPageState extends State<LibraryPage> {
       builder: (_, value, __) {
         return userLikedPlaylists.isNotEmpty
             ? Column(
-              children: [
-                SectionTitle(context.l10n!.likedPlaylists, primaryColor),
-                _buildPlaylistListView(context, userLikedPlaylists),
-              ],
-            )
+                children: [
+                  SectionTitle(context.l10n!.likedPlaylists, primaryColor),
+                  _buildPlaylistListView(context, userLikedPlaylists),
+                ],
+              )
             : const SizedBox();
       },
     );
@@ -267,15 +264,15 @@ class _LibraryPageState extends State<LibraryPage> {
           isAlbum: playlist['isAlbum'],
           playlistData:
               playlist['source'] == 'user-created' ||
-                      playlist['source'] == 'user-youtube' ||
-                      isOfflinePlaylists
-                  ? playlist
-                  : null,
+                  playlist['source'] == 'user-youtube' ||
+                  isOfflinePlaylists
+              ? playlist
+              : null,
           onDelete:
               playlist['source'] == 'user-created' ||
-                      playlist['source'] == 'user-youtube'
-                  ? () => _showRemovePlaylistDialog(playlist)
-                  : null,
+                  playlist['source'] == 'user-youtube'
+              ? () => _showRemovePlaylistDialog(playlist)
+              : null,
           borderRadius: borderRadius,
         );
       },
@@ -295,10 +292,9 @@ class _LibraryPageState extends State<LibraryPage> {
       itemBuilder: (BuildContext context, index) {
         final folder = folders[index];
         final isLastFolder = index == folders.length - 1;
-        final borderRadius =
-            isLastFolder && !hasPlaylistsAfter
-                ? commonCustomBarRadiusLast // Only bottom radius for last item
-                : BorderRadius.zero; // No radius for middle items
+        final borderRadius = isLastFolder && !hasPlaylistsAfter
+            ? commonCustomBarRadiusLast // Only bottom radius for last item
+            : BorderRadius.zero; // No radius for middle items
         return PlaylistBar(
           folder['name'],
           playlistData: folder,
@@ -362,10 +358,9 @@ class _LibraryPageState extends State<LibraryPage> {
                           });
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              isYouTubeMode
-                                  ? inactiveButtonBackground
-                                  : activeButtonBackground,
+                          backgroundColor: isYouTubeMode
+                              ? inactiveButtonBackground
+                              : activeButtonBackground,
                         ),
                         child: const Icon(FluentIcons.globe_add_24_filled),
                       ),
@@ -381,10 +376,9 @@ class _LibraryPageState extends State<LibraryPage> {
                           });
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              isYouTubeMode
-                                  ? activeButtonBackground
-                                  : inactiveButtonBackground,
+                          backgroundColor: isYouTubeMode
+                              ? activeButtonBackground
+                              : inactiveButtonBackground,
                         ),
                         child: const Icon(FluentIcons.person_add_24_filled),
                       ),

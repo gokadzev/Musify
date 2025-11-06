@@ -44,30 +44,28 @@ class SongArtworkWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return metadata.artUri?.scheme == 'file'
         ? SizedBox(
-          width: size,
-          height: size,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(borderRadius),
-            child: Image.file(
-              File(metadata.extras?['artWorkPath']),
-              fit: BoxFit.cover,
-            ),
-          ),
-        )
-        : CachedNetworkImage(
-          key: ValueKey(metadata.artUri.toString()),
-          width: size,
-          height: size,
-          imageUrl: metadata.artUri.toString(),
-          imageBuilder:
-              (context, imageProvider) => ClipRRect(
-                borderRadius: BorderRadius.circular(borderRadius),
-                child: Image(image: imageProvider, fit: BoxFit.cover),
+            width: size,
+            height: size,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(borderRadius),
+              child: Image.file(
+                File(metadata.extras?['artWorkPath']),
+                fit: BoxFit.cover,
               ),
-          placeholder: (context, url) => const Spinner(),
-          errorWidget:
-              (context, url, error) =>
-                  NullArtworkWidget(iconSize: errorWidgetIconSize),
-        );
+            ),
+          )
+        : CachedNetworkImage(
+            key: ValueKey(metadata.artUri.toString()),
+            width: size,
+            height: size,
+            imageUrl: metadata.artUri.toString(),
+            imageBuilder: (context, imageProvider) => ClipRRect(
+              borderRadius: BorderRadius.circular(borderRadius),
+              child: Image(image: imageProvider, fit: BoxFit.cover),
+            ),
+            placeholder: (context, url) => const Spinner(),
+            errorWidget: (context, url, error) =>
+                NullArtworkWidget(iconSize: errorWidgetIconSize),
+          );
   }
 }

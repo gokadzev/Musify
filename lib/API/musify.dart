@@ -1220,7 +1220,7 @@ Future<File?> _downloadAndSaveArtworkFile(String url, String filePath) async {
       final file = File(filePath);
       await file.parent.create(recursive: true);
       await file.writeAsBytes(response.bodyBytes);
-      
+
       // Validate that the file was actually written
       if (await file.exists() && await file.length() > 0) {
         return file;

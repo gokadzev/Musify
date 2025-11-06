@@ -185,8 +185,9 @@ class OfflinePlaylistService {
       }
 
       // Start initial downloads
-      final initialTasks =
-          songsList.length < maxConcurrent ? songsList.length : maxConcurrent;
+      final initialTasks = songsList.length < maxConcurrent
+          ? songsList.length
+          : maxConcurrent;
       for (var i = 0; i < initialTasks; i++) {
         unawaited(processQueue());
       }
@@ -391,10 +392,9 @@ class OfflinePlaylistService {
   Map<String, dynamic> getDownloadStatus(String playlistId) {
     final isDownloaded = isPlaylistDownloaded(playlistId);
     final isDownloading = isPlaylistDownloading(playlistId);
-    final progress =
-        downloadProgressNotifiers.containsKey(playlistId)
-            ? downloadProgressNotifiers[playlistId]!.value
-            : null;
+    final progress = downloadProgressNotifiers.containsKey(playlistId)
+        ? downloadProgressNotifiers[playlistId]!.value
+        : null;
 
     return {
       'isDownloaded': isDownloaded,

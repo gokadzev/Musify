@@ -42,13 +42,12 @@ String formatSongTitle(String title) {
     replacementsForSongTitle.keys.map(RegExp.escape).join('|'),
   );
 
-  var finalTitle =
-      title
-          .replaceAllMapped(
-            pattern,
-            (match) => replacementsForSongTitle[match.group(0)] ?? '',
-          )
-          .trimLeft();
+  var finalTitle = title
+      .replaceAllMapped(
+        pattern,
+        (match) => replacementsForSongTitle[match.group(0)] ?? '',
+      )
+      .trimLeft();
 
   finalTitle = finalTitle.replaceAll(wordsPatternForSongTitle, '');
 

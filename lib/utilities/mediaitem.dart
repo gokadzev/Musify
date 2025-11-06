@@ -37,12 +37,12 @@ MediaItem mapToMediaItem(Map song) => MediaItem(
   album: '',
   artist: song['artist'].toString().trim(),
   title: song['title'].toString(),
-  artUri:
-      song['isOffline'] ?? false
-          ? Uri.file(song['highResImage'].toString())
-          : Uri.parse(song['highResImage'].toString()),
-  duration:
-      song['duration'] != null ? Duration(seconds: song['duration']) : null,
+  artUri: song['isOffline'] ?? false
+      ? Uri.file(song['highResImage'].toString())
+      : Uri.parse(song['highResImage'].toString()),
+  duration: song['duration'] != null
+      ? Duration(seconds: song['duration'])
+      : null,
   extras: {
     'lowResImage': song['lowResImage'],
     'ytid': song['ytid'],

@@ -72,8 +72,9 @@ Widget buildImagePreview({
   double height = 80,
 }) {
   if (imageBase64 != null) {
-    final base64Data =
-        imageBase64.contains(',') ? imageBase64.split(',').last : imageBase64;
+    final base64Data = imageBase64.contains(',')
+        ? imageBase64.split(',').last
+        : imageBase64;
 
     return Padding(
       padding: const EdgeInsets.only(top: 8),
