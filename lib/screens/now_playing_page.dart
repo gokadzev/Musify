@@ -678,13 +678,27 @@ class BottomActionsRow extends StatelessWidget {
             color: primaryColor,
           ),
           iconSize: iconSize,
-          onPressed: () {
-            if (value) {
-              removeSongFromOffline(audioId);
-            } else {
-              makeSongOffline(mediaItemToMap(metadata));
+          onPressed: () async {
+            final originalValue = value;
+            status.value = !value;
+
+            try {
+              final bool success;
+              if (originalValue) {
+                success = await removeSongFromOffline(audioId);
+              } else {
+                success = await makeSongOffline(mediaItemToMap(metadata));
+              }
+
+              // Revert if operation failed
+              if (!success) {
+                status.value = originalValue;
+              }
+            } catch (e) {
+              // Revert on error
+              status.value = originalValue;
+              logger.log('Error toggling offline status', e, null);
             }
-            status.value = !status.value;
           },
         );
       },
