@@ -1142,14 +1142,23 @@ Future<bool> makeSongOffline(dynamic song, {bool fromPlaylist = false}) async {
           artworkPath,
         );
 
-        if (_artworkFile != null) {
+        if (_artworkFile != null && await _artworkFile.exists()) {
           song['artworkPath'] = artworkPath;
           song['highResImage'] = artworkPath;
           song['lowResImage'] = artworkPath;
+        } else {
+          logger.log(
+            'Artwork download failed or file does not exist for $ytid',
+            null,
+            null,
+          );
+          // Clear artwork paths if download failed
+          song['artworkPath'] = null;
         }
       }
     } catch (e, stackTrace) {
       logger.log('Error downloading artwork', e, stackTrace);
+      song['artworkPath'] = null;
     }
 
     song['audioPath'] = audioFile.path;
@@ -1209,8 +1218,20 @@ Future<File?> _downloadAndSaveArtworkFile(String url, String filePath) async {
 
     if (response.statusCode == 200) {
       final file = File(filePath);
+      await file.parent.create(recursive: true);
       await file.writeAsBytes(response.bodyBytes);
-      return file;
+      
+      // Validate that the file was actually written
+      if (await file.exists() && await file.length() > 0) {
+        return file;
+      } else {
+        logger.log(
+          'Artwork file was not written properly: $filePath',
+          null,
+          null,
+        );
+        return null;
+      }
     } else {
       logger.log(
         'Failed to download file. Status code: ${response.statusCode}',
