@@ -228,12 +228,15 @@ class _UserSongsPageState extends State<UserSongsPage> {
               song['isOffline'] = title == context.l10n!.offlineSongs;
               final borderRadius = getItemBorderRadius(index, songsList.length);
 
-              return _buildSongBar(
-                song,
-                index,
-                borderRadius,
-                playlist,
-                isRecentSong: isRecentlyPlayed,
+              return RepaintBoundary(
+                key: ValueKey('song_${song['ytid']}'),
+                child: _buildSongBar(
+                  song,
+                  index,
+                  borderRadius,
+                  playlist,
+                  isRecentSong: isRecentlyPlayed,
+                ),
               );
               // ignore: require_trailing_commas
             }, childCount: songsList.length),
