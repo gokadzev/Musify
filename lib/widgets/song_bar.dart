@@ -195,12 +195,18 @@ class _SongBarState extends State<SongBar> {
         );
         break;
       case 'like':
-        _songLikeStatus.value = !_songLikeStatus.value;
-        updateSongLikeStatus(_ytid, _songLikeStatus.value);
+        final newValue = !_songLikeStatus.value;
+        _songLikeStatus.value = newValue;
         final likedSongsLength = currentLikedSongsLength.value;
-        currentLikedSongsLength.value = _songLikeStatus.value
+        currentLikedSongsLength.value = newValue
             ? likedSongsLength + 1
             : likedSongsLength - 1;
+        updateSongLikeStatus(_ytid, newValue).catchError((e) {
+          logger.log('Error updating song like status', e, null);
+          // Revert on error
+          _songLikeStatus.value = !newValue;
+          currentLikedSongsLength.value = likedSongsLength;
+        });
         break;
       case 'remove':
         widget.onRemove?.call();
@@ -209,7 +215,9 @@ class _SongBarState extends State<SongBar> {
         showAddToPlaylistDialog(context, widget.song);
         break;
       case 'remove_from_recents':
-        removeFromRecentlyPlayed(_ytid);
+        removeFromRecentlyPlayed(_ytid).catchError((e) {
+          logger.log('Error removing from recently played', e, null);
+        });
         break;
       case 'offline':
         _handleOfflineToggle(context);
@@ -217,21 +225,35 @@ class _SongBarState extends State<SongBar> {
     }
   }
 
-  void _handleOfflineToggle(BuildContext context) {
-    if (_songOfflineStatus.value) {
-      removeSongFromOffline(_ytid).then((success) {
-        if (success) {
-          _songOfflineStatus.value = false;
+  void _handleOfflineToggle(BuildContext context) async {
+    final originalValue = _songOfflineStatus.value;
+    _songOfflineStatus.value = !originalValue;
+
+    try {
+      final bool success;
+      if (originalValue) {
+        success = await removeSongFromOffline(_ytid);
+        if (success && context.mounted) {
           showToast(context, context.l10n!.songRemovedFromOffline);
         }
-      });
-    } else {
-      makeSongOffline(widget.song).then((success) {
-        if (success) {
-          _songOfflineStatus.value = true;
+      } else {
+        success = await makeSongOffline(widget.song);
+        if (success && context.mounted) {
           showToast(context, context.l10n!.songAddedToOffline);
         }
-      });
+      }
+
+      // Revert if operation failed
+      if (!success) {
+        _songOfflineStatus.value = originalValue;
+      }
+    } catch (e) {
+      // Revert on error
+      _songOfflineStatus.value = originalValue;
+      logger.log('Error toggling offline status', e, null);
+      if (context.mounted) {
+        showToast(context, context.l10n!.error);
+      }
     }
   }
 
