@@ -355,7 +355,10 @@ class ProxyManager {
     if (!useProxy.value) return;
     try {
       const url = 'https://spys.me/proxy.txt';
-      final response = await http.get(Uri.parse(url));
+      final response = await http.get(Uri.parse(url)).timeout(
+        const Duration(seconds: 15),
+        onTimeout: () => http.Response('', 408),
+      );
       if (response.statusCode != 200) return;
       response.body.split('\n').forEach((line) {
         // Use pre-compiled regex (constant)
@@ -394,7 +397,10 @@ class ProxyManager {
     try {
       const url =
           'https://api.proxyscrape.com/v4/free-proxy-list/get?request=display_proxies&proxy_format=protocolipport&format=json';
-      final response = await http.get(Uri.parse(url));
+      final response = await http.get(Uri.parse(url)).timeout(
+        const Duration(seconds: 15),
+        onTimeout: () => http.Response('', 408),
+      );
       if (response.statusCode != 200) return;
       final result = jsonDecode(response.body);
       for (final proxyData in (result['proxies'] as List)) {
@@ -424,7 +430,10 @@ class ProxyManager {
     try {
       const url =
           'https://raw.githubusercontent.com/roosterkid/openproxylist/main/HTTPS.txt';
-      final response = await http.get(Uri.parse(url));
+      final response = await http.get(Uri.parse(url)).timeout(
+        const Duration(seconds: 15),
+        onTimeout: () => http.Response('', 408),
+      );
       if (response.statusCode != 200) return;
       response.body.split('\n').forEach((line) {
         // Use pre-compiled regex (constant)
