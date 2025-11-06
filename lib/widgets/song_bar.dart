@@ -383,35 +383,33 @@ class _OfflineArtwork extends StatelessWidget {
     return SizedBox(
       width: size,
       height: size,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadiusGeometry.circular(
-              commonMiniArtworkRadius,
-            ),
-            child: Image.file(
+      child: ClipRRect(
+        borderRadius: BorderRadiusGeometry.circular(commonMiniArtworkRadius),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Image.file(
               File(artworkPath),
+              width: size,
+              height: size,
               fit: BoxFit.cover,
-              cacheWidth: 256,
-              cacheHeight: 256,
               color: Theme.of(context).colorScheme.primaryContainer,
               colorBlendMode: BlendMode.multiply,
               opacity: const AlwaysStoppedAnimation(0.45),
             ),
-          ),
-          SizedBox(
-            width: size - 10,
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Icon(
-                FluentIcons.cellular_off_24_filled,
-                size: 24,
-                color: primaryColor,
+            SizedBox(
+              width: size - 10,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Icon(
+                  FluentIcons.cellular_off_24_filled,
+                  size: 24,
+                  color: primaryColor,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
