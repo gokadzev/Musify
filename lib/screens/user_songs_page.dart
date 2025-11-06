@@ -251,6 +251,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
     bool isRecentSong = false,
   }) {
     return SongBar(
+      key: Key(song['ytid'].toString()),
       song,
       true,
       onPlay: () {
