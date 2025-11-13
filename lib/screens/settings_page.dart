@@ -113,23 +113,6 @@ class SettingsPage extends StatelessWidget {
             inactivatedColor,
           ),
         ),
-        ValueListenableBuilder<bool>(
-          valueListenable: useProxy,
-          builder: (_, value, __) {
-            return CustomBar(
-              context.l10n!.useProxy,
-              FluentIcons.shield_24_filled,
-              trailing: Switch(
-                value: value,
-                onChanged: (value) {
-                  useProxy.value = value;
-                  addOrUpdateData('settings', 'useProxy', value);
-                  showToast(context, context.l10n!.settingChangedMsg);
-                },
-              ),
-            );
-          },
-        ),
         CustomBar(
           context.l10n!.dynamicColor,
           FluentIcons.toggle_left_24_filled,
@@ -161,11 +144,30 @@ class SettingsPage extends StatelessWidget {
           },
         ),
         ValueListenableBuilder<bool>(
+          valueListenable: useProxy,
+          builder: (_, value, __) {
+            return CustomBar(
+              context.l10n!.useProxy,
+              FluentIcons.shield_24_filled,
+              description: context.l10n!.useProxyDescription,
+              trailing: Switch(
+                value: value,
+                onChanged: (value) {
+                  useProxy.value = value;
+                  addOrUpdateData('settings', 'useProxy', value);
+                  showToast(context, context.l10n!.settingChangedMsg);
+                },
+              ),
+            );
+          },
+        ),
+        ValueListenableBuilder<bool>(
           valueListenable: offlineMode,
           builder: (_, value, __) {
             return CustomBar(
               context.l10n!.offlineMode,
               FluentIcons.cellular_off_24_regular,
+              description: context.l10n!.offlineModeDescription,
               trailing: Switch(
                 value: value,
                 onChanged: (value) => _toggleOfflineMode(context, value),
@@ -180,6 +182,7 @@ class SettingsPage extends StatelessWidget {
               return CustomBar(
                 context.l10n!.automaticUpdateChecks,
                 FluentIcons.arrow_sync_24_filled,
+                description: context.l10n!.automaticUpdateChecksDescription,
                 borderRadius: commonCustomBarRadiusLast,
                 trailing: Switch(
                   value: value ?? false,
@@ -207,6 +210,7 @@ class SettingsPage extends StatelessWidget {
             return CustomBar(
               'SponsorBlock',
               FluentIcons.presence_blocked_24_regular,
+              description: context.l10n!.sponsorBlockDescription,
               trailing: Switch(
                 value: value,
                 onChanged: (value) => _toggleSponsorBlock(context, value),
@@ -220,6 +224,7 @@ class SettingsPage extends StatelessWidget {
             return CustomBar(
               context.l10n!.automaticSongPicker,
               FluentIcons.music_note_2_play_20_filled,
+              description: context.l10n!.automaticSongPickerDescription,
               trailing: Switch(
                 value: value,
                 onChanged: (value) {
@@ -236,6 +241,7 @@ class SettingsPage extends StatelessWidget {
             return CustomBar(
               context.l10n!.originalRecommendations,
               FluentIcons.channel_share_24_regular,
+              description: context.l10n!.originalRecommendationsDescription,
               borderRadius: commonCustomBarRadiusLast,
               trailing: Switch(
                 value: value,
@@ -441,6 +447,7 @@ class SettingsPage extends StatelessWidget {
         CustomBar(
           context.l10n!.translate,
           FluentIcons.translate_24_filled,
+          description: context.l10n!.translateDescription,
           onTap: () =>
               launchURL(Uri.parse('https://crowdin.com/project/musify')),
         ),
