@@ -482,13 +482,7 @@ class SettingsPage extends StatelessWidget {
 
           return GestureDetector(
             onTap: () {
-              //TODO: migrate this
-              addOrUpdateData(
-                'settings',
-                'accentColor',
-                // ignore: deprecated_member_use
-                color.value,
-              );
+              addOrUpdateData('settings', 'accentColor', color.toARGB32());
               Musify.updateAppState(
                 context,
                 newAccentColor: color,
