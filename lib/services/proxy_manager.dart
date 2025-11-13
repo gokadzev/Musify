@@ -128,7 +128,9 @@ class ProxyManager {
             };
 
           ioClient = IOClient(httpClient);
-          final ytClient = YoutubeExplode(YoutubeHttpClient(ioClient));
+          final ytClient = YoutubeExplode(
+            httpClient: YoutubeHttpClient(ioClient),
+          );
 
           if (_sharedYt != null && _sharedYt != _defaultYt) {
             try {
@@ -197,7 +199,7 @@ class ProxyManager {
           return true;
         };
       ioClient = IOClient(httpClient);
-      ytClient = YoutubeExplode(YoutubeHttpClient(ioClient));
+      ytClient = YoutubeExplode(httpClient: YoutubeHttpClient(ioClient));
       final manifest = await ytClient.videos.streams
           .getManifest(songId, ytClients: [YoutubeApiClient.androidVr])
           .timeout(Duration(seconds: timeoutSeconds));
@@ -333,7 +335,9 @@ class ProxyManager {
           };
 
         ioClient = IOClient(httpClient);
-        final ytClient = YoutubeExplode(YoutubeHttpClient(ioClient));
+        final ytClient = YoutubeExplode(
+          httpClient: YoutubeHttpClient(ioClient),
+        );
 
         _workingProxies.add(proxy);
         return ytClient;
