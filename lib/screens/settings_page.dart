@@ -271,12 +271,28 @@ class SettingsPage extends StatelessWidget {
         CustomBar(
           context.l10n!.clearSearchHistory,
           FluentIcons.history_24_filled,
-          onTap: () => _showClearSearchHistoryDialog(context),
+          onTap: () => _showConfirmationDialog(
+            context: context,
+            confirmationMessage: context.l10n!.clearSearchHistoryQuestion,
+            onSubmit: () {
+              searchHistoryNotifier.value = [];
+              deleteData('user', 'searchHistory');
+              showToast(context, '${context.l10n!.searchHistoryMsg}!');
+            },
+          ),
         ),
         CustomBar(
           context.l10n!.clearRecentlyPlayed,
           FluentIcons.receipt_play_24_filled,
-          onTap: () => _showClearRecentlyPlayedDialog(context),
+          onTap: () => _showConfirmationDialog(
+            context: context,
+            confirmationMessage: context.l10n!.clearRecentlyPlayedQuestion,
+            onSubmit: () {
+              userRecentlyPlayed = [];
+              deleteData('user', 'recentlyPlayedSongs');
+              showToast(context, '${context.l10n!.recentlyPlayedMsg}!');
+            },
+          ),
         ),
         CustomBar(
           context.l10n!.backupUserData,
@@ -686,38 +702,21 @@ class SettingsPage extends StatelessWidget {
     showToast(context, context.l10n!.settingChangedMsg);
   }
 
-  void _showClearSearchHistoryDialog(BuildContext context) {
+  void _showConfirmationDialog({
+    required BuildContext context,
+    required String confirmationMessage,
+    required VoidCallback onSubmit,
+  }) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return ConfirmationDialog(
           submitMessage: context.l10n!.clear,
-          confirmationMessage: context.l10n!.clearSearchHistoryQuestion,
-          onCancel: () => {Navigator.of(context).pop()},
-          onSubmit: () => {
-            Navigator.of(context).pop(),
-            searchHistoryNotifier.value = [],
-            deleteData('user', 'searchHistory'),
-            showToast(context, '${context.l10n!.searchHistoryMsg}!'),
-          },
-        );
-      },
-    );
-  }
-
-  void _showClearRecentlyPlayedDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return ConfirmationDialog(
-          submitMessage: context.l10n!.clear,
-          confirmationMessage: context.l10n!.clearRecentlyPlayedQuestion,
-          onCancel: () => {Navigator.of(context).pop()},
-          onSubmit: () => {
-            Navigator.of(context).pop(),
-            userRecentlyPlayed = [],
-            deleteData('user', 'recentlyPlayedSongs'),
-            showToast(context, '${context.l10n!.recentlyPlayedMsg}!'),
+          confirmationMessage: confirmationMessage,
+          onCancel: () => Navigator.of(context).pop(),
+          onSubmit: () {
+            Navigator.of(context).pop();
+            onSubmit();
           },
         );
       },
