@@ -20,17 +20,30 @@
  */
 
 import 'package:audio_service/audio_service.dart';
+import 'package:musify/API/musify.dart';
+import 'package:musify/services/io_service.dart';
 
-Map mediaItemToMap(MediaItem mediaItem) => {
-  'id': mediaItem.id,
-  'ytid': mediaItem.extras!['ytid'],
-  'album': mediaItem.album.toString(),
-  'artist': mediaItem.artist.toString(),
-  'title': mediaItem.title,
-  'highResImage': mediaItem.artUri.toString(),
-  'lowResImage': mediaItem.extras!['lowResImage'],
-  'isLive': mediaItem.extras!['isLive'],
-};
+Map<String, dynamic> mediaItemToMap(MediaItem mediaItem) {
+  final ytid = mediaItem.extras!['ytid'];
+  dynamic audioPath = null;
+
+  if (isSongAlreadyOffline(ytid)) {
+    audioPath = FilePaths.getAudioPath(ytid);
+  } 
+
+  return {
+    'id': mediaItem.id,
+    'ytid': mediaItem.extras!['ytid'],
+    'album': mediaItem.album.toString(),
+    'artist': mediaItem.artist.toString(),
+    'title': mediaItem.title,
+    'highResImage': mediaItem.artUri.toString(),
+    'lowResImage': mediaItem.extras!['lowResImage'],
+    'isLive': mediaItem.extras!['isLive'],
+    'audioPath': audioPath,
+    'isOffline': audioPath != null,
+  };
+}
 
 MediaItem mapToMediaItem(Map song) => MediaItem(
   id: song['id'].toString(),

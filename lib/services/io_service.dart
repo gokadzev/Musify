@@ -20,6 +20,9 @@
  */
 
 import 'dart:io';
+import 'dart:math';
+import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
 
 late String applicationDirPath;
 
@@ -53,5 +56,20 @@ class FilePaths {
     if (!await artworksDirectory.exists()) {
       await artworksDirectory.create(recursive: true);
     }
+  }
+
+  static Future<File> temporalFileForSharing(dynamic song) async {
+    final originalFile = File(song['audioPath']);
+
+    final safeTitle = (song['title'] ?? 'song')
+        .toString()
+        .replaceAll(RegExp(r'[<>:"/\\|?*]'), '_');
+    final truncated = safeTitle.substring(0, min(20, safeTitle.length));
+    final newFileName = '$truncated$audioExtension';
+
+    final tempDir = await getTemporaryDirectory();
+    final newFilePath = path.join(tempDir.path, newFileName);
+
+    return originalFile.copy(newFilePath);
   }
 }

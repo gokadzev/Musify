@@ -27,6 +27,7 @@ import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/models/position_data.dart';
+import 'package:musify/services/io_service.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/flutter_bottom_sheet.dart';
@@ -39,6 +40,7 @@ import 'package:musify/widgets/playback_icon_button.dart';
 import 'package:musify/widgets/song_artwork.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/spinner.dart';
+import 'package:share_plus/share_plus.dart';
 
 final _lyricsController = FlipCardController();
 
@@ -666,6 +668,34 @@ class BottomActionsRow extends StatelessWidget {
   final double iconSize;
   final bool isLargeScreen;
 
+  Widget _buildShareButton(
+    ValueNotifier<bool> songOfflineStatus,
+    Color primaryColor,
+  ) {
+    return Builder(
+      builder: (ctx) => IconButton.filledTonal(
+        icon: Icon(Icons.share, color: primaryColor),
+        iconSize: iconSize,
+        onPressed: () async {
+          try {
+            final song = mediaItemToMap(metadata);
+
+            if (!songOfflineStatus.value) {
+              songOfflineStatus.value = await makeSongOffline(song);
+            }
+
+            if (songOfflineStatus.value) {
+              final file = await FilePaths.temporalFileForSharing(song);
+              await Share.shareXFiles([XFile(file.path)]);
+            }
+          } catch (e) {
+            logger.log('Error sharing song', e, null);
+          }
+        },
+      ),
+    );
+  }
+
   Widget _buildOfflineButton(ValueNotifier<bool> status, Color primaryColor) {
     return ValueListenableBuilder<bool>(
       valueListenable: status,
@@ -734,8 +764,9 @@ class BottomActionsRow extends StatelessWidget {
             : [];
         return Wrap(
           alignment: WrapAlignment.center,
-          spacing: 8,
+          spacing: 4,
           children: [
+            _buildShareButton(songOfflineStatus, _primaryColor),
             _buildOfflineButton(songOfflineStatus, _primaryColor),
             if (!offlineMode.value) _buildAddToPlaylistButton(_primaryColor),
             if (queue.isNotEmpty && !isLargeScreen)
