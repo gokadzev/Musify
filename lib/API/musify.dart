@@ -1121,6 +1121,9 @@ Future<bool> makeSongOffline(dynamic song, {bool fromPlaylist = false}) async {
         return false;
       }
 
+      song['audioBitrate'] = '${audioManifest.bitrate.kiloBitsPerSecond} kbps';
+      song['audioCodec'] = audioManifest.codec.mimeType;
+
       final stream = _yt.videos.streamsClient.get(audioManifest);
       final fileStream = audioFile.openWrite();
       await stream.pipe(fileStream);
