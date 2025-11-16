@@ -176,6 +176,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
           if (widget.playlistId != null) ...[_buildLikeButton()],
           const SizedBox(width: 10),
           if (_playlist != null) ...[
+            if (_playlist['list'] != null) ...[_buildPlayButton()],
             _buildSyncButton(),
             const SizedBox(width: 10),
             _buildDownloadButton(),
@@ -294,6 +295,16 @@ class _PlaylistPageState extends State<PlaylistPage> {
           },
         );
       },
+    );
+  }
+
+  Widget _buildPlayButton() {
+    return IconButton(
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      icon: const Icon(FluentIcons.play_24_filled),
+      iconSize: 26,
+      onPressed: _handlePlayPlaylist,
     );
   }
 
@@ -525,6 +536,17 @@ class _PlaylistPageState extends State<PlaylistPage> {
           ],
         );
       },
+    );
+  }
+
+  void _handlePlayPlaylist() async {
+    for (var song in _playlist['list']) {
+      audioHandler.playNext(song);
+    }
+
+    showToast(
+      context,
+      'Playing "${_playlist['title']}"',
     );
   }
 
