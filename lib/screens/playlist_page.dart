@@ -540,6 +540,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
   }
 
   void _handlePlayPlaylist() async {
+    await audioHandler.stop();
+    audioHandler.clearQueue();
     for (var song in _playlist['list']) {
       audioHandler.playNext(song);
     }
