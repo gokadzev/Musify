@@ -25,6 +25,7 @@ import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/screens/playlist_folder_page.dart';
 import 'package:musify/screens/playlist_page.dart';
+import 'package:musify/utilities/artwork_provider.dart';
 import 'package:musify/utilities/common_variables.dart';
 
 class PlaylistBar extends StatelessWidget {
@@ -130,9 +131,7 @@ class PlaylistBar extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           image: DecorationImage(
-            image: playlistArtwork!.startsWith('http')
-                ? NetworkImage(playlistArtwork!) as ImageProvider
-                : AssetImage(playlistArtwork!),
+            image: ArtworkProvider.get(playlistArtwork!),
             fit: BoxFit.cover,
           ),
         ),
