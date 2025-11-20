@@ -758,10 +758,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
       _emitOptimisticLoadingState(queueIndex: _currentQueueIndex);
 
-      final success = await playSong(
-        _queueList[index],
-        transitionId: _songTransitionCounter,
-      );
+      final success = await playSong(_queueList[index]);
 
       if (success) {
         _consecutiveErrors = 0;
@@ -953,7 +950,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
   Future<void> rewind() =>
       seek(Duration(seconds: audioPlayer.position.inSeconds - 15));
 
-  Future<bool> playSong(Map song, {int? transitionId}) async {
+  Future<bool> playSong(Map song) async {
     try {
       if (song['ytid'] == null || song['ytid'].toString().isEmpty) {
         logger.log('Invalid song data: missing ytid', null, null);
@@ -991,7 +988,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
         audioSource,
         songUrl,
         isOffline,
-        transitionId: transitionId ?? _songTransitionCounter,
       );
     } catch (e, stackTrace) {
       logger.log('Error playing song', e, stackTrace);
@@ -1048,26 +1044,13 @@ class MusifyAudioHandler extends BaseAudioHandler {
     Map song,
     AudioSource audioSource,
     String songUrl,
-    bool isOffline, {
-    required int transitionId,
-  }) async {
+    bool isOffline,
+  ) async {
     try {
       await audioPlayer
           .setAudioSource(audioSource)
           .timeout(_songTransitionTimeout);
       await Future.delayed(const Duration(milliseconds: 100));
-
-      // If a newer song transition started while we were preparing the
-      // audio source, abort this operation to avoid playing an out-of-date
-      // audio source that would override the newer selection.
-      if (transitionId != _songTransitionCounter) {
-        logger.log(
-          'Aborting playback: transitionId $transitionId is stale (current $_songTransitionCounter)',
-          null,
-          null,
-        );
-        return false;
-      }
 
       // Update media item only with duration if available (media item base was set in _playFromQueue)
       if (audioPlayer.duration != null) {
@@ -1078,17 +1061,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
       }
 
       await audioPlayer.play();
-
-      // Double-check again after starting playback: if another transition
-      // happened very quickly, don't consider this as the active play.
-      if (transitionId != _songTransitionCounter) {
-        logger.log(
-          'Playback started but transitionId $transitionId is stale after play (current $_songTransitionCounter)',
-          null,
-          null,
-        );
-        return false;
-      }
 
       if (!isOffline) {
         final cacheKey =
@@ -1107,11 +1079,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
       return true;
     } catch (e, stackTrace) {
       logger.log('Error setting audio source', e, stackTrace);
-
-      if (e is PlayerInterruptedException) {
-        logger.log('setAudioSource was interrupted', e, null);
-        return false;
-      }
 
       // Try online fallback for offline songs
       if (isOffline) {
@@ -1146,15 +1113,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
                 fallbackError,
                 fallbackStackTrace,
               );
-
-              if (fallbackError is PlayerInterruptedException) {
-                logger.log(
-                  'Fallback setAudioSource was interrupted',
-                  fallbackError,
-                  null,
-                );
-                return false;
-              }
             }
           }
         }
