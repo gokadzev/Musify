@@ -70,6 +70,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
   bool _isUpdatingState = false;
   int _songTransitionCounter =
       0; // Track song transitions to prevent race conditions
+  bool _completionEventPending = false;
 
   // Error handling
   String? _lastError;
@@ -308,15 +309,20 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   void _handlePlaybackEvent(PlaybackEvent event) {
     try {
-      if (event.processingState == ProcessingState.completed &&
-          !sleepTimerExpired) {
-        // Schedule the completion handler with slight delay
-        Future.delayed(const Duration(milliseconds: 100), () {
-          // Double-check sleep timer state before handling completion
-          if (!sleepTimerExpired) {
-            _handleSongCompletion();
-          }
-        });
+      if (event.processingState == ProcessingState.completed) {
+        if (!sleepTimerExpired && !_completionEventPending) {
+          _completionEventPending = true;
+
+          // Schedule the completion handler with slight delay
+          Future.delayed(const Duration(milliseconds: 100), () {
+            // Double-check sleep timer state before handling completion
+            if (!sleepTimerExpired) {
+              _handleSongCompletion();
+            }
+          });
+        }
+      } else {
+        _completionEventPending = false;
       }
     } catch (e, stackTrace) {
       logger.log('Error handling playback event', e, stackTrace);
