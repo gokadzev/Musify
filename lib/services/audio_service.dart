@@ -496,17 +496,57 @@ class MusifyAudioHandler extends BaseAudioHandler {
         return;
       }
 
-      _queueList.removeWhere((s) => s['ytid'] == song['ytid']);
+      final currentSongYtId =
+          _currentQueueIndex < _queueList.length && _queueList.isNotEmpty
+          ? _queueList[_currentQueueIndex]['ytid']?.toString()
+          : null;
+
+      var removedCurrentSong = false;
+
+      for (var i = _queueList.length - 1; i >= 0; i--) {
+        if (_queueList[i]['ytid']?.toString() == song['ytid'].toString()) {
+          if (i == _currentQueueIndex) {
+            removedCurrentSong = true;
+          }
+
+          _queueList.removeAt(i);
+
+          if (i < _currentQueueIndex) {
+            _currentQueueIndex--;
+          }
+        }
+      }
+
+      if (_queueList.isEmpty) {
+        _currentQueueIndex = 0;
+      } else if (_currentQueueIndex >= _queueList.length) {
+        _currentQueueIndex = _queueList.length - 1;
+      }
+
+      int insertIndex;
 
       if (playNext) {
-        final insertIndex = _currentQueueIndex + 1;
-        if (insertIndex < _queueList.length) {
-          _queueList.insert(insertIndex, song);
-        } else {
-          _queueList.add(song);
+        var desiredIndex = _currentQueueIndex + (removedCurrentSong ? 0 : 1);
+        if (desiredIndex < 0) desiredIndex = 0;
+        if (desiredIndex > _queueList.length) {
+          desiredIndex = _queueList.length;
         }
+        insertIndex = desiredIndex;
+      } else {
+        insertIndex = _queueList.length;
+      }
+
+      if (insertIndex >= 0 && insertIndex <= _queueList.length) {
+        _queueList.insert(insertIndex, song);
       } else {
         _queueList.add(song);
+        insertIndex = _queueList.length - 1;
+      }
+
+      if (removedCurrentSong && currentSongYtId == song['ytid']) {
+        _currentQueueIndex = insertIndex;
+      } else if (_currentQueueIndex < 0) {
+        _currentQueueIndex = 0;
       }
 
       _updateQueueMediaItems();
