@@ -32,8 +32,10 @@ dependencies:
   infinite_scroll_pagination: ^5.1.1
   intl: ^0.20.2
   just_audio: 0.10.5
+  path: ^1.9.1
   path_provider: ^2.1.5
   rxdart: ^0.28.0
+  share_plus: ^7.0.0
   url_launcher: ^6.3.2
   youtube_explode_dart: ^3.0.4
 

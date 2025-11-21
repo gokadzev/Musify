@@ -27,10 +27,12 @@ import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
+import 'package:musify/services/io_service.dart';
 import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/formatter.dart';
 import 'package:musify/widgets/no_artwork_cube.dart';
+import 'package:share_plus/share_plus.dart';
 
 class SongBar extends StatefulWidget {
   const SongBar(
@@ -222,6 +224,27 @@ class _SongBarState extends State<SongBar> {
       case 'offline':
         _handleOfflineToggle(context);
         break;
+      case 'share':
+        _handleShareAction(context);
+        break;
+    }
+  }
+
+  void _handleShareAction(BuildContext context) async {
+    try {
+      if (!_songOfflineStatus.value) {
+        _songOfflineStatus.value = await makeSongOffline(widget.song);
+      }
+
+      if (_songOfflineStatus.value) {
+        final file = await FilePaths.temporalFileForSharing(widget.song);
+        await Share.shareXFiles([XFile(file.path)]);
+      }
+    } catch (e) {
+      logger.log('Error sharing song', e, null);
+      if (context.mounted) {
+        showToast(context, context.l10n!.error);
+      }
     }
   }
 
@@ -345,6 +368,16 @@ class _SongBarState extends State<SongBar> {
               ],
             );
           },
+        ),
+      ),
+      PopupMenuItem<String>(
+        value: 'share',
+        child: Row(
+          children: [
+            Icon(FluentIcons.share_24_regular, color: primaryColor),
+            const SizedBox(width: 8),
+            Text(context.l10n!.share),
+          ],
         ),
       ),
     ];
