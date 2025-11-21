@@ -8,8 +8,8 @@ publish_to: 'none'
 version: 9.6.13+147 # run update.sh after changing the version
 
 environment:
-  sdk: '>=3.9.0 <4.0.0'
-  flutter: ^3.38.0
+  sdk: '>=3.9.10 <4.0.0'
+  flutter: ^3.38.2
 
 dependencies:
   app_links: ^6.4.1
