@@ -304,11 +304,6 @@ Future<void> initialisation() async {
         androidNotificationIcon: 'drawable/ic_launcher_foreground',
         androidShowNotificationBadge: true,
         androidStopForegroundOnPause: false,
-        androidBrowsableRootExtras: {
-          'android.media.browse.CONTENT_STYLE_SUPPORTED': true,
-          'android.media.browse.CONTENT_STYLE_BROWSABLE_HINT': 1,
-          'android.media.browse.CONTENT_STYLE_PLAYABLE_HINT': 1,
-        },
       ),
     );
 
