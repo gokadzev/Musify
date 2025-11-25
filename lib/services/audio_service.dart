@@ -972,6 +972,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   @override
   Future<void> stop() async {
+    _debounceTimer?.cancel();
     try {
       await audioPlayer.stop();
       _lastError = null;
