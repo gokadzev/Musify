@@ -980,6 +980,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
     } catch (e, stackTrace) {
       logger.log('Error in stop()', e, stackTrace);
     }
+    await super.stop();
   }
 
   void _resetPreloadingState() {
