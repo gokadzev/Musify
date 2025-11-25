@@ -314,10 +314,14 @@ class MusifyAudioHandler extends BaseAudioHandler {
           _completionEventPending = true;
 
           // Schedule the completion handler with slight delay
-          Future.delayed(const Duration(milliseconds: 100), () {
-            // Double-check sleep timer state before handling completion
-            if (!sleepTimerExpired) {
-              _handleSongCompletion();
+          Future.delayed(const Duration(milliseconds: 100), () async {
+            try {
+              // Double-check conditions before handling completion
+              if (!sleepTimerExpired && _completionEventPending) {
+                await _handleSongCompletion();
+              }
+            } finally {
+              _completionEventPending = false;
             }
           });
         }
@@ -973,6 +977,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
   @override
   Future<void> stop() async {
     _debounceTimer?.cancel();
+    _completionEventPending = false;
     try {
       await audioPlayer.stop();
       _lastError = null;
