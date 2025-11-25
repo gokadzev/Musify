@@ -28,6 +28,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/main.dart';
 import 'package:musify/models/position_data.dart';
+import 'package:musify/services/android_auto_service.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/mediaitem.dart';
@@ -84,17 +85,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
   static const Duration _errorRetryDelay = Duration(seconds: 2);
   static const Duration _songTransitionTimeout = Duration(seconds: 30);
   static const Duration _debounceInterval = Duration(milliseconds: 150);
-  static const String _androidAutoQueueId = '__QUEUE__';
-  static const String _androidAutoLikedSongsId = '__LIKED_SONGS__';
-  static const String _androidAutoRecentSongsId = '__RECENT_SONGS__';
-  static const String _androidAutoOfflineSongsId = '__OFFLINE_SONGS__';
-  static const String _androidAutoUserPlaylistsId = '__USER_PLAYLISTS__';
-  static const String _androidAutoCustomPlaylistsId = '__CUSTOM_PLAYLISTS__';
-  static const String _androidAutoPlaylistPrefix = 'playlist:';
-  static const String _androidAutoCustomPlaylistPrefix = 'playlist:custom:';
-  static const String _androidAutoSourceKey = 'aaSource';
-  static const String _androidAutoIndexKey = 'aaIndex';
-  static const String _androidAutoSongKey = 'aaSong';
 
   // Preloading state management
   int _activePreloadCount = 0;
@@ -1497,58 +1487,12 @@ class MusifyAudioHandler extends BaseAudioHandler {
     Map<String, dynamic>? options,
   ]) async {
     try {
-      // Root level - show main browsable categories
-      // AudioService.browsableRootId is 'root' (hardcoded in the Android plugin)
-      if (parentMediaId == AudioService.browsableRootId) {
-        return _buildRootMediaItems();
-      }
-
-      // Recent root for Android Auto resume feature
-      if (parentMediaId == AudioService.recentRootId) {
-        return _buildRecentSongsMediaItems();
-      }
-
-      if (parentMediaId == _androidAutoQueueId) {
-        return queue.valueOrNull ?? const [];
-      }
-
-      if (parentMediaId == _androidAutoLikedSongsId) {
-        return _buildLikedSongsMediaItems();
-      }
-
-      if (parentMediaId == _androidAutoRecentSongsId) {
-        return _buildRecentSongsMediaItems();
-      }
-
-      if (parentMediaId == _androidAutoOfflineSongsId) {
-        return _buildOfflineSongsMediaItems();
-      }
-
-      if (parentMediaId == _androidAutoUserPlaylistsId) {
-        return await _buildUserPlaylistsMediaItems();
-      }
-
-      if (parentMediaId == _androidAutoCustomPlaylistsId) {
-        return _buildCustomPlaylistsMediaItems();
-      }
-
-      if (parentMediaId.startsWith(_androidAutoCustomPlaylistPrefix)) {
-        final playlistId = parentMediaId.substring(
-          _androidAutoCustomPlaylistPrefix.length,
-        );
-        return _buildCustomPlaylistSongsMediaItems(playlistId);
-      }
-
-      if (parentMediaId.startsWith(_androidAutoPlaylistPrefix)) {
-        final playlistId = parentMediaId.substring(
-          _androidAutoPlaylistPrefix.length,
-        );
-        return await _buildUserPlaylistSongsMediaItems(playlistId);
-      }
-
-      return [];
+      return await AndroidAutoService.getChildren(
+        parentMediaId,
+        queue.valueOrNull,
+      );
     } catch (e, stackTrace) {
-      logger.log('Error in onLoadChildren', e, stackTrace);
+      logger.log('Error in getChildren', e, stackTrace);
       return [];
     }
   }
@@ -1559,337 +1503,22 @@ class MusifyAudioHandler extends BaseAudioHandler {
     Map<String, dynamic>? extras,
   ]) async {
     try {
-      final handled = await _handleAndroidAutoPlayRequest(mediaId, extras);
-      if (handled) return;
+      final result = await AndroidAutoService.handlePlayRequest(
+        mediaId,
+        extras,
+      );
+      if (result != null) {
+        await addPlaylistToQueue(
+          result.songs,
+          replace: true,
+          startIndex: result.startIndex,
+        );
+        return;
+      }
     } catch (e, stackTrace) {
       logger.log('Error handling Android Auto playFromMediaId', e, stackTrace);
     }
 
     await super.playFromMediaId(mediaId, extras);
-  }
-
-  /// Builds the root-level browsable categories
-  List<MediaItem> _buildRootMediaItems() {
-    final items = <MediaItem>[];
-
-    final currentQueue = queue.valueOrNull ?? const <MediaItem>[];
-    if (currentQueue.isNotEmpty) {
-      items.add(
-        const MediaItem(
-          id: _androidAutoQueueId,
-          title: 'Queue',
-          playable: false,
-        ),
-      );
-    }
-
-    // Always surface liked songs so users have a starting point
-    items.add(
-      const MediaItem(
-        id: _androidAutoLikedSongsId,
-        title: 'Liked Songs',
-        playable: false,
-      ),
-    );
-
-    if (userRecentlyPlayed.isNotEmpty) {
-      items.add(
-        const MediaItem(
-          id: _androidAutoRecentSongsId,
-          title: 'Recently Played',
-          playable: false,
-        ),
-      );
-    }
-
-    if (userOfflineSongs.isNotEmpty) {
-      items.add(
-        const MediaItem(
-          id: _androidAutoOfflineSongsId,
-          title: 'Offline Songs',
-          playable: false,
-        ),
-      );
-    }
-
-    if (userPlaylists.value.isNotEmpty) {
-      items.add(
-        const MediaItem(
-          id: _androidAutoUserPlaylistsId,
-          title: 'Your Playlists',
-          playable: false,
-        ),
-      );
-    }
-
-    if (userCustomPlaylists.value.isNotEmpty) {
-      items.add(
-        const MediaItem(
-          id: _androidAutoCustomPlaylistsId,
-          title: 'Custom Playlists',
-          playable: false,
-        ),
-      );
-    }
-
-    return items;
-  }
-
-  List<MediaItem> _buildLikedSongsMediaItems() {
-    final songs = _cloneSongList(userLikedSongsList);
-    return _buildSongMediaItemsFromList(songs, _androidAutoLikedSongsId);
-  }
-
-  List<MediaItem> _buildRecentSongsMediaItems() {
-    final songs = _cloneSongList(userRecentlyPlayed);
-    return _buildSongMediaItemsFromList(songs, _androidAutoRecentSongsId);
-  }
-
-  List<MediaItem> _buildOfflineSongsMediaItems() {
-    final songs = _cloneSongList(userOfflineSongs);
-    return _buildSongMediaItemsFromList(songs, _androidAutoOfflineSongsId);
-  }
-
-  Future<List<MediaItem>> _buildUserPlaylistsMediaItems() async {
-    try {
-      final playlists = await getUserPlaylists();
-      return playlists
-          .map<MediaItem?>((playlist) {
-            if (playlist is! Map) return null;
-            final playlistId = playlist['ytid']?.toString();
-            if (playlistId == null || playlistId.isEmpty) return null;
-
-            return MediaItem(
-              id: '$_androidAutoPlaylistPrefix$playlistId',
-              title: playlist['title']?.toString() ?? 'Unnamed Playlist',
-              displaySubtitle: playlist['list'] is List
-                  ? '${(playlist['list'] as List).length} songs'
-                  : null,
-              artUri: playlist['image'] != null
-                  ? Uri.parse(playlist['image'].toString())
-                  : null,
-              playable: false,
-            );
-          })
-          .whereType<MediaItem>()
-          .toList();
-    } catch (e, stackTrace) {
-      logger.log(
-        'Error building user playlists for Android Auto',
-        e,
-        stackTrace,
-      );
-      return [];
-    }
-  }
-
-  List<MediaItem> _buildCustomPlaylistsMediaItems() {
-    return userCustomPlaylists.value
-        .map<MediaItem?>((playlist) {
-          if (playlist is! Map) return null;
-          final playlistId =
-              playlist['ytid']?.toString() ?? playlist['title']?.toString();
-          if (playlistId == null || playlistId.isEmpty) return null;
-
-          return MediaItem(
-            id: '$_androidAutoCustomPlaylistPrefix$playlistId',
-            title: playlist['title']?.toString() ?? 'Unnamed Playlist',
-            artUri: playlist['image'] != null
-                ? Uri.parse(playlist['image'].toString())
-                : null,
-            playable: false,
-          );
-        })
-        .whereType<MediaItem>()
-        .toList();
-  }
-
-  Future<List<MediaItem>> _buildUserPlaylistSongsMediaItems(
-    String playlistId,
-  ) async {
-    try {
-      final playlist = await getPlaylistInfoForWidget(playlistId);
-      final songs = _cloneSongList((playlist?['list'] as List?) ?? const []);
-      return _buildSongMediaItemsFromList(
-        songs,
-        '$_androidAutoPlaylistPrefix$playlistId',
-      );
-    } catch (e, stackTrace) {
-      logger.log('Error building user playlist songs', e, stackTrace);
-      return [];
-    }
-  }
-
-  List<MediaItem> _buildCustomPlaylistSongsMediaItems(String playlistId) {
-    try {
-      final playlist = userCustomPlaylists.value.firstWhere((p) {
-        if (p is! Map) return false;
-        final ytid = p['ytid']?.toString();
-        final title = p['title']?.toString();
-        return ytid == playlistId || title == playlistId;
-      }, orElse: () => <String, dynamic>{});
-
-      if (playlist is Map && playlist.isNotEmpty) {
-        final songs = _cloneSongList(playlist['list'] as List? ?? const []);
-        return _buildSongMediaItemsFromList(
-          songs,
-          '$_androidAutoCustomPlaylistPrefix$playlistId',
-        );
-      }
-      return [];
-    } catch (e, stackTrace) {
-      logger.log('Error building custom playlist songs', e, stackTrace);
-      return [];
-    }
-  }
-
-  List<MediaItem> _buildSongMediaItemsFromList(
-    List<Map<String, dynamic>> songs,
-    String sourceId,
-  ) {
-    return List<MediaItem>.generate(songs.length, (index) {
-      final baseItem = mapToMediaItem(songs[index]);
-      return _decorateAndroidAutoMediaItem(
-        baseItem,
-        sourceId: sourceId,
-        index: index,
-        song: songs[index],
-      );
-    });
-  }
-
-  MediaItem _decorateAndroidAutoMediaItem(
-    MediaItem item, {
-    required String sourceId,
-    required int index,
-    Map<String, dynamic>? song,
-  }) {
-    final extras = <String, dynamic>{
-      if (item.extras != null) ...item.extras!,
-      _androidAutoSourceKey: sourceId,
-      _androidAutoIndexKey: index,
-      if (song != null) _androidAutoSongKey: song,
-    };
-
-    return item.copyWith(extras: extras);
-  }
-
-  List<Map<String, dynamic>> _cloneSongList(List<dynamic> songs) {
-    final sanitized = <Map<String, dynamic>>[];
-    for (final entry in songs) {
-      if (entry is! Map) continue;
-      final song = Map<String, dynamic>.from(entry);
-      final existingId = song['id'];
-      if (existingId == null || existingId.toString().isEmpty) {
-        final fallbackId = (song['ytid'] ?? song.hashCode).toString();
-        song['id'] = fallbackId;
-      } else if (existingId is! String) {
-        song['id'] = existingId.toString();
-      }
-      sanitized.add(song);
-    }
-    return sanitized;
-  }
-
-  Future<bool> _handleAndroidAutoPlayRequest(
-    String mediaId,
-    Map<String, dynamic>? extras,
-  ) async {
-    final sourceId = extras?[_androidAutoSourceKey] as String?;
-    if (sourceId == null) {
-      return false;
-    }
-
-    final songs = await _getAndroidAutoSongsForSource(sourceId);
-    if (songs.isEmpty) {
-      return false;
-    }
-
-    final indexFromExtras = extras?[_androidAutoIndexKey] as int?;
-    final rawSongExtras = extras?[_androidAutoSongKey];
-    Map<String, dynamic>? songExtras;
-    if (rawSongExtras is Map<String, dynamic>) {
-      songExtras = rawSongExtras;
-    } else if (rawSongExtras is Map) {
-      songExtras = Map<String, dynamic>.from(rawSongExtras);
-    }
-    final targetIndex = _resolveAndroidAutoStartIndex(
-      songs,
-      mediaId,
-      indexFromExtras,
-      songExtras,
-    );
-
-    await addPlaylistToQueue(songs, replace: true, startIndex: targetIndex);
-    return true;
-  }
-
-  Future<List<Map<String, dynamic>>> _getAndroidAutoSongsForSource(
-    String sourceId,
-  ) async {
-    if (sourceId == _androidAutoLikedSongsId) {
-      return _cloneSongList(userLikedSongsList);
-    }
-
-    if (sourceId == _androidAutoRecentSongsId) {
-      return _cloneSongList(userRecentlyPlayed);
-    }
-
-    if (sourceId == _androidAutoOfflineSongsId) {
-      return _cloneSongList(userOfflineSongs);
-    }
-
-    if (sourceId.startsWith(_androidAutoCustomPlaylistPrefix)) {
-      final playlistId = sourceId.substring(
-        _androidAutoCustomPlaylistPrefix.length,
-      );
-      final playlist = userCustomPlaylists.value.firstWhere((p) {
-        if (p is! Map) return false;
-        final ytid = p['ytid']?.toString();
-        final title = p['title']?.toString();
-        return ytid == playlistId || title == playlistId;
-      }, orElse: () => <String, dynamic>{});
-      if (playlist is Map && playlist.isNotEmpty) {
-        return _cloneSongList(playlist['list'] as List? ?? const []);
-      }
-      return [];
-    }
-
-    if (sourceId.startsWith(_androidAutoPlaylistPrefix)) {
-      final playlistId = sourceId.substring(_androidAutoPlaylistPrefix.length);
-      final playlist = await getPlaylistInfoForWidget(playlistId);
-      return _cloneSongList((playlist?['list'] as List?) ?? const []);
-    }
-
-    return [];
-  }
-
-  int _resolveAndroidAutoStartIndex(
-    List<Map<String, dynamic>> songs,
-    String mediaId,
-    int? indexFromExtras,
-    Map<String, dynamic>? songExtras,
-  ) {
-    if (songs.isEmpty) {
-      return 0;
-    }
-
-    if (indexFromExtras != null &&
-        indexFromExtras >= 0 &&
-        indexFromExtras < songs.length) {
-      return indexFromExtras;
-    }
-
-    final requestedId =
-        songExtras?['id']?.toString() ??
-        songExtras?['ytid']?.toString() ??
-        mediaId;
-    final matchIndex = songs.indexWhere((song) {
-      final songId = song['id']?.toString();
-      final songYtid = song['ytid']?.toString();
-      return songId == requestedId || songYtid == requestedId;
-    });
-
-    return matchIndex != -1 ? matchIndex : 0;
   }
 }
