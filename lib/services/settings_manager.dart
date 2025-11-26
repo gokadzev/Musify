@@ -60,8 +60,8 @@ final sponsorBlockSupport = ValueNotifier<bool>(
   Hive.box('settings').get('sponsorBlockSupport', defaultValue: false),
 );
 
-final defaultRecommendations = ValueNotifier<bool>(
-  Hive.box('settings').get('defaultRecommendations', defaultValue: false),
+final externalRecommendations = ValueNotifier<bool>(
+  Hive.box('settings').get('externalRecommendations', defaultValue: false),
 );
 
 final useProxy = ValueNotifier<bool>(

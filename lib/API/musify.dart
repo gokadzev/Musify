@@ -34,6 +34,7 @@ import 'package:musify/main.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/io_service.dart';
 import 'package:musify/services/lyrics_manager.dart';
+import 'package:musify/services/musify_algorithm.dart';
 import 'package:musify/services/proxy_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
@@ -102,7 +103,7 @@ Future<List> fetchSongsList(String searchQuery) async {
 
 Future<List> getRecommendedSongs() async {
   try {
-    if (defaultRecommendations.value && userRecentlyPlayed.isNotEmpty) {
+    if (externalRecommendations.value && userRecentlyPlayed.isNotEmpty) {
       return await _getRecommendationsFromRecentlyPlayed();
     } else {
       return await _getRecommendationsFromMixedSources();
@@ -138,41 +139,8 @@ Future<List> _getRecommendationsFromRecentlyPlayed() async {
   return playlistSongs;
 }
 
-Future<List> _getRecommendationsFromMixedSources() async {
-  final playlistSongs = [...userLikedSongsList, ...userRecentlyPlayed];
-
-  if (globalSongs.isEmpty) {
-    const playlistId = 'PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx';
-    globalSongs = await getSongsFromPlaylist(playlistId);
-  }
-  playlistSongs.addAll(globalSongs.take(10));
-
-  if (userCustomPlaylists.value.isNotEmpty) {
-    for (final userPlaylist in userCustomPlaylists.value) {
-      final _list = (userPlaylist['list'] as List)..shuffle();
-      playlistSongs.addAll(_list.take(5));
-    }
-  }
-
-  return _deduplicateAndShuffle(playlistSongs);
-}
-
-List _deduplicateAndShuffle(List playlistSongs) {
-  final seenYtIds = <String>{};
-  final uniqueSongs = <Map>[];
-
-  playlistSongs.shuffle();
-
-  for (final song in playlistSongs) {
-    if (song['ytid'] != null && seenYtIds.add(song['ytid'])) {
-      uniqueSongs.add(song);
-      // Early exit when we have enough songs
-      if (uniqueSongs.length >= 15) break;
-    }
-  }
-
-  return uniqueSongs;
-}
+Future<List> _getRecommendationsFromMixedSources() async =>
+    MusifyAlgorithm().getRecommendations();
 
 Future<List<dynamic>> getUserPlaylists() async {
   final playlistsByUser = [];

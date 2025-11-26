@@ -236,17 +236,17 @@ class SettingsPage extends StatelessWidget {
           },
         ),
         ValueListenableBuilder<bool>(
-          valueListenable: defaultRecommendations,
+          valueListenable: externalRecommendations,
           builder: (_, value, __) {
             return CustomBar(
-              context.l10n!.originalRecommendations,
+              context.l10n!.externalRecommendations,
               FluentIcons.channel_share_24_regular,
-              description: context.l10n!.originalRecommendationsDescription,
+              description: context.l10n!.externalRecommendationsDescription,
               borderRadius: commonCustomBarRadiusLast,
               trailing: Switch(
                 value: value,
                 onChanged: (value) =>
-                    _toggleDefaultRecommendations(context, value),
+                    _toggleExternalRecommendations(context, value),
               ),
             );
           },
@@ -697,9 +697,9 @@ class SettingsPage extends StatelessWidget {
     showToast(context, context.l10n!.settingChangedMsg);
   }
 
-  void _toggleDefaultRecommendations(BuildContext context, bool value) {
-    addOrUpdateData('settings', 'defaultRecommendations', value);
-    defaultRecommendations.value = value;
+  void _toggleExternalRecommendations(BuildContext context, bool value) {
+    addOrUpdateData('settings', 'externalRecommendations', value);
+    externalRecommendations.value = value;
     showToast(context, context.l10n!.settingChangedMsg);
   }
 

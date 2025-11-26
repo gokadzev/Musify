@@ -191,7 +191,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildRecommendedSongsSection(double playlistHeight) {
     return ValueListenableBuilder<bool>(
-      valueListenable: defaultRecommendations,
+      valueListenable: externalRecommendations,
       builder: (_, recommendations, __) {
         return FutureBuilder<dynamic>(
           future: getRecommendedSongs(),
