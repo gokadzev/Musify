@@ -36,6 +36,7 @@ import 'package:musify/utilities/mediaitem.dart';
 import 'package:musify/utilities/utils.dart';
 import 'package:musify/widgets/marque.dart';
 import 'package:musify/widgets/playback_icon_button.dart';
+import 'package:musify/widgets/queue_list_view.dart';
 import 'package:musify/widgets/song_artwork.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/spinner.dart';
@@ -250,66 +251,6 @@ class NowPlayingArtwork extends StatelessWidget {
           },
         ),
       ),
-    );
-  }
-}
-
-class QueueListView extends StatelessWidget {
-  const QueueListView({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final _textColor = Theme.of(context).colorScheme.secondary;
-    return StreamBuilder<List<MediaItem>>(
-      stream: audioHandler.queueStream,
-      builder: (context, snapshot) {
-        final queue = snapshot.data ?? [];
-        final mappedQueue = queue.isNotEmpty
-            ? queue.map(mediaItemToMap).toList()
-            : [];
-        return Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: Text(
-                context.l10n!.playlist,
-                style: Theme.of(
-                  context,
-                ).textTheme.headlineSmall?.copyWith(color: _textColor),
-              ),
-            ),
-            Expanded(
-              child: mappedQueue.isEmpty
-                  ? Center(
-                      child: Text(
-                        context.l10n!.noSongsInQueue,
-                        style: TextStyle(color: _textColor),
-                      ),
-                    )
-                  : ListView.builder(
-                      itemCount: mappedQueue.length,
-                      itemBuilder: (context, index) {
-                        final borderRadius = getItemBorderRadius(
-                          index,
-                          mappedQueue.length,
-                        );
-                        return SongBar(
-                          mappedQueue[index],
-                          false,
-                          onPlay: () {
-                            audioHandler.skipToSong(index);
-                          },
-                          backgroundColor: Theme.of(
-                            context,
-                          ).colorScheme.surfaceContainerHigh,
-                          borderRadius: borderRadius,
-                        );
-                      },
-                    ),
-            ),
-          ],
-        );
-      },
     );
   }
 }
