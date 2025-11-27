@@ -26,16 +26,15 @@ import 'package:flutter_flip_card/flutter_flip_card.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
-import 'package:musify/models/position_data.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/flutter_bottom_sheet.dart';
 import 'package:musify/utilities/flutter_toast.dart';
-import 'package:musify/utilities/formatter.dart';
 import 'package:musify/utilities/mediaitem.dart';
 import 'package:musify/utilities/utils.dart';
 import 'package:musify/widgets/marque.dart';
 import 'package:musify/widgets/playback_icon_button.dart';
+import 'package:musify/widgets/position_slider.dart';
 import 'package:musify/widgets/queue_list_view.dart';
 import 'package:musify/widgets/song_artwork.dart';
 import 'package:musify/widgets/song_bar.dart';
@@ -340,92 +339,6 @@ class NowPlayingControls extends StatelessWidget {
             miniIconSize: adjustedMiniIconSize,
           ),
           const Spacer(flex: 2),
-        ],
-      ),
-    );
-  }
-}
-
-class PositionSlider extends StatefulWidget {
-  const PositionSlider({super.key});
-
-  @override
-  State<PositionSlider> createState() => _PositionSliderState();
-}
-
-class _PositionSliderState extends State<PositionSlider> {
-  bool _isDragging = false;
-  double _dragValue = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    final primaryColor = Theme.of(context).colorScheme.primary;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: StreamBuilder<PositionData>(
-        stream: audioHandler.positionDataStream,
-        builder: (context, snapshot) {
-          final hasData = snapshot.hasData && snapshot.data != null;
-          final positionData = hasData
-              ? snapshot.data!
-              : PositionData(Duration.zero, Duration.zero, Duration.zero);
-
-          final maxDuration = positionData.duration.inSeconds > 0
-              ? positionData.duration.inSeconds.toDouble()
-              : 1.0;
-
-          final currentValue = _isDragging
-              ? _dragValue
-              : positionData.position.inSeconds.toDouble();
-
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Slider(
-                value: currentValue.clamp(0.0, maxDuration),
-                onChanged: hasData
-                    ? (value) {
-                        setState(() {
-                          _isDragging = true;
-                          _dragValue = value;
-                        });
-                      }
-                    : null,
-                onChangeEnd: hasData
-                    ? (value) {
-                        audioHandler.seek(Duration(seconds: value.toInt()));
-                        setState(() {
-                          _isDragging = false;
-                        });
-                      }
-                    : null,
-                max: maxDuration,
-              ),
-              _buildPositionRow(context, primaryColor, positionData),
-            ],
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildPositionRow(
-    BuildContext context,
-    Color fontColor,
-    PositionData positionData,
-  ) {
-    final positionText = formatDuration(positionData.position.inSeconds);
-    final durationText = formatDuration(positionData.duration.inSeconds);
-    final textStyle = TextStyle(fontSize: 15, color: fontColor);
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 22),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(positionText, style: textStyle),
-          Text(durationText, style: textStyle),
         ],
       ),
     );
