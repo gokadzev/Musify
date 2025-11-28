@@ -32,8 +32,6 @@ import 'package:musify/utilities/playlist_image_picker.dart';
 import 'package:musify/utilities/utils.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/playlist_bar.dart';
-import 'package:musify/widgets/section_header.dart';
-import 'package:musify/widgets/section_title.dart';
 
 class LibraryPage extends StatefulWidget {
   const LibraryPage({super.key});
@@ -69,32 +67,36 @@ class _LibraryPageState extends State<LibraryPage> {
   }
 
   Widget _buildUserPlaylistsSection(Color primaryColor) {
+    final colorScheme = Theme.of(context).colorScheme;
     final isUserPlaylistsEmpty =
         userPlaylists.value.isEmpty && userCustomPlaylists.value.isEmpty;
     return Column(
       children: [
         if (!offlineMode.value) ...[
-          SectionHeader(
+          _buildSectionHeader(
+            context: context,
             title: context.l10n!.customPlaylists,
-            actionButton: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  padding: const EdgeInsets.symmetric(horizontal: 2),
-                  onPressed: _showCreateFolderDialog,
-                  icon: Icon(
-                    FluentIcons.folder_add_24_filled,
-                    color: primaryColor,
-                  ),
-                  tooltip: context.l10n!.createFolder,
+            icon: FluentIcons.library_24_filled,
+            colorScheme: colorScheme,
+            actions: [
+              IconButton(
+                padding: const EdgeInsets.symmetric(horizontal: 2),
+                onPressed: _showCreateFolderDialog,
+                icon: Icon(
+                  FluentIcons.folder_add_24_filled,
+                  color: colorScheme.onSurfaceVariant,
                 ),
-                IconButton(
-                  padding: const EdgeInsets.symmetric(horizontal: 2),
-                  onPressed: _showAddPlaylistDialog,
-                  icon: Icon(FluentIcons.add_24_filled, color: primaryColor),
+                tooltip: context.l10n!.createFolder,
+              ),
+              IconButton(
+                padding: const EdgeInsets.symmetric(horizontal: 2),
+                onPressed: _showAddPlaylistDialog,
+                icon: Icon(
+                  FluentIcons.add_24_filled,
+                  color: colorScheme.onSurfaceVariant,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
           PlaylistBar(
             context.l10n!.recentlyPlayed,
@@ -159,16 +161,21 @@ class _LibraryPageState extends State<LibraryPage> {
               }
               return Column(
                 children: [
-                  SectionHeader(
+                  _buildSectionHeader(
+                    context: context,
                     title: context.l10n!.addedPlaylists,
-                    actionButton: IconButton(
-                      padding: const EdgeInsets.only(right: 5),
-                      onPressed: _showAddPlaylistDialog,
-                      icon: Icon(
-                        FluentIcons.add_24_filled,
-                        color: primaryColor,
+                    icon: FluentIcons.add_circle_24_filled,
+                    colorScheme: colorScheme,
+                    actions: [
+                      IconButton(
+                        padding: const EdgeInsets.only(right: 5),
+                        onPressed: _showAddPlaylistDialog,
+                        icon: Icon(
+                          FluentIcons.add_24_filled,
+                          color: colorScheme.onSurfaceVariant,
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                   FutureBuilder(
                     future: getUserPlaylistsNotInFolders(),
@@ -206,13 +213,19 @@ class _LibraryPageState extends State<LibraryPage> {
   }
 
   Widget _buildUserLikedPlaylistsSection(Color primaryColor) {
+    final colorScheme = Theme.of(context).colorScheme;
     return ValueListenableBuilder(
       valueListenable: currentLikedPlaylistsLength,
       builder: (_, value, __) {
         return userLikedPlaylists.isNotEmpty
             ? Column(
                 children: [
-                  SectionTitle(context.l10n!.likedPlaylists, primaryColor),
+                  _buildSectionHeader(
+                    context: context,
+                    title: context.l10n!.likedPlaylists,
+                    icon: FluentIcons.heart_24_filled,
+                    colorScheme: colorScheme,
+                  ),
                   _buildPlaylistListView(context, userLikedPlaylists),
                 ],
               )
@@ -221,7 +234,36 @@ class _LibraryPageState extends State<LibraryPage> {
     );
   }
 
+  Widget _buildSectionHeader({
+    required BuildContext context,
+    required String title,
+    required IconData icon,
+    required ColorScheme colorScheme,
+    List<Widget>? actions,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(8, 20, 0, 12),
+      child: Row(
+        children: [
+          Icon(icon, size: 20, color: colorScheme.primary),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              title,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: colorScheme.onSurface,
+              ),
+            ),
+          ),
+          if (actions != null) ...actions,
+        ],
+      ),
+    );
+  }
+
   Widget _buildOfflinePlaylistsSection() {
+    final colorScheme = Theme.of(context).colorScheme;
     return ValueListenableBuilder<List<dynamic>>(
       valueListenable: offlinePlaylistService.offlinePlaylists,
       builder: (context, offlinePlaylists, _) {
@@ -231,7 +273,12 @@ class _LibraryPageState extends State<LibraryPage> {
 
         return Column(
           children: [
-            SectionHeader(title: context.l10n!.offlinePlaylists),
+            _buildSectionHeader(
+              context: context,
+              title: context.l10n!.offlinePlaylists,
+              icon: FluentIcons.cloud_off_24_filled,
+              colorScheme: colorScheme,
+            ),
             _buildPlaylistListView(
               context,
               offlinePlaylists,
