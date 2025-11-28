@@ -91,15 +91,10 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
                               _onTabTapped(index, items),
                         ),
                       Expanded(
-                        child: Stack(
+                        child: Column(
                           children: [
-                            Positioned.fill(child: widget.child),
-                            const Positioned(
-                              left: 0,
-                              right: 0,
-                              bottom: 0,
-                              child: MiniPlayer(),
-                            ),
+                            Expanded(child: widget.child),
+                            const MiniPlayer(),
                           ],
                         ),
                       ),
