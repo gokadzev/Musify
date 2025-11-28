@@ -138,6 +138,52 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
     ),
     navigationBarTheme: base.navigationBarTheme.copyWith(
       backgroundColor: bgColor,
+      elevation: 0,
+      height: 70,
+      indicatorColor: colorScheme.primaryContainer,
+      iconTheme: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return IconThemeData(color: colorScheme.onPrimaryContainer, size: 24);
+        }
+        return IconThemeData(color: colorScheme.onSurfaceVariant, size: 24);
+      }),
+      labelTextStyle: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return TextStyle(
+            color: colorScheme.onSurface,
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+          );
+        }
+        return TextStyle(
+          color: colorScheme.onSurfaceVariant,
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
+        );
+      }),
+    ),
+    navigationRailTheme: base.navigationRailTheme.copyWith(
+      backgroundColor: bgColor,
+      elevation: 0,
+      indicatorColor: colorScheme.primaryContainer,
+      selectedIconTheme: IconThemeData(
+        color: colorScheme.onPrimaryContainer,
+        size: 24,
+      ),
+      unselectedIconTheme: IconThemeData(
+        color: colorScheme.onSurfaceVariant,
+        size: 24,
+      ),
+      selectedLabelTextStyle: TextStyle(
+        color: colorScheme.onSurface,
+        fontSize: 12,
+        fontWeight: FontWeight.w600,
+      ),
+      unselectedLabelTextStyle: TextStyle(
+        color: colorScheme.onSurfaceVariant,
+        fontSize: 12,
+        fontWeight: FontWeight.w500,
+      ),
     ),
     popupMenuTheme: base.popupMenuTheme.copyWith(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
