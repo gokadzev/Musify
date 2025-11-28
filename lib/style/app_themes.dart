@@ -101,12 +101,20 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
       backgroundColor: bgColor,
       foregroundColor: colorScheme.primary,
       elevation: 0,
+      scrolledUnderElevation: 0,
       centerTitle: true,
       titleTextStyle: TextStyle(
-        fontSize: 28,
+        fontSize: 30,
         fontFamily: 'paytoneOne',
-        fontWeight: FontWeight.w400,
+        fontWeight: FontWeight.w500,
         color: colorScheme.primary,
+        letterSpacing: -0.5,
+      ),
+      toolbarHeight: 64,
+      iconTheme: IconThemeData(color: colorScheme.onSurfaceVariant, size: 24),
+      actionsIconTheme: IconThemeData(
+        color: colorScheme.onSurfaceVariant,
+        size: 24,
       ),
     ),
     listTileTheme: base.listTileTheme.copyWith(
