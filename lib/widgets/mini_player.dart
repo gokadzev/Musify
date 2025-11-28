@@ -5,7 +5,6 @@ import 'package:musify/main.dart';
 import 'package:musify/models/full_player_state.dart';
 import 'package:musify/models/position_data.dart';
 import 'package:musify/screens/now_playing_page.dart';
-import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/widgets/marque.dart';
 import 'package:musify/widgets/song_artwork.dart';
 import 'package:rxdart/rxdart.dart';
@@ -21,10 +20,10 @@ final Stream<FullPlayerState> _fullPlayerStateStream = Rx.combineLatest3(
 class MiniPlayer extends StatelessWidget {
   const MiniPlayer({super.key});
 
-  static const double _playerHeight = 75;
-  static const double _progressBarHeight = 2;
-  static const double _artworkSize = 55;
-  static const double _artworkIconSize = 30;
+  static const double _playerHeight = 64;
+  static const double _artworkSize = 48;
+  static const double _artworkIconSize = 24;
+  static const double _borderRadius = 16;
 
   @override
   Widget build(BuildContext context) {
@@ -131,6 +130,13 @@ class _MiniPlayerBodyState extends State<_MiniPlayerBody>
     final metadata = widget.metadata;
     final state = widget.state;
 
+    final totalDuration = metadata.duration ?? Duration.zero;
+    final progress = totalDuration.inMilliseconds == 0
+        ? 0.0
+        : (state.position.position.inMilliseconds /
+                  totalDuration.inMilliseconds)
+              .clamp(0.0, 1.0);
+
     return AnimatedBuilder(
       animation: _scaleAnimation,
       builder: (context, child) {
@@ -142,45 +148,51 @@ class _MiniPlayerBodyState extends State<_MiniPlayerBody>
             onTapCancel: () => _animationController.reverse(),
             onVerticalDragUpdate: _handleVerticalDrag,
             onTap: _navigateToNowPlaying,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 18),
-                  height: MiniPlayer._playerHeight,
-                  decoration: BoxDecoration(
-                    color: colorScheme.surfaceContainerLow,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withAlpha(25),
-                        blurRadius: 4,
-                        offset: const Offset(0, -2),
-                      ),
-                    ],
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              clipBehavior: Clip.antiAlias,
+              decoration: BoxDecoration(
+                color: colorScheme.surfaceContainerHigh,
+                borderRadius: BorderRadius.circular(MiniPlayer._borderRadius),
+                boxShadow: [
+                  BoxShadow(
+                    color: colorScheme.shadow.withValues(alpha: 0.15),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
                   ),
-                  child: Row(
-                    children: [
-                      _ArtworkWidget(metadata: metadata),
-                      _MetadataWidget(
-                        title: metadata.title,
-                        artist: metadata.artist,
-                        titleColor: colorScheme.primary,
-                        artistColor: colorScheme.secondary,
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    height: MiniPlayer._playerHeight,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(8, 8, 12, 8),
+                      child: Row(
+                        children: [
+                          _ArtworkWidget(
+                            metadata: metadata,
+                            colorScheme: colorScheme,
+                          ),
+                          const SizedBox(width: 12),
+                          _MetadataWidget(
+                            title: metadata.title,
+                            artist: metadata.artist,
+                            colorScheme: colorScheme,
+                          ),
+                          _ControlsWidget(
+                            colorScheme: colorScheme,
+                            playbackState: state.playbackState,
+                            hasNext: widget.hasNext,
+                          ),
+                        ],
                       ),
-                      _ControlsWidget(
-                        colorScheme: colorScheme,
-                        playbackState: state.playbackState,
-                        hasNext: widget.hasNext,
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-                _ProgressBar(
-                  colorScheme: colorScheme,
-                  positionData: state.position,
-                  duration: metadata.duration,
-                ),
-              ],
+                  _ProgressBar(colorScheme: colorScheme, progress: progress),
+                ],
+              ),
             ),
           ),
         );
@@ -190,20 +202,21 @@ class _MiniPlayerBodyState extends State<_MiniPlayerBody>
 }
 
 class _ArtworkWidget extends StatelessWidget {
-  const _ArtworkWidget({required this.metadata});
+  const _ArtworkWidget({required this.metadata, required this.colorScheme});
   final MediaItem metadata;
+  final ColorScheme colorScheme;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 7, bottom: 7, right: 15),
-      child: Hero(
-        tag: 'now_playing_artwork',
+    return Hero(
+      tag: 'now_playing_artwork',
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
         child: SongArtworkWidget(
           metadata: metadata,
           size: MiniPlayer._artworkSize,
           errorWidgetIconSize: MiniPlayer._artworkIconSize,
-          borderRadius: commonMiniArtworkRadius,
+          borderRadius: 12,
         ),
       ),
     );
@@ -214,59 +227,50 @@ class _MetadataWidget extends StatelessWidget {
   const _MetadataWidget({
     required this.title,
     required this.artist,
-    required this.titleColor,
-    required this.artistColor,
+    required this.colorScheme,
   });
 
   final String title;
   final String? artist;
-  final Color titleColor;
-  final Color artistColor;
+  final ColorScheme colorScheme;
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.only(right: 8),
-        child: Align(
-          alignment: Alignment.centerLeft,
-          child: MarqueeWidget(
-            manualScrollEnabled: false,
-            animationDuration: const Duration(seconds: 8),
-            backDuration: const Duration(seconds: 2),
-            pauseDuration: const Duration(seconds: 2),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    color: titleColor,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    height: 1.2,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                if (artist != null && artist!.isNotEmpty) ...[
-                  const SizedBox(height: 2),
-                  Text(
-                    artist!,
-                    style: TextStyle(
-                      color: artistColor,
-                      fontSize: 14,
-                      fontWeight: FontWeight.normal,
-                      height: 1.2,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ],
+      child: MarqueeWidget(
+        manualScrollEnabled: false,
+        animationDuration: const Duration(seconds: 8),
+        backDuration: const Duration(seconds: 2),
+        pauseDuration: const Duration(seconds: 2),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                color: colorScheme.onSurface,
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.1,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
-          ),
+            if (artist != null && artist!.isNotEmpty) ...[
+              const SizedBox(height: 2),
+              Text(
+                artist!,
+                style: TextStyle(
+                  color: colorScheme.onSurfaceVariant,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w400,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ],
         ),
       ),
     );
@@ -293,21 +297,21 @@ class _ControlsWidget extends StatelessWidget {
           colorScheme: colorScheme,
           playbackState: playbackState,
         ),
-        if (hasNext)
-          Padding(
-            padding: const EdgeInsets.only(left: 10),
-            child: GestureDetector(
-              onTap: audioHandler.skipToNext,
-              child: Container(
-                padding: const EdgeInsets.all(4),
-                child: Icon(
-                  FluentIcons.next_24_filled,
-                  color: colorScheme.primary,
-                  size: 25,
-                ),
-              ),
+        if (hasNext) ...[
+          const SizedBox(width: 4),
+          IconButton(
+            onPressed: audioHandler.skipToNext,
+            icon: Icon(
+              FluentIcons.next_24_filled,
+              color: colorScheme.onSurfaceVariant,
+            ),
+            iconSize: 24,
+            visualDensity: VisualDensity.compact,
+            style: IconButton.styleFrom(
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
           ),
+        ],
       ],
     );
   }
@@ -329,57 +333,55 @@ class _PlayPauseButton extends StatelessWidget {
 
     if (processingState == AudioProcessingState.loading ||
         processingState == AudioProcessingState.buffering) {
-      return Container(
-        padding: const EdgeInsets.all(4),
-        child: SizedBox(
-          width: 35,
-          height: 35,
+      return SizedBox(
+        width: 40,
+        height: 40,
+        child: Padding(
+          padding: const EdgeInsets.all(8),
           child: CircularProgressIndicator(
             strokeWidth: 2.5,
-            valueColor: AlwaysStoppedAnimation<Color>(colorScheme.primary),
+            color: colorScheme.primary,
           ),
         ),
       );
     }
 
-    final iconData = isPlaying
-        ? FluentIcons.pause_24_filled
-        : FluentIcons.play_24_filled;
-
-    return GestureDetector(
-      onTap: isPlaying ? audioHandler.pause : audioHandler.play,
-      child: Container(
-        padding: const EdgeInsets.all(4),
-        child: Icon(iconData, color: colorScheme.primary, size: 35),
+    return IconButton(
+      onPressed: isPlaying ? audioHandler.pause : audioHandler.play,
+      icon: Icon(
+        isPlaying ? FluentIcons.pause_24_filled : FluentIcons.play_24_filled,
+        color: colorScheme.onPrimary,
+      ),
+      iconSize: 22,
+      style: IconButton.styleFrom(
+        backgroundColor: colorScheme.primary,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        minimumSize: const Size(40, 40),
+        fixedSize: const Size(40, 40),
       ),
     );
   }
 }
 
 class _ProgressBar extends StatelessWidget {
-  const _ProgressBar({
-    required this.colorScheme,
-    required this.positionData,
-    required this.duration,
-  });
+  const _ProgressBar({required this.colorScheme, required this.progress});
 
   final ColorScheme colorScheme;
-  final PositionData positionData;
-  final Duration? duration;
+  final double progress;
 
   @override
   Widget build(BuildContext context) {
-    final totalDuration = duration ?? Duration.zero;
-    final progress = totalDuration.inMilliseconds == 0
-        ? 0.0
-        : (positionData.position.inMilliseconds / totalDuration.inMilliseconds)
-              .clamp(0.0, 1.0);
-
-    return LinearProgressIndicator(
-      value: progress,
-      minHeight: MiniPlayer._progressBarHeight,
-      backgroundColor: colorScheme.outline.withValues(alpha: 0.1),
-      valueColor: AlwaysStoppedAnimation<Color>(colorScheme.primary),
+    return ClipRRect(
+      borderRadius: const BorderRadius.only(
+        bottomLeft: Radius.circular(MiniPlayer._borderRadius),
+        bottomRight: Radius.circular(MiniPlayer._borderRadius),
+      ),
+      child: LinearProgressIndicator(
+        value: progress,
+        minHeight: 3,
+        backgroundColor: Colors.transparent,
+        valueColor: AlwaysStoppedAnimation<Color>(colorScheme.primary),
+      ),
     );
   }
 }
