@@ -65,7 +65,17 @@ class CustomBar extends StatelessWidget {
             onLongPress: onLongPress,
             child: ListTile(
               minTileHeight: 45,
-              leading: Icon(tileIcon, color: iconColor),
+              leading: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(tileIcon, size: 22),
+              ),
               title: Text(
                 tileName,
                 style: TextStyle(fontWeight: FontWeight.w600, color: textColor),
