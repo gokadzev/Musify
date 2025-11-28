@@ -39,7 +39,7 @@ import 'package:musify/utilities/sort_utils.dart';
 import 'package:musify/utilities/utils.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/song_bar.dart';
-import 'package:musify/widgets/sort_button.dart';
+import 'package:musify/widgets/sort_chips.dart';
 import 'package:musify/widgets/spinner.dart';
 
 enum PlaylistSortType { default_, title, artist }
@@ -179,19 +179,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
                 slivers: [
                   SliverToBoxAdapter(child: _buildHeaderSection()),
                   if (_playlist['list'].isNotEmpty) ...[
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                          top: 15,
-                          bottom: 20,
-                          right: 20,
-                        ),
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: _buildSortSongActionButton(),
-                        ),
-                      ),
-                    ),
                     SliverPadding(
                       padding: commonListViewBottmomPadding,
                       sliver: PagedSliverList(
@@ -262,8 +249,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
           const SizedBox(height: 20),
           Wrap(
             alignment: WrapAlignment.center,
-            spacing: 6,
-            runSpacing: 6,
+            spacing: 8,
+            runSpacing: 8,
             children: [
               if (songsLength > 0) _buildPlayButton(primaryColor),
               if (widget.playlistId != null) _buildLikeButton(primaryColor),
@@ -275,6 +262,23 @@ class _PlaylistPageState extends State<PlaylistPage> {
               ],
             ],
           ),
+          if (songsLength > 1) ...[
+            const SizedBox(height: 16),
+            SortChips<PlaylistSortType>(
+              currentSortType: _sortType,
+              sortTypes: PlaylistSortType.values,
+              sortTypeToString: _getSortTypeDisplayText,
+              onSelected: (type) {
+                setState(() {
+                  _sortType = type;
+                  addOrUpdateData('settings', 'playlistSortType', type.name);
+                  playlistSortSetting = type.name;
+                  _sortPlaylist(type);
+                });
+                _pagingController.refresh();
+              },
+            ),
+          ],
           const SizedBox(height: 8),
         ],
       ),
@@ -633,25 +637,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
       case PlaylistSortType.artist:
         return context.l10n!.artist;
     }
-  }
-
-  Widget _buildSortSongActionButton() {
-    return SortButton<PlaylistSortType>(
-      currentSortType: _sortType,
-      sortTypes: PlaylistSortType.values,
-      sortTypeToString: _getSortTypeDisplayText,
-      onSelected: (type) {
-        setState(() {
-          _sortType = type;
-          addOrUpdateData('settings', 'playlistSortType', type.name);
-          playlistSortSetting = type.name;
-          _sortPlaylist(type);
-        });
-
-        // Refresh pagination inside setState ensures UI updates properly
-        _pagingController.refresh();
-      },
-    );
   }
 
   void _sortPlaylist(PlaylistSortType type) {

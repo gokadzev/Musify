@@ -30,7 +30,7 @@ import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/utils.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/song_bar.dart';
-import 'package:musify/widgets/sort_button.dart';
+import 'package:musify/widgets/sort_chips.dart';
 
 enum OfflineSortType { default_, title, artist, dateAdded }
 
@@ -194,15 +194,29 @@ class _UserSongsPageState extends State<UserSongsPage> {
           const SizedBox(height: 20),
           Wrap(
             alignment: WrapAlignment.center,
-            spacing: 6,
-            runSpacing: 6,
+            spacing: 8,
+            runSpacing: 8,
             children: [
               if (songsLength > 0) _buildPlayButton(primaryColor, title),
               if (isRecentlyPlayed && songsLength > 0)
                 _buildClearRecentsButton(primaryColor),
-              if (isOfflineSongs) _buildSortButton(),
             ],
           ),
+          if (isOfflineSongs && songsLength > 1) ...[
+            const SizedBox(height: 16),
+            SortChips<OfflineSortType>(
+              currentSortType: _getCurrentOfflineSortType(),
+              sortTypes: OfflineSortType.values,
+              sortTypeToString: _getSortTypeDisplayText,
+              onSelected: (type) {
+                setState(() {
+                  addOrUpdateData('settings', 'offlineSortType', type.name);
+                  offlineSortSetting = type.name;
+                });
+                _sortOfflineSongs(type);
+              },
+            ),
+          ],
           const SizedBox(height: 8),
         ],
       ),
@@ -365,22 +379,6 @@ class _UserSongsPageState extends State<UserSongsPage> {
       },
       borderRadius: borderRadius,
       isRecentSong: isRecentSong,
-    );
-  }
-
-  Widget _buildSortButton() {
-    return SortButton<OfflineSortType>(
-      currentSortType: _getCurrentOfflineSortType(),
-      sortTypes: OfflineSortType.values,
-      sortTypeToString: _getSortTypeDisplayText,
-      onSelected: (type) {
-        setState(() {
-          addOrUpdateData('settings', 'offlineSortType', type.name);
-          offlineSortSetting = type.name;
-        });
-
-        _sortOfflineSongs(type);
-      },
     );
   }
 
