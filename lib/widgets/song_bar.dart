@@ -102,32 +102,31 @@ class _SongBarState extends State<SongBar> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final primaryColor = theme.colorScheme.primary;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Padding(
       padding: commonBarPadding,
-      child: GestureDetector(
-        onTap: _handleSongTap,
-        child: Card(
-          color: widget.backgroundColor,
-          shape: RoundedRectangleBorder(borderRadius: widget.borderRadius),
-          margin: const EdgeInsets.only(bottom: 3),
+      child: Card(
+        color: widget.backgroundColor,
+        shape: RoundedRectangleBorder(borderRadius: widget.borderRadius),
+        margin: const EdgeInsets.only(bottom: 3),
+        child: InkWell(
+          borderRadius: widget.borderRadius,
+          onTap: _handleSongTap,
           child: Padding(
-            padding: commonBarContentPadding,
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
             child: Row(
               children: [
-                _buildAlbumArt(primaryColor),
-                const SizedBox(width: 8),
+                _buildAlbumArt(colorScheme),
+                const SizedBox(width: 12),
                 Expanded(
                   child: _SongInfo(
                     title: _songTitle,
                     artist: _songArtist,
-                    primaryColor: primaryColor,
-                    secondaryColor: theme.colorScheme.secondary,
+                    colorScheme: colorScheme,
                   ),
                 ),
-                _buildActionButtons(context, primaryColor),
+                _buildActionButtons(context, colorScheme),
               ],
             ),
           ),
@@ -148,8 +147,8 @@ class _SongBarState extends State<SongBar> {
     }
   }
 
-  Widget _buildAlbumArt(Color primaryColor) {
-    const size = 55.0;
+  Widget _buildAlbumArt(ColorScheme colorScheme) {
+    const size = 48.0;
     final isDurationAvailable =
         widget.showMusicDuration && widget.song['duration'] != null;
 
@@ -160,7 +159,7 @@ class _SongBarState extends State<SongBar> {
           return _OfflineArtwork(
             artworkPath: _artworkPath,
             size: size,
-            primaryColor: primaryColor,
+            colorScheme: colorScheme,
           );
         }
 
@@ -168,7 +167,7 @@ class _SongBarState extends State<SongBar> {
           lowResImageUrl: _lowResImageUrl,
           size: size,
           isDurationAvailable: isDurationAvailable,
-          primaryColor: primaryColor,
+          colorScheme: colorScheme,
           duration: widget.song['duration'],
           isOffline: isOffline,
         );
@@ -176,11 +175,14 @@ class _SongBarState extends State<SongBar> {
     );
   }
 
-  Widget _buildActionButtons(BuildContext context, Color primaryColor) {
+  Widget _buildActionButtons(BuildContext context, ColorScheme colorScheme) {
     return PopupMenuButton<String>(
-      icon: Icon(FluentIcons.more_horizontal_24_filled, color: primaryColor),
+      icon: Icon(
+        FluentIcons.more_horizontal_24_filled,
+        color: colorScheme.onSurfaceVariant,
+      ),
       onSelected: (value) => _handleMenuAction(context, value),
-      itemBuilder: (context) => _buildMenuItems(context, primaryColor),
+      itemBuilder: (context) => _buildMenuItems(context, colorScheme),
     );
   }
 
@@ -259,14 +261,17 @@ class _SongBarState extends State<SongBar> {
 
   List<PopupMenuEntry<String>> _buildMenuItems(
     BuildContext context,
-    Color primaryColor,
+    ColorScheme colorScheme,
   ) {
     return [
       PopupMenuItem<String>(
         value: 'play_next',
         child: Row(
           children: [
-            Icon(FluentIcons.receipt_play_24_regular, color: primaryColor),
+            Icon(
+              FluentIcons.receipt_play_24_regular,
+              color: colorScheme.primary,
+            ),
             const SizedBox(width: 8),
             Text(context.l10n!.playNext),
           ],
@@ -279,7 +284,7 @@ class _SongBarState extends State<SongBar> {
           builder: (_, value, __) {
             return Row(
               children: [
-                Icon(likeStatusToIconMapper[value], color: primaryColor),
+                Icon(likeStatusToIconMapper[value], color: colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
                   value
@@ -296,7 +301,7 @@ class _SongBarState extends State<SongBar> {
           value: 'remove',
           child: Row(
             children: [
-              Icon(FluentIcons.delete_24_filled, color: primaryColor),
+              Icon(FluentIcons.delete_24_filled, color: colorScheme.primary),
               const SizedBox(width: 8),
               Text(context.l10n!.removeFromPlaylist),
             ],
@@ -306,7 +311,7 @@ class _SongBarState extends State<SongBar> {
         value: 'add_to_playlist',
         child: Row(
           children: [
-            Icon(FluentIcons.add_24_regular, color: primaryColor),
+            Icon(FluentIcons.add_24_regular, color: colorScheme.primary),
             const SizedBox(width: 8),
             Text(context.l10n!.addToPlaylist),
           ],
@@ -317,7 +322,7 @@ class _SongBarState extends State<SongBar> {
           value: 'remove_from_recents',
           child: Row(
             children: [
-              Icon(FluentIcons.delete_24_filled, color: primaryColor),
+              Icon(FluentIcons.delete_24_filled, color: colorScheme.primary),
               const SizedBox(width: 8),
               Text(context.l10n!.removeFromRecentlyPlayed),
             ],
@@ -334,7 +339,7 @@ class _SongBarState extends State<SongBar> {
                   value
                       ? FluentIcons.cellular_off_24_regular
                       : FluentIcons.cellular_data_1_24_regular,
-                  color: primaryColor,
+                  color: colorScheme.primary,
                 ),
                 const SizedBox(width: 8),
                 Text(
@@ -355,14 +360,12 @@ class _SongInfo extends StatelessWidget {
   const _SongInfo({
     required this.title,
     required this.artist,
-    required this.primaryColor,
-    required this.secondaryColor,
+    required this.colorScheme,
   });
 
   final String title;
   final String artist;
-  final Color primaryColor;
-  final Color secondaryColor;
+  final ColorScheme colorScheme;
 
   @override
   Widget build(BuildContext context) {
@@ -372,16 +375,16 @@ class _SongInfo extends StatelessWidget {
         Text(
           title,
           overflow: TextOverflow.ellipsis,
-          style: commonBarTitleStyle.copyWith(color: primaryColor),
+          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
         ),
-        const SizedBox(height: 3),
+        const SizedBox(height: 2),
         Text(
           artist,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
             fontWeight: FontWeight.w400,
             fontSize: 13,
-            color: secondaryColor,
+            color: colorScheme.onSurfaceVariant,
           ),
         ),
       ],
@@ -393,12 +396,12 @@ class _OfflineArtwork extends StatelessWidget {
   const _OfflineArtwork({
     required this.artworkPath,
     required this.size,
-    required this.primaryColor,
+    required this.colorScheme,
   });
 
   final String artworkPath;
   final double size;
-  final Color primaryColor;
+  final ColorScheme colorScheme;
 
   @override
   Widget build(BuildContext context) {
@@ -406,7 +409,7 @@ class _OfflineArtwork extends StatelessWidget {
       width: size,
       height: size,
       child: ClipRRect(
-        borderRadius: BorderRadiusGeometry.circular(commonMiniArtworkRadius),
+        borderRadius: BorderRadius.circular(10),
         child: Stack(
           alignment: Alignment.center,
           children: [
@@ -415,20 +418,14 @@ class _OfflineArtwork extends StatelessWidget {
               width: size,
               height: size,
               fit: BoxFit.cover,
-              color: Theme.of(context).colorScheme.primaryContainer,
+              color: colorScheme.primaryContainer,
               colorBlendMode: BlendMode.multiply,
               opacity: const AlwaysStoppedAnimation(0.45),
             ),
-            SizedBox(
-              width: size - 10,
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Icon(
-                  FluentIcons.cellular_off_24_filled,
-                  size: 24,
-                  color: primaryColor,
-                ),
-              ),
+            Icon(
+              FluentIcons.cellular_off_24_filled,
+              size: 20,
+              color: colorScheme.primary,
             ),
           ],
         ),
@@ -442,7 +439,7 @@ class _OnlineArtwork extends StatelessWidget {
     required this.lowResImageUrl,
     required this.size,
     required this.isDurationAvailable,
-    required this.primaryColor,
+    required this.colorScheme,
     required this.duration,
     required this.isOffline,
   });
@@ -450,7 +447,7 @@ class _OnlineArtwork extends StatelessWidget {
   final String lowResImageUrl;
   final double size;
   final bool isDurationAvailable;
-  final Color primaryColor;
+  final ColorScheme colorScheme;
   final dynamic duration;
   final bool isOffline;
 
@@ -475,15 +472,13 @@ class _OnlineArtwork extends StatelessWidget {
             memCacheWidth: 256,
             memCacheHeight: 256,
             imageBuilder: (context, imageProvider) => ClipRRect(
-              borderRadius: BorderRadiusGeometry.circular(
-                commonMiniArtworkRadius,
-              ),
+              borderRadius: BorderRadius.circular(10),
               child: Stack(
                 alignment: Alignment.center,
                 children: [
                   Image(
                     color: shouldOverlayBeShown
-                        ? Theme.of(context).colorScheme.primaryContainer
+                        ? colorScheme.primaryContainer
                         : null,
                     colorBlendMode: shouldOverlayBeShown
                         ? BlendMode.multiply
@@ -500,16 +495,10 @@ class _OnlineArtwork extends StatelessWidget {
                         : null,
                   ),
                   if (isOffline)
-                    SizedBox(
-                      width: size - 10,
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Icon(
-                          FluentIcons.cellular_off_24_filled,
-                          size: 24,
-                          color: primaryColor,
-                        ),
-                      ),
+                    Icon(
+                      FluentIcons.cellular_off_24_filled,
+                      size: 20,
+                      color: colorScheme.primary,
                     ),
                 ],
               ),
@@ -518,17 +507,12 @@ class _OnlineArtwork extends StatelessWidget {
                 const NullArtworkWidget(iconSize: 30),
           ),
           if (isDurationAvailable && !isOffline)
-            SizedBox(
-              width: size - 10,
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(
-                  '(${formatDuration(duration)})',
-                  style: TextStyle(
-                    color: primaryColor,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+            Text(
+              '(${formatDuration(duration)})',
+              style: TextStyle(
+                color: colorScheme.primary,
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
               ),
             ),
         ],
