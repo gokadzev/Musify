@@ -379,14 +379,7 @@ class NowPlayingArtwork extends StatelessWidget {
         width: imageSize,
         height: imageSize,
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              colorScheme.secondaryContainer,
-              colorScheme.tertiaryContainer,
-            ],
-          ),
+          color: colorScheme.secondaryContainer,
           borderRadius: BorderRadius.circular(borderRadius),
           boxShadow: [
             BoxShadow(
