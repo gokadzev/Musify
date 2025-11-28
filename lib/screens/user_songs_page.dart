@@ -26,9 +26,9 @@ import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/settings_manager.dart';
+import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/utils.dart';
 import 'package:musify/widgets/playlist_cube.dart';
-import 'package:musify/widgets/playlist_header.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/sort_button.dart';
 
@@ -108,18 +108,13 @@ class _UserSongsPageState extends State<UserSongsPage> {
     return CustomScrollView(
       slivers: [
         SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: buildPlaylistHeader(title, icon, songsList.length),
+          child: _buildHeaderSection(
+            title,
+            icon,
+            songsList.length,
+            isOfflineSongs,
           ),
         ),
-        if (isOfflineSongs)
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-              child: buildSongActionsRow(),
-            ),
-          ),
         buildSongList(title, songsList, length),
       ],
     );
@@ -161,15 +156,120 @@ class _UserSongsPageState extends State<UserSongsPage> {
     };
   }
 
-  Widget buildPlaylistHeader(String title, IconData icon, int songsLength) {
-    return PlaylistHeader(_buildPlaylistImage(title, icon), title, songsLength);
+  Widget _buildHeaderSection(
+    String title,
+    IconData icon,
+    int songsLength,
+    bool isOfflineSongs,
+  ) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final primaryColor = colorScheme.primary;
+    final isRecentlyPlayed = title == context.l10n!.recentlyPlayed;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
+      child: Column(
+        children: [
+          _buildPlaylistImage(title, icon),
+          const SizedBox(height: 20),
+          Text(
+            title,
+            style: theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: colorScheme.onSurface,
+            ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 6),
+          Text(
+            '$songsLength ${context.l10n!.songs}',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 20),
+          Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 6,
+            runSpacing: 6,
+            children: [
+              if (songsLength > 0) _buildPlayButton(primaryColor, title),
+              if (isRecentlyPlayed && songsLength > 0)
+                _buildClearRecentsButton(primaryColor),
+              if (isOfflineSongs) _buildSortButton(),
+            ],
+          ),
+          const SizedBox(height: 8),
+        ],
+      ),
+    );
   }
 
   Widget _buildPlaylistImage(String title, IconData icon) {
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final isLandscape = screenWidth > MediaQuery.sizeOf(context).height;
     return PlaylistCube(
       {'title': title},
-      size: MediaQuery.sizeOf(context).width / 2.5,
+      size: isLandscape ? 250 : screenWidth / 2.2,
       cubeIcon: icon,
+    );
+  }
+
+  Widget _buildPlayButton(Color primaryColor, String title) {
+    final songsList = getSongsList(widget.page);
+    final playlist = {
+      'ytid': '',
+      'title': title,
+      'source': 'user-created',
+      'list': songsList,
+    };
+
+    return IconButton.filled(
+      icon: Icon(
+        FluentIcons.play_24_filled,
+        color: Theme.of(context).colorScheme.onPrimary,
+      ),
+      iconSize: 24,
+      onPressed: () =>
+          audioHandler.playPlaylistSong(playlist: playlist, songIndex: 0),
+    );
+  }
+
+  Widget _buildClearRecentsButton(Color primaryColor) {
+    return IconButton.filledTonal(
+      icon: Icon(FluentIcons.delete_24_regular, color: primaryColor),
+      iconSize: 24,
+      onPressed: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text(context.l10n!.clearRecentlyPlayed),
+              content: Text(context.l10n!.clearRecentlyPlayedQuestion),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(context.l10n!.cancel.toUpperCase()),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    userRecentlyPlayed.clear();
+                    currentRecentlyPlayedLength.value = 0;
+                    addOrUpdateData('user', 'recentlyPlayedSongs', []);
+                    showToast(context, context.l10n!.recentlyPlayedMsg);
+                  },
+                  child: Text(context.l10n!.clear.toUpperCase()),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 
@@ -265,13 +365,6 @@ class _UserSongsPageState extends State<UserSongsPage> {
       },
       borderRadius: borderRadius,
       isRecentSong: isRecentSong,
-    );
-  }
-
-  Widget buildSongActionsRow() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [_buildSortButton()],
     );
   }
 
