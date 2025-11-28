@@ -38,7 +38,6 @@ import 'package:musify/utilities/playlist_image_picker.dart';
 import 'package:musify/utilities/sort_utils.dart';
 import 'package:musify/utilities/utils.dart';
 import 'package:musify/widgets/playlist_cube.dart';
-import 'package:musify/widgets/playlist_header.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/sort_button.dart';
 import 'package:musify/widgets/spinner.dart';
@@ -172,45 +171,13 @@ class _PlaylistPageState extends State<PlaylistPage> {
           onPressed: () =>
               Navigator.pop(context, widget.playlistData == _playlist),
         ),
-        actions: [
-          if (widget.playlistId != null) ...[_buildLikeButton()],
-          const SizedBox(width: 10),
-          if (_playlist != null) ...[
-            _buildSyncButton(),
-            const SizedBox(width: 10),
-            _buildDownloadButton(),
-            const SizedBox(width: 10),
-            if (_playlist['source'] == 'user-created')
-              IconButton(
-                icon: const Icon(FluentIcons.share_24_regular),
-                onPressed: () async {
-                  final encodedPlaylist = PlaylistSharingService.encodePlaylist(
-                    _playlist,
-                  );
-
-                  final url = 'musify://playlist/custom/$encodedPlaylist';
-                  await Clipboard.setData(ClipboardData(text: url));
-                },
-              ),
-            const SizedBox(width: 10),
-          ],
-          if (_playlist != null && _playlist['source'] == 'user-created') ...[
-            _buildEditButton(),
-            const SizedBox(width: 10),
-          ],
-        ],
       ),
       body: _playlist != null
           ? PagingListener(
               controller: _pagingController,
               builder: (context, state, fetchNextPage) => CustomScrollView(
                 slivers: [
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: buildPlaylistHeader(),
-                    ),
-                  ),
+                  SliverToBoxAdapter(child: _buildHeaderSection()),
                   if (_playlist['list'].isNotEmpty) ...[
                     SliverToBoxAdapter(
                       child: Padding(
@@ -256,63 +223,144 @@ class _PlaylistPageState extends State<PlaylistPage> {
     final isLandscape = screenWidth > MediaQuery.sizeOf(context).height;
     return PlaylistCube(
       _playlist,
-      size: isLandscape ? 300 : screenWidth / 2.5,
+      size: isLandscape ? 250 : screenWidth / 2.2,
       cubeIcon: widget.cubeIcon,
     );
   }
 
-  Widget buildPlaylistHeader() {
-    final _songsLength = _playlist['list'].length;
+  Widget _buildHeaderSection() {
+    final songsLength = _playlist['list'].length;
+    final isUserCreated = _playlist['source'] == 'user-created';
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final primaryColor = colorScheme.primary;
 
-    return PlaylistHeader(
-      _buildPlaylistImage(),
-      _playlist['title'],
-      _songsLength,
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
+      child: Column(
+        children: [
+          _buildPlaylistImage(),
+          const SizedBox(height: 20),
+          Text(
+            _playlist['title'],
+            style: theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: colorScheme.onSurface,
+            ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 6),
+          Text(
+            '$songsLength ${context.l10n!.songs}',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 20),
+          Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 6,
+            runSpacing: 6,
+            children: [
+              if (songsLength > 0) _buildPlayButton(primaryColor),
+              if (widget.playlistId != null) _buildLikeButton(primaryColor),
+              _buildSyncButton(primaryColor),
+              _buildDownloadButton(),
+              if (isUserCreated) ...[
+                _buildShareButton(primaryColor),
+                _buildEditButton(primaryColor),
+              ],
+            ],
+          ),
+          const SizedBox(height: 8),
+        ],
+      ),
     );
   }
 
-  Widget _buildLikeButton() {
-    return ValueListenableBuilder<bool>(
-      valueListenable: playlistLikeStatus,
-      builder: (_, value, __) {
-        return IconButton(
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          icon: value
-              ? const Icon(FluentIcons.heart_24_filled)
-              : const Icon(FluentIcons.heart_24_regular),
-          iconSize: 26,
-          onPressed: () {
-            playlistLikeStatus.value = !playlistLikeStatus.value;
-            updatePlaylistLikeStatus(
-              _playlist['ytid'],
-              playlistLikeStatus.value,
-            );
-            currentLikedPlaylistsLength.value = value
-                ? currentLikedPlaylistsLength.value + 1
-                : currentLikedPlaylistsLength.value - 1;
-          },
+  Widget _buildPlayButton(Color primaryColor) {
+    return IconButton.filled(
+      icon: Icon(
+        FluentIcons.play_24_filled,
+        color: Theme.of(context).colorScheme.onPrimary,
+      ),
+      iconSize: 24,
+      onPressed: () =>
+          audioHandler.playPlaylistSong(playlist: _playlist, songIndex: 0),
+    );
+  }
+
+  Widget _buildShareButton(Color primaryColor) {
+    return IconButton.filledTonal(
+      icon: Icon(FluentIcons.share_24_regular, color: primaryColor),
+      iconSize: 24,
+      onPressed: () async {
+        final encodedPlaylist = PlaylistSharingService.encodePlaylist(
+          _playlist,
         );
+        final url = 'musify://playlist/custom/$encodedPlaylist';
+        await Clipboard.setData(ClipboardData(text: url));
       },
     );
   }
 
-  Widget _buildSyncButton() {
-    return IconButton(
-      splashColor: Colors.transparent,
-      highlightColor: Colors.transparent,
-      icon: const Icon(FluentIcons.arrow_sync_24_filled),
-      iconSize: 26,
+  Widget _buildLikeButton(Color primaryColor) {
+    return ValueListenableBuilder<bool>(
+      valueListenable: playlistLikeStatus,
+      builder: (_, value, __) {
+        final icon = value
+            ? FluentIcons.heart_24_filled
+            : FluentIcons.heart_24_regular;
+
+        return value
+            ? IconButton.filled(
+                icon: Icon(
+                  icon,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+                iconSize: 24,
+                onPressed: () {
+                  playlistLikeStatus.value = !playlistLikeStatus.value;
+                  updatePlaylistLikeStatus(
+                    _playlist['ytid'],
+                    playlistLikeStatus.value,
+                  );
+                  currentLikedPlaylistsLength.value =
+                      currentLikedPlaylistsLength.value - 1;
+                },
+              )
+            : IconButton.filledTonal(
+                icon: Icon(icon, color: primaryColor),
+                iconSize: 24,
+                onPressed: () {
+                  playlistLikeStatus.value = !playlistLikeStatus.value;
+                  updatePlaylistLikeStatus(
+                    _playlist['ytid'],
+                    playlistLikeStatus.value,
+                  );
+                  currentLikedPlaylistsLength.value =
+                      currentLikedPlaylistsLength.value + 1;
+                },
+              );
+      },
+    );
+  }
+
+  Widget _buildSyncButton(Color primaryColor) {
+    return IconButton.filledTonal(
+      icon: Icon(FluentIcons.arrow_sync_24_filled, color: primaryColor),
+      iconSize: 24,
       onPressed: _handleSyncPlaylist,
     );
   }
 
-  Widget _buildEditButton() {
-    return IconButton(
-      splashColor: Colors.transparent,
-      highlightColor: Colors.transparent,
-      icon: const Icon(FluentIcons.edit_24_filled),
-      iconSize: 26,
+  Widget _buildEditButton(Color primaryColor) {
+    return IconButton.filledTonal(
+      icon: Icon(FluentIcons.edit_24_filled, color: primaryColor),
+      iconSize: 24,
       onPressed: () => showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -432,6 +480,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
   Widget _buildDownloadButton() {
     final playlistId = widget.playlistId ?? _playlist['title'];
+    final primaryColor = Theme.of(context).colorScheme.primary;
 
     return ValueListenableBuilder<List<dynamic>>(
       valueListenable: offlinePlaylistService.offlinePlaylists,
@@ -441,11 +490,12 @@ class _PlaylistPageState extends State<PlaylistPage> {
         );
 
         if (playlistOfflineStatus) {
-          return IconButton(
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-            icon: const Icon(FluentIcons.arrow_download_off_24_filled),
-            iconSize: 26,
+          return IconButton.filled(
+            icon: Icon(
+              FluentIcons.arrow_download_off_24_filled,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
+            iconSize: 24,
             onPressed: () => _showRemoveOfflineDialog(playlistId),
             tooltip: context.l10n!.removeOffline,
           );
@@ -461,37 +511,45 @@ class _PlaylistPageState extends State<PlaylistPage> {
             );
 
             if (isDownloading) {
-              return Stack(
-                alignment: Alignment.center,
-                children: [
-                  CircularProgressIndicator(
-                    value: progress.progress,
-                    strokeWidth: 2,
-                    backgroundColor: Colors.grey.withValues(alpha: .3),
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      Theme.of(context).colorScheme.primary,
+              return SizedBox(
+                width: 48,
+                height: 48,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    SizedBox(
+                      width: 40,
+                      height: 40,
+                      child: CircularProgressIndicator(
+                        value: progress.progress,
+                        strokeWidth: 3,
+                        backgroundColor: primaryColor.withValues(alpha: .2),
+                        valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
+                      ),
                     ),
-                  ),
-                  IconButton(
-                    splashColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
-                    icon: const Icon(FluentIcons.dismiss_24_filled),
-                    iconSize: 14,
-                    onPressed: () => offlinePlaylistService.cancelDownload(
-                      context,
-                      playlistId,
+                    IconButton(
+                      icon: Icon(
+                        FluentIcons.dismiss_24_filled,
+                        color: primaryColor,
+                        size: 16,
+                      ),
+                      onPressed: () => offlinePlaylistService.cancelDownload(
+                        context,
+                        playlistId,
+                      ),
+                      tooltip: context.l10n!.cancel,
                     ),
-                    tooltip: context.l10n!.cancel,
-                  ),
-                ],
+                  ],
+                ),
               );
             }
 
-            return IconButton(
-              splashColor: Colors.transparent,
-              highlightColor: Colors.transparent,
-              icon: const Icon(FluentIcons.arrow_download_24_filled),
-              iconSize: 26,
+            return IconButton.filledTonal(
+              icon: Icon(
+                FluentIcons.arrow_download_24_filled,
+                color: primaryColor,
+              ),
+              iconSize: 24,
               onPressed: () =>
                   offlinePlaylistService.downloadPlaylist(context, _playlist),
               tooltip: context.l10n!.downloadPlaylist,
