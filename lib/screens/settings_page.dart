@@ -85,7 +85,10 @@ class SettingsPage extends StatelessWidget {
   ) {
     return Column(
       children: [
-        SectionHeader(title: context.l10n!.preferences),
+        SectionHeader(
+          title: context.l10n!.preferences,
+          icon: FluentIcons.options_24_filled,
+        ),
         CustomBar(
           context.l10n!.accentColor,
           FluentIcons.color_24_filled,
@@ -261,7 +264,10 @@ class SettingsPage extends StatelessWidget {
   Widget _buildToolsSection(BuildContext context) {
     return Column(
       children: [
-        SectionHeader(title: context.l10n!.tools),
+        SectionHeader(
+          title: context.l10n!.tools,
+          icon: FluentIcons.toolbox_24_filled,
+        ),
         CustomBar(
           context.l10n!.clearCache,
           FluentIcons.broom_24_filled,
@@ -342,7 +348,10 @@ class SettingsPage extends StatelessWidget {
 
     return Column(
       children: [
-        SectionHeader(title: context.l10n!.becomeSponsor),
+        SectionHeader(
+          title: context.l10n!.becomeSponsor,
+          icon: FluentIcons.heart_24_filled,
+        ),
         Padding(
           padding: commonBarPadding,
           child: Card(
@@ -437,7 +446,10 @@ class SettingsPage extends StatelessWidget {
   Widget _buildOthersSection(BuildContext context) {
     return Column(
       children: [
-        SectionHeader(title: context.l10n!.others),
+        SectionHeader(
+          title: context.l10n!.others,
+          icon: FluentIcons.more_circle_24_filled,
+        ),
         CustomBar(
           context.l10n!.licenses,
           FluentIcons.document_24_filled,

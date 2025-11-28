@@ -128,7 +128,12 @@ class _HomePageState extends State<HomePage> {
 
         return Column(
           children: [
-            SectionHeader(title: sectionTitle),
+            SectionHeader(
+              title: sectionTitle,
+              icon: showOnlyLiked
+                  ? FluentIcons.heart_24_filled
+                  : FluentIcons.list_24_filled,
+            ),
             ConstrainedBox(
               constraints: BoxConstraints(maxHeight: playlistHeight),
               child: isLargeScreen
@@ -235,6 +240,7 @@ class _HomePageState extends State<HomePage> {
       children: [
         SectionHeader(
           title: context.l10n!.recommendedForYou,
+          icon: FluentIcons.sparkle_24_filled,
           actionButton: IconButton(
             onPressed: () async {
               await Future.microtask(
