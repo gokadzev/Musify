@@ -10,13 +10,13 @@ import 'package:musify/widgets/marque.dart';
 import 'package:musify/widgets/song_artwork.dart';
 import 'package:rxdart/rxdart.dart';
 
-Stream<FullPlayerState> _createFullPlayerStateStream() => Rx.combineLatest3(
-  audioHandler.playbackStateStream.distinct(),
-  audioHandler.queueStream.distinct(),
+final Stream<FullPlayerState> _fullPlayerStateStream = Rx.combineLatest3(
+  audioHandler.playbackState.distinct(),
+  audioHandler.queue.distinct(),
   audioHandler.positionDataStream,
   (PlaybackState state, List<MediaItem> queue, PositionData pos) =>
       FullPlayerState(playbackState: state, queue: queue, position: pos),
-).debounceTime(const Duration(milliseconds: 100));
+).debounceTime(const Duration(milliseconds: 100)).asBroadcastStream();
 
 class MiniPlayer extends StatelessWidget {
   const MiniPlayer({super.key});
@@ -37,15 +37,20 @@ class MiniPlayer extends StatelessWidget {
         if (metadata == null) return const SizedBox.shrink();
 
         return StreamBuilder<FullPlayerState>(
-          stream: _createFullPlayerStateStream(),
+          stream: _fullPlayerStateStream,
           builder: (context, stateSnapshot) {
             final state = stateSnapshot.data;
             if (state == null) return const SizedBox.shrink();
+
+            final hasNext =
+                state.queue.length > 1 &&
+                (state.playbackState.queueIndex ?? 0) < state.queue.length - 1;
 
             return _MiniPlayerBody(
               colorScheme: colorScheme,
               metadata: metadata,
               state: state,
+              hasNext: hasNext,
             );
           },
         );
@@ -59,11 +64,13 @@ class _MiniPlayerBody extends StatefulWidget {
     required this.colorScheme,
     required this.metadata,
     required this.state,
+    required this.hasNext,
   });
 
   final ColorScheme colorScheme;
   final MediaItem metadata;
   final FullPlayerState state;
+  final bool hasNext;
 
   @override
   State<_MiniPlayerBody> createState() => _MiniPlayerBodyState();
@@ -163,7 +170,7 @@ class _MiniPlayerBodyState extends State<_MiniPlayerBody>
                       _ControlsWidget(
                         colorScheme: colorScheme,
                         playbackState: state.playbackState,
-                        hasNext: audioHandler.hasNext,
+                        hasNext: widget.hasNext,
                       ),
                     ],
                   ),

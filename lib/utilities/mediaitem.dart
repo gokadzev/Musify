@@ -21,16 +21,19 @@
 
 import 'package:audio_service/audio_service.dart';
 
-Map mediaItemToMap(MediaItem mediaItem) => {
-  'id': mediaItem.id,
-  'ytid': mediaItem.extras!['ytid'],
-  'album': mediaItem.album.toString(),
-  'artist': mediaItem.artist.toString(),
-  'title': mediaItem.title,
-  'highResImage': mediaItem.artUri.toString(),
-  'lowResImage': mediaItem.extras!['lowResImage'],
-  'isLive': mediaItem.extras!['isLive'],
-};
+Map mediaItemToMap(MediaItem mediaItem) {
+  final extras = mediaItem.extras;
+  return {
+    'id': mediaItem.id,
+    'ytid': extras?['ytid'],
+    'album': mediaItem.album.toString(),
+    'artist': mediaItem.artist.toString(),
+    'title': mediaItem.title,
+    'highResImage': mediaItem.artUri.toString(),
+    'lowResImage': extras?['lowResImage'],
+    'isLive': extras?['isLive'] ?? false,
+  };
+}
 
 MediaItem mapToMediaItem(Map song) => MediaItem(
   id: song['id'].toString(),

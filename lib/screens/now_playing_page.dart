@@ -40,10 +40,15 @@ import 'package:musify/widgets/song_artwork.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/spinner.dart';
 
-final _lyricsController = FlipCardController();
-
-class NowPlayingPage extends StatelessWidget {
+class NowPlayingPage extends StatefulWidget {
   const NowPlayingPage({super.key});
+
+  @override
+  State<NowPlayingPage> createState() => _NowPlayingPageState();
+}
+
+class _NowPlayingPageState extends State<NowPlayingPage> {
+  final _lyricsController = FlipCardController();
 
   @override
   Widget build(BuildContext context) {
@@ -79,6 +84,7 @@ class NowPlayingPage extends StatelessWidget {
                       size: size,
                       adjustedIconSize: adjustedIconSize,
                       adjustedMiniIconSize: adjustedMiniIconSize,
+                      lyricsController: _lyricsController,
                     )
                   : _MobileLayout(
                       metadata: metadata,
@@ -86,6 +92,7 @@ class NowPlayingPage extends StatelessWidget {
                       adjustedIconSize: adjustedIconSize,
                       adjustedMiniIconSize: adjustedMiniIconSize,
                       isLargeScreen: isLargeScreen,
+                      lyricsController: _lyricsController,
                     );
             }
           },
@@ -101,11 +108,13 @@ class _DesktopLayout extends StatelessWidget {
     required this.size,
     required this.adjustedIconSize,
     required this.adjustedMiniIconSize,
+    required this.lyricsController,
   });
   final MediaItem metadata;
   final Size size;
   final double adjustedIconSize;
   final double adjustedMiniIconSize;
+  final FlipCardController lyricsController;
 
   @override
   Widget build(BuildContext context) {
@@ -115,7 +124,11 @@ class _DesktopLayout extends StatelessWidget {
           child: Column(
             children: [
               const SizedBox(height: 5),
-              NowPlayingArtwork(size: size, metadata: metadata),
+              NowPlayingArtwork(
+                size: size,
+                metadata: metadata,
+                lyricsController: lyricsController,
+              ),
               const SizedBox(height: 5),
               if (!(metadata.extras?['isLive'] ?? false))
                 NowPlayingControls(
@@ -142,19 +155,25 @@ class _MobileLayout extends StatelessWidget {
     required this.adjustedIconSize,
     required this.adjustedMiniIconSize,
     required this.isLargeScreen,
+    required this.lyricsController,
   });
   final MediaItem metadata;
   final Size size;
   final double adjustedIconSize;
   final double adjustedMiniIconSize;
   final bool isLargeScreen;
+  final FlipCardController lyricsController;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       spacing: 10,
       children: [
-        NowPlayingArtwork(size: size, metadata: metadata),
+        NowPlayingArtwork(
+          size: size,
+          metadata: metadata,
+          lyricsController: lyricsController,
+        ),
         if (!(metadata.extras?['isLive'] ?? false))
           NowPlayingControls(
             size: size,
@@ -169,6 +188,7 @@ class _MobileLayout extends StatelessWidget {
             metadata: metadata,
             iconSize: adjustedMiniIconSize,
             isLargeScreen: isLargeScreen,
+            lyricsController: lyricsController,
           ),
           const SizedBox(height: 2),
         ],
@@ -182,9 +202,11 @@ class NowPlayingArtwork extends StatelessWidget {
     super.key,
     required this.size,
     required this.metadata,
+    required this.lyricsController,
   });
   final Size size;
   final MediaItem metadata;
+  final FlipCardController lyricsController;
 
   @override
   Widget build(BuildContext context) {
@@ -204,7 +226,7 @@ class NowPlayingArtwork extends StatelessWidget {
     return FlipCard(
       rotateSide: RotateSide.right,
       onTapFlipping: !offlineMode.value,
-      controller: _lyricsController,
+      controller: lyricsController,
       frontWidget: SongArtworkWidget(
         metadata: metadata,
         size: imageSize,
@@ -369,7 +391,7 @@ class PlayerControlButtons extends StatelessWidget {
         children: <Widget>[
           _buildShuffleButton(_primaryColor, _secondaryColor, miniIconSize),
           StreamBuilder<List<MediaItem>>(
-            stream: audioHandler.queueStream,
+            stream: audioHandler.queue,
             builder: (context, snapshot) {
               return ValueListenableBuilder<AudioServiceRepeatMode>(
                 valueListenable: repeatNotifier,
@@ -459,7 +481,7 @@ class PlayerControlButtons extends StatelessWidget {
     double iconSize,
   ) {
     return StreamBuilder<List<MediaItem>>(
-      stream: audioHandler.queueStream,
+      stream: audioHandler.queue,
       builder: (context, snapshot) {
         final queue = snapshot.data ?? [];
         return ValueListenableBuilder<AudioServiceRepeatMode>(
@@ -514,11 +536,13 @@ class BottomActionsRow extends StatelessWidget {
     required this.metadata,
     required this.iconSize,
     required this.isLargeScreen,
+    required this.lyricsController,
   });
   final dynamic audioId;
   final MediaItem metadata;
   final double iconSize;
   final bool isLargeScreen;
+  final FlipCardController lyricsController;
 
   Widget _buildOfflineButton(ValueNotifier<bool> status, Color primaryColor) {
     return ValueListenableBuilder<bool>(
@@ -532,28 +556,28 @@ class BottomActionsRow extends StatelessWidget {
             color: primaryColor,
           ),
           iconSize: iconSize,
-          onPressed: () async {
-            final originalValue = value;
-            status.value = !value;
+          onPressed: audioId == null
+              ? null
+              : () async {
+                  final originalValue = value;
+                  status.value = !value;
 
-            try {
-              final bool success;
-              if (originalValue) {
-                success = await removeSongFromOffline(audioId);
-              } else {
-                success = await makeSongOffline(mediaItemToMap(metadata));
-              }
+                  try {
+                    final bool success;
+                    if (originalValue) {
+                      success = await removeSongFromOffline(audioId);
+                    } else {
+                      success = await makeSongOffline(mediaItemToMap(metadata));
+                    }
 
-              // Revert if operation failed
-              if (!success) {
-                status.value = originalValue;
-              }
-            } catch (e) {
-              // Revert on error
-              status.value = originalValue;
-              logger.log('Error toggling offline status', e, null);
-            }
-          },
+                    if (!success) {
+                      status.value = originalValue;
+                    }
+                  } catch (e) {
+                    status.value = originalValue;
+                    logger.log('Error toggling offline status', e, null);
+                  }
+                },
         );
       },
     );
@@ -580,7 +604,7 @@ class BottomActionsRow extends StatelessWidget {
     final _primaryColor = Theme.of(context).colorScheme.primary;
 
     return StreamBuilder<List<MediaItem>>(
-      stream: audioHandler.queueStream,
+      stream: audioHandler.queue,
       builder: (context, snapshot) {
         final queue = snapshot.data ?? [];
         final mappedQueue = queue.isNotEmpty
@@ -643,7 +667,7 @@ class BottomActionsRow extends StatelessWidget {
     return IconButton.filledTonal(
       icon: Icon(FluentIcons.text_32_filled, color: primaryColor),
       iconSize: iconSize,
-      onPressed: _lyricsController.flipcard,
+      onPressed: lyricsController.flipcard,
     );
   }
 

@@ -34,7 +34,7 @@ class QueueListView extends StatelessWidget {
   Widget build(BuildContext context) {
     final _textColor = Theme.of(context).colorScheme.secondary;
     return StreamBuilder<List<MediaItem>>(
-      stream: audioHandler.queueStream,
+      stream: audioHandler.queue,
       builder: (context, snapshot) {
         final queue = snapshot.data ?? [];
         final mappedQueue = queue.isNotEmpty
