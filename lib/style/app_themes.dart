@@ -85,18 +85,25 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
       ? ThemeData.light()
       : ThemeData.dark();
 
+  final isLight = colorScheme.brightness == Brightness.light;
   final isPureBlackUsable =
       colorScheme.brightness == Brightness.dark && usePureBlackColor.value;
 
-  final bgColor = colorScheme.brightness == Brightness.light
-      ? colorScheme.surfaceContainer
+  final bgColor = isLight
+      ? colorScheme.surface
       : (isPureBlackUsable ? const Color(0xFF000000) : null);
+
+  final cardBgColor = isLight ? colorScheme.surfaceContainerLow : bgColor;
 
   return ThemeData(
     scaffoldBackgroundColor: bgColor,
     colorScheme: colorScheme,
-    cardColor: bgColor,
-    cardTheme: base.cardTheme.copyWith(elevation: 0.1),
+    cardColor: cardBgColor,
+    cardTheme: base.cardTheme.copyWith(
+      elevation: 0,
+      color: cardBgColor,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    ),
     appBarTheme: base.appBarTheme.copyWith(
       backgroundColor: bgColor,
       foregroundColor: colorScheme.primary,
@@ -126,15 +133,24 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
       trackHeight: 12,
       thumbSize: WidgetStateProperty.all(const Size(6, 30)),
     ),
-    bottomSheetTheme: base.bottomSheetTheme.copyWith(backgroundColor: bgColor),
+    bottomSheetTheme: base.bottomSheetTheme.copyWith(
+      backgroundColor: isLight ? colorScheme.surfaceContainerLow : bgColor,
+    ),
     inputDecorationTheme: base.inputDecorationTheme.copyWith(
       filled: true,
       isDense: true,
+      fillColor: isLight
+          ? colorScheme.surfaceContainerHighest
+          : colorScheme.surfaceContainerHigh,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide.none,
       ),
       contentPadding: const EdgeInsets.fromLTRB(18, 14, 20, 14),
+    ),
+    dialogTheme: base.dialogTheme.copyWith(
+      backgroundColor: isLight ? colorScheme.surfaceContainerLow : null,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
     ),
     navigationBarTheme: base.navigationBarTheme.copyWith(
       backgroundColor: bgColor,
@@ -186,7 +202,12 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
       ),
     ),
     popupMenuTheme: base.popupMenuTheme.copyWith(
+      color: isLight ? colorScheme.surfaceContainerLow : null,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    ),
+    dividerTheme: base.dividerTheme.copyWith(
+      color: colorScheme.outlineVariant,
+      thickness: 1,
     ),
     visualDensity: VisualDensity.adaptivePlatformDensity,
     useMaterial3: true,
