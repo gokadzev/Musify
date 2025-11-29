@@ -215,7 +215,13 @@ class _SearchPageState extends State<SearchPage> {
 
     // Songs section
     if (_songsSearchResult.isNotEmpty) {
-      widgets.add(SectionTitle(context.l10n!.songs, primaryColor));
+      widgets.add(
+        SectionTitle(
+          context.l10n!.songs,
+          primaryColor,
+          icon: FluentIcons.music_note_1_24_filled,
+        ),
+      );
 
       final songsCount = _songsSearchResult.length > maxSongsInList
           ? maxSongsInList
@@ -237,7 +243,13 @@ class _SearchPageState extends State<SearchPage> {
 
     // Albums section
     if (_albumsSearchResult.isNotEmpty) {
-      widgets.add(SectionTitle(context.l10n!.albums, primaryColor));
+      widgets.add(
+        SectionTitle(
+          context.l10n!.albums,
+          primaryColor,
+          icon: FluentIcons.album_24_filled,
+        ),
+      );
 
       final albumsCount = _albumsSearchResult.length > maxSongsInList
           ? maxSongsInList
@@ -263,7 +275,13 @@ class _SearchPageState extends State<SearchPage> {
 
     // Playlists section
     if (_playlistsSearchResult.isNotEmpty) {
-      widgets.add(SectionTitle(context.l10n!.playlists, primaryColor));
+      widgets.add(
+        SectionTitle(
+          context.l10n!.playlists,
+          primaryColor,
+          icon: FluentIcons.list_24_filled,
+        ),
+      );
 
       final playlistsCount = _playlistsSearchResult.length > maxSongsInList
           ? maxSongsInList
