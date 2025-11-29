@@ -543,7 +543,7 @@ class SettingsPage extends StatelessWidget {
               Musify.updateAppState(context, newThemeMode: mode);
               Navigator.pop(context);
             },
-            themeMode == mode ? activatedColor : inactivatedColor,
+            themeMode == mode,
             borderRadius: borderRadius,
           );
         },
@@ -590,9 +590,7 @@ class SettingsPage extends StatelessWidget {
               showToast(context, context.l10n!.languageMsg);
               Navigator.pop(context);
             },
-            activeLanguageFullCode == newLocaleFullCode
-                ? activatedColor
-                : inactivatedColor,
+            activeLanguageFullCode == newLocaleFullCode,
             borderRadius: borderRadius,
           );
         },
@@ -635,7 +633,7 @@ class SettingsPage extends StatelessWidget {
               showToast(context, context.l10n!.audioQualityMsg);
               Navigator.pop(context);
             },
-            isCurrentQuality ? activatedColor : inactivatedColor,
+            isCurrentQuality,
             borderRadius: borderRadius,
           );
         },

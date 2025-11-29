@@ -23,38 +23,43 @@ import 'package:flutter/material.dart';
 
 void showCustomBottomSheet(BuildContext context, Widget content) {
   final size = MediaQuery.sizeOf(context);
+  final colorScheme = Theme.of(context).colorScheme;
 
   showBottomSheet(
     enableDrag: true,
     context: context,
     builder: (context) => Container(
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(18),
-          topRight: Radius.circular(18),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerLow,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(24),
         ),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.symmetric(vertical: size.height * 0.015),
+            padding: const EdgeInsets.only(top: 12, bottom: 8),
             child: GestureDetector(
               onTap: () => Navigator.pop(context),
               child: Container(
-                width: 60,
-                height: 8,
+                width: 40,
+                height: 4,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.onSecondaryContainer,
-                  borderRadius: BorderRadius.circular(10),
+                  color: colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+                  borderRadius: BorderRadius.circular(2),
                 ),
               ),
             ),
           ),
           ConstrainedBox(
             constraints: BoxConstraints(maxHeight: size.height * 0.65),
-            child: SingleChildScrollView(child: content),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: content,
+            ),
           ),
         ],
       ),
