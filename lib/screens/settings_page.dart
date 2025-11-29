@@ -340,11 +340,7 @@ class SettingsPage extends StatelessWidget {
   }
 
   Widget _buildSponsorSection(BuildContext context, Color primaryColor) {
-    final gradientEnd = Color.lerp(primaryColor, Colors.pink, 0.3)!;
-    final shadowColor = primaryColor.withValues(alpha: 0.3);
-    final iconBgColor = Colors.white.withValues(alpha: 0.2);
-    final arrowBgColor = Colors.white.withValues(alpha: 0.15);
-    final arrowColor = Colors.white.withValues(alpha: 0.9);
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Column(
       children: [
@@ -362,26 +358,11 @@ class SettingsPage extends StatelessWidget {
             ),
             child: DecoratedBox(
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    primaryColor,
-                    primaryColor.withValues(alpha: 0.8),
-                    gradientEnd,
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
                 borderRadius: BorderRadius.circular(15),
-                boxShadow: [
-                  BoxShadow(
-                    color: shadowColor,
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
               ),
               child: Material(
-                color: Colors.transparent,
+                color: colorScheme.primaryContainer,
+                borderRadius: BorderRadius.circular(15),
                 child: InkWell(
                   borderRadius: BorderRadius.circular(15),
                   onTap: () =>
@@ -392,18 +373,20 @@ class SettingsPage extends StatelessWidget {
                       horizontal: 16,
                     ),
                     child: SizedBox(
-                      height: 45, // Match CustomBar's minTileHeight
+                      height: 45,
                       child: Row(
                         children: [
                           Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: iconBgColor,
-                              shape: BoxShape.circle,
+                              color: colorScheme.onPrimaryContainer.withValues(
+                                alpha: 0.15,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
                             ),
-                            child: const Icon(
+                            child: Icon(
                               FluentIcons.heart_24_filled,
-                              color: Colors.white,
+                              color: colorScheme.onPrimaryContainer,
                               size: 24,
                             ),
                           ),
@@ -411,22 +394,24 @@ class SettingsPage extends StatelessWidget {
                           Expanded(
                             child: Text(
                               context.l10n!.sponsorProject,
-                              style: const TextStyle(
-                                color: Colors.white,
+                              style: TextStyle(
+                                color: colorScheme.onPrimaryContainer,
                                 fontSize: 16,
-                                fontWeight: FontWeight.w600, // Match CustomBar
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                           ),
                           Container(
                             padding: const EdgeInsets.all(6),
                             decoration: BoxDecoration(
-                              color: arrowBgColor,
+                              color: colorScheme.onPrimaryContainer.withValues(
+                                alpha: 0.1,
+                              ),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Icon(
                               FluentIcons.arrow_right_24_filled,
-                              color: arrowColor,
+                              color: colorScheme.onPrimaryContainer,
                               size: 16,
                             ),
                           ),
