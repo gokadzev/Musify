@@ -1,0 +1,6 @@
+Bug fixes
+- Fixed more playback problems
+
+Enhancements
+- Redesigned almost every component
+- Full changelog: https://github.com/gokadzev/Musify/releases
