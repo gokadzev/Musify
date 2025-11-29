@@ -127,8 +127,6 @@ class _LibraryPageState extends State<LibraryPage> {
                 : BorderRadius.zero,
             showBuildActions: false,
           ),
-
-          // Display folders
           ValueListenableBuilder<List>(
             valueListenable: userPlaylistFolders,
             builder: (context, folders, _) {
@@ -140,8 +138,6 @@ class _LibraryPageState extends State<LibraryPage> {
               return _buildFolderListView(context, folders, hasPlaylistsAfter);
             },
           ),
-
-          // Display playlists not in folders
           ValueListenableBuilder<List>(
             valueListenable: userCustomPlaylists,
             builder: (context, playlists, _) {
