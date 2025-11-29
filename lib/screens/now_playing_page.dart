@@ -527,7 +527,7 @@ class NowPlayingControls extends StatelessWidget {
             children: [
               MarqueeTextWidget(
                 text: metadata.title,
-                fontColor: colorScheme.onSurface,
+                fontColor: colorScheme.secondary,
                 fontSize: titleFontSize,
                 fontWeight: FontWeight.bold,
               ),
