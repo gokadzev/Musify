@@ -86,18 +86,38 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
       : ThemeData.dark();
 
   final isLight = colorScheme.brightness == Brightness.light;
-  final isPureBlackUsable =
+  final isPureBlack =
       colorScheme.brightness == Brightness.dark && usePureBlackColor.value;
+
+  // Pure black theme colors
+  const pureBlack = Color(0xFF000000);
+  const pureBlackElevated = Color(0xFF0A0A0A);
+  const pureBlackContainer = Color(0xFF121212);
+  const pureBlackContainerHigh = Color(0xFF1A1A1A);
 
   final bgColor = isLight
       ? colorScheme.surface
-      : (isPureBlackUsable ? const Color(0xFF000000) : null);
+      : (isPureBlack ? pureBlack : null);
 
-  final cardBgColor = isLight ? colorScheme.surfaceContainerLow : bgColor;
+  final cardBgColor = isLight
+      ? colorScheme.surfaceContainerLow
+      : (isPureBlack ? pureBlackElevated : null);
+
+  // modified color scheme for pure black theme
+  final effectiveColorScheme = isPureBlack
+      ? colorScheme.copyWith(
+          surface: pureBlack,
+          surfaceContainerLowest: pureBlack,
+          surfaceContainerLow: pureBlackElevated,
+          surfaceContainer: pureBlackContainer,
+          surfaceContainerHigh: pureBlackContainerHigh,
+          surfaceContainerHighest: pureBlackContainerHigh,
+        )
+      : colorScheme;
 
   return ThemeData(
     scaffoldBackgroundColor: bgColor,
-    colorScheme: colorScheme,
+    colorScheme: effectiveColorScheme,
     cardColor: cardBgColor,
     cardTheme: base.cardTheme.copyWith(
       elevation: 0,
@@ -106,7 +126,7 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
     ),
     appBarTheme: base.appBarTheme.copyWith(
       backgroundColor: bgColor,
-      foregroundColor: colorScheme.primary,
+      foregroundColor: effectiveColorScheme.primary,
       elevation: 0,
       scrolledUnderElevation: 0,
       centerTitle: true,
@@ -114,19 +134,22 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
         fontSize: 30,
         fontFamily: 'paytoneOne',
         fontWeight: FontWeight.w500,
-        color: colorScheme.primary,
+        color: effectiveColorScheme.primary,
         letterSpacing: -0.5,
       ),
       toolbarHeight: 64,
-      iconTheme: IconThemeData(color: colorScheme.onSurfaceVariant, size: 24),
+      iconTheme: IconThemeData(
+        color: effectiveColorScheme.onSurfaceVariant,
+        size: 24,
+      ),
       actionsIconTheme: IconThemeData(
-        color: colorScheme.onSurfaceVariant,
+        color: effectiveColorScheme.onSurfaceVariant,
         size: 24,
       ),
     ),
     listTileTheme: base.listTileTheme.copyWith(
-      textColor: colorScheme.primary,
-      iconColor: colorScheme.primary,
+      textColor: effectiveColorScheme.primary,
+      iconColor: effectiveColorScheme.primary,
     ),
     sliderTheme: base.sliderTheme.copyWith(
       year2023: false,
@@ -134,14 +157,18 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
       thumbSize: WidgetStateProperty.all(const Size(6, 30)),
     ),
     bottomSheetTheme: base.bottomSheetTheme.copyWith(
-      backgroundColor: isLight ? colorScheme.surfaceContainerLow : bgColor,
+      backgroundColor: isLight
+          ? colorScheme.surfaceContainerLow
+          : (isPureBlack ? pureBlackElevated : null),
     ),
     inputDecorationTheme: base.inputDecorationTheme.copyWith(
       filled: true,
       isDense: true,
       fillColor: isLight
           ? colorScheme.surfaceContainerHighest
-          : colorScheme.surfaceContainerHigh,
+          : (isPureBlack
+                ? pureBlackContainerHigh
+                : colorScheme.surfaceContainerHigh),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide.none,
@@ -149,30 +176,38 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
       contentPadding: const EdgeInsets.fromLTRB(18, 14, 20, 14),
     ),
     dialogTheme: base.dialogTheme.copyWith(
-      backgroundColor: isLight ? colorScheme.surfaceContainerLow : null,
+      backgroundColor: isLight
+          ? colorScheme.surfaceContainerLow
+          : (isPureBlack ? pureBlackContainer : null),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
     ),
     navigationBarTheme: base.navigationBarTheme.copyWith(
       backgroundColor: bgColor,
       elevation: 0,
       height: 70,
-      indicatorColor: colorScheme.primaryContainer,
+      indicatorColor: effectiveColorScheme.primaryContainer,
       iconTheme: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.selected)) {
-          return IconThemeData(color: colorScheme.onPrimaryContainer, size: 24);
+          return IconThemeData(
+            color: effectiveColorScheme.onPrimaryContainer,
+            size: 24,
+          );
         }
-        return IconThemeData(color: colorScheme.onSurfaceVariant, size: 24);
+        return IconThemeData(
+          color: effectiveColorScheme.onSurfaceVariant,
+          size: 24,
+        );
       }),
       labelTextStyle: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.selected)) {
           return TextStyle(
-            color: colorScheme.onSurface,
+            color: effectiveColorScheme.onSurface,
             fontSize: 12,
             fontWeight: FontWeight.w600,
           );
         }
         return TextStyle(
-          color: colorScheme.onSurfaceVariant,
+          color: effectiveColorScheme.onSurfaceVariant,
           fontSize: 12,
           fontWeight: FontWeight.w500,
         );
@@ -181,32 +216,34 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
     navigationRailTheme: base.navigationRailTheme.copyWith(
       backgroundColor: bgColor,
       elevation: 0,
-      indicatorColor: colorScheme.primaryContainer,
+      indicatorColor: effectiveColorScheme.primaryContainer,
       selectedIconTheme: IconThemeData(
-        color: colorScheme.onPrimaryContainer,
+        color: effectiveColorScheme.onPrimaryContainer,
         size: 24,
       ),
       unselectedIconTheme: IconThemeData(
-        color: colorScheme.onSurfaceVariant,
+        color: effectiveColorScheme.onSurfaceVariant,
         size: 24,
       ),
       selectedLabelTextStyle: TextStyle(
-        color: colorScheme.onSurface,
+        color: effectiveColorScheme.onSurface,
         fontSize: 12,
         fontWeight: FontWeight.w600,
       ),
       unselectedLabelTextStyle: TextStyle(
-        color: colorScheme.onSurfaceVariant,
+        color: effectiveColorScheme.onSurfaceVariant,
         fontSize: 12,
         fontWeight: FontWeight.w500,
       ),
     ),
     popupMenuTheme: base.popupMenuTheme.copyWith(
-      color: isLight ? colorScheme.surfaceContainerLow : null,
+      color: isLight
+          ? colorScheme.surfaceContainerLow
+          : (isPureBlack ? pureBlackContainer : null),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     ),
     dividerTheme: base.dividerTheme.copyWith(
-      color: colorScheme.outlineVariant,
+      color: effectiveColorScheme.outlineVariant,
       thickness: 1,
     ),
     visualDensity: VisualDensity.adaptivePlatformDensity,
