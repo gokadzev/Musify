@@ -351,6 +351,7 @@ class _CircularPlayButton extends StatelessWidget {
     final isLoading =
         processingState == AudioProcessingState.loading ||
         processingState == AudioProcessingState.buffering;
+    final isCompleted = processingState == AudioProcessingState.completed;
 
     return SizedBox(
       width: 48,
@@ -378,11 +379,15 @@ class _CircularPlayButton extends StatelessWidget {
             )
           else
             IconButton(
-              onPressed: isPlaying ? audioHandler.pause : audioHandler.play,
+              onPressed: isCompleted
+                  ? () => audioHandler.seek(Duration.zero)
+                  : (isPlaying ? audioHandler.pause : audioHandler.play),
               icon: Icon(
-                isPlaying
-                    ? FluentIcons.pause_16_filled
-                    : FluentIcons.play_16_filled,
+                isCompleted
+                    ? FluentIcons.arrow_counterclockwise_24_filled
+                    : (isPlaying
+                          ? FluentIcons.pause_16_filled
+                          : FluentIcons.play_16_filled),
                 color: colorScheme.primary,
                 size: 22,
               ),
