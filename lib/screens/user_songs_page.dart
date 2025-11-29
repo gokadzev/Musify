@@ -258,18 +258,47 @@ class _UserSongsPageState extends State<UserSongsPage> {
       icon: Icon(FluentIcons.delete_24_regular, color: primaryColor),
       iconSize: 24,
       onPressed: () {
+        final colorScheme = Theme.of(context).colorScheme;
+
         showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text(context.l10n!.clearRecentlyPlayed),
-              content: Text(context.l10n!.clearRecentlyPlayedQuestion),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text(context.l10n!.cancel.toUpperCase()),
+              backgroundColor: colorScheme.surface,
+              surfaceTintColor: Colors.transparent,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(28),
+              ),
+              icon: Icon(
+                FluentIcons.delete_24_regular,
+                color: colorScheme.error,
+                size: 32,
+              ),
+              title: Text(
+                context.l10n!.clearRecentlyPlayed,
+                style: TextStyle(
+                  color: colorScheme.onSurface,
+                  fontWeight: FontWeight.w600,
                 ),
-                TextButton(
+              ),
+              content: Text(
+                context.l10n!.clearRecentlyPlayedQuestion,
+                style: TextStyle(color: colorScheme.onSurfaceVariant),
+                textAlign: TextAlign.center,
+              ),
+              actionsAlignment: MainAxisAlignment.center,
+              actions: [
+                OutlinedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: colorScheme.outline),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(context.l10n!.cancel),
+                ),
+                FilledButton(
                   onPressed: () {
                     Navigator.pop(context);
                     userRecentlyPlayed.clear();
@@ -277,7 +306,13 @@ class _UserSongsPageState extends State<UserSongsPage> {
                     addOrUpdateData('user', 'recentlyPlayedSongs', []);
                     showToast(context, context.l10n!.recentlyPlayedMsg);
                   },
-                  child: Text(context.l10n!.clear.toUpperCase()),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: colorScheme.error,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(context.l10n!.clear),
                 ),
               ],
             );

@@ -21,6 +21,7 @@
 
 import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/extensions/l10n.dart';
 
@@ -71,34 +72,41 @@ Widget buildImagePreview({
   double width = 80,
   double height = 80,
 }) {
+  Widget? imageWidget;
+
   if (imageBase64 != null) {
     final base64Data = imageBase64.contains(',')
         ? imageBase64.split(',').last
         : imageBase64;
 
-    return Padding(
-      padding: const EdgeInsets.only(top: 8),
-      child: Image.memory(
-        base64Decode(base64Data),
-        width: width,
-        height: height,
-        fit: BoxFit.cover,
-      ),
+    imageWidget = Image.memory(
+      base64Decode(base64Data),
+      width: width,
+      height: height,
+      fit: BoxFit.cover,
     );
   } else if (imageUrl != null && imageUrl.isNotEmpty) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 8),
-      child: Image.network(
-        imageUrl,
-        width: width,
-        height: height,
-        fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => const Icon(Icons.broken_image),
+    imageWidget = Image.network(
+      imageUrl,
+      width: width,
+      height: height,
+      fit: BoxFit.cover,
+      errorBuilder: (context, _, __) => Icon(
+        FluentIcons.image_off_20_regular,
+        color: Theme.of(context).colorScheme.onSurfaceVariant,
       ),
     );
   }
 
-  return const SizedBox.shrink();
+  if (imageWidget == null) return const SizedBox.shrink();
+
+  return Padding(
+    padding: const EdgeInsets.only(top: 12),
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: imageWidget,
+    ),
+  );
 }
 
 Widget buildImagePickerRow(
@@ -106,21 +114,28 @@ Widget buildImagePickerRow(
   Function() onPickImage,
   bool isImagePicked,
 ) {
-  return Row(
-    children: [
-      ElevatedButton.icon(
-        onPressed: onPickImage,
-        icon: const Icon(Icons.image),
-        label: Text(context.l10n!.pickImageFromDevice),
+  final colorScheme = Theme.of(context).colorScheme;
+
+  return OutlinedButton.icon(
+    onPressed: onPickImage,
+    style: OutlinedButton.styleFrom(
+      foregroundColor: colorScheme.primary,
+      side: BorderSide(
+        color: isImagePicked ? colorScheme.primary : colorScheme.outline,
       ),
-      if (isImagePicked)
-        Padding(
-          padding: const EdgeInsets.only(left: 8),
-          child: Icon(
-            Icons.check_circle,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-        ),
-    ],
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    ),
+    icon: Icon(
+      isImagePicked
+          ? FluentIcons.checkmark_circle_20_filled
+          : FluentIcons.image_add_20_regular,
+      size: 20,
+    ),
+    label: Text(
+      isImagePicked
+          ? context.l10n!.imagePicked
+          : context.l10n!.pickImageFromDevice,
+    ),
   );
 }

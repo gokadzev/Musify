@@ -329,10 +329,7 @@ class _LibraryPageState extends State<LibraryPage> {
 
       return StatefulBuilder(
         builder: (context, dialogSetState) {
-          final theme = Theme.of(context);
-          final activeButtonBackground = theme.colorScheme.surfaceContainer;
-          final inactiveButtonBackground = theme.colorScheme.secondaryContainer;
-          final dialogBackgroundColor = theme.dialogTheme.backgroundColor;
+          final colorScheme = Theme.of(context).colorScheme;
 
           Future<void> _pickImage() async {
             final result = await pickImage();
@@ -352,56 +349,141 @@ class _LibraryPageState extends State<LibraryPage> {
           }
 
           return AlertDialog(
-            backgroundColor: dialogBackgroundColor,
+            backgroundColor: colorScheme.surface,
+            surfaceTintColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(28),
+            ),
+            title: Text(
+              context.l10n!.addPlaylist,
+              style: TextStyle(
+                color: colorScheme.onSurface,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
             content: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          dialogSetState(() {
-                            isYouTubeMode = true;
-                            id = '';
-                            customPlaylistName = '';
-                            imageUrl = null;
-                            imageBase64 = null;
-                          });
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: isYouTubeMode
-                              ? inactiveButtonBackground
-                              : activeButtonBackground,
+                  Container(
+                    decoration: BoxDecoration(
+                      color: colorScheme.surfaceContainerLow,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    padding: const EdgeInsets.all(4),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              dialogSetState(() {
+                                isYouTubeMode = true;
+                                id = '';
+                                customPlaylistName = '';
+                                imageUrl = null;
+                                imageBase64 = null;
+                              });
+                            },
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              decoration: BoxDecoration(
+                                color: isYouTubeMode
+                                    ? colorScheme.primaryContainer
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    FluentIcons.globe_20_filled,
+                                    size: 20,
+                                    color: isYouTubeMode
+                                        ? colorScheme.onPrimaryContainer
+                                        : colorScheme.onSurfaceVariant,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'YouTube',
+                                    style: TextStyle(
+                                      color: isYouTubeMode
+                                          ? colorScheme.onPrimaryContainer
+                                          : colorScheme.onSurfaceVariant,
+                                      fontWeight: isYouTubeMode
+                                          ? FontWeight.w600
+                                          : FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
                         ),
-                        child: const Icon(FluentIcons.globe_add_24_filled),
-                      ),
-                      const SizedBox(width: 10),
-                      ElevatedButton(
-                        onPressed: () {
-                          dialogSetState(() {
-                            isYouTubeMode = false;
-                            id = '';
-                            customPlaylistName = '';
-                            imageUrl = null;
-                            imageBase64 = null;
-                          });
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: isYouTubeMode
-                              ? activeButtonBackground
-                              : inactiveButtonBackground,
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              dialogSetState(() {
+                                isYouTubeMode = false;
+                                id = '';
+                                customPlaylistName = '';
+                                imageUrl = null;
+                                imageBase64 = null;
+                              });
+                            },
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              decoration: BoxDecoration(
+                                color: !isYouTubeMode
+                                    ? colorScheme.primaryContainer
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    FluentIcons.person_20_filled,
+                                    size: 20,
+                                    color: !isYouTubeMode
+                                        ? colorScheme.onPrimaryContainer
+                                        : colorScheme.onSurfaceVariant,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    context.l10n!.custom,
+                                    style: TextStyle(
+                                      color: !isYouTubeMode
+                                          ? colorScheme.onPrimaryContainer
+                                          : colorScheme.onSurfaceVariant,
+                                      fontWeight: !isYouTubeMode
+                                          ? FontWeight.w600
+                                          : FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
                         ),
-                        child: const Icon(FluentIcons.person_add_24_filled),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                  const SizedBox(height: 15),
+                  const SizedBox(height: 20),
                   if (isYouTubeMode)
                     TextField(
                       decoration: InputDecoration(
                         labelText: context.l10n!.youtubePlaylistLinkOrId,
+                        prefixIcon: Icon(
+                          FluentIcons.link_20_regular,
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        filled: true,
+                        fillColor: colorScheme.surfaceContainerLow,
                       ),
                       onChanged: (value) {
                         id = value;
@@ -411,16 +493,34 @@ class _LibraryPageState extends State<LibraryPage> {
                     TextField(
                       decoration: InputDecoration(
                         labelText: context.l10n!.customPlaylistName,
+                        prefixIcon: Icon(
+                          FluentIcons.text_field_20_regular,
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        filled: true,
+                        fillColor: colorScheme.surfaceContainerLow,
                       ),
                       onChanged: (value) {
                         customPlaylistName = value;
                       },
                     ),
                     if (imageBase64 == null) ...[
-                      const SizedBox(height: 7),
+                      const SizedBox(height: 12),
                       TextField(
                         decoration: InputDecoration(
                           labelText: context.l10n!.customPlaylistImgUrl,
+                          prefixIcon: Icon(
+                            FluentIcons.image_20_regular,
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          filled: true,
+                          fillColor: colorScheme.surfaceContainerLow,
                         ),
                         onChanged: (value) {
                           imageUrl = value;
@@ -429,7 +529,7 @@ class _LibraryPageState extends State<LibraryPage> {
                         },
                       ),
                     ],
-                    const SizedBox(height: 7),
+                    const SizedBox(height: 12),
                     if (imageUrl == null) ...[
                       buildImagePickerRow(
                         context,
@@ -444,7 +544,13 @@ class _LibraryPageState extends State<LibraryPage> {
             ),
             actions: <Widget>[
               TextButton(
-                child: Text(context.l10n!.add.toUpperCase()),
+                onPressed: () => Navigator.pop(context),
+                child: Text(
+                  context.l10n!.cancel,
+                  style: TextStyle(color: colorScheme.onSurfaceVariant),
+                ),
+              ),
+              FilledButton.icon(
                 onPressed: () async {
                   if (isYouTubeMode && id.isNotEmpty) {
                     showToast(context, await addUserPlaylist(id, context));
@@ -466,6 +572,8 @@ class _LibraryPageState extends State<LibraryPage> {
 
                   Navigator.pop(context);
                 },
+                icon: const Icon(FluentIcons.add_20_filled),
+                label: Text(context.l10n!.add),
               ),
             ],
           );
@@ -502,27 +610,53 @@ class _LibraryPageState extends State<LibraryPage> {
     context: context,
     builder: (BuildContext context) {
       var folderName = '';
+      final colorScheme = Theme.of(context).colorScheme;
 
       return AlertDialog(
-        title: Text(context.l10n!.createFolder),
+        backgroundColor: colorScheme.surface,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+        icon: Icon(
+          FluentIcons.folder_add_24_regular,
+          color: colorScheme.primary,
+          size: 32,
+        ),
+        title: Text(
+          context.l10n!.createFolder,
+          style: TextStyle(
+            color: colorScheme.onSurface,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         content: TextField(
           decoration: InputDecoration(
             labelText: context.l10n!.folderName,
             hintText: context.l10n!.newFolder,
+            prefixIcon: Icon(
+              FluentIcons.folder_20_regular,
+              color: colorScheme.onSurfaceVariant,
+            ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            filled: true,
+            fillColor: colorScheme.surfaceContainerLow,
           ),
           onChanged: (value) {
             folderName = value;
           },
         ),
+        actionsAlignment: MainAxisAlignment.center,
         actions: <Widget>[
-          TextButton(
-            child: Text(context.l10n!.cancel.toUpperCase()),
-            onPressed: () {
-              Navigator.pop(context);
-            },
+          OutlinedButton(
+            onPressed: () => Navigator.pop(context),
+            style: OutlinedButton.styleFrom(
+              side: BorderSide(color: colorScheme.outline),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: Text(context.l10n!.cancel),
           ),
-          TextButton(
-            child: Text(context.l10n!.create.toUpperCase()),
+          FilledButton.icon(
             onPressed: () {
               if (folderName.trim().isNotEmpty) {
                 final result = createPlaylistFolder(folderName.trim());
@@ -532,6 +666,8 @@ class _LibraryPageState extends State<LibraryPage> {
               }
               Navigator.pop(context);
             },
+            icon: const Icon(FluentIcons.add_20_filled),
+            label: Text(context.l10n!.create),
           ),
         ],
       );

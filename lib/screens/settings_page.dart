@@ -730,18 +730,33 @@ class SettingsPage extends StatelessWidget {
   }
 
   Future<void> _backupUserData(BuildContext context) async {
+    final colorScheme = Theme.of(context).colorScheme;
+
     try {
       await showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            content: Text(context.l10n!.folderRestrictions),
+            backgroundColor: colorScheme.surface,
+            surfaceTintColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(28),
+            ),
+            icon: Icon(
+              FluentIcons.info_24_regular,
+              color: colorScheme.primary,
+              size: 32,
+            ),
+            content: Text(
+              context.l10n!.folderRestrictions,
+              style: TextStyle(color: colorScheme.onSurfaceVariant),
+              textAlign: TextAlign.center,
+            ),
+            actionsAlignment: MainAxisAlignment.center,
             actions: <Widget>[
-              TextButton(
-                child: Text(context.l10n!.understand.toUpperCase()),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
+              FilledButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(context.l10n!.understand),
               ),
             ],
           );

@@ -377,6 +377,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
           return StatefulBuilder(
             builder: (context, dialogSetState) {
+              final colorScheme = Theme.of(context).colorScheme;
+
               Future<void> _pickImage() async {
                 final result = await pickImage();
                 if (result != null) {
@@ -395,27 +397,57 @@ class _PlaylistPageState extends State<PlaylistPage> {
               }
 
               return AlertDialog(
+                backgroundColor: colorScheme.surface,
+                surfaceTintColor: Colors.transparent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(28),
+                ),
+                title: Text(
+                  context.l10n!.editPlaylist,
+                  style: TextStyle(
+                    color: colorScheme.onSurface,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
                 content: SingleChildScrollView(
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      const SizedBox(height: 7),
                       TextField(
                         controller: TextEditingController(
                           text: customPlaylistName,
                         ),
                         decoration: InputDecoration(
                           labelText: context.l10n!.customPlaylistName,
+                          prefixIcon: Icon(
+                            FluentIcons.text_field_20_regular,
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          filled: true,
+                          fillColor: colorScheme.surfaceContainerLow,
                         ),
                         onChanged: (value) {
                           customPlaylistName = value;
                         },
                       ),
                       if (imageBase64 == null) ...[
-                        const SizedBox(height: 7),
+                        const SizedBox(height: 12),
                         TextField(
                           controller: TextEditingController(text: imageUrl),
                           decoration: InputDecoration(
                             labelText: context.l10n!.customPlaylistImgUrl,
+                            prefixIcon: Icon(
+                              FluentIcons.image_20_regular,
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            filled: true,
+                            fillColor: colorScheme.surfaceContainerLow,
                           ),
                           onChanged: (value) {
                             imageUrl = value;
@@ -424,7 +456,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                           },
                         ),
                       ],
-                      const SizedBox(height: 7),
+                      const SizedBox(height: 12),
                       if (imageUrl == null) ...[
                         buildImagePickerRow(
                           context,
@@ -438,7 +470,13 @@ class _PlaylistPageState extends State<PlaylistPage> {
                 ),
                 actions: <Widget>[
                   TextButton(
-                    child: Text(context.l10n!.update.toUpperCase()),
+                    onPressed: () => Navigator.pop(context),
+                    child: Text(
+                      context.l10n!.cancel,
+                      style: TextStyle(color: colorScheme.onSurfaceVariant),
+                    ),
+                  ),
+                  FilledButton.icon(
                     onPressed: () {
                       final index = userCustomPlaylists.value.indexOf(
                         widget.playlistData,
@@ -472,6 +510,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
                       Navigator.pop(context);
                     },
+                    icon: const Icon(FluentIcons.save_20_filled),
+                    label: Text(context.l10n!.update),
                   ),
                 ],
               );
@@ -565,24 +605,59 @@ class _PlaylistPageState extends State<PlaylistPage> {
   }
 
   void _showRemoveOfflineDialog(String playlistId) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(context.l10n!.removeOfflinePlaylist),
-          content: Text(context.l10n!.removeOfflinePlaylistConfirm),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(context.l10n!.cancel.toUpperCase()),
+          backgroundColor: colorScheme.surface,
+          surfaceTintColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(28),
+          ),
+          icon: Icon(
+            FluentIcons.cloud_off_24_regular,
+            color: colorScheme.error,
+            size: 32,
+          ),
+          title: Text(
+            context.l10n!.removeOfflinePlaylist,
+            style: TextStyle(
+              color: colorScheme.onSurface,
+              fontWeight: FontWeight.w600,
             ),
-            TextButton(
+          ),
+          content: Text(
+            context.l10n!.removeOfflinePlaylistConfirm,
+            style: TextStyle(color: colorScheme.onSurfaceVariant),
+            textAlign: TextAlign.center,
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: [
+            OutlinedButton(
+              onPressed: () => Navigator.pop(context),
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: colorScheme.outline),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(context.l10n!.cancel),
+            ),
+            FilledButton(
               onPressed: () {
                 offlinePlaylistService.removeOfflinePlaylist(playlistId);
                 Navigator.pop(context);
                 showToast(context, context.l10n!.playlistRemovedFromOffline);
               },
-              child: Text(context.l10n!.remove.toUpperCase()),
+              style: FilledButton.styleFrom(
+                backgroundColor: colorScheme.error,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(context.l10n!.remove),
             ),
           ],
         );
