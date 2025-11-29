@@ -265,7 +265,7 @@ class _MetadataWidget extends StatelessWidget {
             child: Text(
               title,
               style: TextStyle(
-                color: colorScheme.onSurface,
+                color: colorScheme.secondary,
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 0.1,

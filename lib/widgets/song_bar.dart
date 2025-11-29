@@ -273,7 +273,10 @@ class _SongBarState extends State<SongBar> {
               color: colorScheme.primary,
             ),
             const SizedBox(width: 8),
-            Text(context.l10n!.playNext),
+            Text(
+              context.l10n!.playNext,
+              style: TextStyle(color: colorScheme.secondary),
+            ),
           ],
         ),
       ),
@@ -290,6 +293,7 @@ class _SongBarState extends State<SongBar> {
                   value
                       ? context.l10n!.removeFromLikedSongs
                       : context.l10n!.addToLikedSongs,
+                  style: TextStyle(color: colorScheme.secondary),
                 ),
               ],
             );
@@ -303,7 +307,10 @@ class _SongBarState extends State<SongBar> {
             children: [
               Icon(FluentIcons.delete_24_filled, color: colorScheme.primary),
               const SizedBox(width: 8),
-              Text(context.l10n!.removeFromPlaylist),
+              Text(
+                context.l10n!.removeFromPlaylist,
+                style: TextStyle(color: colorScheme.secondary),
+              ),
             ],
           ),
         ),
@@ -313,7 +320,10 @@ class _SongBarState extends State<SongBar> {
           children: [
             Icon(FluentIcons.add_24_regular, color: colorScheme.primary),
             const SizedBox(width: 8),
-            Text(context.l10n!.addToPlaylist),
+            Text(
+              context.l10n!.addToPlaylist,
+              style: TextStyle(color: colorScheme.secondary),
+            ),
           ],
         ),
       ),
@@ -324,7 +334,10 @@ class _SongBarState extends State<SongBar> {
             children: [
               Icon(FluentIcons.delete_24_filled, color: colorScheme.primary),
               const SizedBox(width: 8),
-              Text(context.l10n!.removeFromRecentlyPlayed),
+              Text(
+                context.l10n!.removeFromRecentlyPlayed,
+                style: TextStyle(color: colorScheme.secondary),
+              ),
             ],
           ),
         ),
@@ -346,6 +359,7 @@ class _SongBarState extends State<SongBar> {
                   value
                       ? context.l10n!.removeOffline
                       : context.l10n!.makeOffline,
+                  style: TextStyle(color: colorScheme.secondary),
                 ),
               ],
             );
@@ -375,7 +389,11 @@ class _SongInfo extends StatelessWidget {
         Text(
           title,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 15,
+            color: colorScheme.secondary,
+          ),
         ),
         const SizedBox(height: 2),
         Text(

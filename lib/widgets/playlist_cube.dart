@@ -89,7 +89,7 @@ class PlaylistCube extends StatelessWidget {
             ? context.l10n!.album
             : context.l10n!.playlist,
         style: TextStyle(
-          color: colorScheme.onSurface,
+          color: colorScheme.secondary,
           fontSize: 11,
           fontWeight: FontWeight.w600,
           letterSpacing: 0.3,

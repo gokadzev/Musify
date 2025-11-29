@@ -45,7 +45,7 @@ class SectionTitle extends StatelessWidget {
               child: Text(
                 title,
                 style: TextStyle(
-                  color: colorScheme.onSurface,
+                  color: colorScheme.secondary,
                   fontSize:
                       Theme.of(context).textTheme.titleMedium?.fontSize ?? 16,
                   fontWeight: FontWeight.w600,
