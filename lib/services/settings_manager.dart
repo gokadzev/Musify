@@ -77,7 +77,7 @@ Locale languageSetting = getLocaleFromLanguageCode(
 );
 
 final themeModeSetting =
-    Hive.box('settings').get('themeIndex', defaultValue: 1) as int;
+    Hive.box('settings').get('themeIndex', defaultValue: 0) as int;
 
 String playlistSortSetting = Hive.box(
   'settings',
