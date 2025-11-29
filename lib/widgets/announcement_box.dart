@@ -21,56 +21,103 @@
 
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:musify/utilities/common_variables.dart';
+import 'package:musify/extensions/l10n.dart';
 import 'package:musify/utilities/url_launcher.dart';
 
 class AnnouncementBox extends StatelessWidget {
   const AnnouncementBox({
     super.key,
     required this.message,
-    required this.backgroundColor,
-    required this.textColor,
     required this.url,
     this.onDismiss,
   });
   final String message;
-  final Color backgroundColor;
-  final Color textColor;
   final String url;
   final VoidCallback? onDismiss;
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => launchURL(Uri.parse(url)),
-      child: Card(
-        color: backgroundColor,
-        shape: RoundedRectangleBorder(borderRadius: commonBarRadius),
-        elevation: 0.1,
-        child: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Row(
-            children: [
-              Icon(Icons.notifications, color: textColor, size: 32),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Text(
-                  message,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: textColor,
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Material(
+        color: colorScheme.primaryContainer,
+        borderRadius: BorderRadius.circular(20),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: () => launchURL(Uri.parse(url)),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: colorScheme.primary.withValues(alpha: 0.15),
+                    shape: BoxShape.circle,
                   ),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 2,
+                  child: Icon(
+                    FluentIcons.megaphone_24_filled,
+                    color: colorScheme.onPrimaryContainer,
+                    size: 24,
+                  ),
                 ),
-              ),
-              if (onDismiss != null)
-                IconButton(
-                  icon: Icon(FluentIcons.dismiss_24_filled, color: textColor),
-                  onPressed: onDismiss,
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        message,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 15,
+                          color: colorScheme.onPrimaryContainer,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Text(
+                            context.l10n!.tapToView,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: colorScheme.onPrimaryContainer.withValues(
+                                alpha: 0.7,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Icon(
+                            FluentIcons.arrow_right_16_filled,
+                            size: 12,
+                            color: colorScheme.onPrimaryContainer.withValues(
+                              alpha: 0.7,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-            ],
+                if (onDismiss != null)
+                  IconButton(
+                    icon: Icon(
+                      FluentIcons.dismiss_circle_24_regular,
+                      color: colorScheme.onPrimaryContainer.withValues(
+                        alpha: 0.7,
+                      ),
+                    ),
+                    onPressed: onDismiss,
+                    style: IconButton.styleFrom(
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                  ),
+              ],
+            ),
           ),
         ),
       ),
