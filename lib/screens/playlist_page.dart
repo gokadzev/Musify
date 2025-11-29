@@ -253,7 +253,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
             runSpacing: 8,
             children: [
               if (songsLength > 0) _buildPlayButton(primaryColor),
-              if (widget.playlistId != null) _buildLikeButton(primaryColor),
+              if (widget.playlistId != null && !isUserCreated)
+                _buildLikeButton(primaryColor),
               _buildSyncButton(primaryColor),
               _buildDownloadButton(),
               if (isUserCreated) ...[
