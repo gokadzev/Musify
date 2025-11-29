@@ -464,48 +464,58 @@ class SettingsPage extends StatelessWidget {
   }
 
   void _showAccentColorPicker(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     showCustomBottomSheet(
       context,
-      GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 5,
-        ),
-        shrinkWrap: true,
-        physics: const BouncingScrollPhysics(),
-        itemCount: availableColors.length,
-        itemBuilder: (context, index) {
-          final color = availableColors[index];
-          final isSelected = color == primaryColorSetting;
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 5,
+            mainAxisSpacing: 12,
+            crossAxisSpacing: 12,
+          ),
+          shrinkWrap: true,
+          physics: const BouncingScrollPhysics(),
+          itemCount: availableColors.length,
+          itemBuilder: (context, index) {
+            final color = availableColors[index];
+            final isSelected = color == primaryColorSetting;
 
-          return GestureDetector(
-            onTap: () {
-              addOrUpdateData('settings', 'accentColor', color.toARGB32());
-              Musify.updateAppState(
-                context,
-                newAccentColor: color,
-                useSystemColor: false,
-              );
-              showToast(context, context.l10n!.accentChangeMsg);
-              Navigator.pop(context);
-            },
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                CircleAvatar(
-                  radius: 25,
-                  backgroundColor: themeMode == ThemeMode.light
-                      ? color.withAlpha(150)
-                      : color,
+            return GestureDetector(
+              onTap: () {
+                addOrUpdateData('settings', 'accentColor', color.toARGB32());
+                Musify.updateAppState(
+                  context,
+                  newAccentColor: color,
+                  useSystemColor: false,
+                );
+                showToast(context, context.l10n!.accentChangeMsg);
+                Navigator.pop(context);
+              },
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                decoration: BoxDecoration(
+                  color: color,
+                  shape: BoxShape.circle,
+                  border: isSelected
+                      ? Border.all(color: colorScheme.onSurface, width: 3)
+                      : null,
                 ),
-                if (isSelected)
-                  Icon(
-                    Icons.check,
-                    color: Theme.of(context).colorScheme.onPrimary,
-                  ),
-              ],
-            ),
-          );
-        },
+                child: isSelected
+                    ? Icon(
+                        FluentIcons.checkmark_20_filled,
+                        color: color.computeLuminance() > 0.5
+                            ? Colors.black
+                            : Colors.white,
+                        size: 24,
+                      )
+                    : null,
+              ),
+            );
+          },
+        ),
       ),
     );
   }
