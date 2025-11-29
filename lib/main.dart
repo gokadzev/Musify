@@ -195,40 +195,6 @@ class _MusifyState extends State<Musify> {
     super.dispose();
   }
 
-  void showUpdateCheckDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(context.l10n!.checkForUpdates),
-          content: Text(context.l10n!.enableUpdateChecksDescription),
-          actions: [
-            TextButton(
-              onPressed: () {
-                shouldWeCheckUpdates.value = false;
-                addOrUpdateData('settings', 'shouldWeCheckUpdates', false);
-                Navigator.of(context).pop();
-              },
-              child: Text(context.l10n!.no),
-            ),
-            TextButton(
-              onPressed: () {
-                shouldWeCheckUpdates.value = true;
-                addOrUpdateData('settings', 'shouldWeCheckUpdates', true);
-                if (!isFdroidBuild && kReleaseMode && !offlineMode.value) {
-                  checkAppUpdates();
-                  isUpdateChecked = true;
-                }
-                Navigator.of(context).pop();
-              },
-              child: Text(context.l10n!.yes),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   void _onOfflineModeChanged() {
     // Force rebuild when offline mode changes
     setState(() {});
