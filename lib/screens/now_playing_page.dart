@@ -1023,16 +1023,20 @@ class BottomActionsRow extends StatelessWidget {
                     ],
                   ),
                 ),
-                IconButton(
+                FilledButton.tonalIcon(
                   onPressed: () {
                     audioHandler.clearQueue();
                     Navigator.pop(context);
                   },
-                  icon: Icon(
-                    FluentIcons.broom_24_filled,
-                    color: colorScheme.onSurfaceVariant,
+                  icon: const Icon(FluentIcons.dismiss_24_regular, size: 18),
+                  label: Text(context.l10n!.clear),
+                  style: FilledButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    visualDensity: VisualDensity.compact,
                   ),
-                  tooltip: context.l10n!.clearQueue,
                 ),
               ],
             ),
