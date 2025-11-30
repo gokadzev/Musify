@@ -52,7 +52,7 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
-    final isLargeScreen = size.width > 800;
+    final isLargeScreen = size.width > 800 && size.height > 600;
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final screenWidth = size.width;
