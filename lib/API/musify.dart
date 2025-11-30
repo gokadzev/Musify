@@ -1256,11 +1256,16 @@ Future<void> updateRecentlyPlayed(dynamic songId) async {
       userRecentlyPlayed.removeLast();
     }
 
-    userRecentlyPlayed.removeWhere((song) => song['ytid'] == songId);
-
-    final newSongDetails = await getSongDetails(0, songId);
-
-    userRecentlyPlayed.insert(0, newSongDetails);
+    final existingIndex = userRecentlyPlayed.indexWhere(
+      (song) => song['ytid'] == songId,
+    );
+    if (existingIndex != -1) {
+      final song = userRecentlyPlayed.removeAt(existingIndex);
+      userRecentlyPlayed.insert(0, song);
+    } else {
+      final newSongDetails = await getSongDetails(0, songId);
+      userRecentlyPlayed.insert(0, newSongDetails);
+    }
     currentRecentlyPlayedLength.value = userRecentlyPlayed.length;
     await addOrUpdateData('user', 'recentlyPlayedSongs', userRecentlyPlayed);
   } catch (e, stackTrace) {
