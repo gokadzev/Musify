@@ -104,6 +104,7 @@ void showToastWithButton(
         textColor: colorScheme.secondary,
         onPressed: () => onPressedToast(),
       ),
+      persist: false,
       duration: duration,
     ),
   );
