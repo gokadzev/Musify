@@ -46,6 +46,19 @@ class _CacheEntry {
   }
 }
 
+// Maximum number of entries allowed in the memory cache
+const int _maxMemoryCacheSize = 500;
+const int _memoryCacheTrimSize = 100;
+
+void _trimMemoryCacheIfNeeded() {
+  if (_memoryCache.length > _maxMemoryCacheSize) {
+    final keysToRemove = _memoryCache.keys.take(_memoryCacheTrimSize).toList();
+    for (final key in keysToRemove) {
+      _memoryCache.remove(key);
+    }
+  }
+}
+
 Future<void> addOrUpdateData(String category, String key, dynamic value) async {
   final _box = await _openBox(category);
   await _box.put(key, value);
@@ -56,6 +69,7 @@ Future<void> addOrUpdateData(String category, String key, dynamic value) async {
     // Update memory cache too
     final cacheKey = '${category}_$key';
     _memoryCache[cacheKey] = _CacheEntry(value, DateTime.now());
+    _trimMemoryCacheIfNeeded();
   }
 }
 
@@ -74,6 +88,7 @@ Future<dynamic> getData(
   if (memCacheEntry != null && memCacheEntry.isValid(cachingDuration)) {
     return memCacheEntry.data;
   }
+  _trimMemoryCacheIfNeeded();
 
   final _box = await _openBox(category);
   if (category == 'cache') {
