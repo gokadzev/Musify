@@ -605,6 +605,8 @@ class PlayerControlButtons extends StatelessWidget {
                             : null,
                         style: IconButton.styleFrom(
                           backgroundColor: colorScheme.surfaceContainerHighest,
+                          disabledBackgroundColor:
+                              colorScheme.surfaceContainerHighest,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                           ),
@@ -632,6 +634,8 @@ class PlayerControlButtons extends StatelessWidget {
                             : audioHandler.skipToNext(),
                         style: IconButton.styleFrom(
                           backgroundColor: colorScheme.surfaceContainerHighest,
+                          disabledBackgroundColor:
+                              colorScheme.surfaceContainerHighest,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                           ),
