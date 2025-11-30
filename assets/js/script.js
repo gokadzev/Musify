@@ -15,7 +15,6 @@ function makeHttpRequest(url, callback) {
   xmlHttp.open('GET', url, true)
   xmlHttp.send(null)
 }
-
 const swiper = new Swiper('.product-swiper', {
   slidesPerView: 3,
   spaceBetween: 50,
@@ -75,24 +74,59 @@ function fetchAppMetadata(apiUrl) {
 }
 
 function fetchAppFeatures(featuresUrl) {
+  const featureIcons = [
+    'music_note',
+    'cloud_download',
+    'queue_music',
+    'lyrics',
+    'high_quality',
+    'search',
+    'playlist_add',
+    'equalizer',
+    'language',
+    'palette',
+    'timer',
+    'headphones',
+    'library_music',
+    'recommend',
+    'sync',
+    'auto_awesome',
+  ]
+
   makeHttpRequest(featuresUrl, (res) => {
     try {
       const lines = res.split(/\r?\n/).filter((line) => line.trim() !== '')
 
       const features = lines
         .slice(1)
-        .map((line) => line.trim().replace(/^\*/, '•').trim())
+        .map((line) =>
+          line
+            .trim()
+            .replace(/^\*\s*/, '')
+            .trim()
+        )
+        .filter((line) => line.length > 0)
 
       if (features.length > 0) {
-        features.forEach((feature) => {
-          const listItem = document.createElement('p')
-          listItem.textContent = feature
-          featuresElement.appendChild(listItem)
+        features.forEach((feature, index) => {
+          const card = document.createElement('article')
+          card.className = 'feature-card'
+
+          const icon = document.createElement('i')
+          icon.textContent = featureIcons[index % featureIcons.length]
+
+          const text = document.createElement('span')
+          text.textContent = feature
+
+          card.appendChild(icon)
+          card.appendChild(text)
+          featuresElement.appendChild(card)
         })
 
-        const extraItem = document.createElement('p')
-        extraItem.textContent = '• And more...'
-        featuresElement.appendChild(extraItem)
+        const extraCard = document.createElement('article')
+        extraCard.className = 'feature-card'
+        extraCard.innerHTML = '<i>more_horiz</i><span>And much more...</span>'
+        featuresElement.appendChild(extraCard)
       } else {
         console.warn('No features found in the response.')
       }
@@ -103,20 +137,19 @@ function fetchAppFeatures(featuresUrl) {
 }
 
 function parseChangelog(text) {
-  const lines = text.split('\r\n').filter((line) => line.trim() !== '');
+  const lines = text.split('\r\n').filter((line) => line.trim() !== '')
 
   lines.forEach((line) => {
-    const itemMatch = line.match(/^\*\s+(.+)$/);
+    const itemMatch = line.match(/^\*\s+(.+)$/)
     if (itemMatch) {
-      const processedText = itemMatch[1].replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+      const processedText = itemMatch[1].replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
 
-      const listItem = document.createElement('p');
-      listItem.innerHTML = `• ${processedText}`;
-      changelogElement.appendChild(listItem);
+      const listItem = document.createElement('p')
+      listItem.innerHTML = `• ${processedText}`
+      changelogElement.appendChild(listItem)
     }
-  });
+  })
 }
-
 
 function assignNavClass() {
   const nav = document.getElementById('navigation-bar')

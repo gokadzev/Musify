@@ -14,14 +14,12 @@
     />
     <meta
       name="description"
-      content="The open-source music app for Android that offers streaming and
-      offline listening."
+      content="The open-source music app for Android that offers streaming and offline listening."
     />
     <meta property="og:title" content="Musify" />
     <meta
       property="og:description"
-      content="The open-source music app for Android that offers streaming and
-      offline listening."
+      content="The open-source music app for Android that offers streaming and offline listening."
     />
     <meta
       property="og:image"
@@ -53,154 +51,221 @@
           src="https://github.com/gokadzev/Musify/raw/master/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
         />
       </header>
-      <a href="#" class="active">
+      <a href="#hero" class="active">
         <i>home</i>
         <span>Home</span>
+      </a>
+      <a href="#features">
+        <i>stars</i>
+        <span>Features</span>
+      </a>
+      <a href="#screenshots">
+        <i>photo_library</i>
+        <span>Gallery</span>
       </a>
       <a href="https://github.com/gokadzev/Musify">
         <i>code</i>
         <span>Code</span>
-      </a>
-      <a href="https://ko-fi.com/gokadzev">
-        <i>favorite</i>
-        <span>Sponsor</span>
       </a>
       <a href="https://github.com/gokadzev/Musify/discussions/340">
         <i>help</i>
         <span>F.A.Q</span>
       </a>
     </nav>
-    <main class="responsive center">
-      <article class="section center-align medium-padding">
-        <h3 class="section-title light">Musify</h3>
-        <p>
-          The open-source music app for Android that offers streaming and
-          offline listening. <br />
-          Enjoy custom playlists, high-quality audio, and lyrics support - all
-          completely free, with no ads or subscriptions.
-        </p>
-        <div class="space"></div>
-        <nav class="center-align website-actions">
-          <a id="download">
-            <button class="small-round">
-              <i>download</i>
-              <span>Download <span id="version"></span></span>
-            </button>
-          </a>
-          <a href="https://github.com/gokadzev/Musify">
-            <button class="small-round">
-              <i>star</i>
-              <span>Star the repository</span>
-            </button>
-          </a>
-          <a href="https://ko-fi.com/gokadzev">
-            <button class="small-round">
-              <i>favorite</i>
-              <span>Sponsor the project</span>
-            </button>
-          </a>
-        </nav>
+
+    <main class="responsive">
+      <!-- Hero Section -->
+      <section id="hero" class="hero-section">
+        <div class="hero-content">
+          <img
+            class="hero-logo"
+            src="https://github.com/gokadzev/Musify/raw/master/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
+            alt="Musify Logo"
+          />
+          <h1 class="hero-title">Musify</h1>
+          <p class="hero-subtitle">
+            The open-source music app for Android that offers streaming and
+            offline listening.
+          </p>
+          <div class="hero-actions">
+            <a id="download">
+              <button class="extra round">
+                <i>download</i>
+                <span>Download <span id="version"></span></span>
+              </button>
+            </a>
+            <a href="https://github.com/gokadzev/Musify">
+              <button class="round border">
+                <i>star</i>
+                <span>Star on GitHub</span>
+              </button>
+            </a>
+            <a href="https://ko-fi.com/gokadzev">
+              <button class="round border">
+                <i>favorite</i>
+                <span>Sponsor</span>
+              </button>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Notice Banner -->
+      <article id="notice" class="notice-banner">
+        <i>info</i>
+        <div>
+          <strong>Official Sources Only</strong>
+          <p>
+            Musify does not have any other official websites. Download only from
+            <a href="https://github.com/gokadzev/Musify">GitHub</a> or
+            <a href="https://f-droid.org/packages/com.gokadzev.musify.fdroid"
+              >F-Droid</a
+            >.
+          </p>
+        </div>
       </article>
 
-      <article class="section medium-padding" id="notice">
-        <h3 class="section-title light">Notice</h3>
-        <p>
-          <b> Musify does not have any other official websites or domains.</b>
-          <br />
-          It is recommended to download the builds either from here,
-          <a href="https://github.com/gokadzev/Musify">GitHub</a>, or
-          <a href="https://f-droid.org/packages/com.gokadzev.musify.fdroid"
-            >F-Droid</a
-          >.
-        </p>
-      </article>
+      <!-- Statistics Section -->
+      <section id="statistics" class="stats-section">
+        <h2 class="section-title">
+          <i>trending_up</i>
+          <span>Project Stats</span>
+        </h2>
+        <div class="stats-grid">
+          <article class="stat-card">
+            <i>star</i>
+            <div class="stat-content">
+              <span class="stat-label">Stars</span>
+              <a href="https://github.com/gokadzev/Musify/stargazers">
+                <img
+                  src="https://img.shields.io/github/stars/gokadzev/Musify?style=flat-square&color=5d3f3b&labelColor=ffb4a9&label="
+                  alt="Stars"
+                />
+              </a>
+            </div>
+          </article>
+          <article class="stat-card">
+            <i>fork_right</i>
+            <div class="stat-content">
+              <span class="stat-label">Forks</span>
+              <a href="https://github.com/gokadzev/Musify/fork">
+                <img
+                  src="https://img.shields.io/github/forks/gokadzev/Musify?style=flat-square&color=5d3f3b&labelColor=ffb4a9&label="
+                  alt="Forks"
+                />
+              </a>
+            </div>
+          </article>
+          <article class="stat-card">
+            <i>download</i>
+            <div class="stat-content">
+              <span class="stat-label">Downloads</span>
+              <a href="https://github.com/gokadzev/Musify/releases">
+                <img
+                  src="https://img.shields.io/github/downloads/gokadzev/Musify/total?style=flat-square&color=5d3f3b&labelColor=ffb4a9&label="
+                  alt="Downloads"
+                />
+              </a>
+            </div>
+          </article>
+        </div>
+      </section>
 
-      <article class="section medium-padding" id="statistics">
-        <h3 class="section-title light">Statistics</h3>
-        <p>
-          <a href="https://github.com/gokadzev/Musify/stargazers">
-            <img
-              src="https://img.shields.io/github/stars/gokadzev/Musify?style=flat-square&color=5d3f3b&labelColor=ffb4a9"
-              alt="Stars"
-            />
-          </a>
-          <a href="https://github.com/gokadzev/Musify/fork">
-            <img
-              src="https://img.shields.io/github/forks/gokadzev/Musify?style=flat-square&color=5d3f3b&labelColor=ffb4a9"
-              alt="Forks"
-            />
-          </a>
-          <a href="https://github.com/gokadzev/Musify/releases">
-            <img
-              src="https://img.shields.io/github/downloads/gokadzev/Musify/total?style=flat-square&color=5d3f3b&labelColor=ffb4a9"
-              alt="Downloads"
-            />
-          </a>
-        </p>
-      </article>
+      <!-- Features Section -->
+      <section id="features" class="features-section">
+        <h2 class="section-title">
+          <i>auto_awesome</i>
+          <span>Features</span>
+        </h2>
+        <div id="features_element" class="features-grid"></div>
+      </section>
 
-      <article class="section medium-padding" id="changelog">
-        <h3 class="section-title light">Changelog</h3>
-        <div id="changelog_element" class="light"></div>
-      </article>
-
-      <article class="section medium-padding" id="features">
-        <h3 class="section-title light">Features</h3>
-        <div id="features_element" class="light"></div>
-      </article>
-
-      <article class="section medium-padding" id="screenshots">
-        <h3 class="section-title light">Screenshots</h3>
+      <!-- Screenshots Section -->
+      <section id="screenshots" class="screenshots-section">
+        <h2 class="section-title">
+          <i>photo_library</i>
+          <span>Screenshots</span>
+        </h2>
         <div class="swiper product-swiper">
           <div class="swiper-wrapper">
             <div class="swiper-slide">
-              <div class="product-item">
-                <div class="image-holder">
-                  <img
-                    src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/01.jpg"
-                    alt="collection"
-                    class="rounded-shape"
-                  />
-                </div>
+              <div class="screenshot-item">
+                <img
+                  src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/01.jpg"
+                  alt="Musify Screenshot 1"
+                  class="screenshot-img"
+                />
               </div>
             </div>
             <div class="swiper-slide">
-              <div class="product-item">
-                <div class="image-holder">
-                  <img
-                    src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/02.jpg"
-                    alt="collection"
-                    class="rounded-shape"
-                  />
-                </div>
+              <div class="screenshot-item">
+                <img
+                  src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/02.jpg"
+                  alt="Musify Screenshot 2"
+                  class="screenshot-img"
+                />
               </div>
             </div>
             <div class="swiper-slide">
-              <div class="product-item">
-                <div class="image-holder">
-                  <img
-                    src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/03.jpg"
-                    alt="collection"
-                    class="rounded-shape"
-                  />
-                </div>
+              <div class="screenshot-item">
+                <img
+                  src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/03.jpg"
+                  alt="Musify Screenshot 3"
+                  class="screenshot-img"
+                />
               </div>
             </div>
             <div class="swiper-slide">
-              <div class="product-item">
-                <div class="image-holder">
-                  <img
-                    src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/04.jpg"
-                    alt="collection"
-                    class="rounded-shape"
-                  />
-                </div>
+              <div class="screenshot-item">
+                <img
+                  src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/04.jpg"
+                  alt="Musify Screenshot 4"
+                  class="screenshot-img"
+                />
               </div>
             </div>
           </div>
+          <div class="swiper-pagination"></div>
         </div>
-      </article>
-      <hr />
+      </section>
+
+      <!-- Changelog Section -->
+      <section id="changelog" class="changelog-section">
+        <h2 class="section-title">
+          <i>history</i>
+          <span>What's New</span>
+        </h2>
+        <article class="changelog-card">
+          <div id="changelog_element"></div>
+        </article>
+      </section>
+
+      <!-- Footer -->
+      <footer class="site-footer">
+        <div class="footer-content">
+          <div class="footer-brand">
+            <img
+              src="https://github.com/gokadzev/Musify/raw/master/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
+              alt="Musify"
+            />
+            <span>Musify</span>
+          </div>
+          <div class="footer-links">
+            <a href="https://github.com/gokadzev/Musify">
+              <i>code</i>
+              <span>Source Code</span>
+            </a>
+            <a href="https://github.com/gokadzev/Musify/discussions/340">
+              <i>help</i>
+              <span>F.A.Q</span>
+            </a>
+            <a href="https://ko-fi.com/gokadzev">
+              <i>favorite</i>
+              <span>Support</span>
+            </a>
+          </div>
+        </div>
+      </footer>
     </main>
   </body>
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
