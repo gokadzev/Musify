@@ -117,28 +117,49 @@ class _SearchPageState extends State<SearchPage> {
         padding: commonSingleChildScrollViewPadding,
         child: Column(
           children: <Widget>[
-            CustomSearchBar(
-              loadingProgressNotifier: _fetchingSongs,
-              controller: _searchBar,
-              focusNode: _inputNode,
-              labelText: '${context.l10n!.search}...',
-              onChanged: (value) {
-                // debounce suggestions to avoid rapid API calls
-                _debounce?.cancel();
-                _debounce = Timer(const Duration(milliseconds: 300), () async {
-                  if (value.isNotEmpty) {
-                    final s = await getSearchSuggestions(value);
-                    _suggestionsList = List<String>.from(s);
-                  } else {
-                    _suggestionsList = [];
-                  }
-                  if (mounted) setState(() {});
-                });
-              },
-              onSubmitted: (String value) {
-                search();
-                _suggestionsList = [];
-                _inputNode.unfocus();
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final isWide = constraints.maxWidth > 600;
+                final bar = ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: isWide ? 600 : double.infinity,
+                  ),
+                  child: CustomSearchBar(
+                    loadingProgressNotifier: _fetchingSongs,
+                    controller: _searchBar,
+                    focusNode: _inputNode,
+                    labelText: '${context.l10n!.search}...',
+                    onChanged: (value) {
+                      // debounce suggestions to avoid rapid API calls
+                      _debounce?.cancel();
+                      _debounce = Timer(
+                        const Duration(milliseconds: 300),
+                        () async {
+                          if (value.isNotEmpty) {
+                            final s = await getSearchSuggestions(value);
+                            _suggestionsList = List<String>.from(s);
+                          } else {
+                            _suggestionsList = [];
+                          }
+                          if (mounted) setState(() {});
+                        },
+                      );
+                    },
+                    onSubmitted: (String value) {
+                      search();
+                      _suggestionsList = [];
+                      _inputNode.unfocus();
+                    },
+                  ),
+                );
+                if (isWide) {
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [bar],
+                  );
+                } else {
+                  return bar;
+                }
               },
             ),
 

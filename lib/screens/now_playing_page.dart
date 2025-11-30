@@ -154,7 +154,7 @@ class _DesktopLayout extends StatelessWidget {
               children: [
                 const SizedBox(height: 16),
                 Expanded(
-                  flex: 3,
+                  flex: 5,
                   child: Center(
                     child: NowPlayingArtwork(
                       size: size,
@@ -165,7 +165,7 @@ class _DesktopLayout extends StatelessWidget {
                 ),
                 if (!(metadata.extras?['isLive'] ?? false))
                   Expanded(
-                    flex: 2,
+                    flex: 4,
                     child: NowPlayingControls(
                       size: size,
                       audioId: metadata.extras?['ytid'],
@@ -339,8 +339,11 @@ class NowPlayingArtwork extends StatelessWidget {
     final screenWidth = size.width;
     final screenHeight = size.height;
     final isLandscape = screenWidth > screenHeight;
-    final imageSize = isLandscape
-        ? screenHeight * 0.50
+    final isDesktop = screenWidth > 800;
+    final imageSize = isDesktop
+        ? screenHeight * 0.38
+        : isLandscape
+        ? screenHeight * 0.45
         : screenWidth < 360
         ? screenWidth * 0.75
         : screenWidth < 600
@@ -487,6 +490,7 @@ class NowPlayingControls extends StatelessWidget {
     required this.adjustedMiniIconSize,
     required this.metadata,
   });
+
   final Size size;
   final dynamic audioId;
   final double adjustedIconSize;
@@ -496,62 +500,76 @@ class NowPlayingControls extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final screenWidth = size.width;
-    final screenHeight = size.height;
-    final isLandscape = screenWidth > screenHeight;
-    final titleFontSize = screenWidth < 360
-        ? 20.0
-        : screenWidth < 400
-        ? 22.0
-        : isLandscape
-        ? screenHeight * 0.035
-        : screenHeight * 0.028;
+    final isDesktop = size.width > 800;
 
-    final artistFontSize = screenWidth < 360
-        ? 14.0
-        : screenWidth < 400
-        ? 15.0
-        : isLandscape
-        ? screenHeight * 0.022
-        : screenHeight * 0.018;
+    final titleFontSize = getResponsiveTitleFontSize(size);
+    final artistFontSize = getResponsiveArtistFontSize(size);
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Spacer(),
-        Container(
-          width: screenWidth * 0.88,
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              MarqueeTextWidget(
-                text: metadata.title,
-                fontColor: colorScheme.secondary,
-                fontSize: titleFontSize,
-                fontWeight: FontWeight.bold,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final availableHeight = constraints.maxHeight;
+        final isCompact = availableHeight < 280;
+        final isVeryCompact = availableHeight < 200;
+
+        final spacing = isVeryCompact
+            ? 2.0
+            : isCompact
+            ? 4.0
+            : 8.0;
+        final iconScale = isVeryCompact
+            ? 0.65
+            : isCompact
+            ? 0.75
+            : 1.0;
+        final fontScale = isCompact ? 0.9 : 1.0;
+
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (!isCompact) const Spacer(),
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: isDesktop ? 16 : 24,
+                vertical: spacing,
               ),
-              const SizedBox(height: 8),
-              if (metadata.artist != null)
-                MarqueeTextWidget(
-                  text: metadata.artist!,
-                  fontColor: colorScheme.onSurfaceVariant,
-                  fontSize: artistFontSize,
-                  fontWeight: FontWeight.w500,
-                ),
-            ],
-          ),
-        ),
-        const Spacer(),
-        const PositionSlider(),
-        const SizedBox(height: 8),
-        PlayerControlButtons(
-          metadata: metadata,
-          iconSize: adjustedIconSize,
-          miniIconSize: adjustedMiniIconSize,
-        ),
-        const Spacer(),
-      ],
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  MarqueeTextWidget(
+                    text: metadata.title,
+                    fontColor: colorScheme.secondary,
+                    fontSize: titleFontSize * fontScale,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  SizedBox(height: spacing),
+                  if (metadata.artist != null)
+                    MarqueeTextWidget(
+                      text: metadata.artist!,
+                      fontColor: colorScheme.onSurfaceVariant,
+                      fontSize: artistFontSize * fontScale,
+                      fontWeight: FontWeight.w500,
+                    ),
+                ],
+              ),
+            ),
+            if (!isCompact) const Spacer(),
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: isDesktop ? 400 : constraints.maxWidth,
+              ),
+              child: const PositionSlider(),
+            ),
+            SizedBox(height: spacing),
+            PlayerControlButtons(
+              metadata: metadata,
+              iconSize: adjustedIconSize * iconScale,
+              miniIconSize: adjustedMiniIconSize * iconScale,
+            ),
+            if (!isCompact) const Spacer(),
+          ],
+        );
+      },
     );
   }
 }

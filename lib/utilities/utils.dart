@@ -67,3 +67,21 @@ String? extractYoutubePlaylistId(String url) {
 
   return match?.group(1);
 }
+
+double getResponsiveTitleFontSize(Size size) {
+  final isDesktop = size.width > 800;
+  final isLandscape = size.width > size.height;
+  if (isDesktop || isLandscape) return 20;
+  if (size.width < 360) return 20;
+  if (size.width < 400) return 22;
+  return size.height * 0.028;
+}
+
+double getResponsiveArtistFontSize(Size size) {
+  final isDesktop = size.width > 800;
+  final isLandscape = size.width > size.height;
+  if (isDesktop || isLandscape) return 14;
+  if (size.width < 360) return 14;
+  if (size.width < 400) return 15;
+  return size.height * 0.018;
+}
