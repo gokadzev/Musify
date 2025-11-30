@@ -153,7 +153,7 @@ class _MusifyState extends State<Musify> {
       }
     };
 
-    offlineModeChangeNotifier.addListener(_onOfflineModeChanged);
+    offlineMode.addListener(_onOfflineModeChanged);
 
     try {
       LicenseRegistry.addLicense(() async* {
@@ -189,7 +189,7 @@ class _MusifyState extends State<Musify> {
 
   @override
   void dispose() {
-    offlineModeChangeNotifier.removeListener(_onOfflineModeChanged);
+    offlineMode.removeListener(_onOfflineModeChanged);
 
     Hive.close();
     super.dispose();

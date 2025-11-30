@@ -685,7 +685,6 @@ class SettingsPage extends StatelessWidget {
 
     // Trigger router refresh and notify about the change
     NavigationManager.refreshRouter();
-    offlineModeChangeNotifier.value = !offlineModeChangeNotifier.value;
 
     showToast(context, context.l10n!.settingChangedMsg);
   }

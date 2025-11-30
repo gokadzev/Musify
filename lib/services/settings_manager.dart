@@ -48,10 +48,6 @@ final offlineMode = ValueNotifier<bool>(
   Hive.box('settings').get('offlineMode', defaultValue: false),
 );
 
-final ValueNotifier<bool> offlineModeChangeNotifier = ValueNotifier<bool>(
-  false,
-);
-
 final predictiveBack = ValueNotifier<bool>(
   Hive.box('settings').get('predictiveBack', defaultValue: false),
 );
