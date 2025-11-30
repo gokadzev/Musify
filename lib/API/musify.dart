@@ -66,7 +66,6 @@ List userRecentlyPlayed = Hive.box(
 List userOfflineSongs = Hive.box(
   'userNoBackup',
 ).get('offlineSongs', defaultValue: []);
-List suggestedPlaylists = [];
 List onlinePlaylists = [];
 
 dynamic nextRecommendedSong;
@@ -592,8 +591,7 @@ Future<List> getPlaylists({
   String type = 'all',
 }) async {
   // Early exit if there are no playlists to process.
-  if (playlists.isEmpty ||
-      (playlistsNum == null && query == null && suggestedPlaylists.isEmpty)) {
+  if (playlists.isEmpty || (playlistsNum == null && query == null)) {
     return [];
   }
 
@@ -690,9 +688,7 @@ Future<List> getPlaylists({
   // If a specific number of playlists is requested (without a query),
   // return a shuffled subset of suggested playlists.
   if (playlistsNum != null && query == null) {
-    if (suggestedPlaylists.isEmpty) {
-      suggestedPlaylists = List.from(playlists)..shuffle();
-    }
+    final suggestedPlaylists = List<Map>.from(playlists)..shuffle();
     return suggestedPlaylists.take(playlistsNum).toList();
   }
 
