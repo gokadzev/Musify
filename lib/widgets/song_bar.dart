@@ -209,6 +209,13 @@ class _SongBarState extends State<SongBar> {
           _songLikeStatus.value = !newValue;
           currentLikedSongsLength.value = likedSongsLength;
         });
+        showToast(
+          context,
+          newValue
+              ? context.l10n!.addedToLikedSongs
+              : context.l10n!.removedFromLikedSongs,
+          duration: const Duration(seconds: 1),
+        );
         break;
       case 'remove':
         widget.onRemove?.call();
