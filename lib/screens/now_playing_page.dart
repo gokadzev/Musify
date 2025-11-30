@@ -855,7 +855,7 @@ class BottomActionsRow extends StatelessWidget {
                   colorScheme: colorScheme,
                   size: responsiveIconSize,
                   statusNotifier: songLikeStatus,
-                  activeColor: colorScheme.error,
+                  activeColor: colorScheme.primary,
                   onPressed: () {
                     updateSongLikeStatus(audioId, !songLikeStatus.value);
                     songLikeStatus.value = !songLikeStatus.value;
