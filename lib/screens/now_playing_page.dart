@@ -975,23 +975,96 @@ class BottomActionsRow extends StatelessWidget {
   }
 
   void _showQueue(BuildContext context, List<dynamic> mappedQueue) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final currentIndex = audioHandler.currentQueueIndex;
+
     showCustomBottomSheet(
       context,
-      ListView.builder(
-        shrinkWrap: true,
-        physics: const BouncingScrollPhysics(),
-        padding: commonListViewBottmomPadding,
-        itemCount: mappedQueue.length,
-        itemBuilder: (BuildContext context, int index) {
-          final borderRadius = getItemBorderRadius(index, mappedQueue.length);
-          return SongBar(
-            mappedQueue[index],
-            false,
-            onPlay: () => audioHandler.skipToSong(index),
-            backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
-            borderRadius: borderRadius,
-          );
-        },
+      Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Header
+          Padding(
+            padding: const EdgeInsets.only(left: 10, right: 8, bottom: 12),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: colorScheme.primaryContainer,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    FluentIcons.apps_list_24_filled,
+                    color: colorScheme.onPrimaryContainer,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        context.l10n!.queue,
+                        style: TextStyle(
+                          color: colorScheme.onSurface,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Text(
+                        '${mappedQueue.length} ${context.l10n!.songs}',
+                        style: TextStyle(
+                          color: colorScheme.onSurfaceVariant,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {
+                    audioHandler.clearQueue();
+                    Navigator.pop(context);
+                  },
+                  icon: Icon(
+                    FluentIcons.broom_24_filled,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                  tooltip: context.l10n!.clearQueue,
+                ),
+              ],
+            ),
+          ),
+          // Queue list
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const BouncingScrollPhysics(),
+            padding: commonListViewBottmomPadding,
+            itemCount: mappedQueue.length,
+            itemBuilder: (BuildContext context, int index) {
+              final isCurrentSong = index == currentIndex;
+              final borderRadius = getItemBorderRadius(
+                index,
+                mappedQueue.length,
+              );
+
+              return SongBar(
+                mappedQueue[index],
+                false,
+                onPlay: () {
+                  audioHandler.skipToSong(index);
+                  Navigator.pop(context);
+                },
+                backgroundColor: isCurrentSong
+                    ? colorScheme.primaryContainer.withValues(alpha: 0.3)
+                    : colorScheme.surfaceContainerHigh,
+                borderRadius: borderRadius,
+              );
+            },
+          ),
+        ],
       ),
     );
   }
