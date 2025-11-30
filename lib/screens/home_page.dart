@@ -232,19 +232,18 @@ class _HomePageState extends State<HomePage> {
     BuildContext context,
     List<dynamic> data,
   ) {
+    final recommendedTitle = context.l10n!.recommendedForYou;
+
     return Column(
       children: [
         SectionHeader(
-          title: context.l10n!.recommendedForYou,
+          title: recommendedTitle,
           icon: FluentIcons.sparkle_24_filled,
           actionButton: IconButton(
             onPressed: () async {
               await Future.microtask(
                 () => audioHandler.playPlaylistSong(
-                  playlist: {
-                    'title': context.l10n!.recommendedForYou,
-                    'list': data,
-                  },
+                  playlist: {'title': recommendedTitle, 'list': data},
                   songIndex: 0,
                 ),
               );
