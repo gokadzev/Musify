@@ -686,20 +686,29 @@ class _PlaylistPageState extends State<PlaylistPage> {
     if (indexOfRemovedSong >= items.length) return;
 
     final dynamic songToRemove = items[indexOfRemovedSong];
-    showToastWithButton(
-      context,
-      context.l10n!.songRemoved,
-      context.l10n!.undo.toUpperCase(),
-      () {
-        addSongInCustomPlaylist(
-          context,
-          _playlist['title'],
-          songToRemove,
-          indexToInsert: indexOfRemovedSong,
-        );
-        _pagingController.refresh();
-      },
-    );
+    final playlistTitle = _playlist['title'];
+    if (mounted) {
+      showToastWithButton(
+        context,
+        context.l10n!.songRemoved,
+        context.l10n!.undo.toUpperCase(),
+        () {
+          addSongInCustomPlaylist(
+            context,
+            playlistTitle,
+            songToRemove,
+            indexToInsert: indexOfRemovedSong,
+          );
+          _pagingController.refresh();
+        },
+      );
+    } else {
+      logger.log(
+        '(_updateSongsListOnRemove): Widget not mounted, cannot show undo toast.',
+        null,
+        null,
+      );
+    }
 
     _pagingController.refresh();
   }
