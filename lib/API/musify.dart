@@ -992,20 +992,31 @@ Future<String?> getSong(String songId, bool isLive) async {
     );
 
     if (cachedUrl != null && cachedUrl is String && cachedUrl.isNotEmpty) {
-      // Validate cached URL is still working
-      try {
-        final response = await http.head(Uri.parse(cachedUrl));
-        if (response.statusCode >= 200 && response.statusCode < 300) {
-          unawaited(updateRecentlyPlayed(songId));
-          return cachedUrl;
+      // Only validate with HEAD if cache is older than 1 hour
+      final cacheBox = await Hive.openBox('cache');
+      final cacheDate = cacheBox.get('${cacheKey}_date');
+      final now = DateTime.now();
+      final isOld =
+          cacheDate is DateTime &&
+          now.difference(cacheDate) > const Duration(hours: 1);
+      var valid = true;
+      if (isOld) {
+        try {
+          final response = await http.head(Uri.parse(cachedUrl));
+          if (response.statusCode < 200 || response.statusCode >= 300) {
+            valid = false;
+          }
+        } catch (_) {
+          valid = false;
         }
-        // If validation fails, remove from cache
-        await deleteData('cache', cacheKey);
-        await deleteData('cache', '${cacheKey}_date');
-      } catch (_) {
-        // URL validation failed, remove from cache
-        await deleteData('cache', cacheKey);
-        await deleteData('cache', '${cacheKey}_date');
+        if (!valid) {
+          await deleteData('cache', cacheKey);
+          await deleteData('cache', '${cacheKey}_date');
+        }
+      }
+      if (valid) {
+        unawaited(updateRecentlyPlayed(songId));
+        return cachedUrl;
       }
     }
 
