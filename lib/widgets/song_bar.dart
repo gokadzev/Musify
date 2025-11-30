@@ -263,6 +263,19 @@ class _SongBarState extends State<SongBar> {
     BuildContext context,
     ColorScheme colorScheme,
   ) {
+    // Capture localization strings before building menu items to avoid
+    // accessing context.l10n inside ValueListenableBuilder which can fail
+    // when the widget is being disposed
+    final l10n = context.l10n!;
+    final playNextText = l10n.playNext;
+    final removeFromLikedSongsText = l10n.removeFromLikedSongs;
+    final addToLikedSongsText = l10n.addToLikedSongs;
+    final removeFromPlaylistText = l10n.removeFromPlaylist;
+    final addToPlaylistText = l10n.addToPlaylist;
+    final removeFromRecentlyPlayedText = l10n.removeFromRecentlyPlayed;
+    final removeOfflineText = l10n.removeOffline;
+    final makeOfflineText = l10n.makeOffline;
+
     return [
       PopupMenuItem<String>(
         value: 'play_next',
@@ -273,10 +286,7 @@ class _SongBarState extends State<SongBar> {
               color: colorScheme.primary,
             ),
             const SizedBox(width: 8),
-            Text(
-              context.l10n!.playNext,
-              style: TextStyle(color: colorScheme.secondary),
-            ),
+            Text(playNextText, style: TextStyle(color: colorScheme.secondary)),
           ],
         ),
       ),
@@ -290,9 +300,7 @@ class _SongBarState extends State<SongBar> {
                 Icon(likeStatusToIconMapper[value], color: colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  value
-                      ? context.l10n!.removeFromLikedSongs
-                      : context.l10n!.addToLikedSongs,
+                  value ? removeFromLikedSongsText : addToLikedSongsText,
                   style: TextStyle(color: colorScheme.secondary),
                 ),
               ],
@@ -308,7 +316,7 @@ class _SongBarState extends State<SongBar> {
               Icon(FluentIcons.delete_24_filled, color: colorScheme.primary),
               const SizedBox(width: 8),
               Text(
-                context.l10n!.removeFromPlaylist,
+                removeFromPlaylistText,
                 style: TextStyle(color: colorScheme.secondary),
               ),
             ],
@@ -321,7 +329,7 @@ class _SongBarState extends State<SongBar> {
             Icon(FluentIcons.add_24_regular, color: colorScheme.primary),
             const SizedBox(width: 8),
             Text(
-              context.l10n!.addToPlaylist,
+              addToPlaylistText,
               style: TextStyle(color: colorScheme.secondary),
             ),
           ],
@@ -335,7 +343,7 @@ class _SongBarState extends State<SongBar> {
               Icon(FluentIcons.delete_24_filled, color: colorScheme.primary),
               const SizedBox(width: 8),
               Text(
-                context.l10n!.removeFromRecentlyPlayed,
+                removeFromRecentlyPlayedText,
                 style: TextStyle(color: colorScheme.secondary),
               ),
             ],
@@ -356,9 +364,7 @@ class _SongBarState extends State<SongBar> {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  value
-                      ? context.l10n!.removeOffline
-                      : context.l10n!.makeOffline,
+                  value ? removeOfflineText : makeOfflineText,
                   style: TextStyle(color: colorScheme.secondary),
                 ),
               ],
