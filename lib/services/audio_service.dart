@@ -699,7 +699,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
     try {
       if (includeMediaItem && song != null) {
         final immediateMediaItem = mapToMediaItem(song);
-        scheduleMicrotask(() {
+        Future.microtask(() {
           mediaItem.add(immediateMediaItem);
         });
       }
@@ -756,7 +756,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       final currentSong = _queueList[_currentQueueIndex];
       final currentMediaItem = mapToMediaItem(currentSong);
 
-      scheduleMicrotask(() {
+      await Future.microtask(() {
         mediaItem.add(currentMediaItem);
       });
 
