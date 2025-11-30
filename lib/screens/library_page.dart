@@ -566,6 +566,7 @@ class _LibraryPageState extends State<LibraryPage> {
                     );
                   }
 
+                  if (!mounted) return;
                   Navigator.pop(context);
                 },
                 icon: const Icon(FluentIcons.add_20_filled),
