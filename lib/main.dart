@@ -182,6 +182,12 @@ class _MusifyState extends State<Musify> {
           SchedulerBinding.instance.addPostFrameCallback((_) {
             showUpdateCheckDialog(NavigationManager().context);
           });
+        } else {
+          SchedulerBinding.instance.addPostFrameCallback((_) async {
+            if (!offlineMode.value) {
+              await fetchAnnouncementOnly();
+            }
+          });
         }
       }
     }
