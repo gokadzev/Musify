@@ -77,10 +77,11 @@ main {
   max-width: 700px;
 }
 
-.hero-logo {
-  width: 120px;
-  height: 120px;
-  margin-bottom: 1.5rem;
+#hero .shape {
+  background-color: var(--on-primary) !important;
+  width: 180px;
+  height: 180px;
+  margin: auto !important;
 }
 
 .hero-title {
