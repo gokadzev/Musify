@@ -47,8 +47,7 @@ main {
 }
 
 /* Navigation */
-.musify-nav-logo img,
-.hero-logo {
+.musify-logo {
   filter: invert(0) sepia(1) hue-rotate(-45deg) saturate(0.8) brightness(1.05)
     contrast(1.1) !important;
 }
