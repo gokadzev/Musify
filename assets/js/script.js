@@ -15,28 +15,19 @@ function makeHttpRequest(url, callback) {
   xmlHttp.open('GET', url, true)
   xmlHttp.send(null)
 }
-const swiper = new Swiper('.product-swiper', {
-  slidesPerView: 3,
-  spaceBetween: 50,
-  loop: true,
-  pagination: {
-    el: '.swiper-pagination',
-    clickable: true,
-  },
-  breakpoints: {
-    0: {
-      slidesPerView: 1,
-      spaceBetween: 20,
+document.addEventListener('DOMContentLoaded', function () {
+  new Splide('#screenshot-carousel', {
+    type: 'loop',
+    perPage: 3,
+    gap: '2rem',
+    pagination: true,
+    arrows: false,
+    breakpoints: {
+      1200: { perPage: 3, gap: '2rem' },
+      699: { perPage: 2, gap: '1.5rem' },
+      560: { perPage: 1, gap: '1rem' },
     },
-    699: {
-      slidesPerView: 2,
-      spaceBetween: 30,
-    },
-    1200: {
-      slidesPerView: 3,
-      spaceBetween: 50,
-    },
-  },
+  }).mount()
 })
 
 window.onload = function () {
