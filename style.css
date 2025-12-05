@@ -110,6 +110,7 @@ main {
   gap: 1rem;
   justify-content: center;
   flex-wrap: wrap;
+  margin-top: 15px;
 }
 
 .hero-actions button {
