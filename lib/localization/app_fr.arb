@@ -22,7 +22,7 @@
   "audioQualityMsg": "La qualité audio a été modifiée",
   "automaticSongPicker": "Sélection automatique de titres",
   "automaticSongPickerDescription": "Lancer automatiquement un titre aléatoire après la fin du morceau en cours.",
-  "automaticUpdateChecks": "Vérifications de mise à jour automatiques",
+  "automaticUpdateChecks": "Vérifications de mises à jour automatiques",
   "automaticUpdateChecksDescription": "Vérifier automatiquement les mises à jour de l'application au démarrage.",
   "backToFavorites": "Retour aux favoris",
   "backedupSuccess": "Enregistrement réussi",
