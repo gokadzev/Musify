@@ -593,85 +593,186 @@ class PlayerControlButtons extends StatelessWidget {
     final responsiveMiniIconSize = screenWidth < 360
         ? miniIconSize * 0.85
         : miniIconSize;
-    final buttonSpacing = screenWidth < 360 ? 8.0 : 16.0;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final maxWidth = constraints.maxWidth;
+        final isTight = maxWidth < 360;
+        final isUltraTight = maxWidth < 320;
 
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: screenWidth < 360 ? 16 : 24),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          _buildShuffleButton(colorScheme, responsiveMiniIconSize),
-          StreamBuilder<List<MediaItem>>(
-            stream: audioHandler.queue,
-            builder: (context, snapshot) {
-              return ValueListenableBuilder<AudioServiceRepeatMode>(
-                valueListenable: repeatNotifier,
-                builder: (_, repeatMode, __) {
-                  return Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: Icon(
-                          FluentIcons.previous_24_filled,
-                          color: audioHandler.hasPrevious
-                              ? colorScheme.onSurface
-                              : colorScheme.onSurface.withValues(alpha: 0.3),
-                        ),
-                        iconSize: responsiveIconSize * 0.6,
-                        onPressed: audioHandler.hasPrevious
-                            ? () => audioHandler.skipToPrevious()
-                            : null,
-                        style: IconButton.styleFrom(
-                          backgroundColor: colorScheme.surfaceContainerHighest,
-                          disabledBackgroundColor:
-                              colorScheme.surfaceContainerHighest,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: buttonSpacing),
-                      PlaybackIconButton(
-                        iconColor: colorScheme.onPrimary,
-                        backgroundColor: colorScheme.primary,
-                        iconSize: responsiveIconSize * 0.85,
-                        padding: EdgeInsets.all(responsiveIconSize * 0.45),
-                      ),
-                      SizedBox(width: buttonSpacing),
-                      IconButton(
-                        icon: Icon(
-                          FluentIcons.next_24_filled,
-                          color: audioHandler.hasNext
-                              ? colorScheme.onSurface
-                              : colorScheme.onSurface.withValues(alpha: 0.3),
-                        ),
-                        iconSize: responsiveIconSize * 0.6,
-                        onPressed: () =>
-                            repeatNotifier.value == AudioServiceRepeatMode.one
-                            ? audioHandler.playAgain()
-                            : audioHandler.skipToNext(),
-                        style: IconButton.styleFrom(
-                          backgroundColor: colorScheme.surfaceContainerHighest,
-                          disabledBackgroundColor:
-                              colorScheme.surfaceContainerHighest,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
+        final horizontalPadding = isUltraTight
+            ? 10.0
+            : isTight
+            ? 14.0
+            : 20.0;
+        final buttonSpacing = isUltraTight
+            ? 6.0
+            : isTight
+            ? 10.0
+            : screenWidth < 360
+            ? 8.0
+            : 16.0;
+        final minButtonSize = isUltraTight
+            ? 38.0
+            : isTight
+            ? 42.0
+            : 46.0;
+        final buttonPadding = EdgeInsets.all(
+          isUltraTight
+              ? 6.0
+              : isTight
+              ? 8.0
+              : 10.0,
+        );
+
+        final buttonConstraints = BoxConstraints(
+          minWidth: minButtonSize,
+          minHeight: minButtonSize,
+        );
+
+        final controlIconSize =
+            responsiveIconSize *
+            (isUltraTight
+                ? 0.75
+                : isTight
+                ? 0.85
+                : 0.92);
+        final miniControlSize =
+            responsiveMiniIconSize *
+            (isUltraTight
+                ? 0.8
+                : isTight
+                ? 0.9
+                : 1.0);
+        final playPadding = EdgeInsets.all(
+          responsiveIconSize *
+              (isUltraTight
+                  ? 0.30
+                  : isTight
+                  ? 0.36
+                  : 0.45),
+        );
+
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+          child: Row(
+            children: <Widget>[
+              _buildShuffleButton(
+                colorScheme,
+                miniControlSize,
+                buttonConstraints,
+                buttonPadding,
+              ),
+              SizedBox(width: buttonSpacing),
+              Expanded(
+                child: Center(
+                  child: StreamBuilder<List<MediaItem>>(
+                    stream: audioHandler.queue,
+                    builder: (context, snapshot) {
+                      return ValueListenableBuilder<AudioServiceRepeatMode>(
+                        valueListenable: repeatNotifier,
+                        builder: (_, repeatMode, __) {
+                          return FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: Icon(
+                                    FluentIcons.previous_24_filled,
+                                    color: audioHandler.hasPrevious
+                                        ? colorScheme.onSurface
+                                        : colorScheme.onSurface.withValues(
+                                            alpha: 0.3,
+                                          ),
+                                  ),
+                                  constraints: buttonConstraints,
+                                  iconSize: controlIconSize * 0.65,
+                                  onPressed: audioHandler.hasPrevious
+                                      ? () => audioHandler.skipToPrevious()
+                                      : null,
+                                  style: IconButton.styleFrom(
+                                    backgroundColor:
+                                        colorScheme.surfaceContainerHighest,
+                                    disabledBackgroundColor:
+                                        colorScheme.surfaceContainerHighest,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                    padding: buttonPadding,
+                                    minimumSize: Size(
+                                      minButtonSize,
+                                      minButtonSize,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: buttonSpacing),
+                                PlaybackIconButton(
+                                  iconColor: colorScheme.onPrimary,
+                                  backgroundColor: colorScheme.primary,
+                                  iconSize: controlIconSize,
+                                  padding: playPadding,
+                                ),
+                                SizedBox(width: buttonSpacing),
+                                IconButton(
+                                  icon: Icon(
+                                    FluentIcons.next_24_filled,
+                                    color: audioHandler.hasNext
+                                        ? colorScheme.onSurface
+                                        : colorScheme.onSurface.withValues(
+                                            alpha: 0.3,
+                                          ),
+                                  ),
+                                  constraints: buttonConstraints,
+                                  iconSize: controlIconSize * 0.65,
+                                  onPressed: () =>
+                                      repeatNotifier.value ==
+                                          AudioServiceRepeatMode.one
+                                      ? audioHandler.playAgain()
+                                      : audioHandler.skipToNext(),
+                                  style: IconButton.styleFrom(
+                                    backgroundColor:
+                                        colorScheme.surfaceContainerHighest,
+                                    disabledBackgroundColor:
+                                        colorScheme.surfaceContainerHighest,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                    padding: buttonPadding,
+                                    minimumSize: Size(
+                                      minButtonSize,
+                                      minButtonSize,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ),
+              SizedBox(width: buttonSpacing),
+              _buildRepeatButton(
+                colorScheme,
+                miniControlSize,
+                buttonConstraints,
+                buttonPadding,
+              ),
+            ],
           ),
-          _buildRepeatButton(colorScheme, responsiveMiniIconSize),
-        ],
-      ),
+        );
+      },
     );
   }
 
-  Widget _buildShuffleButton(ColorScheme colorScheme, double size) {
+  Widget _buildShuffleButton(
+    ColorScheme colorScheme,
+    double size,
+    BoxConstraints buttonConstraints,
+    EdgeInsets buttonPadding,
+  ) {
     return ValueListenableBuilder<bool>(
       valueListenable: shuffleNotifier,
       builder: (_, value, __) {
@@ -683,6 +784,8 @@ class PlayerControlButtons extends StatelessWidget {
             color: value ? colorScheme.onPrimary : colorScheme.onSurfaceVariant,
           ),
           iconSize: size,
+          constraints: buttonConstraints,
+          padding: buttonPadding,
           style: IconButton.styleFrom(
             backgroundColor: value
                 ? colorScheme.primary
@@ -703,7 +806,12 @@ class PlayerControlButtons extends StatelessWidget {
     );
   }
 
-  Widget _buildRepeatButton(ColorScheme colorScheme, double size) {
+  Widget _buildRepeatButton(
+    ColorScheme colorScheme,
+    double size,
+    BoxConstraints buttonConstraints,
+    EdgeInsets buttonPadding,
+  ) {
     return StreamBuilder<List<MediaItem>>(
       stream: audioHandler.queue,
       builder: (context, snapshot) {
@@ -725,6 +833,8 @@ class PlayerControlButtons extends StatelessWidget {
                     : colorScheme.onSurfaceVariant,
               ),
               iconSize: size,
+              constraints: buttonConstraints,
+              padding: buttonPadding,
               style: IconButton.styleFrom(
                 backgroundColor: isActive
                     ? colorScheme.primary
@@ -790,80 +900,98 @@ class BottomActionsRow extends StatelessWidget {
             ? queue.map(mediaItemToMap).toList()
             : [];
 
+        final actions = <Widget>[
+          _buildActionButton(
+            context: context,
+            icon: FluentIcons.cellular_data_1_24_regular,
+            activeIcon: FluentIcons.cellular_off_24_regular,
+            colorScheme: colorScheme,
+            size: responsiveIconSize,
+            statusNotifier: songOfflineStatus,
+            onPressed: audioId == null
+                ? null
+                : () => _toggleOffline(songOfflineStatus),
+            tooltip: 'Offline',
+          ),
+        ];
+
+        if (!offlineMode.value) {
+          actions.add(
+            _buildSimpleActionButton(
+              context: context,
+              icon: FluentIcons.add_24_regular,
+              colorScheme: colorScheme,
+              size: responsiveIconSize,
+              onPressed: () =>
+                  showAddToPlaylistDialog(context, mediaItemToMap(metadata)),
+              tooltip: 'Add to playlist',
+            ),
+          );
+        }
+
+        if (queue.isNotEmpty && !isLargeScreen) {
+          actions.add(
+            _buildSimpleActionButton(
+              context: context,
+              icon: FluentIcons.apps_list_24_filled,
+              colorScheme: colorScheme,
+              size: responsiveIconSize,
+              onPressed: () => _showQueue(context, mappedQueue),
+              tooltip: 'Queue',
+            ),
+          );
+        }
+
+        if (!offlineMode.value) {
+          actions.addAll([
+            _buildSimpleActionButton(
+              context: context,
+              icon: FluentIcons.text_quote_24_regular,
+              colorScheme: colorScheme,
+              size: responsiveIconSize,
+              onPressed: lyricsController.flipcard,
+              tooltip: 'Lyrics',
+            ),
+            _buildSleepTimerButton(context, colorScheme, responsiveIconSize),
+            _buildActionButton(
+              context: context,
+              icon: FluentIcons.heart_24_regular,
+              activeIcon: FluentIcons.heart_24_filled,
+              colorScheme: colorScheme,
+              size: responsiveIconSize,
+              statusNotifier: songLikeStatus,
+              activeColor: colorScheme.primary,
+              onPressed: () {
+                updateSongLikeStatus(audioId, !songLikeStatus.value);
+                songLikeStatus.value = !songLikeStatus.value;
+              },
+              tooltip: 'Like',
+            ),
+          ]);
+        }
+
+        final childrenWithSpacing = <Widget>[];
+        for (var i = 0; i < actions.length; i++) {
+          childrenWithSpacing.add(actions[i]);
+          if (i != actions.length - 1) {
+            childrenWithSpacing.add(SizedBox(width: spacing));
+          }
+        }
+
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
             color: colorScheme.surfaceContainerHigh,
             borderRadius: BorderRadius.circular(20),
           ),
-          child: Wrap(
-            alignment: WrapAlignment.center,
-            spacing: spacing,
-            runSpacing: 8,
-            children: [
-              _buildActionButton(
-                context: context,
-                icon: FluentIcons.cellular_data_1_24_regular,
-                activeIcon: FluentIcons.cellular_off_24_regular,
-                colorScheme: colorScheme,
-                size: responsiveIconSize,
-                statusNotifier: songOfflineStatus,
-                onPressed: audioId == null
-                    ? null
-                    : () => _toggleOffline(songOfflineStatus),
-                tooltip: 'Offline',
-              ),
-              if (!offlineMode.value)
-                _buildSimpleActionButton(
-                  context: context,
-                  icon: FluentIcons.add_24_regular,
-                  colorScheme: colorScheme,
-                  size: responsiveIconSize,
-                  onPressed: () => showAddToPlaylistDialog(
-                    context,
-                    mediaItemToMap(metadata),
-                  ),
-                  tooltip: 'Add to playlist',
-                ),
-              if (queue.isNotEmpty && !isLargeScreen)
-                _buildSimpleActionButton(
-                  context: context,
-                  icon: FluentIcons.apps_list_24_filled,
-                  colorScheme: colorScheme,
-                  size: responsiveIconSize,
-                  onPressed: () => _showQueue(context, mappedQueue),
-                  tooltip: 'Queue',
-                ),
-              if (!offlineMode.value) ...[
-                _buildSimpleActionButton(
-                  context: context,
-                  icon: FluentIcons.text_quote_24_regular,
-                  colorScheme: colorScheme,
-                  size: responsiveIconSize,
-                  onPressed: lyricsController.flipcard,
-                  tooltip: 'Lyrics',
-                ),
-                _buildSleepTimerButton(
-                  context,
-                  colorScheme,
-                  responsiveIconSize,
-                ),
-                _buildActionButton(
-                  context: context,
-                  icon: FluentIcons.heart_24_regular,
-                  activeIcon: FluentIcons.heart_24_filled,
-                  colorScheme: colorScheme,
-                  size: responsiveIconSize,
-                  statusNotifier: songLikeStatus,
-                  activeColor: colorScheme.primary,
-                  onPressed: () {
-                    updateSongLikeStatus(audioId, !songLikeStatus.value);
-                    songLikeStatus.value = !songLikeStatus.value;
-                  },
-                  tooltip: 'Like',
-                ),
-              ],
-            ],
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            physics: const BouncingScrollPhysics(),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: childrenWithSpacing,
+            ),
           ),
         );
       },
