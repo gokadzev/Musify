@@ -1,0 +1,6 @@
+Bug fixes
+- Fixed respnsiveness issue for now playing page
+
+Enhancements
+- Updated translations
+- Full changelog: https://github.com/gokadzev/Musify/releases
