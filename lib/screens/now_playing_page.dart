@@ -944,15 +944,6 @@ class BottomActionsRow extends StatelessWidget {
 
         if (!offlineMode.value) {
           actions.addAll([
-            _buildSimpleActionButton(
-              context: context,
-              icon: FluentIcons.text_quote_24_regular,
-              colorScheme: colorScheme,
-              size: responsiveIconSize,
-              onPressed: lyricsController.flipcard,
-              tooltip: 'Lyrics',
-            ),
-            _buildSleepTimerButton(context, colorScheme, responsiveIconSize),
             _buildActionButton(
               context: context,
               icon: FluentIcons.heart_24_regular,
@@ -967,6 +958,15 @@ class BottomActionsRow extends StatelessWidget {
               },
               tooltip: 'Like',
             ),
+            _buildSimpleActionButton(
+              context: context,
+              icon: FluentIcons.text_quote_24_regular,
+              colorScheme: colorScheme,
+              size: responsiveIconSize,
+              onPressed: lyricsController.flipcard,
+              tooltip: 'Lyrics',
+            ),
+            _buildSleepTimerButton(context, colorScheme, responsiveIconSize),
           ]);
         }
 
@@ -989,7 +989,6 @@ class BottomActionsRow extends StatelessWidget {
             physics: const BouncingScrollPhysics(),
             child: Row(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: childrenWithSpacing,
             ),
           ),
