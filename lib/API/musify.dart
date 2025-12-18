@@ -542,6 +542,66 @@ void moveLikedSong(int oldIndex, int newIndex) {
   addOrUpdateData('user', 'likedSongs', userLikedSongsList);
 }
 
+Future<void> renameSongInLikedSongs(
+  dynamic songId,
+  String newTitle,
+  String newArtist,
+) async {
+  try {
+    final songIndex = userLikedSongsList.indexWhere(
+      (song) => song['ytid'] == songId,
+    );
+
+    if (songIndex != -1) {
+      userLikedSongsList[songIndex]['title'] = newTitle;
+      userLikedSongsList[songIndex]['artist'] = newArtist;
+
+      currentLikedSongsLength.value = userLikedSongsList.length;
+      await addOrUpdateData('user', 'likedSongs', userLikedSongsList);
+    }
+  } catch (e, stackTrace) {
+    logger.log('Error renaming song in liked songs', e, stackTrace);
+    rethrow;
+  }
+}
+
+Future<void> renameSongInPlaylist(
+  dynamic playlistId,
+  dynamic songId,
+  String newTitle,
+  String newArtist,
+) async {
+  try {
+    final playlist = userCustomPlaylists.value.firstWhere(
+      (p) => p['ytid'] == playlistId,
+      orElse: () => <String, dynamic>{},
+    );
+
+    if (playlist.isNotEmpty && playlist['list'] != null) {
+      final songIndex = (playlist['list'] as List).indexWhere(
+        (song) => song['ytid'] == songId,
+      );
+
+      if (songIndex != -1) {
+        (playlist['list'] as List)[songIndex]['title'] = newTitle;
+        (playlist['list'] as List)[songIndex]['artist'] = newArtist;
+
+        // Update the playlist in storage
+        final updatedPlaylists = userCustomPlaylists.value
+            .map((p) => p['ytid'] == playlistId ? playlist : p)
+            .toList();
+        userCustomPlaylists.value = updatedPlaylists;
+
+        // Save to database
+        await addOrUpdateData('user', 'customPlaylists', updatedPlaylists);
+      }
+    }
+  } catch (e, stackTrace) {
+    logger.log('Error renaming song in playlist', e, stackTrace);
+    rethrow;
+  }
+}
+
 Future<void> updatePlaylistLikeStatus(String playlistId, bool add) async {
   try {
     if (add) {

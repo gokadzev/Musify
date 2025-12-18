@@ -402,6 +402,8 @@ class _UserSongsPageState extends State<UserSongsPage> {
     Map playlist, {
     bool isRecentSong = false,
   }) {
+    final isLikedSongs = playlist['title'] == context.l10n!.likedSongs;
+
     return SongBar(
       key: Key(song['ytid'].toString()),
       song,
@@ -414,6 +416,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
       },
       borderRadius: borderRadius,
       isRecentSong: isRecentSong,
+      isFromLikedSongs: isLikedSongs,
     );
   }
 

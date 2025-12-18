@@ -31,6 +31,7 @@ import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/formatter.dart';
 import 'package:musify/widgets/no_artwork_cube.dart';
+import 'package:musify/widgets/rename_song_dialog.dart';
 
 class SongBar extends StatefulWidget {
   const SongBar(
@@ -43,6 +44,9 @@ class SongBar extends StatefulWidget {
     this.isRecentSong,
     this.onRemove,
     this.borderRadius = BorderRadius.zero,
+    this.isFromLikedSongs = false,
+    this.playlistId,
+    this.onRenamed,
     super.key,
   });
 
@@ -55,6 +59,9 @@ class SongBar extends StatefulWidget {
   final bool? isRecentSong;
   final bool showMusicDuration;
   final BorderRadius borderRadius;
+  final bool isFromLikedSongs;
+  final String? playlistId;
+  final VoidCallback? onRenamed;
 
   @override
   State<SongBar> createState() => _SongBarState();
@@ -68,8 +75,8 @@ class _SongBarState extends State<SongBar> {
 
   late final ValueNotifier<bool> _songLikeStatus;
   late final ValueNotifier<bool> _songOfflineStatus;
-  late final String _songTitle;
-  late final String _songArtist;
+  late String _songTitle;
+  late String _songArtist;
   late final String? _artworkPath;
   late final String _lowResImageUrl;
   late final String _ytid;
@@ -91,6 +98,22 @@ class _SongBarState extends State<SongBar> {
         widget.isSongOffline ??
         (widget.song['isOffline'] ?? isSongAlreadyOffline(_ytid));
     _songOfflineStatus = ValueNotifier(isOffline);
+  }
+
+  @override
+  void didUpdateWidget(SongBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // Update cached title and artist if they changed
+    final newTitle = widget.song['title'] ?? '';
+    final newArtist = widget.song['artist']?.toString() ?? '';
+
+    if (_songTitle != newTitle || _songArtist != newArtist) {
+      setState(() {
+        _songTitle = newTitle;
+        _songArtist = newArtist;
+      });
+    }
   }
 
   @override
@@ -220,6 +243,9 @@ class _SongBarState extends State<SongBar> {
       case 'remove':
         widget.onRemove?.call();
         break;
+      case 'rename':
+        _handleRenameSong(context);
+        break;
       case 'add_to_playlist':
         showAddToPlaylistDialog(context, widget.song);
         break;
@@ -231,6 +257,62 @@ class _SongBarState extends State<SongBar> {
       case 'offline':
         _handleOfflineToggle(context);
         break;
+    }
+  }
+
+  void _handleRenameSong(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => RenameSongDialog(
+        currentTitle: _songTitle,
+        currentArtist: _songArtist,
+        onRename: (newTitle, newArtist) {
+          _renameSong(newTitle, newArtist, context);
+        },
+      ),
+    );
+  }
+
+  Future<void> _renameSong(
+    String newTitle,
+    String newArtist,
+    BuildContext context,
+  ) async {
+    try {
+      if (widget.isFromLikedSongs) {
+        await renameSongInLikedSongs(_ytid, newTitle, newArtist);
+        // Update local cached values
+        widget.song['title'] = newTitle;
+        widget.song['artist'] = newArtist;
+        if (context.mounted) {
+          showToast(context, context.l10n!.settingChangedMsg);
+          // Force rebuild by triggering value change
+          // Temporarily change the value to force ValueListenableBuilder to rebuild
+          final oldValue = currentLikedSongsLength.value;
+          currentLikedSongsLength.value = oldValue + 1;
+          currentLikedSongsLength.value = oldValue;
+        }
+      } else if (widget.playlistId != null) {
+        await renameSongInPlaylist(
+          widget.playlistId,
+          _ytid,
+          newTitle,
+          newArtist,
+        );
+        // Update local cached values
+        widget.song['title'] = newTitle;
+        widget.song['artist'] = newArtist;
+        if (context.mounted) {
+          showToast(context, context.l10n!.settingChangedMsg);
+          // Trigger parent page rebuild for custom playlists
+          widget.onRenamed?.call();
+        }
+      }
+    } catch (e, stackTrace) {
+      logger.log('Error renaming song', e, stackTrace);
+      if (context.mounted) {
+        showToast(context, context.l10n!.error);
+      }
     }
   }
 
@@ -282,6 +364,8 @@ class _SongBarState extends State<SongBar> {
     final removeFromRecentlyPlayedText = l10n.removeFromRecentlyPlayed;
     final removeOfflineText = l10n.removeOffline;
     final makeOfflineText = l10n.makeOffline;
+    final renameSongText = l10n.renameSong;
+    final canRename = widget.isFromLikedSongs || widget.playlistId != null;
 
     return [
       PopupMenuItem<String>(
@@ -315,6 +399,20 @@ class _SongBarState extends State<SongBar> {
           },
         ),
       ),
+      if (canRename)
+        PopupMenuItem<String>(
+          value: 'rename',
+          child: Row(
+            children: [
+              Icon(FluentIcons.edit_24_regular, color: colorScheme.primary),
+              const SizedBox(width: 8),
+              Text(
+                renameSongText,
+                style: TextStyle(color: colorScheme.secondary),
+              ),
+            ],
+          ),
+        ),
       if (widget.onRemove != null)
         PopupMenuItem<String>(
           value: 'remove',

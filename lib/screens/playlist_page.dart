@@ -752,6 +752,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
     final items = _pagingController.items ?? [];
     final totalItems = items.length;
     final borderRadius = getItemBorderRadius(index, totalItems);
+    final isUserCreatedPlaylist = _playlist?['source'] == 'user-created';
+    final playlistId = isUserCreatedPlaylist ? _playlist!['ytid'] : null;
 
     return SongBar(
       song,
@@ -770,6 +772,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
         audioHandler.playPlaylistSong(playlist: _playlist, songIndex: index),
       },
       borderRadius: borderRadius,
+      playlistId: playlistId,
+      onRenamed: () => setState(() {}),
     );
   }
 }
