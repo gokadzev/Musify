@@ -87,12 +87,17 @@ Color primaryColorSetting = Color(
   Hive.box('settings').get('accentColor', defaultValue: 0xff91cef4),
 );
 
-// Non-Storage Notifiers
-
-final shuffleNotifier = ValueNotifier<bool>(false);
-final repeatNotifier = ValueNotifier<AudioServiceRepeatMode>(
-  AudioServiceRepeatMode.none,
+final shuffleNotifier = ValueNotifier<bool>(
+  Hive.box('settings').get('shuffleEnabled', defaultValue: false),
 );
+
+final repeatNotifier = ValueNotifier<AudioServiceRepeatMode>(
+  AudioServiceRepeatMode.values[Hive.box(
+    'settings',
+  ).get('repeatMode', defaultValue: 0)],
+);
+
+// Non-storage notifiers
 
 var sleepTimerNotifier = ValueNotifier<Duration?>(null);
 

@@ -24,6 +24,7 @@ import 'dart:io';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
+import 'package:hive/hive.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/main.dart';
@@ -580,6 +581,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
         _currentQueueIndex = 0;
         _resetPreloadingState();
         shuffleNotifier.value = false;
+        unawaited(Hive.box('settings').put('shuffleEnabled', false));
         await audioPlayer.setShuffleModeEnabled(false);
       }
 
@@ -1249,6 +1251,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       final wasShuffled = shuffleNotifier.value;
 
       shuffleNotifier.value = shuffleEnabled;
+      unawaited(Hive.box('settings').put('shuffleEnabled', shuffleEnabled));
       await audioPlayer.setShuffleModeEnabled(shuffleEnabled);
 
       if (_queueList.isEmpty) return;
@@ -1307,6 +1310,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
   Future<void> setRepeatMode(AudioServiceRepeatMode repeatMode) async {
     try {
       repeatNotifier.value = repeatMode;
+      unawaited(Hive.box('settings').put('repeatMode', repeatMode.index));
       switch (repeatMode) {
         case AudioServiceRepeatMode.none:
           await audioPlayer.setLoopMode(LoopMode.off);
