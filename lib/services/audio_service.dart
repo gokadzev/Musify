@@ -231,6 +231,23 @@ class MusifyAudioHandler extends BaseAudioHandler {
     try {
       final session = await AudioSession.instance;
       await session.configure(const AudioSessionConfiguration.music());
+
+      // Apply stored repeat mode to audio player
+      switch (repeatNotifier.value) {
+        case AudioServiceRepeatMode.none:
+          await audioPlayer.setLoopMode(LoopMode.off);
+          break;
+        case AudioServiceRepeatMode.one:
+          await audioPlayer.setLoopMode(LoopMode.one);
+          break;
+        case AudioServiceRepeatMode.all:
+        case AudioServiceRepeatMode.group:
+          await audioPlayer.setLoopMode(LoopMode.all);
+          break;
+      }
+
+      // Apply stored shuffle mode to audio player
+      await audioPlayer.setShuffleModeEnabled(shuffleNotifier.value);
     } catch (e, stackTrace) {
       logger.log('Error initializing audio session', e, stackTrace);
     }
