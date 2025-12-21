@@ -72,6 +72,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
   bool _isUpdatingState = false;
   int _songTransitionCounter = 0;
   bool _completionEventPending = false;
+  bool _completionHandlerLoadStarted = false;
 
   String? _lastError;
   int _consecutiveErrors = 0;
@@ -233,19 +234,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
       final session = await AudioSession.instance;
       await session.configure(const AudioSessionConfiguration.music());
 
-      // Apply stored repeat mode to audio player
-      switch (repeatNotifier.value) {
-        case AudioServiceRepeatMode.none:
-          await audioPlayer.setLoopMode(LoopMode.off);
-          break;
-        case AudioServiceRepeatMode.one:
-          await audioPlayer.setLoopMode(LoopMode.one);
-          break;
-        case AudioServiceRepeatMode.all:
-        case AudioServiceRepeatMode.group:
-          await audioPlayer.setLoopMode(LoopMode.all);
-          break;
-      }
+      // Always set loop mode to off - we handle all repeating through _handleSongCompletion
+      // This ensures ProcessingState.completed is always fired for song transitions
+      await audioPlayer.setLoopMode(LoopMode.off);
 
       // Apply stored shuffle mode to audio player
       await audioPlayer.setShuffleModeEnabled(shuffleNotifier.value);
@@ -319,7 +310,17 @@ class MusifyAudioHandler extends BaseAudioHandler {
                 await _handleSongCompletion();
               }
             } finally {
-              _completionEventPending = false;
+              // Only reset if still marked as pending (another event didn't override)
+              if (_completionEventPending) {
+                _completionEventPending = false;
+                _completionHandlerLoadStarted = false;
+              } else {
+                logger.log(
+                  '[COMPLETION] Flag already false in finally block (was overridden)',
+                  null,
+                  null,
+                );
+              }
             }
           });
         }
@@ -360,12 +361,19 @@ class MusifyAudioHandler extends BaseAudioHandler {
         _addToHistory(_queueList[_currentQueueIndex]);
       }
 
+      // Determine what to play next based on queue position and repeat mode
       if (_currentQueueIndex < _queueList.length - 1) {
+        // Not at end of queue - play next song
         await skipToNext();
+      } else if (repeatNotifier.value == AudioServiceRepeatMode.one) {
+        // Repeat single song - play current song again
+        await _playFromQueue(_currentQueueIndex);
       } else if (repeatNotifier.value == AudioServiceRepeatMode.all &&
           _queueList.isNotEmpty) {
+        // Repeat all - loop back to first song
         await _playFromQueue(0);
       } else if (playNextSongAutomatically.value) {
+        // No repeat and queue ended - play next recommended song
         await _playNextRecommendedSong();
       }
     } catch (e, stackTrace) {
@@ -771,18 +779,29 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   Future<void> _playFromQueue(int index) async {
     try {
+      logger.log(
+        '[PLAY_FROM_QUEUE] Called with index=$index, _currentLoadingIndex=$_currentLoadingIndex',
+        null,
+        null,
+      );
       if (index < 0 || index >= _queueList.length) {
         logger.log('Invalid queue index: $index', null, null);
         return;
       }
 
       // If already loading any song, skip the request
-      if (_currentLoadingIndex >= 0) {
-        logger.log(
-          'Already loading song at index $_currentLoadingIndex, skipping request for index: $index',
-          null,
-          null,
-        );
+      // UNLESS we're in the middle of handling a completion event (allow one load attempt)
+      if (_currentLoadingIndex >= 0 && !_completionEventPending) {
+        return;
+      }
+
+      if (_currentLoadingIndex >= 0 &&
+          _completionEventPending &&
+          !_completionHandlerLoadStarted) {
+        _completionHandlerLoadStarted = true;
+      } else if (_currentLoadingIndex >= 0 &&
+          _completionEventPending &&
+          _completionHandlerLoadStarted) {
         return;
       }
 
@@ -791,7 +810,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
       final currentTransitionId = _songTransitionCounter;
       _currentLoadingIndex = index;
       _currentLoadingTransitionId = currentTransitionId;
-      _completionEventPending = false;
 
       final previousQueueIndex = _currentQueueIndex;
       _currentQueueIndex = index;
@@ -823,8 +841,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
       logger.log('Error playing from queue', e, stackTrace);
       _handlePlaybackError();
     } finally {
-      // Only reset if this is still the current transition
-      if (_currentLoadingTransitionId == _songTransitionCounter) {
+      // Only reset if we haven't already cleared it in the success path
+      if (_currentLoadingIndex >= 0) {
         _currentLoadingIndex = -1;
         _currentLoadingTransitionId = -1;
       }
@@ -1035,6 +1053,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
         audioSource,
         songUrl,
         isOffline,
+        onPlayStarted: () {
+          _currentLoadingIndex = -1;
+          _currentLoadingTransitionId = -1;
+        },
       );
     } catch (e, stackTrace) {
       logger.log('Error playing song', e, stackTrace);
@@ -1089,8 +1111,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
     Map song,
     AudioSource audioSource,
     String songUrl,
-    bool isOffline,
-  ) async {
+    bool isOffline, {
+    Function()? onPlayStarted,
+  }) async {
     try {
       await audioPlayer
           .setAudioSource(audioSource)
@@ -1105,6 +1128,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
       }
 
       await audioPlayer.play();
+
+      // Invoke callback immediately after play() succeeds
+      onPlayStarted?.call();
 
       if (!isOffline) {
         final cacheKey =
@@ -1362,18 +1388,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
     try {
       repeatNotifier.value = repeatMode;
       unawaited(Hive.box('settings').put('repeatMode', repeatMode.index));
-      switch (repeatMode) {
-        case AudioServiceRepeatMode.none:
-          await audioPlayer.setLoopMode(LoopMode.off);
-          break;
-        case AudioServiceRepeatMode.one:
-          await audioPlayer.setLoopMode(LoopMode.one);
-          break;
-        case AudioServiceRepeatMode.all:
-        case AudioServiceRepeatMode.group:
-          await audioPlayer.setLoopMode(LoopMode.all);
-          break;
-      }
+
+      // Always set loop mode to off - we handle all repeating through _handleSongCompletion
+      // This ensures ProcessingState.completed is always fired for proper song transitions
+      await audioPlayer.setLoopMode(LoopMode.off);
     } catch (e, stackTrace) {
       logger.log('Error setting repeat mode', e, stackTrace);
     }
