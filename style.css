@@ -233,6 +233,7 @@ main {
 .features-section {
   padding: 2rem 1rem 3rem;
   background: var(--surface-container-low);
+  border-radius: 16px;
 }
 
 .features-grid {
@@ -322,6 +323,7 @@ main {
 .changelog-section {
   padding: 2rem 1rem 3rem;
   background: var(--surface-container-low);
+  border-radius: 16px;
 }
 
 .changelog-card {
@@ -347,6 +349,7 @@ main {
 .site-footer {
   background: var(--surface-container-highest);
   padding: 3rem 1.5rem 2rem;
+  border-radius: 16px;
   margin-top: 2rem;
 }
 
