@@ -67,7 +67,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
   final List<Map> _originalQueueList = [];
   final List<Map> _historyList = [];
   int _currentQueueIndex = 0;
-  bool _isLoadingNextSong = false;
+  int _currentLoadingIndex = -1;
+  int _currentLoadingTransitionId = -1;
   bool _isUpdatingState = false;
   int _songTransitionCounter = 0;
   bool _completionEventPending = false;
@@ -373,8 +374,12 @@ class MusifyAudioHandler extends BaseAudioHandler {
   }
 
   Future<void> _playNextRecommendedSong() async {
-    if (_isLoadingNextSong) {
-      logger.log('Already loading next song, skipping', null, null);
+    if (_currentLoadingIndex >= 0) {
+      logger.log(
+        'Already loading next song (index: $_currentLoadingIndex), skipping',
+        null,
+        null,
+      );
       return;
     }
 
@@ -478,6 +483,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
       if (existingYtId == ytid) {
         if (i == _currentQueueIndex) {
           removedCurrentSong = true;
+          // Reset loading state if removing the currently-loading song
+          if (_currentLoadingIndex == i) {
+            _currentLoadingIndex = -1;
+            _currentLoadingTransitionId = -1;
+          }
         }
 
         _queueList.removeAt(i);
@@ -596,6 +606,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
         _queueList.clear();
         _originalQueueList.clear();
         _currentQueueIndex = 0;
+        _currentLoadingIndex = -1;
+        _currentLoadingTransitionId = -1;
         _resetPreloadingState();
         shuffleNotifier.value = false;
         unawaited(Hive.box('settings').put('shuffleEnabled', false));
@@ -635,6 +647,12 @@ class MusifyAudioHandler extends BaseAudioHandler {
       if (index < _currentQueueIndex) {
         _currentQueueIndex--;
       } else if (index == _currentQueueIndex && _queueList.isNotEmpty) {
+        // If removing the currently-loading song, reset loading state
+        if (_currentLoadingIndex == index) {
+          _currentLoadingIndex = -1;
+          _currentLoadingTransitionId = -1;
+        }
+
         if (_currentQueueIndex >= _queueList.length) {
           _currentQueueIndex = _queueList.length - 1;
         }
@@ -680,6 +698,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
       _queueList.clear();
       _originalQueueList.clear();
       _currentQueueIndex = 0;
+      _currentLoadingIndex = -1;
+      _currentLoadingTransitionId = -1;
       _resetPreloadingState();
       _updateQueueMediaItems();
     } catch (e, stackTrace) {
@@ -756,21 +776,25 @@ class MusifyAudioHandler extends BaseAudioHandler {
         return;
       }
 
-      if (_isLoadingNextSong && _currentQueueIndex == index) {
+      // If already loading any song, skip the request
+      if (_currentLoadingIndex >= 0) {
         logger.log(
-          'Song already loading, skipping request for index: $index',
+          'Already loading song at index $_currentLoadingIndex, skipping request for index: $index',
           null,
           null,
         );
         return;
       }
 
-      _isLoadingNextSong = true;
+      // Start new transition
+      _songTransitionCounter++;
+      final currentTransitionId = _songTransitionCounter;
+      _currentLoadingIndex = index;
+      _currentLoadingTransitionId = currentTransitionId;
       _completionEventPending = false;
 
       final previousQueueIndex = _currentQueueIndex;
       _currentQueueIndex = index;
-      _songTransitionCounter++;
 
       final currentSong = _queueList[_currentQueueIndex];
       final currentMediaItem = mapToMediaItem(currentSong);
@@ -785,18 +809,25 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
       final success = await playSong(_queueList[index]);
 
-      if (success) {
-        _consecutiveErrors = 0;
-        _preloadUpcomingSongs();
-      } else {
-        _currentQueueIndex = previousQueueIndex;
-        _handlePlaybackError();
+      // Only process result if this is still the current transition
+      if (currentTransitionId == _currentLoadingTransitionId) {
+        if (success) {
+          _consecutiveErrors = 0;
+          _preloadUpcomingSongs();
+        } else {
+          _currentQueueIndex = previousQueueIndex;
+          _handlePlaybackError();
+        }
       }
     } catch (e, stackTrace) {
       logger.log('Error playing from queue', e, stackTrace);
       _handlePlaybackError();
     } finally {
-      _isLoadingNextSong = false;
+      // Only reset if this is still the current transition
+      if (_currentLoadingTransitionId == _songTransitionCounter) {
+        _currentLoadingIndex = -1;
+        _currentLoadingTransitionId = -1;
+      }
     }
   }
 
@@ -930,6 +961,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
   Future<void> stop() async {
     _debounceTimer?.cancel();
     _completionEventPending = false;
+    _currentLoadingIndex = -1;
+    _currentLoadingTransitionId = -1;
     try {
       await audioPlayer.stop();
       _lastError = null;
@@ -1222,7 +1255,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
       } else if (repeatNotifier.value == AudioServiceRepeatMode.all &&
           _queueList.isNotEmpty) {
         await _playFromQueue(0);
-      } else if (playNextSongAutomatically.value && !_isLoadingNextSong) {
+      } else if (playNextSongAutomatically.value &&
+          _currentLoadingIndex == -1) {
         await _playNextRecommendedSong();
       } else {
         logger.log('No next song available', null, null);
