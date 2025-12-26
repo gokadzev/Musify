@@ -356,95 +356,6 @@ main {
   border-bottom: none;
 }
 
-/* Sponsors Section */
-.sponsors-section {
-  padding: 3rem 1rem;
-  max-width: 1000px;
-  margin: 0 auto;
-}
-
-.sponsors-list {
-  list-style: none;
-  margin: 0 auto 2rem;
-  padding: 0;
-  color: var(--on-surface);
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1rem;
-  counter-reset: sponsor-counter;
-}
-
-.sponsor-item {
-  padding: 1.25rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  position: relative;
-  counter-increment: sponsor-counter;
-  background: linear-gradient(
-    135deg,
-    var(--surface-container) 0%,
-    var(--surface-container-low) 100%
-  );
-  border: 1px solid var(--outline-variant);
-  border-radius: 12px;
-  transition: all 0.3s ease;
-}
-
-.sponsor-item:hover {
-  border-color: var(--primary);
-  box-shadow: 0 4px 12px rgba(255, 180, 169, 0.1);
-}
-
-.sponsor-item::before {
-  content: counter(sponsor-counter);
-  font-weight: 700;
-  font-size: 1.5rem;
-  color: var(--primary);
-  line-height: 1;
-  margin-bottom: 0.25rem;
-}
-
-.sponsor-name {
-  font-weight: 600;
-  font-size: 0.95rem;
-  color: var(--on-surface);
-}
-
-.sponsor-desc {
-  font-size: 0.8rem;
-  color: var(--on-surface-variant);
-  line-height: 1.4;
-}
-
-.sponsor-info {
-  flex: 1;
-}
-
-.sponsor-info h3 {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--on-surface);
-  margin: 0 0 0.25rem 0;
-}
-
-.sponsor-info p {
-  font-size: 0.8rem;
-  color: var(--on-surface-variant);
-  margin: 0;
-}
-
-.sponsors-cta {
-  display: flex;
-  justify-content: center;
-  max-width: 700px;
-  margin: 0 auto;
-}
-
-.sponsors-cta button {
-  font-weight: 600;
-}
-
 /* Footer */
 .site-footer {
   background: var(--surface-container-highest);
@@ -520,31 +431,6 @@ main {
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
-  .sponsors-section {
-    padding: 2rem 1rem;
-  }
-
-  .sponsors-list {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 0.875rem;
-  }
-
-  .sponsor-item {
-    padding: 1rem;
-  }
-
-  .sponsor-item::before {
-    font-size: 1.25rem;
-  }
-
-  .sponsor-name {
-    font-size: 0.9rem;
-  }
-
-  .sponsor-desc {
-    font-size: 0.75rem;
-  }
-
   .hero-section {
     min-height: auto;
     padding: 3rem 1rem;
@@ -607,31 +493,6 @@ main {
 }
 
 @media (max-width: 480px) {
-  .sponsors-section {
-    padding: 1.5rem 0.75rem;
-  }
-
-  .sponsors-list {
-    grid-template-columns: 1fr;
-    gap: 0.75rem;
-  }
-
-  .sponsor-item {
-    padding: 0.875rem;
-  }
-
-  .sponsor-item::before {
-    font-size: 1.15rem;
-  }
-
-  .sponsor-name {
-    font-size: 0.85rem;
-  }
-
-  .sponsor-desc {
-    font-size: 0.7rem;
-  }
-
   .hero-actions {
     flex-direction: column;
     align-items: stretch;
