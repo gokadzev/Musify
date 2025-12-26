@@ -177,6 +177,13 @@ main {
 }
 
 /* Stats Section */
+
+.stats-section {
+  padding: 2rem 0 3rem;
+  background: var(--surface-container-low);
+  border-radius: 16px;
+}
+
 .stats-grid {
   display: flex;
   flex-wrap: wrap;
