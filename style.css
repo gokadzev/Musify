@@ -253,6 +253,10 @@ main {
   align-items: center;
   gap: 1rem;
   transition: transform 0.2s ease;
+  min-height: 120px;
+  height: 100%;
+  box-sizing: border-box;
+  margin-block-start: unset !important;
 }
 
 .feature-card:hover {
