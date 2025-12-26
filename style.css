@@ -58,6 +58,10 @@ main {
   }
 }
 
+.section {
+  padding: 2rem 1rem 3rem;
+}
+
 /* Hero Section */
 .hero-section {
   min-height: 85vh;
@@ -231,7 +235,6 @@ main {
 
 /* Features Section */
 .features-section {
-  padding: 2rem 1rem 3rem;
   background: var(--surface-container-low);
   border-radius: 16px;
 }
@@ -325,7 +328,6 @@ main {
 
 /* Changelog Section */
 .changelog-section {
-  padding: 2rem 1rem 3rem;
   background: var(--surface-container-low);
   border-radius: 16px;
 }
