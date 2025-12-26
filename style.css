@@ -437,9 +437,9 @@ main {
 /* Footer */
 .site-footer {
   background: var(--surface-container-highest);
-  padding: 3rem 1.5rem 2rem;
+  padding: 3rem 1.5rem;
   border-radius: 16px;
-  margin-top: 2rem;
+  margin: 1rem auto;
 }
 
 .footer-content {
