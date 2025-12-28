@@ -496,40 +496,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
     }
   }
 
-  bool _removeSongInstances(String ytid) {
-    var removedCurrentSong = false;
-
-    for (var i = _queueList.length - 1; i >= 0; i--) {
-      final existingYtId = _queueList[i]['ytid']?.toString();
-      if (existingYtId == ytid) {
-        if (i == _currentQueueIndex) {
-          removedCurrentSong = true;
-          // Reset loading state if removing the currently-loading song
-          if (_currentLoadingIndex == i) {
-            _currentLoadingIndex = -1;
-            _currentLoadingTransitionId = -1;
-          }
-        }
-
-        _queueList.removeAt(i);
-
-        if (i < _currentQueueIndex) {
-          _currentQueueIndex--;
-        }
-      }
-    }
-
-    if (_queueList.isEmpty) {
-      _currentQueueIndex = 0;
-    } else if (_currentQueueIndex >= _queueList.length) {
-      _currentQueueIndex = _queueList.length - 1;
-    } else if (_currentQueueIndex < 0) {
-      _currentQueueIndex = 0;
-    }
-
-    return removedCurrentSong;
-  }
-
   Future<void> addToQueue(Map song, {bool playNext = false}) async {
     try {
       if (song['ytid'] == null || song['ytid'].toString().isEmpty) {
@@ -537,13 +503,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
         return;
       }
 
-      final ytid = song['ytid'].toString();
-      final removedCurrentSong = _removeSongInstances(ytid);
-
       int insertIndex;
 
       if (playNext) {
-        var desiredIndex = _currentQueueIndex + (removedCurrentSong ? 0 : 1);
+        var desiredIndex = _currentQueueIndex + 1;
         if (desiredIndex < 0) desiredIndex = 0;
         if (desiredIndex > _queueList.length) {
           desiredIndex = _queueList.length;
@@ -560,9 +523,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
         insertIndex = _queueList.length - 1;
       }
 
-      if (removedCurrentSong) {
-        _currentQueueIndex = insertIndex;
-      } else if (_currentQueueIndex < 0) {
+      if (_currentQueueIndex < 0) {
         _currentQueueIndex = 0;
       }
 
@@ -640,21 +601,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
       for (var i = 0; i < songs.length; i++) {
         final song = songs[i];
         if (song['ytid'] != null && song['ytid'].toString().isNotEmpty) {
-          final ytid = song['ytid'].toString();
-
-          var removedCurrentSong = false;
-          if (!replace) {
-            removedCurrentSong = _removeSongInstances(ytid);
-          }
-
           _queueList.add(song);
 
           if (replace && startIndex == i) {
             targetQueueIndex = _queueList.length - 1;
-          }
-
-          if (removedCurrentSong) {
-            _currentQueueIndex = _queueList.length - 1;
           }
         }
       }
