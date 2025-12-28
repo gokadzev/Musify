@@ -1275,6 +1275,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
         return children.first;
       }
 
+      // ignore: deprecated_member_use
       return ConcatenatingAudioSource(children: children);
     } catch (e, stackTrace) {
       logger.log('Error checking sponsor block', e, stackTrace);
