@@ -635,11 +635,23 @@ class MusifyAudioHandler extends BaseAudioHandler {
         await audioPlayer.setShuffleModeEnabled(false);
       }
 
-      for (final song in songs) {
+      int? targetQueueIndex;
+
+      for (var i = 0; i < songs.length; i++) {
+        final song = songs[i];
         if (song['ytid'] != null && song['ytid'].toString().isNotEmpty) {
           final ytid = song['ytid'].toString();
-          final removedCurrentSong = _removeSongInstances(ytid);
+
+          var removedCurrentSong = false;
+          if (!replace) {
+            removedCurrentSong = _removeSongInstances(ytid);
+          }
+
           _queueList.add(song);
+
+          if (replace && startIndex == i) {
+            targetQueueIndex = _queueList.length - 1;
+          }
 
           if (removedCurrentSong) {
             _currentQueueIndex = _queueList.length - 1;
@@ -649,7 +661,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
       _updateQueueMediaItems();
 
-      if (startIndex != null && startIndex < _queueList.length) {
+      if (targetQueueIndex != null) {
+        await _playFromQueue(targetQueueIndex);
+      } else if (startIndex != null &&
+          startIndex < _queueList.length &&
+          !replace) {
         await _playFromQueue(startIndex);
       } else if (replace && _queueList.isNotEmpty) {
         await _playFromQueue(0);
