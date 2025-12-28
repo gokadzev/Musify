@@ -1227,25 +1227,59 @@ class MusifyAudioHandler extends BaseAudioHandler {
     }
   }
 
-  Future<ClippingAudioSource?> checkIfSponsorBlockIsAvailable(
+  Future<AudioSource?> checkIfSponsorBlockIsAvailable(
     UriAudioSource audioSource,
     String songId,
   ) async {
-    // TODO: Implement proper SponsorBlock support.
-    // Current implementation incorrectly clips the song instead of skipping segments.
-    // try {
-    //   final segments = await getSkipSegments(songId);
-    //   if (segments.isNotEmpty && segments[0]['end'] != null) {
-    //     return ClippingAudioSource(
-    //       child: audioSource,
-    //       start: Duration.zero,
-    //       end: Duration(seconds: segments[0]['end']!),
-    //     );
-    //   }
-    // } catch (e, stackTrace) {
-    //   logger.log('Error checking sponsor block', e, stackTrace);
-    // }
-    return null;
+    try {
+      final segments = await getSkipSegments(songId);
+      if (segments.isEmpty) return null;
+
+      // Sort segments by start time
+      segments.sort((a, b) => (a['start'] ?? 0).compareTo(b['start'] ?? 0));
+
+      final children = <AudioSource>[];
+      var lastEnd = 0;
+
+      for (final segment in segments) {
+        final start = segment['start'] ?? 0;
+        final end = segment['end'] ?? 0;
+
+        // Add the "good" part before this sponsor segment
+        if (start > lastEnd) {
+          children.add(
+            ClippingAudioSource(
+              child: audioSource,
+              start: Duration(seconds: lastEnd),
+              end: Duration(seconds: start),
+            ),
+          );
+        }
+
+        // Advance lastEnd, handling overlapping segments
+        if (end > lastEnd) {
+          lastEnd = end;
+        }
+      }
+
+      // Add the final part from the last sponsor segment to the end of the song
+      children.add(
+        ClippingAudioSource(
+          child: audioSource,
+          start: Duration(seconds: lastEnd),
+          // end: null means play until the end of the file
+        ),
+      );
+
+      if (children.length == 1) {
+        return children.first;
+      }
+
+      return ConcatenatingAudioSource(children: children);
+    } catch (e, stackTrace) {
+      logger.log('Error checking sponsor block', e, stackTrace);
+      return null;
+    }
   }
 
   Future<void> skipToSong(int newIndex) async {
