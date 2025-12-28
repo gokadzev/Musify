@@ -213,15 +213,24 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
         if (capturedQueueIndex == _currentQueueIndex &&
             capturedTransitionCounter == _songTransitionCounter) {
-          final mediaItems = _queueList.asMap().entries.map((entry) {
-            final song = entry.value;
-            final mediaItem = mapToMediaItem(song);
-            return entry.key == capturedQueueIndex
-                ? mediaItem.copyWith(duration: duration)
-                : mediaItem;
-          }).toList();
+          List<MediaItem> newQueue;
+          if (queue.hasValue && queue.value.length == _queueList.length) {
+            newQueue = List<MediaItem>.from(queue.value);
+            if (capturedQueueIndex < newQueue.length) {
+              newQueue[capturedQueueIndex] = newQueue[capturedQueueIndex]
+                  .copyWith(duration: duration);
+            }
+          } else {
+            newQueue = _queueList.asMap().entries.map((entry) {
+              final song = entry.value;
+              final mediaItem = mapToMediaItem(song);
+              return entry.key == capturedQueueIndex
+                  ? mediaItem.copyWith(duration: duration)
+                  : mediaItem;
+            }).toList();
+          }
 
-          queue.add(mediaItems);
+          queue.add(newQueue);
         }
       } catch (e, stackTrace) {
         logger.log('Error updating media item with duration', e, stackTrace);
@@ -350,7 +359,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
       return;
     }
 
-    if (hasNext) {
+    if (hasNext ||
+        (repeatNotifier.value == AudioServiceRepeatMode.all &&
+            _queueList.isNotEmpty) ||
+        playNextSongAutomatically.value) {
       Future.delayed(_errorRetryDelay, skipToNext);
     }
   }
@@ -362,12 +374,12 @@ class MusifyAudioHandler extends BaseAudioHandler {
       }
 
       // Determine what to play next based on queue position and repeat mode
-      if (_currentQueueIndex < _queueList.length - 1) {
-        // Not at end of queue - play next song
-        await skipToNext();
-      } else if (repeatNotifier.value == AudioServiceRepeatMode.one) {
+      if (repeatNotifier.value == AudioServiceRepeatMode.one) {
         // Repeat single song - play current song again
         await _playFromQueue(_currentQueueIndex);
+      } else if (_currentQueueIndex < _queueList.length - 1) {
+        // Not at end of queue - play next song
+        await skipToNext();
       } else if (repeatNotifier.value == AudioServiceRepeatMode.all &&
           _queueList.isNotEmpty) {
         // Repeat all - loop back to first song
@@ -729,15 +741,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
     }
   }
 
-  void _updateQueueOnly() {
-    try {
-      final mediaItems = _queueList.map(mapToMediaItem).toList();
-      queue.add(mediaItems);
-    } catch (e, stackTrace) {
-      logger.log('Error updating queue', e, stackTrace);
-    }
-  }
-
   void _emitOptimisticLoadingState({
     Map? song,
     int? queueIndex,
@@ -820,8 +823,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
       await Future.microtask(() {
         mediaItem.add(currentMediaItem);
       });
-
-      _updateQueueOnly();
 
       _emitOptimisticLoadingState(queueIndex: _currentQueueIndex);
 
@@ -920,16 +921,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
     final ytid = nextSong['ytid'];
     if (ytid == null) return;
 
-    final cacheKey = 'song_${ytid}_${audioQualitySetting.value}_url';
-    final cachedUrl = await getData('cache', cacheKey);
-    if (cachedUrl != null && cachedUrl.toString().isNotEmpty) return;
-
-    final url = await getSong(ytid, nextSong['isLive'] ?? false);
-    if (url != null && url.isNotEmpty) {
-      await addOrUpdateData('cache', cacheKey, url);
-    } else {
-      logger.log('Preload: Failed to get URL for song $ytid', null, null);
-    }
+    // getSong handles caching, freshness checks, and validation
+    await getSong(ytid, nextSong['isLive'] ?? false);
   }
 
   List<Map> get currentQueue => List.unmodifiable(_queueList);
@@ -1053,10 +1046,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
         audioSource,
         songUrl,
         isOffline,
-        onPlayStarted: () {
-          _currentLoadingIndex = -1;
-          _currentLoadingTransitionId = -1;
-        },
       );
     } catch (e, stackTrace) {
       logger.log('Error playing song', e, stackTrace);
@@ -1111,9 +1100,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
     Map song,
     AudioSource audioSource,
     String songUrl,
-    bool isOffline, {
-    Function()? onPlayStarted,
-  }) async {
+    bool isOffline,
+  ) async {
     try {
       await audioPlayer
           .setAudioSource(audioSource)
@@ -1128,9 +1116,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
       }
 
       await audioPlayer.play();
-
-      // Invoke callback immediately after play() succeeds
-      onPlayStarted?.call();
 
       if (!isOffline) {
         final cacheKey =
@@ -1246,18 +1231,20 @@ class MusifyAudioHandler extends BaseAudioHandler {
     UriAudioSource audioSource,
     String songId,
   ) async {
-    try {
-      final segments = await getSkipSegments(songId);
-      if (segments.isNotEmpty && segments[0]['end'] != null) {
-        return ClippingAudioSource(
-          child: audioSource,
-          start: Duration.zero,
-          end: Duration(seconds: segments[0]['end']!),
-        );
-      }
-    } catch (e, stackTrace) {
-      logger.log('Error checking sponsor block', e, stackTrace);
-    }
+    // TODO: Implement proper SponsorBlock support.
+    // Current implementation incorrectly clips the song instead of skipping segments.
+    // try {
+    //   final segments = await getSkipSegments(songId);
+    //   if (segments.isNotEmpty && segments[0]['end'] != null) {
+    //     return ClippingAudioSource(
+    //       child: audioSource,
+    //       start: Duration.zero,
+    //       end: Duration(seconds: segments[0]['end']!),
+    //     );
+    //   }
+    // } catch (e, stackTrace) {
+    //   logger.log('Error checking sponsor block', e, stackTrace);
+    // }
     return null;
   }
 
