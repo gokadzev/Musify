@@ -323,13 +323,14 @@ class MusifyAudioHandler extends BaseAudioHandler {
               if (_completionEventPending) {
                 _completionEventPending = false;
                 _completionHandlerLoadStarted = false;
-              } else {
-                logger.log(
-                  '[COMPLETION] Flag already false in finally block (was overridden)',
-                  null,
-                  null,
-                );
               }
+              // else {
+              //   logger.log(
+              //     '[COMPLETION] Flag already false in finally block (was overridden)',
+              //     null,
+              //     null,
+              //   );
+              // }
             }
           });
         }
@@ -782,11 +783,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   Future<void> _playFromQueue(int index) async {
     try {
-      logger.log(
-        '[PLAY_FROM_QUEUE] Called with index=$index, _currentLoadingIndex=$_currentLoadingIndex',
-        null,
-        null,
-      );
+      // logger.log(
+      //   '[PLAY_FROM_QUEUE] Called with index=$index, _currentLoadingIndex=$_currentLoadingIndex',
+      //   null,
+      //   null,
+      // );
       if (index < 0 || index >= _queueList.length) {
         logger.log('Invalid queue index: $index', null, null);
         return;
