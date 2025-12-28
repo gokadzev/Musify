@@ -497,7 +497,7 @@ List<Map<String, dynamic>> playlistsDB = [
   {
     'ytid': 'PLoTmxgrbHycoNOZj2GwTwPP1rLN2kHMjZ',
     'title': 'Dance hits',
-    'image': 'https://i.scdn.co/image/ab67706c0000da847f5e28ddc4c4ec1994b2206c',
+    'image': 'https://i.scdn.co/image/ab67616d00001e021124aa2e1761e02c0b00d492',
     'list': [],
   },
   {

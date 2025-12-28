@@ -838,4 +838,32 @@ List albumsDB = [
     'isAlbum': true,
     'list': [],
   },
+  {
+    'ytid': 'OLAK5uy_m7dVFdaWDh6N7jNYWXd2CpXEnjY4W0-sw',
+    'title': 'Sombr - I barely know her',
+    'image': 'https://i.scdn.co/image/ab67616d0000b273d2eb391e0b3c3bc21c127db6',
+    'isAlbum': true,
+    'list': [],
+  },
+  {
+    'ytid': 'OLAK5uy_lD8qORzBI5Mip_cX9hcaOpYTOyZc94OD8',
+    'title': 'Cardi B - AM I THE DRAMA?',
+    'image': 'https://i.scdn.co/image/ab67616d0000b2732fa2de79bd9fee046085ea72',
+    'isAlbum': true,
+    'list': [],
+  },
+  {
+    'ytid': 'OLAK5uy_nGg_xXxWAN5OVZeMl-9mtDi7vZUlEsKEo',
+    'title': 'Justin Bieber - SWAG',
+    'image': 'https://i.scdn.co/image/ab67616d0000b273b2d278666b1150e827de324d',
+    'isAlbum': true,
+    'list': [],
+  },
+  {
+    'ytid': 'OLAK5uy_mrovhl9JXvTKu8VbI3qRIqlwZ0SR_VetU',
+    'title': 'Olivia Dean - The Art of Loving',
+    'image': 'https://i.scdn.co/image/ab67616d0000b2739a336bfb6d40bbd90a507417',
+    'isAlbum': true,
+    'list': [],
+  },
 ];
