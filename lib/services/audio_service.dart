@@ -275,10 +275,29 @@ class MusifyAudioHandler extends BaseAudioHandler {
             processingStateMap[audioPlayer.processingState] ??
             AudioProcessingState.idle;
 
-        if (currentState == null ||
+        var shouldUpdate =
+            currentState == null ||
             currentState.playing != audioPlayer.playing ||
             currentState.processingState != newProcessingState ||
-            currentState.queueIndex != _currentQueueIndex) {
+            currentState.queueIndex != _currentQueueIndex;
+
+        if (!shouldUpdate) {
+          final currentPosition = audioPlayer.position;
+          final lastUpdateTime = currentState.updateTime;
+          final lastUpdatePosition = currentState.updatePosition;
+          final speed = currentState.speed;
+
+          final expectedPosition =
+              lastUpdatePosition +
+              (DateTime.now().difference(lastUpdateTime)) * speed;
+
+          if ((currentPosition - expectedPosition).abs() >
+              const Duration(milliseconds: 500)) {
+            shouldUpdate = true;
+          }
+        }
+
+        if (shouldUpdate) {
           playbackState.add(
             PlaybackState(
               controls: [
