@@ -87,10 +87,14 @@ class ProxyManager {
   Future<void> _fetchProxies() async {
     if (!useProxy.value) return;
     try {
+      // Clear existing candidates to avoid duplicates and stale proxies
+      _proxiesByCountry.clear();
+
       final fetchTasks = <Future>[]
-        ..add(_fetchSpysMe())
         ..add(_fetchProxyScrape())
-        ..add(_fetchOpenProxyList());
+        ..add(_fetchGeonode())
+        ..add(_fetchOpenProxyList())
+        ..add(_fetchSpysMe());
       _fetchingProxiesFuture = Future.wait(fetchTasks);
       await _fetchingProxiesFuture?.whenComplete(() {
         _hasFetched = true;
@@ -362,11 +366,21 @@ class ProxyManager {
       final response = await http
           .get(Uri.parse(url))
           .timeout(
-            const Duration(seconds: 15),
+            const Duration(seconds: 10),
             onTimeout: () => http.Response('', 408),
           );
-      if (response.statusCode != 200) return;
+
+      if (response.statusCode != 200) {
+        _logProxyFetchError('spys.me', 'Status code: ${response.statusCode}');
+        return;
+      }
+
+      if (response.body.isEmpty) return;
+
       response.body.split('\n').forEach((line) {
+        if (line.trim().isEmpty || line.startsWith(';'))
+          return; // Skip comments/empty lines
+
         // Use pre-compiled regex (constant)
         final match = _spysRegex.firstMatch(line);
         if (match != null) {
@@ -402,7 +416,7 @@ class ProxyManager {
     if (!useProxy.value) return;
     try {
       const url =
-          'https://api.proxyscrape.com/v4/free-proxy-list/get?request=display_proxies&proxy_format=protocolipport&format=json';
+          'https://api.proxyscrape.com/v4/free-proxy-list/get?request=display_proxies&proxy_format=protocolipport&format=json&protocol=http&ssl=yes';
       final response = await http
           .get(Uri.parse(url))
           .timeout(
@@ -410,12 +424,22 @@ class ProxyManager {
             onTimeout: () => http.Response('', 408),
           );
       if (response.statusCode != 200) return;
-      final result = jsonDecode(response.body);
+
+      Map<String, dynamic> result;
+      try {
+        result = jsonDecode(response.body);
+      } catch (_) {
+        return; // Invalid JSON
+      }
+
+      if (result['proxies'] is! List) return;
+
       for (final proxyData in (result['proxies'] as List)) {
+        if (proxyData is! Map) continue;
+
         if (proxyData['ip_data'] != null &&
             (proxyData['alive'] ?? false) &&
-            proxyData['ip_data']['countryCode'] != null &&
-            (proxyData['ssl'] ?? false)) {
+            proxyData['ip_data']['countryCode'] != null) {
           final country = proxyData['ip_data']['countryCode'];
           _proxiesByCountry[country] = _proxiesByCountry[country] ?? [];
           _proxiesByCountry[country]!.add(
@@ -423,7 +447,7 @@ class ProxyManager {
               source: 'proxyscrape.com',
               address: '${proxyData['ip']}:${proxyData['port']}',
               country: country,
-              isSsl: proxyData['ssl'],
+              isSsl: true,
             ),
           );
         }
@@ -466,6 +490,46 @@ class ProxyManager {
       });
     } catch (e) {
       _logProxyFetchError('openproxylist', e);
+    }
+  }
+
+  Future<void> _fetchGeonode() async {
+    if (!useProxy.value) return;
+    try {
+      const url =
+          'https://proxylist.geonode.com/api/proxy-list?limit=50&page=1&sort_by=lastChecked&sort_type=desc&protocols=http%2Chttps';
+      final response = await http
+          .get(Uri.parse(url))
+          .timeout(
+            const Duration(seconds: 15),
+            onTimeout: () => http.Response('', 408),
+          );
+      if (response.statusCode != 200) return;
+
+      final result = jsonDecode(response.body);
+      final data = result['data'];
+      if (data is! List) return;
+
+      for (final item in data) {
+        if (item is! Map) continue;
+        final ip = item['ip'];
+        final port = item['port'];
+        final country = item['country'];
+
+        if (ip != null && port != null && country != null) {
+          _proxiesByCountry[country] = _proxiesByCountry[country] ?? [];
+          _proxiesByCountry[country]!.add(
+            ProxyInfo(
+              source: 'geonode',
+              address: '$ip:$port',
+              country: country,
+              isSsl: true,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      _logProxyFetchError('geonode', e);
     }
   }
 }
