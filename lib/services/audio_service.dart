@@ -387,16 +387,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
       if (repeatNotifier.value == AudioServiceRepeatMode.one) {
         // Repeat single song - play current song again
         await _playFromQueue(_currentQueueIndex);
-      } else if (_currentQueueIndex < _queueList.length - 1) {
-        // Not at end of queue - play next song
+      } else {
+        // For all other cases (next song, repeat all, auto-play), skipToNext handles it
         await skipToNext();
-      } else if (repeatNotifier.value == AudioServiceRepeatMode.all &&
-          _queueList.isNotEmpty) {
-        // Repeat all - loop back to first song
-        await _playFromQueue(0);
-      } else if (playNextSongAutomatically.value) {
-        // No repeat and queue ended - play next recommended song
-        await _playNextRecommendedSong();
       }
     } catch (e, stackTrace) {
       logger.log('Error handling song completion', e, stackTrace);
@@ -886,10 +879,12 @@ class MusifyAudioHandler extends BaseAudioHandler {
     Future.microtask(() async {
       _activePreloadCount++;
       try {
-        await _preloadSingleSong(nextSong).timeout(
+        // getSong handles caching, freshness checks, and validation
+        await getSong(ytid, nextSong['isLive'] ?? false).timeout(
           const Duration(seconds: 8),
           onTimeout: () {
             logger.log('Preload timeout for song $ytid', null, null);
+            return null;
           },
         );
       } catch (e) {
@@ -900,14 +895,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
         _preloadedYtIds.add(ytid);
       }
     });
-  }
-
-  Future<void> _preloadSingleSong(Map nextSong) async {
-    final ytid = nextSong['ytid'];
-    if (ytid == null) return;
-
-    // getSong handles caching, freshness checks, and validation
-    await getSong(ytid, nextSong['isLive'] ?? false);
   }
 
   List<Map> get currentQueue => List.unmodifiable(_queueList);
