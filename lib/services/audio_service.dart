@@ -1142,7 +1142,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       logger.log('Error setting audio source', e, stackTrace);
 
       if (isOffline) {
-        return _attemptOfflineFallback(song);
+        return _attemptOfflineFallback(song, mediaId: mediaId);
       }
 
       _lastError = e.toString();
@@ -1150,34 +1150,19 @@ class MusifyAudioHandler extends BaseAudioHandler {
     }
   }
 
-  Future<bool> _attemptOfflineFallback(Map song) async {
+  Future<bool> _attemptOfflineFallback(Map song, {String? mediaId}) async {
     logger.log('Attempting to play online version as fallback', null, null);
     final onlineUrl = await getSong(song['ytid'], song['isLive'] ?? false);
     if (onlineUrl != null && onlineUrl.isNotEmpty) {
       final onlineSource = await buildAudioSource(song, onlineUrl, false);
       if (onlineSource != null) {
-        try {
-          await audioPlayer
-              .setAudioSource(onlineSource)
-              .timeout(_songTransitionTimeout);
-          await Future.delayed(const Duration(milliseconds: 100));
-
-          if (audioPlayer.duration != null) {
-            final currentMediaItem = mapToMediaItem(song);
-            mediaItem.add(
-              currentMediaItem.copyWith(duration: audioPlayer.duration),
-            );
-          }
-
-          await audioPlayer.play();
-          _updatePlaybackState();
-
-          Future.delayed(const Duration(seconds: 2), _preloadUpcomingSongs);
-
-          return true;
-        } catch (fallbackError, fallbackStackTrace) {
-          logger.log('Fallback also failed', fallbackError, fallbackStackTrace);
-        }
+        return _setAudioSourceAndPlay(
+          song,
+          onlineSource,
+          onlineUrl,
+          false,
+          mediaId: mediaId,
+        );
       }
     }
     return false;
