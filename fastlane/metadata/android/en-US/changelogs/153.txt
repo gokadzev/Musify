@@ -1,0 +1,4 @@
+Bug fixes
+- Fixed various playback problems
+- Fixed proxy problems
+- Full changelog: https://github.com/gokadzev/Musify/releases
