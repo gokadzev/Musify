@@ -409,10 +409,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
       song,
       true,
       onPlay: () {
-        audioHandler.playPlaylistSong(
-          playlist: audioHandler.queue != playlist['list'] ? playlist : null,
-          songIndex: index,
-        );
+        audioHandler.playPlaylistSong(playlist: playlist, songIndex: index);
       },
       borderRadius: borderRadius,
       isRecentSong: isRecentSong,

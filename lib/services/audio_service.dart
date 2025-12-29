@@ -198,38 +198,35 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
         final capturedQueueIndex = _currentQueueIndex;
         final capturedTransitionCounter = _songTransitionCounter;
+
+        // If state changed while waiting for microtask, abort
+        if (capturedQueueIndex != _currentQueueIndex ||
+            capturedTransitionCounter != _songTransitionCounter) {
+          return;
+        }
+
         final currentSong = _queueList[capturedQueueIndex];
         final currentMediaItem = mapToMediaItem(currentSong);
-
         final currentItem = mediaItem.valueOrNull;
+
         if (currentItem != null &&
             currentItem.id == currentMediaItem.id &&
-            capturedQueueIndex == _currentQueueIndex &&
-            capturedTransitionCounter == _songTransitionCounter &&
             (currentItem.duration == null ||
                 !durationEquals(currentItem.duration, duration))) {
           mediaItem.add(currentMediaItem.copyWith(duration: duration));
         }
 
-        if (capturedQueueIndex == _currentQueueIndex &&
-            capturedTransitionCounter == _songTransitionCounter) {
-          List<MediaItem> newQueue;
-          if (queue.hasValue && queue.value.length == _queueList.length) {
-            newQueue = List<MediaItem>.from(queue.value);
-            if (capturedQueueIndex < newQueue.length) {
-              newQueue[capturedQueueIndex] = newQueue[capturedQueueIndex]
-                  .copyWith(duration: duration);
-            }
-          } else {
-            newQueue = _queueList.asMap().entries.map((entry) {
-              final song = entry.value;
-              final mediaItem = mapToMediaItem(song);
-              return entry.key == capturedQueueIndex
-                  ? mediaItem.copyWith(duration: duration)
-                  : mediaItem;
-            }).toList();
-          }
+        List<MediaItem> newQueue;
+        if (queue.hasValue && queue.value.length == _queueList.length) {
+          newQueue = List<MediaItem>.from(queue.value);
+        } else {
+          newQueue = _queueList.map(mapToMediaItem).toList();
+        }
 
+        if (capturedQueueIndex < newQueue.length) {
+          newQueue[capturedQueueIndex] = newQueue[capturedQueueIndex].copyWith(
+            duration: duration,
+          );
           queue.add(newQueue);
         }
       } catch (e, stackTrace) {
@@ -506,22 +503,16 @@ class MusifyAudioHandler extends BaseAudioHandler {
       int insertIndex;
 
       if (playNext) {
-        var desiredIndex = _currentQueueIndex + 1;
-        if (desiredIndex < 0) desiredIndex = 0;
-        if (desiredIndex > _queueList.length) {
-          desiredIndex = _queueList.length;
+        insertIndex = _currentQueueIndex + 1;
+        if (insertIndex < 0) insertIndex = 0;
+        if (insertIndex > _queueList.length) {
+          insertIndex = _queueList.length;
         }
-        insertIndex = desiredIndex;
       } else {
         insertIndex = _queueList.length;
       }
 
-      if (insertIndex >= 0 && insertIndex <= _queueList.length) {
-        _queueList.insert(insertIndex, song);
-      } else {
-        _queueList.add(song);
-        insertIndex = _queueList.length - 1;
-      }
+      _queueList.insert(insertIndex, song);
 
       if (_currentQueueIndex < 0) {
         _currentQueueIndex = 0;
@@ -983,13 +974,24 @@ class MusifyAudioHandler extends BaseAudioHandler {
       }
 
       _lastError = null;
-      final isOffline = song['isOffline'] ?? false;
+      var isOffline = song['isOffline'] ?? false;
 
       if (audioPlayer.playing) await audioPlayer.pause();
 
       _emitOptimisticLoadingState(song: song, includeMediaItem: true);
 
-      final songUrl = await _getSongUrl(song, isOffline);
+      var songUrl = await _getSongUrl(song, isOffline);
+
+      // If offline file is missing, try falling back to online
+      if ((songUrl == null || songUrl.isEmpty) && isOffline) {
+        logger.log(
+          'Offline file missing for ${song['ytid']}, switching to online',
+          null,
+          null,
+        );
+        isOffline = false;
+        songUrl = await _getSongUrl(song, isOffline);
+      }
 
       if (songUrl == null || songUrl.isEmpty) {
         logger.log('Failed to get song URL for ${song['ytid']}', null, null);
@@ -1041,26 +1043,27 @@ class MusifyAudioHandler extends BaseAudioHandler {
     }
 
     final file = File(audioPath);
-    if (!await file.exists()) {
-      logger.log('Offline audio file not found: $audioPath', null, null);
-
-      final offlineSong = userOfflineSongs.firstWhere(
-        (s) => s['ytid'] == song['ytid'],
-        orElse: () => <String, dynamic>{},
-      );
-
-      if (offlineSong.isNotEmpty && offlineSong['audioPath'] != null) {
-        final fallbackFile = File(offlineSong['audioPath']);
-        if (await fallbackFile.exists()) {
-          song['audioPath'] = offlineSong['audioPath'];
-          return offlineSong['audioPath'];
-        }
-      }
-
-      return getSong(song['ytid'], song['isLive'] ?? false);
+    if (await file.exists()) {
+      return audioPath;
     }
 
-    return audioPath;
+    logger.log('Offline audio file not found: $audioPath', null, null);
+
+    final offlineSong = userOfflineSongs.firstWhere(
+      (s) => s['ytid'] == song['ytid'],
+      orElse: () => <String, dynamic>{},
+    );
+
+    if (offlineSong.isNotEmpty && offlineSong['audioPath'] != null) {
+      final fallbackPath = offlineSong['audioPath'];
+      final fallbackFile = File(fallbackPath);
+      if (await fallbackFile.exists()) {
+        song['audioPath'] = fallbackPath;
+        return fallbackPath;
+      }
+    }
+
+    return null;
   }
 
   Future<bool> _setAudioSourceAndPlay(
@@ -1103,44 +1106,45 @@ class MusifyAudioHandler extends BaseAudioHandler {
       logger.log('Error setting audio source', e, stackTrace);
 
       if (isOffline) {
-        logger.log('Attempting to play online version as fallback', null, null);
-        final onlineUrl = await getSong(song['ytid'], song['isLive'] ?? false);
-        if (onlineUrl != null && onlineUrl.isNotEmpty) {
-          final onlineSource = await buildAudioSource(song, onlineUrl, false);
-          if (onlineSource != null) {
-            try {
-              await audioPlayer
-                  .setAudioSource(onlineSource)
-                  .timeout(_songTransitionTimeout);
-              await Future.delayed(const Duration(milliseconds: 100));
-
-              if (audioPlayer.duration != null) {
-                final currentMediaItem = mapToMediaItem(song);
-                mediaItem.add(
-                  currentMediaItem.copyWith(duration: audioPlayer.duration),
-                );
-              }
-
-              await audioPlayer.play();
-              _updatePlaybackState();
-
-              Future.delayed(const Duration(seconds: 2), _preloadUpcomingSongs);
-
-              return true;
-            } catch (fallbackError, fallbackStackTrace) {
-              logger.log(
-                'Fallback also failed',
-                fallbackError,
-                fallbackStackTrace,
-              );
-            }
-          }
-        }
+        return _attemptOfflineFallback(song);
       }
 
       _lastError = e.toString();
       return false;
     }
+  }
+
+  Future<bool> _attemptOfflineFallback(Map song) async {
+    logger.log('Attempting to play online version as fallback', null, null);
+    final onlineUrl = await getSong(song['ytid'], song['isLive'] ?? false);
+    if (onlineUrl != null && onlineUrl.isNotEmpty) {
+      final onlineSource = await buildAudioSource(song, onlineUrl, false);
+      if (onlineSource != null) {
+        try {
+          await audioPlayer
+              .setAudioSource(onlineSource)
+              .timeout(_songTransitionTimeout);
+          await Future.delayed(const Duration(milliseconds: 100));
+
+          if (audioPlayer.duration != null) {
+            final currentMediaItem = mapToMediaItem(song);
+            mediaItem.add(
+              currentMediaItem.copyWith(duration: audioPlayer.duration),
+            );
+          }
+
+          await audioPlayer.play();
+          _updatePlaybackState();
+
+          Future.delayed(const Duration(seconds: 2), _preloadUpcomingSongs);
+
+          return true;
+        } catch (fallbackError, fallbackStackTrace) {
+          logger.log('Fallback also failed', fallbackError, fallbackStackTrace);
+        }
+      }
+    }
+    return false;
   }
 
   Future<void> playNext(Map song) async {
