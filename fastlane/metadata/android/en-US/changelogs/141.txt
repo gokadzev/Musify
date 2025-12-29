@@ -1,9 +1,0 @@
-Bug Fixes
-- Fixed shuffle feature
-- Fixed unpredictable back navigation behavior
-
-Enhancements
-- Improved automatic song selection logic
-- Added browsable media items support for Android Auto
-- Enhanced sorting UI and added sorting for liked and offline songs
-- Full changelog: https://github.com/gokadzev/Musify/releases

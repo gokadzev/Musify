@@ -1,8 +1,0 @@
-Bug fixes
-- Fixed queue button on now playing page
-- Fixed skipping songs from queue list
-
-Enhancements
-- Improved proxy logic
-- Various other improvements
-- Full changelog: https://github.com/gokadzev/Musify/releases

@@ -1,2 +1,0 @@
-Bug Fixes
-- Fixed F-droid build

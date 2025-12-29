@@ -1,5 +1,0 @@
-Enhancements
-- Updated French and Korean translations
-- Added Estonian and Hungarian languages
-- Fixed issues related to search and proxy
-- Full changelog: https://github.com/gokadzev/Musify/releases

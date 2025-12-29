@@ -1,8 +1,0 @@
-Bug fixes
-- Fixed offline songs issues
-
-Enhancements
-- Improved settings page
-- Updated translations
-- Various other UI/UX improvements
-- Full changelog: https://github.com/gokadzev/Musify/releases

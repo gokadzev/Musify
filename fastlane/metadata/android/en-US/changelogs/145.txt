@@ -1,7 +1,0 @@
-Enhancements
-- Theme mode detection reset to index-based system
-- Improved some components visual on light mode
-- Added offline music indicator on artwork
-- Updated translations
-- Various other UI/UX improvements
-- Full changelog: https://github.com/gokadzev/Musify/releases

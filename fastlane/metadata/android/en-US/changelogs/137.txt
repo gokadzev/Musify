@@ -1,2 +1,0 @@
-Bug Fixes
-- Force use of androidVr client to fix manifest retrieval

@@ -1,4 +1,0 @@
-Bug Fixes
-- Fixed backup/restore features
-- Fixed slider issue while changing position
-- Full changelog: https://github.com/gokadzev/Musify/releases

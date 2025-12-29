@@ -1,8 +1,0 @@
-Bug fixes
-- Fixed custom playlist image loading
-
-Enhancements
-- Improved playback logic
-- Updated translations
-- Various other UI/UX improvements
-- Full changelog: https://github.com/gokadzev/Musify/releases

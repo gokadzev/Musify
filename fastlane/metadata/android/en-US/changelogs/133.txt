@@ -1,3 +1,0 @@
-Enhancements
-- Miscellaneous major improvements and fixes related to performance and UI
-- Full changelog: https://github.com/gokadzev/Musify/releases

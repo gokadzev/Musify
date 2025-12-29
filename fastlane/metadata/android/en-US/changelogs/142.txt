@@ -1,3 +1,0 @@
-Bug fixes
-- Added a default sorting option
-- Fixed several issues in the F-Droid check logic

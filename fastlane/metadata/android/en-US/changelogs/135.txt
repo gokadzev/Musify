@@ -1,4 +1,0 @@
-Enhancements
-- Added proxy service (for those who have playback problems)
-- Updated Japanese translations
-- Full changelog: https://github.com/gokadzev/Musify/releases
