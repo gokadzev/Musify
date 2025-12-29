@@ -170,7 +170,7 @@
   "undo": "Visszavonás",
   "update": "Frissítés",
   "useProxy": "Proxy használata",
-  "useProxyDescription": "Use a proxy server to potentially solve streaming problems.",
+  "useProxyDescription": "Use the proxy only when streaming fails, unnecessary use may break playback.",
   "userPlaylists": "Felhasználói lejátszási listák",
   "yes": "Yes",
   "youtubePlaylistLinkOrId": "YouTube lejátszási lista vagy azonosító"

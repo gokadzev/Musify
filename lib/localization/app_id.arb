@@ -170,7 +170,7 @@
   "undo": "Batalkan",
   "update": "Perbarui",
   "useProxy": "Use proxy",
-  "useProxyDescription": "Use a proxy server to potentially solve streaming problems.",
+  "useProxyDescription": "Use the proxy only when streaming fails, unnecessary use may break playback.",
   "userPlaylists": "Playlist pengguna",
   "yes": "Yes",
   "youtubePlaylistLinkOrId": "Tautan atau ID playlist YouTube"

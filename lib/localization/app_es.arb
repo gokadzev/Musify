@@ -170,7 +170,7 @@
   "undo": "Deshacer",
   "update": "Actualización",
   "useProxy": "Usar proxy",
-  "useProxyDescription": "Use a proxy server to potentially solve streaming problems.",
+  "useProxyDescription": "Use the proxy only when streaming fails, unnecessary use may break playback.",
   "userPlaylists": "Listas de reproducción del usuario",
   "yes": "Si",
   "youtubePlaylistLinkOrId": "Enlace o ID de lista de reproducción de YouTube"

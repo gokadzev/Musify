@@ -170,7 +170,7 @@
   "undo": "отменить",
   "update": "Обновить",
   "useProxy": "Использовать прокси",
-  "useProxyDescription": "Использовать прокси-сервер для возможного решения проблем со стримингом.",
+  "useProxyDescription": "Use the proxy only when streaming fails, unnecessary use may break playback.",
   "userPlaylists": "Ваши плейлисты",
   "yes": "Да",
   "youtubePlaylistLinkOrId": "ID плейлиста YouTube или ссылка на него "

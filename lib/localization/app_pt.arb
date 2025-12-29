@@ -170,7 +170,7 @@
   "undo": "Desfazer",
   "update": "Atualizar",
   "useProxy": "Usar proxy",
-  "useProxyDescription": "Use a proxy server to potentially solve streaming problems.",
+  "useProxyDescription": "Use the proxy only when streaming fails, unnecessary use may break playback.",
   "userPlaylists": "Minhas playlists",
   "yes": "Sim",
   "youtubePlaylistLinkOrId": "Link ou ID do YouTube"

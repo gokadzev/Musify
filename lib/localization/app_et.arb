@@ -170,7 +170,7 @@
   "undo": "Võta tagasi",
   "update": "Uuenda",
   "useProxy": "Kasuta proksit",
-  "useProxyDescription": "Use a proxy server to potentially solve streaming problems.",
+  "useProxyDescription": "Use the proxy only when streaming fails, unnecessary use may break playback.",
   "userPlaylists": "Kasutaja nimekirjad",
   "yes": "Yes",
   "youtubePlaylistLinkOrId": "YouTube'i nimekirja link või ID"

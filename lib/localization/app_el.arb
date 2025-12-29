@@ -170,7 +170,7 @@
   "undo": "Αναίρεση",
   "update": "Ενημέρωση",
   "useProxy": "Χρήση διαμεσολαβητή",
-  "useProxyDescription": "Χρήση διακομιστή μεσολάβησης για πιθανή λύση προβλημάτων ροής.",
+  "useProxyDescription": "Use the proxy only when streaming fails, unnecessary use may break playback.",
   "userPlaylists": "Λίστες αναπαραγωγής χρήστη",
   "yes": "Ναι",
   "youtubePlaylistLinkOrId": "YouTube playlist link or ID "

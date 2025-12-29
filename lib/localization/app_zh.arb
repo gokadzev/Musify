@@ -170,7 +170,7 @@
   "undo": "撤销",
   "update": "Update",
   "useProxy": "Use proxy",
-  "useProxyDescription": "Use a proxy server to potentially solve streaming problems.",
+  "useProxyDescription": "Use the proxy only when streaming fails, unnecessary use may break playback.",
   "userPlaylists": "我的播放列表",
   "yes": "Yes",
   "youtubePlaylistLinkOrId": "YouTube 播放列表链接或 ID"

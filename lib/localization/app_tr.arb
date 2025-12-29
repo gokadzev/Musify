@@ -170,7 +170,7 @@
   "undo": "Geri Al",
   "update": "Güncelleme",
   "useProxy": "Proxy kullan",
-  "useProxyDescription": "Akış sorunlarını potansiyel olarak çözmek için bir proxy sunucusu kullanın.",
+  "useProxyDescription": "Use the proxy only when streaming fails, unnecessary use may break playback.",
   "userPlaylists": "Kullanıcı Listeleri",
   "yes": "Evet",
   "youtubePlaylistLinkOrId": "YouTube listesi bağlantısı veya ID'si"

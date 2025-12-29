@@ -170,7 +170,7 @@
   "undo": "실행 취소",
   "update": "업데이트",
   "useProxy": "프록시 사용",
-  "useProxyDescription": "Use a proxy server to potentially solve streaming problems.",
+  "useProxyDescription": "Use the proxy only when streaming fails, unnecessary use may break playback.",
   "userPlaylists": "사용자 재생목록",
   "yes": "Yes",
   "youtubePlaylistLinkOrId": "유튜브 재생목록 링크 또는 ID "

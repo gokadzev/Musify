@@ -170,7 +170,7 @@
   "undo": "Undo",
   "update": "Update",
   "useProxy": "Use proxy",
-  "useProxyDescription": "Use a proxy server to potentially solve streaming problems.",
+  "useProxyDescription": "Use the proxy only when streaming fails, unnecessary use may break playback.",
   "userPlaylists": "User playlists",
   "yes": "Yes",
   "youtubePlaylistLinkOrId": "YouTube playlist link or ID"

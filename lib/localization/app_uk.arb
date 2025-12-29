@@ -170,7 +170,7 @@
   "undo": "Скасувати",
   "update": "Оновити",
   "useProxy": "Використовувати проксі",
-  "useProxyDescription": "Use a proxy server to potentially solve streaming problems.",
+  "useProxyDescription": "Use the proxy only when streaming fails, unnecessary use may break playback.",
   "userPlaylists": "Плейлисти користувача",
   "yes": "Так",
   "youtubePlaylistLinkOrId": "YouTube playlist link or ID "
