@@ -409,7 +409,17 @@ class _UserSongsPageState extends State<UserSongsPage> {
       song,
       true,
       onPlay: () {
-        audioHandler.playPlaylistSong(playlist: playlist, songIndex: index);
+        final currentQueue = audioHandler.currentQueue;
+        final isSameQueue =
+            currentQueue.length == playlist['list'].length &&
+            index < currentQueue.length &&
+            currentQueue[index] == song;
+
+        if (isSameQueue) {
+          audioHandler.skipToSong(index);
+        } else {
+          audioHandler.playPlaylistSong(playlist: playlist, songIndex: index);
+        }
       },
       borderRadius: borderRadius,
       isRecentSong: isRecentSong,
