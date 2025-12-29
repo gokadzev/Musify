@@ -110,6 +110,20 @@ class MusifyAudioHandler extends BaseAudioHandler {
         prev.queueIndex == curr.queueIndex,
   );
 
+  static const _playingControls = [
+    MediaControl.skipToPrevious,
+    MediaControl.pause,
+    MediaControl.stop,
+    MediaControl.skipToNext,
+  ];
+
+  static const _pausedControls = [
+    MediaControl.skipToPrevious,
+    MediaControl.play,
+    MediaControl.stop,
+    MediaControl.skipToNext,
+  ];
+
   final processingStateMap = {
     ProcessingState.idle: AudioProcessingState.idle,
     ProcessingState.loading: AudioProcessingState.loading,
@@ -270,6 +284,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
     Future.microtask(() {
       try {
+        final now = DateTime.now();
+        final currentPosition = audioPlayer.position;
+        final isPlaying = audioPlayer.playing;
         final currentState = playbackState.valueOrNull;
         final newProcessingState =
             processingStateMap[audioPlayer.processingState] ??
@@ -277,19 +294,17 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
         var shouldUpdate =
             currentState == null ||
-            currentState.playing != audioPlayer.playing ||
+            currentState.playing != isPlaying ||
             currentState.processingState != newProcessingState ||
             currentState.queueIndex != _currentQueueIndex;
 
         if (!shouldUpdate) {
-          final currentPosition = audioPlayer.position;
           final lastUpdateTime = currentState.updateTime;
           final lastUpdatePosition = currentState.updatePosition;
           final speed = currentState.speed;
 
           final expectedPosition =
-              lastUpdatePosition +
-              (DateTime.now().difference(lastUpdateTime)) * speed;
+              lastUpdatePosition + (now.difference(lastUpdateTime)) * speed;
 
           if ((currentPosition - expectedPosition).abs() >
               const Duration(milliseconds: 500)) {
@@ -300,15 +315,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
         if (shouldUpdate) {
           playbackState.add(
             PlaybackState(
-              controls: [
-                MediaControl.skipToPrevious,
-                if (audioPlayer.playing)
-                  MediaControl.pause
-                else
-                  MediaControl.play,
-                MediaControl.stop,
-                MediaControl.skipToNext,
-              ],
+              controls: isPlaying ? _playingControls : _pausedControls,
               systemActions: const {
                 MediaAction.seek,
                 MediaAction.seekForward,
@@ -316,14 +323,14 @@ class MusifyAudioHandler extends BaseAudioHandler {
               },
               androidCompactActionIndices: const [0, 1, 3],
               processingState: newProcessingState,
-              playing: audioPlayer.playing,
-              updatePosition: audioPlayer.position,
+              playing: isPlaying,
+              updatePosition: currentPosition,
               bufferedPosition: audioPlayer.bufferedPosition,
               speed: audioPlayer.speed,
               queueIndex: _currentQueueIndex < _queueList.length
                   ? _currentQueueIndex
                   : null,
-              updateTime: DateTime.now(),
+              updateTime: now,
             ),
           );
         }
