@@ -191,6 +191,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
     });
   }
 
+  MediaItem _getMediaItemForQueue(Map song, int index) {
+    return mapToMediaItem(song).copyWith(id: '${song['ytid']}_$index');
+  }
+
   void _updateCurrentMediaItemWithDuration(Duration duration) {
     Future.microtask(() async {
       try {
@@ -206,11 +210,15 @@ class MusifyAudioHandler extends BaseAudioHandler {
         }
 
         final currentSong = _queueList[capturedQueueIndex];
-        final currentMediaItem = mapToMediaItem(currentSong);
+        final currentMediaItem = _getMediaItemForQueue(
+          currentSong,
+          capturedQueueIndex,
+        );
+        final uniqueId = currentMediaItem.id;
         final currentItem = mediaItem.valueOrNull;
 
         if (currentItem != null &&
-            currentItem.id == currentMediaItem.id &&
+            currentItem.id == uniqueId &&
             (currentItem.duration == null ||
                 !durationEquals(currentItem.duration, duration))) {
           mediaItem.add(currentMediaItem.copyWith(duration: duration));
@@ -220,7 +228,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
         if (queue.hasValue && queue.value.length == _queueList.length) {
           newQueue = List<MediaItem>.from(queue.value);
         } else {
-          newQueue = _queueList.map(mapToMediaItem).toList();
+          newQueue = _queueList
+              .asMap()
+              .entries
+              .map((entry) => _getMediaItemForQueue(entry.value, entry.key))
+              .toList();
         }
 
         if (capturedQueueIndex < newQueue.length) {
@@ -687,7 +699,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   void _updateQueueMediaItems() {
     try {
-      final mediaItems = _queueList.map(mapToMediaItem).toList();
+      final mediaItems = _queueList
+          .asMap()
+          .entries
+          .map((entry) => _getMediaItemForQueue(entry.value, entry.key))
+          .toList();
       queue.add(mediaItems);
 
       if (_currentQueueIndex < mediaItems.length) {
@@ -703,10 +719,14 @@ class MusifyAudioHandler extends BaseAudioHandler {
     Map? song,
     int? queueIndex,
     bool includeMediaItem = false,
+    String? mediaId,
   }) {
     try {
       if (includeMediaItem && song != null) {
-        final immediateMediaItem = mapToMediaItem(song);
+        var immediateMediaItem = mapToMediaItem(song);
+        if (mediaId != null) {
+          immediateMediaItem = immediateMediaItem.copyWith(id: mediaId);
+        }
         Future.microtask(() {
           mediaItem.add(immediateMediaItem);
         });
@@ -776,15 +796,22 @@ class MusifyAudioHandler extends BaseAudioHandler {
       _currentQueueIndex = index;
 
       final currentSong = _queueList[_currentQueueIndex];
-      final currentMediaItem = mapToMediaItem(currentSong);
+      final currentMediaItem = _getMediaItemForQueue(
+        currentSong,
+        _currentQueueIndex,
+      );
+      final uniqueId = currentMediaItem.id;
 
       await Future.microtask(() {
         mediaItem.add(currentMediaItem);
       });
 
-      _emitOptimisticLoadingState(queueIndex: _currentQueueIndex);
+      _emitOptimisticLoadingState(
+        queueIndex: _currentQueueIndex,
+        mediaId: uniqueId,
+      );
 
-      final success = await playSong(_queueList[index]);
+      final success = await playSong(_queueList[index], mediaId: uniqueId);
 
       // Only process result if this is still the current transition
       if (currentTransitionId == _currentLoadingTransitionId) {
@@ -966,7 +993,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
   Future<void> rewind() =>
       seek(Duration(seconds: audioPlayer.position.inSeconds - 15));
 
-  Future<bool> playSong(Map song) async {
+  Future<bool> playSong(Map song, {String? mediaId}) async {
     try {
       if (song['ytid'] == null || song['ytid'].toString().isEmpty) {
         logger.log('Invalid song data: missing ytid', null, null);
@@ -978,7 +1005,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
       if (audioPlayer.playing) await audioPlayer.pause();
 
-      _emitOptimisticLoadingState(song: song, includeMediaItem: true);
+      _emitOptimisticLoadingState(
+        song: song,
+        includeMediaItem: true,
+        mediaId: mediaId,
+      );
 
       var songUrl = await _getSongUrl(song, isOffline);
 
@@ -1015,6 +1046,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
         audioSource,
         songUrl,
         isOffline,
+        mediaId: mediaId,
       );
     } catch (e, stackTrace) {
       logger.log('Error playing song', e, stackTrace);
@@ -1070,8 +1102,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
     Map song,
     AudioSource audioSource,
     String songUrl,
-    bool isOffline,
-  ) async {
+    bool isOffline, {
+    String? mediaId,
+  }) async {
     try {
       await audioPlayer
           .setAudioSource(audioSource)
@@ -1079,7 +1112,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
       await Future.delayed(const Duration(milliseconds: 100));
 
       if (audioPlayer.duration != null) {
-        final currentMediaItem = mapToMediaItem(song);
+        var currentMediaItem = mapToMediaItem(song);
+        if (mediaId != null) {
+          currentMediaItem = currentMediaItem.copyWith(id: mediaId);
+        }
         mediaItem.add(
           currentMediaItem.copyWith(duration: audioPlayer.duration),
         );
