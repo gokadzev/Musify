@@ -25,6 +25,7 @@ import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/data_manager.dart';
+import 'package:musify/services/playlist_download_service.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/utils.dart';
@@ -46,6 +47,7 @@ class UserSongsPage extends StatefulWidget {
 class _UserSongsPageState extends State<UserSongsPage> {
   bool _isEditEnabled = false;
   late List<dynamic> _originalOfflineSongsList = [];
+  bool likedSongsOfflineStatus = false;
 
   @override
   Widget build(BuildContext context) {
@@ -166,6 +168,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
     final colorScheme = theme.colorScheme;
     final primaryColor = colorScheme.primary;
     final isRecentlyPlayed = title == context.l10n!.recentlyPlayed;
+    final isLikedSongs = title == context.l10n!.likedSongs;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
@@ -198,6 +201,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
             runSpacing: 8,
             children: [
               if (songsLength > 0) _buildPlayButton(primaryColor, title),
+              if (isLikedSongs && songsLength > 0) _buildDownloadButton(),
               if (isRecentlyPlayed && songsLength > 0)
                 _buildClearRecentsButton(primaryColor),
             ],
@@ -250,6 +254,158 @@ class _UserSongsPageState extends State<UserSongsPage> {
       iconSize: 24,
       onPressed: () =>
           audioHandler.playPlaylistSong(playlist: playlist, songIndex: 0),
+    );
+  }
+
+  Widget _buildDownloadButton() {
+    final title = getTitle(widget.page, context);
+    final playlistId = title; // Use title as playlist ID for liked songs
+    final primaryColor = Theme.of(context).colorScheme.primary;
+
+    return ValueListenableBuilder<List<dynamic>>(
+      valueListenable: offlinePlaylistService.offlinePlaylists,
+      builder: (context, offlinePlaylists, _) {
+        likedSongsOfflineStatus = offlinePlaylistService.isPlaylistDownloaded(
+          playlistId,
+        );
+
+        if (likedSongsOfflineStatus) {
+          return IconButton.filled(
+            icon: Icon(
+              FluentIcons.arrow_download_off_24_filled,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
+            iconSize: 24,
+            onPressed: () => _showRemoveOfflineDialog(playlistId),
+            tooltip: context.l10n!.removeOffline,
+          );
+        }
+
+        return ValueListenableBuilder<DownloadProgress>(
+          valueListenable: offlinePlaylistService.getProgressNotifier(
+            playlistId,
+          ),
+          builder: (context, progress, _) {
+            final isDownloading = offlinePlaylistService.isPlaylistDownloading(
+              playlistId,
+            );
+
+            if (isDownloading) {
+              return SizedBox(
+                width: 48,
+                height: 48,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    SizedBox(
+                      width: 40,
+                      height: 40,
+                      child: CircularProgressIndicator(
+                        value: progress.progress,
+                        strokeWidth: 3,
+                        backgroundColor: primaryColor.withValues(alpha: .2),
+                        valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        FluentIcons.dismiss_24_filled,
+                        color: primaryColor,
+                        size: 16,
+                      ),
+                      onPressed: () => offlinePlaylistService.cancelDownload(
+                        context,
+                        playlistId,
+                      ),
+                      tooltip: context.l10n!.cancel,
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            return IconButton.filledTonal(
+              icon: Icon(
+                FluentIcons.arrow_download_24_filled,
+                color: primaryColor,
+              ),
+              iconSize: 24,
+              onPressed: () {
+                final songsList = getSongsList(widget.page);
+                final playlist = {
+                  'ytid': playlistId,
+                  'title': title,
+                  'source': 'user-created',
+                  'list': songsList,
+                };
+                offlinePlaylistService.downloadPlaylist(context, playlist);
+              },
+              tooltip: context.l10n!.downloadPlaylist,
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _showRemoveOfflineDialog(String playlistId) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: colorScheme.surface,
+          surfaceTintColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(28),
+          ),
+          icon: Icon(
+            FluentIcons.cloud_off_24_regular,
+            color: colorScheme.error,
+            size: 32,
+          ),
+          title: Text(
+            context.l10n!.removeOfflinePlaylist,
+            style: TextStyle(
+              color: colorScheme.onSurface,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          content: Text(
+            context.l10n!.removeOfflinePlaylistConfirm,
+            style: TextStyle(color: colorScheme.onSurfaceVariant),
+            textAlign: TextAlign.center,
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: [
+            OutlinedButton(
+              onPressed: () => Navigator.pop(context),
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: colorScheme.outline),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(context.l10n!.cancel),
+            ),
+            FilledButton(
+              onPressed: () {
+                offlinePlaylistService.removeOfflinePlaylist(playlistId);
+                Navigator.pop(context);
+                showToast(context, context.l10n!.playlistRemovedFromOffline);
+              },
+              style: FilledButton.styleFrom(
+                backgroundColor: colorScheme.error,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(context.l10n!.remove),
+            ),
+          ],
+        );
+      },
     );
   }
 
