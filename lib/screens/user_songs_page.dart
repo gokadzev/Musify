@@ -29,6 +29,7 @@ import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/utils.dart';
 import 'package:musify/widgets/playlist_cube.dart';
+import 'package:musify/widgets/playlist_header.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/sort_chips.dart';
 
@@ -162,64 +163,39 @@ class _UserSongsPageState extends State<UserSongsPage> {
     int songsLength,
     bool isOfflineSongs,
   ) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final primaryColor = colorScheme.primary;
+    final primaryColor = Theme.of(context).colorScheme.primary;
     final isRecentlyPlayed = title == context.l10n!.recentlyPlayed;
 
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
-      child: Column(
-        children: [
-          _buildPlaylistImage(title, icon),
-          const SizedBox(height: 20),
-          Text(
-            title,
-            style: theme.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: colorScheme.onSurface,
-            ),
-            overflow: TextOverflow.ellipsis,
-            maxLines: 2,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 6),
-          Text(
-            '$songsLength ${context.l10n!.songs}',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onSurfaceVariant,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 20),
-          Wrap(
-            alignment: WrapAlignment.center,
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              if (songsLength > 0) _buildPlayButton(primaryColor, title),
-              if (isRecentlyPlayed && songsLength > 0)
-                _buildClearRecentsButton(primaryColor),
-            ],
-          ),
-          if (isOfflineSongs && songsLength > 1) ...[
-            const SizedBox(height: 16),
-            SortChips<OfflineSortType>(
-              currentSortType: _getCurrentOfflineSortType(),
-              sortTypes: OfflineSortType.values,
-              sortTypeToString: _getSortTypeDisplayText,
-              onSelected: (type) {
-                setState(() {
-                  addOrUpdateData('settings', 'offlineSortType', type.name);
-                  offlineSortSetting = type.name;
-                });
-                _sortOfflineSongs(type);
-              },
-            ),
+    return Column(
+      children: [
+        PlaylistHeader(_buildPlaylistImage(title, icon), title, songsLength),
+        Wrap(
+          alignment: WrapAlignment.center,
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            if (songsLength > 0) _buildPlayButton(primaryColor, title),
+            if (isRecentlyPlayed && songsLength > 0)
+              _buildClearRecentsButton(primaryColor),
           ],
-          const SizedBox(height: 8),
+        ),
+        if (isOfflineSongs && songsLength > 1) ...[
+          const SizedBox(height: 16),
+          SortChips<OfflineSortType>(
+            currentSortType: _getCurrentOfflineSortType(),
+            sortTypes: OfflineSortType.values,
+            sortTypeToString: _getSortTypeDisplayText,
+            onSelected: (type) {
+              setState(() {
+                addOrUpdateData('settings', 'offlineSortType', type.name);
+                offlineSortSetting = type.name;
+              });
+              _sortOfflineSongs(type);
+            },
+          ),
         ],
-      ),
+        const SizedBox(height: 8),
+      ],
     );
   }
 
