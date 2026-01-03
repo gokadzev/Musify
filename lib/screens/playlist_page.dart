@@ -38,6 +38,7 @@ import 'package:musify/utilities/sort_utils.dart';
 import 'package:musify/utilities/utils.dart';
 import 'package:musify/widgets/edit_playlist_dialog.dart';
 import 'package:musify/widgets/playlist_cube.dart';
+import 'package:musify/widgets/playlist_header.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/sort_chips.dart';
 import 'package:musify/widgets/spinner.dart';
@@ -222,67 +223,45 @@ class _PlaylistPageState extends State<PlaylistPage> {
     final colorScheme = theme.colorScheme;
     final primaryColor = colorScheme.primary;
 
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
-      child: Column(
-        children: [
-          _buildPlaylistImage(),
-          const SizedBox(height: 20),
-          Text(
-            _playlist['title'],
-            style: theme.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: colorScheme.onSurface,
-            ),
-            overflow: TextOverflow.ellipsis,
-            maxLines: 2,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 6),
-          Text(
-            '$songsLength ${context.l10n!.songs}',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onSurfaceVariant,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 20),
-          Wrap(
-            alignment: WrapAlignment.center,
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              if (songsLength > 0) _buildPlayButton(primaryColor),
-              if (widget.playlistId != null && !isUserCreated)
-                _buildLikeButton(primaryColor),
-              _buildSyncButton(primaryColor),
-              _buildDownloadButton(),
-              if (isUserCreated) ...[
-                _buildShareButton(primaryColor),
-                _buildEditButton(primaryColor),
-              ],
+    return Column(
+      children: [
+        PlaylistHeader(_buildPlaylistImage(), _playlist['title'], songsLength),
+        const SizedBox(height: 8),
+        Wrap(
+          alignment: WrapAlignment.center,
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            if (songsLength > 0) _buildPlayButton(primaryColor),
+            if (widget.playlistId != null && !isUserCreated)
+              _buildLikeButton(primaryColor),
+            _buildSyncButton(primaryColor),
+            _buildDownloadButton(),
+            if (isUserCreated) ...[
+              _buildShareButton(primaryColor),
+              _buildEditButton(primaryColor),
             ],
-          ),
-          if (songsLength > 1) ...[
-            const SizedBox(height: 16),
-            SortChips<PlaylistSortType>(
-              currentSortType: _sortType,
-              sortTypes: PlaylistSortType.values,
-              sortTypeToString: _getSortTypeDisplayText,
-              onSelected: (type) {
-                setState(() {
-                  _sortType = type;
-                  addOrUpdateData('settings', 'playlistSortType', type.name);
-                  playlistSortSetting = type.name;
-                  _sortPlaylist(type);
-                });
-                _pagingController.refresh();
-              },
-            ),
           ],
-          const SizedBox(height: 8),
+        ),
+        if (songsLength > 1) ...[
+          const SizedBox(height: 16),
+          SortChips<PlaylistSortType>(
+            currentSortType: _sortType,
+            sortTypes: PlaylistSortType.values,
+            sortTypeToString: _getSortTypeDisplayText,
+            onSelected: (type) {
+              setState(() {
+                _sortType = type;
+                addOrUpdateData('settings', 'playlistSortType', type.name);
+                playlistSortSetting = type.name;
+                _sortPlaylist(type);
+              });
+              _pagingController.refresh();
+            },
+          ),
         ],
-      ),
+        const SizedBox(height: 8),
+      ],
     );
   }
 
