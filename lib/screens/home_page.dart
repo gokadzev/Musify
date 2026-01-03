@@ -26,13 +26,13 @@ import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/screens/playlist_page.dart';
 import 'package:musify/services/settings_manager.dart';
+import 'package:musify/utilities/async_loader.dart';
 import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/utils.dart';
 import 'package:musify/widgets/announcement_box.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/section_header.dart';
 import 'package:musify/widgets/song_bar.dart';
-import 'package:musify/widgets/spinner.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -74,24 +74,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildLoadingWidget() {
-    return const Center(
-      child: Padding(padding: EdgeInsets.all(35), child: Spinner()),
-    );
-  }
-
-  Widget _buildErrorWidget(BuildContext context) {
-    return Center(
-      child: Text(
-        '${context.l10n!.error}!',
-        style: TextStyle(
-          color: Theme.of(context).colorScheme.primary,
-          fontSize: 18,
-        ),
-      ),
-    );
-  }
-
   Widget _buildSuggestedPlaylists(
     double playlistHeight, {
     bool showOnlyLiked = false,
@@ -99,26 +81,13 @@ class _HomePageState extends State<HomePage> {
     final sectionTitle = showOnlyLiked
         ? context.l10n!.backToFavorites
         : context.l10n!.suggestedPlaylists;
-    return FutureBuilder<List<dynamic>>(
+    return AsyncLoader<List<dynamic>>(
       future: getPlaylists(
         playlistsNum: recommendedCubesNumber,
         onlyLiked: showOnlyLiked,
       ),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return _buildLoadingWidget();
-        } else if (snapshot.hasError) {
-          logger.log(
-            'Error in _buildSuggestedPlaylists',
-            snapshot.error,
-            snapshot.stackTrace,
-          );
-          return _buildErrorWidget(context);
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const SizedBox.shrink();
-        }
 
-        final playlists = snapshot.data ?? [];
+      builder: (context, playlists) {
         final itemsNumber = playlists.length.clamp(0, recommendedCubesNumber);
         final isLargeScreen = MediaQuery.of(context).size.width > 480;
 
@@ -194,34 +163,13 @@ class _HomePageState extends State<HomePage> {
     return ValueListenableBuilder<bool>(
       valueListenable: externalRecommendations,
       builder: (_, recommendations, __) {
-        return FutureBuilder<dynamic>(
+        return AsyncLoader<List<dynamic>>(
           future: getRecommendedSongs(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return _buildLoadingWidget();
-            }
 
-            if (snapshot.connectionState != ConnectionState.done) {
-              return const SizedBox.shrink();
-            }
-
-            if (snapshot.hasError) {
-              logger.log(
-                'Error in _buildRecommendedSongsSection',
-                snapshot.error,
-                snapshot.stackTrace,
-              );
-              return _buildErrorWidget(context);
-            }
-
-            if (!snapshot.hasData) {
-              return const SizedBox.shrink();
-            }
-
-            final data = snapshot.data as List<dynamic>;
-            if (data.isEmpty) return const SizedBox.shrink();
-
-            return _buildRecommendedForYouSection(context, data);
+          builder: (context, data) {
+            final list = data.cast<dynamic>();
+            if (list.isEmpty) return const SizedBox.shrink();
+            return _buildRecommendedForYouSection(context, list);
           },
         );
       },

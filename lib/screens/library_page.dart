@@ -26,6 +26,7 @@ import 'package:musify/extensions/l10n.dart';
 import 'package:musify/services/playlist_download_service.dart';
 import 'package:musify/services/router_service.dart';
 import 'package:musify/services/settings_manager.dart';
+import 'package:musify/utilities/async_loader.dart';
 import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/playlist_image_picker.dart';
@@ -173,32 +174,20 @@ class _LibraryPageState extends State<LibraryPage> {
                       ),
                     ),
                   ),
-                  FutureBuilder(
+                  AsyncLoader<List<dynamic>>(
                     future: getUserPlaylistsNotInFolders(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      } else if (snapshot.hasError) {
-                        return Center(child: Text('Error: ${snapshot.error}'));
-                      } else if (snapshot.hasData &&
-                          snapshot.data!.isNotEmpty) {
-                        return _buildPlaylistListView(context, snapshot.data!);
-                      } else {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 20),
-                          child: Text(
-                            context.l10n!.noPlaylistsAdded,
-                            style: Theme.of(context).textTheme.bodyMedium
-                                ?.copyWith(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurfaceVariant,
-                                ),
-                            textAlign: TextAlign.center,
-                          ),
-                        );
-                      }
-                    },
+                    emptyWidget: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      child: Text(
+                        context.l10n!.noPlaylistsAdded,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+
+                    builder: _buildPlaylistListView,
                   ),
                 ],
               );
