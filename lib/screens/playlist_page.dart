@@ -34,9 +34,9 @@ import 'package:musify/services/playlist_sharing.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/flutter_toast.dart';
-import 'package:musify/utilities/playlist_image_picker.dart';
 import 'package:musify/utilities/sort_utils.dart';
 import 'package:musify/utilities/utils.dart';
+import 'package:musify/widgets/edit_playlist_dialog.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/sort_chips.dart';
@@ -366,160 +366,28 @@ class _PlaylistPageState extends State<PlaylistPage> {
     return IconButton.filledTonal(
       icon: Icon(FluentIcons.edit_24_filled, color: primaryColor),
       iconSize: 24,
-      onPressed: () => showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          String customPlaylistName = _playlist['title'];
-          String? imageUrl = _playlist['image'];
-          var imageBase64 = (imageUrl != null && imageUrl.startsWith('data:'))
-              ? imageUrl
-              : null;
-          if (imageBase64 != null) imageUrl = null;
+      onPressed: () async {
+        final result = await showDialog<Map?>(
+          context: context,
+          builder: (context) => EditPlaylistDialog(playlistData: _playlist),
+        );
 
-          return StatefulBuilder(
-            builder: (context, dialogSetState) {
-              final colorScheme = Theme.of(context).colorScheme;
-
-              Future<void> _pickImage() async {
-                final result = await pickImage();
-                if (result != null) {
-                  dialogSetState(() {
-                    imageBase64 = result;
-                    imageUrl = null;
-                  });
-                }
-              }
-
-              Widget _imagePreview() {
-                return buildImagePreview(
-                  imageBase64: imageBase64,
-                  imageUrl: imageUrl,
-                );
-              }
-
-              return AlertDialog(
-                backgroundColor: colorScheme.surface,
-                surfaceTintColor: Colors.transparent,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(28),
-                ),
-                title: Text(
-                  context.l10n!.editPlaylist,
-                  style: TextStyle(
-                    color: colorScheme.onSurface,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                content: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      TextField(
-                        controller: TextEditingController(
-                          text: customPlaylistName,
-                        ),
-                        decoration: InputDecoration(
-                          labelText: context.l10n!.customPlaylistName,
-                          prefixIcon: Icon(
-                            FluentIcons.text_field_20_regular,
-                            color: colorScheme.onSurfaceVariant,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          filled: true,
-                          fillColor: colorScheme.surfaceContainerLow,
-                        ),
-                        onChanged: (value) {
-                          customPlaylistName = value;
-                        },
-                      ),
-                      if (imageBase64 == null) ...[
-                        const SizedBox(height: 12),
-                        TextField(
-                          controller: TextEditingController(text: imageUrl),
-                          decoration: InputDecoration(
-                            labelText: context.l10n!.customPlaylistImgUrl,
-                            prefixIcon: Icon(
-                              FluentIcons.image_20_regular,
-                              color: colorScheme.onSurfaceVariant,
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            filled: true,
-                            fillColor: colorScheme.surfaceContainerLow,
-                          ),
-                          onChanged: (value) {
-                            imageUrl = value;
-                            imageBase64 = null;
-                            dialogSetState(() {});
-                          },
-                        ),
-                      ],
-                      const SizedBox(height: 12),
-                      if (imageUrl == null) ...[
-                        buildImagePickerRow(
-                          context,
-                          _pickImage,
-                          imageBase64 != null,
-                        ),
-                        _imagePreview(),
-                      ],
-                    ],
-                  ),
-                ),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: Text(
-                      context.l10n!.cancel,
-                      style: TextStyle(color: colorScheme.onSurfaceVariant),
-                    ),
-                  ),
-                  FilledButton.icon(
-                    onPressed: () {
-                      final index = userCustomPlaylists.value.indexOf(
-                        widget.playlistData,
-                      );
-
-                      if (index != -1) {
-                        final newPlaylist = {
-                          'title': customPlaylistName,
-                          'source': 'user-created',
-                          if (imageBase64 != null)
-                            'image': imageBase64
-                          else if (imageUrl != null)
-                            'image': imageUrl,
-                          'list': widget.playlistData['list'],
-                        };
-                        final updatedPlaylists = List<Map>.from(
-                          userCustomPlaylists.value,
-                        );
-                        updatedPlaylists[index] = newPlaylist;
-                        userCustomPlaylists.value = updatedPlaylists;
-                        addOrUpdateData(
-                          'user',
-                          'customPlaylists',
-                          userCustomPlaylists.value,
-                        );
-                        setState(() {
-                          _playlist = newPlaylist;
-                        });
-                        showToast(context, context.l10n!.playlistUpdated);
-                      }
-
-                      Navigator.pop(context);
-                    },
-                    icon: const Icon(FluentIcons.save_20_filled),
-                    label: Text(context.l10n!.update),
-                  ),
-                ],
-              );
-            },
-          );
-        },
-      ),
+        if (result != null) {
+          final index = userCustomPlaylists.value.indexOf(widget.playlistData);
+          if (index != -1) {
+            final updatedPlaylists = List<Map>.from(userCustomPlaylists.value);
+            updatedPlaylists[index] = result;
+            userCustomPlaylists.value = updatedPlaylists;
+            await addOrUpdateData(
+              'user',
+              'customPlaylists',
+              userCustomPlaylists.value,
+            );
+            setState(() => _playlist = result);
+            showToast(context, context.l10n!.playlistUpdated);
+          }
+        }
+      },
     );
   }
 

@@ -25,8 +25,12 @@ import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/screens/playlist_folder_page.dart';
 import 'package:musify/screens/playlist_page.dart';
+import 'package:musify/services/data_manager.dart';
+import 'package:musify/services/router_service.dart';
 import 'package:musify/utilities/artwork_provider.dart';
 import 'package:musify/utilities/common_variables.dart';
+import 'package:musify/utilities/flutter_toast.dart';
+import 'package:musify/widgets/edit_playlist_dialog.dart';
 
 class PlaylistBar extends StatelessWidget {
   PlaylistBar(
@@ -161,6 +165,9 @@ class PlaylistBar extends StatelessWidget {
           case 'moveToFolder':
             _showMoveToFolderDialog(context);
             break;
+          case 'edit':
+            _handleEdit(context);
+            break;
         }
       },
       itemBuilder: (BuildContext context) {
@@ -197,6 +204,20 @@ class PlaylistBar extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(context.l10n!.moveToFolder),
+                ],
+              ),
+            ),
+          if (playlistData != null &&
+              !isFolder &&
+              (playlistData!['source'] == 'user-created' ||
+                  playlistData!['source'] == 'user-youtube'))
+            PopupMenuItem<String>(
+              value: 'edit',
+              child: Row(
+                children: [
+                  Icon(FluentIcons.edit_24_filled, color: colorScheme.primary),
+                  const SizedBox(width: 8),
+                  Text(context.l10n!.editPlaylist),
                 ],
               ),
             ),
@@ -367,6 +388,31 @@ class PlaylistBar extends StatelessWidget {
           }
         });
       };
+    }
+  }
+
+  Future<void> _handleEdit(BuildContext context) async {
+    if (playlistData == null) return;
+
+    final result = await showDialog<Map?>(
+      context: context,
+      builder: (context) => EditPlaylistDialog(playlistData: playlistData!),
+    );
+
+    if (result != null) {
+      final index = userCustomPlaylists.value.indexOf(playlistData);
+      if (index != -1) {
+        final updatedPlaylists = List<Map>.from(userCustomPlaylists.value);
+        updatedPlaylists[index] = result;
+        userCustomPlaylists.value = updatedPlaylists;
+        await addOrUpdateData(
+          'user',
+          'customPlaylists',
+          userCustomPlaylists.value,
+        );
+        final appCtx = NavigationManager().context;
+        showToast(appCtx, appCtx.l10n!.playlistUpdated);
+      }
     }
   }
 }
