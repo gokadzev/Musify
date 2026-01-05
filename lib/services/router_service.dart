@@ -95,8 +95,15 @@ class NavigationManager {
   static final GlobalKey<NavigatorState> settingsTabNavigatorKey =
       GlobalKey<NavigatorState>();
 
-  BuildContext get context =>
-      router.routerDelegate.navigatorKey.currentContext!;
+  BuildContext get context {
+    final ctx = router.routerDelegate.navigatorKey.currentContext;
+    if (ctx == null) {
+      throw StateError(
+        'NavigationManager.context was accessed before the navigator context was available.',
+      );
+    }
+    return ctx;
+  }
 
   GoRouterDelegate get routerDelegate => router.routerDelegate;
 
