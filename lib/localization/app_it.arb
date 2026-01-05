@@ -24,7 +24,7 @@
   "automaticSongPicker": "Suggerimento automatico brani",
   "automaticSongPickerDescription": "Automatically play a random song after the current track ends.",
   "automaticUpdateChecks": "Controlli automatici di aggiornamento",
-  "automaticUpdateChecksDescription": "Automatically check for app updates on startup.",
+  "automaticUpdateChecksDescription": "Controlla automaticamente la presenza di aggiornamenti delle app all'avvio.",
   "backToFavorites": "Torna ai preferiti",
   "backedupSuccess": "Dati salvati con successo",
   "backupError": "Errore durante il salvataggio dei dati",

@@ -171,7 +171,7 @@
   "undo": "отменить",
   "update": "Обновить",
   "useProxy": "Использовать прокси",
-  "useProxyDescription": "Use the proxy only when streaming fails, unnecessary use may break playback.",
+  "useProxyDescription": "Используйте прокси только при проблемах со стримингом, лишнее использование может нарушить воспроизведение.",
   "userPlaylists": "Ваши плейлисты",
   "yes": "Да",
   "youtubePlaylistLinkOrId": "ID плейлиста YouTube или ссылка на него "
