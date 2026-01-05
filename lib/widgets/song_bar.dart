@@ -220,6 +220,14 @@ class _SongBarState extends State<SongBar> {
           duration: const Duration(seconds: 1),
         );
         break;
+      case 'add_to_queue':
+        audioHandler.addToQueue(widget.song);
+        showToast(
+          context,
+          context.l10n!.songAdded,
+          duration: const Duration(seconds: 1),
+        );
+        break;
       case 'like':
         final newValue = !_songLikeStatus.value;
         _songLikeStatus.value = newValue;
@@ -358,6 +366,7 @@ class _SongBarState extends State<SongBar> {
     // when the widget is being disposed
     final l10n = context.l10n!;
     final playNextText = l10n.playNext;
+    final addToQueueText = l10n.addToQueue;
     final removeFromLikedSongsText = l10n.removeFromLikedSongs;
     final addToLikedSongsText = l10n.addToLikedSongs;
     final removeFromPlaylistText = l10n.removeFromPlaylist;
@@ -379,6 +388,19 @@ class _SongBarState extends State<SongBar> {
             ),
             const SizedBox(width: 8),
             Text(playNextText, style: TextStyle(color: colorScheme.secondary)),
+          ],
+        ),
+      ),
+      PopupMenuItem<String>(
+        value: 'add_to_queue',
+        child: Row(
+          children: [
+            Icon(FluentIcons.add_24_regular, color: colorScheme.primary),
+            const SizedBox(width: 8),
+            Text(
+              addToQueueText,
+              style: TextStyle(color: colorScheme.secondary),
+            ),
           ],
         ),
       ),
