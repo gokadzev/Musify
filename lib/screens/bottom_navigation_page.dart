@@ -136,7 +136,7 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
         selectedIcon: FluentIcons.home_24_filled,
         label: context.l10n?.home ?? 'Home',
         route: '/home',
-        index: 0,
+        shellIndex: 0,
       ),
     ];
 
@@ -148,14 +148,10 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
           selectedIcon: FluentIcons.search_24_filled,
           label: context.l10n?.search ?? 'Search',
           route: '/search',
-          index: 1,
+          shellIndex: 1,
         ),
       );
     }
-
-    // Adjust indices based on whether search is included
-    final libraryIndex = isOfflineMode ? 1 : 2;
-    final settingsIndex = isOfflineMode ? 2 : 3;
 
     items.addAll([
       _NavigationItem(
@@ -163,14 +159,14 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
         selectedIcon: FluentIcons.book_24_filled,
         label: context.l10n?.library ?? 'Library',
         route: '/library',
-        index: libraryIndex,
+        shellIndex: 2,
       ),
       _NavigationItem(
         icon: FluentIcons.settings_24_regular,
         selectedIcon: FluentIcons.settings_24_filled,
         label: context.l10n?.settings ?? 'Settings',
         route: '/settings',
-        index: settingsIndex,
+        shellIndex: 3,
       ),
     ]);
 
@@ -231,21 +227,12 @@ class _NavigationItem {
     required this.selectedIcon,
     required this.label,
     required this.route,
-    required this.index,
+    required this.shellIndex,
   });
 
   final IconData icon;
   final IconData selectedIcon;
   final String label;
   final String route;
-  final int index;
-
-  // Shell index maps to the actual StatefulShellRoute branch index
-  int get shellIndex {
-    if (route == '/home') return 0;
-    if (route == '/search') return 1;
-    if (route == '/library') return 2;
-    if (route == '/settings') return 3;
-    return 0;
-  }
+  final int shellIndex;
 }
