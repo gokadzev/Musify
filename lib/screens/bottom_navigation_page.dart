@@ -194,30 +194,22 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
   }
 
   int _getCurrentIndex(List<_NavigationItem> items, bool isOfflineMode) {
-    final currentIndex = widget.child.currentIndex;
+    final currentShellIndex = widget.child.currentIndex;
 
-    // Add bounds checking
-    if (currentIndex < 0 || items.isEmpty) {
-      return 0;
-    }
+    if (items.isEmpty) return 0;
 
-    // Map shell index to navigation items index
-    for (var i = 0; i < items.length; i++) {
-      if (items[i].shellIndex == currentIndex) {
-        return i;
-      }
-    }
+    // Try to find the current shell index in the available items
+    final matchedIndex = items.indexWhere(
+      (item) => item.shellIndex == currentShellIndex,
+    );
+    if (matchedIndex != -1) return matchedIndex;
 
-    // Handle edge cases more robustly
-    if (isOfflineMode && currentIndex == 1) {
-      return 0; // Search -> Home
-    }
+    // If the Search branch (1) is active but Search is hidden in offline mode,
+    // fall back to the Home tab.
+    if (isOfflineMode && currentShellIndex == 1) return 0;
 
-    if (isOfflineMode && currentIndex > 1) {
-      return (currentIndex - 1).clamp(0, items.length - 1);
-    }
-
-    return currentIndex.clamp(0, items.length - 1);
+    // Final fallback: return the first tab to keep UI in a valid state.
+    return 0;
   }
 }
 
