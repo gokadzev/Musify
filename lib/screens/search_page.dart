@@ -70,6 +70,7 @@ class _SearchPageState extends State<SearchPage> {
   void dispose() {
     _searchBar.dispose();
     _inputNode.dispose();
+    _fetchingSongs.dispose();
     _debounce?.cancel();
     super.dispose();
   }
