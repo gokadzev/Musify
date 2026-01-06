@@ -49,6 +49,14 @@ class _UserSongsPageState extends State<UserSongsPage> {
   List<dynamic> _originalOfflineSongsList = [];
 
   @override
+  void initState() {
+    super.initState();
+    if (widget.page == 'offline') {
+      _originalOfflineSongsList = List<dynamic>.from(userOfflineSongs);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final title = getTitle(widget.page, context);
     final icon = getIcon(widget.page);
@@ -56,11 +64,6 @@ class _UserSongsPageState extends State<UserSongsPage> {
     final length = getLength(widget.page);
     final isLikedSongs = title == context.l10n!.likedSongs;
     final isOfflineSongs = title == context.l10n!.offlineSongs;
-
-    // Initialize backup for offline songs on first open
-    if (isOfflineSongs && _originalOfflineSongsList.isEmpty) {
-      _originalOfflineSongsList = List<dynamic>.from(userOfflineSongs);
-    }
 
     return Scaffold(
       appBar: AppBar(
