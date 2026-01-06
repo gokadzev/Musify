@@ -1105,7 +1105,7 @@ Future<String?> getSong(String songId, bool isLive) async {
     unawaited(updateRecentlyPlayed(songId));
     return url;
   } on TimeoutException catch (_) {
-    logger.log('getSongManifest request timed out for $songId', null, null);
+    logger.log('getSong request timed out for $songId', null, null);
     return null;
   } catch (e, stackTrace) {
     logger.log('Error in getSong for songId $songId:', e, stackTrace);
