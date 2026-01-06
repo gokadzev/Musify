@@ -46,7 +46,7 @@ class UserSongsPage extends StatefulWidget {
 
 class _UserSongsPageState extends State<UserSongsPage> {
   bool _isEditEnabled = false;
-  late List<dynamic> _originalOfflineSongsList = [];
+  List<dynamic> _originalOfflineSongsList = [];
 
   @override
   Widget build(BuildContext context) {
