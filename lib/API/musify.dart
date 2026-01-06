@@ -211,12 +211,11 @@ Future<String> addUserPlaylist(String input, BuildContext context) async {
   }
 
   try {
-    final _playlist = await _yt.playlists.get(playlistId);
-
     if (playlistExistsAnywhere(playlistId)) {
       return '${context.l10n!.playlistAlreadyExists}!';
     }
 
+    final _playlist = await _yt.playlists.get(playlistId);
     if (_playlist.title.isEmpty) {
       return '${context.l10n!.invalidYouTubePlaylist}!';
     }
