@@ -37,7 +37,6 @@ Map mediaItemToMap(MediaItem mediaItem) {
 
 MediaItem mapToMediaItem(Map song) => MediaItem(
   id: song['id'].toString(),
-  album: '',
   artist: song['artist'].toString().trim(),
   title: song['title'].toString(),
   artUri: song['isOffline'] ?? false
