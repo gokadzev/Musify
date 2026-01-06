@@ -188,11 +188,9 @@ class _HomePageState extends State<HomePage> {
           icon: FluentIcons.sparkle_24_filled,
           actionButton: IconButton(
             onPressed: () async {
-              await Future.microtask(
-                () => audioHandler.playPlaylistSong(
-                  playlist: {'title': recommendedTitle, 'list': data},
-                  songIndex: 0,
-                ),
+              await audioHandler.playPlaylistSong(
+                playlist: {'title': recommendedTitle, 'list': data},
+                songIndex: 0,
               );
             },
             icon: Icon(
