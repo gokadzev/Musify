@@ -97,6 +97,7 @@
   "newFolder": "Νέος φάκελος",
   "no": "Όχι",
   "noCustomPlaylists": "Δεν έχετε δημιουργήσει ακόμα λίστες αναπαραγωγής",
+  "noOfflineLibraryContent": "No offline content. Enable online mode or download playlists/songs to use the library.",
   "noPlaylistsAdded": "Δεν έχουν προστεθεί λίστες αναπαραγωγής ακόμα",
   "noSongsInQueue": "Δεν υπάρχουν τραγούδια σε ουρά",
   "notYTlist": "Αυτό δεν είναι αναγνωριστικό λίστας αναπαραγωγής του YouTube",

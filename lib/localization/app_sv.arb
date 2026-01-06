@@ -97,6 +97,7 @@
   "newFolder": "New folder",
   "no": "No",
   "noCustomPlaylists": "Inga anpassade spellistor har skapats än",
+  "noOfflineLibraryContent": "No offline content. Enable online mode or download playlists/songs to use the library.",
   "noPlaylistsAdded": "No playlists added yet",
   "noSongsInQueue": "Inga låtar i kön",
   "notYTlist": "Ogiltigt ID för YouTube-spellista",

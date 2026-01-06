@@ -97,6 +97,7 @@
   "newFolder": "New folder",
   "no": "No",
   "noCustomPlaylists": "अभी तक कोई कस्टम प्लेलिस्ट नहीं बनाई गई",
+  "noOfflineLibraryContent": "No offline content. Enable online mode or download playlists/songs to use the library.",
   "noPlaylistsAdded": "No playlists added yet",
   "noSongsInQueue": "क्यू में कोई गाने नहीं हैं",
   "notYTlist": "अमान्य YouTube प्लेलिस्ट ID",

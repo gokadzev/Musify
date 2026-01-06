@@ -97,6 +97,7 @@
   "newFolder": "Új mappa",
   "no": "No",
   "noCustomPlaylists": "Még nem készített saját lejátszási listát",
+  "noOfflineLibraryContent": "No offline content. Enable online mode or download playlists/songs to use the library.",
   "noPlaylistsAdded": "Még nincsenek hozzáadva lejátszási listák",
   "noSongsInQueue": "Nincsenek zenék a sorban",
   "notYTlist": "Érvénytlen YouTube lejátszási lista azonosító",

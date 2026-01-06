@@ -97,6 +97,7 @@
   "newFolder": "New folder",
   "no": "No",
   "noCustomPlaylists": "Belum ada daftar putar khusus yang dibuat",
+  "noOfflineLibraryContent": "No offline content. Enable online mode or download playlists/songs to use the library.",
   "noPlaylistsAdded": "No playlists added yet",
   "noSongsInQueue": "Tidak ada lagu dalam antrean",
   "notYTlist": "ID playlist YouTube tidak sah",

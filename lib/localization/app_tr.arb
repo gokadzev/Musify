@@ -97,6 +97,7 @@
   "newFolder": "Yeni klasör",
   "no": "Hayır",
   "noCustomPlaylists": "Henüz çalma listesi oluşturulmadı.",
+  "noOfflineLibraryContent": "No offline content. Enable online mode or download playlists/songs to use the library.",
   "noPlaylistsAdded": "Henüz oynatma listesi eklenmedi",
   "noSongsInQueue": "Sırada parça yok",
   "notYTlist": "Geçersiz çalma listesi linki",

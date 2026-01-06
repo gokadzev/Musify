@@ -97,6 +97,7 @@
   "newFolder": "Neuer Ordner",
   "no": "Nein",
   "noCustomPlaylists": "Du hast noch keine eigene Playlist erstellt",
+  "noOfflineLibraryContent": "No offline content. Enable online mode or download playlists/songs to use the library.",
   "noPlaylistsAdded": "Noch keine Playlists hinzugefügt",
   "noSongsInQueue": "Keine Titel in der Warteschlange",
   "notYTlist": "Das ist keine YouTube-Playlist-ID",

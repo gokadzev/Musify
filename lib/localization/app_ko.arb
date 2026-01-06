@@ -97,6 +97,7 @@
   "newFolder": "새 폴더",
   "no": "No",
   "noCustomPlaylists": "아직 커스텀 재생목록을 만들지 않았음",
+  "noOfflineLibraryContent": "No offline content. Enable online mode or download playlists/songs to use the library.",
   "noPlaylistsAdded": "아직 추가된 재생목록이 없음",
   "noSongsInQueue": "대기열에 노래 없음",
   "notYTlist": "잘못된 유튜브 재생목록 ID",

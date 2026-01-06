@@ -47,6 +47,62 @@ class _LibraryPageState extends State<LibraryPage> {
   Widget build(BuildContext context) {
     final primaryColor = Theme.of(context).colorScheme.primary;
 
+    // Show offline mode message if there is no content
+    if (offlineMode.value) {
+      final hasUserContent =
+          userPlaylistFolders.value.isNotEmpty ||
+          userPlaylists.value.isNotEmpty ||
+          userCustomPlaylists.value.isNotEmpty;
+      final hasOfflinePlaylists =
+          offlinePlaylistService.offlinePlaylists.value.isNotEmpty;
+
+      if (!hasUserContent && !hasOfflinePlaylists) {
+        final colorScheme = Theme.of(context).colorScheme;
+        return Scaffold(
+          appBar: AppBar(title: Text(context.l10n!.library)),
+          body: Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: colorScheme.primaryContainer,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      FluentIcons.cloud_off_24_filled,
+                      size: 40,
+                      color: colorScheme.onPrimaryContainer,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    context.l10n!.offlinePlaylists,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      color: colorScheme.onSurface,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    context.l10n!.noOfflineLibraryContent,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n!.library)),
       body: Column(

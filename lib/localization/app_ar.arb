@@ -97,6 +97,7 @@
   "newFolder": "مجلد جديد",
   "no": "لا",
   "noCustomPlaylists": "You haven't created any custom playlists yet",
+  "noOfflineLibraryContent": "No offline content. Enable online mode or download playlists/songs to use the library.",
   "noPlaylistsAdded": "لا توجد قوائم تشغيل مضافة بعد",
   "noSongsInQueue": "لا توجد أغاني في قائمة الانتظار",
   "notYTlist": "هذا ليس معرف قائمة تشغيل YouTube",

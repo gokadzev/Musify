@@ -97,6 +97,7 @@
   "newFolder": "Nova pasta",
   "no": "Não",
   "noCustomPlaylists": "Nenhuma playlist personalizada criada",
+  "noOfflineLibraryContent": "No offline content. Enable online mode or download playlists/songs to use the library.",
   "noPlaylistsAdded": "Nenhuma playlist adicionada ainda",
   "noSongsInQueue": "Fila vazia",
   "notYTlist": "ID do YouTube inválido",

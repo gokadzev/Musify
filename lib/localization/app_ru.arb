@@ -97,6 +97,7 @@
   "newFolder": "Новая папка",
   "no": "Нет",
   "noCustomPlaylists": "Вы ещё не создали свои плейлисты",
+  "noOfflineLibraryContent": "No offline content. Enable online mode or download playlists/songs to use the library.",
   "noPlaylistsAdded": "Плейлисты ещё не добавлены",
   "noSongsInQueue": "Нет треков в очереди",
   "notYTlist": "Неверный ID плейлиста YouTube",

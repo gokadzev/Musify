@@ -97,6 +97,7 @@
   "newFolder": "Uus kaust",
   "no": "No",
   "noCustomPlaylists": "Kohandatud nimekirju pole veel loodud",
+  "noOfflineLibraryContent": "No offline content. Enable online mode or download playlists/songs to use the library.",
   "noPlaylistsAdded": "Nimekirju pole veel lisatud",
   "noSongsInQueue": "Järjekorras pole laule",
   "notYTlist": "Vigane YouTube'i nimekirja ID",

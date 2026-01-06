@@ -97,6 +97,7 @@
   "newFolder": "Nueva carpeta",
   "no": "No",
   "noCustomPlaylists": "Aún no se han creado listas de reproducción personalizadas",
+  "noOfflineLibraryContent": "No offline content. Enable online mode or download playlists/songs to use the library.",
   "noPlaylistsAdded": "Aún no se han añadido listas de reproducción",
   "noSongsInQueue": "No hay canciones en cola",
   "notYTlist": "ID de lista de reproducción de YouTube no válido",

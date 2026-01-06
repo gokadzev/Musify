@@ -97,6 +97,7 @@
   "newFolder": "新規フォルダー",
   "no": "No",
   "noCustomPlaylists": "まだ再生リストを作成していません",
+  "noOfflineLibraryContent": "No offline content. Enable online mode or download playlists/songs to use the library.",
   "noPlaylistsAdded": "まだ再生リストは追加されていません",
   "noSongsInQueue": "キュー内に曲なし",
   "notYTlist": "有効な YouTube の再生リスト ID ではありません",

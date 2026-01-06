@@ -97,6 +97,7 @@
   "newFolder": "New folder",
   "no": "No",
   "noCustomPlaylists": "还没有创建自定义播放列表",
+  "noOfflineLibraryContent": "No offline content. Enable online mode or download playlists/songs to use the library.",
   "noPlaylistsAdded": "No playlists added yet",
   "noSongsInQueue": "队列中没有歌曲",
   "notYTlist": "无效的 YouTube 播放列表 ID",

@@ -97,6 +97,7 @@
   "newFolder": "Nuova cartella",
   "no": "No",
   "noCustomPlaylists": "Non hai ancora creato playlist personalizzate",
+  "noOfflineLibraryContent": "No offline content. Enable online mode or download playlists/songs to use the library.",
   "noPlaylistsAdded": "Nessuna scaletta ancora aggiunta",
   "noSongsInQueue": "Nessun brano in coda",
   "notYTlist": "Questo non è un ID playlist di YouTube valido",
