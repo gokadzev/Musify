@@ -58,19 +58,21 @@ Map<String, dynamic> returnSongLayout(
   int index,
   Video song, {
   String? playlistImage,
-}) => {
-  'id': index,
-  'ytid': song.id.toString(),
-  'title': formatSongTitle(
-    song.title.split('-')[song.title.split('-').length - 1],
-  ),
-  'artist': song.title.split('-')[0],
-  'image': playlistImage ?? song.thumbnails.standardResUrl,
-  'lowResImage': playlistImage ?? song.thumbnails.lowResUrl,
-  'highResImage': playlistImage ?? song.thumbnails.maxResUrl,
-  'duration': song.duration?.inSeconds,
-  'isLive': song.isLive,
-};
+}) {
+  final titleParts = song.title.split('-');
+
+  return {
+    'id': index,
+    'ytid': song.id.toString(),
+    'title': formatSongTitle(titleParts[titleParts.length - 1]),
+    'artist': titleParts[0],
+    'image': playlistImage ?? song.thumbnails.standardResUrl,
+    'lowResImage': playlistImage ?? song.thumbnails.lowResUrl,
+    'highResImage': playlistImage ?? song.thumbnails.maxResUrl,
+    'duration': song.duration?.inSeconds,
+    'isLive': song.isLive,
+  };
+}
 
 String formatDuration(int audioDurationInSeconds) {
   final duration = Duration(seconds: audioDurationInSeconds);
