@@ -67,7 +67,7 @@ class _HomePageState extends State<HomePage> {
             ),
             _buildSuggestedPlaylists(playlistHeight),
             _buildSuggestedPlaylists(playlistHeight, showOnlyLiked: true),
-            _buildRecommendedSongsSection(playlistHeight),
+            _buildRecommendedSongsSection(),
           ],
         ),
       ),
@@ -159,7 +159,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildRecommendedSongsSection(double playlistHeight) {
+  Widget _buildRecommendedSongsSection() {
     return ValueListenableBuilder<bool>(
       valueListenable: externalRecommendations,
       builder: (_, recommendations, __) {
