@@ -137,8 +137,12 @@ class _SearchPageState extends State<SearchPage> {
                         const Duration(milliseconds: 300),
                         () async {
                           if (value.isNotEmpty) {
-                            final s = await getSearchSuggestions(value);
-                            _suggestionsList = List<String>.from(s);
+                            final searchSuggestions =
+                                await getSearchSuggestions(value);
+
+                            _suggestionsList = List<String>.from(
+                              searchSuggestions,
+                            );
                           } else {
                             _suggestionsList = [];
                           }
