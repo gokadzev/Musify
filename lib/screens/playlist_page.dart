@@ -181,7 +181,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                   SliverToBoxAdapter(child: _buildHeaderSection()),
                   if (_playlist['list'].isNotEmpty) ...[
                     SliverPadding(
-                      padding: commonListViewBottmomPadding,
+                      padding: commonListViewBottomPadding,
                       sliver: PagedSliverList(
                         state: state,
                         fetchNextPage: fetchNextPage,

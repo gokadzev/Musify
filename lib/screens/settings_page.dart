@@ -531,7 +531,7 @@ class SettingsPage extends StatelessWidget {
       ListView.builder(
         shrinkWrap: true,
         physics: const BouncingScrollPhysics(),
-        padding: commonListViewBottmomPadding,
+        padding: commonListViewBottomPadding,
         itemCount: availableModes.length,
         itemBuilder: (context, index) {
           final mode = availableModes[index];
@@ -578,7 +578,7 @@ class SettingsPage extends StatelessWidget {
       ListView.builder(
         shrinkWrap: true,
         physics: const BouncingScrollPhysics(),
-        padding: commonListViewBottmomPadding,
+        padding: commonListViewBottomPadding,
         itemCount: availableLanguages.length,
         itemBuilder: (context, index) {
           final language = availableLanguages[index];
@@ -625,7 +625,7 @@ class SettingsPage extends StatelessWidget {
       ListView.builder(
         shrinkWrap: true,
         physics: const BouncingScrollPhysics(),
-        padding: commonListViewBottmomPadding,
+        padding: commonListViewBottomPadding,
         itemCount: availableQualities.length,
         itemBuilder: (context, index) {
           final quality = availableQualities[index];

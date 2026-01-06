@@ -207,7 +207,7 @@ class _HomePageState extends State<HomePage> {
           shrinkWrap: true,
           physics: const BouncingScrollPhysics(),
           itemCount: data.length,
-          padding: commonListViewBottmomPadding,
+          padding: commonListViewBottomPadding,
           itemBuilder: (context, index) {
             final borderRadius = getItemBorderRadius(index, data.length);
             return RepaintBoundary(

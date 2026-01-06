@@ -42,7 +42,7 @@ const commonCustomBarRadiusLast = BorderRadius.vertical(
 
 const miniPlayerTotalHeight = 92.0;
 
-const commonListViewBottmomPadding = EdgeInsets.only(bottom: 8);
+const commonListViewBottomPadding = EdgeInsets.only(bottom: 8);
 
 const commonBarContentPadding = EdgeInsets.symmetric(
   vertical: 12,

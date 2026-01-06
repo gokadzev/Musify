@@ -319,7 +319,7 @@ class _SearchPageState extends State<SearchPage> {
 
         widgets.add(
           Padding(
-            padding: isLast ? commonListViewBottmomPadding : EdgeInsets.zero,
+            padding: isLast ? commonListViewBottomPadding : EdgeInsets.zero,
             child: PlaylistBar(
               key: ValueKey('playlist_${playlist['ytid']}_$index'),
               playlist['title'],

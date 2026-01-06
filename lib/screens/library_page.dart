@@ -250,7 +250,7 @@ class _LibraryPageState extends State<LibraryPage> {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: playlists.length,
-      padding: commonListViewBottmomPadding,
+      padding: commonListViewBottomPadding,
       itemBuilder: (BuildContext context, index) {
         final playlist = playlists[index];
         final borderRadius = getItemBorderRadius(index, playlists.length);

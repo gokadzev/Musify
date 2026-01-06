@@ -363,7 +363,7 @@ void _showQueue(BuildContext context, List<dynamic> mappedQueue) {
         ListView.builder(
           shrinkWrap: true,
           physics: const BouncingScrollPhysics(),
-          padding: commonListViewBottmomPadding,
+          padding: commonListViewBottomPadding,
           itemCount: mappedQueue.length,
           itemBuilder: (BuildContext context, int index) {
             final isCurrentSong = index == currentIndex;
