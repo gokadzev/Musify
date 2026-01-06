@@ -167,9 +167,8 @@ class _HomePageState extends State<HomePage> {
           future: getRecommendedSongs(),
 
           builder: (context, data) {
-            final list = data.cast<dynamic>();
-            if (list.isEmpty) return const SizedBox.shrink();
-            return _buildRecommendedForYouSection(context, list);
+            if (data.isEmpty) return const SizedBox.shrink();
+            return _buildRecommendedForYouSection(context, data);
           },
         );
       },
