@@ -1,5 +1,5 @@
 /*
- *     Copyright (C) 2025 Valeri Gokadze
+ *     Copyright (C) 2026 Valeri Gokadze
  *
  *     Musify is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,28 +21,30 @@
 
 import 'package:audio_service/audio_service.dart';
 
-Map mediaItemToMap(MediaItem mediaItem) => {
-  'id': mediaItem.id,
-  'ytid': mediaItem.extras!['ytid'],
-  'album': mediaItem.album.toString(),
-  'artist': mediaItem.artist.toString(),
-  'title': mediaItem.title,
-  'highResImage': mediaItem.artUri.toString(),
-  'lowResImage': mediaItem.extras!['lowResImage'],
-  'isLive': mediaItem.extras!['isLive'],
-};
+Map mediaItemToMap(MediaItem mediaItem) {
+  final extras = mediaItem.extras;
+  return {
+    'id': mediaItem.id,
+    'ytid': extras?['ytid'],
+    'album': mediaItem.album.toString(),
+    'artist': mediaItem.artist.toString(),
+    'title': mediaItem.title,
+    'highResImage': mediaItem.artUri.toString(),
+    'lowResImage': extras?['lowResImage'],
+    'isLive': extras?['isLive'] ?? false,
+  };
+}
 
 MediaItem mapToMediaItem(Map song) => MediaItem(
   id: song['id'].toString(),
-  album: '',
   artist: song['artist'].toString().trim(),
   title: song['title'].toString(),
-  artUri:
-      song['isOffline'] ?? false
-          ? Uri.file(song['highResImage'].toString())
-          : Uri.parse(song['highResImage'].toString()),
-  duration:
-      song['duration'] != null ? Duration(seconds: song['duration']) : null,
+  artUri: song['isOffline'] ?? false
+      ? Uri.file(song['highResImage'].toString())
+      : Uri.parse(song['highResImage'].toString()),
+  duration: song['duration'] != null
+      ? Duration(seconds: song['duration'])
+      : null,
   extras: {
     'lowResImage': song['lowResImage'],
     'ytid': song['ytid'],

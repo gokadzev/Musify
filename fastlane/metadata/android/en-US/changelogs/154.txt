@@ -1,0 +1,6 @@
+Enhancements
+- Added edit playlist option in playlist bar
+- Added 'Add to queue' feature
+- Updated translations
+- Miscellaneous UI/UX refinements and performance optimizations
+- Full changelog: https://github.com/gokadzev/Musify/releases

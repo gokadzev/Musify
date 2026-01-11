@@ -1,5 +1,5 @@
 /*
- *     Copyright (C) 2025 Valeri Gokadze
+ *     Copyright (C) 2026 Valeri Gokadze
  *
  *     Musify is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -42,13 +42,12 @@ String formatSongTitle(String title) {
     replacementsForSongTitle.keys.map(RegExp.escape).join('|'),
   );
 
-  var finalTitle =
-      title
-          .replaceAllMapped(
-            pattern,
-            (match) => replacementsForSongTitle[match.group(0)] ?? '',
-          )
-          .trimLeft();
+  var finalTitle = title
+      .replaceAllMapped(
+        pattern,
+        (match) => replacementsForSongTitle[match.group(0)] ?? '',
+      )
+      .trimLeft();
 
   finalTitle = finalTitle.replaceAll(wordsPatternForSongTitle, '');
 
@@ -59,19 +58,21 @@ Map<String, dynamic> returnSongLayout(
   int index,
   Video song, {
   String? playlistImage,
-}) => {
-  'id': index,
-  'ytid': song.id.toString(),
-  'title': formatSongTitle(
-    song.title.split('-')[song.title.split('-').length - 1],
-  ),
-  'artist': song.title.split('-')[0],
-  'image': playlistImage ?? song.thumbnails.standardResUrl,
-  'lowResImage': playlistImage ?? song.thumbnails.lowResUrl,
-  'highResImage': playlistImage ?? song.thumbnails.maxResUrl,
-  'duration': song.duration?.inSeconds,
-  'isLive': song.isLive,
-};
+}) {
+  final titleParts = song.title.split('-');
+
+  return {
+    'id': index,
+    'ytid': song.id.toString(),
+    'title': formatSongTitle(titleParts[titleParts.length - 1]),
+    'artist': titleParts[0],
+    'image': playlistImage ?? song.thumbnails.standardResUrl,
+    'lowResImage': playlistImage ?? song.thumbnails.lowResUrl,
+    'highResImage': playlistImage ?? song.thumbnails.maxResUrl,
+    'duration': song.duration?.inSeconds,
+    'isLive': song.isLive,
+  };
+}
 
 String formatDuration(int audioDurationInSeconds) {
   final duration = Duration(seconds: audioDurationInSeconds);

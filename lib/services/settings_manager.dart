@@ -1,5 +1,5 @@
 /*
- *     Copyright (C) 2025 Valeri Gokadze
+ *     Copyright (C) 2026 Valeri Gokadze
  *
  *     Musify is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -22,12 +22,14 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:musify/screens/playlist_page.dart';
+import 'package:musify/screens/user_songs_page.dart';
 import 'package:musify/utilities/utils.dart';
 
 // Preferences
 
-final backgroundPlay = ValueNotifier<bool>(
-  Hive.box('settings').get('backgroundPlay', defaultValue: false),
+final shouldWeCheckUpdates = ValueNotifier<bool?>(
+  Hive.box('settings').get('shouldWeCheckUpdates', defaultValue: null),
 );
 
 final playNextSongAutomatically = ValueNotifier<bool>(
@@ -46,10 +48,6 @@ final offlineMode = ValueNotifier<bool>(
   Hive.box('settings').get('offlineMode', defaultValue: false),
 );
 
-final ValueNotifier<bool> offlineModeChangeNotifier = ValueNotifier<bool>(
-  false,
-);
-
 final predictiveBack = ValueNotifier<bool>(
   Hive.box('settings').get('predictiveBack', defaultValue: false),
 );
@@ -58,8 +56,8 @@ final sponsorBlockSupport = ValueNotifier<bool>(
   Hive.box('settings').get('sponsorBlockSupport', defaultValue: false),
 );
 
-final defaultRecommendations = ValueNotifier<bool>(
-  Hive.box('settings').get('defaultRecommendations', defaultValue: false),
+final externalRecommendations = ValueNotifier<bool>(
+  Hive.box('settings').get('externalRecommendations', defaultValue: false),
 );
 
 final useProxy = ValueNotifier<bool>(
@@ -75,18 +73,31 @@ Locale languageSetting = getLocaleFromLanguageCode(
 );
 
 final themeModeSetting =
-    Hive.box('settings').get('themeMode', defaultValue: 'dark') as String;
+    Hive.box('settings').get('themeIndex', defaultValue: 0) as int;
+
+String playlistSortSetting = Hive.box(
+  'settings',
+).get('playlistSortType', defaultValue: PlaylistSortType.default_.name);
+
+String offlineSortSetting = Hive.box(
+  'settings',
+).get('offlineSortType', defaultValue: OfflineSortType.default_.name);
 
 Color primaryColorSetting = Color(
   Hive.box('settings').get('accentColor', defaultValue: 0xff91cef4),
 );
 
-// Non-Storage Notifiers
-
-final shuffleNotifier = ValueNotifier<bool>(false);
-final repeatNotifier = ValueNotifier<AudioServiceRepeatMode>(
-  AudioServiceRepeatMode.none,
+final shuffleNotifier = ValueNotifier<bool>(
+  Hive.box('settings').get('shuffleEnabled', defaultValue: false),
 );
+
+final repeatNotifier = ValueNotifier<AudioServiceRepeatMode>(
+  AudioServiceRepeatMode.values[Hive.box(
+    'settings',
+  ).get('repeatMode', defaultValue: 0)],
+);
+
+// Non-storage notifiers
 
 var sleepTimerNotifier = ValueNotifier<Duration?>(null);
 

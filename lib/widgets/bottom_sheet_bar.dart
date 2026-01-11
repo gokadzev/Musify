@@ -1,5 +1,5 @@
 /*
- *     Copyright (C) 2025 Valeri Gokadze
+ *     Copyright (C) 2026 Valeri Gokadze
  *
  *     Musify is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -19,35 +19,63 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:musify/utilities/common_variables.dart';
 
 class BottomSheetBar extends StatelessWidget {
   const BottomSheetBar(
     this.title,
     this.onTap,
-    this.backgroundColor, {
+    this.isSelected, {
     this.borderRadius = BorderRadius.zero,
     super.key,
   });
   final String title;
   final VoidCallback onTap;
-  final Color backgroundColor;
+  final bool isSelected;
   final BorderRadius borderRadius;
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: backgroundColor,
-      shape: RoundedRectangleBorder(borderRadius: borderRadius),
-      margin: const EdgeInsets.only(bottom: 3),
-      child: Padding(
-        padding: commonBarContentPadding,
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+      child: Material(
+        color: isSelected
+            ? colorScheme.primaryContainer
+            : colorScheme.surfaceContainerHigh,
+        borderRadius: borderRadius,
         child: InkWell(
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
+          borderRadius: borderRadius,
           onTap: onTap,
-          child: ListTile(minTileHeight: 45, title: Text(title)),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                      color: isSelected
+                          ? colorScheme.onPrimaryContainer
+                          : colorScheme.onSurface,
+                      fontSize: 15,
+                      fontWeight: isSelected
+                          ? FontWeight.w600
+                          : FontWeight.w500,
+                    ),
+                  ),
+                ),
+                if (isSelected)
+                  Icon(
+                    FluentIcons.checkmark_24_filled,
+                    color: colorScheme.onPrimaryContainer,
+                    size: 20,
+                  ),
+              ],
+            ),
+          ),
         ),
       ),
     );

@@ -1,5 +1,5 @@
 /*
- *     Copyright (C) 2025 Valeri Gokadze
+ *     Copyright (C) 2026 Valeri Gokadze
  *
  *     Musify is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -29,46 +29,55 @@ class NullArtworkWidget extends StatelessWidget {
     this.size = 220,
     this.iconSize,
     this.title,
+    this.borderRadius = 12,
   });
 
   final IconData icon;
   final double? iconSize;
   final double size;
   final String? title;
-
-  static const double paddingValue = 10;
+  final double borderRadius;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final primaryColor = colorScheme.primary;
 
     // Calculate icon size based on container size if not provided
-    final calculatedIconSize = iconSize ?? (size * 0.29);
+    final calculatedIconSize = iconSize ?? (size * 0.3);
 
     return SizedBox(
       width: size,
       height: size,
       child: DecoratedBox(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          color: primaryColor.withAlpha(30),
+          borderRadius: BorderRadius.circular(borderRadius),
+          color: colorScheme.surfaceContainerHighest,
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Icon(icon, size: calculatedIconSize, color: primaryColor),
-            if (title != null)
+            Icon(
+              icon,
+              size: calculatedIconSize,
+              color: colorScheme.onSurfaceVariant,
+            ),
+            if (title != null) ...[
+              SizedBox(height: size * 0.04),
               Padding(
-                padding: const EdgeInsets.all(paddingValue),
+                padding: EdgeInsets.symmetric(horizontal: size * 0.08),
                 child: Text(
                   title!,
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: primaryColor),
+                  style: TextStyle(
+                    color: colorScheme.onSurfaceVariant,
+                    fontSize: (size * 0.06).clamp(11.0, 14.0),
+                    fontWeight: FontWeight.w500,
+                  ),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 2,
                 ),
               ),
+            ],
           ],
         ),
       ),

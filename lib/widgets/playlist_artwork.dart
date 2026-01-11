@@ -1,5 +1,5 @@
 /*
- *     Copyright (C) 2025 Valeri Gokadze
+ *     Copyright (C) 2026 Valeri Gokadze
  *
  *     Musify is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -19,11 +19,9 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
-import 'dart:convert';
-
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:musify/utilities/artwork_provider.dart';
 import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/widgets/no_artwork_cube.dart';
 
@@ -55,55 +53,24 @@ class PlaylistArtwork extends StatelessWidget {
     final image = playlistArtwork;
     if (image == null) return _nullArtwork();
 
-    if (image.startsWith('data:image')) {
-      final commaIdx = image.indexOf(',');
-      if (commaIdx == -1) return _nullArtwork();
-      try {
-        final bytes = base64Decode(image.substring(commaIdx + 1));
-        return SizedBox(
-          width: size,
-          height: size,
-          child: ClipRRect(
-            borderRadius: commonBarRadius,
-            child: Image.memory(
-              bytes,
-              height: size,
-              width: size,
-              fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => _nullArtwork(),
-            ),
-          ),
-        );
-      } catch (_) {
-        return _nullArtwork();
-      }
-    }
-
-    if (image.startsWith('http')) {
-      return CachedNetworkImage(
-        key: Key(image),
-        height: size,
+    try {
+      final provider = ArtworkProvider.get(image);
+      return SizedBox(
         width: size,
-        imageUrl: image,
-        fit: BoxFit.cover,
-        imageBuilder:
-            (_, imageProvider) => SizedBox(
-              width: size,
-              height: size,
-              child: ClipRRect(
-                borderRadius: commonBarRadius,
-                child: Image(
-                  image: imageProvider,
-                  height: size,
-                  width: size,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-        errorWidget: (_, __, ___) => _nullArtwork(),
+        height: size,
+        child: ClipRRect(
+          borderRadius: commonBarRadius,
+          child: Image(
+            image: provider,
+            height: size,
+            width: size,
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) => _nullArtwork(),
+          ),
+        ),
       );
+    } catch (_) {
+      return _nullArtwork();
     }
-
-    return _nullArtwork();
   }
 }

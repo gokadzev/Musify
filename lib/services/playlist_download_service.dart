@@ -1,7 +1,7 @@
 // ignore_for_file: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
 
 /*
- *     Copyright (C) 2025 Valeri Gokadze
+ *     Copyright (C) 2026 Valeri Gokadze
  *
  *     Musify is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -185,8 +185,9 @@ class OfflinePlaylistService {
       }
 
       // Start initial downloads
-      final initialTasks =
-          songsList.length < maxConcurrent ? songsList.length : maxConcurrent;
+      final initialTasks = songsList.length < maxConcurrent
+          ? songsList.length
+          : maxConcurrent;
       for (var i = 0; i < initialTasks; i++) {
         unawaited(processQueue());
       }
@@ -391,10 +392,9 @@ class OfflinePlaylistService {
   Map<String, dynamic> getDownloadStatus(String playlistId) {
     final isDownloaded = isPlaylistDownloaded(playlistId);
     final isDownloading = isPlaylistDownloading(playlistId);
-    final progress =
-        downloadProgressNotifiers.containsKey(playlistId)
-            ? downloadProgressNotifiers[playlistId]!.value
-            : null;
+    final progress = downloadProgressNotifiers.containsKey(playlistId)
+        ? downloadProgressNotifiers[playlistId]!.value
+        : null;
 
     return {
       'isDownloaded': isDownloaded,

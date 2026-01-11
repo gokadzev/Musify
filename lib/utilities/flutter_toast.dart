@@ -1,5 +1,5 @@
 /*
- *     Copyright (C) 2025 Valeri Gokadze
+ *     Copyright (C) 2026 Valeri Gokadze
  *
  *     Musify is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -19,20 +19,43 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 
 void showToast(
   BuildContext context,
   String text, {
   Duration duration = const Duration(seconds: 3),
+  IconData? icon,
 }) {
+  final colorScheme = Theme.of(context).colorScheme;
+
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
-      backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+      backgroundColor: colorScheme.secondaryContainer,
       behavior: SnackBarBehavior.floating,
-      content: Text(
-        text,
-        style: TextStyle(color: Theme.of(context).colorScheme.inverseSurface),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      elevation: 6,
+      content: Row(
+        children: [
+          Icon(
+            icon ?? FluentIcons.checkmark_circle_20_filled,
+            color: colorScheme.onSecondaryContainer,
+            size: 20,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                color: colorScheme.onSecondaryContainer,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
       ),
       duration: duration,
     ),
@@ -45,19 +68,43 @@ void showToastWithButton(
   String buttonName,
   VoidCallback onPressedToast, {
   Duration duration = const Duration(seconds: 3),
+  IconData? icon,
 }) {
+  final colorScheme = Theme.of(context).colorScheme;
+
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
-      backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-      content: Text(
-        text,
-        style: TextStyle(color: Theme.of(context).colorScheme.inverseSurface),
+      backgroundColor: colorScheme.secondaryContainer,
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      elevation: 6,
+      content: Row(
+        children: [
+          Icon(
+            icon ?? FluentIcons.info_20_filled,
+            color: colorScheme.onSecondaryContainer,
+            size: 20,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                color: colorScheme.onSecondaryContainer,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
       ),
       action: SnackBarAction(
         label: buttonName,
-        textColor: Theme.of(context).colorScheme.secondary,
+        textColor: colorScheme.secondary,
         onPressed: () => onPressedToast(),
       ),
+      persist: false,
       duration: duration,
     ),
   );

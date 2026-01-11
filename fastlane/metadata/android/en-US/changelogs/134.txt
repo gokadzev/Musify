@@ -1,8 +1,0 @@
-Bug Fixes
-- Fix smooth transition between offline and online modes
-- Update icon for liked songs button in library page
-
-
-Enhancements
-- Added playlist folders
-- Full changelog: https://github.com/gokadzev/Musify/releases

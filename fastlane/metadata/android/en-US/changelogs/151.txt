@@ -1,0 +1,8 @@
+Bug fixes
+- Fixed queue problems
+- Fixed repeat/loop problems
+
+Enhancements
+- Added song rename feature for custom playlists and liked songs
+- Updated translations
+- Full changelog: https://github.com/gokadzev/Musify/releases

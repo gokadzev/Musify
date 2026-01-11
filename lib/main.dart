@@ -1,5 +1,5 @@
 /*
- *     Copyright (C) 2025 Valeri Gokadze
+ *     Copyright (C) 2026 Valeri Gokadze
  *
  *     Musify is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -78,14 +78,15 @@ const appLanguages = <String, String>{
   'Ukrainian': 'uk',
 };
 
-final List<Locale> appSupportedLocales =
-    appLanguages.values.map((languageCode) {
-      final parts = languageCode.split('-');
-      if (parts.length > 1) {
-        return Locale.fromSubtags(languageCode: parts[0], scriptCode: parts[1]);
-      }
-      return Locale(languageCode);
-    }).toList();
+final List<Locale> appSupportedLocales = appLanguages.values.map((
+  languageCode,
+) {
+  final parts = languageCode.split('-');
+  if (parts.length > 1) {
+    return Locale.fromSubtags(languageCode: parts[0], scriptCode: parts[1]);
+  }
+  return Locale(languageCode);
+}).toList();
 
 class Musify extends StatefulWidget {
   const Musify({super.key});
@@ -152,7 +153,7 @@ class _MusifyState extends State<Musify> {
       }
     };
 
-    offlineModeChangeNotifier.addListener(_onOfflineModeChanged);
+    offlineMode.addListener(_onOfflineModeChanged);
 
     try {
       LicenseRegistry.addLicense(() async* {
@@ -165,19 +166,36 @@ class _MusifyState extends State<Musify> {
       logger.log('License Registration Error', e, stackTrace);
     }
 
-    if (!isFdroidBuild && !isUpdateChecked && kReleaseMode) {
-      SchedulerBinding.instance.addPostFrameCallback((_) {
-        if (!offlineMode.value) {
-          checkAppUpdates();
+    if (!isFdroidBuild) {
+      if (shouldWeCheckUpdates.value == true) {
+        if (!isUpdateChecked && kReleaseMode) {
+          SchedulerBinding.instance.addPostFrameCallback((_) {
+            if (!offlineMode.value) {
+              checkAppUpdates();
+            }
+            isUpdateChecked = true;
+          });
         }
-        isUpdateChecked = true;
-      });
+      } else {
+        if (shouldWeCheckUpdates.value == null) {
+          // show dialog that asks user if they want to enable update checks
+          SchedulerBinding.instance.addPostFrameCallback((_) {
+            showUpdateCheckDialog(NavigationManager().context);
+          });
+        } else {
+          SchedulerBinding.instance.addPostFrameCallback((_) async {
+            if (!offlineMode.value) {
+              await fetchAnnouncementOnly();
+            }
+          });
+        }
+      }
     }
   }
 
   @override
   void dispose() {
-    offlineModeChangeNotifier.removeListener(_onOfflineModeChanged);
+    offlineMode.removeListener(_onOfflineModeChanged);
 
     Hive.close();
     super.dispose();
@@ -202,18 +220,15 @@ class _MusifyState extends State<Musify> {
             statusBarColor: Colors.transparent,
             systemNavigationBarColor: Colors.transparent,
             systemNavigationBarContrastEnforced: true,
-            statusBarBrightness:
-                brightness == Brightness.dark
-                    ? Brightness.light
-                    : Brightness.dark,
-            statusBarIconBrightness:
-                brightness == Brightness.dark
-                    ? Brightness.light
-                    : Brightness.dark,
-            systemNavigationBarIconBrightness:
-                brightness == Brightness.dark
-                    ? Brightness.light
-                    : Brightness.dark,
+            statusBarBrightness: brightness == Brightness.dark
+                ? Brightness.light
+                : Brightness.dark,
+            statusBarIconBrightness: brightness == Brightness.dark
+                ? Brightness.light
+                : Brightness.dark,
+            systemNavigationBarIconBrightness: brightness == Brightness.dark
+                ? Brightness.light
+                : Brightness.dark,
           ),
           child: MaterialApp.router(
             themeMode: themeMode,
@@ -277,6 +292,10 @@ Future<void> initialisation() async {
       );
     } on PlatformException {
       logger.log('Failed to get initial uri', null, null);
+    }
+
+    if (isFdroidBuild && !offlineMode.value) {
+      await fetchAnnouncementOnly();
     }
   } catch (e, stackTrace) {
     logger.log('Initialization Error', e, stackTrace);

@@ -1,5 +1,5 @@
 /*
- *     Copyright (C) 2025 Valeri Gokadze
+ *     Copyright (C) 2026 Valeri Gokadze
  *
  *     Musify is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -46,6 +46,19 @@ class _CacheEntry {
   }
 }
 
+// Maximum number of entries allowed in the memory cache
+const int _maxMemoryCacheSize = 500;
+const int _memoryCacheTrimSize = 100;
+
+void _trimMemoryCacheIfNeeded() {
+  if (_memoryCache.length > _maxMemoryCacheSize) {
+    final keysToRemove = _memoryCache.keys.take(_memoryCacheTrimSize).toList();
+    for (final key in keysToRemove) {
+      _memoryCache.remove(key);
+    }
+  }
+}
+
 Future<void> addOrUpdateData(String category, String key, dynamic value) async {
   final _box = await _openBox(category);
   await _box.put(key, value);
@@ -56,6 +69,7 @@ Future<void> addOrUpdateData(String category, String key, dynamic value) async {
     // Update memory cache too
     final cacheKey = '${category}_$key';
     _memoryCache[cacheKey] = _CacheEntry(value, DateTime.now());
+    _trimMemoryCacheIfNeeded();
   }
 }
 
@@ -74,6 +88,7 @@ Future<dynamic> getData(
   if (memCacheEntry != null && memCacheEntry.isValid(cachingDuration)) {
     return memCacheEntry.data;
   }
+  _trimMemoryCacheIfNeeded();
 
   final _box = await _openBox(category);
   if (category == 'cache') {
@@ -126,8 +141,9 @@ Future<void> cleanupOldCacheEntries() async {
     final now = DateTime.now();
 
     // Get all keys except the ones with _date suffix
-    final keys =
-        cacheBox.keys.where((k) => !k.toString().endsWith('_date')).toList();
+    final keys = cacheBox.keys
+        .where((k) => !k.toString().endsWith('_date'))
+        .toList();
 
     for (final key in keys) {
       final dateKey = '${key}_date';
@@ -185,6 +201,10 @@ Future<String> backupData(BuildContext context) async {
 
   if (dlPath == null) {
     return '${context.l10n!.chooseBackupDir}!';
+  }
+
+  if (!dlPath.contains('Documents') && !dlPath.contains('Download')) {
+    return context.l10n!.folderRestrictions;
   }
 
   try {
@@ -265,14 +285,13 @@ Future<String> restoreData(BuildContext context) async {
     await Future.delayed(const Duration(milliseconds: 100));
 
     for (final boxName in boxNames) {
-      final backupFile =
-          result.files
-              .where(
-                (file) =>
-                    file.name == '$boxName.hive' ||
-                    file.name.startsWith('${boxName}_'),
-              )
-              .firstOrNull;
+      final backupFile = result.files
+          .where(
+            (file) =>
+                file.name == '$boxName.hive' ||
+                file.name.startsWith('${boxName}_'),
+          )
+          .firstOrNull;
 
       if (backupFile?.path != null) {
         final sourceFile = File(backupFile!.path!);

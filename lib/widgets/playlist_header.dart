@@ -1,5 +1,5 @@
 /*
- *     Copyright (C) 2025 Valeri Gokadze
+ *     Copyright (C) 2026 Valeri Gokadze
  *
  *     Musify is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -33,39 +33,32 @@ class PlaylistHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final textTheme = theme.textTheme;
 
     return Padding(
-      padding: const EdgeInsets.all(6),
-      child: Row(
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
+      child: Column(
         children: [
-          ClipRRect(borderRadius: BorderRadius.circular(8), child: image),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              children: [
-                Text(
-                  title,
-                  style: textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: colorScheme.onSurface,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 2,
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  '$songsLength ${context.l10n!.songs}'.toUpperCase(),
-                  style: textTheme.bodySmall?.copyWith(
-                    fontWeight: FontWeight.w500,
-                    color: colorScheme.onSurfaceVariant,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
+          Center(child: image),
+          const SizedBox(height: 20),
+          Text(
+            title,
+            style: theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: colorScheme.onSurface,
             ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2,
+            textAlign: TextAlign.center,
           ),
+          const SizedBox(height: 6),
+          Text(
+            '$songsLength ${context.l10n!.songs}',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 20),
         ],
       ),
     );

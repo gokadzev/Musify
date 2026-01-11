@@ -1,5 +1,5 @@
 /*
- *     Copyright (C) 2025 Valeri Gokadze
+ *     Copyright (C) 2026 Valeri Gokadze
  *
  *     Musify is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -85,7 +85,10 @@ class SettingsPage extends StatelessWidget {
   ) {
     return Column(
       children: [
-        SectionHeader(title: context.l10n!.preferences),
+        SectionHeader(
+          title: context.l10n!.preferences,
+          icon: FluentIcons.options_24_filled,
+        ),
         CustomBar(
           context.l10n!.accentColor,
           FluentIcons.color_24_filled,
@@ -95,49 +98,23 @@ class SettingsPage extends StatelessWidget {
         CustomBar(
           context.l10n!.themeMode,
           FluentIcons.weather_sunny_28_filled,
-          onTap:
-              () => _showThemeModePicker(
-                context,
-                activatedColor,
-                inactivatedColor,
-              ),
+          onTap: () =>
+              _showThemeModePicker(context, activatedColor, inactivatedColor),
         ),
         CustomBar(
           context.l10n!.language,
           FluentIcons.translate_24_filled,
-          onTap:
-              () => _showLanguagePicker(
-                context,
-                activatedColor,
-                inactivatedColor,
-              ),
+          onTap: () =>
+              _showLanguagePicker(context, activatedColor, inactivatedColor),
         ),
         CustomBar(
           context.l10n!.audioQuality,
           Icons.music_note,
-          onTap:
-              () => _showAudioQualityPicker(
-                context,
-                activatedColor,
-                inactivatedColor,
-              ),
-        ),
-        ValueListenableBuilder<bool>(
-          valueListenable: useProxy,
-          builder: (_, value, __) {
-            return CustomBar(
-              context.l10n!.useProxy,
-              FluentIcons.shield_24_filled,
-              trailing: Switch(
-                value: value,
-                onChanged: (value) {
-                  useProxy.value = value;
-                  addOrUpdateData('settings', 'useProxy', value);
-                  showToast(context, context.l10n!.settingChangedMsg);
-                },
-              ),
-            );
-          },
+          onTap: () => _showAudioQualityPicker(
+            context,
+            activatedColor,
+            inactivatedColor,
+          ),
         ),
         CustomBar(
           context.l10n!.dynamicColor,
@@ -170,11 +147,30 @@ class SettingsPage extends StatelessWidget {
           },
         ),
         ValueListenableBuilder<bool>(
+          valueListenable: useProxy,
+          builder: (_, value, __) {
+            return CustomBar(
+              context.l10n!.useProxy,
+              FluentIcons.shield_24_filled,
+              description: context.l10n!.useProxyDescription,
+              trailing: Switch(
+                value: value,
+                onChanged: (value) {
+                  useProxy.value = value;
+                  addOrUpdateData('settings', 'useProxy', value);
+                  showToast(context, context.l10n!.settingChangedMsg);
+                },
+              ),
+            );
+          },
+        ),
+        ValueListenableBuilder<bool>(
           valueListenable: offlineMode,
           builder: (_, value, __) {
             return CustomBar(
               context.l10n!.offlineMode,
               FluentIcons.cellular_off_24_regular,
+              description: context.l10n!.offlineModeDescription,
               trailing: Switch(
                 value: value,
                 onChanged: (value) => _toggleOfflineMode(context, value),
@@ -182,19 +178,23 @@ class SettingsPage extends StatelessWidget {
             );
           },
         ),
-        ValueListenableBuilder<bool>(
-          valueListenable: backgroundPlay,
-          builder: (_, value, __) {
-            return CustomBar(
-              context.l10n!.backgroundPlay,
-              FluentIcons.dual_screen_tablet_24_filled,
-              trailing: Switch(
-                value: value,
-                onChanged: (value) => _toggleBackgroundPlay(context, value),
-              ),
-            );
-          },
-        ),
+        if (!isFdroidBuild)
+          ValueListenableBuilder<bool?>(
+            valueListenable: shouldWeCheckUpdates,
+            builder: (_, value, __) {
+              return CustomBar(
+                context.l10n!.automaticUpdateChecks,
+                FluentIcons.arrow_sync_24_filled,
+                description: context.l10n!.automaticUpdateChecksDescription,
+                borderRadius: commonCustomBarRadiusLast,
+                trailing: Switch(
+                  value: value ?? false,
+                  onChanged: (value) =>
+                      _toggleAutomaticUpdateChecks(context, value),
+                ),
+              );
+            },
+          ),
       ],
     );
   }
@@ -213,6 +213,7 @@ class SettingsPage extends StatelessWidget {
             return CustomBar(
               'SponsorBlock',
               FluentIcons.presence_blocked_24_regular,
+              description: context.l10n!.sponsorBlockDescription,
               trailing: Switch(
                 value: value,
                 onChanged: (value) => _toggleSponsorBlock(context, value),
@@ -226,6 +227,7 @@ class SettingsPage extends StatelessWidget {
             return CustomBar(
               context.l10n!.automaticSongPicker,
               FluentIcons.music_note_2_play_20_filled,
+              description: context.l10n!.automaticSongPickerDescription,
               trailing: Switch(
                 value: value,
                 onChanged: (value) {
@@ -237,16 +239,17 @@ class SettingsPage extends StatelessWidget {
           },
         ),
         ValueListenableBuilder<bool>(
-          valueListenable: defaultRecommendations,
+          valueListenable: externalRecommendations,
           builder: (_, value, __) {
             return CustomBar(
-              context.l10n!.originalRecommendations,
+              context.l10n!.externalRecommendations,
               FluentIcons.channel_share_24_regular,
+              description: context.l10n!.externalRecommendationsDescription,
               borderRadius: commonCustomBarRadiusLast,
               trailing: Switch(
                 value: value,
-                onChanged:
-                    (value) => _toggleDefaultRecommendations(context, value),
+                onChanged: (value) =>
+                    _toggleExternalRecommendations(context, value),
               ),
             );
           },
@@ -261,7 +264,10 @@ class SettingsPage extends StatelessWidget {
   Widget _buildToolsSection(BuildContext context) {
     return Column(
       children: [
-        SectionHeader(title: context.l10n!.tools),
+        SectionHeader(
+          title: context.l10n!.tools,
+          icon: FluentIcons.toolbox_24_filled,
+        ),
         CustomBar(
           context.l10n!.clearCache,
           FluentIcons.broom_24_filled,
@@ -277,12 +283,28 @@ class SettingsPage extends StatelessWidget {
         CustomBar(
           context.l10n!.clearSearchHistory,
           FluentIcons.history_24_filled,
-          onTap: () => _showClearSearchHistoryDialog(context),
+          onTap: () => _showConfirmationDialog(
+            context: context,
+            confirmationMessage: context.l10n!.clearSearchHistoryQuestion,
+            onSubmit: () {
+              searchHistoryNotifier.value = [];
+              deleteData('user', 'searchHistory');
+              showToast(context, '${context.l10n!.searchHistoryMsg}!');
+            },
+          ),
         ),
         CustomBar(
           context.l10n!.clearRecentlyPlayed,
           FluentIcons.receipt_play_24_filled,
-          onTap: () => _showClearRecentlyPlayedDialog(context),
+          onTap: () => _showConfirmationDialog(
+            context: context,
+            confirmationMessage: context.l10n!.clearRecentlyPlayedQuestion,
+            onSubmit: () {
+              userRecentlyPlayed = [];
+              deleteData('user', 'recentlyPlayedSongs');
+              showToast(context, '${context.l10n!.recentlyPlayedMsg}!');
+            },
+          ),
         ),
         CustomBar(
           context.l10n!.backupUserData,
@@ -293,8 +315,17 @@ class SettingsPage extends StatelessWidget {
           context.l10n!.restoreUserData,
           FluentIcons.cloud_add_24_filled,
           onTap: () async {
-            final response = await restoreData(context);
-            showToast(context, response);
+            try {
+              final response = await restoreData(context);
+              if (context.mounted) {
+                showToast(context, response);
+              }
+            } catch (e) {
+              logger.log('Error restoring data', e, null);
+              if (context.mounted) {
+                showToast(context, context.l10n!.error);
+              }
+            }
           },
         ),
         if (!isFdroidBuild)
@@ -309,15 +340,14 @@ class SettingsPage extends StatelessWidget {
   }
 
   Widget _buildSponsorSection(BuildContext context, Color primaryColor) {
-    final gradientEnd = Color.lerp(primaryColor, Colors.pink, 0.3)!;
-    final shadowColor = primaryColor.withValues(alpha: 0.3);
-    final iconBgColor = Colors.white.withValues(alpha: 0.2);
-    final arrowBgColor = Colors.white.withValues(alpha: 0.15);
-    final arrowColor = Colors.white.withValues(alpha: 0.9);
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Column(
       children: [
-        SectionHeader(title: context.l10n!.becomeSponsor),
+        SectionHeader(
+          title: context.l10n!.becomeSponsor,
+          icon: FluentIcons.heart_24_filled,
+        ),
         Padding(
           padding: commonBarPadding,
           child: Card(
@@ -328,48 +358,35 @@ class SettingsPage extends StatelessWidget {
             ),
             child: DecoratedBox(
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    primaryColor,
-                    primaryColor.withValues(alpha: 0.8),
-                    gradientEnd,
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
                 borderRadius: BorderRadius.circular(15),
-                boxShadow: [
-                  BoxShadow(
-                    color: shadowColor,
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
               ),
               child: Material(
-                color: Colors.transparent,
+                color: colorScheme.primaryContainer,
+                borderRadius: BorderRadius.circular(15),
                 child: InkWell(
                   borderRadius: BorderRadius.circular(15),
-                  onTap:
-                      () => launchURL(Uri.parse('https://ko-fi.com/gokadzev')),
+                  onTap: () =>
+                      launchURL(Uri.parse('https://ko-fi.com/gokadzev')),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                       vertical: 12,
                       horizontal: 16,
                     ),
                     child: SizedBox(
-                      height: 45, // Match CustomBar's minTileHeight
+                      height: 45,
                       child: Row(
                         children: [
                           Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: iconBgColor,
-                              shape: BoxShape.circle,
+                              color: colorScheme.onPrimaryContainer.withValues(
+                                alpha: 0.15,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
                             ),
-                            child: const Icon(
+                            child: Icon(
                               FluentIcons.heart_24_filled,
-                              color: Colors.white,
+                              color: colorScheme.onPrimaryContainer,
                               size: 24,
                             ),
                           ),
@@ -377,22 +394,24 @@ class SettingsPage extends StatelessWidget {
                           Expanded(
                             child: Text(
                               context.l10n!.sponsorProject,
-                              style: const TextStyle(
-                                color: Colors.white,
+                              style: TextStyle(
+                                color: colorScheme.onPrimaryContainer,
                                 fontSize: 16,
-                                fontWeight: FontWeight.w600, // Match CustomBar
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                           ),
                           Container(
                             padding: const EdgeInsets.all(6),
                             decoration: BoxDecoration(
-                              color: arrowBgColor,
+                              color: colorScheme.onPrimaryContainer.withValues(
+                                alpha: 0.1,
+                              ),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Icon(
                               FluentIcons.arrow_right_24_filled,
-                              color: arrowColor,
+                              color: colorScheme.onPrimaryContainer,
                               size: 16,
                             ),
                           ),
@@ -412,12 +431,22 @@ class SettingsPage extends StatelessWidget {
   Widget _buildOthersSection(BuildContext context) {
     return Column(
       children: [
-        SectionHeader(title: context.l10n!.others),
+        SectionHeader(
+          title: context.l10n!.others,
+          icon: FluentIcons.more_circle_24_filled,
+        ),
         CustomBar(
           context.l10n!.licenses,
           FluentIcons.document_24_filled,
           borderRadius: commonCustomBarRadiusFirst,
           onTap: () => NavigationManager.router.go('/settings/license'),
+        ),
+        CustomBar(
+          context.l10n!.translate,
+          FluentIcons.translate_24_filled,
+          description: context.l10n!.translateDescription,
+          onTap: () =>
+              launchURL(Uri.parse('https://crowdin.com/project/musify')),
         ),
         CustomBar(
           '${context.l10n!.copyLogs} (${logger.getLogCount()})',
@@ -435,55 +464,58 @@ class SettingsPage extends StatelessWidget {
   }
 
   void _showAccentColorPicker(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     showCustomBottomSheet(
       context,
-      GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 5,
-        ),
-        shrinkWrap: true,
-        physics: const BouncingScrollPhysics(),
-        itemCount: availableColors.length,
-        itemBuilder: (context, index) {
-          final color = availableColors[index];
-          final isSelected = color == primaryColorSetting;
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 5,
+            mainAxisSpacing: 12,
+            crossAxisSpacing: 12,
+          ),
+          shrinkWrap: true,
+          physics: const BouncingScrollPhysics(),
+          itemCount: availableColors.length,
+          itemBuilder: (context, index) {
+            final color = availableColors[index];
+            final isSelected = color == primaryColorSetting;
 
-          return GestureDetector(
-            onTap: () {
-              //TODO: migrate this
-              addOrUpdateData(
-                'settings',
-                'accentColor',
-                // ignore: deprecated_member_use
-                color.value,
-              );
-              Musify.updateAppState(
-                context,
-                newAccentColor: color,
-                useSystemColor: false,
-              );
-              showToast(context, context.l10n!.accentChangeMsg);
-              Navigator.pop(context);
-            },
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                CircleAvatar(
-                  radius: 25,
-                  backgroundColor:
-                      themeMode == ThemeMode.light
-                          ? color.withAlpha(150)
-                          : color,
+            return GestureDetector(
+              onTap: () {
+                addOrUpdateData('settings', 'accentColor', color.toARGB32());
+                Musify.updateAppState(
+                  context,
+                  newAccentColor: color,
+                  useSystemColor: false,
+                );
+                showToast(context, context.l10n!.accentChangeMsg);
+                Navigator.pop(context);
+              },
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                decoration: BoxDecoration(
+                  color: color,
+                  shape: BoxShape.circle,
+                  border: isSelected
+                      ? Border.all(color: colorScheme.onSurface, width: 3)
+                      : null,
                 ),
-                if (isSelected)
-                  Icon(
-                    Icons.check,
-                    color: Theme.of(context).colorScheme.onPrimary,
-                  ),
-              ],
-            ),
-          );
-        },
+                child: isSelected
+                    ? Icon(
+                        FluentIcons.checkmark_20_filled,
+                        color: color.computeLuminance() > 0.5
+                            ? Colors.black
+                            : Colors.white,
+                        size: 24,
+                      )
+                    : null,
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -499,7 +531,7 @@ class SettingsPage extends StatelessWidget {
       ListView.builder(
         shrinkWrap: true,
         physics: const BouncingScrollPhysics(),
-        padding: commonListViewBottmomPadding,
+        padding: commonListViewBottomPadding,
         itemCount: availableModes.length,
         itemBuilder: (context, index) {
           final mode = availableModes[index];
@@ -508,14 +540,20 @@ class SettingsPage extends StatelessWidget {
             availableModes.length,
           );
 
+          final modeNames = [
+            context.l10n!.themeModeSystem,
+            context.l10n!.themeModeLight,
+            context.l10n!.themeModeDark,
+          ];
+
           return BottomSheetBar(
-            mode.name,
+            modeNames[mode.index],
             () {
-              addOrUpdateData('settings', 'themeMode', mode.name);
+              addOrUpdateData('settings', 'themeIndex', mode.index);
               Musify.updateAppState(context, newThemeMode: mode);
               Navigator.pop(context);
             },
-            themeMode == mode ? activatedColor : inactivatedColor,
+            themeMode == mode,
             borderRadius: borderRadius,
           );
         },
@@ -531,25 +569,23 @@ class SettingsPage extends StatelessWidget {
     final availableLanguages = appLanguages.keys.toList();
     final activeLanguageCode = Localizations.localeOf(context).languageCode;
     final activeScriptCode = Localizations.localeOf(context).scriptCode;
-    final activeLanguageFullCode =
-        activeScriptCode != null
-            ? '$activeLanguageCode-$activeScriptCode'
-            : activeLanguageCode;
+    final activeLanguageFullCode = activeScriptCode != null
+        ? '$activeLanguageCode-$activeScriptCode'
+        : activeLanguageCode;
 
     showCustomBottomSheet(
       context,
       ListView.builder(
         shrinkWrap: true,
         physics: const BouncingScrollPhysics(),
-        padding: commonListViewBottmomPadding,
+        padding: commonListViewBottomPadding,
         itemCount: availableLanguages.length,
         itemBuilder: (context, index) {
           final language = availableLanguages[index];
           final newLocale = getLocaleFromLanguageCode(appLanguages[language]);
-          final newLocaleFullCode =
-              newLocale.scriptCode != null
-                  ? '${newLocale.languageCode}-${newLocale.scriptCode}'
-                  : newLocale.languageCode;
+          final newLocaleFullCode = newLocale.scriptCode != null
+              ? '${newLocale.languageCode}-${newLocale.scriptCode}'
+              : newLocale.languageCode;
 
           final borderRadius = getItemBorderRadius(
             index,
@@ -564,9 +600,7 @@ class SettingsPage extends StatelessWidget {
               showToast(context, context.l10n!.languageMsg);
               Navigator.pop(context);
             },
-            activeLanguageFullCode == newLocaleFullCode
-                ? activatedColor
-                : inactivatedColor,
+            activeLanguageFullCode == newLocaleFullCode,
             borderRadius: borderRadius,
           );
         },
@@ -580,13 +614,18 @@ class SettingsPage extends StatelessWidget {
     Color inactivatedColor,
   ) {
     final availableQualities = ['low', 'medium', 'high'];
+    final qualityNames = [
+      context.l10n!.audioQualityLow,
+      context.l10n!.audioQualityMedium,
+      context.l10n!.audioQualityHigh,
+    ];
 
     showCustomBottomSheet(
       context,
       ListView.builder(
         shrinkWrap: true,
         physics: const BouncingScrollPhysics(),
-        padding: commonListViewBottmomPadding,
+        padding: commonListViewBottomPadding,
         itemCount: availableQualities.length,
         itemBuilder: (context, index) {
           final quality = availableQualities[index];
@@ -597,14 +636,14 @@ class SettingsPage extends StatelessWidget {
           );
 
           return BottomSheetBar(
-            quality,
+            qualityNames[index],
             () {
               addOrUpdateData('settings', 'audioQuality', quality);
               audioQualitySetting.value = quality;
               showToast(context, context.l10n!.audioQualityMsg);
               Navigator.pop(context);
             },
-            isCurrentQuality ? activatedColor : inactivatedColor,
+            isCurrentQuality,
             borderRadius: borderRadius,
           );
         },
@@ -633,17 +672,10 @@ class SettingsPage extends StatelessWidget {
   void _togglePredictiveBack(BuildContext context, bool value) {
     addOrUpdateData('settings', 'predictiveBack', value);
     predictiveBack.value = value;
-    transitionsBuilder =
-        value
-            ? const PredictiveBackPageTransitionsBuilder()
-            : const CupertinoPageTransitionsBuilder();
+    transitionsBuilder = value
+        ? const PredictiveBackPageTransitionsBuilder()
+        : const CupertinoPageTransitionsBuilder();
     Musify.updateAppState(context);
-    showToast(context, context.l10n!.settingChangedMsg);
-  }
-
-  void _toggleBackgroundPlay(BuildContext context, bool value) {
-    addOrUpdateData('settings', 'backgroundPlay', value);
-    backgroundPlay.value = value;
     showToast(context, context.l10n!.settingChangedMsg);
   }
 
@@ -653,7 +685,6 @@ class SettingsPage extends StatelessWidget {
 
     // Trigger router refresh and notify about the change
     NavigationManager.refreshRouter();
-    offlineModeChangeNotifier.value = !offlineModeChangeNotifier.value;
 
     showToast(context, context.l10n!.settingChangedMsg);
   }
@@ -664,70 +695,81 @@ class SettingsPage extends StatelessWidget {
     showToast(context, context.l10n!.settingChangedMsg);
   }
 
-  void _toggleDefaultRecommendations(BuildContext context, bool value) {
-    addOrUpdateData('settings', 'defaultRecommendations', value);
-    defaultRecommendations.value = value;
+  void _toggleAutomaticUpdateChecks(BuildContext context, bool value) {
+    addOrUpdateData('settings', 'shouldWeCheckUpdates', value);
+    shouldWeCheckUpdates.value = value;
     showToast(context, context.l10n!.settingChangedMsg);
   }
 
-  void _showClearSearchHistoryDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return ConfirmationDialog(
-          submitMessage: context.l10n!.clear,
-          confirmationMessage: context.l10n!.clearSearchHistoryQuestion,
-          onCancel: () => {Navigator.of(context).pop()},
-          onSubmit:
-              () => {
-                Navigator.of(context).pop(),
-                searchHistory = [],
-                deleteData('user', 'searchHistory'),
-                showToast(context, '${context.l10n!.searchHistoryMsg}!'),
-              },
-        );
-      },
-    );
+  void _toggleExternalRecommendations(BuildContext context, bool value) {
+    addOrUpdateData('settings', 'externalRecommendations', value);
+    externalRecommendations.value = value;
+    showToast(context, context.l10n!.settingChangedMsg);
   }
 
-  void _showClearRecentlyPlayedDialog(BuildContext context) {
+  void _showConfirmationDialog({
+    required BuildContext context,
+    required String confirmationMessage,
+    required VoidCallback onSubmit,
+  }) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return ConfirmationDialog(
           submitMessage: context.l10n!.clear,
-          confirmationMessage: context.l10n!.clearRecentlyPlayedQuestion,
-          onCancel: () => {Navigator.of(context).pop()},
-          onSubmit:
-              () => {
-                Navigator.of(context).pop(),
-                userRecentlyPlayed = [],
-                deleteData('user', 'recentlyPlayedSongs'),
-                showToast(context, '${context.l10n!.recentlyPlayedMsg}!'),
-              },
+          confirmationMessage: confirmationMessage,
+          onCancel: () => Navigator.of(context).pop(),
+          onSubmit: () {
+            Navigator.of(context).pop();
+            onSubmit();
+          },
         );
       },
     );
   }
 
   Future<void> _backupUserData(BuildContext context) async {
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          content: Text(context.l10n!.folderRestrictions),
-          actions: <Widget>[
-            TextButton(
-              child: Text(context.l10n!.understand.toUpperCase()),
-              onPressed: () {
-                Navigator.pop(context);
-              },
+    final colorScheme = Theme.of(context).colorScheme;
+
+    try {
+      await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor: colorScheme.surface,
+            surfaceTintColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(28),
             ),
-          ],
-        );
-      },
-    );
-    final response = await backupData(context);
-    showToast(context, response);
+            icon: Icon(
+              FluentIcons.info_24_regular,
+              color: colorScheme.primary,
+              size: 32,
+            ),
+            content: Text(
+              context.l10n!.folderRestrictions,
+              style: TextStyle(color: colorScheme.onSurfaceVariant),
+              textAlign: TextAlign.center,
+            ),
+            actionsAlignment: MainAxisAlignment.center,
+            actions: <Widget>[
+              FilledButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(context.l10n!.understand),
+              ),
+            ],
+          );
+        },
+      );
+      final response = await backupData(context);
+      if (context.mounted) {
+        showToast(context, response);
+      }
+    } catch (e) {
+      logger.log('Error backing up data', e, null);
+      if (context.mounted) {
+        showToast(context, context.l10n!.error);
+      }
+    }
   }
 }

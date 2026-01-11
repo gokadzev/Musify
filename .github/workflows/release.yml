@@ -44,10 +44,13 @@ jobs:
             ${{ runner.os }}-gradle-
 
       # Setup the Flutter environment.
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
+      - run: |
+          pip install -U yq
+          echo "FLUTTER_VERSION=$(yq -r .environment.flutter pubspec.yaml | sed 's/\^//g')" >> $GITHUB_ENV
+      - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
+          flutter-version: "${{ env.FLUTTER_VERSION }}"
 
       #
       - run: |

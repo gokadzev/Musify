@@ -1,5 +1,5 @@
 /*
- *     Copyright (C) 2025 Valeri Gokadze
+ *     Copyright (C) 2026 Valeri Gokadze
  *
  *     Musify is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -23,7 +23,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:musify/API/version.dart';
-import 'package:musify/extensions/l10n.dart';
 import 'package:musify/screens/about_page.dart';
 import 'package:musify/screens/bottom_navigation_page.dart';
 import 'package:musify/screens/home_page.dart';
@@ -32,6 +31,7 @@ import 'package:musify/screens/search_page.dart';
 import 'package:musify/screens/settings_page.dart';
 import 'package:musify/screens/user_songs_page.dart';
 import 'package:musify/services/settings_manager.dart';
+import 'package:musify/widgets/offline_search_placeholder.dart';
 
 class NavigationManager {
   factory NavigationManager() {
@@ -95,8 +95,15 @@ class NavigationManager {
   static final GlobalKey<NavigatorState> settingsTabNavigatorKey =
       GlobalKey<NavigatorState>();
 
-  BuildContext get context =>
-      router.routerDelegate.navigatorKey.currentContext!;
+  BuildContext get context {
+    final ctx = router.routerDelegate.navigatorKey.currentContext;
+    if (ctx == null) {
+      throw StateError(
+        'NavigationManager.context was accessed before the navigator context was available.',
+      );
+    }
+    return ctx;
+  }
 
   GoRouterDelegate get routerDelegate => router.routerDelegate;
 
@@ -157,7 +164,7 @@ class NavigationManager {
                   valueListenable: offlineMode,
                   builder: (context, isOffline, _) {
                     return isOffline
-                        ? const _OfflineSearchPlaceholder()
+                        ? const OfflineSearchPlaceholder()
                         : const SearchPage();
                   },
                 ),
@@ -179,10 +186,9 @@ class NavigationManager {
             routes: [
               GoRoute(
                 path: 'userSongs/:page',
-                builder:
-                    (context, state) => UserSongsPage(
-                      page: state.pathParameters['page'] ?? 'liked',
-                    ),
+                builder: (context, state) => UserSongsPage(
+                  page: state.pathParameters['page'] ?? 'liked',
+                ),
               ),
             ],
           ),
@@ -200,11 +206,10 @@ class NavigationManager {
             routes: [
               GoRoute(
                 path: 'license',
-                builder:
-                    (context, state) => const LicensePage(
-                      applicationName: 'Musify',
-                      applicationVersion: appVersion,
-                    ),
+                builder: (context, state) => const LicensePage(
+                  applicationName: 'Musify',
+                  applicationVersion: appVersion,
+                ),
               ),
               GoRoute(
                 path: 'about',
@@ -219,39 +224,5 @@ class NavigationManager {
 
   static Page getPage({required Widget child, required GoRouterState state}) {
     return MaterialPage(key: state.pageKey, child: child);
-  }
-}
-
-class _OfflineSearchPlaceholder extends StatelessWidget {
-  const _OfflineSearchPlaceholder();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(context.l10n!.search)),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.cloud_off,
-              size: 64,
-              color: Theme.of(
-                context,
-              ).colorScheme.onSurface.withValues(alpha: 0.5),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              context.l10n!.error,
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Theme.of(
-                  context,
-                ).colorScheme.onSurface.withValues(alpha: 0.7),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

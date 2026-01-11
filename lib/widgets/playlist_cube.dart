@@ -1,5 +1,5 @@
 /*
- *     Copyright (C) 2025 Valeri Gokadze
+ *     Copyright (C) 2026 Valeri Gokadze
  *
  *     Musify is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -56,7 +56,6 @@ class PlaylistCube extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      elevation: 4,
       borderRadius: BorderRadius.circular(borderRadius),
       clipBehavior: Clip.antiAlias,
       child: Stack(
@@ -81,16 +80,19 @@ class PlaylistCube extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
       decoration: BoxDecoration(
-        color: colorScheme.secondaryContainer,
-        borderRadius: BorderRadius.circular(paddingValue),
+        color: colorScheme.surface.withValues(alpha: 0.85),
+        borderRadius: BorderRadius.circular(8),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       child: Text(
         playlist['isAlbum'] != null && playlist['isAlbum'] == true
             ? context.l10n!.album
             : context.l10n!.playlist,
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-          color: colorScheme.onSecondaryContainer,
+        style: TextStyle(
+          color: colorScheme.secondary,
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.3,
         ),
       ),
     );

@@ -1,5 +1,5 @@
 /*
- *     Copyright (C) 2025 Valeri Gokadze
+ *     Copyright (C) 2026 Valeri Gokadze
  *
  *     Musify is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -84,27 +84,37 @@ class LyricsManager {
     String artistName,
     String title,
   ) async {
-    final uri = Uri.parse(
-      'https://www.paroles.net/${_lyricsUrl(artistName)}/paroles-${_lyricsUrl(title)}',
-    );
-    final response = await http.get(uri);
-
-    if (response.statusCode == 200) {
-      final document = html_parser.parse(response.body);
-      final songTextElements = document.querySelectorAll('.song-text');
-
-      if (songTextElements.isNotEmpty) {
-        final lyricsLines = songTextElements.first.text.split('\n');
-        if (lyricsLines.length > 1) {
-          lyricsLines.removeAt(0);
-
-          final finalLyrics = addCopyright(
-            lyricsLines.join('\n'),
-            'www.paroles.net',
+    try {
+      final uri = Uri.parse(
+        'https://www.paroles.net/${_lyricsUrl(artistName)}/paroles-${_lyricsUrl(title)}',
+      );
+      final response = await http
+          .get(uri)
+          .timeout(
+            const Duration(seconds: 10),
+            onTimeout: () => http.Response('', 408),
           );
-          return _removeSpaces(finalLyrics);
+
+      if (response.statusCode == 200) {
+        final document = html_parser.parse(response.body);
+        final songTextElements = document.querySelectorAll('.song-text');
+
+        if (songTextElements.isNotEmpty) {
+          final lyricsLines = songTextElements.first.text.split('\n');
+          if (lyricsLines.length > 1) {
+            lyricsLines.removeAt(0);
+
+            final finalLyrics = addCopyright(
+              lyricsLines.join('\n'),
+              'www.paroles.net',
+            );
+            return _removeSpaces(finalLyrics);
+          }
         }
       }
+    } catch (e) {
+      // Silently fail and return null to try next source
+      return null;
     }
 
     return null;
@@ -114,21 +124,31 @@ class LyricsManager {
     String artistName,
     String title,
   ) async {
-    final uri = Uri.parse(
-      'https://www.lyricsmania.com/${_lyricsManiaUrl(title)}_lyrics_${_lyricsManiaUrl(artistName)}.html',
-    );
-    final response = await http.get(uri);
+    try {
+      final uri = Uri.parse(
+        'https://www.lyricsmania.com/${_lyricsManiaUrl(title)}_lyrics_${_lyricsManiaUrl(artistName)}.html',
+      );
+      final response = await http
+          .get(uri)
+          .timeout(
+            const Duration(seconds: 10),
+            onTimeout: () => http.Response('', 408),
+          );
 
-    if (response.statusCode == 200) {
-      final document = html_parser.parse(response.body);
-      final lyricsBodyElements = document.querySelectorAll('.lyrics-body');
+      if (response.statusCode == 200) {
+        final document = html_parser.parse(response.body);
+        final lyricsBodyElements = document.querySelectorAll('.lyrics-body');
 
-      if (lyricsBodyElements.isNotEmpty) {
-        return addCopyright(
-          lyricsBodyElements.first.text,
-          'www.lyricsmania.com',
-        );
+        if (lyricsBodyElements.isNotEmpty) {
+          return addCopyright(
+            lyricsBodyElements.first.text,
+            'www.lyricsmania.com',
+          );
+        }
       }
+    } catch (e) {
+      // Silently fail and return null
+      return null;
     }
 
     return null;

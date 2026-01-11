@@ -35,7 +35,7 @@ Lyrics support <br/>
 No ads <br/>
 No subscriptions <br/>
 Inbuilt updater <br/>
-21 supported languages <br/>
+22 supported languages <br/>
 Material UI & accent colors & dynamic colors (Android 12+) <br/>
 
 </center>
@@ -63,7 +63,7 @@ Material UI & accent colors & dynamic colors (Android 12+) <br/>
 
 
 ```
-Copyright © 2025 Valeri Gokadze
+Copyright © 2026 Valeri Gokadze
 
 Musify is a free software licensed under GPL v3.0
 It is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
