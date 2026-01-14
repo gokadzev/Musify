@@ -70,10 +70,7 @@ Locale getLocaleFromLanguageCode(String? languageCode) {
 
 /// Validates if a URL is a YouTube playlist URL
 bool isYoutubePlaylistUrl(String url) {
-  final playlistRegExp = RegExp(
-    r'^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.*(list=([a-zA-Z0-9_-]+)).*$',
-  );
-  return playlistRegExp.hasMatch(url);
+  return _youtubePlaylistRegExp.hasMatch(url);
 }
 
 /// Extracts the playlist ID from a YouTube playlist URL
@@ -82,9 +79,7 @@ String? extractYoutubePlaylistId(String url) {
     return null;
   }
 
-  final playlistIdRegExp = RegExp('[&?]list=([a-zA-Z0-9_-]+)');
-  final match = playlistIdRegExp.firstMatch(url);
-
+  final match = _youtubePlaylistIdRegExp.firstMatch(url);
   return match?.group(1);
 }
 
@@ -105,3 +100,9 @@ double getResponsiveArtistFontSize(Size size) {
   if (size.width < 400) return 15;
   return size.height * 0.018;
 }
+
+final RegExp _youtubePlaylistRegExp = RegExp(
+  r'^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.*(list=([a-zA-Z0-9_-]+)).*$',
+);
+
+final RegExp _youtubePlaylistIdRegExp = RegExp('[&?]list=([a-zA-Z0-9_-]+)');
