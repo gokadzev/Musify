@@ -84,6 +84,20 @@ String? lastFetchedLyrics;
 
 final _clients = [customAndroidVr, customAndroidSdkless];
 
+// Timeouts and durations used across manifest fetching and cache validation.
+const Duration _manifestTimeout = Duration(seconds: 12);
+const Duration _cacheValidationDuration = Duration(hours: 1);
+
+Future<StreamManifest?> _fetchStreamManifest(String songId) async {
+  if (useProxy.value) {
+    return ProxyManager().getSongManifest(songId).timeout(_manifestTimeout);
+  }
+
+  return _yt.videos.streams
+      .getManifest(songId, ytClients: _clients)
+      .timeout(_manifestTimeout);
+}
+
 Future<List> fetchSongsList(String searchQuery) async {
   try {
     // If not in cache, perform the search
@@ -1001,16 +1015,7 @@ Future<AudioOnlyStreamInfo?> getSongManifest(String? songId) async {
       return null;
     }
 
-    StreamManifest? manifest;
-    if (useProxy.value) {
-      manifest = await ProxyManager()
-          .getSongManifest(songId)
-          .timeout(const Duration(seconds: 12));
-    } else {
-      manifest = await _yt.videos.streams
-          .getManifest(songId, ytClients: _clients)
-          .timeout(const Duration(seconds: 12));
-    }
+    final manifest = await _fetchStreamManifest(songId);
     final audioStream = manifest?.audioOnly;
     if (audioStream == null || audioStream.isEmpty) {
       logger.log('getSongManifest: no audio streams for $songId', null, null);
@@ -1057,7 +1062,7 @@ Future<String?> getSong(String songId, bool isLive) async {
       final now = DateTime.now();
       final isOld =
           cacheDate is DateTime &&
-          now.difference(cacheDate) > const Duration(hours: 1);
+          now.difference(cacheDate) > _cacheValidationDuration;
       var valid = true;
       if (isOld) {
         try {
@@ -1080,16 +1085,7 @@ Future<String?> getSong(String songId, bool isLive) async {
     }
 
     // Get fresh URL
-    StreamManifest? manifest;
-    if (useProxy.value) {
-      manifest = await ProxyManager()
-          .getSongManifest(songId)
-          .timeout(const Duration(seconds: 12));
-    } else {
-      manifest = await _yt.videos.streams
-          .getManifest(songId, ytClients: _clients)
-          .timeout(const Duration(seconds: 12));
-    }
+    final manifest = await _fetchStreamManifest(songId);
     final audioStreams = manifest?.audioOnly;
     if (audioStreams == null || audioStreams.isEmpty) {
       logger.log('getSong: no audio streams for $songId', null, null);
