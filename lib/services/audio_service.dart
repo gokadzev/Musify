@@ -905,8 +905,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
     Future.microtask(() async {
       _activePreloadCount++;
       try {
-        // getSong handles caching, freshness checks, and validation
-        await getSong(ytid, nextSong['isLive'] ?? false).timeout(
+        // fetchSongStreamUrl handles caching, freshness checks, and validation
+        await fetchSongStreamUrl(ytid, nextSong['isLive'] ?? false).timeout(
           const Duration(seconds: 8),
           onTimeout: () {
             logger.log('Preload timeout for song $ytid', null, null);
@@ -1072,7 +1072,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
     if (isOffline) {
       return _getOfflineSongUrl(song);
     } else {
-      return getSong(song['ytid'], song['isLive'] ?? false);
+      return fetchSongStreamUrl(song['ytid'], song['isLive'] ?? false);
     }
   }
 
@@ -1165,7 +1165,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   Future<bool> _attemptOfflineFallback(Map song, {String? mediaId}) async {
     logger.log('Attempting to play online version as fallback', null, null);
-    final onlineUrl = await getSong(song['ytid'], song['isLive'] ?? false);
+    final onlineUrl = await fetchSongStreamUrl(
+      song['ytid'],
+      song['isLive'] ?? false,
+    );
     if (onlineUrl != null && onlineUrl.isNotEmpty) {
       final onlineSource = await buildAudioSource(song, onlineUrl, false);
       if (onlineSource != null) {

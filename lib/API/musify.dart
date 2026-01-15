@@ -88,6 +88,7 @@ final _clients = [customAndroidVr, customAndroidSdkless];
 const Duration _manifestTimeout = Duration(seconds: 12);
 const Duration _cacheValidationDuration = Duration(hours: 1);
 
+/// Fetches a stream manifest for a song, honoring proxy settings.
 Future<StreamManifest?> _fetchStreamManifest(String songId) async {
   if (useProxy.value) {
     return ProxyManager().getSongManifest(songId).timeout(_manifestTimeout);
@@ -96,6 +97,50 @@ Future<StreamManifest?> _fetchStreamManifest(String songId) async {
   return _yt.videos.streams
       .getManifest(songId, ytClients: _clients)
       .timeout(_manifestTimeout);
+}
+
+/// Returns a cached song URL if present and still valid.
+Future<String?> _getCachedSongUrl(
+  String cacheKey,
+  Duration cacheDuration,
+) async {
+  final cachedUrl = await getData(
+    'cache',
+    cacheKey,
+    cachingDuration: cacheDuration,
+  );
+
+  if (cachedUrl is! String || cachedUrl.isEmpty) {
+    return null;
+  }
+
+  final cacheBox = await Hive.openBox('cache');
+  final cacheDate = cacheBox.get('${cacheKey}_date') as DateTime?;
+  final now = DateTime.now();
+  final isOld =
+      cacheDate != null && now.difference(cacheDate) > _cacheValidationDuration;
+
+  if (!isOld) {
+    return cachedUrl;
+  }
+
+  if (await _validateCachedUrl(cachedUrl)) {
+    return cachedUrl;
+  }
+
+  await deleteData('cache', cacheKey);
+  await deleteData('cache', '${cacheKey}_date');
+  return null;
+}
+
+/// Checks if a cached URL still responds successfully.
+Future<bool> _validateCachedUrl(String cachedUrl) async {
+  try {
+    final response = await http.head(Uri.parse(cachedUrl));
+    return response.statusCode >= 200 && response.statusCode < 300;
+  } catch (_) {
+    return false;
+  }
 }
 
 Future<List> fetchSongsList(String searchQuery) async {
@@ -1008,33 +1053,43 @@ Future<Map?> getPlaylistInfoForWidget(
   }
 }
 
-Future<AudioOnlyStreamInfo?> getSongManifest(String? songId) async {
+/// Fetches the best available audio stream for a song.
+Future<AudioOnlyStreamInfo?> fetchBestAudioStream(String? songId) async {
   try {
     if (songId == null || songId.isEmpty) {
-      logger.log('getSongManifest: songId is null or empty', null, null);
+      logger.log('fetchBestAudioStream: songId is null or empty', null, null);
       return null;
     }
 
     final manifest = await _fetchStreamManifest(songId);
     final audioStream = manifest?.audioOnly;
     if (audioStream == null || audioStream.isEmpty) {
-      logger.log('getSongManifest: no audio streams for $songId', null, null);
+      logger.log(
+        'fetchBestAudioStream: no audio streams for $songId',
+        null,
+        null,
+      );
       return null;
     }
     return audioStream.withHighestBitrate();
   } on TimeoutException catch (_) {
-    logger.log('getSongManifest request timed out for $songId', null, null);
+    logger.log(
+      'fetchBestAudioStream request timed out for $songId',
+      null,
+      null,
+    );
     return null;
   } catch (e, stackTrace) {
-    logger.log('Error while getting song streaming manifest', e, stackTrace);
+    logger.log('Error while fetching best audio stream', e, stackTrace);
     return null;
   }
 }
 
-Future<String?> getSong(String songId, bool isLive) async {
+/// Resolves a playable stream URL for a song (cached when possible).
+Future<String?> fetchSongStreamUrl(String songId, bool isLive) async {
   try {
     if (songId.isEmpty) {
-      logger.log('getSong: songId is empty', null, null);
+      logger.log('fetchSongStreamUrl: songId is empty', null, null);
       return null;
     }
     if (isLive) {
@@ -1049,50 +1104,27 @@ Future<String?> getSong(String songId, bool isLive) async {
     final cacheKey = 'song_${songId}_${audioQualitySetting.value}_url';
 
     // Try to get from cache
-    final cachedUrl = await getData(
-      'cache',
-      cacheKey,
-      cachingDuration: _cacheDuration,
-    );
-
-    if (cachedUrl != null && cachedUrl is String && cachedUrl.isNotEmpty) {
-      // Only validate with HEAD if cache is older than 1 hour
-      final cacheBox = await Hive.openBox('cache');
-      final cacheDate = cacheBox.get('${cacheKey}_date');
-      final now = DateTime.now();
-      final isOld =
-          cacheDate is DateTime &&
-          now.difference(cacheDate) > _cacheValidationDuration;
-      var valid = true;
-      if (isOld) {
-        try {
-          final response = await http.head(Uri.parse(cachedUrl));
-          if (response.statusCode < 200 || response.statusCode >= 300) {
-            valid = false;
-          }
-        } catch (_) {
-          valid = false;
-        }
-        if (!valid) {
-          await deleteData('cache', cacheKey);
-          await deleteData('cache', '${cacheKey}_date');
-        }
-      }
-      if (valid) {
-        unawaited(updateRecentlyPlayed(songId));
-        return cachedUrl;
-      }
+    final cachedUrl = await _getCachedSongUrl(cacheKey, _cacheDuration);
+    if (cachedUrl != null) {
+      unawaited(updateRecentlyPlayed(songId));
+      return cachedUrl;
     }
 
     // Get fresh URL
     final manifest = await _fetchStreamManifest(songId);
     final audioStreams = manifest?.audioOnly;
     if (audioStreams == null || audioStreams.isEmpty) {
-      logger.log('getSong: no audio streams for $songId', null, null);
+      logger.log(
+        'fetchSongStreamUrl: no audio streams for $songId',
+        null,
+        null,
+      );
       return null;
     }
 
-    final selectedStream = selectAudioQuality(audioStreams.sortByBitrate());
+    final selectedStream = selectAudioStreamForQuality(
+      audioStreams.sortByBitrate(),
+    );
     final url = selectedStream.url.toString();
 
     await addOrUpdateData('cache', cacheKey, url);
@@ -1100,15 +1132,18 @@ Future<String?> getSong(String songId, bool isLive) async {
     unawaited(updateRecentlyPlayed(songId));
     return url;
   } on TimeoutException catch (_) {
-    logger.log('getSong request timed out for $songId', null, null);
+    logger.log('fetchSongStreamUrl request timed out for $songId', null, null);
     return null;
   } catch (e, stackTrace) {
-    logger.log('Error in getSong for songId $songId:', e, stackTrace);
+    logger.log('Error in fetchSongStreamUrl for $songId:', e, stackTrace);
     return null;
   }
 }
 
-AudioStreamInfo selectAudioQuality(List<AudioStreamInfo> availableSources) {
+/// Selects the best audio stream based on the configured quality.
+AudioStreamInfo selectAudioStreamForQuality(
+  List<AudioStreamInfo> availableSources,
+) {
   final qualitySetting = audioQualitySetting.value;
 
   if (qualitySetting == 'low') {
@@ -1173,7 +1208,7 @@ Future<bool> makeSongOffline(dynamic song, {bool fromPlaylist = false}) async {
     await audioFile.parent.create(recursive: true);
 
     try {
-      final audioManifest = await getSongManifest(ytid);
+      final audioManifest = await fetchBestAudioStream(ytid);
       if (audioManifest == null) {
         logger.log(
           'makeSongOffline: audioManifest is null for $ytid',
