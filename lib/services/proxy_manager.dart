@@ -233,7 +233,8 @@ class ProxyManager {
 
     _lastProxyCleanup = DateTime.now();
 
-    if (DateTime.now().difference(_lastFetched).inMinutes >= 120) {
+    if (DateTime.now().difference(_lastFetched).inMinutes >=
+        _proxyCleanupIntervalMinutes) {
       _proxiesByCountry.clear();
       _workingProxies.clear();
       _hasFetched = false;
