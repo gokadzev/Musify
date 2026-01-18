@@ -71,7 +71,7 @@
   "enterFolderName": "Veuillez saisir un nom de dossier",
   "error": "Une erreur s'est produite",
   "externalRecommendations": "Recommandations externes",
-  "externalRecommendationsDescription": "Utilisez l'algorithme externe de recommandations au lieu de celui de Musify.",
+  "externalRecommendationsDescription": "Utilisez l'algorithme externe de recommandations à la place de Musify.",
   "fieldsNotEmpty": "Tous les champs doivent être remplis",
   "folderAlreadyExists": "Un dossier portant ce nom existe déjà",
   "folderDeleted": "Dossier supprimé avec succès",
