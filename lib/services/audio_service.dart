@@ -576,20 +576,17 @@ class MusifyAudioHandler extends BaseAudioHandler {
           _preloadedYtIds.remove(ytid);
         }
 
-        final stalePrelodingEntries = _preloadingYtIds
+        final stalePreloadingEntries = _preloadingYtIds
             .where((ytid) => !queueYtIds.contains(ytid))
             .toList();
 
-        for (final ytid in stalePrelodingEntries) {
+        for (final ytid in stalePreloadingEntries) {
           _preloadingYtIds.remove(ytid);
-          if (_activePreloadCount > 0) {
-            _activePreloadCount--;
-          }
         }
 
-        if (oldPreloadedSongs.isNotEmpty || stalePrelodingEntries.isNotEmpty) {
+        if (oldPreloadedSongs.isNotEmpty || stalePreloadingEntries.isNotEmpty) {
           logger.log(
-            'Cleaned up ${oldPreloadedSongs.length + stalePrelodingEntries.length} old preload entries',
+            'Cleaned up ${oldPreloadedSongs.length + stalePreloadingEntries.length} old preload entries',
             null,
             null,
           );
@@ -892,35 +889,39 @@ class MusifyAudioHandler extends BaseAudioHandler {
         continue;
       }
 
-      _preloadSingleSongControlled(song);
+      unawaited(_preloadSingleSongControlled(song));
     }
   }
 
-  void _preloadSingleSongControlled(Map nextSong) {
+  Future<void> _preloadSingleSongControlled(Map nextSong) async {
     final ytid = nextSong['ytid'];
     if (ytid == null) return;
 
     _preloadingYtIds.add(ytid);
+    _activePreloadCount++;
+    String? preloadUrl;
 
-    Future.microtask(() async {
-      _activePreloadCount++;
-      try {
-        // fetchSongStreamUrl handles caching, freshness checks, and validation
-        await fetchSongStreamUrl(ytid, nextSong['isLive'] ?? false).timeout(
-          const Duration(seconds: 8),
-          onTimeout: () {
-            logger.log('Preload timeout for song $ytid', null, null);
-            return null;
-          },
-        );
-      } catch (e) {
-        logger.log('Error preloading song $ytid', e, null);
-      } finally {
-        _preloadingYtIds.remove(ytid);
+    try {
+      // fetchSongStreamUrl handles caching, freshness checks, and validation
+      preloadUrl = await fetchSongStreamUrl(ytid, nextSong['isLive'] ?? false)
+          .timeout(
+            const Duration(seconds: 8),
+            onTimeout: () {
+              logger.log('Preload timeout for song $ytid', null, null);
+              return null;
+            },
+          );
+    } catch (e) {
+      logger.log('Error preloading song $ytid', e, null);
+    } finally {
+      _preloadingYtIds.remove(ytid);
+      if (_activePreloadCount > 0) {
         _activePreloadCount--;
+      }
+      if (preloadUrl != null && preloadUrl.isNotEmpty) {
         _preloadedYtIds.add(ytid);
       }
-    });
+    }
   }
 
   List<Map> get currentQueue => List.unmodifiable(_queueList);
