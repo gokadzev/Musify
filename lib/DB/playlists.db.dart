@@ -1,5 +1,5 @@
 /*
- *     Copyright (C) 2025 Valeri Gokadze
+ *     Copyright (C) 2026 Valeri Gokadze
  *
  *     Musify is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ List<Map<String, dynamic>> playlistsDB = [
   },
   {
     'ytid': 'PLoumn5BIsUDd3IH7MVw2XiW9nQKzCFy4O',
-    'title': 'Best Pop Music Playlist 2024',
+    'title': 'Best Pop Music Playlist 2026',
     'image': 'https://i.scdn.co/image/ab67616d0000b273d48b3ca7ced155aa46324088',
     'list': [],
   },
@@ -66,13 +66,13 @@ List<Map<String, dynamic>> playlistsDB = [
   },
   {
     'ytid': 'PLHg022HMFzFDMNp9xBGy3sARnqxaPl3PG',
-    'title': 'Car Music 2024',
+    'title': 'Car Music 2026',
     'image': 'https://i.scdn.co/image/ab67706c0000da84cd9bd13f71d8b16277e1092a',
     'list': [],
   },
   {
     'ytid': 'PLSR9lWowvoE3A9i4JVVHtQFjlJt0_LItG',
-    'title': 'TikTok Songs 2024',
+    'title': 'TikTok Songs 2026',
     'image': 'https://i.scdn.co/image/ab67616d0000b2739da92b8aa7cbcd57a20fe10e',
     'list': [],
   },
@@ -132,13 +132,13 @@ List<Map<String, dynamic>> playlistsDB = [
   },
   {
     'ytid': 'PL7zsB-C3aNu03RwSy2Bn3Ov3oaEReOlT5',
-    'title': 'Best Remixes Of Popular SONGS 2024 and 2025',
+    'title': 'Best Remixes Of Popular SONGS 2025 and 2026',
     'image': 'https://i.scdn.co/image/ab67706c0000da84896a7f23065fa962b6e9a5f5',
     'list': [],
   },
   {
     'ytid': 'PLWEEt0QgQFInR8b2_sKk86VAGhLs_Iczf',
-    'title': 'OPM Top Hits: Original Pilipino Music 2024',
+    'title': 'OPM Top Hits: Original Pilipino Music 2025',
     'image': 'https://i.scdn.co/image/ab67706c0000bebb5c6e74a654ff510d06bd1734',
     'list': [],
   },
@@ -174,13 +174,13 @@ List<Map<String, dynamic>> playlistsDB = [
   },
   {
     'ytid': 'PLOHoVaTp8R7darg5gZZEeTj1BJsJ1hrAr',
-    'title': 'Capital Fm Top 40 This Week 2024',
+    'title': 'Capital Fm Top 40 This Week 2026',
     'image': 'https://i.scdn.co/image/ab67706c0000da846ac2471755fdda62425a58fc',
     'list': [],
   },
   {
     'ytid': 'PLOHoVaTp8R7dfrJW5pumS0iD_dhlXKv17',
-    'title': 'KPOP 2024',
+    'title': 'KPOP 2026',
     'image': 'https://i.scdn.co/image/ab67706c0000da8412710d16432431315bc5dcd3',
     'list': [],
   },
@@ -204,7 +204,7 @@ List<Map<String, dynamic>> playlistsDB = [
   },
   {
     'ytid': 'PL-_a53M3g7u2UQT5jfGpmhkMswdNJe-Gh',
-    'title': 'New NCS Song 2024',
+    'title': 'New NCS Song 2026',
     'image': 'https://i.scdn.co/image/ab67616d0000b27324fc209a4bc5cf933d334ade',
     'list': [],
   },
@@ -223,13 +223,13 @@ List<Map<String, dynamic>> playlistsDB = [
   },
   {
     'ytid': 'PL-_a53M3g7u0GJasXfv8u9lWpIGxNEGio',
-    'title': '2024 Rap Hits',
+    'title': '2026 Rap Hits',
     'image': 'https://i.scdn.co/image/ab67706c0000da84c06bf2f63b986a90b48bcd7c',
     'list': [],
   },
   {
     'ytid': 'PL-_a53M3g7u3EyY6fsaOrYhrGDSMTpu8g',
-    'title': 'Polskie Teledyski 2024',
+    'title': 'Polskie Teledyski 2026',
     'image': 'https://i.scdn.co/image/ab67706f0000000297857d20f856f2c6a703fede',
     'list': [],
   },
@@ -241,49 +241,49 @@ List<Map<String, dynamic>> playlistsDB = [
   },
   {
     'ytid': 'PL-_a53M3g7u1AvsB9-qMXN3TInFZ1rpQH',
-    'title': 'Cancion Pop en Ingles 2024',
+    'title': 'Cancion Pop en Ingles 2026',
     'image': 'https://i.scdn.co/image/ab67706c0000da84abb63f8229cb1d6b89501adb',
     'list': [],
   },
   {
     'ytid': 'PL-_a53M3g7u31e2_YgqqgB7NJlj5tPNr1',
-    'title': 'Fenomen Hit 2024',
+    'title': 'Fenomen Hit 2026',
     'image': 'https://i.scdn.co/image/ab67706c0000da8468c39a197c5fbdff54460834',
     'list': [],
   },
   {
     'ytid': 'PL-_a53M3g7u3Zlv6NkqlVPNZcdfCgC6dM',
-    'title': 'Top French Songs September 2024',
+    'title': 'Top French Songs 2026 (Monthly updated)',
     'image': 'https://i.scdn.co/image/ab67616d0000b273662542e4480ed1f32c744534',
     'list': [],
   },
   {
     'ytid': 'PL-_a53M3g7u22pc0c5UUIzrzcXQEWnCcV',
-    'title': 'Christmas Carols 2024',
+    'title': 'Christmas Carols 2026',
     'image': 'https://i.scdn.co/image/ab67706f00000002605da1bd01a2efb08818292c',
     'list': [],
   },
   {
     'ytid': 'PL-_a53M3g7u082wTxHgLM1MsEbCMYmGde',
-    'title': 'Mix Christmas Songs 2024',
+    'title': 'Mix Christmas Songs 2026',
     'image': 'https://i.scdn.co/image/ab67616d0000b27304b909a70702ef96cca4f2f7',
     'list': [],
   },
   {
     'ytid': 'PL-_a53M3g7u1jSV1qeQ8mrzEbsRF_dpB2',
-    'title': 'Canzoni 2023 Estate Nuove',
+    'title': 'Canzoni 2026 Estate Nuove',
     'image': 'https://i.scdn.co/image/ab67706c0000da8462b4a3b753cb26952188d703',
     'list': [],
   },
   {
     'ytid': 'PL-_a53M3g7u3TuMekuhs2oTjUTyQlakb1',
-    'title': 'Top Underrated Trap Songs 2023',
+    'title': 'Top Underrated Trap Songs 2026',
     'image': 'https://i.scdn.co/image/ab67616d0000b27317e0090dbb716696273c6c7c',
     'list': [],
   },
   {
     'ytid': 'PLXpMeQYR1ilJiZuba40Sfzq-5AbF3XF4z',
-    'title': 'Sped Up Audios 2024',
+    'title': 'Sped Up Audios 2026',
     'image': 'https://i.scdn.co/image/ab67616d0000b2734a98d0e7c1da1c7b258c3447',
     'list': [],
   },
@@ -331,14 +331,14 @@ List<Map<String, dynamic>> playlistsDB = [
   },
   {
     'ytid': 'PLXpMeQYR1ilK2M6PUwdA75st7uAUrH7Z_',
-    'title': 'Canciones 2025 Reggaeton',
+    'title': 'Canciones 2026 Reggaeton',
     'image':
-        'https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da8428450fba04bfd105d51c7486',
+        'https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da84b5e0600f19f06bc9f6be1382',
     'list': [],
   },
   {
     'ytid': 'PLXpMeQYR1ilIgQ0klpqWf7-RdfouCeJLj',
-    'title': 'Best Remixes of 2025',
+    'title': 'Remix music 2026',
     'image':
         'https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da84be56484cc9d25aa2af1ea3e4',
     'list': [],
@@ -357,7 +357,7 @@ List<Map<String, dynamic>> playlistsDB = [
   },
   {
     'ytid': 'PLXpMeQYR1ilIGbCW4ZGy5aPsENjEn6SgF',
-    'title': 'Mix Canciones TikTok 2024',
+    'title': 'Mix Canciones TikTok 2026',
     'image': 'https://i.scdn.co/image/ab67706c0000da8499d4a791a43650a4205d45bf',
     'list': [],
   },
@@ -369,38 +369,38 @@ List<Map<String, dynamic>> playlistsDB = [
   },
   {
     'ytid': 'PLXpMeQYR1ilKaCDSyh9l8PUBKoWOCejel',
-    'title': 'Regional Mexicano 2024 Lo Mas Nuevo',
+    'title': 'Regional Mexicano 2026 Lo Mas Nuevo',
     'image': 'https://i.scdn.co/image/ab67616d00001e0253305f7bb2d3e54f3d22d78a',
     'list': [],
   },
   {
     'ytid': 'PLXpMeQYR1ilJKp9YfL2fVMsoQuKSbxsLK',
-    'title': 'Disney Soundtracks Playlist 2024',
+    'title': 'Disney Soundtracks Playlist 2026',
     'image': 'https://i.scdn.co/image/ab6761610000e5ebc698d53b77db34027b00f853',
     'list': [],
   },
   {
     'ytid': 'PLXpMeQYR1ilL_qsEr9Z9aaTlcOq2oQhe8',
-    'title': 'New Song 2024 Dance',
-    'image':
-        'https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da8414b2741de5d2163184ecb459',
+    'title': 'New Song 2026 Dance',
+    'image': 'https://i.scdn.co/image/ab67706f00000002bdf0742a01634a5689a4b73d',
     'list': [],
   },
   {
     'ytid': 'PLXpMeQYR1ilIU529zp7xRsv990b6YpyAh',
-    'title': 'Clean TikTok Playlist 2024',
+    'title': 'Clean TikTok Playlist 2026',
     'image': 'https://i.scdn.co/image/ab67706c0000da84e7d5897020753e1d58be9446',
     'list': [],
   },
   {
     'ytid': 'PLXpMeQYR1ilKXzjYmIb-FIKmYnzWZ7v4b',
-    'title': 'New House Songs 2024 to 2025',
-    'image': 'https://i.scdn.co/image/ab67706c0000da84ed4f4edd01cfb81857eff52d',
+    'title': 'New House Songs 2026',
+    'image':
+        'https://image-cdn-ak.spotifycdn.com/image/ab67706c0000d72c7d5dc51b5b4c6c698d4fff2d',
     'list': [],
   },
   {
     'ytid': 'PLXpMeQYR1ilJbpgayg1uVwZ9fZEMTbdL5',
-    'title': 'Top Upbeat Hits 2024',
+    'title': 'Top Upbeat Hits 2026',
     'image': 'https://i.scdn.co/image/ab67706c0000da84e39142e42362f0d30b99a815',
     'list': [],
   },
