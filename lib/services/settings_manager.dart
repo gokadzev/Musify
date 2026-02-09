@@ -60,6 +60,10 @@ final externalRecommendations = ValueNotifier<bool>(
   Hive.box('settings').get('externalRecommendations', defaultValue: false),
 );
 
+final useLiquidGlassMiniPlayer = ValueNotifier<bool>(
+  Hive.box('settings').get('useLiquidGlassMiniPlayer', defaultValue: false),
+);
+
 final useProxy = ValueNotifier<bool>(
   Hive.box('settings').get('useProxy', defaultValue: false),
 );
