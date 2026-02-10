@@ -19,12 +19,16 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/screens/search_page.dart';
+import 'package:musify/services/audio_permission_service.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/router_service.dart';
 import 'package:musify/services/settings_manager.dart';
@@ -328,6 +332,14 @@ class SettingsPage extends StatelessWidget {
             }
           },
         ),
+        CustomBar(
+          'Local music folders',
+          FluentIcons.folder_24_filled,
+          borderRadius: isFdroidBuild
+              ? commonCustomBarRadiusLast
+              : BorderRadius.zero,
+          onTap: () => _showLocalMusicFoldersDialog(context),
+        ),
         if (!isFdroidBuild)
           CustomBar(
             context.l10n!.downloadAppUpdate,
@@ -518,6 +530,173 @@ class SettingsPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _showLocalMusicFoldersDialog(BuildContext context) {
+    final folders = List<String>.from(localMusicFolders);
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Local music folders'),
+              content: SizedBox(
+                width: double.maxFinite,
+                child: folders.isEmpty
+                    ? const Text(
+                        'No folders selected yet. Add a folder to scan.',
+                      )
+                    : ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: folders.length,
+                        itemBuilder: (context, index) {
+                          final path = folders[index];
+                          return ListTile(
+                            dense: true,
+                            title: Text(_folderName(path)),
+                            subtitle: Text(path),
+                            trailing: IconButton(
+                              icon: const Icon(FluentIcons.delete_24_regular),
+                              onPressed: () async {
+                                setState(() {
+                                  folders.removeAt(index);
+                                });
+                                await _saveLocalMusicFolders(folders);
+                              },
+                            ),
+                          );
+                        },
+                      ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () async {
+                    final hasPermission = await _ensureAudioPermission(context);
+                    if (!hasPermission) {
+                      return;
+                    }
+                    final path = await FilePicker.platform.getDirectoryPath();
+                    if (path == null || path.isEmpty) {
+                      return;
+                    }
+                    if (path.startsWith('content://')) {
+                      if (context.mounted) {
+                        showToast(
+                          context,
+                          'Folder access is restricted on Android. Choose a local storage folder.',
+                        );
+                      }
+                      return;
+                    }
+                    if (!folders.contains(path)) {
+                      setState(() {
+                        folders.add(path);
+                      });
+                      await _saveLocalMusicFolders(folders);
+                    }
+                  },
+                  child: const Text('Add folder'),
+                ),
+                TextButton(
+                  onPressed: folders.isEmpty
+                      ? null
+                      : () async {
+                          final hasPermission = await _ensureAudioPermission(
+                            context,
+                          );
+                          if (!hasPermission) {
+                            return;
+                          }
+                          await _rescanLocalMusicFolders(context, folders);
+                        },
+                  child: const Text('Rescan'),
+                ),
+                TextButton(
+                  onPressed: folders.isEmpty
+                      ? null
+                      : () async {
+                          await _clearLocalMusicFolders(context);
+                          setState(folders.clear);
+                        },
+                  child: const Text('Clear'),
+                ),
+                FilledButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(context.l10n!.cancel),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _saveLocalMusicFolders(List<String> folders) async {
+    localMusicFolders = List<String>.from(folders);
+    await addOrUpdateData(
+      'userNoBackup',
+      'localMusicFolders',
+      localMusicFolders,
+    );
+  }
+
+  Future<void> _rescanLocalMusicFolders(
+    BuildContext context,
+    List<String> folders,
+  ) async {
+    final report = await refreshLocalSongsFromFolders(folders);
+    if (context.mounted) {
+      showToast(context, _localScanMessage(report, context));
+    }
+  }
+
+  Future<bool> _ensureAudioPermission(BuildContext context) async {
+    final hasPermission = await AudioPermissionService.hasAudioPermission();
+    if (hasPermission) {
+      return true;
+    }
+
+    final granted = await AudioPermissionService.requestAudioPermission();
+    if (!granted && context.mounted) {
+      showToast(context, 'Audio permission is required to scan local music.');
+    }
+    return granted;
+  }
+
+  Future<void> _clearLocalMusicFolders(BuildContext context) async {
+    localMusicFolders = [];
+    userLocalSongs.clear();
+    currentLocalSongsLength.value = 0;
+    await addOrUpdateData('userNoBackup', 'localMusicFolders', []);
+    await addOrUpdateData('userNoBackup', 'localSongs', userLocalSongs);
+    if (context.mounted) {
+      showToast(context, context.l10n!.settingChangedMsg);
+    }
+  }
+
+  String _folderName(String path) {
+    final separator = Platform.pathSeparator;
+    final parts = path.split(separator);
+    return parts.isNotEmpty ? parts.last : path;
+  }
+
+  String _localScanMessage(LocalScanReport report, BuildContext context) {
+    if (report.found > 0) {
+      return context.l10n!.playlistUpdated;
+    }
+    if (report.contentUriFolders > 0) {
+      return 'Folder access is restricted on Android. Choose a local storage folder.';
+    }
+    if (report.missingFolders > 0) {
+      return 'Selected folder is not available. Please choose another.';
+    }
+    if (report.errorFolders > 0) {
+      return 'Unable to scan folders. Check storage permissions.';
+    }
+    return 'No supported audio files found in the selected folders.';
   }
 
   void _showThemeModePicker(

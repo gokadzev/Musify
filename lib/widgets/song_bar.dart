@@ -376,6 +376,7 @@ class _SongBarState extends State<SongBar> {
     final makeOfflineText = l10n.makeOffline;
     final renameSongText = l10n.renameSong;
     final canRename = widget.isFromLikedSongs || widget.playlistId != null;
+    final isLocalSong = widget.song['isLocal'] == true;
 
     return [
       PopupMenuItem<String>(
@@ -477,29 +478,30 @@ class _SongBarState extends State<SongBar> {
             ],
           ),
         ),
-      PopupMenuItem<String>(
-        value: 'offline',
-        child: ValueListenableBuilder<bool>(
-          valueListenable: _songOfflineStatus,
-          builder: (_, value, __) {
-            return Row(
-              children: [
-                Icon(
-                  value
-                      ? FluentIcons.cellular_off_24_regular
-                      : FluentIcons.cellular_data_1_24_regular,
-                  color: colorScheme.primary,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  value ? removeOfflineText : makeOfflineText,
-                  style: TextStyle(color: colorScheme.secondary),
-                ),
-              ],
-            );
-          },
+      if (!isLocalSong)
+        PopupMenuItem<String>(
+          value: 'offline',
+          child: ValueListenableBuilder<bool>(
+            valueListenable: _songOfflineStatus,
+            builder: (_, value, __) {
+              return Row(
+                children: [
+                  Icon(
+                    value
+                        ? FluentIcons.cellular_off_24_regular
+                        : FluentIcons.cellular_data_1_24_regular,
+                    color: colorScheme.primary,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    value ? removeOfflineText : makeOfflineText,
+                    style: TextStyle(color: colorScheme.secondary),
+                  ),
+                ],
+              );
+            },
+          ),
         ),
-      ),
     ];
   }
 }

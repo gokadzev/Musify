@@ -175,6 +175,13 @@ class _LibraryPageState extends State<LibraryPage> {
             showBuildActions: false,
           ),
           PlaylistBar(
+            'Local songs',
+            onPressed: () =>
+                NavigationManager.router.go('/library/userSongs/local'),
+            cubeIcon: FluentIcons.music_note_2_24_filled,
+            showBuildActions: false,
+          ),
+          PlaylistBar(
             context.l10n!.offlineSongs,
             onPressed: () =>
                 NavigationManager.router.go('/library/userSongs/offline'),

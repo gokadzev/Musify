@@ -24,6 +24,7 @@ import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
+import 'package:musify/services/audio_permission_service.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
@@ -46,6 +47,7 @@ class UserSongsPage extends StatefulWidget {
 
 class _UserSongsPageState extends State<UserSongsPage> {
   bool _isEditEnabled = false;
+  bool _isRefreshingLocalSongs = false;
   List<dynamic> _originalOfflineSongsList = [];
 
   @override
@@ -64,6 +66,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
     final length = getLength(widget.page);
     final isLikedSongs = title == context.l10n!.likedSongs;
     final isOfflineSongs = title == context.l10n!.offlineSongs;
+    final isLocalSongs = widget.page == 'local';
 
     return Scaffold(
       appBar: AppBar(
@@ -79,6 +82,20 @@ class _UserSongsPageState extends State<UserSongsPage> {
                     : Theme.of(context).colorScheme.primary,
               ),
             ),
+          if (isLocalSongs)
+            IconButton(
+              onPressed: _isRefreshingLocalSongs ? null : _refreshLocalSongs,
+              icon: _isRefreshingLocalSongs
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : Icon(
+                      FluentIcons.arrow_clockwise_24_regular,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+            ),
         ],
       ),
       body: _buildCustomScrollView(
@@ -87,6 +104,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
         songsList,
         length,
         isOfflineSongs,
+        isLocalSongs,
       ),
     );
   }
@@ -108,6 +126,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
     List songsList,
     ValueNotifier<int> length,
     bool isOfflineSongs,
+    bool isLocalSongs,
   ) {
     return CustomScrollView(
       slivers: [
@@ -119,7 +138,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
             isOfflineSongs,
           ),
         ),
-        buildSongList(title, songsList, length),
+        buildSongList(title, songsList, length, isLocalSongs),
       ],
     );
   }
@@ -127,6 +146,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
   String getTitle(String page, BuildContext context) {
     return switch (page) {
       'liked' => context.l10n!.likedSongs,
+      'local' => 'Local songs',
       'offline' => context.l10n!.offlineSongs,
       'recents' => context.l10n!.recentlyPlayed,
       _ => context.l10n!.playlist,
@@ -136,6 +156,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
   IconData getIcon(String page) {
     return switch (page) {
       'liked' => FluentIcons.heart_24_regular,
+      'local' => FluentIcons.music_note_2_24_regular,
       'offline' => FluentIcons.cellular_off_24_regular,
       'recents' => FluentIcons.history_24_regular,
       _ => FluentIcons.heart_24_regular,
@@ -145,6 +166,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
   List getSongsList(String page) {
     return switch (page) {
       'liked' => userLikedSongsList,
+      'local' => userLocalSongs,
       'offline' => userOfflineSongs,
       'recents' => userRecentlyPlayed,
       _ => userLikedSongsList,
@@ -154,6 +176,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
   ValueNotifier<int> getLength(String page) {
     return switch (page) {
       'liked' => currentLikedSongsLength,
+      'local' => currentLocalSongsLength,
       'offline' => currentOfflineSongsLength,
       'recents' => currentRecentlyPlayedLength,
       _ => currentLikedSongsLength,
@@ -305,6 +328,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
     String title,
     List songsList,
     ValueNotifier<int> currentSongsLength,
+    bool isLocalSongs,
   ) {
     final playlist = {
       'ytid': '',
@@ -353,7 +377,8 @@ class _UserSongsPageState extends State<UserSongsPage> {
             key: isOfflineSongs ? ValueKey(_getCurrentOfflineSortType()) : null,
             delegate: SliverChildBuilderDelegate((context, index) {
               final song = songsList[index];
-              song['isOffline'] = title == context.l10n!.offlineSongs;
+              song['isOffline'] = isOfflineSongs || isLocalSongs;
+              song['isLocal'] = isLocalSongs;
               final borderRadius = getItemBorderRadius(index, songsList.length);
 
               return RepaintBoundary(
@@ -444,5 +469,72 @@ class _UserSongsPageState extends State<UserSongsPage> {
         });
         break;
     }
+  }
+
+  Future<void> _refreshLocalSongs() async {
+    if (_isRefreshingLocalSongs) return;
+
+    setState(() {
+      _isRefreshingLocalSongs = true;
+    });
+
+    try {
+      final hasPermission = await _ensureAudioPermission();
+      if (!hasPermission) {
+        return;
+      }
+      if (localMusicFolders.isEmpty) {
+        if (mounted) {
+          showToast(context, 'Choose music folders in Settings first.');
+        }
+        return;
+      }
+
+      final report = await refreshLocalSongsFromFolders(localMusicFolders);
+
+      if (mounted) {
+        showToast(context, _localScanMessage(report));
+      }
+    } catch (e, stackTrace) {
+      logger.log('Error refreshing local songs', e, stackTrace);
+      if (mounted) {
+        showToast(context, context.l10n!.error);
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isRefreshingLocalSongs = false;
+        });
+      }
+    }
+  }
+
+  String _localScanMessage(LocalScanReport report) {
+    if (report.found > 0) {
+      return context.l10n!.playlistUpdated;
+    }
+    if (report.contentUriFolders > 0) {
+      return 'Folder access is restricted on Android. Choose a local storage folder.';
+    }
+    if (report.missingFolders > 0) {
+      return 'Selected folder is not available. Please choose another.';
+    }
+    if (report.errorFolders > 0) {
+      return 'Unable to scan folders. Check storage permissions.';
+    }
+    return 'No supported audio files found in the selected folders.';
+  }
+
+  Future<bool> _ensureAudioPermission() async {
+    final hasPermission = await AudioPermissionService.hasAudioPermission();
+    if (hasPermission) {
+      return true;
+    }
+
+    final granted = await AudioPermissionService.requestAudioPermission();
+    if (!granted && mounted) {
+      showToast(context, 'Audio permission is required to scan local music.');
+    }
+    return granted;
   }
 }

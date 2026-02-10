@@ -66,6 +66,12 @@ List userRecentlyPlayed = Hive.box(
 List userOfflineSongs = Hive.box(
   'userNoBackup',
 ).get('offlineSongs', defaultValue: []);
+List userLocalSongs = Hive.box(
+  'userNoBackup',
+).get('localSongs', defaultValue: []);
+List<String> localMusicFolders = Hive.box(
+  'userNoBackup',
+).get('localMusicFolders', defaultValue: []).cast<String>();
 List onlinePlaylists = [];
 
 dynamic nextRecommendedSong;
@@ -75,6 +81,7 @@ final currentLikedPlaylistsLength = ValueNotifier<int>(
   userLikedPlaylists.length,
 );
 final currentOfflineSongsLength = ValueNotifier<int>(userOfflineSongs.length);
+final currentLocalSongsLength = ValueNotifier<int>(userLocalSongs.length);
 final currentRecentlyPlayedLength = ValueNotifier<int>(
   userRecentlyPlayed.length,
 );
@@ -87,6 +94,157 @@ final _clients = [customAndroidVr, customAndroidSdkless];
 // Timeouts and durations used across manifest fetching and cache validation.
 const Duration _manifestTimeout = Duration(seconds: 12);
 const Duration _cacheValidationDuration = Duration(hours: 1);
+const Set<String> _localAudioExtensions = {
+  'mp3',
+  'm4a',
+  'aac',
+  'flac',
+  'wav',
+  'ogg',
+  'opus',
+};
+
+class LocalScanReport {
+  LocalScanReport({
+    required this.paths,
+    required this.missingFolders,
+    required this.contentUriFolders,
+    required this.errorFolders,
+  });
+
+  final List<String> paths;
+  final int missingFolders;
+  final int contentUriFolders;
+  final int errorFolders;
+
+  int get found => paths.length;
+}
+
+bool _isSupportedLocalAudio(String path) {
+  final lower = path.toLowerCase();
+  final dotIndex = lower.lastIndexOf('.');
+  if (dotIndex == -1 || dotIndex == lower.length - 1) {
+    return false;
+  }
+  final ext = lower.substring(dotIndex + 1);
+  return _localAudioExtensions.contains(ext);
+}
+
+Map<String, dynamic> buildLocalSongFromPath(String path) {
+  final fileName = _basename(path);
+  final baseName = _stripExtension(fileName);
+  final parsed = _splitArtistTitle(baseName);
+
+  return {
+    'id': path,
+    'ytid': path,
+    'title': parsed.title,
+    'artist': parsed.artist,
+    'lowResImage': '',
+    'highResImage': '',
+    'audioPath': path,
+    'artworkPath': null,
+    'isOffline': true,
+    'isLocal': true,
+    'source': 'local',
+    'dateAdded': DateTime.now().millisecondsSinceEpoch,
+  };
+}
+
+Future<LocalScanReport> refreshLocalSongsFromFolders(
+  List<String> folders,
+) async {
+  final report = await scanLocalMusicFolders(folders);
+  final updatedSongs = report.paths.map(buildLocalSongFromPath).toList();
+
+  userLocalSongs
+    ..clear()
+    ..addAll(updatedSongs);
+  currentLocalSongsLength.value = userLocalSongs.length;
+  await addOrUpdateData('userNoBackup', 'localSongs', userLocalSongs);
+  logger.log(
+    'Local scan complete: found=${report.found}, missing=${report.missingFolders}, contentUri=${report.contentUriFolders}, errors=${report.errorFolders}',
+    null,
+    null,
+  );
+  return report;
+}
+
+Future<LocalScanReport> scanLocalMusicFolders(List<String> folders) async {
+  final seen = <String>{};
+  var missingFolders = 0;
+  var contentUriFolders = 0;
+  var errorFolders = 0;
+
+  for (final folder in folders) {
+    try {
+      if (folder.trim().isEmpty) {
+        continue;
+      }
+      if (folder.startsWith('content://')) {
+        contentUriFolders++;
+        logger.log(
+          'Local music folder is content:// uri; cannot scan with dart:io',
+          null,
+          null,
+        );
+        continue;
+      }
+      final dir = Directory(folder);
+      if (!await dir.exists()) {
+        missingFolders++;
+        logger.log('Local music folder not found: $folder', null, null);
+        continue;
+      }
+
+      await for (final entity in dir.list(
+        recursive: true,
+        followLinks: false,
+      )) {
+        if (entity is! File) {
+          continue;
+        }
+        final path = entity.path;
+        if (_isSupportedLocalAudio(path)) {
+          seen.add(path);
+        }
+      }
+    } catch (e, stackTrace) {
+      errorFolders++;
+      logger.log('Error scanning local folder $folder', e, stackTrace);
+    }
+  }
+
+  final results = seen.toList()..sort();
+  return LocalScanReport(
+    paths: results,
+    missingFolders: missingFolders,
+    contentUriFolders: contentUriFolders,
+    errorFolders: errorFolders,
+  );
+}
+
+String _basename(String path) {
+  final separator = Platform.pathSeparator;
+  final parts = path.split(separator);
+  return parts.isNotEmpty ? parts.last : path;
+}
+
+String _stripExtension(String fileName) {
+  final dotIndex = fileName.lastIndexOf('.');
+  if (dotIndex <= 0) return fileName;
+  return fileName.substring(0, dotIndex);
+}
+
+({String title, String artist}) _splitArtistTitle(String fileName) {
+  final parts = fileName.split(' - ');
+  if (parts.length >= 2) {
+    final artist = parts.first.trim();
+    final title = parts.sublist(1).join(' - ').trim();
+    return (title: title, artist: artist);
+  }
+  return (title: fileName.trim(), artist: '');
+}
 
 /// Fetches a stream manifest for a song, honoring proxy settings.
 Future<StreamManifest?> _fetchStreamManifest(String songId) async {
