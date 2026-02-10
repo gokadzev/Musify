@@ -74,6 +74,7 @@ const appLanguages = <String, String>{
   'Portuguese': 'pt',
   'Spanish': 'es',
   'Swedish': 'sv',
+  'Tamil': 'ta',
   'Turkish': 'tr',
   'Ukrainian': 'uk',
 };
