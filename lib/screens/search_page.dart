@@ -170,7 +170,10 @@ class _SearchPageState extends State<SearchPage> {
 
             AnimatedSwitcher(
               duration: const Duration(milliseconds: 200),
-              child: (_songsSearchResult.isEmpty && _albumsSearchResult.isEmpty)
+              child:
+                  (_suggestionsList.isNotEmpty ||
+                      (_songsSearchResult.isEmpty &&
+                          _albumsSearchResult.isEmpty))
                   ? ValueListenableBuilder<List>(
                       valueListenable: searchHistoryNotifier,
                       builder: (context, searchHistory, _) {
