@@ -44,8 +44,6 @@ class MiniPlayer extends StatelessWidget {
   const MiniPlayer({super.key});
 
   static const double playerHeight = 72;
-  static const double _horizontalMargin = 12;
-  static const double _bottomMargin = 8;
   static const double _borderRadius = 20;
   static const double _artworkSize = 52;
   static const double _artworkRadius = 14;
@@ -167,54 +165,45 @@ class _MiniPlayerBodyState extends State<_MiniPlayerBody>
       builder: (context, child) {
         return Transform.scale(
           scale: _scaleAnimation.value,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(
-              MiniPlayer._horizontalMargin,
-              0,
-              MiniPlayer._horizontalMargin,
-              MiniPlayer._bottomMargin,
-            ),
-            child: GestureDetector(
-              onTapDown: (_) => _animationController.forward(),
-              onTapUp: (_) => _animationController.reverse(),
-              onTapCancel: () => _animationController.reverse(),
-              onVerticalDragUpdate: _handleVerticalDrag,
-              onTap: _navigateToNowPlaying,
-              child: Container(
-                height: MiniPlayer.playerHeight,
-                decoration: BoxDecoration(
-                  color: colorScheme.surfaceContainerHigh,
-                  borderRadius: BorderRadius.circular(MiniPlayer._borderRadius),
-                  boxShadow: [
-                    BoxShadow(
-                      color: colorScheme.shadow.withValues(alpha: 0.08),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(MiniPlayer._borderRadius),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Row(
-                      children: [
-                        _ArtworkWidget(metadata: metadata),
-                        Expanded(
-                          child: _MetadataWidget(
-                            title: metadata.title,
-                            artist: metadata.artist,
-                            colorScheme: colorScheme,
-                          ),
-                        ),
-                        _ControlsWidget(
+          child: GestureDetector(
+            onTapDown: (_) => _animationController.forward(),
+            onTapUp: (_) => _animationController.reverse(),
+            onTapCancel: () => _animationController.reverse(),
+            onVerticalDragUpdate: _handleVerticalDrag,
+            onTap: _navigateToNowPlaying,
+            child: Container(
+              height: MiniPlayer.playerHeight,
+              decoration: BoxDecoration(
+                color: colorScheme.surfaceContainerHigh,
+                boxShadow: [
+                  BoxShadow(
+                    color: colorScheme.shadow.withValues(alpha: 0.08),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(MiniPlayer._borderRadius),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Row(
+                    children: [
+                      _ArtworkWidget(metadata: metadata),
+                      Expanded(
+                        child: _MetadataWidget(
+                          title: metadata.title,
+                          artist: metadata.artist,
                           colorScheme: colorScheme,
-                          playbackState: state.playbackState,
-                          hasNext: widget.hasNext,
-                          progress: progress,
                         ),
-                      ],
-                    ),
+                      ),
+                      _ControlsWidget(
+                        colorScheme: colorScheme,
+                        playbackState: state.playbackState,
+                        hasNext: widget.hasNext,
+                        progress: progress,
+                      ),
+                    ],
                   ),
                 ),
               ),
