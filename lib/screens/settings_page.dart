@@ -124,6 +124,24 @@ class SettingsPage extends StatelessWidget {
             onChanged: (value) => _toggleSystemColor(context, value),
           ),
         ),
+        ValueListenableBuilder<bool>(
+          valueListenable: useLiquidGlassMiniPlayer,
+          builder: (_, value, __) {
+            return CustomBar(
+              'Liquid glass mini player',
+              Icons.blur_on,
+              description: 'Frosted glass effect for the mini player.',
+              trailing: Switch(
+                value: value,
+                onChanged: (value) {
+                  useLiquidGlassMiniPlayer.value = value;
+                  addOrUpdateData('settings', 'useLiquidGlassMiniPlayer', value);
+                  showToast(context, context.l10n!.settingChangedMsg);
+                },
+              ),
+            );
+          },
+        ),
         if (themeMode == ThemeMode.dark)
           CustomBar(
             context.l10n!.pureBlackTheme,

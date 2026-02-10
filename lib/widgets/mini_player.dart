@@ -20,7 +20,7 @@
  */
 
 import 'dart:math' as math;
-
+import 'dart:ui';
 import 'package:audio_service/audio_service.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +28,7 @@ import 'package:musify/main.dart';
 import 'package:musify/models/full_player_state.dart';
 import 'package:musify/models/position_data.dart';
 import 'package:musify/screens/now_playing_page.dart';
+import 'package:musify/services/settings_manager.dart';
 import 'package:musify/widgets/marque.dart';
 import 'package:musify/widgets/song_artwork.dart';
 import 'package:rxdart/rxdart.dart';
@@ -46,6 +47,7 @@ class MiniPlayer extends StatelessWidget {
   static const double playerHeight = 72;
   static const double _horizontalMargin = 12;
   static const double _bottomMargin = 8;
+  static const double reservedHeight = playerHeight + _bottomMargin + 12;
   static const double _borderRadius = 20;
   static const double _artworkSize = 52;
   static const double _artworkRadius = 14;
@@ -162,64 +164,137 @@ class _MiniPlayerBodyState extends State<_MiniPlayerBody>
                   totalDuration.inMilliseconds)
               .clamp(0.0, 1.0);
 
-    return AnimatedBuilder(
-      animation: _scaleAnimation,
-      builder: (context, child) {
-        return Transform.scale(
-          scale: _scaleAnimation.value,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(
-              MiniPlayer._horizontalMargin,
-              0,
-              MiniPlayer._horizontalMargin,
-              MiniPlayer._bottomMargin,
-            ),
-            child: GestureDetector(
-              onTapDown: (_) => _animationController.forward(),
-              onTapUp: (_) => _animationController.reverse(),
-              onTapCancel: () => _animationController.reverse(),
-              onVerticalDragUpdate: _handleVerticalDrag,
-              onTap: _navigateToNowPlaying,
-              child: Container(
-                height: MiniPlayer.playerHeight,
-                decoration: BoxDecoration(
-                  color: colorScheme.surfaceContainerHigh,
-                  borderRadius: BorderRadius.circular(MiniPlayer._borderRadius),
-                  boxShadow: [
-                    BoxShadow(
-                      color: colorScheme.shadow.withValues(alpha: 0.08),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(MiniPlayer._borderRadius),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Row(
-                      children: [
-                        _ArtworkWidget(metadata: metadata),
-                        Expanded(
-                          child: _MetadataWidget(
-                            title: metadata.title,
-                            artist: metadata.artist,
-                            colorScheme: colorScheme,
-                          ),
-                        ),
-                        _ControlsWidget(
-                          colorScheme: colorScheme,
-                          playbackState: state.playbackState,
-                          hasNext: widget.hasNext,
-                          progress: progress,
+    return ValueListenableBuilder<bool>(
+      valueListenable: useLiquidGlassMiniPlayer,
+      builder: (context, useGlass, _) {
+        return AnimatedBuilder(
+          animation: _scaleAnimation,
+          builder: (context, child) {
+            final borderRadius = BorderRadius.circular(
+              MiniPlayer._borderRadius,
+            );
+            final decoration = BoxDecoration(
+              color: useGlass
+                  ? colorScheme.surface.withValues(alpha: 0.2)
+                  : colorScheme.surfaceContainerHigh,
+              gradient: useGlass
+                  ? LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        colorScheme.surface.withValues(alpha: 0.24),
+                        colorScheme.surfaceContainerHighest.withValues(
+                          alpha: 0.1,
                         ),
                       ],
+                    )
+                  : null,
+              borderRadius: borderRadius,
+              border: useGlass
+                  ? Border.all(
+                      color: colorScheme.onSurface.withValues(alpha: 0.14),
+                      width: 1,
+                    )
+                  : null,
+              boxShadow: [
+                BoxShadow(
+                  color: colorScheme.shadow.withValues(
+                    alpha: useGlass ? 0.16 : 0.08,
+                  ),
+                  blurRadius: useGlass ? 18 : 8,
+                  offset: Offset(0, useGlass ? 6 : 2),
+                ),
+              ],
+            );
+
+            final content = Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Row(
+                children: [
+                  _ArtworkWidget(metadata: metadata),
+                  Expanded(
+                    child: _MetadataWidget(
+                      title: metadata.title,
+                      artist: metadata.artist,
+                      colorScheme: colorScheme,
+                    ),
+                  ),
+                  _ControlsWidget(
+                    colorScheme: colorScheme,
+                    playbackState: state.playbackState,
+                    hasNext: widget.hasNext,
+                    progress: progress,
+                  ),
+                ],
+              ),
+            );
+
+            return Transform.scale(
+              scale: _scaleAnimation.value,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  MiniPlayer._horizontalMargin,
+                  0,
+                  MiniPlayer._horizontalMargin,
+                  MiniPlayer._bottomMargin,
+                ),
+                child: GestureDetector(
+                  onTapDown: (_) => _animationController.forward(),
+                  onTapUp: (_) => _animationController.reverse(),
+                  onTapCancel: () => _animationController.reverse(),
+                  onVerticalDragUpdate: _handleVerticalDrag,
+                  onTap: _navigateToNowPlaying,
+                  child: SizedBox(
+                    height: MiniPlayer.playerHeight,
+                    child: ClipRRect(
+                      borderRadius: borderRadius,
+                      child: useGlass
+                          ? Stack(
+                              children: [
+                                LayoutBuilder(
+                                  builder: (context, constraints) {
+                                    return ClipRRect(
+                                      borderRadius: BorderRadius.circular(
+                                        MiniPlayer._borderRadius,
+                                      ),
+                                      child: BackdropFilter(
+                                        filter: ImageFilter.blur(
+                                          sigmaX: 1.0,
+                                          sigmaY: 2.0,
+                                        ),
+                                        child: RawMagnifier(
+                                          magnificationScale: 1.35,
+                                          size: constraints.biggest,
+                                          decoration: MagnifierDecoration(
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                    MiniPlayer._borderRadius,
+                                                  ),
+                                            ),
+                                          ),
+                                          child: const SizedBox.expand(),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                                DecoratedBox(
+                                  decoration: decoration,
+                                  child: content,
+                                ),
+                              ],
+                            )
+                          : DecoratedBox(
+                              decoration: decoration,
+                              child: content,
+                            ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ),
+            );
+          },
         );
       },
     );

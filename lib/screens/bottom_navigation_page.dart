@@ -19,6 +19,8 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
+import 'dart:ui';
+
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -70,57 +72,70 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
               final isLargeScreen = MediaQuery.of(context).size.width >= 600;
               final items = _getNavigationItems(isOfflineMode);
 
-              return Scaffold(
-                body: SafeArea(
-                  child: Row(
-                    children: [
-                      if (isLargeScreen)
-                        NavigationRail(
-                          labelType: NavigationRailLabelType.selected,
-                          destinations: items
-                              .map(
-                                (item) => NavigationRailDestination(
-                                  icon: Icon(item.icon),
-                                  selectedIcon: Icon(item.selectedIcon),
-                                  label: Text(item.label),
-                                ),
-                              )
-                              .toList(),
-                          selectedIndex: _getCurrentIndex(items, isOfflineMode),
-                          onDestinationSelected: (index) =>
-                              _onTabTapped(index, items),
-                        ),
-                      Expanded(
-                        child: Column(
-                          children: [
-                            Expanded(child: widget.child),
-                            const MiniPlayer(),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                bottomNavigationBar: !isLargeScreen
-                    ? NavigationBar(
-                        selectedIndex: _getCurrentIndex(items, isOfflineMode),
-                        labelBehavior: languageSetting == const Locale('en', '')
-                            ? NavigationDestinationLabelBehavior
-                                  .onlyShowSelected
-                            : NavigationDestinationLabelBehavior.alwaysHide,
-                        onDestinationSelected: (index) =>
-                            _onTabTapped(index, items),
-                        destinations: items
-                            .map(
-                              (item) => NavigationDestination(
-                                icon: Icon(item.icon),
-                                selectedIcon: Icon(item.selectedIcon),
-                                label: item.label,
+              return ValueListenableBuilder<bool>(
+                valueListenable: useLiquidGlassMiniPlayer,
+                builder: (context, useGlass, _) {
+                  final colorScheme = Theme.of(context).colorScheme;
+                  return Scaffold(
+                    backgroundColor: useGlass
+                        ? Colors.transparent
+                        : colorScheme.background,
+                    extendBody: useGlass && !isLargeScreen,
+                    body: SafeArea(
+                      bottom: !(useGlass && !isLargeScreen),
+                      child: Row(
+                        children: [
+                          if (isLargeScreen)
+                            NavigationRail(
+                              labelType: NavigationRailLabelType.selected,
+                              destinations: items
+                                  .map(
+                                    (item) => NavigationRailDestination(
+                                      icon: Icon(item.icon),
+                                      selectedIcon: Icon(item.selectedIcon),
+                                      label: Text(item.label),
+                                    ),
+                                  )
+                                  .toList(),
+                              selectedIndex: _getCurrentIndex(
+                                items,
+                                isOfflineMode,
                               ),
-                            )
-                            .toList(),
-                      )
-                    : null,
+                              onDestinationSelected: (index) =>
+                                  _onTabTapped(index, items),
+                            ),
+                          Expanded(
+                            child: Stack(
+                              children: [
+                                widget.child,
+                                if (isLargeScreen)
+                                  const Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: MiniPlayer(),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    bottomNavigationBar: !isLargeScreen
+                        ? Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const SizedBox(height: 6),
+                              const MiniPlayer(),
+                              _buildBottomNavBar(
+                                context,
+                                items,
+                                isOfflineMode,
+                                useGlass,
+                              ),
+                            ],
+                          )
+                        : null,
+                  );
+                },
               );
             },
           );
@@ -210,6 +225,74 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
 
     // Final fallback: return the first tab to keep UI in a valid state.
     return 0;
+  }
+
+  Widget _buildBottomNavBar(
+    BuildContext context,
+    List<_NavigationItem> items,
+    bool isOfflineMode,
+    bool useGlass,
+  ) {
+    final navBar = NavigationBar(
+      selectedIndex: _getCurrentIndex(items, isOfflineMode),
+      labelBehavior: languageSetting == const Locale('en', '')
+          ? NavigationDestinationLabelBehavior.onlyShowSelected
+          : NavigationDestinationLabelBehavior.alwaysHide,
+      onDestinationSelected: (index) => _onTabTapped(index, items),
+      destinations: items
+          .map(
+            (item) => NavigationDestination(
+              icon: Icon(item.icon),
+              selectedIcon: Icon(item.selectedIcon),
+              label: item.label,
+            ),
+          )
+          .toList(),
+      backgroundColor: useGlass ? Colors.transparent : null,
+      surfaceTintColor: useGlass ? Colors.transparent : null,
+      elevation: useGlass ? 0 : null,
+    );
+
+    if (!useGlass) return navBar;
+
+    final colorScheme = Theme.of(context).colorScheme;
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 14),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(22),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: colorScheme.surface.withValues(alpha: 0.25),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    colorScheme.surface.withValues(alpha: 0.32),
+                    colorScheme.surfaceContainerHighest.withValues(alpha: 0.16),
+                  ],
+                ),
+                border: Border.all(
+                  color: colorScheme.onSurface.withValues(alpha: 0.12),
+                  width: 1,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: colorScheme.shadow.withValues(alpha: 0.15),
+                    blurRadius: 12,
+                    offset: const Offset(0, -2),
+                  ),
+                ],
+              ),
+              child: navBar,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 

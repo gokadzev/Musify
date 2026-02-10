@@ -19,6 +19,8 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
+import 'dart:async';
+
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
@@ -42,6 +44,29 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  late final PageController _suggestedPlaylistsController;
+  late final PageController _likedPlaylistsController;
+  Timer? _suggestedAutoTimer;
+  Timer? _suggestedResumeTimer;
+  int _suggestedItemCount = 0;
+  bool _suggestedAutoPaused = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _suggestedPlaylistsController = PageController(viewportFraction: 0.68);
+    _likedPlaylistsController = PageController(viewportFraction: 0.68);
+  }
+
+  @override
+  void dispose() {
+    _suggestedAutoTimer?.cancel();
+    _suggestedResumeTimer?.cancel();
+    _suggestedPlaylistsController.dispose();
+    _likedPlaylistsController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final playlistHeight = MediaQuery.sizeOf(context).height * 0.25 / 1.1;
@@ -89,7 +114,13 @@ class _HomePageState extends State<HomePage> {
 
       builder: (context, playlists) {
         final itemsNumber = playlists.length.clamp(0, recommendedCubesNumber);
-        final isLargeScreen = MediaQuery.of(context).size.width > 480;
+        final controller = showOnlyLiked
+            ? _likedPlaylistsController
+            : _suggestedPlaylistsController;
+        if (!showOnlyLiked) {
+          _suggestedItemCount = itemsNumber;
+          _startSuggestedAutoScroll();
+        }
 
         return Column(
           children: [
@@ -101,9 +132,13 @@ class _HomePageState extends State<HomePage> {
             ),
             ConstrainedBox(
               constraints: BoxConstraints(maxHeight: playlistHeight),
-              child: isLargeScreen
-                  ? _buildHorizontalList(playlists, itemsNumber, playlistHeight)
-                  : _buildCarouselView(playlists, itemsNumber, playlistHeight),
+              child: _buildAdvancedScroller(
+                playlists,
+                itemsNumber,
+                playlistHeight,
+                controller,
+                enableAutoScroll: !showOnlyLiked,
+              ),
             ),
           ],
         );
@@ -111,52 +146,173 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildHorizontalList(
+  Widget _buildAdvancedScroller(
     List<dynamic> playlists,
     int itemCount,
     double height,
-  ) {
-    return ListView.builder(
-      scrollDirection: Axis.horizontal,
-      itemCount: itemCount,
-      itemBuilder: (context, index) {
-        final playlist = playlists[index];
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: GestureDetector(
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) =>
-                    PlaylistPage(playlistId: playlist['ytid']),
-              ),
-            ),
-            child: PlaylistCube(playlist, size: height),
-          ),
+    PageController controller, {
+    bool enableAutoScroll = false,
+  }) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final baseSize = height * 0.9;
+    Widget scroller = Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 2),
+      child: PageView.builder(
+        controller: controller,
+        itemCount: itemCount,
+        padEnds: false,
+        physics: const BouncingScrollPhysics(),
+        itemBuilder: (context, index) {
+          final playlist = playlists[index];
+          return AnimatedBuilder(
+            animation: controller,
+            builder: (context, child) {
+              final page = controller.hasClients
+                  ? (controller.page ?? controller.initialPage.toDouble())
+                  : controller.initialPage.toDouble();
+              final distance = (page - index).abs().clamp(0.0, 1.0);
+              final scale = 1 - (distance * 0.12);
+              final tilt = (page - index) * 0.05;
+              final translateY = distance * 10;
+              final glowOpacity = (1 - distance * 0.7).clamp(0.0, 1.0);
+
+              return Transform.translate(
+                offset: Offset(0, translateY),
+                child: Transform.rotate(
+                  angle: tilt,
+                  child: Transform.scale(
+                    scale: scale,
+                    child: Opacity(
+                      opacity: (1 - distance * 0.2).clamp(0.0, 1.0),
+                      child: GestureDetector(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                PlaylistPage(playlistId: playlist['ytid']),
+                          ),
+                        ),
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 6),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(22),
+                            boxShadow: [
+                              BoxShadow(
+                                color: colorScheme.primary.withValues(
+                                  alpha: 0.12 * glowOpacity,
+                                ),
+                                blurRadius: 24,
+                                offset: const Offset(0, 10),
+                              ),
+                            ],
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(22),
+                            child: Stack(
+                              children: [
+                                Align(
+                                  alignment: Alignment.center,
+                                  child: PlaylistCube(
+                                    playlist,
+                                    size: baseSize,
+                                    borderRadius: 22,
+                                  ),
+                                ),
+                                Positioned.fill(
+                                  child: DecoratedBox(
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
+                                        colors: [
+                                          Colors.transparent,
+                                          colorScheme.surface.withValues(
+                                            alpha: 0.15,
+                                          ),
+                                          colorScheme.surface.withValues(
+                                            alpha: 0.75,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  left: 14,
+                                  right: 14,
+                                  bottom: 12,
+                                  child: Text(
+                                    playlist['title']?.toString() ?? '',
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: colorScheme.onSurface,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w700,
+                                      height: 1.1,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      ),
+    );
+
+    if (!enableAutoScroll) return scroller;
+
+    return NotificationListener<ScrollNotification>(
+      onNotification: (notification) {
+        if (notification is ScrollStartNotification) {
+          _pauseSuggestedAutoScroll();
+        } else if (notification is ScrollEndNotification) {
+          _pauseSuggestedAutoScroll(resumeDelay: const Duration(seconds: 3));
+        }
+        return false;
+      },
+      child: scroller,
+    );
+  }
+
+  void _startSuggestedAutoScroll() {
+    if (_suggestedAutoTimer != null || _suggestedItemCount < 2) return;
+
+    _suggestedAutoTimer = Timer.periodic(
+      const Duration(seconds: 4),
+      (_) {
+        if (!mounted || _suggestedAutoPaused) return;
+        if (!_suggestedPlaylistsController.hasClients) return;
+
+        final currentPage =
+            (_suggestedPlaylistsController.page ?? 0).round();
+        final nextPage = (currentPage + 1) % _suggestedItemCount;
+
+        _suggestedPlaylistsController.animateToPage(
+          nextPage,
+          duration: const Duration(milliseconds: 600),
+          curve: Curves.easeInOut,
         );
       },
     );
   }
 
-  Widget _buildCarouselView(
-    List<dynamic> playlists,
-    int itemCount,
-    double height,
-  ) {
-    return CarouselView.weighted(
-      flexWeights: const <int>[3, 2, 1],
-      itemSnapping: true,
-      onTap: (index) => Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) =>
-              PlaylistPage(playlistId: playlists[index]['ytid']),
-        ),
-      ),
-      children: List.generate(itemCount, (index) {
-        return PlaylistCube(playlists[index], size: height * 2);
-      }),
-    );
+  void _pauseSuggestedAutoScroll({Duration resumeDelay = Duration.zero}) {
+    _suggestedAutoPaused = true;
+    _suggestedResumeTimer?.cancel();
+    if (resumeDelay == Duration.zero) return;
+
+    _suggestedResumeTimer = Timer(resumeDelay, () {
+      _suggestedAutoPaused = false;
+    });
   }
 
   Widget _buildRecommendedSongsSection() {
