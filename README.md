@@ -35,7 +35,7 @@ Lyrics support <br/>
 No ads <br/>
 No subscriptions <br/>
 Inbuilt updater <br/>
-22 supported languages <br/>
+23 supported languages <br/>
 Material UI & accent colors & dynamic colors (Android 12+) <br/>
 
 </center>
