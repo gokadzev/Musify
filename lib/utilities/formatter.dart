@@ -22,7 +22,7 @@
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 final wordsPatternForSongTitle = RegExp(
-  r'\b(official music video|official lyric video|official lyrics video|official video|official 4k video|official audio|lyric video|lyrics video|official hd video|lyric visualizer|lyric vizualizer|official visualizer|lyrics|lyric|official song clip)\b',
+  r'(?:\b(official music video|official lyric video|official lyrics video|official video|official 4k video|official audio|lyric video|lyrics video|official hd video|lyric visualizer|lyric vizualizer|official visualizer|lyrics|lyric|official song clip)\b)|(?:\s+audio\s*$)',
   caseSensitive: false,
 );
 
@@ -50,6 +50,7 @@ String formatSongTitle(String title) {
       .trimLeft();
 
   finalTitle = finalTitle.replaceAll(wordsPatternForSongTitle, '');
+  finalTitle = finalTitle.replaceAll(RegExp(r'\s{2,}'), ' ').trim();
 
   return finalTitle;
 }
