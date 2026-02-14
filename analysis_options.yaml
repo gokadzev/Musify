@@ -13,7 +13,6 @@ linter:
     - avoid_empty_else
     - avoid_function_literals_in_foreach_calls
     - avoid_init_to_null
-    - avoid_null_checks_in_equality_operators
     - avoid_print
     - avoid_redundant_argument_values
     - avoid_relative_lib_imports
