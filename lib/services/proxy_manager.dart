@@ -31,6 +31,22 @@ import 'package:musify/models/proxy_model.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
+class _ProxyResources {
+  _ProxyResources(this.httpClient, this.ioClient);
+
+  final HttpClient httpClient;
+  final IOClient ioClient;
+
+  void close() {
+    try {
+      ioClient.close();
+    } catch (_) {}
+    try {
+      httpClient.close(force: true);
+    } catch (_) {}
+  }
+}
+
 class ProxyManager {
   // Singleton
   factory ProxyManager() => _instance;
@@ -50,6 +66,7 @@ class ProxyManager {
           } catch (_) {}
           _sharedYt = _defaultYt;
         }
+        _closeAllProxyResources();
       }
     });
   }
@@ -83,6 +100,9 @@ class ProxyManager {
   DateTime _lastFetched = DateTime.now();
   DateTime _lastProxyCleanup = DateTime.now();
   static const int _proxyCleanupIntervalMinutes = 120;
+  static const int _maxProxyResourcePoolSize = 50;
+
+  final Map<String, _ProxyResources> _proxyResources = {};
 
   Future<void> _fetchProxies() async {
     if (!useProxy.value) return;
@@ -99,6 +119,7 @@ class ProxyManager {
       await _fetchingProxiesFuture?.whenComplete(() {
         _hasFetched = true;
         _lastFetched = DateTime.now();
+        _pruneStaleProxyResources();
       });
     } catch (e) {
       logger.log('ProxyManager: Error fetching proxies: $e', null, null);
@@ -119,21 +140,13 @@ class ProxyManager {
       do {
         final proxy = await _getRandomProxy();
         if (proxy == null) break;
-        HttpClient? httpClient;
-        IOClient? ioClient;
         try {
-          httpClient = HttpClient()
-            ..connectionTimeout = Duration(seconds: timeoutSeconds)
-            ..findProxy = (_) {
-              return 'PROXY ${proxy.address}; DIRECT';
-            }
-            ..badCertificateCallback = (context, _context, ___) {
-              return true;
-            };
-
-          ioClient = IOClient(httpClient);
+          final res = _ensureProxyResources(
+            proxy,
+            timeoutSeconds: timeoutSeconds,
+          );
           final ytClient = YoutubeExplode(
-            httpClient: YoutubeHttpClient(ioClient),
+            httpClient: YoutubeHttpClient(res.ioClient),
           );
 
           if (_sharedYt != null && _sharedYt != _defaultYt) {
@@ -145,12 +158,11 @@ class ProxyManager {
           _workingProxies.add(proxy);
           break;
         } catch (e) {
-          try {
-            ioClient?.close();
-          } catch (_) {}
-          try {
-            httpClient?.close(force: true);
-          } catch (_) {}
+          logger.log(
+            'ProxyManager: failed to init shared proxy client for ${proxy.address}',
+            e,
+            null,
+          );
           continue;
         }
       } while (true);
@@ -169,18 +181,13 @@ class ProxyManager {
     String songId,
     int timeoutSeconds,
   ) async {
-    final ytClient = YoutubeExplode();
     try {
-      final manifest = await ytClient.videos.streams
+      final manifest = await _defaultYt.videos.streams
           .getManifest(songId, ytClients: [YoutubeApiClient.androidVr])
           .timeout(Duration(seconds: timeoutSeconds));
       return manifest;
     } catch (e) {
       return null;
-    } finally {
-      try {
-        ytClient.close();
-      } catch (_) {}
     }
   }
 
@@ -190,36 +197,25 @@ class ProxyManager {
     int timeoutSeconds,
   ) async {
     if (!useProxy.value) return null;
-    IOClient? ioClient;
-    HttpClient? httpClient;
     YoutubeExplode? ytClient;
     try {
-      httpClient = HttpClient()
-        ..connectionTimeout = Duration(seconds: timeoutSeconds)
-        ..findProxy = (_) {
-          return 'PROXY ${proxy.address}; DIRECT';
-        }
-        ..badCertificateCallback = (context, _context, ___) {
-          return true;
-        };
-      ioClient = IOClient(httpClient);
-      ytClient = YoutubeExplode(httpClient: YoutubeHttpClient(ioClient));
+      final res = _ensureProxyResources(proxy, timeoutSeconds: timeoutSeconds);
+      ytClient = YoutubeExplode(httpClient: YoutubeHttpClient(res.ioClient));
       final manifest = await ytClient.videos.streams
           .getManifest(songId, ytClients: [YoutubeApiClient.androidVr])
           .timeout(Duration(seconds: timeoutSeconds));
       _workingProxies.add(proxy);
       return manifest;
     } catch (e) {
+      logger.log(
+        'ProxyManager: failed to validate proxy ${proxy.address}',
+        e,
+        null,
+      );
       return null;
     } finally {
       try {
         ytClient?.close();
-      } catch (_) {}
-      try {
-        ioClient?.close();
-      } catch (_) {}
-      try {
-        httpClient?.close(force: true);
       } catch (_) {}
     }
   }
@@ -230,7 +226,6 @@ class ProxyManager {
         _proxyCleanupIntervalMinutes) {
       return;
     }
-
     _lastProxyCleanup = DateTime.now();
 
     if (DateTime.now().difference(_lastFetched).inMinutes >=
@@ -238,6 +233,7 @@ class ProxyManager {
       _proxiesByCountry.clear();
       _workingProxies.clear();
       _hasFetched = false;
+      _closeAllProxyResources();
     }
   }
 
@@ -278,6 +274,58 @@ class ProxyManager {
     }
   }
 
+  _ProxyResources _ensureProxyResources(
+    ProxyInfo proxy, {
+    int timeoutSeconds = 5,
+  }) {
+    final key = proxy.address;
+    var res = _proxyResources[key];
+    if (res != null) return res;
+
+    final httpClient = HttpClient()
+      ..connectionTimeout = Duration(seconds: timeoutSeconds)
+      ..findProxy = (_) {
+        return 'PROXY ${proxy.address}; DIRECT';
+      }
+      ..badCertificateCallback = (context, _context, ___) {
+        return true;
+      };
+
+    final ioClient = IOClient(httpClient);
+    res = _ProxyResources(httpClient, ioClient);
+
+    if (_proxyResources.length >= _maxProxyResourcePoolSize) {
+      final oldestKey = _proxyResources.keys.first;
+      final oldest = _proxyResources.remove(oldestKey);
+      try {
+        oldest?.close();
+      } catch (_) {}
+    }
+
+    _proxyResources[key] = res;
+    return res;
+  }
+
+  void _pruneStaleProxyResources() {
+    if (_proxyResources.isEmpty) return;
+
+    final activeAddresses = _proxiesByCountry.values
+        .expand((x) => x)
+        .map((p) => p.address)
+        .toSet();
+
+    final staleKeys = _proxyResources.keys
+        .where((key) => !activeAddresses.contains(key))
+        .toList();
+
+    for (final key in staleKeys) {
+      final stale = _proxyResources.remove(key);
+      try {
+        stale?.close();
+      } catch (_) {}
+    }
+  }
+
   Future<StreamManifest?> getSongManifest(String songId) async {
     if (!useProxy.value) {
       return _validateDirect(songId, _validateDirectTimeout);
@@ -307,6 +355,15 @@ class ProxyManager {
     return manifest;
   }
 
+  void _closeAllProxyResources() {
+    for (final res in _proxyResources.values) {
+      try {
+        res.close();
+      } catch (_) {}
+    }
+    _proxyResources.clear();
+  }
+
   /// Try to create a [YoutubeExplode] client that routes requests through a
   /// working proxy. Returns null if no proxy client could be created.
   ///
@@ -327,32 +384,23 @@ class ProxyManager {
       final proxy = await _getRandomProxy();
       if (proxy == null) break;
 
-      HttpClient? httpClient;
-      IOClient? ioClient;
       try {
-        httpClient = HttpClient()
-          ..connectionTimeout = Duration(seconds: timeoutSeconds)
-          ..findProxy = (_) {
-            return 'PROXY ${proxy.address}; DIRECT';
-          }
-          ..badCertificateCallback = (context, _context, ___) {
-            return true;
-          };
-
-        ioClient = IOClient(httpClient);
+        final res = _ensureProxyResources(
+          proxy,
+          timeoutSeconds: timeoutSeconds,
+        );
         final ytClient = YoutubeExplode(
-          httpClient: YoutubeHttpClient(ioClient),
+          httpClient: YoutubeHttpClient(res.ioClient),
         );
 
         _workingProxies.add(proxy);
         return ytClient;
       } catch (e) {
-        try {
-          ioClient?.close();
-        } catch (_) {}
-        try {
-          httpClient?.close(force: true);
-        } catch (_) {}
+        logger.log(
+          'ProxyManager: failed to create proxy youtube client for ${proxy.address}',
+          e,
+          null,
+        );
         continue;
       }
     } while (true);
