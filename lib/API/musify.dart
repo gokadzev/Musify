@@ -1343,7 +1343,7 @@ Future<File?> _downloadAndSaveArtworkFile(String url, String filePath) async {
   return null;
 }
 
-const recentlyPlayedSongsLimit = 50;
+const recentlyPlayedSongsLimit = 250;
 
 Future<void> updateRecentlyPlayed(dynamic songId) async {
   try {
