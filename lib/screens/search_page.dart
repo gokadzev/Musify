@@ -91,7 +91,7 @@ class _SearchPageState extends State<SearchPage> {
     if (!searchHistory.contains(query)) {
       final updatedHistory = List.from(searchHistory)..insert(0, query);
       searchHistoryNotifier.value = updatedHistory;
-      await addOrUpdateData('user', 'searchHistory', updatedHistory);
+      unawaited(addOrUpdateData('user', 'searchHistory', updatedHistory));
     }
 
     try {
