@@ -38,11 +38,12 @@ body.dark {
 }
 
 body {
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
   scroll-behavior: smooth;
 }
 
 main {
+  padding-top: 0;
   padding-bottom: 0;
 }
 
@@ -199,7 +200,9 @@ main {
   flex-direction: column;
   align-items: center;
   gap: 0.75rem;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
   margin-block-start: unset !important;
   box-sizing: border-box;
   flex: 1 1 220px;
@@ -310,7 +313,9 @@ main {
   border-radius: 24px;
   overflow: hidden;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .screenshot-item:hover {
