@@ -280,7 +280,7 @@ Future<String> addUserPlaylist(String input, BuildContext context) async {
     }
 
     userPlaylists.value = [...userPlaylists.value, playlistId];
-    await addOrUpdateData('user', 'playlists', userPlaylists.value);
+    unawaited(addOrUpdateData('user', 'playlists', userPlaylists.value));
     return '${context.l10n!.addedSuccess}!';
   } catch (e, stackTrace) {
     logger.log('Error adding user playlist', e, stackTrace);
@@ -585,7 +585,7 @@ Future<void> updateSongLikeStatus(dynamic songId, bool add) async {
     }
 
     currentLikedSongsLength.value = userLikedSongsList.length;
-    await addOrUpdateData('user', 'likedSongs', userLikedSongsList);
+    unawaited(addOrUpdateData('user', 'likedSongs', userLikedSongsList));
   } catch (e, stackTrace) {
     logger.log('Error updating song like status', e, stackTrace);
   }
@@ -615,7 +615,7 @@ Future<void> renameSongInLikedSongs(
       userLikedSongsList[songIndex]['artist'] = newArtist;
 
       currentLikedSongsLength.value = userLikedSongsList.length;
-      await addOrUpdateData('user', 'likedSongs', userLikedSongsList);
+      unawaited(addOrUpdateData('user', 'likedSongs', userLikedSongsList));
     }
   } catch (e, stackTrace) {
     logger.log('Error renaming song in liked songs', e, stackTrace);
@@ -651,7 +651,7 @@ Future<void> renameSongInPlaylist(
         userCustomPlaylists.value = updatedPlaylists;
 
         // Save to database
-        await addOrUpdateData('user', 'customPlaylists', updatedPlaylists);
+        unawaited(addOrUpdateData('user', 'customPlaylists', updatedPlaylists));
       }
     }
   } catch (e, stackTrace) {
@@ -687,7 +687,7 @@ Future<void> updatePlaylistLikeStatus(String playlistId, bool add) async {
     }
 
     currentLikedPlaylistsLength.value = userLikedPlaylists.length;
-    await addOrUpdateData('user', 'likedPlaylists', userLikedPlaylists);
+    unawaited(addOrUpdateData('user', 'likedPlaylists', userLikedPlaylists));
   } catch (e, stackTrace) {
     logger.log('Error updating playlist like status: ', e, stackTrace);
   }
@@ -1127,7 +1127,7 @@ Future<String?> fetchSongStreamUrl(String songId, bool isLive) async {
     );
     final url = selectedStream.url.toString();
 
-    await addOrUpdateData('cache', cacheKey, url);
+    unawaited(addOrUpdateData('cache', cacheKey, url));
 
     unawaited(updateRecentlyPlayed(songId));
     return url;
