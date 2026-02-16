@@ -255,10 +255,12 @@ class OfflinePlaylistService {
         }
 
         offlinePlaylists.value = updatedPlaylists;
-        await addOrUpdateData(
-          'userNoBackup',
-          'offlinePlaylists',
-          offlinePlaylists.value,
+        unawaited(
+          addOrUpdateData(
+            'userNoBackup',
+            'offlinePlaylists',
+            offlinePlaylists.value,
+          ),
         );
 
         showToast(
@@ -368,10 +370,12 @@ class OfflinePlaylistService {
       final updatedPlaylists = List<dynamic>.from(offlinePlaylists.value)
         ..removeWhere((p) => p['ytid'] == playlistId);
       offlinePlaylists.value = updatedPlaylists;
-      await addOrUpdateData(
-        'userNoBackup',
-        'offlinePlaylists',
-        offlinePlaylists.value,
+      unawaited(
+        addOrUpdateData(
+          'userNoBackup',
+          'offlinePlaylists',
+          offlinePlaylists.value,
+        ),
       );
     } catch (e, stackTrace) {
       logger.log('Error removing offline playlist', e, stackTrace);

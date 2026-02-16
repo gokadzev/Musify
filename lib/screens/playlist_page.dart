@@ -19,6 +19,7 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
+import 'dart:async';
 import 'dart:math';
 
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
@@ -357,10 +358,12 @@ class _PlaylistPageState extends State<PlaylistPage> {
             final updatedPlaylists = List<Map>.from(userCustomPlaylists.value);
             updatedPlaylists[index] = result;
             userCustomPlaylists.value = updatedPlaylists;
-            await addOrUpdateData(
-              'user',
-              'customPlaylists',
-              userCustomPlaylists.value,
+            unawaited(
+              addOrUpdateData(
+                'user',
+                'customPlaylists',
+                userCustomPlaylists.value,
+              ),
             );
             setState(() => _playlist = result);
             showToast(context, context.l10n!.playlistUpdated);

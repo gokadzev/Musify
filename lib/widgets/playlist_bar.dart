@@ -19,6 +19,8 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
+import 'dart:async';
+
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
@@ -405,10 +407,8 @@ class PlaylistBar extends StatelessWidget {
         final updatedPlaylists = List<Map>.from(userCustomPlaylists.value);
         updatedPlaylists[index] = result;
         userCustomPlaylists.value = updatedPlaylists;
-        await addOrUpdateData(
-          'user',
-          'customPlaylists',
-          userCustomPlaylists.value,
+        unawaited(
+          addOrUpdateData('user', 'customPlaylists', userCustomPlaylists.value),
         );
         final appCtx = NavigationManager().context;
         showToast(appCtx, appCtx.l10n!.playlistUpdated);

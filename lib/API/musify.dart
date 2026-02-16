@@ -950,7 +950,7 @@ Future<List> getSongsFromPlaylist(
       );
     }
 
-    await addOrUpdateData('cache', 'playlistSongs$playlistId', songList);
+    unawaited(addOrUpdateData('cache', 'playlistSongs$playlistId', songList));
   }
 
   return songList;
@@ -965,7 +965,7 @@ Future updatePlaylistList(BuildContext context, String playlistId) async {
     }
 
     playlists[index]['list'] = songList;
-    await addOrUpdateData('cache', 'playlistSongs$playlistId', songList);
+    unawaited(addOrUpdateData('cache', 'playlistSongs$playlistId', songList));
     showToast(context, context.l10n!.playlistUpdated);
   }
   return playlists[index];
@@ -1286,7 +1286,9 @@ Future<bool> makeSongOffline(dynamic song, {bool fromPlaylist = false}) async {
     song['dateAdded'] = DateTime.now().millisecondsSinceEpoch;
     if (!fromPlaylist) {
       userOfflineSongs.add(song);
-      await addOrUpdateData('userNoBackup', 'offlineSongs', userOfflineSongs);
+      unawaited(
+        addOrUpdateData('userNoBackup', 'offlineSongs', userOfflineSongs),
+      );
       currentOfflineSongsLength.value = userOfflineSongs.length;
     }
 
@@ -1322,7 +1324,9 @@ Future<bool> removeSongFromOffline(
     if (!fromPlaylist) {
       userOfflineSongs.removeWhere((song) => song['ytid'] == songId);
       currentOfflineSongsLength.value = userOfflineSongs.length;
-      await addOrUpdateData('userNoBackup', 'offlineSongs', userOfflineSongs);
+      unawaited(
+        addOrUpdateData('userNoBackup', 'offlineSongs', userOfflineSongs),
+      );
     }
 
     return true;

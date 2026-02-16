@@ -217,10 +217,12 @@ class _SearchPageState extends State<SearchPage> {
                                         )..remove(query);
                                         searchHistoryNotifier.value =
                                             updatedHistory;
-                                        await addOrUpdateData(
-                                          'user',
-                                          'searchHistory',
-                                          updatedHistory,
+                                        unawaited(
+                                          addOrUpdateData(
+                                            'user',
+                                            'searchHistory',
+                                            updatedHistory,
+                                          ),
                                         );
                                       }
                                     },
