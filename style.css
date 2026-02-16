@@ -37,6 +37,10 @@ body.dark {
   --surface-container-highest: #3b3332;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   font-family: "Montserrat", sans-serif;
   scroll-behavior: smooth;
