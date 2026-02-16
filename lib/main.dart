@@ -55,7 +55,6 @@ bool isUpdateChecked = false;
 
 const appLanguages = <String, String>{
   'English': 'en',
-  'Arabic': 'ar',
   'Chinese (Simplified)': 'zh',
   'Chinese (Traditional)': 'zh-Hant',
   'Estonian': 'et',
