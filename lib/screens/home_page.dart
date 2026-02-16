@@ -67,6 +67,7 @@ class _HomePageState extends State<HomePage> {
             ),
             _buildSuggestedPlaylists(playlistHeight),
             _buildSuggestedPlaylists(playlistHeight, showOnlyLiked: true),
+            _buildMostPlayedSection(),
             _buildRecommendedSongsSection(),
           ],
         ),
@@ -169,6 +170,79 @@ class _HomePageState extends State<HomePage> {
           builder: (context, data) {
             if (data.isEmpty) return const SizedBox.shrink();
             return _buildRecommendedForYouSection(context, data);
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildMostPlayedSection() {
+    final sectionTitle = context.l10n!.mostPlayed;
+
+    return ValueListenableBuilder<int>(
+      valueListenable: currentRecentlyPlayedLength,
+      builder: (_, __, ___) {
+        return ValueListenableBuilder<int>(
+          valueListenable: recentlyPlayedVersion,
+          builder: (_, __, ___) {
+            final mostPlayedSongs = getMostPlayed(limit: 5);
+            if (mostPlayedSongs.isEmpty) {
+              return const SizedBox.shrink();
+            }
+
+            return Column(
+              children: [
+                SectionHeader(
+                  title: sectionTitle,
+                  icon: FluentIcons.music_note_2_24_filled,
+                  actionButton: IconButton(
+                    onPressed: () async {
+                      await audioHandler.playPlaylistSong(
+                        playlist: {
+                          'title': sectionTitle,
+                          'list': mostPlayedSongs,
+                        },
+                        songIndex: 0,
+                      );
+                    },
+                    icon: Icon(
+                      FluentIcons.play_circle_24_filled,
+                      color: Theme.of(context).colorScheme.primary,
+                      size: 30,
+                    ),
+                  ),
+                ),
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: mostPlayedSongs.length,
+                  padding: commonListViewBottomPadding,
+                  itemBuilder: (context, index) {
+                    final borderRadius = getItemBorderRadius(
+                      index,
+                      mostPlayedSongs.length,
+                    );
+
+                    final song = Map<String, dynamic>.from(
+                      mostPlayedSongs[index],
+                    );
+                    final plays = (song['listeningCount'] is int)
+                        ? song['listeningCount'] as int
+                        : int.tryParse(
+                                song['listeningCount']?.toString() ?? '',
+                              ) ??
+                              0;
+
+                    song['artist'] = '${song['artist'] ?? ''} • $plays plays';
+
+                    return RepaintBoundary(
+                      key: ValueKey('most_played_${song['ytid']}_$index'),
+                      child: SongBar(song, true, borderRadius: borderRadius),
+                    );
+                  },
+                ),
+              ],
+            );
           },
         );
       },
