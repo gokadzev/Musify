@@ -1451,8 +1451,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
       } else if (playNextSongAutomatically.value &&
           _currentLoadingIndex == -1) {
         await _playNextRecommendedSong();
-      } else {
-        logger.log('No next song available', null, null);
       }
 
       _cleanupOldPreloadedSongs();
