@@ -172,7 +172,7 @@ Future<List> getRecommendedSongs() async {
 }
 
 Future<List> _getRecommendationsFromRecentlyPlayed() async {
-  final recent = userRecentlyPlayed.take(3).toList();
+  final recent = (List.from(userRecentlyPlayed)..shuffle()).take(3).toList();
 
   final futures = recent.map((songData) async {
     try {
