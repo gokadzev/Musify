@@ -24,6 +24,7 @@ import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
+import 'package:musify/screens/equalizer_page.dart';
 import 'package:musify/screens/search_page.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/router_service.dart';
@@ -115,6 +116,13 @@ class SettingsPage extends StatelessWidget {
             activatedColor,
             inactivatedColor,
           ),
+        ),
+        CustomBar(
+          context.l10n!.equalizer,
+          Icons.equalizer,
+          onTap: () => Navigator.of(
+            context,
+          ).push(MaterialPageRoute(builder: (_) => const EqualizerPage())),
         ),
         CustomBar(
           context.l10n!.dynamicColor,

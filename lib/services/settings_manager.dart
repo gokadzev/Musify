@@ -68,6 +68,24 @@ final audioQualitySetting = ValueNotifier<String>(
   Hive.box('settings').get('audioQuality', defaultValue: 'high'),
 );
 
+List<double> _readEqualizerGains() {
+  final raw = Hive.box(
+    'settings',
+  ).get('equalizerBandGains', defaultValue: const <dynamic>[]);
+
+  if (raw is List) {
+    return raw.map((value) => value is num ? value.toDouble() : 0.0).toList();
+  }
+
+  return <double>[];
+}
+
+final equalizerEnabled = ValueNotifier<bool>(
+  Hive.box('settings').get('equalizerEnabled', defaultValue: false),
+);
+
+final equalizerBandGains = ValueNotifier<List<double>>(_readEqualizerGains());
+
 Locale languageSetting = getLocaleFromLanguageCode(
   Hive.box('settings').get('language', defaultValue: 'English') as String,
 );
