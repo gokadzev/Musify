@@ -46,3 +46,24 @@ Future<void> handleYoutubeSharedTextIntent(
     onError(e, stackTrace);
   }
 }
+
+Future<void> consumeYoutubeSharedTextIntent(
+  String? value, {
+  required MusifyAudioHandler audioHandler,
+  required void Function(Object error, StackTrace stackTrace) onError,
+}) async {
+  if (value == null || value.isEmpty) {
+    return;
+  }
+
+  final normalizedValue = value.trim();
+  if (normalizedValue.isEmpty) {
+    return;
+  }
+
+  await handleYoutubeSharedTextIntent(
+    normalizedValue,
+    audioHandler: audioHandler,
+    onError: onError,
+  );
+}

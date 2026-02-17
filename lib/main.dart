@@ -160,7 +160,7 @@ class _MusifyState extends State<Musify> {
 
     sharingIntentSubscription = ReceiveSharingIntent.getTextStream().listen(
       (String? value) async {
-        await handleYoutubeSharedTextIntent(
+        await consumeYoutubeSharedTextIntent(
           value,
           audioHandler: audioHandler,
           onError: (error, stackTrace) {
@@ -171,26 +171,6 @@ class _MusifyState extends State<Musify> {
       onError: (err) {
         logger.log('getTextStream error:', err, null);
       },
-    );
-
-    unawaited(
-      ReceiveSharingIntent.getInitialText()
-          .then((value) async {
-            await handleYoutubeSharedTextIntent(
-              value,
-              audioHandler: audioHandler,
-              onError: (error, stackTrace) {
-                logger.log(
-                  'Error while playing shared song:',
-                  error,
-                  stackTrace,
-                );
-              },
-            );
-          })
-          .catchError((err, stackTrace) {
-            logger.log('getInitialText error:', err, stackTrace);
-          }),
     );
 
     try {
