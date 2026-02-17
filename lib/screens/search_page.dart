@@ -66,6 +66,22 @@ class _SearchPageState extends State<SearchPage> {
   List<String> _suggestionsList = [];
   Timer? _debounce;
 
+  Future<void> _submitSearch([String? query]) async {
+    if (query != null) {
+      _searchBar.text = query;
+      _searchBar.selection = TextSelection.fromPosition(
+        TextPosition(offset: _searchBar.text.length),
+      );
+    }
+
+    _debounce?.cancel();
+    _suggestionsList = [];
+    if (mounted) setState(() {});
+
+    await search();
+    _inputNode.unfocus();
+  }
+
   @override
   void dispose() {
     _searchBar.dispose();
@@ -151,9 +167,7 @@ class _SearchPageState extends State<SearchPage> {
                       );
                     },
                     onSubmitted: (String value) {
-                      search();
-                      _suggestionsList = [];
-                      _inputNode.unfocus();
+                      _submitSearch();
                     },
                   ),
                 );
@@ -200,9 +214,7 @@ class _SearchPageState extends State<SearchPage> {
                                     FluentIcons.search_24_regular,
                                     borderRadius: borderRadius,
                                     onTap: () async {
-                                      _searchBar.text = query;
-                                      await search();
-                                      _inputNode.unfocus();
+                                      await _submitSearch(query.toString());
                                     },
                                     onLongPress: () async {
                                       final confirm =
