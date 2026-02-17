@@ -65,6 +65,7 @@ class _SearchPageState extends State<SearchPage> {
   List<dynamic> _playlistsSearchResult = [];
   List<String> _suggestionsList = [];
   Timer? _debounce;
+  int _latestSuggestionRequest = 0;
 
   Future<void> _submitSearch([String? query]) async {
     if (query != null) {
@@ -74,6 +75,7 @@ class _SearchPageState extends State<SearchPage> {
       );
     }
 
+    _latestSuggestionRequest++;
     _debounce?.cancel();
     _suggestionsList = [];
     if (mounted) setState(() {});
@@ -149,17 +151,28 @@ class _SearchPageState extends State<SearchPage> {
                     onChanged: (value) {
                       // debounce suggestions to avoid rapid API calls
                       _debounce?.cancel();
+                      final query = value;
+                      final requestId = ++_latestSuggestionRequest;
                       _debounce = Timer(
                         const Duration(milliseconds: 300),
                         () async {
-                          if (value.isNotEmpty) {
+                          if (query.isNotEmpty) {
                             final searchSuggestions =
-                                await getSearchSuggestions(value);
+                                await getSearchSuggestions(query);
+
+                            if (!mounted ||
+                                requestId != _latestSuggestionRequest ||
+                                _searchBar.text != query) {
+                              return;
+                            }
 
                             _suggestionsList = List<String>.from(
                               searchSuggestions,
                             );
                           } else {
+                            if (requestId != _latestSuggestionRequest) {
+                              return;
+                            }
                             _suggestionsList = [];
                           }
                           if (mounted) setState(() {});
