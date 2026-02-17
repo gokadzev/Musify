@@ -72,6 +72,7 @@
   "error": "發生錯誤，請重試。",
   "externalRecommendations": "External recommendations",
   "externalRecommendationsDescription": "Use the external algorithm for recommendations instead of Musify’s own.",
+  "failedToLoadPlaylist": "Failed to load playlist",
   "fieldsNotEmpty": "All fields must be filled",
   "folderAlreadyExists": "A folder with this name already exists",
   "folderDeleted": "Folder deleted successfully",

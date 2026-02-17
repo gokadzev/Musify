@@ -348,11 +348,17 @@ void handleIncomingLink(Uri? uri) async {
             '${NavigationManager().context.l10n!.addedSuccess}!',
           );
         } else {
-          showToast(NavigationManager().context, 'Invalid playlist data');
+          showToast(
+            NavigationManager().context,
+            NavigationManager().context.l10n!.failedToLoadPlaylist,
+          );
         }
       }
     } catch (e) {
-      showToast(NavigationManager().context, 'Failed to load playlist');
+      showToast(
+        NavigationManager().context,
+        NavigationManager().context.l10n!.failedToLoadPlaylist,
+      );
     }
   }
 }
