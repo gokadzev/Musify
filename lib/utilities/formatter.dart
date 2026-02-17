@@ -75,6 +75,8 @@ Map<String, dynamic> returnSongLayout(
   };
 }
 
+String? getSongId(String url) => VideoId.parseVideoId(url);
+
 String formatDuration(int audioDurationInSeconds) {
   final duration = Duration(seconds: audioDurationInSeconds);
 
