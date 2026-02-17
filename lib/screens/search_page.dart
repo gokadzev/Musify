@@ -187,7 +187,8 @@ class _SearchPageState extends State<SearchPage> {
               child:
                   (_suggestionsList.isNotEmpty ||
                       (_songsSearchResult.isEmpty &&
-                          _albumsSearchResult.isEmpty))
+                          _albumsSearchResult.isEmpty &&
+                          _playlistsSearchResult.isEmpty))
                   ? ValueListenableBuilder<List>(
                       valueListenable: searchHistoryNotifier,
                       builder: (context, searchHistory, _) {
