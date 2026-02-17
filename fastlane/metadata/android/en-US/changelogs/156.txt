@@ -1,0 +1,7 @@
+Enhancements
+- Improved search suggestions
+- Added Most Played songs & built-in equalizer
+- Restored track link sharing
+- Recently played limit increased to 250
+- Miscellaneous UI and performance improvements
+- Full changelog: https://github.com/gokadzev/Musify/releases
