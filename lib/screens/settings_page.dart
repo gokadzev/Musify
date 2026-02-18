@@ -35,6 +35,7 @@ import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/flutter_bottom_sheet.dart';
 import 'package:musify/utilities/flutter_toast.dart';
+import 'package:musify/utilities/language_utils.dart';
 import 'package:musify/utilities/url_launcher.dart';
 import 'package:musify/utilities/utils.dart';
 import 'package:musify/widgets/bottom_sheet_bar.dart';
@@ -574,7 +575,7 @@ class SettingsPage extends StatelessWidget {
     Color activatedColor,
     Color inactivatedColor,
   ) {
-    final availableLanguages = appLanguages.keys.toList();
+    final availableLanguages = appLanguages.toList();
     final activeLanguageCode = Localizations.localeOf(context).languageCode;
     final activeScriptCode = Localizations.localeOf(context).scriptCode;
     final activeLanguageFullCode = activeScriptCode != null
@@ -590,7 +591,7 @@ class SettingsPage extends StatelessWidget {
         itemCount: availableLanguages.length,
         itemBuilder: (context, index) {
           final language = availableLanguages[index];
-          final newLocale = getLocaleFromLanguageCode(appLanguages[language]);
+          final newLocale = getLocaleFromLanguageCode(language);
           final newLocaleFullCode = newLocale.scriptCode != null
               ? '${newLocale.languageCode}-${newLocale.scriptCode}'
               : newLocale.languageCode;
@@ -601,9 +602,9 @@ class SettingsPage extends StatelessWidget {
           );
 
           return BottomSheetBar(
-            language,
+            getLanguageDisplayName(context, language),
             () {
-              addOrUpdateData('settings', 'language', newLocaleFullCode);
+              addOrUpdateData('settings', 'languageCode', newLocaleFullCode);
               Musify.updateAppState(context, newLocale: newLocale);
               showToast(context, context.l10n!.languageMsg);
               Navigator.pop(context);

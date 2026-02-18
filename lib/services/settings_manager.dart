@@ -24,7 +24,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:musify/screens/playlist_page.dart';
 import 'package:musify/screens/user_songs_page.dart';
-import 'package:musify/utilities/utils.dart';
+import 'package:musify/utilities/language_utils.dart';
 
 // Preferences
 
@@ -87,7 +87,7 @@ final equalizerEnabled = ValueNotifier<bool>(
 final equalizerBandGains = ValueNotifier<List<double>>(_readEqualizerGains());
 
 Locale languageSetting = getLocaleFromLanguageCode(
-  Hive.box('settings').get('language', defaultValue: 'English') as String,
+  Hive.box('settings').get('languageCode', defaultValue: 'en') as String,
 );
 
 final themeModeSetting =

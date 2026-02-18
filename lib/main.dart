@@ -43,6 +43,7 @@ import 'package:musify/services/settings_manager.dart';
 import 'package:musify/services/update_manager.dart';
 import 'package:musify/style/app_themes.dart';
 import 'package:musify/utilities/flutter_toast.dart';
+import 'package:musify/utilities/language_utils.dart';
 import 'package:musify/utilities/sharing_intent.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
@@ -55,41 +56,6 @@ final appLinks = AppLinks();
 
 bool isFdroidBuild = false;
 bool isUpdateChecked = false;
-
-const appLanguages = <String, String>{
-  'English': 'en',
-  'Chinese (Simplified)': 'zh',
-  'Chinese (Traditional)': 'zh-Hant',
-  'Estonian': 'et',
-  'French': 'fr',
-  'German': 'de',
-  'Greek': 'el',
-  'Hindi': 'hi',
-  'Hebrew': 'he',
-  'Hungarian': 'hu',
-  'Indonesian': 'id',
-  'Italian': 'it',
-  'Japanese': 'ja',
-  'Korean': 'ko',
-  'Russian': 'ru',
-  'Polish': 'pl',
-  'Portuguese': 'pt',
-  'Spanish': 'es',
-  'Swedish': 'sv',
-  'Tamil': 'ta',
-  'Turkish': 'tr',
-  'Ukrainian': 'uk',
-};
-
-final List<Locale> appSupportedLocales = appLanguages.values.map((
-  languageCode,
-) {
-  final parts = languageCode.split('-');
-  if (parts.length > 1) {
-    return Locale.fromSubtags(languageCode: parts[0], scriptCode: parts[1]);
-  }
-  return Locale(languageCode);
-}).toList();
 
 class Musify extends StatefulWidget {
   const Musify({super.key});
