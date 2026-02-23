@@ -20,7 +20,9 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/common_variables.dart';
+import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 BorderRadius getItemBorderRadius(int index, int totalLength) {
   if (totalLength == 1) {
@@ -75,4 +77,83 @@ final RegExp _youtubePlaylistIdRegExp = RegExp('[&?]list=([a-zA-Z0-9_-]+)');
 bool isSponsorshipAnnouncementUrl(String url) {
   final host = Uri.tryParse(url)?.host.toLowerCase();
   return host != null && (host == 'ko-fi.com' || host.endsWith('.ko-fi.com'));
+}
+
+/// Selects the best audio stream based on the configured quality.
+AudioStreamInfo selectAudioStreamForQuality(
+  List<AudioStreamInfo> availableSources,
+) {
+  final compatibleSources = _filterCompatibleSources(availableSources);
+  final selectionPool = compatibleSources.isNotEmpty
+      ? compatibleSources
+      : availableSources;
+
+  final qualitySetting = audioQualitySetting.value;
+
+  if (qualitySetting == 'low') {
+    return selectionPool.last;
+  } else if (qualitySetting == 'medium') {
+    return selectionPool[selectionPool.length ~/ 2];
+  }
+
+  return selectionPool.withHighestBitrate();
+}
+
+AudioOnlyStreamInfo selectAudioOnlyStreamForQuality(
+  List<AudioOnlyStreamInfo> availableSources,
+) {
+  final compatibleSources = _filterCompatibleAudioOnlySources(availableSources);
+  final selectionPool = compatibleSources.isNotEmpty
+      ? compatibleSources
+      : availableSources;
+
+  final qualitySetting = audioQualitySetting.value;
+
+  if (qualitySetting == 'low') {
+    return selectionPool.last;
+  } else if (qualitySetting == 'medium') {
+    return selectionPool[selectionPool.length ~/ 2];
+  }
+
+  return selectionPool.withHighestBitrate();
+}
+
+List<AudioOnlyStreamInfo> _filterCompatibleAudioOnlySources(
+  List<AudioOnlyStreamInfo> sources,
+) {
+  return sources.where((stream) {
+    final codec = stream.codec.toString().toLowerCase();
+
+    if (_isDolbyCodec(codec)) {
+      return false;
+    }
+
+    return _isPreferredCodec(codec);
+  }).toList();
+}
+
+List<AudioStreamInfo> _filterCompatibleSources(List<AudioStreamInfo> sources) {
+  return sources.where((stream) {
+    final codec = stream.codec.toString().toLowerCase();
+
+    if (_isDolbyCodec(codec)) {
+      return false;
+    }
+
+    return _isPreferredCodec(codec);
+  }).toList();
+}
+
+bool _isDolbyCodec(String codec) {
+  return codec.contains('ec-3') ||
+      codec.contains('ac-3') ||
+      codec.contains('eac3') ||
+      codec.contains('dolby');
+}
+
+bool _isPreferredCodec(String codec) {
+  return codec.contains('mp4a') ||
+      codec.contains('aac') ||
+      codec.contains('opus') ||
+      codec.contains('vorbis');
 }
