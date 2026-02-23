@@ -30,10 +30,12 @@ class AnnouncementBox extends StatelessWidget {
     required this.message,
     required this.url,
     this.onDismiss,
+    this.icon = FluentIcons.megaphone_24_filled,
   });
   final String message;
   final String url;
   final VoidCallback? onDismiss;
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +60,7 @@ class AnnouncementBox extends StatelessWidget {
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
-                    FluentIcons.megaphone_24_filled,
+                    icon,
                     color: colorScheme.onPrimaryContainer,
                     size: 24,
                   ),
