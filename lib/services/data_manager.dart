@@ -50,6 +50,20 @@ class _CacheEntry {
 const int _maxMemoryCacheSize = 500;
 const int _memoryCacheTrimSize = 100;
 
+void _setMemoryCacheEntry(String key, _CacheEntry entry) {
+  _memoryCache
+    ..remove(key)
+    ..[key] = entry;
+  _trimMemoryCacheIfNeeded();
+}
+
+void _touchMemoryCacheEntry(String key) {
+  final entry = _memoryCache.remove(key);
+  if (entry != null) {
+    _memoryCache[key] = entry;
+  }
+}
+
 void _trimMemoryCacheIfNeeded() {
   if (_memoryCache.length > _maxMemoryCacheSize) {
     final keysToRemove = _memoryCache.keys.take(_memoryCacheTrimSize).toList();
@@ -68,8 +82,7 @@ Future<void> addOrUpdateData(String category, String key, dynamic value) async {
 
     // Update memory cache too
     final cacheKey = '${category}_$key';
-    _memoryCache[cacheKey] = _CacheEntry(value, DateTime.now());
-    _trimMemoryCacheIfNeeded();
+    _setMemoryCacheEntry(cacheKey, _CacheEntry(value, DateTime.now()));
   }
 }
 
@@ -86,13 +99,14 @@ Future<dynamic> getData(
   final cacheKey = '${category}_$key';
   final memCacheEntry = _memoryCache[cacheKey];
   if (memCacheEntry != null && memCacheEntry.isValid(cachingDuration)) {
+    _touchMemoryCacheEntry(cacheKey);
     return memCacheEntry.data;
   }
   _trimMemoryCacheIfNeeded();
 
   final _box = await _openBox(category);
   if (category == 'cache') {
-    final cacheIsValid = await isCacheValid(_box, key, cachingDuration);
+    final cacheIsValid = isCacheValid(_box, key, cachingDuration);
     if (!cacheIsValid) {
       await deleteData(category, key);
       await deleteData(category, '${key}_date');
@@ -105,7 +119,7 @@ Future<dynamic> getData(
   // Store in memory cache for faster access next time
   if (data != null && category == 'cache') {
     final timestamp = await _box.get('${key}_date') ?? DateTime.now();
-    _memoryCache[cacheKey] = _CacheEntry(data, timestamp);
+    _setMemoryCacheEntry(cacheKey, _CacheEntry(data, timestamp));
   }
 
   return data;
@@ -167,7 +181,7 @@ Future<void> cleanupOldCacheEntries() async {
 }
 
 // Check if the cache is still valid based on the caching duration
-Future<bool> isCacheValid(Box box, String key, Duration cachingDuration) async {
+bool isCacheValid(Box box, String key, Duration cachingDuration) {
   final date = box.get('${key}_date');
   if (date == null) {
     return false;
