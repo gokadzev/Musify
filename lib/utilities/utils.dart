@@ -71,3 +71,8 @@ final RegExp _youtubePlaylistRegExp = RegExp(
 );
 
 final RegExp _youtubePlaylistIdRegExp = RegExp('[&?]list=([a-zA-Z0-9_-]+)');
+
+bool isSponsorshipAnnouncementUrl(String url) {
+  final host = Uri.tryParse(url)?.host.toLowerCase();
+  return host != null && (host == 'ko-fi.com' || host.endsWith('.ko-fi.com'));
+}
