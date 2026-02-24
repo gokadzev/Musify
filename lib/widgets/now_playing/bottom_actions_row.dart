@@ -64,9 +64,6 @@ class BottomActionsRow extends StatelessWidget {
       stream: audioHandler.queue,
       builder: (context, snapshot) {
         final queue = snapshot.data ?? [];
-        final mappedQueue = queue.isNotEmpty
-            ? queue.map(mediaItemToMap).toList()
-            : [];
 
         final actions = <Widget>[
           _buildActionButton(
@@ -104,7 +101,7 @@ class BottomActionsRow extends StatelessWidget {
               icon: FluentIcons.apps_list_24_filled,
               colorScheme: colorScheme,
               size: responsiveIconSize,
-              onPressed: () => _showQueue(context, mappedQueue),
+              onPressed: () => _showQueue(context, queue),
               tooltip: 'Queue',
             ),
           );
@@ -292,7 +289,7 @@ Future<void> _toggleOffline(
   }
 }
 
-void _showQueue(BuildContext context, List<dynamic> mappedQueue) {
+void _showQueue(BuildContext context, List<MediaItem> queue) {
   final colorScheme = Theme.of(context).colorScheme;
   final currentIndex = audioHandler.currentQueueIndex;
 
@@ -332,7 +329,7 @@ void _showQueue(BuildContext context, List<dynamic> mappedQueue) {
                       ),
                     ),
                     Text(
-                      '${mappedQueue.length} ${context.l10n!.songs}',
+                      '${queue.length} ${context.l10n!.songs}',
                       style: TextStyle(
                         color: colorScheme.onSurfaceVariant,
                         fontSize: 13,
@@ -364,13 +361,14 @@ void _showQueue(BuildContext context, List<dynamic> mappedQueue) {
           shrinkWrap: true,
           physics: const BouncingScrollPhysics(),
           padding: commonListViewBottomPadding,
-          itemCount: mappedQueue.length,
+          itemCount: queue.length,
           itemBuilder: (BuildContext context, int index) {
             final isCurrentSong = index == currentIndex;
-            final borderRadius = getItemBorderRadius(index, mappedQueue.length);
+            final borderRadius = getItemBorderRadius(index, queue.length);
+            final song = mediaItemToMap(queue[index]);
 
             return SongBar(
-              mappedQueue[index],
+              song,
               false,
               showQueueActions: false,
               onPlay: () {

@@ -40,9 +40,6 @@ class QueueListView extends StatelessWidget {
       stream: audioHandler.queue,
       builder: (context, snapshot) {
         final queue = snapshot.data ?? [];
-        final mappedQueue = queue.isNotEmpty
-            ? queue.map(mediaItemToMap).toList()
-            : [];
 
         return Column(
           children: [
@@ -75,9 +72,9 @@ class QueueListView extends StatelessWidget {
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        if (mappedQueue.isNotEmpty)
+                        if (queue.isNotEmpty)
                           Text(
-                            '${mappedQueue.length} ${context.l10n!.songs.toLowerCase()}',
+                            '${queue.length} ${context.l10n!.songs.toLowerCase()}',
                             style: textTheme.bodySmall?.copyWith(
                               color: colorScheme.onSurfaceVariant,
                             ),
@@ -85,7 +82,7 @@ class QueueListView extends StatelessWidget {
                       ],
                     ),
                   ),
-                  if (mappedQueue.isNotEmpty)
+                  if (queue.isNotEmpty)
                     FilledButton.tonalIcon(
                       onPressed: () {
                         audioHandler.clearQueue();
@@ -119,9 +116,9 @@ class QueueListView extends StatelessWidget {
 
             // Queue list
             Expanded(
-              child: mappedQueue.isEmpty
+              child: queue.isEmpty
                   ? _buildEmptyState(context, colorScheme, textTheme)
-                  : _buildQueueList(context, mappedQueue, colorScheme),
+                  : _buildQueueList(context, queue, colorScheme),
             ),
           ],
         );
@@ -168,18 +165,18 @@ class QueueListView extends StatelessWidget {
 
   Widget _buildQueueList(
     BuildContext context,
-    List<dynamic> mappedQueue,
+    List<MediaItem> queue,
     ColorScheme colorScheme,
   ) {
     final currentIndex = audioHandler.currentQueueIndex;
 
     return ListView.builder(
       padding: const EdgeInsets.only(top: 8, bottom: 16),
-      itemCount: mappedQueue.length,
+      itemCount: queue.length,
       itemBuilder: (context, index) {
-        final song = mappedQueue[index];
+        final song = mediaItemToMap(queue[index]);
         final isCurrentSong = index == currentIndex;
-        final borderRadius = getItemBorderRadius(index, mappedQueue.length);
+        final borderRadius = getItemBorderRadius(index, queue.length);
 
         return SongBar(
           song,
