@@ -258,7 +258,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
                 playlistSortSetting = type.name;
                 _sortPlaylist(type);
               });
-              _pagingController.refresh();
             },
           ),
         ],
@@ -633,17 +632,18 @@ class _PlaylistPageState extends State<PlaylistPage> {
       song,
       true,
       onRemove: isRemovable
-          ? () => {
+          ? () {
               if (removeSongFromPlaylist(
                 _playlist,
                 song,
                 removeOneAtIndex: index,
-              ))
-                {_updateSongsListOnRemove(index)},
+              )) {
+                _updateSongsListOnRemove(index);
+              }
             }
           : null,
-      onPlay: () => {
-        audioHandler.playPlaylistSong(playlist: _playlist, songIndex: index),
+      onPlay: () {
+        audioHandler.playPlaylistSong(playlist: _playlist, songIndex: index);
       },
       borderRadius: borderRadius,
       playlistId: playlistId,
