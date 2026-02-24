@@ -372,6 +372,7 @@ void _showQueue(BuildContext context, List<dynamic> mappedQueue) {
             return SongBar(
               mappedQueue[index],
               false,
+              showQueueActions: false,
               onPlay: () {
                 audioHandler.skipToSong(index);
                 Navigator.pop(context);

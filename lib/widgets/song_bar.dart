@@ -45,6 +45,7 @@ class SongBar extends StatefulWidget {
     this.onRemove,
     this.borderRadius = BorderRadius.zero,
     this.isFromLikedSongs = false,
+    this.showQueueActions = true,
     this.playlistId,
     this.onRenamed,
     super.key,
@@ -60,6 +61,7 @@ class SongBar extends StatefulWidget {
   final bool showMusicDuration;
   final BorderRadius borderRadius;
   final bool isFromLikedSongs;
+  final bool showQueueActions;
   final String? playlistId;
   final VoidCallback? onRenamed;
 
@@ -378,32 +380,37 @@ class _SongBarState extends State<SongBar> {
     final canRename = widget.isFromLikedSongs || widget.playlistId != null;
 
     return [
-      PopupMenuItem<String>(
-        value: 'play_next',
-        child: Row(
-          children: [
-            Icon(
-              FluentIcons.receipt_play_24_regular,
-              color: colorScheme.primary,
-            ),
-            const SizedBox(width: 8),
-            Text(playNextText, style: TextStyle(color: colorScheme.secondary)),
-          ],
+      if (widget.showQueueActions)
+        PopupMenuItem<String>(
+          value: 'play_next',
+          child: Row(
+            children: [
+              Icon(
+                FluentIcons.receipt_play_24_regular,
+                color: colorScheme.primary,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                playNextText,
+                style: TextStyle(color: colorScheme.secondary),
+              ),
+            ],
+          ),
         ),
-      ),
-      PopupMenuItem<String>(
-        value: 'add_to_queue',
-        child: Row(
-          children: [
-            Icon(FluentIcons.add_24_regular, color: colorScheme.primary),
-            const SizedBox(width: 8),
-            Text(
-              addToQueueText,
-              style: TextStyle(color: colorScheme.secondary),
-            ),
-          ],
+      if (widget.showQueueActions)
+        PopupMenuItem<String>(
+          value: 'add_to_queue',
+          child: Row(
+            children: [
+              Icon(FluentIcons.add_24_regular, color: colorScheme.primary),
+              const SizedBox(width: 8),
+              Text(
+                addToQueueText,
+                style: TextStyle(color: colorScheme.secondary),
+              ),
+            ],
+          ),
         ),
-      ),
       PopupMenuItem<String>(
         value: 'like',
         child: ValueListenableBuilder<bool>(

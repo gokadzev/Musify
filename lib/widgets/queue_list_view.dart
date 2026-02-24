@@ -184,6 +184,7 @@ class QueueListView extends StatelessWidget {
         return SongBar(
           song,
           false,
+          showQueueActions: false,
           onPlay: () {
             audioHandler.skipToSong(index);
           },
