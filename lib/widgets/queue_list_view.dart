@@ -187,6 +187,9 @@ class QueueListView extends StatelessWidget {
           onPlay: () {
             audioHandler.skipToSong(index);
           },
+          onRemove: () {
+            audioHandler.removeFromQueue(index);
+          },
           backgroundColor: isCurrentSong
               ? colorScheme.primaryContainer.withValues(alpha: 0.5)
               : colorScheme.surfaceContainerHigh,

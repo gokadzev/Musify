@@ -376,6 +376,10 @@ void _showQueue(BuildContext context, List<dynamic> mappedQueue) {
                 audioHandler.skipToSong(index);
                 Navigator.pop(context);
               },
+              onRemove: () {
+                audioHandler.removeFromQueue(index);
+                Navigator.pop(context);
+              },
               backgroundColor: isCurrentSong
                   ? colorScheme.primaryContainer.withValues(alpha: 0.3)
                   : colorScheme.surfaceContainerHigh,
