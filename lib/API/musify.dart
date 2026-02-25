@@ -412,12 +412,19 @@ void removeUserPlaylist(String playlistId) {
 }
 
 void removeUserCustomPlaylist(dynamic playlist) {
-  final updatedPlaylists = List.from(userCustomPlaylists.value)
-    ..remove(playlist);
-  userCustomPlaylists.value = updatedPlaylists;
-  unawaited(
-    addOrUpdateData('user', 'customPlaylists', userCustomPlaylists.value),
-  );
+  try {
+    final playlistId = playlist is Map ? playlist['ytid'] : playlist;
+    if (playlistId == null) return;
+
+    final updatedPlaylists = List.from(userCustomPlaylists.value)
+      ..removeWhere((p) => p['ytid'] == playlistId);
+    userCustomPlaylists.value = updatedPlaylists;
+    unawaited(
+      addOrUpdateData('user', 'customPlaylists', userCustomPlaylists.value),
+    );
+  } catch (e, stackTrace) {
+    logger.log('Error removing custom playlist', e, stackTrace);
+  }
 }
 
 // Playlist Folders Management Functions

@@ -301,18 +301,53 @@ void handleIncomingLink(Uri? uri) async {
         );
 
         if (playlist != null) {
-          userCustomPlaylists.value = [...userCustomPlaylists.value, playlist];
-          unawaited(
-            addOrUpdateData(
-              'user',
-              'customPlaylists',
-              userCustomPlaylists.value,
-            ),
-          );
-          showToast(
-            NavigationManager().context,
-            '${NavigationManager().context.l10n!.addedSuccess}!',
-          );
+          // Ensure the incoming playlist has a unique id so it can be removed later
+          if (playlist['ytid'] == null || playlist['ytid'].toString().isEmpty) {
+            playlist['ytid'] =
+                'customId-${DateTime.now().millisecondsSinceEpoch}';
+          }
+          // Check for duplicate by title and song ytids
+          final incomingYtids = (playlist['list'] as List<dynamic>)
+              .map((s) => s['ytid'].toString())
+              .toList();
+
+          final exists = userCustomPlaylists.value.any((p) {
+            if (p == null) return false;
+            if (p['title'] != playlist['title']) return false;
+            final existingList = (p['list'] as List<dynamic>?) ?? [];
+            final existingYtids = existingList
+                .map((s) => s['ytid']?.toString())
+                .where((e) => e != null)
+                .toList();
+            if (existingYtids.length != incomingYtids.length) return false;
+            for (var i = 0; i < incomingYtids.length; i++) {
+              if (existingYtids[i] != incomingYtids[i]) return false;
+            }
+            return true;
+          });
+
+          if (exists) {
+            showToast(
+              NavigationManager().context,
+              NavigationManager().context.l10n!.playlistAlreadyExists,
+            );
+          } else {
+            userCustomPlaylists.value = [
+              ...userCustomPlaylists.value,
+              playlist,
+            ];
+            unawaited(
+              addOrUpdateData(
+                'user',
+                'customPlaylists',
+                userCustomPlaylists.value,
+              ),
+            );
+            showToast(
+              NavigationManager().context,
+              '${NavigationManager().context.l10n!.addedSuccess}!',
+            );
+          }
         } else {
           showToast(
             NavigationManager().context,
