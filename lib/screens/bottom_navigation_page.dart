@@ -42,6 +42,9 @@ class BottomNavigationPage extends StatefulWidget {
 class _BottomNavigationPageState extends State<BottomNavigationPage> {
   bool? _previousOfflineMode;
 
+  /// Track the previously selected tab index to detect double-taps on the same tab.
+  int? _previousTabIndex;
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -190,8 +193,20 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
   void _onTabTapped(int index, List<_NavigationItem> items) {
     if (index < items.length) {
       final item = items[index];
+      final isReselect = _previousTabIndex == index;
+
+      // Close any open bottom sheet before switching tabs
       closeCurrentBottomSheet();
-      widget.child.goBranch(item.shellIndex); // initialLocation: true
+
+      // If user taps the same tab again, reset it to initial state.
+      // Otherwise, preserve the branch state.
+      if (isReselect) {
+        widget.child.goBranch(item.shellIndex, initialLocation: true);
+      } else {
+        widget.child.goBranch(item.shellIndex);
+      }
+
+      _previousTabIndex = index;
     }
   }
 
