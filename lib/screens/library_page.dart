@@ -55,8 +55,9 @@ class _LibraryPageState extends State<LibraryPage> {
           userCustomPlaylists.value.isNotEmpty;
       final hasOfflinePlaylists =
           offlinePlaylistService.offlinePlaylists.value.isNotEmpty;
+      final hasOfflineSongs = currentOfflineSongsLength.value > 0;
 
-      if (!hasUserContent && !hasOfflinePlaylists) {
+      if (!hasUserContent && !hasOfflinePlaylists && !hasOfflineSongs) {
         final colorScheme = Theme.of(context).colorScheme;
         return Scaffold(
           appBar: AppBar(title: Text(context.l10n!.library)),
@@ -80,7 +81,7 @@ class _LibraryPageState extends State<LibraryPage> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    context.l10n!.offlinePlaylists,
+                    context.l10n!.offlineMode,
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       color: colorScheme.onSurface,
                       fontWeight: FontWeight.w600,
@@ -174,16 +175,6 @@ class _LibraryPageState extends State<LibraryPage> {
             cubeIcon: FluentIcons.heart_24_filled,
             showBuildActions: false,
           ),
-          PlaylistBar(
-            context.l10n!.offlineSongs,
-            onPressed: () =>
-                NavigationManager.router.go('/library/userSongs/offline'),
-            cubeIcon: FluentIcons.cellular_off_24_filled,
-            borderRadius: isUserPlaylistsEmpty
-                ? commonCustomBarRadiusLast
-                : BorderRadius.zero,
-            showBuildActions: false,
-          ),
           ValueListenableBuilder<List>(
             valueListenable: userPlaylistFolders,
             builder: (context, folders, _) {
@@ -206,6 +197,16 @@ class _LibraryPageState extends State<LibraryPage> {
             },
           ),
         ],
+        PlaylistBar(
+          context.l10n!.offlineSongs,
+          onPressed: () =>
+              NavigationManager.router.go('/library/userSongs/offline'),
+          cubeIcon: FluentIcons.cellular_off_24_filled,
+          borderRadius: isUserPlaylistsEmpty
+              ? commonCustomBarRadiusLast
+              : BorderRadius.zero,
+          showBuildActions: false,
+        ),
 
         _buildOfflinePlaylistsSection(),
 
