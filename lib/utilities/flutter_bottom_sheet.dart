@@ -21,11 +21,16 @@
 
 import 'package:flutter/material.dart';
 
-void showCustomBottomSheet(BuildContext context, Widget content) {
+PersistentBottomSheetController? _currentBottomSheetController;
+
+PersistentBottomSheetController? showCustomBottomSheet(
+  BuildContext context,
+  Widget content,
+) {
   final size = MediaQuery.sizeOf(context);
   final colorScheme = Theme.of(context).colorScheme;
 
-  showBottomSheet(
+  final controller = showBottomSheet(
     enableDrag: true,
     context: context,
     builder: (context) => Container(
@@ -65,4 +70,20 @@ void showCustomBottomSheet(BuildContext context, Widget content) {
       ),
     ),
   );
+
+  _currentBottomSheetController = controller;
+  controller.closed.whenComplete(() {
+    if (_currentBottomSheetController == controller) {
+      _currentBottomSheetController = null;
+    }
+  });
+
+  return controller;
+}
+
+void closeCurrentBottomSheet() {
+  try {
+    _currentBottomSheetController?.close();
+  } catch (_) {}
+  _currentBottomSheetController = null;
 }

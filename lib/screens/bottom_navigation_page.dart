@@ -26,6 +26,8 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/services/settings_manager.dart';
+import 'package:musify/utilities/flutter_bottom_sheet.dart'
+    show closeCurrentBottomSheet;
 import 'package:musify/widgets/mini_player.dart';
 
 class BottomNavigationPage extends StatefulWidget {
@@ -188,8 +190,8 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
   void _onTabTapped(int index, List<_NavigationItem> items) {
     if (index < items.length) {
       final item = items[index];
-      // Use the shell navigation index instead of the route
-      widget.child.goBranch(item.shellIndex);
+      closeCurrentBottomSheet();
+      widget.child.goBranch(item.shellIndex); // initialLocation: true
     }
   }
 
