@@ -201,7 +201,7 @@
   "translateDescription": "Help translate Musify into your language on Crowdin.",
   "understand": "Entiendo",
   "undo": "Deshacer",
-  "update": "Actualización",
+  "update": "Actualizacion",
   "useProxy": "Usar proxy",
   "useProxyDescription": "Use the proxy only when streaming fails, unnecessary use may break playback.",
   "userPlaylists": "Listas de reproducción del usuario",
