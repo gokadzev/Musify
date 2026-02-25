@@ -23,10 +23,9 @@ import 'dart:async';
 
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
-import 'package:musify/screens/playlist_folder_page.dart';
-import 'package:musify/screens/playlist_page.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/router_service.dart';
 import 'package:musify/utilities/artwork_provider.dart';
@@ -360,35 +359,13 @@ class PlaylistBar extends StatelessWidget {
   ) {
     if (isFolder && playlistData != null) {
       return () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => PlaylistFolderPage(
-              folderId: playlistData!['id'],
-              folderName: playlistTitle,
-            ),
-          ),
+        context.push(
+          '/home/folder/${playlistData!['id']}/${Uri.encodeComponent(playlistTitle)}',
         );
       };
     } else {
       return () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => PlaylistPage(
-              playlistId: playlistId,
-              playlistData: updatedPlaylist ?? playlistData,
-            ),
-          ),
-        ).then((isPlaylistUpdated) {
-          if (playlistId != null &&
-              isPlaylistUpdated != null &&
-              isPlaylistUpdated) {
-            getPlaylistInfoForWidget(
-              playlistId,
-            ).then((result) => {updatedPlaylist = result});
-          }
-        });
+        context.push('/home/playlist/$playlistId');
       };
     }
   }

@@ -21,10 +21,10 @@
 
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
-import 'package:musify/screens/playlist_page.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/async_loader.dart';
 import 'package:musify/utilities/common_variables.dart';
@@ -135,13 +135,7 @@ class _HomePageState extends State<HomePage> {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: GestureDetector(
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) =>
-                    PlaylistPage(playlistId: playlist['ytid']),
-              ),
-            ),
+            onTap: () => context.push('/home/playlist/${playlist['ytid']}'),
             child: PlaylistCube(playlist, size: height),
           ),
         );
@@ -157,13 +151,8 @@ class _HomePageState extends State<HomePage> {
     return CarouselView.weighted(
       flexWeights: const <int>[3, 2, 1],
       itemSnapping: true,
-      onTap: (index) => Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) =>
-              PlaylistPage(playlistId: playlists[index]['ytid']),
-        ),
-      ),
+      onTap: (index) =>
+          context.push('/home/playlist/${playlists[index]['ytid']}'),
       children: List.generate(itemCount, (index) {
         return PlaylistCube(playlists[index], size: height * 2);
       }),

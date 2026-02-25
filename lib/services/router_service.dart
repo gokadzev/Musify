@@ -25,8 +25,11 @@ import 'package:go_router/go_router.dart';
 import 'package:musify/API/version.dart';
 import 'package:musify/screens/about_page.dart';
 import 'package:musify/screens/bottom_navigation_page.dart';
+import 'package:musify/screens/equalizer_page.dart';
 import 'package:musify/screens/home_page.dart';
 import 'package:musify/screens/library_page.dart';
+import 'package:musify/screens/playlist_folder_page.dart';
+import 'package:musify/screens/playlist_page.dart';
 import 'package:musify/screens/search_page.dart';
 import 'package:musify/screens/settings_page.dart';
 import 'package:musify/screens/user_songs_page.dart';
@@ -148,6 +151,19 @@ class NavigationManager {
                 path: 'library',
                 builder: (context, state) => const LibraryPage(),
               ),
+              GoRoute(
+                path: 'playlist/:playlistId',
+                builder: (context, state) => PlaylistPage(
+                  playlistId: state.pathParameters['playlistId'],
+                ),
+              ),
+              GoRoute(
+                path: 'folder/:folderId/:folderName',
+                builder: (context, state) => PlaylistFolderPage(
+                  folderId: state.pathParameters['folderId'] ?? '',
+                  folderName: state.pathParameters['folderName'] ?? '',
+                ),
+              ),
             ],
           ),
         ],
@@ -214,6 +230,10 @@ class NavigationManager {
               GoRoute(
                 path: 'about',
                 builder: (context, state) => const AboutPage(),
+              ),
+              GoRoute(
+                path: 'equalizer',
+                builder: (context, state) => const EqualizerPage(),
               ),
             ],
           ),

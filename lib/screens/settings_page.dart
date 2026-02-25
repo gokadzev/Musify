@@ -21,10 +21,10 @@
 
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
-import 'package:musify/screens/equalizer_page.dart';
 import 'package:musify/screens/search_page.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/router_service.dart';
@@ -121,9 +121,7 @@ class SettingsPage extends StatelessWidget {
         CustomBar(
           context.l10n!.equalizer,
           Icons.equalizer,
-          onTap: () => Navigator.of(
-            context,
-          ).push(MaterialPageRoute(builder: (_) => const EqualizerPage())),
+          onTap: () => context.push('/settings/equalizer'),
         ),
         CustomBar(
           context.l10n!.dynamicColor,
