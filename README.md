@@ -99,7 +99,7 @@ Contributions are always welcome. Please read our [contributing guidelines](http
 
 ## F.A.Q
 
-You can see frequently asked questions and their answers [here](https://github.com/gokadzev/Musify/discussions/340).
+You can see frequently asked questions and their answers [here](https://github.com/gokadzev/Musify/discussions/728).
 
 ---
 
