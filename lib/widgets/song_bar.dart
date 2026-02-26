@@ -202,13 +202,19 @@ class _SongBarState extends State<SongBar> {
   }
 
   Widget _buildActionButtons(BuildContext context, ColorScheme colorScheme) {
-    return PopupMenuButton<String>(
-      icon: Icon(
-        FluentIcons.more_horizontal_24_filled,
-        color: colorScheme.onSurfaceVariant,
+    return SizedBox(
+      width: 48,
+      height: 48,
+      child: Center(
+        child: PopupMenuButton<String>(
+          icon: Icon(
+            FluentIcons.more_horizontal_24_filled,
+            color: colorScheme.onSurfaceVariant,
+          ),
+          onSelected: (value) => _handleMenuAction(context, value),
+          itemBuilder: (context) => _buildMenuItems(context, colorScheme),
+        ),
       ),
-      onSelected: (value) => _handleMenuAction(context, value),
-      itemBuilder: (context) => _buildMenuItems(context, colorScheme),
     );
   }
 
@@ -570,21 +576,31 @@ class _OfflineArtwork extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
         child: Stack(
-          alignment: Alignment.center,
           children: [
             Image.file(
               File(artworkPath),
               width: size,
               height: size,
               fit: BoxFit.cover,
-              color: colorScheme.primaryContainer,
-              colorBlendMode: BlendMode.multiply,
-              opacity: const AlwaysStoppedAnimation(0.45),
+              errorBuilder: (_, __, ___) =>
+                  const NullArtworkWidget(iconSize: 30),
             ),
-            Icon(
-              FluentIcons.cellular_off_24_filled,
-              size: 20,
-              color: colorScheme.primary,
+            Positioned(
+              top: 4,
+              right: 2,
+              child: Container(
+                width: 20,
+                height: 20,
+                decoration: BoxDecoration(
+                  color: colorScheme.secondaryContainer,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  FluentIcons.cellular_off_24_filled,
+                  size: 12,
+                  color: colorScheme.onSecondaryContainer,
+                ),
+              ),
             ),
           ],
         ),
@@ -613,8 +629,6 @@ class _OnlineArtwork extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isImageSmall = lowResImageUrl.contains('default.jpg');
-    final shouldOverlayBeShown =
-        (isDurationAvailable && !isOffline) || isOffline;
 
     return SizedBox(
       width: size,
@@ -633,18 +647,8 @@ class _OnlineArtwork extends StatelessWidget {
             imageBuilder: (context, imageProvider) => ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: Stack(
-                alignment: Alignment.center,
                 children: [
                   Image(
-                    color: shouldOverlayBeShown
-                        ? colorScheme.primaryContainer
-                        : null,
-                    colorBlendMode: shouldOverlayBeShown
-                        ? BlendMode.multiply
-                        : null,
-                    opacity: shouldOverlayBeShown
-                        ? const AlwaysStoppedAnimation(0.45)
-                        : null,
                     image: imageProvider,
                     fit: isImageSmall ? BoxFit.fill : BoxFit.cover,
                     width: size,
@@ -654,10 +658,22 @@ class _OnlineArtwork extends StatelessWidget {
                         : null,
                   ),
                   if (isOffline)
-                    Icon(
-                      FluentIcons.cellular_off_24_filled,
-                      size: 20,
-                      color: colorScheme.primary,
+                    Positioned(
+                      top: 2,
+                      right: 4,
+                      child: Container(
+                        width: 20,
+                        height: 20,
+                        decoration: BoxDecoration(
+                          color: colorScheme.secondaryContainer,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Icon(
+                          FluentIcons.cellular_off_24_filled,
+                          size: 12,
+                          color: colorScheme.onSecondaryContainer,
+                        ),
+                      ),
                     ),
                 ],
               ),
@@ -666,12 +682,25 @@ class _OnlineArtwork extends StatelessWidget {
                 const NullArtworkWidget(iconSize: 30),
           ),
           if (isDurationAvailable && !isOffline)
-            Text(
-              '(${formatDuration(duration)})',
-              style: TextStyle(
-                color: colorScheme.primary,
-                fontWeight: FontWeight.bold,
-                fontSize: 12,
+            Positioned(
+              bottom: 4,
+              right: 4,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: colorScheme.surfaceContainerHighest.withValues(
+                    alpha: 0.85,
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  formatDuration(duration),
+                  style: TextStyle(
+                    color: colorScheme.onSurfaceVariant,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 11,
+                  ),
+                ),
               ),
             ),
         ],
