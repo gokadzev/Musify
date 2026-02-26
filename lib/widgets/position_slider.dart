@@ -39,52 +39,49 @@ class _PositionSliderState extends State<PositionSlider> {
   Widget build(BuildContext context) {
     final primaryColor = Theme.of(context).colorScheme.primary;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: StreamBuilder<PositionData>(
-        stream: audioHandler.positionDataStream,
-        builder: (context, snapshot) {
-          final hasData = snapshot.hasData && snapshot.data != null;
-          final positionData = hasData
-              ? snapshot.data!
-              : PositionData(Duration.zero, Duration.zero, Duration.zero);
+    return StreamBuilder<PositionData>(
+      stream: audioHandler.positionDataStream,
+      builder: (context, snapshot) {
+        final hasData = snapshot.hasData && snapshot.data != null;
+        final positionData = hasData
+            ? snapshot.data!
+            : PositionData(Duration.zero, Duration.zero, Duration.zero);
 
-          final maxDuration = positionData.duration.inSeconds > 0
-              ? positionData.duration.inSeconds.toDouble()
-              : 1.0;
+        final maxDuration = positionData.duration.inSeconds > 0
+            ? positionData.duration.inSeconds.toDouble()
+            : 1.0;
 
-          final currentValue = _isDragging
-              ? _dragValue
-              : positionData.position.inSeconds.toDouble();
+        final currentValue = _isDragging
+            ? _dragValue
+            : positionData.position.inSeconds.toDouble();
 
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Slider(
-                value: currentValue.clamp(0.0, maxDuration),
-                onChanged: hasData
-                    ? (value) {
-                        setState(() {
-                          _isDragging = true;
-                          _dragValue = value;
-                        });
-                      }
-                    : null,
-                onChangeEnd: hasData
-                    ? (value) {
-                        audioHandler.seek(Duration(seconds: value.toInt()));
-                        setState(() {
-                          _isDragging = false;
-                        });
-                      }
-                    : null,
-                max: maxDuration,
-              ),
-              _buildPositionRow(context, primaryColor, positionData),
-            ],
-          );
-        },
-      ),
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Slider(
+              value: currentValue.clamp(0.0, maxDuration),
+              onChanged: hasData
+                  ? (value) {
+                      setState(() {
+                        _isDragging = true;
+                        _dragValue = value;
+                      });
+                    }
+                  : null,
+              onChangeEnd: hasData
+                  ? (value) {
+                      audioHandler.seek(Duration(seconds: value.toInt()));
+                      setState(() {
+                        _isDragging = false;
+                      });
+                    }
+                  : null,
+              max: maxDuration,
+            ),
+            _buildPositionRow(context, primaryColor, positionData),
+          ],
+        );
+      },
     );
   }
 
