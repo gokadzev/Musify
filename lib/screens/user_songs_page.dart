@@ -353,7 +353,6 @@ class _UserSongsPageState extends State<UserSongsPage> {
             key: isOfflineSongs ? ValueKey(_getCurrentOfflineSortType()) : null,
             delegate: SliverChildBuilderDelegate((context, index) {
               final song = songsList[index];
-              song['isOffline'] = title == context.l10n!.offlineSongs;
               final borderRadius = getItemBorderRadius(index, songsList.length);
 
               return RepaintBoundary(

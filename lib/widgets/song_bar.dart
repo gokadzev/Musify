@@ -40,7 +40,6 @@ class SongBar extends StatefulWidget {
     this.backgroundColor,
     this.showMusicDuration = false,
     this.onPlay,
-    this.isSongOffline,
     this.isRecentSong,
     this.onRemove,
     this.borderRadius = BorderRadius.zero,
@@ -56,7 +55,6 @@ class SongBar extends StatefulWidget {
   final Color? backgroundColor;
   final VoidCallback? onRemove;
   final VoidCallback? onPlay;
-  final bool? isSongOffline;
   final bool? isRecentSong;
   final bool showMusicDuration;
   final BorderRadius borderRadius;
@@ -96,9 +94,7 @@ class _SongBarState extends State<SongBar> {
 
     // Initialize ValueNotifiers only once
     _songLikeStatus = ValueNotifier(isSongAlreadyLiked(_ytid));
-    final isOffline =
-        widget.isSongOffline ??
-        (widget.song['isOffline'] ?? isSongAlreadyOffline(_ytid));
+    final isOffline = isSongAlreadyOffline(_ytid);
     _songOfflineStatus = ValueNotifier(isOffline);
   }
 

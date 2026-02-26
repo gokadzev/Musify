@@ -750,6 +750,18 @@ bool isPlaylistAlreadyLiked(playlistIdToCheck) =>
 bool isSongAlreadyOffline(songIdToCheck) =>
     userOfflineSongs.any((song) => song['ytid'] == songIdToCheck);
 
+Map<String, dynamic> getOfflineSongByYtid(String ytid) {
+  try {
+    final song = userOfflineSongs.firstWhere(
+      (s) => s['ytid'] == ytid,
+      orElse: () => <String, dynamic>{},
+    );
+    return Map<String, dynamic>.from(song);
+  } catch (_) {
+    return <String, dynamic>{};
+  }
+}
+
 Future<List> getPlaylists({
   String? query,
   int? playlistsNum,
@@ -1292,14 +1304,25 @@ Future<bool> makeSongOffline(dynamic song, {bool fromPlaylist = false}) async {
     }
 
     song['audioPath'] = audioFile.path;
-    song['isOffline'] = true;
     song['dateAdded'] = DateTime.now().millisecondsSinceEpoch;
-    if (!fromPlaylist) {
-      userOfflineSongs.add(song);
+
+    try {
+      final existingIndex = userOfflineSongs.indexWhere(
+        (s) => s['ytid'] == ytid,
+      );
+
+      if (existingIndex != -1) {
+        userOfflineSongs[existingIndex] = song;
+      } else {
+        userOfflineSongs.add(song);
+      }
+
       unawaited(
         addOrUpdateData('userNoBackup', 'offlineSongs', userOfflineSongs),
       );
       currentOfflineSongsLength.value = userOfflineSongs.length;
+    } catch (e, st) {
+      logger.log('Error updating global offline songs list', e, st);
     }
 
     return true;
@@ -1331,12 +1354,14 @@ Future<bool> removeSongFromOffline(
       logger.log('Error deleting artwork file', e, stackTrace);
     }
 
-    if (!fromPlaylist) {
+    try {
       userOfflineSongs.removeWhere((song) => song['ytid'] == songId);
       currentOfflineSongsLength.value = userOfflineSongs.length;
       unawaited(
         addOrUpdateData('userNoBackup', 'offlineSongs', userOfflineSongs),
       );
+    } catch (e, st) {
+      logger.log('Error updating offline songs registry after removal', e, st);
     }
 
     return true;

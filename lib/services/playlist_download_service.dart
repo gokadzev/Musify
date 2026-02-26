@@ -129,16 +129,12 @@ class OfflinePlaylistService {
             // Skip if already offline
             if (isSongAlreadyOffline(song['ytid'])) {
               // Find the existing offline song to get the correct audioPath
-              final offlineSong = userOfflineSongs.firstWhere(
-                (s) => s['ytid'] == song['ytid'],
-                orElse: () => null,
-              );
+              final offlineSong = getOfflineSongByYtid(song['ytid']);
 
-              if (offlineSong != null) {
+              if (offlineSong.isNotEmpty) {
                 // Update the song in the playlist with the correct offline properties
                 song['audioPath'] = offlineSong['audioPath'];
                 song['artworkPath'] = offlineSong['artworkPath'];
-                song['isOffline'] = true;
               }
               // Update progress
               progressNotifier.value.completed++;

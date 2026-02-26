@@ -998,7 +998,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
             final ytid = nextSong['ytid'];
 
             if (ytid != null &&
-                !(nextSong['isOffline'] ?? false) &&
+                !isSongAlreadyOffline(ytid) &&
                 !_preloadedYtIds.contains(ytid) &&
                 !_preloadingYtIds.contains(ytid)) {
               songsToPreload.add(nextSong);
@@ -1150,7 +1150,25 @@ class MusifyAudioHandler extends BaseAudioHandler {
       }
 
       _lastError = null;
-      var isOffline = song['isOffline'] ?? false;
+      var isOffline = false;
+      try {
+        final ytid = song['ytid'];
+        if (ytid != null && ytid.toString().isNotEmpty) {
+          final offlineSong = getOfflineSongByYtid(ytid.toString());
+          if (offlineSong.isNotEmpty &&
+              offlineSong['audioPath'] != null &&
+              offlineSong['audioPath'].toString().isNotEmpty) {
+            isOffline = true;
+            song['audioPath'] = offlineSong['audioPath'];
+            if (offlineSong['artworkPath'] != null) {
+              song['artworkPath'] = offlineSong['artworkPath'];
+            }
+            logger.log('Using offline copy for $ytid', null, null);
+          }
+        }
+      } catch (e, stackTrace) {
+        logger.log('Error while checking offline songs', e, stackTrace);
+      }
 
       if (audioPlayer.playing) await audioPlayer.pause();
 

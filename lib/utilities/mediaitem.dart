@@ -20,6 +20,7 @@
  */
 
 import 'package:audio_service/audio_service.dart';
+import 'package:musify/API/musify.dart';
 
 Map mediaItemToMap(MediaItem mediaItem) {
   final extras = mediaItem.extras;
@@ -35,24 +36,35 @@ Map mediaItemToMap(MediaItem mediaItem) {
   };
 }
 
-MediaItem mapToMediaItem(Map song) => MediaItem(
-  id: song['id'].toString(),
-  artist: song['artist'].toString().trim(),
-  title: song['title'].toString(),
-  artUri: song['isOffline'] ?? false
-      ? Uri.file(song['highResImage'].toString())
-      : Uri.parse(song['highResImage'].toString()),
-  duration: song['duration'] != null
-      ? Duration(seconds: song['duration'])
-      : null,
-  extras: {
-    'lowResImage': song['lowResImage'],
-    'ytid': song['ytid'],
-    'isLive': song['isLive'],
-    'isOffline': song['isOffline'],
-    'artWorkPath': song['highResImage'].toString(),
-  },
-);
+MediaItem mapToMediaItem(Map song) {
+  final ytid = song['ytid']?.toString();
+  final offlineSong = ytid != null
+      ? getOfflineSongByYtid(ytid)
+      : <String, dynamic>{};
+  final isOffline = offlineSong.isNotEmpty;
+
+  final artUri = isOffline && offlineSong['highResImage'] != null
+      ? Uri.file(offlineSong['highResImage'].toString())
+      : Uri.parse(song['highResImage'].toString());
+
+  return MediaItem(
+    id: song['id'].toString(),
+    artist: song['artist'].toString().trim(),
+    title: song['title'].toString(),
+    artUri: artUri,
+    duration: song['duration'] != null
+        ? Duration(seconds: song['duration'])
+        : null,
+    extras: {
+      'lowResImage': song['lowResImage'],
+      'ytid': song['ytid'],
+      'isLive': song['isLive'],
+      'artWorkPath':
+          (isOffline ? offlineSong['highResImage'] : song['highResImage'])
+              .toString(),
+    },
+  );
+}
 
 /// Compares two Duration objects with tolerance for minor differences.
 ///
