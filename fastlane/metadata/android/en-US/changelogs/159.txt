@@ -1,0 +1,7 @@
+Enhancements
+- Improved offline song management
+- Improved song bar UI
+- Fixed offline songs visibility issue
+- Updated translations
+- More UI and performance improvements
+- Full changelog: https://github.com/gokadzev/Musify/releases
