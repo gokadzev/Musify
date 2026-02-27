@@ -1271,6 +1271,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
     String songUrl,
     bool isOffline, {
     String? mediaId,
+    bool allowOnlineRetry = true,
   }) async {
     try {
       await audioPlayer
@@ -1311,6 +1312,38 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
       if (isOffline) {
         return _attemptOfflineFallback(song, mediaId: mediaId);
+      }
+
+      if (allowOnlineRetry) {
+        final songId = song['ytid']?.toString();
+        if (songId != null && songId.isNotEmpty) {
+          final cacheKey = 'song_${songId}_${audioQualitySetting.value}_url';
+          await deleteData('cache', cacheKey);
+
+          final refreshedUrl = await fetchSongStreamUrl(
+            songId,
+            song['isLive'] ?? false,
+          );
+
+          if (refreshedUrl != null && refreshedUrl.isNotEmpty) {
+            final refreshedSource = await buildAudioSource(
+              song,
+              refreshedUrl,
+              false,
+            );
+
+            if (refreshedSource != null) {
+              return _setAudioSourceAndPlay(
+                song,
+                refreshedSource,
+                refreshedUrl,
+                false,
+                mediaId: mediaId,
+                allowOnlineRetry: false,
+              );
+            }
+          }
+        }
       }
 
       _lastError = e.toString();
