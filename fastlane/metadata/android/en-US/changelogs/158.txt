@@ -1,7 +1,0 @@
-Enhancements
-- Enabled translation for language names
-- Fixed some streaming issues
-- Added remove from queue option
-- Added shuffle-play button for playlists
-- More UI and performance improvements
-- Full changelog: https://github.com/gokadzev/Musify/releases

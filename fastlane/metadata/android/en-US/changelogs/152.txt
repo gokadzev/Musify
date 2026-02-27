@@ -1,8 +1,0 @@
-Bug fixes
-- Fixed repeat/loop problems
-- Fixed SponsorBlock problems
-
-Enhancements
-- Added several new albums
-- Updated translations
-- Full changelog: https://github.com/gokadzev/Musify/releases
