@@ -1,0 +1,4 @@
+Bug fixes
+- Fixed streaming and caching issues
+- Fixed blank screen issue when reopening the app
+- Full changelog: https://github.com/gokadzev/Musify/releases
