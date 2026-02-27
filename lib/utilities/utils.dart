@@ -102,10 +102,13 @@ AudioStreamInfo selectAudioStreamForQuality(
 AudioOnlyStreamInfo selectAudioOnlyStreamForQuality(
   List<AudioOnlyStreamInfo> availableSources,
 ) {
-  final compatibleSources = _filterCompatibleAudioOnlySources(availableSources);
+  final sortedByCompatibility = _sortAudioOnlyByCompatibility(availableSources);
+  final compatibleSources = _filterCompatibleAudioOnlySources(
+    sortedByCompatibility,
+  );
   final selectionPool = compatibleSources.isNotEmpty
       ? compatibleSources
-      : availableSources;
+      : sortedByCompatibility;
 
   final qualitySetting = audioQualitySetting.value;
 
@@ -123,13 +126,46 @@ List<AudioOnlyStreamInfo> _filterCompatibleAudioOnlySources(
 ) {
   return sources.where((stream) {
     final codec = stream.codec.toString().toLowerCase();
+    final container = stream.container.name.toLowerCase();
 
     if (_isDolbyCodec(codec)) {
       return false;
     }
 
-    return _isPreferredCodec(codec);
+    return _isPreferredAudioOnlyCodec(codec, container);
   }).toList();
+}
+
+List<AudioOnlyStreamInfo> _sortAudioOnlyByCompatibility(
+  List<AudioOnlyStreamInfo> sources,
+) {
+  final sorted = List<AudioOnlyStreamInfo>.from(sources)
+    ..sort((a, b) {
+      final aScore = _audioOnlyCompatibilityScore(a);
+      final bScore = _audioOnlyCompatibilityScore(b);
+      return bScore.compareTo(aScore);
+    });
+  return sorted;
+}
+
+int _audioOnlyCompatibilityScore(AudioOnlyStreamInfo stream) {
+  final codec = stream.codec.toString().toLowerCase();
+  final container = stream.container.name.toLowerCase();
+
+  if (_isDolbyCodec(codec)) {
+    return 0;
+  }
+
+  if ((codec.contains('mp4a') || codec.contains('aac')) &&
+      (container == 'mp4' || container == 'm4a')) {
+    return 3;
+  }
+
+  if (codec.contains('opus') || codec.contains('vorbis')) {
+    return 2;
+  }
+
+  return 1;
 }
 
 List<AudioStreamInfo> _filterCompatibleSources(List<AudioStreamInfo> sources) {
@@ -156,4 +192,13 @@ bool _isPreferredCodec(String codec) {
       codec.contains('aac') ||
       codec.contains('opus') ||
       codec.contains('vorbis');
+}
+
+bool _isPreferredAudioOnlyCodec(String codec, String container) {
+  if ((codec.contains('mp4a') || codec.contains('aac')) &&
+      (container == 'mp4' || container == 'm4a')) {
+    return true;
+  }
+
+  return codec.contains('opus') || codec.contains('vorbis');
 }

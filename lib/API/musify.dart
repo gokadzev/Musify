@@ -1182,7 +1182,7 @@ Future<String?> fetchSongStreamUrl(String songId, bool isLive) async {
       return null;
     }
 
-    final selectedStream = selectAudioStreamForQuality(
+    final selectedStream = selectAudioOnlyStreamForQuality(
       audioStreams.sortByBitrate(),
     );
     final url = selectedStream.url.toString();
