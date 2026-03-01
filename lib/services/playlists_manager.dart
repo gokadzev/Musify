@@ -24,8 +24,8 @@ import 'dart:math';
 
 import 'package:flutter/widgets.dart';
 import 'package:hive/hive.dart';
-import 'package:musify/DB/albums.db.dart';
-import 'package:musify/DB/playlists.db.dart';
+import 'package:musify/database/albums.db.dart';
+import 'package:musify/database/playlists.db.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart' show logger;
 import 'package:musify/services/data_manager.dart';
