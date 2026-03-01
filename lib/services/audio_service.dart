@@ -240,12 +240,12 @@ class MusifyAudioHandler extends BaseAudioHandler {
   }
 
   void _updateCurrentMediaItemWithDuration(Duration duration) {
+    final capturedQueueIndex = _currentQueueIndex;
+    final capturedTransitionCounter = _songTransitionCounter;
+
     Future.microtask(() async {
       try {
         if (_currentQueueIndex >= _queueList.length) return;
-
-        final capturedQueueIndex = _currentQueueIndex;
-        final capturedTransitionCounter = _songTransitionCounter;
 
         // If state changed while waiting for microtask, abort
         if (capturedQueueIndex != _currentQueueIndex ||
@@ -558,6 +558,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
         }
       } else if (state == ProcessingState.ready) {
         _completionEventPending = false;
+        _completionHandlerLoadStarted = false;
       }
     } catch (e, stackTrace) {
       logger.log(
@@ -850,7 +851,14 @@ class MusifyAudioHandler extends BaseAudioHandler {
     try {
       if (index < 0 || index >= _queueList.length) return;
 
+      final removedSong = _queueList[index];
       _queueList.removeAt(index);
+
+      if (shuffleNotifier.value && _originalQueueList.isNotEmpty) {
+        _originalQueueList.removeWhere(
+          (s) => s['ytid'] != null && s['ytid'] == removedSong['ytid'],
+        );
+      }
 
       if (index < _currentQueueIndex) {
         _currentQueueIndex--;
@@ -1748,19 +1756,23 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   void changeSponsorBlockStatus() {
     sponsorBlockSupport.value = !sponsorBlockSupport.value;
-    addOrUpdateData(
-      'settings',
-      'sponsorBlockSupport',
-      sponsorBlockSupport.value,
+    unawaited(
+      addOrUpdateData(
+        'settings',
+        'sponsorBlockSupport',
+        sponsorBlockSupport.value,
+      ),
     );
   }
 
   void changeAutoPlayNextStatus() {
     playNextSongAutomatically.value = !playNextSongAutomatically.value;
-    addOrUpdateData(
-      'settings',
-      'playNextSongAutomatically',
-      playNextSongAutomatically.value,
+    unawaited(
+      addOrUpdateData(
+        'settings',
+        'playNextSongAutomatically',
+        playNextSongAutomatically.value,
+      ),
     );
   }
 
