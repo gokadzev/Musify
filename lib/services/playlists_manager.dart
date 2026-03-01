@@ -693,10 +693,6 @@ bool isCustomPlaylist(Map playlist) {
       (playlistId != null && playlistId.startsWith('customId-'));
 }
 
-String getPlaylistId(Map playlist) {
-  return playlist['ytid']?.toString() ?? '';
-}
-
 int findPlaylistIndexByYtId(String ytid) {
   for (var i = 0; i < playlists.length; i++) {
     if (playlists[i]['ytid'] == ytid) {
