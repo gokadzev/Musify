@@ -712,117 +712,123 @@ Future<Map?> getPlaylistInfoForWidget(
   dynamic id, {
   bool isArtist = false,
 }) async {
-  if (isArtist) {
-    try {
-      final List<Video> searchResults = await ytClient.search.search(id);
-      final songsList = searchResults
-          .map((video) => returnSongLayout(0, video))
-          .toList();
-      return {'title': id, 'list': songsList};
-    } catch (e, stackTrace) {
-      logger.log(
-        'Error fetching artist songs for $id',
-        error: e,
-        stackTrace: stackTrace,
-      );
-      return {'title': id, 'list': []};
-    }
+  if (id == null) return null;
+  if (isArtist) return _fetchArtistPlaylist(id.toString());
+  if (id.toString().startsWith('customId-')) {
+    return _findCustomPlaylist(id.toString());
   }
+  return _fetchYouTubePlaylist(id.toString());
+}
 
-  Map? playlist;
-
+Future<Map> _fetchArtistPlaylist(String artistName) async {
   try {
-    if (id != null && id.toString().startsWith('customId-')) {
-      playlist = userCustomPlaylists.value.firstWhere(
-        (p) => p['ytid'] == id,
-        orElse: () => null,
-      );
-
-      // Also search inside playlist folders — playlists moved to a folder are
-      // removed from userCustomPlaylists.value, so they must be found here.
-      if (playlist == null) {
-        for (final folder in userPlaylistFolders.value) {
-          final folderPlaylists = folder['playlists'] as List<dynamic>? ?? [];
-          final found = folderPlaylists.firstWhere(
-            (p) => p['ytid']?.toString() == id.toString(),
-            orElse: () => null,
-          );
-          if (found != null) {
-            playlist = found as Map;
-            break;
-          }
-        }
-      }
-
-      // Custom playlists are never on YouTube — never call the YouTube API
-      // for them. Return what we have (or null if genuinely not found).
-      return playlist;
-    }
-
-    playlist = playlists.firstWhere((p) => p['ytid'] == id, orElse: () => null);
-
-    if (playlist == null) {
-      final userPl = await getUserPlaylists();
-      playlist = userPl.firstWhere((p) => p['ytid'] == id, orElse: () => null);
-    }
-
-    playlist ??= onlinePlaylists.firstWhere(
-      (p) => p['ytid'] == id,
-      orElse: () => null,
-    );
-
-    if (playlist == null) {
-      try {
-        final ytPlaylist = await ytClient.playlists.get(id);
-        playlist = {
-          'ytid': ytPlaylist.id.toString(),
-          'title': ytPlaylist.title,
-          'image': null,
-          'source': 'user-youtube',
-          'list': [],
-        };
-        onlinePlaylists.add(playlist);
-      } catch (e, stackTrace) {
-        logger.log(
-          'Failed to fetch playlist info for id $id',
-          error: e,
-          stackTrace: stackTrace,
-        );
-        return null;
-      }
-    }
-
-    if (playlist['list'] == null ||
-        (playlist['list'] is List && (playlist['list'] as List).isEmpty)) {
-      try {
-        final playlistImage = playlist['isAlbum'] == true
-            ? playlist['image']
-            : null;
-        playlist['list'] = await getSongsFromPlaylist(
-          playlist['ytid'],
-          playlistImage: playlistImage,
-        );
-        if (!playlists.contains(playlist)) {
-          playlists.add(playlist);
-        }
-      } catch (e, stackTrace) {
-        logger.log(
-          'Error fetching songs for playlist ${playlist['ytid']}',
-          error: e,
-          stackTrace: stackTrace,
-        );
-        playlist['list'] = [];
-      }
-    }
-
-    return playlist;
+    final searchResults = await ytClient.search.search(artistName);
+    return {
+      'title': artistName,
+      'list': searchResults.map((v) => returnSongLayout(0, v)).toList(),
+    };
   } catch (e, stackTrace) {
     logger.log(
-      'Unexpected error in getPlaylistInfoForWidget for id $id',
+      'Error fetching artist songs for $artistName',
       error: e,
       stackTrace: stackTrace,
     );
-    return null;
+    return {'title': artistName, 'list': []};
+  }
+}
+
+Map? _findCustomPlaylist(String id) {
+  final inRoot = userCustomPlaylists.value.firstWhere(
+    (p) => p['ytid']?.toString() == id,
+    orElse: () => null,
+  );
+  if (inRoot != null) return inRoot as Map;
+
+  for (final folder in userPlaylistFolders.value) {
+    final folderPlaylists = folder['playlists'] as List<dynamic>? ?? [];
+    final inFolder = folderPlaylists.firstWhere(
+      (p) => p['ytid']?.toString() == id,
+      orElse: () => null,
+    );
+    if (inFolder != null) return inFolder as Map;
+  }
+
+  return null;
+}
+
+Future<Map?> _fetchYouTubePlaylist(String id) async {
+  // 1. Local DB / in-memory caches (no network).
+  Map? playlist = playlists.firstWhere(
+    (p) => p['ytid']?.toString() == id,
+    orElse: () => null,
+  );
+
+  // 2. User-added YouTube playlists.
+  if (playlist == null) {
+    final userPl = await getUserPlaylists();
+    playlist = userPl.firstWhere(
+      (p) => p['ytid']?.toString() == id,
+      orElse: () => null,
+    );
+  }
+
+  // 3. Previously fetched online playlists.
+  playlist ??= onlinePlaylists.firstWhere(
+    (p) => p['ytid']?.toString() == id,
+    orElse: () => null,
+  );
+
+  // 4. Fetch from YouTube as a last resort.
+  if (playlist == null) {
+    try {
+      final ytPlaylist = await ytClient.playlists.get(id);
+      playlist = {
+        'ytid': ytPlaylist.id.toString(),
+        'title': ytPlaylist.title,
+        'image': null,
+        'source': 'user-youtube',
+        'list': [],
+      };
+      onlinePlaylists.add(playlist);
+    } catch (e, stackTrace) {
+      logger.log(
+        'Failed to fetch playlist info for id $id',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      return null;
+    }
+  }
+
+  // 5. Populate the song list if it is absent or empty.
+  final list = playlist['list'];
+  if (list == null || (list is List && list.isEmpty)) {
+    playlist['list'] = await _loadSongsForPlaylist(playlist);
+  }
+
+  return playlist;
+}
+
+Future<List> _loadSongsForPlaylist(Map playlist) async {
+  try {
+    final playlistImage = playlist['isAlbum'] == true
+        ? playlist['image'] as String?
+        : null;
+    final songs = await getSongsFromPlaylist(
+      playlist['ytid'],
+      playlistImage: playlistImage,
+    );
+    if (!playlists.contains(playlist)) {
+      playlists.add(playlist);
+    }
+    return songs;
+  } catch (e, stackTrace) {
+    logger.log(
+      'Error fetching songs for playlist ${playlist['ytid']}',
+      error: e,
+      stackTrace: stackTrace,
+    );
+    return [];
   }
 }
 
