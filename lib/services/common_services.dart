@@ -216,7 +216,7 @@ Future<List> _getRecommendationsFromMixedSources() async {
 
   if (userCustomPlaylists.value.isNotEmpty) {
     for (final userPlaylist in userCustomPlaylists.value) {
-      final _list = (userPlaylist['list'] as List)..shuffle();
+      final _list = List.from(userPlaylist['list'] as List)..shuffle();
       playlistSongs.addAll(_list.take(5));
     }
   }
@@ -523,8 +523,8 @@ Future<String?> getSongLyrics(String? artist, String title) async {
     lyrics.value = null;
     var _lyrics = await LyricsManager().fetchLyrics(artist, title);
     if (_lyrics != null) {
-      _lyrics = _lyrics.replaceAll(RegExp(r'\n{2}'), '\n');
       _lyrics = _lyrics.replaceAll(RegExp(r'\n{4}'), '\n\n');
+      _lyrics = _lyrics.replaceAll(RegExp(r'\n{2}'), '\n');
       lyrics.value = _lyrics;
     } else {
       return null;
@@ -738,13 +738,15 @@ Future<void> updateRecentlyPlayed(dynamic songId) async {
       return;
     }
 
-    if (userRecentlyPlayed.length >= recentlyPlayedSongsLimit) {
-      userRecentlyPlayed.removeLast();
-    }
-
     final existingIndex = userRecentlyPlayed.indexWhere(
       (song) => song['ytid'] == songId,
     );
+
+    if (existingIndex == -1 &&
+        userRecentlyPlayed.length >= recentlyPlayedSongsLimit) {
+      userRecentlyPlayed.removeLast();
+    }
+
     if (existingIndex != -1) {
       final song = userRecentlyPlayed.removeAt(existingIndex) as Map;
       song['listeningCount'] = (song['listeningCount'] ?? 0) + 1;
