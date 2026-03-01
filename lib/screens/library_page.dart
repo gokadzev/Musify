@@ -132,7 +132,8 @@ class _LibraryPageState extends State<LibraryPage> {
     final isUserPlaylistsEmpty =
         userPlaylistFolders.value.isEmpty &&
         userPlaylists.value.isEmpty &&
-        userCustomPlaylists.value.isEmpty;
+        userCustomPlaylists.value.isEmpty &&
+        offlinePlaylistService.offlinePlaylists.value.isEmpty;
     return Column(
       children: [
         if (!offlineMode.value) ...[
@@ -705,7 +706,7 @@ class _LibraryPageState extends State<LibraryPage> {
           FilledButton.icon(
             onPressed: () {
               if (folderName.trim().isNotEmpty) {
-                final result = createPlaylistFolder(folderName.trim());
+                final result = createPlaylistFolder(folderName.trim(), context);
                 showToast(context, result);
               } else {
                 showToast(context, context.l10n!.enterFolderName);
@@ -730,8 +731,8 @@ class _LibraryPageState extends State<LibraryPage> {
           Navigator.of(context).pop();
         },
         onSubmit: () {
+          final result = deletePlaylistFolder(folder['id'], context);
           Navigator.of(context).pop();
-          final result = deletePlaylistFolder(folder['id']);
           showToast(context, result);
         },
       );
