@@ -737,9 +737,26 @@ Future<Map?> getPlaylistInfoForWidget(
         (p) => p['ytid'] == id,
         orElse: () => null,
       );
-      if (playlist != null) {
-        return playlist;
+
+      // Also search inside playlist folders — playlists moved to a folder are
+      // removed from userCustomPlaylists.value, so they must be found here.
+      if (playlist == null) {
+        for (final folder in userPlaylistFolders.value) {
+          final folderPlaylists = folder['playlists'] as List<dynamic>? ?? [];
+          final found = folderPlaylists.firstWhere(
+            (p) => p['ytid']?.toString() == id.toString(),
+            orElse: () => null,
+          );
+          if (found != null) {
+            playlist = found as Map;
+            break;
+          }
+        }
       }
+
+      // Custom playlists are never on YouTube — never call the YouTube API
+      // for them. Return what we have (or null if genuinely not found).
+      return playlist;
     }
 
     playlist = playlists.firstWhere((p) => p['ytid'] == id, orElse: () => null);
