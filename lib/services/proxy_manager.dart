@@ -66,6 +66,7 @@ class ProxyManager {
           } catch (_) {}
           _sharedYt = _defaultYt;
         }
+        _sharedProxyAddress = null;
         _closeAllProxyResources();
       }
     });
@@ -343,7 +344,9 @@ class ProxyManager {
         .toSet();
 
     final staleKeys = _proxyResources.keys
-        .where((key) => !activeAddresses.contains(key))
+        .where(
+          (key) => key != _sharedProxyAddress && !activeAddresses.contains(key),
+        )
         .toList();
 
     for (final key in staleKeys) {
@@ -405,6 +408,7 @@ class ProxyManager {
       }
     }
     _proxyResources.clear();
+    _sharedProxyAddress = null;
   }
 
   /// Try to create a [YoutubeExplode] client that routes requests through a
