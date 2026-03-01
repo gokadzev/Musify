@@ -104,6 +104,8 @@ class ProxyManager {
 
   final Map<String, _ProxyResources> _proxyResources = {};
 
+  String? _sharedProxyAddress;
+
   Future<void> _fetchProxies() async {
     if (!useProxy.value) return;
     try {
@@ -159,6 +161,7 @@ class ProxyManager {
             } catch (_) {}
           }
           _sharedYt = ytClient;
+          _sharedProxyAddress = proxy.address;
           _workingProxies.add(proxy);
           break;
         } catch (e, stackTrace) {
@@ -248,7 +251,7 @@ class ProxyManager {
   Future<ProxyInfo?> _getRandomProxy({String? preferredCountry}) async {
     if (!useProxy.value) return null;
     try {
-      if (!_hasFetched) await _fetchingProxiesFuture;
+      if (!_hasFetched) await (_fetchingProxiesFuture ?? _fetchProxies());
       if (_hasFetched && _proxiesByCountry.isEmpty) await _fetchProxies();
       if (_proxiesByCountry.isEmpty) return null;
       ProxyInfo proxy;
@@ -308,16 +311,22 @@ class ProxyManager {
     res = _ProxyResources(httpClient, ioClient);
 
     if (_proxyResources.length >= _maxProxyResourcePoolSize) {
-      final oldestKey = _proxyResources.keys.first;
-      final oldest = _proxyResources.remove(oldestKey);
-      try {
-        oldest?.close();
-      } catch (e, stackTrace) {
-        logger.log(
-          'ProxyManager: Error closing proxy resources',
-          error: e,
-          stackTrace: stackTrace,
-        );
+      // Skip the entry that backs _sharedYt to avoid closing its IOClient.
+      final oldestKey = _proxyResources.keys.firstWhere(
+        (k) => k != _sharedProxyAddress,
+        orElse: () => '',
+      );
+      if (oldestKey.isNotEmpty) {
+        final oldest = _proxyResources.remove(oldestKey);
+        try {
+          oldest?.close();
+        } catch (e, stackTrace) {
+          logger.log(
+            'ProxyManager: Error closing proxy resources',
+            error: e,
+            stackTrace: stackTrace,
+          );
+        }
       }
     }
 
@@ -372,7 +381,10 @@ class ProxyManager {
   Future<StreamManifest?> _tryProxies(String songId) async {
     if (!useProxy.value) return null;
     StreamManifest? manifest;
+    var attempts = 0;
+    const maxAttempts = 5;
     do {
+      if (attempts++ >= maxAttempts) break;
       final proxy = await _getRandomProxy();
       if (proxy == null) break;
       manifest = await _validateProxy(proxy, songId, 5);
