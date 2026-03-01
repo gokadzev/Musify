@@ -63,7 +63,11 @@ class AsyncLoader<T> extends StatelessWidget {
         }
 
         if (snapshot.hasError) {
-          logger.log('AsyncLoader error', error: snapshot.error, stackTrace: snapshot.stackTrace);
+          logger.log(
+            'AsyncLoader error',
+            error: snapshot.error,
+            stackTrace: snapshot.stackTrace,
+          );
           return errorBuilder!(context, snapshot.error, snapshot.stackTrace);
         }
 

@@ -22,7 +22,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:musify/API/version.dart';
+import 'package:musify/constants/version.dart';
 import 'package:musify/screens/about_page.dart';
 import 'package:musify/screens/bottom_navigation_page.dart';
 import 'package:musify/screens/equalizer_page.dart';

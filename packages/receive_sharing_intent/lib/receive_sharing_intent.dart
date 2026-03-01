@@ -4,12 +4,15 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 
 class ReceiveSharingIntent {
-  static const MethodChannel _mChannel =
-      MethodChannel('receive_sharing_intent/messages');
-  static const EventChannel _eChannelMedia =
-      EventChannel('receive_sharing_intent/events-media');
-  static const EventChannel _eChannelLink =
-      EventChannel('receive_sharing_intent/events-text');
+  static const MethodChannel _mChannel = MethodChannel(
+    'receive_sharing_intent/messages',
+  );
+  static const EventChannel _eChannelMedia = EventChannel(
+    'receive_sharing_intent/events-media',
+  );
+  static const EventChannel _eChannelLink = EventChannel(
+    'receive_sharing_intent/events-text',
+  );
 
   static Stream<List<SharedMediaFile>>? _streamMedia;
   static Stream<String>? _streamLink;
@@ -65,8 +68,9 @@ class ReceiveSharingIntent {
   /// not emit that initial one - query either the `getInitialMedia` instead.
   static Stream<List<SharedMediaFile>> getMediaStream() {
     if (_streamMedia == null) {
-      final stream =
-          _eChannelMedia.receiveBroadcastStream('media').cast<String?>();
+      final stream = _eChannelMedia
+          .receiveBroadcastStream('media')
+          .cast<String?>();
       _streamMedia = stream.transform<List<SharedMediaFile>>(
         StreamTransformer<String?, List<SharedMediaFile>>.fromHandlers(
           handleData: (String? data, EventSink<List<SharedMediaFile>> sink) {
@@ -75,11 +79,7 @@ class ReceiveSharingIntent {
             } else {
               final encoded = jsonDecode(data);
               sink.add(
-                encoded
-                    .map<SharedMediaFile>(
-                      SharedMediaFile.fromJson,
-                    )
-                    .toList(),
+                encoded.map<SharedMediaFile>(SharedMediaFile.fromJson).toList(),
               );
             }
           },
@@ -140,10 +140,10 @@ class SharedMediaFile {
   SharedMediaFile(this.path, this.thumbnail, this.duration, this.type);
 
   SharedMediaFile.fromJson(Map<String, dynamic> json)
-      : path = json['path'],
-        thumbnail = json['thumbnail'],
-        duration = json['duration'],
-        type = SharedMediaType.values[json['type']];
+    : path = json['path'],
+      thumbnail = json['thumbnail'],
+      duration = json['duration'],
+      type = SharedMediaType.values[json['type']];
 
   /// Image or Video path.
   /// NOTE. for iOS only the file is always copied
