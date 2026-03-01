@@ -613,3 +613,5 @@ class ProxyManager {
     }
   }
 }
+
+final ytClient = ProxyManager().getClientSync();
