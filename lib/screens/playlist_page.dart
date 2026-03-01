@@ -564,7 +564,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
     if (indexOfRemovedSong >= items.length) return;
 
     final dynamic songToRemove = items[indexOfRemovedSong];
-    final playlistTitle = _playlist['title'];
+    final playlistId = _playlist['ytid'];
     if (mounted) {
       showToastWithButton(
         context,
@@ -573,7 +573,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
         () {
           addSongInCustomPlaylist(
             context,
-            playlistTitle,
+            playlistId,
             songToRemove,
             indexToInsert: indexOfRemovedSong,
           );

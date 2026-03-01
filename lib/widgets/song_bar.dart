@@ -734,7 +734,7 @@ void showAddToPlaylistDialog(BuildContext context, dynamic song) {
                             context,
                             addSongInCustomPlaylist(
                               context,
-                              playlist['title'],
+                              playlist['ytid'],
                               song,
                             ),
                           );

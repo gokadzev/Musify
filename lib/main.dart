@@ -311,8 +311,7 @@ void handleIncomingLink(Uri? uri) async {
         if (playlist != null) {
           // Ensure the incoming playlist has a unique id so it can be removed later
           if (playlist['ytid'] == null || playlist['ytid'].toString().isEmpty) {
-            playlist['ytid'] =
-                'customId-${DateTime.now().millisecondsSinceEpoch}';
+            playlist['ytid'] = generateCustomPlaylistId();
           }
           // Check for duplicate by title and song ytids
           final incomingYtids = (playlist['list'] as List<dynamic>)

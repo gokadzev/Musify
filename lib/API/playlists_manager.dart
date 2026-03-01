@@ -20,6 +20,7 @@
  */
 
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/widgets.dart';
 import 'package:hive/hive.dart';
@@ -53,6 +54,12 @@ List onlinePlaylists = [];
 final currentLikedPlaylistsLength = ValueNotifier<int>(
   userLikedPlaylists.length,
 );
+
+String generateCustomPlaylistId() {
+  final timestamp = DateTime.now().microsecondsSinceEpoch;
+  final randomSuffix = Random().nextInt(0x7fffffff);
+  return 'customId-$timestamp-$randomSuffix';
+}
 
 Future<List<dynamic>> getUserPlaylists() async {
   final playlistsByUser = [];
@@ -121,7 +128,7 @@ String createCustomPlaylist(
 ) {
   final creationTime = DateTime.now().millisecondsSinceEpoch;
   final customPlaylist = {
-    'ytid': 'customId-$creationTime',
+    'ytid': generateCustomPlaylistId(),
     'title': playlistName,
     'source': 'user-created',
     if (image != null) 'image': image,
@@ -137,12 +144,12 @@ String createCustomPlaylist(
 
 String addSongInCustomPlaylist(
   BuildContext context,
-  String playlistName,
+  String playlistId,
   Map song, {
   int? indexToInsert,
 }) {
   final customPlaylist = userCustomPlaylists.value.firstWhere(
-    (playlist) => playlist['title'] == playlistName,
+    (playlist) => playlist['ytid'] == playlistId,
     orElse: () => null,
   );
 
@@ -153,15 +160,18 @@ String addSongInCustomPlaylist(
     )) {
       return context.l10n!.songAlreadyInPlaylist;
     }
-    indexToInsert != null
-        ? playlistSongs.insert(indexToInsert, song)
-        : playlistSongs.add(song);
+    if (indexToInsert != null) {
+      final safeIndex = indexToInsert.clamp(0, playlistSongs.length);
+      playlistSongs.insert(safeIndex, song);
+    } else {
+      playlistSongs.add(song);
+    }
     unawaited(
       addOrUpdateData('user', 'customPlaylists', userCustomPlaylists.value),
     );
     return context.l10n!.songAdded;
   } else {
-    logger.log('Custom playlist not found: $playlistName');
+    logger.log('Custom playlist not found for ytid: $playlistId');
     return context.l10n!.error;
   }
 }
