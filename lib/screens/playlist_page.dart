@@ -337,9 +337,11 @@ class _PlaylistPageState extends State<PlaylistPage> {
                 iconSize: 24,
                 onPressed: () {
                   playlistLikeStatus.value = !playlistLikeStatus.value;
-                  updatePlaylistLikeStatus(
-                    _playlist['ytid'],
-                    playlistLikeStatus.value,
+                  unawaited(
+                    updatePlaylistLikeStatus(
+                      _playlist['ytid'],
+                      playlistLikeStatus.value,
+                    ),
                   );
                   currentLikedPlaylistsLength.value =
                       currentLikedPlaylistsLength.value - 1;
@@ -350,9 +352,11 @@ class _PlaylistPageState extends State<PlaylistPage> {
                 iconSize: 24,
                 onPressed: () {
                   playlistLikeStatus.value = !playlistLikeStatus.value;
-                  updatePlaylistLikeStatus(
-                    _playlist['ytid'],
-                    playlistLikeStatus.value,
+                  unawaited(
+                    updatePlaylistLikeStatus(
+                      _playlist['ytid'],
+                      playlistLikeStatus.value,
+                    ),
                   );
                   currentLikedPlaylistsLength.value =
                       currentLikedPlaylistsLength.value + 1;
@@ -381,12 +385,16 @@ class _PlaylistPageState extends State<PlaylistPage> {
         );
 
         if (result != null) {
-          final index = userCustomPlaylists.value.indexWhere(
-            (p) => p['ytid'] == _playlist['ytid'],
+          final playlistYtid = _playlist['ytid'];
+
+          // Search root list first, then inside folders.
+          final rootIndex = userCustomPlaylists.value.indexWhere(
+            (p) => p['ytid'] == playlistYtid,
           );
-          if (index != -1) {
+
+          if (rootIndex != -1) {
             final updatedPlaylists = List<Map>.from(userCustomPlaylists.value);
-            updatedPlaylists[index] = result;
+            updatedPlaylists[rootIndex] = result;
             userCustomPlaylists.value = updatedPlaylists;
             unawaited(
               addOrUpdateData(
@@ -395,9 +403,34 @@ class _PlaylistPageState extends State<PlaylistPage> {
                 userCustomPlaylists.value,
               ),
             );
-            setState(() => _playlist = result);
-            showToast(context, context.l10n!.playlistUpdated);
+          } else {
+            // Playlist lives inside a folder - update it there.
+            final updatedFolders = List<Map>.from(userPlaylistFolders.value);
+            for (final folder in updatedFolders) {
+              final folderPlaylists = List<Map>.from(
+                folder['playlists'] as List? ?? [],
+              );
+              final fi = folderPlaylists.indexWhere(
+                (p) => p['ytid'] == playlistYtid,
+              );
+              if (fi != -1) {
+                folderPlaylists[fi] = result;
+                folder['playlists'] = folderPlaylists;
+                break;
+              }
+            }
+            userPlaylistFolders.value = updatedFolders;
+            unawaited(
+              addOrUpdateData(
+                'user',
+                'playlistFolders',
+                userPlaylistFolders.value,
+              ),
+            );
           }
+
+          setState(() => _playlist = result);
+          showToast(context, context.l10n!.playlistUpdated);
         }
       },
     );
@@ -548,9 +581,16 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
   void _handleSyncPlaylist() async {
     if (_playlist['ytid'] != null) {
-      _playlist = await updatePlaylistList(context, _playlist['ytid']);
-      if (_playlist != null && _playlist['list'] != null) {
-        _originalPlaylistList = List<dynamic>.from(_playlist['list'] as List);
+      final updated = await updatePlaylistList(context, _playlist['ytid']);
+      if (updated != null && mounted) {
+        setState(() {
+          _playlist = updated;
+          if (_playlist['list'] != null) {
+            _originalPlaylistList = List<dynamic>.from(
+              _playlist['list'] as List,
+            );
+          }
+        });
       }
       _pagingController.refresh();
     } else {
