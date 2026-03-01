@@ -316,21 +316,25 @@ class OfflinePlaylistService {
 
   Future<void> removeOfflinePlaylist(String playlistId) async {
     try {
-      if (playlistId.isEmpty) {
+      final normalizedPlaylistId = playlistId.trim();
+      if (normalizedPlaylistId.isEmpty) {
         logger.log('Invalid playlistId for removal');
         return;
       }
 
       // Find the playlist
-      final playlist = offlinePlaylists.value.firstWhere(
-        (playlist) => playlist['ytid'] == playlistId,
-        orElse: () => null,
+      final playlistIndex = offlinePlaylists.value.indexWhere(
+        (playlist) =>
+            playlist is Map &&
+            playlist['ytid']?.toString() == normalizedPlaylistId,
       );
 
-      if (playlist == null) {
-        logger.log('Playlist not found for removal: $playlistId');
+      if (playlistIndex == -1) {
+        logger.log('Playlist not found for removal: $normalizedPlaylistId');
         return;
       }
+
+      final playlist = offlinePlaylists.value[playlistIndex] as Map;
 
       // Get songs that are only in this playlist
       final songsInPlaylist = playlist['list'] as List<dynamic>? ?? [];
@@ -344,7 +348,10 @@ class OfflinePlaylistService {
 
           // Check if this song is used in other offline playlists
           final isUsedInOtherPlaylists = offlinePlaylists.value
-              .where((p) => p['ytid'] != playlistId) // Exclude current playlist
+              .where(
+                (p) =>
+                    p is Map && p['ytid']?.toString() != normalizedPlaylistId,
+              ) // Exclude current playlist
               .any((p) {
                 final playlistSongs = p['list'] as List<dynamic>? ?? [];
                 return playlistSongs.any((s) => s['ytid'] == songId);
@@ -376,7 +383,9 @@ class OfflinePlaylistService {
 
       // Remove playlist from offline playlists
       final updatedPlaylists = List<dynamic>.from(offlinePlaylists.value)
-        ..removeWhere((p) => p['ytid'] == playlistId);
+        ..removeWhere(
+          (p) => p is Map && p['ytid']?.toString() == normalizedPlaylistId,
+        );
       offlinePlaylists.value = updatedPlaylists;
       unawaited(
         addOrUpdateData(

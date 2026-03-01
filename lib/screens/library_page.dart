@@ -23,6 +23,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/API/musify.dart';
 import 'package:musify/extensions/l10n.dart';
+import 'package:musify/main.dart' show logger;
 import 'package:musify/services/playlist_download_service.dart';
 import 'package:musify/services/router_service.dart';
 import 'package:musify/services/settings_manager.dart';
@@ -637,12 +638,18 @@ class _LibraryPageState extends State<LibraryPage> {
         onSubmit: () {
           Navigator.of(context).pop();
 
-          if (playlist['ytid'] != null &&
-              playlist['ytid'].toString().startsWith('customId-') &&
-              playlist['source'] == 'user-created') {
-            removeUserCustomPlaylist(playlist);
+          final playlistId = playlist['ytid']?.toString() ?? '';
+          final source = playlist['source']?.toString();
+
+          if (playlistId.isEmpty) {
+            logger.log('Playlist ID is missing, cannot remove playlist.');
+            return;
+          }
+
+          if (source == 'user-created') {
+            removeUserCustomPlaylist(playlistId);
           } else {
-            removeUserPlaylist(playlist['ytid']);
+            removeUserPlaylist(playlistId);
           }
         },
       );

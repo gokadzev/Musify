@@ -426,22 +426,44 @@ bool removeSongFromPlaylist(
 }
 
 void removeUserPlaylist(String playlistId) {
-  final updatedPlaylists = List.from(userPlaylists.value)..remove(playlistId);
+  final normalizedId = playlistId.trim();
+  if (normalizedId.isEmpty) return;
+
+  final updatedPlaylists = List.from(userPlaylists.value)
+    ..removeWhere((id) => id?.toString() == normalizedId);
   userPlaylists.value = updatedPlaylists;
+
+  final foldersChanged = _removePlaylistFromFolders(normalizedId);
+
   unawaited(addOrUpdateData('user', 'playlists', userPlaylists.value));
+  if (foldersChanged) {
+    unawaited(
+      addOrUpdateData('user', 'playlistFolders', userPlaylistFolders.value),
+    );
+  }
 }
 
 void removeUserCustomPlaylist(dynamic playlist) {
   try {
-    final playlistId = playlist is Map ? playlist['ytid'] : playlist;
-    if (playlistId == null) return;
+    final playlistId = (playlist is Map ? playlist['ytid'] : playlist)
+        ?.toString()
+        .trim();
+    if (playlistId == null || playlistId.isEmpty) return;
 
     final updatedPlaylists = List.from(userCustomPlaylists.value)
-      ..removeWhere((p) => p['ytid'] == playlistId);
+      ..removeWhere((p) => p['ytid']?.toString() == playlistId);
     userCustomPlaylists.value = updatedPlaylists;
+
+    final foldersChanged = _removePlaylistFromFolders(playlistId);
+
     unawaited(
       addOrUpdateData('user', 'customPlaylists', userCustomPlaylists.value),
     );
+    if (foldersChanged) {
+      unawaited(
+        addOrUpdateData('user', 'playlistFolders', userPlaylistFolders.value),
+      );
+    }
   } catch (e, stackTrace) {
     logger.log(
       'Error removing custom playlist',
@@ -449,6 +471,30 @@ void removeUserCustomPlaylist(dynamic playlist) {
       stackTrace: stackTrace,
     );
   }
+}
+
+bool _removePlaylistFromFolders(String playlistId) {
+  var changed = false;
+  final updatedFolders = List<Map>.from(userPlaylistFolders.value);
+
+  for (final folder in updatedFolders) {
+    final folderPlaylists = List<Map>.from(folder['playlists'] ?? []);
+    final previousLength = folderPlaylists.length;
+    folderPlaylists.removeWhere(
+      (playlist) => playlist['ytid']?.toString() == playlistId,
+    );
+
+    if (folderPlaylists.length != previousLength) {
+      folder['playlists'] = folderPlaylists;
+      changed = true;
+    }
+  }
+
+  if (changed) {
+    userPlaylistFolders.value = updatedFolders;
+  }
+
+  return changed;
 }
 
 // Playlist Folders Management Functions
