@@ -30,7 +30,7 @@ import 'package:musify/API/clients.dart';
 import 'package:musify/DB/albums.db.dart';
 import 'package:musify/DB/playlists.db.dart';
 import 'package:musify/extensions/l10n.dart';
-import 'package:musify/main.dart';
+import 'package:musify/main.dart' show logger;
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/io_service.dart';
 import 'package:musify/services/lyrics_manager.dart';
