@@ -434,12 +434,43 @@ void removeUserPlaylist(String playlistId) {
   userPlaylists.value = updatedPlaylists;
 
   final foldersChanged = _removePlaylistFromFolders(normalizedId);
+  final likedChanged = _removePlaylistFromLikedPlaylists(normalizedId);
 
   unawaited(addOrUpdateData('user', 'playlists', userPlaylists.value));
   if (foldersChanged) {
     unawaited(
       addOrUpdateData('user', 'playlistFolders', userPlaylistFolders.value),
     );
+  }
+  if (likedChanged) {
+    currentLikedPlaylistsLength.value = userLikedPlaylists.length;
+    unawaited(addOrUpdateData('user', 'likedPlaylists', userLikedPlaylists));
+  }
+}
+
+void removeUserPlaylistEntry(Map playlist) {
+  final playlistId = playlist['ytid']?.toString().trim() ?? '';
+  if (playlistId.isEmpty) return;
+
+  final source = playlist['source']?.toString();
+  if (source == 'user-created' || playlistId.startsWith('customId-')) {
+    removeUserCustomPlaylist(playlistId);
+    return;
+  }
+
+  if (source == 'user-youtube') {
+    removeUserPlaylist(playlistId);
+    return;
+  }
+
+  final existsInCustom = userCustomPlaylists.value.any(
+    (p) => p['ytid']?.toString() == playlistId,
+  );
+
+  if (existsInCustom) {
+    removeUserCustomPlaylist(playlistId);
+  } else {
+    removeUserPlaylist(playlistId);
   }
 }
 
@@ -455,6 +486,7 @@ void removeUserCustomPlaylist(dynamic playlist) {
     userCustomPlaylists.value = updatedPlaylists;
 
     final foldersChanged = _removePlaylistFromFolders(playlistId);
+    final likedChanged = _removePlaylistFromLikedPlaylists(playlistId);
 
     unawaited(
       addOrUpdateData('user', 'customPlaylists', userCustomPlaylists.value),
@@ -463,6 +495,10 @@ void removeUserCustomPlaylist(dynamic playlist) {
       unawaited(
         addOrUpdateData('user', 'playlistFolders', userPlaylistFolders.value),
       );
+    }
+    if (likedChanged) {
+      currentLikedPlaylistsLength.value = userLikedPlaylists.length;
+      unawaited(addOrUpdateData('user', 'likedPlaylists', userLikedPlaylists));
     }
   } catch (e, stackTrace) {
     logger.log(
@@ -495,6 +531,14 @@ bool _removePlaylistFromFolders(String playlistId) {
   }
 
   return changed;
+}
+
+bool _removePlaylistFromLikedPlaylists(String playlistId) {
+  final previousLength = userLikedPlaylists.length;
+  userLikedPlaylists.removeWhere(
+    (playlist) => playlist['ytid']?.toString() == playlistId,
+  );
+  return userLikedPlaylists.length != previousLength;
 }
 
 // Playlist Folders Management Functions
@@ -1634,14 +1678,15 @@ List<Map> getMostPlayed({int limit = 20, bool deduplicate = true}) {
 
 // Helper function to check if a playlist is a custom playlist
 bool isCustomPlaylist(Map playlist) {
-  return playlist['source'] == 'user-created' &&
-      playlist['ytid'] != null &&
-      playlist['ytid'].toString().startsWith('customId-');
+  final source = playlist['source']?.toString();
+  final playlistId = playlist['ytid']?.toString();
+  return source == 'user-created' ||
+      (playlistId != null && playlistId.startsWith('customId-'));
 }
 
 // Helper function to get a unique identifier for playlists (custom or YouTube)
 String getPlaylistId(Map playlist) {
-  return playlist['ytid'] ?? '';
+  return playlist['ytid']?.toString() ?? '';
 }
 
 Future<List<dynamic>> getUserPlaylistsNotInFolders() async {
@@ -1665,22 +1710,25 @@ Future<List<dynamic>> getUserPlaylistsNotInFolders() async {
 
 // Helper function to check if a playlist exists anywhere (main lists or folders)
 bool playlistExistsAnywhere(String playlistId) {
+  final normalizedId = playlistId.trim();
+  if (normalizedId.isEmpty) return false;
+
   // Check in main YouTube playlists
-  if (userPlaylists.value.contains(playlistId)) {
+  if (userPlaylists.value.any((id) => id?.toString() == normalizedId)) {
     return true;
   }
 
   // Check in custom playlists
-  if (userCustomPlaylists.value.any((p) => p['ytid'] == playlistId)) {
+  if (userCustomPlaylists.value.any(
+    (p) => p['ytid']?.toString() == normalizedId,
+  )) {
     return true;
   }
 
   // Check in folders
   for (final folder in userPlaylistFolders.value) {
     final folderPlaylists = folder['playlists'] as List<dynamic>? ?? [];
-    if (folderPlaylists.any(
-      (p) => p['ytid'] != null && p['ytid'] == playlistId,
-    )) {
+    if (folderPlaylists.any((p) => p['ytid']?.toString() == normalizedId)) {
       return true;
     }
   }

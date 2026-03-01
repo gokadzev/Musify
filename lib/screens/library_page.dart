@@ -639,18 +639,13 @@ class _LibraryPageState extends State<LibraryPage> {
           Navigator.of(context).pop();
 
           final playlistId = playlist['ytid']?.toString() ?? '';
-          final source = playlist['source']?.toString();
 
           if (playlistId.isEmpty) {
             logger.log('Playlist ID is missing, cannot remove playlist.');
             return;
           }
 
-          if (source == 'user-created') {
-            removeUserCustomPlaylist(playlistId);
-          } else {
-            removeUserPlaylist(playlistId);
-          }
+          removeUserPlaylistEntry(playlist);
         },
       );
     },
