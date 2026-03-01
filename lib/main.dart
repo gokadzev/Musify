@@ -130,12 +130,16 @@ class _MusifyState extends State<Musify> {
           value,
           audioHandler: audioHandler,
           onError: (error, stackTrace) {
-            logger.log('Error while playing shared song:', error, stackTrace);
+            logger.log(
+              'Error while playing shared song:',
+              error: error,
+              stackTrace: stackTrace,
+            );
           },
         );
       },
       onError: (err) {
-        logger.log('getTextStream error:', err, null);
+        logger.log('getTextStream error:', error: err);
       },
     );
 
@@ -147,7 +151,11 @@ class _MusifyState extends State<Musify> {
         yield LicenseEntryWithLineBreaks(['paytoneOne'], license);
       });
     } catch (e, stackTrace) {
-      logger.log('License Registration Error', e, stackTrace);
+      logger.log(
+        'License Registration Error',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
 
     if (!isFdroidBuild) {
@@ -272,18 +280,18 @@ Future<void> initialisation() async {
       appLinks.uriLinkStream.listen(
         handleIncomingLink,
         onError: (err) {
-          logger.log('URI link error:', err, null);
+          logger.log('URI link error:', error: err);
         },
       );
     } on PlatformException {
-      logger.log('Failed to get initial uri', null, null);
+      logger.log('Failed to get initial uri');
     }
 
     if (isFdroidBuild && !offlineMode.value) {
       await fetchAnnouncementOnly();
     }
   } catch (e, stackTrace) {
-    logger.log('Initialization Error', e, stackTrace);
+    logger.log('Initialization Error', error: e, stackTrace: stackTrace);
   }
 
   applicationDirPath = (await getApplicationDocumentsDirectory()).path;

@@ -50,8 +50,6 @@ Future<void> checkAppUpdates() async {
     if (response.statusCode != 200) {
       logger.log(
         'Fetch update API (checkUrl) call returned status code ${response.statusCode}',
-        null,
-        null,
       );
       return;
     }
@@ -69,8 +67,6 @@ Future<void> checkAppUpdates() async {
     if (releasesRequest.statusCode != 200) {
       logger.log(
         'Fetch update API (releasesUrl) call returned status code ${response.statusCode}',
-        null,
-        null,
       );
       return;
     }
@@ -176,7 +172,7 @@ Future<void> checkAppUpdates() async {
       },
     );
   } catch (e, stackTrace) {
-    logger.log('Error in checkAppUpdates', e, stackTrace);
+    logger.log('Error in checkAppUpdates', error: e, stackTrace: stackTrace);
   }
 }
 
@@ -292,8 +288,6 @@ Future<void> fetchAnnouncementOnly() async {
     if (response.statusCode != 200) {
       logger.log(
         'Fetch announcement (checkUrl) call returned status code ${response.statusCode}',
-        null,
-        null,
       );
       return;
     }
@@ -304,6 +298,10 @@ Future<void> fetchAnnouncementOnly() async {
       announcementURL.value = ann.toString();
     }
   } catch (e, stackTrace) {
-    logger.log('Error in fetchAnnouncementOnly', e, stackTrace);
+    logger.log(
+      'Error in fetchAnnouncementOnly',
+      error: e,
+      stackTrace: stackTrace,
+    );
   }
 }

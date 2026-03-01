@@ -150,14 +150,22 @@ class MusifyAudioHandler extends BaseAudioHandler {
             _updatePlaybackState();
           },
           onError: (error, stackTrace) {
-            logger.log('Playback event stream error', error, stackTrace);
+            logger.log(
+              'Playback event stream error',
+              error: error,
+              stackTrace: stackTrace,
+            );
           },
         );
 
     audioPlayer.processingStateStream.distinct().listen(
       _handleProcessingStateChange,
       onError: (error, stackTrace) {
-        logger.log('Processing state stream error', error, stackTrace);
+        logger.log(
+          'Processing state stream error',
+          error: error,
+          stackTrace: stackTrace,
+        );
       },
     );
 
@@ -171,7 +179,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
             }
           },
           onError: (error, stackTrace) {
-            logger.log('Duration stream error', error, stackTrace);
+            logger.log(
+              'Duration stream error',
+              error: error,
+              stackTrace: stackTrace,
+            );
           },
         );
 
@@ -188,7 +200,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
             _debouncedStateUpdate();
           },
           onError: (error, stackTrace) {
-            logger.log('Player state stream error', error, stackTrace);
+            logger.log(
+              'Player state stream error',
+              error: error,
+              stackTrace: stackTrace,
+            );
           },
         );
 
@@ -201,7 +217,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
         .listen(
           (_) => _debouncedStateUpdate(),
           onError: (error, stackTrace) {
-            logger.log('Index/sequence stream error', error, stackTrace);
+            logger.log(
+              'Current index stream error',
+              error: error,
+              stackTrace: stackTrace,
+            );
           },
         );
   }
@@ -266,7 +286,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
           queue.add(newQueue);
         }
       } catch (e, stackTrace) {
-        logger.log('Error updating media item with duration', e, stackTrace);
+        logger.log(
+          'Error updating media item with duration',
+          error: e,
+          stackTrace: stackTrace,
+        );
       }
     });
   }
@@ -283,7 +307,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
       // Apply stored shuffle mode to audio player
       await audioPlayer.setShuffleModeEnabled(shuffleNotifier.value);
     } catch (e, stackTrace) {
-      logger.log('Error initializing audio session', e, stackTrace);
+      logger.log(
+        'Error initializing audio session',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
   }
 
@@ -338,7 +366,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
       _equalizerRetryNotBefore = DateTime.now().add(
         const Duration(seconds: 10),
       );
-      logger.log('Equalizer initialization deferred', e, stackTrace);
+      logger.log(
+        'Equalizer initialization deferred',
+        error: e,
+        stackTrace: stackTrace,
+      );
       return false;
     }
   }
@@ -354,7 +386,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
         const Duration(seconds: 2),
       );
     } catch (e, stackTrace) {
-      logger.log('Failed to get equalizer parameters', e, stackTrace);
+      logger.log(
+        'Failed to get equalizer parameters',
+        error: e,
+        stackTrace: stackTrace,
+      );
       return null;
     }
   }
@@ -368,7 +404,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
       equalizerEnabled.value = enabled;
       unawaited(addOrUpdateData('settings', 'equalizerEnabled', enabled));
     } catch (e, stackTrace) {
-      logger.log('Failed to set equalizer enabled state', e, stackTrace);
+      logger.log(
+        'Failed to set equalizer enabled state',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
   }
 
@@ -390,7 +430,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
       equalizerBandGains.value = gains;
       unawaited(addOrUpdateData('settings', 'equalizerBandGains', gains));
     } catch (e, stackTrace) {
-      logger.log('Failed to set equalizer band gain', e, stackTrace);
+      logger.log(
+        'Failed to set equalizer band gain',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
   }
 
@@ -408,7 +452,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
       equalizerBandGains.value = gains;
       unawaited(addOrUpdateData('settings', 'equalizerBandGains', gains));
     } catch (e, stackTrace) {
-      logger.log('Failed to reset equalizer bands', e, stackTrace);
+      logger.log(
+        'Failed to reset equalizer bands',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
   }
 
@@ -470,7 +518,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
           );
         }
       } catch (e, stackTrace) {
-        logger.log('Error updating playback state', e, stackTrace);
+        logger.log(
+          'Error updating playback state',
+          error: e,
+          stackTrace: stackTrace,
+        );
       } finally {
         _isUpdatingState = false;
       }
@@ -508,7 +560,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
         _completionEventPending = false;
       }
     } catch (e, stackTrace) {
-      logger.log('Error handling processing state change', e, stackTrace);
+      logger.log(
+        'Error handling processing state change',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
   }
 
@@ -516,16 +572,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
     _consecutiveErrors++;
     logger.log(
       'Playback error occurred. Consecutive errors: $_consecutiveErrors',
-      _lastError,
-      null,
+      error: _lastError,
     );
 
     if (_consecutiveErrors >= _maxConsecutiveErrors) {
-      logger.log(
-        'Max consecutive errors reached. Stopping playback.',
-        null,
-        null,
-      );
+      logger.log('Max consecutive errors reached. Stopping playback.');
       stop();
       return;
     }
@@ -553,7 +604,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
         await skipToNext();
       }
     } catch (e, stackTrace) {
-      logger.log('Error handling song completion', e, stackTrace);
+      logger.log(
+        'Error handling song completion',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
   }
 
@@ -561,8 +616,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
     if (_currentLoadingIndex >= 0) {
       logger.log(
         'Already loading next song (index: $_currentLoadingIndex), skipping',
-        null,
-        null,
       );
       return;
     }
@@ -570,7 +623,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
     try {
       final baseSong = _getCurrentSongForRecommendations();
       if (baseSong == null) {
-        logger.log('No valid song for recommendations', null, null);
+        logger.log('No valid song for recommendations');
         return;
       }
 
@@ -581,14 +634,14 @@ class MusifyAudioHandler extends BaseAudioHandler {
       if (nextRecommendedSong != null) {
         await _playRecommendation();
       } else {
-        logger.log(
-          'No recommendations available for "${baseSong['title']}"',
-          null,
-          null,
-        );
+        logger.log('No recommendations available for "${baseSong['title']}"');
       }
     } catch (e, stackTrace) {
-      logger.log('Error playing recommended song', e, stackTrace);
+      logger.log(
+        'Error playing recommended song',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
   }
 
@@ -596,7 +649,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
     final currentMediaItem = mediaItem.valueOrNull;
 
     if (currentMediaItem == null || currentMediaItem.id.isEmpty) {
-      logger.log('No current media item available', null, null);
+      logger.log('No current media item available');
       return null;
     }
 
@@ -608,11 +661,15 @@ class MusifyAudioHandler extends BaseAudioHandler {
       await getSimilarSong(baseSong['ytid']).timeout(
         const Duration(seconds: 7),
         onTimeout: () {
-          logger.log('Recommendation fetch timed out', null, null);
+          logger.log('Recommendation fetch timed out');
         },
       );
     } catch (e, stackTrace) {
-      logger.log('Error fetching recommendation', e, stackTrace);
+      logger.log(
+        'Error fetching recommendation',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
   }
 
@@ -636,11 +693,15 @@ class MusifyAudioHandler extends BaseAudioHandler {
         await getSimilarSong(currentSongYtid).timeout(
           const Duration(seconds: 5),
           onTimeout: () {
-            logger.log('Prefetch recommendation timed out', null, null);
+            logger.log('Prefetch recommendation timed out');
           },
         );
       } catch (e, stackTrace) {
-        logger.log('Error prefetching recommendation', e, stackTrace);
+        logger.log(
+          'Error prefetching recommendation',
+          error: e,
+          stackTrace: stackTrace,
+        );
       }
     });
   }
@@ -655,14 +716,14 @@ class MusifyAudioHandler extends BaseAudioHandler {
         _historyList.removeRange(_maxHistorySize, _historyList.length);
       }
     } catch (e, stackTrace) {
-      logger.log('Error adding to history', e, stackTrace);
+      logger.log('Error adding to history', error: e, stackTrace: stackTrace);
     }
   }
 
   Future<void> addToQueue(Map song, {bool playNext = false}) async {
     try {
       if (song['ytid'] == null || song['ytid'].toString().isEmpty) {
-        logger.log('Invalid song data for queue', null, null);
+        logger.log('Invalid song data for queue');
         return;
       }
 
@@ -691,7 +752,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
         await _playFromQueue(0);
       }
     } catch (e, stackTrace) {
-      logger.log('Error adding to queue', e, stackTrace);
+      logger.log('Error adding to queue', error: e, stackTrace: stackTrace);
     }
   }
 
@@ -722,12 +783,14 @@ class MusifyAudioHandler extends BaseAudioHandler {
         if (oldPreloadedSongs.isNotEmpty || stalePreloadingEntries.isNotEmpty) {
           logger.log(
             'Cleaned up ${oldPreloadedSongs.length + stalePreloadingEntries.length} old preload entries',
-            null,
-            null,
           );
         }
       } catch (e, stackTrace) {
-        logger.log('Error cleaning up preloaded songs', e, stackTrace);
+        logger.log(
+          'Error cleaning up preloaded songs',
+          error: e,
+          stackTrace: stackTrace,
+        );
       }
     });
   }
@@ -775,7 +838,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
         await _playFromQueue(0);
       }
     } catch (e, stackTrace) {
-      logger.log('Error adding playlist to queue', e, stackTrace);
+      logger.log(
+        'Error adding playlist to queue',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
   }
 
@@ -802,7 +869,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
       _updateQueueMediaItems();
     } catch (e, stackTrace) {
-      logger.log('Error removing from queue', e, stackTrace);
+      logger.log('Error removing from queue', error: e, stackTrace: stackTrace);
     }
   }
 
@@ -830,7 +897,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
       _updateQueueMediaItems();
     } catch (e, stackTrace) {
-      logger.log('Error reordering queue', e, stackTrace);
+      logger.log('Error reordering queue', error: e, stackTrace: stackTrace);
     }
   }
 
@@ -844,7 +911,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       _resetPreloadingState();
       _updateQueueMediaItems();
     } catch (e, stackTrace) {
-      logger.log('Error clearing queue', e, stackTrace);
+      logger.log('Error clearing queue', error: e, stackTrace: stackTrace);
     }
   }
 
@@ -862,7 +929,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
         mediaItem.add(currentMediaItem);
       }
     } catch (e, stackTrace) {
-      logger.log('Error updating queue media items', e, stackTrace);
+      logger.log(
+        'Error updating queue media items',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
   }
 
@@ -906,7 +977,13 @@ class MusifyAudioHandler extends BaseAudioHandler {
           updateTime: DateTime.now(),
         ),
       );
-    } catch (_) {}
+    } catch (e, stackTrace) {
+      logger.log(
+        'Error emitting optimistic loading state',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
   }
 
   Future<void> _playFromQueue(int index) async {
@@ -917,7 +994,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       //   null,
       // );
       if (index < 0 || index >= _queueList.length) {
-        logger.log('Invalid queue index: $index', null, null);
+        logger.log('Invalid queue index: $index');
         return;
       }
 
@@ -975,7 +1052,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
         }
       }
     } catch (e, stackTrace) {
-      logger.log('Error playing from queue', e, stackTrace);
+      logger.log('Error playing from queue', error: e, stackTrace: stackTrace);
       _handlePlaybackError();
     } finally {
       // Only reset if we haven't already cleared it in the success path
@@ -1008,7 +1085,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
         await _preloadSongsSequentially(songsToPreload);
       } catch (e, stackTrace) {
-        logger.log('Error in _preloadUpcomingSongs', e, stackTrace);
+        logger.log(
+          'Error in _preloadUpcomingSongs',
+          error: e,
+          stackTrace: stackTrace,
+        );
       }
     });
   }
@@ -1042,12 +1123,16 @@ class MusifyAudioHandler extends BaseAudioHandler {
           .timeout(
             const Duration(seconds: 8),
             onTimeout: () {
-              logger.log('Preload timeout for song $ytid', null, null);
+              logger.log('Preload timeout for song $ytid');
               return null;
             },
           );
-    } catch (e) {
-      logger.log('Error preloading song $ytid', e, null);
+    } catch (e, stackTrace) {
+      logger.log(
+        'Error preloading song $ytid',
+        error: e,
+        stackTrace: stackTrace,
+      );
     } finally {
       _preloadingYtIds.remove(ytid);
       if (_activePreloadCount > 0) {
@@ -1078,7 +1163,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       final session = await AudioSession.instance;
       await session.setActive(false);
     } catch (e, stackTrace) {
-      logger.log('Error in onTaskRemoved', e, stackTrace);
+      logger.log('Error in onTaskRemoved', error: e, stackTrace: stackTrace);
     }
     await super.onTaskRemoved();
   }
@@ -1088,7 +1173,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
     try {
       await audioPlayer.play();
     } catch (e, stackTrace) {
-      logger.log('Error in play()', e, stackTrace);
+      logger.log('Error in play()', error: e, stackTrace: stackTrace);
       _lastError = e.toString();
     }
   }
@@ -1098,7 +1183,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
     try {
       await audioPlayer.pause();
     } catch (e, stackTrace) {
-      logger.log('Error in pause()', e, stackTrace);
+      logger.log('Error in pause()', error: e, stackTrace: stackTrace);
     }
   }
 
@@ -1114,7 +1199,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       _consecutiveErrors = 0;
       _resetPreloadingState();
     } catch (e, stackTrace) {
-      logger.log('Error in stop()', e, stackTrace);
+      logger.log('Error in stop()', error: e, stackTrace: stackTrace);
     }
     await super.stop();
   }
@@ -1130,7 +1215,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
     try {
       await audioPlayer.seek(position);
     } catch (e, stackTrace) {
-      logger.log('Error in seek()', e, stackTrace);
+      logger.log('Error in seek()', error: e, stackTrace: stackTrace);
     }
   }
 
@@ -1145,7 +1230,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
   Future<bool> playSong(Map song, {String? mediaId}) async {
     try {
       if (song['ytid'] == null || song['ytid'].toString().isEmpty) {
-        logger.log('Invalid song data: missing ytid', null, null);
+        logger.log('Invalid song data: missing ytid');
         return false;
       }
 
@@ -1163,11 +1248,15 @@ class MusifyAudioHandler extends BaseAudioHandler {
             if (offlineSong['artworkPath'] != null) {
               song['artworkPath'] = offlineSong['artworkPath'];
             }
-            logger.log('Using offline copy for $ytid', null, null);
+            logger.log('Using offline copy for $ytid');
           }
         }
       } catch (e, stackTrace) {
-        logger.log('Error while checking offline songs', e, stackTrace);
+        logger.log(
+          'Error while checking offline songs',
+          error: e,
+          stackTrace: stackTrace,
+        );
       }
 
       if (audioPlayer.playing) await audioPlayer.pause();
@@ -1184,26 +1273,20 @@ class MusifyAudioHandler extends BaseAudioHandler {
       if ((songUrl == null || songUrl.isEmpty) && isOffline) {
         logger.log(
           'Offline file missing for ${song['ytid']}, switching to online',
-          null,
-          null,
         );
         isOffline = false;
         songUrl = await _getSongUrl(song, isOffline);
       }
 
       if (songUrl == null || songUrl.isEmpty) {
-        logger.log('Failed to get song URL for ${song['ytid']}', null, null);
+        logger.log('Failed to get song URL for ${song['ytid']}');
         _lastError = 'Failed to get song URL';
         return false;
       }
 
       final audioSource = await buildAudioSource(song, songUrl, isOffline);
       if (audioSource == null) {
-        logger.log(
-          'Failed to build audio source for ${song['ytid']}',
-          null,
-          null,
-        );
+        logger.log('Failed to build audio source for ${song['ytid']}');
         _lastError = 'Failed to build audio source';
         return false;
       }
@@ -1216,7 +1299,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
         mediaId: mediaId,
       );
     } catch (e, stackTrace) {
-      logger.log('Error playing song', e, stackTrace);
+      logger.log('Error playing song', error: e, stackTrace: stackTrace);
       _lastError = e.toString();
       return false;
     }
@@ -1233,11 +1316,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
   Future<String?> _getOfflineSongUrl(Map song) async {
     final audioPath = song['audioPath'];
     if (audioPath == null || audioPath.isEmpty) {
-      logger.log(
-        'Missing audioPath for offline song: ${song['ytid']}',
-        null,
-        null,
-      );
+      logger.log('Missing audioPath for offline song: ${song['ytid']}');
       return null;
     }
 
@@ -1246,7 +1325,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       return audioPath;
     }
 
-    logger.log('Offline audio file not found: $audioPath', null, null);
+    logger.log('Offline audio file not found: $audioPath');
 
     final offlineSong = userOfflineSongs.firstWhere(
       (s) => s['ytid'] == song['ytid'],
@@ -1308,7 +1387,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
       return true;
     } catch (e, stackTrace) {
-      logger.log('Error setting audio source', e, stackTrace);
+      logger.log(
+        'Error setting audio source',
+        error: e,
+        stackTrace: stackTrace,
+      );
 
       if (isOffline) {
         return _attemptOfflineFallback(song, mediaId: mediaId);
@@ -1352,7 +1435,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
   }
 
   Future<bool> _attemptOfflineFallback(Map song, {String? mediaId}) async {
-    logger.log('Attempting to play online version as fallback', null, null);
     final onlineUrl = await fetchSongStreamUrl(
       song['ytid'],
       song['isLive'] ?? false,
@@ -1389,7 +1471,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
         );
       }
     } catch (e, stackTrace) {
-      logger.log('Error playing playlist', e, stackTrace);
+      logger.log('Error playing playlist', error: e, stackTrace: stackTrace);
     }
   }
 
@@ -1418,7 +1500,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
       );
       return spbAudioSource ?? audioSource;
     } catch (e, stackTrace) {
-      logger.log('Error building audio source', e, stackTrace);
+      logger.log(
+        'Error building audio source',
+        error: e,
+        stackTrace: stackTrace,
+      );
       return null;
     }
   }
@@ -1474,7 +1560,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
       // ignore: deprecated_member_use
       return ConcatenatingAudioSource(children: children);
     } catch (e, stackTrace) {
-      logger.log('Error checking sponsor block', e, stackTrace);
+      logger.log(
+        'Error checking sponsor block',
+        error: e,
+        stackTrace: stackTrace,
+      );
       return null;
     }
   }
@@ -1482,12 +1572,12 @@ class MusifyAudioHandler extends BaseAudioHandler {
   Future<void> skipToSong(int newIndex) async {
     try {
       if (newIndex < 0 || newIndex >= _queueList.length) {
-        logger.log('Invalid song index: $newIndex', null, null);
+        logger.log('Invalid song index: $newIndex');
         return;
       }
       await _playFromQueue(newIndex);
     } catch (e, stackTrace) {
-      logger.log('Error skipping to song', e, stackTrace);
+      logger.log('Error skipping to song', error: e, stackTrace: stackTrace);
     }
   }
 
@@ -1506,7 +1596,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
       _cleanupOldPreloadedSongs();
     } catch (e, stackTrace) {
-      logger.log('Error skipping to next song', e, stackTrace);
+      logger.log(
+        'Error skipping to next song',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
   }
 
@@ -1525,7 +1619,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
       _cleanupOldPreloadedSongs();
     } catch (e, stackTrace) {
-      logger.log('Error skipping to previous song', e, stackTrace);
+      logger.log(
+        'Error skipping to previous song',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
   }
 
@@ -1533,7 +1631,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
     try {
       await audioPlayer.seek(Duration.zero);
     } catch (e, stackTrace) {
-      logger.log('Error playing again', e, stackTrace);
+      logger.log('Error playing again', error: e, stackTrace: stackTrace);
     }
   }
 
@@ -1595,7 +1693,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
         }
       }
     } catch (e, stackTrace) {
-      logger.log('Error setting shuffle mode', e, stackTrace);
+      logger.log(
+        'Error setting shuffle mode',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
   }
 
@@ -1609,7 +1711,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       // This ensures ProcessingState.completed is always fired for proper song transitions
       await audioPlayer.setLoopMode(LoopMode.off);
     } catch (e, stackTrace) {
-      logger.log('Error setting repeat mode', e, stackTrace);
+      logger.log('Error setting repeat mode', error: e, stackTrace: stackTrace);
     }
   }
 
@@ -1625,7 +1727,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
         sleepTimerNotifier.value = Duration.zero;
       });
     } catch (e, stackTrace) {
-      logger.log('Error setting sleep timer', e, stackTrace);
+      logger.log('Error setting sleep timer', error: e, stackTrace: stackTrace);
     }
   }
 
@@ -1636,7 +1738,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
       sleepTimerExpired = false;
       sleepTimerNotifier.value = Duration.zero;
     } catch (e, stackTrace) {
-      logger.log('Error canceling sleep timer', e, stackTrace);
+      logger.log(
+        'Error canceling sleep timer',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
   }
 
@@ -1690,7 +1796,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
           await super.customAction(name, extras);
       }
     } catch (e, stackTrace) {
-      logger.log('Error in customAction: $name', e, stackTrace);
+      logger.log(
+        'Error in customAction: $name',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
   }
 }

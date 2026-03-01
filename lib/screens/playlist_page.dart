@@ -140,7 +140,11 @@ class _PlaylistPageState extends State<PlaylistPage> {
         }
       }
     } catch (e, stackTrace) {
-      logger.log('Error initializing playlist:', e, stackTrace);
+      logger.log(
+        'Error initializing playlist:',
+        error: e,
+        stackTrace: stackTrace,
+      );
       if (mounted) {
         showToast(context, context.l10n!.error);
       }
@@ -578,8 +582,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
     } else {
       logger.log(
         '(_updateSongsListOnRemove): Widget not mounted, cannot show undo toast.',
-        null,
-        null,
       );
     }
 

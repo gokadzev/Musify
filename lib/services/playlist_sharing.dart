@@ -53,7 +53,11 @@ class PlaylistSharingService {
             final video = await ytClient!.videos.get(ytid);
             return returnSongLayout(songIds.indexOf(ytid), video);
           } catch (e, stackTrace) {
-            logger.log('Error expanding song: $ytid', e, stackTrace);
+            logger.log(
+              'Error expanding song: $ytid',
+              error: e,
+              stackTrace: stackTrace,
+            );
             return null;
           }
         }),
@@ -83,7 +87,7 @@ class PlaylistSharingService {
       final compactPlaylist = json.decode(jsonString) as Map;
       return await expandCompactPlaylist(compactPlaylist);
     } catch (e, stackTrace) {
-      logger.log('Failed to decode playlist', e, stackTrace);
+      logger.log('Failed to decode playlist', error: e, stackTrace: stackTrace);
       return null;
     }
   }

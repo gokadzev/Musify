@@ -285,7 +285,7 @@ Future<void> _toggleOffline(
     }
   } catch (e) {
     status.value = originalValue;
-    logger.log('Error toggling offline status', e, null);
+    logger.log('Error toggling offline status', error: e);
   }
 }
 

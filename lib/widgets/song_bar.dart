@@ -240,7 +240,7 @@ class _SongBarState extends State<SongBar> {
             ? likedSongsLength + 1
             : likedSongsLength - 1;
         updateSongLikeStatus(_ytid, newValue).catchError((e) {
-          logger.log('Error updating song like status', e, null);
+          logger.log('Error updating song like status', error: e);
           // Revert on error
           _songLikeStatus.value = !newValue;
           currentLikedSongsLength.value = likedSongsLength;
@@ -264,7 +264,7 @@ class _SongBarState extends State<SongBar> {
         break;
       case 'remove_from_recents':
         removeFromRecentlyPlayed(_ytid).catchError((e) {
-          logger.log('Error removing from recently played', e, null);
+          logger.log('Error removing from recently played', error: e);
         });
         break;
       case 'offline':
@@ -322,7 +322,7 @@ class _SongBarState extends State<SongBar> {
         }
       }
     } catch (e, stackTrace) {
-      logger.log('Error renaming song', e, stackTrace);
+      logger.log('Error renaming song', error: e, stackTrace: stackTrace);
       if (context.mounted) {
         showToast(context, context.l10n!.error);
       }
@@ -354,7 +354,7 @@ class _SongBarState extends State<SongBar> {
     } catch (e) {
       // Revert on error
       _songOfflineStatus.value = originalValue;
-      logger.log('Error toggling offline status', e, null);
+      logger.log('Error toggling offline status', error: e);
       if (context.mounted) {
         showToast(context, context.l10n!.error);
       }

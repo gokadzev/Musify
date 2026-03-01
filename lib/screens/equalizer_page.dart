@@ -66,7 +66,11 @@ class _EqualizerPageState extends State<EqualizerPage> {
         setState(() => _isLoading = false);
       }
     } catch (e, stackTrace) {
-      logger.log('Failed to load equalizer page', e, stackTrace);
+      logger.log(
+        'Failed to load equalizer page',
+        error: e,
+        stackTrace: stackTrace,
+      );
       if (mounted) {
         setState(() => _isLoading = false);
       }

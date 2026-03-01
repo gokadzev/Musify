@@ -27,7 +27,7 @@ class Logger {
   String _logs = '';
   int _logCount = 0;
 
-  void log(String errorLocation, Object? error, StackTrace? stackTrace) {
+  void log(String errorLocation, {Object? error, StackTrace? stackTrace}) {
     final timestamp = DateTime.now().toString();
 
     // Check if error is not null, otherwise use an empty string
@@ -53,7 +53,7 @@ class Logger {
         return '${context.l10n!.copyLogsNoLogs}.';
       }
     } catch (e, stackTrace) {
-      log('Error copying logs', e, stackTrace);
+      log('Error copying logs', error: e, stackTrace: stackTrace);
       return 'Error: $e';
     }
   }

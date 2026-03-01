@@ -121,8 +121,12 @@ class ProxyManager {
         _lastFetched = DateTime.now();
         _pruneStaleProxyResources();
       });
-    } catch (e) {
-      logger.log('ProxyManager: Error fetching proxies: $e', null, null);
+    } catch (e, stackTrace) {
+      logger.log(
+        'ProxyManager: Error fetching proxies',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
   }
 
@@ -157,17 +161,21 @@ class ProxyManager {
           _sharedYt = ytClient;
           _workingProxies.add(proxy);
           break;
-        } catch (e) {
+        } catch (e, stackTrace) {
           logger.log(
             'ProxyManager: failed to init shared proxy client for ${proxy.address}',
-            e,
-            null,
+            error: e,
+            stackTrace: stackTrace,
           );
           continue;
         }
       } while (true);
     } catch (e, stackTrace) {
-      logger.log('Error initializing proxy client', e, stackTrace);
+      logger.log(
+        'Error initializing proxy client',
+        error: e,
+        stackTrace: stackTrace,
+      );
     } finally {
       _initializationCompletion?.complete();
       _initializationCompletion = null;
@@ -206,11 +214,11 @@ class ProxyManager {
           .timeout(Duration(seconds: timeoutSeconds));
       _workingProxies.add(proxy);
       return manifest;
-    } catch (e) {
+    } catch (e, stackTrace) {
       logger.log(
         'ProxyManager: failed to validate proxy ${proxy.address}',
-        e,
-        null,
+        error: e,
+        stackTrace: stackTrace,
       );
       return null;
     } finally {
@@ -269,7 +277,12 @@ class ProxyManager {
         }
       }
       return proxy;
-    } catch (e) {
+    } catch (e, stackTrace) {
+      logger.log(
+        'ProxyManager: Error getting random proxy',
+        error: e,
+        stackTrace: stackTrace,
+      );
       return null;
     }
   }
@@ -299,7 +312,13 @@ class ProxyManager {
       final oldest = _proxyResources.remove(oldestKey);
       try {
         oldest?.close();
-      } catch (_) {}
+      } catch (e, stackTrace) {
+        logger.log(
+          'ProxyManager: Error closing proxy resources',
+          error: e,
+          stackTrace: stackTrace,
+        );
+      }
     }
 
     _proxyResources[key] = res;
@@ -322,7 +341,13 @@ class ProxyManager {
       final stale = _proxyResources.remove(key);
       try {
         stale?.close();
-      } catch (_) {}
+      } catch (e, stackTrace) {
+        logger.log(
+          'ProxyManager: Error closing stale proxy resources',
+          error: e,
+          stackTrace: stackTrace,
+        );
+      }
     }
   }
 
@@ -359,7 +384,13 @@ class ProxyManager {
     for (final res in _proxyResources.values) {
       try {
         res.close();
-      } catch (_) {}
+      } catch (e, stackTrace) {
+        logger.log(
+          'ProxyManager: Error closing proxy resources',
+          error: e,
+          stackTrace: stackTrace,
+        );
+      }
     }
     _proxyResources.clear();
   }
@@ -395,11 +426,11 @@ class ProxyManager {
 
         _workingProxies.add(proxy);
         return ytClient;
-      } catch (e) {
+      } catch (e, stackTrace) {
         logger.log(
           'ProxyManager: failed to create proxy youtube client for ${proxy.address}',
-          e,
-          null,
+          error: e,
+          stackTrace: stackTrace,
         );
         continue;
       }
@@ -456,8 +487,7 @@ class ProxyManager {
   void _logProxyFetchError(String source, dynamic error) {
     logger.log(
       'ProxyManager: Error fetching proxies from $source: $error',
-      error,
-      null,
+      error: error,
     );
   }
 
@@ -477,7 +507,8 @@ class ProxyManager {
       Map<String, dynamic> result;
       try {
         result = jsonDecode(response.body);
-      } catch (_) {
+      } catch (e) {
+        _logProxyFetchError('proxyscrape.com', e);
         return; // Invalid JSON
       }
 

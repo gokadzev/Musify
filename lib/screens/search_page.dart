@@ -120,7 +120,7 @@ class _SearchPageState extends State<SearchPage> {
         type: 'playlist',
       );
     } catch (e, stackTrace) {
-      logger.log('Error while searching online songs', e, stackTrace);
+      logger.log('Error while searching online songs', error: e, stackTrace: stackTrace);
     } finally {
       _fetchingSongs.value = false;
       if (mounted) setState(() {});

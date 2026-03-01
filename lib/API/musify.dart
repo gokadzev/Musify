@@ -98,7 +98,11 @@ final recentlyPlayedMigration = Future.microtask(() async {
       );
     }
   } catch (e, st) {
-    logger.log('Error migrating recently played entries', e, st);
+    logger.log(
+      'Error migrating recently played entries',
+      error: e,
+      stackTrace: st,
+    );
   }
 });
 
@@ -176,7 +180,7 @@ Future<List> fetchSongsList(String searchQuery) async {
 
     return songsList;
   } catch (e, stackTrace) {
-    logger.log('Error in fetchSongsList', e, stackTrace);
+    logger.log('Error in fetchSongsList', error: e, stackTrace: stackTrace);
     return [];
   }
 }
@@ -189,7 +193,11 @@ Future<List> getRecommendedSongs() async {
       return await _getRecommendationsFromMixedSources();
     }
   } catch (e, stackTrace) {
-    logger.log('Error in getRecommendedSongs', e, stackTrace);
+    logger.log(
+      'Error in getRecommendedSongs',
+      error: e,
+      stackTrace: stackTrace,
+    );
     return [];
   }
 }
@@ -205,8 +213,8 @@ Future<List> _getRecommendationsFromRecentlyPlayed() async {
     } catch (e, stackTrace) {
       logger.log(
         'Error getting related videos for ${songData['ytid']}',
-        e,
-        stackTrace,
+        error: e,
+        stackTrace: stackTrace,
       );
       return <Map>[];
     }
@@ -275,7 +283,11 @@ Future<List<dynamic>> getUserPlaylists() async {
         'source': 'user-youtube',
         'list': [],
       });
-      logger.log('Error occurred while fetching the playlist:', e, stackTrace);
+      logger.log(
+        'Error occurred while fetching the playlist:',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
   }
   return playlistsByUser;
@@ -306,7 +318,7 @@ Future<String> addUserPlaylist(String input, BuildContext context) async {
     unawaited(addOrUpdateData('user', 'playlists', userPlaylists.value));
     return '${context.l10n!.addedSuccess}!';
   } catch (e, stackTrace) {
-    logger.log('Error adding user playlist', e, stackTrace);
+    logger.log('Error adding user playlist', error: e, stackTrace: stackTrace);
     return '${context.l10n!.error}: $e';
   }
 }
@@ -358,7 +370,7 @@ String addSongInCustomPlaylist(
     );
     return context.l10n!.songAdded;
   } else {
-    logger.log('Custom playlist not found: $playlistName', null, null);
+    logger.log('Custom playlist not found: $playlistName');
     return context.l10n!.error;
   }
 }
@@ -394,13 +406,21 @@ bool removeSongFromPlaylist(
         unawaited(addOrUpdateData('user', 'playlists', userPlaylists.value));
       }
     } catch (e, stackTrace) {
-      logger.log('Error saving playlist changes', e, stackTrace);
+      logger.log(
+        'Error saving playlist changes',
+        error: e,
+        stackTrace: stackTrace,
+      );
       return false;
     }
 
     return true;
   } catch (e, stackTrace) {
-    logger.log('Error while removing song from playlist: ', e, stackTrace);
+    logger.log(
+      'Error while removing song from playlist: ',
+      error: e,
+      stackTrace: stackTrace,
+    );
     return false;
   }
 }
@@ -423,7 +443,11 @@ void removeUserCustomPlaylist(dynamic playlist) {
       addOrUpdateData('user', 'customPlaylists', userCustomPlaylists.value),
     );
   } catch (e, stackTrace) {
-    logger.log('Error removing custom playlist', e, stackTrace);
+    logger.log(
+      'Error removing custom playlist',
+      error: e,
+      stackTrace: stackTrace,
+    );
   }
 }
 
@@ -525,7 +549,11 @@ String movePlaylistToFolder(
 
     return '${context.l10n!.addedSuccess}!';
   } catch (e, stackTrace) {
-    logger.log('Error moving playlist to folder', e, stackTrace);
+    logger.log(
+      'Error moving playlist to folder',
+      error: e,
+      stackTrace: stackTrace,
+    );
     return context.l10n!.error;
   }
 }
@@ -579,7 +607,11 @@ String deletePlaylistFolder(String folderId, [BuildContext? context]) {
     }
     return context?.l10n?.error ?? 'Error';
   } catch (e, stackTrace) {
-    logger.log('Error deleting playlist folder', e, stackTrace);
+    logger.log(
+      'Error deleting playlist folder',
+      error: e,
+      stackTrace: stackTrace,
+    );
     return context?.l10n?.error ?? 'Error';
   }
 }
@@ -591,7 +623,12 @@ List<Map> getPlaylistsInFolder(String folderId) {
       orElse: () => {},
     );
     return List<Map>.from(folder['playlists'] ?? []);
-  } catch (e) {
+  } catch (e, stackTrace) {
+    logger.log(
+      'Error getting playlists in folder',
+      error: e,
+      stackTrace: stackTrace,
+    );
     return [];
   }
 }
@@ -635,7 +672,11 @@ Future<void> updateSongLikeStatus(dynamic songId, bool add) async {
     currentLikedSongsLength.value = userLikedSongsList.length;
     unawaited(addOrUpdateData('user', 'likedSongs', userLikedSongsList));
   } catch (e, stackTrace) {
-    logger.log('Error updating song like status', e, stackTrace);
+    logger.log(
+      'Error updating song like status',
+      error: e,
+      stackTrace: stackTrace,
+    );
   }
 }
 
@@ -666,7 +707,11 @@ Future<void> renameSongInLikedSongs(
       unawaited(addOrUpdateData('user', 'likedSongs', userLikedSongsList));
     }
   } catch (e, stackTrace) {
-    logger.log('Error renaming song in liked songs', e, stackTrace);
+    logger.log(
+      'Error renaming song in liked songs',
+      error: e,
+      stackTrace: stackTrace,
+    );
     rethrow;
   }
 }
@@ -703,7 +748,11 @@ Future<void> renameSongInPlaylist(
       }
     }
   } catch (e, stackTrace) {
-    logger.log('Error renaming song in playlist', e, stackTrace);
+    logger.log(
+      'Error renaming song in playlist',
+      error: e,
+      stackTrace: stackTrace,
+    );
     rethrow;
   }
 }
@@ -737,7 +786,11 @@ Future<void> updatePlaylistLikeStatus(String playlistId, bool add) async {
     currentLikedPlaylistsLength.value = userLikedPlaylists.length;
     unawaited(addOrUpdateData('user', 'likedPlaylists', userLikedPlaylists));
   } catch (e, stackTrace) {
-    logger.log('Error updating playlist like status: ', e, stackTrace);
+    logger.log(
+      'Error updating playlist like status: ',
+      error: e,
+      stackTrace: stackTrace,
+    );
   }
 }
 
@@ -804,7 +857,11 @@ Future<List> getPlaylists({
         filter: TypeFilters.playlist,
       );
     } catch (e, st) {
-      logger.log('Error while searching online songs:$e', e, st);
+      logger.log(
+        'Error while searching online songs:',
+        error: e,
+        stackTrace: st,
+      );
       // Attempt proxy fallback if enabled
       if (useProxy.value) {
         final proxyYt = await ProxyManager().getYoutubeExplodeClient();
@@ -815,7 +872,7 @@ Future<List> getPlaylists({
               filter: TypeFilters.playlist,
             );
           } catch (e2, st2) {
-            logger.log('Proxy search failed:$e2', e2, st2);
+            logger.log('Proxy search failed:', error: e2, stackTrace: st2);
             searchResultsIterable = <dynamic>[];
           } finally {
             try {
@@ -953,8 +1010,8 @@ Future<List<Map<String, int>>> getSkipSegments(String id) async {
     } else {
       return [];
     }
-  } catch (e, stack) {
-    logger.log('Error in getSkipSegments', e, stack);
+  } catch (e, stackTrace) {
+    logger.log('Error in getSkipSegments', error: e, stackTrace: stackTrace);
     return [];
   }
 }
@@ -967,10 +1024,14 @@ Future<void> getSimilarSong(String songYtId) async {
     if (relatedSongs.isNotEmpty) {
       nextRecommendedSong = returnSongLayout(0, relatedSongs[0]);
     } else {
-      logger.log('No related songs found for $songYtId', null, null);
+      logger.log('No related songs found for $songYtId');
     }
   } catch (e, stackTrace) {
-    logger.log('Error while fetching next similar song:', e, stackTrace);
+    logger.log(
+      'Error while fetching next similar song:',
+      error: e,
+      stackTrace: stackTrace,
+    );
   }
 }
 
@@ -1025,7 +1086,11 @@ Future<Map?> getPlaylistInfoForWidget(
     try {
       return {'title': id, 'list': await fetchSongsList(id)};
     } catch (e, stackTrace) {
-      logger.log('Error fetching artist songs for $id', e, stackTrace);
+      logger.log(
+        'Error fetching artist songs for $id',
+        error: e,
+        stackTrace: stackTrace,
+      );
       return {'title': id, 'list': []};
     }
   }
@@ -1073,7 +1138,11 @@ Future<Map?> getPlaylistInfoForWidget(
         };
         onlinePlaylists.add(playlist);
       } catch (e, stackTrace) {
-        logger.log('Failed to fetch playlist info for id $id', e, stackTrace);
+        logger.log(
+          'Failed to fetch playlist info for id $id',
+          error: e,
+          stackTrace: stackTrace,
+        );
         return null;
       }
     }
@@ -1095,8 +1164,8 @@ Future<Map?> getPlaylistInfoForWidget(
       } catch (e, stackTrace) {
         logger.log(
           'Error fetching songs for playlist ${playlist['ytid']}',
-          e,
-          stackTrace,
+          error: e,
+          stackTrace: stackTrace,
         );
         playlist['list'] = [];
       }
@@ -1106,8 +1175,8 @@ Future<Map?> getPlaylistInfoForWidget(
   } catch (e, stackTrace) {
     logger.log(
       'Unexpected error in getPlaylistInfoForWidget for id $id',
-      e,
-      stackTrace,
+      error: e,
+      stackTrace: stackTrace,
     );
     return null;
   }
@@ -1117,30 +1186,26 @@ Future<Map?> getPlaylistInfoForWidget(
 Future<AudioOnlyStreamInfo?> fetchBestAudioStream(String? songId) async {
   try {
     if (songId == null || songId.isEmpty) {
-      logger.log('fetchBestAudioStream: songId is null or empty', null, null);
+      logger.log('fetchBestAudioStream: songId is null or empty');
       return null;
     }
 
     final manifest = await _fetchStreamManifest(songId);
     final audioStream = manifest?.audioOnly;
     if (audioStream == null || audioStream.isEmpty) {
-      logger.log(
-        'fetchBestAudioStream: no audio streams for $songId',
-        null,
-        null,
-      );
+      logger.log('fetchBestAudioStream: no audio streams for $songId');
       return null;
     }
     return selectAudioOnlyStreamForQuality(audioStream.sortByBitrate());
   } on TimeoutException catch (_) {
-    logger.log(
-      'fetchBestAudioStream request timed out for $songId',
-      null,
-      null,
-    );
+    logger.log('fetchBestAudioStream request timed out for $songId');
     return null;
   } catch (e, stackTrace) {
-    logger.log('Error while fetching best audio stream', e, stackTrace);
+    logger.log(
+      'Error while fetching best audio stream',
+      error: e,
+      stackTrace: stackTrace,
+    );
     return null;
   }
 }
@@ -1149,7 +1214,7 @@ Future<AudioOnlyStreamInfo?> fetchBestAudioStream(String? songId) async {
 Future<String?> fetchSongStreamUrl(String songId, bool isLive) async {
   try {
     if (songId.isEmpty) {
-      logger.log('fetchSongStreamUrl: songId is empty', null, null);
+      logger.log('fetchSongStreamUrl: songId is empty');
       return null;
     }
     if (isLive) {
@@ -1174,11 +1239,7 @@ Future<String?> fetchSongStreamUrl(String songId, bool isLive) async {
     final manifest = await _fetchStreamManifest(songId);
     final audioStreams = manifest?.audioOnly;
     if (audioStreams == null || audioStreams.isEmpty) {
-      logger.log(
-        'fetchSongStreamUrl: no audio streams for $songId',
-        null,
-        null,
-      );
+      logger.log('fetchSongStreamUrl: no audio streams for $songId');
       return null;
     }
 
@@ -1192,10 +1253,14 @@ Future<String?> fetchSongStreamUrl(String songId, bool isLive) async {
     unawaited(updateRecentlyPlayed(songId));
     return url;
   } on TimeoutException catch (_) {
-    logger.log('fetchSongStreamUrl request timed out for $songId', null, null);
+    logger.log('fetchSongStreamUrl request timed out for $songId');
     return null;
   } catch (e, stackTrace) {
-    logger.log('Error in fetchSongStreamUrl for $songId:', e, stackTrace);
+    logger.log(
+      'Error in fetchSongStreamUrl for $songId:',
+      error: e,
+      stackTrace: stackTrace,
+    );
     return null;
   }
 }
@@ -1208,7 +1273,11 @@ Future<Map<String, dynamic>> getSongDetails(
     final song = await _yt.videos.get(songId);
     return returnSongLayout(songIndex, song);
   } catch (e, stackTrace) {
-    logger.log('Error while getting song details', e, stackTrace);
+    logger.log(
+      'Error while getting song details',
+      error: e,
+      stackTrace: stackTrace,
+    );
     rethrow;
   }
 }
@@ -1238,7 +1307,7 @@ Future<bool> makeSongOffline(dynamic song, {bool fromPlaylist = false}) async {
     final String? ytid = song['ytid'];
 
     if (ytid == null || ytid.isEmpty) {
-      logger.log('makeSongOffline: song["ytid"] is null or empty', null, null);
+      logger.log('makeSongOffline: song["ytid"] is null or empty');
       return false;
     }
 
@@ -1255,11 +1324,7 @@ Future<bool> makeSongOffline(dynamic song, {bool fromPlaylist = false}) async {
     try {
       final audioManifest = await fetchBestAudioStream(ytid);
       if (audioManifest == null) {
-        logger.log(
-          'makeSongOffline: audioManifest is null for $ytid',
-          null,
-          null,
-        );
+        logger.log('makeSongOffline: audioManifest is null for $ytid');
         return false;
       }
 
@@ -1269,7 +1334,11 @@ Future<bool> makeSongOffline(dynamic song, {bool fromPlaylist = false}) async {
       await fileStream.flush();
       await fileStream.close();
     } catch (e, stackTrace) {
-      logger.log('Error downloading audio file', e, stackTrace);
+      logger.log(
+        'Error downloading audio file',
+        error: e,
+        stackTrace: stackTrace,
+      );
       if (await audioFile.exists()) {
         await audioFile.delete();
       }
@@ -1291,15 +1360,13 @@ Future<bool> makeSongOffline(dynamic song, {bool fromPlaylist = false}) async {
         } else {
           logger.log(
             'Artwork download failed or file does not exist for $ytid',
-            null,
-            null,
           );
           // Clear artwork paths if download failed
           song['artworkPath'] = null;
         }
       }
     } catch (e, stackTrace) {
-      logger.log('Error downloading artwork', e, stackTrace);
+      logger.log('Error downloading artwork', error: e, stackTrace: stackTrace);
       song['artworkPath'] = null;
     }
 
@@ -1322,12 +1389,16 @@ Future<bool> makeSongOffline(dynamic song, {bool fromPlaylist = false}) async {
       );
       currentOfflineSongsLength.value = userOfflineSongs.length;
     } catch (e, st) {
-      logger.log('Error updating global offline songs list', e, st);
+      logger.log(
+        'Error updating global offline songs list',
+        error: e,
+        stackTrace: st,
+      );
     }
 
     return true;
   } catch (e, stackTrace) {
-    logger.log('Error making song offline', e, stackTrace);
+    logger.log('Error making song offline', error: e, stackTrace: stackTrace);
     return false;
   }
 }
@@ -1345,13 +1416,17 @@ Future<bool> removeSongFromOffline(
     try {
       if (await audioFile.exists()) await audioFile.delete(recursive: true);
     } catch (e, stackTrace) {
-      logger.log('Error deleting audio file', e, stackTrace);
+      logger.log('Error deleting audio file', error: e, stackTrace: stackTrace);
     }
 
     try {
       if (await artworkFile.exists()) await artworkFile.delete(recursive: true);
     } catch (e, stackTrace) {
-      logger.log('Error deleting artwork file', e, stackTrace);
+      logger.log(
+        'Error deleting artwork file',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
 
     try {
@@ -1361,12 +1436,20 @@ Future<bool> removeSongFromOffline(
         addOrUpdateData('userNoBackup', 'offlineSongs', userOfflineSongs),
       );
     } catch (e, st) {
-      logger.log('Error updating offline songs registry after removal', e, st);
+      logger.log(
+        'Error updating offline songs registry after removal',
+        error: e,
+        stackTrace: st,
+      );
     }
 
     return true;
   } catch (e, stackTrace) {
-    logger.log('Error removing song from offline storage', e, stackTrace);
+    logger.log(
+      'Error removing song from offline storage',
+      error: e,
+      stackTrace: stackTrace,
+    );
     return false;
   }
 }
@@ -1384,22 +1467,20 @@ Future<File?> _downloadAndSaveArtworkFile(String url, String filePath) async {
       if (await file.exists() && await file.length() > 0) {
         return file;
       } else {
-        logger.log(
-          'Artwork file was not written properly: $filePath',
-          null,
-          null,
-        );
+        logger.log('Artwork file was not written properly: $filePath');
         return null;
       }
     } else {
       logger.log(
         'Failed to download file. Status code: ${response.statusCode}',
-        null,
-        null,
       );
     }
   } catch (e, stackTrace) {
-    logger.log('Error downloading and saving file', e, stackTrace);
+    logger.log(
+      'Error downloading and saving file',
+      error: e,
+      stackTrace: stackTrace,
+    );
   }
 
   return null;
@@ -1447,7 +1528,11 @@ Future<void> updateRecentlyPlayed(dynamic songId) async {
       addOrUpdateData('user', 'recentlyPlayedSongs', userRecentlyPlayed),
     );
   } catch (e, stackTrace) {
-    logger.log('Error updating recently played', e, stackTrace);
+    logger.log(
+      'Error updating recently played',
+      error: e,
+      stackTrace: stackTrace,
+    );
   }
 }
 

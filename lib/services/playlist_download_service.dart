@@ -120,7 +120,7 @@ class OfflinePlaylistService {
             if (song == null ||
                 song['ytid'] == null ||
                 song['ytid'].toString().isEmpty) {
-              logger.log('Invalid song data in playlist download', null, null);
+              logger.log('Invalid song data in playlist download');
               progressNotifier.value.failed++;
               progressNotifier.notifyListeners();
               continue;
@@ -151,8 +151,8 @@ class OfflinePlaylistService {
           } catch (e, stackTrace) {
             logger.log(
               'Failed to download song: ${song['title']}',
-              e,
-              stackTrace,
+              error: e,
+              stackTrace: stackTrace,
             );
             progressNotifier.value.failed++;
             progressNotifier.notifyListeners();
@@ -192,7 +192,7 @@ class OfflinePlaylistService {
       await completer.future.timeout(
         Duration(minutes: songsList.length * 2), // 2 minutes per song
         onTimeout: () {
-          logger.log('Download timeout for playlist $playlistId', null, null);
+          logger.log('Download timeout for playlist $playlistId');
           progressNotifier.value.isCancelled = true;
           progressNotifier.notifyListeners();
         },
@@ -206,7 +206,11 @@ class OfflinePlaylistService {
         progressNotifier,
       );
     } catch (e, stackTrace) {
-      logger.log('Error during playlist download', e, stackTrace);
+      logger.log(
+        'Error during playlist download',
+        error: e,
+        stackTrace: stackTrace,
+      );
       activeDownloads.remove(playlistId);
       showToast(context, '${context.l10n!.error}: $e');
     }
@@ -272,7 +276,11 @@ class OfflinePlaylistService {
         );
       }
     } catch (e, stackTrace) {
-      logger.log('Error handling download completion', e, stackTrace);
+      logger.log(
+        'Error handling download completion',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
   }
 
@@ -292,7 +300,7 @@ class OfflinePlaylistService {
         await Future.delayed(const Duration(milliseconds: 100));
 
         if (DateTime.now().difference(startTime) > maxWaitTime) {
-          logger.log('Timeout waiting for download cancellation', null, null);
+          logger.log('Timeout waiting for download cancellation');
           activeDownloads.remove(playlistId);
           break;
         }
@@ -300,7 +308,7 @@ class OfflinePlaylistService {
 
       showToast(context, context.l10n!.downloadCancelled);
     } catch (e, stackTrace) {
-      logger.log('Error cancelling download', e, stackTrace);
+      logger.log('Error cancelling download', error: e, stackTrace: stackTrace);
       // Force remove from active downloads on error
       activeDownloads.remove(playlistId);
     }
@@ -309,7 +317,7 @@ class OfflinePlaylistService {
   Future<void> removeOfflinePlaylist(String playlistId) async {
     try {
       if (playlistId.isEmpty) {
-        logger.log('Invalid playlistId for removal', null, null);
+        logger.log('Invalid playlistId for removal');
         return;
       }
 
@@ -320,7 +328,7 @@ class OfflinePlaylistService {
       );
 
       if (playlist == null) {
-        logger.log('Playlist not found for removal: $playlistId', null, null);
+        logger.log('Playlist not found for removal: $playlistId');
         return;
       }
 
@@ -358,7 +366,11 @@ class OfflinePlaylistService {
             await removeSongFromOffline(songId, fromPlaylist: true);
           }
         } catch (e, stackTrace) {
-          logger.log('Error removing song from offline', e, stackTrace);
+          logger.log(
+            'Error removing song from offline',
+            error: e,
+            stackTrace: stackTrace,
+          );
         }
       }
 
@@ -374,7 +386,11 @@ class OfflinePlaylistService {
         ),
       );
     } catch (e, stackTrace) {
-      logger.log('Error removing offline playlist', e, stackTrace);
+      logger.log(
+        'Error removing offline playlist',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
   }
 
@@ -385,7 +401,11 @@ class OfflinePlaylistService {
         downloadProgressNotifiers.remove(playlistId);
       }
     } catch (e, stackTrace) {
-      logger.log('Error cleaning up progress notifier', e, stackTrace);
+      logger.log(
+        'Error cleaning up progress notifier',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
   }
 

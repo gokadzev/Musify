@@ -143,7 +143,7 @@ Future<bool> clearCache() async {
     await cacheBox.clear();
     return true;
   } catch (e, stackTrace) {
-    logger.log('Failed to clear cache', e, stackTrace);
+    logger.log('Failed to clear cache', error: e, stackTrace: stackTrace);
     return false;
   }
 }
@@ -176,7 +176,11 @@ Future<void> cleanupOldCacheEntries() async {
       }
     }
   } catch (e, stackTrace) {
-    logger.log('Error cleaning up old cache entries', e, stackTrace);
+    logger.log(
+      'Error cleaning up old cache entries',
+      error: e,
+      stackTrace: stackTrace,
+    );
   }
 }
 
@@ -226,7 +230,7 @@ Future<String> backupData(BuildContext context) async {
       final box = await _openBox(boxName);
 
       if (box.path == null) {
-        logger.log('Box path is null for $boxName', null, null);
+        logger.log('Box path is null for $boxName');
         continue;
       }
 
@@ -252,8 +256,12 @@ Future<String> backupData(BuildContext context) async {
       // Compact the box before copying
       try {
         await box.compact();
-      } catch (e) {
-        logger.log('Failed to compact box $boxName: $e', null, null);
+      } catch (e, stackTrace) {
+        logger.log(
+          'Failed to compact box $boxName',
+          error: e,
+          stackTrace: stackTrace,
+        );
       }
 
       // Copy the box file to backup location
@@ -262,15 +270,13 @@ Future<String> backupData(BuildContext context) async {
       } else {
         logger.log(
           'Source file does not exist for $boxName at ${sourceFile.path}',
-          null,
-          null,
         );
       }
     }
 
     return '${context.l10n!.backedupSuccess}!';
   } catch (e, stackTrace) {
-    logger.log('Backup error', e, stackTrace);
+    logger.log('Backup error', error: e, stackTrace: stackTrace);
     return '${context.l10n!.backupError}: $e';
   }
 }
@@ -289,8 +295,12 @@ Future<String> restoreData(BuildContext context) async {
       if (Hive.isBoxOpen(boxName)) {
         try {
           await Hive.box(boxName).close();
-        } catch (e) {
-          logger.log('Failed to close box $boxName: $e', null, null);
+        } catch (e, stackTrace) {
+          logger.log(
+            'Failed to close box $boxName',
+            error: e,
+            stackTrace: stackTrace,
+          );
         }
       }
     }
@@ -327,8 +337,12 @@ Future<String> restoreData(BuildContext context) async {
               if (await targetFile.exists()) {
                 try {
                   await targetFile.delete();
-                } catch (e) {
-                  logger.log('Failed to delete existing file: $e', null, null);
+                } catch (e, stackTrace) {
+                  logger.log(
+                    'Failed to delete existing file',
+                    error: e,
+                    stackTrace: stackTrace,
+                  );
                 }
               }
 
@@ -336,26 +350,20 @@ Future<String> restoreData(BuildContext context) async {
               await sourceFile.copy(targetFile.path);
               logger.log(
                 'Restored $boxName from ${sourceFile.path} to ${targetFile.path}',
-                null,
-                null,
               );
             }
-          } catch (e) {
-            logger.log('Failed to restore $boxName: $e', null, null);
+          } catch (e, stackTrace) {
+            logger.log(
+              'Failed to restore $boxName',
+              error: e,
+              stackTrace: stackTrace,
+            );
           }
         } else {
-          logger.log(
-            'Backup file does not exist: ${sourceFile.path}',
-            null,
-            null,
-          );
+          logger.log('Backup file does not exist: ${sourceFile.path}');
         }
       } else {
-        logger.log(
-          'Backup file for $boxName not found in selection',
-          null,
-          null,
-        );
+        logger.log('Backup file for $boxName not found in selection');
       }
     }
 
@@ -366,14 +374,18 @@ Future<String> restoreData(BuildContext context) async {
     for (final boxName in boxNames) {
       try {
         await _openBox(boxName);
-      } catch (e) {
-        logger.log('Failed to reopen box $boxName: $e', null, null);
+      } catch (e, stackTrace) {
+        logger.log(
+          'Failed to reopen box $boxName',
+          error: e,
+          stackTrace: stackTrace,
+        );
       }
     }
 
     return '${context.l10n!.restoredSuccess}!';
   } catch (e, stackTrace) {
-    logger.log('Restore error', e, stackTrace);
+    logger.log('Restore error', error: e, stackTrace: stackTrace);
     return '${context.l10n!.restoreError}: $e';
   }
 }
