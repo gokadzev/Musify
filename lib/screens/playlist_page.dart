@@ -381,7 +381,9 @@ class _PlaylistPageState extends State<PlaylistPage> {
         );
 
         if (result != null) {
-          final index = userCustomPlaylists.value.indexOf(widget.playlistData);
+          final index = userCustomPlaylists.value.indexWhere(
+            (p) => p['ytid'] == _playlist['ytid'],
+          );
           if (index != -1) {
             final updatedPlaylists = List<Map>.from(userCustomPlaylists.value);
             updatedPlaylists[index] = result;
@@ -547,12 +549,20 @@ class _PlaylistPageState extends State<PlaylistPage> {
   void _handleSyncPlaylist() async {
     if (_playlist['ytid'] != null) {
       _playlist = await updatePlaylistList(context, _playlist['ytid']);
+      if (_playlist != null && _playlist['list'] != null) {
+        _originalPlaylistList = List<dynamic>.from(_playlist['list'] as List);
+      }
       _pagingController.refresh();
     } else {
       final updatedPlaylist = await getPlaylistInfoForWidget(widget.playlistId);
       if (updatedPlaylist != null && mounted) {
         setState(() {
           _playlist = updatedPlaylist;
+          if (_playlist['list'] != null) {
+            _originalPlaylistList = List<dynamic>.from(
+              _playlist['list'] as List,
+            );
+          }
         });
         _pagingController.refresh();
       }
@@ -564,6 +574,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
     if (indexOfRemovedSong >= items.length) return;
 
     final dynamic songToRemove = items[indexOfRemovedSong];
+    _originalPlaylistList.removeWhere((s) => s['ytid'] == songToRemove['ytid']);
     final playlistId = _playlist['ytid'];
     if (mounted) {
       showToastWithButton(
