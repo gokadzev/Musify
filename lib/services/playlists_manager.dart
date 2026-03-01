@@ -402,6 +402,11 @@ String movePlaylistToFolder(
         } else if (playlist['source'] == 'user-youtube') {
           updatedYoutubePlaylists.removeWhere((p) => p == playlist['ytid']);
         }
+      } else {
+        logger.log(
+          'Target folder with id $folderId not found for moving playlist',
+        );
+        return context.l10n!.error;
       }
     } else {
       if (playlist['source'] == 'user-created') {
@@ -537,15 +542,16 @@ Future<List> getPlaylists({
   bool onlyLiked = false,
   String type = 'all',
 }) async {
-  if (playlists.isEmpty || (playlistsNum == null && query == null)) {
-    return [];
-  }
-
   if (onlyLiked) {
     if (playlistsNum != null) {
       return userLikedPlaylists.take(playlistsNum).toList();
     }
     return userLikedPlaylists;
+  }
+
+  if (playlists.isEmpty || (playlistsNum == null && query == null)) {
+    logger.log('No playlists available');
+    return [];
   }
 
   if (query != null && playlistsNum == null) {
@@ -833,8 +839,10 @@ Future updatePlaylistList(BuildContext context, String playlistId) async {
     playlists[index]['list'] = songList;
     unawaited(addOrUpdateData('cache', 'playlistSongs$playlistId', songList));
     showToast(context, context.l10n!.playlistUpdated);
+    return playlists[index];
   }
-  return playlists[index];
+  logger.log('Playlist with id $playlistId not found for update');
+  return null;
 }
 
 Future<void> renameSongInPlaylist(
