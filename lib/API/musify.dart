@@ -27,7 +27,7 @@ import 'package:flutter/widgets.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:musify/API/clients.dart';
-import 'package:musify/API/playlists_manager.dart';
+import 'package:musify/services/playlists_manager.dart';
 import 'package:musify/main.dart' show logger;
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/io_service.dart';
