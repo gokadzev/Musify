@@ -131,13 +131,16 @@ class _EditPlaylistDialogState extends State<EditPlaylistDialog> {
         FilledButton.icon(
           onPressed: () {
             final newPlaylist = {
+              'ytid': widget.playlistData['ytid'],
               'title': _titleController.text,
-              'source': 'user-created',
+              'source': widget.playlistData['source'] ?? 'user-created',
               if (_imageBase64 != null)
                 'image': _imageBase64
               else if (_imageUrlController.text.isNotEmpty)
                 'image': _imageUrlController.text,
               'list': widget.playlistData['list'],
+              if (widget.playlistData['createdAt'] != null)
+                'createdAt': widget.playlistData['createdAt'],
             };
 
             Navigator.pop(context, newPlaylist);

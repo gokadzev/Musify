@@ -366,7 +366,15 @@ class PlaylistBar extends StatelessWidget {
       };
     } else {
       return () {
-        context.push('/home/playlist/$playlistId');
+        final resolvedPlaylistId =
+            playlistId ?? playlistData?['ytid']?.toString();
+        if (resolvedPlaylistId == null ||
+            resolvedPlaylistId.isEmpty ||
+            resolvedPlaylistId == 'null') {
+          showToast(context, context.l10n!.error);
+          return;
+        }
+        context.push('/home/playlist/$resolvedPlaylistId');
       };
     }
   }

@@ -54,6 +54,92 @@ List onlinePlaylists = [];
 final currentLikedPlaylistsLength = ValueNotifier<int>(
   userLikedPlaylists.length,
 );
+bool _didSanitizePlaylistIdentifiers = false;
+
+void _ensurePlaylistIdentifiersSanitized() {
+  if (_didSanitizePlaylistIdentifiers) return;
+  _didSanitizePlaylistIdentifiers = true;
+  _sanitizePlaylistIdentifiers();
+}
+
+bool _isMissingPlaylistId(dynamic playlistId) {
+  final normalized = playlistId?.toString().trim();
+  return normalized == null || normalized.isEmpty || normalized == 'null';
+}
+
+/// Repairs persisted custom playlist entries that have missing/null ids.
+///
+/// This prevents navigation paths like `/home/playlist/null` from stale,
+/// previously corrupted data.
+void _sanitizePlaylistIdentifiers() {
+  var customChanged = false;
+  final normalizedCustom = userCustomPlaylists.value.map((item) {
+    if (item is! Map) return item;
+    final source = item['source']?.toString();
+    final shouldRepair =
+        source == null || source == 'user-created' || source == 'custom';
+    if (!shouldRepair || !_isMissingPlaylistId(item['ytid'])) {
+      return item;
+    }
+
+    customChanged = true;
+    return <String, dynamic>{
+      ...Map<String, dynamic>.from(item.cast<dynamic, dynamic>()),
+      'ytid': generateCustomPlaylistId(),
+      'source': source ?? 'user-created',
+    };
+  }).toList();
+
+  if (customChanged) {
+    userCustomPlaylists.value = normalizedCustom;
+    unawaited(addOrUpdateData('user', 'customPlaylists', normalizedCustom));
+  }
+
+  var foldersChanged = false;
+  final normalizedFolders = userPlaylistFolders.value.map((folder) {
+    if (folder is! Map) return folder;
+
+    final folderMap = Map<String, dynamic>.from(
+      folder.cast<dynamic, dynamic>(),
+    );
+    final folderPlaylists = folderMap['playlists'] as List<dynamic>? ?? [];
+    var folderChanged = false;
+
+    final normalizedPlaylists = folderPlaylists.map((playlist) {
+      if (playlist is! Map) return playlist;
+
+      final playlistMap = Map<String, dynamic>.from(
+        playlist.cast<dynamic, dynamic>(),
+      );
+      final source = playlistMap['source']?.toString();
+      final shouldRepair =
+          source == null || source == 'user-created' || source == 'custom';
+
+      if (!shouldRepair || !_isMissingPlaylistId(playlistMap['ytid'])) {
+        return playlistMap;
+      }
+
+      folderChanged = true;
+      return <String, dynamic>{
+        ...playlistMap,
+        'ytid': generateCustomPlaylistId(),
+        'source': source ?? 'user-created',
+      };
+    }).toList();
+
+    if (folderChanged) {
+      foldersChanged = true;
+      folderMap['playlists'] = normalizedPlaylists;
+    }
+
+    return folderMap;
+  }).toList();
+
+  if (foldersChanged) {
+    userPlaylistFolders.value = normalizedFolders;
+    unawaited(addOrUpdateData('user', 'playlistFolders', normalizedFolders));
+  }
+}
 
 String generateCustomPlaylistId() {
   final timestamp = DateTime.now().microsecondsSinceEpoch;
@@ -503,6 +589,7 @@ String deletePlaylistFolder(String folderId, [BuildContext? context]) {
 }
 
 List<Map> getPlaylistsInFolder(String folderId) {
+  _ensurePlaylistIdentifiersSanitized();
   try {
     final folder = userPlaylistFolders.value.firstWhere(
       (folder) => folder['id'] == folderId,
@@ -520,6 +607,7 @@ List<Map> getPlaylistsInFolder(String folderId) {
 }
 
 List<Map> getPlaylistsNotInFolders() {
+  _ensurePlaylistIdentifiersSanitized();
   final playlistsInFolders = <String>{};
   for (final folder in userPlaylistFolders.value) {
     final folderPlaylists = folder['playlists'] as List<dynamic>? ?? [];
@@ -545,6 +633,7 @@ Future<List> getPlaylists({
   bool onlyLiked = false,
   String type = 'all',
 }) async {
+  _ensurePlaylistIdentifiersSanitized();
   if (onlyLiked) {
     if (playlistsNum != null) {
       return userLikedPlaylists.take(playlistsNum).toList();
@@ -715,12 +804,15 @@ Future<Map?> getPlaylistInfoForWidget(
   dynamic id, {
   bool isArtist = false,
 }) async {
+  _ensurePlaylistIdentifiersSanitized();
   if (id == null) return null;
-  if (isArtist) return _fetchArtistPlaylist(id.toString());
-  if (id.toString().startsWith('customId-')) {
-    return _findCustomPlaylist(id.toString());
+  final normalizedId = id.toString().trim();
+  if (normalizedId.isEmpty || normalizedId == 'null') return null;
+  if (isArtist) return _fetchArtistPlaylist(normalizedId);
+  if (normalizedId.startsWith('customId-')) {
+    return _findCustomPlaylist(normalizedId);
   }
-  return _fetchYouTubePlaylist(id.toString());
+  return _fetchYouTubePlaylist(normalizedId);
 }
 
 Future<Map> _fetchArtistPlaylist(String artistName) async {

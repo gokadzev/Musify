@@ -118,8 +118,10 @@ class _PlaylistPageState extends State<PlaylistPage> {
         _playlist = widget.playlistData;
         final playlistList = _playlist?['list'] as List?;
         if (playlistList == null || playlistList.isEmpty) {
+          final resolvedId =
+              _playlist?['ytid']?.toString() ?? widget.playlistId;
           final fullPlaylist = await getPlaylistInfoForWidget(
-            widget.playlistId,
+            resolvedId,
             isArtist: widget.isArtist,
           );
           if (fullPlaylist != null) {
@@ -385,16 +387,31 @@ class _PlaylistPageState extends State<PlaylistPage> {
         );
 
         if (result != null) {
-          final playlistYtid = _playlist['ytid'];
+          final resolvedPlaylistYtid =
+              _playlist['ytid']?.toString() ?? widget.playlistId;
+          if (resolvedPlaylistYtid == null ||
+              resolvedPlaylistYtid.isEmpty ||
+              resolvedPlaylistYtid == 'null') {
+            showToast(context, context.l10n!.error);
+            return;
+          }
+
+          final updatedPlaylist = {
+            ..._playlist,
+            ...result,
+            'ytid': resolvedPlaylistYtid,
+            'source': _playlist['source'] ?? result['source'],
+            'list': result['list'] ?? _playlist['list'],
+          };
 
           // Search root list first, then inside folders.
           final rootIndex = userCustomPlaylists.value.indexWhere(
-            (p) => p['ytid'] == playlistYtid,
+            (p) => p['ytid'] == resolvedPlaylistYtid,
           );
 
           if (rootIndex != -1) {
             final updatedPlaylists = List<Map>.from(userCustomPlaylists.value);
-            updatedPlaylists[rootIndex] = result;
+            updatedPlaylists[rootIndex] = updatedPlaylist;
             userCustomPlaylists.value = updatedPlaylists;
             unawaited(
               addOrUpdateData(
@@ -411,10 +428,10 @@ class _PlaylistPageState extends State<PlaylistPage> {
                 folder['playlists'] as List? ?? [],
               );
               final fi = folderPlaylists.indexWhere(
-                (p) => p['ytid'] == playlistYtid,
+                (p) => p['ytid'] == resolvedPlaylistYtid,
               );
               if (fi != -1) {
-                folderPlaylists[fi] = result;
+                folderPlaylists[fi] = updatedPlaylist;
                 folder['playlists'] = folderPlaylists;
                 break;
               }
@@ -429,7 +446,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
             );
           }
 
-          setState(() => _playlist = result);
+          setState(() => _playlist = updatedPlaylist);
           showToast(context, context.l10n!.playlistUpdated);
         }
       },
@@ -594,7 +611,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
       }
       _pagingController.refresh();
     } else {
-      final updatedPlaylist = await getPlaylistInfoForWidget(widget.playlistId);
+      final resolvedId = _playlist['ytid']?.toString() ?? widget.playlistId;
+      final updatedPlaylist = await getPlaylistInfoForWidget(resolvedId);
       if (updatedPlaylist != null && mounted) {
         setState(() {
           _playlist = updatedPlaylist;
