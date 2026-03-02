@@ -148,10 +148,13 @@ String addSongInCustomPlaylist(
   Map song, {
   int? indexToInsert,
 }) {
-  final customPlaylist = userCustomPlaylists.value.firstWhere(
-    (playlist) => playlist['ytid'] == playlistId,
-    orElse: () => null,
-  );
+  Map? customPlaylist;
+  for (final playlist in userCustomPlaylists.value) {
+    if (playlist['ytid'] == playlistId) {
+      customPlaylist = playlist as Map;
+      break;
+    }
+  }
 
   if (customPlaylist != null) {
     final List<dynamic> playlistSongs = customPlaylist['list'];
@@ -738,19 +741,19 @@ Future<Map> _fetchArtistPlaylist(String artistName) async {
 }
 
 Map? _findCustomPlaylist(String id) {
-  final inRoot = userCustomPlaylists.value.firstWhere(
-    (p) => p['ytid']?.toString() == id,
-    orElse: () => null,
-  );
-  if (inRoot != null) return inRoot as Map;
+  for (final playlist in userCustomPlaylists.value) {
+    if (playlist['ytid']?.toString() == id) {
+      return playlist as Map;
+    }
+  }
 
   for (final folder in userPlaylistFolders.value) {
     final folderPlaylists = folder['playlists'] as List<dynamic>? ?? [];
-    final inFolder = folderPlaylists.firstWhere(
-      (p) => p['ytid']?.toString() == id,
-      orElse: () => null,
-    );
-    if (inFolder != null) return inFolder as Map;
+    for (final playlist in folderPlaylists) {
+      if (playlist['ytid']?.toString() == id) {
+        return playlist as Map;
+      }
+    }
   }
 
   return null;
@@ -758,25 +761,34 @@ Map? _findCustomPlaylist(String id) {
 
 Future<Map?> _fetchYouTubePlaylist(String id) async {
   // 1. Local DB / in-memory caches (no network).
-  Map? playlist = playlists.firstWhere(
-    (p) => p['ytid']?.toString() == id,
-    orElse: () => null,
-  );
+  Map? playlist;
+  for (final p in playlists) {
+    if (p['ytid']?.toString() == id) {
+      playlist = p as Map;
+      break;
+    }
+  }
 
   // 2. User-added YouTube playlists.
   if (playlist == null) {
     final userPl = await getUserPlaylists();
-    playlist = userPl.firstWhere(
-      (p) => p['ytid']?.toString() == id,
-      orElse: () => null,
-    );
+    for (final p in userPl) {
+      if (p['ytid']?.toString() == id) {
+        playlist = p as Map;
+        break;
+      }
+    }
   }
 
   // 3. Previously fetched online playlists.
-  playlist ??= onlinePlaylists.firstWhere(
-    (p) => p['ytid']?.toString() == id,
-    orElse: () => null,
-  );
+  if (playlist == null) {
+    for (final p in onlinePlaylists) {
+      if (p['ytid']?.toString() == id) {
+        playlist = p as Map;
+        break;
+      }
+    }
+  }
 
   // 4. Fetch from YouTube as a last resort.
   if (playlist == null) {
