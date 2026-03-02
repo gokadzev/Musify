@@ -1,0 +1,7 @@
+Enhancements
+- Improved playlist-related logic code
+
+Bug fixes
+- Fixed folder playlist issues
+- Fixed playlist rename bug
+- Full changelog: https://github.com/gokadzev/Musify/releases
