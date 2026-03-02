@@ -21,6 +21,7 @@
 
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/extensions/l10n.dart';
@@ -28,7 +29,6 @@ import 'package:musify/main.dart';
 import 'package:musify/services/common_services.dart';
 import 'package:musify/services/playlists_manager.dart';
 import 'package:musify/utilities/common_variables.dart';
-import 'package:musify/utilities/fallback_image.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/formatter.dart';
 import 'package:musify/widgets/no_artwork_cube.dart';
@@ -80,7 +80,6 @@ class _SongBarState extends State<SongBar> {
   late String _songArtist;
   late final String? _artworkPath;
   late final String _lowResImageUrl;
-  late final String _highResImageUrl;
   late final String _ytid;
 
   @override
@@ -92,7 +91,6 @@ class _SongBarState extends State<SongBar> {
     _songArtist = widget.song['artist']?.toString() ?? '';
     _artworkPath = widget.song['artworkPath'];
     _lowResImageUrl = widget.song['lowResImage']?.toString() ?? '';
-    _highResImageUrl = widget.song['highResImage']?.toString() ?? '';
     _ytid = widget.song['ytid'] ?? '';
 
     // Initialize ValueNotifiers only once
@@ -190,7 +188,6 @@ class _SongBarState extends State<SongBar> {
 
         return _OnlineArtwork(
           lowResImageUrl: _lowResImageUrl,
-          highResImageUrl: _highResImageUrl,
           size: size,
           isDurationAvailable: isDurationAvailable,
           colorScheme: colorScheme,
@@ -612,7 +609,6 @@ class _OfflineArtwork extends StatelessWidget {
 class _OnlineArtwork extends StatelessWidget {
   const _OnlineArtwork({
     required this.lowResImageUrl,
-    required this.highResImageUrl,
     required this.size,
     required this.isDurationAvailable,
     required this.colorScheme,
@@ -621,7 +617,6 @@ class _OnlineArtwork extends StatelessWidget {
   });
 
   final String lowResImageUrl;
-  final String highResImageUrl;
   final double size;
   final bool isDurationAvailable;
   final ColorScheme colorScheme;
@@ -638,11 +633,12 @@ class _OnlineArtwork extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: <Widget>[
-          FallbackNetworkImage(
+          CachedNetworkImage(
+            key: ValueKey(lowResImageUrl),
             imageUrl: lowResImageUrl,
-            fallbackUrl: highResImageUrl.isNotEmpty ? highResImageUrl : null,
             width: size,
             height: size,
+            fit: BoxFit.cover,
             memCacheWidth: 256,
             memCacheHeight: 256,
             imageBuilder: (context, imageProvider) => ClipRRect(
@@ -679,7 +675,8 @@ class _OnlineArtwork extends StatelessWidget {
                 ],
               ),
             ),
-            errorChild: const NullArtworkWidget(iconSize: 30),
+            errorWidget: (context, url, error) =>
+                const NullArtworkWidget(iconSize: 30),
           ),
           if (isDurationAvailable && !isOffline)
             Positioned(

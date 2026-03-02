@@ -22,8 +22,8 @@
 import 'dart:io';
 
 import 'package:audio_service/audio_service.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:musify/utilities/fallback_image.dart';
 import 'package:musify/widgets/no_artwork_cube.dart';
 import 'package:musify/widgets/spinner.dart';
 
@@ -54,18 +54,18 @@ class SongArtworkWidget extends StatelessWidget {
               ),
             ),
           )
-        : FallbackNetworkImage(
+        : CachedNetworkImage(
             key: ValueKey(metadata.artUri.toString()),
             width: size,
             height: size,
             imageUrl: metadata.artUri.toString(),
-            fallbackUrl: metadata.extras?['lowResImage']?.toString(),
             imageBuilder: (context, imageProvider) => ClipRRect(
               borderRadius: BorderRadius.circular(borderRadius),
               child: Image(image: imageProvider, fit: BoxFit.cover),
             ),
             placeholder: (context, url) => const Spinner(),
-            errorChild: NullArtworkWidget(iconSize: errorWidgetIconSize),
+            errorWidget: (context, url, error) =>
+                NullArtworkWidget(iconSize: errorWidgetIconSize),
           );
   }
 }
