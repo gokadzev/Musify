@@ -1256,7 +1256,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
             if (offlineSong['artworkPath'] != null) {
               song['artworkPath'] = offlineSong['artworkPath'];
             }
-            logger.log('Using offline copy for $ytid');
           }
         }
       } catch (e, stackTrace) {
