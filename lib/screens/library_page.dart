@@ -184,9 +184,7 @@ class _LibraryPageState extends State<LibraryPage> {
               if (folders.isEmpty) {
                 return const SizedBox();
               }
-              final playlistsNotInFolders = getPlaylistsNotInFolders();
-              final hasPlaylistsAfter = playlistsNotInFolders.isNotEmpty;
-              return _buildFolderListView(context, folders, hasPlaylistsAfter);
+              return _buildFolderListView(context, folders, true);
             },
           ),
           ValueListenableBuilder<List>(
@@ -196,7 +194,11 @@ class _LibraryPageState extends State<LibraryPage> {
               if (playlistsNotInFolders.isEmpty) {
                 return const SizedBox();
               }
-              return _buildPlaylistListView(context, playlistsNotInFolders);
+              return _buildPlaylistListView(
+                context,
+                playlistsNotInFolders,
+                hasItemsAfter: true,
+              );
             },
           ),
         ],
@@ -305,15 +307,19 @@ class _LibraryPageState extends State<LibraryPage> {
     BuildContext context,
     List playlists, {
     bool isOfflinePlaylists = false,
+    bool hasItemsAfter = false,
   }) {
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: playlists.length,
-      padding: commonListViewBottomPadding,
+      padding: hasItemsAfter ? EdgeInsets.zero : commonListViewBottomPadding,
       itemBuilder: (BuildContext context, index) {
         final playlist = playlists[index];
-        final borderRadius = getItemBorderRadius(index, playlists.length);
+        final isLastItem = index == playlists.length - 1;
+        final borderRadius = hasItemsAfter && isLastItem
+            ? BorderRadius.zero
+            : getItemBorderRadius(index, playlists.length);
         return PlaylistBar(
           key: ValueKey(playlist['ytid']),
           playlist['title'],
