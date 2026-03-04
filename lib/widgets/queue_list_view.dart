@@ -19,12 +19,10 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
-import 'package:audio_service/audio_service.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
-import 'package:musify/utilities/mediaitem.dart';
 import 'package:musify/utilities/utils.dart';
 import 'package:musify/widgets/song_bar.dart';
 
@@ -36,10 +34,11 @@ class QueueListView extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    return StreamBuilder<List<MediaItem>>(
-      stream: audioHandler.queue,
+    return StreamBuilder<List<Map>>(
+      stream: audioHandler.queueAsMapStream,
       builder: (context, snapshot) {
         final queue = snapshot.data ?? [];
+        final currentIndex = audioHandler.currentQueueIndex;
 
         return Column(
           children: [
@@ -118,7 +117,7 @@ class QueueListView extends StatelessWidget {
             Expanded(
               child: queue.isEmpty
                   ? _buildEmptyState(context, colorScheme, textTheme)
-                  : _buildQueueList(context, queue, colorScheme),
+                  : _buildQueueList(context, queue, colorScheme, currentIndex),
             ),
           ],
         );
@@ -165,21 +164,19 @@ class QueueListView extends StatelessWidget {
 
   Widget _buildQueueList(
     BuildContext context,
-    List<MediaItem> queue,
+    List<Map> queue,
     ColorScheme colorScheme,
+    int currentIndex,
   ) {
-    final currentIndex = audioHandler.currentQueueIndex;
-
     return ListView.builder(
       padding: const EdgeInsets.only(top: 8, bottom: 16),
       itemCount: queue.length,
       itemBuilder: (context, index) {
-        final song = mediaItemToMap(queue[index]);
         final isCurrentSong = index == currentIndex;
         final borderRadius = getItemBorderRadius(index, queue.length);
 
         return SongBar(
-          song,
+          queue[index],
           false,
           showQueueActions: false,
           onPlay: () {
