@@ -76,6 +76,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
   final List<Map> _queueList = [];
   final List<Map> _originalQueueList = [];
   final List<Map> _historyList = [];
+  final BehaviorSubject<List<Map>> _queueMapStream =
+      BehaviorSubject<List<Map>>.seeded([]);
   int _currentQueueIndex = 0;
   int _currentLoadingIndex = -1;
   int _currentLoadingTransitionId = -1;
@@ -932,6 +934,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
           .toList();
       queue.add(mediaItems);
 
+      _queueMapStream.add(List.unmodifiable(_queueList));
+
       if (_currentQueueIndex < mediaItems.length) {
         final currentMediaItem = mediaItems[_currentQueueIndex];
         mediaItem.add(currentMediaItem);
@@ -1154,6 +1158,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   List<Map> get currentQueue => List.unmodifiable(_queueList);
   List<Map> get playHistory => List.unmodifiable(_historyList);
+  Stream<List<Map>> get queueAsMapStream => _queueMapStream.stream;
   int get currentQueueIndex => _currentQueueIndex;
   Map? get currentSong =>
       _currentQueueIndex >= 0 && _currentQueueIndex < _queueList.length

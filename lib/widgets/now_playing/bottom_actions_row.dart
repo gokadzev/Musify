@@ -60,8 +60,8 @@ class BottomActionsRow extends StatelessWidget {
     final responsiveIconSize = screenWidth < 360 ? iconSize * 0.85 : iconSize;
     final spacing = screenWidth < 360 ? 6.0 : 10.0;
 
-    return StreamBuilder<List<MediaItem>>(
-      stream: audioHandler.queue,
+    return StreamBuilder<List<Map>>(
+      stream: audioHandler.queueAsMapStream,
       builder: (context, snapshot) {
         final queue = snapshot.data ?? [];
 
@@ -101,7 +101,8 @@ class BottomActionsRow extends StatelessWidget {
               icon: FluentIcons.apps_list_24_filled,
               colorScheme: colorScheme,
               size: responsiveIconSize,
-              onPressed: () => _showQueue(context, queue),
+              onPressed: () =>
+                  _showQueue(context, queue, audioHandler.currentQueueIndex),
               tooltip: 'Queue',
             ),
           );
@@ -289,9 +290,8 @@ Future<void> _toggleOffline(
   }
 }
 
-void _showQueue(BuildContext context, List<MediaItem> queue) {
+void _showQueue(BuildContext context, List<Map> queue, int currentIndex) {
   final colorScheme = Theme.of(context).colorScheme;
-  final currentIndex = audioHandler.currentQueueIndex;
 
   showCustomBottomSheet(
     context,
@@ -365,10 +365,9 @@ void _showQueue(BuildContext context, List<MediaItem> queue) {
           itemBuilder: (BuildContext context, int index) {
             final isCurrentSong = index == currentIndex;
             final borderRadius = getItemBorderRadius(index, queue.length);
-            final song = mediaItemToMap(queue[index]);
 
             return SongBar(
-              song,
+              queue[index],
               false,
               showQueueActions: false,
               onPlay: () {
