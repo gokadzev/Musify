@@ -652,6 +652,7 @@ class _LibraryPageState extends State<LibraryPage> {
 
           if (playlistId.isEmpty) {
             logger.log('Playlist ID is missing, cannot remove playlist.');
+            showToast(context, context.l10n!.error);
             return;
           }
 
