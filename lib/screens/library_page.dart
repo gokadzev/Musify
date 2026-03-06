@@ -19,6 +19,8 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
+import 'dart:async';
+
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/extensions/l10n.dart';
@@ -654,6 +656,9 @@ class _LibraryPageState extends State<LibraryPage> {
           }
 
           removeUserPlaylistEntry(playlist);
+          if (offlinePlaylistService.isPlaylistDownloaded(playlistId)) {
+            unawaited(offlinePlaylistService.removeOfflinePlaylist(playlistId));
+          }
         },
       );
     },
