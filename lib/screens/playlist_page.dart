@@ -36,6 +36,7 @@ import 'package:musify/services/playlists_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/flutter_toast.dart';
+import 'package:musify/utilities/offline_playlist_dialogs.dart';
 import 'package:musify/utilities/sort_utils.dart';
 import 'package:musify/utilities/utils.dart';
 import 'package:musify/widgets/edit_playlist_dialog.dart';
@@ -535,66 +536,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
     );
   }
 
-  void _showRemoveOfflineDialog(String playlistId) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: colorScheme.surface,
-          surfaceTintColor: Colors.transparent,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(28),
-          ),
-          icon: Icon(
-            FluentIcons.cloud_off_24_regular,
-            color: colorScheme.error,
-            size: 32,
-          ),
-          title: Text(
-            context.l10n!.removeOfflinePlaylist,
-            style: TextStyle(
-              color: colorScheme.onSurface,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          content: Text(
-            context.l10n!.removeOfflinePlaylistConfirm,
-            style: TextStyle(color: colorScheme.onSurfaceVariant),
-            textAlign: TextAlign.center,
-          ),
-          actionsAlignment: MainAxisAlignment.center,
-          actions: [
-            OutlinedButton(
-              onPressed: () => Navigator.pop(context),
-              style: OutlinedButton.styleFrom(
-                side: BorderSide(color: colorScheme.outline),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: Text(context.l10n!.cancel),
-            ),
-            FilledButton(
-              onPressed: () {
-                offlinePlaylistService.removeOfflinePlaylist(playlistId);
-                Navigator.pop(context);
-                showToast(context, context.l10n!.playlistRemovedFromOffline);
-              },
-              style: FilledButton.styleFrom(
-                backgroundColor: colorScheme.error,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: Text(context.l10n!.remove),
-            ),
-          ],
-        );
-      },
-    );
-  }
+  void _showRemoveOfflineDialog(String playlistId) =>
+      showRemoveOfflinePlaylistDialog(context, playlistId);
 
   void _handleSyncPlaylist() async {
     if (_playlist['ytid'] != null) {
