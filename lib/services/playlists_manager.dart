@@ -900,12 +900,18 @@ Future<void> renameSongInPlaylist(
       );
 
       if (songIndex != -1) {
-        (playlist['list'] as List)[songIndex]['title'] = newTitle;
-        (playlist['list'] as List)[songIndex]['artist'] = newArtist;
+        final updatedSongs = List<dynamic>.from(playlist['list'] as List);
+        updatedSongs[songIndex] =
+            Map<String, dynamic>.from(updatedSongs[songIndex] as Map)
+              ..['title'] = newTitle
+              ..['artist'] = newArtist;
+
+        final updatedPlaylist = Map<String, dynamic>.from(playlist)
+          ..['list'] = updatedSongs;
 
         // Update the playlist in storage
         final updatedPlaylists = userCustomPlaylists.value
-            .map((p) => p['ytid'] == playlistId ? playlist : p)
+            .map((p) => p['ytid'] == playlistId ? updatedPlaylist : p)
             .toList();
         userCustomPlaylists.value = updatedPlaylists;
 
