@@ -49,7 +49,7 @@ final offlineMode = ValueNotifier<bool>(
 );
 
 final predictiveBack = ValueNotifier<bool>(
-  Hive.box('settings').get('predictiveBack', defaultValue: false),
+  Hive.box('settings').get('predictiveBack', defaultValue: true),
 );
 
 final sponsorBlockSupport = ValueNotifier<bool>(
