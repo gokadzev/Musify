@@ -353,6 +353,8 @@ class _ControlsWidget extends StatelessWidget {
           const SizedBox(width: 4),
           IconButton(
             onPressed: audioHandler.skipToNext,
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
             icon: Icon(
               FluentIcons.next_24_filled,
               color: colorScheme.onSurfaceVariant,
@@ -415,6 +417,8 @@ class _CircularPlayButton extends StatelessWidget {
               onPressed: isCompleted
                   ? () => audioHandler.seek(Duration.zero)
                   : (isPlaying ? audioHandler.pause : audioHandler.play),
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
               icon: Icon(
                 isCompleted
                     ? FluentIcons.arrow_counterclockwise_24_filled
