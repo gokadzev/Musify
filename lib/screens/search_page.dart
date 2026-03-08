@@ -29,6 +29,7 @@ import 'package:musify/main.dart';
 import 'package:musify/services/common_services.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/playlists_manager.dart';
+import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/utils.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
@@ -64,6 +65,8 @@ class _SearchPageState extends State<SearchPage> {
   List<dynamic> _songsSearchResult = [];
   List<dynamic> _albumsSearchResult = [];
   List<dynamic> _playlistsSearchResult = [];
+  List<dynamic> _offlineSongsResult = [];
+  List<dynamic> _librarySongsResult = [];
   List<String> _suggestionsList = [];
   Timer? _debounce;
   int _latestSuggestionRequest = 0;
@@ -101,6 +104,8 @@ class _SearchPageState extends State<SearchPage> {
       _songsSearchResult = [];
       _albumsSearchResult = [];
       _playlistsSearchResult = [];
+      _offlineSongsResult = [];
+      _librarySongsResult = [];
       _suggestionsList = [];
       if (mounted) setState(() {});
       return;
@@ -114,15 +119,25 @@ class _SearchPageState extends State<SearchPage> {
     }
 
     try {
-      _songsSearchResult = await fetchSongsList(query);
-      _albumsSearchResult = await getPlaylists(query: query, type: 'album');
-      _playlistsSearchResult = await getPlaylists(
-        query: query,
-        type: 'playlist',
-      );
+      // Offline/Local Search (Intelligent search)
+      _offlineSongsResult = _intelligentLocalSearch(userOfflineSongs, query);
+      _librarySongsResult = _intelligentLocalSearch(userLikedSongsList, query);
+
+      if (!offlineMode.value) {
+        _songsSearchResult = await fetchSongsList(query);
+        _albumsSearchResult = await getPlaylists(query: query, type: 'album');
+        _playlistsSearchResult = await getPlaylists(
+          query: query,
+          type: 'playlist',
+        );
+      } else {
+        _songsSearchResult = [];
+        _albumsSearchResult = [];
+        _playlistsSearchResult = [];
+      }
     } catch (e, stackTrace) {
       logger.log(
-        'Error while searching online songs',
+        'Error while searching songs',
         error: e,
         stackTrace: stackTrace,
       );
@@ -130,6 +145,24 @@ class _SearchPageState extends State<SearchPage> {
       _fetchingSongs.value = false;
       if (mounted) setState(() {});
     }
+  }
+
+  List<dynamic> _intelligentLocalSearch(List source, String query) {
+    if (query.isEmpty) return [];
+    final lowercaseQuery = query.toLowerCase();
+    final queryWords = lowercaseQuery.split(RegExp(r'\s+')).where((w) => w.isNotEmpty).toList();
+
+    return source.where((song) {
+      final title = (song['title'] ?? '').toString().toLowerCase();
+      final artist = (song['artist'] ?? '').toString().toLowerCase();
+      final album = (song['album'] ?? '').toString().toLowerCase();
+
+      // Check if all words in query are present in either title, artist or album
+      return queryWords.every((word) =>
+          title.contains(word) ||
+          artist.contains(word) ||
+          album.contains(word));
+    }).toList();
   }
 
   @override
@@ -162,18 +195,23 @@ class _SearchPageState extends State<SearchPage> {
                         const Duration(milliseconds: 300),
                         () async {
                           if (query.isNotEmpty) {
-                            final searchSuggestions =
-                                await getSearchSuggestions(query);
+                            if (!offlineMode.value) {
+                              final searchSuggestions =
+                                  await getSearchSuggestions(query);
 
-                            if (!mounted ||
-                                requestId != _latestSuggestionRequest ||
-                                _searchBar.text != query) {
-                              return;
+                              if (!mounted ||
+                                  requestId != _latestSuggestionRequest ||
+                                  _searchBar.text != query) {
+                                return;
+                              }
+
+                              _suggestionsList = List<String>.from(
+                                searchSuggestions,
+                              );
+                            } else {
+                              // Minimal suggestions for offline? Maybe just history
+                              _suggestionsList = [];
                             }
-
-                            _suggestionsList = List<String>.from(
-                              searchSuggestions,
-                            );
                           } else {
                             if (requestId != _latestSuggestionRequest) {
                               return;
@@ -206,7 +244,9 @@ class _SearchPageState extends State<SearchPage> {
                   (_suggestionsList.isNotEmpty ||
                       (_songsSearchResult.isEmpty &&
                           _albumsSearchResult.isEmpty &&
-                          _playlistsSearchResult.isEmpty))
+                          _playlistsSearchResult.isEmpty &&
+                          _offlineSongsResult.isEmpty &&
+                          _librarySongsResult.isEmpty))
                   ? ValueListenableBuilder<List>(
                       valueListenable: searchHistoryNotifier,
                       builder: (context, searchHistory, _) {
@@ -275,7 +315,63 @@ class _SearchPageState extends State<SearchPage> {
   Widget _buildSearchResults(BuildContext context, Color primaryColor) {
     final widgets = <Widget>[];
 
-    // Songs section
+    // Offline Songs section
+    if (_offlineSongsResult.isNotEmpty) {
+      widgets.add(
+        SectionTitle(
+          context.l10n!.offlineSongs,
+          primaryColor,
+          icon: FluentIcons.cellular_off_24_filled,
+        ),
+      );
+
+      final count = _offlineSongsResult.length > maxSongsInList
+          ? maxSongsInList
+          : _offlineSongsResult.length;
+
+      for (var index = 0; index < count; index++) {
+        final borderRadius = getItemBorderRadius(index, count);
+        widgets.add(
+          SongBar(
+            _offlineSongsResult[index],
+            true,
+            key: ValueKey('offline_song_${_offlineSongsResult[index]['ytid']}_$index'),
+            showMusicDuration: true,
+            borderRadius: borderRadius,
+          ),
+        );
+      }
+    }
+
+    // Library Songs section (Liked)
+    if (_librarySongsResult.isNotEmpty) {
+      widgets.add(
+        SectionTitle(
+          context.l10n!.likedSongs,
+          primaryColor,
+          icon: FluentIcons.heart_24_filled,
+        ),
+      );
+
+      final count = _librarySongsResult.length > maxSongsInList
+          ? maxSongsInList
+          : _librarySongsResult.length;
+
+      for (var index = 0; index < count; index++) {
+        final borderRadius = getItemBorderRadius(index, count);
+        widgets.add(
+          SongBar(
+            _librarySongsResult[index],
+            true,
+            key: ValueKey('library_song_${_librarySongsResult[index]['ytid']}_$index'),
+            showMusicDuration: true,
+            borderRadius: borderRadius,
+          ),
+        );
+      }
+    }
+
+    // Songs section (Online)
     if (_songsSearchResult.isNotEmpty) {
       widgets.add(
         SectionTitle(
@@ -370,7 +466,7 @@ class _SearchPageState extends State<SearchPage> {
 
     return Column(
       key: ValueKey(
-        'results-${_songsSearchResult.length}-${_albumsSearchResult.length}-${_playlistsSearchResult.length}',
+        'results-${_songsSearchResult.length}-${_albumsSearchResult.length}-${_playlistsSearchResult.length}-${_offlineSongsResult.length}-${_librarySongsResult.length}',
       ),
       children: widgets,
     );

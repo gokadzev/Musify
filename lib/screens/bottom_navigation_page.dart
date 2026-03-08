@@ -143,22 +143,13 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
         route: '/home',
         shellIndex: 0,
       ),
-    ];
-
-    // Only add search tab in online mode
-    if (!isOfflineMode) {
-      items.add(
-        _NavigationItem(
-          icon: FluentIcons.search_24_regular,
-          selectedIcon: FluentIcons.search_24_filled,
-          label: context.l10n?.search ?? 'Search',
-          route: '/search',
-          shellIndex: 1,
-        ),
-      );
-    }
-
-    items.addAll([
+      _NavigationItem(
+        icon: FluentIcons.search_24_regular,
+        selectedIcon: FluentIcons.search_24_filled,
+        label: context.l10n?.search ?? 'Search',
+        route: '/search',
+        shellIndex: 1,
+      ),
       _NavigationItem(
         icon: FluentIcons.book_24_regular,
         selectedIcon: FluentIcons.book_24_filled,
@@ -173,21 +164,13 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
         route: '/settings',
         shellIndex: 3,
       ),
-    ]);
+    ];
 
     return items;
   }
 
   void _handleOfflineModeChange(bool isOfflineMode) {
-    if (!mounted) return;
-
-    final currentRoute = GoRouterState.of(context).matchedLocation;
-
-    // If we're switching to offline mode and currently on search tab
-    if (isOfflineMode && currentRoute.startsWith('/search')) {
-      // Navigate to home
-      widget.child.goBranch(0);
-    }
+    // No longer need to navigate away from search in offline mode
   }
 
   void _onTabTapped(int index, List<_NavigationItem> items) {
@@ -220,10 +203,6 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
       (item) => item.shellIndex == currentShellIndex,
     );
     if (matchedIndex != -1) return matchedIndex;
-
-    // If the Search branch (1) is active but Search is hidden in offline mode,
-    // fall back to the Home tab.
-    if (isOfflineMode && currentShellIndex == 1) return 0;
 
     // Final fallback: return the first tab to keep UI in a valid state.
     return 0;
