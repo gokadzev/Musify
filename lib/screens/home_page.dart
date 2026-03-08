@@ -237,7 +237,14 @@ class _HomePageState extends State<HomePage> {
 
                     return RepaintBoundary(
                       key: ValueKey('most_played_${song['ytid']}_$index'),
-                      child: SongBar(song, true, borderRadius: borderRadius),
+                      child: SongBar(
+                        song,
+                        true,
+                        borderRadius: borderRadius,
+                        onPlay: () => audioHandler.addPlaylistToQueue([
+                          mostPlayedSongs[index],
+                        ], replace: true),
+                      ),
                     );
                   },
                 ),
