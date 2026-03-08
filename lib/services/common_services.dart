@@ -58,6 +58,7 @@ final currentRecentlyPlayedLength = ValueNotifier<int>(
 );
 final recentlyPlayedVersion = ValueNotifier<int>(0);
 
+// TODO: Remove this after one release
 final recentlyPlayedMigration = Future.microtask(() async {
   try {
     var needsPersist = false;
