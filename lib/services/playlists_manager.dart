@@ -201,6 +201,14 @@ bool removeSongFromPlaylist(
 
     playlist['list'] = playlistSongs;
 
+    // If the removed song was the one providing the image, clear the playlist image
+    if (playlist['image'] != null &&
+        (songToRemove['image'] == playlist['image'] ||
+            songToRemove['lowResImage'] == playlist['image'] ||
+            songToRemove['thumbnail'] == playlist['image'])) {
+      playlist['image'] = null;
+    }
+
     try {
       if (playlist['source'] == 'user-created') {
         unawaited(
@@ -963,5 +971,38 @@ Future<void> updatePlaylistLikeStatus(String playlistId, bool add) async {
       error: e,
       stackTrace: stackTrace,
     );
+  }
+}
+
+Future<void> setPlaylistImageFromSong(
+  dynamic playlistId,
+  String? imageUrl,
+) async {
+  if (playlistId == null) return;
+  final updatedPlaylists = List<Map>.from(userCustomPlaylists.value);
+  final index = updatedPlaylists.indexWhere((p) => p['ytid'] == playlistId);
+
+  if (index != -1) {
+    updatedPlaylists[index]['image'] = imageUrl;
+    userCustomPlaylists.value = updatedPlaylists;
+    unawaited(
+      addOrUpdateData('user', 'customPlaylists', userCustomPlaylists.value),
+    );
+  } else {
+    // Check in folders
+    final updatedFolders = List<Map>.from(userPlaylistFolders.value);
+    for (final folder in updatedFolders) {
+      final folderPlaylists = List<Map>.from(folder['playlists'] ?? []);
+      final fi = folderPlaylists.indexWhere((p) => p['ytid'] == playlistId);
+      if (fi != -1) {
+        folderPlaylists[fi]['image'] = imageUrl;
+        folder['playlists'] = folderPlaylists;
+        userPlaylistFolders.value = updatedFolders;
+        unawaited(
+          addOrUpdateData('user', 'playlistFolders', userPlaylistFolders.value),
+        );
+        break;
+      }
+    }
   }
 }

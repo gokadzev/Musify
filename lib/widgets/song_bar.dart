@@ -278,6 +278,17 @@ class _SongBarState extends State<SongBar> {
       case 'offline':
         unawaited(_handleOfflineToggle(context));
         break;
+      case 'set_as_playlist_image':
+        final imageUrl = widget.song['highResImage'] ??
+            widget.song['image'] ??
+            widget.song['lowResImage'] ??
+            widget.song['thumbnail'];
+        if (imageUrl != null && widget.playlistId != null) {
+          unawaited(setPlaylistImageFromSong(widget.playlistId!, imageUrl));
+          showToast(context, context.l10n!.settingChangedMsg);
+          widget.onRenamed?.call();
+        }
+        break;
     }
   }
 
@@ -387,7 +398,14 @@ class _SongBarState extends State<SongBar> {
     final removeOfflineText = l10n.removeOffline;
     final makeOfflineText = l10n.makeOffline;
     final renameSongText = l10n.renameSong;
+    final setAsPlaylistImageText = l10n.setAsPlaylistImage;
     final canRename = widget.isFromLikedSongs || widget.playlistId != null;
+
+    final hasImage = widget.song['image'] != null ||
+        widget.song['lowResImage'] != null ||
+        widget.song['highResImage'] != null ||
+        widget.song['thumbnail'] != null;
+    final canSetAsPlaylistImage = widget.playlistId != null && hasImage;
 
     return [
       if (widget.showQueueActions)
@@ -448,6 +466,20 @@ class _SongBarState extends State<SongBar> {
               const SizedBox(width: 8),
               Text(
                 renameSongText,
+                style: TextStyle(color: colorScheme.secondary),
+              ),
+            ],
+          ),
+        ),
+      if (canSetAsPlaylistImage)
+        PopupMenuItem<String>(
+          value: 'set_as_playlist_image',
+          child: Row(
+            children: [
+              Icon(FluentIcons.image_24_regular, color: colorScheme.primary),
+              const SizedBox(width: 8),
+              Text(
+                setAsPlaylistImageText,
                 style: TextStyle(color: colorScheme.secondary),
               ),
             ],
