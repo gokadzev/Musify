@@ -27,6 +27,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
+import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/no_artwork_cube.dart';
 
 class QueueWidget extends StatefulWidget {
@@ -96,6 +97,23 @@ class _QueueWidgetState extends State<QueueWidget> {
     );
   }
 
+  void _confirmClearQueue(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      builder: (_) => ConfirmationDialog(
+        confirmationMessage: context.l10n!.clearQueueQuestion,
+        submitMessage: context.l10n!.clear,
+        isDangerous: true,
+        onCancel: () => Navigator.pop(context),
+        onSubmit: () {
+          Navigator.pop(context);
+          audioHandler.clearQueue();
+          if (widget.isBottomSheet) Navigator.pop(context);
+        },
+      ),
+    );
+  }
+
   Widget _buildHeader(
     BuildContext context,
     ColorScheme colorScheme,
@@ -155,10 +173,7 @@ class _QueueWidgetState extends State<QueueWidget> {
           ),
           if (_queue.isNotEmpty)
             FilledButton.tonalIcon(
-              onPressed: () {
-                audioHandler.clearQueue();
-                if (widget.isBottomSheet) Navigator.pop(context);
-              },
+              onPressed: () => _confirmClearQueue(context),
               icon: const Icon(FluentIcons.dismiss_24_regular, size: 18),
               label: Text(context.l10n!.clear),
               style: FilledButton.styleFrom(
