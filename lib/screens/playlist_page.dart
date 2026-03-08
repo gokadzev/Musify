@@ -85,20 +85,30 @@ class _PlaylistPageState extends State<PlaylistPage> {
     orElse: () => PlaylistSortType.default_,
   );
 
+  // Search
+  String _searchQuery = '';
+
+  List<dynamic> get _sourceList {
+    final list = _playlist?['list'] as List<dynamic>? ?? [];
+    if (_searchQuery.isEmpty) return list;
+    final q = _searchQuery.toLowerCase();
+    return list.where((s) {
+      final title = (s['title'] ?? '').toString().toLowerCase();
+      final artist = (s['artist'] ?? '').toString().toLowerCase();
+      return title.contains(q) || artist.contains(q);
+    }).toList();
+  }
+
   @override
   void initState() {
     super.initState();
 
     _pagingController = PagingController<int, dynamic>(
       getNextPageKey: (state) {
-        if (_playlist == null || _playlist['list'] == null) return null;
-
-        final playlistList = _playlist['list'] as List<dynamic>;
-        final totalCount = playlistList.length;
+        final source = _sourceList;
+        final totalCount = source.length;
         final currentlyLoaded = state.items?.length ?? 0;
-
         if (currentlyLoaded >= totalCount) return null;
-
         return currentlyLoaded;
       },
       fetchPage: _fetchPage,
@@ -157,16 +167,10 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
   Future<List<dynamic>> _fetchPage(int pageKey) async {
     try {
-      if (_playlist == null || _playlist['list'] == null) {
-        return [];
-      }
-
-      final playlistList = _playlist['list'] as List<dynamic>;
-      final totalCount = playlistList.length;
+      final source = _sourceList;
       final startIndex = pageKey;
-      final endIndex = min(startIndex + _itemsPerPage, totalCount);
-
-      return playlistList.sublist(startIndex, endIndex);
+      final endIndex = min(startIndex + _itemsPerPage, source.length);
+      return source.sublist(startIndex, endIndex);
     } catch (error) {
       rethrow;
     }
@@ -235,7 +239,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
     return Column(
       children: [
         PlaylistHeader(_buildPlaylistImage(), _playlist['title'], songsLength),
-        const SizedBox(height: 8),
+        const SizedBox(height: 12),
         Wrap(
           alignment: WrapAlignment.center,
           spacing: 8,
@@ -254,7 +258,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
           ],
         ),
         if (songsLength > 1) ...[
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           SortChips<PlaylistSortType>(
             currentSortType: _sortType,
             sortTypes: PlaylistSortType.values,
@@ -269,8 +273,49 @@ class _PlaylistPageState extends State<PlaylistPage> {
             },
           ),
         ],
-        const SizedBox(height: 8),
+        if (songsLength > 0) ...[
+          const SizedBox(height: 16),
+          _buildSearchBar(colorScheme),
+        ],
+        const SizedBox(height: 16),
       ],
+    );
+  }
+
+  Widget _buildSearchBar(ColorScheme colorScheme) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: SearchBar(
+        hintText: context.l10n!.search,
+        leading: Icon(
+          Icons.search_rounded,
+          color: colorScheme.onSurfaceVariant,
+        ),
+        trailing: [
+          if (_searchQuery.isNotEmpty)
+            IconButton(
+              icon: const Icon(Icons.close_rounded),
+              onPressed: () {
+                setState(() => _searchQuery = '');
+                _pagingController.refresh();
+              },
+            ),
+        ],
+        onChanged: (value) {
+          setState(() => _searchQuery = value);
+          _pagingController.refresh();
+        },
+        elevation: const WidgetStatePropertyAll(0),
+        backgroundColor: WidgetStatePropertyAll(
+          colorScheme.surfaceContainerHigh,
+        ),
+        shape: WidgetStatePropertyAll(
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        ),
+        padding: const WidgetStatePropertyAll(
+          EdgeInsets.symmetric(horizontal: 12),
+        ),
+      ),
     );
   }
 
@@ -642,11 +687,15 @@ class _PlaylistPageState extends State<PlaylistPage> {
     final borderRadius = getItemBorderRadius(index, totalItems);
     final isUserCreatedPlaylist = _playlist?['source'] == 'user-created';
     final playlistId = isUserCreatedPlaylist ? _playlist!['ytid'] : null;
+    final isSearching = _searchQuery.isNotEmpty;
+    final playlistForQueue = isSearching
+        ? {..._playlist as Map, 'list': _sourceList}
+        : _playlist;
 
     return SongBar(
       song,
       true,
-      onRemove: isRemovable
+      onRemove: (isRemovable && !isSearching)
           ? () {
               if (removeSongFromPlaylist(
                 _playlist,
@@ -658,7 +707,10 @@ class _PlaylistPageState extends State<PlaylistPage> {
             }
           : null,
       onPlay: () {
-        audioHandler.playPlaylistSong(playlist: _playlist, songIndex: index);
+        audioHandler.playPlaylistSong(
+          playlist: playlistForQueue,
+          songIndex: index,
+        );
       },
       borderRadius: borderRadius,
       playlistId: playlistId,

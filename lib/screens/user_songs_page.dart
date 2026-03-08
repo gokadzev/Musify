@@ -47,6 +47,17 @@ class UserSongsPage extends StatefulWidget {
 class _UserSongsPageState extends State<UserSongsPage> {
   bool _isEditEnabled = false;
   List<dynamic> _originalOfflineSongsList = [];
+  String _searchQuery = '';
+
+  List _getFilteredList(List songsList) {
+    if (_searchQuery.isEmpty) return songsList;
+    final q = _searchQuery.toLowerCase();
+    return songsList.where((s) {
+      final title = (s['title'] ?? '').toString().toLowerCase();
+      final artist = (s['artist'] ?? '').toString().toLowerCase();
+      return title.contains(q) || artist.contains(q);
+    }).toList();
+  }
 
   @override
   void initState() {
@@ -183,7 +194,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
           ],
         ),
         if (isOfflineSongs && songsLength > 1) ...[
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           SortChips<OfflineSortType>(
             currentSortType: _getCurrentOfflineSortType(),
             sortTypes: OfflineSortType.values,
@@ -197,8 +208,41 @@ class _UserSongsPageState extends State<UserSongsPage> {
             },
           ),
         ],
-        const SizedBox(height: 8),
+        if (songsLength > 0) ...[const SizedBox(height: 16), _buildSearchBar()],
+        const SizedBox(height: 16),
       ],
+    );
+  }
+
+  Widget _buildSearchBar() {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: SearchBar(
+        hintText: context.l10n!.search,
+        leading: Icon(
+          Icons.search_rounded,
+          color: colorScheme.onSurfaceVariant,
+        ),
+        trailing: [
+          if (_searchQuery.isNotEmpty)
+            IconButton(
+              icon: const Icon(Icons.close_rounded),
+              onPressed: () => setState(() => _searchQuery = ''),
+            ),
+        ],
+        onChanged: (value) => setState(() => _searchQuery = value),
+        elevation: const WidgetStatePropertyAll(0),
+        backgroundColor: WidgetStatePropertyAll(
+          colorScheme.surfaceContainerHigh,
+        ),
+        shape: WidgetStatePropertyAll(
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        ),
+        padding: const WidgetStatePropertyAll(
+          EdgeInsets.symmetric(horizontal: 12),
+        ),
+      ),
     );
   }
 
@@ -306,12 +350,6 @@ class _UserSongsPageState extends State<UserSongsPage> {
     List songsList,
     ValueNotifier<int> currentSongsLength,
   ) {
-    final playlist = {
-      'ytid': '',
-      'title': title,
-      'source': 'user-created',
-      'list': songsList,
-    };
     final isLikedSongs = title == context.l10n!.likedSongs;
     final isRecentlyPlayed = title == context.l10n!.recentlyPlayed;
     final isOfflineSongs = title == context.l10n!.offlineSongs;
@@ -319,13 +357,31 @@ class _UserSongsPageState extends State<UserSongsPage> {
     return ValueListenableBuilder(
       valueListenable: currentSongsLength,
       builder: (_, value, __) {
-        if (isLikedSongs) {
-          return SliverReorderableList(
-            itemCount: songsList.length,
-            itemBuilder: (context, index) {
-              final song = songsList[index];
-              final borderRadius = getItemBorderRadius(index, songsList.length);
+        final isSearching = _searchQuery.isNotEmpty;
+        final displayList = _getFilteredList(songsList);
+        final playlist = {
+          'ytid': '',
+          'title': title,
+          'source': 'user-created',
+          'list': displayList,
+        };
 
+        if (displayList.isEmpty) {
+          return const SliverFillRemaining(
+            hasScrollBody: false,
+            child: SizedBox.expand(),
+          );
+        }
+
+        if (isLikedSongs && !isSearching) {
+          return SliverReorderableList(
+            itemCount: displayList.length,
+            itemBuilder: (context, index) {
+              final song = displayList[index];
+              final borderRadius = getItemBorderRadius(
+                index,
+                displayList.length,
+              );
               return ReorderableDragStartListener(
                 enabled: _isEditEnabled,
                 key: ValueKey('${song['ytid']}_$index'),
@@ -341,20 +397,22 @@ class _UserSongsPageState extends State<UserSongsPage> {
             },
             onReorder: (oldIndex, newIndex) {
               setState(() {
-                if (oldIndex < newIndex) {
-                  newIndex -= 1;
-                }
+                if (oldIndex < newIndex) newIndex -= 1;
                 moveLikedSong(oldIndex, newIndex);
               });
             },
           );
         } else {
           return SliverList(
-            key: isOfflineSongs ? ValueKey(_getCurrentOfflineSortType()) : null,
+            key: isOfflineSongs && !isSearching
+                ? ValueKey(_getCurrentOfflineSortType())
+                : null,
             delegate: SliverChildBuilderDelegate((context, index) {
-              final song = songsList[index];
-              final borderRadius = getItemBorderRadius(index, songsList.length);
-
+              final song = displayList[index];
+              final borderRadius = getItemBorderRadius(
+                index,
+                displayList.length,
+              );
               return RepaintBoundary(
                 key: ValueKey('song_${song['ytid']}_$index'),
                 child: _buildSongBar(
@@ -365,8 +423,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
                   isRecentSong: isRecentlyPlayed,
                 ),
               );
-              // ignore: require_trailing_commas
-            }, childCount: songsList.length),
+            }, childCount: displayList.length),
           );
         }
       },
