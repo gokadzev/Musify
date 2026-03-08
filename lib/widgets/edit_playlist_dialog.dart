@@ -63,6 +63,8 @@ class _EditPlaylistDialogState extends State<EditPlaylistDialog> {
       );
     }
 
+    final hasImage = _imageBase64 != null || _imageUrlController.text.isNotEmpty;
+
     return AlertDialog(
       backgroundColor: colorScheme.surface,
       surfaceTintColor: Colors.transparent,
@@ -93,8 +95,8 @@ class _EditPlaylistDialogState extends State<EditPlaylistDialog> {
                 fillColor: colorScheme.surfaceContainerLow,
               ),
             ),
+            const SizedBox(height: 12),
             if (_imageBase64 == null) ...[
-              const SizedBox(height: 12),
               TextField(
                 controller: _imageUrlController,
                 decoration: InputDecoration(
@@ -111,11 +113,29 @@ class _EditPlaylistDialogState extends State<EditPlaylistDialog> {
                 ),
                 onChanged: (_) => setState(() => _imageBase64 = null),
               ),
+              const SizedBox(height: 12),
             ],
-            const SizedBox(height: 12),
             if (_imageUrlController.text.isEmpty || _imageBase64 != null) ...[
               buildImagePickerRow(context, _pickImage, _imageBase64 != null),
+              const SizedBox(height: 12),
+            ],
+            if (hasImage) ...[
               _imagePreview(),
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: () {
+                  setState(() {
+                    _imageBase64 = null;
+                    _imageUrlController.clear();
+                  });
+                },
+                icon: const Icon(FluentIcons.delete_20_regular),
+                label: Text(context.l10n!.removeImage),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: colorScheme.error,
+                  side: BorderSide(color: colorScheme.error),
+                ),
+              ),
             ],
           ],
         ),
@@ -134,10 +154,7 @@ class _EditPlaylistDialogState extends State<EditPlaylistDialog> {
               'ytid': widget.playlistData['ytid'],
               'title': _titleController.text,
               'source': widget.playlistData['source'] ?? 'user-created',
-              if (_imageBase64 != null)
-                'image': _imageBase64
-              else if (_imageUrlController.text.isNotEmpty)
-                'image': _imageUrlController.text,
+              'image': _imageBase64 ?? (_imageUrlController.text.isNotEmpty ? _imageUrlController.text : null),
               'list': widget.playlistData['list'],
               if (widget.playlistData['createdAt'] != null)
                 'createdAt': widget.playlistData['createdAt'],

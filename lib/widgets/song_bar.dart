@@ -279,16 +279,46 @@ class _SongBarState extends State<SongBar> {
         unawaited(_handleOfflineToggle(context));
         break;
       case 'set_as_playlist_image':
-        final imageUrl = widget.song['highResImage'] ??
+        _handleSetAsPlaylistImage(context);
+        break;
+    }
+  }
+
+  void _handleSetAsPlaylistImage(BuildContext context) {
+    try {
+      final isOffline = isSongAlreadyOffline(_ytid);
+      String? imageUrl;
+
+      if (isOffline) {
+        imageUrl = widget.song['highResImage'] ??
+            widget.song['image'] ??
+            widget.song['lowResImage'] ??
+            widget.song['artworkPath'];
+      } else {
+        imageUrl = widget.song['highResImage'] ??
             widget.song['image'] ??
             widget.song['lowResImage'] ??
             widget.song['thumbnail'];
-        if (imageUrl != null && widget.playlistId != null) {
-          unawaited(setPlaylistImageFromSong(widget.playlistId!, imageUrl));
-          showToast(context, context.l10n!.settingChangedMsg);
-          widget.onRenamed?.call();
-        }
-        break;
+      }
+
+      if (imageUrl != null && imageUrl.isNotEmpty && widget.playlistId != null) {
+        setPlaylistImageFromSong(widget.playlistId!, imageUrl).then((_) {
+          if (context.mounted) {
+            showToast(context, context.l10n!.setAsPlaylistImageSuccess);
+            widget.onRenamed?.call();
+          }
+        }).catchError((e) {
+          if (context.mounted) {
+            showToast(context, context.l10n!.setAsPlaylistImageError);
+          }
+        });
+      } else {
+        showToast(context, context.l10n!.noImageFound);
+      }
+    } catch (e) {
+      if (context.mounted) {
+        showToast(context, context.l10n!.setAsPlaylistImageError);
+      }
     }
   }
 
@@ -401,10 +431,16 @@ class _SongBarState extends State<SongBar> {
     final setAsPlaylistImageText = l10n.setAsPlaylistImage;
     final canRename = widget.isFromLikedSongs || widget.playlistId != null;
 
-    final hasImage = widget.song['image'] != null ||
-        widget.song['lowResImage'] != null ||
-        widget.song['highResImage'] != null ||
-        widget.song['thumbnail'] != null;
+    final hasImage = (widget.song['image'] != null &&
+            widget.song['image'].toString().isNotEmpty) ||
+        (widget.song['lowResImage'] != null &&
+            widget.song['lowResImage'].toString().isNotEmpty) ||
+        (widget.song['highResImage'] != null &&
+            widget.song['highResImage'].toString().isNotEmpty) ||
+        (widget.song['thumbnail'] != null &&
+            widget.song['thumbnail'].toString().isNotEmpty) ||
+        (widget.song['artworkPath'] != null &&
+            widget.song['artworkPath'].toString().isNotEmpty);
     final canSetAsPlaylistImage = widget.playlistId != null && hasImage;
 
     return [
