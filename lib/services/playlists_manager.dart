@@ -205,6 +205,8 @@ bool removeSongFromPlaylist(
     if (playlist['image'] != null &&
         (songToRemove['image'] == playlist['image'] ||
             songToRemove['lowResImage'] == playlist['image'] ||
+            songToRemove['highResImage'] == playlist['image'] ||
+            songToRemove['artworkPath'] == playlist['image'] ||
             songToRemove['thumbnail'] == playlist['image'])) {
       playlist['image'] = null;
     }
