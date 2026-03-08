@@ -57,7 +57,6 @@ class BottomActionsRow extends StatelessWidget {
 
     final screenWidth = MediaQuery.sizeOf(context).width;
     final responsiveIconSize = screenWidth < 360 ? iconSize * 0.85 : iconSize;
-    final spacing = screenWidth < 360 ? 6.0 : 10.0;
 
     return StreamBuilder<List<Map>>(
       stream: audioHandler.queueAsMapStream,
@@ -134,27 +133,15 @@ class BottomActionsRow extends StatelessWidget {
           ]);
         }
 
-        final childrenWithSpacing = <Widget>[];
-        for (var i = 0; i < actions.length; i++) {
-          childrenWithSpacing.add(actions[i]);
-          if (i != actions.length - 1) {
-            childrenWithSpacing.add(SizedBox(width: spacing));
-          }
-        }
-
         return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: colorScheme.surfaceContainerHigh,
             borderRadius: BorderRadius.circular(20),
           ),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            physics: const BouncingScrollPhysics(),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: childrenWithSpacing,
-            ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: actions,
           ),
         );
       },
@@ -188,6 +175,7 @@ class BottomActionsRow extends StatelessWidget {
             backgroundColor: isActive
                 ? (activeColor ?? colorScheme.primary).withValues(alpha: 0.15)
                 : Colors.transparent,
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
@@ -211,6 +199,7 @@ class BottomActionsRow extends StatelessWidget {
       iconSize: size,
       tooltip: tooltip,
       style: IconButton.styleFrom(
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
       onPressed: onPressed,
@@ -241,6 +230,7 @@ class BottomActionsRow extends StatelessWidget {
             backgroundColor: isActive
                 ? colorScheme.primary.withValues(alpha: 0.15)
                 : Colors.transparent,
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
