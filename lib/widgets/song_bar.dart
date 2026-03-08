@@ -301,16 +301,14 @@ class _SongBarState extends State<SongBar> {
     try {
       if (widget.isFromLikedSongs) {
         await renameSongInLikedSongs(_ytid, newTitle, newArtist);
-        // Update local cached values
         widget.song['title'] = newTitle;
         widget.song['artist'] = newArtist;
         if (context.mounted) {
+          setState(() {
+            _songTitle = newTitle;
+            _songArtist = newArtist;
+          });
           showToast(context, context.l10n!.settingChangedMsg);
-          // Force rebuild by triggering value change
-          // Temporarily change the value to force ValueListenableBuilder to rebuild
-          final oldValue = currentLikedSongsLength.value;
-          currentLikedSongsLength.value = oldValue + 1;
-          currentLikedSongsLength.value = oldValue;
         }
       } else if (widget.playlistId != null) {
         await renameSongInPlaylist(
@@ -319,12 +317,14 @@ class _SongBarState extends State<SongBar> {
           newTitle,
           newArtist,
         );
-        // Update local cached values
         widget.song['title'] = newTitle;
         widget.song['artist'] = newArtist;
         if (context.mounted) {
+          setState(() {
+            _songTitle = newTitle;
+            _songArtist = newArtist;
+          });
           showToast(context, context.l10n!.settingChangedMsg);
-          // Trigger parent page rebuild for custom playlists
           widget.onRenamed?.call();
         }
       }
