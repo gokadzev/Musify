@@ -1,0 +1,8 @@
+Enhancements
+- Added confirmation dialog for clear queue
+- Added shuffle-play button for more pages
+
+Bug fixes
+- Added missing padding around sorting chips
+- Fixed more queue issues
+- Full changelog: https://github.com/gokadzev/Musify/releases
