@@ -29,7 +29,7 @@ import 'package:musify/utilities/playlist_image_picker.dart';
 void showAddPlaylistDialog(BuildContext context, {dynamic songToAdd}) {
   var id = '';
   var customPlaylistName = '';
-  var isYouTubeMode = true;
+  var isYouTubeMode = songToAdd == null;
   String? imageUrl;
   String? imageBase64;
 
