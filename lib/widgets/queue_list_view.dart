@@ -19,12 +19,14 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
+import 'dart:io';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
-import 'package:musify/utilities/utils.dart';
-import 'package:musify/widgets/song_bar.dart';
+import 'package:musify/widgets/no_artwork_cube.dart';
 
 class QueueListView extends StatelessWidget {
   const QueueListView({super.key});
@@ -168,29 +170,237 @@ class QueueListView extends StatelessWidget {
     ColorScheme colorScheme,
     int currentIndex,
   ) {
-    return ListView.builder(
-      padding: const EdgeInsets.only(top: 8, bottom: 16),
+    return ReorderableListView.builder(
+      padding: const EdgeInsets.only(top: 4, bottom: 24),
       itemCount: queue.length,
+      onReorder: (oldIndex, newIndex) {
+        if (newIndex > oldIndex) newIndex--;
+        audioHandler.reorderQueue(oldIndex, newIndex);
+      },
+      proxyDecorator: (child, index, animation) => Material(
+        elevation: 6,
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(14),
+        shadowColor: colorScheme.shadow.withValues(alpha: 0.25),
+        child: child,
+      ),
       itemBuilder: (context, index) {
+        final song = queue[index];
         final isCurrentSong = index == currentIndex;
-        final borderRadius = getItemBorderRadius(index, queue.length);
-
-        return SongBar(
-          queue[index],
-          false,
-          showQueueActions: false,
-          onPlay: () {
-            audioHandler.skipToSong(index);
-          },
-          onRemove: () {
-            audioHandler.removeFromQueue(index);
-          },
-          backgroundColor: isCurrentSong
-              ? colorScheme.primaryContainer.withValues(alpha: 0.5)
-              : colorScheme.surfaceContainerHigh,
-          borderRadius: borderRadius,
+        return QueueTile(
+          key: ValueKey('qt_${song['ytid']}_$index'),
+          song: song,
+          index: index,
+          isCurrentSong: isCurrentSong,
+          colorScheme: colorScheme,
+          onTap: () => audioHandler.skipToSong(index),
+          onDismissed: () => audioHandler.removeFromQueue(index),
         );
       },
+    );
+  }
+}
+
+class QueueTile extends StatelessWidget {
+  const QueueTile({
+    super.key,
+    required this.song,
+    required this.index,
+    required this.isCurrentSong,
+    required this.colorScheme,
+    required this.onTap,
+    required this.onDismissed,
+  });
+
+  final Map song;
+  final int index;
+  final bool isCurrentSong;
+  final ColorScheme colorScheme;
+  final VoidCallback onTap;
+  final VoidCallback onDismissed;
+
+  static const double _artSize = 46;
+  static const double _artRadius = 10;
+
+  @override
+  Widget build(BuildContext context) {
+    return Dismissible(
+      key: ValueKey('d_${song['ytid']}_$index'),
+      onDismissed: (_) => onDismissed(),
+      background: _DismissBackground(
+        alignment: Alignment.centerLeft,
+        colorScheme: colorScheme,
+      ),
+      secondaryBackground: _DismissBackground(
+        alignment: Alignment.centerRight,
+        colorScheme: colorScheme,
+      ),
+      child: Material(
+        color: isCurrentSong
+            ? colorScheme.primaryContainer.withValues(alpha: 0.45)
+            : Colors.transparent,
+        borderRadius: BorderRadius.circular(14),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(14),
+          splashColor: Colors.transparent,
+          highlightColor: colorScheme.onSurface.withValues(alpha: 0.06),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            child: Row(
+              children: [
+                _ArtworkThumbnail(
+                  song: song,
+                  size: _artSize,
+                  radius: _artRadius,
+                  colorScheme: colorScheme,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        song['title']?.toString() ?? '',
+                        style: TextStyle(
+                          color: isCurrentSong
+                              ? colorScheme.primary
+                              : colorScheme.onSurface,
+                          fontSize: 14,
+                          fontWeight: isCurrentSong
+                              ? FontWeight.w600
+                              : FontWeight.w500,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        song['artist']?.toString() ?? '',
+                        style: TextStyle(
+                          color: colorScheme.onSurfaceVariant,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                if (isCurrentSong) ...[
+                  Icon(
+                    FluentIcons.music_note_2_24_filled,
+                    color: colorScheme.primary,
+                    size: 16,
+                  ),
+                  const SizedBox(width: 6),
+                ],
+                ReorderableDragStartListener(
+                  index: index,
+                  child: Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: Icon(
+                      Icons.drag_handle_rounded,
+                      color: colorScheme.onSurfaceVariant.withValues(
+                        alpha: 0.5,
+                      ),
+                      size: 22,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ArtworkThumbnail extends StatelessWidget {
+  const _ArtworkThumbnail({
+    required this.song,
+    required this.size,
+    required this.radius,
+    required this.colorScheme,
+  });
+
+  final Map song;
+  final double size;
+  final double radius;
+  final ColorScheme colorScheme;
+
+  @override
+  Widget build(BuildContext context) {
+    final artworkPath = song['artworkPath'] as String?;
+    if (artworkPath != null && artworkPath.isNotEmpty) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(radius),
+        child: Image.file(
+          File(artworkPath),
+          width: size,
+          height: size,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => _fallback(),
+        ),
+      );
+    }
+    final imageUrl = song['lowResImage']?.toString() ?? '';
+    if (imageUrl.isEmpty) return _fallback();
+    return CachedNetworkImage(
+      width: size,
+      height: size,
+      imageUrl: imageUrl,
+      imageBuilder: (_, imageProvider) => ClipRRect(
+        borderRadius: BorderRadius.circular(radius),
+        child: Image(image: imageProvider, fit: BoxFit.cover),
+      ),
+      placeholder: (_, __) => _loading(),
+      errorWidget: (_, __, ___) => _fallback(),
+    );
+  }
+
+  Widget _fallback() => NullArtworkWidget(
+    size: size,
+    borderRadius: radius,
+    iconSize: size * 0.45,
+  );
+
+  Widget _loading() => Container(
+    width: size,
+    height: size,
+    decoration: BoxDecoration(
+      color: colorScheme.surfaceContainerHighest,
+      borderRadius: BorderRadius.circular(radius),
+    ),
+  );
+}
+
+class _DismissBackground extends StatelessWidget {
+  const _DismissBackground({
+    required this.alignment,
+    required this.colorScheme,
+  });
+
+  final Alignment alignment;
+  final ColorScheme colorScheme;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: alignment,
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      decoration: BoxDecoration(
+        color: colorScheme.errorContainer,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Icon(
+        FluentIcons.delete_24_filled,
+        color: colorScheme.onErrorContainer,
+        size: 22,
+      ),
     );
   }
 }
