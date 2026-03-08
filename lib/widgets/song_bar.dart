@@ -733,6 +733,85 @@ class _OnlineArtwork extends StatelessWidget {
   }
 }
 
+void showCreatePlaylistAndAddSongDialog(BuildContext context, dynamic song) {
+  var customPlaylistName = '';
+  final colorScheme = Theme.of(context).colorScheme;
+
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        backgroundColor: colorScheme.surface,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(28),
+        ),
+        title: Text(
+          context.l10n!.addPlaylist,
+          style: TextStyle(
+            color: colorScheme.onSurface,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        content: TextField(
+          decoration: InputDecoration(
+            labelText: context.l10n!.customPlaylistName,
+            prefixIcon: Icon(
+              FluentIcons.text_field_20_regular,
+              color: colorScheme.onSurfaceVariant,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            filled: true,
+            fillColor: colorScheme.surfaceContainerLow,
+          ),
+          autofocus: true,
+          onChanged: (value) {
+            customPlaylistName = value;
+          },
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              context.l10n!.cancel,
+              style: TextStyle(color: colorScheme.onSurfaceVariant),
+            ),
+          ),
+          FilledButton.icon(
+            onPressed: () {
+              if (customPlaylistName.trim().isNotEmpty) {
+                createCustomPlaylist(
+                  customPlaylistName.trim(),
+                  null,
+                  context,
+                );
+
+                if (userCustomPlaylists.value.isNotEmpty) {
+                  final newPlaylist = userCustomPlaylists.value.last;
+                  final result = addSongInCustomPlaylist(
+                    context,
+                    newPlaylist['ytid'],
+                    song,
+                  );
+                  showToast(context, result);
+                }
+                Navigator.pop(context); // Close create playlist dialog
+                Navigator.pop(context); // Close add to playlist dialog as well
+              } else {
+                showToast(context, '${context.l10n!.provideIdOrNameError}.');
+              }
+            },
+            icon: const Icon(FluentIcons.add_20_filled),
+            label: Text(context.l10n!.add),
+          ),
+        ],
+      );
+    },
+  );
+}
+
 void showAddToPlaylistDialog(BuildContext context, dynamic song) {
   showDialog(
     context: context,
@@ -782,6 +861,13 @@ void showAddToPlaylistDialog(BuildContext context, dynamic song) {
             onPressed: () {
               Navigator.of(context).pop();
             },
+          ),
+          FilledButton.icon(
+            onPressed: () {
+              showCreatePlaylistAndAddSongDialog(context, song);
+            },
+            icon: const Icon(FluentIcons.add_24_regular, size: 18),
+            label: Text(context.l10n!.addPlaylist),
           ),
         ],
       );
