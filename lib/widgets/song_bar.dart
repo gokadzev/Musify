@@ -176,23 +176,29 @@ class _SongBarState extends State<SongBar> {
         widget.showMusicDuration && widget.song['duration'] != null;
 
     return ValueListenableBuilder<bool>(
-      valueListenable: _songOfflineStatus,
-      builder: (_, isOffline, __) {
-        if (isOffline && _artworkPath != null) {
-          return _OfflineArtwork(
-            artworkPath: _artworkPath,
-            size: size,
-            colorScheme: colorScheme,
-          );
-        }
+      valueListenable: _songLikeStatus,
+      builder: (_, isLiked, __) {
+        return ValueListenableBuilder<bool>(
+          valueListenable: _songOfflineStatus,
+          builder: (_, isOffline, __) {
+            if (isOffline && _artworkPath != null) {
+              return _OfflineArtwork(
+                artworkPath: _artworkPath,
+                size: size,
+                colorScheme: colorScheme,
+              );
+            }
 
-        return _OnlineArtwork(
-          lowResImageUrl: _lowResImageUrl,
-          size: size,
-          isDurationAvailable: isDurationAvailable,
-          colorScheme: colorScheme,
-          duration: widget.song['duration'],
-          isOffline: isOffline,
+            return _OnlineArtwork(
+              lowResImageUrl: _lowResImageUrl,
+              size: size,
+              isDurationAvailable: isDurationAvailable,
+              colorScheme: colorScheme,
+              duration: widget.song['duration'],
+              isOffline: isOffline,
+              isLiked: isLiked,
+            );
+          },
         );
       },
     );
@@ -614,6 +620,7 @@ class _OnlineArtwork extends StatelessWidget {
     required this.colorScheme,
     required this.duration,
     required this.isOffline,
+    required this.isLiked,
   });
 
   final String lowResImageUrl;
@@ -622,6 +629,7 @@ class _OnlineArtwork extends StatelessWidget {
   final ColorScheme colorScheme;
   final dynamic duration;
   final bool isOffline;
+  final bool isLiked;
 
   @override
   Widget build(BuildContext context) {
@@ -669,6 +677,24 @@ class _OnlineArtwork extends StatelessWidget {
                           FluentIcons.cellular_off_24_filled,
                           size: 12,
                           color: colorScheme.onSecondaryContainer,
+                        ),
+                      ),
+                    )
+                  else if (isLiked)
+                    Positioned(
+                      top: 2,
+                      right: 4,
+                      child: Container(
+                        width: 20,
+                        height: 20,
+                        decoration: BoxDecoration(
+                          color: colorScheme.primaryContainer,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Icon(
+                          FluentIcons.heart_24_filled,
+                          size: 12,
+                          color: colorScheme.onPrimaryContainer,
                         ),
                       ),
                     ),
