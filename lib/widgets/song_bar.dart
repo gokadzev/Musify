@@ -19,6 +19,7 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
+import 'dart:async';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -275,7 +276,7 @@ class _SongBarState extends State<SongBar> {
         });
         break;
       case 'offline':
-        _handleOfflineToggle(context);
+        unawaited(_handleOfflineToggle(context));
         break;
     }
   }
@@ -336,7 +337,7 @@ class _SongBarState extends State<SongBar> {
     }
   }
 
-  void _handleOfflineToggle(BuildContext context) async {
+  Future<void> _handleOfflineToggle(BuildContext context) async {
     final originalValue = _songOfflineStatus.value;
     _songOfflineStatus.value = !originalValue;
 
