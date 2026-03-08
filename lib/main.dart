@@ -33,7 +33,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/localization/app_localizations.dart';
 import 'package:musify/services/audio_service.dart';
-import 'package:musify/services/common_services.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/io_service.dart';
 import 'package:musify/services/logger_service.dart';
@@ -297,9 +296,6 @@ Future<void> initialisation() async {
 
   applicationDirPath = (await getApplicationDocumentsDirectory()).path;
   await FilePaths.ensureDirectoriesExist();
-
-  // TODO: Remove this after one release
-  unawaited(recentlyPlayedMigration);
 }
 
 void handleIncomingLink(Uri? uri) async {

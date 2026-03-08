@@ -58,33 +58,6 @@ final currentRecentlyPlayedLength = ValueNotifier<int>(
 );
 final recentlyPlayedVersion = ValueNotifier<int>(0);
 
-// TODO: Remove this after one release
-final recentlyPlayedMigration = Future.microtask(() async {
-  try {
-    var needsPersist = false;
-    for (var i = 0; i < userRecentlyPlayed.length; i++) {
-      final entry = userRecentlyPlayed[i] as Map;
-      if (entry['listeningCount'] == null || entry['lastPlayed'] == null) {
-        entry['listeningCount'] = entry['listeningCount'] ?? 1;
-        entry['lastPlayed'] = entry['lastPlayed'] ?? DateTime.now();
-        needsPersist = true;
-      }
-    }
-
-    if (needsPersist) {
-      unawaited(
-        addOrUpdateData('user', 'recentlyPlayedSongs', userRecentlyPlayed),
-      );
-    }
-  } catch (e, st) {
-    logger.log(
-      'Error migrating recently played entries',
-      error: e,
-      stackTrace: st,
-    );
-  }
-});
-
 final lyrics = ValueNotifier<String?>(null);
 String? lastFetchedLyrics;
 
