@@ -550,6 +550,8 @@ Future<bool> makeSongOffline(dynamic song, {bool fromPlaylist = false}) async {
       return true;
     }
 
+    final offlineSong = Map<String, dynamic>.from(song as Map);
+
     final audioPath = FilePaths.getAudioPath(ytid);
     final audioFile = File(audioPath);
     final artworkPath = FilePaths.getArtworkPath(ytid);
@@ -581,32 +583,31 @@ Future<bool> makeSongOffline(dynamic song, {bool fromPlaylist = false}) async {
     }
 
     try {
-      if (song['highResImage'] != null &&
-          song['highResImage'].toString().isNotEmpty) {
+      if (offlineSong['highResImage'] != null &&
+          offlineSong['highResImage'].toString().isNotEmpty) {
         final _artworkFile = await _downloadAndSaveArtworkFile(
-          song['highResImage'],
+          offlineSong['highResImage'],
           artworkPath,
         );
 
         if (_artworkFile != null && await _artworkFile.exists()) {
-          song['artworkPath'] = artworkPath;
-          song['highResImage'] = artworkPath;
-          song['lowResImage'] = artworkPath;
+          offlineSong['artworkPath'] = artworkPath;
+          offlineSong['highResImage'] = artworkPath;
+          offlineSong['lowResImage'] = artworkPath;
         } else {
           logger.log(
             'Artwork download failed or file does not exist for $ytid',
           );
-          // Clear artwork paths if download failed
-          song['artworkPath'] = null;
+          offlineSong['artworkPath'] = null;
         }
       }
     } catch (e, stackTrace) {
       logger.log('Error downloading artwork', error: e, stackTrace: stackTrace);
-      song['artworkPath'] = null;
+      offlineSong['artworkPath'] = null;
     }
 
-    song['audioPath'] = audioFile.path;
-    song['dateAdded'] = DateTime.now().millisecondsSinceEpoch;
+    offlineSong['audioPath'] = audioFile.path;
+    offlineSong['dateAdded'] = DateTime.now().millisecondsSinceEpoch;
 
     try {
       final existingIndex = userOfflineSongs.indexWhere(
@@ -614,9 +615,9 @@ Future<bool> makeSongOffline(dynamic song, {bool fromPlaylist = false}) async {
       );
 
       if (existingIndex != -1) {
-        userOfflineSongs[existingIndex] = song;
+        userOfflineSongs[existingIndex] = offlineSong;
       } else {
-        userOfflineSongs.add(song);
+        userOfflineSongs.add(offlineSong);
       }
 
       unawaited(
