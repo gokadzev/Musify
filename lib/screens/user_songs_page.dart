@@ -189,6 +189,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
           runSpacing: 8,
           children: [
             if (songsLength > 0) _buildPlayButton(primaryColor, title),
+            if (songsLength > 0) _buildShufflePlayButton(primaryColor),
             if (isRecentlyPlayed && songsLength > 0)
               _buildClearRecentsButton(primaryColor),
           ],
@@ -273,6 +274,29 @@ class _UserSongsPageState extends State<UserSongsPage> {
       iconSize: 24,
       onPressed: () =>
           audioHandler.playPlaylistSong(playlist: playlist, songIndex: 0),
+    );
+  }
+
+  Widget _buildShufflePlayButton(Color primaryColor) {
+    return IconButton.filledTonal(
+      icon: Icon(FluentIcons.arrow_shuffle_24_filled, color: primaryColor),
+      iconSize: 24,
+      tooltip: 'Shuffle play',
+      onPressed: () async {
+        final songsList = getSongsList(widget.page);
+        if (songsList.isEmpty) return;
+
+        final shuffledSongs = List<Map>.from(songsList.whereType<Map>());
+        if (shuffledSongs.isEmpty) return;
+
+        shuffledSongs.shuffle();
+
+        await audioHandler.addPlaylistToQueue(
+          shuffledSongs,
+          replace: true,
+          startIndex: 0,
+        );
+      },
     );
   }
 
