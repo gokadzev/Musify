@@ -149,19 +149,26 @@ class NavigationManager {
             routes: [
               GoRoute(
                 path: 'library',
-                builder: (context, state) => const LibraryPage(),
+                pageBuilder: (context, state) =>
+                    _pushPage(child: const LibraryPage(), state: state),
               ),
               GoRoute(
                 path: 'playlist/:playlistId',
-                builder: (context, state) => PlaylistPage(
-                  playlistId: state.pathParameters['playlistId'],
+                pageBuilder: (context, state) => _pushPage(
+                  child: PlaylistPage(
+                    playlistId: state.pathParameters['playlistId'],
+                  ),
+                  state: state,
                 ),
               ),
               GoRoute(
                 path: 'folder/:folderId/:folderName',
-                builder: (context, state) => PlaylistFolderPage(
-                  folderId: state.pathParameters['folderId'] ?? '',
-                  folderName: state.pathParameters['folderName'] ?? '',
+                pageBuilder: (context, state) => _pushPage(
+                  child: PlaylistFolderPage(
+                    folderId: state.pathParameters['folderId'] ?? '',
+                    folderName: state.pathParameters['folderName'] ?? '',
+                  ),
+                  state: state,
                 ),
               ),
             ],
@@ -202,8 +209,11 @@ class NavigationManager {
             routes: [
               GoRoute(
                 path: 'userSongs/:page',
-                builder: (context, state) => UserSongsPage(
-                  page: state.pathParameters['page'] ?? 'liked',
+                pageBuilder: (context, state) => _pushPage(
+                  child: UserSongsPage(
+                    page: state.pathParameters['page'] ?? 'liked',
+                  ),
+                  state: state,
                 ),
               ),
             ],
@@ -222,18 +232,23 @@ class NavigationManager {
             routes: [
               GoRoute(
                 path: 'license',
-                builder: (context, state) => const LicensePage(
-                  applicationName: 'Musify',
-                  applicationVersion: appVersion,
+                pageBuilder: (context, state) => _pushPage(
+                  child: const LicensePage(
+                    applicationName: 'Musify',
+                    applicationVersion: appVersion,
+                  ),
+                  state: state,
                 ),
               ),
               GoRoute(
                 path: 'about',
-                builder: (context, state) => const AboutPage(),
+                pageBuilder: (context, state) =>
+                    _pushPage(child: const AboutPage(), state: state),
               ),
               GoRoute(
                 path: 'equalizer',
-                builder: (context, state) => const EqualizerPage(),
+                pageBuilder: (context, state) =>
+                    _pushPage(child: const EqualizerPage(), state: state),
               ),
             ],
           ),
@@ -242,7 +257,48 @@ class NavigationManager {
     ];
   }
 
-  static Page getPage({required Widget child, required GoRouterState state}) {
-    return MaterialPage(key: state.pageKey, child: child);
+  static Page<void> getPage({
+    required Widget child,
+    required GoRouterState state,
+  }) {
+    return CustomTransitionPage<void>(
+      key: state.pageKey,
+      child: child,
+      transitionDuration: const Duration(milliseconds: 250),
+      reverseTransitionDuration: const Duration(milliseconds: 200),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: CurvedAnimation(parent: animation, curve: Curves.easeIn),
+          child: child,
+        );
+      },
+    );
+  }
+
+  static Page<void> _pushPage({
+    required Widget child,
+    required GoRouterState state,
+  }) {
+    return CustomTransitionPage<void>(
+      key: state.pageKey,
+      child: child,
+      reverseTransitionDuration: const Duration(milliseconds: 250),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        final curvedAnimation = CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOutCubic,
+        );
+        return FadeTransition(
+          opacity: CurvedAnimation(parent: animation, curve: Curves.easeIn),
+          child: SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0.04, 0),
+              end: Offset.zero,
+            ).animate(curvedAnimation),
+            child: child,
+          ),
+        );
+      },
+    );
   }
 }

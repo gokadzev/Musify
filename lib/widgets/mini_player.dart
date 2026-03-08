@@ -52,31 +52,36 @@ class MiniPlayer extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return StreamBuilder<MediaItem?>(
-      stream: audioHandler.mediaItem,
-      builder: (context, mediaSnapshot) {
-        final metadata = mediaSnapshot.data;
-        if (metadata == null) return const SizedBox.shrink();
+    return AnimatedSize(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOutCubic,
+      child: StreamBuilder<MediaItem?>(
+        stream: audioHandler.mediaItem,
+        builder: (context, mediaSnapshot) {
+          final metadata = mediaSnapshot.data;
+          if (metadata == null) return const SizedBox.shrink();
 
-        return StreamBuilder<FullPlayerState>(
-          stream: _fullPlayerStateStream,
-          builder: (context, stateSnapshot) {
-            final state = stateSnapshot.data;
-            if (state == null) return const SizedBox.shrink();
+          return StreamBuilder<FullPlayerState>(
+            stream: _fullPlayerStateStream,
+            builder: (context, stateSnapshot) {
+              final state = stateSnapshot.data;
+              if (state == null) return const SizedBox.shrink();
 
-            final hasNext =
-                state.queue.length > 1 &&
-                (state.playbackState.queueIndex ?? 0) < state.queue.length - 1;
+              final hasNext =
+                  state.queue.length > 1 &&
+                  (state.playbackState.queueIndex ?? 0) <
+                      state.queue.length - 1;
 
-            return _MiniPlayerBody(
-              colorScheme: colorScheme,
-              metadata: metadata,
-              state: state,
-              hasNext: hasNext,
-            );
-          },
-        );
-      },
+              return _MiniPlayerBody(
+                colorScheme: colorScheme,
+                metadata: metadata,
+                state: state,
+                hasNext: hasNext,
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }
@@ -191,10 +196,28 @@ class _MiniPlayerBodyState extends State<_MiniPlayerBody>
                     children: [
                       _ArtworkWidget(metadata: metadata),
                       Expanded(
-                        child: _MetadataWidget(
-                          title: metadata.title,
-                          artist: metadata.artist,
-                          colorScheme: colorScheme,
+                        child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 300),
+                          switchInCurve: Curves.easeIn,
+                          switchOutCurve: Curves.easeOut,
+                          layoutBuilder: (currentChild, previousChildren) =>
+                              Stack(
+                                alignment: Alignment.centerLeft,
+                                children: [
+                                  ...previousChildren,
+                                  if (currentChild != null) currentChild,
+                                ],
+                              ),
+                          transitionBuilder: (child, animation) =>
+                              FadeTransition(opacity: animation, child: child),
+                          child: KeyedSubtree(
+                            key: ValueKey(metadata.title),
+                            child: _MetadataWidget(
+                              title: metadata.title,
+                              artist: metadata.artist,
+                              colorScheme: colorScheme,
+                            ),
+                          ),
                         ),
                       ),
                       _ControlsWidget(
