@@ -34,6 +34,7 @@ import 'package:musify/utilities/async_loader.dart';
 import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/offline_playlist_dialogs.dart';
+import 'package:musify/utilities/playlist_dialogs.dart';
 import 'package:musify/utilities/playlist_image_picker.dart';
 import 'package:musify/utilities/utils.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
@@ -157,7 +158,7 @@ class _LibraryPageState extends State<LibraryPage> {
                 ),
                 IconButton(
                   padding: const EdgeInsets.symmetric(horizontal: 2),
-                  onPressed: _showAddPlaylistDialog,
+                  onPressed: () => showAddPlaylistDialog(context),
                   icon: Icon(
                     FluentIcons.add_24_filled,
                     color: colorScheme.onSurfaceVariant,
@@ -232,7 +233,7 @@ class _LibraryPageState extends State<LibraryPage> {
                     icon: FluentIcons.add_circle_24_filled,
                     actionButton: IconButton(
                       padding: const EdgeInsets.only(right: 5),
-                      onPressed: _showAddPlaylistDialog,
+                      onPressed: () => showAddPlaylistDialog(context),
                       icon: Icon(
                         FluentIcons.add_24_filled,
                         color: colorScheme.onSurfaceVariant,
@@ -373,271 +374,6 @@ class _LibraryPageState extends State<LibraryPage> {
       },
     );
   }
-
-  void _showAddPlaylistDialog() => showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      var id = '';
-      var customPlaylistName = '';
-      var isYouTubeMode = true;
-      String? imageUrl;
-      String? imageBase64;
-
-      return StatefulBuilder(
-        builder: (context, dialogSetState) {
-          final colorScheme = Theme.of(context).colorScheme;
-
-          Future<void> _pickImage() async {
-            final result = await pickImage();
-            if (result != null) {
-              dialogSetState(() {
-                imageBase64 = result;
-                imageUrl = null;
-              });
-            }
-          }
-
-          Widget _imagePreview() {
-            return buildImagePreview(
-              imageBase64: imageBase64,
-              imageUrl: imageUrl,
-            );
-          }
-
-          return AlertDialog(
-            backgroundColor: colorScheme.surface,
-            surfaceTintColor: Colors.transparent,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(28),
-            ),
-            title: Text(
-              context.l10n!.addPlaylist,
-              style: TextStyle(
-                color: colorScheme.onSurface,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            content: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Container(
-                    decoration: BoxDecoration(
-                      color: colorScheme.surfaceContainerLow,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    padding: const EdgeInsets.all(4),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              dialogSetState(() {
-                                isYouTubeMode = true;
-                                id = '';
-                                customPlaylistName = '';
-                                imageUrl = null;
-                                imageBase64 = null;
-                              });
-                            },
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 200),
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              decoration: BoxDecoration(
-                                color: isYouTubeMode
-                                    ? colorScheme.primaryContainer
-                                    : Colors.transparent,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    FluentIcons.globe_20_filled,
-                                    size: 20,
-                                    color: isYouTubeMode
-                                        ? colorScheme.onPrimaryContainer
-                                        : colorScheme.onSurfaceVariant,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    'YouTube',
-                                    style: TextStyle(
-                                      color: isYouTubeMode
-                                          ? colorScheme.onPrimaryContainer
-                                          : colorScheme.onSurfaceVariant,
-                                      fontWeight: isYouTubeMode
-                                          ? FontWeight.w600
-                                          : FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              dialogSetState(() {
-                                isYouTubeMode = false;
-                                id = '';
-                                customPlaylistName = '';
-                                imageUrl = null;
-                                imageBase64 = null;
-                              });
-                            },
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 200),
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              decoration: BoxDecoration(
-                                color: !isYouTubeMode
-                                    ? colorScheme.primaryContainer
-                                    : Colors.transparent,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    FluentIcons.person_20_filled,
-                                    size: 20,
-                                    color: !isYouTubeMode
-                                        ? colorScheme.onPrimaryContainer
-                                        : colorScheme.onSurfaceVariant,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    context.l10n!.custom,
-                                    style: TextStyle(
-                                      color: !isYouTubeMode
-                                          ? colorScheme.onPrimaryContainer
-                                          : colorScheme.onSurfaceVariant,
-                                      fontWeight: !isYouTubeMode
-                                          ? FontWeight.w600
-                                          : FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  if (isYouTubeMode)
-                    TextField(
-                      decoration: InputDecoration(
-                        labelText: context.l10n!.youtubePlaylistLinkOrId,
-                        prefixIcon: Icon(
-                          FluentIcons.link_20_regular,
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        filled: true,
-                        fillColor: colorScheme.surfaceContainerLow,
-                      ),
-                      onChanged: (value) {
-                        id = value;
-                      },
-                    )
-                  else ...[
-                    TextField(
-                      decoration: InputDecoration(
-                        labelText: context.l10n!.customPlaylistName,
-                        prefixIcon: Icon(
-                          FluentIcons.text_field_20_regular,
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        filled: true,
-                        fillColor: colorScheme.surfaceContainerLow,
-                      ),
-                      onChanged: (value) {
-                        customPlaylistName = value;
-                      },
-                    ),
-                    if (imageBase64 == null) ...[
-                      const SizedBox(height: 12),
-                      TextField(
-                        decoration: InputDecoration(
-                          labelText: context.l10n!.customPlaylistImgUrl,
-                          prefixIcon: Icon(
-                            FluentIcons.image_20_regular,
-                            color: colorScheme.onSurfaceVariant,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          filled: true,
-                          fillColor: colorScheme.surfaceContainerLow,
-                        ),
-                        onChanged: (value) {
-                          imageUrl = value;
-                          imageBase64 = null;
-                          dialogSetState(() {});
-                        },
-                      ),
-                    ],
-                    const SizedBox(height: 12),
-                    if (imageUrl == null) ...[
-                      buildImagePickerRow(
-                        context,
-                        _pickImage,
-                        imageBase64 != null,
-                      ),
-                      _imagePreview(),
-                    ],
-                  ],
-                ],
-              ),
-            ),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text(
-                  context.l10n!.cancel,
-                  style: TextStyle(color: colorScheme.onSurfaceVariant),
-                ),
-              ),
-              FilledButton.icon(
-                onPressed: () async {
-                  if (isYouTubeMode && id.isNotEmpty) {
-                    showToast(context, await addUserPlaylist(id, context));
-                  } else if (!isYouTubeMode && customPlaylistName.isNotEmpty) {
-                    showToast(
-                      context,
-                      createCustomPlaylist(
-                        customPlaylistName,
-                        imageBase64 ?? imageUrl,
-                        context,
-                      ),
-                    );
-                  } else {
-                    showToast(
-                      context,
-                      '${context.l10n!.provideIdOrNameError}.',
-                    );
-                  }
-
-                  if (!mounted) return;
-                  Navigator.pop(context);
-                },
-                icon: const Icon(FluentIcons.add_20_filled),
-                label: Text(context.l10n!.add),
-              ),
-            ],
-          );
-        },
-      );
-    },
-  );
 
   void _showRemoveOfflinePlaylistDialog(Map playlist) {
     final playlistId = playlist['ytid']?.toString() ?? '';
