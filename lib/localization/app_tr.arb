@@ -78,7 +78,7 @@
   "equalizerResetBands": "Reset bands",
   "error": "Bir hata oluştu.",
   "externalRecommendations": "Dış öneriler",
-  "externalRecommendationsDescription": "Musify'in yerleşik öneri algoritması yerine dış bir tanesini kullan.",
+  "externalRecommendationsDescription": "Musify'ın yerleşik öneri algoritması yerine dış bir tanesini kullan.",
   "failedToLoadPlaylist": "Failed to load playlist",
   "fieldsNotEmpty": "Tüm alanlar doldurulmalıdır",
   "folderAlreadyExists": "Bu isimde bir klasör zaten var",
