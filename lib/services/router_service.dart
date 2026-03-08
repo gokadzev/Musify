@@ -264,11 +264,11 @@ class NavigationManager {
     return CustomTransitionPage<void>(
       key: state.pageKey,
       child: child,
-      transitionDuration: const Duration(milliseconds: 250),
-      reverseTransitionDuration: const Duration(milliseconds: 200),
+      transitionDuration: const Duration(milliseconds: 180),
+      reverseTransitionDuration: const Duration(milliseconds: 150),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         return FadeTransition(
-          opacity: CurvedAnimation(parent: animation, curve: Curves.easeIn),
+          opacity: CurvedAnimation(parent: animation, curve: Curves.easeOut),
           child: child,
         );
       },
@@ -282,17 +282,19 @@ class NavigationManager {
     return CustomTransitionPage<void>(
       key: state.pageKey,
       child: child,
-      reverseTransitionDuration: const Duration(milliseconds: 250),
+      transitionDuration: const Duration(milliseconds: 220),
+      reverseTransitionDuration: const Duration(milliseconds: 180),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         final curvedAnimation = CurvedAnimation(
           parent: animation,
           curve: Curves.easeOutCubic,
+          reverseCurve: Curves.easeInCubic,
         );
         return FadeTransition(
-          opacity: CurvedAnimation(parent: animation, curve: Curves.easeIn),
+          opacity: CurvedAnimation(parent: animation, curve: Curves.easeOut),
           child: SlideTransition(
             position: Tween<Offset>(
-              begin: const Offset(0.04, 0),
+              begin: const Offset(0.06, 0),
               end: Offset.zero,
             ).animate(curvedAnimation),
             child: child,
