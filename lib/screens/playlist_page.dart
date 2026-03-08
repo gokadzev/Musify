@@ -42,6 +42,8 @@ import 'package:musify/utilities/utils.dart';
 import 'package:musify/widgets/edit_playlist_dialog.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/playlist_header.dart';
+import 'package:musify/widgets/playlists_page/playlist_search_bar.dart';
+import 'package:musify/widgets/playlists_page/shuffle_play_button.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/sort_chips.dart';
 import 'package:musify/widgets/spinner.dart';
@@ -245,8 +247,20 @@ class _PlaylistPageState extends State<PlaylistPage> {
           spacing: 8,
           runSpacing: 8,
           children: [
-            if (songsLength > 0) _buildPlayButton(primaryColor),
-            if (songsLength > 0) _buildShufflePlayButton(primaryColor),
+            if (songsLength > 0)
+              IconButton.filled(
+                icon: Icon(
+                  FluentIcons.play_24_filled,
+                  color: colorScheme.onPrimary,
+                ),
+                iconSize: 24,
+                onPressed: () => audioHandler.playPlaylistSong(
+                  playlist: _playlist,
+                  songIndex: 0,
+                ),
+              ),
+            if (songsLength > 0)
+              ShufflePlayButton(songs: _playlist['list'] as List? ?? []),
             if (widget.playlistId != null && !isUserCreated)
               _buildLikeButton(primaryColor),
             _buildSyncButton(primaryColor),
@@ -275,82 +289,20 @@ class _PlaylistPageState extends State<PlaylistPage> {
         ],
         if (songsLength > 0) ...[
           const SizedBox(height: 16),
-          _buildSearchBar(colorScheme),
+          PlaylistSearchBar(
+            query: _searchQuery,
+            onChanged: (value) {
+              setState(() => _searchQuery = value);
+              _pagingController.refresh();
+            },
+            onCleared: () {
+              setState(() => _searchQuery = '');
+              _pagingController.refresh();
+            },
+          ),
         ],
         const SizedBox(height: 16),
       ],
-    );
-  }
-
-  Widget _buildSearchBar(ColorScheme colorScheme) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: SearchBar(
-        hintText: context.l10n!.search,
-        leading: Icon(
-          Icons.search_rounded,
-          color: colorScheme.onSurfaceVariant,
-        ),
-        trailing: [
-          if (_searchQuery.isNotEmpty)
-            IconButton(
-              icon: const Icon(Icons.close_rounded),
-              onPressed: () {
-                setState(() => _searchQuery = '');
-                _pagingController.refresh();
-              },
-            ),
-        ],
-        onChanged: (value) {
-          setState(() => _searchQuery = value);
-          _pagingController.refresh();
-        },
-        elevation: const WidgetStatePropertyAll(0),
-        backgroundColor: WidgetStatePropertyAll(
-          colorScheme.surfaceContainerHigh,
-        ),
-        shape: WidgetStatePropertyAll(
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        ),
-        padding: const WidgetStatePropertyAll(
-          EdgeInsets.symmetric(horizontal: 12),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPlayButton(Color primaryColor) {
-    return IconButton.filled(
-      icon: Icon(
-        FluentIcons.play_24_filled,
-        color: Theme.of(context).colorScheme.onPrimary,
-      ),
-      iconSize: 24,
-      onPressed: () =>
-          audioHandler.playPlaylistSong(playlist: _playlist, songIndex: 0),
-    );
-  }
-
-  Widget _buildShufflePlayButton(Color primaryColor) {
-    return IconButton.filledTonal(
-      icon: Icon(FluentIcons.arrow_shuffle_24_filled, color: primaryColor),
-      iconSize: 24,
-      tooltip: 'Shuffle play',
-      onPressed: () async {
-        final playlistSongs = _playlist['list'] as List<dynamic>?;
-        if (playlistSongs == null || playlistSongs.isEmpty) return;
-
-        final shuffledSongs = List<Map>.from(playlistSongs.whereType<Map>());
-        if (shuffledSongs.isEmpty) return;
-
-        shuffledSongs.shuffle();
-
-        await audioHandler.addPlaylistToQueue(
-          shuffledSongs,
-          replace: true,
-          startIndex: 0,
-        );
-      },
     );
   }
 

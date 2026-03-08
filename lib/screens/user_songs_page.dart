@@ -30,6 +30,8 @@ import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/utils.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/playlist_header.dart';
+import 'package:musify/widgets/playlists_page/playlist_search_bar.dart';
+import 'package:musify/widgets/playlists_page/shuffle_play_button.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/sort_chips.dart';
 
@@ -177,7 +179,8 @@ class _UserSongsPageState extends State<UserSongsPage> {
     int songsLength,
     bool isOfflineSongs,
   ) {
-    final primaryColor = Theme.of(context).colorScheme.primary;
+    final colorScheme = Theme.of(context).colorScheme;
+    final primaryColor = colorScheme.primary;
     final isRecentlyPlayed = title == context.l10n!.recentlyPlayed;
 
     return Column(
@@ -188,8 +191,29 @@ class _UserSongsPageState extends State<UserSongsPage> {
           spacing: 8,
           runSpacing: 8,
           children: [
-            if (songsLength > 0) _buildPlayButton(primaryColor, title),
-            if (songsLength > 0) _buildShufflePlayButton(primaryColor),
+            if (songsLength > 0)
+              IconButton.filled(
+                icon: Icon(
+                  FluentIcons.play_24_filled,
+                  color: colorScheme.onPrimary,
+                ),
+                iconSize: 24,
+                onPressed: () {
+                  final songsList = getSongsList(widget.page);
+                  final playlist = {
+                    'ytid': '',
+                    'title': title,
+                    'source': 'user-created',
+                    'list': songsList,
+                  };
+                  audioHandler.playPlaylistSong(
+                    playlist: playlist,
+                    songIndex: 0,
+                  );
+                },
+              ),
+            if (songsLength > 0)
+              ShufflePlayButton(songs: getSongsList(widget.page)),
             if (isRecentlyPlayed && songsLength > 0)
               _buildClearRecentsButton(primaryColor),
           ],
@@ -209,41 +233,16 @@ class _UserSongsPageState extends State<UserSongsPage> {
             },
           ),
         ],
-        if (songsLength > 0) ...[const SizedBox(height: 16), _buildSearchBar()],
+        if (songsLength > 0) ...[
+          const SizedBox(height: 16),
+          PlaylistSearchBar(
+            query: _searchQuery,
+            onChanged: (value) => setState(() => _searchQuery = value),
+            onCleared: () => setState(() => _searchQuery = ''),
+          ),
+        ],
         const SizedBox(height: 16),
       ],
-    );
-  }
-
-  Widget _buildSearchBar() {
-    final colorScheme = Theme.of(context).colorScheme;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: SearchBar(
-        hintText: context.l10n!.search,
-        leading: Icon(
-          Icons.search_rounded,
-          color: colorScheme.onSurfaceVariant,
-        ),
-        trailing: [
-          if (_searchQuery.isNotEmpty)
-            IconButton(
-              icon: const Icon(Icons.close_rounded),
-              onPressed: () => setState(() => _searchQuery = ''),
-            ),
-        ],
-        onChanged: (value) => setState(() => _searchQuery = value),
-        elevation: const WidgetStatePropertyAll(0),
-        backgroundColor: WidgetStatePropertyAll(
-          colorScheme.surfaceContainerHigh,
-        ),
-        shape: WidgetStatePropertyAll(
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        ),
-        padding: const WidgetStatePropertyAll(
-          EdgeInsets.symmetric(horizontal: 12),
-        ),
-      ),
     );
   }
 
@@ -254,49 +253,6 @@ class _UserSongsPageState extends State<UserSongsPage> {
       {'title': title},
       size: isLandscape ? 250 : screenWidth / 2.2,
       cubeIcon: icon,
-    );
-  }
-
-  Widget _buildPlayButton(Color primaryColor, String title) {
-    final songsList = getSongsList(widget.page);
-    final playlist = {
-      'ytid': '',
-      'title': title,
-      'source': 'user-created',
-      'list': songsList,
-    };
-
-    return IconButton.filled(
-      icon: Icon(
-        FluentIcons.play_24_filled,
-        color: Theme.of(context).colorScheme.onPrimary,
-      ),
-      iconSize: 24,
-      onPressed: () =>
-          audioHandler.playPlaylistSong(playlist: playlist, songIndex: 0),
-    );
-  }
-
-  Widget _buildShufflePlayButton(Color primaryColor) {
-    return IconButton.filledTonal(
-      icon: Icon(FluentIcons.arrow_shuffle_24_filled, color: primaryColor),
-      iconSize: 24,
-      tooltip: 'Shuffle play',
-      onPressed: () async {
-        final songsList = getSongsList(widget.page);
-        if (songsList.isEmpty) return;
-
-        final shuffledSongs = List<Map>.from(songsList.whereType<Map>());
-        if (shuffledSongs.isEmpty) return;
-
-        shuffledSongs.shuffle();
-
-        await audioHandler.addPlaylistToQueue(
-          shuffledSongs,
-          replace: true,
-          startIndex: 0,
-        );
-      },
     );
   }
 
