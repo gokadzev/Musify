@@ -29,14 +29,16 @@ import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/widgets/no_artwork_cube.dart';
 
-class QueueListView extends StatefulWidget {
-  const QueueListView({super.key});
+class QueueWidget extends StatefulWidget {
+  const QueueWidget({super.key, this.isBottomSheet = false});
+
+  final bool isBottomSheet;
 
   @override
-  State<QueueListView> createState() => _QueueListViewState();
+  State<QueueWidget> createState() => _QueueWidgetState();
 }
 
-class _QueueListViewState extends State<QueueListView> {
+class _QueueWidgetState extends State<QueueWidget> {
   List<Map> _queue = [];
   late StreamSubscription<List<Map>> _subscription;
   bool _isDismissing = false;
@@ -62,83 +64,130 @@ class _QueueListViewState extends State<QueueListView> {
     final textTheme = Theme.of(context).textTheme;
     final currentIndex = audioHandler.currentQueueIndex;
 
+    if (widget.isBottomSheet) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildHeader(context, colorScheme, textTheme, compact: true),
+          _buildBottomSheetContent(context, colorScheme, currentIndex),
+        ],
+      );
+    }
+
     return Column(
       children: [
-        // Header
-        Padding(
-          padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: colorScheme.primaryContainer,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  FluentIcons.apps_list_24_filled,
-                  color: colorScheme.onPrimaryContainer,
-                  size: 22,
-                ),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      context.l10n!.queue,
-                      style: textTheme.titleMedium?.copyWith(
-                        color: colorScheme.onSurface,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    if (_queue.isNotEmpty)
-                      Text(
-                        '${_queue.length} ${context.l10n!.songs.toLowerCase()}',
-                        style: textTheme.bodySmall?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-              if (_queue.isNotEmpty)
-                FilledButton.tonalIcon(
-                  onPressed: () {
-                    audioHandler.clearQueue();
-                    Navigator.pop(context);
-                  },
-                  icon: const Icon(FluentIcons.dismiss_24_regular, size: 18),
-                  label: Text(context.l10n!.clear),
-                  style: FilledButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                    visualDensity: VisualDensity.compact,
-                  ),
-                ),
-            ],
-          ),
-        ),
-
-        // Divider
+        _buildHeader(context, colorScheme, textTheme, compact: false),
         Divider(
           height: 1,
           thickness: 1,
           color: colorScheme.outlineVariant.withValues(alpha: 0.5),
-          indent: 20,
-          endIndent: 20,
+          indent: 8,
+          endIndent: 8,
         ),
-
-        // Queue list
         Expanded(
           child: _queue.isEmpty
               ? _buildEmptyState(context, colorScheme, textTheme)
-              : _buildQueueList(context, colorScheme, currentIndex),
+              : _buildList(context, colorScheme, currentIndex),
         ),
       ],
+    );
+  }
+
+  Widget _buildHeader(
+    BuildContext context,
+    ColorScheme colorScheme,
+    TextTheme textTheme, {
+    required bool compact,
+  }) {
+    return Padding(
+      padding: compact
+          ? const EdgeInsets.only(left: 10, right: 8, bottom: 12)
+          : const EdgeInsets.fromLTRB(8, 8, 8, 16),
+      child: Row(
+        children: [
+          Container(
+            padding: EdgeInsets.all(compact ? 8 : 10),
+            decoration: BoxDecoration(
+              color: colorScheme.primaryContainer,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              FluentIcons.apps_list_24_filled,
+              color: colorScheme.onPrimaryContainer,
+              size: compact ? 20.0 : 22.0,
+            ),
+          ),
+          SizedBox(width: compact ? 12 : 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  context.l10n!.queue,
+                  style: compact
+                      ? TextStyle(
+                          color: colorScheme.onSurface,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        )
+                      : textTheme.titleMedium?.copyWith(
+                          color: colorScheme.onSurface,
+                          fontWeight: FontWeight.w600,
+                        ),
+                ),
+                if (_queue.isNotEmpty)
+                  Text(
+                    '${_queue.length} ${context.l10n!.songs.toLowerCase()}',
+                    style: compact
+                        ? TextStyle(
+                            color: colorScheme.onSurfaceVariant,
+                            fontSize: 13,
+                          )
+                        : textTheme.bodySmall?.copyWith(
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                  ),
+              ],
+            ),
+          ),
+          if (_queue.isNotEmpty)
+            FilledButton.tonalIcon(
+              onPressed: () {
+                audioHandler.clearQueue();
+                if (widget.isBottomSheet) Navigator.pop(context);
+              },
+              icon: const Icon(FluentIcons.dismiss_24_regular, size: 18),
+              label: Text(context.l10n!.clear),
+              style: FilledButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                visualDensity: VisualDensity.compact,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBottomSheetContent(
+    BuildContext context,
+    ColorScheme colorScheme,
+    int currentIndex,
+  ) {
+    if (_queue.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 24),
+        child: Text(
+          context.l10n!.noSongsInQueue,
+          style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 14),
+        ),
+      );
+    }
+    return SizedBox(
+      height: MediaQuery.sizeOf(context).height * 0.52,
+      child: _buildList(context, colorScheme, currentIndex, closeOnTap: true),
     );
   }
 
@@ -179,13 +228,14 @@ class _QueueListViewState extends State<QueueListView> {
     );
   }
 
-  Widget _buildQueueList(
+  Widget _buildList(
     BuildContext context,
     ColorScheme colorScheme,
-    int currentIndex,
-  ) {
+    int currentIndex, {
+    bool closeOnTap = false,
+  }) {
     return ReorderableListView.builder(
-      padding: const EdgeInsets.only(top: 4, bottom: 24),
+      padding: const EdgeInsets.only(top: 4, bottom: 24, left: 8, right: 8),
       itemCount: _queue.length,
       onReorder: (oldIndex, newIndex) {
         if (newIndex > oldIndex) newIndex--;
@@ -211,7 +261,10 @@ class _QueueListViewState extends State<QueueListView> {
           index: index,
           isCurrentSong: isCurrentSong,
           colorScheme: colorScheme,
-          onTap: () => audioHandler.skipToSong(index),
+          onTap: () {
+            audioHandler.skipToSong(index);
+            if (closeOnTap) Navigator.pop(context);
+          },
           confirmDismiss: (_) async {
             _isDismissing = true;
             return true;

@@ -132,8 +132,6 @@ class _DesktopLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Row(
       children: [
         Expanded(
@@ -175,23 +173,7 @@ class _DesktopLayout extends StatelessWidget {
             ),
           ),
         ),
-        Container(
-          width: 1,
-          margin: const EdgeInsets.symmetric(vertical: 24),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                colorScheme.outlineVariant.withValues(alpha: 0),
-                colorScheme.outlineVariant,
-                colorScheme.outlineVariant,
-                colorScheme.outlineVariant.withValues(alpha: 0),
-              ],
-            ),
-          ),
-        ),
-        const Expanded(child: QueueListView()),
+        const Expanded(child: QueueWidget()),
       ],
     );
   }
