@@ -29,9 +29,9 @@ import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/utils.dart';
 import 'package:musify/widgets/playlist_cube.dart';
-import 'package:musify/widgets/playlist_header.dart';
-import 'package:musify/widgets/playlists_page/playlist_search_bar.dart';
-import 'package:musify/widgets/playlists_page/shuffle_play_button.dart';
+import 'package:musify/widgets/playlist_page/playlist_header.dart';
+import 'package:musify/widgets/playlist_page/playlist_search_bar.dart';
+import 'package:musify/widgets/playlist_page/shuffle_play_button.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/sort_chips.dart';
 
