@@ -175,6 +175,7 @@
   "restoredSuccess": "Data restored successfully",
   "search": "Search",
   "searchHistoryMsg": "Search history cleared",
+  "searchIsDisabledInOfflineMode": "Search is disabled in offline mode",
   "selectDuration": "Select duration",
   "setSleepTimer": "Set sleep timer",
   "setTimer": "Set timer",
