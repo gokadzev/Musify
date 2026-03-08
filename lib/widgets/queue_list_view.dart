@@ -47,8 +47,11 @@ class _QueueWidgetState extends State<QueueWidget> {
   void initState() {
     super.initState();
     _subscription = audioHandler.queueAsMapStream.listen((queue) {
-      if (mounted && !_isDismissing)
-        setState(() => _queue = List<Map>.from(queue));
+      if (mounted && !_isDismissing) {
+        setState(() {
+          _queue = List<Map>.from(queue);
+        });
+      }
     });
   }
 
@@ -270,11 +273,14 @@ class _QueueWidgetState extends State<QueueWidget> {
             return true;
           },
           onDismissed: () {
+            final ytid = song['ytid'];
+            final actualIndex = _queue.indexWhere((s) => s['ytid'] == ytid);
+            if (actualIndex == -1) return;
             setState(() {
               _isDismissing = false;
-              _queue.removeAt(index);
+              _queue.removeAt(actualIndex);
             });
-            audioHandler.removeFromQueue(index);
+            audioHandler.removeFromQueue(actualIndex);
           },
         );
       },
