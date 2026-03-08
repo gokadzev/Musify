@@ -19,6 +19,8 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
+import 'dart:async';
+
 import 'package:audio_service/audio_service.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
@@ -282,130 +284,158 @@ void _showQueue(BuildContext context) {
   showCustomBottomSheet(context, const _QueueBottomSheet());
 }
 
-class _QueueBottomSheet extends StatelessWidget {
+class _QueueBottomSheet extends StatefulWidget {
   const _QueueBottomSheet();
+
+  @override
+  State<_QueueBottomSheet> createState() => _QueueBottomSheetState();
+}
+
+class _QueueBottomSheetState extends State<_QueueBottomSheet> {
+  List<Map> _queue = [];
+  late StreamSubscription<List<Map>> _subscription;
+  bool _isDismissing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _subscription = audioHandler.queueAsMapStream.listen((queue) {
+      if (mounted && !_isDismissing)
+        setState(() => _queue = List<Map>.from(queue));
+    });
+  }
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final currentIndex = audioHandler.currentQueueIndex;
 
-    return StreamBuilder<List<Map>>(
-      stream: audioHandler.queueAsMapStream,
-      builder: (context, snapshot) {
-        final queue = snapshot.data ?? [];
-        final currentIndex = audioHandler.currentQueueIndex;
-
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 10, right: 8, bottom: 12),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: colorScheme.primaryContainer,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(
-                      FluentIcons.apps_list_24_filled,
-                      color: colorScheme.onPrimaryContainer,
-                      size: 20,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          context.l10n!.queue,
-                          style: TextStyle(
-                            color: colorScheme.onSurface,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        Text(
-                          '${queue.length} ${context.l10n!.songs}',
-                          style: TextStyle(
-                            color: colorScheme.onSurfaceVariant,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (queue.isNotEmpty)
-                    FilledButton.tonalIcon(
-                      onPressed: () {
-                        audioHandler.clearQueue();
-                        Navigator.pop(context);
-                      },
-                      icon: const Icon(
-                        FluentIcons.dismiss_24_regular,
-                        size: 18,
-                      ),
-                      label: Text(context.l10n!.clear),
-                      style: FilledButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        visualDensity: VisualDensity.compact,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 10, right: 8, bottom: 12),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: colorScheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  FluentIcons.apps_list_24_filled,
+                  color: colorScheme.onPrimaryContainer,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      context.l10n!.queue,
+                      style: TextStyle(
+                        color: colorScheme.onSurface,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                ],
+                    Text(
+                      '${_queue.length} ${context.l10n!.songs}',
+                      style: TextStyle(
+                        color: colorScheme.onSurfaceVariant,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (_queue.isNotEmpty)
+                FilledButton.tonalIcon(
+                  onPressed: () {
+                    audioHandler.clearQueue();
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(FluentIcons.dismiss_24_regular, size: 18),
+                  label: Text(context.l10n!.clear),
+                  style: FilledButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    visualDensity: VisualDensity.compact,
+                  ),
+                ),
+            ],
+          ),
+        ),
+        if (_queue.isEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 24),
+            child: Text(
+              context.l10n!.noSongsInQueue,
+              style: TextStyle(
+                color: colorScheme.onSurfaceVariant,
+                fontSize: 14,
               ),
             ),
-            if (queue.isEmpty)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 24),
-                child: Text(
-                  context.l10n!.noSongsInQueue,
-                  style: TextStyle(
-                    color: colorScheme.onSurfaceVariant,
-                    fontSize: 14,
-                  ),
-                ),
-              )
-            else
-              SizedBox(
-                height: MediaQuery.sizeOf(context).height * 0.52,
-                child: ReorderableListView.builder(
-                  padding: const EdgeInsets.only(top: 4, bottom: 24),
-                  itemCount: queue.length,
-                  onReorder: (oldIndex, newIndex) {
-                    if (newIndex > oldIndex) newIndex--;
-                    audioHandler.reorderQueue(oldIndex, newIndex);
-                  },
-                  proxyDecorator: (child, index, animation) => Material(
-                    elevation: 6,
-                    color: Colors.transparent,
-                    borderRadius: BorderRadius.circular(14),
-                    shadowColor: colorScheme.shadow.withValues(alpha: 0.25),
-                    child: child,
-                  ),
-                  itemBuilder: (context, index) {
-                    return QueueTile(
-                      key: ValueKey('bs_${queue[index]['ytid']}_$index'),
-                      song: queue[index],
-                      index: index,
-                      isCurrentSong: index == currentIndex,
-                      colorScheme: colorScheme,
-                      onTap: () {
-                        audioHandler.skipToSong(index);
-                        Navigator.pop(context);
-                      },
-                      onDismissed: () => audioHandler.removeFromQueue(index),
-                    );
-                  },
-                ),
+          )
+        else
+          SizedBox(
+            height: MediaQuery.sizeOf(context).height * 0.52,
+            child: ReorderableListView.builder(
+              padding: const EdgeInsets.only(top: 4, bottom: 24),
+              itemCount: _queue.length,
+              onReorder: (oldIndex, newIndex) {
+                if (newIndex > oldIndex) newIndex--;
+                setState(() {
+                  final item = _queue.removeAt(oldIndex);
+                  _queue.insert(newIndex, item);
+                });
+                audioHandler.reorderQueue(oldIndex, newIndex);
+              },
+              proxyDecorator: (child, index, animation) => Material(
+                elevation: 6,
+                color: Colors.transparent,
+                borderRadius: BorderRadius.circular(14),
+                shadowColor: colorScheme.shadow.withValues(alpha: 0.25),
+                child: child,
               ),
-          ],
-        );
-      },
+              itemBuilder: (context, index) {
+                return QueueTile(
+                  key: ValueKey(_queue[index]['ytid']),
+                  song: _queue[index],
+                  index: index,
+                  isCurrentSong: index == currentIndex,
+                  colorScheme: colorScheme,
+                  onTap: () {
+                    audioHandler.skipToSong(index);
+                    Navigator.pop(context);
+                  },
+                  confirmDismiss: (_) async {
+                    _isDismissing = true;
+                    return true;
+                  },
+                  onDismissed: () {
+                    setState(() {
+                      _isDismissing = false;
+                      _queue.removeAt(index);
+                    });
+                    audioHandler.removeFromQueue(index);
+                  },
+                );
+              },
+            ),
+          ),
+      ],
     );
   }
 }

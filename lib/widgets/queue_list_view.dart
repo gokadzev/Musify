@@ -19,6 +19,7 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
+import 'dart:async';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -28,102 +29,116 @@ import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/widgets/no_artwork_cube.dart';
 
-class QueueListView extends StatelessWidget {
+class QueueListView extends StatefulWidget {
   const QueueListView({super.key});
+
+  @override
+  State<QueueListView> createState() => _QueueListViewState();
+}
+
+class _QueueListViewState extends State<QueueListView> {
+  List<Map> _queue = [];
+  late StreamSubscription<List<Map>> _subscription;
+  bool _isDismissing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _subscription = audioHandler.queueAsMapStream.listen((queue) {
+      if (mounted && !_isDismissing)
+        setState(() => _queue = List<Map>.from(queue));
+    });
+  }
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+    final currentIndex = audioHandler.currentQueueIndex;
 
-    return StreamBuilder<List<Map>>(
-      stream: audioHandler.queueAsMapStream,
-      builder: (context, snapshot) {
-        final queue = snapshot.data ?? [];
-        final currentIndex = audioHandler.currentQueueIndex;
-
-        return Column(
-          children: [
-            // Header
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: colorScheme.primaryContainer,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(
-                      FluentIcons.apps_list_24_filled,
-                      color: colorScheme.onPrimaryContainer,
-                      size: 22,
-                    ),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          context.l10n!.queue,
-                          style: textTheme.titleMedium?.copyWith(
-                            color: colorScheme.onSurface,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        if (queue.isNotEmpty)
-                          Text(
-                            '${queue.length} ${context.l10n!.songs.toLowerCase()}',
-                            style: textTheme.bodySmall?.copyWith(
-                              color: colorScheme.onSurfaceVariant,
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                  if (queue.isNotEmpty)
-                    FilledButton.tonalIcon(
-                      onPressed: () {
-                        audioHandler.clearQueue();
-                        Navigator.pop(context);
-                      },
-                      icon: const Icon(
-                        FluentIcons.dismiss_24_regular,
-                        size: 18,
-                      ),
-                      label: Text(context.l10n!.clear),
-                      style: FilledButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        visualDensity: VisualDensity.compact,
-                      ),
-                    ),
-                ],
+    return Column(
+      children: [
+        // Header
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: colorScheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  FluentIcons.apps_list_24_filled,
+                  color: colorScheme.onPrimaryContainer,
+                  size: 22,
+                ),
               ),
-            ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      context.l10n!.queue,
+                      style: textTheme.titleMedium?.copyWith(
+                        color: colorScheme.onSurface,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    if (_queue.isNotEmpty)
+                      Text(
+                        '${_queue.length} ${context.l10n!.songs.toLowerCase()}',
+                        style: textTheme.bodySmall?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              if (_queue.isNotEmpty)
+                FilledButton.tonalIcon(
+                  onPressed: () {
+                    audioHandler.clearQueue();
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(FluentIcons.dismiss_24_regular, size: 18),
+                  label: Text(context.l10n!.clear),
+                  style: FilledButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    visualDensity: VisualDensity.compact,
+                  ),
+                ),
+            ],
+          ),
+        ),
 
-            // Divider
-            Divider(
-              height: 1,
-              thickness: 1,
-              color: colorScheme.outlineVariant.withValues(alpha: 0.5),
-              indent: 20,
-              endIndent: 20,
-            ),
+        // Divider
+        Divider(
+          height: 1,
+          thickness: 1,
+          color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+          indent: 20,
+          endIndent: 20,
+        ),
 
-            // Queue list
-            Expanded(
-              child: queue.isEmpty
-                  ? _buildEmptyState(context, colorScheme, textTheme)
-                  : _buildQueueList(context, queue, colorScheme, currentIndex),
-            ),
-          ],
-        );
-      },
+        // Queue list
+        Expanded(
+          child: _queue.isEmpty
+              ? _buildEmptyState(context, colorScheme, textTheme)
+              : _buildQueueList(context, colorScheme, currentIndex),
+        ),
+      ],
     );
   }
 
@@ -166,15 +181,18 @@ class QueueListView extends StatelessWidget {
 
   Widget _buildQueueList(
     BuildContext context,
-    List<Map> queue,
     ColorScheme colorScheme,
     int currentIndex,
   ) {
     return ReorderableListView.builder(
       padding: const EdgeInsets.only(top: 4, bottom: 24),
-      itemCount: queue.length,
+      itemCount: _queue.length,
       onReorder: (oldIndex, newIndex) {
         if (newIndex > oldIndex) newIndex--;
+        setState(() {
+          final item = _queue.removeAt(oldIndex);
+          _queue.insert(newIndex, item);
+        });
         audioHandler.reorderQueue(oldIndex, newIndex);
       },
       proxyDecorator: (child, index, animation) => Material(
@@ -185,16 +203,26 @@ class QueueListView extends StatelessWidget {
         child: child,
       ),
       itemBuilder: (context, index) {
-        final song = queue[index];
+        final song = _queue[index];
         final isCurrentSong = index == currentIndex;
         return QueueTile(
-          key: ValueKey('qt_${song['ytid']}_$index'),
+          key: ValueKey(song['ytid']),
           song: song,
           index: index,
           isCurrentSong: isCurrentSong,
           colorScheme: colorScheme,
           onTap: () => audioHandler.skipToSong(index),
-          onDismissed: () => audioHandler.removeFromQueue(index),
+          confirmDismiss: (_) async {
+            _isDismissing = true;
+            return true;
+          },
+          onDismissed: () {
+            setState(() {
+              _isDismissing = false;
+              _queue.removeAt(index);
+            });
+            audioHandler.removeFromQueue(index);
+          },
         );
       },
     );
@@ -210,6 +238,7 @@ class QueueTile extends StatelessWidget {
     required this.colorScheme,
     required this.onTap,
     required this.onDismissed,
+    this.confirmDismiss,
   });
 
   final Map song;
@@ -218,6 +247,7 @@ class QueueTile extends StatelessWidget {
   final ColorScheme colorScheme;
   final VoidCallback onTap;
   final VoidCallback onDismissed;
+  final Future<bool?> Function(DismissDirection)? confirmDismiss;
 
   static const double _artSize = 46;
   static const double _artRadius = 10;
@@ -225,7 +255,8 @@ class QueueTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dismissible(
-      key: ValueKey('d_${song['ytid']}_$index'),
+      key: ValueKey('d_${song['ytid']}'),
+      confirmDismiss: confirmDismiss,
       onDismissed: (_) => onDismissed(),
       background: _DismissBackground(
         alignment: Alignment.centerLeft,
