@@ -74,111 +74,116 @@ void showCreatePlaylistDialog(BuildContext context, {dynamic songToAdd}) {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Container(
-                    decoration: BoxDecoration(
-                      color: colorScheme.surfaceContainerLow,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    padding: const EdgeInsets.all(4),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              dialogSetState(() {
-                                isYouTubeMode = true;
-                                id = '';
-                                customPlaylistName = '';
-                                imageUrl = null;
-                                imageBase64 = null;
-                              });
-                            },
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 200),
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              decoration: BoxDecoration(
-                                color: isYouTubeMode
-                                    ? colorScheme.primaryContainer
-                                    : Colors.transparent,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    FluentIcons.globe_20_filled,
-                                    size: 20,
-                                    color: isYouTubeMode
-                                        ? colorScheme.onPrimaryContainer
-                                        : colorScheme.onSurfaceVariant,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    'YouTube',
-                                    style: TextStyle(
+                  if (songToAdd == null)
+                    Container(
+                      decoration: BoxDecoration(
+                        color: colorScheme.surfaceContainerLow,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      padding: const EdgeInsets.all(4),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                dialogSetState(() {
+                                  isYouTubeMode = true;
+                                  id = '';
+                                  customPlaylistName = '';
+                                  imageUrl = null;
+                                  imageBase64 = null;
+                                });
+                              },
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 200),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: isYouTubeMode
+                                      ? colorScheme.primaryContainer
+                                      : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      FluentIcons.globe_20_filled,
+                                      size: 20,
                                       color: isYouTubeMode
                                           ? colorScheme.onPrimaryContainer
                                           : colorScheme.onSurfaceVariant,
-                                      fontWeight: isYouTubeMode
-                                          ? FontWeight.w600
-                                          : FontWeight.w500,
                                     ),
-                                  ),
-                                ],
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      'YouTube',
+                                      style: TextStyle(
+                                        color: isYouTubeMode
+                                            ? colorScheme.onPrimaryContainer
+                                            : colorScheme.onSurfaceVariant,
+                                        fontWeight: isYouTubeMode
+                                            ? FontWeight.w600
+                                            : FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              dialogSetState(() {
-                                isYouTubeMode = false;
-                                id = '';
-                                customPlaylistName = '';
-                                imageUrl = null;
-                                imageBase64 = null;
-                              });
-                            },
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 200),
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              decoration: BoxDecoration(
-                                color: !isYouTubeMode
-                                    ? colorScheme.primaryContainer
-                                    : Colors.transparent,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    FluentIcons.person_20_filled,
-                                    size: 20,
-                                    color: !isYouTubeMode
-                                        ? colorScheme.onPrimaryContainer
-                                        : colorScheme.onSurfaceVariant,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    context.l10n!.custom,
-                                    style: TextStyle(
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                dialogSetState(() {
+                                  isYouTubeMode = false;
+                                  id = '';
+                                  customPlaylistName = '';
+                                  imageUrl = null;
+                                  imageBase64 = null;
+                                });
+                              },
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 200),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: !isYouTubeMode
+                                      ? colorScheme.primaryContainer
+                                      : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      FluentIcons.person_20_filled,
+                                      size: 20,
                                       color: !isYouTubeMode
                                           ? colorScheme.onPrimaryContainer
                                           : colorScheme.onSurfaceVariant,
-                                      fontWeight: !isYouTubeMode
-                                          ? FontWeight.w600
-                                          : FontWeight.w500,
                                     ),
-                                  ),
-                                ],
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      context.l10n!.custom,
+                                      style: TextStyle(
+                                        color: !isYouTubeMode
+                                            ? colorScheme.onPrimaryContainer
+                                            : colorScheme.onSurfaceVariant,
+                                        fontWeight: !isYouTubeMode
+                                            ? FontWeight.w600
+                                            : FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
                   const SizedBox(height: 20),
                   if (isYouTubeMode)
                     TextField(
@@ -265,25 +270,22 @@ void showCreatePlaylistDialog(BuildContext context, {dynamic songToAdd}) {
                   if (isYouTubeMode && id.isNotEmpty) {
                     final result = await addUserPlaylist(id, context);
                     if (context.mounted) showToast(context, result);
-                    
+
                     if (!context.mounted) return;
                     Navigator.pop(context);
                   } else if (!isYouTubeMode && customPlaylistName.isNotEmpty) {
-                    final result = createCustomPlaylist(
+                    final (result, newPlaylistId) = createCustomPlaylist(
                       customPlaylistName.trim(),
                       imageBase64 ?? imageUrl,
                       context,
                     );
-                    if (context.mounted && songToAdd == null) {
-                        showToast(context, result);
-                    }
-                    
-                    if (songToAdd != null && userCustomPlaylists.value.isNotEmpty) {
-                      final newPlaylist = userCustomPlaylists.value.last;
+                    if (context.mounted) showToast(context, result);
+
+                    if (songToAdd != null) {
                       if (context.mounted) {
                         final addResult = addSongInCustomPlaylist(
                           context,
-                          newPlaylist['ytid'],
+                          newPlaylistId,
                           songToAdd,
                         );
                         showToast(context, addResult);

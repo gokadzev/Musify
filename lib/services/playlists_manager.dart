@@ -121,14 +121,15 @@ Future<String> addUserPlaylist(String input, BuildContext context) async {
   }
 }
 
-String createCustomPlaylist(
+(String message, String playlistId) createCustomPlaylist(
   String playlistName,
   String? image,
   BuildContext context,
 ) {
+  final newPlaylistId = generateCustomPlaylistId();
   final creationTime = DateTime.now().millisecondsSinceEpoch;
   final customPlaylist = {
-    'ytid': generateCustomPlaylistId(),
+    'ytid': newPlaylistId,
     'title': playlistName,
     'source': 'user-created',
     if (image != null) 'image': image,
@@ -139,7 +140,7 @@ String createCustomPlaylist(
   unawaited(
     addOrUpdateData('user', 'customPlaylists', userCustomPlaylists.value),
   );
-  return '${context.l10n!.addedSuccess}!';
+  return ('${context.l10n!.addedSuccess}!', newPlaylistId);
 }
 
 String addSongInCustomPlaylist(
