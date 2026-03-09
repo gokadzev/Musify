@@ -38,7 +38,7 @@
   "clear": "Effacer",
   "clearCache": "Vider le cache",
   "clearQueue": "Vider la file d'attente",
-  "clearQueueQuestion": "Are you sure you want to clear the queue?",
+  "clearQueueQuestion": "Êtes-vous sûr de vouloir effacer la file d'attente ?",
   "clearRecentlyPlayed": "Effacer l'historique de lecture",
   "clearRecentlyPlayedQuestion": "Souhaitez-vous effacer l'historique de lecture ?",
   "clearSearchHistory": "Effacer l'historique de recherche",
