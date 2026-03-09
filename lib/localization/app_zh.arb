@@ -38,7 +38,7 @@
   "clear": "清除",
   "clearCache": "清除缓存",
   "clearQueue": "清空队列",
-  "clearQueueQuestion": "Are you sure you want to clear the queue?",
+  "clearQueueQuestion": "您确定要清除队列吗？",
   "clearRecentlyPlayed": "清除近期播放",
   "clearRecentlyPlayedQuestion": "您确定要清除近期播放历史记录吗？",
   "clearSearchHistory": "清除搜索历史记录",
