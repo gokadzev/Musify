@@ -279,46 +279,55 @@ class _SongBarState extends State<SongBar> {
         unawaited(_handleOfflineToggle(context));
         break;
       case 'set_as_playlist_image':
-        _handleSetAsPlaylistImage(context);
+        unawaited(_handleSetAsPlaylistImage(context));
         break;
     }
   }
 
-  void _handleSetAsPlaylistImage(BuildContext context) {
+  Future<void> _handleSetAsPlaylistImage(BuildContext context) async {
     try {
       final isOffline = isSongAlreadyOffline(_ytid);
-      String? imageUrl;
-
-      if (isOffline) {
-        imageUrl = widget.song['highResImage'] ??
-            widget.song['image'] ??
-            widget.song['lowResImage'] ??
-            widget.song['artworkPath'];
-      } else {
-        imageUrl = widget.song['highResImage'] ??
-            widget.song['image'] ??
-            widget.song['lowResImage'] ??
-            widget.song['thumbnail'];
-      }
+      final imageUrl = widget.song['highResImage'] ??
+          widget.song['image'] ??
+          widget.song['lowResImage'] ??
+          (isOffline ? widget.song['artworkPath'] : widget.song['thumbnail']);
 
       if (imageUrl != null && imageUrl.isNotEmpty && widget.playlistId != null) {
-        setPlaylistImageFromSong(widget.playlistId!, imageUrl).then((_) {
+        final isLocalPath = !imageUrl.startsWith('http');
+        final canUse = isLocalPath || await _isImageUrlReachable(imageUrl);
+
+        if (canUse) {
+          await setPlaylistImageFromSong(widget.playlistId!, imageUrl);
           if (context.mounted) {
             showToast(context, context.l10n!.setAsPlaylistImageSuccess);
             widget.onRenamed?.call();
           }
-        }).catchError((e) {
+        } else {
           if (context.mounted) {
-            showToast(context, context.l10n!.setAsPlaylistImageError);
+            showToast(context, context.l10n!.noImageFound);
           }
-        });
+        }
       } else {
-        showToast(context, context.l10n!.noImageFound);
+        if (context.mounted) {
+          showToast(context, context.l10n!.noImageFound);
+        }
       }
     } catch (e) {
       if (context.mounted) {
         showToast(context, context.l10n!.setAsPlaylistImageError);
       }
+    }
+  }
+
+  Future<bool> _isImageUrlReachable(String url) async {
+    try {
+      final client = HttpClient();
+      final request = await client.headUrl(Uri.parse(url));
+      final response = await request.close();
+      client.close();
+      return response.statusCode >= 200 && response.statusCode < 400;
+    } catch (_) {
+      return false;
     }
   }
 
