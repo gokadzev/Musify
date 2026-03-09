@@ -116,26 +116,29 @@ Widget buildImagePickerRow(
 ) {
   final colorScheme = Theme.of(context).colorScheme;
 
-  return OutlinedButton.icon(
-    onPressed: onPickImage,
-    style: OutlinedButton.styleFrom(
-      foregroundColor: colorScheme.primary,
-      side: BorderSide(
-        color: isImagePicked ? colorScheme.primary : colorScheme.outline,
+  return SizedBox(
+    width: double.infinity,
+    child: OutlinedButton.icon(
+      onPressed: onPickImage,
+      style: OutlinedButton.styleFrom(
+        foregroundColor: colorScheme.primary,
+        side: BorderSide(
+          color: isImagePicked ? colorScheme.primary : colorScheme.outline,
+        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-    ),
-    icon: Icon(
-      isImagePicked
-          ? FluentIcons.checkmark_circle_20_filled
-          : FluentIcons.image_add_20_regular,
-      size: 20,
-    ),
-    label: Text(
-      isImagePicked
-          ? context.l10n!.imagePicked
-          : context.l10n!.pickImageFromDevice,
+      icon: Icon(
+        isImagePicked
+            ? FluentIcons.checkmark_circle_20_filled
+            : FluentIcons.image_add_20_regular,
+        size: 20,
+      ),
+      label: Text(
+        isImagePicked
+            ? context.l10n!.imagePicked
+            : context.l10n!.pickImageFromDevice,
+      ),
     ),
   );
 }
