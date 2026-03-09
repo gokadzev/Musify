@@ -26,7 +26,7 @@ import 'package:musify/services/playlists_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/playlist_image_picker.dart';
 
-void showAddPlaylistDialog(BuildContext context, {dynamic songToAdd}) {
+void showCreatePlaylistDialog(BuildContext context, {dynamic songToAdd}) {
   var id = '';
   var customPlaylistName = '';
   var isYouTubeMode = songToAdd == null;
@@ -266,14 +266,6 @@ void showAddPlaylistDialog(BuildContext context, {dynamic songToAdd}) {
                     final result = await addUserPlaylist(id, context);
                     if (context.mounted) showToast(context, result);
                     
-                    if (songToAdd != null && context.mounted) {
-                       // The newly added youtube playlist will be the last one
-                       if (userPlaylists.value.isNotEmpty) {
-                           final newPlaylist = userPlaylists.value.last;
-                           // It's not possible to add a song to a youtube playlist directly like this,
-                           // but handling this keeps the logic similar. Usually users want to add to custom playlists.
-                       }
-                    }
                     if (!context.mounted) return;
                     Navigator.pop(context);
                   } else if (!isYouTubeMode && customPlaylistName.isNotEmpty) {

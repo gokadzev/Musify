@@ -12,11 +12,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- *
- *     For more information about Musify, including how to contribute,
- *     please visit: https://github.com/gokadzev/Musify
+ *     along with this program.  If not, see <https://github.com/gokadzev/Musify
  */
 
 import 'dart:async';
@@ -788,7 +784,7 @@ void showAddToPlaylistDialog(BuildContext context, dynamic song) {
           FilledButton.icon(
             onPressed: () {
               Navigator.pop(context);
-              showAddPlaylistDialog(context, songToAdd: song);
+              showCreatePlaylistDialog(context, songToAdd: song);
             },
             icon: const Icon(FluentIcons.add_24_regular, size: 18),
             label: Text(context.l10n!.addPlaylist),

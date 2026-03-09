@@ -158,7 +158,7 @@ class _LibraryPageState extends State<LibraryPage> {
                 ),
                 IconButton(
                   padding: const EdgeInsets.symmetric(horizontal: 2),
-                  onPressed: () => showAddPlaylistDialog(context),
+                  onPressed: () => showCreatePlaylistDialog(context),
                   icon: Icon(
                     FluentIcons.add_24_filled,
                     color: colorScheme.onSurfaceVariant,
@@ -233,7 +233,7 @@ class _LibraryPageState extends State<LibraryPage> {
                     icon: FluentIcons.add_circle_24_filled,
                     actionButton: IconButton(
                       padding: const EdgeInsets.only(right: 5),
-                      onPressed: () => showAddPlaylistDialog(context),
+                      onPressed: () => showCreatePlaylistDialog(context),
                       icon: Icon(
                         FluentIcons.add_24_filled,
                         color: colorScheme.onSurfaceVariant,
