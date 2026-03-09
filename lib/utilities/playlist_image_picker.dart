@@ -121,18 +121,22 @@ Widget buildImagePickerRow(
     child: OutlinedButton.icon(
       onPressed: onPickImage,
       style: OutlinedButton.styleFrom(
+        alignment: Alignment.centerLeft,
         foregroundColor: colorScheme.primary,
         side: BorderSide(
           color: isImagePicked ? colorScheme.primary : colorScheme.outline,
         ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       ),
-      icon: Icon(
-        isImagePicked
-            ? FluentIcons.checkmark_circle_20_filled
-            : FluentIcons.image_add_20_regular,
-        size: 20,
+      icon: Padding(
+        padding: const EdgeInsets.only(left: 4),
+        child: Icon(
+          isImagePicked
+              ? FluentIcons.checkmark_circle_20_filled
+              : FluentIcons.image_add_20_regular,
+          size: 20,
+        ),
       ),
       label: Text(
         isImagePicked
