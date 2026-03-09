@@ -1,1 +1,420 @@
-/*\n *     Copyright (C) 2026 Valeri Gokadze\n *\n *     Musify is free software: you can redistribute it and/or modify\n *     it under the terms of the GNU General Public License as published by\n *     the Free Software Foundation, either version 3 of the License, or\n *     (at your option) any later version.\n *\n *     Musify is distributed in the hope that it will be useful,\n *     but WITHOUT ANY WARRANTY; without even the implied warranty of\n *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n *     GNU General Public License for more details.\n *\n *     You should have received a copy of the GNU General Public License\n *     along with this program.  If not, see <https://www.gnu.org/licenses/>.\n *\n *\n *     For more information about Musify, including how to contribute,\n *     please visit: https://github.com/gokadzev/Musify\n */\n\nimport 'dart:async';\n\nimport 'package:fluentui_system_icons/fluentui_system_icons.dart';\nimport 'package:flutter/material.dart';\nimport 'package:hive_flutter/hive_flutter.dart';\nimport 'package:musify/extensions/l10n.dart';\nimport 'package:musify/main.dart';\nimport 'package:musify/services/common_services.dart';\nimport 'package:musify/services/data_manager.dart';\nimport 'package:musify/services/playlists_manager.dart';\nimport 'package:musify/utilities/common_variables.dart';\nimport 'package:musify/utilities/utils.dart';\nimport 'package:musify/widgets/confirmation_dialog.dart';\nimport 'package:musify/widgets/custom_bar.dart';\nimport 'package:musify/widgets/custom_search_bar.dart';\nimport 'package:musify/widgets/playlist_bar.dart';\nimport 'package:musify/widgets/section_title.dart';\nimport 'package:musify/widgets/song_bar.dart';\n\nclass SearchPage extends StatefulWidget {\n  const SearchPage({super.key});\n\n  @override\n  _SearchPageState createState() => _SearchPageState();\n\n  static final ValueNotifier<String?> externalSearchQuery = ValueNotifier(null);\n}\n\n// Global ValueNotifier for search history to make it reactive\nfinal ValueNotifier<List> searchHistoryNotifier = ValueNotifier<List>(\n  Hive.box('user').get('searchHistory', defaultValue: []),\n);\n\n// Backward compatibility - keep the global variable for existing code\nList get searchHistory => searchHistoryNotifier.value;\nset searchHistory(List value) {\n  searchHistoryNotifier.value = value;\n}\n\nclass _SearchPageState extends State<SearchPage> {\n  final TextEditingController _searchBar = TextEditingController();\n  final FocusNode _inputNode = FocusNode();\n  final ValueNotifier<bool> _fetchingSongs = ValueNotifier(false);\n  int maxSongsInList = 15;\n  List<dynamic> _songsSearchResult = [];\n  List<dynamic> _albumsSearchResult = [];\n  List<dynamic> _playlistsSearchResult = [];\n  List<String> _suggestionsList = [];\n  Timer? _debounce;\n  int _latestSuggestionRequest = 0;\n\n  @override\n  void initState() {\n    super.initState();\n    SearchPage.externalSearchQuery.addListener(_onExternalSearchQueryChanged);\n    \n    // Check if there's an initial query waiting\n    if (SearchPage.externalSearchQuery.value != null) {\n      WidgetsBinding.instance.addPostFrameCallback((_) {\n        _onExternalSearchQueryChanged();\n      });\n    }\n  }\n\n  void _onExternalSearchQueryChanged() {\n    final query = SearchPage.externalSearchQuery.value;\n    if (query != null && mounted) {\n      Future.microtask(() => SearchPage.externalSearchQuery.value = null);\n      _submitSearch(query);\n    }\n  }\n\n  Future<void> _submitSearch([String? query]) async {\n    if (query != null) {\n      _searchBar.text = query;\n      _searchBar.selection = TextSelection.fromPosition(\n        TextPosition(offset: _searchBar.text.length),\n      );\n    }\n\n    _latestSuggestionRequest++;\n    _debounce?.cancel();\n    _suggestionsList = [];\n    if (mounted) setState(() {});\n\n    await search();\n    _inputNode.unfocus();\n  }\n\n  @override\n  void dispose() {\n    SearchPage.externalSearchQuery.removeListener(_onExternalSearchQueryChanged);\n    _searchBar.dispose();\n    _inputNode.dispose();\n    _fetchingSongs.dispose();\n    _debounce?.cancel();\n    super.dispose();\n  }\n\n  Future<void> search() async {\n    final query = _searchBar.text;\n\n    if (query.isEmpty) {\n      _songsSearchResult = [];\n      _albumsSearchResult = [];\n      _playlistsSearchResult = [];\n      _suggestionsList = [];\n      if (mounted) setState(() {});\n      return;\n    }\n    _fetchingSongs.value = true;\n\n    if (!searchHistory.contains(query)) {\n      final updatedHistory = List.from(searchHistory)..insert(0, query);\n      searchHistoryNotifier.value = updatedHistory;\n      unawaited(addOrUpdateData('user', 'searchHistory', updatedHistory));\n    }\n\n    try {\n      _songsSearchResult = await fetchSongsList(query);\n      _albumsSearchResult = await getPlaylists(query: query, type: 'album');\n      _playlistsSearchResult = await getPlaylists(\n        query: query,\n        type: 'playlist',\n      );\n    } catch (e, stackTrace) {\n      logger.log(\n        'Error while searching online songs',\n        error: e,\n        stackTrace: stackTrace,\n      );\n    } finally {\n      _fetchingSongs.value = false;\n      if (mounted) setState(() {});\n    }\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    final primaryColor = Theme.of(context).colorScheme.primary;\n    return Scaffold(\n      appBar: AppBar(title: Text(context.l10n!.search)),\n      body: SingleChildScrollView(\n        padding: commonSingleChildScrollViewPadding,\n        child: Column(\n          children: <Widget>[\n            LayoutBuilder(\n              builder: (context, constraints) {\n                final isWide = constraints.maxWidth > 600;\n                final bar = ConstrainedBox(\n                  constraints: BoxConstraints(\n                    maxWidth: isWide ? 600 : double.infinity,\n                  ),\n                  child: CustomSearchBar(\n                    loadingProgressNotifier: _fetchingSongs,\n                    controller: _searchBar,\n                    focusNode: _inputNode,\n                    labelText: '${context.l10n!.search}...',\n                    onChanged: (value) {\n                      // debounce suggestions to avoid rapid API calls\n                      _debounce?.cancel();\n                      final query = value;\n                      final requestId = ++_latestSuggestionRequest;\n                      _debounce = Timer(\n                        const Duration(milliseconds: 300),\n                        () async {\n                          if (query.isNotEmpty) {\n                            final searchSuggestions =\n                                await getSearchSuggestions(query);\n\n                            if (!mounted ||\n                                requestId != _latestSuggestionRequest ||\n                                _searchBar.text != query) {\n                              return;\n                            }\n\n                            _suggestionsList = List<String>.from(\n                              searchSuggestions,\n                            );\n                          } else {\n                            if (requestId != _latestSuggestionRequest) {\n                              return;\n                            }\n                            _suggestionsList = [];\n                          }\n                          if (mounted) setState(() {});\n                        },\n                      );\n                    },\n                    onSubmitted: (String value) {\n                      _submitSearch();\n                    },\n                  ),\n                );\n                if (isWide) {\n                  return Row(\n                    mainAxisAlignment: MainAxisAlignment.center,\n                    children: [bar],\n                  );\n                } else {\n                  return bar;\n                }\n              },\n            ),\n\n            AnimatedSwitcher(\n              duration: const Duration(milliseconds: 200),\n              child:\n                  (_suggestionsList.isNotEmpty ||\n                      (_songsSearchResult.isEmpty &&\n                          _albumsSearchResult.isEmpty &&\n                          _playlistsSearchResult.isEmpty))\n                  ? ValueListenableBuilder<List>(\n                      valueListenable: searchHistoryNotifier,\n                      builder: (context, searchHistory, _) {\n                        final items = _suggestionsList.isEmpty\n                            ? searchHistory\n                            : _suggestionsList;\n\n                        return Column(\n                          key: ValueKey(\n                            'history-${_suggestionsList.length}-${_searchBar.text}-${searchHistory.length}',\n                          ),\n                          children: [\n                            for (int index = 0; index < items.length; index++)\n                              Builder(\n                                builder: (context) {\n                                  final query = items[index];\n                                  final borderRadius = getItemBorderRadius(\n                                    index,\n                                    items.length,\n                                  );\n\n                                  return CustomBar(\n                                    query,\n                                    FluentIcons.search_24_regular,\n                                    borderRadius: borderRadius,\n                                    onTap: () async {\n                                      await _submitSearch(query.toString());\n                                    },\n                                    onLongPress: () async {\n                                      final confirm =\n                                          await _showConfirmationDialog(\n                                            context,\n                                          ) ??\n                                          false;\n                                      if (confirm &&\n                                          searchHistory.contains(query)) {\n                                        final updatedHistory = List.from(\n                                          searchHistory,\n                                        )..remove(query);\n                                        searchHistoryNotifier.value =\n                                            updatedHistory;\n                                        unawaited(\n                                          addOrUpdateData(\n                                            'user',\n                                            'searchHistory',\n                                            updatedHistory,\n                                          ),\n                                        );\n                                      }\n                                    },\n                                  );\n                                },\n                              ),\n                          ],\n                        );\n                      },\n                    )\n                  : _buildSearchResults(context, primaryColor),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n\n  Widget _buildSearchResults(BuildContext context, Color primaryColor) {\n    final widgets = <Widget>[];\n\n    // Songs section\n    if (_songsSearchResult.isNotEmpty) {\n      widgets.add(\n        SectionTitle(\n          context.l10n!.songs,\n          primaryColor,\n          icon: FluentIcons.music_note_1_24_filled,\n        ),\n      );\n\n      final songsCount = _songsSearchResult.length > maxSongsInList\n          ? maxSongsInList\n          : _songsSearchResult.length;\n\n      for (var index = 0; index < songsCount; index++) {\n        final borderRadius = getItemBorderRadius(index, songsCount);\n        widgets.add(\n          SongBar(\n            _songsSearchResult[index],\n            true,\n            key: ValueKey('song_${_songsSearchResult[index]['ytid']}_$index'),\n            showMusicDuration: true,\n            borderRadius: borderRadius,\n          ),\n        );\n      }\n    }\n\n    // Albums section\n    if (_albumsSearchResult.isNotEmpty) {\n      widgets.add(\n        SectionTitle(\n          context.l10n!.albums,\n          primaryColor,\n          icon: FluentIcons.album_24_filled,\n        ),\n      );\n\n      final albumsCount = _albumsSearchResult.length > maxSongsInList\n          ? maxSongsInList\n          : _albumsSearchResult.length;\n\n      for (var index = 0; index < albumsCount; index++) {\n        final playlist = _albumsSearchResult[index];\n        final borderRadius = getItemBorderRadius(index, albumsCount);\n\n        widgets.add(\n          PlaylistBar(\n            key: ValueKey('album_${playlist['ytid']}_$index'),\n            playlist['title'],\n            playlistId: playlist['ytid'],\n            playlistArtwork: playlist['image'],\n            cubeIcon: FluentIcons.cd_16_filled,\n            isAlbum: true,\n            borderRadius: borderRadius,\n          ),\n        );\n      }\n    }\n\n    // Playlists section\n    if (_playlistsSearchResult.isNotEmpty) {\n      widgets.add(\n        SectionTitle(\n          context.l10n!.playlists,\n          primaryColor,\n          icon: FluentIcons.list_24_filled,\n        ),\n      );\n\n      final playlistsCount = _playlistsSearchResult.length > maxSongsInList\n          ? maxSongsInList\n          : _playlistsSearchResult.length;\n\n      for (var index = 0; index < playlistsCount; index++) {\n        final playlist = _playlistsSearchResult[index];\n        final isLast = index == playlistsCount - 1;\n\n        widgets.add(\n          Padding(\n            padding: isLast ? commonListViewBottomPadding : EdgeInsets.zero,\n            child: PlaylistBar(\n              key: ValueKey('playlist_${playlist['ytid']}_$index'),\n              playlist['title'],\n              playlistId: playlist['ytid'],\n              playlistArtwork: playlist['image'],\n              cubeIcon: FluentIcons.apps_list_24_filled,\n            ),\n          ),\n        );\n      }\n    }\n\n    return Column(\n      key: ValueKey(\n        'results-${_songsSearchResult.length}-${_albumsSearchResult.length}-${_playlistsSearchResult.length}',\n      ),\n      children: widgets,\n    );\n  }\n\n  Future<bool?> _showConfirmationDialog(BuildContext context) {\n    return showDialog<bool>(\n      context: context,\n      builder: (BuildContext context) {\n        return ConfirmationDialog(\n          confirmationMessage: context.l10n!.removeSearchQueryQuestion,\n          submitMessage: context.l10n!.confirm,\n          onCancel: () {\n            Navigator.of(context).pop(false);\n          },\n          onSubmit: () {\n            Navigator.of(context).pop(true);\n          },\n        );\n      },\n    );\n  }\n}\n
+/*
+ *     Copyright (C) 2026 Valeri Gokadze
+ *
+ *     Musify is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     Musify is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ *
+ *     For more information about Musify, including how to contribute,
+ *     please visit: https://github.com/gokadzev/Musify
+ */
+
+import 'dart:async';
+
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
+import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:musify/extensions/l10n.dart';
+import 'package:musify/main.dart';
+import 'package:musify/services/common_services.dart';
+import 'package:musify/services/data_manager.dart';
+import 'package:musify/services/playlists_manager.dart';
+import 'package:musify/utilities/common_variables.dart';
+import 'package:musify/utilities/utils.dart';
+import 'package:musify/widgets/confirmation_dialog.dart';
+import 'package:musify/widgets/custom_bar.dart';
+import 'package:musify/widgets/custom_search_bar.dart';
+import 'package:musify/widgets/playlist_bar.dart';
+import 'package:musify/widgets/section_title.dart';
+import 'package:musify/widgets/song_bar.dart';
+
+class SearchPage extends StatefulWidget {
+  const SearchPage({super.key});
+
+  @override
+  _SearchPageState createState() => _SearchPageState();
+
+  static final ValueNotifier<String?> externalSearchQuery = ValueNotifier(null);
+}
+
+// Global ValueNotifier for search history to make it reactive
+final ValueNotifier<List> searchHistoryNotifier = ValueNotifier<List>(
+  Hive.box('user').get('searchHistory', defaultValue: []),
+);
+
+// Backward compatibility - keep the global variable for existing code
+List get searchHistory => searchHistoryNotifier.value;
+set searchHistory(List value) {
+  searchHistoryNotifier.value = value;
+}
+
+class _SearchPageState extends State<SearchPage> {
+  final TextEditingController _searchBar = TextEditingController();
+  final FocusNode _inputNode = FocusNode();
+  final ValueNotifier<bool> _fetchingSongs = ValueNotifier(false);
+  int maxSongsInList = 15;
+  List<dynamic> _songsSearchResult = [];
+  List<dynamic> _albumsSearchResult = [];
+  List<dynamic> _playlistsSearchResult = [];
+  List<String> _suggestionsList = [];
+  Timer? _debounce;
+  int _latestSuggestionRequest = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    SearchPage.externalSearchQuery.addListener(_onExternalSearchQueryChanged);
+    
+    // Check if there's an initial query waiting
+    if (SearchPage.externalSearchQuery.value != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _onExternalSearchQueryChanged();
+      });
+    }
+  }
+
+  void _onExternalSearchQueryChanged() {
+    final query = SearchPage.externalSearchQuery.value;
+    if (query != null && mounted) {
+      SearchPage.externalSearchQuery.value = null;
+      _submitSearch(query);
+    }
+  }
+
+  Future<void> _submitSearch([String? query]) async {
+    if (query != null) {
+      _searchBar.text = query;
+      _searchBar.selection = TextSelection.fromPosition(
+        TextPosition(offset: _searchBar.text.length),
+      );
+    }
+
+    _latestSuggestionRequest++;
+    _debounce?.cancel();
+    _suggestionsList = [];
+    if (mounted) setState(() {});
+
+    await search();
+    _inputNode.unfocus();
+  }
+
+  @override
+  void dispose() {
+    SearchPage.externalSearchQuery.removeListener(_onExternalSearchQueryChanged);
+    _searchBar.dispose();
+    _inputNode.dispose();
+    _fetchingSongs.dispose();
+    _debounce?.cancel();
+    super.dispose();
+  }
+
+  Future<void> search() async {
+    final query = _searchBar.text;
+
+    if (query.isEmpty) {
+      _songsSearchResult = [];
+      _albumsSearchResult = [];
+      _playlistsSearchResult = [];
+      _suggestionsList = [];
+      if (mounted) setState(() {});
+      return;
+    }
+    _fetchingSongs.value = true;
+
+    if (!searchHistory.contains(query)) {
+      final updatedHistory = List.from(searchHistory)..insert(0, query);
+      searchHistoryNotifier.value = updatedHistory;
+      unawaited(addOrUpdateData('user', 'searchHistory', updatedHistory));
+    }
+
+    try {
+      _songsSearchResult = await fetchSongsList(query);
+      _albumsSearchResult = await getPlaylists(query: query, type: 'album');
+      _playlistsSearchResult = await getPlaylists(
+        query: query,
+        type: 'playlist',
+      );
+    } catch (e, stackTrace) {
+      logger.log(
+        'Error while searching online songs',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    } finally {
+      _fetchingSongs.value = false;
+      if (mounted) setState(() {});
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final primaryColor = Theme.of(context).colorScheme.primary;
+    return Scaffold(
+      appBar: AppBar(title: Text(context.l10n!.search)),
+      body: SingleChildScrollView(
+        padding: commonSingleChildScrollViewPadding,
+        child: Column(
+          children: <Widget>[
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final isWide = constraints.maxWidth > 600;
+                final bar = ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: isWide ? 600 : double.infinity,
+                  ),
+                  child: CustomSearchBar(
+                    loadingProgressNotifier: _fetchingSongs,
+                    controller: _searchBar,
+                    focusNode: _inputNode,
+                    labelText: '${context.l10n!.search}...',
+                    onChanged: (value) {
+                      // debounce suggestions to avoid rapid API calls
+                      _debounce?.cancel();
+                      final query = value;
+                      final requestId = ++_latestSuggestionRequest;
+                      _debounce = Timer(
+                        const Duration(milliseconds: 300),
+                        () async {
+                          if (query.isNotEmpty) {
+                            final searchSuggestions =
+                                await getSearchSuggestions(query);
+
+                            if (!mounted ||
+                                requestId != _latestSuggestionRequest ||
+                                _searchBar.text != query) {
+                              return;
+                            }
+
+                            _suggestionsList = List<String>.from(
+                              searchSuggestions,
+                            );
+                          } else {
+                            if (requestId != _latestSuggestionRequest) {
+                              return;
+                            }
+                            _suggestionsList = [];
+                          }
+                          if (mounted) setState(() {});
+                        },
+                      );
+                    },
+                    onSubmitted: (String value) {
+                      _submitSearch();
+                    },
+                  ),
+                );
+                if (isWide) {
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [bar],
+                  );
+                } else {
+                  return bar;
+                }
+              },
+            ),
+
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 200),
+              child:
+                  (_suggestionsList.isNotEmpty ||
+                      (_songsSearchResult.isEmpty &&
+                          _albumsSearchResult.isEmpty &&
+                          _playlistsSearchResult.isEmpty))
+                  ? ValueListenableBuilder<List>(
+                      valueListenable: searchHistoryNotifier,
+                      builder: (context, searchHistory, _) {
+                        final items = _suggestionsList.isEmpty
+                            ? searchHistory
+                            : _suggestionsList;
+
+                        return Column(
+                          key: ValueKey(
+                            'history-${_suggestionsList.length}-${_searchBar.text}-${searchHistory.length}',
+                          ),
+                          children: [
+                            for (int index = 0; index < items.length; index++)
+                              Builder(
+                                builder: (context) {
+                                  final query = items[index];
+                                  final borderRadius = getItemBorderRadius(
+                                    index,
+                                    items.length,
+                                  );
+
+                                  return CustomBar(
+                                    query,
+                                    FluentIcons.search_24_regular,
+                                    borderRadius: borderRadius,
+                                    onTap: () async {
+                                      await _submitSearch(query.toString());
+                                    },
+                                    onLongPress: () async {
+                                      final confirm =
+                                          await _showConfirmationDialog(
+                                            context,
+                                          ) ??
+                                          false;
+                                      if (confirm &&
+                                          searchHistory.contains(query)) {
+                                        final updatedHistory = List.from(
+                                          searchHistory,
+                                        )..remove(query);
+                                        searchHistoryNotifier.value =
+                                            updatedHistory;
+                                        unawaited(
+                                          addOrUpdateData(
+                                            'user',
+                                            'searchHistory',
+                                            updatedHistory,
+                                          ),
+                                        );
+                                      }
+                                    },
+                                  );
+                                },
+                              ),
+                          ],
+                        );
+                      },
+                    )
+                  : _buildSearchResults(context, primaryColor),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSearchResults(BuildContext context, Color primaryColor) {
+    final widgets = <Widget>[];
+
+    // Songs section
+    if (_songsSearchResult.isNotEmpty) {
+      widgets.add(
+        SectionTitle(
+          context.l10n!.songs,
+          primaryColor,
+          icon: FluentIcons.music_note_1_24_filled,
+        ),
+      );
+
+      final songsCount = _songsSearchResult.length > maxSongsInList
+          ? maxSongsInList
+          : _songsSearchResult.length;
+
+      for (var index = 0; index < songsCount; index++) {
+        final borderRadius = getItemBorderRadius(index, songsCount);
+        widgets.add(
+          SongBar(
+            _songsSearchResult[index],
+            true,
+            key: ValueKey('song_${_songsSearchResult[index]['ytid']}_$index'),
+            showMusicDuration: true,
+            borderRadius: borderRadius,
+          ),
+        );
+      }
+    }
+
+    // Albums section
+    if (_albumsSearchResult.isNotEmpty) {
+      widgets.add(
+        SectionTitle(
+          context.l10n!.albums,
+          primaryColor,
+          icon: FluentIcons.album_24_filled,
+        ),
+      );
+
+      final albumsCount = _albumsSearchResult.length > maxSongsInList
+          ? maxSongsInList
+          : _albumsSearchResult.length;
+
+      for (var index = 0; index < albumsCount; index++) {
+        final playlist = _albumsSearchResult[index];
+        final borderRadius = getItemBorderRadius(index, albumsCount);
+
+        widgets.add(
+          PlaylistBar(
+            key: ValueKey('album_${playlist['ytid']}_$index'),
+            playlist['title'],
+            playlistId: playlist['ytid'],
+            playlistArtwork: playlist['image'],
+            cubeIcon: FluentIcons.cd_16_filled,
+            isAlbum: true,
+            borderRadius: borderRadius,
+          ),
+        );
+      }
+    }
+
+    // Playlists section
+    if (_playlistsSearchResult.isNotEmpty) {
+      widgets.add(
+        SectionTitle(
+          context.l10n!.playlists,
+          primaryColor,
+          icon: FluentIcons.list_24_filled,
+        ),
+      );
+
+      final playlistsCount = _playlistsSearchResult.length > maxSongsInList
+          ? maxSongsInList
+          : _playlistsSearchResult.length;
+
+      for (var index = 0; index < playlistsCount; index++) {
+        final playlist = _playlistsSearchResult[index];
+        final isLast = index == playlistsCount - 1;
+
+        widgets.add(
+          Padding(
+            padding: isLast ? commonListViewBottomPadding : EdgeInsets.zero,
+            child: PlaylistBar(
+              key: ValueKey('playlist_${playlist['ytid']}_$index'),
+              playlist['title'],
+              playlistId: playlist['ytid'],
+              playlistArtwork: playlist['image'],
+              cubeIcon: FluentIcons.apps_list_24_filled,
+            ),
+          ),
+        );
+      }
+    }
+
+    return Column(
+      key: ValueKey(
+        'results-${_songsSearchResult.length}-${_albumsSearchResult.length}-${_playlistsSearchResult.length}',
+      ),
+      children: widgets,
+    );
+  }
+
+  Future<bool?> _showConfirmationDialog(BuildContext context) {
+    return showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return ConfirmationDialog(
+          confirmationMessage: context.l10n!.removeSearchQueryQuestion,
+          submitMessage: context.l10n!.confirm,
+          onCancel: () {
+            Navigator.of(context).pop(false);
+          },
+          onSubmit: () {
+            Navigator.of(context).pop(true);
+          },
+        );
+      },
+    );
+  }
+}
