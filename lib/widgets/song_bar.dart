@@ -32,6 +32,7 @@ import 'package:musify/services/playlists_manager.dart';
 import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/formatter.dart';
+import 'package:musify/utilities/playlist_dialogs.dart';
 import 'package:musify/widgets/no_artwork_cube.dart';
 import 'package:musify/widgets/rename_song_dialog.dart';
 
@@ -776,12 +777,21 @@ void showAddToPlaylistDialog(BuildContext context, dynamic song) {
                   textAlign: TextAlign.center,
                 ),
         ),
+        actionsAlignment: MainAxisAlignment.end,
         actions: <Widget>[
           TextButton(
             child: Text(context.l10n!.cancel),
             onPressed: () {
               Navigator.of(context).pop();
             },
+          ),
+          FilledButton.icon(
+            onPressed: () {
+              Navigator.pop(context);
+              showCreatePlaylistDialog(context, songToAdd: song);
+            },
+            icon: const Icon(FluentIcons.add_24_regular, size: 18),
+            label: Text(context.l10n!.addPlaylist),
           ),
         ],
       );
