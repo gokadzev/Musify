@@ -226,14 +226,6 @@ class _HomePageState extends State<HomePage> {
                     final song = Map<String, dynamic>.from(
                       mostPlayedSongs[index],
                     );
-                    final plays = (song['listeningCount'] is int)
-                        ? song['listeningCount'] as int
-                        : int.tryParse(
-                                song['listeningCount']?.toString() ?? '',
-                              ) ??
-                              0;
-
-                    song['artist'] = '${song['artist'] ?? ''} • $plays plays';
 
                     return RepaintBoundary(
                       key: ValueKey('most_played_${song['ytid']}_$index'),
@@ -241,6 +233,7 @@ class _HomePageState extends State<HomePage> {
                         song,
                         true,
                         borderRadius: borderRadius,
+                        showPlayTime: true,
                         onPlay: () => audioHandler.addPlaylistToQueue([
                           mostPlayedSongs[index],
                         ], replace: true),

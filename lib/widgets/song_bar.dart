@@ -48,6 +48,7 @@ class SongBar extends StatefulWidget {
     this.borderRadius = BorderRadius.zero,
     this.isFromLikedSongs = false,
     this.showQueueActions = true,
+    this.showPlayTime = false,
     this.playlistId,
     this.onRenamed,
     super.key,
@@ -60,6 +61,7 @@ class SongBar extends StatefulWidget {
   final VoidCallback? onPlay;
   final bool? isRecentSong;
   final bool showMusicDuration;
+  final bool showPlayTime;
   final BorderRadius borderRadius;
   final bool isFromLikedSongs;
   final bool showQueueActions;
@@ -127,6 +129,12 @@ class _SongBarState extends State<SongBar> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final _plays = widget.showPlayTime
+        ? (widget.song['listeningCount'] is int)
+              ? widget.song['listeningCount'] as int
+              : int.tryParse(widget.song['listeningCount']?.toString() ?? '') ??
+                    0
+        : null;
 
     return Padding(
       padding: commonBarPadding,
@@ -147,6 +155,7 @@ class _SongBarState extends State<SongBar> {
                   child: _SongInfo(
                     title: _songTitle,
                     artist: _songArtist,
+                    plays: _plays,
                     colorScheme: colorScheme,
                   ),
                 ),
@@ -526,11 +535,13 @@ class _SongInfo extends StatelessWidget {
   const _SongInfo({
     required this.title,
     required this.artist,
+    this.plays,
     required this.colorScheme,
   });
 
   final String title;
   final String artist;
+  final int? plays;
   final ColorScheme colorScheme;
 
   @override
@@ -548,14 +559,46 @@ class _SongInfo extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 2),
-        Text(
-          artist,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            fontWeight: FontWeight.w400,
-            fontSize: 13,
-            color: colorScheme.onSurfaceVariant,
-          ),
+        Row(
+          children: [
+            Flexible(
+              child: Text(
+                artist,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 13,
+                  color: colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ),
+            if (plays != null && plays! > 0) ...[
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: Text(
+                  '•',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ),
+              Icon(
+                FluentIcons.headphones_20_regular,
+                size: 12,
+                color: colorScheme.primary,
+              ),
+              const SizedBox(width: 3),
+              Text(
+                '$plays',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: colorScheme.primary,
+                ),
+              ),
+            ],
+          ],
         ),
       ],
     );
