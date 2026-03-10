@@ -45,7 +45,6 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  translations_cleaner: ^0.1.0
 
   # flutter_lints: ^2.0.0
 
