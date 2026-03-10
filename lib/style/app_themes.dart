@@ -246,6 +246,17 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
       color: effectiveColorScheme.outlineVariant,
       thickness: 1,
     ),
+    snackBarTheme: SnackBarThemeData(
+      backgroundColor: effectiveColorScheme.secondaryContainer,
+      contentTextStyle: TextStyle(
+        color: effectiveColorScheme.onSecondaryContainer,
+        fontWeight: FontWeight.w500,
+      ),
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 6,
+      actionTextColor: effectiveColorScheme.secondary,
+    ),
     visualDensity: VisualDensity.adaptivePlatformDensity,
     useMaterial3: true,
     pageTransitionsTheme: PageTransitionsTheme(

@@ -32,16 +32,13 @@ void showToast(
 }) {
   final colorScheme = Theme.of(context).colorScheme;
   final isMiniPlayerVisible = audioHandler.mediaItem.value != null;
-  final bottomMargin = 12.0 + (isMiniPlayerVisible ? MiniPlayer.playerHeight : 0.0);
+  final bottomMargin =
+      12.0 + (isMiniPlayerVisible ? MiniPlayer.playerHeight : 0.0);
 
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
-      backgroundColor: colorScheme.secondaryContainer,
-      behavior: SnackBarBehavior.floating,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       margin: EdgeInsets.fromLTRB(16, 12, 16, bottomMargin),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      elevation: 6,
       content: Row(
         children: [
           Icon(
@@ -50,15 +47,7 @@ void showToast(
             size: 20,
           ),
           const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              text,
-              style: TextStyle(
-                color: colorScheme.onSecondaryContainer,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
+          Expanded(child: Text(text)),
         ],
       ),
       duration: duration,
@@ -76,16 +65,13 @@ void showToastWithButton(
 }) {
   final colorScheme = Theme.of(context).colorScheme;
   final isMiniPlayerVisible = audioHandler.mediaItem.value != null;
-  final bottomMargin = 12.0 + (isMiniPlayerVisible ? MiniPlayer.playerHeight : 0.0);
+  final bottomMargin =
+      12.0 + (isMiniPlayerVisible ? MiniPlayer.playerHeight : 0.0);
 
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
-      backgroundColor: colorScheme.secondaryContainer,
-      behavior: SnackBarBehavior.floating,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       margin: EdgeInsets.fromLTRB(16, 12, 16, bottomMargin),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      elevation: 6,
       content: Row(
         children: [
           Icon(
@@ -94,20 +80,11 @@ void showToastWithButton(
             size: 20,
           ),
           const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              text,
-              style: TextStyle(
-                color: colorScheme.onSecondaryContainer,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
+          Expanded(child: Text(text)),
         ],
       ),
       action: SnackBarAction(
         label: buttonName,
-        textColor: colorScheme.secondary,
         onPressed: () => onPressedToast(),
       ),
       persist: false,
