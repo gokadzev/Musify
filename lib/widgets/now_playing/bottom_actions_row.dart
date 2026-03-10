@@ -303,7 +303,7 @@ void _showSleepTimerDialog(BuildContext context) {
                 Icon(FluentIcons.timer_24_regular, color: colorScheme.primary),
                 const SizedBox(width: 12),
                 Text(
-                  context.l10n!.setSleepTimer,
+                  context.l10n!.sleepTimer,
                   style: TextStyle(
                     color: colorScheme.onSurface,
                     fontWeight: FontWeight.w600,
