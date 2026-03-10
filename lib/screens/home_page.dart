@@ -234,9 +234,6 @@ class _HomePageState extends State<HomePage> {
                         true,
                         borderRadius: borderRadius,
                         showPlayTime: true,
-                        onPlay: () => audioHandler.addPlaylistToQueue([
-                          mostPlayedSongs[index],
-                        ], replace: true),
                       ),
                     );
                   },
