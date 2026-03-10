@@ -14,7 +14,6 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- *
  *     For more information about Musify, including how to contribute,
  *     please visit: https://github.com/gokadzev/Musify
  */
@@ -302,11 +301,13 @@ void _showSleepTimerDialog(BuildContext context) {
               children: [
                 Icon(FluentIcons.timer_24_regular, color: colorScheme.primary),
                 const SizedBox(width: 12),
-                Text(
-                  context.l10n!.setSleepTimer,
-                  style: TextStyle(
-                    color: colorScheme.onSurface,
-                    fontWeight: FontWeight.w600,
+                Expanded(
+                  child: Text(
+                    context.l10n!.setSleepTimer,
+                    style: TextStyle(
+                      color: colorScheme.onSurface,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ],
@@ -430,14 +431,17 @@ Widget _buildTimeSelector({
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          label,
-          style: TextStyle(
-            color: colorScheme.onSurface,
-            fontWeight: FontWeight.w500,
-            fontSize: 16,
+        Expanded(
+          child: Text(
+            label,
+            style: TextStyle(
+              color: colorScheme.onSurface,
+              fontWeight: FontWeight.w500,
+              fontSize: 16,
+            ),
           ),
         ),
+        const SizedBox(width: 8),
         Row(
           children: [
             IconButton(
