@@ -57,6 +57,7 @@ Widget buildPlaybackIconButton(
           ),
         );
         onPressed = null;
+        semanticLabel = context.l10n!.loading;
       } else if (processingState == AudioProcessingState.completed) {
         iconWidget = Icon(
           FluentIcons.arrow_counterclockwise_24_filled,
@@ -64,7 +65,7 @@ Widget buildPlaybackIconButton(
           size: iconSize,
         );
         onPressed = () => audioHandler.seek(Duration.zero);
-        semanticLabel = context.l10n!.play;
+        semanticLabel = context.l10n!.replay;
       } else {
         iconWidget = Icon(
           isPlaying ? FluentIcons.pause_24_filled : FluentIcons.play_24_filled,
@@ -87,11 +88,7 @@ Widget buildPlaybackIconButton(
           height: iconSize * 2,
         ),
         materialTapTargetSize: MaterialTapTargetSize.padded,
-        child: Semantics(
-          label: semanticLabel,
-          button: true,
-          child: iconWidget,
-        ),
+        child: Semantics(label: semanticLabel, button: true, child: iconWidget),
       );
     },
   );

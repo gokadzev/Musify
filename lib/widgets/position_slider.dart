@@ -20,7 +20,6 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/models/position_data.dart';
 import 'package:musify/utilities/formatter.dart';
@@ -78,7 +77,6 @@ class _PositionSliderState extends State<PositionSlider> {
                     }
                   : null,
               max: maxDuration,
-              label: formatDuration(currentValue.toInt()),
               semanticFormatterCallback: (value) =>
                   formatDuration(value.toInt()),
             ),
