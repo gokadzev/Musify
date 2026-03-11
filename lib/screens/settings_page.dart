@@ -27,6 +27,7 @@ import 'package:musify/main.dart';
 import 'package:musify/screens/search_page.dart';
 import 'package:musify/services/common_services.dart';
 import 'package:musify/services/data_manager.dart';
+import 'package:musify/services/playlist_download_service.dart';
 import 'package:musify/services/router_service.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/services/update_manager.dart';
@@ -310,6 +311,28 @@ class SettingsPage extends StatelessWidget {
               userRecentlyPlayed = [];
               deleteData('user', 'recentlyPlayedSongs');
               showToast(context, '${context.l10n!.recentlyPlayedMsg}!');
+            },
+          ),
+        ),
+        CustomBar(
+          context.l10n!.deleteDownloads,
+          FluentIcons.delete_24_filled,
+          onTap: () => _showConfirmationDialog(
+            context: context,
+            confirmationMessage: context.l10n!.deleteDownloadsQuestion,
+            submitMessage: context.l10n!.delete,
+            isDangerous: true,
+            onSubmit: () async {
+              try {
+                await offlinePlaylistService.deleteAllDownloads();
+                if (context.mounted) {
+                  showToast(context, context.l10n!.settingChangedMsg);
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  showToast(context, context.l10n!.error);
+                }
+              }
             },
           ),
         ),
@@ -718,13 +741,16 @@ class SettingsPage extends StatelessWidget {
     required BuildContext context,
     required String confirmationMessage,
     required VoidCallback onSubmit,
+    String? submitMessage,
+    bool isDangerous = false,
   }) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return ConfirmationDialog(
-          submitMessage: context.l10n!.clear,
+          submitMessage: submitMessage ?? context.l10n!.clear,
           confirmationMessage: confirmationMessage,
+          isDangerous: isDangerous,
           onCancel: () => Navigator.of(context).pop(),
           onSubmit: () {
             Navigator.of(context).pop();
