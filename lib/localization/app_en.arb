@@ -67,6 +67,7 @@
   "downloadCancelled": "Download cancelled",
   "downloadFailed": "Download failed",
   "downloadPlaylist": "Download playlist",
+  "downloadsDeleted": "Downloads deleted successfully",
   "dynamicColor": "Dynamic accent color (Android 12+)",
   "editPlaylist": "Edit playlist",
   "emptyFolderMsg": "This folder is empty. Add playlists to organize your music.",

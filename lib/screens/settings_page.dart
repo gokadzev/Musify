@@ -326,7 +326,7 @@ class SettingsPage extends StatelessWidget {
               try {
                 await offlinePlaylistService.deleteAllDownloads();
                 if (context.mounted) {
-                  showToast(context, context.l10n!.settingChangedMsg);
+                  showToast(context, context.l10n!.downloadsDeleted);
                 }
               } catch (e) {
                 if (context.mounted) {
