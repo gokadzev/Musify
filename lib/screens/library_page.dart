@@ -197,10 +197,11 @@ class _LibraryPageState extends State<LibraryPage> {
               if (playlistsNotInFolders.isEmpty) {
                 return const SizedBox();
               }
-              return _buildPlaylistListView(
+                            return _buildPlaylistListView(
                 context,
                 playlistsNotInFolders,
                 hasItemsAfter: true,
+                hasItemsBefore: true,
               );
             },
           ),
@@ -210,9 +211,9 @@ class _LibraryPageState extends State<LibraryPage> {
           onPressed: () =>
               NavigationManager.router.go('/library/userSongs/offline'),
           cubeIcon: FluentIcons.cellular_off_24_filled,
-          borderRadius: isUserPlaylistsEmpty
-              ? commonCustomBarRadiusLast
-              : BorderRadius.zero,
+          borderRadius: offlineMode.value
+              ? commonCustomBarRadius
+              : commonCustomBarRadiusLast,
           showBuildActions: false,
         ),
 
@@ -311,6 +312,7 @@ class _LibraryPageState extends State<LibraryPage> {
     List playlists, {
     bool isOfflinePlaylists = false,
     bool hasItemsAfter = false,
+    bool hasItemsBefore = false,
   }) {
     return ListView.builder(
       shrinkWrap: true,
@@ -319,28 +321,46 @@ class _LibraryPageState extends State<LibraryPage> {
       padding: hasItemsAfter ? EdgeInsets.zero : commonListViewBottomPadding,
       itemBuilder: (BuildContext context, index) {
         final playlist = playlists[index];
+        final isFirstItem = index == 0;
         final isLastItem = index == playlists.length - 1;
-        final borderRadius = hasItemsAfter && isLastItem
-            ? BorderRadius.zero
-            : getItemBorderRadius(index, playlists.length);
+
+        BorderRadius borderRadius;
+        if (playlists.length == 1) {
+          if (hasItemsBefore && hasItemsAfter) {
+            borderRadius = BorderRadius.zero;
+          } else if (hasItemsBefore) {
+            borderRadius = commonCustomBarRadiusLast;
+          } else if (hasItemsAfter) {
+            borderRadius = commonCustomBarRadiusFirst;
+          } else {
+            borderRadius = commonCustomBarRadius;
+          }
+        } else if (isFirstItem) {
+          borderRadius =
+              hasItemsBefore ? BorderRadius.zero : commonCustomBarRadiusFirst;
+        } else if (isLastItem) {
+          borderRadius =
+              hasItemsAfter ? BorderRadius.zero : commonCustomBarRadiusLast;
+        } else {
+          borderRadius = BorderRadius.zero;
+        }
+
         return PlaylistBar(
           key: ValueKey(playlist['ytid']),
           playlist['title'],
           playlistId: playlist['ytid'],
           playlistArtwork: playlist['image'],
           isAlbum: playlist['isAlbum'],
-          playlistData:
-              playlist['source'] == 'user-created' ||
+          playlistData: playlist['source'] == 'user-created' ||
                   playlist['source'] == 'user-youtube' ||
                   isOfflinePlaylists
               ? playlist
               : null,
-          onDelete:
-              playlist['source'] == 'user-created' ||
+          onDelete: playlist['source'] == 'user-created' ||
                   playlist['source'] == 'user-youtube'
               ? () => isOfflinePlaylists
-                    ? _showRemoveOfflinePlaylistDialog(playlist)
-                    : _showRemovePlaylistDialog(playlist)
+                  ? _showRemoveOfflinePlaylistDialog(playlist)
+                  : _showRemovePlaylistDialog(playlist)
               : null,
           borderRadius: borderRadius,
         );
