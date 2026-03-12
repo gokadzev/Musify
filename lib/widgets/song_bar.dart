@@ -29,6 +29,7 @@ import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/common_services.dart';
 import 'package:musify/services/playlists_manager.dart';
+import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/formatter.dart';
@@ -54,7 +55,7 @@ class SongBar extends StatefulWidget {
     super.key,
   });
 
-  final dynamic song;
+  final Map song;
   final bool clearPlaylist;
   final Color? backgroundColor;
   final VoidCallback? onRemove;
@@ -323,7 +324,7 @@ class _SongBarState extends State<SongBar> {
         }
       } else if (widget.playlistId != null) {
         await renameSongInPlaylist(
-          widget.playlistId,
+          widget.playlistId!,
           _ytid,
           newTitle,
           newArtist,
@@ -422,7 +423,10 @@ class _SongBarState extends State<SongBar> {
           value: 'add_to_queue',
           child: Row(
             children: [
-              Icon(FluentIcons.add_24_regular, color: colorScheme.primary),
+              Icon(
+                FluentIcons.text_bullet_list_add_24_regular,
+                color: colorScheme.primary,
+              ),
               const SizedBox(width: 8),
               Text(
                 addToQueueText,
@@ -431,24 +435,28 @@ class _SongBarState extends State<SongBar> {
             ],
           ),
         ),
-      PopupMenuItem<String>(
-        value: 'like',
-        child: ValueListenableBuilder<bool>(
-          valueListenable: _songLikeStatus,
-          builder: (_, value, __) {
-            return Row(
-              children: [
-                Icon(likeStatusToIconMapper[value], color: colorScheme.primary),
-                const SizedBox(width: 8),
-                Text(
-                  value ? removeFromLikedSongsText : addToLikedSongsText,
-                  style: TextStyle(color: colorScheme.secondary),
-                ),
-              ],
-            );
-          },
+      if (!offlineMode.value)
+        PopupMenuItem<String>(
+          value: 'like',
+          child: ValueListenableBuilder<bool>(
+            valueListenable: _songLikeStatus,
+            builder: (_, value, __) {
+              return Row(
+                children: [
+                  Icon(
+                    likeStatusToIconMapper[value],
+                    color: colorScheme.primary,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    value ? removeFromLikedSongsText : addToLikedSongsText,
+                    style: TextStyle(color: colorScheme.secondary),
+                  ),
+                ],
+              );
+            },
+          ),
         ),
-      ),
       if (canRename)
         PopupMenuItem<String>(
           value: 'rename',
@@ -477,19 +485,23 @@ class _SongBarState extends State<SongBar> {
             ],
           ),
         ),
-      PopupMenuItem<String>(
-        value: 'add_to_playlist',
-        child: Row(
-          children: [
-            Icon(FluentIcons.add_24_regular, color: colorScheme.primary),
-            const SizedBox(width: 8),
-            Text(
-              addToPlaylistText,
-              style: TextStyle(color: colorScheme.secondary),
-            ),
-          ],
+      if (!offlineMode.value)
+        PopupMenuItem<String>(
+          value: 'add_to_playlist',
+          child: Row(
+            children: [
+              Icon(
+                FluentIcons.album_add_24_regular,
+                color: colorScheme.primary,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                addToPlaylistText,
+                style: TextStyle(color: colorScheme.secondary),
+              ),
+            ],
+          ),
         ),
-      ),
       if (widget.isRecentSong == true)
         PopupMenuItem<String>(
           value: 'remove_from_recents',
@@ -504,29 +516,30 @@ class _SongBarState extends State<SongBar> {
             ],
           ),
         ),
-      PopupMenuItem<String>(
-        value: 'offline',
-        child: ValueListenableBuilder<bool>(
-          valueListenable: _songOfflineStatus,
-          builder: (_, value, __) {
-            return Row(
-              children: [
-                Icon(
-                  value
-                      ? FluentIcons.cellular_off_24_regular
-                      : FluentIcons.cellular_data_1_24_regular,
-                  color: colorScheme.primary,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  value ? removeOfflineText : makeOfflineText,
-                  style: TextStyle(color: colorScheme.secondary),
-                ),
-              ],
-            );
-          },
+      if (!offlineMode.value || _songOfflineStatus.value)
+        PopupMenuItem<String>(
+          value: 'offline',
+          child: ValueListenableBuilder<bool>(
+            valueListenable: _songOfflineStatus,
+            builder: (_, value, __) {
+              return Row(
+                children: [
+                  Icon(
+                    value
+                        ? FluentIcons.cloud_off_24_filled
+                        : FluentIcons.cloud_arrow_down_24_regular,
+                    color: colorScheme.primary,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    value ? removeOfflineText : makeOfflineText,
+                    style: TextStyle(color: colorScheme.secondary),
+                  ),
+                ],
+              );
+            },
+          ),
         ),
-      ),
     ];
   }
 }
@@ -644,7 +657,7 @@ class _OfflineArtwork extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
-                  FluentIcons.cellular_off_24_filled,
+                  FluentIcons.cloud_off_24_filled,
                   size: 12,
                   color: colorScheme.onSecondaryContainer,
                 ),
@@ -719,7 +732,7 @@ class _OnlineArtwork extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Icon(
-                          FluentIcons.cellular_off_24_filled,
+                          FluentIcons.cloud_off_24_filled,
                           size: 12,
                           color: colorScheme.onSecondaryContainer,
                         ),
@@ -777,12 +790,12 @@ class _OnlineArtwork extends StatelessWidget {
   }
 }
 
-void showAddToPlaylistDialog(BuildContext context, dynamic song) {
+void showAddToPlaylistDialog(BuildContext context, Map song) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        icon: const Icon(FluentIcons.text_bullet_list_add_24_filled),
+        icon: const Icon(FluentIcons.album_add_24_filled),
         title: Text(context.l10n!.addToPlaylist),
         content: Container(
           width: double.maxFinite,

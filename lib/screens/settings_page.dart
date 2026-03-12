@@ -177,7 +177,7 @@ class SettingsPage extends StatelessWidget {
           builder: (_, value, __) {
             return CustomBar(
               context.l10n!.offlineMode,
-              FluentIcons.cellular_off_24_regular,
+              FluentIcons.cloud_off_24_filled,
               description: context.l10n!.offlineModeDescription,
               trailing: Switch(
                 value: value,

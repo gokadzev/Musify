@@ -215,7 +215,7 @@ List _deduplicateAndShuffle(List playlistSongs) {
   return uniqueSongs;
 }
 
-Future<void> updateSongLikeStatus(dynamic songId, bool add) async {
+Future<void> updateSongLikeStatus(String songId, bool add) async {
   try {
     if (add) {
       if (!userLikedSongsList.any((song) => song['ytid'] == songId)) {
@@ -250,7 +250,7 @@ void moveLikedSong(int oldIndex, int newIndex) {
 }
 
 Future<void> renameSongInLikedSongs(
-  dynamic songId,
+  String songId,
   String newTitle,
   String newArtist,
 ) async {
@@ -276,13 +276,13 @@ Future<void> renameSongInLikedSongs(
   }
 }
 
-bool isSongAlreadyLiked(songIdToCheck) =>
+bool isSongAlreadyLiked(String songIdToCheck) =>
     userLikedSongsList.any((song) => song['ytid'] == songIdToCheck);
 
-bool isPlaylistAlreadyLiked(playlistIdToCheck) =>
+bool isPlaylistAlreadyLiked(String playlistIdToCheck) =>
     userLikedPlaylists.any((playlist) => playlist['ytid'] == playlistIdToCheck);
 
-bool isSongAlreadyOffline(songIdToCheck) =>
+bool isSongAlreadyOffline(String songIdToCheck) =>
     userOfflineSongs.any((song) => song['ytid'] == songIdToCheck);
 
 Map<String, dynamic> getOfflineSongByYtid(String ytid) {
@@ -511,7 +511,7 @@ Future<String?> getSongLyrics(String? artist, String title) async {
   return lyrics.value;
 }
 
-Future<bool> makeSongOffline(dynamic song, {bool fromPlaylist = false}) async {
+Future<bool> makeSongOffline(Map song) async {
   try {
     final String? ytid = song['ytid'];
 
@@ -520,11 +520,11 @@ Future<bool> makeSongOffline(dynamic song, {bool fromPlaylist = false}) async {
       return false;
     }
 
-    if (!fromPlaylist && isSongAlreadyOffline(ytid)) {
+    if (isSongAlreadyOffline(ytid)) {
       return true;
     }
 
-    final offlineSong = Map<String, dynamic>.from(song as Map);
+    final offlineSong = Map.from(song);
 
     final audioPath = FilePaths.getAudioPath(ytid);
     final audioFile = File(audioPath);
@@ -532,6 +532,7 @@ Future<bool> makeSongOffline(dynamic song, {bool fromPlaylist = false}) async {
 
     await audioFile.parent.create(recursive: true);
 
+    IOSink? fileStream;
     try {
       final audioManifest = await fetchBestAudioStream(ytid);
       if (audioManifest == null) {
@@ -540,16 +541,20 @@ Future<bool> makeSongOffline(dynamic song, {bool fromPlaylist = false}) async {
       }
 
       final stream = ytClient.videos.streamsClient.get(audioManifest);
-      final fileStream = audioFile.openWrite();
+      fileStream = audioFile.openWrite();
       await stream.pipe(fileStream);
       await fileStream.flush();
       await fileStream.close();
+      fileStream = null;
     } catch (e, stackTrace) {
       logger.log(
         'Error downloading audio file',
         error: e,
         stackTrace: stackTrace,
       );
+      try {
+        await fileStream?.close();
+      } catch (_) {}
       if (await audioFile.exists()) {
         await audioFile.delete();
       }
@@ -613,10 +618,7 @@ Future<bool> makeSongOffline(dynamic song, {bool fromPlaylist = false}) async {
   }
 }
 
-Future<bool> removeSongFromOffline(
-  dynamic songId, {
-  bool fromPlaylist = false,
-}) async {
+Future<bool> removeSongFromOffline(String songId) async {
   try {
     final audioPath = FilePaths.getAudioPath(songId);
     final audioFile = File(audioPath);
@@ -698,7 +700,7 @@ Future<File?> _downloadAndSaveArtworkFile(String url, String filePath) async {
 
 const recentlyPlayedSongsLimit = 250;
 
-Future<void> updateRecentlyPlayed(dynamic songId) async {
+Future<void> updateRecentlyPlayed(String songId) async {
   try {
     if (userRecentlyPlayed.isNotEmpty &&
         userRecentlyPlayed.length == 1 &&
@@ -748,7 +750,7 @@ Future<void> updateRecentlyPlayed(dynamic songId) async {
   }
 }
 
-Future<void> removeFromRecentlyPlayed(dynamic songId) async {
+Future<void> removeFromRecentlyPlayed(String songId) async {
   if (userRecentlyPlayed.any((song) => song['ytid'] == songId)) {
     userRecentlyPlayed.removeWhere((song) => song['ytid'] == songId);
     currentRecentlyPlayedLength.value = userRecentlyPlayed.length;

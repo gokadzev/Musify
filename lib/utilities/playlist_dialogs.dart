@@ -26,7 +26,7 @@ import 'package:musify/services/playlists_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/playlist_image_picker.dart';
 
-void showCreatePlaylistDialog(BuildContext context, {dynamic songToAdd}) {
+void showCreatePlaylistDialog(BuildContext context, {Map? songToAdd}) {
   var id = '';
   var customPlaylistName = '';
   var isYouTubeMode = songToAdd == null;

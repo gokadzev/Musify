@@ -20,12 +20,10 @@
  */
 
 import 'dart:async';
-import 'dart:math';
 
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/common_services.dart';
@@ -73,11 +71,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
   late final List<dynamic>
   _originalPlaylistList; // Keep original order separately
 
-  final int _itemsPerPage = 35;
-  late final PagingController<int, dynamic> _pagingController;
-
   late final playlistLikeStatus = ValueNotifier<bool>(
-    isPlaylistAlreadyLiked(widget.playlistId),
+    widget.playlistId != null && isPlaylistAlreadyLiked(widget.playlistId!),
   );
   bool playlistOfflineStatus = false;
 
@@ -104,24 +99,12 @@ class _PlaylistPageState extends State<PlaylistPage> {
   @override
   void initState() {
     super.initState();
-
-    _pagingController = PagingController<int, dynamic>(
-      getNextPageKey: (state) {
-        final source = _sourceList;
-        final totalCount = source.length;
-        final currentlyLoaded = state.items?.length ?? 0;
-        if (currentlyLoaded >= totalCount) return null;
-        return currentlyLoaded;
-      },
-      fetchPage: _fetchPage,
-    );
-
     _initializePlaylist();
   }
 
   @override
   void dispose() {
-    _pagingController.dispose();
+    playlistLikeStatus.dispose();
     super.dispose();
   }
 
@@ -167,17 +150,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
     }
   }
 
-  Future<List<dynamic>> _fetchPage(int pageKey) async {
-    try {
-      final source = _sourceList;
-      final startIndex = pageKey;
-      final endIndex = min(startIndex + _itemsPerPage, source.length);
-      return source.sublist(startIndex, endIndex);
-    } catch (error) {
-      rethrow;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -189,30 +161,28 @@ class _PlaylistPageState extends State<PlaylistPage> {
         ),
       ),
       body: _playlist != null
-          ? PagingListener(
-              controller: _pagingController,
-              builder: (context, state, fetchNextPage) => CustomScrollView(
-                slivers: [
-                  SliverToBoxAdapter(child: _buildHeaderSection()),
-                  if (_playlist['list'].isNotEmpty) ...[
-                    SliverPadding(
-                      padding: commonListViewBottomPadding,
-                      sliver: PagedSliverList(
-                        state: state,
-                        fetchNextPage: fetchNextPage,
-                        builderDelegate: PagedChildBuilderDelegate<dynamic>(
-                          itemBuilder: (context, item, index) {
-                            final isRemovable =
-                                _playlist['source'] == 'user-created';
-                            return _buildSongListItem(item, index, isRemovable);
-                          },
-                        ),
-                      ),
+          ? CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(child: _buildHeaderSection()),
+                if ((_playlist['list'] as List).isNotEmpty) ...[
+                  SliverPadding(
+                    padding: commonListViewBottomPadding,
+                    sliver: SliverList.builder(
+                      itemCount: _sourceList.length,
+                      itemBuilder: (context, index) {
+                        final isRemovable =
+                            _playlist['source'] == 'user-created';
+                        return _buildSongListItem(
+                          _sourceList[index],
+                          index,
+                          isRemovable,
+                        );
+                      },
                     ),
-                  ] else
-                    const SliverFillRemaining(child: SizedBox.expand()),
-                ],
-              ),
+                  ),
+                ] else
+                  const SliverFillRemaining(child: SizedBox.expand()),
+              ],
             )
           : SizedBox(
               height: MediaQuery.sizeOf(context).height - 100,
@@ -261,9 +231,11 @@ class _PlaylistPageState extends State<PlaylistPage> {
               ),
             if (songsLength > 0)
               ShufflePlayButton(songs: _playlist['list'] as List? ?? []),
-            if (widget.playlistId != null && !isUserCreated)
+            if (widget.playlistId != null &&
+                !isUserCreated &&
+                !offlineMode.value)
               _buildLikeButton(primaryColor),
-            _buildSyncButton(primaryColor),
+            if (!offlineMode.value) _buildSyncButton(primaryColor),
             _buildDownloadButton(),
             if (isUserCreated) ...[
               _buildShareButton(primaryColor),
@@ -291,14 +263,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
           const SizedBox(height: 16),
           PlaylistSearchBar(
             query: _searchQuery,
-            onChanged: (value) {
-              setState(() => _searchQuery = value);
-              _pagingController.refresh();
-            },
-            onCleared: () {
-              setState(() => _searchQuery = '');
-              _pagingController.refresh();
-            },
+            onChanged: (value) => setState(() => _searchQuery = value),
+            onCleared: () => setState(() => _searchQuery = ''),
           ),
         ],
         const SizedBox(height: 16),
@@ -517,6 +483,10 @@ class _PlaylistPageState extends State<PlaylistPage> {
               );
             }
 
+            if (offlineMode.value) {
+              return const SizedBox.shrink();
+            }
+
             return IconButton.filledTonal(
               icon: Icon(
                 FluentIcons.arrow_download_24_filled,
@@ -549,7 +519,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
           }
         });
       }
-      _pagingController.refresh();
     } else {
       final resolvedId = _playlist['ytid']?.toString() ?? widget.playlistId;
       final updatedPlaylist = await getPlaylistInfoForWidget(resolvedId);
@@ -562,19 +531,15 @@ class _PlaylistPageState extends State<PlaylistPage> {
             );
           }
         });
-        _pagingController.refresh();
       }
     }
   }
 
-  void _updateSongsListOnRemove(int indexOfRemovedSong) {
-    final items = _pagingController.items ?? [];
-    if (indexOfRemovedSong >= items.length) return;
-
-    final dynamic songToRemove = items[indexOfRemovedSong];
+  void _updateSongsListOnRemove(int indexOfRemovedSong, Map songToRemove) {
     _originalPlaylistList.removeWhere((s) => s['ytid'] == songToRemove['ytid']);
     final playlistId = _playlist['ytid'];
     if (mounted) {
+      setState(() {});
       showToastWithButton(
         context,
         context.l10n!.songRemoved,
@@ -586,7 +551,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
             songToRemove,
             indexToInsert: indexOfRemovedSong,
           );
-          _pagingController.refresh();
+          if (mounted) setState(() {});
         },
       );
     } else {
@@ -594,8 +559,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
         '(_updateSongsListOnRemove): Widget not mounted, cannot show undo toast.',
       );
     }
-
-    _pagingController.refresh();
   }
 
   String _getSortTypeDisplayText(PlaylistSortType type) {
@@ -628,14 +591,10 @@ class _PlaylistPageState extends State<PlaylistPage> {
         _playlist['list'] = playlist;
         break;
     }
-
-    // Reset paging controller to top
-    _pagingController.refresh();
   }
 
-  Widget _buildSongListItem(dynamic song, int index, bool isRemovable) {
-    final items = _pagingController.items ?? [];
-    final totalItems = items.length;
+  Widget _buildSongListItem(Map song, int index, bool isRemovable) {
+    final totalItems = _sourceList.length;
     final borderRadius = getItemBorderRadius(index, totalItems);
     final isUserCreatedPlaylist = _playlist?['source'] == 'user-created';
     final playlistId = isUserCreatedPlaylist ? _playlist!['ytid'] : null;
@@ -654,7 +613,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                 song,
                 removeOneAtIndex: index,
               )) {
-                _updateSongsListOnRemove(index);
+                _updateSongsListOnRemove(index, song);
               }
             }
           : null,

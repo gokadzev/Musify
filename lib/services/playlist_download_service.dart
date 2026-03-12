@@ -143,7 +143,7 @@ class OfflinePlaylistService {
               progressNotifier.value.completed++;
               progressNotifier.notifyListeners();
             } else {
-              final success = await makeSongOffline(song, fromPlaylist: true);
+              final success = await makeSongOffline(song);
               if (success) {
                 progressNotifier.value.completed++;
               } else {
@@ -169,10 +169,6 @@ class OfflinePlaylistService {
               if (!completer.isCompleted) {
                 completer.complete();
               }
-            } else if (songQueue.isNotEmpty &&
-                !progressNotifier.value.isCancelled) {
-              // Start next song if available
-              unawaited(processQueue());
             } else if (songQueue.isEmpty && runningTasks == 0) {
               // All tasks completed
               if (!completer.isCompleted) {
@@ -215,7 +211,9 @@ class OfflinePlaylistService {
         stackTrace: stackTrace,
       );
       activeDownloads.remove(playlistId);
-      showToast(context, '${context.l10n!.error}: $e');
+      if (context.mounted) {
+        showToast(context, '${context.l10n!.error}: $e');
+      }
     }
   }
 
@@ -266,18 +264,24 @@ class OfflinePlaylistService {
           ),
         );
 
-        showToast(
-          context,
-          '${context.l10n!.playlistDownloaded}: ${progressNotifier.value.completed}/${songsList.length}',
-        );
-      } else if (progressNotifier.value.isCancelled) {
-        showToast(context, context.l10n!.downloadCancelled);
-      } else {
-        showToast(
-          context,
-          '${context.l10n!.downloadFailed}: ${progressNotifier.value.failed}/${songsList.length}',
-        );
+        if (context.mounted) {
+          showToast(
+            context,
+            '${context.l10n!.playlistDownloaded}: ${progressNotifier.value.completed}/${songsList.length}',
+          );
+        }
+      } else if (!progressNotifier.value.isCancelled) {
+        // Cancelled toast is shown by cancelDownload, only show failure toast here.
+        if (context.mounted) {
+          showToast(
+            context,
+            '${context.l10n!.downloadFailed}: ${progressNotifier.value.failed}/${songsList.length}',
+          );
+        }
       }
+
+      // Clean up the progress notifier now that the download is fully done.
+      cleanupProgressNotifier(playlistId);
     } catch (e, stackTrace) {
       logger.log(
         'Error handling download completion',
@@ -373,7 +377,7 @@ class OfflinePlaylistService {
           if (!isUsedInOtherPlaylists &&
               !isInLikedSongs &&
               !isInCustomPlaylists) {
-            await removeSongFromOffline(songId, fromPlaylist: true);
+            await removeSongFromOffline(songId);
           }
         } catch (e, stackTrace) {
           logger.log(

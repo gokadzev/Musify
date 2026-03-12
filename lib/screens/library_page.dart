@@ -200,17 +200,15 @@ class _LibraryPageState extends State<LibraryPage> {
               );
             },
           ),
+          PlaylistBar(
+            context.l10n!.offlineSongs,
+            onPressed: () =>
+                NavigationManager.router.go('/library/userSongs/offline'),
+            cubeIcon: FluentIcons.cloud_off_24_filled,
+            borderRadius: commonCustomBarRadiusLast,
+            showBuildActions: false,
+          ),
         ],
-        PlaylistBar(
-          context.l10n!.offlineSongs,
-          onPressed: () =>
-              NavigationManager.router.go('/library/userSongs/offline'),
-          cubeIcon: FluentIcons.cellular_off_24_filled,
-          borderRadius: offlineMode.value
-              ? commonCustomBarRadius
-              : commonCustomBarRadiusLast,
-          showBuildActions: false,
-        ),
 
         _buildOfflinePlaylistsSection(),
 
