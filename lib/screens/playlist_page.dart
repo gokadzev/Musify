@@ -261,9 +261,11 @@ class _PlaylistPageState extends State<PlaylistPage> {
               ),
             if (songsLength > 0)
               ShufflePlayButton(songs: _playlist['list'] as List? ?? []),
-            if (widget.playlistId != null && !isUserCreated)
+            if (widget.playlistId != null &&
+                !isUserCreated &&
+                !offlineMode.value)
               _buildLikeButton(primaryColor),
-            _buildSyncButton(primaryColor),
+            if (!offlineMode.value) _buildSyncButton(primaryColor),
             _buildDownloadButton(),
             if (isUserCreated) ...[
               _buildShareButton(primaryColor),
@@ -515,6 +517,10 @@ class _PlaylistPageState extends State<PlaylistPage> {
                   ],
                 ),
               );
+            }
+
+            if (offlineMode.value) {
+              return const SizedBox.shrink();
             }
 
             return IconButton.filledTonal(
