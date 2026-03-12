@@ -132,11 +132,6 @@ class _LibraryPageState extends State<LibraryPage> {
 
   Widget _buildUserPlaylistsSection(Color primaryColor) {
     final colorScheme = Theme.of(context).colorScheme;
-    final isUserPlaylistsEmpty =
-        userPlaylistFolders.value.isEmpty &&
-        userPlaylists.value.isEmpty &&
-        userCustomPlaylists.value.isEmpty &&
-        offlinePlaylistService.offlinePlaylists.value.isEmpty;
     return Column(
       children: [
         if (!offlineMode.value) ...[
@@ -201,20 +196,21 @@ class _LibraryPageState extends State<LibraryPage> {
                 context,
                 playlistsNotInFolders,
                 hasItemsAfter: true,
+                hasItemsBefore: true,
               );
             },
           ),
         ],
         PlaylistBar(
-          context.l10n!.offlineSongs,
-          onPressed: () =>
-              NavigationManager.router.go('/library/userSongs/offline'),
-          cubeIcon: FluentIcons.cloud_off_24_filled,
-          borderRadius: isUserPlaylistsEmpty
-              ? commonCustomBarRadiusLast
-              : BorderRadius.zero,
-          showBuildActions: false,
-        ),
+  context.l10n!.offlineSongs,
+  onPressed: () =>
+      NavigationManager.router.go('/library/userSongs/offline'),
+  cubeIcon: FluentIcons.cloud_off_24_filled,
+  borderRadius: offlineMode.value
+      ? commonCustomBarRadius
+      : commonCustomBarRadiusLast,
+  showBuildActions: false,
+),
 
         _buildOfflinePlaylistsSection(),
 
@@ -311,6 +307,7 @@ class _LibraryPageState extends State<LibraryPage> {
     List playlists, {
     bool isOfflinePlaylists = false,
     bool hasItemsAfter = false,
+    bool hasItemsBefore = false,
   }) {
     return ListView.builder(
       shrinkWrap: true,
@@ -320,7 +317,8 @@ class _LibraryPageState extends State<LibraryPage> {
       itemBuilder: (BuildContext context, index) {
         final playlist = playlists[index];
         final isLastItem = index == playlists.length - 1;
-        final borderRadius = hasItemsAfter && isLastItem
+        final borderRadius =
+            (hasItemsBefore && index == 0) || (hasItemsAfter && isLastItem)
             ? BorderRadius.zero
             : getItemBorderRadius(index, playlists.length);
         return PlaylistBar(
