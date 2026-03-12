@@ -143,7 +143,7 @@ class OfflinePlaylistService {
               progressNotifier.value.completed++;
               progressNotifier.notifyListeners();
             } else {
-              final success = await makeSongOffline(song, fromPlaylist: true);
+              final success = await makeSongOffline(song);
               if (success) {
                 progressNotifier.value.completed++;
               } else {
@@ -373,7 +373,7 @@ class OfflinePlaylistService {
           if (!isUsedInOtherPlaylists &&
               !isInLikedSongs &&
               !isInCustomPlaylists) {
-            await removeSongFromOffline(songId, fromPlaylist: true);
+            await removeSongFromOffline(songId);
           }
         } catch (e, stackTrace) {
           logger.log(

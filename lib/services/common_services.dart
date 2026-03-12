@@ -511,7 +511,7 @@ Future<String?> getSongLyrics(String? artist, String title) async {
   return lyrics.value;
 }
 
-Future<bool> makeSongOffline(dynamic song, {bool fromPlaylist = false}) async {
+Future<bool> makeSongOffline(dynamic song) async {
   try {
     final String? ytid = song['ytid'];
 
@@ -520,7 +520,7 @@ Future<bool> makeSongOffline(dynamic song, {bool fromPlaylist = false}) async {
       return false;
     }
 
-    if (!fromPlaylist && isSongAlreadyOffline(ytid)) {
+    if (isSongAlreadyOffline(ytid)) {
       return true;
     }
 
@@ -532,6 +532,7 @@ Future<bool> makeSongOffline(dynamic song, {bool fromPlaylist = false}) async {
 
     await audioFile.parent.create(recursive: true);
 
+    IOSink? fileStream;
     try {
       final audioManifest = await fetchBestAudioStream(ytid);
       if (audioManifest == null) {
@@ -540,16 +541,20 @@ Future<bool> makeSongOffline(dynamic song, {bool fromPlaylist = false}) async {
       }
 
       final stream = ytClient.videos.streamsClient.get(audioManifest);
-      final fileStream = audioFile.openWrite();
+      fileStream = audioFile.openWrite();
       await stream.pipe(fileStream);
       await fileStream.flush();
       await fileStream.close();
+      fileStream = null;
     } catch (e, stackTrace) {
       logger.log(
         'Error downloading audio file',
         error: e,
         stackTrace: stackTrace,
       );
+      try {
+        await fileStream?.close();
+      } catch (_) {}
       if (await audioFile.exists()) {
         await audioFile.delete();
       }
@@ -613,10 +618,7 @@ Future<bool> makeSongOffline(dynamic song, {bool fromPlaylist = false}) async {
   }
 }
 
-Future<bool> removeSongFromOffline(
-  dynamic songId, {
-  bool fromPlaylist = false,
-}) async {
+Future<bool> removeSongFromOffline(dynamic songId) async {
   try {
     final audioPath = FilePaths.getAudioPath(songId);
     final audioFile = File(audioPath);
