@@ -66,8 +66,8 @@ class BottomActionsRow extends StatelessWidget {
         final actions = <Widget>[
           _buildActionButton(
             context: context,
-            icon: FluentIcons.cellular_data_1_24_regular,
-            activeIcon: FluentIcons.cellular_off_24_regular,
+            icon: FluentIcons.cloud_arrow_down_24_regular,
+            activeIcon: FluentIcons.cloud_off_24_filled,
             colorScheme: colorScheme,
             size: responsiveIconSize,
             statusNotifier: songOfflineStatus,
@@ -82,7 +82,7 @@ class BottomActionsRow extends StatelessWidget {
           actions.add(
             _buildSimpleActionButton(
               context: context,
-              icon: FluentIcons.add_24_regular,
+              icon: FluentIcons.album_add_24_regular,
               colorScheme: colorScheme,
               size: responsiveIconSize,
               onPressed: () =>
