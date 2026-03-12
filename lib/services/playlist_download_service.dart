@@ -23,6 +23,7 @@
 
 import 'dart:async';
 import 'dart:collection';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
@@ -30,6 +31,7 @@ import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/common_services.dart';
 import 'package:musify/services/data_manager.dart';
+import 'package:musify/services/io_service.dart';
 import 'package:musify/services/playlists_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 
@@ -401,6 +403,40 @@ class OfflinePlaylistService {
         error: e,
         stackTrace: stackTrace,
       );
+    }
+  }
+
+  Future<void> deleteAllDownloads() async {
+    try {
+      final tracksDir = Directory('$applicationDirPath/${FilePaths.tracksDir}');
+      final artworksDir =
+          Directory('$applicationDirPath/${FilePaths.artworksDir}');
+
+      if (await tracksDir.exists()) {
+        await tracksDir.delete(recursive: true);
+      }
+      if (await artworksDir.exists()) {
+        await artworksDir.delete(recursive: true);
+      }
+
+      await FilePaths.ensureDirectoriesExist();
+
+      userOfflineSongs.clear();
+      currentOfflineSongsLength.value = 0;
+
+      offlinePlaylists.value = [];
+
+      unawaited(addOrUpdateData('userNoBackup', 'offlineSongs', []));
+      unawaited(addOrUpdateData('userNoBackup', 'offlinePlaylists', []));
+
+      logger.log('All downloads deleted successfully');
+    } catch (e, stackTrace) {
+      logger.log(
+        'Error deleting all downloads',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      rethrow;
     }
   }
 
