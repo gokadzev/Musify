@@ -511,7 +511,7 @@ Future<String?> getSongLyrics(String? artist, String title) async {
   return lyrics.value;
 }
 
-Future<bool> makeSongOffline(dynamic song) async {
+Future<bool> makeSongOffline(Map song) async {
   try {
     final String? ytid = song['ytid'];
 
@@ -524,7 +524,7 @@ Future<bool> makeSongOffline(dynamic song) async {
       return true;
     }
 
-    final offlineSong = Map<String, dynamic>.from(song as Map);
+    final offlineSong = Map.from(song);
 
     final audioPath = FilePaths.getAudioPath(ytid);
     final audioFile = File(audioPath);

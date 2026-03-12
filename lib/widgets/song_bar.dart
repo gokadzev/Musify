@@ -790,7 +790,7 @@ class _OnlineArtwork extends StatelessWidget {
   }
 }
 
-void showAddToPlaylistDialog(BuildContext context, dynamic song) {
+void showAddToPlaylistDialog(BuildContext context, Map song) {
   showDialog(
     context: context,
     builder: (BuildContext context) {

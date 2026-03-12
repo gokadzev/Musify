@@ -593,7 +593,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
     }
   }
 
-  Widget _buildSongListItem(dynamic song, int index, bool isRemovable) {
+  Widget _buildSongListItem(Map song, int index, bool isRemovable) {
     final totalItems = _sourceList.length;
     final borderRadius = getItemBorderRadius(index, totalItems);
     final isUserCreatedPlaylist = _playlist?['source'] == 'user-created';
