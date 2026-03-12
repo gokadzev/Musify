@@ -848,7 +848,7 @@ Future<List> _loadSongsForPlaylist(Map playlist) async {
 }
 
 Future<List> getSongsFromPlaylist(
-  dynamic playlistId, {
+  String playlistId, {
   String? playlistImage,
 }) async {
   final songList = await getData('cache', 'playlistSongs$playlistId') ?? [];
@@ -884,8 +884,8 @@ Future updatePlaylistList(BuildContext context, String playlistId) async {
 }
 
 Future<void> renameSongInPlaylist(
-  dynamic playlistId,
-  dynamic songId,
+  String playlistId,
+  String songId,
   String newTitle,
   String newArtist,
 ) async {

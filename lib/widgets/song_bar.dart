@@ -55,7 +55,7 @@ class SongBar extends StatefulWidget {
     super.key,
   });
 
-  final dynamic song;
+  final Map song;
   final bool clearPlaylist;
   final Color? backgroundColor;
   final VoidCallback? onRemove;
@@ -324,7 +324,7 @@ class _SongBarState extends State<SongBar> {
         }
       } else if (widget.playlistId != null) {
         await renameSongInPlaylist(
-          widget.playlistId,
+          widget.playlistId!,
           _ytid,
           newTitle,
           newArtist,

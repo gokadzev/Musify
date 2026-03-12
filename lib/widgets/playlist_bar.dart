@@ -48,7 +48,7 @@ class PlaylistBar extends StatelessWidget {
     this.isAlbum = false,
     this.borderRadius = BorderRadius.zero,
   }) : playlistLikeStatus = ValueNotifier<bool>(
-         isPlaylistAlreadyLiked(playlistId),
+         playlistId != null && isPlaylistAlreadyLiked(playlistId),
        );
 
   final Map? playlistData;

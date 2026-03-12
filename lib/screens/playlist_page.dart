@@ -72,7 +72,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
   _originalPlaylistList; // Keep original order separately
 
   late final playlistLikeStatus = ValueNotifier<bool>(
-    isPlaylistAlreadyLiked(widget.playlistId),
+    widget.playlistId != null && isPlaylistAlreadyLiked(widget.playlistId!),
   );
   bool playlistOfflineStatus = false;
 
@@ -104,6 +104,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
   @override
   void dispose() {
+    playlistLikeStatus.dispose();
     super.dispose();
   }
 
@@ -534,7 +535,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
     }
   }
 
-  void _updateSongsListOnRemove(int indexOfRemovedSong, dynamic songToRemove) {
+  void _updateSongsListOnRemove(int indexOfRemovedSong, Map songToRemove) {
     _originalPlaylistList.removeWhere((s) => s['ytid'] == songToRemove['ytid']);
     final playlistId = _playlist['ytid'];
     if (mounted) {
