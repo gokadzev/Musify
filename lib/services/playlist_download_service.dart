@@ -407,10 +407,32 @@ class OfflinePlaylistService {
   }
 
   Future<void> deleteAllDownloads() async {
+    // Cancel all active downloads first and wait for them to stop
+    final activeIds = List<String>.from(activeDownloads);
+    for (final id in activeIds) {
+      final notifier = downloadProgressNotifiers[id];
+      if (notifier != null) {
+        notifier.value.isCancelled = true;
+        notifier.notifyListeners();
+      }
+    }
+
+    const maxWaitTime = Duration(seconds: 30);
+    final startTime = DateTime.now();
+    while (activeDownloads.isNotEmpty) {
+      if (DateTime.now().difference(startTime) > maxWaitTime) {
+        logger.log('Timeout waiting for downloads to cancel before delete');
+        activeDownloads.clear();
+        break;
+      }
+      await Future.delayed(const Duration(milliseconds: 100));
+    }
+
     try {
       final tracksDir = Directory('$applicationDirPath/${FilePaths.tracksDir}');
-      final artworksDir =
-          Directory('$applicationDirPath/${FilePaths.artworksDir}');
+      final artworksDir = Directory(
+        '$applicationDirPath/${FilePaths.artworksDir}',
+      );
 
       if (await tracksDir.exists()) {
         await tracksDir.delete(recursive: true);
@@ -425,6 +447,12 @@ class OfflinePlaylistService {
       currentOfflineSongsLength.value = 0;
 
       offlinePlaylists.value = [];
+
+      for (final notifier in downloadProgressNotifiers.values) {
+        notifier.dispose();
+      }
+      downloadProgressNotifiers.clear();
+      activeDownloads.clear();
 
       unawaited(addOrUpdateData('userNoBackup', 'offlineSongs', []));
       unawaited(addOrUpdateData('userNoBackup', 'offlinePlaylists', []));
