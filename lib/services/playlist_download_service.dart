@@ -183,8 +183,9 @@ class OfflinePlaylistService {
       final initialTasks = songsList.length < maxConcurrent
           ? songsList.length
           : maxConcurrent;
+      final tasks = <Future<void>>[];
       for (var i = 0; i < initialTasks; i++) {
-        unawaited(processQueue());
+        tasks.add(processQueue());
       }
 
       // Wait for all downloads to complete with timeout
@@ -196,6 +197,8 @@ class OfflinePlaylistService {
           progressNotifier.notifyListeners();
         },
       );
+
+      await Future.wait(tasks);
 
       // Handle completion
       await _handleDownloadCompletion(
