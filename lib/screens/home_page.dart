@@ -22,13 +22,13 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:musify/constants/common_variables.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/common_services.dart';
 import 'package:musify/services/playlists_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/async_loader.dart';
-import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/utils.dart';
 import 'package:musify/widgets/announcement_box.dart';
 import 'package:musify/widgets/playlist_cube.dart';

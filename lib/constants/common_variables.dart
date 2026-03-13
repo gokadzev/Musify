@@ -48,3 +48,5 @@ const commonBarContentPadding = EdgeInsets.symmetric(
   vertical: 12,
   horizontal: 10,
 );
+
+const commonPlaylistArtworkDivision = 1.75;

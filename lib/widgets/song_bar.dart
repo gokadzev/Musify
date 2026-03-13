@@ -25,12 +25,12 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:musify/constants/common_variables.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/common_services.dart';
 import 'package:musify/services/playlists_manager.dart';
 import 'package:musify/services/settings_manager.dart';
-import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/formatter.dart';
 import 'package:musify/utilities/playlist_dialogs.dart';
@@ -139,19 +139,18 @@ class _SongBarState extends State<SongBar> {
 
     return Padding(
       padding: commonBarPadding,
-      child: Card(
-        color: widget.backgroundColor,
-        shape: RoundedRectangleBorder(borderRadius: widget.borderRadius),
-        margin: const EdgeInsets.only(bottom: 3),
+      child: Material(
+        color: widget.backgroundColor ?? colorScheme.surfaceContainerLow,
+        borderRadius: widget.borderRadius,
+        clipBehavior: Clip.antiAlias,
         child: InkWell(
-          borderRadius: widget.borderRadius,
           onTap: _handleSongTap,
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
             child: Row(
               children: [
                 _buildAlbumArt(colorScheme),
-                const SizedBox(width: 12),
+                const SizedBox(width: 14),
                 Expanded(
                   child: _SongInfo(
                     title: _songTitle,
@@ -183,7 +182,7 @@ class _SongBarState extends State<SongBar> {
   }
 
   Widget _buildAlbumArt(ColorScheme colorScheme) {
-    const size = 48.0;
+    const size = 52.0;
     final isDurationAvailable =
         widget.showMusicDuration && widget.song['duration'] != null;
 
@@ -218,14 +217,16 @@ class _SongBarState extends State<SongBar> {
 
   Widget _buildActionButtons(BuildContext context, ColorScheme colorScheme) {
     return SizedBox(
-      width: 48,
-      height: 48,
+      width: 40,
+      height: 40,
       child: Center(
         child: PopupMenuButton<String>(
           icon: Icon(
-            FluentIcons.more_horizontal_24_filled,
+            FluentIcons.more_vertical_24_regular,
             color: colorScheme.onSurfaceVariant,
+            size: 20,
           ),
+          padding: EdgeInsets.zero,
           onSelected: (value) => _handleMenuAction(context, value),
           itemBuilder: (context) => _buildMenuItems(context, colorScheme),
         ),
@@ -568,7 +569,7 @@ class _SongInfo extends StatelessWidget {
           style: TextStyle(
             fontWeight: FontWeight.w600,
             fontSize: 15,
-            color: colorScheme.secondary,
+            color: colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 2),
@@ -647,19 +648,19 @@ class _OfflineArtwork extends StatelessWidget {
                   const NullArtworkWidget(iconSize: 30),
             ),
             Positioned(
-              top: 4,
-              right: 2,
+              top: 3,
+              right: 3,
               child: Container(
                 width: 20,
                 height: 20,
                 decoration: BoxDecoration(
-                  color: colorScheme.secondaryContainer,
-                  borderRadius: BorderRadius.circular(10),
+                  color: colorScheme.tertiaryContainer,
+                  shape: BoxShape.circle,
                 ),
                 child: Icon(
                   FluentIcons.cloud_off_24_filled,
-                  size: 12,
-                  color: colorScheme.onSecondaryContainer,
+                  size: 11,
+                  color: colorScheme.onTertiaryContainer,
                 ),
               ),
             ),
@@ -722,36 +723,36 @@ class _OnlineArtwork extends StatelessWidget {
                   ),
                   if (isOffline)
                     Positioned(
-                      top: 2,
-                      right: 4,
+                      top: 3,
+                      right: 3,
                       child: Container(
                         width: 20,
                         height: 20,
                         decoration: BoxDecoration(
-                          color: colorScheme.secondaryContainer,
-                          borderRadius: BorderRadius.circular(10),
+                          color: colorScheme.tertiaryContainer,
+                          shape: BoxShape.circle,
                         ),
                         child: Icon(
                           FluentIcons.cloud_off_24_filled,
-                          size: 12,
-                          color: colorScheme.onSecondaryContainer,
+                          size: 11,
+                          color: colorScheme.onTertiaryContainer,
                         ),
                       ),
                     )
                   else if (isLiked)
                     Positioned(
-                      top: 2,
-                      right: 4,
+                      top: 3,
+                      right: 3,
                       child: Container(
                         width: 20,
                         height: 20,
                         decoration: BoxDecoration(
                           color: colorScheme.primaryContainer,
-                          borderRadius: BorderRadius.circular(10),
+                          shape: BoxShape.circle,
                         ),
                         child: Icon(
                           FluentIcons.heart_24_filled,
-                          size: 12,
+                          size: 11,
                           color: colorScheme.onPrimaryContainer,
                         ),
                       ),

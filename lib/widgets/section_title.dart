@@ -33,7 +33,7 @@ class SectionTitle extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 10),
       child: Row(
         children: [
           if (icon != null) ...[
@@ -45,7 +45,7 @@ class SectionTitle extends StatelessWidget {
               child: Text(
                 title,
                 style: TextStyle(
-                  color: colorScheme.secondary,
+                  color: colorScheme.onSurface,
                   fontSize:
                       Theme.of(context).textTheme.titleMedium?.fontSize ?? 16,
                   fontWeight: FontWeight.w600,

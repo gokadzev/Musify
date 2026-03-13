@@ -30,9 +30,8 @@ class ShufflePlayButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final primaryColor = Theme.of(context).colorScheme.primary;
     return IconButton.filledTonal(
-      icon: Icon(FluentIcons.arrow_shuffle_24_filled, color: primaryColor),
+      icon: const Icon(FluentIcons.arrow_shuffle_24_filled),
       iconSize: 24,
       tooltip: 'Shuffle play',
       onPressed: () async {

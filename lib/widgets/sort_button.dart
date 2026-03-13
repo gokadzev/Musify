@@ -21,7 +21,7 @@
 
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:musify/utilities/common_variables.dart';
+import 'package:musify/constants/common_variables.dart';
 
 typedef SortTypeToStringConverter<T> = String Function(T type);
 typedef OnSortTypeSelected<T> = void Function(T type);

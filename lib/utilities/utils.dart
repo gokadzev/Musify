@@ -20,8 +20,8 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:musify/constants/common_variables.dart';
 import 'package:musify/services/settings_manager.dart';
-import 'package:musify/utilities/common_variables.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 BorderRadius getItemBorderRadius(int index, int totalLength) {

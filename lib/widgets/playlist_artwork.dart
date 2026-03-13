@@ -22,7 +22,6 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/utilities/artwork_provider.dart';
-import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/widgets/no_artwork_cube.dart';
 
 class PlaylistArtwork extends StatelessWidget {
@@ -58,15 +57,12 @@ class PlaylistArtwork extends StatelessWidget {
       return SizedBox(
         width: size,
         height: size,
-        child: ClipRRect(
-          borderRadius: commonBarRadius,
-          child: Image(
-            image: provider,
-            height: size,
-            width: size,
-            fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) => _nullArtwork(),
-          ),
+        child: Image(
+          image: provider,
+          height: size,
+          width: size,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => _nullArtwork(),
         ),
       );
     } catch (_) {

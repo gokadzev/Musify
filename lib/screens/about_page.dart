@@ -21,9 +21,9 @@
 
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:musify/constants/common_variables.dart';
 import 'package:musify/constants/version.dart';
 import 'package:musify/extensions/l10n.dart';
-import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/url_launcher.dart';
 
 class AboutPage extends StatelessWidget {
@@ -87,44 +87,73 @@ class AboutPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 32),
-            Card(
-              color: Theme.of(context).colorScheme.surfaceContainerHigh,
-              child: ListTile(
-                contentPadding: const EdgeInsets.all(8),
-                leading: Container(
-                  height: 50,
-                  width: 50,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                      fit: BoxFit.fill,
-                      image: NetworkImage(
+            Material(
+              color: Theme.of(context).colorScheme.surfaceContainerLow,
+              borderRadius: BorderRadius.circular(20),
+              clipBehavior: Clip.antiAlias,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
+                child: Row(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(14),
+                      child: Image.network(
                         'https://avatars.githubusercontent.com/u/79704324?v=4',
+                        width: 52,
+                        height: 52,
+                        fit: BoxFit.cover,
                       ),
                     ),
-                  ),
-                ),
-                title: const Text(
-                  'Valeri Gokadze',
-                  style: TextStyle(fontWeight: FontWeight.w600),
-                ),
-                subtitle: const Text('WEB & APP Developer'),
-                trailing: Wrap(
-                  children: <Widget>[
-                    _SocialButton(
-                      icon: FluentIcons.code_24_filled,
-                      tooltip: 'Github',
-                      onPressed: () {
-                        launchURL(Uri.parse('https://github.com/gokadzev'));
-                      },
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Valeri Gokadze',
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onSurface,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'WEB & APP Developer',
+                            style: TextStyle(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(width: 8),
-                    _SocialButton(
-                      icon: FluentIcons.globe_24_filled,
-                      tooltip: 'Website',
-                      onPressed: () {
-                        launchURL(Uri.parse('https://gokadzev.github.io'));
-                      },
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _SocialButton(
+                          icon: FluentIcons.code_24_filled,
+                          tooltip: 'Github',
+                          onPressed: () {
+                            launchURL(Uri.parse('https://github.com/gokadzev'));
+                          },
+                        ),
+                        const SizedBox(width: 8),
+                        _SocialButton(
+                          icon: FluentIcons.globe_24_filled,
+                          tooltip: 'Website',
+                          onPressed: () {
+                            launchURL(Uri.parse('https://gokadzev.github.io'));
+                          },
+                        ),
+                      ],
                     ),
                   ],
                 ),
