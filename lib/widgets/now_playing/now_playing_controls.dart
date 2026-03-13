@@ -24,7 +24,10 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
+import 'package:musify/screens/search_page.dart';
+import 'package:musify/services/router_service.dart';
 import 'package:musify/services/settings_manager.dart';
+import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/utils.dart';
 import 'package:musify/widgets/now_playing/marquee_text_widget.dart';
 import 'package:musify/widgets/playback_icon_button.dart';
@@ -93,11 +96,22 @@ class NowPlayingControls extends StatelessWidget {
                   ),
                   SizedBox(height: spacing),
                   if (metadata.artist != null)
-                    MarqueeTextWidget(
-                      text: metadata.artist!,
-                      fontColor: colorScheme.onSurfaceVariant,
-                      fontSize: artistFontSize * fontScale,
-                      fontWeight: FontWeight.w500,
+                    GestureDetector(
+                      onTap: () {
+                        if (offlineMode.value) {
+                          showToast(context, context.l10n!.searchIsDisabledInOfflineMode);
+                          return;
+                        }
+                        SearchPage.externalSearchQuery.value = metadata.artist;
+                        Navigator.pop(context); // Close Now Playing page
+                        NavigationManager.router.go(NavigationManager.searchPath);
+                      },
+                      child: MarqueeTextWidget(
+                        text: metadata.artist!,
+                        fontColor: colorScheme.onSurfaceVariant,
+                        fontSize: artistFontSize * fontScale,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                 ],
               ),

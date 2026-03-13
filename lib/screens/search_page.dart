@@ -43,6 +43,8 @@ class SearchPage extends StatefulWidget {
 
   @override
   _SearchPageState createState() => _SearchPageState();
+
+  static final ValueNotifier<String?> externalSearchQuery = ValueNotifier(null);
 }
 
 // Global ValueNotifier for search history to make it reactive
@@ -68,6 +70,27 @@ class _SearchPageState extends State<SearchPage> {
   Timer? _debounce;
   int _latestSuggestionRequest = 0;
 
+  @override
+  void initState() {
+    super.initState();
+    SearchPage.externalSearchQuery.addListener(_onExternalSearchQueryChanged);
+    
+    // Check if there's an initial query waiting
+    if (SearchPage.externalSearchQuery.value != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _onExternalSearchQueryChanged();
+      });
+    }
+  }
+
+  void _onExternalSearchQueryChanged() {
+    final query = SearchPage.externalSearchQuery.value;
+    if (query != null && mounted) {
+      SearchPage.externalSearchQuery.value = null;
+      _submitSearch(query);
+    }
+  }
+
   Future<void> _submitSearch([String? query]) async {
     if (query != null) {
       _searchBar.text = query;
@@ -87,6 +110,7 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   void dispose() {
+    SearchPage.externalSearchQuery.removeListener(_onExternalSearchQueryChanged);
     _searchBar.dispose();
     _inputNode.dispose();
     _fetchingSongs.dispose();
