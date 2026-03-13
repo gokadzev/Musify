@@ -78,6 +78,11 @@ class PlaylistBar extends StatelessWidget {
   bool get isFolder =>
       playlistData != null && playlistData!.containsKey('playlists');
 
+  String? get _resolvedPlaylistId =>
+      playlistId ?? playlistData?['ytid']?.toString();
+
+  bool get _canAddToPlaylist => !isFolder && _resolvedPlaylistId != null;
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -173,10 +178,10 @@ class PlaylistBar extends StatelessWidget {
       onSelected: (String value) {
         switch (value) {
           case 'like':
-            if (playlistId != null) {
+            if (_resolvedPlaylistId != null) {
               final newValue = !playlistLikeStatus.value;
               playlistLikeStatus.value = newValue;
-              updatePlaylistLikeStatus(playlistId!, newValue);
+              updatePlaylistLikeStatus(_resolvedPlaylistId!, newValue);
               currentLikedPlaylistsLength.value += newValue ? 1 : -1;
             }
             break;
@@ -214,7 +219,7 @@ class PlaylistBar extends StatelessWidget {
                 ],
               ),
             ),
-          if (playlistData != null && !isFolder || (playlistId != null && !isFolder))
+          if (_canAddToPlaylist)
             PopupMenuItem<String>(
               value: 'add_to_playlist',
               child: Row(
@@ -406,15 +411,13 @@ class PlaylistBar extends StatelessWidget {
       };
     } else {
       return () {
-        final resolvedPlaylistId =
-            playlistId ?? playlistData?['ytid']?.toString();
-        if (resolvedPlaylistId == null ||
-            resolvedPlaylistId.isEmpty ||
-            resolvedPlaylistId == 'null') {
+        if (_resolvedPlaylistId == null ||
+            _resolvedPlaylistId!.isEmpty ||
+            _resolvedPlaylistId == 'null') {
           showToast(context, context.l10n!.error);
           return;
         }
-        context.push('/home/playlist/$resolvedPlaylistId');
+        context.push('/home/playlist/$_resolvedPlaylistId');
       };
     }
   }
@@ -423,8 +426,7 @@ class PlaylistBar extends StatelessWidget {
     BuildContext context,
     ColorScheme colorScheme,
   ) async {
-    final resolvedPlaylistId = playlistId ?? playlistData?['ytid']?.toString();
-    if (resolvedPlaylistId == null) {
+    if (_resolvedPlaylistId == null) {
       showToast(context, context.l10n!.error);
       return;
     }
@@ -444,7 +446,7 @@ class PlaylistBar extends StatelessWidget {
 
     try {
       final fullPlaylist = await getPlaylistInfoForWidget(
-        resolvedPlaylistId,
+        _resolvedPlaylistId!,
       );
 
       final appCtx = NavigationManager().context;

@@ -389,6 +389,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
         return;
       }
       showAddToPlaylistDialog(context, songs: tracks);
+    } else {
+      showToast(context, context.l10n!.loading);
     }
   }
 
