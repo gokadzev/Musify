@@ -19,6 +19,7 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/extensions/l10n.dart';
 
@@ -51,18 +52,51 @@ class _PlaylistSearchBarState extends State<PlaylistSearchBar> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
       child: SearchBar(
         controller: _controller,
         hintText: context.l10n!.search,
+        elevation: WidgetStateProperty.all(0),
+        shadowColor: WidgetStateProperty.all(Colors.transparent),
+        backgroundColor: WidgetStateProperty.all(
+          colorScheme.surfaceContainerHigh,
+        ),
+        overlayColor: WidgetStateProperty.all(
+          colorScheme.primary.withValues(alpha: 0.08),
+        ),
+        shape: WidgetStateProperty.all(
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        ),
+        padding: WidgetStateProperty.all(
+          const EdgeInsets.symmetric(horizontal: 16),
+        ),
+        hintStyle: WidgetStateProperty.all(
+          TextStyle(
+            color: colorScheme.onSurfaceVariant,
+            fontSize: 16,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+        textStyle: WidgetStateProperty.all(
+          TextStyle(
+            color: colorScheme.onSurface,
+            fontSize: 16,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
         leading: Icon(
-          Icons.search_rounded,
+          FluentIcons.search_24_regular,
           color: colorScheme.onSurfaceVariant,
+          size: 22,
         ),
         trailing: [
           if (widget.query.isNotEmpty)
             IconButton(
-              icon: const Icon(Icons.close_rounded),
+              icon: Icon(
+                FluentIcons.dismiss_24_regular,
+                color: colorScheme.onSurfaceVariant,
+                size: 20,
+              ),
               onPressed: () {
                 _controller.clear();
                 widget.onCleared();
@@ -70,16 +104,6 @@ class _PlaylistSearchBarState extends State<PlaylistSearchBar> {
             ),
         ],
         onChanged: widget.onChanged,
-        elevation: const WidgetStatePropertyAll(0),
-        backgroundColor: WidgetStatePropertyAll(
-          colorScheme.surfaceContainerHigh,
-        ),
-        shape: WidgetStatePropertyAll(
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        ),
-        padding: const WidgetStatePropertyAll(
-          EdgeInsets.symmetric(horizontal: 12),
-        ),
       ),
     );
   }

@@ -571,8 +571,6 @@ Future<bool> makeSongOffline(Map song) async {
 
         if (_artworkFile != null && await _artworkFile.exists()) {
           offlineSong['artworkPath'] = artworkPath;
-          offlineSong['highResImage'] = artworkPath;
-          offlineSong['lowResImage'] = artworkPath;
         } else {
           logger.log(
             'Artwork download failed or file does not exist for $ytid',

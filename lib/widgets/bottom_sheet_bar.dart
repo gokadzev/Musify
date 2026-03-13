@@ -27,39 +27,59 @@ class BottomSheetBar extends StatelessWidget {
     this.title,
     this.onTap,
     this.isSelected, {
-    this.borderRadius = BorderRadius.zero,
+    this.icon,
     super.key,
   });
   final String title;
   final VoidCallback onTap;
   final bool isSelected;
-  final BorderRadius borderRadius;
+  final IconData? icon;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final bgColor = isSelected
+        ? colorScheme.secondaryContainer
+        : colorScheme.surfaceContainerHigh;
+    final fgColor = isSelected
+        ? colorScheme.onSecondaryContainer
+        : colorScheme.onSurface;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
       child: Material(
-        color: isSelected
-            ? colorScheme.primaryContainer
-            : colorScheme.surfaceContainerHigh,
-        borderRadius: borderRadius,
+        color: bgColor,
+        borderRadius: BorderRadius.circular(16),
+        clipBehavior: Clip.antiAlias,
         child: InkWell(
-          borderRadius: borderRadius,
           onTap: onTap,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             child: Row(
               children: [
+                if (icon != null) ...[
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? colorScheme.onSecondaryContainer.withValues(
+                              alpha: 0.12,
+                            )
+                          : colorScheme.onSurfaceVariant.withValues(
+                              alpha: 0.08,
+                            ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(icon, size: 20, color: fgColor),
+                  ),
+                  const SizedBox(width: 14),
+                ],
                 Expanded(
                   child: Text(
                     title,
                     style: TextStyle(
-                      color: isSelected
-                          ? colorScheme.onPrimaryContainer
-                          : colorScheme.onSurface,
+                      color: fgColor,
                       fontSize: 15,
                       fontWeight: isSelected
                           ? FontWeight.w600
@@ -67,12 +87,14 @@ class BottomSheetBar extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (isSelected)
+                if (isSelected) ...[
+                  const SizedBox(width: 8),
                   Icon(
-                    FluentIcons.checkmark_24_filled,
-                    color: colorScheme.onPrimaryContainer,
-                    size: 20,
+                    FluentIcons.checkmark_circle_24_filled,
+                    color: colorScheme.onSecondaryContainer,
+                    size: 22,
                   ),
+                ],
               ],
             ),
           ),

@@ -24,6 +24,7 @@ import 'dart:async';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:musify/constants/common_variables.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/common_services.dart';
@@ -32,7 +33,6 @@ import 'package:musify/services/playlist_download_service.dart';
 import 'package:musify/services/playlist_sharing.dart';
 import 'package:musify/services/playlists_manager.dart';
 import 'package:musify/services/settings_manager.dart';
-import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/offline_playlist_dialogs.dart';
 import 'package:musify/utilities/sort_utils.dart';
@@ -41,7 +41,6 @@ import 'package:musify/widgets/edit_playlist_dialog.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/playlist_page/playlist_header.dart';
 import 'package:musify/widgets/playlist_page/playlist_search_bar.dart';
-import 'package:musify/widgets/playlist_page/shuffle_play_button.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/sort_chips.dart';
 import 'package:musify/widgets/spinner.dart';
@@ -196,55 +195,89 @@ class _PlaylistPageState extends State<PlaylistPage> {
     final isLandscape = screenWidth > MediaQuery.sizeOf(context).height;
     return PlaylistCube(
       _playlist,
-      size: isLandscape ? 250 : screenWidth / 2.2,
+      size: isLandscape ? 250 : screenWidth / commonPlaylistArtworkDivision,
       cubeIcon: widget.cubeIcon,
+      showTypeLabel: false,
     );
   }
 
   Widget _buildHeaderSection() {
     final songsLength = _playlist['list'].length;
     final isUserCreated = _playlist['source'] == 'user-created';
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final primaryColor = colorScheme.primary;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    final hasSecondaryActions =
+        (widget.playlistId != null && !isUserCreated && !offlineMode.value) ||
+        !offlineMode.value ||
+        isUserCreated;
 
     return Column(
       children: [
-        PlaylistHeader(_buildPlaylistImage(), _playlist['title'], songsLength),
-        const SizedBox(height: 12),
-        Wrap(
-          alignment: WrapAlignment.center,
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            if (songsLength > 0)
-              IconButton.filled(
-                icon: Icon(
-                  FluentIcons.play_24_filled,
-                  color: colorScheme.onPrimary,
-                ),
-                iconSize: 24,
-                onPressed: () => audioHandler.playPlaylistSong(
-                  playlist: _playlist,
-                  songIndex: 0,
-                ),
-              ),
-            if (songsLength > 0)
-              ShufflePlayButton(songs: _playlist['list'] as List? ?? []),
-            if (widget.playlistId != null &&
-                !isUserCreated &&
-                !offlineMode.value)
-              _buildLikeButton(primaryColor),
-            if (!offlineMode.value) _buildSyncButton(primaryColor),
-            _buildDownloadButton(),
-            if (isUserCreated) ...[
-              _buildShareButton(primaryColor),
-              _buildEditButton(primaryColor),
-            ],
-          ],
+        PlaylistHeader(
+          _buildPlaylistImage(),
+          _playlist['title'],
+          songsLength,
+          isAlbum: _playlist['isAlbum'] == true,
         ),
+        if (songsLength > 0) ...[
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Row(
+              children: [
+                Expanded(
+                  child: FilledButton.icon(
+                    icon: const Icon(FluentIcons.play_24_filled),
+                    label: Text(context.l10n!.play),
+                    onPressed: () => audioHandler.playPlaylistSong(
+                      playlist: _playlist,
+                      songIndex: 0,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: FilledButton.icon(
+                    style: FilledButton.styleFrom(
+                      backgroundColor: colorScheme.secondaryContainer,
+                      foregroundColor: colorScheme.onSecondaryContainer,
+                    ),
+                    icon: const Icon(FluentIcons.arrow_shuffle_24_filled),
+                    label: Text(context.l10n!.shuffle),
+                    onPressed: () async {
+                      final songs = _playlist['list'] as List? ?? [];
+                      if (songs.isEmpty) return;
+                      final shuffled = List<Map>.from(songs.whereType<Map>())
+                        ..shuffle();
+                      await audioHandler.addPlaylistToQueue(
+                        shuffled,
+                        replace: true,
+                        startIndex: 0,
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+        if (hasSecondaryActions) ...[
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            spacing: 5,
+            children: [
+              if (widget.playlistId != null &&
+                  !isUserCreated &&
+                  !offlineMode.value)
+                _buildLikeButton(),
+              if (!offlineMode.value) _buildSyncButton(),
+              if (songsLength > 0) _buildDownloadButton(),
+              if (isUserCreated) ...[_buildShareButton(), _buildEditButton()],
+            ],
+          ),
+        ],
         if (songsLength > 1) ...[
-          const SizedBox(height: 20),
+          const SizedBox(height: 12),
           SortChips<PlaylistSortType>(
             currentSortType: _sortType,
             sortTypes: PlaylistSortType.values,
@@ -272,9 +305,9 @@ class _PlaylistPageState extends State<PlaylistPage> {
     );
   }
 
-  Widget _buildShareButton(Color primaryColor) {
+  Widget _buildShareButton() {
     return IconButton.filledTonal(
-      icon: Icon(FluentIcons.share_24_regular, color: primaryColor),
+      icon: const Icon(FluentIcons.share_24_regular),
       iconSize: 24,
       onPressed: () async {
         final encodedPlaylist = PlaylistSharingService.encodePlaylist(
@@ -286,7 +319,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
     );
   }
 
-  Widget _buildLikeButton(Color primaryColor) {
+  Widget _buildLikeButton() {
     return ValueListenableBuilder<bool>(
       valueListenable: playlistLikeStatus,
       builder: (_, value, __) {
@@ -296,10 +329,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
         return value
             ? IconButton.filled(
-                icon: Icon(
-                  icon,
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
+                icon: Icon(icon),
                 iconSize: 24,
                 onPressed: () {
                   playlistLikeStatus.value = !playlistLikeStatus.value;
@@ -314,7 +344,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                 },
               )
             : IconButton.filledTonal(
-                icon: Icon(icon, color: primaryColor),
+                icon: Icon(icon),
                 iconSize: 24,
                 onPressed: () {
                   playlistLikeStatus.value = !playlistLikeStatus.value;
@@ -332,17 +362,17 @@ class _PlaylistPageState extends State<PlaylistPage> {
     );
   }
 
-  Widget _buildSyncButton(Color primaryColor) {
+  Widget _buildSyncButton() {
     return IconButton.filledTonal(
-      icon: Icon(FluentIcons.arrow_sync_24_filled, color: primaryColor),
+      icon: const Icon(FluentIcons.arrow_sync_24_filled),
       iconSize: 24,
       onPressed: _handleSyncPlaylist,
     );
   }
 
-  Widget _buildEditButton(Color primaryColor) {
+  Widget _buildEditButton() {
     return IconButton.filledTonal(
-      icon: Icon(FluentIcons.edit_24_filled, color: primaryColor),
+      icon: const Icon(FluentIcons.edit_24_filled),
       iconSize: 24,
       onPressed: () async {
         final result = await showDialog<Map?>(
@@ -419,7 +449,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
   Widget _buildDownloadButton() {
     final playlistId = widget.playlistId ?? _playlist['title'];
-    final primaryColor = Theme.of(context).colorScheme.primary;
 
     return ValueListenableBuilder<List<dynamic>>(
       valueListenable: offlinePlaylistService.offlinePlaylists,
@@ -462,16 +491,13 @@ class _PlaylistPageState extends State<PlaylistPage> {
                       child: CircularProgressIndicator(
                         value: progress.progress,
                         strokeWidth: 3,
-                        backgroundColor: primaryColor.withValues(alpha: .2),
-                        valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
+                        backgroundColor: Theme.of(
+                          context,
+                        ).colorScheme.primaryContainer,
                       ),
                     ),
                     IconButton(
-                      icon: Icon(
-                        FluentIcons.dismiss_24_filled,
-                        color: primaryColor,
-                        size: 16,
-                      ),
+                      icon: const Icon(FluentIcons.dismiss_24_filled, size: 16),
                       onPressed: () => offlinePlaylistService.cancelDownload(
                         context,
                         playlistId,
@@ -488,10 +514,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
             }
 
             return IconButton.filledTonal(
-              icon: Icon(
-                FluentIcons.arrow_download_24_filled,
-                color: primaryColor,
-              ),
+              icon: const Icon(FluentIcons.arrow_download_24_filled),
               iconSize: 24,
               onPressed: () =>
                   offlinePlaylistService.downloadPlaylist(context, _playlist),
