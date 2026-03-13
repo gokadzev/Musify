@@ -180,6 +180,47 @@ String addSongInCustomPlaylist(
   }
 }
 
+String addSongsInCustomPlaylist(
+  BuildContext context,
+  String playlistId,
+  List<dynamic> songs,
+) {
+  Map? customPlaylist;
+  for (final playlist in userCustomPlaylists.value) {
+    if (playlist['ytid'] == playlistId) {
+      customPlaylist = playlist as Map;
+      break;
+    }
+  }
+
+  if (customPlaylist != null) {
+    final List<dynamic> playlistSongs = customPlaylist['list'];
+    var addedCount = 0;
+
+    for (final song in songs) {
+      final alreadyExists = playlistSongs.any(
+        (playlistElement) => playlistElement['ytid'] == song['ytid'],
+      );
+      if (!alreadyExists) {
+        playlistSongs.add(song);
+        addedCount++;
+      }
+    }
+
+    if (addedCount > 0) {
+      unawaited(
+        addOrUpdateData('user', 'customPlaylists', userCustomPlaylists.value),
+      );
+      return context.l10n!.addedSuccess;
+    } else {
+      return context.l10n!.songAlreadyInPlaylist; // Or some message saying all songs already exist
+    }
+  } else {
+    logger.log('Custom playlist not found for ytid: $playlistId');
+    return context.l10n!.error;
+  }
+}
+
 bool removeSongFromPlaylist(
   Map playlist,
   Map songToRemove, {

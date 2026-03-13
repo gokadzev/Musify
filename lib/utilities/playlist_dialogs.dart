@@ -26,10 +26,11 @@ import 'package:musify/services/playlists_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/playlist_image_picker.dart';
 
-void showCreatePlaylistDialog(BuildContext context, {dynamic songToAdd}) {
+void showCreatePlaylistDialog(BuildContext context,
+    {dynamic songToAdd, List<dynamic>? songsToAdd}) {
   var id = '';
   var customPlaylistName = '';
-  var isYouTubeMode = songToAdd == null;
+  var isYouTubeMode = songToAdd == null && songsToAdd == null;
   String? imageUrl;
   String? imageBase64;
 
@@ -74,7 +75,7 @@ void showCreatePlaylistDialog(BuildContext context, {dynamic songToAdd}) {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  if (songToAdd == null)
+                  if (songToAdd == null && songsToAdd == null)
                     Container(
                       decoration: BoxDecoration(
                         color: colorScheme.surfaceContainerLow,
@@ -279,7 +280,6 @@ void showCreatePlaylistDialog(BuildContext context, {dynamic songToAdd}) {
                       imageBase64 ?? imageUrl,
                       context,
                     );
-                    if (context.mounted) showToast(context, result);
 
                     if (songToAdd != null) {
                       if (context.mounted) {
@@ -290,6 +290,17 @@ void showCreatePlaylistDialog(BuildContext context, {dynamic songToAdd}) {
                         );
                         showToast(context, addResult);
                       }
+                    } else if (songsToAdd != null && songsToAdd.isNotEmpty) {
+                      if (context.mounted) {
+                        final addResult = addSongsInCustomPlaylist(
+                          context,
+                          newPlaylistId,
+                          songsToAdd,
+                        );
+                        showToast(context, addResult);
+                      }
+                    } else {
+                      if (context.mounted) showToast(context, result);
                     }
                     if (!context.mounted) return;
                     Navigator.pop(context);
@@ -306,6 +317,90 @@ void showCreatePlaylistDialog(BuildContext context, {dynamic songToAdd}) {
             ],
           );
         },
+      );
+    },
+  );
+}
+
+void showAddToPlaylistDialog(
+  BuildContext context, {
+  dynamic song,
+  List<dynamic>? songs,
+}) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        icon: const Icon(FluentIcons.album_add_24_filled),
+        title: Text(context.l10n!.addToPlaylist),
+        content: Container(
+          width: double.maxFinite,
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.sizeOf(context).height * 0.6,
+          ),
+          child: userCustomPlaylists.value.isNotEmpty
+              ? ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: userCustomPlaylists.value.length,
+                  itemBuilder: (context, index) {
+                    final playlist = userCustomPlaylists.value[index];
+                    return Card(
+                      color: Theme.of(context).colorScheme.secondaryContainer,
+                      elevation: 0,
+                      child: ListTile(
+                        title: Text(playlist['title']),
+                        onTap: () {
+                          if (song != null) {
+                            showToast(
+                              context,
+                              addSongInCustomPlaylist(
+                                context,
+                                playlist['ytid'],
+                                song,
+                              ),
+                            );
+                          } else if (songs != null && songs.isNotEmpty) {
+                            showToast(
+                              context,
+                              addSongsInCustomPlaylist(
+                                context,
+                                playlist['ytid'],
+                                songs,
+                              ),
+                            );
+                          }
+                          Navigator.pop(context);
+                        },
+                      ),
+                    );
+                  },
+                )
+              : Text(
+                  context.l10n!.noCustomPlaylists,
+                  textAlign: TextAlign.center,
+                ),
+        ),
+        actionsAlignment: MainAxisAlignment.end,
+        actions: <Widget>[
+          TextButton(
+            child: Text(context.l10n!.cancel),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          FilledButton.icon(
+            onPressed: () {
+              Navigator.pop(context);
+              showCreatePlaylistDialog(
+                context,
+                songToAdd: song,
+                songsToAdd: songs,
+              );
+            },
+            icon: const Icon(FluentIcons.add_24_regular, size: 18),
+            label: Text(context.l10n!.addPlaylist),
+          ),
+        ],
       );
     },
   );

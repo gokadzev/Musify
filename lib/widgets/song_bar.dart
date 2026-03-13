@@ -280,7 +280,7 @@ class _SongBarState extends State<SongBar> {
         _handleRenameSong(context);
         break;
       case 'add_to_playlist':
-        showAddToPlaylistDialog(context, widget.song);
+        showAddToPlaylistDialog(context, song: widget.song);
         break;
       case 'remove_from_recents':
         removeFromRecentlyPlayed(_ytid).catchError((e) {
@@ -791,67 +791,3 @@ class _OnlineArtwork extends StatelessWidget {
   }
 }
 
-void showAddToPlaylistDialog(BuildContext context, dynamic song) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        icon: const Icon(FluentIcons.album_add_24_filled),
-        title: Text(context.l10n!.addToPlaylist),
-        content: Container(
-          width: double.maxFinite,
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.sizeOf(context).height * 0.6,
-          ),
-          child: userCustomPlaylists.value.isNotEmpty
-              ? ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: userCustomPlaylists.value.length,
-                  itemBuilder: (context, index) {
-                    final playlist = userCustomPlaylists.value[index];
-                    return Card(
-                      color: Theme.of(context).colorScheme.secondaryContainer,
-                      elevation: 0,
-                      child: ListTile(
-                        title: Text(playlist['title']),
-                        onTap: () {
-                          showToast(
-                            context,
-                            addSongInCustomPlaylist(
-                              context,
-                              playlist['ytid'],
-                              song,
-                            ),
-                          );
-                          Navigator.pop(context);
-                        },
-                      ),
-                    );
-                  },
-                )
-              : Text(
-                  context.l10n!.noCustomPlaylists,
-                  textAlign: TextAlign.center,
-                ),
-        ),
-        actionsAlignment: MainAxisAlignment.end,
-        actions: <Widget>[
-          TextButton(
-            child: Text(context.l10n!.cancel),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          FilledButton.icon(
-            onPressed: () {
-              Navigator.pop(context);
-              showCreatePlaylistDialog(context, songToAdd: song);
-            },
-            icon: const Icon(FluentIcons.add_24_regular, size: 18),
-            label: Text(context.l10n!.addPlaylist),
-          ),
-        ],
-      );
-    },
-  );
-}

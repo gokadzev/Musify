@@ -32,7 +32,9 @@ import 'package:musify/services/playlists_manager.dart';
 import 'package:musify/services/router_service.dart';
 import 'package:musify/utilities/artwork_provider.dart';
 import 'package:musify/utilities/flutter_toast.dart';
+import 'package:musify/utilities/playlist_dialogs.dart';
 import 'package:musify/widgets/edit_playlist_dialog.dart';
+import 'package:musify/widgets/spinner.dart';
 
 class PlaylistBar extends StatelessWidget {
   PlaylistBar(
@@ -187,6 +189,9 @@ class PlaylistBar extends StatelessWidget {
           case 'edit':
             _handleEdit(context);
             break;
+          case 'add_to_playlist':
+            _handleAddPlaylistToPlaylist(context, colorScheme);
+            break;
         }
       },
       itemBuilder: (BuildContext context) {
@@ -236,6 +241,20 @@ class PlaylistBar extends StatelessWidget {
                   Icon(FluentIcons.edit_24_filled, color: colorScheme.primary),
                   const SizedBox(width: 8),
                   Text(context.l10n!.editPlaylist),
+                ],
+              ),
+            ),
+          if (playlistData != null && !isFolder)
+            PopupMenuItem<String>(
+              value: 'add_to_playlist',
+              child: Row(
+                children: [
+                  Icon(
+                    FluentIcons.album_add_24_regular,
+                    color: colorScheme.primary,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(context.l10n!.addToPlaylist),
                 ],
               ),
             ),
@@ -397,6 +416,61 @@ class PlaylistBar extends StatelessWidget {
         }
         context.push('/home/playlist/$resolvedPlaylistId');
       };
+    }
+  }
+
+  Future<void> _handleAddPlaylistToPlaylist(
+    BuildContext context,
+    ColorScheme colorScheme,
+  ) async {
+    final resolvedPlaylistId = playlistId ?? playlistData?['ytid']?.toString();
+    if (resolvedPlaylistId == null) {
+      showToast(context, context.l10n!.error);
+      return;
+    }
+
+    final currentContext = NavigationManager().context;
+    unawaited(
+      showDialog(
+        context: currentContext,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return const Center(
+            child: Spinner(),
+          );
+        },
+      ),
+    );
+
+    try {
+      final fullPlaylist = await getPlaylistInfoForWidget(
+        resolvedPlaylistId,
+      );
+
+      final appCtx = NavigationManager().context;
+
+      if (appCtx.mounted) {
+        Navigator.pop(appCtx); // close spinner
+        if (fullPlaylist != null && fullPlaylist['list'] != null) {
+          final List<dynamic> tracks = fullPlaylist['list'];
+          if (tracks.isEmpty) {
+            showToast(appCtx, appCtx.l10n!.noSongsInPlaylist);
+            return;
+          }
+          unawaited(
+            Future.microtask(
+                () => showAddToPlaylistDialog(appCtx, songs: tracks)),
+          );
+        } else {
+          showToast(appCtx, appCtx.l10n!.error);
+        }
+      }
+    } catch (e) {
+      final appCtx = NavigationManager().context;
+      if (appCtx.mounted) {
+        Navigator.pop(appCtx); // close spinner
+        showToast(appCtx, appCtx.l10n!.error);
+      }
     }
   }
 
