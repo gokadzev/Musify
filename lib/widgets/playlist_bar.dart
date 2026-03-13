@@ -214,6 +214,20 @@ class PlaylistBar extends StatelessWidget {
                 ],
               ),
             ),
+          if (playlistData != null && !isFolder || (playlistId != null && !isFolder))
+            PopupMenuItem<String>(
+              value: 'add_to_playlist',
+              child: Row(
+                children: [
+                  Icon(
+                    FluentIcons.album_add_24_regular,
+                    color: colorScheme.primary,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(context.l10n!.addToPlaylist),
+                ],
+              ),
+            ),
           if (playlistData != null &&
               !isFolder &&
               (playlistData!['source'] == 'user-created' ||
@@ -241,20 +255,6 @@ class PlaylistBar extends StatelessWidget {
                   Icon(FluentIcons.edit_24_filled, color: colorScheme.primary),
                   const SizedBox(width: 8),
                   Text(context.l10n!.editPlaylist),
-                ],
-              ),
-            ),
-          if (playlistData != null && !isFolder)
-            PopupMenuItem<String>(
-              value: 'add_to_playlist',
-              child: Row(
-                children: [
-                  Icon(
-                    FluentIcons.album_add_24_regular,
-                    color: colorScheme.primary,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(context.l10n!.addToPlaylist),
                 ],
               ),
             ),
