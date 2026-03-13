@@ -76,6 +76,7 @@ class BottomActionsRow extends StatelessWidget {
                 : () => _toggleOffline(songOfflineStatus, audioId, metadata),
             tooltip: 'Offline',
           ),
+          _buildSleepTimerButton(context, colorScheme, responsiveIconSize),
         ];
 
         if (!offlineMode.value) {
@@ -132,7 +133,6 @@ class BottomActionsRow extends StatelessWidget {
               onPressed: lyricsController.flipcard,
               tooltip: 'Lyrics',
             ),
-            _buildSleepTimerButton(context, colorScheme, responsiveIconSize),
           ]);
         }
 
