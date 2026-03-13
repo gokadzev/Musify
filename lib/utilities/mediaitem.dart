@@ -30,7 +30,7 @@ Map mediaItemToMap(MediaItem mediaItem) {
     'album': mediaItem.album.toString(),
     'artist': mediaItem.artist.toString(),
     'title': mediaItem.title,
-    'highResImage': mediaItem.artUri.toString(),
+    'highResImage': extras?['highResImage'] ?? mediaItem.artUri.toString(),
     'lowResImage': extras?['lowResImage'],
     'isLive': extras?['isLive'] ?? false,
   };
@@ -43,8 +43,8 @@ MediaItem mapToMediaItem(Map song) {
       : <String, dynamic>{};
   final isOffline = offlineSong.isNotEmpty;
 
-  final artUri = isOffline && offlineSong['highResImage'] != null
-      ? Uri.file(offlineSong['highResImage'].toString())
+  final artUri = isOffline && offlineSong['artworkPath'] != null
+      ? Uri.file(offlineSong['artworkPath'].toString())
       : Uri.parse(song['highResImage'].toString());
 
   return MediaItem(
@@ -59,9 +59,11 @@ MediaItem mapToMediaItem(Map song) {
       'lowResImage': song['lowResImage'],
       'ytid': song['ytid'],
       'isLive': song['isLive'],
+      'highResImage': song['highResImage'],
       'artWorkPath':
-          (isOffline ? offlineSong['highResImage'] : song['highResImage'])
-              .toString(),
+          (isOffline ? offlineSong['artworkPath'] : song['highResImage'])
+              ?.toString() ??
+          '',
     },
   );
 }
