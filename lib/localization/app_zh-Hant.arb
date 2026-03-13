@@ -100,6 +100,7 @@
   "newFolder": "New folder",
   "no": "No",
   "noCustomPlaylists": "尚未創建任何自定義播放列表",
+  "noFolders": "No folders created yet",
   "noOfflineLibraryContent": "No offline content. Enable online mode or download playlists/songs to use the library.",
   "noPlaylistsAdded": "No playlists added yet",
   "noSongsInQueue": "隊列中沒有歌曲",

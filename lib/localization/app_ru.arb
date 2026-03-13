@@ -131,6 +131,7 @@
   "newFolder": "Новая папка",
   "no": "Нет",
   "noCustomPlaylists": "Собственные плейлисты еще не созданы",
+  "noFolders": "No folders created yet",
   "noOfflineLibraryContent": "Нет офлайн контента. Включите режим онлайн или загрузите плейлисты/песни для использования библиотеки.",
   "noPlaylistsAdded": "Плейлисты ещё не добавлены",
   "noSongsInQueue": "Нет песен в очереди",

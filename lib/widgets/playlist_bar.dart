@@ -306,7 +306,7 @@ class PlaylistBar extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.all(16),
                         child: Text(
-                          context.l10n!.noCustomPlaylists,
+                          context.l10n!.noFolders,
                           style: TextStyle(color: Theme.of(context).hintColor),
                         ),
                       ),

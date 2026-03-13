@@ -131,6 +131,7 @@
   "newFolder": "Nouveau dossier",
   "no": "Non",
   "noCustomPlaylists": "Vous n'avez pas encore créé de playlists personnalisées",
+  "noFolders": "No folders created yet",
   "noOfflineLibraryContent": "Aucun contenu hors ligne. Activez le mode en ligne ou téléchargez des playlists/titres pour utiliser la bibliothèque.",
   "noPlaylistsAdded": "Aucune playlist ajoutée pour le moment",
   "noSongsInQueue": "Aucun titre dans la file d'attente",

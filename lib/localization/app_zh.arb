@@ -131,6 +131,7 @@
   "newFolder": "新建文件夹",
   "no": "否",
   "noCustomPlaylists": "还没有创建自定义播放列表",
+  "noFolders": "No folders created yet",
   "noOfflineLibraryContent": "没有离线内容。启用在线模式或下载播放列表/歌曲以使用媒体库。",
   "noPlaylistsAdded": "还没有添加播放列表",
   "noSongsInQueue": "队列中没有歌曲",

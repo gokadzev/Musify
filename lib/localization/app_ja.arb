@@ -131,6 +131,7 @@
   "newFolder": "新規フォルダー",
   "no": "No",
   "noCustomPlaylists": "まだ再生リストを作成していません",
+  "noFolders": "No folders created yet",
   "noOfflineLibraryContent": "No offline content. Enable online mode or download playlists/songs to use the library.",
   "noPlaylistsAdded": "まだ再生リストは追加されていません",
   "noSongsInQueue": "キュー内に曲なし",
