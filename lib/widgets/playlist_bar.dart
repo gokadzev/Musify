@@ -228,8 +228,7 @@ class PlaylistBar extends StatelessWidget {
             ),
           if (playlistData != null &&
               !isFolder &&
-              (playlistData!['source'] == 'user-created' ||
-                  playlistData!['source'] == 'user-youtube'))
+              playlistData!['source'] == 'user-created')
             PopupMenuItem<String>(
               value: 'edit',
               child: Row(
