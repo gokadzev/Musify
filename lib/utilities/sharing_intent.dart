@@ -41,7 +41,7 @@ Future<void> handleYoutubeSharedTextIntent(
 
   try {
     final song = await getSongDetails(0, songId);
-    await audioHandler.playSong(song);
+    await audioHandler.playSingleSong(song);
   } catch (e, stackTrace) {
     onError(e, stackTrace);
   }

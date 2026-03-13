@@ -37,7 +37,7 @@ jobs:
       # Build universal apk.
       - run: flutter build apk --debug --flavor github
       # Upload universal generated apk to the artifacts.
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: Musify-debug.apk
           path: build/app/outputs/flutter-apk/app-github-debug.apk

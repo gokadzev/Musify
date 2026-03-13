@@ -49,8 +49,6 @@ List userOfflineSongs = Hive.box(
   'userNoBackup',
 ).get('offlineSongs', defaultValue: []);
 
-dynamic nextRecommendedSong;
-
 final currentLikedSongsLength = ValueNotifier<int>(userLikedSongsList.length);
 final currentOfflineSongsLength = ValueNotifier<int>(userOfflineSongs.length);
 final currentRecentlyPlayedLength = ValueNotifier<int>(
@@ -134,6 +132,33 @@ Future<List> fetchSongsList(String searchQuery) async {
   } catch (e, stackTrace) {
     logger.log('Error in fetchSongsList', error: e, stackTrace: stackTrace);
     return [];
+  }
+}
+
+Future<List<Map<String, dynamic>>> fetchRelatedSongsQueue(
+  String songYtId, {
+  int limit = 20,
+}) async {
+  try {
+    if (songYtId.isEmpty) {
+      return <Map<String, dynamic>>[];
+    }
+
+    final song = await ytClient.videos.get(songYtId);
+    final relatedSongs = await ytClient.videos.getRelatedVideos(song) ?? [];
+
+    return relatedSongs
+        .take(limit)
+        .map((relatedSong) => returnSongLayout(0, relatedSong))
+        .cast<Map<String, dynamic>>()
+        .toList();
+  } catch (e, stackTrace) {
+    logger.log(
+      'Error fetching related songs queue for $songYtId',
+      error: e,
+      stackTrace: stackTrace,
+    );
+    return <Map<String, dynamic>>[];
   }
 }
 
@@ -370,25 +395,6 @@ Future<List<Map<String, int>>> getSkipSegments(String id) async {
   } catch (e, stackTrace) {
     logger.log('Error in getSkipSegments', error: e, stackTrace: stackTrace);
     return [];
-  }
-}
-
-Future<void> getSimilarSong(String songYtId) async {
-  try {
-    final song = await ytClient.videos.get(songYtId);
-    final relatedSongs = await ytClient.videos.getRelatedVideos(song) ?? [];
-
-    if (relatedSongs.isNotEmpty) {
-      nextRecommendedSong = returnSongLayout(0, relatedSongs[0]);
-    } else {
-      logger.log('No related songs found for $songYtId');
-    }
-  } catch (e, stackTrace) {
-    logger.log(
-      'Error while fetching next similar song:',
-      error: e,
-      stackTrace: stackTrace,
-    );
   }
 }
 

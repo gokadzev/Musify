@@ -176,9 +176,9 @@ class _SongBarState extends State<SongBar> {
     }
 
     if (widget.clearPlaylist) {
-      audioHandler.addPlaylistToQueue([widget.song], replace: true);
+      audioHandler.playSingleSong(widget.song);
     } else {
-      audioHandler.playSong(widget.song);
+      audioHandler.playSingleSong(widget.song);
     }
   }
 
@@ -387,7 +387,10 @@ class _SongBarState extends State<SongBar> {
     // Capture localization strings before building menu items to avoid
     // accessing context.l10n inside ValueListenableBuilder which can fail
     // when the widget is being disposed
-    final l10n = context.l10n!;
+    final l10n = context.l10n;
+    if (l10n == null) {
+      return <PopupMenuEntry<String>>[];
+    }
     final playNextText = l10n.playNext;
     final addToQueueText = l10n.addToQueue;
     final removeFromLikedSongsText = l10n.removeFromLikedSongs;
