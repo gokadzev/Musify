@@ -179,34 +179,44 @@ class _LibraryPageState extends State<LibraryPage> {
           ValueListenableBuilder<List>(
             valueListenable: userPlaylistFolders,
             builder: (context, folders, _) {
-              if (folders.isEmpty) {
-                return const SizedBox();
-              }
-              return _buildFolderListView(context, folders, true);
-            },
-          ),
-          ValueListenableBuilder<List>(
-            valueListenable: userCustomPlaylists,
-            builder: (context, playlists, _) {
-              final playlistsNotInFolders = getPlaylistsNotInFolders();
-              if (playlistsNotInFolders.isEmpty) {
-                return const SizedBox();
-              }
-              return _buildPlaylistListView(
-                context,
-                playlistsNotInFolders,
-                hasItemsAfter: true,
-                hasItemsBefore: true,
+              return ValueListenableBuilder<List>(
+                valueListenable: userCustomPlaylists,
+                builder: (context, _, __) {
+                  final playlistsNotInFolders = getPlaylistsNotInFolders();
+                  final hasFolders = folders.isNotEmpty;
+                  final hasCustomPlaylists = playlistsNotInFolders.isNotEmpty;
+                  final hasAnythingAfterOffline =
+                      hasFolders || hasCustomPlaylists;
+                  return Column(
+                    children: [
+                      PlaylistBar(
+                        context.l10n!.offlineSongs,
+                        onPressed: () => NavigationManager.router.go(
+                          '/library/userSongs/offline',
+                        ),
+                        cubeIcon: FluentIcons.cloud_off_24_filled,
+                        borderRadius: hasAnythingAfterOffline
+                            ? BorderRadius.zero
+                            : commonCustomBarRadiusLast,
+                        showBuildActions: false,
+                      ),
+                      if (hasFolders)
+                        _buildFolderListView(
+                          context,
+                          folders,
+                          hasCustomPlaylists,
+                        ),
+                      if (hasCustomPlaylists)
+                        _buildPlaylistListView(
+                          context,
+                          playlistsNotInFolders,
+                          hasItemsBefore: true,
+                        ),
+                    ],
+                  );
+                },
               );
             },
-          ),
-          PlaylistBar(
-            context.l10n!.offlineSongs,
-            onPressed: () =>
-                NavigationManager.router.go('/library/userSongs/offline'),
-            cubeIcon: FluentIcons.cloud_off_24_filled,
-            borderRadius: commonCustomBarRadiusLast,
-            showBuildActions: false,
           ),
         ],
 
