@@ -44,103 +44,101 @@ class PlaylistFolderPage extends StatefulWidget {
 }
 
 class _PlaylistFolderPageState extends State<PlaylistFolderPage> {
-  late List<Map> _playlists;
   late String _folderName;
 
   @override
   void initState() {
     super.initState();
     _folderName = widget.folderName;
-    _loadPlaylists();
-  }
-
-  void _loadPlaylists() {
-    setState(() {
-      _playlists = getPlaylistsInFolder(widget.folderId);
-    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(_folderName),
-        actions: [
-          PopupMenuButton<String>(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            color: Theme.of(context).colorScheme.surface,
-            itemBuilder: (context) => [
-              PopupMenuItem<String>(
-                value: 'add',
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      FluentIcons.add_24_regular,
-                      color: Theme.of(context).colorScheme.primary,
-                      size: 18,
-                    ),
-                    const SizedBox(width: 10),
-                    Text(context.l10n!.addPlaylist),
-                  ],
+    return ValueListenableBuilder<List>(
+      valueListenable: userPlaylistFolders,
+      builder: (context, _, __) {
+        final playlists = getPlaylistsInFolder(widget.folderId);
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(_folderName),
+            actions: [
+              PopupMenuButton<String>(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
-              ),
-              PopupMenuItem<String>(
-                value: 'rename',
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      FluentIcons.edit_24_regular,
-                      color: Theme.of(context).colorScheme.primary,
-                      size: 18,
+                color: Theme.of(context).colorScheme.surface,
+                itemBuilder: (context) => [
+                  PopupMenuItem<String>(
+                    value: 'add',
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          FluentIcons.add_24_regular,
+                          color: Theme.of(context).colorScheme.primary,
+                          size: 18,
+                        ),
+                        const SizedBox(width: 10),
+                        Text(context.l10n!.addPlaylist),
+                      ],
                     ),
-                    const SizedBox(width: 10),
-                    Text(context.l10n!.editFolder),
-                  ],
-                ),
-              ),
-              PopupMenuItem<String>(
-                value: 'delete',
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      FluentIcons.delete_24_regular,
-                      color: Theme.of(context).colorScheme.error,
-                      size: 18,
+                  ),
+                  PopupMenuItem<String>(
+                    value: 'rename',
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          FluentIcons.edit_24_regular,
+                          color: Theme.of(context).colorScheme.primary,
+                          size: 18,
+                        ),
+                        const SizedBox(width: 10),
+                        Text(context.l10n!.editFolder),
+                      ],
                     ),
-                    const SizedBox(width: 10),
-                    Text(
-                      context.l10n!.deleteFolder,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.error,
-                      ),
+                  ),
+                  PopupMenuItem<String>(
+                    value: 'delete',
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          FluentIcons.delete_24_regular,
+                          color: Theme.of(context).colorScheme.error,
+                          size: 18,
+                        ),
+                        const SizedBox(width: 10),
+                        Text(
+                          context.l10n!.deleteFolder,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.error,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
+                onSelected: (value) {
+                  if (value == 'add') {
+                    _showAddPlaylistDialog();
+                  } else if (value == 'rename') {
+                    _showRenameFolderDialog();
+                  } else if (value == 'delete') {
+                    _showDeleteFolderDialog();
+                  }
+                },
               ),
             ],
-            onSelected: (value) {
-              if (value == 'add') {
-                _showAddPlaylistDialog();
-              } else if (value == 'rename') {
-                _showRenameFolderDialog();
-              } else if (value == 'delete') {
-                _showDeleteFolderDialog();
-              }
-            },
           ),
-        ],
-      ),
-      body: _playlists.isEmpty
-          ? _buildEmptyState()
-          : SingleChildScrollView(
-              padding: commonSingleChildScrollViewPadding,
-              child: Column(children: [_buildPlaylistList()]),
-            ),
+          body: playlists.isEmpty
+              ? _buildEmptyState()
+              : SingleChildScrollView(
+                  padding: commonSingleChildScrollViewPadding,
+                  child: Column(children: [_buildPlaylistList(playlists)]),
+                ),
+        );
+      },
     );
   }
 
@@ -171,15 +169,15 @@ class _PlaylistFolderPageState extends State<PlaylistFolderPage> {
     );
   }
 
-  Widget _buildPlaylistList() {
+  Widget _buildPlaylistList(List<Map> playlists) {
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: _playlists.length,
+      itemCount: playlists.length,
       padding: commonListViewBottomPadding,
       itemBuilder: (context, index) {
-        final playlist = _playlists[index];
-        final borderRadius = getItemBorderRadius(index, _playlists.length);
+        final playlist = playlists[index];
+        final borderRadius = getItemBorderRadius(index, playlists.length);
 
         return PlaylistBar(
           key: ValueKey(playlist['ytid']),
@@ -230,7 +228,6 @@ class _PlaylistFolderPageState extends State<PlaylistFolderPage> {
                 onTap: () {
                   Navigator.pop(context);
                   movePlaylistToFolder(playlist, widget.folderId, context);
-                  _loadPlaylists();
                 },
               );
             },
@@ -256,7 +253,6 @@ class _PlaylistFolderPageState extends State<PlaylistFolderPage> {
         onSubmit: () {
           Navigator.of(context).pop();
           movePlaylistToFolder(playlist, null, context);
-          _loadPlaylists();
         },
       ),
     );
