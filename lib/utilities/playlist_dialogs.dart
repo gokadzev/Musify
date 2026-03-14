@@ -341,47 +341,52 @@ void showAddToPlaylistDialog(
           constraints: BoxConstraints(
             maxHeight: MediaQuery.sizeOf(context).height * 0.6,
           ),
-          child: userCustomPlaylists.value.isNotEmpty
-              ? ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: userCustomPlaylists.value.length,
-                  itemBuilder: (context, index) {
-                    final playlist = userCustomPlaylists.value[index];
-                    return Card(
-                      color: Theme.of(context).colorScheme.secondaryContainer,
-                      elevation: 0,
-                      child: ListTile(
-                        title: Text(playlist['title']),
-                        onTap: () {
-                          if (song != null) {
-                            showToast(
-                              context,
-                              addSongInCustomPlaylist(
-                                context,
-                                playlist['ytid'],
-                                song,
-                              ),
-                            );
-                          } else if (songs != null && songs.isNotEmpty) {
-                            showToast(
-                              context,
-                              addSongsInCustomPlaylist(
-                                context,
-                                playlist['ytid'],
-                                songs,
-                              ),
-                            );
-                          }
-                          Navigator.pop(context);
-                        },
-                      ),
+          child: Builder(
+            builder: (context) {
+              final playlists = getUserCustomPlaylists();
+              return playlists.isNotEmpty
+                  ? ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: playlists.length,
+                      itemBuilder: (context, index) {
+                        final playlist = playlists[index];
+                        return Card(
+                          color: Theme.of(context).colorScheme.secondaryContainer,
+                          elevation: 0,
+                          child: ListTile(
+                            title: Text(playlist['title']),
+                            onTap: () {
+                              if (song != null) {
+                                showToast(
+                                  context,
+                                  addSongInCustomPlaylist(
+                                    context,
+                                    playlist['ytid'],
+                                    song,
+                                  ),
+                                );
+                              } else if (songs != null && songs.isNotEmpty) {
+                                showToast(
+                                  context,
+                                  addSongsInCustomPlaylist(
+                                    context,
+                                    playlist['ytid'],
+                                    songs,
+                                  ),
+                                );
+                              }
+                              Navigator.pop(context);
+                            },
+                          ),
+                        );
+                      },
+                    )
+                  : Text(
+                      context.l10n!.noCustomPlaylists,
+                      textAlign: TextAlign.center,
                     );
-                  },
-                )
-              : Text(
-                  context.l10n!.noCustomPlaylists,
-                  textAlign: TextAlign.center,
-                ),
+            },
+          ),
         ),
         actionsAlignment: MainAxisAlignment.end,
         actions: [
