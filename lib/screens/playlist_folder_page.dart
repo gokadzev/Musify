@@ -25,6 +25,7 @@ import 'package:musify/constants/app_constants.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/services/playlists_manager.dart';
 import 'package:musify/utilities/app_utils.dart';
+import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/playlist_bar.dart';
 
@@ -44,10 +45,12 @@ class PlaylistFolderPage extends StatefulWidget {
 
 class _PlaylistFolderPageState extends State<PlaylistFolderPage> {
   late List<Map> _playlists;
+  late String _folderName;
 
   @override
   void initState() {
     super.initState();
+    _folderName = widget.folderName;
     _loadPlaylists();
   }
 
@@ -61,7 +64,7 @@ class _PlaylistFolderPageState extends State<PlaylistFolderPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.folderName),
+        title: Text(_folderName),
         actions: [
           PopupMenuButton<String>(
             shape: RoundedRectangleBorder(
@@ -69,6 +72,21 @@ class _PlaylistFolderPageState extends State<PlaylistFolderPage> {
             ),
             color: Theme.of(context).colorScheme.surface,
             itemBuilder: (context) => [
+              PopupMenuItem<String>(
+                value: 'rename',
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      FluentIcons.edit_24_regular,
+                      color: Theme.of(context).colorScheme.primary,
+                      size: 18,
+                    ),
+                    const SizedBox(width: 10),
+                    Text(context.l10n!.editFolder),
+                  ],
+                ),
+              ),
               PopupMenuItem<String>(
                 value: 'delete',
                 child: Row(
@@ -91,7 +109,9 @@ class _PlaylistFolderPageState extends State<PlaylistFolderPage> {
               ),
             ],
             onSelected: (value) {
-              if (value == 'delete') {
+              if (value == 'rename') {
+                _showRenameFolderDialog();
+              } else if (value == 'delete') {
                 _showDeleteFolderDialog();
               }
             },
@@ -169,6 +189,71 @@ class _PlaylistFolderPageState extends State<PlaylistFolderPage> {
           movePlaylistToFolder(playlist, null, context);
           _loadPlaylists();
         },
+      ),
+    );
+  }
+
+  void _showRenameFolderDialog() {
+    var newName = _folderName;
+    final colorScheme = Theme.of(context).colorScheme;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: colorScheme.surface,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+        icon: Icon(
+          FluentIcons.folder_24_regular,
+          color: colorScheme.primary,
+          size: 32,
+        ),
+        title: Text(
+          context.l10n!.editFolder,
+          style: TextStyle(
+            color: colorScheme.onSurface,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        content: TextFormField(
+          decoration: InputDecoration(
+            labelText: context.l10n!.folderName,
+            prefixIcon: Icon(
+              FluentIcons.text_field_20_regular,
+              color: colorScheme.onSurfaceVariant,
+            ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            filled: true,
+            fillColor: colorScheme.surfaceContainerLow,
+          ),
+          initialValue: newName,
+          autofocus: true,
+          onChanged: (value) => newName = value,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              context.l10n!.cancel,
+              style: TextStyle(color: colorScheme.onSurfaceVariant),
+            ),
+          ),
+          FilledButton.icon(
+            onPressed: () {
+              Navigator.pop(context);
+              final result = renamePlaylistFolder(
+                widget.folderId,
+                newName,
+                context,
+              );
+              showToast(context, result);
+              if (newName.trim().isNotEmpty) {
+                setState(() => _folderName = newName.trim());
+              }
+            },
+            icon: const Icon(FluentIcons.save_20_filled),
+            label: Text(context.l10n!.update),
+          ),
+        ],
       ),
     );
   }
