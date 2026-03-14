@@ -255,8 +255,7 @@ class PlaylistBar extends StatelessWidget {
               ),
             ),
           if (playlistData != null &&
-              (isFolder ||
-                  playlistData!['source'] == 'user-created'))
+              (isFolder || playlistData!['source'] == 'user-created'))
             PopupMenuItem<String>(
               value: 'edit',
               child: Row(
@@ -517,20 +516,18 @@ class PlaylistBar extends StatelessWidget {
             fontWeight: FontWeight.w600,
           ),
         ),
-        content: TextField(
+        content: TextFormField(
           decoration: InputDecoration(
             labelText: context.l10n!.folderName,
             prefixIcon: Icon(
               FluentIcons.text_field_20_regular,
               color: colorScheme.onSurfaceVariant,
             ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             filled: true,
             fillColor: colorScheme.surfaceContainerLow,
           ),
-          controller: TextEditingController(text: folderName),
+          initialValue: folderName,
           autofocus: true,
           onChanged: (value) => folderName = value,
         ),
@@ -545,7 +542,11 @@ class PlaylistBar extends StatelessWidget {
           FilledButton.icon(
             onPressed: () {
               Navigator.pop(context);
-              final result = renamePlaylistFolder(folderId, folderName, context);
+              final result = renamePlaylistFolder(
+                folderId,
+                folderName,
+                context,
+              );
               showToast(context, result);
             },
             icon: const Icon(FluentIcons.save_20_filled),
