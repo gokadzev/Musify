@@ -150,10 +150,26 @@ String addSongInCustomPlaylist(
   int? indexToInsert,
 }) {
   Map? customPlaylist;
+  var isFromFolder = false;
+
   for (final playlist in userCustomPlaylists.value) {
     if (playlist['ytid'] == playlistId) {
       customPlaylist = playlist as Map;
       break;
+    }
+  }
+
+  if (customPlaylist == null) {
+    for (final folder in userPlaylistFolders.value) {
+      final folderPlaylists = folder['playlists'] as List<dynamic>? ?? [];
+      for (final playlist in folderPlaylists) {
+        if (playlist['ytid'] == playlistId) {
+          customPlaylist = playlist as Map;
+          isFromFolder = true;
+          break;
+        }
+      }
+      if (customPlaylist != null) break;
     }
   }
 
@@ -170,14 +186,32 @@ String addSongInCustomPlaylist(
     } else {
       playlistSongs.add(song);
     }
-    unawaited(
-      addOrUpdateData('user', 'customPlaylists', userCustomPlaylists.value),
-    );
+
+    if (isFromFolder) {
+      unawaited(
+        addOrUpdateData('user', 'playlistFolders', userPlaylistFolders.value),
+      );
+    } else {
+      unawaited(
+        addOrUpdateData('user', 'customPlaylists', userCustomPlaylists.value),
+      );
+    }
+
     return context.l10n!.songAdded;
   } else {
     logger.log('Custom playlist not found for ytid: $playlistId');
     return context.l10n!.error;
   }
+}
+
+List<Map> getUserCustomPlaylists() {
+  final allPlaylists = <Map>[];
+  allPlaylists.addAll(userCustomPlaylists.value.cast<Map>());
+  for (final folder in userPlaylistFolders.value) {
+    final folderPlaylists = folder['playlists'] as List<dynamic>? ?? [];
+    allPlaylists.addAll(folderPlaylists.cast<Map>());
+  }
+  return allPlaylists;
 }
 
 bool removeSongFromPlaylist(
