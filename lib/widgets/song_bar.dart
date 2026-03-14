@@ -790,4 +790,3 @@ class _OnlineArtwork extends StatelessWidget {
     );
   }
 }
-
