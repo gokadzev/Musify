@@ -315,9 +315,34 @@ bool removeSongFromPlaylist(
 
     try {
       if (playlist['source'] == 'user-created') {
-        unawaited(
-          addOrUpdateData('user', 'customPlaylists', userCustomPlaylists.value),
-        );
+        final playlistId = playlist['ytid']?.toString();
+        final isInFolder =
+            playlistId != null &&
+            userPlaylistFolders.value.any((folder) {
+              final folderPlaylists =
+                  folder['playlists'] as List<dynamic>? ?? [];
+              return folderPlaylists.any(
+                (p) => p['ytid']?.toString() == playlistId,
+              );
+            });
+
+        if (isInFolder) {
+          unawaited(
+            addOrUpdateData(
+              'user',
+              'playlistFolders',
+              userPlaylistFolders.value,
+            ),
+          );
+        } else {
+          unawaited(
+            addOrUpdateData(
+              'user',
+              'customPlaylists',
+              userCustomPlaylists.value,
+            ),
+          );
+        }
       } else {
         unawaited(addOrUpdateData('user', 'playlists', userPlaylists.value));
       }
