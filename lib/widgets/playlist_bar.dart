@@ -24,7 +24,7 @@ import 'dart:async';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:musify/constants/common_variables.dart';
+import 'package:musify/constants/app_constants.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/services/common_services.dart';
 import 'package:musify/services/data_manager.dart';
@@ -32,7 +32,9 @@ import 'package:musify/services/playlists_manager.dart';
 import 'package:musify/services/router_service.dart';
 import 'package:musify/utilities/artwork_provider.dart';
 import 'package:musify/utilities/flutter_toast.dart';
+import 'package:musify/utilities/playlist_dialogs.dart';
 import 'package:musify/widgets/edit_playlist_dialog.dart';
+import 'package:musify/widgets/spinner.dart';
 
 class PlaylistBar extends StatelessWidget {
   PlaylistBar(
@@ -75,6 +77,11 @@ class PlaylistBar extends StatelessWidget {
   // Helper to determine if this is a folder
   bool get isFolder =>
       playlistData != null && playlistData!.containsKey('playlists');
+
+  String? get _resolvedPlaylistId =>
+      playlistId ?? playlistData?['ytid']?.toString();
+
+  bool get _canAddToPlaylist => !isFolder && _resolvedPlaylistId != null;
 
   @override
   Widget build(BuildContext context) {
@@ -171,10 +178,10 @@ class PlaylistBar extends StatelessWidget {
       onSelected: (String value) {
         switch (value) {
           case 'like':
-            if (playlistId != null) {
+            if (_resolvedPlaylistId != null) {
               final newValue = !playlistLikeStatus.value;
               playlistLikeStatus.value = newValue;
-              updatePlaylistLikeStatus(playlistId!, newValue);
+              updatePlaylistLikeStatus(_resolvedPlaylistId!, newValue);
               currentLikedPlaylistsLength.value += newValue ? 1 : -1;
             }
             break;
@@ -190,6 +197,9 @@ class PlaylistBar extends StatelessWidget {
             } else {
               _handleEdit(context);
             }
+            break;
+          case 'add_to_playlist':
+            _handleAddPlaylistToPlaylist(context);
             break;
         }
       },
@@ -210,6 +220,20 @@ class PlaylistBar extends StatelessWidget {
                         ? context.l10n!.removeFromLikedPlaylists
                         : context.l10n!.addToLikedPlaylists,
                   ),
+                ],
+              ),
+            ),
+          if (_canAddToPlaylist)
+            PopupMenuItem<String>(
+              value: 'add_to_playlist',
+              child: Row(
+                children: [
+                  Icon(
+                    FluentIcons.album_add_24_regular,
+                    color: colorScheme.primary,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(context.l10n!.addToPlaylist),
                 ],
               ),
             ),
@@ -395,16 +419,54 @@ class PlaylistBar extends StatelessWidget {
       };
     } else {
       return () {
-        final resolvedPlaylistId =
-            playlistId ?? playlistData?['ytid']?.toString();
-        if (resolvedPlaylistId == null ||
-            resolvedPlaylistId.isEmpty ||
-            resolvedPlaylistId == 'null') {
+        if (_resolvedPlaylistId == null ||
+            _resolvedPlaylistId!.isEmpty ||
+            _resolvedPlaylistId == 'null') {
           showToast(context, context.l10n!.error);
           return;
         }
-        context.push('/home/playlist/$resolvedPlaylistId');
+        context.push('/home/playlist/$_resolvedPlaylistId');
       };
+    }
+  }
+
+  Future<void> _handleAddPlaylistToPlaylist(BuildContext context) async {
+    if (_resolvedPlaylistId == null) {
+      showToast(context, context.l10n!.error);
+      return;
+    }
+
+    final navContext = NavigationManager().context;
+    unawaited(
+      showDialog(
+        context: navContext,
+        barrierDismissible: false,
+        builder: (_) => const Center(child: Spinner()),
+      ),
+    );
+
+    try {
+      final fullPlaylist = await getPlaylistInfoForWidget(_resolvedPlaylistId);
+      if (!navContext.mounted) return;
+      Navigator.pop(navContext);
+
+      if (fullPlaylist == null || fullPlaylist['list'] == null) {
+        showToast(navContext, navContext.l10n!.error);
+        return;
+      }
+
+      final tracks = fullPlaylist['list'] as List<dynamic>;
+      if (tracks.isEmpty) {
+        showToast(navContext, navContext.l10n!.noSongsInPlaylist);
+        return;
+      }
+
+      showAddToPlaylistDialog(navContext, songs: tracks);
+    } catch (e) {
+      if (navContext.mounted) {
+        Navigator.pop(navContext);
+        showToast(navContext, navContext.l10n!.error);
+      }
     }
   }
 

@@ -138,6 +138,7 @@
   "noFolders": "No folders created yet",
   "noOfflineLibraryContent": "No offline content. Enable online mode or download playlists/songs to use the library.",
   "noPlaylistsAdded": "No playlists added yet",
+  "noSongsInPlaylist": "No songs in playlist",
   "noSongsInQueue": "No songs in queue",
   "notYTlist": "Invalid YouTube playlist ID",
   "offlineMode": "Offline mode",

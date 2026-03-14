@@ -24,7 +24,7 @@ import 'dart:async';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:musify/constants/common_variables.dart';
+import 'package:musify/constants/app_constants.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/common_services.dart';
@@ -33,10 +33,11 @@ import 'package:musify/services/playlist_download_service.dart';
 import 'package:musify/services/playlist_sharing.dart';
 import 'package:musify/services/playlists_manager.dart';
 import 'package:musify/services/settings_manager.dart';
+import 'package:musify/utilities/app_utils.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/offline_playlist_dialogs.dart';
+import 'package:musify/utilities/playlist_dialogs.dart';
 import 'package:musify/utilities/sort_utils.dart';
-import 'package:musify/utilities/utils.dart';
 import 'package:musify/widgets/edit_playlist_dialog.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/playlist_page/playlist_header.dart';
@@ -269,7 +270,10 @@ class _PlaylistPageState extends State<PlaylistPage> {
                   !isUserCreated &&
                   !offlineMode.value)
                 _buildLikeButton(),
-              if (!offlineMode.value) _buildSyncButton(),
+              if (!offlineMode.value) ...[
+                _buildAddToPlaylistButton(),
+                _buildSyncButton(),
+              ],
               if (songsLength > 0) _buildDownloadButton(),
               if (isUserCreated) ...[_buildShareButton(), _buildEditButton()],
             ],
@@ -367,6 +371,27 @@ class _PlaylistPageState extends State<PlaylistPage> {
       iconSize: 24,
       onPressed: _handleSyncPlaylist,
     );
+  }
+
+  Widget _buildAddToPlaylistButton() {
+    return IconButton.filledTonal(
+      icon: const Icon(FluentIcons.album_add_24_regular),
+      iconSize: 24,
+      onPressed: _handleAddFullPlaylistToPlaylist,
+    );
+  }
+
+  void _handleAddFullPlaylistToPlaylist() {
+    if (_playlist != null && _playlist['list'] != null) {
+      final List<dynamic> tracks = _playlist['list'];
+      if (tracks.isEmpty) {
+        showToast(context, context.l10n!.noSongsInPlaylist);
+        return;
+      }
+      showAddToPlaylistDialog(context, songs: tracks);
+    } else {
+      showToast(context, context.l10n!.loading);
+    }
   }
 
   Widget _buildEditButton() {

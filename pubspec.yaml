@@ -58,4 +58,4 @@ flutter:
   fonts:
     - family: paytoneOne
       fonts:
-        - asset: fonts/paytone/PaytoneOne-Regular.ttf
+        - asset: assets/fonts/paytone/PaytoneOne-Regular.ttf

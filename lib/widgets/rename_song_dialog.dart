@@ -64,7 +64,8 @@ class _RenameSongDialogState extends State<RenameSongDialog> {
 
     if (newTitle.isEmpty || newArtist.isEmpty) {
       final isMiniPlayerVisible = audioHandler.mediaItem.value != null;
-      final bottomMargin = 12.0 + (isMiniPlayerVisible ? MiniPlayer.playerHeight : 0.0);
+      final bottomMargin =
+          12.0 + (isMiniPlayerVisible ? MiniPlayer.playerHeight : 0.0);
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

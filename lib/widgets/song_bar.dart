@@ -25,7 +25,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:musify/constants/common_variables.dart';
+import 'package:musify/constants/app_constants.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/common_services.dart';
@@ -280,7 +280,7 @@ class _SongBarState extends State<SongBar> {
         _handleRenameSong(context);
         break;
       case 'add_to_playlist':
-        showAddToPlaylistDialog(context, widget.song);
+        showAddToPlaylistDialog(context, song: widget.song);
         break;
       case 'remove_from_recents':
         removeFromRecentlyPlayed(_ytid).catchError((e) {
@@ -789,74 +789,4 @@ class _OnlineArtwork extends StatelessWidget {
       ),
     );
   }
-}
-
-void showAddToPlaylistDialog(BuildContext context, dynamic song) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        icon: const Icon(FluentIcons.album_add_24_filled),
-        title: Text(context.l10n!.addToPlaylist),
-        content: Container(
-          width: double.maxFinite,
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.sizeOf(context).height * 0.6,
-          ),
-          child: Builder(
-            builder: (context) {
-              final playlists = getUserCustomPlaylists();
-              return playlists.isNotEmpty
-                  ? ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: playlists.length,
-                      itemBuilder: (context, index) {
-                        final playlist = playlists[index];
-                        return Card(
-                          color: Theme.of(context).colorScheme.secondaryContainer,
-                          elevation: 0,
-                          child: ListTile(
-                            title: Text(playlist['title']),
-                            onTap: () {
-                              showToast(
-                                context,
-                                addSongInCustomPlaylist(
-                                  context,
-                                  playlist['ytid'],
-                                  song,
-                                ),
-                              );
-                              Navigator.pop(context);
-                            },
-                          ),
-                        );
-                      },
-                    )
-                  : Text(
-                      context.l10n!.noCustomPlaylists,
-                      textAlign: TextAlign.center,
-                    );
-            },
-          ),
-        ),
-        actionsAlignment: MainAxisAlignment.end,
-        actions: <Widget>[
-          TextButton(
-            child: Text(context.l10n!.cancel),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          FilledButton.icon(
-            onPressed: () {
-              Navigator.pop(context);
-              showCreatePlaylistDialog(context, songToAdd: song);
-            },
-            icon: const Icon(FluentIcons.add_24_regular, size: 18),
-            label: Text(context.l10n!.addPlaylist),
-          ),
-        ],
-      );
-    },
-  );
 }
