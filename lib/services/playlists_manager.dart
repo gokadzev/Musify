@@ -210,10 +210,18 @@ String addSongInCustomPlaylist(
 
 List<Map> getUserCustomPlaylists() {
   final allPlaylists = <Map>[];
-  allPlaylists.addAll(userCustomPlaylists.value.cast<Map>());
+  allPlaylists.addAll(
+    userCustomPlaylists.value
+        .where((p) => p['source'] == 'user-created')
+        .cast<Map>(),
+  );
   for (final folder in userPlaylistFolders.value) {
     final folderPlaylists = folder['playlists'] as List<dynamic>? ?? [];
-    allPlaylists.addAll(folderPlaylists.cast<Map>());
+    allPlaylists.addAll(
+      folderPlaylists
+          .where((p) => p['source'] == 'user-created')
+          .cast<Map>(),
+    );
   }
   return allPlaylists;
 }
