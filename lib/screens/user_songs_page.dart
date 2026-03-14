@@ -371,9 +371,37 @@ class _UserSongsPageState extends State<UserSongsPage> {
         };
 
         if (displayList.isEmpty) {
-          return const SliverFillRemaining(
+          final emptyIcon = isLikedSongs
+              ? FluentIcons.heart_24_regular
+              : FluentIcons.music_note_1_24_regular;
+          return SliverFillRemaining(
             hasScrollBody: false,
-            child: SizedBox.expand(),
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      emptyIcon,
+                      size: 64,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withAlpha(120),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      context.l10n!.playlistEmpty,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           );
         }
 

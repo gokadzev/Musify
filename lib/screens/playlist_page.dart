@@ -180,7 +180,37 @@ class _PlaylistPageState extends State<PlaylistPage> {
                     ),
                   ),
                 ] else
-                  const SliverFillRemaining(child: SizedBox.expand()),
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 32),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              FluentIcons.music_note_1_24_regular,
+                              size: 64,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurface.withAlpha(120),
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              context.l10n!.noSongsInPlaylist,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
               ],
             )
           : SizedBox(
