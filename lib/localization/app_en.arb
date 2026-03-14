@@ -88,6 +88,7 @@
   "fieldsNotEmpty": "All fields must be filled",
   "folderAlreadyExists": "A folder with this name already exists",
   "folderDeleted": "Folder deleted successfully",
+  "folderUpdated": "Folder updated successfully",
   "folderName": "Folder name",
   "folderRestrictions": "Android restrictions require selecting a backup folder from Downloads or Documents",
   "home": "Home",

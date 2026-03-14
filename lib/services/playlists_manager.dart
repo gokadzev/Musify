@@ -512,7 +512,7 @@ String renamePlaylistFolder(
   unawaited(
     addOrUpdateData('user', 'playlistFolders', userPlaylistFolders.value),
   );
-  return context?.l10n?.addedSuccess ?? 'Added successfully';
+  return context?.l10n?.folderUpdated ?? 'Folder updated successfully';
 }
 
 String movePlaylistToFolder(
