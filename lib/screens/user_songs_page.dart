@@ -82,7 +82,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
       appBar: AppBar(
         title: offlineMode.value ? Text(title) : null,
         actions: [
-          if (isLikedSongs)
+          if (isLikedSongs && songsList.isNotEmpty)
             IconButton(
               onPressed: _toggleEditMode,
               icon: Icon(
