@@ -209,22 +209,17 @@ String addSongInCustomPlaylist(
 }
 
 List<Map> getUserCustomPlaylists() {
-  final allPlaylists = <Map>[];
-  allPlaylists.addAll(
-    userCustomPlaylists.value
+  return [
+    ...userCustomPlaylists.value
         .where((p) => p['source'] == 'user-created')
         .cast<Map>(),
-  );
-  for (final folder in userPlaylistFolders.value) {
-    final folderPlaylists = folder['playlists'] as List<dynamic>? ?? [];
-    allPlaylists.addAll(
-      folderPlaylists
+    for (final folder in userPlaylistFolders.value)
+      ...(folder['playlists'] as List<dynamic>? ?? [])
           .where((p) => p['source'] == 'user-created')
           .cast<Map>(),
-    );
-  }
-  return allPlaylists;
+  ];
 }
+
 String addSongsInCustomPlaylist(
   BuildContext context,
   String playlistId,
@@ -506,8 +501,7 @@ String renamePlaylistFolder(
   final exists = updatedFolders.any(
     (folder) =>
         folder['id'] != folderId &&
-        folder['name'].toString().toLowerCase() ==
-            newName.trim().toLowerCase(),
+        folder['name'].toString().toLowerCase() == newName.trim().toLowerCase(),
   );
 
   if (exists) {
