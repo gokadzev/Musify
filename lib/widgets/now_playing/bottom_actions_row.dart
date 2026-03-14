@@ -29,8 +29,8 @@ import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/flutter_bottom_sheet.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/mediaitem.dart';
+import 'package:musify/utilities/playlist_dialogs.dart';
 import 'package:musify/widgets/queue_list_view.dart';
-import 'package:musify/widgets/song_bar.dart';
 
 class BottomActionsRow extends StatefulWidget {
   const BottomActionsRow({
@@ -121,7 +121,7 @@ class _BottomActionsRowState extends State<BottomActionsRow> {
               size: responsiveIconSize,
               onPressed: () => showAddToPlaylistDialog(
                 context,
-                mediaItemToMap(widget.metadata),
+                song: mediaItemToMap(widget.metadata),
               ),
               tooltip: l10n.addToPlaylist,
             ),
