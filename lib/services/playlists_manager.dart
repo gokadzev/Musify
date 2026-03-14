@@ -405,6 +405,42 @@ String createPlaylistFolder(String folderName, [BuildContext? context]) {
   return context?.l10n?.addedSuccess ?? 'Added successfully';
 }
 
+String renamePlaylistFolder(
+  String folderId,
+  String newName, [
+  BuildContext? context,
+]) {
+  if (newName.trim().isEmpty) {
+    return context?.l10n?.enterFolderName ?? 'Please enter a folder name';
+  }
+
+  final updatedFolders = List<Map>.from(userPlaylistFolders.value);
+  final folderIndex = updatedFolders.indexWhere((f) => f['id'] == folderId);
+
+  if (folderIndex == -1) {
+    return context?.l10n?.error ?? 'Error';
+  }
+
+  final exists = updatedFolders.any(
+    (folder) =>
+        folder['id'] != folderId &&
+        folder['name'].toString().toLowerCase() ==
+            newName.trim().toLowerCase(),
+  );
+
+  if (exists) {
+    return context?.l10n?.folderAlreadyExists ?? 'Folder already exists';
+  }
+
+  updatedFolders[folderIndex]['name'] = newName.trim();
+  userPlaylistFolders.value = updatedFolders;
+
+  unawaited(
+    addOrUpdateData('user', 'playlistFolders', userPlaylistFolders.value),
+  );
+  return context?.l10n?.addedSuccess ?? 'Added successfully';
+}
+
 String movePlaylistToFolder(
   Map playlist,
   String? folderId,

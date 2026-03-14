@@ -185,7 +185,11 @@ class PlaylistBar extends StatelessWidget {
             _showMoveToFolderDialog(context);
             break;
           case 'edit':
-            _handleEdit(context);
+            if (isFolder) {
+              _handleEditFolder(context);
+            } else {
+              _handleEdit(context);
+            }
             break;
         }
       },
@@ -227,15 +231,19 @@ class PlaylistBar extends StatelessWidget {
               ),
             ),
           if (playlistData != null &&
-              !isFolder &&
-              playlistData!['source'] == 'user-created')
+              (isFolder ||
+                  playlistData!['source'] == 'user-created'))
             PopupMenuItem<String>(
               value: 'edit',
               child: Row(
                 children: [
                   Icon(FluentIcons.edit_24_filled, color: colorScheme.primary),
                   const SizedBox(width: 8),
-                  Text(context.l10n!.editPlaylist),
+                  Text(
+                    isFolder
+                        ? context.l10n!.editFolder
+                        : context.l10n!.editPlaylist,
+                  ),
                 ],
               ),
             ),
@@ -421,5 +429,68 @@ class PlaylistBar extends StatelessWidget {
         showToast(appCtx, appCtx.l10n!.playlistUpdated);
       }
     }
+  }
+
+  void _handleEditFolder(BuildContext context) {
+    if (playlistData == null) return;
+    final folderId = playlistData!['id'];
+    var folderName = playlistTitle;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: colorScheme.surface,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+        icon: Icon(
+          FluentIcons.folder_24_regular,
+          color: colorScheme.primary,
+          size: 32,
+        ),
+        title: Text(
+          context.l10n!.editFolder,
+          style: TextStyle(
+            color: colorScheme.onSurface,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        content: TextField(
+          decoration: InputDecoration(
+            labelText: context.l10n!.folderName,
+            prefixIcon: Icon(
+              FluentIcons.text_field_20_regular,
+              color: colorScheme.onSurfaceVariant,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            filled: true,
+            fillColor: colorScheme.surfaceContainerLow,
+          ),
+          controller: TextEditingController(text: folderName),
+          autofocus: true,
+          onChanged: (value) => folderName = value,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              context.l10n!.cancel,
+              style: TextStyle(color: colorScheme.onSurfaceVariant),
+            ),
+          ),
+          FilledButton.icon(
+            onPressed: () {
+              Navigator.pop(context);
+              final result = renamePlaylistFolder(folderId, folderName, context);
+              showToast(context, result);
+            },
+            icon: const Icon(FluentIcons.save_20_filled),
+            label: Text(context.l10n!.update),
+          ),
+        ],
+      ),
+    );
   }
 }

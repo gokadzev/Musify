@@ -70,6 +70,7 @@
   "downloadsDeleted": "Downloads deleted successfully",
   "dynamicColor": "Dynamic accent color (Android 12+)",
   "editPlaylist": "Edit playlist",
+  "editFolder": "Edit folder",
   "emptyFolderMsg": "This folder is empty. Add playlists to organize your music.",
   "enableUpdateChecksDescription": "Would you like Musify to check for updates automatically from GitHub releases? You can always check for updates manually from the settings",
   "enterFolderName": "Please enter a folder name",
