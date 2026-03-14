@@ -73,6 +73,21 @@ class _PlaylistFolderPageState extends State<PlaylistFolderPage> {
             color: Theme.of(context).colorScheme.surface,
             itemBuilder: (context) => [
               PopupMenuItem<String>(
+                value: 'add',
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      FluentIcons.add_24_regular,
+                      color: Theme.of(context).colorScheme.primary,
+                      size: 18,
+                    ),
+                    const SizedBox(width: 10),
+                    Text(context.l10n!.addPlaylist),
+                  ],
+                ),
+              ),
+              PopupMenuItem<String>(
                 value: 'rename',
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -109,7 +124,9 @@ class _PlaylistFolderPageState extends State<PlaylistFolderPage> {
               ),
             ],
             onSelected: (value) {
-              if (value == 'rename') {
+              if (value == 'add') {
+                _showAddPlaylistDialog();
+              } else if (value == 'rename') {
                 _showRenameFolderDialog();
               } else if (value == 'delete') {
                 _showDeleteFolderDialog();
@@ -174,6 +191,58 @@ class _PlaylistFolderPageState extends State<PlaylistFolderPage> {
           borderRadius: borderRadius,
         );
       },
+    );
+  }
+
+  Future<void> _showAddPlaylistDialog() async {
+    final customCandidates = getPlaylistsNotInFolders();
+    final youtubeCandidates = await getUserPlaylistsNotInFolders();
+    final candidates = [...customCandidates, ...youtubeCandidates];
+
+    if (!mounted) return;
+
+    if (candidates.isEmpty) {
+      showToast(context, context.l10n!.noPlaylistsAdded);
+      return;
+    }
+
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(context.l10n!.addPlaylist),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: candidates.length,
+            itemBuilder: (context, index) {
+              final playlist = candidates[index];
+              return ListTile(
+                leading: Icon(
+                  FluentIcons.music_note_2_24_regular,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                title: Text(
+                  playlist['title'] ?? '',
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  movePlaylistToFolder(playlist, widget.folderId, context);
+                  _loadPlaylists();
+                },
+              );
+            },
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(context.l10n!.cancel),
+          ),
+        ],
+      ),
     );
   }
 
