@@ -26,8 +26,11 @@ import 'package:musify/services/playlists_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/playlist_image_picker.dart';
 
-void showCreatePlaylistDialog(BuildContext context,
-    {dynamic songToAdd, List<dynamic>? songsToAdd}) {
+void showCreatePlaylistDialog(
+  BuildContext context, {
+  dynamic songToAdd,
+  List<dynamic>? songsToAdd,
+}) {
   var id = '';
   var customPlaylistName = '';
   var isYouTubeMode = songToAdd == null && songsToAdd == null;
@@ -381,12 +384,10 @@ void showAddToPlaylistDialog(
                 ),
         ),
         actionsAlignment: MainAxisAlignment.end,
-        actions: <Widget>[
+        actions: [
           TextButton(
             child: Text(context.l10n!.cancel),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
+            onPressed: () => Navigator.pop(context),
           ),
           FilledButton.icon(
             onPressed: () {

@@ -213,7 +213,7 @@ String addSongsInCustomPlaylist(
       );
       return context.l10n!.addedSuccess;
     } else {
-      return context.l10n!.songAlreadyInPlaylist; // Or some message saying all songs already exist
+      return context.l10n!.songAlreadyInPlaylist;
     }
   } else {
     logger.log('Custom playlist not found for ytid: $playlistId');

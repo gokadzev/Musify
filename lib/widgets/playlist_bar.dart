@@ -195,7 +195,7 @@ class PlaylistBar extends StatelessWidget {
             _handleEdit(context);
             break;
           case 'add_to_playlist':
-            _handleAddPlaylistToPlaylist(context, colorScheme);
+            _handleAddPlaylistToPlaylist(context);
             break;
         }
       },
@@ -422,56 +422,42 @@ class PlaylistBar extends StatelessWidget {
     }
   }
 
-  Future<void> _handleAddPlaylistToPlaylist(
-    BuildContext context,
-    ColorScheme colorScheme,
-  ) async {
+  Future<void> _handleAddPlaylistToPlaylist(BuildContext context) async {
     if (_resolvedPlaylistId == null) {
       showToast(context, context.l10n!.error);
       return;
     }
 
-    final currentContext = NavigationManager().context;
+    final navContext = NavigationManager().context;
     unawaited(
       showDialog(
-        context: currentContext,
+        context: navContext,
         barrierDismissible: false,
-        builder: (BuildContext context) {
-          return const Center(
-            child: Spinner(),
-          );
-        },
+        builder: (_) => const Center(child: Spinner()),
       ),
     );
 
     try {
-      final fullPlaylist = await getPlaylistInfoForWidget(
-        _resolvedPlaylistId!,
-      );
+      final fullPlaylist = await getPlaylistInfoForWidget(_resolvedPlaylistId);
+      if (!navContext.mounted) return;
+      Navigator.pop(navContext);
 
-      final appCtx = NavigationManager().context;
-
-      if (appCtx.mounted) {
-        Navigator.pop(appCtx); // close spinner
-        if (fullPlaylist != null && fullPlaylist['list'] != null) {
-          final List<dynamic> tracks = fullPlaylist['list'];
-          if (tracks.isEmpty) {
-            showToast(appCtx, appCtx.l10n!.noSongsInPlaylist);
-            return;
-          }
-          unawaited(
-            Future.microtask(
-                () => showAddToPlaylistDialog(appCtx, songs: tracks)),
-          );
-        } else {
-          showToast(appCtx, appCtx.l10n!.error);
-        }
+      if (fullPlaylist == null || fullPlaylist['list'] == null) {
+        showToast(navContext, navContext.l10n!.error);
+        return;
       }
+
+      final tracks = fullPlaylist['list'] as List<dynamic>;
+      if (tracks.isEmpty) {
+        showToast(navContext, navContext.l10n!.noSongsInPlaylist);
+        return;
+      }
+
+      showAddToPlaylistDialog(navContext, songs: tracks);
     } catch (e) {
-      final appCtx = NavigationManager().context;
-      if (appCtx.mounted) {
-        Navigator.pop(appCtx); // close spinner
-        showToast(appCtx, appCtx.l10n!.error);
+      if (navContext.mounted) {
+        Navigator.pop(navContext);
+        showToast(navContext, navContext.l10n!.error);
       }
     }
   }

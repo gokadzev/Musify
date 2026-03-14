@@ -372,7 +372,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
       onPressed: _handleSyncPlaylist,
     );
   }
-  
+
   Widget _buildAddToPlaylistButton() {
     return IconButton.filledTonal(
       icon: const Icon(FluentIcons.album_add_24_regular),
