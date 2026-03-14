@@ -20,7 +20,7 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:musify/constants/common_variables.dart';
+import 'package:musify/constants/app_constants.dart';
 
 class CustomBar extends StatelessWidget {
   CustomBar(
