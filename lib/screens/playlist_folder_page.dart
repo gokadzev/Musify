@@ -59,86 +59,189 @@ class _PlaylistFolderPageState extends State<PlaylistFolderPage> {
       builder: (context, _, __) {
         final playlists = getPlaylistsInFolder(widget.folderId);
         return Scaffold(
-          appBar: AppBar(
-            title: Text(_folderName),
-            actions: [
-              PopupMenuButton<String>(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+          body: CustomScrollView(
+            slivers: [
+              SliverAppBar(
+                pinned: true,
+                expandedHeight: 300,
+                flexibleSpace: FlexibleSpaceBar(
+                  collapseMode: CollapseMode.pin,
+                  background: _buildHeader(context, playlists.length),
                 ),
-                color: Theme.of(context).colorScheme.surface,
-                itemBuilder: (context) => [
-                  PopupMenuItem<String>(
-                    value: 'add',
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          FluentIcons.add_24_regular,
-                          color: Theme.of(context).colorScheme.primary,
-                          size: 18,
-                        ),
-                        const SizedBox(width: 10),
-                        Text(context.l10n!.addPlaylist),
-                      ],
+                actions: [
+                  PopupMenuButton<String>(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                  ),
-                  PopupMenuItem<String>(
-                    value: 'rename',
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          FluentIcons.edit_24_regular,
-                          color: Theme.of(context).colorScheme.primary,
-                          size: 18,
+                    color: Theme.of(context).colorScheme.surface,
+                    itemBuilder: (context) => [
+                      PopupMenuItem<String>(
+                        value: 'add',
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              FluentIcons.add_24_regular,
+                              color: Theme.of(context).colorScheme.primary,
+                              size: 18,
+                            ),
+                            const SizedBox(width: 10),
+                            Text(context.l10n!.addPlaylist),
+                          ],
                         ),
-                        const SizedBox(width: 10),
-                        Text(context.l10n!.editFolder),
-                      ],
-                    ),
-                  ),
-                  PopupMenuItem<String>(
-                    value: 'delete',
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          FluentIcons.delete_24_regular,
-                          color: Theme.of(context).colorScheme.error,
-                          size: 18,
+                      ),
+                      PopupMenuItem<String>(
+                        value: 'rename',
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              FluentIcons.edit_24_regular,
+                              color: Theme.of(context).colorScheme.primary,
+                              size: 18,
+                            ),
+                            const SizedBox(width: 10),
+                            Text(context.l10n!.editFolder),
+                          ],
                         ),
-                        const SizedBox(width: 10),
-                        Text(
-                          context.l10n!.deleteFolder,
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.error,
-                          ),
+                      ),
+                      PopupMenuItem<String>(
+                        value: 'delete',
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              FluentIcons.delete_24_regular,
+                              color: Theme.of(context).colorScheme.error,
+                              size: 18,
+                            ),
+                            const SizedBox(width: 10),
+                            Text(
+                              context.l10n!.deleteFolder,
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.error,
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
+                    onSelected: (value) {
+                      if (value == 'add') {
+                        _showAddPlaylistDialog();
+                      } else if (value == 'rename') {
+                        _showRenameFolderDialog();
+                      } else if (value == 'delete') {
+                        _showDeleteFolderDialog();
+                      }
+                    },
                   ),
                 ],
-                onSelected: (value) {
-                  if (value == 'add') {
-                    _showAddPlaylistDialog();
-                  } else if (value == 'rename') {
-                    _showRenameFolderDialog();
-                  } else if (value == 'delete') {
-                    _showDeleteFolderDialog();
-                  }
-                },
               ),
+              if (playlists.isEmpty)
+                SliverFillRemaining(child: _buildEmptyState())
+              else
+                SliverPadding(
+                  padding: commonListViewBottomPadding,
+                  sliver: SliverList.builder(
+                    itemCount: playlists.length,
+                    itemBuilder: (context, index) {
+                      final playlist = playlists[index];
+                      final borderRadius = getItemBorderRadius(
+                        index,
+                        playlists.length,
+                      );
+                      return PlaylistBar(
+                        key: ValueKey(playlist['ytid']),
+                        playlist['title'],
+                        playlistId: playlist['ytid'],
+                        playlistArtwork: playlist['image'],
+                        playlistData: playlist,
+                        onDelete: () => _showRemovePlaylistDialog(playlist),
+                        borderRadius: borderRadius,
+                      );
+                    },
+                  ),
+                ),
             ],
           ),
-          body: playlists.isEmpty
-              ? _buildEmptyState()
-              : SingleChildScrollView(
-                  padding: commonSingleChildScrollViewPadding,
-                  child: Column(children: [_buildPlaylistList(playlists)]),
-                ),
         );
       },
+    );
+  }
+
+  Widget _buildHeader(BuildContext context, int playlistCount) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    return Container(
+      alignment: Alignment.center,
+      padding: const EdgeInsets.fromLTRB(24, 20, 24, 16),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ClipPath(
+            clipper: const ShapeBorderClipper(
+              shape: StarBorder(
+                points: 8,
+                pointRounding: 0.8,
+                valleyRounding: 0.2,
+                innerRadiusRatio: 0.6,
+              ),
+            ),
+            child: Container(
+              width: 130,
+              height: 130,
+              color: colorScheme.surfaceContainerHighest,
+              child: Icon(
+                FluentIcons.folder_24_filled,
+                size: 64,
+                color: colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+          Text(
+            _folderName,
+            style: theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.w700,
+              color: colorScheme.onSurface,
+              letterSpacing: -0.3,
+            ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 10),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+            decoration: BoxDecoration(
+              color: colorScheme.secondaryContainer,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  FluentIcons.music_note_2_24_regular,
+                  size: 14,
+                  color: colorScheme.onSecondaryContainer,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  playlistCount == 1
+                      ? '1 ${context.l10n!.playlist.toLowerCase()}'
+                      : '$playlistCount ${context.l10n!.playlists.toLowerCase()}',
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    color: colorScheme.onSecondaryContainer,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.2,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -166,29 +269,6 @@ class _PlaylistFolderPageState extends State<PlaylistFolderPage> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildPlaylistList(List<Map> playlists) {
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: playlists.length,
-      padding: commonListViewBottomPadding,
-      itemBuilder: (context, index) {
-        final playlist = playlists[index];
-        final borderRadius = getItemBorderRadius(index, playlists.length);
-
-        return PlaylistBar(
-          key: ValueKey(playlist['ytid']),
-          playlist['title'],
-          playlistId: playlist['ytid'],
-          playlistArtwork: playlist['image'],
-          playlistData: playlist,
-          onDelete: () => _showRemovePlaylistDialog(playlist),
-          borderRadius: borderRadius,
-        );
-      },
     );
   }
 
