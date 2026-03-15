@@ -698,6 +698,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
     return SongBar(
       song,
       true,
+      key: ValueKey(song['ytid']),
       onRemove: (isRemovable && !isSearching)
           ? () {
               if (removeSongFromPlaylist(
