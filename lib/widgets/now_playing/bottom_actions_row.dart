@@ -326,6 +326,7 @@ void _showSleepTimerDialog(BuildContext context) {
             ),
             backgroundColor: colorScheme.surfaceContainerHigh,
             title: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(FluentIcons.timer_24_regular, color: colorScheme.primary),
                 const SizedBox(width: 12),
