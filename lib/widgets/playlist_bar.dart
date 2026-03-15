@@ -32,6 +32,7 @@ import 'package:musify/services/playlists_manager.dart';
 import 'package:musify/services/router_service.dart';
 import 'package:musify/utilities/artwork_provider.dart';
 import 'package:musify/utilities/flutter_toast.dart';
+import 'package:musify/utilities/offline_playlist_dialogs.dart';
 import 'package:musify/utilities/playlist_dialogs.dart';
 import 'package:musify/widgets/edit_playlist_dialog.dart';
 import 'package:musify/widgets/spinner.dart';
@@ -167,6 +168,10 @@ class PlaylistBar extends StatelessWidget {
   }
 
   Widget _buildActionButtons(BuildContext context, ColorScheme colorScheme) {
+    final isOffline =
+        playlistData != null &&
+        (playlistData!['downloadedAt'] != null ||
+            playlistData!['isOffline'] == true);
     return PopupMenuButton<String>(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       color: colorScheme.surfaceContainerHigh,
@@ -200,6 +205,14 @@ class PlaylistBar extends StatelessWidget {
             break;
           case 'add_to_playlist':
             _handleAddPlaylistToPlaylist(context);
+            break;
+          case 'remove_offline':
+            if (playlistData != null && playlistData!['ytid'] != null) {
+              showRemoveOfflinePlaylistDialog(
+                context,
+                playlistData!['ytid'].toString(),
+              );
+            }
             break;
         }
       },
@@ -235,6 +248,23 @@ class PlaylistBar extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(context.l10n!.addToPlaylist),
+                ],
+              ),
+            ),
+          if (isOffline)
+            PopupMenuItem<String>(
+              value: 'remove_offline',
+              child: Row(
+                children: [
+                  Icon(
+                    FluentIcons.cloud_off_24_filled,
+                    color: colorScheme.error,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    context.l10n!.removeOffline,
+                    style: TextStyle(color: colorScheme.error),
+                  ),
                 ],
               ),
             ),
