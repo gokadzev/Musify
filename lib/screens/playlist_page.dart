@@ -302,7 +302,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                 _buildLikeButton(),
               if (!offlineMode.value) ...[
                 _buildAddToPlaylistButton(),
-                _buildSyncButton(),
+              if(!isUserCreated)  _buildSyncButton(),
               ],
               if (songsLength > 0) _buildDownloadButton(),
               if (isUserCreated) ...[_buildShareButton(), _buildEditButton()],
