@@ -338,27 +338,49 @@ class PlaylistBar extends StatelessWidget {
             child: ValueListenableBuilder<List>(
               valueListenable: userPlaylistFolders,
               builder: (context, folders, _) {
+                // Find the current folder containing this playlist
+                String? currentFolderId;
+                if (playlistData != null) {
+                  for (final folder in folders) {
+                    final folderPlaylists = folder['playlists'] as List? ?? [];
+                    if (folderPlaylists.any(
+                      (p) => p['ytid'] == playlistData!['ytid'],
+                    )) {
+                      currentFolderId = folder['id'];
+                      break;
+                    }
+                  }
+                }
+
+                // Filter folders to exclude current one
+                final availableFolders = folders
+                    .where((folder) => folder['id'] != currentFolderId)
+                    .toList();
+
                 return Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     // Option to remove from folder (move to main library)
-                    ListTile(
-                      leading: Icon(
-                        FluentIcons.library_24_filled,
-                        color: Theme.of(context).colorScheme.primary,
+                    // Only show if playlist is currently in a folder
+                    if (currentFolderId != null) ...[
+                      ListTile(
+                        leading: Icon(
+                          FluentIcons.library_24_filled,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        title: Text(context.l10n!.library),
+                        onTap: () {
+                          Navigator.pop(context);
+                          if (playlistData != null) {
+                            movePlaylistToFolder(playlistData!, null, context);
+                          }
+                        },
                       ),
-                      title: Text(context.l10n!.library),
-                      onTap: () {
-                        Navigator.pop(context);
-                        if (playlistData != null) {
-                          movePlaylistToFolder(playlistData!, null, context);
-                        }
-                      },
-                    ),
-                    const Divider(),
+                      const Divider(),
+                    ],
                     // List of available folders
-                    if (folders.isNotEmpty)
-                      ...folders.map((folder) {
+                    if (availableFolders.isNotEmpty)
+                      ...availableFolders.map((folder) {
                         return ListTile(
                           leading: Icon(
                             FluentIcons.folder_24_filled,
