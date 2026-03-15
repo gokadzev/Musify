@@ -67,10 +67,18 @@ void showCreatePlaylistDialog(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(28),
             ),
-            icon: Icon(
-              FluentIcons.add_24_filled,
-              color: colorScheme.primary,
-              size: 32,
+            icon: Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                color: colorScheme.primaryContainer,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                FluentIcons.add_24_filled,
+                color: colorScheme.primary,
+                size: 32,
+              ),
             ),
             title: Text(
               context.l10n!.addPlaylist,
@@ -273,20 +281,23 @@ void showCreatePlaylistDialog(
                 ],
               ),
             ),
+            actionsAlignment: MainAxisAlignment.center,
             actions: <Widget>[
-              TextButton(
+              OutlinedButton(
                 onPressed: () => Navigator.pop(context),
-                child: Text(
-                  context.l10n!.cancel,
-                  style: TextStyle(color: colorScheme.onSurfaceVariant),
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(color: colorScheme.outline),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
+                child: Text(context.l10n!.cancel),
               ),
               FilledButton.icon(
                 onPressed: () async {
                   if (isYouTubeMode && id.isNotEmpty) {
                     final result = await addUserPlaylist(id, context);
                     if (context.mounted) showToast(context, result);
-
                     if (!context.mounted) return;
                     Navigator.pop(context);
                   } else if (!isYouTubeMode && customPlaylistName.isNotEmpty) {
@@ -295,7 +306,6 @@ void showCreatePlaylistDialog(
                       imageBase64 ?? imageUrl,
                       context,
                     );
-
                     if (songToAdd != null) {
                       if (context.mounted) {
                         final addResult = addSongInCustomPlaylist(

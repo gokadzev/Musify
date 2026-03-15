@@ -426,10 +426,18 @@ class _LibraryPageState extends State<LibraryPage> {
         backgroundColor: colorScheme.surface,
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
-        icon: Icon(
-          FluentIcons.folder_add_24_filled,
-          color: colorScheme.primary,
-          size: 32,
+        icon: Container(
+          width: 56,
+          height: 56,
+          decoration: BoxDecoration(
+            color: colorScheme.primaryContainer,
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            FluentIcons.folder_add_24_filled,
+            color: colorScheme.primary,
+            size: 32,
+          ),
         ),
         title: Text(
           context.l10n!.createFolder,
