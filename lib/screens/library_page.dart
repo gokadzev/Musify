@@ -427,7 +427,7 @@ class _LibraryPageState extends State<LibraryPage> {
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
         icon: Icon(
-          FluentIcons.folder_add_24_regular,
+          FluentIcons.folder_add_24_filled,
           color: colorScheme.primary,
           size: 32,
         ),
