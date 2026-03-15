@@ -67,12 +67,24 @@ void showCreatePlaylistDialog(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(28),
             ),
+            icon: Icon(
+              FluentIcons.add_24_filled,
+              color: colorScheme.primary,
+              size: 32,
+            ),
             title: Text(
               context.l10n!.addPlaylist,
               style: TextStyle(
                 color: colorScheme.onSurface,
                 fontWeight: FontWeight.w600,
+                fontSize: 20,
               ),
+              textAlign: TextAlign.center,
+            ),
+            titleTextStyle: TextStyle(
+              color: colorScheme.onSurface,
+              fontWeight: FontWeight.w600,
+              fontSize: 20,
             ),
             content: SingleChildScrollView(
               child: Column(
@@ -351,7 +363,9 @@ void showAddToPlaylistDialog(
                       itemBuilder: (context, index) {
                         final playlist = playlists[index];
                         return Card(
-                          color: Theme.of(context).colorScheme.secondaryContainer,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.secondaryContainer,
                           elevation: 0,
                           child: ListTile(
                             title: Text(playlist['title']),
