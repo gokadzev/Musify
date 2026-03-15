@@ -204,8 +204,9 @@ class PlaylistBar extends StatelessWidget {
         }
       },
       itemBuilder: (BuildContext context) {
+        final isUserCreated = playlistData?['source'] == 'user-created';
         return [
-          if (onDelete == null)
+          if (onDelete == null || !isUserCreated)
             PopupMenuItem<String>(
               value: 'like',
               child: Row(

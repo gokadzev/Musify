@@ -343,7 +343,8 @@ class _LibraryPageState extends State<LibraryPage> {
               : null,
           onDelete:
               playlist['source'] == 'user-created' ||
-                  playlist['source'] == 'user-youtube'
+                  playlist['source'] == 'user-youtube' ||
+                  isOfflinePlaylists
               ? () => isOfflinePlaylists
                     ? _showRemoveOfflinePlaylistDialog(playlist)
                     : _showRemovePlaylistDialog(playlist)
