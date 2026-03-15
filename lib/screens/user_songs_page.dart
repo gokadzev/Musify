@@ -30,9 +30,9 @@ import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/app_utils.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
+import 'package:musify/widgets/custom_search_bar.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/playlist_page/playlist_header.dart';
-import 'package:musify/widgets/playlist_page/playlist_search_bar.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/sort_chips.dart';
 
@@ -51,6 +51,8 @@ class _UserSongsPageState extends State<UserSongsPage> {
   bool _isEditEnabled = false;
   List<dynamic> _originalOfflineSongsList = [];
   String _searchQuery = '';
+  late final TextEditingController _searchController;
+  late final FocusNode _searchFocusNode;
 
   List _getFilteredList(List songsList) {
     if (_searchQuery.isEmpty) return songsList;
@@ -65,9 +67,18 @@ class _UserSongsPageState extends State<UserSongsPage> {
   @override
   void initState() {
     super.initState();
+    _searchController = TextEditingController();
+    _searchFocusNode = FocusNode();
     if (widget.page == 'offline') {
       _originalOfflineSongsList = List<dynamic>.from(userOfflineSongs);
     }
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _searchFocusNode.dispose();
+    super.dispose();
   }
 
   @override
@@ -260,10 +271,12 @@ class _UserSongsPageState extends State<UserSongsPage> {
         ],
         if (songsLength > 0) ...[
           const SizedBox(height: 16),
-          PlaylistSearchBar(
-            query: _searchQuery,
+          CustomSearchBar(
+            controller: _searchController..text = _searchQuery,
+            focusNode: _searchFocusNode,
+            labelText: context.l10n!.search,
+            onSubmitted: (_) {},
             onChanged: (value) => setState(() => _searchQuery = value),
-            onCleared: () => setState(() => _searchQuery = ''),
           ),
         ],
         const SizedBox(height: 16),

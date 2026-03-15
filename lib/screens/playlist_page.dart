@@ -38,10 +38,10 @@ import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/offline_playlist_dialogs.dart';
 import 'package:musify/utilities/playlist_dialogs.dart';
 import 'package:musify/utilities/sort_utils.dart';
+import 'package:musify/widgets/custom_search_bar.dart';
 import 'package:musify/widgets/edit_playlist_dialog.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/playlist_page/playlist_header.dart';
-import 'package:musify/widgets/playlist_page/playlist_search_bar.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/sort_chips.dart';
 import 'package:musify/widgets/spinner.dart';
@@ -84,6 +84,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
   // Search
   String _searchQuery = '';
+  late final TextEditingController _searchController;
+  late final FocusNode _searchFocusNode;
 
   List<dynamic> get _sourceList {
     final list = _playlist?['list'] as List<dynamic>? ?? [];
@@ -99,11 +101,15 @@ class _PlaylistPageState extends State<PlaylistPage> {
   @override
   void initState() {
     super.initState();
+    _searchController = TextEditingController();
+    _searchFocusNode = FocusNode();
     _initializePlaylist();
   }
 
   @override
   void dispose() {
+    _searchController.dispose();
+    _searchFocusNode.dispose();
     super.dispose();
   }
 
@@ -328,10 +334,12 @@ class _PlaylistPageState extends State<PlaylistPage> {
         ],
         if (songsLength > 0) ...[
           const SizedBox(height: 16),
-          PlaylistSearchBar(
-            query: _searchQuery,
+          CustomSearchBar(
+            controller: _searchController..text = _searchQuery,
+            focusNode: _searchFocusNode,
+            labelText: context.l10n!.search,
+            onSubmitted: (_) {},
             onChanged: (value) => setState(() => _searchQuery = value),
-            onCleared: () => setState(() => _searchQuery = ''),
           ),
         ],
         const SizedBox(height: 16),
