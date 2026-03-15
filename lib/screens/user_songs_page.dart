@@ -29,6 +29,7 @@ import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/app_utils.dart';
 import 'package:musify/utilities/flutter_toast.dart';
+import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/playlist_page/playlist_header.dart';
 import 'package:musify/widgets/playlist_page/playlist_search_bar.dart';
@@ -285,63 +286,21 @@ class _UserSongsPageState extends State<UserSongsPage> {
       icon: Icon(FluentIcons.delete_24_regular, color: primaryColor),
       iconSize: 24,
       onPressed: () {
-        final colorScheme = Theme.of(context).colorScheme;
-
         showDialog(
           context: context,
           builder: (BuildContext context) {
-            return AlertDialog(
-              backgroundColor: colorScheme.surface,
-              surfaceTintColor: Colors.transparent,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(28),
-              ),
-              icon: Icon(
-                FluentIcons.delete_24_regular,
-                color: colorScheme.error,
-                size: 32,
-              ),
-              title: Text(
-                context.l10n!.clearRecentlyPlayed,
-                style: TextStyle(
-                  color: colorScheme.onSurface,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              content: Text(
-                context.l10n!.clearRecentlyPlayedQuestion,
-                style: TextStyle(color: colorScheme.onSurfaceVariant),
-                textAlign: TextAlign.center,
-              ),
-              actionsAlignment: MainAxisAlignment.center,
-              actions: [
-                OutlinedButton(
-                  onPressed: () => Navigator.pop(context),
-                  style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: colorScheme.outline),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: Text(context.l10n!.cancel),
-                ),
-                FilledButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    userRecentlyPlayed.clear();
-                    currentRecentlyPlayedLength.value = 0;
-                    addOrUpdateData('user', 'recentlyPlayedSongs', []);
-                    showToast(context, context.l10n!.recentlyPlayedMsg);
-                  },
-                  style: FilledButton.styleFrom(
-                    backgroundColor: colorScheme.error,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: Text(context.l10n!.clear),
-                ),
-              ],
+            return ConfirmationDialog(
+              confirmationMessage: context.l10n!.clearRecentlyPlayedQuestion,
+              submitMessage: context.l10n!.clear,
+              isDangerous: true,
+              onCancel: () => Navigator.pop(context),
+              onSubmit: () {
+                Navigator.pop(context);
+                userRecentlyPlayed.clear();
+                currentRecentlyPlayedLength.value = 0;
+                addOrUpdateData('user', 'recentlyPlayedSongs', []);
+                showToast(context, context.l10n!.recentlyPlayedMsg);
+              },
             );
           },
         );

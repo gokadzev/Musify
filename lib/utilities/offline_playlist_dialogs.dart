@@ -19,66 +19,26 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/services/playlist_download_service.dart';
 import 'package:musify/utilities/flutter_toast.dart';
+import 'package:musify/widgets/confirmation_dialog.dart';
 
 void showRemoveOfflinePlaylistDialog(BuildContext context, String playlistId) {
-  final colorScheme = Theme.of(context).colorScheme;
-
   showDialog<void>(
     context: context,
     builder: (BuildContext context) {
-      return AlertDialog(
-        backgroundColor: colorScheme.surface,
-        surfaceTintColor: Colors.transparent,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
-        icon: Icon(
-          FluentIcons.cloud_off_24_regular,
-          color: colorScheme.error,
-          size: 32,
-        ),
-        title: Text(
-          context.l10n!.removeOfflinePlaylist,
-          style: TextStyle(
-            color: colorScheme.onSurface,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        content: Text(
-          context.l10n!.removeOfflinePlaylistConfirm,
-          style: TextStyle(color: colorScheme.onSurfaceVariant),
-          textAlign: TextAlign.center,
-        ),
-        actionsAlignment: MainAxisAlignment.center,
-        actions: [
-          OutlinedButton(
-            onPressed: () => Navigator.pop(context),
-            style: OutlinedButton.styleFrom(
-              side: BorderSide(color: colorScheme.outline),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: Text(context.l10n!.cancel),
-          ),
-          FilledButton(
-            onPressed: () {
-              offlinePlaylistService.removeOfflinePlaylist(playlistId);
-              Navigator.pop(context);
-              showToast(context, context.l10n!.playlistRemovedFromOffline);
-            },
-            style: FilledButton.styleFrom(
-              backgroundColor: colorScheme.error,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: Text(context.l10n!.remove),
-          ),
-        ],
+      return ConfirmationDialog(
+        confirmationMessage: context.l10n!.removeOfflinePlaylistConfirm,
+        submitMessage: context.l10n!.remove,
+        isDangerous: true,
+        onCancel: () => Navigator.pop(context),
+        onSubmit: () {
+          offlinePlaylistService.removeOfflinePlaylist(playlistId);
+          Navigator.pop(context);
+          showToast(context, context.l10n!.playlistRemovedFromOffline);
+        },
       );
     },
   );
