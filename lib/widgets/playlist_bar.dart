@@ -331,8 +331,35 @@ class PlaylistBar extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) {
+        final colorScheme = Theme.of(context).colorScheme;
         return AlertDialog(
-          title: Text(context.l10n!.moveToFolder),
+          backgroundColor: colorScheme.surface,
+          surfaceTintColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(28),
+          ),
+          icon: Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              color: colorScheme.secondaryContainer,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              FluentIcons.folder_arrow_right_24_filled,
+              color: colorScheme.secondary,
+              size: 28,
+            ),
+          ),
+          title: Text(
+            context.l10n!.moveToFolder,
+            style: TextStyle(
+              color: colorScheme.onSurface,
+              fontWeight: FontWeight.w600,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          contentPadding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
           content: SizedBox(
             width: double.maxFinite,
             child: ValueListenableBuilder<List>(
@@ -357,18 +384,30 @@ class PlaylistBar extends StatelessWidget {
                     .where((folder) => folder['id'] != currentFolderId)
                     .toList();
 
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
+                final hasLibrary = currentFolderId != null;
+                final hasItems = hasLibrary || availableFolders.isNotEmpty;
+
+                if (!hasItems) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: Text(
+                      context.l10n!.noFolders,
+                      style: TextStyle(color: colorScheme.onSurfaceVariant),
+                      textAlign: TextAlign.center,
+                    ),
+                  );
+                }
+
+                return ListView(
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.symmetric(vertical: 8),
                   children: [
-                    // Option to remove from folder (move to main library)
-                    // Only show if playlist is currently in a folder
-                    if (currentFolderId != null) ...[
-                      ListTile(
-                        leading: Icon(
-                          FluentIcons.library_24_filled,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                        title: Text(context.l10n!.library),
+                    if (hasLibrary)
+                      _MoveToFolderItem(
+                        icon: FluentIcons.library_24_filled,
+                        iconColor: colorScheme.primary,
+                        iconBgColor: colorScheme.primaryContainer,
+                        label: context.l10n!.library,
                         onTap: () {
                           Navigator.pop(context);
                           if (playlistData != null) {
@@ -376,49 +415,50 @@ class PlaylistBar extends StatelessWidget {
                           }
                         },
                       ),
-                      const Divider(),
-                    ],
-                    // List of available folders
-                    if (availableFolders.isNotEmpty)
-                      ...availableFolders.map((folder) {
-                        return ListTile(
-                          leading: Icon(
-                            FluentIcons.folder_24_filled,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                          title: Text(
-                            folder['name'],
-                            style: const TextStyle(fontWeight: FontWeight.w600),
-                          ),
-                          onTap: () {
-                            Navigator.pop(context);
-                            if (playlistData != null) {
-                              movePlaylistToFolder(
-                                playlistData!,
-                                folder['id'],
-                                context,
-                              );
-                            }
-                          },
-                        );
-                      })
-                    else
-                      Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Text(
-                          context.l10n!.noFolders,
-                          style: TextStyle(color: Theme.of(context).hintColor),
-                        ),
+                    ...availableFolders.map(
+                      (folder) => _MoveToFolderItem(
+                        icon: FluentIcons.folder_24_filled,
+                        iconColor: colorScheme.secondary,
+                        iconBgColor: colorScheme.secondaryContainer,
+                        label: folder['name'] as String,
+                        onTap: () {
+                          Navigator.pop(context);
+                          if (playlistData != null) {
+                            movePlaylistToFolder(
+                              playlistData!,
+                              folder['id'],
+                              context,
+                            );
+                          }
+                        },
                       ),
+                    ),
                   ],
                 );
               },
             ),
           ),
+          actionsPadding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
           actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(context.l10n!.cancel),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: () => Navigator.pop(context),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  side: BorderSide(color: colorScheme.outline),
+                ),
+                child: Text(
+                  context.l10n!.cancel,
+                  style: TextStyle(
+                    color: colorScheme.onSurface,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
             ),
           ],
         );
@@ -606,6 +646,70 @@ class PlaylistBar extends StatelessWidget {
             label: Text(context.l10n!.update),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _MoveToFolderItem extends StatelessWidget {
+  const _MoveToFolderItem({
+    required this.icon,
+    required this.iconColor,
+    required this.iconBgColor,
+    required this.label,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final Color iconColor;
+  final Color iconBgColor;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Material(
+        color: colorScheme.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(16),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            child: Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: iconBgColor,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(icon, color: iconColor, size: 22),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Text(
+                    label,
+                    style: TextStyle(
+                      color: colorScheme.onSurface,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+                Icon(
+                  FluentIcons.chevron_right_24_regular,
+                  color: colorScheme.onSurfaceVariant,
+                  size: 18,
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
