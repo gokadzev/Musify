@@ -157,6 +157,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () =>
               Navigator.pop(context, widget.playlistData == _playlist),
+          tooltip: context.l10n!.back,
         ),
       ),
       body: _playlist != null
@@ -302,7 +303,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                 _buildLikeButton(),
               if (!offlineMode.value) ...[
                 _buildAddToPlaylistButton(),
-              if(!isUserCreated)  _buildSyncButton(),
+                if (!isUserCreated) _buildSyncButton(),
               ],
               if (songsLength > 0) _buildDownloadButton(),
               if (isUserCreated) ...[_buildShareButton(), _buildEditButton()],
@@ -349,6 +350,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
         final url = 'musify://playlist/custom/$encodedPlaylist';
         await Clipboard.setData(ClipboardData(text: url));
       },
+      tooltip: context.l10n!.share,
     );
   }
 
@@ -375,6 +377,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                   currentLikedPlaylistsLength.value =
                       currentLikedPlaylistsLength.value - 1;
                 },
+                tooltip: context.l10n!.removeFromLikedSongs,
               )
             : IconButton.filledTonal(
                 icon: Icon(icon),
@@ -390,6 +393,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                   currentLikedPlaylistsLength.value =
                       currentLikedPlaylistsLength.value + 1;
                 },
+                tooltip: context.l10n!.addToLikedSongs,
               );
       },
     );
@@ -400,6 +404,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
       icon: const Icon(FluentIcons.arrow_sync_24_filled),
       iconSize: 24,
       onPressed: _handleSyncPlaylist,
+      tooltip: context.l10n!.update,
     );
   }
 
@@ -408,6 +413,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
       icon: const Icon(FluentIcons.album_add_24_regular),
       iconSize: 24,
       onPressed: _handleAddFullPlaylistToPlaylist,
+      tooltip: context.l10n!.addToPlaylist,
     );
   }
 
@@ -498,6 +504,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
           showToast(context, context.l10n!.playlistUpdated);
         }
       },
+      tooltip: context.l10n!.editPlaylist,
     );
   }
 
