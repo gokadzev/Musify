@@ -325,9 +325,9 @@ class _LibraryPageState extends State<LibraryPage> {
       itemBuilder: (BuildContext context, index) {
         final playlist = playlists[index];
         final isLastItem = index == playlists.length - 1;
-        final borderRadius =
-            (hasItemsBefore && index == 0 && !isLastItem) ||
-                (hasItemsAfter && isLastItem)
+        final borderRadius = (hasItemsBefore && index == 0)
+            ? (isLastItem ? commonCustomBarRadiusLast : BorderRadius.zero)
+            : (hasItemsAfter && isLastItem)
             ? BorderRadius.zero
             : getItemBorderRadius(index, playlists.length);
         return PlaylistBar(
