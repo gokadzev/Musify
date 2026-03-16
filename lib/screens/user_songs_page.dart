@@ -29,10 +29,12 @@ import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/app_utils.dart';
 import 'package:musify/utilities/flutter_toast.dart';
+import 'package:musify/utilities/song_filtering.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
-import 'package:musify/widgets/custom_search_bar.dart';
 import 'package:musify/widgets/playlist_cube.dart';
+import 'package:musify/widgets/playlist_page/empty_playlist_state.dart';
 import 'package:musify/widgets/playlist_page/playlist_header.dart';
+import 'package:musify/widgets/playlist_page/search_bar_section.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/sort_chips.dart';
 
@@ -50,18 +52,12 @@ class UserSongsPage extends StatefulWidget {
 class _UserSongsPageState extends State<UserSongsPage> {
   bool _isEditEnabled = false;
   List<dynamic> _originalOfflineSongsList = [];
-  String _searchQuery = '';
+  final ValueNotifier<String> _searchQueryNotifier = ValueNotifier('');
   late final TextEditingController _searchController;
   late final FocusNode _searchFocusNode;
 
   List _getFilteredList(List songsList) {
-    if (_searchQuery.isEmpty) return songsList;
-    final q = _searchQuery.toLowerCase();
-    return songsList.where((s) {
-      final title = (s['title'] ?? '').toString().toLowerCase();
-      final artist = (s['artist'] ?? '').toString().toLowerCase();
-      return title.contains(q) || artist.contains(q);
-    }).toList();
+    return filterSongsByQuery(songsList, _searchQueryNotifier.value);
   }
 
   @override
@@ -78,6 +74,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
   void dispose() {
     _searchController.dispose();
     _searchFocusNode.dispose();
+    _searchQueryNotifier.dispose();
     super.dispose();
   }
 
@@ -271,12 +268,11 @@ class _UserSongsPageState extends State<UserSongsPage> {
         ],
         if (songsLength > 0) ...[
           const SizedBox(height: 16),
-          CustomSearchBar(
-            controller: _searchController..text = _searchQuery,
+          SearchBarSection(
+            controller: _searchController,
             focusNode: _searchFocusNode,
+            onSearchChanged: (value) => _searchQueryNotifier.value = value,
             labelText: context.l10n!.search,
-            onSubmitted: (_) {},
-            onChanged: (value) => setState(() => _searchQuery = value),
           ),
         ],
         const SizedBox(height: 16),
@@ -333,103 +329,83 @@ class _UserSongsPageState extends State<UserSongsPage> {
     return ValueListenableBuilder(
       valueListenable: currentSongsLength,
       builder: (_, value, __) {
-        final isSearching = _searchQuery.isNotEmpty;
-        final displayList = _getFilteredList(songsList);
-        final playlist = {
-          'ytid': '',
-          'title': title,
-          'source': 'user-created',
-          'list': displayList,
-        };
+        return ValueListenableBuilder<String>(
+          valueListenable: _searchQueryNotifier,
+          builder: (_, searchQuery, __) {
+            final isSearching = searchQuery.isNotEmpty;
+            final displayList = _getFilteredList(songsList);
+            final playlist = {
+              'ytid': '',
+              'title': title,
+              'source': 'user-created',
+              'list': displayList,
+            };
 
-        if (displayList.isEmpty) {
-          final emptyIcon = isLikedSongs
-              ? FluentIcons.heart_24_regular
-              : FluentIcons.music_note_1_24_regular;
-          return SliverFillRemaining(
-            hasScrollBody: false,
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      emptyIcon,
-                      size: 64,
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.onSurface.withAlpha(120),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      context.l10n!.playlistEmpty,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        }
+            if (displayList.isEmpty) {
+              final emptyIcon = isLikedSongs
+                  ? FluentIcons.heart_24_regular
+                  : FluentIcons.music_note_1_24_regular;
+              return EmptyPlaylistState(
+                icon: emptyIcon,
+                message: context.l10n!.playlistEmpty,
+              );
+            }
 
-        if (isLikedSongs && !isSearching) {
-          return SliverReorderableList(
-            itemCount: displayList.length,
-            itemBuilder: (context, index) {
-              final song = displayList[index];
-              final borderRadius = getItemBorderRadius(
-                index,
-                displayList.length,
+            if (isLikedSongs && !isSearching) {
+              return SliverReorderableList(
+                itemCount: displayList.length,
+                itemBuilder: (context, index) {
+                  final song = displayList[index];
+                  final borderRadius = getItemBorderRadius(
+                    index,
+                    displayList.length,
+                  );
+                  return ReorderableDragStartListener(
+                    enabled: _isEditEnabled,
+                    key: ValueKey(song['ytid']),
+                    index: index,
+                    child: _buildSongBar(
+                      song,
+                      index,
+                      borderRadius,
+                      playlist,
+                      isRecentSong: isRecentlyPlayed,
+                    ),
+                  );
+                },
+                onReorder: (oldIndex, newIndex) {
+                  setState(() {
+                    if (oldIndex < newIndex) newIndex -= 1;
+                    moveLikedSong(oldIndex, newIndex);
+                  });
+                },
               );
-              return ReorderableDragStartListener(
-                enabled: _isEditEnabled,
-                key: ValueKey(song['ytid']),
-                index: index,
-                child: _buildSongBar(
-                  song,
-                  index,
-                  borderRadius,
-                  playlist,
-                  isRecentSong: isRecentlyPlayed,
-                ),
+            } else {
+              return SliverList(
+                key: isOfflineSongs && !isSearching
+                    ? ValueKey(_getCurrentOfflineSortType())
+                    : null,
+                delegate: SliverChildBuilderDelegate((context, index) {
+                  final song = displayList[index];
+                  final borderRadius = getItemBorderRadius(
+                    index,
+                    displayList.length,
+                  );
+                  return RepaintBoundary(
+                    key: ValueKey(song['ytid']),
+                    child: _buildSongBar(
+                      song,
+                      index,
+                      borderRadius,
+                      playlist,
+                      isRecentSong: isRecentlyPlayed,
+                    ),
+                  );
+                }, childCount: displayList.length),
               );
-            },
-            onReorder: (oldIndex, newIndex) {
-              setState(() {
-                if (oldIndex < newIndex) newIndex -= 1;
-                moveLikedSong(oldIndex, newIndex);
-              });
-            },
-          );
-        } else {
-          return SliverList(
-            key: isOfflineSongs && !isSearching
-                ? ValueKey(_getCurrentOfflineSortType())
-                : null,
-            delegate: SliverChildBuilderDelegate((context, index) {
-              final song = displayList[index];
-              final borderRadius = getItemBorderRadius(
-                index,
-                displayList.length,
-              );
-              return RepaintBoundary(
-                key: ValueKey(song['ytid']),
-                child: _buildSongBar(
-                  song,
-                  index,
-                  borderRadius,
-                  playlist,
-                  isRecentSong: isRecentlyPlayed,
-                ),
-              );
-            }, childCount: displayList.length),
-          );
-        }
+            }
+          },
+        );
       },
     );
   }

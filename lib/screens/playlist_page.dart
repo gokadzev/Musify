@@ -37,11 +37,13 @@ import 'package:musify/utilities/app_utils.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/offline_playlist_dialogs.dart';
 import 'package:musify/utilities/playlist_dialogs.dart';
+import 'package:musify/utilities/song_filtering.dart';
 import 'package:musify/utilities/sort_utils.dart';
-import 'package:musify/widgets/custom_search_bar.dart';
 import 'package:musify/widgets/edit_playlist_dialog.dart';
 import 'package:musify/widgets/playlist_cube.dart';
+import 'package:musify/widgets/playlist_page/empty_playlist_state.dart';
 import 'package:musify/widgets/playlist_page/playlist_header.dart';
+import 'package:musify/widgets/playlist_page/search_bar_section.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/sort_chips.dart';
 import 'package:musify/widgets/spinner.dart';
@@ -83,19 +85,13 @@ class _PlaylistPageState extends State<PlaylistPage> {
   );
 
   // Search
-  String _searchQuery = '';
+  final ValueNotifier<String> _searchQueryNotifier = ValueNotifier('');
   late final TextEditingController _searchController;
   late final FocusNode _searchFocusNode;
 
-  List<dynamic> get _sourceList {
+  List<dynamic> _getSourceList(String searchQuery) {
     final list = _playlist?['list'] as List<dynamic>? ?? [];
-    if (_searchQuery.isEmpty) return list;
-    final q = _searchQuery.toLowerCase();
-    return list.where((s) {
-      final title = (s['title'] ?? '').toString().toLowerCase();
-      final artist = (s['artist'] ?? '').toString().toLowerCase();
-      return title.contains(q) || artist.contains(q);
-    }).toList();
+    return filterSongsByQuery(list, searchQuery);
   }
 
   @override
@@ -110,6 +106,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
   void dispose() {
     _searchController.dispose();
     _searchFocusNode.dispose();
+    _searchQueryNotifier.dispose();
     super.dispose();
   }
 
@@ -171,53 +168,29 @@ class _PlaylistPageState extends State<PlaylistPage> {
               slivers: [
                 SliverToBoxAdapter(child: _buildHeaderSection()),
                 if ((_playlist['list'] as List).isNotEmpty) ...[
-                  SliverPadding(
-                    padding: commonListViewBottomPadding,
-                    sliver: SliverList.builder(
-                      itemCount: _sourceList.length,
-                      itemBuilder: (context, index) {
-                        final isRemovable =
-                            _playlist['source'] == 'user-created';
-                        return _buildSongListItem(
-                          _sourceList[index],
-                          index,
-                          isRemovable,
-                        );
-                      },
-                    ),
+                  ValueListenableBuilder<String>(
+                    valueListenable: _searchQueryNotifier,
+                    builder: (context, searchQuery, _) {
+                      final sourceList = _getSourceList(searchQuery);
+                      return SliverPadding(
+                        padding: commonListViewBottomPadding,
+                        sliver: SliverList.builder(
+                          itemCount: sourceList.length,
+                          itemBuilder: (context, index) {
+                            final isRemovable =
+                                _playlist['source'] == 'user-created';
+                            return _buildSongListItem(
+                              sourceList[index],
+                              index,
+                              isRemovable,
+                            );
+                          },
+                        ),
+                      );
+                    },
                   ),
                 ] else
-                  SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 32),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              FluentIcons.music_note_1_24_regular,
-                              size: 64,
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.onSurface.withAlpha(120),
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              context.l10n!.noSongsInPlaylist,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onSurfaceVariant,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
+                  EmptyPlaylistState(message: context.l10n!.noSongsInPlaylist),
               ],
             )
           : SizedBox(
@@ -334,12 +307,11 @@ class _PlaylistPageState extends State<PlaylistPage> {
         ],
         if (songsLength > 0) ...[
           const SizedBox(height: 16),
-          CustomSearchBar(
-            controller: _searchController..text = _searchQuery,
+          SearchBarSection(
+            controller: _searchController,
             focusNode: _searchFocusNode,
+            onSearchChanged: (value) => _searchQueryNotifier.value = value,
             labelText: context.l10n!.search,
-            onSubmitted: (_) {},
-            onChanged: (value) => setState(() => _searchQuery = value),
           ),
         ],
         const SizedBox(height: 16),
@@ -362,7 +334,11 @@ class _PlaylistPageState extends State<PlaylistPage> {
             showToast(context, context.l10n!.linkCopied);
           }
         } catch (e, stackTrace) {
-          logger.log('Error sharing playlist', error: e, stackTrace: stackTrace);
+          logger.log(
+            'Error sharing playlist',
+            error: e,
+            stackTrace: stackTrace,
+          );
           if (mounted) {
             showToast(context, context.l10n!.error);
           }
@@ -696,13 +672,14 @@ class _PlaylistPageState extends State<PlaylistPage> {
   }
 
   Widget _buildSongListItem(dynamic song, int index, bool isRemovable) {
-    final totalItems = _sourceList.length;
+    final sourceList = _getSourceList(_searchQueryNotifier.value);
+    final totalItems = sourceList.length;
     final borderRadius = getItemBorderRadius(index, totalItems);
     final isUserCreatedPlaylist = _playlist?['source'] == 'user-created';
     final playlistId = isUserCreatedPlaylist ? _playlist!['ytid'] : null;
-    final isSearching = _searchQuery.isNotEmpty;
+    final isSearching = _searchQueryNotifier.value.isNotEmpty;
     final playlistForQueue = isSearching
-        ? {..._playlist as Map, 'list': _sourceList}
+        ? {..._playlist as Map, 'list': sourceList}
         : _playlist;
 
     return SongBar(
