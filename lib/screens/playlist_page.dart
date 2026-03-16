@@ -352,11 +352,21 @@ class _PlaylistPageState extends State<PlaylistPage> {
       icon: const Icon(FluentIcons.share_24_regular),
       iconSize: 24,
       onPressed: () async {
-        final encodedPlaylist = PlaylistSharingService.encodePlaylist(
-          _playlist,
-        );
-        final url = 'musify://playlist/custom/$encodedPlaylist';
-        await Clipboard.setData(ClipboardData(text: url));
+        try {
+          final encodedPlaylist = PlaylistSharingService.encodePlaylist(
+            _playlist,
+          );
+          final url = 'musify://playlist/custom/$encodedPlaylist';
+          await Clipboard.setData(ClipboardData(text: url));
+          if (mounted) {
+            showToast(context, context.l10n!.linkCopied);
+          }
+        } catch (e, stackTrace) {
+          logger.log('Error sharing playlist', error: e, stackTrace: stackTrace);
+          if (mounted) {
+            showToast(context, context.l10n!.error);
+          }
+        }
       },
       tooltip: context.l10n!.share,
     );
