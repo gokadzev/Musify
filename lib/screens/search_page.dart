@@ -158,28 +158,30 @@ class _SearchPageState extends State<SearchPage> {
                       _debounce?.cancel();
                       final query = value;
                       final requestId = ++_latestSuggestionRequest;
+
+                      // Clear suggestions immediately if input is empty
+                      if (query.isEmpty) {
+                        _suggestionsList = [];
+                        if (mounted) setState(() {});
+                        return;
+                      }
+
                       _debounce = Timer(
                         const Duration(milliseconds: 300),
                         () async {
-                          if (query.isNotEmpty) {
-                            final searchSuggestions =
-                                await getSearchSuggestions(query);
+                          final searchSuggestions = await getSearchSuggestions(
+                            query,
+                          );
 
-                            if (!mounted ||
-                                requestId != _latestSuggestionRequest ||
-                                _searchBar.text != query) {
-                              return;
-                            }
-
-                            _suggestionsList = List<String>.from(
-                              searchSuggestions,
-                            );
-                          } else {
-                            if (requestId != _latestSuggestionRequest) {
-                              return;
-                            }
-                            _suggestionsList = [];
+                          if (!mounted ||
+                              requestId != _latestSuggestionRequest ||
+                              _searchBar.text != query) {
+                            return;
                           }
+
+                          _suggestionsList = List<String>.from(
+                            searchSuggestions,
+                          );
                           if (mounted) setState(() {});
                         },
                       );
