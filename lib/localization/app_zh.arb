@@ -194,6 +194,7 @@
   "settingChangedMsg": "设置更新成功",
   "settings": "设置",
   "share": "分享",
+  "linkCopied": "播放列表链接已复制到剪贴板",
   "shuffle": "随机播放",
   "skipToNext": "跳至下一首",
   "skipToPrevious": "跳至上一首",
