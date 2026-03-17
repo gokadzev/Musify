@@ -919,63 +919,44 @@ Future<Map> _fetchArtistPlaylist(String artistName) async {
 }
 
 Map? _findCustomPlaylist(String id) {
-  for (final playlist in userCustomPlaylists.value) {
-    if (playlist['ytid']?.toString() == id) {
-      return playlist as Map;
-    }
-  }
+  final rootPlaylist = _findPlaylistById(userCustomPlaylists.value, id);
+  if (rootPlaylist != null) return rootPlaylist;
 
   for (final folder in userPlaylistFolders.value) {
     final folderPlaylists = folder['playlists'] as List<dynamic>? ?? [];
-    for (final playlist in folderPlaylists) {
-      if (playlist['ytid']?.toString() == id) {
-        return playlist as Map;
-      }
-    }
+    final folderPlaylist = _findPlaylistById(folderPlaylists, id);
+    if (folderPlaylist != null) return folderPlaylist;
   }
 
   return null;
 }
 
 Map? _findOfflinePlaylist(String id) {
-  for (final playlist in offlinePlaylistService.offlinePlaylists.value) {
+  return _findPlaylistById(offlinePlaylistService.offlinePlaylists.value, id);
+}
+
+Map? _findPlaylistById(Iterable<dynamic> playlists, String id) {
+  for (final playlist in playlists) {
     if (playlist is Map && playlist['ytid']?.toString() == id) {
       return playlist;
     }
   }
+
   return null;
 }
 
 Future<Map?> _fetchYouTubePlaylist(String id) async {
   // 1. Local DB / in-memory caches (no network).
-  Map? playlist;
-  for (final p in playlists) {
-    if (p['ytid']?.toString() == id) {
-      playlist = p as Map;
-      break;
-    }
-  }
+  var playlist = _findPlaylistById(playlists, id);
 
   // 2. User-added YouTube playlists.
   if (playlist == null) {
-    final userPl = await getUserPlaylists();
-    for (final p in userPl) {
-      if (p['ytid']?.toString() == id) {
-        playlist = p as Map;
-        break;
-      }
-    }
+    final userPlaylists = await getUserPlaylists();
+    playlist = _findPlaylistById(userPlaylists, id);
   }
 
   // 3. Previously fetched online playlists.
-  if (playlist == null) {
-    for (final p in onlinePlaylists) {
-      if (p['ytid']?.toString() == id) {
-        playlist = p as Map;
-        break;
-      }
-    }
-  }
+  playlist ??= _findPlaylistById(onlinePlaylists, id);
 
   // 4. Fetch from YouTube as a last resort.
   if (playlist == null) {
