@@ -57,8 +57,6 @@ final currentLikedPlaylistsLength = ValueNotifier<int>(
   userLikedPlaylists.length,
 );
 
-const Duration _playlistFetchTimeout = Duration(seconds: 4);
-
 Map<String, dynamic>? _getOfflinePlaylistById(String id) {
   final normalizedId = id.trim();
   if (normalizedId.isEmpty) return null;
@@ -953,7 +951,8 @@ Map? _findCustomPlaylist(String id) {
 }
 
 Future<Map?> _fetchYouTubePlaylist(String id) async {
-  final offlineFallback = _getOfflinePlaylistById(id);
+  final offlineFallback =
+      offlineMode.value ? _getOfflinePlaylistById(id) : null;
 
   if (offlineMode.value && offlineFallback != null) {
     return offlineFallback;
@@ -969,7 +968,7 @@ Future<Map?> _fetchYouTubePlaylist(String id) async {
   }
 
   // 2. User-added YouTube playlists.
-  if (playlist == null && offlineFallback == null) {
+  if (playlist == null) {
     final userPl = await getUserPlaylists();
     for (final p in userPl) {
       if (p['ytid']?.toString() == id) {
@@ -992,9 +991,7 @@ Future<Map?> _fetchYouTubePlaylist(String id) async {
   // 4. Fetch from YouTube as a last resort.
   if (playlist == null) {
     try {
-      final ytPlaylist = await ytClient.playlists
-          .get(id)
-          .timeout(_playlistFetchTimeout);
+      final ytPlaylist = await ytClient.playlists.get(id);
       playlist = {
         'ytid': ytPlaylist.id.toString(),
         'title': ytPlaylist.title,
@@ -1009,7 +1006,7 @@ Future<Map?> _fetchYouTubePlaylist(String id) async {
         error: e,
         stackTrace: stackTrace,
       );
-      return offlineFallback;
+      return null;
     }
   }
 
@@ -1046,7 +1043,7 @@ Future<List> _loadSongsForPlaylist(
     final songs = await getSongsFromPlaylist(
       playlist['ytid'],
       playlistImage: playlistImage,
-    ).timeout(_playlistFetchTimeout);
+    );
     if (!playlists.contains(playlist)) {
       playlists.add(playlist);
     }
@@ -1057,15 +1054,6 @@ Future<List> _loadSongsForPlaylist(
       error: e,
       stackTrace: stackTrace,
     );
-    if (offlineFallback != null) {
-      final fallbackSongs = List<dynamic>.from(
-        offlineFallback['list'] as List? ?? const <dynamic>[],
-      );
-      if (!playlists.contains(playlist)) {
-        playlists.add(playlist);
-      }
-      return fallbackSongs;
-    }
     return [];
   }
 }
