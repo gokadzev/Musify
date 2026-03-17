@@ -297,7 +297,7 @@ class _SearchPageState extends State<SearchPage> {
           SongBar(
             _songsSearchResult[index],
             true,
-            key: ValueKey('${_songsSearchResult[index]['ytid']}'),
+            key: ValueKey('song_${_songsSearchResult[index]['ytid']}_$index'),
             showMusicDuration: true,
             borderRadius: borderRadius,
           ),
