@@ -57,6 +57,25 @@ final currentLikedPlaylistsLength = ValueNotifier<int>(
   userLikedPlaylists.length,
 );
 
+const Duration _playlistFetchTimeout = Duration(seconds: 4);
+
+Map<String, dynamic>? _getOfflinePlaylistById(String id) {
+  final normalizedId = id.trim();
+  if (normalizedId.isEmpty) return null;
+
+  for (final entry in offlinePlaylistService.offlinePlaylists.value) {
+    if (entry is Map && entry['ytid']?.toString() == normalizedId) {
+      final offlinePlaylist = Map<String, dynamic>.from(entry);
+      final list = offlinePlaylist['list'];
+      offlinePlaylist['list'] =
+          list is List ? List<dynamic>.from(list) : <dynamic>[];
+      return offlinePlaylist;
+    }
+  }
+
+  return null;
+}
+
 String generateCustomPlaylistId() {
   final timestamp = DateTime.now().microsecondsSinceEpoch;
   final randomSuffix = Random().nextInt(0x7fffffff);
@@ -934,6 +953,12 @@ Map? _findCustomPlaylist(String id) {
 }
 
 Future<Map?> _fetchYouTubePlaylist(String id) async {
+  final offlineFallback = _getOfflinePlaylistById(id);
+
+  if (offlineMode.value && offlineFallback != null) {
+    return offlineFallback;
+  }
+
   // 1. Local DB / in-memory caches (no network).
   Map? playlist;
   for (final p in playlists) {
@@ -944,7 +969,7 @@ Future<Map?> _fetchYouTubePlaylist(String id) async {
   }
 
   // 2. User-added YouTube playlists.
-  if (playlist == null) {
+  if (playlist == null && offlineFallback == null) {
     final userPl = await getUserPlaylists();
     for (final p in userPl) {
       if (p['ytid']?.toString() == id) {
@@ -967,7 +992,9 @@ Future<Map?> _fetchYouTubePlaylist(String id) async {
   // 4. Fetch from YouTube as a last resort.
   if (playlist == null) {
     try {
-      final ytPlaylist = await ytClient.playlists.get(id);
+      final ytPlaylist = await ytClient.playlists
+          .get(id)
+          .timeout(_playlistFetchTimeout);
       playlist = {
         'ytid': ytPlaylist.id.toString(),
         'title': ytPlaylist.title,
@@ -982,28 +1009,44 @@ Future<Map?> _fetchYouTubePlaylist(String id) async {
         error: e,
         stackTrace: stackTrace,
       );
-      return null;
+      return offlineFallback;
     }
   }
 
   // 5. Populate the song list if it is absent or empty.
   final list = playlist['list'];
   if (list == null || (list is List && list.isEmpty)) {
-    playlist['list'] = await _loadSongsForPlaylist(playlist);
+    playlist['list'] = await _loadSongsForPlaylist(
+      playlist,
+      offlineFallback: offlineFallback,
+    );
   }
 
   return playlist;
 }
 
-Future<List> _loadSongsForPlaylist(Map playlist) async {
+Future<List> _loadSongsForPlaylist(
+  Map playlist, {
+  Map<String, dynamic>? offlineFallback,
+}) async {
   try {
+    if (offlineMode.value && offlineFallback != null) {
+      final fallbackSongs = List<dynamic>.from(
+        offlineFallback['list'] as List? ?? const <dynamic>[],
+      );
+      if (!playlists.contains(playlist)) {
+        playlists.add(playlist);
+      }
+      return fallbackSongs;
+    }
+
     final playlistImage = playlist['isAlbum'] == true
         ? playlist['image'] as String?
         : null;
     final songs = await getSongsFromPlaylist(
       playlist['ytid'],
       playlistImage: playlistImage,
-    );
+    ).timeout(_playlistFetchTimeout);
     if (!playlists.contains(playlist)) {
       playlists.add(playlist);
     }
@@ -1014,6 +1057,15 @@ Future<List> _loadSongsForPlaylist(Map playlist) async {
       error: e,
       stackTrace: stackTrace,
     );
+    if (offlineFallback != null) {
+      final fallbackSongs = List<dynamic>.from(
+        offlineFallback['list'] as List? ?? const <dynamic>[],
+      );
+      if (!playlists.contains(playlist)) {
+        playlists.add(playlist);
+      }
+      return fallbackSongs;
+    }
     return [];
   }
 }
