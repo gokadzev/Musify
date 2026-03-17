@@ -218,7 +218,7 @@ class _SearchPageState extends State<SearchPage> {
 
                         return Column(
                           key: ValueKey(
-                            'history-${items.hashCode}-${_searchBar.text}',
+                            'history-${_suggestionsList.length}-${_searchBar.text}-${searchHistory.length}',
                           ),
                           children: [
                             for (int index = 0; index < items.length; index++)
@@ -325,7 +325,7 @@ class _SearchPageState extends State<SearchPage> {
 
         widgets.add(
           PlaylistBar(
-            key: ValueKey(playlist['ytid']),
+            key: ValueKey('album_${playlist['ytid']}_$index'),
             playlist['title'],
             playlistId: playlist['ytid'],
             playlistArtwork: playlist['image'],
@@ -359,7 +359,7 @@ class _SearchPageState extends State<SearchPage> {
           Padding(
             padding: isLast ? commonListViewBottomPadding : EdgeInsets.zero,
             child: PlaylistBar(
-              key: ValueKey(playlist['ytid']),
+              key: ValueKey('playlist_${playlist['ytid']}_$index'),
               playlist['title'],
               playlistId: playlist['ytid'],
               playlistArtwork: playlist['image'],
@@ -370,7 +370,12 @@ class _SearchPageState extends State<SearchPage> {
       }
     }
 
-    return Column(children: widgets);
+    return Column(
+      key: ValueKey(
+        'results-${_songsSearchResult.length}-${_albumsSearchResult.length}-${_playlistsSearchResult.length}',
+      ),
+      children: widgets,
+    );
   }
 
   Future<bool?> _showConfirmationDialog(BuildContext context) {
