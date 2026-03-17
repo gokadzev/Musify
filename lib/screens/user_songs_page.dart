@@ -338,7 +338,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
               'ytid': '',
               'title': title,
               'source': 'user-created',
-              'list': displayList,
+              'list': songsList,
             };
 
             if (displayList.isEmpty) {
@@ -424,17 +424,14 @@ class _UserSongsPageState extends State<UserSongsPage> {
       song,
       true,
       onPlay: () {
-        final currentQueue = audioHandler.currentQueue;
-        final isSameQueue =
-            currentQueue.length == playlist['list'].length &&
-            index < currentQueue.length &&
-            currentQueue[index] == song;
-
-        if (isSameQueue) {
-          audioHandler.skipToSong(index);
-        } else {
-          audioHandler.playPlaylistSong(playlist: playlist, songIndex: index);
-        }
+        final fullList = playlist['list'] as List<dynamic>? ?? [];
+        final fullIndex = fullList.indexWhere(
+          (s) => s is Map && s['ytid'] == song['ytid'],
+        );
+        audioHandler.playPlaylistSong(
+          playlist: playlist,
+          songIndex: fullIndex != -1 ? fullIndex : index,
+        );
       },
       borderRadius: borderRadius,
       isRecentSong: isRecentSong,
