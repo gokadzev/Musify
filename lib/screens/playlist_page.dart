@@ -112,23 +112,25 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
   Future<void> _initializePlaylist() async {
     try {
-      if (widget.playlistData != null) {
-        _playlist = widget.playlistData;
+      final initialPlaylist = widget.playlistData;
+      final resolvedId =
+          initialPlaylist?['ytid']?.toString() ?? widget.playlistId;
+
+      if (initialPlaylist != null) {
+        _playlist = initialPlaylist;
         final playlistList = _playlist?['list'] as List?;
-        if (playlistList == null || playlistList.isEmpty) {
-          final resolvedId =
-              _playlist?['ytid']?.toString() ?? widget.playlistId;
-          final fullPlaylist = await getPlaylistInfoForWidget(
-            resolvedId,
-            isArtist: widget.isArtist,
-          );
-          if (fullPlaylist != null) {
-            _playlist = fullPlaylist;
-          }
+        if ((playlistList == null || playlistList.isEmpty) &&
+            resolvedId != null) {
+          _playlist =
+              await getPlaylistInfoForWidget(
+                resolvedId,
+                isArtist: widget.isArtist,
+              ) ??
+              initialPlaylist;
         }
       } else {
         _playlist = await getPlaylistInfoForWidget(
-          widget.playlistId,
+          resolvedId,
           isArtist: widget.isArtist,
         );
       }

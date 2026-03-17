@@ -894,6 +894,10 @@ Future<Map?> getPlaylistInfoForWidget(
   if (normalizedId.startsWith('customId-')) {
     return _findCustomPlaylist(normalizedId);
   }
+
+  final offlinePlaylist = _findOfflinePlaylist(normalizedId);
+  if (offlinePlaylist != null) return offlinePlaylist;
+
   return _fetchYouTubePlaylist(normalizedId);
 }
 
@@ -930,6 +934,15 @@ Map? _findCustomPlaylist(String id) {
     }
   }
 
+  return null;
+}
+
+Map? _findOfflinePlaylist(String id) {
+  for (final playlist in offlinePlaylistService.offlinePlaylists.value) {
+    if (playlist is Map && playlist['ytid']?.toString() == id) {
+      return playlist;
+    }
+  }
   return null;
 }
 
