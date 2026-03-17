@@ -194,6 +194,7 @@
   "settingChangedMsg": "設定を変更しました",
   "settings": "設定",
   "share": "Share",
+  "linkCopied": "Playlist link copied to clipboard",
   "shuffle": "Shuffle",
   "skipToNext": "Skip to next",
   "skipToPrevious": "Skip to previous",
