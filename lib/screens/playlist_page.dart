@@ -505,7 +505,11 @@ class _PlaylistPageState extends State<PlaylistPage> {
   }
 
   Widget _buildDownloadButton() {
-    final playlistId = widget.playlistId ?? _playlist['title'];
+    final playlistId = _playlist?['ytid']?.toString() ?? widget.playlistId;
+
+    if (playlistId == null || playlistId.isEmpty) {
+      return const SizedBox.shrink();
+    }
 
     return ValueListenableBuilder<List<dynamic>>(
       valueListenable: offlinePlaylistService.offlinePlaylists,
@@ -587,31 +591,24 @@ class _PlaylistPageState extends State<PlaylistPage> {
       showRemoveOfflinePlaylistDialog(context, playlistId);
 
   void _handleSyncPlaylist() async {
-    if (_playlist['ytid'] != null) {
-      final updated = await updatePlaylistList(context, _playlist['ytid']);
-      if (updated != null && mounted) {
-        setState(() {
-          _playlist = updated;
-          if (_playlist['list'] != null) {
-            _originalPlaylistList = List<dynamic>.from(
-              _playlist['list'] as List,
-            );
-          }
-        });
+    final playlistId = _playlist?['ytid']?.toString();
+    if (playlistId == null || playlistId.isEmpty) return;
+
+    if (offlinePlaylistService.isPlaylistDownloaded(playlistId)) {
+      if (mounted) {
+        showToast(context, context.l10n!.removeOffline);
       }
-    } else {
-      final resolvedId = _playlist['ytid']?.toString() ?? widget.playlistId;
-      final updatedPlaylist = await getPlaylistInfoForWidget(resolvedId);
-      if (updatedPlaylist != null && mounted) {
-        setState(() {
-          _playlist = updatedPlaylist;
-          if (_playlist['list'] != null) {
-            _originalPlaylistList = List<dynamic>.from(
-              _playlist['list'] as List,
-            );
-          }
-        });
-      }
+      return;
+    }
+
+    final updated = await updatePlaylistList(context, playlistId);
+    if (updated != null && mounted) {
+      setState(() {
+        _playlist = updated;
+        if (_playlist['list'] != null) {
+          _originalPlaylistList = List<dynamic>.from(_playlist['list'] as List);
+        }
+      });
     }
   }
 
