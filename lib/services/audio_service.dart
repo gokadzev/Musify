@@ -274,6 +274,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
     return mapToMediaItem(song).copyWith(id: _ensureQueueEntryId(song));
   }
 
+  Map<String, dynamic> _cloneSong(Map song) {
+    return Map<String, dynamic>.from(song);
+  }
+
   void _updateCurrentMediaItemWithDuration(Duration duration) {
     final capturedQueueIndex = _currentQueueIndex;
     final capturedTransitionCounter = _songTransitionCounter;
@@ -736,9 +740,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   void _addToHistory(Map song) {
     try {
-      _historyList
-        ..removeWhere((s) => s['ytid'] == song['ytid'])
-        ..insert(0, song);
+      _historyList.insert(0, _cloneSong(song));
 
       if (_historyList.length > _maxHistorySize) {
         _historyList.removeRange(_maxHistorySize, _historyList.length);
@@ -1651,7 +1653,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       if (_currentQueueIndex > 0) {
         await _playFromQueue(_currentQueueIndex - 1);
       } else if (_historyList.isNotEmpty) {
-        final lastSong = _historyList.removeLast();
+        final lastSong = _cloneSong(_historyList.removeLast());
         _queueList.insert(0, lastSong);
         _currentQueueIndex = 0;
         _updateQueueMediaItems();
