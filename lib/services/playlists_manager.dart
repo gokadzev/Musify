@@ -51,7 +51,14 @@ List userLikedPlaylists = Hive.box(
 final userPlaylistFolders = ValueNotifier<List>(
   Hive.box('user').get('playlistFolders', defaultValue: []),
 );
+final pinnedPlaylistIds = ValueNotifier<List<String>>(
+  List<String>.from(
+    Hive.box('user').get('pinnedPlaylistIds', defaultValue: <String>[]),
+  ),
+);
 List onlinePlaylists = [];
+
+const pinnedPlaylistsLimit = 5;
 
 final currentLikedPlaylistsLength = ValueNotifier<int>(
   userLikedPlaylists.length,
@@ -376,6 +383,7 @@ void removeUserPlaylist(String playlistId) {
 
   final foldersChanged = _removePlaylistFromFolders(normalizedId);
   final likedChanged = _removePlaylistFromLikedPlaylists(normalizedId);
+  _unpinPlaylist(normalizedId);
 
   unawaited(addOrUpdateData('user', 'playlists', userPlaylists.value));
   if (foldersChanged) {
@@ -427,6 +435,7 @@ void removeUserCustomPlaylist(dynamic playlist) {
 
     final foldersChanged = _removePlaylistFromFolders(playlistId);
     final likedChanged = _removePlaylistFromLikedPlaylists(playlistId);
+    _unpinPlaylist(playlistId);
 
     unawaited(
       addOrUpdateData('user', 'customPlaylists', userCustomPlaylists.value),
@@ -1130,4 +1139,32 @@ Future<void> updatePlaylistLikeStatus(String playlistId, bool add) async {
       stackTrace: stackTrace,
     );
   }
+}
+
+bool isPlaylistPinned(String playlistId) =>
+    pinnedPlaylistIds.value.contains(playlistId);
+
+bool togglePinnedPlaylist(String playlistId, BuildContext context) {
+  final current = List<String>.from(pinnedPlaylistIds.value);
+  if (current.contains(playlistId)) {
+    current.remove(playlistId);
+    pinnedPlaylistIds.value = current;
+    unawaited(addOrUpdateData('user', 'pinnedPlaylistIds', current));
+    return false;
+  }
+  if (current.length >= pinnedPlaylistsLimit) {
+    return false;
+  }
+  current.add(playlistId);
+  pinnedPlaylistIds.value = current;
+  unawaited(addOrUpdateData('user', 'pinnedPlaylistIds', current));
+  return true;
+}
+
+void _unpinPlaylist(String playlistId) {
+  if (!pinnedPlaylistIds.value.contains(playlistId)) return;
+  final updated = List<String>.from(pinnedPlaylistIds.value)
+    ..remove(playlistId);
+  pinnedPlaylistIds.value = updated;
+  unawaited(addOrUpdateData('user', 'pinnedPlaylistIds', updated));
 }

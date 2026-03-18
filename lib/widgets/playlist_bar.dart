@@ -110,14 +110,38 @@ class PlaylistBar extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        playlistTitle,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 15,
-                          color: colorScheme.onSurface,
-                        ),
-                        overflow: TextOverflow.ellipsis,
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          if (!isFolder && _resolvedPlaylistId != null)
+                            ValueListenableBuilder<List<String>>(
+                              valueListenable: pinnedPlaylistIds,
+                              builder: (_, ids, __) {
+                                if (!ids.contains(_resolvedPlaylistId)) {
+                                  return const SizedBox.shrink();
+                                }
+                                return Padding(
+                                  padding: const EdgeInsets.only(right: 6),
+                                  child: Icon(
+                                    FluentIcons.pin_24_filled,
+                                    size: 13,
+                                    color: colorScheme.primary,
+                                  ),
+                                );
+                              },
+                            ),
+                          Expanded(
+                            child: Text(
+                              playlistTitle,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 15,
+                                color: colorScheme.onSurface,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
                       ),
                       if (isFolder) ...[
                         const SizedBox(height: 3),
@@ -190,6 +214,19 @@ class PlaylistBar extends StatelessWidget {
               currentLikedPlaylistsLength.value += newValue ? 1 : -1;
             }
             break;
+          case 'pin':
+            if (_resolvedPlaylistId != null) {
+              final pinned = togglePinnedPlaylist(
+                _resolvedPlaylistId!,
+                context,
+              );
+              if (!pinned &&
+                  !isPlaylistPinned(_resolvedPlaylistId!) &&
+                  pinnedPlaylistIds.value.length >= pinnedPlaylistsLimit) {
+                showToast(context, context.l10n!.pinnedPlaylistsLimit);
+              }
+            }
+            break;
           case 'delete':
             if (onDelete != null) onDelete!();
             break;
@@ -218,7 +255,31 @@ class PlaylistBar extends StatelessWidget {
       },
       itemBuilder: (BuildContext context) {
         final isUserCreated = playlistData?['source'] == 'user-created';
+        final pinnedIds = pinnedPlaylistIds.value;
+        final isPinned =
+            _resolvedPlaylistId != null &&
+            pinnedIds.contains(_resolvedPlaylistId);
         return [
+          if (!isFolder && _resolvedPlaylistId != null)
+            PopupMenuItem<String>(
+              value: 'pin',
+              child: Row(
+                children: [
+                  Icon(
+                    isPinned
+                        ? FluentIcons.pin_off_24_regular
+                        : FluentIcons.pin_24_regular,
+                    color: colorScheme.primary,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    isPinned
+                        ? context.l10n!.unpinFromLibrary
+                        : context.l10n!.pinToLibrary,
+                  ),
+                ],
+              ),
+            ),
           if (onDelete == null || !isUserCreated)
             PopupMenuItem<String>(
               value: 'like',
