@@ -308,7 +308,7 @@ void showCreatePlaylistDialog(
                     );
                     if (songToAdd != null) {
                       if (context.mounted) {
-                        final addResult = addSongInCustomPlaylist(
+                        final addResult = await addSongToCustomPlaylist(
                           context,
                           newPlaylistId,
                           songToAdd,
@@ -317,7 +317,7 @@ void showCreatePlaylistDialog(
                       }
                     } else if (songsToAdd != null && songsToAdd.isNotEmpty) {
                       if (context.mounted) {
-                        final addResult = addSongsInCustomPlaylist(
+                        final addResult = await addSongsInCustomPlaylist(
                           context,
                           newPlaylistId,
                           songsToAdd,
@@ -379,24 +379,26 @@ void showAddToPlaylistDialog(
                           elevation: 0,
                           child: ListTile(
                             title: Text(playlist['title']),
-                            onTap: () {
+                            onTap: () async {
                               if (song != null) {
+                                final addResult = await addSongToCustomPlaylist(
+                                  context,
+                                  playlist['ytid'],
+                                  song,
+                                );
                                 showToast(
                                   context,
-                                  addSongInCustomPlaylist(
-                                    context,
-                                    playlist['ytid'],
-                                    song,
-                                  ),
+                                  addResult,
                                 );
                               } else if (songs != null && songs.isNotEmpty) {
+                                final addResult = await addSongsInCustomPlaylist(
+                                  context,
+                                  playlist['ytid'],
+                                  songs,
+                                );
                                 showToast(
                                   context,
-                                  addSongsInCustomPlaylist(
-                                    context,
-                                    playlist['ytid'],
-                                    songs,
-                                  ),
+                                  addResult,
                                 );
                               }
                               Navigator.pop(context);

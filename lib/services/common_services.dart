@@ -31,6 +31,7 @@ import 'package:musify/main.dart' show logger;
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/io_service.dart';
 import 'package:musify/services/lyrics_manager.dart';
+import 'package:musify/services/playlist_download_service.dart';
 import 'package:musify/services/playlists_manager.dart';
 import 'package:musify/services/proxy_manager.dart';
 import 'package:musify/services/settings_manager.dart';
@@ -653,6 +654,8 @@ Future<bool> removeSongFromOffline(dynamic songId) async {
       );
     }
 
+    _clearOfflineSongReferences(songId.toString());
+
     return true;
   } catch (e, stackTrace) {
     logger.log(
@@ -661,6 +664,111 @@ Future<bool> removeSongFromOffline(dynamic songId) async {
       stackTrace: stackTrace,
     );
     return false;
+  }
+}
+
+void _clearOfflineSongReferences(String songId) {
+  var likedSongsChanged = false;
+  for (final song in userLikedSongsList) {
+    if (song is Map && song['ytid']?.toString() == songId) {
+      song
+        ..remove('audioPath')
+        ..remove('artworkPath')
+        ..remove('artWorkPath');
+      likedSongsChanged = true;
+    }
+  }
+  if (likedSongsChanged) {
+    unawaited(addOrUpdateData('user', 'likedSongs', userLikedSongsList));
+  }
+
+  var recentlyPlayedChanged = false;
+  for (final song in userRecentlyPlayed) {
+    if (song is Map && song['ytid']?.toString() == songId) {
+      song
+        ..remove('audioPath')
+        ..remove('artworkPath')
+        ..remove('artWorkPath');
+      recentlyPlayedChanged = true;
+    }
+  }
+  if (recentlyPlayedChanged) {
+    unawaited(
+      addOrUpdateData('user', 'recentlyPlayedSongs', userRecentlyPlayed),
+    );
+  }
+
+  var customPlaylistsChanged = false;
+  for (final playlist in userCustomPlaylists.value) {
+    if (playlist is Map) {
+      final songs = playlist['list'] as List<dynamic>?;
+      if (songs == null) continue;
+      for (final song in songs) {
+        if (song is Map && song['ytid']?.toString() == songId) {
+          song
+            ..remove('audioPath')
+            ..remove('artworkPath')
+            ..remove('artWorkPath');
+          customPlaylistsChanged = true;
+        }
+      }
+    }
+  }
+
+  var playlistFoldersChanged = false;
+  for (final folder in userPlaylistFolders.value) {
+    final playlists = folder is Map
+        ? folder['playlists'] as List<dynamic>?
+        : null;
+    if (playlists == null) continue;
+    for (final playlist in playlists) {
+      if (playlist is Map) {
+        final songs = playlist['list'] as List<dynamic>?;
+        if (songs == null) continue;
+        for (final song in songs) {
+          if (song is Map && song['ytid']?.toString() == songId) {
+            song
+              ..remove('audioPath')
+              ..remove('artworkPath')
+              ..remove('artWorkPath');
+            playlistFoldersChanged = true;
+          }
+        }
+      }
+    }
+  }
+
+  if (customPlaylistsChanged) {
+    unawaited(
+      addOrUpdateData('user', 'customPlaylists', userCustomPlaylists.value),
+    );
+  }
+  if (playlistFoldersChanged) {
+    unawaited(
+      addOrUpdateData('user', 'playlistFolders', userPlaylistFolders.value),
+    );
+  }
+
+  final offlinePlaylists =
+      List<dynamic>.from(offlinePlaylistService.offlinePlaylists.value)
+        ..removeWhere((playlist) {
+          if (playlist is! Map) return false;
+          final songs = playlist['list'] as List<dynamic>? ?? [];
+          return songs.any(
+            (song) => song is Map && song['ytid']?.toString() == songId,
+          );
+        });
+
+  if (offlinePlaylists.length !=
+      offlinePlaylistService.offlinePlaylists.value.length) {
+    offlinePlaylistService.offlinePlaylists.value = offlinePlaylists;
+    unawaited(
+      addOrUpdateData(
+        'userNoBackup',
+        'offlinePlaylists',
+        offlinePlaylistService.offlinePlaylists.value,
+      ),
+    );
   }
 }
 

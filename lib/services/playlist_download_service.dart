@@ -236,12 +236,26 @@ class OfflinePlaylistService {
       if (!progressNotifier.value.isCancelled &&
           progressNotifier.value.completed > progressNotifier.value.failed) {
         // Create an offline version of the playlist
+        final offlineSongsList = songsList.map((song) {
+          final offlineSong = song is Map
+              ? getOfflineSongByYtid(song['ytid'].toString())
+              : <String, dynamic>{};
+          final offlineSongEntry = Map<String, dynamic>.from(song as Map);
+
+          if (offlineSong.isNotEmpty) {
+            offlineSongEntry['audioPath'] = offlineSong['audioPath'];
+            offlineSongEntry['artworkPath'] = offlineSong['artworkPath'];
+          }
+
+          return offlineSongEntry;
+        }).toList();
+
         final offlinePlaylist = {
           'ytid': playlistId,
           'title': playlist['title'],
           'image': playlist['image'],
           'source': playlist['source'],
-          'list': songsList,
+          'list': offlineSongsList,
           'downloadedAt': DateTime.now().millisecondsSinceEpoch,
         };
 

@@ -145,12 +145,12 @@ Future<String> addUserPlaylist(String input, BuildContext context) async {
   return ('${context.l10n!.addedSuccess}!', newPlaylistId);
 }
 
-String addSongInCustomPlaylist(
+Future<String> addSongToCustomPlaylist(
   BuildContext context,
   String playlistId,
   Map song, {
   int? indexToInsert,
-}) {
+}) async {
   Map? customPlaylist;
   var isFromFolder = false;
 
@@ -199,7 +199,14 @@ String addSongInCustomPlaylist(
     }
 
     if (offlinePlaylistService.isPlaylistDownloaded(playlistId)) {
-      unawaited(makeSongOffline(song));
+      final success = await makeSongOffline(song);
+      if (success) {
+        final offlineSong = getOfflineSongByYtid(song['ytid'].toString());
+        if (offlineSong.isNotEmpty) {
+          song['audioPath'] = offlineSong['audioPath'];
+          song['artworkPath'] = offlineSong['artworkPath'];
+        }
+      }
     }
     return context.l10n!.songAdded;
   } else {
@@ -220,11 +227,11 @@ List<Map> getUserCustomPlaylists() {
   ];
 }
 
-String addSongsInCustomPlaylist(
+Future<String> addSongsInCustomPlaylist(
   BuildContext context,
   String playlistId,
   List<dynamic> songs,
-) {
+) async {
   Map? customPlaylist;
   var isFromFolder = false;
 
@@ -278,7 +285,14 @@ String addSongsInCustomPlaylist(
       }
       if (isOffline) {
         for (final song in newSongs) {
-          unawaited(makeSongOffline(song));
+          final success = await makeSongOffline(song);
+          if (success) {
+            final offlineSong = getOfflineSongByYtid(song['ytid'].toString());
+            if (offlineSong.isNotEmpty) {
+              song['audioPath'] = offlineSong['audioPath'];
+              song['artworkPath'] = offlineSong['artworkPath'];
+            }
+          }
         }
       }
       return context.l10n!.addedSuccess;

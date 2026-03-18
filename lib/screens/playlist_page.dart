@@ -622,11 +622,13 @@ class _PlaylistPageState extends State<PlaylistPage> {
         context.l10n!.songRemoved,
         context.l10n!.undo.toUpperCase(),
         () {
-          addSongInCustomPlaylist(
-            context,
-            playlistId,
-            songToRemove,
-            indexToInsert: indexOfRemovedSong,
+          unawaited(
+            addSongToCustomPlaylist(
+              context,
+              playlistId,
+              songToRemove,
+              indexToInsert: indexOfRemovedSong,
+            ),
           );
           if (mounted) setState(() {});
         },

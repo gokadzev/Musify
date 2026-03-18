@@ -83,7 +83,7 @@ class _SongBarState extends State<SongBar> {
   late final ValueNotifier<bool> _songOfflineStatus;
   late String _songTitle;
   late String _songArtist;
-  late final String? _artworkPath;
+  String? _artworkPath;
   late final String _lowResImageUrl;
   late final String _ytid;
 
@@ -94,7 +94,7 @@ class _SongBarState extends State<SongBar> {
     // Cache frequently accessed values
     _songTitle = widget.song['title'] ?? '';
     _songArtist = widget.song['artist']?.toString() ?? '';
-    _artworkPath = widget.song['artworkPath'];
+    _artworkPath = widget.song['artworkPath'] as String?;
     _lowResImageUrl = widget.song['lowResImage']?.toString() ?? '';
     _ytid = widget.song['ytid'] ?? '';
 
@@ -194,7 +194,7 @@ class _SongBarState extends State<SongBar> {
           builder: (_, isOffline, __) {
             if (isOffline && _artworkPath != null) {
               return _OfflineArtwork(
-                artworkPath: _artworkPath,
+                artworkPath: _artworkPath!,
                 size: size,
                 colorScheme: colorScheme,
               );
@@ -358,11 +358,26 @@ class _SongBarState extends State<SongBar> {
       if (originalValue) {
         success = await removeSongFromOffline(_ytid);
         if (success && context.mounted) {
+          widget.song['audioPath'] = null;
+          widget.song['artworkPath'] = null;
+          widget.song['artWorkPath'] = null;
+          setState(() {
+            _artworkPath = null;
+          });
           showToast(context, context.l10n!.songRemovedFromOffline);
         }
       } else {
         success = await makeSongOffline(widget.song);
         if (success && context.mounted) {
+          final offlineSong = getOfflineSongByYtid(_ytid);
+          if (offlineSong.isNotEmpty) {
+            widget.song['audioPath'] = offlineSong['audioPath'];
+            widget.song['artworkPath'] = offlineSong['artworkPath'];
+            widget.song['artWorkPath'] = offlineSong['artworkPath'];
+          }
+          setState(() {
+            _artworkPath = offlineSong['artworkPath'] as String?;
+          });
           showToast(context, context.l10n!.songAddedToOffline);
         }
       }

@@ -60,6 +60,10 @@ MediaItem mapToMediaItem(Map song) {
       'ytid': song['ytid'],
       'isLive': song['isLive'],
       'highResImage': song['highResImage'],
+      'artworkPath':
+          (isOffline ? offlineSong['artworkPath'] : song['highResImage'])
+              ?.toString() ??
+          '',
       'artWorkPath':
           (isOffline ? offlineSong['artworkPath'] : song['highResImage'])
               ?.toString() ??

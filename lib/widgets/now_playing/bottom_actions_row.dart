@@ -296,8 +296,25 @@ Future<void> _toggleOffline(
     final bool success;
     if (originalValue) {
       success = await removeSongFromOffline(audioId);
+      if (success && audioHandler.mediaItem.value?.id == metadata.id) {
+        final highResImage = metadata.extras?['highResImage']?.toString();
+        if (highResImage != null && highResImage.isNotEmpty) {
+          audioHandler.mediaItem.add(
+            metadata.copyWith(artUri: Uri.parse(highResImage)),
+          );
+        }
+      }
     } else {
       success = await makeSongOffline(mediaItemToMap(metadata));
+      if (success && audioHandler.mediaItem.value?.id == metadata.id) {
+        final offlineSong = getOfflineSongByYtid(audioId.toString());
+        final artworkPath = offlineSong['artworkPath']?.toString();
+        if (artworkPath != null && artworkPath.isNotEmpty) {
+          audioHandler.mediaItem.add(
+            metadata.copyWith(artUri: Uri.file(artworkPath)),
+          );
+        }
+      }
     }
     if (!success) {
       status.value = originalValue;
