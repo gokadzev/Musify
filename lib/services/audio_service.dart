@@ -78,6 +78,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
   final List<Map> _historyList = [];
   final BehaviorSubject<List<Map>> _queueMapStream =
       BehaviorSubject<List<Map>>.seeded([]);
+  int _queueEntryCounter = 0;
   int _currentQueueIndex = 0;
   int _currentLoadingIndex = -1;
   int _currentLoadingTransitionId = -1;
@@ -237,8 +238,40 @@ class MusifyAudioHandler extends BaseAudioHandler {
     });
   }
 
-  MediaItem _getMediaItemForQueue(Map song, int index) {
-    return mapToMediaItem(song).copyWith(id: '${song['ytid']}_$index');
+  String _generateQueueEntryId() {
+    return 'queue-${DateTime.now().microsecondsSinceEpoch}-${_queueEntryCounter++}';
+  }
+
+  String _ensureQueueEntryId(Map song) {
+    final existingId = song['queueEntryId']?.toString();
+    if (existingId != null && existingId.isNotEmpty) {
+      return existingId;
+    }
+
+    final generatedId = _generateQueueEntryId();
+    song['queueEntryId'] = generatedId;
+    return generatedId;
+  }
+
+  Map<String, dynamic> _createQueueSong(Map song) {
+    final queueSong = Map<String, dynamic>.from(song);
+    queueSong['queueEntryId'] = _generateQueueEntryId();
+    return queueSong;
+  }
+
+  void _ensureQueueEntryIds(Iterable<Map> songs) {
+    for (final song in songs) {
+      _ensureQueueEntryId(song);
+    }
+  }
+
+  void _hydrateQueueEntryIds() {
+    _ensureQueueEntryIds(_queueList);
+    _ensureQueueEntryIds(_originalQueueList);
+  }
+
+  MediaItem _getMediaItemForQueue(Map song) {
+    return mapToMediaItem(song).copyWith(id: _ensureQueueEntryId(song));
   }
 
   void _updateCurrentMediaItemWithDuration(Duration duration) {
@@ -256,10 +289,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
         }
 
         final currentSong = _queueList[capturedQueueIndex];
-        final currentMediaItem = _getMediaItemForQueue(
-          currentSong,
-          capturedQueueIndex,
-        );
+        final currentMediaItem = _getMediaItemForQueue(currentSong);
         final uniqueId = currentMediaItem.id;
         final currentItem = mediaItem.valueOrNull;
 
@@ -270,16 +300,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
           mediaItem.add(currentMediaItem.copyWith(duration: duration));
         }
 
-        List<MediaItem> newQueue;
-        if (queue.hasValue && queue.value.length == _queueList.length) {
-          newQueue = List<MediaItem>.from(queue.value);
-        } else {
-          newQueue = _queueList
-              .asMap()
-              .entries
-              .map((entry) => _getMediaItemForQueue(entry.value, entry.key))
-              .toList();
-        }
+        final newQueue = _queueList
+            .asMap()
+            .entries
+            .map((entry) => _getMediaItemForQueue(entry.value))
+            .toList();
 
         if (capturedQueueIndex < newQueue.length) {
           newQueue[capturedQueueIndex] = newQueue[capturedQueueIndex].copyWith(
@@ -742,7 +767,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
         insertIndex = _queueList.length;
       }
 
-      _queueList.insert(insertIndex, song);
+      _queueList.insert(insertIndex, _createQueueSong(song));
 
       if (_currentQueueIndex < 0) {
         _currentQueueIndex = 0;
@@ -821,7 +846,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       for (var i = 0; i < songs.length; i++) {
         final song = songs[i];
         if (song['ytid'] != null && song['ytid'].toString().isNotEmpty) {
-          _queueList.add(song);
+          _queueList.add(_createQueueSong(song));
 
           if (replace && startIndex == i) {
             targetQueueIndex = _queueList.length - 1;
@@ -829,6 +854,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
         }
       }
 
+      _hydrateQueueEntryIds();
       _updateQueueMediaItems();
 
       if (targetQueueIndex != null) {
@@ -854,11 +880,12 @@ class MusifyAudioHandler extends BaseAudioHandler {
       if (index < 0 || index >= _queueList.length) return;
 
       final removedSong = _queueList[index];
+      final removedQueueEntryId = _ensureQueueEntryId(removedSong);
       _queueList.removeAt(index);
 
       if (shuffleNotifier.value && _originalQueueList.isNotEmpty) {
         _originalQueueList.removeWhere(
-          (s) => s['ytid'] != null && s['ytid'] == removedSong['ytid'],
+          (s) => _ensureQueueEntryId(s) == removedQueueEntryId,
         );
       }
 
@@ -877,6 +904,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
         await _playFromQueue(_currentQueueIndex);
       }
 
+      _hydrateQueueEntryIds();
       _updateQueueMediaItems();
     } catch (e, stackTrace) {
       logger.log('Error removing from queue', error: e, stackTrace: stackTrace);
@@ -885,6 +913,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   Future<void> reorderQueue(int oldIndex, int newIndex) async {
     try {
+      _ensureQueueEntryIds(_queueList);
+
       if (oldIndex < 0 ||
           oldIndex >= _queueList.length ||
           newIndex < 0 ||
@@ -927,10 +957,12 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   void _updateQueueMediaItems() {
     try {
+      _ensureQueueEntryIds(_queueList);
+
       final mediaItems = _queueList
           .asMap()
           .entries
-          .map((entry) => _getMediaItemForQueue(entry.value, entry.key))
+          .map((entry) => _getMediaItemForQueue(entry.value))
           .toList();
       queue.add(mediaItems);
 
@@ -1036,10 +1068,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       _currentQueueIndex = index;
 
       final currentSong = _queueList[_currentQueueIndex];
-      final currentMediaItem = _getMediaItemForQueue(
-        currentSong,
-        _currentQueueIndex,
-      );
+      final currentMediaItem = _getMediaItemForQueue(currentSong);
       final uniqueId = currentMediaItem.id;
 
       await Future.microtask(() {
@@ -1660,41 +1689,43 @@ class MusifyAudioHandler extends BaseAudioHandler {
       if (_queueList.isEmpty) return;
 
       if (shuffleEnabled && !wasShuffled) {
+        _hydrateQueueEntryIds();
+
         _originalQueueList
           ..clear()
           ..addAll(_queueList);
 
         final currentSong = _queueList[_currentQueueIndex];
-        final currentYtId = currentSong['ytid'];
+        final currentQueueEntryId = _ensureQueueEntryId(currentSong);
 
         _queueList.shuffle();
 
-        if (currentYtId != null) {
-          final newCurrentIndex = _queueList.indexWhere(
-            (song) => song['ytid'] == currentYtId,
-          );
+        final newCurrentIndex = _queueList.indexWhere(
+          (song) => _ensureQueueEntryId(song) == currentQueueEntryId,
+        );
 
-          if (newCurrentIndex != -1 && newCurrentIndex != 0) {
-            _queueList
-              ..removeAt(newCurrentIndex)
-              ..insert(0, currentSong);
-          }
+        if (newCurrentIndex != -1 && newCurrentIndex != 0) {
+          _queueList
+            ..removeAt(newCurrentIndex)
+            ..insert(0, currentSong);
         }
 
         _currentQueueIndex = 0;
         _updateQueueMediaItems();
       } else if (!shuffleEnabled && wasShuffled) {
         if (_originalQueueList.isNotEmpty) {
+          _hydrateQueueEntryIds();
+
           final currentSong = _queueList[_currentQueueIndex];
-          final currentYtId = currentSong['ytid'];
+          final currentQueueEntryId = _ensureQueueEntryId(currentSong);
 
           _queueList
             ..clear()
             ..addAll(_originalQueueList);
 
-          _currentQueueIndex = currentYtId != null
-              ? _queueList.indexWhere((song) => song['ytid'] == currentYtId)
-              : 0;
+          _currentQueueIndex = _queueList.indexWhere(
+            (song) => _ensureQueueEntryId(song) == currentQueueEntryId,
+          );
 
           if (_currentQueueIndex == -1) {
             _currentQueueIndex = 0;

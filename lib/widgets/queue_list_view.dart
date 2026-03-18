@@ -246,6 +246,10 @@ class _QueueWidgetState extends State<QueueWidget> {
     );
   }
 
+  String _queueEntryKey(Map song, int index) {
+    return song['queueEntryId']?.toString() ?? 'legacy_${song['ytid']}_$index';
+  }
+
   Widget _buildList(
     BuildContext context,
     ColorScheme colorScheme,
@@ -273,10 +277,12 @@ class _QueueWidgetState extends State<QueueWidget> {
       itemBuilder: (context, index) {
         final song = _queue[index];
         final isCurrentSong = index == currentIndex;
+        final queueEntryId = _queueEntryKey(song, index);
         return QueueTile(
-          key: ValueKey('queue_song_${song['ytid']}'),
+          key: ValueKey(queueEntryId),
           song: song,
           index: index,
+          queueEntryId: queueEntryId,
           isCurrentSong: isCurrentSong,
           colorScheme: colorScheme,
           onTap: () {
@@ -288,7 +294,9 @@ class _QueueWidgetState extends State<QueueWidget> {
             return true;
           },
           onDismissed: () {
-            final actualIndex = _queue.indexOf(song);
+            final actualIndex = _queue.indexWhere(
+              (item) => item['queueEntryId']?.toString() == queueEntryId,
+            );
             if (actualIndex == -1) return;
             setState(() {
               _isDismissing = false;
@@ -307,6 +315,7 @@ class QueueTile extends StatelessWidget {
     super.key,
     required this.song,
     required this.index,
+    required this.queueEntryId,
     required this.isCurrentSong,
     required this.colorScheme,
     required this.onTap,
@@ -316,6 +325,7 @@ class QueueTile extends StatelessWidget {
 
   final Map song;
   final int index;
+  final String queueEntryId;
   final bool isCurrentSong;
   final ColorScheme colorScheme;
   final VoidCallback onTap;
@@ -328,7 +338,7 @@ class QueueTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dismissible(
-      key: ValueKey('queue_dismiss_${song['ytid']}'),
+      key: ValueKey(queueEntryId),
       confirmDismiss: confirmDismiss,
       onDismissed: (_) => onDismissed(),
       background: _DismissBackground(
