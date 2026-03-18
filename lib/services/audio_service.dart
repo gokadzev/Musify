@@ -31,7 +31,9 @@ import 'package:musify/models/position_data.dart';
 import 'package:musify/services/common_services.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/settings_manager.dart';
+import 'package:musify/utilities/map_utils.dart';
 import 'package:musify/utilities/mediaitem.dart';
+import 'package:musify/utilities/queue_entry_utils.dart';
 import 'package:rxdart/rxdart.dart';
 
 class MusifyAudioHandler extends BaseAudioHandler {
@@ -78,7 +80,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
   final List<Map> _historyList = [];
   final BehaviorSubject<List<Map>> _queueMapStream =
       BehaviorSubject<List<Map>>.seeded([]);
-  int _queueEntryCounter = 0;
+  final QueueEntryIdManager _queueEntryIds = QueueEntryIdManager();
   int _currentQueueIndex = 0;
   int _currentLoadingIndex = -1;
   int _currentLoadingTransitionId = -1;
@@ -238,48 +240,14 @@ class MusifyAudioHandler extends BaseAudioHandler {
     });
   }
 
-  String _generateQueueEntryId() {
-    return 'queue-${DateTime.now().microsecondsSinceEpoch}-${_queueEntryCounter++}';
-  }
-
-  String _ensureQueueEntryId(Map song) {
-    final existingId = song['queueEntryId']?.toString();
-    if (existingId != null && existingId.isNotEmpty) {
-      return existingId;
-    }
-
-    final generatedId = _generateQueueEntryId();
-    song['queueEntryId'] = generatedId;
-    return generatedId;
-  }
-
-  Map<String, dynamic> _createQueueSong(Map song) {
-    final queueSong = Map<String, dynamic>.from(song);
-    queueSong['queueEntryId'] = _generateQueueEntryId();
-    return queueSong;
-  }
-
-  void _ensureQueueEntryIds(Iterable<Map> songs) {
-    for (final song in songs) {
-      _ensureQueueEntryId(song);
-    }
-  }
-
   void _hydrateQueueEntryIds() {
-    _ensureQueueEntryIds(_queueList);
-    _ensureQueueEntryIds(_originalQueueList);
+    _queueEntryIds
+      ..ensureIds(_queueList)
+      ..ensureIds(_originalQueueList);
   }
 
   MediaItem _getMediaItemForQueue(Map song) {
-    return mapToMediaItem(song).copyWith(id: _ensureQueueEntryId(song));
-  }
-
-  Map<String, dynamic> _cloneSong(Map song) {
-    return Map<String, dynamic>.from(song);
-  }
-
-  List<Map<String, dynamic>> _cloneSongs(Iterable<Map> songs) {
-    return songs.map(_cloneSong).toList();
+    return mapToMediaItem(song).copyWith(id: _queueEntryIds.ensureId(song));
   }
 
   void _updateCurrentMediaItemWithDuration(Duration duration) {
@@ -744,7 +712,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   void _addToHistory(Map song) {
     try {
-      _historyList.insert(0, _cloneSong(song));
+      _historyList.insert(0, cloneMap(song));
 
       if (_historyList.length > _maxHistorySize) {
         _historyList.removeRange(_maxHistorySize, _historyList.length);
@@ -773,7 +741,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
         insertIndex = _queueList.length;
       }
 
-      _queueList.insert(insertIndex, _createQueueSong(song));
+      _queueList.insert(insertIndex, _queueEntryIds.createSong(song));
 
       if (_currentQueueIndex < 0) {
         _currentQueueIndex = 0;
@@ -852,7 +820,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       for (var i = 0; i < songs.length; i++) {
         final song = songs[i];
         if (song['ytid'] != null && song['ytid'].toString().isNotEmpty) {
-          _queueList.add(_createQueueSong(song));
+          _queueList.add(_queueEntryIds.createSong(song));
 
           if (replace && startIndex == i) {
             targetQueueIndex = _queueList.length - 1;
@@ -886,12 +854,12 @@ class MusifyAudioHandler extends BaseAudioHandler {
       if (index < 0 || index >= _queueList.length) return;
 
       final removedSong = _queueList[index];
-      final removedQueueEntryId = _ensureQueueEntryId(removedSong);
+      final removedQueueEntryId = _queueEntryIds.ensureId(removedSong);
       _queueList.removeAt(index);
 
       if (shuffleNotifier.value && _originalQueueList.isNotEmpty) {
         _originalQueueList.removeWhere(
-          (s) => _ensureQueueEntryId(s) == removedQueueEntryId,
+          (s) => _queueEntryIds.ensureId(s) == removedQueueEntryId,
         );
       }
 
@@ -919,7 +887,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   Future<void> reorderQueue(int oldIndex, int newIndex) async {
     try {
-      _ensureQueueEntryIds(_queueList);
+      _queueEntryIds.ensureIds(_queueList);
 
       if (oldIndex < 0 ||
           oldIndex >= _queueList.length ||
@@ -963,7 +931,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   void _updateQueueMediaItems() {
     try {
-      _ensureQueueEntryIds(_queueList);
+      _queueEntryIds.ensureIds(_queueList);
 
       final mediaItems = _queueList
           .asMap()
@@ -1277,7 +1245,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   Future<bool> playSong(Map song, {String? mediaId}) async {
     try {
-      final songData = _cloneSong(song);
+      final songData = cloneMap(song);
 
       if (songData['ytid'] == null || songData['ytid'].toString().isEmpty) {
         logger.log('Invalid song data: missing ytid');
@@ -1659,7 +1627,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       if (_currentQueueIndex > 0) {
         await _playFromQueue(_currentQueueIndex - 1);
       } else if (_historyList.isNotEmpty) {
-        final lastSong = _cloneSong(_historyList.removeLast());
+        final lastSong = cloneMap(_historyList.removeLast());
         _queueList.insert(0, lastSong);
         _currentQueueIndex = 0;
         _updateQueueMediaItems();
@@ -1701,15 +1669,15 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
         _originalQueueList
           ..clear()
-          ..addAll(_cloneSongs(_queueList));
+          ..addAll(cloneMaps(_queueList));
 
         final currentSong = _queueList[_currentQueueIndex];
-        final currentQueueEntryId = _ensureQueueEntryId(currentSong);
+        final currentQueueEntryId = _queueEntryIds.ensureId(currentSong);
 
         _queueList.shuffle();
 
         final newCurrentIndex = _queueList.indexWhere(
-          (song) => _ensureQueueEntryId(song) == currentQueueEntryId,
+          (song) => _queueEntryIds.ensureId(song) == currentQueueEntryId,
         );
 
         if (newCurrentIndex != -1 && newCurrentIndex != 0) {
@@ -1725,15 +1693,15 @@ class MusifyAudioHandler extends BaseAudioHandler {
           _hydrateQueueEntryIds();
 
           final currentSong = _queueList[_currentQueueIndex];
-          final currentQueueEntryId = _ensureQueueEntryId(currentSong);
-          final restoredQueue = _cloneSongs(_originalQueueList);
+          final currentQueueEntryId = _queueEntryIds.ensureId(currentSong);
+          final restoredQueue = cloneMaps(_originalQueueList);
 
           _queueList
             ..clear()
             ..addAll(restoredQueue);
 
           _currentQueueIndex = _queueList.indexWhere(
-            (song) => _ensureQueueEntryId(song) == currentQueueEntryId,
+            (song) => _queueEntryIds.ensureId(song) == currentQueueEntryId,
           );
 
           if (_currentQueueIndex == -1) {
