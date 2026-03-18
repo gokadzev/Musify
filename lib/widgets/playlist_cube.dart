@@ -22,36 +22,27 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/extensions/l10n.dart';
-import 'package:musify/services/common_services.dart';
 import 'package:musify/widgets/playlist_artwork.dart';
 
 class PlaylistCube extends StatelessWidget {
-  PlaylistCube(
+  const PlaylistCube(
     this.playlist, {
     super.key,
     this.playlistData,
     this.cubeIcon = FluentIcons.music_note_1_24_regular,
     this.size = 220,
-    this.borderRadius = 13,
-  }) : playlistLikeStatus = ValueNotifier<bool>(
-         isPlaylistAlreadyLiked(playlist['ytid']),
-       );
+    this.borderRadius = 16,
+    this.showTypeLabel = true,
+  });
 
   final Map? playlistData;
   final Map playlist;
   final IconData cubeIcon;
   final double size;
   final double borderRadius;
+  final bool showTypeLabel;
 
-  static const double paddingValue = 4;
   static const double typeLabelOffset = 10;
-
-  final ValueNotifier<bool> playlistLikeStatus;
-
-  static const likeStatusToIconMapper = {
-    true: FluentIcons.heart_24_filled,
-    false: FluentIcons.heart_24_regular,
-  };
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +56,7 @@ class PlaylistCube extends StatelessWidget {
             size: size,
             cubeIcon: cubeIcon,
           ),
-          if (borderRadius == 13 && playlist['image'] != null)
+          if (showTypeLabel && playlist['image'] != null)
             Positioned(
               top: typeLabelOffset,
               right: typeLabelOffset,
@@ -78,21 +69,20 @@ class PlaylistCube extends StatelessWidget {
 
   Widget _buildLabel(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final isAlbum = playlist['isAlbum'] == true;
     return Container(
       decoration: BoxDecoration(
-        color: colorScheme.surface.withValues(alpha: 0.85),
-        borderRadius: BorderRadius.circular(8),
+        color: colorScheme.primaryContainer.withValues(alpha: 0.92),
+        borderRadius: BorderRadius.circular(20),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: Text(
-        playlist['isAlbum'] != null && playlist['isAlbum'] == true
-            ? context.l10n!.album
-            : context.l10n!.playlist,
+        isAlbum ? context.l10n!.album : context.l10n!.playlist,
         style: TextStyle(
-          color: colorScheme.secondary,
+          color: colorScheme.onPrimaryContainer,
           fontSize: 11,
-          fontWeight: FontWeight.w600,
-          letterSpacing: 0.3,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 0.4,
         ),
       ),
     );

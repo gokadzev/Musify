@@ -29,10 +29,10 @@ import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/flutter_bottom_sheet.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/mediaitem.dart';
+import 'package:musify/utilities/playlist_dialogs.dart';
 import 'package:musify/widgets/queue_list_view.dart';
-import 'package:musify/widgets/song_bar.dart';
 
-class BottomActionsRow extends StatelessWidget {
+class BottomActionsRow extends StatefulWidget {
   const BottomActionsRow({
     super.key,
     required this.audioId,
@@ -48,15 +48,47 @@ class BottomActionsRow extends StatelessWidget {
   final dynamic lyricsController;
 
   @override
+  State<BottomActionsRow> createState() => _BottomActionsRowState();
+}
+
+class _BottomActionsRowState extends State<BottomActionsRow> {
+  late final ValueNotifier<bool> _songLikeStatus;
+  late final ValueNotifier<bool> _songOfflineStatus;
+
+  @override
+  void initState() {
+    super.initState();
+    _songLikeStatus = ValueNotifier<bool>(isSongAlreadyLiked(widget.audioId));
+    _songOfflineStatus = ValueNotifier<bool>(
+      isSongAlreadyOffline(widget.audioId),
+    );
+  }
+
+  @override
+  void didUpdateWidget(BottomActionsRow oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.audioId != widget.audioId) {
+      _songLikeStatus.value = isSongAlreadyLiked(widget.audioId);
+      _songOfflineStatus.value = isSongAlreadyOffline(widget.audioId);
+    }
+  }
+
+  @override
+  void dispose() {
+    _songLikeStatus.dispose();
+    _songOfflineStatus.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final songLikeStatus = ValueNotifier<bool>(isSongAlreadyLiked(audioId));
-    final songOfflineStatus = ValueNotifier<bool>(
-      isSongAlreadyOffline(audioId),
-    );
+    final l10n = context.l10n!;
 
     final screenWidth = MediaQuery.sizeOf(context).width;
-    final responsiveIconSize = screenWidth < 360 ? iconSize * 0.85 : iconSize;
+    final responsiveIconSize = screenWidth < 360
+        ? widget.iconSize * 0.85
+        : widget.iconSize;
 
     return StreamBuilder<List<Map>>(
       stream: audioHandler.queueAsMapStream,
@@ -66,34 +98,34 @@ class BottomActionsRow extends StatelessWidget {
         final actions = <Widget>[
           _buildActionButton(
             context: context,
-            icon: FluentIcons.cellular_data_1_24_regular,
-            activeIcon: FluentIcons.cellular_off_24_regular,
+            icon: FluentIcons.cloud_arrow_down_24_regular,
+            activeIcon: FluentIcons.cloud_off_24_filled,
             colorScheme: colorScheme,
             size: responsiveIconSize,
-            statusNotifier: songOfflineStatus,
-            onPressed: audioId == null
+            statusNotifier: _songOfflineStatus,
+            onPressed: widget.audioId == null
                 ? null
-                : () => _toggleOffline(songOfflineStatus, audioId, metadata),
-            tooltip: 'Offline',
+                : () => _toggleOffline(
+                    _songOfflineStatus,
+                    widget.audioId,
+                    widget.metadata,
+                  ),
+            tooltip: l10n.makeOffline,
           ),
-        ];
-
-        if (!offlineMode.value) {
-          actions.add(
+          _buildSleepTimerButton(context, colorScheme, responsiveIconSize),
+          if (!offlineMode.value)
             _buildSimpleActionButton(
               context: context,
-              icon: FluentIcons.add_24_regular,
+              icon: FluentIcons.album_add_24_regular,
               colorScheme: colorScheme,
               size: responsiveIconSize,
-              onPressed: () =>
-                  showAddToPlaylistDialog(context, mediaItemToMap(metadata)),
-              tooltip: 'Add to playlist',
+              onPressed: () => showAddToPlaylistDialog(
+                context,
+                song: mediaItemToMap(widget.metadata),
+              ),
+              tooltip: l10n.addToPlaylist,
             ),
-          );
-        }
-
-        if (queue.isNotEmpty && !isLargeScreen) {
-          actions.add(
+          if (queue.isNotEmpty && !widget.isLargeScreen)
             _buildSimpleActionButton(
               context: context,
               icon: FluentIcons.apps_list_24_filled,
@@ -103,38 +135,33 @@ class BottomActionsRow extends StatelessWidget {
                 context,
                 const QueueWidget(isBottomSheet: true),
               ),
-              tooltip: 'Queue',
+              tooltip: l10n.queue,
             ),
-          );
-        }
-
-        if (!offlineMode.value) {
-          actions.addAll([
+          if (!offlineMode.value) ...[
+            _buildSimpleActionButton(
+              context: context,
+              icon: FluentIcons.text_quote_24_regular,
+              colorScheme: colorScheme,
+              size: responsiveIconSize,
+              onPressed: widget.lyricsController.flipcard,
+              tooltip: l10n.lyrics,
+            ),
             _buildActionButton(
               context: context,
               icon: FluentIcons.heart_24_regular,
               activeIcon: FluentIcons.heart_24_filled,
               colorScheme: colorScheme,
               size: responsiveIconSize,
-              statusNotifier: songLikeStatus,
+              statusNotifier: _songLikeStatus,
               activeColor: colorScheme.primary,
               onPressed: () {
-                updateSongLikeStatus(audioId, !songLikeStatus.value);
-                songLikeStatus.value = !songLikeStatus.value;
+                updateSongLikeStatus(widget.audioId, !_songLikeStatus.value);
+                _songLikeStatus.value = !_songLikeStatus.value;
               },
-              tooltip: 'Like',
+              tooltip: l10n.likedSongs,
             ),
-            _buildSimpleActionButton(
-              context: context,
-              icon: FluentIcons.text_quote_24_regular,
-              colorScheme: colorScheme,
-              size: responsiveIconSize,
-              onPressed: lyricsController.flipcard,
-              tooltip: 'Lyrics',
-            ),
-            _buildSleepTimerButton(context, colorScheme, responsiveIconSize),
-          ]);
-        }
+          ],
+        ];
 
         return Container(
           padding: const EdgeInsets.all(8),
@@ -228,7 +255,7 @@ class BottomActionsRow extends StatelessWidget {
                 : colorScheme.onSurfaceVariant,
           ),
           iconSize: size,
-          tooltip: 'Sleep timer',
+          tooltip: context.l10n!.sleepTimer,
           style: IconButton.styleFrom(
             backgroundColor: isActive
                 ? colorScheme.primary.withValues(alpha: 0.15)
@@ -299,11 +326,12 @@ void _showSleepTimerDialog(BuildContext context) {
             ),
             backgroundColor: colorScheme.surfaceContainerHigh,
             title: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(FluentIcons.timer_24_regular, color: colorScheme.primary),
                 const SizedBox(width: 12),
                 Text(
-                  context.l10n!.setSleepTimer,
+                  context.l10n!.sleepTimer,
                   style: TextStyle(
                     color: colorScheme.onSurface,
                     fontWeight: FontWeight.w600,

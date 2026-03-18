@@ -28,7 +28,7 @@ import 'package:musify/main.dart';
 import 'package:musify/models/full_player_state.dart';
 import 'package:musify/models/position_data.dart';
 import 'package:musify/screens/now_playing_page.dart';
-import 'package:musify/widgets/marque.dart';
+import 'package:musify/widgets/marquee.dart';
 import 'package:musify/widgets/song_artwork.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -211,7 +211,7 @@ class _MiniPlayerBodyState extends State<_MiniPlayerBody>
                           transitionBuilder: (child, animation) =>
                               FadeTransition(opacity: animation, child: child),
                           child: KeyedSubtree(
-                            key: ValueKey(metadata.title),
+                            key: ValueKey(metadata.id),
                             child: _MetadataWidget(
                               title: metadata.title,
                               artist: metadata.artist,

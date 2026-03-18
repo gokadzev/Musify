@@ -19,32 +19,13 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
-import 'package:flutter/material.dart';
-import 'package:musify/main.dart';
+List<dynamic> filterSongsByQuery(List<dynamic> songsList, String searchQuery) {
+  if (searchQuery.isEmpty) return songsList;
 
-class ShufflePlayButton extends StatelessWidget {
-  const ShufflePlayButton({super.key, required this.songs});
-
-  final List songs;
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton.filledTonal(
-      icon: const Icon(FluentIcons.arrow_shuffle_24_filled),
-      iconSize: 24,
-      tooltip: 'Shuffle play',
-      onPressed: () async {
-        if (songs.isEmpty) return;
-        final shuffledSongs = List<Map>.from(songs.whereType<Map>());
-        if (shuffledSongs.isEmpty) return;
-        shuffledSongs.shuffle();
-        await audioHandler.addPlaylistToQueue(
-          shuffledSongs,
-          replace: true,
-          startIndex: 0,
-        );
-      },
-    );
-  }
+  final q = searchQuery.toLowerCase();
+  return songsList.where((s) {
+    final title = (s['title'] ?? '').toString().toLowerCase();
+    final artist = (s['artist'] ?? '').toString().toLowerCase();
+    return title.contains(q) || artist.contains(q);
+  }).toList();
 }

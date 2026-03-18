@@ -19,32 +19,35 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:musify/main.dart';
+import 'package:musify/widgets/custom_search_bar.dart';
 
-class ShufflePlayButton extends StatelessWidget {
-  const ShufflePlayButton({super.key, required this.songs});
-
-  final List songs;
+class SearchBarSection extends StatefulWidget {
+  const SearchBarSection({
+    super.key,
+    required this.controller,
+    required this.focusNode,
+    required this.onSearchChanged,
+    required this.labelText,
+  });
+  final TextEditingController controller;
+  final FocusNode focusNode;
+  final ValueChanged<String> onSearchChanged;
+  final String labelText;
 
   @override
+  State<SearchBarSection> createState() => _SearchBarSectionState();
+}
+
+class _SearchBarSectionState extends State<SearchBarSection> {
+  @override
   Widget build(BuildContext context) {
-    return IconButton.filledTonal(
-      icon: const Icon(FluentIcons.arrow_shuffle_24_filled),
-      iconSize: 24,
-      tooltip: 'Shuffle play',
-      onPressed: () async {
-        if (songs.isEmpty) return;
-        final shuffledSongs = List<Map>.from(songs.whereType<Map>());
-        if (shuffledSongs.isEmpty) return;
-        shuffledSongs.shuffle();
-        await audioHandler.addPlaylistToQueue(
-          shuffledSongs,
-          replace: true,
-          startIndex: 0,
-        );
-      },
+    return CustomSearchBar(
+      controller: widget.controller,
+      focusNode: widget.focusNode,
+      labelText: widget.labelText,
+      onSubmitted: (_) {},
+      onChanged: widget.onSearchChanged,
     );
   }
 }

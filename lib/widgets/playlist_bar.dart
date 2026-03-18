@@ -24,15 +24,18 @@ import 'dart:async';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:musify/constants/app_constants.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/services/common_services.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/playlists_manager.dart';
 import 'package:musify/services/router_service.dart';
 import 'package:musify/utilities/artwork_provider.dart';
-import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/flutter_toast.dart';
+import 'package:musify/utilities/offline_playlist_dialogs.dart';
+import 'package:musify/utilities/playlist_dialogs.dart';
 import 'package:musify/widgets/edit_playlist_dialog.dart';
+import 'package:musify/widgets/spinner.dart';
 
 class PlaylistBar extends StatelessWidget {
   PlaylistBar(
@@ -76,38 +79,59 @@ class PlaylistBar extends StatelessWidget {
   bool get isFolder =>
       playlistData != null && playlistData!.containsKey('playlists');
 
+  String? get _resolvedPlaylistId =>
+      playlistId ?? playlistData?['ytid']?.toString();
+
+  bool get _canAddToPlaylist => !isFolder && _resolvedPlaylistId != null;
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     Map<dynamic, dynamic>? updatedPlaylist;
     return Padding(
       padding: commonBarPadding,
-      child: Card(
-        shape: RoundedRectangleBorder(borderRadius: borderRadius),
-        margin: const EdgeInsets.only(bottom: 3),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 3),
-          child: InkWell(
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-            onTap: onPressed ?? _getDefaultOnPressed(context, updatedPlaylist),
-            child: ListTile(
-              minTileHeight: 45,
-              leading: isFolder
-                  ? _buildFolderIcon(colorScheme)
-                  : _buildPlaylistIcon(colorScheme),
-              title: Text(
-                playlistTitle,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 15,
+      child: Material(
+        color: colorScheme.surfaceContainerLow,
+        borderRadius: borderRadius,
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onPressed ?? _getDefaultOnPressed(context, updatedPlaylist),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+            child: Row(
+              children: [
+                if (isFolder)
+                  _buildFolderIcon(colorScheme)
+                else
+                  _buildPlaylistIcon(colorScheme),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        playlistTitle,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 15,
+                          color: colorScheme.onSurface,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      if (isFolder) ...[
+                        const SizedBox(height: 3),
+                        _buildFolderSubtitle(context) ??
+                            const SizedBox.shrink(),
+                      ],
+                    ],
+                  ),
                 ),
-                overflow: TextOverflow.ellipsis,
-              ),
-              subtitle: isFolder ? _buildFolderSubtitle(context) : null,
-              trailing: showBuildActions
-                  ? _buildActionButtons(context, colorScheme)
-                  : null,
+                if (showBuildActions) ...[
+                  const SizedBox(width: 4),
+                  _buildActionButtons(context, colorScheme),
+                ],
+              ],
             ),
           ),
         ),
@@ -117,47 +141,52 @@ class PlaylistBar extends StatelessWidget {
 
   Widget _buildPlaylistIcon(ColorScheme colorScheme) {
     if (playlistArtwork != null && playlistArtwork!.isNotEmpty) {
-      // Use artwork if available
-      return Container(
-        width: 50,
-        height: 50,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          image: DecorationImage(
-            image: ArtworkProvider.get(playlistArtwork!),
-            fit: BoxFit.cover,
-          ),
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Image(
+          image: ArtworkProvider.get(playlistArtwork!),
+          width: 52,
+          height: 52,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => _buildIconFallback(colorScheme),
         ),
-      );
-    } else {
-      // Use icon with consistent styling
-      return Container(
-        width: 40,
-        height: 40,
-        decoration: BoxDecoration(
-          color: colorScheme.onSurface.withValues(alpha: 0.12),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Icon(cubeIcon, size: 22),
       );
     }
+    return _buildIconFallback(colorScheme);
+  }
+
+  Widget _buildIconFallback(ColorScheme colorScheme) {
+    return Container(
+      width: 52,
+      height: 52,
+      decoration: BoxDecoration(
+        color: colorScheme.secondaryContainer,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Icon(cubeIcon, size: 26, color: colorScheme.onSecondaryContainer),
+    );
   }
 
   Widget _buildActionButtons(BuildContext context, ColorScheme colorScheme) {
+    final isOffline =
+        playlistData != null &&
+        (playlistData!['downloadedAt'] != null ||
+            playlistData!['isOffline'] == true);
     return PopupMenuButton<String>(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      color: colorScheme.surface,
+      color: colorScheme.surfaceContainerHigh,
       icon: Icon(
-        FluentIcons.more_horizontal_24_filled,
+        FluentIcons.more_vertical_24_regular,
         color: colorScheme.onSurfaceVariant,
+        size: 20,
       ),
       onSelected: (String value) {
         switch (value) {
           case 'like':
-            if (playlistId != null) {
+            if (_resolvedPlaylistId != null) {
               final newValue = !playlistLikeStatus.value;
               playlistLikeStatus.value = newValue;
-              updatePlaylistLikeStatus(playlistId!, newValue);
+              updatePlaylistLikeStatus(_resolvedPlaylistId!, newValue);
               currentLikedPlaylistsLength.value += newValue ? 1 : -1;
             }
             break;
@@ -168,13 +197,29 @@ class PlaylistBar extends StatelessWidget {
             _showMoveToFolderDialog(context);
             break;
           case 'edit':
-            _handleEdit(context);
+            if (isFolder) {
+              _handleEditFolder(context);
+            } else {
+              _handleEdit(context);
+            }
+            break;
+          case 'add_to_playlist':
+            _handleAddPlaylistToPlaylist(context);
+            break;
+          case 'remove_offline':
+            if (playlistData != null && playlistData!['ytid'] != null) {
+              showRemoveOfflinePlaylistDialog(
+                context,
+                playlistData!['ytid'].toString(),
+              );
+            }
             break;
         }
       },
       itemBuilder: (BuildContext context) {
+        final isUserCreated = playlistData?['source'] == 'user-created';
         return [
-          if (onDelete == null)
+          if (onDelete == null || !isUserCreated)
             PopupMenuItem<String>(
               value: 'like',
               child: Row(
@@ -188,6 +233,37 @@ class PlaylistBar extends StatelessWidget {
                     playlistLikeStatus.value
                         ? context.l10n!.removeFromLikedPlaylists
                         : context.l10n!.addToLikedPlaylists,
+                  ),
+                ],
+              ),
+            ),
+          if (_canAddToPlaylist)
+            PopupMenuItem<String>(
+              value: 'add_to_playlist',
+              child: Row(
+                children: [
+                  Icon(
+                    FluentIcons.album_add_24_regular,
+                    color: colorScheme.primary,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(context.l10n!.addToPlaylist),
+                ],
+              ),
+            ),
+          if (isOffline)
+            PopupMenuItem<String>(
+              value: 'remove_offline',
+              child: Row(
+                children: [
+                  Icon(
+                    FluentIcons.cloud_off_24_filled,
+                    color: colorScheme.error,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    context.l10n!.removeOffline,
+                    style: TextStyle(color: colorScheme.error),
                   ),
                 ],
               ),
@@ -210,16 +286,18 @@ class PlaylistBar extends StatelessWidget {
               ),
             ),
           if (playlistData != null &&
-              !isFolder &&
-              (playlistData!['source'] == 'user-created' ||
-                  playlistData!['source'] == 'user-youtube'))
+              (isFolder || playlistData!['source'] == 'user-created'))
             PopupMenuItem<String>(
               value: 'edit',
               child: Row(
                 children: [
                   Icon(FluentIcons.edit_24_filled, color: colorScheme.primary),
                   const SizedBox(width: 8),
-                  Text(context.l10n!.editPlaylist),
+                  Text(
+                    isFolder
+                        ? context.l10n!.editFolder
+                        : context.l10n!.editPlaylist,
+                  ),
                 ],
               ),
             ),
@@ -253,72 +331,134 @@ class PlaylistBar extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) {
+        final colorScheme = Theme.of(context).colorScheme;
         return AlertDialog(
-          title: Text(context.l10n!.moveToFolder),
+          backgroundColor: colorScheme.surface,
+          surfaceTintColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(28),
+          ),
+          icon: Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              color: colorScheme.secondaryContainer,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              FluentIcons.folder_arrow_right_24_filled,
+              color: colorScheme.secondary,
+              size: 28,
+            ),
+          ),
+          title: Text(
+            context.l10n!.moveToFolder,
+            style: TextStyle(
+              color: colorScheme.onSurface,
+              fontWeight: FontWeight.w600,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          contentPadding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
           content: SizedBox(
             width: double.maxFinite,
             child: ValueListenableBuilder<List>(
               valueListenable: userPlaylistFolders,
               builder: (context, folders, _) {
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Option to remove from folder (move to main library)
-                    ListTile(
-                      leading: Icon(
-                        FluentIcons.library_24_filled,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                      title: Text(context.l10n!.library),
-                      onTap: () {
-                        Navigator.pop(context);
-                        if (playlistData != null) {
-                          movePlaylistToFolder(playlistData!, null, context);
-                        }
-                      },
+                // Find the current folder containing this playlist
+                String? currentFolderId;
+                if (playlistData != null) {
+                  for (final folder in folders) {
+                    final folderPlaylists = folder['playlists'] as List? ?? [];
+                    if (folderPlaylists.any(
+                      (p) => p['ytid'] == playlistData!['ytid'],
+                    )) {
+                      currentFolderId = folder['id'];
+                      break;
+                    }
+                  }
+                }
+
+                // Filter folders to exclude current one
+                final availableFolders = folders
+                    .where((folder) => folder['id'] != currentFolderId)
+                    .toList();
+
+                final hasLibrary = currentFolderId != null;
+                final hasItems = hasLibrary || availableFolders.isNotEmpty;
+
+                if (!hasItems) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: Text(
+                      context.l10n!.noFolders,
+                      style: TextStyle(color: colorScheme.onSurfaceVariant),
+                      textAlign: TextAlign.center,
                     ),
-                    const Divider(),
-                    // List of available folders
-                    if (folders.isNotEmpty)
-                      ...folders.map((folder) {
-                        return ListTile(
-                          leading: Icon(
-                            FluentIcons.folder_24_filled,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                          title: Text(
-                            folder['name'],
-                            style: const TextStyle(fontWeight: FontWeight.w600),
-                          ),
-                          onTap: () {
-                            Navigator.pop(context);
-                            if (playlistData != null) {
-                              movePlaylistToFolder(
-                                playlistData!,
-                                folder['id'],
-                                context,
-                              );
-                            }
-                          },
-                        );
-                      })
-                    else
-                      Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Text(
-                          context.l10n!.noCustomPlaylists,
-                          style: TextStyle(color: Theme.of(context).hintColor),
-                        ),
+                  );
+                }
+
+                return ListView(
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  children: [
+                    if (hasLibrary)
+                      _MoveToFolderItem(
+                        icon: FluentIcons.library_24_filled,
+                        iconColor: colorScheme.primary,
+                        iconBgColor: colorScheme.primaryContainer,
+                        label: context.l10n!.library,
+                        onTap: () {
+                          Navigator.pop(context);
+                          if (playlistData != null) {
+                            movePlaylistToFolder(playlistData!, null, context);
+                          }
+                        },
                       ),
+                    ...availableFolders.map(
+                      (folder) => _MoveToFolderItem(
+                        icon: FluentIcons.folder_24_filled,
+                        iconColor: colorScheme.secondary,
+                        iconBgColor: colorScheme.secondaryContainer,
+                        label: folder['name'] as String,
+                        onTap: () {
+                          Navigator.pop(context);
+                          if (playlistData != null) {
+                            movePlaylistToFolder(
+                              playlistData!,
+                              folder['id'],
+                              context,
+                            );
+                          }
+                        },
+                      ),
+                    ),
                   ],
                 );
               },
             ),
           ),
+          actionsPadding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
           actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(context.l10n!.cancel),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: () => Navigator.pop(context),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  side: BorderSide(color: colorScheme.outline),
+                ),
+                child: Text(
+                  context.l10n!.cancel,
+                  style: TextStyle(
+                    color: colorScheme.onSurface,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
             ),
           ],
         );
@@ -329,13 +469,17 @@ class PlaylistBar extends StatelessWidget {
   // Helper methods for folder display
   Widget _buildFolderIcon(ColorScheme colorScheme) {
     return Container(
-      width: 40,
-      height: 40,
+      width: 52,
+      height: 52,
       decoration: BoxDecoration(
-        color: colorScheme.onSurface.withValues(alpha: 0.12),
+        color: colorScheme.secondaryContainer,
         borderRadius: BorderRadius.circular(12),
       ),
-      child: const Icon(FluentIcons.folder_24_filled, size: 22),
+      child: Icon(
+        FluentIcons.folder_24_filled,
+        size: 26,
+        color: colorScheme.onSecondaryContainer,
+      ),
     );
   }
 
@@ -350,6 +494,7 @@ class PlaylistBar extends StatelessWidget {
       style: TextStyle(
         color: Theme.of(context).colorScheme.onSurfaceVariant,
         fontSize: 12,
+        fontWeight: FontWeight.w500,
       ),
     );
   }
@@ -366,16 +511,54 @@ class PlaylistBar extends StatelessWidget {
       };
     } else {
       return () {
-        final resolvedPlaylistId =
-            playlistId ?? playlistData?['ytid']?.toString();
-        if (resolvedPlaylistId == null ||
-            resolvedPlaylistId.isEmpty ||
-            resolvedPlaylistId == 'null') {
+        if (_resolvedPlaylistId == null ||
+            _resolvedPlaylistId!.isEmpty ||
+            _resolvedPlaylistId == 'null') {
           showToast(context, context.l10n!.error);
           return;
         }
-        context.push('/home/playlist/$resolvedPlaylistId');
+        context.push('/home/playlist/$_resolvedPlaylistId');
       };
+    }
+  }
+
+  Future<void> _handleAddPlaylistToPlaylist(BuildContext context) async {
+    if (_resolvedPlaylistId == null) {
+      showToast(context, context.l10n!.error);
+      return;
+    }
+
+    final navContext = NavigationManager().context;
+    unawaited(
+      showDialog(
+        context: navContext,
+        barrierDismissible: false,
+        builder: (_) => const Center(child: Spinner()),
+      ),
+    );
+
+    try {
+      final fullPlaylist = await getPlaylistInfoForWidget(_resolvedPlaylistId);
+      if (!navContext.mounted) return;
+      Navigator.pop(navContext);
+
+      if (fullPlaylist == null || fullPlaylist['list'] == null) {
+        showToast(navContext, navContext.l10n!.error);
+        return;
+      }
+
+      final tracks = fullPlaylist['list'] as List<dynamic>;
+      if (tracks.isEmpty) {
+        showToast(navContext, navContext.l10n!.noSongsInPlaylist);
+        return;
+      }
+
+      showAddToPlaylistDialog(navContext, songs: tracks);
+    } catch (e) {
+      if (navContext.mounted) {
+        Navigator.pop(navContext);
+        showToast(navContext, navContext.l10n!.error);
+      }
     }
   }
 
@@ -400,5 +583,134 @@ class PlaylistBar extends StatelessWidget {
         showToast(appCtx, appCtx.l10n!.playlistUpdated);
       }
     }
+  }
+
+  void _handleEditFolder(BuildContext context) {
+    if (playlistData == null) return;
+    final folderId = playlistData!['id'];
+    var folderName = playlistTitle;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: colorScheme.surface,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+        icon: Icon(
+          FluentIcons.folder_24_regular,
+          color: colorScheme.primary,
+          size: 32,
+        ),
+        title: Text(
+          context.l10n!.editFolder,
+          style: TextStyle(
+            color: colorScheme.onSurface,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        content: TextFormField(
+          decoration: InputDecoration(
+            labelText: context.l10n!.folderName,
+            prefixIcon: Icon(
+              FluentIcons.text_field_20_regular,
+              color: colorScheme.onSurfaceVariant,
+            ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            filled: true,
+            fillColor: colorScheme.surfaceContainerLow,
+          ),
+          initialValue: folderName,
+          autofocus: true,
+          onChanged: (value) => folderName = value,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              context.l10n!.cancel,
+              style: TextStyle(color: colorScheme.onSurfaceVariant),
+            ),
+          ),
+          FilledButton.icon(
+            onPressed: () {
+              Navigator.pop(context);
+              final result = renamePlaylistFolder(
+                folderId,
+                folderName,
+                context,
+              );
+              showToast(context, result);
+            },
+            icon: const Icon(FluentIcons.save_20_filled),
+            label: Text(context.l10n!.update),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MoveToFolderItem extends StatelessWidget {
+  const _MoveToFolderItem({
+    required this.icon,
+    required this.iconColor,
+    required this.iconBgColor,
+    required this.label,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final Color iconColor;
+  final Color iconBgColor;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Material(
+        color: colorScheme.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(16),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            child: Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: iconBgColor,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(icon, color: iconColor, size: 22),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Text(
+                    label,
+                    style: TextStyle(
+                      color: colorScheme.onSurface,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+                Icon(
+                  FluentIcons.chevron_right_24_regular,
+                  color: colorScheme.onSurfaceVariant,
+                  size: 18,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

@@ -20,7 +20,7 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:musify/utilities/common_variables.dart';
+import 'package:musify/constants/app_constants.dart';
 
 class CustomBar extends StatelessWidget {
   CustomBar(
@@ -50,47 +50,62 @@ class CustomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final effectiveIconColor = iconColor ?? colorScheme.onSecondaryContainer;
+
     return Padding(
       padding: commonBarPadding,
-      child: Card(
-        margin: const EdgeInsets.only(bottom: 3),
-        color: backgroundColor,
-        shape: RoundedRectangleBorder(borderRadius: borderRadius),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 3),
-          child: InkWell(
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-            onTap: onTap,
-            onLongPress: onLongPress,
-            child: ListTile(
-              minTileHeight: 45,
-              leading: Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(12),
+      child: Material(
+        color: backgroundColor ?? colorScheme.surfaceContainerLow,
+        borderRadius: borderRadius,
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          onLongPress: onLongPress,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+            child: Row(
+              children: [
+                Container(
+                  width: 52,
+                  height: 52,
+                  decoration: BoxDecoration(
+                    color: colorScheme.secondaryContainer,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(tileIcon, size: 26, color: effectiveIconColor),
                 ),
-                child: Icon(tileIcon, size: 22),
-              ),
-              title: Text(
-                tileName,
-                style: TextStyle(fontWeight: FontWeight.w600, color: textColor),
-              ),
-              subtitle: description != null
-                  ? Text(
-                      description!,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color:
-                            textColor?.withValues(alpha: 0.75) ??
-                            Theme.of(context).colorScheme.onSurfaceVariant,
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        tileName,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 15,
+                          color: textColor ?? colorScheme.onSurface,
+                        ),
                       ),
-                    )
-                  : null,
-              trailing: trailing,
+                      if (description != null) ...[
+                        const SizedBox(height: 2),
+                        Text(
+                          description!,
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color:
+                                    textColor?.withValues(alpha: 0.75) ??
+                                    colorScheme.onSurfaceVariant,
+                              ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                if (trailing != null) ...[const SizedBox(width: 8), trailing!],
+              ],
             ),
           ),
         ),

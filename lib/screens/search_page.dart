@@ -24,13 +24,13 @@ import 'dart:async';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:musify/constants/app_constants.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/common_services.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/playlists_manager.dart';
-import 'package:musify/utilities/common_variables.dart';
-import 'package:musify/utilities/utils.dart';
+import 'package:musify/utilities/app_utils.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/custom_bar.dart';
 import 'package:musify/widgets/custom_search_bar.dart';
@@ -182,28 +182,30 @@ class _SearchPageState extends State<SearchPage> {
                       _debounce?.cancel();
                       final query = value;
                       final requestId = ++_latestSuggestionRequest;
+
+                      // Clear suggestions immediately if input is empty
+                      if (query.isEmpty) {
+                        _suggestionsList = [];
+                        if (mounted) setState(() {});
+                        return;
+                      }
+
                       _debounce = Timer(
                         const Duration(milliseconds: 300),
                         () async {
-                          if (query.isNotEmpty) {
-                            final searchSuggestions =
-                                await getSearchSuggestions(query);
+                          final searchSuggestions = await getSearchSuggestions(
+                            query,
+                          );
 
-                            if (!mounted ||
-                                requestId != _latestSuggestionRequest ||
-                                _searchBar.text != query) {
-                              return;
-                            }
-
-                            _suggestionsList = List<String>.from(
-                              searchSuggestions,
-                            );
-                          } else {
-                            if (requestId != _latestSuggestionRequest) {
-                              return;
-                            }
-                            _suggestionsList = [];
+                          if (!mounted ||
+                              requestId != _latestSuggestionRequest ||
+                              _searchBar.text != query) {
+                            return;
                           }
+
+                          _suggestionsList = List<String>.from(
+                            searchSuggestions,
+                          );
                           if (mounted) setState(() {});
                         },
                       );
@@ -319,7 +321,7 @@ class _SearchPageState extends State<SearchPage> {
           SongBar(
             _songsSearchResult[index],
             true,
-            key: ValueKey('song_${_songsSearchResult[index]['ytid']}_$index'),
+            key: ValueKey('search_song_${_songsSearchResult[index]['ytid']}'),
             showMusicDuration: true,
             borderRadius: borderRadius,
           ),
@@ -347,7 +349,7 @@ class _SearchPageState extends State<SearchPage> {
 
         widgets.add(
           PlaylistBar(
-            key: ValueKey('album_${playlist['ytid']}_$index'),
+            key: ValueKey('search_album_${playlist['ytid']}'),
             playlist['title'],
             playlistId: playlist['ytid'],
             playlistArtwork: playlist['image'],
@@ -381,7 +383,7 @@ class _SearchPageState extends State<SearchPage> {
           Padding(
             padding: isLast ? commonListViewBottomPadding : EdgeInsets.zero,
             child: PlaylistBar(
-              key: ValueKey('playlist_${playlist['ytid']}_$index'),
+              key: ValueKey('search_playlist_${playlist['ytid']}'),
               playlist['title'],
               playlistId: playlist['ytid'],
               playlistArtwork: playlist['image'],

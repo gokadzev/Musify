@@ -21,30 +21,45 @@
 
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:musify/main.dart';
 
-class ShufflePlayButton extends StatelessWidget {
-  const ShufflePlayButton({super.key, required this.songs});
+class EmptyPlaylistState extends StatelessWidget {
+  const EmptyPlaylistState({
+    super.key,
+    this.icon = FluentIcons.music_note_1_24_regular,
+    required this.message,
+  });
 
-  final List songs;
+  final IconData icon;
+  final String message;
 
   @override
   Widget build(BuildContext context) {
-    return IconButton.filledTonal(
-      icon: const Icon(FluentIcons.arrow_shuffle_24_filled),
-      iconSize: 24,
-      tooltip: 'Shuffle play',
-      onPressed: () async {
-        if (songs.isEmpty) return;
-        final shuffledSongs = List<Map>.from(songs.whereType<Map>());
-        if (shuffledSongs.isEmpty) return;
-        shuffledSongs.shuffle();
-        await audioHandler.addPlaylistToQueue(
-          shuffledSongs,
-          replace: true,
-          startIndex: 0,
-        );
-      },
+    return SliverFillRemaining(
+      hasScrollBody: false,
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                icon,
+                size: 64,
+                color: Theme.of(context).colorScheme.onSurface.withAlpha(120),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  fontSize: 16,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

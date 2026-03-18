@@ -23,6 +23,7 @@
 
 import 'dart:async';
 import 'dart:collection';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
@@ -30,6 +31,7 @@ import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/common_services.dart';
 import 'package:musify/services/data_manager.dart';
+import 'package:musify/services/io_service.dart';
 import 'package:musify/services/playlists_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 
@@ -141,7 +143,7 @@ class OfflinePlaylistService {
               progressNotifier.value.completed++;
               progressNotifier.notifyListeners();
             } else {
-              final success = await makeSongOffline(song, fromPlaylist: true);
+              final success = await makeSongOffline(song);
               if (success) {
                 progressNotifier.value.completed++;
               } else {
@@ -167,10 +169,6 @@ class OfflinePlaylistService {
               if (!completer.isCompleted) {
                 completer.complete();
               }
-            } else if (songQueue.isNotEmpty &&
-                !progressNotifier.value.isCancelled) {
-              // Start next song if available
-              unawaited(processQueue());
             } else if (songQueue.isEmpty && runningTasks == 0) {
               // All tasks completed
               if (!completer.isCompleted) {
@@ -185,8 +183,9 @@ class OfflinePlaylistService {
       final initialTasks = songsList.length < maxConcurrent
           ? songsList.length
           : maxConcurrent;
+      final tasks = <Future<void>>[];
       for (var i = 0; i < initialTasks; i++) {
-        unawaited(processQueue());
+        tasks.add(processQueue());
       }
 
       // Wait for all downloads to complete with timeout
@@ -198,6 +197,8 @@ class OfflinePlaylistService {
           progressNotifier.notifyListeners();
         },
       );
+
+      await Future.wait(tasks);
 
       // Handle completion
       await _handleDownloadCompletion(
@@ -213,7 +214,9 @@ class OfflinePlaylistService {
         stackTrace: stackTrace,
       );
       activeDownloads.remove(playlistId);
-      showToast(context, '${context.l10n!.error}: $e');
+      if (context.mounted) {
+        showToast(context, '${context.l10n!.error}: $e');
+      }
     }
   }
 
@@ -264,18 +267,24 @@ class OfflinePlaylistService {
           ),
         );
 
-        showToast(
-          context,
-          '${context.l10n!.playlistDownloaded}: ${progressNotifier.value.completed}/${songsList.length}',
-        );
-      } else if (progressNotifier.value.isCancelled) {
-        showToast(context, context.l10n!.downloadCancelled);
-      } else {
-        showToast(
-          context,
-          '${context.l10n!.downloadFailed}: ${progressNotifier.value.failed}/${songsList.length}',
-        );
+        if (context.mounted) {
+          showToast(
+            context,
+            '${context.l10n!.playlistDownloaded}: ${progressNotifier.value.completed}/${songsList.length}',
+          );
+        }
+      } else if (!progressNotifier.value.isCancelled) {
+        // Cancelled toast is shown by cancelDownload, only show failure toast here.
+        if (context.mounted) {
+          showToast(
+            context,
+            '${context.l10n!.downloadFailed}: ${progressNotifier.value.failed}/${songsList.length}',
+          );
+        }
       }
+
+      // Clean up the progress notifier now that the download is fully done.
+      cleanupProgressNotifier(playlistId);
     } catch (e, stackTrace) {
       logger.log(
         'Error handling download completion',
@@ -371,7 +380,7 @@ class OfflinePlaylistService {
           if (!isUsedInOtherPlaylists &&
               !isInLikedSongs &&
               !isInCustomPlaylists) {
-            await removeSongFromOffline(songId, fromPlaylist: true);
+            await removeSongFromOffline(songId);
           }
         } catch (e, stackTrace) {
           logger.log(
@@ -404,11 +413,74 @@ class OfflinePlaylistService {
     }
   }
 
+  Future<void> deleteAllDownloads() async {
+    // Cancel all active downloads first and wait for them to stop
+    final activeIds = List<String>.from(activeDownloads);
+    for (final id in activeIds) {
+      final notifier = downloadProgressNotifiers[id];
+      if (notifier != null) {
+        notifier.value.isCancelled = true;
+        notifier.notifyListeners();
+      }
+    }
+
+    const maxWaitTime = Duration(seconds: 30);
+    final startTime = DateTime.now();
+    while (activeDownloads.isNotEmpty) {
+      if (DateTime.now().difference(startTime) > maxWaitTime) {
+        logger.log('Timeout waiting for downloads to cancel before delete');
+        activeDownloads.clear();
+        break;
+      }
+      await Future.delayed(const Duration(milliseconds: 100));
+    }
+
+    try {
+      final tracksDir = Directory('$applicationDirPath/${FilePaths.tracksDir}');
+      final artworksDir = Directory(
+        '$applicationDirPath/${FilePaths.artworksDir}',
+      );
+
+      if (await tracksDir.exists()) {
+        await tracksDir.delete(recursive: true);
+      }
+      if (await artworksDir.exists()) {
+        await artworksDir.delete(recursive: true);
+      }
+
+      await FilePaths.ensureDirectoriesExist();
+
+      userOfflineSongs.clear();
+      currentOfflineSongsLength.value = 0;
+
+      offlinePlaylists.value = [];
+
+      for (final notifier in downloadProgressNotifiers.values) {
+        notifier.dispose();
+      }
+      downloadProgressNotifiers.clear();
+      activeDownloads.clear();
+
+      unawaited(addOrUpdateData('userNoBackup', 'offlineSongs', []));
+      unawaited(addOrUpdateData('userNoBackup', 'offlinePlaylists', []));
+
+      logger.log('All downloads deleted successfully');
+    } catch (e, stackTrace) {
+      logger.log(
+        'Error deleting all downloads',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      rethrow;
+    }
+  }
+
   void cleanupProgressNotifier(String playlistId) {
     try {
       if (downloadProgressNotifiers.containsKey(playlistId)) {
-        downloadProgressNotifiers[playlistId]?.dispose();
-        downloadProgressNotifiers.remove(playlistId);
+        downloadProgressNotifiers[playlistId]?.value = DownloadProgress(
+          total: 0,
+        );
       }
     } catch (e, stackTrace) {
       logger.log(

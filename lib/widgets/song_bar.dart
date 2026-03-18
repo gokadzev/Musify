@@ -25,6 +25,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:musify/constants/app_constants.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/common_services.dart';
@@ -33,6 +34,7 @@ import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/common_variables.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/formatter.dart';
+import 'package:musify/utilities/playlist_dialogs.dart';
 import 'package:musify/widgets/no_artwork_cube.dart';
 import 'package:musify/widgets/rename_song_dialog.dart';
 
@@ -48,6 +50,7 @@ class SongBar extends StatefulWidget {
     this.borderRadius = BorderRadius.zero,
     this.isFromLikedSongs = false,
     this.showQueueActions = true,
+    this.showPlayTime = false,
     this.playlistId,
     this.onRenamed,
     super.key,
@@ -60,6 +63,7 @@ class SongBar extends StatefulWidget {
   final VoidCallback? onPlay;
   final bool? isRecentSong;
   final bool showMusicDuration;
+  final bool showPlayTime;
   final BorderRadius borderRadius;
   final bool isFromLikedSongs;
   final bool showQueueActions;
@@ -127,26 +131,32 @@ class _SongBarState extends State<SongBar> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final _plays = widget.showPlayTime
+        ? (widget.song['listeningCount'] is int)
+              ? widget.song['listeningCount'] as int
+              : int.tryParse(widget.song['listeningCount']?.toString() ?? '') ??
+                    0
+        : null;
 
     return Padding(
       padding: commonBarPadding,
-      child: Card(
-        color: widget.backgroundColor,
-        shape: RoundedRectangleBorder(borderRadius: widget.borderRadius),
-        margin: const EdgeInsets.only(bottom: 3),
+      child: Material(
+        color: widget.backgroundColor ?? colorScheme.surfaceContainerLow,
+        borderRadius: widget.borderRadius,
+        clipBehavior: Clip.antiAlias,
         child: InkWell(
-          borderRadius: widget.borderRadius,
           onTap: _handleSongTap,
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
             child: Row(
               children: [
                 _buildAlbumArt(colorScheme),
-                const SizedBox(width: 12),
+                const SizedBox(width: 14),
                 Expanded(
                   child: _SongInfo(
                     title: _songTitle,
                     artist: _songArtist,
+                    plays: _plays,
                     colorScheme: colorScheme,
                   ),
                 ),
@@ -173,7 +183,7 @@ class _SongBarState extends State<SongBar> {
   }
 
   Widget _buildAlbumArt(ColorScheme colorScheme) {
-    const size = 48.0;
+    const size = 52.0;
     final isDurationAvailable =
         widget.showMusicDuration && widget.song['duration'] != null;
 
@@ -208,14 +218,16 @@ class _SongBarState extends State<SongBar> {
 
   Widget _buildActionButtons(BuildContext context, ColorScheme colorScheme) {
     return SizedBox(
-      width: 48,
-      height: 48,
+      width: 40,
+      height: 40,
       child: Center(
         child: PopupMenuButton<String>(
           icon: Icon(
-            FluentIcons.more_horizontal_24_filled,
+            FluentIcons.more_vertical_24_regular,
             color: colorScheme.onSurfaceVariant,
+            size: 20,
           ),
+          padding: EdgeInsets.zero,
           onSelected: (value) => _handleMenuAction(context, value),
           itemBuilder: (context) => _buildMenuItems(context, colorScheme),
         ),
@@ -269,7 +281,7 @@ class _SongBarState extends State<SongBar> {
         _handleRenameSong(context);
         break;
       case 'add_to_playlist':
-        showAddToPlaylistDialog(context, widget.song);
+        showAddToPlaylistDialog(context, song: widget.song);
         break;
       case 'remove_from_recents':
         removeFromRecentlyPlayed(_ytid).catchError((e) {
@@ -413,7 +425,10 @@ class _SongBarState extends State<SongBar> {
           value: 'add_to_queue',
           child: Row(
             children: [
-              Icon(FluentIcons.add_24_regular, color: colorScheme.primary),
+              Icon(
+                FluentIcons.text_bullet_list_add_24_regular,
+                color: colorScheme.primary,
+              ),
               const SizedBox(width: 8),
               Text(
                 addToQueueText,
@@ -422,24 +437,28 @@ class _SongBarState extends State<SongBar> {
             ],
           ),
         ),
-      PopupMenuItem<String>(
-        value: 'like',
-        child: ValueListenableBuilder<bool>(
-          valueListenable: _songLikeStatus,
-          builder: (_, value, __) {
-            return Row(
-              children: [
-                Icon(likeStatusToIconMapper[value], color: colorScheme.primary),
-                const SizedBox(width: 8),
-                Text(
-                  value ? removeFromLikedSongsText : addToLikedSongsText,
-                  style: TextStyle(color: colorScheme.secondary),
-                ),
-              ],
-            );
-          },
+      if (!offlineMode.value)
+        PopupMenuItem<String>(
+          value: 'like',
+          child: ValueListenableBuilder<bool>(
+            valueListenable: _songLikeStatus,
+            builder: (_, value, __) {
+              return Row(
+                children: [
+                  Icon(
+                    likeStatusToIconMapper[value],
+                    color: colorScheme.primary,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    value ? removeFromLikedSongsText : addToLikedSongsText,
+                    style: TextStyle(color: colorScheme.secondary),
+                  ),
+                ],
+              );
+            },
+          ),
         ),
-      ),
       if (canRename)
         PopupMenuItem<String>(
           value: 'rename',
@@ -468,19 +487,23 @@ class _SongBarState extends State<SongBar> {
             ],
           ),
         ),
-      PopupMenuItem<String>(
-        value: 'add_to_playlist',
-        child: Row(
-          children: [
-            Icon(FluentIcons.add_24_regular, color: colorScheme.primary),
-            const SizedBox(width: 8),
-            Text(
-              addToPlaylistText,
-              style: TextStyle(color: colorScheme.secondary),
-            ),
-          ],
+      if (!offlineMode.value)
+        PopupMenuItem<String>(
+          value: 'add_to_playlist',
+          child: Row(
+            children: [
+              Icon(
+                FluentIcons.album_add_24_regular,
+                color: colorScheme.primary,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                addToPlaylistText,
+                style: TextStyle(color: colorScheme.secondary),
+              ),
+            ],
+          ),
         ),
-      ),
       if (widget.isRecentSong == true)
         PopupMenuItem<String>(
           value: 'remove_from_recents',
@@ -495,29 +518,30 @@ class _SongBarState extends State<SongBar> {
             ],
           ),
         ),
-      PopupMenuItem<String>(
-        value: 'offline',
-        child: ValueListenableBuilder<bool>(
-          valueListenable: _songOfflineStatus,
-          builder: (_, value, __) {
-            return Row(
-              children: [
-                Icon(
-                  value
-                      ? FluentIcons.cellular_off_24_regular
-                      : FluentIcons.cellular_data_1_24_regular,
-                  color: colorScheme.primary,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  value ? removeOfflineText : makeOfflineText,
-                  style: TextStyle(color: colorScheme.secondary),
-                ),
-              ],
-            );
-          },
+      if (!offlineMode.value || _songOfflineStatus.value)
+        PopupMenuItem<String>(
+          value: 'offline',
+          child: ValueListenableBuilder<bool>(
+            valueListenable: _songOfflineStatus,
+            builder: (_, value, __) {
+              return Row(
+                children: [
+                  Icon(
+                    value
+                        ? FluentIcons.cloud_off_24_filled
+                        : FluentIcons.cloud_arrow_down_24_regular,
+                    color: colorScheme.primary,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    value ? removeOfflineText : makeOfflineText,
+                    style: TextStyle(color: colorScheme.secondary),
+                  ),
+                ],
+              );
+            },
+          ),
         ),
-      ),
     ];
   }
 }
@@ -526,11 +550,13 @@ class _SongInfo extends StatelessWidget {
   const _SongInfo({
     required this.title,
     required this.artist,
+    this.plays,
     required this.colorScheme,
   });
 
   final String title;
   final String artist;
+  final int? plays;
   final ColorScheme colorScheme;
 
   @override
@@ -544,18 +570,50 @@ class _SongInfo extends StatelessWidget {
           style: TextStyle(
             fontWeight: FontWeight.w600,
             fontSize: 15,
-            color: colorScheme.secondary,
+            color: colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 2),
-        Text(
-          artist,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            fontWeight: FontWeight.w400,
-            fontSize: 13,
-            color: colorScheme.onSurfaceVariant,
-          ),
+        Row(
+          children: [
+            Flexible(
+              child: Text(
+                artist,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 13,
+                  color: colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ),
+            if (plays != null && plays! > 0) ...[
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: Text(
+                  '•',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ),
+              Icon(
+                FluentIcons.headphones_20_regular,
+                size: 12,
+                color: colorScheme.primary,
+              ),
+              const SizedBox(width: 3),
+              Text(
+                '$plays',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: colorScheme.primary,
+                ),
+              ),
+            ],
+          ],
         ),
       ],
     );
@@ -591,19 +649,19 @@ class _OfflineArtwork extends StatelessWidget {
                   const NullArtworkWidget(iconSize: 30),
             ),
             Positioned(
-              top: 4,
-              right: 2,
+              top: 3,
+              right: 3,
               child: Container(
                 width: 20,
                 height: 20,
                 decoration: BoxDecoration(
-                  color: colorScheme.secondaryContainer,
-                  borderRadius: BorderRadius.circular(10),
+                  color: colorScheme.tertiaryContainer,
+                  shape: BoxShape.circle,
                 ),
                 child: Icon(
-                  FluentIcons.cellular_off_24_filled,
-                  size: 12,
-                  color: colorScheme.onSecondaryContainer,
+                  FluentIcons.cloud_off_24_filled,
+                  size: 11,
+                  color: colorScheme.onTertiaryContainer,
                 ),
               ),
             ),
@@ -666,36 +724,36 @@ class _OnlineArtwork extends StatelessWidget {
                   ),
                   if (isOffline)
                     Positioned(
-                      top: 2,
-                      right: 4,
+                      top: 3,
+                      right: 3,
                       child: Container(
                         width: 20,
                         height: 20,
                         decoration: BoxDecoration(
-                          color: colorScheme.secondaryContainer,
-                          borderRadius: BorderRadius.circular(10),
+                          color: colorScheme.tertiaryContainer,
+                          shape: BoxShape.circle,
                         ),
                         child: Icon(
-                          FluentIcons.cellular_off_24_filled,
-                          size: 12,
-                          color: colorScheme.onSecondaryContainer,
+                          FluentIcons.cloud_off_24_filled,
+                          size: 11,
+                          color: colorScheme.onTertiaryContainer,
                         ),
                       ),
                     )
                   else if (isLiked)
                     Positioned(
-                      top: 2,
-                      right: 4,
+                      top: 3,
+                      right: 3,
                       child: Container(
                         width: 20,
                         height: 20,
                         decoration: BoxDecoration(
                           color: colorScheme.primaryContainer,
-                          borderRadius: BorderRadius.circular(10),
+                          shape: BoxShape.circle,
                         ),
                         child: Icon(
                           FluentIcons.heart_24_filled,
-                          size: 12,
+                          size: 11,
                           color: colorScheme.onPrimaryContainer,
                         ),
                       ),
@@ -732,60 +790,4 @@ class _OnlineArtwork extends StatelessWidget {
       ),
     );
   }
-}
-
-void showAddToPlaylistDialog(BuildContext context, dynamic song) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        icon: const Icon(FluentIcons.text_bullet_list_add_24_filled),
-        title: Text(context.l10n!.addToPlaylist),
-        content: Container(
-          width: double.maxFinite,
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.sizeOf(context).height * 0.6,
-          ),
-          child: userCustomPlaylists.value.isNotEmpty
-              ? ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: userCustomPlaylists.value.length,
-                  itemBuilder: (context, index) {
-                    final playlist = userCustomPlaylists.value[index];
-                    return Card(
-                      color: Theme.of(context).colorScheme.secondaryContainer,
-                      elevation: 0,
-                      child: ListTile(
-                        title: Text(playlist['title']),
-                        onTap: () {
-                          showToast(
-                            context,
-                            addSongInCustomPlaylist(
-                              context,
-                              playlist['ytid'],
-                              song,
-                            ),
-                          );
-                          Navigator.pop(context);
-                        },
-                      ),
-                    );
-                  },
-                )
-              : Text(
-                  context.l10n!.noCustomPlaylists,
-                  textAlign: TextAlign.center,
-                ),
-        ),
-        actions: <Widget>[
-          TextButton(
-            child: Text(context.l10n!.cancel),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      );
-    },
-  );
 }

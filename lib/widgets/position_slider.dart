@@ -77,6 +77,8 @@ class _PositionSliderState extends State<PositionSlider> {
                     }
                   : null,
               max: maxDuration,
+              semanticFormatterCallback: (value) =>
+                  formatDuration(value.toInt()),
             ),
             _buildPositionRow(context, primaryColor, positionData),
           ],

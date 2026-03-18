@@ -60,7 +60,10 @@ PersistentBottomSheetController? showCustomBottomSheet(
             ),
           ),
           ConstrainedBox(
-            constraints: BoxConstraints(maxHeight: size.height * 0.65),
+            constraints: BoxConstraints(
+              maxWidth: size.width * 0.92,
+              maxHeight: size.height * 0.65,
+            ),
             child: SingleChildScrollView(
               padding: const EdgeInsets.only(bottom: 16),
               child: content,

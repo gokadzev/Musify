@@ -22,22 +22,22 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:musify/constants/app_constants.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/screens/search_page.dart';
 import 'package:musify/services/common_services.dart';
 import 'package:musify/services/data_manager.dart';
+import 'package:musify/services/playlist_download_service.dart';
 import 'package:musify/services/router_service.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/services/update_manager.dart';
-import 'package:musify/style/app_colors.dart';
-import 'package:musify/style/app_themes.dart';
-import 'package:musify/utilities/common_variables.dart';
+import 'package:musify/theme/app_colors.dart';
+import 'package:musify/theme/app_themes.dart';
 import 'package:musify/utilities/flutter_bottom_sheet.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/language_utils.dart';
 import 'package:musify/utilities/url_launcher.dart';
-import 'package:musify/utilities/utils.dart';
 import 'package:musify/widgets/bottom_sheet_bar.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/custom_bar.dart';
@@ -64,13 +64,7 @@ class SettingsPage extends StatelessWidget {
               activatedColor,
               inactivatedColor,
             ),
-            if (!offlineMode.value)
-              _buildOnlineFeaturesSection(
-                context,
-                activatedColor,
-                inactivatedColor,
-                primaryColor,
-              ),
+            if (!offlineMode.value) _buildOnlineFeaturesSection(context),
             _buildOthersSection(context),
             const SizedBox(height: 20),
           ],
@@ -100,23 +94,17 @@ class SettingsPage extends StatelessWidget {
         CustomBar(
           context.l10n!.themeMode,
           FluentIcons.weather_sunny_28_filled,
-          onTap: () =>
-              _showThemeModePicker(context, activatedColor, inactivatedColor),
+          onTap: () => _showThemeModePicker(context),
         ),
         CustomBar(
           context.l10n!.language,
           FluentIcons.translate_24_filled,
-          onTap: () =>
-              _showLanguagePicker(context, activatedColor, inactivatedColor),
+          onTap: () => _showLanguagePicker(context),
         ),
         CustomBar(
           context.l10n!.audioQuality,
-          Icons.music_note,
-          onTap: () => _showAudioQualityPicker(
-            context,
-            activatedColor,
-            inactivatedColor,
-          ),
+          FluentIcons.music_note_1_24_filled,
+          onTap: () => _showAudioQualityPicker(context),
         ),
         CustomBar(
           context.l10n!.equalizer,
@@ -176,7 +164,7 @@ class SettingsPage extends StatelessWidget {
           builder: (_, value, __) {
             return CustomBar(
               context.l10n!.offlineMode,
-              FluentIcons.cellular_off_24_regular,
+              FluentIcons.cloud_off_24_filled,
               description: context.l10n!.offlineModeDescription,
               trailing: Switch(
                 value: value,
@@ -206,12 +194,7 @@ class SettingsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildOnlineFeaturesSection(
-    BuildContext context,
-    Color activatedColor,
-    Color inactivatedColor,
-    Color primaryColor,
-  ) {
+  Widget _buildOnlineFeaturesSection(BuildContext context) {
     return Column(
       children: [
         ValueListenableBuilder<bool>(
@@ -263,7 +246,7 @@ class SettingsPage extends StatelessWidget {
         ),
 
         _buildToolsSection(context),
-        _buildSponsorSection(context, primaryColor),
+        _buildSponsorSection(context),
       ],
     );
   }
@@ -314,6 +297,28 @@ class SettingsPage extends StatelessWidget {
           ),
         ),
         CustomBar(
+          context.l10n!.deleteDownloads,
+          FluentIcons.delete_24_filled,
+          onTap: () => _showConfirmationDialog(
+            context: context,
+            confirmationMessage: context.l10n!.deleteDownloadsQuestion,
+            submitMessage: context.l10n!.delete,
+            isDangerous: true,
+            onSubmit: () async {
+              try {
+                await offlinePlaylistService.deleteAllDownloads();
+                if (context.mounted) {
+                  showToast(context, context.l10n!.downloadsDeleted);
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  showToast(context, context.l10n!.error);
+                }
+              }
+            },
+          ),
+        ),
+        CustomBar(
           context.l10n!.backupUserData,
           FluentIcons.cloud_sync_24_filled,
           onTap: () => _backupUserData(context),
@@ -346,7 +351,7 @@ class SettingsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildSponsorSection(BuildContext context, Color primaryColor) {
+  Widget _buildSponsorSection(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Column(
@@ -527,12 +532,14 @@ class SettingsPage extends StatelessWidget {
     );
   }
 
-  void _showThemeModePicker(
-    BuildContext context,
-    Color activatedColor,
-    Color inactivatedColor,
-  ) {
+  void _showThemeModePicker(BuildContext context) {
     final availableModes = [ThemeMode.system, ThemeMode.light, ThemeMode.dark];
+    const modeIcons = [
+      FluentIcons.phone_24_regular,
+      FluentIcons.weather_sunny_24_regular,
+      FluentIcons.weather_moon_24_regular,
+    ];
+
     showCustomBottomSheet(
       context,
       ListView.builder(
@@ -542,11 +549,6 @@ class SettingsPage extends StatelessWidget {
         itemCount: availableModes.length,
         itemBuilder: (context, index) {
           final mode = availableModes[index];
-          final borderRadius = getItemBorderRadius(
-            index,
-            availableModes.length,
-          );
-
           final modeNames = [
             context.l10n!.themeModeSystem,
             context.l10n!.themeModeLight,
@@ -561,18 +563,14 @@ class SettingsPage extends StatelessWidget {
               Navigator.pop(context);
             },
             themeMode == mode,
-            borderRadius: borderRadius,
+            icon: modeIcons[mode.index],
           );
         },
       ),
     );
   }
 
-  void _showLanguagePicker(
-    BuildContext context,
-    Color activatedColor,
-    Color inactivatedColor,
-  ) {
+  void _showLanguagePicker(BuildContext context) {
     final availableLanguages = appLanguages.toList();
     final activeLanguageCode = Localizations.localeOf(context).languageCode;
     final activeScriptCode = Localizations.localeOf(context).scriptCode;
@@ -594,11 +592,6 @@ class SettingsPage extends StatelessWidget {
               ? '${newLocale.languageCode}-${newLocale.scriptCode}'
               : newLocale.languageCode;
 
-          final borderRadius = getItemBorderRadius(
-            index,
-            availableLanguages.length,
-          );
-
           return BottomSheetBar(
             getLanguageDisplayName(context, language),
             () {
@@ -608,23 +601,23 @@ class SettingsPage extends StatelessWidget {
               Navigator.pop(context);
             },
             activeLanguageFullCode == newLocaleFullCode,
-            borderRadius: borderRadius,
           );
         },
       ),
     );
   }
 
-  void _showAudioQualityPicker(
-    BuildContext context,
-    Color activatedColor,
-    Color inactivatedColor,
-  ) {
+  void _showAudioQualityPicker(BuildContext context) {
     final availableQualities = ['low', 'medium', 'high'];
     final qualityNames = [
       context.l10n!.audioQualityLow,
       context.l10n!.audioQualityMedium,
       context.l10n!.audioQualityHigh,
+    ];
+    const qualityIcons = [
+      FluentIcons.speaker_1_24_regular,
+      FluentIcons.speaker_2_24_regular,
+      FluentIcons.speaker_2_24_filled,
     ];
 
     showCustomBottomSheet(
@@ -636,11 +629,6 @@ class SettingsPage extends StatelessWidget {
         itemCount: availableQualities.length,
         itemBuilder: (context, index) {
           final quality = availableQualities[index];
-          final isCurrentQuality = audioQualitySetting.value == quality;
-          final borderRadius = getItemBorderRadius(
-            index,
-            availableQualities.length,
-          );
 
           return BottomSheetBar(
             qualityNames[index],
@@ -650,8 +638,8 @@ class SettingsPage extends StatelessWidget {
               showToast(context, context.l10n!.audioQualityMsg);
               Navigator.pop(context);
             },
-            isCurrentQuality,
-            borderRadius: borderRadius,
+            audioQualitySetting.value == quality,
+            icon: qualityIcons[index],
           );
         },
       ),
@@ -718,13 +706,16 @@ class SettingsPage extends StatelessWidget {
     required BuildContext context,
     required String confirmationMessage,
     required VoidCallback onSubmit,
+    String? submitMessage,
+    bool isDangerous = false,
   }) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return ConfirmationDialog(
-          submitMessage: context.l10n!.clear,
+          submitMessage: submitMessage ?? context.l10n!.clear,
           confirmationMessage: confirmationMessage,
+          isDangerous: isDangerous,
           onCancel: () => Navigator.of(context).pop(),
           onSubmit: () {
             Navigator.of(context).pop();

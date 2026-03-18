@@ -22,6 +22,7 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 
 Widget buildPlaybackIconButton(
@@ -43,6 +44,7 @@ Widget buildPlaybackIconButton(
 
       Widget iconWidget;
       VoidCallback? onPressed;
+      String? semanticLabel;
 
       if (processingState == AudioProcessingState.loading ||
           processingState == AudioProcessingState.buffering) {
@@ -55,6 +57,7 @@ Widget buildPlaybackIconButton(
           ),
         );
         onPressed = null;
+        semanticLabel = context.l10n!.loading;
       } else if (processingState == AudioProcessingState.completed) {
         iconWidget = Icon(
           FluentIcons.arrow_counterclockwise_24_filled,
@@ -62,6 +65,7 @@ Widget buildPlaybackIconButton(
           size: iconSize,
         );
         onPressed = () => audioHandler.seek(Duration.zero);
+        semanticLabel = context.l10n!.replay;
       } else {
         iconWidget = Icon(
           isPlaying ? FluentIcons.pause_24_filled : FluentIcons.play_24_filled,
@@ -69,6 +73,7 @@ Widget buildPlaybackIconButton(
           size: iconSize,
         );
         onPressed = isPlaying ? audioHandler.pause : audioHandler.play;
+        semanticLabel = isPlaying ? context.l10n!.pause : context.l10n!.play;
       }
 
       return RawMaterialButton(
@@ -78,7 +83,12 @@ Widget buildPlaybackIconButton(
         splashColor: Colors.transparent,
         padding: padding ?? EdgeInsets.all(iconSize * 0.35),
         shape: const CircleBorder(),
-        child: iconWidget,
+        constraints: BoxConstraints.tightFor(
+          width: iconSize * 2,
+          height: iconSize * 2,
+        ),
+        materialTapTargetSize: MaterialTapTargetSize.padded,
+        child: Semantics(label: semanticLabel, button: true, child: iconWidget),
       );
     },
   );

@@ -40,19 +40,36 @@ class SortChips<T extends Enum> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: sortTypes.map((type) {
           final isSelected = currentSortType == type;
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
+            padding: const EdgeInsets.only(right: 8),
             child: FilterChip(
               selected: isSelected,
               showCheckmark: false,
-              label: Text(sortTypeToString(type)),
+              label: Text(
+                sortTypeToString(type),
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                  color: isSelected
+                      ? colorScheme.onSecondaryContainer
+                      : colorScheme.onSurfaceVariant,
+                ),
+              ),
+              backgroundColor: colorScheme.surfaceContainerHigh,
+              selectedColor: colorScheme.secondaryContainer,
+              side: BorderSide.none,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
               onSelected: (_) {
                 if (currentSortType == type) return;
                 onSelected(type);

@@ -5,7 +5,6 @@ import 'package:musify/localization/app_localizations.dart';
 const appLanguages = <String>{
   'en',
   'zh',
-  'zh-Hant',
   'et',
   'fr',
   'de',
@@ -43,8 +42,6 @@ String getLanguageDisplayName(BuildContext context, String languageCode) {
       return l10n.languageEn;
     case 'zh':
       return l10n.languageZh;
-    case 'zh-Hant':
-      return l10n.languageZhHant;
     case 'et':
       return l10n.languageEt;
     case 'fr':

@@ -31,7 +31,9 @@ import 'package:musify/models/position_data.dart';
 import 'package:musify/services/common_services.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/settings_manager.dart';
+import 'package:musify/utilities/map_utils.dart';
 import 'package:musify/utilities/mediaitem.dart';
+import 'package:musify/utilities/queue_entry_utils.dart';
 import 'package:rxdart/rxdart.dart';
 
 class MusifyAudioHandler extends BaseAudioHandler {
@@ -78,6 +80,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
   final List<Map> _historyList = [];
   final BehaviorSubject<List<Map>> _queueMapStream =
       BehaviorSubject<List<Map>>.seeded([]);
+  final QueueEntryIdManager _queueEntryIds = QueueEntryIdManager();
   int _currentQueueIndex = 0;
   int _currentLoadingIndex = -1;
   int _currentLoadingTransitionId = -1;
@@ -237,8 +240,14 @@ class MusifyAudioHandler extends BaseAudioHandler {
     });
   }
 
-  MediaItem _getMediaItemForQueue(Map song, int index) {
-    return mapToMediaItem(song).copyWith(id: '${song['ytid']}_$index');
+  void _hydrateQueueEntryIds() {
+    _queueEntryIds
+      ..ensureIds(_queueList)
+      ..ensureIds(_originalQueueList);
+  }
+
+  MediaItem _getMediaItemForQueue(Map song) {
+    return mapToMediaItem(song).copyWith(id: _queueEntryIds.ensureId(song));
   }
 
   void _updateCurrentMediaItemWithDuration(Duration duration) {
@@ -256,10 +265,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
         }
 
         final currentSong = _queueList[capturedQueueIndex];
-        final currentMediaItem = _getMediaItemForQueue(
-          currentSong,
-          capturedQueueIndex,
-        );
+        final currentMediaItem = _getMediaItemForQueue(currentSong);
         final uniqueId = currentMediaItem.id;
         final currentItem = mediaItem.valueOrNull;
 
@@ -270,16 +276,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
           mediaItem.add(currentMediaItem.copyWith(duration: duration));
         }
 
-        List<MediaItem> newQueue;
-        if (queue.hasValue && queue.value.length == _queueList.length) {
-          newQueue = List<MediaItem>.from(queue.value);
-        } else {
-          newQueue = _queueList
-              .asMap()
-              .entries
-              .map((entry) => _getMediaItemForQueue(entry.value, entry.key))
-              .toList();
-        }
+        final newQueue = _queueList
+            .asMap()
+            .entries
+            .map((entry) => _getMediaItemForQueue(entry.value))
+            .toList();
 
         if (capturedQueueIndex < newQueue.length) {
           newQueue[capturedQueueIndex] = newQueue[capturedQueueIndex].copyWith(
@@ -711,9 +712,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   void _addToHistory(Map song) {
     try {
-      _historyList
-        ..removeWhere((s) => s['ytid'] == song['ytid'])
-        ..insert(0, song);
+      _historyList.insert(0, cloneMap(song));
 
       if (_historyList.length > _maxHistorySize) {
         _historyList.removeRange(_maxHistorySize, _historyList.length);
@@ -742,7 +741,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
         insertIndex = _queueList.length;
       }
 
-      _queueList.insert(insertIndex, song);
+      _queueList.insert(insertIndex, _queueEntryIds.createSong(song));
 
       if (_currentQueueIndex < 0) {
         _currentQueueIndex = 0;
@@ -821,7 +820,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       for (var i = 0; i < songs.length; i++) {
         final song = songs[i];
         if (song['ytid'] != null && song['ytid'].toString().isNotEmpty) {
-          _queueList.add(song);
+          _queueList.add(_queueEntryIds.createSong(song));
 
           if (replace && startIndex == i) {
             targetQueueIndex = _queueList.length - 1;
@@ -829,6 +828,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
         }
       }
 
+      _hydrateQueueEntryIds();
       _updateQueueMediaItems();
 
       if (targetQueueIndex != null) {
@@ -854,11 +854,12 @@ class MusifyAudioHandler extends BaseAudioHandler {
       if (index < 0 || index >= _queueList.length) return;
 
       final removedSong = _queueList[index];
+      final removedQueueEntryId = _queueEntryIds.ensureId(removedSong);
       _queueList.removeAt(index);
 
       if (shuffleNotifier.value && _originalQueueList.isNotEmpty) {
         _originalQueueList.removeWhere(
-          (s) => s['ytid'] != null && s['ytid'] == removedSong['ytid'],
+          (s) => _queueEntryIds.ensureId(s) == removedQueueEntryId,
         );
       }
 
@@ -877,6 +878,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
         await _playFromQueue(_currentQueueIndex);
       }
 
+      _hydrateQueueEntryIds();
       _updateQueueMediaItems();
     } catch (e, stackTrace) {
       logger.log('Error removing from queue', error: e, stackTrace: stackTrace);
@@ -885,6 +887,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   Future<void> reorderQueue(int oldIndex, int newIndex) async {
     try {
+      _queueEntryIds.ensureIds(_queueList);
+
       if (oldIndex < 0 ||
           oldIndex >= _queueList.length ||
           newIndex < 0 ||
@@ -927,10 +931,12 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   void _updateQueueMediaItems() {
     try {
+      _queueEntryIds.ensureIds(_queueList);
+
       final mediaItems = _queueList
           .asMap()
           .entries
-          .map((entry) => _getMediaItemForQueue(entry.value, entry.key))
+          .map((entry) => _getMediaItemForQueue(entry.value))
           .toList();
       queue.add(mediaItems);
 
@@ -1036,10 +1042,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       _currentQueueIndex = index;
 
       final currentSong = _queueList[_currentQueueIndex];
-      final currentMediaItem = _getMediaItemForQueue(
-        currentSong,
-        _currentQueueIndex,
-      );
+      final currentMediaItem = _getMediaItemForQueue(currentSong);
       final uniqueId = currentMediaItem.id;
 
       await Future.microtask(() {
@@ -1242,7 +1245,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   Future<bool> playSong(Map song, {String? mediaId}) async {
     try {
-      if (song['ytid'] == null || song['ytid'].toString().isEmpty) {
+      final songData = cloneMap(song);
+
+      if (songData['ytid'] == null || songData['ytid'].toString().isEmpty) {
         logger.log('Invalid song data: missing ytid');
         return false;
       }
@@ -1250,16 +1255,16 @@ class MusifyAudioHandler extends BaseAudioHandler {
       _lastError = null;
       var isOffline = false;
       try {
-        final ytid = song['ytid'];
+        final ytid = songData['ytid'];
         if (ytid != null && ytid.toString().isNotEmpty) {
           final offlineSong = getOfflineSongByYtid(ytid.toString());
           if (offlineSong.isNotEmpty &&
               offlineSong['audioPath'] != null &&
               offlineSong['audioPath'].toString().isNotEmpty) {
             isOffline = true;
-            song['audioPath'] = offlineSong['audioPath'];
+            songData['audioPath'] = offlineSong['audioPath'];
             if (offlineSong['artworkPath'] != null) {
-              song['artworkPath'] = offlineSong['artworkPath'];
+              songData['artworkPath'] = offlineSong['artworkPath'];
             }
           }
         }
@@ -1274,37 +1279,37 @@ class MusifyAudioHandler extends BaseAudioHandler {
       if (audioPlayer.playing) await audioPlayer.pause();
 
       _emitOptimisticLoadingState(
-        song: song,
+        song: songData,
         includeMediaItem: true,
         mediaId: mediaId,
       );
 
-      var songUrl = await _getSongUrl(song, isOffline);
+      var songUrl = await _getSongUrl(songData, isOffline);
 
       // If offline file is missing, try falling back to online
       if ((songUrl == null || songUrl.isEmpty) && isOffline) {
         logger.log(
-          'Offline file missing for ${song['ytid']}, switching to online',
+          'Offline file missing for ${songData['ytid']}, switching to online',
         );
         isOffline = false;
-        songUrl = await _getSongUrl(song, isOffline);
+        songUrl = await _getSongUrl(songData, isOffline);
       }
 
       if (songUrl == null || songUrl.isEmpty) {
-        logger.log('Failed to get song URL for ${song['ytid']}');
+        logger.log('Failed to get song URL for ${songData['ytid']}');
         _lastError = 'Failed to get song URL';
         return false;
       }
 
-      final audioSource = await buildAudioSource(song, songUrl, isOffline);
+      final audioSource = await buildAudioSource(songData, songUrl, isOffline);
       if (audioSource == null) {
-        logger.log('Failed to build audio source for ${song['ytid']}');
+        logger.log('Failed to build audio source for ${songData['ytid']}');
         _lastError = 'Failed to build audio source';
         return false;
       }
 
       return await _setAudioSourceAndPlay(
-        song,
+        songData,
         audioSource,
         songUrl,
         isOffline,
@@ -1622,7 +1627,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       if (_currentQueueIndex > 0) {
         await _playFromQueue(_currentQueueIndex - 1);
       } else if (_historyList.isNotEmpty) {
-        final lastSong = _historyList.removeLast();
+        final lastSong = cloneMap(_historyList.removeLast());
         _queueList.insert(0, lastSong);
         _currentQueueIndex = 0;
         _updateQueueMediaItems();
@@ -1660,41 +1665,44 @@ class MusifyAudioHandler extends BaseAudioHandler {
       if (_queueList.isEmpty) return;
 
       if (shuffleEnabled && !wasShuffled) {
+        _hydrateQueueEntryIds();
+
         _originalQueueList
           ..clear()
-          ..addAll(_queueList);
+          ..addAll(cloneMaps(_queueList));
 
         final currentSong = _queueList[_currentQueueIndex];
-        final currentYtId = currentSong['ytid'];
+        final currentQueueEntryId = _queueEntryIds.ensureId(currentSong);
 
         _queueList.shuffle();
 
-        if (currentYtId != null) {
-          final newCurrentIndex = _queueList.indexWhere(
-            (song) => song['ytid'] == currentYtId,
-          );
+        final newCurrentIndex = _queueList.indexWhere(
+          (song) => _queueEntryIds.ensureId(song) == currentQueueEntryId,
+        );
 
-          if (newCurrentIndex != -1 && newCurrentIndex != 0) {
-            _queueList
-              ..removeAt(newCurrentIndex)
-              ..insert(0, currentSong);
-          }
+        if (newCurrentIndex != -1 && newCurrentIndex != 0) {
+          _queueList
+            ..removeAt(newCurrentIndex)
+            ..insert(0, currentSong);
         }
 
         _currentQueueIndex = 0;
         _updateQueueMediaItems();
       } else if (!shuffleEnabled && wasShuffled) {
         if (_originalQueueList.isNotEmpty) {
+          _hydrateQueueEntryIds();
+
           final currentSong = _queueList[_currentQueueIndex];
-          final currentYtId = currentSong['ytid'];
+          final currentQueueEntryId = _queueEntryIds.ensureId(currentSong);
+          final restoredQueue = cloneMaps(_originalQueueList);
 
           _queueList
             ..clear()
-            ..addAll(_originalQueueList);
+            ..addAll(restoredQueue);
 
-          _currentQueueIndex = currentYtId != null
-              ? _queueList.indexWhere((song) => song['ytid'] == currentYtId)
-              : 0;
+          _currentQueueIndex = _queueList.indexWhere(
+            (song) => _queueEntryIds.ensureId(song) == currentQueueEntryId,
+          );
 
           if (_currentQueueIndex == -1) {
             _currentQueueIndex = 0;

@@ -5,7 +5,7 @@ repository: https://github.com/gokadzev/Musify
 issue_tracker: https://github.com/gokadzev/Musify/issues
 
 publish_to: 'none'
-version: 9.9.1+163 # run update.sh after changing the version
+version: 10.0.1+165 # run update.sh after changing the version
 
 environment:
   sdk: '>=3.11.0 <4.0.0'
@@ -29,7 +29,6 @@ dependencies:
   hive_flutter: ^1.1.0
   html: ^0.15.6
   http: ^1.6.0
-  infinite_scroll_pagination: ^5.1.1
   intl: ^0.20.2
   just_audio: 0.10.5
   path_provider: ^2.1.5
@@ -40,12 +39,11 @@ dependencies:
   youtube_explode_dart:
     git:
       url: https://github.com/Hexer10/youtube_explode_dart
-      ref: 94a82565030cd8a2a50b21c904fba722f05e2468
+      ref: e00fed3be4e4c8c07efdd1bc8c40329c966e7ba2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  translations_cleaner: ^0.1.0
 
   # flutter_lints: ^2.0.0
 
@@ -60,4 +58,4 @@ flutter:
   fonts:
     - family: paytoneOne
       fonts:
-        - asset: fonts/paytone/PaytoneOne-Regular.ttf
+        - asset: assets/fonts/paytone/PaytoneOne-Regular.ttf

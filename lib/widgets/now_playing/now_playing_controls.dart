@@ -29,6 +29,7 @@ import 'package:musify/services/router_service.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/utils.dart';
+import 'package:musify/utilities/app_utils.dart';
 import 'package:musify/widgets/now_playing/marquee_text_widget.dart';
 import 'package:musify/widgets/playback_icon_button.dart';
 import 'package:musify/widgets/position_slider.dart';
@@ -220,6 +221,7 @@ class PlayerControlButtons extends StatelessWidget {
           child: Row(
             children: <Widget>[
               _buildShuffleButton(
+                context,
                 colorScheme,
                 miniControlSize,
                 buttonConstraints,
@@ -248,6 +250,7 @@ class PlayerControlButtons extends StatelessWidget {
                                             alpha: 0.3,
                                           ),
                                   ),
+                                  tooltip: context.l10n!.skipToPrevious,
                                   constraints: buttonConstraints,
                                   iconSize: controlIconSize * 0.65,
                                   onPressed: audioHandler.hasPrevious
@@ -285,6 +288,7 @@ class PlayerControlButtons extends StatelessWidget {
                                             alpha: 0.3,
                                           ),
                                   ),
+                                  tooltip: context.l10n!.skipToNext,
                                   constraints: buttonConstraints,
                                   iconSize: controlIconSize * 0.65,
                                   onPressed: () =>
@@ -318,6 +322,7 @@ class PlayerControlButtons extends StatelessWidget {
               ),
               SizedBox(width: buttonSpacing),
               _buildRepeatButton(
+                context,
                 colorScheme,
                 miniControlSize,
                 buttonConstraints,
@@ -331,6 +336,7 @@ class PlayerControlButtons extends StatelessWidget {
   }
 
   Widget _buildShuffleButton(
+    BuildContext context,
     ColorScheme colorScheme,
     double size,
     BoxConstraints buttonConstraints,
@@ -346,6 +352,7 @@ class PlayerControlButtons extends StatelessWidget {
                 : FluentIcons.arrow_shuffle_off_24_filled,
             color: value ? colorScheme.onPrimary : colorScheme.onSurfaceVariant,
           ),
+          tooltip: context.l10n!.shuffle,
           iconSize: size,
           constraints: buttonConstraints,
           padding: buttonPadding,
@@ -370,6 +377,7 @@ class PlayerControlButtons extends StatelessWidget {
   }
 
   Widget _buildRepeatButton(
+    BuildContext context,
     ColorScheme colorScheme,
     double size,
     BoxConstraints buttonConstraints,
@@ -395,6 +403,7 @@ class PlayerControlButtons extends StatelessWidget {
                     ? colorScheme.onPrimary
                     : colorScheme.onSurfaceVariant,
               ),
+              tooltip: context.l10n!.repeat,
               iconSize: size,
               constraints: buttonConstraints,
               padding: buttonPadding,

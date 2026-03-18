@@ -19,32 +19,33 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
-import 'package:flutter/material.dart';
+class QueueEntryIdManager {
+  int _counter = 0;
 
-const recommendedCubesNumber = 8;
+  String nextId() {
+    return 'queue-${DateTime.now().microsecondsSinceEpoch}-${_counter++}';
+  }
 
-const commonSingleChildScrollViewPadding = EdgeInsets.symmetric(horizontal: 10);
-const commonBarPadding = EdgeInsets.symmetric(horizontal: 8);
-var commonBarRadius = BorderRadius.circular(16);
-var commonBarTitleStyle = const TextStyle(
-  fontSize: 15,
-  fontWeight: FontWeight.bold,
-);
-const commonMiniArtworkRadius = 8.0;
+  String ensureId(Map song) {
+    final existingId = song['queueEntryId']?.toString();
+    if (existingId != null && existingId.isNotEmpty) {
+      return existingId;
+    }
 
-const commonCustomBarRadius = BorderRadius.all(Radius.circular(16));
-const commonCustomBarRadiusFirst = BorderRadius.vertical(
-  top: Radius.circular(16),
-);
-const commonCustomBarRadiusLast = BorderRadius.vertical(
-  bottom: Radius.circular(16),
-);
+    final generatedId = nextId();
+    song['queueEntryId'] = generatedId;
+    return generatedId;
+  }
 
-const miniPlayerTotalHeight = 92.0;
+  Map<String, dynamic> createSong(Map song) {
+    final queueSong = Map<String, dynamic>.from(song);
+    queueSong['queueEntryId'] = nextId();
+    return queueSong;
+  }
 
-const commonListViewBottomPadding = EdgeInsets.only(bottom: 8);
-
-const commonBarContentPadding = EdgeInsets.symmetric(
-  vertical: 12,
-  horizontal: 10,
-);
+  void ensureIds(Iterable<Map> songs) {
+    for (final song in songs) {
+      ensureId(song);
+    }
+  }
+}

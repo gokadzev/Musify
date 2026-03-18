@@ -23,7 +23,7 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:musify/services/settings_manager.dart';
-import 'package:musify/style/dynamic_color_temp_fix.dart';
+import 'package:musify/theme/dynamic_color_compat.dart';
 
 ThemeMode themeMode = getThemeMode(themeModeSetting);
 Brightness brightness = getBrightnessFromThemeMode(themeMode);
@@ -245,6 +245,17 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
     dividerTheme: base.dividerTheme.copyWith(
       color: effectiveColorScheme.outlineVariant,
       thickness: 1,
+    ),
+    snackBarTheme: SnackBarThemeData(
+      backgroundColor: effectiveColorScheme.secondaryContainer,
+      contentTextStyle: TextStyle(
+        color: effectiveColorScheme.onSecondaryContainer,
+        fontWeight: FontWeight.w500,
+      ),
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 6,
+      actionTextColor: effectiveColorScheme.secondary,
     ),
     visualDensity: VisualDensity.adaptivePlatformDensity,
     useMaterial3: true,

@@ -21,6 +21,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:musify/extensions/l10n.dart';
+import 'package:musify/main.dart';
+import 'package:musify/widgets/mini_player.dart';
 
 class RenameSongDialog extends StatefulWidget {
   const RenameSongDialog({
@@ -61,8 +63,14 @@ class _RenameSongDialogState extends State<RenameSongDialog> {
     final newArtist = _artistController.text.trim();
 
     if (newTitle.isEmpty || newArtist.isEmpty) {
+      final isMiniPlayerVisible = audioHandler.mediaItem.value != null;
+      final bottomMargin =
+          12.0 + (isMiniPlayerVisible ? MiniPlayer.playerHeight : 0.0);
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.fromLTRB(16, 12, 16, bottomMargin),
           content: Text(context.l10n!.fieldsNotEmpty),
           duration: const Duration(seconds: 2),
         ),

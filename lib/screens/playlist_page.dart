@@ -20,12 +20,11 @@
  */
 
 import 'dart:async';
-import 'dart:math';
 
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:musify/constants/app_constants.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/common_services.dart';
@@ -34,16 +33,17 @@ import 'package:musify/services/playlist_download_service.dart';
 import 'package:musify/services/playlist_sharing.dart';
 import 'package:musify/services/playlists_manager.dart';
 import 'package:musify/services/settings_manager.dart';
-import 'package:musify/utilities/common_variables.dart';
+import 'package:musify/utilities/app_utils.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/offline_playlist_dialogs.dart';
+import 'package:musify/utilities/playlist_dialogs.dart';
+import 'package:musify/utilities/song_filtering.dart';
 import 'package:musify/utilities/sort_utils.dart';
-import 'package:musify/utilities/utils.dart';
 import 'package:musify/widgets/edit_playlist_dialog.dart';
 import 'package:musify/widgets/playlist_cube.dart';
+import 'package:musify/widgets/playlist_page/empty_playlist_state.dart';
 import 'package:musify/widgets/playlist_page/playlist_header.dart';
-import 'package:musify/widgets/playlist_page/playlist_search_bar.dart';
-import 'package:musify/widgets/playlist_page/shuffle_play_button.dart';
+import 'package:musify/widgets/playlist_page/search_bar_section.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/sort_chips.dart';
 import 'package:musify/widgets/spinner.dart';
@@ -73,9 +73,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
   late final List<dynamic>
   _originalPlaylistList; // Keep original order separately
 
-  final int _itemsPerPage = 35;
-  late final PagingController<int, dynamic> _pagingController;
-
   late final playlistLikeStatus = ValueNotifier<bool>(
     isPlaylistAlreadyLiked(widget.playlistId),
   );
@@ -88,62 +85,52 @@ class _PlaylistPageState extends State<PlaylistPage> {
   );
 
   // Search
-  String _searchQuery = '';
+  final ValueNotifier<String> _searchQueryNotifier = ValueNotifier('');
+  late final TextEditingController _searchController;
+  late final FocusNode _searchFocusNode;
 
-  List<dynamic> get _sourceList {
+  List<dynamic> _getSourceList(String searchQuery) {
     final list = _playlist?['list'] as List<dynamic>? ?? [];
-    if (_searchQuery.isEmpty) return list;
-    final q = _searchQuery.toLowerCase();
-    return list.where((s) {
-      final title = (s['title'] ?? '').toString().toLowerCase();
-      final artist = (s['artist'] ?? '').toString().toLowerCase();
-      return title.contains(q) || artist.contains(q);
-    }).toList();
+    return filterSongsByQuery(list, searchQuery);
   }
 
   @override
   void initState() {
     super.initState();
-
-    _pagingController = PagingController<int, dynamic>(
-      getNextPageKey: (state) {
-        final source = _sourceList;
-        final totalCount = source.length;
-        final currentlyLoaded = state.items?.length ?? 0;
-        if (currentlyLoaded >= totalCount) return null;
-        return currentlyLoaded;
-      },
-      fetchPage: _fetchPage,
-    );
-
+    _searchController = TextEditingController();
+    _searchFocusNode = FocusNode();
     _initializePlaylist();
   }
 
   @override
   void dispose() {
-    _pagingController.dispose();
+    _searchController.dispose();
+    _searchFocusNode.dispose();
+    _searchQueryNotifier.dispose();
     super.dispose();
   }
 
   Future<void> _initializePlaylist() async {
     try {
-      if (widget.playlistData != null) {
-        _playlist = widget.playlistData;
+      final initialPlaylist = widget.playlistData;
+      final resolvedId =
+          initialPlaylist?['ytid']?.toString() ?? widget.playlistId;
+
+      if (initialPlaylist != null) {
+        _playlist = initialPlaylist;
         final playlistList = _playlist?['list'] as List?;
-        if (playlistList == null || playlistList.isEmpty) {
-          final resolvedId =
-              _playlist?['ytid']?.toString() ?? widget.playlistId;
-          final fullPlaylist = await getPlaylistInfoForWidget(
-            resolvedId,
-            isArtist: widget.isArtist,
-          );
-          if (fullPlaylist != null) {
-            _playlist = fullPlaylist;
-          }
+        if ((playlistList == null || playlistList.isEmpty) &&
+            resolvedId != null) {
+          _playlist =
+              await getPlaylistInfoForWidget(
+                resolvedId,
+                isArtist: widget.isArtist,
+              ) ??
+              initialPlaylist;
         }
       } else {
         _playlist = await getPlaylistInfoForWidget(
-          widget.playlistId,
+          resolvedId,
           isArtist: widget.isArtist,
         );
       }
@@ -167,17 +154,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
     }
   }
 
-  Future<List<dynamic>> _fetchPage(int pageKey) async {
-    try {
-      final source = _sourceList;
-      final startIndex = pageKey;
-      final endIndex = min(startIndex + _itemsPerPage, source.length);
-      return source.sublist(startIndex, endIndex);
-    } catch (error) {
-      rethrow;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -186,33 +162,38 @@ class _PlaylistPageState extends State<PlaylistPage> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () =>
               Navigator.pop(context, widget.playlistData == _playlist),
+          tooltip: context.l10n!.back,
         ),
       ),
       body: _playlist != null
-          ? PagingListener(
-              controller: _pagingController,
-              builder: (context, state, fetchNextPage) => CustomScrollView(
-                slivers: [
-                  SliverToBoxAdapter(child: _buildHeaderSection()),
-                  if (_playlist['list'].isNotEmpty) ...[
-                    SliverPadding(
-                      padding: commonListViewBottomPadding,
-                      sliver: PagedSliverList(
-                        state: state,
-                        fetchNextPage: fetchNextPage,
-                        builderDelegate: PagedChildBuilderDelegate<dynamic>(
-                          itemBuilder: (context, item, index) {
+          ? CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(child: _buildHeaderSection()),
+                if ((_playlist['list'] as List).isNotEmpty) ...[
+                  ValueListenableBuilder<String>(
+                    valueListenable: _searchQueryNotifier,
+                    builder: (context, searchQuery, _) {
+                      final sourceList = _getSourceList(searchQuery);
+                      return SliverPadding(
+                        padding: commonListViewBottomPadding,
+                        sliver: SliverList.builder(
+                          itemCount: sourceList.length,
+                          itemBuilder: (context, index) {
                             final isRemovable =
                                 _playlist['source'] == 'user-created';
-                            return _buildSongListItem(item, index, isRemovable);
+                            return _buildSongListItem(
+                              sourceList[index],
+                              index,
+                              isRemovable,
+                            );
                           },
                         ),
-                      ),
-                    ),
-                  ] else
-                    const SliverFillRemaining(child: SizedBox.expand()),
-                ],
-              ),
+                      );
+                    },
+                  ),
+                ] else
+                  EmptyPlaylistState(message: context.l10n!.noSongsInPlaylist),
+              ],
             )
           : SizedBox(
               height: MediaQuery.sizeOf(context).height - 100,
@@ -226,53 +207,92 @@ class _PlaylistPageState extends State<PlaylistPage> {
     final isLandscape = screenWidth > MediaQuery.sizeOf(context).height;
     return PlaylistCube(
       _playlist,
-      size: isLandscape ? 250 : screenWidth / 2.2,
+      size: isLandscape ? 250 : screenWidth / commonPlaylistArtworkDivision,
       cubeIcon: widget.cubeIcon,
+      showTypeLabel: false,
     );
   }
 
   Widget _buildHeaderSection() {
     final songsLength = _playlist['list'].length;
     final isUserCreated = _playlist['source'] == 'user-created';
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final primaryColor = colorScheme.primary;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    final hasSecondaryActions =
+        (widget.playlistId != null && !isUserCreated && !offlineMode.value) ||
+        !offlineMode.value ||
+        isUserCreated;
 
     return Column(
       children: [
-        PlaylistHeader(_buildPlaylistImage(), _playlist['title'], songsLength),
-        const SizedBox(height: 12),
-        Wrap(
-          alignment: WrapAlignment.center,
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            if (songsLength > 0)
-              IconButton.filled(
-                icon: Icon(
-                  FluentIcons.play_24_filled,
-                  color: colorScheme.onPrimary,
-                ),
-                iconSize: 24,
-                onPressed: () => audioHandler.playPlaylistSong(
-                  playlist: _playlist,
-                  songIndex: 0,
-                ),
-              ),
-            if (songsLength > 0)
-              ShufflePlayButton(songs: _playlist['list'] as List? ?? []),
-            if (widget.playlistId != null && !isUserCreated)
-              _buildLikeButton(primaryColor),
-            _buildSyncButton(primaryColor),
-            _buildDownloadButton(),
-            if (isUserCreated) ...[
-              _buildShareButton(primaryColor),
-              _buildEditButton(primaryColor),
-            ],
-          ],
+        PlaylistHeader(
+          _buildPlaylistImage(),
+          _playlist['title'],
+          songsLength,
+          isAlbum: _playlist['isAlbum'] == true,
         ),
+        if (songsLength > 0) ...[
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Row(
+              children: [
+                Expanded(
+                  child: FilledButton.icon(
+                    icon: const Icon(FluentIcons.play_24_filled),
+                    label: Text(context.l10n!.play),
+                    onPressed: () => audioHandler.playPlaylistSong(
+                      playlist: _playlist,
+                      songIndex: 0,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: FilledButton.icon(
+                    style: FilledButton.styleFrom(
+                      backgroundColor: colorScheme.secondaryContainer,
+                      foregroundColor: colorScheme.onSecondaryContainer,
+                    ),
+                    icon: const Icon(FluentIcons.arrow_shuffle_24_filled),
+                    label: Text(context.l10n!.shuffle),
+                    onPressed: () async {
+                      final songs = _playlist['list'] as List? ?? [];
+                      if (songs.isEmpty) return;
+                      final shuffled = List<Map>.from(songs.whereType<Map>())
+                        ..shuffle();
+                      await audioHandler.addPlaylistToQueue(
+                        shuffled,
+                        replace: true,
+                        startIndex: 0,
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+        if (hasSecondaryActions) ...[
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            spacing: 5,
+            children: [
+              if (widget.playlistId != null &&
+                  !isUserCreated &&
+                  !offlineMode.value)
+                _buildLikeButton(),
+              if (!offlineMode.value) ...[
+                _buildAddToPlaylistButton(),
+                if (!isUserCreated) _buildSyncButton(),
+              ],
+              if (songsLength > 0) _buildDownloadButton(),
+              if (isUserCreated) ...[_buildShareButton(), _buildEditButton()],
+            ],
+          ),
+        ],
         if (songsLength > 1) ...[
-          const SizedBox(height: 20),
+          const SizedBox(height: 12),
           SortChips<PlaylistSortType>(
             currentSortType: _sortType,
             sortTypes: PlaylistSortType.values,
@@ -289,16 +309,11 @@ class _PlaylistPageState extends State<PlaylistPage> {
         ],
         if (songsLength > 0) ...[
           const SizedBox(height: 16),
-          PlaylistSearchBar(
-            query: _searchQuery,
-            onChanged: (value) {
-              setState(() => _searchQuery = value);
-              _pagingController.refresh();
-            },
-            onCleared: () {
-              setState(() => _searchQuery = '');
-              _pagingController.refresh();
-            },
+          SearchBarSection(
+            controller: _searchController,
+            focusNode: _searchFocusNode,
+            onSearchChanged: (value) => _searchQueryNotifier.value = value,
+            labelText: context.l10n!.search,
           ),
         ],
         const SizedBox(height: 16),
@@ -306,21 +321,36 @@ class _PlaylistPageState extends State<PlaylistPage> {
     );
   }
 
-  Widget _buildShareButton(Color primaryColor) {
+  Widget _buildShareButton() {
     return IconButton.filledTonal(
-      icon: Icon(FluentIcons.share_24_regular, color: primaryColor),
+      icon: const Icon(FluentIcons.share_24_regular),
       iconSize: 24,
       onPressed: () async {
-        final encodedPlaylist = PlaylistSharingService.encodePlaylist(
-          _playlist,
-        );
-        final url = 'musify://playlist/custom/$encodedPlaylist';
-        await Clipboard.setData(ClipboardData(text: url));
+        try {
+          final encodedPlaylist = PlaylistSharingService.encodePlaylist(
+            _playlist,
+          );
+          final url = 'musify://playlist/custom/$encodedPlaylist';
+          await Clipboard.setData(ClipboardData(text: url));
+          if (mounted) {
+            showToast(context, context.l10n!.linkCopied);
+          }
+        } catch (e, stackTrace) {
+          logger.log(
+            'Error sharing playlist',
+            error: e,
+            stackTrace: stackTrace,
+          );
+          if (mounted) {
+            showToast(context, context.l10n!.error);
+          }
+        }
       },
+      tooltip: context.l10n!.share,
     );
   }
 
-  Widget _buildLikeButton(Color primaryColor) {
+  Widget _buildLikeButton() {
     return ValueListenableBuilder<bool>(
       valueListenable: playlistLikeStatus,
       builder: (_, value, __) {
@@ -330,10 +360,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
         return value
             ? IconButton.filled(
-                icon: Icon(
-                  icon,
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
+                icon: Icon(icon),
                 iconSize: 24,
                 onPressed: () {
                   playlistLikeStatus.value = !playlistLikeStatus.value;
@@ -346,9 +373,10 @@ class _PlaylistPageState extends State<PlaylistPage> {
                   currentLikedPlaylistsLength.value =
                       currentLikedPlaylistsLength.value - 1;
                 },
+                tooltip: context.l10n!.removeFromLikedSongs,
               )
             : IconButton.filledTonal(
-                icon: Icon(icon, color: primaryColor),
+                icon: Icon(icon),
                 iconSize: 24,
                 onPressed: () {
                   playlistLikeStatus.value = !playlistLikeStatus.value;
@@ -361,22 +389,46 @@ class _PlaylistPageState extends State<PlaylistPage> {
                   currentLikedPlaylistsLength.value =
                       currentLikedPlaylistsLength.value + 1;
                 },
+                tooltip: context.l10n!.addToLikedSongs,
               );
       },
     );
   }
 
-  Widget _buildSyncButton(Color primaryColor) {
+  Widget _buildSyncButton() {
     return IconButton.filledTonal(
-      icon: Icon(FluentIcons.arrow_sync_24_filled, color: primaryColor),
+      icon: const Icon(FluentIcons.arrow_sync_24_filled),
       iconSize: 24,
       onPressed: _handleSyncPlaylist,
+      tooltip: context.l10n!.update,
     );
   }
 
-  Widget _buildEditButton(Color primaryColor) {
+  Widget _buildAddToPlaylistButton() {
     return IconButton.filledTonal(
-      icon: Icon(FluentIcons.edit_24_filled, color: primaryColor),
+      icon: const Icon(FluentIcons.album_add_24_regular),
+      iconSize: 24,
+      onPressed: _handleAddFullPlaylistToPlaylist,
+      tooltip: context.l10n!.addToPlaylist,
+    );
+  }
+
+  void _handleAddFullPlaylistToPlaylist() {
+    if (_playlist != null && _playlist['list'] != null) {
+      final List<dynamic> tracks = _playlist['list'];
+      if (tracks.isEmpty) {
+        showToast(context, context.l10n!.noSongsInPlaylist);
+        return;
+      }
+      showAddToPlaylistDialog(context, songs: tracks);
+    } else {
+      showToast(context, context.l10n!.loading);
+    }
+  }
+
+  Widget _buildEditButton() {
+    return IconButton.filledTonal(
+      icon: const Icon(FluentIcons.edit_24_filled),
       iconSize: 24,
       onPressed: () async {
         final result = await showDialog<Map?>(
@@ -448,12 +500,16 @@ class _PlaylistPageState extends State<PlaylistPage> {
           showToast(context, context.l10n!.playlistUpdated);
         }
       },
+      tooltip: context.l10n!.editPlaylist,
     );
   }
 
   Widget _buildDownloadButton() {
-    final playlistId = widget.playlistId ?? _playlist['title'];
-    final primaryColor = Theme.of(context).colorScheme.primary;
+    final playlistId = _playlist?['ytid']?.toString() ?? widget.playlistId;
+
+    if (playlistId == null || playlistId.isEmpty) {
+      return const SizedBox.shrink();
+    }
 
     return ValueListenableBuilder<List<dynamic>>(
       valueListenable: offlinePlaylistService.offlinePlaylists,
@@ -496,16 +552,13 @@ class _PlaylistPageState extends State<PlaylistPage> {
                       child: CircularProgressIndicator(
                         value: progress.progress,
                         strokeWidth: 3,
-                        backgroundColor: primaryColor.withValues(alpha: .2),
-                        valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
+                        backgroundColor: Theme.of(
+                          context,
+                        ).colorScheme.primaryContainer,
                       ),
                     ),
                     IconButton(
-                      icon: Icon(
-                        FluentIcons.dismiss_24_filled,
-                        color: primaryColor,
-                        size: 16,
-                      ),
+                      icon: const Icon(FluentIcons.dismiss_24_filled, size: 16),
                       onPressed: () => offlinePlaylistService.cancelDownload(
                         context,
                         playlistId,
@@ -517,11 +570,12 @@ class _PlaylistPageState extends State<PlaylistPage> {
               );
             }
 
+            if (offlineMode.value) {
+              return const SizedBox.shrink();
+            }
+
             return IconButton.filledTonal(
-              icon: Icon(
-                FluentIcons.arrow_download_24_filled,
-                color: primaryColor,
-              ),
+              icon: const Icon(FluentIcons.arrow_download_24_filled),
               iconSize: 24,
               onPressed: () =>
                   offlinePlaylistService.downloadPlaylist(context, _playlist),
@@ -537,44 +591,32 @@ class _PlaylistPageState extends State<PlaylistPage> {
       showRemoveOfflinePlaylistDialog(context, playlistId);
 
   void _handleSyncPlaylist() async {
-    if (_playlist['ytid'] != null) {
-      final updated = await updatePlaylistList(context, _playlist['ytid']);
-      if (updated != null && mounted) {
-        setState(() {
-          _playlist = updated;
-          if (_playlist['list'] != null) {
-            _originalPlaylistList = List<dynamic>.from(
-              _playlist['list'] as List,
-            );
-          }
-        });
+    final playlistId = _playlist?['ytid']?.toString();
+    if (playlistId == null || playlistId.isEmpty) return;
+
+    if (offlinePlaylistService.isPlaylistDownloaded(playlistId)) {
+      if (mounted) {
+        showToast(context, context.l10n!.removeOffline);
       }
-      _pagingController.refresh();
-    } else {
-      final resolvedId = _playlist['ytid']?.toString() ?? widget.playlistId;
-      final updatedPlaylist = await getPlaylistInfoForWidget(resolvedId);
-      if (updatedPlaylist != null && mounted) {
-        setState(() {
-          _playlist = updatedPlaylist;
-          if (_playlist['list'] != null) {
-            _originalPlaylistList = List<dynamic>.from(
-              _playlist['list'] as List,
-            );
-          }
-        });
-        _pagingController.refresh();
-      }
+      return;
+    }
+
+    final updated = await updatePlaylistList(context, playlistId);
+    if (updated != null && mounted) {
+      setState(() {
+        _playlist = updated;
+        if (_playlist['list'] != null) {
+          _originalPlaylistList = List<dynamic>.from(_playlist['list'] as List);
+        }
+      });
     }
   }
 
-  void _updateSongsListOnRemove(int indexOfRemovedSong) {
-    final items = _pagingController.items ?? [];
-    if (indexOfRemovedSong >= items.length) return;
-
-    final dynamic songToRemove = items[indexOfRemovedSong];
+  void _updateSongsListOnRemove(int indexOfRemovedSong, dynamic songToRemove) {
     _originalPlaylistList.removeWhere((s) => s['ytid'] == songToRemove['ytid']);
     final playlistId = _playlist['ytid'];
     if (mounted) {
+      setState(() {});
       showToastWithButton(
         context,
         context.l10n!.songRemoved,
@@ -586,7 +628,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
             songToRemove,
             indexToInsert: indexOfRemovedSong,
           );
-          _pagingController.refresh();
+          if (mounted) setState(() {});
         },
       );
     } else {
@@ -594,8 +636,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
         '(_updateSongsListOnRemove): Widget not mounted, cannot show undo toast.',
       );
     }
-
-    _pagingController.refresh();
   }
 
   String _getSortTypeDisplayText(PlaylistSortType type) {
@@ -628,25 +668,23 @@ class _PlaylistPageState extends State<PlaylistPage> {
         _playlist['list'] = playlist;
         break;
     }
-
-    // Reset paging controller to top
-    _pagingController.refresh();
   }
 
   Widget _buildSongListItem(dynamic song, int index, bool isRemovable) {
-    final items = _pagingController.items ?? [];
-    final totalItems = items.length;
+    final sourceList = _getSourceList(_searchQueryNotifier.value);
+    final totalItems = sourceList.length;
     final borderRadius = getItemBorderRadius(index, totalItems);
     final isUserCreatedPlaylist = _playlist?['source'] == 'user-created';
     final playlistId = isUserCreatedPlaylist ? _playlist!['ytid'] : null;
-    final isSearching = _searchQuery.isNotEmpty;
+    final isSearching = _searchQueryNotifier.value.isNotEmpty;
     final playlistForQueue = isSearching
-        ? {..._playlist as Map, 'list': _sourceList}
+        ? {..._playlist as Map, 'list': sourceList}
         : _playlist;
 
     return SongBar(
       song,
       true,
+      key: ValueKey(song['ytid']),
       onRemove: (isRemovable && !isSearching)
           ? () {
               if (removeSongFromPlaylist(
@@ -654,7 +692,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                 song,
                 removeOneAtIndex: index,
               )) {
-                _updateSongsListOnRemove(index);
+                _updateSongsListOnRemove(index, song);
               }
             }
           : null,

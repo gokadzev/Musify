@@ -22,14 +22,14 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:musify/constants/app_constants.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/common_services.dart';
 import 'package:musify/services/playlists_manager.dart';
 import 'package:musify/services/settings_manager.dart';
+import 'package:musify/utilities/app_utils.dart';
 import 'package:musify/utilities/async_loader.dart';
-import 'package:musify/utilities/common_variables.dart';
-import 'package:musify/utilities/utils.dart';
 import 'package:musify/widgets/announcement_box.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/section_header.dart';
@@ -226,24 +226,14 @@ class _HomePageState extends State<HomePage> {
                     final song = Map<String, dynamic>.from(
                       mostPlayedSongs[index],
                     );
-                    final plays = (song['listeningCount'] is int)
-                        ? song['listeningCount'] as int
-                        : int.tryParse(
-                                song['listeningCount']?.toString() ?? '',
-                              ) ??
-                              0;
-
-                    song['artist'] = '${song['artist'] ?? ''} • $plays plays';
 
                     return RepaintBoundary(
-                      key: ValueKey('most_played_${song['ytid']}_$index'),
+                      key: ValueKey('home_most_played_${song['ytid']}'),
                       child: SongBar(
                         song,
                         true,
                         borderRadius: borderRadius,
-                        onPlay: () => audioHandler.addPlaylistToQueue([
-                          mostPlayedSongs[index],
-                        ], replace: true),
+                        showPlayTime: true,
                       ),
                     );
                   },
@@ -289,7 +279,7 @@ class _HomePageState extends State<HomePage> {
           itemBuilder: (context, index) {
             final borderRadius = getItemBorderRadius(index, data.length);
             return RepaintBoundary(
-              key: ValueKey('song_${data[index]['ytid']}'),
+              key: ValueKey('home_recommended_${data[index]['ytid']}'),
               child: SongBar(data[index], true, borderRadius: borderRadius),
             );
           },
