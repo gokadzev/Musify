@@ -278,6 +278,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
     return Map<String, dynamic>.from(song);
   }
 
+  List<Map<String, dynamic>> _cloneSongs(Iterable<Map> songs) {
+    return songs.map(_cloneSong).toList();
+  }
+
   void _updateCurrentMediaItemWithDuration(Duration duration) {
     final capturedQueueIndex = _currentQueueIndex;
     final capturedTransitionCounter = _songTransitionCounter;
@@ -1273,7 +1277,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   Future<bool> playSong(Map song, {String? mediaId}) async {
     try {
-      if (song['ytid'] == null || song['ytid'].toString().isEmpty) {
+      final songData = _cloneSong(song);
+
+      if (songData['ytid'] == null || songData['ytid'].toString().isEmpty) {
         logger.log('Invalid song data: missing ytid');
         return false;
       }
@@ -1281,16 +1287,16 @@ class MusifyAudioHandler extends BaseAudioHandler {
       _lastError = null;
       var isOffline = false;
       try {
-        final ytid = song['ytid'];
+        final ytid = songData['ytid'];
         if (ytid != null && ytid.toString().isNotEmpty) {
           final offlineSong = getOfflineSongByYtid(ytid.toString());
           if (offlineSong.isNotEmpty &&
               offlineSong['audioPath'] != null &&
               offlineSong['audioPath'].toString().isNotEmpty) {
             isOffline = true;
-            song['audioPath'] = offlineSong['audioPath'];
+            songData['audioPath'] = offlineSong['audioPath'];
             if (offlineSong['artworkPath'] != null) {
-              song['artworkPath'] = offlineSong['artworkPath'];
+              songData['artworkPath'] = offlineSong['artworkPath'];
             }
           }
         }
@@ -1305,37 +1311,37 @@ class MusifyAudioHandler extends BaseAudioHandler {
       if (audioPlayer.playing) await audioPlayer.pause();
 
       _emitOptimisticLoadingState(
-        song: song,
+        song: songData,
         includeMediaItem: true,
         mediaId: mediaId,
       );
 
-      var songUrl = await _getSongUrl(song, isOffline);
+      var songUrl = await _getSongUrl(songData, isOffline);
 
       // If offline file is missing, try falling back to online
       if ((songUrl == null || songUrl.isEmpty) && isOffline) {
         logger.log(
-          'Offline file missing for ${song['ytid']}, switching to online',
+          'Offline file missing for ${songData['ytid']}, switching to online',
         );
         isOffline = false;
-        songUrl = await _getSongUrl(song, isOffline);
+        songUrl = await _getSongUrl(songData, isOffline);
       }
 
       if (songUrl == null || songUrl.isEmpty) {
-        logger.log('Failed to get song URL for ${song['ytid']}');
+        logger.log('Failed to get song URL for ${songData['ytid']}');
         _lastError = 'Failed to get song URL';
         return false;
       }
 
-      final audioSource = await buildAudioSource(song, songUrl, isOffline);
+      final audioSource = await buildAudioSource(songData, songUrl, isOffline);
       if (audioSource == null) {
-        logger.log('Failed to build audio source for ${song['ytid']}');
+        logger.log('Failed to build audio source for ${songData['ytid']}');
         _lastError = 'Failed to build audio source';
         return false;
       }
 
       return await _setAudioSourceAndPlay(
-        song,
+        songData,
         audioSource,
         songUrl,
         isOffline,
@@ -1695,7 +1701,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
         _originalQueueList
           ..clear()
-          ..addAll(_queueList);
+          ..addAll(_cloneSongs(_queueList));
 
         final currentSong = _queueList[_currentQueueIndex];
         final currentQueueEntryId = _ensureQueueEntryId(currentSong);
@@ -1720,10 +1726,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
           final currentSong = _queueList[_currentQueueIndex];
           final currentQueueEntryId = _ensureQueueEntryId(currentSong);
+          final restoredQueue = _cloneSongs(_originalQueueList);
 
           _queueList
             ..clear()
-            ..addAll(_originalQueueList);
+            ..addAll(restoredQueue);
 
           _currentQueueIndex = _queueList.indexWhere(
             (song) => _ensureQueueEntryId(song) == currentQueueEntryId,
