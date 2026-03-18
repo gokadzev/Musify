@@ -211,7 +211,7 @@ class _MiniPlayerBodyState extends State<_MiniPlayerBody>
                           transitionBuilder: (child, animation) =>
                               FadeTransition(opacity: animation, child: child),
                           child: KeyedSubtree(
-                            key: ValueKey(metadata.title),
+                            key: ValueKey(metadata.id),
                             child: _MetadataWidget(
                               title: metadata.title,
                               artist: metadata.artist,

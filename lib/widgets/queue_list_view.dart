@@ -274,7 +274,7 @@ class _QueueWidgetState extends State<QueueWidget> {
         final song = _queue[index];
         final isCurrentSong = index == currentIndex;
         return QueueTile(
-          key: ValueKey(song['ytid']),
+          key: ValueKey('queue_song_${song['ytid']}'),
           song: song,
           index: index,
           isCurrentSong: isCurrentSong,
@@ -288,8 +288,7 @@ class _QueueWidgetState extends State<QueueWidget> {
             return true;
           },
           onDismissed: () {
-            final ytid = song['ytid'];
-            final actualIndex = _queue.indexWhere((s) => s['ytid'] == ytid);
+            final actualIndex = _queue.indexOf(song);
             if (actualIndex == -1) return;
             setState(() {
               _isDismissing = false;
@@ -329,7 +328,7 @@ class QueueTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dismissible(
-      key: ValueKey('d_${song['ytid']}'),
+      key: ValueKey('queue_dismiss_${song['ytid']}'),
       confirmDismiss: confirmDismiss,
       onDismissed: (_) => onDismissed(),
       background: _DismissBackground(

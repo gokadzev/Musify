@@ -228,7 +228,7 @@ class _HomePageState extends State<HomePage> {
                     );
 
                     return RepaintBoundary(
-                      key: ValueKey('most_played_${song['ytid']}_$index'),
+                      key: ValueKey('home_most_played_${song['ytid']}'),
                       child: SongBar(
                         song,
                         true,
@@ -279,7 +279,7 @@ class _HomePageState extends State<HomePage> {
           itemBuilder: (context, index) {
             final borderRadius = getItemBorderRadius(index, data.length);
             return RepaintBoundary(
-              key: ValueKey('song_${data[index]['ytid']}'),
+              key: ValueKey('home_recommended_${data[index]['ytid']}'),
               child: SongBar(data[index], true, borderRadius: borderRadius),
             );
           },
