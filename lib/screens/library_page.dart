@@ -135,17 +135,34 @@ class _LibraryPageState extends State<LibraryPage> {
     return ValueListenableBuilder<List<String>>(
       valueListenable: pinnedPlaylistIds,
       builder: (context, ids, _) {
-        if (ids.isEmpty) return const SizedBox.shrink();
-        final pinnedItems = _resolvePinnedPlaylists(ids);
-        if (pinnedItems.isEmpty) return const SizedBox.shrink();
-        return Column(
-          children: [
-            SectionHeader(
-              title: context.l10n!.pinnedPlaylists,
-              icon: FluentIcons.pin_24_filled,
-            ),
-            _buildPlaylistListView(context, pinnedItems),
-          ],
+        return ValueListenableBuilder<bool>(
+          valueListenable: offlineMode,
+          builder: (context, isOffline, _) {
+            if (ids.isEmpty) return const SizedBox.shrink();
+            final pinnedItems = _resolvePinnedPlaylists(ids);
+
+            final displayItems = isOffline
+                ? pinnedItems
+                    .where(
+                      (p) =>
+                          p['source'] == 'user-created' ||
+                          offlinePlaylistService
+                              .isPlaylistDownloaded(p['ytid'].toString()),
+                    )
+                    .toList()
+                : pinnedItems;
+
+            if (displayItems.isEmpty) return const SizedBox.shrink();
+            return Column(
+              children: [
+                SectionHeader(
+                  title: context.l10n!.pinnedPlaylists,
+                  icon: FluentIcons.pin_24_filled,
+                ),
+                _buildPlaylistListView(context, displayItems),
+              ],
+            );
+          },
         );
       },
     );
@@ -157,6 +174,7 @@ class _LibraryPageState extends State<LibraryPage> {
       for (final folder in userPlaylistFolders.value)
         ...(folder['playlists'] as List<dynamic>? ?? []).cast<Map>(),
       ...userLikedPlaylists.cast<Map>(),
+      ...onlinePlaylists.cast<Map>(),
     ];
 
     final result = <Map>[];
