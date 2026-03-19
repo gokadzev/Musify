@@ -132,37 +132,42 @@ class _LibraryPageState extends State<LibraryPage> {
   }
 
   Widget _buildPinnedSection() {
-    return ValueListenableBuilder<List<String>>(
-      valueListenable: pinnedPlaylistIds,
-      builder: (context, ids, _) {
-        return ValueListenableBuilder<bool>(
-          valueListenable: offlineMode,
-          builder: (context, isOffline, _) {
-            if (ids.isEmpty) return const SizedBox.shrink();
-            final pinnedItems = _resolvePinnedPlaylists(ids);
+    return AnimatedBuilder(
+      animation: Listenable.merge([
+        pinnedPlaylistIds,
+        offlineMode,
+        userCustomPlaylists,
+        userPlaylistFolders,
+        offlinePlaylistService.offlinePlaylists,
+        currentLikedPlaylistsLength,
+        onlinePlaylists,
+      ]),
+      builder: (context, _) {
+        final ids = pinnedPlaylistIds.value;
+        if (ids.isEmpty) return const SizedBox.shrink();
 
-            final displayItems = isOffline
-                ? pinnedItems
-                    .where(
-                      (p) =>
-                          p['source'] == 'user-created' ||
-                          offlinePlaylistService
-                              .isPlaylistDownloaded(p['ytid'].toString()),
-                    )
-                    .toList()
-                : pinnedItems;
+        final pinnedItems = _resolvePinnedPlaylists(ids);
+        final isOffline = offlineMode.value;
 
-            if (displayItems.isEmpty) return const SizedBox.shrink();
-            return Column(
-              children: [
-                SectionHeader(
-                  title: context.l10n!.pinnedPlaylists,
-                  icon: FluentIcons.pin_24_filled,
-                ),
-                _buildPlaylistListView(context, displayItems),
-              ],
-            );
-          },
+        final displayItems = isOffline
+            ? pinnedItems
+                .where(
+                  (p) => offlinePlaylistService.offlinePlaylists.value
+                      .any((op) => op['ytid'] == p['ytid']),
+                )
+                .toList()
+            : pinnedItems;
+
+        if (displayItems.isEmpty) return const SizedBox.shrink();
+
+        return Column(
+          children: [
+            SectionHeader(
+              title: context.l10n!.pinnedPlaylists,
+              icon: FluentIcons.pin_24_filled,
+            ),
+            _buildPlaylistListView(context, displayItems),
+          ],
         );
       },
     );
@@ -174,7 +179,8 @@ class _LibraryPageState extends State<LibraryPage> {
       for (final folder in userPlaylistFolders.value)
         ...(folder['playlists'] as List<dynamic>? ?? []).cast<Map>(),
       ...userLikedPlaylists.cast<Map>(),
-      ...onlinePlaylists.cast<Map>(),
+      ...onlinePlaylists.value.cast<Map>(),
+      ...offlinePlaylistService.offlinePlaylists.value.cast<Map>(),
     ];
 
     final result = <Map>[];
