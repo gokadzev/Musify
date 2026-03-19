@@ -98,7 +98,7 @@ Future<List<dynamic>> getUserPlaylists() async {
       playlistsByUser.add(failedMap);
 
       if (!onlinePlaylists.value.any((p) => p['ytid'] == failedMap['ytid'])) {
-        onlinePlaylists.value = [...onlinePlaylists.value, failedMap];
+        onlinePlaylists.value = List.from(onlinePlaylists.value)..add(failedMap);
       }
       logger.log(
         'Error occurred while fetching the playlist:',
@@ -987,9 +987,9 @@ Future<Map?> _fetchYouTubePlaylist(String id) async {
         'source': 'user-youtube',
         'list': [],
       };
-    if (!onlinePlaylists.value.any((p) => p['ytid'] == playlist!['ytid'])) {
-      onlinePlaylists.value = [...onlinePlaylists.value, playlist];
-    }
+      if (!onlinePlaylists.value.any((p) => p['ytid'] == playlist!['ytid'])) {
+        onlinePlaylists.value = [...onlinePlaylists.value, playlist];
+      }
     } catch (e, stackTrace) {
       logger.log(
         'Failed to fetch playlist info for id $id',
