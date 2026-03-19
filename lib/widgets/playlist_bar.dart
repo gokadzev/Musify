@@ -111,7 +111,6 @@ class PlaylistBar extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           if (!isFolder && _resolvedPlaylistId != null)
                             ValueListenableBuilder<List<String>>(
