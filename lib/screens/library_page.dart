@@ -133,73 +133,20 @@ class _LibraryPageState extends State<LibraryPage> {
 
   Widget _buildPinnedSection() {
     return AnimatedBuilder(
-      animation: Listenable.merge([
-        pinnedPlaylistIds,
-        offlineMode,
-        userCustomPlaylists,
-        userPlaylistFolders,
-        offlinePlaylistService.offlinePlaylists,
-        currentLikedPlaylistsLength,
-        onlinePlaylists,
-      ]),
+      animation: Listenable.merge([pinnedPlaylistIds, offlineMode, userCustomPlaylists, userPlaylistFolders, offlinePlaylistService.offlinePlaylists, currentLikedPlaylistsLength, onlinePlaylists]),
       builder: (context, _) {
-        final ids = pinnedPlaylistIds.value;
+        final ids = pinnedPlaylistIds.value, isOff = offlineMode.value;
         if (ids.isEmpty) return const SizedBox.shrink();
-
-        final pinnedItems = _resolvePinnedPlaylists(ids);
-        final isOffline = offlineMode.value;
-
-        final displayItems = isOffline
-            ? pinnedItems
-                .where(
-                  (p) => offlinePlaylistService.offlinePlaylists.value
-                      .any((op) => op['ytid'] == p['ytid']),
-                )
-                .toList()
-            : pinnedItems;
-
-        if (displayItems.isEmpty) return const SizedBox.shrink();
-
-        return Column(
-          children: [
-            SectionHeader(
-              title: context.l10n!.pinnedPlaylists,
-              icon: FluentIcons.pin_24_filled,
-            ),
-            _buildPlaylistListView(context, displayItems),
-          ],
-        );
+        final items = _resolvePinnedPlaylists(ids).where((p) => !isOff || offlinePlaylistService.offlinePlaylists.value.any((op) => op['ytid'] == p['ytid'])).toList();
+        if (items.isEmpty) return const SizedBox.shrink();
+        return Column(children: [SectionHeader(title: context.l10n!.pinnedPlaylists, icon: FluentIcons.pin_24_filled), _buildPlaylistListView(context, items)]);
       },
     );
   }
 
   List<Map> _resolvePinnedPlaylists(List<String> ids) {
-    final allAvailable = [
-      ...userCustomPlaylists.value,
-      for (final folder in userPlaylistFolders.value)
-        ...(folder['playlists'] as List<dynamic>? ?? []).cast<Map>(),
-      ...userLikedPlaylists.cast<Map>(),
-      ...onlinePlaylists.value.cast<Map>(),
-      ...offlinePlaylistService.offlinePlaylists.value.cast<Map>(),
-    ];
-
-    final result = <Map>[];
-    for (final id in ids) {
-      final match = allAvailable.cast<Map?>().firstWhere(
-        (p) => p?['ytid']?.toString() == id,
-        orElse: () => null,
-      );
-      if (match != null) {
-        result.add(match);
-        continue;
-      }
-      final dbMatch = playlists.cast<Map?>().firstWhere(
-        (p) => p?['ytid']?.toString() == id,
-        orElse: () => null,
-      );
-      if (dbMatch != null) result.add(dbMatch);
-    }
-    return result;
+    final all = [...userCustomPlaylists.value, for (final f in userPlaylistFolders.value) ...(f['playlists'] as List), ...userLikedPlaylists, ...onlinePlaylists.value, ...offlinePlaylistService.offlinePlaylists.value, ...playlists];
+    return ids.map((id) => all.cast<Map?>().firstWhere((p) => p?['ytid']?.toString() == id, orElse: () => null)).whereType<Map>().toList();
   }
 
   Widget _buildUserPlaylistsSection(Color primaryColor) {
