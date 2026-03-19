@@ -56,7 +56,7 @@ final pinnedPlaylistIds = ValueNotifier<List<String>>(
     Hive.box('user').get('pinnedPlaylistIds', defaultValue: <String>[]),
   ),
 );
-List onlinePlaylists = [];
+final onlinePlaylists = ValueNotifier<List>([]);
 
 const pinnedPlaylistsLimit = 5;
 
@@ -84,8 +84,8 @@ Future<List<dynamic>> getUserPlaylists() async {
       };
       playlistsByUser.add(playlistMap);
 
-      if (!onlinePlaylists.any((p) => p['ytid'] == playlistMap['ytid'])) {
-        onlinePlaylists.add(playlistMap);
+      if (!onlinePlaylists.value.any((p) => p['ytid'] == playlistMap['ytid'])) {
+        onlinePlaylists.value = [...onlinePlaylists.value, playlistMap];
       }
     } catch (e, stackTrace) {
       final failedMap = {
@@ -97,8 +97,8 @@ Future<List<dynamic>> getUserPlaylists() async {
       };
       playlistsByUser.add(failedMap);
 
-      if (!onlinePlaylists.any((p) => p['ytid'] == failedMap['ytid'])) {
-        onlinePlaylists.add(failedMap);
+      if (!onlinePlaylists.value.any((p) => p['ytid'] == failedMap['ytid'])) {
+        onlinePlaylists.value = [...onlinePlaylists.value, failedMap];
       }
       logger.log(
         'Error occurred while fetching the playlist:',
@@ -798,7 +798,7 @@ Future<List> getPlaylists({
       }
     }
 
-    final existingYtIds = onlinePlaylists
+    final existingYtIds = onlinePlaylists.value
         .map((p) => p['ytid'] as String)
         .toSet();
 
@@ -819,14 +819,13 @@ Future<List> getPlaylists({
         })
         .whereType<Map<String, dynamic>>()
         .toList();
-    onlinePlaylists.addAll(newPlaylists);
-
-    filteredPlaylists.addAll(
-      onlinePlaylists.where(
-        (p) => p['title'].toLowerCase().contains(lowercaseQuery),
-      ),
-    );
-    return filteredPlaylists;
+    onlinePlaylists.value = [...onlinePlaylists.value, ...newPlaylists];
+    return filteredPlaylists.isNotEmpty
+        ? filteredPlaylists
+        : onlinePlaylists.value.where((p) {
+            final title = p['title'].toLowerCase();
+            return title.contains(lowercaseQuery);
+          }).toList();
   }
 
   if (playlistsNum != null && query == null) {
@@ -975,7 +974,7 @@ Future<Map?> _fetchYouTubePlaylist(String id) async {
   }
 
   // 3. Previously fetched online playlists.
-  playlist ??= _findPlaylistById(onlinePlaylists, id);
+  playlist ??= _findPlaylistById(onlinePlaylists.value, id);
 
   // 4. Fetch from YouTube as a last resort.
   if (playlist == null) {
@@ -988,7 +987,9 @@ Future<Map?> _fetchYouTubePlaylist(String id) async {
         'source': 'user-youtube',
         'list': [],
       };
-      onlinePlaylists.add(playlist);
+    if (!onlinePlaylists.value.any((p) => p['ytid'] == playlist!['ytid'])) {
+      onlinePlaylists.value = [...onlinePlaylists.value, playlist];
+    }
     } catch (e, stackTrace) {
       logger.log(
         'Failed to fetch playlist info for id $id',
