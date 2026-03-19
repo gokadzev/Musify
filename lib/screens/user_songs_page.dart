@@ -362,7 +362,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
                   );
                   return ReorderableDragStartListener(
                     enabled: _isEditEnabled,
-                    key: ValueKey('liked_song_${song['ytid']}'),
+                    key: listItemKey('liked_song', index, song),
                     index: index,
                     child: _buildSongBar(
                       song,
@@ -392,7 +392,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
                     displayList.length,
                   );
                   return RepaintBoundary(
-                    key: ValueKey('offline_song_${song['ytid']}'),
+                    key: listItemKey('offline_song', index, song),
                     child: _buildSongBar(
                       song,
                       index,
@@ -420,7 +420,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
     final isLikedSongs = playlist['title'] == context.l10n!.likedSongs;
 
     return SongBar(
-      key: ValueKey('user_song_${song['ytid']}'),
+      key: listItemKey('user_song', index, song),
       song,
       true,
       onPlay: () {

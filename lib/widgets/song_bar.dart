@@ -701,7 +701,6 @@ class _OnlineArtwork extends StatelessWidget {
         alignment: Alignment.center,
         children: <Widget>[
           CachedNetworkImage(
-            key: ValueKey(lowResImageUrl),
             imageUrl: lowResImageUrl,
             width: size,
             height: size,

@@ -379,7 +379,7 @@ class _LibraryPageState extends State<LibraryPage> {
             ? BorderRadius.zero
             : getItemBorderRadius(index, playlists.length);
         return PlaylistBar(
-          key: ValueKey(playlist['ytid']),
+          key: listItemKey('library_playlist', index, playlist),
           playlist['title'],
           playlistId: playlist['ytid'],
           playlistArtwork: playlist['image'],

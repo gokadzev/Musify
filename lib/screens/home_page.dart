@@ -222,13 +222,10 @@ class _HomePageState extends State<HomePage> {
                       index,
                       mostPlayedSongs.length,
                     );
-
-                    final song = Map<String, dynamic>.from(
-                      mostPlayedSongs[index],
-                    );
+                    final song = mostPlayedSongs[index];
 
                     return RepaintBoundary(
-                      key: ValueKey('home_most_played_${song['ytid']}'),
+                      key: listItemKey('home_most_played', index, song),
                       child: SongBar(
                         song,
                         true,
@@ -279,7 +276,7 @@ class _HomePageState extends State<HomePage> {
           itemBuilder: (context, index) {
             final borderRadius = getItemBorderRadius(index, data.length);
             return RepaintBoundary(
-              key: ValueKey('home_recommended_${data[index]['ytid']}'),
+              key: listItemKey('home_recommended', index, data[index]),
               child: SongBar(data[index], true, borderRadius: borderRadius),
             );
           },

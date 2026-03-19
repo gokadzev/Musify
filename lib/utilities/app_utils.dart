@@ -35,6 +35,10 @@ BorderRadius getItemBorderRadius(int index, int totalLength) {
   return BorderRadius.zero; // Default for middle items
 }
 
+ValueKey<int> listItemKey(String scope, int index, [Object? item]) {
+  return ValueKey<int>(Object.hash(scope, index, item));
+}
+
 /// Validates if a URL is a YouTube playlist URL
 bool isYoutubePlaylistUrl(String url) {
   return _youtubePlaylistRegExp.hasMatch(url);

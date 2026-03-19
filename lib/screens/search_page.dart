@@ -297,7 +297,7 @@ class _SearchPageState extends State<SearchPage> {
           SongBar(
             _songsSearchResult[index],
             true,
-            key: ValueKey('search_song_${_songsSearchResult[index]['ytid']}'),
+            key: listItemKey('search_song', index, _songsSearchResult[index]),
             showMusicDuration: true,
             borderRadius: borderRadius,
           ),
@@ -325,7 +325,7 @@ class _SearchPageState extends State<SearchPage> {
 
         widgets.add(
           PlaylistBar(
-            key: ValueKey('search_album_${playlist['ytid']}'),
+            key: listItemKey('search_album', index, playlist),
             playlist['title'],
             playlistId: playlist['ytid'],
             playlistArtwork: playlist['image'],
@@ -359,7 +359,7 @@ class _SearchPageState extends State<SearchPage> {
           Padding(
             padding: isLast ? commonListViewBottomPadding : EdgeInsets.zero,
             child: PlaylistBar(
-              key: ValueKey('search_playlist_${playlist['ytid']}'),
+              key: listItemKey('search_playlist', index, playlist),
               playlist['title'],
               playlistId: playlist['ytid'],
               playlistArtwork: playlist['image'],

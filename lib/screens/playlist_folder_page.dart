@@ -152,7 +152,7 @@ class _PlaylistFolderPageState extends State<PlaylistFolderPage> {
                         playlists.length,
                       );
                       return PlaylistBar(
-                        key: ValueKey(playlist['ytid']),
+                        key: listItemKey('folder_playlist', index, playlist),
                         playlist['title'],
                         playlistId: playlist['ytid'],
                         playlistArtwork: playlist['image'],
