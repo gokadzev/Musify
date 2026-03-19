@@ -118,6 +118,7 @@ class _LibraryPageState extends State<LibraryPage> {
               padding: commonSingleChildScrollViewPadding,
               child: Column(
                 children: <Widget>[
+                  _buildPinnedSection(),
                   _buildUserPlaylistsSection(primaryColor),
                   if (!offlineMode.value)
                     _buildUserLikedPlaylistsSection(primaryColor),
@@ -128,6 +129,53 @@ class _LibraryPageState extends State<LibraryPage> {
         ],
       ),
     );
+  }
+
+  Widget _buildPinnedSection() {
+    return ValueListenableBuilder<List<String>>(
+      valueListenable: pinnedPlaylistIds,
+      builder: (context, ids, _) {
+        if (ids.isEmpty) return const SizedBox.shrink();
+        final pinnedItems = _resolvePinnedPlaylists(ids);
+        if (pinnedItems.isEmpty) return const SizedBox.shrink();
+        return Column(
+          children: [
+            SectionHeader(
+              title: context.l10n!.pinnedPlaylists,
+              icon: FluentIcons.pin_24_filled,
+            ),
+            _buildPlaylistListView(context, pinnedItems),
+          ],
+        );
+      },
+    );
+  }
+
+  List<Map> _resolvePinnedPlaylists(List<String> ids) {
+    final allAvailable = [
+      ...userCustomPlaylists.value,
+      for (final folder in userPlaylistFolders.value)
+        ...(folder['playlists'] as List<dynamic>? ?? []).cast<Map>(),
+      ...userLikedPlaylists.cast<Map>(),
+    ];
+
+    final result = <Map>[];
+    for (final id in ids) {
+      final match = allAvailable.cast<Map?>().firstWhere(
+        (p) => p?['ytid']?.toString() == id,
+        orElse: () => null,
+      );
+      if (match != null) {
+        result.add(match);
+        continue;
+      }
+      final dbMatch = playlists.cast<Map?>().firstWhere(
+        (p) => p?['ytid']?.toString() == id,
+        orElse: () => null,
+      );
+      if (dbMatch != null) result.add(dbMatch);
+    }
+    return result;
   }
 
   Widget _buildUserPlaylistsSection(Color primaryColor) {
