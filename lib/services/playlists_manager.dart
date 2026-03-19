@@ -75,21 +75,31 @@ Future<List<dynamic>> getUserPlaylists() async {
   for (final playlistID in userPlaylists.value) {
     try {
       final plist = await ytClient.playlists.get(playlistID);
-      playlistsByUser.add({
+      final playlistMap = {
         'ytid': plist.id.toString(),
         'title': plist.title,
         'image': null,
         'source': 'user-youtube',
         'list': [],
-      });
+      };
+      playlistsByUser.add(playlistMap);
+
+      if (!onlinePlaylists.any((p) => p['ytid'] == playlistMap['ytid'])) {
+        onlinePlaylists.add(playlistMap);
+      }
     } catch (e, stackTrace) {
-      playlistsByUser.add({
+      final failedMap = {
         'ytid': playlistID.toString(),
         'title': 'Failed playlist',
         'image': null,
         'source': 'user-youtube',
         'list': [],
-      });
+      };
+      playlistsByUser.add(failedMap);
+
+      if (!onlinePlaylists.any((p) => p['ytid'] == failedMap['ytid'])) {
+        onlinePlaylists.add(failedMap);
+      }
       logger.log(
         'Error occurred while fetching the playlist:',
         error: e,
