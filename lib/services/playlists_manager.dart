@@ -57,6 +57,11 @@ final pinnedPlaylistIds = ValueNotifier<List<String>>(
   ),
 );
 final onlinePlaylists = ValueNotifier<List>([]);
+void _updateOnlineCache(Map? p) {
+  if (p != null && !onlinePlaylists.value.any((x) => x['ytid'] == p['ytid'])) {
+    onlinePlaylists.value = [...onlinePlaylists.value, p];
+  }
+}
 
 const pinnedPlaylistsLimit = 5;
 
@@ -84,9 +89,7 @@ Future<List<dynamic>> getUserPlaylists() async {
       };
       playlistsByUser.add(playlistMap);
 
-      if (!onlinePlaylists.value.any((p) => p['ytid'] == playlistMap['ytid'])) {
-        onlinePlaylists.value = [...onlinePlaylists.value, playlistMap];
-      }
+      _updateOnlineCache(playlistMap);
     } catch (e, stackTrace) {
       final failedMap = {
         'ytid': playlistID.toString(),
@@ -96,10 +99,7 @@ Future<List<dynamic>> getUserPlaylists() async {
         'list': [],
       };
       playlistsByUser.add(failedMap);
-
-      if (!onlinePlaylists.value.any((p) => p['ytid'] == failedMap['ytid'])) {
-        onlinePlaylists.value = List.from(onlinePlaylists.value)..add(failedMap);
-      }
+      _updateOnlineCache(failedMap);
       logger.log(
         'Error occurred while fetching the playlist:',
         error: e,
@@ -820,12 +820,7 @@ Future<List> getPlaylists({
         .whereType<Map<String, dynamic>>()
         .toList();
     onlinePlaylists.value = [...onlinePlaylists.value, ...newPlaylists];
-    return filteredPlaylists.isNotEmpty
-        ? filteredPlaylists
-        : onlinePlaylists.value.where((p) {
-            final title = p['title'].toLowerCase();
-            return title.contains(lowercaseQuery);
-          }).toList();
+    return filteredPlaylists.isNotEmpty ? filteredPlaylists : onlinePlaylists.value.where((p) => p['title'].toLowerCase().contains(lowercaseQuery)).toList();
   }
 
   if (playlistsNum != null && query == null) {
@@ -987,9 +982,7 @@ Future<Map?> _fetchYouTubePlaylist(String id) async {
         'source': 'user-youtube',
         'list': [],
       };
-      if (!onlinePlaylists.value.any((p) => p['ytid'] == playlist!['ytid'])) {
-        onlinePlaylists.value = [...onlinePlaylists.value, playlist];
-      }
+      _updateOnlineCache(playlist);
     } catch (e, stackTrace) {
       logger.log(
         'Failed to fetch playlist info for id $id',
