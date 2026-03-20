@@ -159,7 +159,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(FluentIcons.arrow_left_24_regular),
           onPressed: () =>
               Navigator.pop(context, widget.playlistData == _playlist),
           tooltip: context.l10n!.back,

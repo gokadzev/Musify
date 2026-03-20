@@ -20,6 +20,7 @@
  */
 
 import 'package:audio_service/audio_service.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_flip_card/flutter_flip_card.dart';
 import 'package:musify/main.dart';
@@ -97,11 +98,8 @@ class _NowPlayingPageState extends State<NowPlayingPage> {
       child: Row(
         children: [
           IconButton(
-            icon: Icon(
-              Icons.keyboard_arrow_down_rounded,
-              color: colorScheme.onSurface,
-              size: 28,
-            ),
+            iconSize: 26,
+            icon: const Icon(FluentIcons.chevron_down_24_regular),
             style: IconButton.styleFrom(
               backgroundColor: colorScheme.surfaceContainerHighest,
               shape: RoundedRectangleBorder(

@@ -19,6 +19,7 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:musify/constants/app_constants.dart';
@@ -145,7 +146,7 @@ class _EqualizerPageState extends State<EqualizerPage> {
                       _gains = List<double>.filled(params.bands.length, 0);
                     });
                   },
-                  icon: const Icon(Icons.refresh),
+                  icon: const Icon(FluentIcons.arrow_clockwise_24_regular),
                   label: Text(context.l10n!.equalizerResetBands),
                 ),
                 const SizedBox(height: 12),

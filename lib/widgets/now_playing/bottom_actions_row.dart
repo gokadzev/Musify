@@ -470,7 +470,7 @@ Widget _buildTimeSelector({
           children: [
             IconButton(
               icon: Icon(
-                Icons.remove_rounded,
+                FluentIcons.line_horizontal_1_24_regular,
                 color: colorScheme.onSurfaceVariant,
               ),
               style: IconButton.styleFrom(
@@ -495,7 +495,7 @@ Widget _buildTimeSelector({
             ),
             IconButton(
               icon: Icon(
-                Icons.add_rounded,
+                FluentIcons.add_24_regular,
                 color: colorScheme.onSurfaceVariant,
               ),
               style: IconButton.styleFrom(

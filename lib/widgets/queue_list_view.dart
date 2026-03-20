@@ -416,11 +416,8 @@ class QueueTile extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(4),
                     child: Icon(
-                      Icons.drag_handle_rounded,
-                      color: colorScheme.onSurfaceVariant.withValues(
-                        alpha: 0.5,
-                      ),
-                      size: 22,
+                      FluentIcons.arrow_move_24_regular,
+                      color: colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ),
