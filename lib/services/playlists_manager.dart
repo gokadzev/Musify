@@ -63,6 +63,40 @@ void _updateOnlineCache(Map? p) {
   }
 }
 
+Map? _searchAppPlaylistsById(String id) {
+  for (final p in userCustomPlaylists.value) {
+    if (p['ytid']?.toString() == id) return p as Map;
+  }
+  for (final f in userPlaylistFolders.value) {
+    for (final p in (f['playlists'] as List? ?? [])) {
+      if (p['ytid']?.toString() == id) return p as Map;
+    }
+  }
+  for (final p in userLikedPlaylists) {
+    if (p['ytid']?.toString() == id) return p as Map;
+  }
+  for (final p in onlinePlaylists.value) {
+    if (p['ytid']?.toString() == id) return p as Map;
+  }
+  for (final p in offlinePlaylistService.offlinePlaylists.value) {
+    if (p['ytid']?.toString() == id) return p as Map;
+  }
+  for (final p in playlists) {
+    if (p['ytid']?.toString() == id) return p as Map;
+  }
+  return null;
+}
+
+List<Map> resolvePinnedPlaylists(List<String> ids) {
+  if (ids.isEmpty) return [];
+  final result = <Map>[];
+  for (final id in ids) {
+    final match = _searchAppPlaylistsById(id);
+    if (match != null) result.add(match);
+  }
+  return result;
+}
+
 const pinnedPlaylistsLimit = 5;
 
 final currentLikedPlaylistsLength = ValueNotifier<int>(
