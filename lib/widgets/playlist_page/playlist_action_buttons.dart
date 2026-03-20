@@ -48,7 +48,7 @@ class PlaylistActionButtons extends StatelessWidget {
         children: [
           Expanded(
             child: FilledButton.icon(
-              icon: const Icon(FluentIcons.play_24_filled),
+              icon: const Icon(FluentIcons.play_24_regular),
               label: Text(context.l10n!.play),
               onPressed: onPlay,
             ),
@@ -60,7 +60,7 @@ class PlaylistActionButtons extends StatelessWidget {
                 backgroundColor: colorScheme.secondaryContainer,
                 foregroundColor: colorScheme.onSecondaryContainer,
               ),
-              icon: const Icon(FluentIcons.arrow_shuffle_24_filled),
+              icon: const Icon(FluentIcons.arrow_shuffle_24_regular),
               label: Text(context.l10n!.shuffle),
               onPressed: songs.isEmpty ? null : onShuffle,
             ),

@@ -90,7 +90,7 @@ class BottomSheetBar extends StatelessWidget {
                 if (isSelected) ...[
                   const SizedBox(width: 8),
                   Icon(
-                    FluentIcons.checkmark_circle_24_filled,
+                    FluentIcons.checkmark_circle_24_regular,
                     color: colorScheme.onSecondaryContainer,
                     size: 22,
                   ),

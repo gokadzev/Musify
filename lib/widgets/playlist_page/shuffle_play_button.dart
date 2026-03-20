@@ -31,7 +31,7 @@ class ShufflePlayButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton.filledTonal(
-      icon: const Icon(FluentIcons.arrow_shuffle_24_filled),
+      icon: const Icon(FluentIcons.arrow_shuffle_24_regular),
       iconSize: 24,
       tooltip: 'Shuffle play',
       onPressed: () async {

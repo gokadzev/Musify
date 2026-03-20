@@ -133,7 +133,7 @@ class _QueueWidgetState extends State<QueueWidget> {
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
-              FluentIcons.apps_list_24_filled,
+              FluentIcons.apps_list_24_regular,
               color: colorScheme.onPrimaryContainer,
               size: compact ? 20.0 : 22.0,
             ),
@@ -405,7 +405,7 @@ class QueueTile extends StatelessWidget {
                 const SizedBox(width: 8),
                 if (isCurrentSong) ...[
                   Icon(
-                    FluentIcons.music_note_2_24_filled,
+                    FluentIcons.music_note_2_24_regular,
                     color: colorScheme.primary,
                     size: 16,
                   ),
@@ -511,7 +511,7 @@ class _DismissBackground extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
       ),
       child: Icon(
-        FluentIcons.delete_24_filled,
+        FluentIcons.delete_24_regular,
         color: colorScheme.onErrorContainer,
         size: 22,
       ),

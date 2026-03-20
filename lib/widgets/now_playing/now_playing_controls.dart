@@ -228,7 +228,7 @@ class PlayerControlButtons extends StatelessWidget {
                               children: [
                                 IconButton(
                                   icon: Icon(
-                                    FluentIcons.previous_24_filled,
+                                    FluentIcons.previous_24_regular,
                                     color: audioHandler.hasPrevious
                                         ? colorScheme.onSurface
                                         : colorScheme.onSurface.withValues(
@@ -266,7 +266,7 @@ class PlayerControlButtons extends StatelessWidget {
                                 SizedBox(width: buttonSpacing),
                                 IconButton(
                                   icon: Icon(
-                                    FluentIcons.next_24_filled,
+                                    FluentIcons.next_24_regular,
                                     color: audioHandler.hasNext
                                         ? colorScheme.onSurface
                                         : colorScheme.onSurface.withValues(
@@ -334,7 +334,7 @@ class PlayerControlButtons extends StatelessWidget {
           icon: Icon(
             value
                 ? FluentIcons.arrow_shuffle_24_filled
-                : FluentIcons.arrow_shuffle_off_24_filled,
+                : FluentIcons.arrow_shuffle_off_24_regular,
             color: value ? colorScheme.onPrimary : colorScheme.onSurfaceVariant,
           ),
           tooltip: context.l10n!.shuffle,
@@ -383,7 +383,7 @@ class PlayerControlButtons extends StatelessWidget {
                     ? FluentIcons.arrow_repeat_1_24_filled
                     : isActive
                     ? FluentIcons.arrow_repeat_all_24_filled
-                    : FluentIcons.arrow_repeat_all_off_24_filled,
+                    : FluentIcons.arrow_repeat_all_off_24_regular,
                 color: isActive
                     ? colorScheme.onPrimary
                     : colorScheme.onSurfaceVariant,

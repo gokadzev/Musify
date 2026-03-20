@@ -42,7 +42,7 @@ void showToast(
       content: Row(
         children: [
           Icon(
-            icon ?? FluentIcons.checkmark_circle_20_filled,
+            icon ?? FluentIcons.checkmark_circle_20_regular,
             color: colorScheme.onSecondaryContainer,
             size: 20,
           ),
@@ -75,7 +75,7 @@ void showToastWithButton(
       content: Row(
         children: [
           Icon(
-            icon ?? FluentIcons.info_20_filled,
+            icon ?? FluentIcons.info_20_regular,
             color: colorScheme.onSecondaryContainer,
             size: 20,
           ),

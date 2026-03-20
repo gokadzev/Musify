@@ -75,8 +75,8 @@ class SongBar extends StatefulWidget {
 
 class _SongBarState extends State<SongBar> {
   static const likeStatusToIconMapper = {
-    true: FluentIcons.heart_off_24_filled,
-    false: FluentIcons.heart_24_filled,
+    true: FluentIcons.heart_off_24_regular,
+    false: FluentIcons.heart_24_regular,
   };
 
   late final ValueNotifier<bool> _songLikeStatus;
@@ -408,7 +408,7 @@ class _SongBarState extends State<SongBar> {
           child: Row(
             children: [
               Icon(
-                FluentIcons.receipt_play_24_filled,
+                FluentIcons.receipt_play_24_regular,
                 color: colorScheme.primary,
               ),
               const SizedBox(width: 8),
@@ -425,7 +425,7 @@ class _SongBarState extends State<SongBar> {
           child: Row(
             children: [
               Icon(
-                FluentIcons.text_bullet_list_add_24_filled,
+                FluentIcons.text_bullet_list_add_24_regular,
                 color: colorScheme.primary,
               ),
               const SizedBox(width: 8),
@@ -477,7 +477,7 @@ class _SongBarState extends State<SongBar> {
           value: 'remove',
           child: Row(
             children: [
-              Icon(FluentIcons.delete_24_filled, color: colorScheme.primary),
+              Icon(FluentIcons.delete_24_regular, color: colorScheme.primary),
               const SizedBox(width: 8),
               Text(
                 removeFromPlaylistText,
@@ -491,7 +491,7 @@ class _SongBarState extends State<SongBar> {
           value: 'add_to_playlist',
           child: Row(
             children: [
-              Icon(FluentIcons.album_add_24_filled, color: colorScheme.primary),
+              Icon(FluentIcons.album_add_24_regular, color: colorScheme.primary),
               const SizedBox(width: 8),
               Text(
                 addToPlaylistText,
@@ -505,7 +505,7 @@ class _SongBarState extends State<SongBar> {
           value: 'remove_from_recents',
           child: Row(
             children: [
-              Icon(FluentIcons.delete_24_filled, color: colorScheme.primary),
+              Icon(FluentIcons.delete_24_regular, color: colorScheme.primary),
               const SizedBox(width: 8),
               Text(
                 removeFromRecentlyPlayedText,
@@ -524,8 +524,8 @@ class _SongBarState extends State<SongBar> {
                 children: [
                   Icon(
                     value
-                        ? FluentIcons.cloud_dismiss_24_filled
-                        : FluentIcons.cloud_arrow_down_24_filled,
+                        ? FluentIcons.cloud_dismiss_24_regular
+                        : FluentIcons.cloud_arrow_down_24_regular,
                     color: colorScheme.primary,
                   ),
                   const SizedBox(width: 8),

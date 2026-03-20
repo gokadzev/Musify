@@ -79,7 +79,7 @@ class _LibraryPageState extends State<LibraryPage> {
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
-                      FluentIcons.cloud_off_24_filled,
+                      FluentIcons.cloud_off_24_regular,
                       size: 40,
                       color: colorScheme.onPrimaryContainer,
                     ),
@@ -189,7 +189,7 @@ class _LibraryPageState extends State<LibraryPage> {
                       padding: const EdgeInsets.symmetric(horizontal: 2),
                       onPressed: _showCreateFolderDialog,
                       icon: Icon(
-                        FluentIcons.folder_add_24_filled,
+                        FluentIcons.folder_add_24_regular,
                         color: colorScheme.onSurfaceVariant,
                       ),
                       tooltip: context.l10n!.createFolder,
@@ -198,7 +198,7 @@ class _LibraryPageState extends State<LibraryPage> {
                       padding: const EdgeInsets.symmetric(horizontal: 2),
                       onPressed: () => showCreatePlaylistDialog(context),
                       icon: Icon(
-                        FluentIcons.add_24_filled,
+                        FluentIcons.add_24_regular,
                         color: colorScheme.onSurfaceVariant,
                       ),
                     ),
@@ -209,7 +209,7 @@ class _LibraryPageState extends State<LibraryPage> {
                 context.l10n!.recentlyPlayed,
                 onPressed: () =>
                     NavigationManager.router.go('/library/userSongs/recents'),
-                cubeIcon: FluentIcons.history_24_filled,
+                cubeIcon: FluentIcons.history_24_regular,
                 borderRadius: commonCustomBarRadiusFirst,
                 showBuildActions: false,
               ),
@@ -217,14 +217,14 @@ class _LibraryPageState extends State<LibraryPage> {
                 context.l10n!.likedSongs,
                 onPressed: () =>
                     NavigationManager.router.go('/library/userSongs/liked'),
-                cubeIcon: FluentIcons.heart_24_filled,
+                cubeIcon: FluentIcons.heart_24_regular,
                 showBuildActions: false,
               ),
               PlaylistBar(
                 context.l10n!.offlineSongs,
                 onPressed: () =>
                     NavigationManager.router.go('/library/userSongs/offline'),
-                cubeIcon: FluentIcons.cloud_off_24_filled,
+                cubeIcon: FluentIcons.cloud_off_24_regular,
                 borderRadius: hasAnythingAfterOffline
                     ? BorderRadius.zero
                     : commonCustomBarRadiusLast,
@@ -273,7 +273,7 @@ class _LibraryPageState extends State<LibraryPage> {
                   padding: const EdgeInsets.only(right: 5),
                   onPressed: () => showCreatePlaylistDialog(context),
                   icon: Icon(
-                    FluentIcons.add_24_filled,
+                    FluentIcons.add_24_regular,
                     color: colorScheme.onSurfaceVariant,
                   ),
                 ),
@@ -477,7 +477,7 @@ class _LibraryPageState extends State<LibraryPage> {
             shape: BoxShape.circle,
           ),
           child: Icon(
-            FluentIcons.folder_add_24_filled,
+            FluentIcons.folder_add_24_regular,
             color: colorScheme.primary,
             size: 32,
           ),
@@ -527,7 +527,7 @@ class _LibraryPageState extends State<LibraryPage> {
               }
               Navigator.pop(context);
             },
-            icon: const Icon(FluentIcons.add_20_filled),
+            icon: const Icon(FluentIcons.add_20_regular),
             label: Text(context.l10n!.create),
           ),
         ],

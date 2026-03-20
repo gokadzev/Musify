@@ -145,7 +145,7 @@ class _EditPlaylistDialogState extends State<EditPlaylistDialog> {
 
             Navigator.pop(context, newPlaylist);
           },
-          icon: const Icon(FluentIcons.save_20_filled),
+          icon: const Icon(FluentIcons.save_20_regular),
           label: Text(context.l10n!.update),
         ),
       ],

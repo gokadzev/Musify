@@ -60,7 +60,7 @@ Widget buildPlaybackIconButton(
         semanticLabel = context.l10n!.loading;
       } else if (processingState == AudioProcessingState.completed) {
         iconWidget = Icon(
-          FluentIcons.arrow_counterclockwise_24_filled,
+          FluentIcons.arrow_counterclockwise_24_regular,
           color: iconColor,
           size: iconSize,
         );
@@ -68,7 +68,7 @@ Widget buildPlaybackIconButton(
         semanticLabel = context.l10n!.replay;
       } else {
         iconWidget = Icon(
-          isPlaying ? FluentIcons.pause_24_filled : FluentIcons.play_24_filled,
+          isPlaying ? FluentIcons.pause_24_regular : FluentIcons.play_24_regular,
           color: iconColor,
           size: iconSize,
         );

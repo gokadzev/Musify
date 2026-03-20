@@ -46,7 +46,7 @@ class PlaylistBar extends StatelessWidget {
     this.playlistData,
     this.onPressed,
     this.onDelete,
-    this.cubeIcon = FluentIcons.music_note_1_24_filled,
+    this.cubeIcon = FluentIcons.music_note_1_24_regular,
     this.showBuildActions = true,
     this.isAlbum = false,
     this.borderRadius = BorderRadius.zero,
@@ -67,8 +67,8 @@ class PlaylistBar extends StatelessWidget {
   static const double iconSize = 27;
 
   static const likeStatusToIconMapper = {
-    true: FluentIcons.heart_off_24_filled,
-    false: FluentIcons.heart_24_filled,
+    true: FluentIcons.heart_off_24_regular,
+    false: FluentIcons.heart_24_regular,
   };
 
   // Helper to determine if this is a folder
@@ -264,8 +264,8 @@ class PlaylistBar extends StatelessWidget {
                 children: [
                   Icon(
                     isPinned
-                        ? FluentIcons.pin_off_24_filled
-                        : FluentIcons.pin_24_filled,
+                        ? FluentIcons.pin_off_24_regular
+                        : FluentIcons.pin_24_regular,
                     color: colorScheme.primary,
                   ),
                   const SizedBox(width: 8),
@@ -301,7 +301,7 @@ class PlaylistBar extends StatelessWidget {
               child: Row(
                 children: [
                   Icon(
-                    FluentIcons.album_add_24_filled,
+                    FluentIcons.album_add_24_regular,
                     color: colorScheme.primary,
                   ),
                   const SizedBox(width: 8),
@@ -315,7 +315,7 @@ class PlaylistBar extends StatelessWidget {
               child: Row(
                 children: [
                   Icon(
-                    FluentIcons.cloud_off_24_filled,
+                    FluentIcons.cloud_off_24_regular,
                     color: colorScheme.error,
                   ),
                   const SizedBox(width: 8),
@@ -335,7 +335,7 @@ class PlaylistBar extends StatelessWidget {
               child: Row(
                 children: [
                   Icon(
-                    FluentIcons.folder_24_filled,
+                    FluentIcons.folder_24_regular,
                     color: colorScheme.primary,
                   ),
                   const SizedBox(width: 8),
@@ -349,7 +349,7 @@ class PlaylistBar extends StatelessWidget {
               value: 'edit',
               child: Row(
                 children: [
-                  Icon(FluentIcons.edit_24_filled, color: colorScheme.primary),
+                  Icon(FluentIcons.edit_24_regular, color: colorScheme.primary),
                   const SizedBox(width: 8),
                   Text(
                     isFolder
@@ -365,7 +365,7 @@ class PlaylistBar extends StatelessWidget {
               child: Row(
                 children: [
                   Icon(
-                    FluentIcons.delete_24_filled,
+                    FluentIcons.delete_24_regular,
                     color: isFolder ? colorScheme.error : colorScheme.primary,
                   ),
                   const SizedBox(width: 8),
@@ -404,7 +404,7 @@ class PlaylistBar extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             child: Icon(
-              FluentIcons.folder_arrow_right_24_filled,
+              FluentIcons.folder_arrow_right_24_regular,
               color: colorScheme.secondary,
               size: 28,
             ),
@@ -462,7 +462,7 @@ class PlaylistBar extends StatelessWidget {
                   children: [
                     if (hasLibrary)
                       _MoveToFolderItem(
-                        icon: FluentIcons.library_24_filled,
+                        icon: FluentIcons.library_24_regular,
                         iconColor: colorScheme.primary,
                         iconBgColor: colorScheme.primaryContainer,
                         label: context.l10n!.library,
@@ -475,7 +475,7 @@ class PlaylistBar extends StatelessWidget {
                       ),
                     ...availableFolders.map(
                       (folder) => _MoveToFolderItem(
-                        icon: FluentIcons.folder_24_filled,
+                        icon: FluentIcons.folder_24_regular,
                         iconColor: colorScheme.secondary,
                         iconBgColor: colorScheme.secondaryContainer,
                         label: folder['name'] as String,
@@ -534,7 +534,7 @@ class PlaylistBar extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Icon(
-        FluentIcons.folder_24_filled,
+        FluentIcons.folder_24_regular,
         size: 26,
         color: colorScheme.onSecondaryContainer,
       ),
@@ -700,7 +700,7 @@ class PlaylistBar extends StatelessWidget {
               );
               showToast(context, result);
             },
-            icon: const Icon(FluentIcons.save_20_filled),
+            icon: const Icon(FluentIcons.save_20_regular),
             label: Text(context.l10n!.update),
           ),
         ],

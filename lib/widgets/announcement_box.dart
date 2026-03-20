@@ -30,7 +30,7 @@ class AnnouncementBox extends StatelessWidget {
     required this.message,
     required this.url,
     this.onDismiss,
-    this.icon = FluentIcons.megaphone_24_filled,
+    this.icon = FluentIcons.megaphone_24_regular,
   });
   final String message;
   final String url;
@@ -94,7 +94,7 @@ class AnnouncementBox extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Icon(
-                            FluentIcons.arrow_right_16_filled,
+                            FluentIcons.arrow_right_16_regular,
                             size: 12,
                             color: colorScheme.onPrimaryContainer.withValues(
                               alpha: 0.7,

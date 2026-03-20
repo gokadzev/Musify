@@ -95,7 +95,7 @@ Future<void> checkAppUpdates() async {
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
-                  FluentIcons.arrow_download_24_filled,
+                  FluentIcons.arrow_download_24_regular,
                   color: colorScheme.onPrimaryContainer,
                   size: 32,
                 ),
@@ -164,7 +164,7 @@ Future<void> checkAppUpdates() async {
                   (url) => {launchURL(Uri.parse(url)), Navigator.pop(context)},
                 );
               },
-              icon: const Icon(FluentIcons.arrow_download_20_filled),
+              icon: const Icon(FluentIcons.arrow_download_20_regular),
               label: Text(context.l10n!.download),
             ),
           ],
