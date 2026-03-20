@@ -50,9 +50,7 @@ class PlaylistBar extends StatelessWidget {
     this.showBuildActions = true,
     this.isAlbum = false,
     this.borderRadius = BorderRadius.zero,
-  }) : playlistLikeStatus = ValueNotifier<bool>(
-         isPlaylistAlreadyLiked(playlistId),
-       );
+  });
 
   final Map? playlistData;
   final String? playlistId;
@@ -67,8 +65,6 @@ class PlaylistBar extends StatelessWidget {
 
   static const double artworkSize = 60;
   static const double iconSize = 27;
-
-  final ValueNotifier<bool> playlistLikeStatus;
 
   static const likeStatusToIconMapper = {
     true: FluentIcons.heart_off_24_filled,
@@ -207,10 +203,9 @@ class PlaylistBar extends StatelessWidget {
         switch (value) {
           case 'like':
             if (_resolvedPlaylistId != null) {
-              final newValue = !playlistLikeStatus.value;
-              playlistLikeStatus.value = newValue;
-              updatePlaylistLikeStatus(_resolvedPlaylistId!, newValue);
-              currentLikedPlaylistsLength.value += newValue ? 1 : -1;
+              final isLiked = isPlaylistAlreadyLiked(_resolvedPlaylistId);
+              updatePlaylistLikeStatus(_resolvedPlaylistId!, !isLiked);
+              currentLikedPlaylistsLength.value += !isLiked ? 1 : -1;
             }
             break;
           case 'pin':
@@ -258,6 +253,9 @@ class PlaylistBar extends StatelessWidget {
         final isPinned =
             _resolvedPlaylistId != null &&
             pinnedIds.contains(_resolvedPlaylistId);
+        final isLiked =
+            _resolvedPlaylistId != null &&
+            isPlaylistAlreadyLiked(_resolvedPlaylistId);
         return [
           if (!isFolder && _resolvedPlaylistId != null)
             PopupMenuItem<String>(
@@ -285,12 +283,12 @@ class PlaylistBar extends StatelessWidget {
               child: Row(
                 children: [
                   Icon(
-                    likeStatusToIconMapper[playlistLikeStatus.value],
+                    likeStatusToIconMapper[isLiked],
                     color: colorScheme.primary,
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    playlistLikeStatus.value
+                    isLiked
                         ? context.l10n!.removeFromLikedPlaylists
                         : context.l10n!.addToLikedPlaylists,
                   ),

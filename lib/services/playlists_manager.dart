@@ -110,38 +110,37 @@ String generateCustomPlaylistId() {
 }
 
 Future<List<dynamic>> getUserPlaylists() async {
-  final playlistsByUser = [];
-  for (final playlistID in userPlaylists.value) {
+  final futures = userPlaylists.value.map((playlistID) async {
     try {
       final plist = await ytClient.playlists.get(playlistID);
-      final playlistMap = {
+      return {
         'ytid': plist.id.toString(),
         'title': plist.title,
         'image': null,
         'source': 'user-youtube',
         'list': [],
       };
-      playlistsByUser.add(playlistMap);
-
-      _updateOnlineCache(playlistMap);
     } catch (e, stackTrace) {
-      final failedMap = {
+      logger.log(
+        'Error occurred while fetching the playlist:',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      return {
         'ytid': playlistID.toString(),
         'title': 'Failed playlist',
         'image': null,
         'source': 'user-youtube',
         'list': [],
       };
-      playlistsByUser.add(failedMap);
-      _updateOnlineCache(failedMap);
-      logger.log(
-        'Error occurred while fetching the playlist:',
-        error: e,
-        stackTrace: stackTrace,
-      );
     }
+  });
+
+  final results = await Future.wait(futures);
+  for (final result in results) {
+    _updateOnlineCache(result);
   }
-  return playlistsByUser;
+  return results.toList();
 }
 
 Future<String> addUserPlaylist(String input, BuildContext context) async {
