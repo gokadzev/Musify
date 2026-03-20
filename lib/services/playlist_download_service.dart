@@ -478,9 +478,8 @@ class OfflinePlaylistService {
   void cleanupProgressNotifier(String playlistId) {
     try {
       if (downloadProgressNotifiers.containsKey(playlistId)) {
-        downloadProgressNotifiers[playlistId]?.value = DownloadProgress(
-          total: 0,
-        );
+        final notifier = downloadProgressNotifiers.remove(playlistId);
+        notifier?.dispose();
       }
     } catch (e, stackTrace) {
       logger.log(

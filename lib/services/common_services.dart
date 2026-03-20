@@ -241,10 +241,11 @@ Future<void> updateSongLikeStatus(dynamic songId, bool add) async {
 }
 
 void moveLikedSong(int oldIndex, int newIndex) {
-  final _song = userLikedSongsList[oldIndex];
-  userLikedSongsList
-    ..removeAt(oldIndex)
-    ..insert(newIndex, _song);
+  if (oldIndex < newIndex) {
+    newIndex -= 1;
+  }
+  final _song = userLikedSongsList.removeAt(oldIndex);
+  userLikedSongsList.insert(newIndex, _song);
   currentLikedSongsLength.value = userLikedSongsList.length;
   unawaited(addOrUpdateData('user', 'likedSongs', userLikedSongsList));
 }
@@ -701,7 +702,6 @@ const recentlyPlayedSongsLimit = 250;
 Future<void> updateRecentlyPlayed(dynamic songId) async {
   try {
     if (userRecentlyPlayed.isNotEmpty &&
-        userRecentlyPlayed.length == 1 &&
         userRecentlyPlayed[0]['ytid'] == songId) {
       final existing = userRecentlyPlayed[0] as Map;
       existing['listeningCount'] = (existing['listeningCount'] ?? 0) + 1;

@@ -865,17 +865,21 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
       if (index < _currentQueueIndex) {
         _currentQueueIndex--;
-      } else if (index == _currentQueueIndex && _queueList.isNotEmpty) {
-        // If removing the currently-loading song, reset loading state
-        if (_currentLoadingIndex == index) {
-          _currentLoadingIndex = -1;
-          _currentLoadingTransitionId = -1;
-        }
+      } else if (index == _currentQueueIndex) {
+        if (_queueList.isEmpty) {
+          await stop();
+        } else {
+          // If removing the currently-loading song, reset loading state
+          if (_currentLoadingIndex == index) {
+            _currentLoadingIndex = -1;
+            _currentLoadingTransitionId = -1;
+          }
 
-        if (_currentQueueIndex >= _queueList.length) {
-          _currentQueueIndex = _queueList.length - 1;
+          if (_currentQueueIndex >= _queueList.length) {
+            _currentQueueIndex = _queueList.length - 1;
+          }
+          await _playFromQueue(_currentQueueIndex);
         }
-        await _playFromQueue(_currentQueueIndex);
       }
 
       _hydrateQueueEntryIds();
@@ -1597,6 +1601,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
       logger.log('Error skipping to song', error: e, stackTrace: stackTrace);
     }
   }
+
+  @override
+  Future<void> skipToQueueItem(int index) => skipToSong(index);
 
   @override
   Future<void> skipToNext() async {
