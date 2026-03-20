@@ -266,8 +266,8 @@ class PlaylistBar extends StatelessWidget {
                 children: [
                   Icon(
                     isPinned
-                        ? FluentIcons.pin_off_24_regular
-                        : FluentIcons.pin_24_regular,
+                        ? FluentIcons.pin_off_24_filled
+                        : FluentIcons.pin_24_filled,
                     color: colorScheme.primary,
                   ),
                   const SizedBox(width: 8),
@@ -303,7 +303,7 @@ class PlaylistBar extends StatelessWidget {
               child: Row(
                 children: [
                   Icon(
-                    FluentIcons.album_add_24_regular,
+                    FluentIcons.album_add_24_filled,
                     color: colorScheme.primary,
                   ),
                   const SizedBox(width: 8),
