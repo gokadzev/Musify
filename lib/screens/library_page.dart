@@ -133,20 +133,40 @@ class _LibraryPageState extends State<LibraryPage> {
 
   Widget _buildPinnedSection() {
     return AnimatedBuilder(
-      animation: Listenable.merge([pinnedPlaylistIds, offlineMode, userCustomPlaylists, userPlaylistFolders, offlinePlaylistService.offlinePlaylists, currentLikedPlaylistsLength, onlinePlaylists]),
+      animation: Listenable.merge([
+        pinnedPlaylistIds,
+        offlineMode,
+        userCustomPlaylists,
+        userPlaylistFolders,
+        offlinePlaylistService.offlinePlaylists,
+        currentLikedPlaylistsLength,
+        onlinePlaylists,
+      ]),
       builder: (context, _) {
-        final ids = pinnedPlaylistIds.value, isOff = offlineMode.value;
+        final ids = pinnedPlaylistIds.value;
         if (ids.isEmpty) return const SizedBox.shrink();
-        final items = _resolvePinnedPlaylists(ids).where((p) => !isOff || offlinePlaylistService.offlinePlaylists.value.any((op) => op['ytid'] == p['ytid'])).toList();
+
+        final isOff = offlineMode.value;
+        final items = resolvePinnedPlaylists(ids).where((p) {
+          return !isOff ||
+              offlinePlaylistService.isPlaylistDownloaded(
+                p['ytid']?.toString() ?? '',
+              );
+        }).toList();
+
         if (items.isEmpty) return const SizedBox.shrink();
-        return Column(children: [SectionHeader(title: context.l10n!.pinnedPlaylists, icon: FluentIcons.pin_24_filled), _buildPlaylistListView(context, items)]);
+
+        return Column(
+          children: [
+            SectionHeader(
+              title: context.l10n!.pinnedPlaylists,
+              icon: FluentIcons.pin_24_filled,
+            ),
+            _buildPlaylistListView(context, items),
+          ],
+        );
       },
     );
-  }
-
-  List<Map> _resolvePinnedPlaylists(List<String> ids) {
-    final all = [...userCustomPlaylists.value, for (final f in userPlaylistFolders.value) ...(f['playlists'] as List), ...userLikedPlaylists, ...onlinePlaylists.value, ...offlinePlaylistService.offlinePlaylists.value, ...playlists];
-    return ids.map((id) => all.cast<Map?>().firstWhere((p) => p?['ytid']?.toString() == id, orElse: () => null)).whereType<Map>().toList();
   }
 
   Widget _buildUserPlaylistsSection(Color primaryColor) {
