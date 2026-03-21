@@ -395,6 +395,33 @@ class ProxyManager {
     return manifest;
   }
 
+  /// Performs an HTTP GET request that respects current proxy settings.
+  Future<http.Response> getProxiedResponse(
+    Uri uri, {
+    Map<String, String>? headers,
+    int timeoutSeconds = 10,
+  }) async {
+    if (!useProxy.value || _sharedProxyAddress == null) {
+      return http.get(uri, headers: headers).timeout(
+            Duration(seconds: timeoutSeconds),
+            onTimeout: () => http.Response('Timeout', 408),
+          );
+    }
+
+    final res = _proxyResources[_sharedProxyAddress!];
+    if (res == null) {
+      return http.get(uri, headers: headers).timeout(
+            Duration(seconds: timeoutSeconds),
+            onTimeout: () => http.Response('Timeout', 408),
+          );
+    }
+
+    return res.ioClient.get(uri, headers: headers).timeout(
+          Duration(seconds: timeoutSeconds),
+          onTimeout: () => http.Response('Timeout', 408),
+        );
+  }
+
   void _closeAllProxyResources() {
     for (final res in _proxyResources.values) {
       try {

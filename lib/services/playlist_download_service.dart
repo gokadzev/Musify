@@ -84,12 +84,6 @@ class OfflinePlaylistService {
       return;
     }
 
-    // Check if already downloaded
-    if (isPlaylistDownloaded(playlistId)) {
-      showToast(context, context.l10n!.playlistAlreadyDownloaded);
-      return;
-    }
-
     // Initialize download state
     final songsList = playlist['list'] as List<dynamic>? ?? [];
     if (songsList.isEmpty) {

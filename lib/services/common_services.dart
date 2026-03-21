@@ -286,6 +286,12 @@ bool isPlaylistAlreadyLiked(playlistIdToCheck) =>
 bool isSongAlreadyOffline(songIdToCheck) =>
     userOfflineSongs.any((song) => song['ytid'] == songIdToCheck);
 
+bool isPlaylistFullyOffline(List songs) {
+  if (songs.isEmpty) return false;
+  final offlineIds = userOfflineSongs.map((s) => s['ytid']).toSet();
+  return songs.every((s) => offlineIds.contains(s['ytid']));
+}
+
 Map<String, dynamic> getOfflineSongByYtid(String ytid) {
   try {
     final song = userOfflineSongs.firstWhere(
@@ -337,7 +343,7 @@ Future<List<String>> getSearchSuggestions(String query) async {
 
 Future<List<Map<String, int>>> getSkipSegments(String id) async {
   try {
-    final res = await http.get(
+    final res = await ProxyManager().getProxiedResponse(
       Uri(
         scheme: 'https',
         host: 'sponsor.ajay.app',
@@ -356,7 +362,7 @@ Future<List<Map<String, int>>> getSkipSegments(String id) async {
         },
       ),
     );
-    if (res.body != 'Not Found') {
+    if (res.statusCode == 200 && res.body != 'Not Found') {
       final data = jsonDecode(res.body);
       final segments = data.map((obj) {
         return Map.castFrom<String, dynamic, String, int>({
@@ -667,7 +673,7 @@ Future<bool> removeSongFromOffline(dynamic songId) async {
 
 Future<File?> _downloadAndSaveArtworkFile(String url, String filePath) async {
   try {
-    final response = await http.get(Uri.parse(url));
+    final response = await ProxyManager().getProxiedResponse(Uri.parse(url));
 
     if (response.statusCode == 200) {
       final file = File(filePath);

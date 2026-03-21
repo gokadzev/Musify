@@ -511,75 +511,84 @@ class _PlaylistPageState extends State<PlaylistPage> {
       return const SizedBox.shrink();
     }
 
-    return ValueListenableBuilder<List<dynamic>>(
-      valueListenable: offlinePlaylistService.offlinePlaylists,
-      builder: (context, offlinePlaylists, _) {
-        playlistOfflineStatus = offlinePlaylistService.isPlaylistDownloaded(
-          playlistId,
-        );
+    return ValueListenableBuilder<int>(
+      valueListenable: currentOfflineSongsLength,
+      builder: (context, _, __) {
+        return ValueListenableBuilder<List<dynamic>>(
+          valueListenable: offlinePlaylistService.offlinePlaylists,
+          builder: (context, offlinePlaylists, _) {
+            final playlistSongs = _playlist?['list'] as List? ?? [];
+            playlistOfflineStatus = isPlaylistFullyOffline(playlistSongs);
 
-        if (playlistOfflineStatus) {
-          return IconButton.filled(
-            icon: Icon(
-              FluentIcons.arrow_download_off_24_filled,
-              color: Theme.of(context).colorScheme.onPrimary,
-            ),
-            iconSize: 24,
-            onPressed: () => _showRemoveOfflineDialog(playlistId),
-            tooltip: context.l10n!.removeOffline,
-          );
-        }
-
-        return ValueListenableBuilder<DownloadProgress>(
-          valueListenable: offlinePlaylistService.getProgressNotifier(
-            playlistId,
-          ),
-          builder: (context, progress, _) {
-            final isDownloading = offlinePlaylistService.isPlaylistDownloading(
-              playlistId,
-            );
-
-            if (isDownloading) {
-              return SizedBox(
-                width: 48,
-                height: 48,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    SizedBox(
-                      width: 40,
-                      height: 40,
-                      child: CircularProgressIndicator(
-                        value: progress.progress,
-                        strokeWidth: 3,
-                        backgroundColor: Theme.of(
-                          context,
-                        ).colorScheme.primaryContainer,
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(FluentIcons.dismiss_24_filled, size: 16),
-                      onPressed: () => offlinePlaylistService.cancelDownload(
-                        context,
-                        playlistId,
-                      ),
-                      tooltip: context.l10n!.cancel,
-                    ),
-                  ],
+            if (playlistOfflineStatus) {
+              return IconButton.filled(
+                icon: Icon(
+                  FluentIcons.arrow_download_off_24_filled,
+                  color: Theme.of(context).colorScheme.onPrimary,
                 ),
+                iconSize: 24,
+                onPressed: () => _showRemoveOfflineDialog(playlistId),
+                tooltip: context.l10n!.removeOffline,
               );
             }
 
-            if (offlineMode.value) {
-              return const SizedBox.shrink();
-            }
+            return ValueListenableBuilder<DownloadProgress>(
+              valueListenable: offlinePlaylistService.getProgressNotifier(
+                playlistId,
+              ),
+              builder: (context, progress, _) {
+                final isDownloading =
+                    offlinePlaylistService.isPlaylistDownloading(playlistId);
 
-            return IconButton.filledTonal(
-              icon: const Icon(FluentIcons.arrow_download_24_filled),
-              iconSize: 24,
-              onPressed: () =>
-                  offlinePlaylistService.downloadPlaylist(context, _playlist),
-              tooltip: context.l10n!.downloadPlaylist,
+                if (isDownloading) {
+                  return SizedBox(
+                    width: 48,
+                    height: 48,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        SizedBox(
+                          width: 40,
+                          height: 40,
+                          child: CircularProgressIndicator(
+                            value: progress.progress,
+                            strokeWidth: 3,
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.primaryContainer,
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(
+                            FluentIcons.dismiss_24_filled,
+                            size: 16,
+                          ),
+                          onPressed: () =>
+                              offlinePlaylistService.cancelDownload(
+                                context,
+                                playlistId,
+                              ),
+                          tooltip: context.l10n!.cancel,
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                if (offlineMode.value) {
+                  return const SizedBox.shrink();
+                }
+
+                return IconButton.filledTonal(
+                  icon: const Icon(FluentIcons.arrow_download_24_filled),
+                  iconSize: 24,
+                  onPressed: () => offlinePlaylistService.downloadPlaylist(
+                    context,
+                    _playlist,
+                  ),
+                  tooltip: context.l10n!.downloadPlaylist,
+                );
+              },
             );
           },
         );
