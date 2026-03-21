@@ -475,6 +475,42 @@ class OfflinePlaylistService {
     }
   }
 
+  /// Appends [song] to the cached offline-playlist entry for [playlistId].
+  ///
+  /// Call this after [makeSongOffline] succeeds so that the offline playlist's
+  /// song list stays in sync with the user's custom playlist.
+  void addSongToOfflinePlaylist(String playlistId, Map song) {
+    try {
+      final playlists = List<dynamic>.from(offlinePlaylists.value);
+      final index = playlists.indexWhere(
+        (p) => p is Map && p['ytid']?.toString() == playlistId,
+      );
+
+      if (index == -1) return; // Playlist not offline – nothing to update.
+
+      final playlist = Map<String, dynamic>.from(playlists[index] as Map);
+      final songs = List<dynamic>.from(playlist['list'] as List? ?? []);
+
+      // Avoid duplicates.
+      if (songs.any((s) => s['ytid'] == song['ytid'])) return;
+
+      songs.add(song);
+      playlist['list'] = songs;
+      playlists[index] = playlist;
+
+      offlinePlaylists.value = playlists;
+      unawaited(
+        addOrUpdateData('userNoBackup', 'offlinePlaylists', playlists),
+      );
+    } catch (e, stackTrace) {
+      logger.log(
+        'Error adding song to offline playlist list',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
+  }
+
   void cleanupProgressNotifier(String playlistId) {
     try {
       if (downloadProgressNotifiers.containsKey(playlistId)) {
