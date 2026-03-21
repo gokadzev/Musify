@@ -51,13 +51,16 @@ class UserSongsPage extends StatefulWidget {
 
 class _UserSongsPageState extends State<UserSongsPage> {
   bool _isEditEnabled = false;
-  List<dynamic> _originalOfflineSongsList = [];
   final ValueNotifier<String> _searchQueryNotifier = ValueNotifier('');
   late final TextEditingController _searchController;
   late final FocusNode _searchFocusNode;
 
-  List _getFilteredList(List songsList) {
-    return filterSongsByQuery(songsList, _searchQueryNotifier.value);
+  List _getDisplayList(List songsList) {
+    var list = filterSongsByQuery(songsList, _searchQueryNotifier.value);
+    if (widget.page == 'offline') {
+      list = _sortOfflineSongsLocal(list, _getCurrentOfflineSortType());
+    }
+    return list;
   }
 
   @override
@@ -65,9 +68,6 @@ class _UserSongsPageState extends State<UserSongsPage> {
     super.initState();
     _searchController = TextEditingController();
     _searchFocusNode = FocusNode();
-    if (widget.page == 'offline') {
-      _originalOfflineSongsList = List<dynamic>.from(userOfflineSongs);
-    }
   }
 
   @override
@@ -262,7 +262,6 @@ class _UserSongsPageState extends State<UserSongsPage> {
                 addOrUpdateData('settings', 'offlineSortType', type.name);
                 offlineSortSetting = type.name;
               });
-              _sortOfflineSongs(type);
             },
           ),
         ],
@@ -333,7 +332,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
           valueListenable: _searchQueryNotifier,
           builder: (_, searchQuery, __) {
             final isSearching = searchQuery.isNotEmpty;
-            final displayList = _getFilteredList(songsList);
+            final displayList = _getDisplayList(songsList);
             final playlist = {
               'ytid': '',
               'title': title,
@@ -451,34 +450,33 @@ class _UserSongsPageState extends State<UserSongsPage> {
     };
   }
 
-  void _sortOfflineSongs(OfflineSortType type) {
+  List _sortOfflineSongsLocal(List list, OfflineSortType type) {
+    final sortedList = List<dynamic>.from(list);
     switch (type) {
       case OfflineSortType.default_:
-        userOfflineSongs
-          ..clear()
-          ..addAll(_originalOfflineSongsList);
-        return;
+        return sortedList;
       case OfflineSortType.title:
-        userOfflineSongs.sort((a, b) {
+        sortedList.sort((a, b) {
           final titleA = (a['title'] ?? '').toString().toLowerCase();
           final titleB = (b['title'] ?? '').toString().toLowerCase();
           return titleA.compareTo(titleB);
         });
         break;
       case OfflineSortType.artist:
-        userOfflineSongs.sort((a, b) {
+        sortedList.sort((a, b) {
           final artistA = (a['artist'] ?? '').toString().toLowerCase();
           final artistB = (b['artist'] ?? '').toString().toLowerCase();
           return artistA.compareTo(artistB);
         });
         break;
       case OfflineSortType.dateAdded:
-        userOfflineSongs.sort((a, b) {
+        sortedList.sort((a, b) {
           final dateA = a['dateAdded'] as int? ?? 0;
           final dateB = b['dateAdded'] as int? ?? 0;
           return dateB.compareTo(dateA);
         });
         break;
     }
+    return sortedList;
   }
 }
