@@ -729,6 +729,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
         return;
       }
 
+      final newSong = _queueEntryIds.createSong(song);
       int insertIndex;
 
       if (playNext) {
@@ -741,7 +742,25 @@ class MusifyAudioHandler extends BaseAudioHandler {
         insertIndex = _queueList.length;
       }
 
-      _queueList.insert(insertIndex, _queueEntryIds.createSong(song));
+      _queueList.insert(insertIndex, newSong);
+
+      if (shuffleNotifier.value && _originalQueueList.isNotEmpty) {
+        if (playNext) {
+          final currentSong = _queueList[_currentQueueIndex];
+          final currentId = _queueEntryIds.ensureId(currentSong);
+          final originalIdx = _originalQueueList.indexWhere(
+            (s) => _queueEntryIds.ensureId(s) == currentId,
+          );
+
+          if (originalIdx != -1) {
+            _originalQueueList.insert(originalIdx + 1, cloneMap(newSong));
+          } else {
+            _originalQueueList.add(cloneMap(newSong));
+          }
+        } else {
+          _originalQueueList.add(cloneMap(newSong));
+        }
+      }
 
       if (_currentQueueIndex < 0) {
         _currentQueueIndex = 0;
@@ -810,24 +829,43 @@ class MusifyAudioHandler extends BaseAudioHandler {
         _currentLoadingIndex = -1;
         _currentLoadingTransitionId = -1;
         _resetPreloadingState();
-        shuffleNotifier.value = false;
-        unawaited(Hive.box('settings').put('shuffleEnabled', false));
-        await audioPlayer.setShuffleModeEnabled(false);
+      }
+
+      final newQueueItems = <Map>[];
+      for (var i = 0; i < songs.length; i++) {
+        final song = songs[i];
+        if (song['ytid'] != null && song['ytid'].toString().isNotEmpty) {
+          newQueueItems.add(_queueEntryIds.createSong(song));
+        }
       }
 
       int? targetQueueIndex;
 
-      for (var i = 0; i < songs.length; i++) {
-        final song = songs[i];
-        if (song['ytid'] != null && song['ytid'].toString().isNotEmpty) {
-          _queueList.add(_queueEntryIds.createSong(song));
+      if (shuffleNotifier.value && newQueueItems.isNotEmpty) {
+        // If shuffle is active, capture the original order and then shuffle the new items.
+        // If replacing, _originalQueueList was cleared above; if appending, we just keep adding to it.
+        _originalQueueList.addAll(cloneMaps(newQueueItems));
 
-          if (replace && startIndex == i) {
-            targetQueueIndex = _queueList.length - 1;
+        final startSong = (startIndex != null && startIndex < newQueueItems.length)
+            ? newQueueItems[startIndex]
+            : null;
+
+        newQueueItems.shuffle();
+
+        if (replace && startSong != null) {
+          final newIdx = newQueueItems.indexOf(startSong);
+          if (newIdx != -1) {
+            newQueueItems
+              ..removeAt(newIdx)
+              ..insert(0, startSong);
           }
+          targetQueueIndex = 0;
         }
+      } else if (replace && startIndex != null && startIndex < newQueueItems.length) {
+        targetQueueIndex = startIndex;
       }
 
+      _queueList.addAll(newQueueItems);
       _hydrateQueueEntryIds();
       _updateQueueMediaItems();
 
@@ -1022,7 +1060,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
       // If already loading any song, skip the request
       // UNLESS we're in the middle of handling a completion event (allow one load attempt)
-      if (_currentLoadingIndex >= 0 && !_completionEventPending) {
+      if (_currentLoadingIndex >= 0 &&
+          _completionEventPending &&
+          _completionHandlerLoadStarted) {
         return;
       }
 
@@ -1030,10 +1070,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
           _completionEventPending &&
           !_completionHandlerLoadStarted) {
         _completionHandlerLoadStarted = true;
-      } else if (_currentLoadingIndex >= 0 &&
-          _completionEventPending &&
-          _completionHandlerLoadStarted) {
-        return;
       }
 
       // Start new transition
@@ -1676,6 +1712,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
       } else if (_historyList.isNotEmpty) {
         final lastSong = cloneMap(_historyList.removeLast());
         _queueList.insert(0, lastSong);
+
+        if (shuffleNotifier.value && _originalQueueList.isNotEmpty) {
+          _originalQueueList.insert(0, cloneMap(lastSong));
+        }
+
         _currentQueueIndex = 0;
         _updateQueueMediaItems();
         await _playFromQueue(0);
@@ -1713,7 +1754,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
       if (shuffleEnabled && !wasShuffled) {
         _hydrateQueueEntryIds();
-
         _originalQueueList
           ..clear()
           ..addAll(cloneMaps(_queueList));
@@ -1751,11 +1791,13 @@ class MusifyAudioHandler extends BaseAudioHandler {
             (song) => _queueEntryIds.ensureId(song) == currentQueueEntryId,
           );
 
-          if (_currentQueueIndex == -1) {
-            _currentQueueIndex = 0;
-          }
+          if (_currentQueueIndex == -1) _currentQueueIndex = 0;
 
           _originalQueueList.clear();
+          _updateQueueMediaItems();
+        } else {
+          // If original queue is missing, we don't restore order, but we should still
+          // emit the updated state and ensure preloading is correct for the current list.
           _updateQueueMediaItems();
         }
       }
