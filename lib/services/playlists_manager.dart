@@ -28,7 +28,6 @@ import 'package:musify/database/albums.db.dart';
 import 'package:musify/database/playlists.db.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart' show logger;
-import 'package:musify/services/common_services.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/playlist_download_service.dart';
 import 'package:musify/services/proxy_manager.dart';
@@ -228,9 +227,6 @@ String addSongInCustomPlaylist(
       );
     }
 
-    if (offlinePlaylistService.isPlaylistDownloaded(playlistId)) {
-      unawaited(makeSongOffline(song));
-    }
     return context.l10n!.songAdded;
   } else {
     logger.log('Custom playlist not found for ytid: $playlistId');
@@ -262,7 +258,6 @@ String addSongsInCustomPlaylist(
   if (customPlaylist != null) {
     final List<dynamic> playlistSongs = customPlaylist['list'];
 
-    final isOffline = offlinePlaylistService.isPlaylistDownloaded(playlistId);
     final newSongs = <dynamic>[];
     for (final song in songs) {
       final alreadyExists = playlistSongs.any(
@@ -283,11 +278,6 @@ String addSongsInCustomPlaylist(
         unawaited(
           addOrUpdateData('user', 'customPlaylists', userCustomPlaylists.value),
         );
-      }
-      if (isOffline) {
-        for (final song in newSongs) {
-          unawaited(makeSongOffline(song));
-        }
       }
       return context.l10n!.addedSuccess;
     } else {
