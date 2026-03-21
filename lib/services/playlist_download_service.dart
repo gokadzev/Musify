@@ -286,11 +286,13 @@ class OfflinePlaylistService {
                 return playlistSongs.any((s) => s['ytid'] == songId);
               });
 
-          // Also check if song is in user's liked songs or custom playlists
+          // Also check if song is in user's liked songs or OTHER custom playlists
           final isInLikedSongs = userLikedSongsList.any(
             (s) => s['ytid'] == songId,
           );
-          final isInCustomPlaylists = getUserCustomPlaylists().any((p) {
+          final isInOtherCustomPlaylists = getUserCustomPlaylists()
+              .where((p) => p['ytid']?.toString() != normalizedPlaylistId)
+              .any((p) {
             final customPlaylistSongs = p['list'] as List<dynamic>? ?? [];
             return customPlaylistSongs.any((s) => s['ytid'] == songId);
           });
@@ -298,7 +300,7 @@ class OfflinePlaylistService {
           // Only remove if not used elsewhere
           if (!isUsedInOtherPlaylists &&
               !isInLikedSongs &&
-              !isInCustomPlaylists) {
+              !isInOtherCustomPlaylists) {
             await removeSongFromOffline(songId);
           }
         } catch (e, stackTrace) {
