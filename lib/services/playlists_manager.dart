@@ -20,7 +20,6 @@
  */
 
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flutter/widgets.dart';
 import 'package:hive/hive.dart';
@@ -35,6 +34,7 @@ import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/app_utils.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/formatter.dart';
+import 'package:musify/utilities/playlist_utils.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 List playlists = [...playlistsDB, ...albumsDB];
@@ -47,7 +47,7 @@ final userCustomPlaylists = ValueNotifier<List>(
 List userLikedPlaylists = Hive.box(
   'user',
 ).get('likedPlaylists', defaultValue: []);
-final userPlaylistFolders = ValueNotifier<List>(
+final userPlaylistFolders = ValueNotifier<List<Map>>(
   Hive.box('user').get('playlistFolders', defaultValue: []),
 );
 final pinnedPlaylistIds = ValueNotifier<List<String>>(
@@ -101,12 +101,6 @@ const pinnedPlaylistsLimit = 5;
 final currentLikedPlaylistsLength = ValueNotifier<int>(
   userLikedPlaylists.length,
 );
-
-String generateCustomPlaylistId() {
-  final timestamp = DateTime.now().microsecondsSinceEpoch;
-  final randomSuffix = Random().nextInt(0x7fffffff);
-  return 'customId-$timestamp-$randomSuffix';
-}
 
 Future<List<dynamic>> getUserPlaylists() async {
   final futures = userPlaylists.value.map((playlistID) async {
@@ -177,7 +171,7 @@ Future<String> addUserPlaylist(String input, BuildContext context) async {
   String? image,
   BuildContext context,
 ) {
-  final newPlaylistId = generateCustomPlaylistId();
+  final newPlaylistId = PlaylistUtils.generateCustomPlaylistId();
   final creationTime = DateTime.now().millisecondsSinceEpoch;
   final customPlaylist = {
     'ytid': newPlaylistId,
@@ -392,7 +386,7 @@ void removeUserPlaylistEntry(Map playlist) {
   if (playlistId.isEmpty) return;
 
   final source = playlist['source']?.toString();
-  if (source == 'user-created' || playlistId.startsWith('customId-')) {
+  if (PlaylistUtils.isCustomPlaylist(playlist)) {
     removeUserCustomPlaylist(playlistId);
     return;
   }
@@ -863,13 +857,6 @@ bool playlistExistsAnywhere(String playlistId) {
   }
 
   return false;
-}
-
-bool isCustomPlaylist(Map playlist) {
-  final source = playlist['source']?.toString();
-  final playlistId = playlist['ytid']?.toString();
-  return source == 'user-created' ||
-      (playlistId != null && playlistId.startsWith('customId-'));
 }
 
 int findPlaylistIndexByYtId(String ytid) {

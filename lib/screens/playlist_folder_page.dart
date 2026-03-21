@@ -24,8 +24,10 @@ import 'package:flutter/material.dart';
 import 'package:musify/constants/app_constants.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/services/playlists_manager.dart';
+import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/app_utils.dart';
 import 'package:musify/utilities/flutter_toast.dart';
+import 'package:musify/utilities/playlist_utils.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/playlist_bar.dart';
 
@@ -57,7 +59,12 @@ class _PlaylistFolderPageState extends State<PlaylistFolderPage> {
     return ValueListenableBuilder<List>(
       valueListenable: userPlaylistFolders,
       builder: (context, _, __) {
-        final playlists = getPlaylistsInFolder(widget.folderId);
+        final isOffline = offlineMode.value;
+        final playlists = isOffline
+            ? getPlaylistsInFolder(
+                widget.folderId,
+              ).where(PlaylistUtils.isPlaylistOffline).toList()
+            : getPlaylistsInFolder(widget.folderId);
         return Scaffold(
           body: CustomScrollView(
             slivers: [

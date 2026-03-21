@@ -36,6 +36,7 @@ import 'package:musify/utilities/async_loader.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/offline_playlist_dialogs.dart';
 import 'package:musify/utilities/playlist_dialogs.dart';
+import 'package:musify/utilities/playlist_utils.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/playlist_bar.dart';
 import 'package:musify/widgets/section_header.dart';
@@ -166,15 +167,26 @@ class _LibraryPageState extends State<LibraryPage> {
 
   List<Widget> _buildUserPlaylistsSlivers(Color primaryColor) {
     final colorScheme = Theme.of(context).colorScheme;
-    final folders = userPlaylistFolders.value;
-    final playlistsNotInFolders = getPlaylistsNotInFolders();
+    final isOffline = offlineMode.value;
+
+    final folders = isOffline
+        ? userPlaylistFolders.value
+              .where(PlaylistUtils.folderHasOfflinePlaylists)
+              .toList()
+        : userPlaylistFolders.value;
+    final playlistsNotInFolders = isOffline
+        ? getPlaylistsNotInFolders()
+              .where(PlaylistUtils.isPlaylistOffline)
+              .toList()
+        : getPlaylistsNotInFolders();
+
     final hasFolders = folders.isNotEmpty;
     final hasCustomPlaylists = playlistsNotInFolders.isNotEmpty;
     final hasAnythingAfterOffline = hasFolders || hasCustomPlaylists;
 
     final slivers = <Widget>[];
 
-    if (!offlineMode.value) {
+    if (!isOffline || hasAnythingAfterOffline) {
       slivers.add(
         SliverToBoxAdapter(
           child: Column(
@@ -182,52 +194,60 @@ class _LibraryPageState extends State<LibraryPage> {
               SectionHeader(
                 title: context.l10n!.customPlaylists,
                 icon: FluentIcons.library_24_filled,
-                actionButton: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      padding: const EdgeInsets.symmetric(horizontal: 2),
-                      onPressed: _showCreateFolderDialog,
-                      icon: Icon(
-                        FluentIcons.folder_add_24_regular,
-                        color: colorScheme.onSurfaceVariant,
+                actionButton: isOffline
+                    ? null
+                    : Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            padding: const EdgeInsets.symmetric(horizontal: 2),
+                            onPressed: _showCreateFolderDialog,
+                            icon: Icon(
+                              FluentIcons.folder_add_24_regular,
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                            tooltip: context.l10n!.createFolder,
+                          ),
+                          IconButton(
+                            padding: const EdgeInsets.symmetric(horizontal: 2),
+                            onPressed: () => showCreatePlaylistDialog(context),
+                            icon: Icon(
+                              FluentIcons.add_24_regular,
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
                       ),
-                      tooltip: context.l10n!.createFolder,
-                    ),
-                    IconButton(
-                      padding: const EdgeInsets.symmetric(horizontal: 2),
-                      onPressed: () => showCreatePlaylistDialog(context),
-                      icon: Icon(
-                        FluentIcons.add_24_regular,
-                        color: colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
+              ),
+              if (!isOffline) ...[
+                PlaylistBar(
+                  context.l10n!.recentlyPlayed,
+                  onPressed: () =>
+                      NavigationManager.router.go('/library/userSongs/recents'),
+                  cubeIcon: FluentIcons.history_24_regular,
+                  borderRadius: commonCustomBarRadiusFirst,
+                  showBuildActions: false,
                 ),
-              ),
-              PlaylistBar(
-                context.l10n!.recentlyPlayed,
-                onPressed: () =>
-                    NavigationManager.router.go('/library/userSongs/recents'),
-                cubeIcon: FluentIcons.history_24_regular,
-                borderRadius: commonCustomBarRadiusFirst,
-                showBuildActions: false,
-              ),
-              PlaylistBar(
-                context.l10n!.likedSongs,
-                onPressed: () =>
-                    NavigationManager.router.go('/library/userSongs/liked'),
-                cubeIcon: FluentIcons.heart_24_regular,
-                showBuildActions: false,
-              ),
+                PlaylistBar(
+                  context.l10n!.likedSongs,
+                  onPressed: () =>
+                      NavigationManager.router.go('/library/userSongs/liked'),
+                  cubeIcon: FluentIcons.heart_24_regular,
+                  showBuildActions: false,
+                ),
+              ],
               PlaylistBar(
                 context.l10n!.offlineSongs,
                 onPressed: () =>
                     NavigationManager.router.go('/library/userSongs/offline'),
                 cubeIcon: FluentIcons.cloud_off_24_regular,
-                borderRadius: hasAnythingAfterOffline
-                    ? BorderRadius.zero
-                    : commonCustomBarRadiusLast,
+                borderRadius: !isOffline
+                    ? (hasAnythingAfterOffline
+                          ? BorderRadius.zero
+                          : commonCustomBarRadiusLast)
+                    : (hasAnythingAfterOffline
+                          ? commonCustomBarRadiusFirst
+                          : commonCustomBarRadius),
                 showBuildActions: false,
               ),
             ],
