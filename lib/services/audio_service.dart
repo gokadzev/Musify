@@ -1009,39 +1009,34 @@ class MusifyAudioHandler extends BaseAudioHandler {
   }
 
   Future<void> _playFromQueue(int index) async {
+    if (index < 0 || index >= _queueList.length) {
+      logger.log('Invalid queue index: $index');
+      return;
+    }
+
+    // If already loading any song, skip the request
+    // UNLESS we're in the middle of handling a completion event (allow one load attempt)
+    if (_currentLoadingIndex == index && !_completionEventPending) {
+      return;
+    }
+
+    if (_currentLoadingIndex >= 0 &&
+        _completionEventPending &&
+        !_completionHandlerLoadStarted) {
+      _completionHandlerLoadStarted = true;
+    } else if (_currentLoadingIndex >= 0 &&
+        _completionEventPending &&
+        _completionHandlerLoadStarted) {
+      return;
+    }
+
+    // Start new transition
+    _songTransitionCounter++;
+    final currentTransitionId = _songTransitionCounter;
+    _currentLoadingIndex = index;
+    _currentLoadingTransitionId = currentTransitionId;
+
     try {
-      // logger.log(
-      //   '[PLAY_FROM_QUEUE] Called with index=$index, _currentLoadingIndex=$_currentLoadingIndex',
-      //   null,
-      //   null,
-      // );
-      if (index < 0 || index >= _queueList.length) {
-        logger.log('Invalid queue index: $index');
-        return;
-      }
-
-      // If already loading any song, skip the request
-      // UNLESS we're in the middle of handling a completion event (allow one load attempt)
-      if (_currentLoadingIndex >= 0 && !_completionEventPending) {
-        return;
-      }
-
-      if (_currentLoadingIndex >= 0 &&
-          _completionEventPending &&
-          !_completionHandlerLoadStarted) {
-        _completionHandlerLoadStarted = true;
-      } else if (_currentLoadingIndex >= 0 &&
-          _completionEventPending &&
-          _completionHandlerLoadStarted) {
-        return;
-      }
-
-      // Start new transition
-      _songTransitionCounter++;
-      final currentTransitionId = _songTransitionCounter;
-      _currentLoadingIndex = index;
-      _currentLoadingTransitionId = currentTransitionId;
-
       final previousQueueIndex = _currentQueueIndex;
       _currentQueueIndex = index;
 
@@ -1074,8 +1069,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
       logger.log('Error playing from queue', error: e, stackTrace: stackTrace);
       _handlePlaybackError();
     } finally {
-      // Only reset if we haven't already cleared it in the success path
-      if (_currentLoadingIndex >= 0) {
+      // Only reset if this is still the transition that started it
+      if (currentTransitionId == _currentLoadingTransitionId) {
         _currentLoadingIndex = -1;
         _currentLoadingTransitionId = -1;
       }
@@ -1297,13 +1292,13 @@ class MusifyAudioHandler extends BaseAudioHandler {
       }
 
       _lastError = null;
+      if (audioPlayer.playing) await audioPlayer.pause();
+
       final playback = await _resolvePlaybackSource(songData);
       if (playback == null) {
         _lastError = 'Failed to get song URL';
         return false;
       }
-
-      if (audioPlayer.playing) await audioPlayer.pause();
 
       _emitOptimisticLoadingState(
         song: songData,
