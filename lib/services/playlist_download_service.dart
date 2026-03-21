@@ -105,8 +105,9 @@ class OfflinePlaylistService {
     try {
       final songQueue = Queue<dynamic>.from(songsList);
       const maxConcurrent = 3;
-      final workerCount =
-          songsList.length < maxConcurrent ? songsList.length : maxConcurrent;
+      final workerCount = songsList.length < maxConcurrent
+          ? songsList.length
+          : maxConcurrent;
 
       await Future.wait([
         for (var i = 0; i < workerCount; i++)
@@ -399,36 +400,6 @@ class OfflinePlaylistService {
     }
   }
 
-  void addSongToOfflinePlaylist(String playlistId, Map song) {
-    try {
-      final playlists = List<dynamic>.from(offlinePlaylists.value);
-      final index = playlists.indexWhere(
-        (p) => p is Map && p['ytid']?.toString() == playlistId,
-      );
-
-      if (index == -1) return; // Playlist not offline – nothing to update.
-
-      final playlist = Map<String, dynamic>.from(playlists[index] as Map);
-      final songs = List<dynamic>.from(playlist['list'] as List? ?? []);
-
-      // Avoid duplicates.
-      if (songs.any((s) => s['ytid'] == song['ytid'])) return;
-
-      songs.add(song);
-      playlist['list'] = songs;
-      playlists[index] = playlist;
-
-      offlinePlaylists.value = playlists;
-      unawaited(addOrUpdateData('userNoBackup', 'offlinePlaylists', playlists));
-    } catch (e, stackTrace) {
-      logger.log(
-        'Error adding song to offline playlist list',
-        error: e,
-        stackTrace: stackTrace,
-      );
-    }
-  }
-
   void cleanupProgressNotifier(String playlistId) {
     try {
       if (downloadProgressNotifiers.containsKey(playlistId)) {
@@ -507,8 +478,6 @@ class OfflinePlaylistService {
       }
     }
   }
-
-
 }
 
 class DownloadProgress {

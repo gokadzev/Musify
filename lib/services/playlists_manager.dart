@@ -229,13 +229,7 @@ String addSongInCustomPlaylist(
     }
 
     if (offlinePlaylistService.isPlaylistDownloaded(playlistId)) {
-      unawaited(
-        makeSongOffline(song).then((success) {
-          if (success) {
-            offlinePlaylistService.addSongToOfflinePlaylist(playlistId, song);
-          }
-        }),
-      );
+      unawaited(makeSongOffline(song));
     }
     return context.l10n!.songAdded;
   } else {
@@ -292,16 +286,7 @@ String addSongsInCustomPlaylist(
       }
       if (isOffline) {
         for (final song in newSongs) {
-          unawaited(
-            makeSongOffline(song).then((success) {
-              if (success) {
-                offlinePlaylistService.addSongToOfflinePlaylist(
-                  playlistId,
-                  song,
-                );
-              }
-            }),
-          );
+          unawaited(makeSongOffline(song));
         }
       }
       return context.l10n!.addedSuccess;
