@@ -103,20 +103,12 @@ class OfflinePlaylistService {
     activeDownloads.add(playlistId);
 
     try {
-      // Create a queue to limit parallel downloads
       final songQueue = Queue<dynamic>.from(songsList);
-      const maxConcurrent = 3; // Limit parallel downloads
-      var runningTasks = 0;
-      final completer = Completer<void>();
-      var hasCompletedEarly = false;
+      const maxConcurrent = 3;
 
       // Helper function to process the queue
       Future<void> processQueue() async {
-        while (songQueue.isNotEmpty &&
-            runningTasks < maxConcurrent &&
-            !progressNotifier.value.isCancelled &&
-            !hasCompletedEarly) {
-          runningTasks++;
+        while (songQueue.isNotEmpty && !progressNotifier.value.isCancelled) {
           final song = songQueue.removeFirst();
 
           try {
@@ -133,7 +125,6 @@ class OfflinePlaylistService {
             if (isSongAlreadyOffline(song['ytid'])) {
               // Find the existing offline song to get the correct audioPath
               final offlineSong = getOfflineSongByYtid(song['ytid']);
-
               if (offlineSong.isNotEmpty) {
                 // Update the song in the playlist with the correct offline properties
                 song['audioPath'] = offlineSong['audioPath'];
@@ -159,46 +150,25 @@ class OfflinePlaylistService {
             );
             progressNotifier.value.failed++;
             progressNotifier.notifyListeners();
-          } finally {
-            runningTasks--;
-
-            // Check if download is complete or cancelled
-            if (progressNotifier.value.isComplete ||
-                progressNotifier.value.isCancelled) {
-              hasCompletedEarly = true;
-              if (!completer.isCompleted) {
-                completer.complete();
-              }
-            } else if (songQueue.isEmpty && runningTasks == 0) {
-              // All tasks completed
-              if (!completer.isCompleted) {
-                completer.complete();
-              }
-            }
           }
         }
       }
 
-      // Start initial downloads
-      final initialTasks = songsList.length < maxConcurrent
+      final workerCount = songsList.length < maxConcurrent
           ? songsList.length
           : maxConcurrent;
-      final tasks = <Future<void>>[];
-      for (var i = 0; i < initialTasks; i++) {
-        tasks.add(processQueue());
-      }
 
-      // Wait for all downloads to complete with timeout
-      await completer.future.timeout(
-        Duration(minutes: songsList.length * 2), // 2 minutes per song
+      await Future.wait([
+        for (var i = 0; i < workerCount; i++) processQueue(),
+      ]).timeout(
+        Duration(minutes: songsList.length * 2),
         onTimeout: () {
           logger.log('Download timeout for playlist $playlistId');
           progressNotifier.value.isCancelled = true;
           progressNotifier.notifyListeners();
+          return <void>[];
         },
       );
-
-      await Future.wait(tasks);
 
       // Handle completion
       await _handleDownloadCompletion(
