@@ -508,15 +508,7 @@ class OfflinePlaylistService {
     }
   }
 
-  void pauseAllDownloads() {
-    for (final id in List<String>.from(activeDownloads)) {
-      final notifier = downloadProgressNotifiers[id];
-      if (notifier != null) {
-        notifier.value.isCancelled = true;
-        notifier.notifyListeners();
-      }
-    }
-  }
+
 }
 
 class DownloadProgress {
