@@ -105,61 +105,12 @@ class OfflinePlaylistService {
     try {
       final songQueue = Queue<dynamic>.from(songsList);
       const maxConcurrent = 3;
-
-      // Helper function to process the queue
-      Future<void> processQueue() async {
-        while (songQueue.isNotEmpty && !progressNotifier.value.isCancelled) {
-          final song = songQueue.removeFirst();
-
-          try {
-            if (song == null ||
-                song['ytid'] == null ||
-                song['ytid'].toString().isEmpty) {
-              logger.log('Invalid song data in playlist download');
-              progressNotifier.value.failed++;
-              progressNotifier.notifyListeners();
-              continue;
-            }
-
-            // Skip if already offline
-            if (isSongAlreadyOffline(song['ytid'])) {
-              // Find the existing offline song to get the correct audioPath
-              final offlineSong = getOfflineSongByYtid(song['ytid']);
-              if (offlineSong.isNotEmpty) {
-                // Update the song in the playlist with the correct offline properties
-                song['audioPath'] = offlineSong['audioPath'];
-                song['artworkPath'] = offlineSong['artworkPath'];
-              }
-              // Update progress
-              progressNotifier.value.completed++;
-              progressNotifier.notifyListeners();
-            } else {
-              final success = await makeSongOffline(song);
-              if (success) {
-                progressNotifier.value.completed++;
-              } else {
-                progressNotifier.value.failed++;
-              }
-              progressNotifier.notifyListeners();
-            }
-          } catch (e, stackTrace) {
-            logger.log(
-              'Failed to download song: ${song['title']}',
-              error: e,
-              stackTrace: stackTrace,
-            );
-            progressNotifier.value.failed++;
-            progressNotifier.notifyListeners();
-          }
-        }
-      }
-
-      final workerCount = songsList.length < maxConcurrent
-          ? songsList.length
-          : maxConcurrent;
+      final workerCount =
+          songsList.length < maxConcurrent ? songsList.length : maxConcurrent;
 
       await Future.wait([
-        for (var i = 0; i < workerCount; i++) processQueue(),
+        for (var i = 0; i < workerCount; i++)
+          _processDownloadQueue(songQueue, progressNotifier),
       ]).timeout(
         Duration(minutes: songsList.length * 2),
         onTimeout: () {
@@ -344,7 +295,7 @@ class OfflinePlaylistService {
           final isInLikedSongs = userLikedSongsList.any(
             (s) => s['ytid'] == songId,
           );
-          final isInCustomPlaylists = userCustomPlaylists.value.any((p) {
+          final isInCustomPlaylists = getUserCustomPlaylists().any((p) {
             final customPlaylistSongs = p['list'] as List<dynamic>? ?? [];
             return customPlaylistSongs.any((s) => s['ytid'] == songId);
           });
@@ -507,10 +458,63 @@ class OfflinePlaylistService {
     };
   }
 
+  Future<void> _processDownloadQueue(
+    Queue<dynamic> songQueue,
+    ValueNotifier<DownloadProgress> progressNotifier,
+  ) async {
+    while (songQueue.isNotEmpty && !progressNotifier.value.isCancelled) {
+      final song = songQueue.removeFirst();
+
+      try {
+        if (song == null ||
+            song['ytid'] == null ||
+            song['ytid'].toString().isEmpty) {
+          logger.log('Invalid song data in playlist download');
+          progressNotifier.value.failed++;
+          progressNotifier.notifyListeners();
+          continue;
+        }
+
+        // Skip if already offline
+        if (isSongAlreadyOffline(song['ytid'])) {
+          // Find the existing offline song to get the correct audioPath
+          final offlineSong = getOfflineSongByYtid(song['ytid']);
+          if (offlineSong.isNotEmpty) {
+            // Update the song in the playlist with the correct offline properties
+            song['audioPath'] = offlineSong['audioPath'];
+            song['artworkPath'] = offlineSong['artworkPath'];
+          }
+          // Update progress
+          progressNotifier.value.completed++;
+          progressNotifier.notifyListeners();
+        } else {
+          final success = await makeSongOffline(song);
+          if (success) {
+            progressNotifier.value.completed++;
+          } else {
+            progressNotifier.value.failed++;
+          }
+          progressNotifier.notifyListeners();
+        }
+      } catch (e, stackTrace) {
+        logger.log(
+          'Failed to download song: ${song?['title']}',
+          error: e,
+          stackTrace: stackTrace,
+        );
+        progressNotifier.value.failed++;
+        progressNotifier.notifyListeners();
+      }
+    }
+  }
+
   void pauseAllDownloads() {
-    for (final notifier in downloadProgressNotifiers.values) {
-      notifier.value.isCancelled = true;
-      notifier.notifyListeners();
+    for (final id in List<String>.from(activeDownloads)) {
+      final notifier = downloadProgressNotifiers[id];
+      if (notifier != null) {
+        notifier.value.isCancelled = true;
+        notifier.notifyListeners();
+      }
     }
   }
 }
