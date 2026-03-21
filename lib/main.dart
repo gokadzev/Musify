@@ -320,7 +320,6 @@ void handleIncomingLink(Uri? uri) async {
               .toList();
 
           final exists = userCustomPlaylists.value.any((p) {
-            if (p == null) return false;
             if (p['title'] != playlist['title']) return false;
             final existingList = (p['list'] as List<dynamic>?) ?? [];
             final existingYtids = existingList

@@ -630,7 +630,7 @@ class PlaylistBar extends StatelessWidget {
     );
 
     if (result != null) {
-      final index = userCustomPlaylists.value.indexOf(playlistData);
+      final index = userCustomPlaylists.value.indexOf(playlistData!);
       if (index != -1) {
         final updatedPlaylists = List<Map>.from(userCustomPlaylists.value);
         updatedPlaylists[index] = result;
