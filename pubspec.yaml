@@ -9,12 +9,12 @@ version: 10.0.1+165 # run update.sh after changing the version
 
 environment:
   sdk: '>=3.11.0 <4.0.0'
-  flutter: ^3.41.4
+  flutter: ^3.41.5
 
 dependencies:
   app_links: ^7.0.0
   audio_service: ^0.18.18
-  audio_session: ^0.2.2
+  audio_session: ^0.2.3
   cached_network_image: ^3.4.1
   dynamic_color: ^1.8.1
   file_picker: ^10.3.10
