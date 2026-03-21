@@ -277,7 +277,7 @@ class PlaylistBar extends StatelessWidget {
                 ],
               ),
             ),
-          if (onDelete == null || !isUserCreated)
+          if (!isFolder && (onDelete == null || !isUserCreated))
             PopupMenuItem<String>(
               value: 'like',
               child: Row(
