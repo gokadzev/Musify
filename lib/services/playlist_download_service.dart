@@ -475,10 +475,6 @@ class OfflinePlaylistService {
     }
   }
 
-  /// Appends [song] to the cached offline-playlist entry for [playlistId].
-  ///
-  /// Call this after [makeSongOffline] succeeds so that the offline playlist's
-  /// song list stays in sync with the user's custom playlist.
   void addSongToOfflinePlaylist(String playlistId, Map song) {
     try {
       final playlists = List<dynamic>.from(offlinePlaylists.value);
@@ -499,9 +495,7 @@ class OfflinePlaylistService {
       playlists[index] = playlist;
 
       offlinePlaylists.value = playlists;
-      unawaited(
-        addOrUpdateData('userNoBackup', 'offlinePlaylists', playlists),
-      );
+      unawaited(addOrUpdateData('userNoBackup', 'offlinePlaylists', playlists));
     } catch (e, stackTrace) {
       logger.log(
         'Error adding song to offline playlist list',

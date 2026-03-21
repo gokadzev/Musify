@@ -201,29 +201,9 @@ String addSongInCustomPlaylist(
   Map song, {
   int? indexToInsert,
 }) {
-  Map? customPlaylist;
-  var isFromFolder = false;
-
-  for (final playlist in userCustomPlaylists.value) {
-    if (playlist['ytid'] == playlistId) {
-      customPlaylist = playlist as Map;
-      break;
-    }
-  }
-
-  if (customPlaylist == null) {
-    for (final folder in userPlaylistFolders.value) {
-      final folderPlaylists = folder['playlists'] as List<dynamic>? ?? [];
-      for (final playlist in folderPlaylists) {
-        if (playlist['ytid'] == playlistId) {
-          customPlaylist = playlist as Map;
-          isFromFolder = true;
-          break;
-        }
-      }
-      if (customPlaylist != null) break;
-    }
-  }
+  final found = _findCustomPlaylist(playlistId);
+  final customPlaylist = found?.playlist;
+  final isFromFolder = found?.isFromFolder ?? false;
 
   if (customPlaylist != null) {
     final List<dynamic> playlistSongs = customPlaylist['list'];
@@ -281,33 +261,12 @@ String addSongsInCustomPlaylist(
   String playlistId,
   List<dynamic> songs,
 ) {
-  Map? customPlaylist;
-  var isFromFolder = false;
-
-  for (final playlist in userCustomPlaylists.value) {
-    if (playlist['ytid'] == playlistId) {
-      customPlaylist = playlist as Map;
-      break;
-    }
-  }
-
-  if (customPlaylist == null) {
-    for (final folder in userPlaylistFolders.value) {
-      final folderPlaylists = folder['playlists'] as List<dynamic>? ?? [];
-      for (final playlist in folderPlaylists) {
-        if (playlist['ytid'] == playlistId) {
-          customPlaylist = playlist as Map;
-          isFromFolder = true;
-          break;
-        }
-      }
-      if (customPlaylist != null) break;
-    }
-  }
+  final found = _findCustomPlaylist(playlistId);
+  final customPlaylist = found?.playlist;
+  final isFromFolder = found?.isFromFolder ?? false;
 
   if (customPlaylist != null) {
     final List<dynamic> playlistSongs = customPlaylist['list'];
-    var addedCount = 0;
 
     final isOffline = offlinePlaylistService.isPlaylistDownloaded(playlistId);
     final newSongs = <dynamic>[];
@@ -318,11 +277,10 @@ String addSongsInCustomPlaylist(
       if (!alreadyExists) {
         playlistSongs.add(song);
         newSongs.add(song);
-        addedCount++;
       }
     }
 
-    if (addedCount > 0) {
+    if (newSongs.isNotEmpty) {
       if (isFromFolder) {
         unawaited(
           addOrUpdateData('user', 'playlistFolders', userPlaylistFolders.value),
@@ -868,7 +826,11 @@ Future<List> getPlaylists({
         .whereType<Map<String, dynamic>>()
         .toList();
     onlinePlaylists.value = [...onlinePlaylists.value, ...newPlaylists];
-    return filteredPlaylists.isNotEmpty ? filteredPlaylists : onlinePlaylists.value.where((p) => p['title'].toLowerCase().contains(lowercaseQuery)).toList();
+    return filteredPlaylists.isNotEmpty
+        ? filteredPlaylists
+        : onlinePlaylists.value
+              .where((p) => p['title'].toLowerCase().contains(lowercaseQuery))
+              .toList();
   }
 
   if (playlistsNum != null && query == null) {
@@ -953,7 +915,7 @@ Future<Map?> getPlaylistInfoForWidget(
   if (normalizedId.isEmpty || normalizedId == 'null') return null;
   if (isArtist) return _fetchArtistPlaylist(normalizedId);
   if (normalizedId.startsWith('customId-')) {
-    return _findCustomPlaylist(normalizedId);
+    return _findCustomPlaylist(normalizedId)?.playlist;
   }
 
   final offlinePlaylist = _findOfflinePlaylist(normalizedId);
@@ -979,16 +941,20 @@ Future<Map> _fetchArtistPlaylist(String artistName) async {
   }
 }
 
-Map? _findCustomPlaylist(String id) {
-  final rootPlaylist = _findPlaylistById(userCustomPlaylists.value, id);
-  if (rootPlaylist != null) return rootPlaylist;
-
+({Map playlist, bool isFromFolder})? _findCustomPlaylist(String playlistId) {
+  for (final playlist in userCustomPlaylists.value) {
+    if (playlist['ytid'] == playlistId) {
+      return (playlist: playlist as Map, isFromFolder: false);
+    }
+  }
   for (final folder in userPlaylistFolders.value) {
     final folderPlaylists = folder['playlists'] as List<dynamic>? ?? [];
-    final folderPlaylist = _findPlaylistById(folderPlaylists, id);
-    if (folderPlaylist != null) return folderPlaylist;
+    for (final playlist in folderPlaylists) {
+      if (playlist['ytid'] == playlistId) {
+        return (playlist: playlist as Map, isFromFolder: true);
+      }
+    }
   }
-
   return null;
 }
 
