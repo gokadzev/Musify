@@ -184,6 +184,7 @@ class OfflinePlaylistService {
         stackTrace: stackTrace,
       );
       activeDownloads.remove(playlistId);
+      cleanupProgressNotifier(playlistId);
       if (context.mounted) {
         showToast(context, '${context.l10n!.error}: $e');
       }
@@ -282,6 +283,7 @@ class OfflinePlaylistService {
         if (DateTime.now().difference(startTime) > maxWaitTime) {
           logger.log('Timeout waiting for download cancellation');
           activeDownloads.remove(playlistId);
+          cleanupProgressNotifier(playlistId);
           break;
         }
       }
@@ -289,8 +291,9 @@ class OfflinePlaylistService {
       showToast(context, context.l10n!.downloadCancelled);
     } catch (e, stackTrace) {
       logger.log('Error cancelling download', error: e, stackTrace: stackTrace);
-      // Force remove from active downloads on error
+      // Force remove from active downloads and cleanup on error
       activeDownloads.remove(playlistId);
+      cleanupProgressNotifier(playlistId);
     }
   }
 
