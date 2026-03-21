@@ -73,7 +73,7 @@ double getResponsiveArtistFontSize(Size size) {
 }
 
 final RegExp _youtubePlaylistRegExp = RegExp(
-  r'^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.*(list=([a-zA-Z0-9_-]+)).*$',
+  r'^(https?:\/\/)?(www\.|m\.|music\.)?(youtube\.com|youtu\.be)\/.*(list=([a-zA-Z0-9_-]+)).*$',
 );
 
 final RegExp _youtubePlaylistIdRegExp = RegExp('[&?]list=([a-zA-Z0-9_-]+)');
