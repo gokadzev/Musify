@@ -459,7 +459,7 @@ void showAddToPlaylistDialog(
                                 right: 16,
                               ),
                               child: DialogItem(
-                                icon: FluentIcons.music_note_2_24_regular,
+                                icon: FluentIcons.text_bullet_list_24_filled,
                                 iconColor: colorScheme.tertiary,
                                 iconBgColor: colorScheme.tertiaryContainer,
                                 label: p['title'] ?? '',
@@ -499,7 +499,7 @@ void showAddToPlaylistDialog(
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 6),
                         child: DialogItem(
-                          icon: FluentIcons.music_note_2_24_regular,
+                          icon: FluentIcons.text_bullet_list_24_filled,
                           iconColor: colorScheme.tertiary,
                           iconBgColor: colorScheme.tertiaryContainer,
                           label: playlist['title'] ?? '',

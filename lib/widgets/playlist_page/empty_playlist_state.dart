@@ -25,7 +25,7 @@ import 'package:flutter/material.dart';
 class EmptyPlaylistState extends StatelessWidget {
   const EmptyPlaylistState({
     super.key,
-    this.icon = FluentIcons.music_note_1_24_regular,
+    this.icon = FluentIcons.text_bullet_list_24_filled,
     required this.message,
   });
 

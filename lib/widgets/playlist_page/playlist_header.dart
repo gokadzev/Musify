@@ -87,7 +87,7 @@ class PlaylistHeader extends StatelessWidget {
                   theme: theme,
                 ),
               _Chip(
-                icon: FluentIcons.music_note_1_24_regular,
+                icon: FluentIcons.text_bullet_list_24_filled,
                 label: '$songsLength ${context.l10n!.songs}',
                 color: colorScheme.secondaryContainer,
                 onColor: colorScheme.onSecondaryContainer,

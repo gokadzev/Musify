@@ -29,6 +29,7 @@ import 'package:musify/utilities/app_utils.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/playlist_utils.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
+import 'package:musify/widgets/dialog_item.dart';
 import 'package:musify/widgets/playlist_bar.dart';
 
 class PlaylistFolderPage extends StatefulWidget {
@@ -229,7 +230,7 @@ class _PlaylistFolderPageState extends State<PlaylistFolderPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
-                  FluentIcons.music_note_2_24_regular,
+                  FluentIcons.text_bullet_list_24_filled,
                   size: 14,
                   color: colorScheme.onSecondaryContainer,
                 ),
@@ -293,40 +294,60 @@ class _PlaylistFolderPageState extends State<PlaylistFolderPage> {
 
     await showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(context.l10n!.addPlaylist),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: candidates.length,
-            itemBuilder: (context, index) {
-              final playlist = candidates[index];
-              return ListTile(
-                leading: Icon(
-                  FluentIcons.music_note_2_24_regular,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                title: Text(
-                  playlist['title'] ?? '',
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  movePlaylistToFolder(playlist, widget.folderId, context);
-                },
-              );
-            },
+      builder: (context) {
+        final colorScheme = Theme.of(context).colorScheme;
+        return AlertDialog(
+          icon: Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              color: colorScheme.secondaryContainer,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              FluentIcons.text_bullet_list_add_24_filled,
+              color: colorScheme.secondary,
+              size: 28,
+            ),
           ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(context.l10n!.cancel),
+          title: Text(
+            context.l10n!.addPlaylist,
+            style: TextStyle(
+              color: colorScheme.onSurface,
+              fontWeight: FontWeight.w600,
+            ),
           ),
-        ],
-      ),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: candidates.length,
+              itemBuilder: (context, index) {
+                final playlist = candidates[index];
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 6),
+                  child: DialogItem(
+                    icon: FluentIcons.text_bullet_list_24_filled,
+                    iconColor: colorScheme.tertiary,
+                    iconBgColor: colorScheme.tertiaryContainer,
+                    label: playlist['title'] ?? '',
+                    onTap: () {
+                      Navigator.pop(context);
+                      movePlaylistToFolder(playlist, widget.folderId, context);
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(context.l10n!.cancel),
+            ),
+          ],
+        );
+      },
     );
   }
 

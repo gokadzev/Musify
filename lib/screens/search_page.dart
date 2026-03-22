@@ -343,7 +343,7 @@ class _SearchPageState extends State<SearchPage> {
         SectionTitle(
           context.l10n!.playlists,
           primaryColor,
-          icon: FluentIcons.list_24_filled,
+          icon: FluentIcons.text_bullet_list_24_filled,
         ),
       );
 

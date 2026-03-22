@@ -29,7 +29,7 @@ class PlaylistArtwork extends StatelessWidget {
     super.key,
     required this.playlistArtwork,
     this.playlistTitle,
-    this.cubeIcon = FluentIcons.music_note_1_24_regular,
+    this.cubeIcon = FluentIcons.text_bullet_list_24_filled,
     this.iconSize,
     this.size = 220,
   });

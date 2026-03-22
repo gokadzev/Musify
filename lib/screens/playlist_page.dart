@@ -55,7 +55,7 @@ class PlaylistPage extends StatefulWidget {
     super.key,
     this.playlistId,
     this.playlistData,
-    this.cubeIcon = FluentIcons.music_note_1_24_regular,
+    this.cubeIcon = FluentIcons.text_bullet_list_24_filled,
     this.isArtist = false,
   });
 
@@ -537,8 +537,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
                 playlistId,
               ),
               builder: (context, progress, _) {
-                final isDownloading =
-                    offlinePlaylistService.isPlaylistDownloading(playlistId);
+                final isDownloading = offlinePlaylistService
+                    .isPlaylistDownloading(playlistId);
 
                 if (isDownloading) {
                   return SizedBox(
@@ -563,11 +563,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
                             FluentIcons.dismiss_24_filled,
                             size: 16,
                           ),
-                          onPressed: () =>
-                              offlinePlaylistService.cancelDownload(
-                                context,
-                                playlistId,
-                              ),
+                          onPressed: () => offlinePlaylistService
+                              .cancelDownload(context, playlistId),
                           tooltip: context.l10n!.cancel,
                         ),
                       ],

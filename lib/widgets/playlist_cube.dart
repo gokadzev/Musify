@@ -29,7 +29,7 @@ class PlaylistCube extends StatelessWidget {
     this.playlist, {
     super.key,
     this.playlistData,
-    this.cubeIcon = FluentIcons.music_note_1_24_regular,
+    this.cubeIcon = FluentIcons.text_bullet_list_24_filled,
     this.size = 220,
     this.borderRadius = 16,
     this.showTypeLabel = true,
