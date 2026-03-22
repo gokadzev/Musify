@@ -43,9 +43,6 @@ class ConfirmationDialog extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return AlertDialog(
-      backgroundColor: colorScheme.surface,
-      surfaceTintColor: Colors.transparent,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
       icon: Icon(
         isDangerous
             ? FluentIcons.warning_24_regular

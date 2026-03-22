@@ -80,11 +80,6 @@ Future<void> checkAppUpdates() async {
         final colorScheme = Theme.of(context).colorScheme;
 
         return AlertDialog(
-          backgroundColor: colorScheme.surface,
-          surfaceTintColor: Colors.transparent,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(28),
-          ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -183,9 +178,6 @@ void showUpdateCheckDialog(BuildContext context) {
     context: context,
     builder: (context) {
       return AlertDialog(
-        backgroundColor: colorScheme.surface,
-        surfaceTintColor: Colors.transparent,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
         icon: Icon(
           FluentIcons.arrow_sync_circle_24_regular,
           color: colorScheme.primary,

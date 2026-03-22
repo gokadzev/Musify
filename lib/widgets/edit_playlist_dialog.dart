@@ -64,9 +64,6 @@ class _EditPlaylistDialogState extends State<EditPlaylistDialog> {
     }
 
     return AlertDialog(
-      backgroundColor: colorScheme.surface,
-      surfaceTintColor: Colors.transparent,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
       title: Text(
         context.l10n!.editPlaylist,
         style: TextStyle(

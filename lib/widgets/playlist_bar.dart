@@ -35,6 +35,7 @@ import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/offline_playlist_dialogs.dart';
 import 'package:musify/utilities/playlist_dialogs.dart';
 import 'package:musify/utilities/playlist_utils.dart';
+import 'package:musify/widgets/dialog_item.dart';
 import 'package:musify/widgets/edit_playlist_dialog.dart';
 import 'package:musify/widgets/spinner.dart';
 
@@ -392,11 +393,6 @@ class PlaylistBar extends StatelessWidget {
       builder: (context) {
         final colorScheme = Theme.of(context).colorScheme;
         return AlertDialog(
-          backgroundColor: colorScheme.surface,
-          surfaceTintColor: Colors.transparent,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(28),
-          ),
           icon: Container(
             width: 56,
             height: 56,
@@ -462,7 +458,7 @@ class PlaylistBar extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   children: [
                     if (hasLibrary)
-                      _MoveToFolderItem(
+                      DialogItem(
                         icon: FluentIcons.library_24_regular,
                         iconColor: colorScheme.primary,
                         iconBgColor: colorScheme.primaryContainer,
@@ -475,7 +471,7 @@ class PlaylistBar extends StatelessWidget {
                         },
                       ),
                     ...availableFolders.map(
-                      (folder) => _MoveToFolderItem(
+                      (folder) => DialogItem(
                         icon: FluentIcons.folder_24_regular,
                         iconColor: colorScheme.secondary,
                         iconBgColor: colorScheme.secondaryContainer,
@@ -653,9 +649,6 @@ class PlaylistBar extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: colorScheme.surface,
-        surfaceTintColor: Colors.transparent,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
         icon: Icon(
           FluentIcons.folder_24_regular,
           color: colorScheme.primary,
@@ -705,70 +698,6 @@ class PlaylistBar extends StatelessWidget {
             label: Text(context.l10n!.update),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _MoveToFolderItem extends StatelessWidget {
-  const _MoveToFolderItem({
-    required this.icon,
-    required this.iconColor,
-    required this.iconBgColor,
-    required this.label,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final Color iconColor;
-  final Color iconBgColor;
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Material(
-        color: colorScheme.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(16),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            child: Row(
-              children: [
-                Container(
-                  width: 44,
-                  height: 44,
-                  decoration: BoxDecoration(
-                    color: iconBgColor,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(icon, color: iconColor, size: 22),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Text(
-                    label,
-                    style: TextStyle(
-                      color: colorScheme.onSurface,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 15,
-                    ),
-                  ),
-                ),
-                Icon(
-                  FluentIcons.chevron_right_24_regular,
-                  color: colorScheme.onSurfaceVariant,
-                  size: 18,
-                ),
-              ],
-            ),
-          ),
-        ),
       ),
     );
   }

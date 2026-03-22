@@ -351,9 +351,6 @@ class _PlaylistFolderPageState extends State<PlaylistFolderPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: colorScheme.surface,
-        surfaceTintColor: Colors.transparent,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
         icon: Icon(
           FluentIcons.folder_24_regular,
           color: colorScheme.primary,

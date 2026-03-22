@@ -87,9 +87,6 @@ class _RenameSongDialogState extends State<RenameSongDialog> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return AlertDialog(
-      backgroundColor: colorScheme.surface,
-      surfaceTintColor: Colors.transparent,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
       title: Text(
         context.l10n!.renameSong,
         style: TextStyle(

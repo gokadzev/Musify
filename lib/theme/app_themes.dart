@@ -179,7 +179,7 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
       backgroundColor: isLight
           ? colorScheme.surfaceContainerLow
           : (isPureBlack ? pureBlackContainer : null),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
     ),
     navigationBarTheme: base.navigationBarTheme.copyWith(
       backgroundColor: bgColor,

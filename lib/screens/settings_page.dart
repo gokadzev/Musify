@@ -734,11 +734,6 @@ class SettingsPage extends StatelessWidget {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            backgroundColor: colorScheme.surface,
-            surfaceTintColor: Colors.transparent,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(28),
-            ),
             icon: Icon(
               FluentIcons.info_24_regular,
               color: colorScheme.primary,

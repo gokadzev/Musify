@@ -491,9 +491,6 @@ class _LibraryPageState extends State<LibraryPage> {
       final colorScheme = Theme.of(context).colorScheme;
 
       return AlertDialog(
-        backgroundColor: colorScheme.surface,
-        surfaceTintColor: Colors.transparent,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
         icon: Container(
           width: 56,
           height: 56,

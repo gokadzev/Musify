@@ -321,10 +321,6 @@ void _showSleepTimerDialog(BuildContext context) {
       return StatefulBuilder(
         builder: (context, setState) {
           return AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(28),
-            ),
-            backgroundColor: colorScheme.surfaceContainerHigh,
             title: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
