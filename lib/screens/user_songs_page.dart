@@ -343,7 +343,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
             if (displayList.isEmpty) {
               final emptyIcon = isLikedSongs
                   ? FluentIcons.heart_24_regular
-                  : FluentIcons.music_note_1_24_regular;
+                  : FluentIcons.text_bullet_list_24_filled;
               return EmptyPlaylistState(
                 icon: emptyIcon,
                 message: context.l10n!.playlistEmpty,
