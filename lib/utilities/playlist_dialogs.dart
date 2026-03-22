@@ -365,50 +365,158 @@ void showAddToPlaylistDialog(
           ),
           child: Builder(
             builder: (context) {
-              final playlists = getUserCustomPlaylists();
-              return playlists.isNotEmpty
-                  ? ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: playlists.length,
-                      itemBuilder: (context, index) {
-                        final playlist = playlists[index];
-                        return Card(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.secondaryContainer,
-                          elevation: 0,
-                          child: ListTile(
-                            title: Text(playlist['title']),
-                            onTap: () {
-                              if (song != null) {
-                                showToast(
-                                  context,
-                                  addSongInCustomPlaylist(
-                                    context,
-                                    playlist['ytid'],
-                                    song,
-                                  ),
-                                );
-                              } else if (songs != null && songs.isNotEmpty) {
-                                showToast(
-                                  context,
-                                  addSongsInCustomPlaylist(
-                                    context,
-                                    playlist['ytid'],
-                                    songs,
-                                  ),
-                                );
-                              }
-                              Navigator.pop(context);
-                            },
-                          ),
-                        );
-                      },
-                    )
-                  : Text(
+              final folders = userPlaylistFolders.value;
+              final topLevelPlaylists = getPlaylistsNotInFolders();
+
+              final hasAny =
+                  (folders.isNotEmpty) || (topLevelPlaylists.isNotEmpty);
+
+              if (!hasAny) {
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 32),
+                    child: Text(
                       context.l10n!.noCustomPlaylists,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                       textAlign: TextAlign.center,
-                    );
+                    ),
+                  ),
+                );
+              }
+
+              return ListView(
+                shrinkWrap: true,
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                children: [
+                  // Folders as expansion tiles
+                  for (final folder in folders)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 6,
+                      ),
+                      child: Material(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerLow,
+                        borderRadius: BorderRadius.circular(12),
+                        clipBehavior: Clip.antiAlias,
+                        child: ExpansionTile(
+                          tilePadding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                          ),
+                          leading: Container(
+                            width: 44,
+                            height: 44,
+                            decoration: BoxDecoration(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.secondaryContainer,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Icon(
+                              FluentIcons.folder_24_regular,
+                              color: Theme.of(context).colorScheme.secondary,
+                              size: 22,
+                            ),
+                          ),
+                          title: Text(
+                            folder['name'] ?? '',
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onSurface,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15,
+                            ),
+                          ),
+                          children: [
+                            for (final p
+                                in (folder['playlists'] as List? ?? []))
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 16,
+                                  right: 16,
+                                ),
+                                child: _AddToPlaylistItem(
+                                  icon: FluentIcons.music_note_2_24_regular,
+                                  iconColor: Theme.of(
+                                    context,
+                                  ).colorScheme.tertiary,
+                                  iconBgColor: Theme.of(
+                                    context,
+                                  ).colorScheme.tertiaryContainer,
+                                  label: p['title'] ?? '',
+                                  onTap: () {
+                                    if (song != null) {
+                                      showToast(
+                                        context,
+                                        addSongInCustomPlaylist(
+                                          context,
+                                          p['ytid'],
+                                          song,
+                                        ),
+                                      );
+                                    } else if (songs != null &&
+                                        songs.isNotEmpty) {
+                                      showToast(
+                                        context,
+                                        addSongsInCustomPlaylist(
+                                          context,
+                                          p['ytid'],
+                                          songs,
+                                        ),
+                                      );
+                                    }
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                  // Top-level playlists
+                  if (topLevelPlaylists.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    for (final playlist in topLevelPlaylists)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: _AddToPlaylistItem(
+                          icon: FluentIcons.music_note_2_24_regular,
+                          iconColor: Theme.of(context).colorScheme.tertiary,
+                          iconBgColor: Theme.of(
+                            context,
+                          ).colorScheme.tertiaryContainer,
+                          label: playlist['title'] ?? '',
+                          onTap: () {
+                            if (song != null) {
+                              showToast(
+                                context,
+                                addSongInCustomPlaylist(
+                                  context,
+                                  playlist['ytid'],
+                                  song,
+                                ),
+                              );
+                            } else if (songs != null && songs.isNotEmpty) {
+                              showToast(
+                                context,
+                                addSongsInCustomPlaylist(
+                                  context,
+                                  playlist['ytid'],
+                                  songs,
+                                ),
+                              );
+                            }
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ),
+                  ],
+                ],
+              );
             },
           ),
         ),
@@ -434,4 +542,68 @@ void showAddToPlaylistDialog(
       );
     },
   );
+}
+
+class _AddToPlaylistItem extends StatelessWidget {
+  const _AddToPlaylistItem({
+    required this.icon,
+    required this.iconColor,
+    required this.iconBgColor,
+    required this.label,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final Color iconColor;
+  final Color iconBgColor;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Material(
+        color: colorScheme.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(12),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            child: Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: iconBgColor,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(icon, color: iconColor, size: 22),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    label,
+                    style: TextStyle(
+                      color: colorScheme.onSurface,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+                Icon(
+                  FluentIcons.chevron_right_24_regular,
+                  color: colorScheme.onSurfaceVariant,
+                  size: 18,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
