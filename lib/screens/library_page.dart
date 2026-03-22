@@ -265,25 +265,30 @@ class _LibraryPageState extends State<LibraryPage> {
       }
     }
 
-    final rawOfflinePlaylists = offlinePlaylistService.offlinePlaylists.value;
-    final offlinePlaylists = PlaylistUtils.filterOfflinePlaylistsNotInFolders(
-      rawOfflinePlaylists,
-      folders,
-    );
+    if (!offlineMode.value) {
+      final rawOfflinePlaylists = offlinePlaylistService.offlinePlaylists.value;
+      final offlinePlaylists = PlaylistUtils.filterOfflinePlaylistsNotInFolders(
+        rawOfflinePlaylists,
+        folders,
+      );
 
-    if (offlinePlaylists.isNotEmpty) {
-      slivers
-        ..add(
-          SliverToBoxAdapter(
-            child: SectionHeader(
-              title: context.l10n!.offlinePlaylists,
-              icon: FluentIcons.cloud_off_24_filled,
+      if (offlinePlaylists.isNotEmpty) {
+        slivers
+          ..add(
+            SliverToBoxAdapter(
+              child: SectionHeader(
+                title: context.l10n!.offlinePlaylists,
+                icon: FluentIcons.cloud_off_24_filled,
+              ),
             ),
-          ),
-        )
-        ..add(
-          _buildSliverPlaylistList(offlinePlaylists, isOfflinePlaylists: true),
-        );
+          )
+          ..add(
+            _buildSliverPlaylistList(
+              offlinePlaylists,
+              isOfflinePlaylists: true,
+            ),
+          );
+      }
     }
 
     if (!offlineMode.value && userPlaylists.value.isNotEmpty) {
