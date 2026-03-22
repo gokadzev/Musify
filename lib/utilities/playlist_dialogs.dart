@@ -355,9 +355,29 @@ void showAddToPlaylistDialog(
   showDialog(
     context: context,
     builder: (BuildContext context) {
+      final colorScheme = Theme.of(context).colorScheme;
       return AlertDialog(
-        icon: const Icon(FluentIcons.album_add_24_filled),
-        title: Text(context.l10n!.addToPlaylist),
+        icon: Container(
+          width: 56,
+          height: 56,
+          decoration: BoxDecoration(
+            color: colorScheme.secondaryContainer,
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            FluentIcons.album_add_24_filled,
+            color: colorScheme.secondary,
+            size: 28,
+          ),
+        ),
+        title: Text(
+          context.l10n!.addToPlaylist,
+          style: TextStyle(
+            color: colorScheme.onSurface,
+            fontWeight: FontWeight.w600,
+          ),
+          textAlign: TextAlign.center,
+        ),
         content: Container(
           width: double.maxFinite,
           constraints: BoxConstraints(
