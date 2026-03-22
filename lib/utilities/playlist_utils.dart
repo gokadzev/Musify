@@ -23,10 +23,8 @@ import 'dart:math';
 import 'package:musify/services/playlist_download_service.dart';
 
 class PlaylistUtils {
-  static bool isPlaylistOffline(Map playlist) =>
-      offlinePlaylistService.isPlaylistDownloaded(
-        playlist['ytid']?.toString() ?? '',
-      );
+  static bool isPlaylistOffline(Map playlist) => offlinePlaylistService
+      .isPlaylistDownloaded(playlist['ytid']?.toString() ?? '');
 
   static bool folderHasOfflinePlaylists(Map folder) {
     final playlists = folder['playlists'] as List? ?? [];
@@ -46,5 +44,26 @@ class PlaylistUtils {
     final timestamp = DateTime.now().microsecondsSinceEpoch;
     final randomSuffix = Random().nextInt(0x7fffffff);
     return 'customId-$timestamp-$randomSuffix';
+  }
+
+  static List<dynamic> filterOfflinePlaylistsNotInFolders(
+    List<dynamic> rawOfflinePlaylists,
+    List<dynamic> folders,
+  ) {
+    final folderPlaylistIds = folders
+        .expand(
+          (f) => (f['playlists'] as List? ?? []).map(
+            (p) => p is Map ? p['ytid']?.toString() : p?.toString(),
+          ),
+        )
+        .where((id) => id != null)
+        .cast<String>()
+        .toSet();
+
+    return rawOfflinePlaylists
+        .where(
+          (p) => p is Map && !folderPlaylistIds.contains(p['ytid']?.toString()),
+        )
+        .toList();
   }
 }

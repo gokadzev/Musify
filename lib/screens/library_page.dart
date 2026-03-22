@@ -265,7 +265,12 @@ class _LibraryPageState extends State<LibraryPage> {
       }
     }
 
-    final offlinePlaylists = offlinePlaylistService.offlinePlaylists.value;
+    final rawOfflinePlaylists = offlinePlaylistService.offlinePlaylists.value;
+    final offlinePlaylists = PlaylistUtils.filterOfflinePlaylistsNotInFolders(
+      rawOfflinePlaylists,
+      folders,
+    );
+
     if (offlinePlaylists.isNotEmpty) {
       slivers
         ..add(
