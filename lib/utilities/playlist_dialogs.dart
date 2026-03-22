@@ -365,7 +365,13 @@ void showAddToPlaylistDialog(
           ),
           child: Builder(
             builder: (context) {
-              final folders = userPlaylistFolders.value;
+              final folders = userPlaylistFolders.value
+                  .where(
+                    (folder) =>
+                        folder['playlists'] != null &&
+                        (folder['playlists'] as List).isNotEmpty,
+                  )
+                  .toList();
               final topLevelPlaylists = getPlaylistsNotInFolders();
 
               final hasAny =
