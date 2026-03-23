@@ -805,7 +805,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
     try {
       List<Map> manuallyAddedSongs = [];
       if (replace) {
-        manuallyAddedSongs = _queueList.where((song) => song['isManuallyAdded'] == true).toList();
+        manuallyAddedSongs = _queueList
+            .skip(_currentQueueIndex >= 0 ? _currentQueueIndex + 1 : 0)
+            .where((song) => song['isManuallyAdded'] == true)
+            .toList();
         _queueList.clear();
         _originalQueueList.clear();
         _currentQueueIndex = 0;
@@ -1822,6 +1825,13 @@ class MusifyAudioHandler extends BaseAudioHandler {
         final currentSong = _queueList[_currentQueueIndex];
         final currentQueueEntryId = _queueEntryIds.ensureId(currentSong);
 
+        final unplayedManualSongs = _queueList
+            .skip(_currentQueueIndex >= 0 ? _currentQueueIndex + 1 : 0)
+            .where((song) => song['isManuallyAdded'] == true)
+            .toList();
+        final manualSongIds = unplayedManualSongs.map((s) => _queueEntryIds.ensureId(s)).toSet();
+        _queueList.removeWhere((song) => manualSongIds.contains(_queueEntryIds.ensureId(song)));
+
         _queueList.shuffle();
 
         final newCurrentIndex = _queueList.indexWhere(
@@ -1834,6 +1844,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
             ..insert(0, currentSong);
         }
 
+        _queueList.insertAll(_queueList.isNotEmpty ? 1 : 0, unplayedManualSongs);
+
         _currentQueueIndex = 0;
         _updateQueueMediaItems();
       } else if (!shuffleEnabled && wasShuffled) {
@@ -1842,7 +1854,14 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
           final currentSong = _queueList[_currentQueueIndex];
           final currentQueueEntryId = _queueEntryIds.ensureId(currentSong);
+          final unplayedManualSongs = _queueList
+              .skip(_currentQueueIndex >= 0 ? _currentQueueIndex + 1 : 0)
+              .where((song) => song['isManuallyAdded'] == true)
+              .toList();
+          final manualSongIds = unplayedManualSongs.map((s) => _queueEntryIds.ensureId(s)).toSet();
+
           final restoredQueue = cloneMaps(_originalQueueList);
+          restoredQueue.removeWhere((song) => manualSongIds.contains(_queueEntryIds.ensureId(song)));
 
           _queueList
             ..clear()
@@ -1855,6 +1874,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
           if (_currentQueueIndex == -1) {
             _currentQueueIndex = 0;
           }
+
+          final insertIndex = _currentQueueIndex >= 0 && _currentQueueIndex < _queueList.length 
+              ? _currentQueueIndex + 1 
+              : _queueList.length;
+          _queueList.insertAll(insertIndex, unplayedManualSongs);
 
           _originalQueueList.clear();
           _updateQueueMediaItems();
