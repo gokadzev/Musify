@@ -625,6 +625,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
     }
 
     try {
+      if (offlineMode.value) return;
+
       final baseSong = _getCurrentSongForRecommendations();
       if (baseSong == null) {
         logger.log('No valid song for recommendations');
@@ -691,6 +693,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
     if (nextRecommendedSong != null) {
       return;
     }
+    // Do not prefetch recommendations while in offline mode
+    if (offlineMode.value) return;
 
     Future.microtask(() async {
       try {
@@ -1078,6 +1082,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
   }
 
   void _preloadUpcomingSongs() {
+    // Don't attempt to preload while offline mode is enabled
+    if (offlineMode.value) return;
+
     Future.microtask(() async {
       try {
         final songsToPreload = <Map>[];
@@ -1132,15 +1139,21 @@ class MusifyAudioHandler extends BaseAudioHandler {
     String? preloadUrl;
 
     try {
-      // fetchSongStreamUrl handles caching, freshness checks, and validation
-      preloadUrl = await fetchSongStreamUrl(ytid, nextSong['isLive'] ?? false)
-          .timeout(
-            const Duration(seconds: 8),
-            onTimeout: () {
-              logger.log('Preload timeout for song $ytid');
-              return null;
-            },
-          );
+      // Don't attempt to fetch remote streams while offline mode is enabled
+      if (offlineMode.value) {
+        logger.log('Offline mode enabled; skipping preload for $ytid');
+        preloadUrl = null;
+      } else {
+        // fetchSongStreamUrl handles caching, freshness checks, and validation
+        preloadUrl = await fetchSongStreamUrl(ytid, nextSong['isLive'] ?? false)
+            .timeout(
+              const Duration(seconds: 8),
+              onTimeout: () {
+                logger.log('Preload timeout for song $ytid');
+                return null;
+              },
+            );
+      }
     } catch (e, stackTrace) {
       logger.log(
         'Error preloading song $ytid',
@@ -1341,6 +1354,20 @@ class MusifyAudioHandler extends BaseAudioHandler {
         return null;
       }
 
+      // If offline mode is enabled, do NOT fall back to online streams.
+      // This prevents network requests while the user explicitly requested
+      // offline-only operation.
+      try {
+        if (offlineMode.value) {
+          logger.log(
+            'Offline mode enabled and offline file missing for ${songData['ytid']}. Not falling back to online.',
+          );
+          return null;
+        }
+      } catch (_) {
+        // If offlineMode isn't available for some reason, continue with fallback.
+      }
+
       logger.log(
         'Offline file missing for ${songData['ytid']}, switching to online',
       );
@@ -1450,10 +1477,24 @@ class MusifyAudioHandler extends BaseAudioHandler {
       );
 
       if (isOffline) {
+        // If offline mode is explicitly enabled, do not attempt any online
+        // fallback — respect the user's offline-only preference.
+        try {
+          if (offlineMode.value) {
+            return false;
+          }
+        } catch (_) {
+          // If offlineMode isn't accessible, fallthrough to attempt fallback.
+        }
+
         return _attemptOfflineFallback(song, mediaId: mediaId);
       }
 
       if (allowOnlineRetry) {
+        if (offlineMode.value) {
+          _lastError = e.toString();
+          return false;
+        }
         final songId = song['ytid']?.toString();
         if (songId != null && songId.isNotEmpty) {
           final cacheKey = 'song_${songId}_${audioQualitySetting.value}_url';
@@ -1491,6 +1532,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
   }
 
   Future<bool> _attemptOfflineFallback(Map song, {String? mediaId}) async {
+    // Do not attempt any network calls when offline mode is enabled.
+    if (offlineMode.value) return false;
+
     final onlineUrl = await fetchSongStreamUrl(
       song['ytid'],
       song['isLive'] ?? false,
