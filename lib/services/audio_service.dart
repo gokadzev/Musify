@@ -739,7 +739,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
         insertIndex = _queueList.length;
       }
 
-      _queueList.insert(insertIndex, _queueEntryIds.createSong(song));
+      final queueSong = _queueEntryIds.createSong(song);
+      queueSong['isManuallyAdded'] = true;
+      _queueList.insert(insertIndex, queueSong);
 
       if (_currentQueueIndex < 0) {
         _currentQueueIndex = 0;
@@ -801,7 +803,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
     int? startIndex,
   }) async {
     try {
+      List<Map> manuallyAddedSongs = [];
       if (replace) {
+        manuallyAddedSongs = _queueList.where((song) => song['isManuallyAdded'] == true).toList();
         _queueList.clear();
         _originalQueueList.clear();
         _currentQueueIndex = 0;
@@ -824,6 +828,13 @@ class MusifyAudioHandler extends BaseAudioHandler {
             targetQueueIndex = _queueList.length - 1;
           }
         }
+      }
+
+      if (replace && manuallyAddedSongs.isNotEmpty) {
+        final insertIndex = targetQueueIndex != null 
+            ? targetQueueIndex + 1 
+            : (_queueList.isNotEmpty ? 1 : 0);
+        _queueList.insertAll(insertIndex, manuallyAddedSongs);
       }
 
       _hydrateQueueEntryIds();
