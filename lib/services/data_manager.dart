@@ -215,7 +215,7 @@ Future<Box> _openBox(String category) async {
 
 Future<String> backupData(BuildContext context) async {
   final boxNames = ['user', 'settings'];
-  final dlPath = await FilePicker.platform.getDirectoryPath();
+  final dlPath = await FilePicker.getDirectoryPath();
 
   if (dlPath == null) {
     return '${context.l10n!.chooseBackupDir}!';
@@ -283,7 +283,7 @@ Future<String> backupData(BuildContext context) async {
 
 Future<String> restoreData(BuildContext context) async {
   final boxNames = ['user', 'settings'];
-  final result = await FilePicker.platform.pickFiles(allowMultiple: true);
+  final result = await FilePicker.pickFiles(allowMultiple: true);
 
   if (result == null || result.files.isEmpty) {
     return '${context.l10n!.chooseBackupFiles}!';

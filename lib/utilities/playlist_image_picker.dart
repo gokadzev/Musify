@@ -26,7 +26,7 @@ import 'package:flutter/material.dart';
 import 'package:musify/extensions/l10n.dart';
 
 Future<String?> pickImage() async {
-  final result = await FilePicker.platform.pickFiles(
+  final result = await FilePicker.pickFiles(
     type: FileType.image,
     withData: true,
   );
