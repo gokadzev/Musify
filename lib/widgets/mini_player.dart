@@ -415,7 +415,7 @@ class _CircularPlayButton extends StatelessWidget {
           else
             IconButton(
               onPressed: isCompleted
-                  ? () => audioHandler.seek(Duration.zero)
+                  ? () => audioHandler.playAgain()
                   : (isPlaying ? audioHandler.pause : audioHandler.play),
               splashColor: Colors.transparent,
               highlightColor: Colors.transparent,

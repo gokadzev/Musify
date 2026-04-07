@@ -64,11 +64,13 @@ Widget buildPlaybackIconButton(
           color: iconColor,
           size: iconSize,
         );
-        onPressed = () => audioHandler.seek(Duration.zero);
+        onPressed = () => audioHandler.playAgain();
         semanticLabel = context.l10n!.replay;
       } else {
         iconWidget = Icon(
-          isPlaying ? FluentIcons.pause_24_regular : FluentIcons.play_24_regular,
+          isPlaying
+              ? FluentIcons.pause_24_regular
+              : FluentIcons.play_24_regular,
           color: iconColor,
           size: iconSize,
         );

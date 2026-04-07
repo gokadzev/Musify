@@ -1780,6 +1780,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
   Future<void> playAgain() async {
     try {
       await audioPlayer.seek(Duration.zero);
+      // Track the replay as a new listen
+      if (currentSong != null) {
+        await updateRecentlyPlayed(currentSong!['ytid']);
+      }
     } catch (e, stackTrace) {
       logger.log('Error playing again', error: e, stackTrace: stackTrace);
     }
