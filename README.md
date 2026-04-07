@@ -34,7 +34,8 @@ SponsorBlock support <br/>
 Lyrics support <br/>
 No ads <br/>
 No subscriptions <br/>
-Inbuilt updater <br/>
+Built-in updater <br/>
+Built-in equalizer with presets <br/>
 21 supported languages <br/>
 Material UI & accent colors & dynamic colors (Android 12+) <br/>
 

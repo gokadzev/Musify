@@ -6,6 +6,7 @@
 * Add custom playlists with link
 * Optimized sound experience
 * SponsorBlock support
+* Built-in equalizer with presets
 * Lyrics support
 * No ads
 * No subscriptions
