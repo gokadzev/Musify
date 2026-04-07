@@ -66,4 +66,11 @@ class PlaylistUtils {
         )
         .toList();
   }
+
+  /// Find the index of a song in a playlist by its ytid.
+  /// Returns the index if found, -1 if not found.
+  static int findSongIndexByYtid(Map playlist, String songYtid) {
+    final list = playlist['list'] as List<dynamic>? ?? [];
+    return list.indexWhere((s) => s is Map && s['ytid'] == songYtid);
+  }
 }

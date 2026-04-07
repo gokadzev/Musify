@@ -23,12 +23,13 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/constants/app_constants.dart';
 import 'package:musify/extensions/l10n.dart';
-import 'package:musify/main.dart';
+import 'package:musify/main.dart' show logger, audioHandler;
 import 'package:musify/services/common_services.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/app_utils.dart';
 import 'package:musify/utilities/flutter_toast.dart';
+import 'package:musify/utilities/playlist_utils.dart';
 import 'package:musify/utilities/song_filtering.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/playlist_cube.dart';
@@ -423,10 +424,15 @@ class _UserSongsPageState extends State<UserSongsPage> {
       song,
       true,
       onPlay: () {
-        final fullList = playlist['list'] as List<dynamic>? ?? [];
-        final fullIndex = fullList.indexWhere(
-          (s) => s is Map && s['ytid'] == song['ytid'],
+        final fullIndex = PlaylistUtils.findSongIndexByYtid(
+          playlist,
+          song['ytid'],
         );
+        if (fullIndex == -1) {
+          logger.log(
+            'Warning: Song ${song['ytid']} not found in full song list',
+          );
+        }
         audioHandler.playPlaylistSong(
           playlist: playlist,
           songIndex: fullIndex != -1 ? fullIndex : index,
