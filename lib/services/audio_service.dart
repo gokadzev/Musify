@@ -830,9 +830,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
       }
 
       if (replace && manuallyAddedSongs.isNotEmpty) {
-        final insertIndex = targetQueueIndex != null
-            ? targetQueueIndex + 1
-            : (_queueList.isNotEmpty ? 1 : 0);
+        // Always insert after the starting song index
+        final insertIndex = (targetQueueIndex ?? 0) + 1;
         _queueList.insertAll(insertIndex, manuallyAddedSongs);
       }
 
@@ -1833,10 +1832,12 @@ class MusifyAudioHandler extends BaseAudioHandler {
         final manualSongIds = unplayedManualSongs
             .map(_queueEntryIds.ensureId)
             .toSet();
+        // Build ID map to avoid repeated ensureId() calls on every song
+        final queueIdMap = {
+          for (final song in _queueList) song: _queueEntryIds.ensureId(song),
+        };
         _queueList
-          ..removeWhere(
-            (song) => manualSongIds.contains(_queueEntryIds.ensureId(song)),
-          )
+          ..removeWhere((song) => manualSongIds.contains(queueIdMap[song]))
           ..shuffle();
 
         final newCurrentIndex = _queueList.indexWhere(
@@ -1867,10 +1868,15 @@ class MusifyAudioHandler extends BaseAudioHandler {
               .map(_queueEntryIds.ensureId)
               .toSet();
 
-          final restoredQueue = cloneMaps(_originalQueueList)
-            ..removeWhere(
-              (song) => manualSongIds.contains(_queueEntryIds.ensureId(song)),
-            );
+          final restoredQueue = cloneMaps(_originalQueueList);
+          // Build ID map to avoid repeated ensureId() calls during filtering
+          final restoredQueueIdMap = {
+            for (final song in restoredQueue)
+              song: _queueEntryIds.ensureId(song),
+          };
+          restoredQueue.removeWhere(
+            (song) => manualSongIds.contains(restoredQueueIdMap[song]),
+          );
 
           _queueList
             ..clear()
