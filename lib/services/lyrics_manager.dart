@@ -23,6 +23,7 @@ import 'dart:convert';
 
 import 'package:html/parser.dart' as html_parser;
 import 'package:http/http.dart' as http;
+import 'package:musify/services/lrclib_service.dart';
 
 class LyricsManager {
   Future<String?> fetchLyrics(String artistName, String title) async {
@@ -31,6 +32,15 @@ class LyricsManager {
       title = title.substring(0, title.length - 7).trim();
     } else if (title.endsWith(' Karaoke')) {
       title = title.substring(0, title.length - 8).trim();
+    }
+
+    // Try LrcLib first (supports both synced and plain lyrics)
+    final lyricsFromLrcLib = await LrcLibService.getLyrics(
+      title: title,
+      artist: artistName,
+    );
+    if (lyricsFromLrcLib != null) {
+      return lyricsFromLrcLib;
     }
 
     // Validate title is not empty after sanitization

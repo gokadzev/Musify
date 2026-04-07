@@ -24,9 +24,11 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_flip_card/flutter_flip_card.dart';
 import 'package:musify/extensions/l10n.dart';
+import 'package:musify/main.dart';
 import 'package:musify/services/common_services.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/async_loader.dart';
+import 'package:musify/widgets/lyrics_display_widget.dart';
 import 'package:musify/widgets/song_artwork.dart';
 
 class NowPlayingArtwork extends StatelessWidget {
@@ -100,69 +102,76 @@ class NowPlayingArtwork extends StatelessWidget {
             ),
           ],
         ),
-        child: AsyncLoader<String?>(
-          future: getSongLyrics(metadata.artist, metadata.title),
-          emptyWidget: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  FluentIcons.text_quote_24_regular,
-                  size: 48,
-                  color: colorScheme.onSecondaryContainer.withValues(
-                    alpha: 0.5,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(borderRadius),
+          child: AsyncLoader<String?>(
+            future: getSongLyrics(metadata.artist, metadata.title),
+            emptyWidget: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    FluentIcons.text_quote_24_regular,
+                    size: 48,
+                    color: colorScheme.onSecondaryContainer.withValues(
+                      alpha: 0.5,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  context.l10n!.lyricsNotAvailable,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                    color: colorScheme.onSecondaryContainer,
+                  const SizedBox(height: 16),
+                  Text(
+                    context.l10n!.lyricsNotAvailable,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                      color: colorScheme.onSecondaryContainer,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          ),
-          errorBuilder: (ctx, error, stack) => Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  FluentIcons.text_quote_24_regular,
-                  size: 48,
-                  color: colorScheme.onSecondaryContainer.withValues(
-                    alpha: 0.5,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  context.l10n!.lyricsNotAvailable,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                    color: colorScheme.onSecondaryContainer,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          ),
-          builder: (context, lyrics) => SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            physics: const BouncingScrollPhysics(),
-            child: Text(
-              lyrics ?? context.l10n!.lyricsNotAvailable,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-                color: colorScheme.onSecondaryContainer,
-                height: 1.6,
+                ],
               ),
-              textAlign: TextAlign.center,
             ),
+            errorBuilder: (ctx, error, stack) => Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    FluentIcons.text_quote_24_regular,
+                    size: 48,
+                    color: colorScheme.onSecondaryContainer.withValues(
+                      alpha: 0.5,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    context.l10n!.lyricsNotAvailable,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                      color: colorScheme.onSecondaryContainer,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+            builder: (context, lyrics) {
+              if (lyrics == null || lyrics.isEmpty) {
+                return Center(
+                  child: Text(
+                    context.l10n!.lyricsNotAvailable,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: colorScheme.onSecondaryContainer,
+                    ),
+                  ),
+                );
+              }
+              return LyricsDisplayWidget(
+                lyrics: lyrics,
+                positionDataStream: audioHandler.positionDataStream,
+              );
+            },
           ),
         ),
       ),
