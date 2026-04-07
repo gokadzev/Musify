@@ -920,6 +920,17 @@ class MusifyAudioHandler extends BaseAudioHandler {
         _currentQueueIndex++;
       }
 
+      // Also update _currentLoadingIndex if the currently-loading song is being reordered
+      if (oldIndex == _currentLoadingIndex) {
+        _currentLoadingIndex = newIndex;
+      } else if (oldIndex < _currentLoadingIndex &&
+          newIndex >= _currentLoadingIndex) {
+        _currentLoadingIndex--;
+      } else if (oldIndex > _currentLoadingIndex &&
+          newIndex <= _currentLoadingIndex) {
+        _currentLoadingIndex++;
+      }
+
       _updateQueueMediaItems();
     } catch (e, stackTrace) {
       logger.log('Error reordering queue', error: e, stackTrace: stackTrace);
