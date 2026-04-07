@@ -47,11 +47,6 @@ class _EqualizerPageState extends State<EqualizerPage> {
   }
 
   Future<void> _loadEqualizer() async {
-    if (!audioHandler.isEqualizerSupported) {
-      setState(() => _isLoading = false);
-      return;
-    }
-
     try {
       final params = await audioHandler.getEqualizerParameters();
       if (!mounted) return;
@@ -95,17 +90,6 @@ class _EqualizerPageState extends State<EqualizerPage> {
       appBar: AppBar(title: Text(context.l10n!.equalizer)),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : !audioHandler.isEqualizerSupported
-          ? Center(
-              child: Padding(
-                padding: commonSingleChildScrollViewPadding,
-                child: Text(
-                  context.l10n!.equalizerAndroidOnly,
-                  style: Theme.of(context).textTheme.bodyLarge,
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            )
           : _params == null
           ? Center(
               child: Padding(
