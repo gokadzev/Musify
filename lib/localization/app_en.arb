@@ -90,6 +90,7 @@
   "equalizerPresetTrebleBoost": "Treble Boost",
   "equalizerPresetVocal": "Vocal",
   "equalizerPresets": "Presets",
+  "equalizerBands": "Bands",
   "error": "An error occurred. Check logs or try again.",
   "externalRecommendations": "External recommendations",
   "externalRecommendationsDescription": "Use the external algorithm for recommendations instead of Musify’s own.",
