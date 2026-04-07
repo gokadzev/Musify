@@ -19,16 +19,31 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
+import 'dart:convert';
+
 import 'package:html/parser.dart' as html_parser;
 import 'package:http/http.dart' as http;
 
 class LyricsManager {
   Future<String?> fetchLyrics(String artistName, String title) async {
-    title = title.replaceAll('Lyrics', '').replaceAll('Karaoke', '');
+    // Remove Lyrics/Karaoke only from end of title
+    if (title.endsWith(' Lyrics')) {
+      title = title.substring(0, title.length - 7).trim();
+    } else if (title.endsWith(' Karaoke')) {
+      title = title.substring(0, title.length - 8).trim();
+    }
 
-    final lyricsFromGoogle = await _fetchLyricsFromGoogle(artistName, title);
-    if (lyricsFromGoogle != null) {
-      return lyricsFromGoogle;
+    // Validate title is not empty after sanitization
+    if (title.isEmpty || artistName.isEmpty) {
+      return null;
+    }
+
+    final lyricsFromLyricsOvh = await _fetchLyricsFromLyricsOvh(
+      artistName,
+      title,
+    );
+    if (lyricsFromLyricsOvh != null) {
+      return lyricsFromLyricsOvh;
     }
 
     final lyricsFromParolesNet = await _fetchLyricsFromParolesNet(
@@ -46,38 +61,30 @@ class LyricsManager {
     return lyricsFromLyricsMania1;
   }
 
-  Future<String?> _fetchLyricsFromGoogle(
+  Future<String?> _fetchLyricsFromLyricsOvh(
     String artistName,
     String title,
   ) async {
-    const url =
-        'https://www.google.com/search?client=safari&rls=en&ie=UTF-8&oe=UTF-8&q=';
-    const delimiter1 =
-        '</div></div></div></div><div class="hwc"><div class="BNeawe tAd8D AP7Wnd"><div><div class="BNeawe tAd8D AP7Wnd">';
-    const delimiter2 =
-        '</div></div></div></div></div><div><span class="hwc"><div class="BNeawe uEec3 AP7Wnd">';
-
     try {
-      final res = await http
-          .get(Uri.parse(Uri.encodeFull('$url$artistName - $title lyrics')))
-          .timeout(const Duration(seconds: 10));
-      final body = res.body;
-      final lyricsRes = body.substring(
-        body.indexOf(delimiter1) + delimiter1.length,
-        body.lastIndexOf(delimiter2),
+      final artistFormatted = _lyricsUrl(artistName.split(',')[0]);
+      final titleFormatted = _lyricsUrl(title);
+      final uri = Uri.parse(
+        'https://api.lyrics.ovh/v1/$artistFormatted/$titleFormatted',
       );
-      if (lyricsRes.contains('<meta charset="UTF-8">')) return null;
-      if (lyricsRes.contains('please enable javascript on your web browser'))
-        return null;
-      if (lyricsRes.contains('Error 500 (Server Error)')) return null;
-      if (lyricsRes.contains(
-        'systems have detected unusual traffic from your computer network',
-      ))
-        return null;
-      return lyricsRes;
-    } catch (_) {
+      final response = await http.get(uri).timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        final json = jsonDecode(response.body) as Map<String, dynamic>;
+        final lyrics = json['lyrics'] as String?;
+        if (lyrics != null && lyrics.isNotEmpty) {
+          return addCopyright(lyrics, 'lyrics.ovh');
+        }
+      }
+    } catch (e) {
+      // Silently fail and return null to try next source
       return null;
     }
+    return null;
   }
 
   Future<String?> _fetchLyricsFromParolesNet(
@@ -156,8 +163,15 @@ class LyricsManager {
 
   String _lyricsUrl(String input) {
     var result = input.replaceAll(' ', '-').toLowerCase();
+    // Remove special characters
+    result = result.replaceAll(RegExp('[^a-z0-9-]'), '');
+    // Clean up multiple/trailing dashes
+    result = result.replaceAll(RegExp('-+'), '-');
     if (result.isNotEmpty && result.endsWith('-')) {
       result = result.substring(0, result.length - 1);
+    }
+    if (result.isNotEmpty && result.startsWith('-')) {
+      result = result.substring(1);
     }
     return result;
   }
@@ -174,7 +188,7 @@ class LyricsManager {
   }
 
   String _removeSpaces(String input) {
-    return input.replaceAll('  ', '');
+    return input.replaceAll(RegExp(' {2,}'), ' ');
   }
 
   String addCopyright(String input, String copyright) {
