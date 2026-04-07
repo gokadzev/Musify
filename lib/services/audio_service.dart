@@ -1299,6 +1299,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
     return false;
   }
 
+  /// Check if the given transitionId is stale (outdated by a newer request).
+  bool _isStaleTransition(int? transitionId) {
+    return transitionId != null && transitionId != _currentLoadingTransitionId;
+  }
+
   Future<bool> playSong(Map song, {String? mediaId, int? transitionId}) async {
     try {
       final songData = cloneMap(song);
@@ -1316,7 +1321,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       // Abort if a newer song was requested while we were fetching the stream URL.
       // This is the primary guard against the race condition where a slow streaming
       // load overrides a song the user already switched to.
-      if (transitionId != null && transitionId != _currentLoadingTransitionId) {
+      if (_isStaleTransition(transitionId)) {
         logger.log(
           'Song load superseded by newer request, aborting: ${songData['ytid']}',
         );
@@ -1341,7 +1346,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       );
 
       // Check again after building the audio source (SponsorBlock fetch can also be slow).
-      if (transitionId != null && transitionId != _currentLoadingTransitionId) {
+      if (_isStaleTransition(transitionId)) {
         logger.log(
           'Song load superseded after building audio source, aborting: ${songData['ytid']}',
         );
@@ -1464,7 +1469,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
     try {
       // Final staleness check before we touch the audio player.
       // If another song was requested between the URL fetch and here, abort.
-      if (transitionId != null && transitionId != _currentLoadingTransitionId) {
+      if (_isStaleTransition(transitionId)) {
         return false;
       }
 
@@ -1477,7 +1482,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       // Check once more after the async setAudioSource: a fast offline song
       // could have loaded and started playing while we were buffering/setting up.
       // If so, stop the source we just loaded and yield to the newer song.
-      if (transitionId != null && transitionId != _currentLoadingTransitionId) {
+      if (_isStaleTransition(transitionId)) {
         unawaited(audioPlayer.stop());
         return false;
       }
