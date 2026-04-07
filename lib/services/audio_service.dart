@@ -309,6 +309,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
       // Apply stored shuffle mode to audio player
       await audioPlayer.setShuffleModeEnabled(shuffleNotifier.value);
+
+      // Initialize equalizer once at startup
+      unawaited(_ensureEqualizerConfigured());
     } catch (e, stackTrace) {
       logger.log(
         'Error initializing audio session',
@@ -1476,7 +1479,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
       await audioPlayer
           .setAudioSource(audioSource)
           .timeout(_songTransitionTimeout);
-      unawaited(_ensureEqualizerConfigured(force: true));
 
       // Check once more after the async setAudioSource: a fast offline song
       // could have loaded and started playing while we were buffering/setting up.
