@@ -1057,7 +1057,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
         mediaId: uniqueId,
       );
 
-      final success = await playSong(_queueList[index], mediaId: uniqueId);
+      final success = await playSong(
+        _queueList[index],
+        mediaId: uniqueId,
+        transitionId: currentTransitionId,
+      );
 
       // Only process result if this is still the current transition
       if (currentTransitionId == _currentLoadingTransitionId) {
@@ -1295,7 +1299,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
     return false;
   }
 
-  Future<bool> playSong(Map song, {String? mediaId}) async {
+  Future<bool> playSong(Map song, {String? mediaId, int? transitionId}) async {
     try {
       final songData = cloneMap(song);
 
@@ -1308,6 +1312,17 @@ class MusifyAudioHandler extends BaseAudioHandler {
       if (audioPlayer.playing) await audioPlayer.pause();
 
       final playback = await _resolvePlaybackSource(songData);
+
+      // Abort if a newer song was requested while we were fetching the stream URL.
+      // This is the primary guard against the race condition where a slow streaming
+      // load overrides a song the user already switched to.
+      if (transitionId != null && transitionId != _currentLoadingTransitionId) {
+        logger.log(
+          'Song load superseded by newer request, aborting: ${songData['ytid']}',
+        );
+        return false;
+      }
+
       if (playback == null) {
         _lastError = 'Failed to get song URL';
         return false;
@@ -1324,6 +1339,15 @@ class MusifyAudioHandler extends BaseAudioHandler {
         playback.songUrl,
         playback.isOffline,
       );
+
+      // Check again after building the audio source (SponsorBlock fetch can also be slow).
+      if (transitionId != null && transitionId != _currentLoadingTransitionId) {
+        logger.log(
+          'Song load superseded after building audio source, aborting: ${songData['ytid']}',
+        );
+        return false;
+      }
+
       if (audioSource == null) {
         logger.log('Failed to build audio source for ${songData['ytid']}');
         _lastError = 'Failed to build audio source';
@@ -1336,6 +1360,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
         playback.songUrl,
         playback.isOffline,
         mediaId: mediaId,
+        transitionId: transitionId,
       );
     } catch (e, stackTrace) {
       logger.log('Error playing song', error: e, stackTrace: stackTrace);
@@ -1434,13 +1459,28 @@ class MusifyAudioHandler extends BaseAudioHandler {
     bool isOffline, {
     String? mediaId,
     bool allowOnlineRetry = true,
+    int? transitionId,
   }) async {
     try {
+      // Final staleness check before we touch the audio player.
+      // If another song was requested between the URL fetch and here, abort.
+      if (transitionId != null && transitionId != _currentLoadingTransitionId) {
+        return false;
+      }
+
       await audioPlayer
           .setAudioSource(audioSource)
           .timeout(_songTransitionTimeout);
       unawaited(_ensureEqualizerConfigured(force: true));
       await Future.delayed(const Duration(milliseconds: 100));
+
+      // Check once more after the async setAudioSource: a fast offline song
+      // could have loaded and started playing while we were buffering/setting up.
+      // If so, stop the source we just loaded and yield to the newer song.
+      if (transitionId != null && transitionId != _currentLoadingTransitionId) {
+        unawaited(audioPlayer.stop());
+        return false;
+      }
 
       if (audioPlayer.duration != null) {
         var currentMediaItem = mapToMediaItem(song);
@@ -1487,7 +1527,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
           // If offlineMode isn't accessible, fallthrough to attempt fallback.
         }
 
-        return _attemptOfflineFallback(song, mediaId: mediaId);
+        return _attemptOfflineFallback(
+          song,
+          mediaId: mediaId,
+          transitionId: transitionId,
+        );
       }
 
       if (allowOnlineRetry) {
@@ -1520,6 +1564,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
                 false,
                 mediaId: mediaId,
                 allowOnlineRetry: false,
+                transitionId: transitionId,
               );
             }
           }
@@ -1531,7 +1576,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
     }
   }
 
-  Future<bool> _attemptOfflineFallback(Map song, {String? mediaId}) async {
+  Future<bool> _attemptOfflineFallback(
+    Map song, {
+    String? mediaId,
+    int? transitionId,
+  }) async {
     // Do not attempt any network calls when offline mode is enabled.
     if (offlineMode.value) return false;
 
@@ -1548,6 +1597,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
           onlineUrl,
           false,
           mediaId: mediaId,
+          transitionId: transitionId,
         );
       }
     }
