@@ -328,14 +328,24 @@ class SettingsPage extends StatelessWidget {
           FluentIcons.cloud_add_24_regular,
           onTap: () async {
             try {
-              final response = await restoreData(context);
+              final result = await restoreData(context);
               if (context.mounted) {
-                showToast(context, response);
+                showToast(
+                  context,
+                  result.message,
+                  icon: result.success
+                      ? null
+                      : FluentIcons.error_circle_24_regular,
+                );
               }
             } catch (e, str) {
               logger.log('Error restoring data', error: e, stackTrace: str);
               if (context.mounted) {
-                showToast(context, context.l10n!.error);
+                showToast(
+                  context,
+                  context.l10n!.error,
+                  icon: FluentIcons.error_circle_24_regular,
+                );
               }
             }
           },
@@ -754,14 +764,22 @@ class SettingsPage extends StatelessWidget {
           );
         },
       );
-      final response = await backupData(context);
+      final result = await backupData(context);
       if (context.mounted) {
-        showToast(context, response);
+        showToast(
+          context,
+          result.message,
+          icon: result.success ? null : FluentIcons.error_circle_24_regular,
+        );
       }
     } catch (e, stackTrace) {
       logger.log('Error backing up data', error: e, stackTrace: stackTrace);
       if (context.mounted) {
-        showToast(context, context.l10n!.error);
+        showToast(
+          context,
+          context.l10n!.error,
+          icon: FluentIcons.error_circle_24_regular,
+        );
       }
     }
   }

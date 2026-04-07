@@ -213,16 +213,18 @@ Future<Box> _openBox(String category) async {
   }
 }
 
-Future<String> backupData(BuildContext context) async {
+Future<({String message, bool success})> backupData(
+  BuildContext context,
+) async {
   final boxNames = ['user', 'settings'];
   final dlPath = await FilePicker.getDirectoryPath();
 
   if (dlPath == null) {
-    return '${context.l10n!.chooseBackupDir}!';
+    return (message: '${context.l10n!.chooseBackupDir}!', success: false);
   }
 
   if (!dlPath.contains('Documents') && !dlPath.contains('Download')) {
-    return context.l10n!.folderRestrictions;
+    return (message: context.l10n!.folderRestrictions, success: false);
   }
 
   try {
@@ -274,19 +276,21 @@ Future<String> backupData(BuildContext context) async {
       }
     }
 
-    return '${context.l10n!.backedupSuccess}!';
+    return (message: '${context.l10n!.backedupSuccess}!', success: true);
   } catch (e, stackTrace) {
     logger.log('Backup error', error: e, stackTrace: stackTrace);
-    return '${context.l10n!.backupError}: $e';
+    return (message: '${context.l10n!.backupError}: $e', success: false);
   }
 }
 
-Future<String> restoreData(BuildContext context) async {
+Future<({String message, bool success})> restoreData(
+  BuildContext context,
+) async {
   final boxNames = ['user', 'settings'];
   final result = await FilePicker.pickFiles(allowMultiple: true);
 
   if (result == null || result.files.isEmpty) {
-    return '${context.l10n!.chooseBackupFiles}!';
+    return (message: '${context.l10n!.chooseBackupFiles}!', success: false);
   }
 
   try {
@@ -383,9 +387,9 @@ Future<String> restoreData(BuildContext context) async {
       }
     }
 
-    return '${context.l10n!.restoredSuccess}!';
+    return (message: '${context.l10n!.restoredSuccess}!', success: true);
   } catch (e, stackTrace) {
     logger.log('Restore error', error: e, stackTrace: stackTrace);
-    return '${context.l10n!.restoreError}: $e';
+    return (message: '${context.l10n!.restoreError}: $e', success: false);
   }
 }
