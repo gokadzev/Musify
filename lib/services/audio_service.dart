@@ -1477,7 +1477,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
           .setAudioSource(audioSource)
           .timeout(_songTransitionTimeout);
       unawaited(_ensureEqualizerConfigured(force: true));
-      await Future.delayed(const Duration(milliseconds: 100));
 
       // Check once more after the async setAudioSource: a fast offline song
       // could have loaded and started playing while we were buffering/setting up.
