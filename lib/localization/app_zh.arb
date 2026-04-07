@@ -82,7 +82,7 @@
   "equalizerEnabledHint": "频段增益调整已激活。",
   "equalizerInitFailed": "均衡器目前无法初始化。请尝试播放一首歌曲并重新打开此页面。",
   "equalizerResetBands": "重置频段",
-  "equalizerPresetBalanced": "Balanced",
+  "equalizerPresetBalanced": "平衡",
   "equalizerPresetBassBoost": "Bass Boost",
   "equalizerPresetElectronic": "Electronic",
   "equalizerPresetPop": "Pop",
