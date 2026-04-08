@@ -58,13 +58,6 @@ List<Map<String, dynamic>> playlistsDB = [
     'list': [],
   },
   {
-    'ytid': 'PLPZdY4vhqvRAKdgI75eWn5XM0gPqs3QMY',
-    'title': 'M+ike Remixes',
-    'image':
-        'https://images.genius.com/593f78ac98312b1e6149cb9671a6bc47.500x500x1.jpg',
-    'list': [],
-  },
-  {
     'ytid': 'PLHg022HMFzFDMNp9xBGy3sARnqxaPl3PG',
     'title': 'Car Music 2026',
     'image': 'https://i.scdn.co/image/ab67706c0000da84cd9bd13f71d8b16277e1092a',
