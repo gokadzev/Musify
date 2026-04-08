@@ -90,7 +90,7 @@
   "equalizerPresetTrebleBoost": "Підсилення Високих частот",
   "equalizerPresetVocal": "Вокал",
   "equalizerPresets": "Перед встановлені",
-  "equalizerBands": "Bands",
+  "equalizerBands": "Групи",
   "error": "Сталася помилка. Перевірте журнали або спробуйте ще раз.",
   "externalRecommendations": "Зовнішні рекомендації",
   "externalRecommendationsDescription": "Використовуйте зовнішній алгоритм для рекомендацій замість власного Musify.",
