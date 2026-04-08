@@ -43,6 +43,8 @@ class _QueueWidgetState extends State<QueueWidget> {
   List<Map> _queue = [];
   late StreamSubscription<List<Map>> _subscription;
   bool _isDismissing = false;
+  bool _hasScrolledToInitial = false;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -52,13 +54,38 @@ class _QueueWidgetState extends State<QueueWidget> {
         setState(() {
           _queue = List<Map>.from(queue);
         });
+        if (!_hasScrolledToInitial && queue.isNotEmpty) {
+          _hasScrolledToInitial = true;
+          _scrollToCurrentSong();
+        }
       }
+    });
+  }
+
+  void _scrollToCurrentSong() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_scrollController.hasClients) return;
+      final currentIndex = audioHandler.currentQueueIndex;
+      if (currentIndex <= 0) return;
+      const estimatedItemHeight = 68.0;
+      const topPadding = 4.0;
+      final targetOffset = currentIndex * estimatedItemHeight + topPadding;
+      final clampedOffset = targetOffset.clamp(
+        0.0,
+        _scrollController.position.maxScrollExtent,
+      );
+      _scrollController.animateTo(
+        clampedOffset,
+        duration: const Duration(milliseconds: 350),
+        curve: Curves.easeOut,
+      );
     });
   }
 
   @override
   void dispose() {
     _subscription.cancel();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -257,6 +284,8 @@ class _QueueWidgetState extends State<QueueWidget> {
     bool closeOnTap = false,
   }) {
     return ReorderableListView.builder(
+      scrollController: _scrollController,
+      buildDefaultDragHandles: false,
       padding: const EdgeInsets.only(top: 4, bottom: 24, left: 8, right: 8),
       itemCount: _queue.length,
       onReorder: (oldIndex, newIndex) {
@@ -268,10 +297,10 @@ class _QueueWidgetState extends State<QueueWidget> {
         audioHandler.reorderQueue(oldIndex, newIndex);
       },
       proxyDecorator: (child, index, animation) => Material(
-        elevation: 6,
-        color: Colors.transparent,
+        elevation: 8,
+        color: colorScheme.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(14),
-        shadowColor: colorScheme.shadow.withValues(alpha: 0.25),
+        shadowColor: colorScheme.shadow.withValues(alpha: 0.35),
         child: child,
       ),
       itemBuilder: (context, index) {
@@ -414,9 +443,12 @@ class QueueTile extends StatelessWidget {
                 ReorderableDragStartListener(
                   index: index,
                   child: Padding(
-                    padding: const EdgeInsets.all(4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 14,
+                    ),
                     child: Icon(
-                      FluentIcons.arrow_move_24_regular,
+                      FluentIcons.re_order_24_regular,
                       color: colorScheme.onSurfaceVariant,
                     ),
                   ),
