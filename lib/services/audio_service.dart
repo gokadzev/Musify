@@ -457,6 +457,19 @@ class MusifyAudioHandler extends BaseAudioHandler {
     }
   }
 
+  bool _hasSignificantPositionChange(
+    Duration currentPosition,
+    Duration lastUpdatePosition,
+    DateTime lastUpdateTime,
+    DateTime now,
+    double speed,
+  ) {
+    final expectedPosition =
+        lastUpdatePosition + (now.difference(lastUpdateTime)) * speed;
+    return (currentPosition - expectedPosition).abs() >
+        const Duration(milliseconds: 500);
+  }
+
   void _updatePlaybackState() {
     if (_isUpdatingState) return;
 
@@ -472,25 +485,18 @@ class MusifyAudioHandler extends BaseAudioHandler {
             processingStateMap[audioPlayer.processingState] ??
             AudioProcessingState.idle;
 
-        var shouldUpdate =
+        final shouldUpdate =
             currentState == null ||
             currentState.playing != isPlaying ||
             currentState.processingState != newProcessingState ||
-            currentState.queueIndex != _currentQueueIndex;
-
-        if (!shouldUpdate) {
-          final lastUpdateTime = currentState.updateTime;
-          final lastUpdatePosition = currentState.updatePosition;
-          final speed = currentState.speed;
-
-          final expectedPosition =
-              lastUpdatePosition + (now.difference(lastUpdateTime)) * speed;
-
-          if ((currentPosition - expectedPosition).abs() >
-              const Duration(milliseconds: 500)) {
-            shouldUpdate = true;
-          }
-        }
+            currentState.queueIndex != _currentQueueIndex ||
+            (_hasSignificantPositionChange(
+              currentPosition,
+              currentState.updatePosition,
+              currentState.updateTime,
+              now,
+              currentState.speed,
+            ));
 
         if (shouldUpdate) {
           playbackState.add(
@@ -566,6 +572,12 @@ class MusifyAudioHandler extends BaseAudioHandler {
     }
   }
 
+  bool _canRetryPlayback() =>
+      hasNext ||
+      (repeatNotifier.value == AudioServiceRepeatMode.all &&
+          _queueList.isNotEmpty) ||
+      playNextSongAutomatically.value;
+
   void _handlePlaybackError() {
     _consecutiveErrors++;
     logger.log(
@@ -579,10 +591,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       return;
     }
 
-    if (hasNext ||
-        (repeatNotifier.value == AudioServiceRepeatMode.all &&
-            _queueList.isNotEmpty) ||
-        playNextSongAutomatically.value) {
+    if (_canRetryPlayback()) {
       Future.delayed(_errorRetryDelay, skipToNext);
     }
   }
@@ -1817,6 +1826,76 @@ class MusifyAudioHandler extends BaseAudioHandler {
     }
   }
 
+  Map<Map, String> _buildIdMap(List<Map> songs) {
+    return {for (final song in songs) song: _queueEntryIds.ensureId(song)};
+  }
+
+  void _enableShuffle(
+    List<Map> unplayedManualSongs,
+    Set<String> manualSongIds,
+  ) {
+    _originalQueueList
+      ..clear()
+      ..addAll(cloneMaps(_queueList));
+
+    final currentSong = _queueList[_currentQueueIndex];
+    final currentQueueEntryId = _queueEntryIds.ensureId(currentSong);
+
+    final queueIdMap = _buildIdMap(_queueList);
+    _queueList
+      ..removeWhere((song) => manualSongIds.contains(queueIdMap[song]))
+      ..shuffle();
+
+    final newCurrentIndex = _queueList.indexWhere(
+      (song) => _queueEntryIds.ensureId(song) == currentQueueEntryId,
+    );
+
+    if (newCurrentIndex != -1 && newCurrentIndex != 0) {
+      _queueList
+        ..removeAt(newCurrentIndex)
+        ..insert(0, currentSong);
+    }
+
+    _queueList.insertAll(_queueList.isNotEmpty ? 1 : 0, unplayedManualSongs);
+
+    _currentQueueIndex = 0;
+    _updateQueueMediaItems();
+  }
+
+  void _disableShuffle(
+    List<Map> unplayedManualSongs,
+    Set<String> manualSongIds,
+  ) {
+    if (_originalQueueList.isEmpty) return;
+
+    final currentSong = _queueList[_currentQueueIndex];
+    final currentQueueEntryId = _queueEntryIds.ensureId(currentSong);
+
+    final restoredQueue = cloneMaps(_originalQueueList);
+    final restoredQueueIdMap = _buildIdMap(restoredQueue);
+    restoredQueue.removeWhere(
+      (song) => manualSongIds.contains(restoredQueueIdMap[song]),
+    );
+
+    _queueList
+      ..clear()
+      ..addAll(restoredQueue);
+
+    _currentQueueIndex = _queueList.indexWhere(
+      (song) => _queueEntryIds.ensureId(song) == currentQueueEntryId,
+    );
+
+    if (_currentQueueIndex == -1) {
+      _currentQueueIndex = 0;
+    }
+
+    final insertIndex = _currentQueueIndex + 1;
+    _queueList.insertAll(insertIndex, unplayedManualSongs);
+
+    _originalQueueList.clear();
+    _updateQueueMediaItems();
+  }
+
   @override
   Future<void> setShuffleMode(AudioServiceShuffleMode shuffleMode) async {
     try {
@@ -1831,83 +1910,18 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
       if (shuffleEnabled && !wasShuffled) {
         _hydrateQueueEntryIds();
-
-        _originalQueueList
-          ..clear()
-          ..addAll(cloneMaps(_queueList));
-
-        final currentSong = _queueList[_currentQueueIndex];
-        final currentQueueEntryId = _queueEntryIds.ensureId(currentSong);
-
         final unplayedManualSongs = _getUnplayedManualSongs();
         final manualSongIds = unplayedManualSongs
             .map(_queueEntryIds.ensureId)
             .toSet();
-        // Build ID map to avoid repeated ensureId() calls on every song
-        final queueIdMap = {
-          for (final song in _queueList) song: _queueEntryIds.ensureId(song),
-        };
-        _queueList
-          ..removeWhere((song) => manualSongIds.contains(queueIdMap[song]))
-          ..shuffle();
-
-        final newCurrentIndex = _queueList.indexWhere(
-          (song) => _queueEntryIds.ensureId(song) == currentQueueEntryId,
-        );
-
-        if (newCurrentIndex != -1 && newCurrentIndex != 0) {
-          _queueList
-            ..removeAt(newCurrentIndex)
-            ..insert(0, currentSong);
-        }
-
-        _queueList.insertAll(
-          _queueList.isNotEmpty ? 1 : 0,
-          unplayedManualSongs,
-        );
-
-        _currentQueueIndex = 0;
-        _updateQueueMediaItems();
+        _enableShuffle(unplayedManualSongs, manualSongIds);
       } else if (!shuffleEnabled && wasShuffled) {
-        if (_originalQueueList.isNotEmpty) {
-          _hydrateQueueEntryIds();
-
-          final currentSong = _queueList[_currentQueueIndex];
-          final currentQueueEntryId = _queueEntryIds.ensureId(currentSong);
-          final unplayedManualSongs = _getUnplayedManualSongs();
-          final manualSongIds = unplayedManualSongs
-              .map(_queueEntryIds.ensureId)
-              .toSet();
-
-          final restoredQueue = cloneMaps(_originalQueueList);
-          // Build ID map to avoid repeated ensureId() calls during filtering
-          final restoredQueueIdMap = {
-            for (final song in restoredQueue)
-              song: _queueEntryIds.ensureId(song),
-          };
-          restoredQueue.removeWhere(
-            (song) => manualSongIds.contains(restoredQueueIdMap[song]),
-          );
-
-          _queueList
-            ..clear()
-            ..addAll(restoredQueue);
-
-          _currentQueueIndex = _queueList.indexWhere(
-            (song) => _queueEntryIds.ensureId(song) == currentQueueEntryId,
-          );
-
-          if (_currentQueueIndex == -1) {
-            _currentQueueIndex = 0;
-          }
-
-          // Insert manual songs right after the current song
-          final insertIndex = _currentQueueIndex + 1;
-          _queueList.insertAll(insertIndex, unplayedManualSongs);
-
-          _originalQueueList.clear();
-          _updateQueueMediaItems();
-        }
+        _hydrateQueueEntryIds();
+        final unplayedManualSongs = _getUnplayedManualSongs();
+        final manualSongIds = unplayedManualSongs
+            .map(_queueEntryIds.ensureId)
+            .toSet();
+        _disableShuffle(unplayedManualSongs, manualSongIds);
       }
     } catch (e, stackTrace) {
       logger.log(
