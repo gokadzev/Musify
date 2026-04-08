@@ -841,7 +841,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
       if (replace && manuallyAddedSongs.isNotEmpty) {
         // Always insert after the starting song index
         final insertIndex = (targetQueueIndex ?? 0) + 1;
-        _queueList.insertAll(insertIndex, manuallyAddedSongs);
+        final safeInsertIndex = insertIndex > _queueList.length
+            ? _queueList.length
+            : insertIndex;
+        _queueList.insertAll(safeInsertIndex, manuallyAddedSongs);
       }
 
       _hydrateQueueEntryIds();
@@ -879,18 +882,19 @@ class MusifyAudioHandler extends BaseAudioHandler {
         );
       }
 
+      if (index == _currentLoadingIndex) {
+        _currentLoadingIndex = -1;
+        _currentLoadingTransitionId = -1;
+      } else if (index < _currentLoadingIndex) {
+        _currentLoadingIndex--;
+      }
+
       if (index < _currentQueueIndex) {
         _currentQueueIndex--;
       } else if (index == _currentQueueIndex) {
         if (_queueList.isEmpty) {
           await stop();
         } else {
-          // If removing the currently-loading song, reset loading state
-          if (_currentLoadingIndex == index) {
-            _currentLoadingIndex = -1;
-            _currentLoadingTransitionId = -1;
-          }
-
           if (_currentQueueIndex >= _queueList.length) {
             _currentQueueIndex = _queueList.length - 1;
           }
