@@ -64,6 +64,11 @@ android {
         create("fdroid") {
             dimension = "flavor"
             applicationIdSuffix = ".fdroid"
+            externalNativeBuild {
+                cmake {
+                    arguments += "-DCMAKE_SHARED_LINKER_FLAGS=-Wl,--build-id=none"
+                }
+            }
         }
     }
 
