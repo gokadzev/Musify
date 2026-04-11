@@ -97,6 +97,7 @@ class ProxyManager {
   bool _hasFetched = false;
   final Map<String, List<ProxyInfo>> _proxiesByCountry = {};
   final Set<ProxyInfo> _workingProxies = {};
+  final Set<String> _blockedProxyAddresses = {};
   final _random = Random();
   DateTime _lastFetched = DateTime.now();
   DateTime _lastProxyCleanup = DateTime.now();
@@ -131,6 +132,33 @@ class ProxyManager {
         stackTrace: stackTrace,
       );
     }
+  }
+
+  bool _isBlockedProxyAddress(String address) {
+    return _blockedProxyAddresses.contains(address);
+  }
+
+  void _addProxyCandidate({
+    required String source,
+    required String address,
+    required String country,
+    bool? isSsl,
+  }) {
+    if (_isBlockedProxyAddress(address)) return;
+
+    final countryProxies = _proxiesByCountry.putIfAbsent(country, () => []);
+    if (countryProxies.any((candidate) => candidate.address == address)) {
+      return;
+    }
+
+    countryProxies.add(
+      ProxyInfo(
+        source: source,
+        address: address,
+        country: country,
+        isSsl: isSsl,
+      ),
+    );
   }
 
   /// Initialize a shared YoutubeExplode client that uses a working proxy.
@@ -211,6 +239,7 @@ class ProxyManager {
   ) async {
     if (!useProxy.value) return null;
     YoutubeExplode? ytClient;
+    var shouldCloseClient = false;
     try {
       final res = _ensureProxyResources(proxy, timeoutSeconds: timeoutSeconds);
       ytClient = YoutubeExplode(httpClient: YoutubeHttpClient(res.ioClient));
@@ -218,6 +247,7 @@ class ProxyManager {
           .getManifest(songId, ytClients: [YoutubeApiClient.androidVr])
           .timeout(Duration(seconds: timeoutSeconds));
       _workingProxies.add(proxy);
+      shouldCloseClient = true;
       return manifest;
     } catch (e, stackTrace) {
       logger.log(
@@ -225,12 +255,14 @@ class ProxyManager {
         error: e,
         stackTrace: stackTrace,
       );
-      _discardProxy(proxy, reason: 'validation failed');
+      _discardProxy(proxy, reason: 'validation failed', closeResources: false);
       return null;
     } finally {
-      try {
-        ytClient?.close();
-      } catch (_) {}
+      if (shouldCloseClient) {
+        try {
+          ytClient?.close();
+        } catch (_) {}
+      }
     }
   }
 
@@ -246,6 +278,7 @@ class ProxyManager {
         _proxyCleanupIntervalMinutes) {
       _proxiesByCountry.clear();
       _workingProxies.clear();
+      _blockedProxyAddresses.clear();
       _hasFetched = false;
       _closeAllProxyResources();
     }
@@ -257,13 +290,19 @@ class ProxyManager {
       if (!_hasFetched) await (_fetchingProxiesFuture ?? _fetchProxies());
       if (_hasFetched && _proxiesByCountry.isEmpty) await _fetchProxies();
       if (_proxiesByCountry.isEmpty) return null;
+      _workingProxies.removeWhere(
+        (candidate) => _isBlockedProxyAddress(candidate.address),
+      );
       ProxyInfo proxy;
       String countryCode;
-      if (_workingProxies.isNotEmpty) {
-        final idx = _workingProxies.length == 1
+      final workingProxies = _workingProxies
+          .where((candidate) => !_isBlockedProxyAddress(candidate.address))
+          .toList(growable: false);
+      if (workingProxies.isNotEmpty) {
+        final idx = workingProxies.length == 1
             ? 0
-            : _random.nextInt(_workingProxies.length);
-        proxy = _workingProxies.elementAt(idx);
+            : _random.nextInt(workingProxies.length);
+        proxy = workingProxies[idx];
         _workingProxies.remove(proxy);
       } else {
         if (preferredCountry != null &&
@@ -273,10 +312,15 @@ class ProxyManager {
           final countries = _proxiesByCountry.keys.toList(growable: false);
           countryCode = countries[_random.nextInt(countries.length)];
         }
-        final countryProxies = _proxiesByCountry[countryCode];
+        final countryProxies = _proxiesByCountry[countryCode]
+            ?.where((candidate) => !_isBlockedProxyAddress(candidate.address))
+            .toList(growable: false);
         if (countryProxies == null || countryProxies.isEmpty) {
           if (_proxiesByCountry.isEmpty) return null;
-          final allProxies = _proxiesByCountry.values.expand((x) => x).toList();
+          final allProxies = _proxiesByCountry.values
+              .expand((x) => x)
+              .where((candidate) => !_isBlockedProxyAddress(candidate.address))
+              .toList(growable: false);
           if (allProxies.isEmpty) return null;
           proxy = allProxies[_random.nextInt(allProxies.length)];
         } else {
@@ -366,8 +410,13 @@ class ProxyManager {
     }
   }
 
-  void _discardProxy(ProxyInfo proxy, {String? reason}) {
+  void _discardProxy(
+    ProxyInfo proxy, {
+    String? reason,
+    bool closeResources = true,
+  }) {
     final address = proxy.address;
+    _blockedProxyAddresses.add(address);
 
     _proxiesByCountry.removeWhere((_, proxies) {
       proxies.removeWhere((candidate) => candidate.address == address);
@@ -377,13 +426,30 @@ class ProxyManager {
 
     final resources = _proxyResources.remove(address);
     if (resources != null) {
-      try {
-        resources.close();
-      } catch (e, stackTrace) {
-        logger.log(
-          'ProxyManager: Error closing discarded proxy resources',
-          error: e,
-          stackTrace: stackTrace,
+      if (closeResources) {
+        try {
+          resources.close();
+        } catch (e, stackTrace) {
+          logger.log(
+            'ProxyManager: Error closing discarded proxy resources',
+            error: e,
+            stackTrace: stackTrace,
+          );
+        }
+      } else {
+        // Let timed-out validation requests unwind before closing the client.
+        unawaited(
+          Future.delayed(const Duration(seconds: 2), () {
+            try {
+              resources.close();
+            } catch (e, stackTrace) {
+              logger.log(
+                'ProxyManager: Error closing discarded proxy resources',
+                error: e,
+                stackTrace: stackTrace,
+              );
+            }
+          }),
         );
       }
     }
@@ -556,15 +622,11 @@ class ProxyManager {
         if (match != null) {
           final country = match.namedGroup('country') ?? '';
           if (country.isNotEmpty) {
-            _proxiesByCountry[country] = _proxiesByCountry[country] ?? [];
-            _proxiesByCountry[country]!.add(
-              ProxyInfo(
-                source: 'spys.me',
-                address:
-                    '${match.namedGroup('ip')}:${match.namedGroup('port')}',
-                country: country,
-                isSsl: (match.namedGroup('ssl') ?? '').trim().isNotEmpty,
-              ),
+            _addProxyCandidate(
+              source: 'spys.me',
+              address: '${match.namedGroup('ip')}:${match.namedGroup('port')}',
+              country: country,
+              isSsl: (match.namedGroup('ssl') ?? '').trim().isNotEmpty,
             );
           }
         }
@@ -611,14 +673,11 @@ class ProxyManager {
             (proxyData['alive'] ?? false) &&
             proxyData['ip_data']['countryCode'] != null) {
           final country = proxyData['ip_data']['countryCode'];
-          _proxiesByCountry[country] = _proxiesByCountry[country] ?? [];
-          _proxiesByCountry[country]!.add(
-            ProxyInfo(
-              source: 'proxyscrape.com',
-              address: '${proxyData['ip']}:${proxyData['port']}',
-              country: country,
-              isSsl: true,
-            ),
+          _addProxyCandidate(
+            source: 'proxyscrape.com',
+            address: '${proxyData['ip']}:${proxyData['port']}',
+            country: country,
+            isSsl: true,
           );
         }
       }
@@ -645,15 +704,11 @@ class ProxyManager {
         if (match != null) {
           final country = match.namedGroup('country') ?? '';
           if (country.isNotEmpty) {
-            _proxiesByCountry[country] = _proxiesByCountry[country] ?? [];
-            _proxiesByCountry[country]!.add(
-              ProxyInfo(
-                source: 'openproxylist',
-                address:
-                    '${match.namedGroup('ip')}:${match.namedGroup('port')}',
-                country: country,
-                isSsl: true,
-              ),
+            _addProxyCandidate(
+              source: 'openproxylist',
+              address: '${match.namedGroup('ip')}:${match.namedGroup('port')}',
+              country: country,
+              isSsl: true,
             );
           }
         }
@@ -687,14 +742,11 @@ class ProxyManager {
         final country = item['country'];
 
         if (ip != null && port != null && country != null) {
-          _proxiesByCountry[country] = _proxiesByCountry[country] ?? [];
-          _proxiesByCountry[country]!.add(
-            ProxyInfo(
-              source: 'geonode',
-              address: '$ip:$port',
-              country: country,
-              isSsl: true,
-            ),
+          _addProxyCandidate(
+            source: 'geonode',
+            address: '$ip:$port',
+            country: country,
+            isSsl: true,
           );
         }
       }
