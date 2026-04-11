@@ -885,9 +885,9 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: e00fed3be4e4c8c07efdd1bc8c40329c966e7ba2
-      resolved-ref: e00fed3be4e4c8c07efdd1bc8c40329c966e7ba2
-      url: "https://github.com/Hexer10/youtube_explode_dart"
+      ref: "0e339cc0f38c5c6da139f88254aa9e7e64951672"
+      resolved-ref: "0e339cc0f38c5c6da139f88254aa9e7e64951672"
+      url: "https://github.com/gmstyle/youtube_explode_dart"
     source: git
     version: "3.0.5"
 sdks:
