@@ -619,39 +619,53 @@ class MusifyAudioHandler extends BaseAudioHandler {
     }
   }
 
-  Future<void> _playNextRecommendedSong() async {
-    if (_currentLoadingIndex >= 0) {
-      logger.log(
-        'Already loading next song (index: $_currentLoadingIndex), skipping',
-      );
-      return;
-    }
+  Future<void> _backgroundAddSongsToQueue() async {
+    // Fire and forget - this runs as a background task without blocking playback
+    if (offlineMode.value) return;
 
-    try {
-      if (offlineMode.value) return;
+    // Use microtask to avoid blocking the current operation
+    unawaited(
+      Future.microtask(() async {
+        try {
+          // Only add songs if we're still playing
+          if (!audioPlayer.playing) {
+            return;
+          }
 
-      final baseSong = _getCurrentSongForRecommendations();
-      if (baseSong == null) {
-        logger.log('No valid song for recommendations');
-        return;
-      }
+          final baseSong = _getCurrentSongForRecommendations();
+          if (baseSong == null) {
+            return;
+          }
 
-      if (nextRecommendedSong == null) {
-        await _fetchRecommendedSong(baseSong);
-      }
+          // Fetch similar songs silently in the background
+          await getSimilarSong(baseSong['ytid']).timeout(
+            const Duration(seconds: 10),
+            onTimeout: () {
+              logger.log('Background song fetch timed out');
+            },
+          );
 
-      if (nextRecommendedSong != null) {
-        await _playRecommendation();
-      } else {
-        logger.log('No recommendations available for "${baseSong['title']}"');
-      }
-    } catch (e, stackTrace) {
-      logger.log(
-        'Error playing recommended song',
-        error: e,
-        stackTrace: stackTrace,
-      );
-    }
+          // If we got a recommendation, add it to the queue
+          // But only if still playing (user might have paused during fetch)
+          if (!audioPlayer.playing) {
+            return;
+          }
+
+          if (nextRecommendedSong != null) {
+            final songToAdd = nextRecommendedSong;
+            nextRecommendedSong = null;
+            await addToQueue(songToAdd);
+            logger.log('Background song added: "${songToAdd['title']}"');
+          }
+        } catch (e, stackTrace) {
+          logger.log(
+            'Error in background song addition',
+            error: e,
+            stackTrace: stackTrace,
+          );
+        }
+      }),
+    );
   }
 
   Map? _getCurrentSongForRecommendations() {
@@ -663,58 +677,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
     }
 
     return mediaItemToMap(currentMediaItem);
-  }
-
-  Future<void> _fetchRecommendedSong(Map baseSong) async {
-    try {
-      await getSimilarSong(baseSong['ytid']).timeout(
-        const Duration(seconds: 7),
-        onTimeout: () {
-          logger.log('Recommendation fetch timed out');
-        },
-      );
-    } catch (e, stackTrace) {
-      logger.log(
-        'Error fetching recommendation',
-        error: e,
-        stackTrace: stackTrace,
-      );
-    }
-  }
-
-  Future<void> _playRecommendation() async {
-    if (nextRecommendedSong == null) return;
-
-    final recommendedSong = nextRecommendedSong;
-    nextRecommendedSong = null;
-
-    await addToQueue(recommendedSong);
-    await _playFromQueue(_queueList.length - 1);
-  }
-
-  void _prefetchNextRecommendation(String currentSongYtid) {
-    if (nextRecommendedSong != null) {
-      return;
-    }
-    // Do not prefetch recommendations while in offline mode
-    if (offlineMode.value) return;
-
-    Future.microtask(() async {
-      try {
-        await getSimilarSong(currentSongYtid).timeout(
-          const Duration(seconds: 5),
-          onTimeout: () {
-            logger.log('Prefetch recommendation timed out');
-          },
-        );
-      } catch (e, stackTrace) {
-        logger.log(
-          'Error prefetching recommendation',
-          error: e,
-          stackTrace: stackTrace,
-        );
-      }
-    });
   }
 
   void _addToHistory(Map song) {
@@ -1095,6 +1057,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
         if (success) {
           _consecutiveErrors = 0;
           _preloadUpcomingSongs();
+          // Trigger background song addition if auto-play is enabled
+          if (playNextSongAutomatically.value) {
+            unawaited(_backgroundAddSongsToQueue());
+          }
         } else {
           _currentQueueIndex = previousQueueIndex;
           _handlePlaybackError();
@@ -1540,10 +1506,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
       _updatePlaybackState();
 
-      if (playNextSongAutomatically.value) {
-        _prefetchNextRecommendation(song['ytid']);
-      }
-
       Future.delayed(const Duration(seconds: 2), _preloadUpcomingSongs);
 
       return true;
@@ -1782,7 +1744,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
         await _playFromQueue(0);
       } else if (playNextSongAutomatically.value &&
           _currentLoadingIndex == -1) {
-        await _playNextRecommendedSong();
+        // At end of queue with auto-play enabled - trigger background fetch
+        unawaited(_backgroundAddSongsToQueue());
       }
 
       _cleanupOldPreloadedSongs();
