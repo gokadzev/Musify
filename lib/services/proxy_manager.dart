@@ -97,12 +97,16 @@ class ProxyManager {
   bool _hasFetched = false;
   final Map<String, List<ProxyInfo>> _proxiesByCountry = {};
   final Set<ProxyInfo> _workingProxies = {};
-  final Set<String> _blockedProxyAddresses = {};
+
+  /// Maps proxy addresses to the time they were blocked (TTL-aware blocklist)
+  final Map<String, DateTime> _blockedProxyAddresses = {};
   final _random = Random();
   DateTime _lastFetched = DateTime.now();
   DateTime _lastProxyCleanup = DateTime.now();
   static const int _proxyCleanupIntervalMinutes = 120;
   static const int _maxProxyResourcePoolSize = 50;
+  static const int _blockedProxyTtlMinutes = 30;
+  static const int _maxBlockedProxiesSize = 200;
 
   final Map<String, _ProxyResources> _proxyResources = {};
 
@@ -135,7 +139,38 @@ class ProxyManager {
   }
 
   bool _isBlockedProxyAddress(String address) {
-    return _blockedProxyAddresses.contains(address);
+    final blockedAt = _blockedProxyAddresses[address];
+    if (blockedAt == null) return false;
+
+    // Check if TTL has expired
+    if (DateTime.now().difference(blockedAt).inMinutes >
+        _blockedProxyTtlMinutes) {
+      _blockedProxyAddresses.remove(address);
+      return false;
+    }
+    return true;
+  }
+
+  void _pruneExpiredBlockedProxies() {
+    final now = DateTime.now();
+    _blockedProxyAddresses.removeWhere(
+      (_, blockedAt) =>
+          now.difference(blockedAt).inMinutes > _blockedProxyTtlMinutes,
+    );
+  }
+
+  void _enforceBlockedProxiesLimit() {
+    if (_blockedProxyAddresses.length <= _maxBlockedProxiesSize) return;
+
+    // Remove oldest entries when exceeding limit
+    final entries = _blockedProxyAddresses.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+
+    final toKeep = entries.take(_maxBlockedProxiesSize ~/ 2).toList();
+    _blockedProxyAddresses.clear();
+    for (final entry in toKeep) {
+      _blockedProxyAddresses[entry.key] = entry.value;
+    }
   }
 
   void _addProxyCandidate({
@@ -281,6 +316,9 @@ class ProxyManager {
       _blockedProxyAddresses.clear();
       _hasFetched = false;
       _closeAllProxyResources();
+    } else {
+      // Prune expired blocked proxies even if not doing full cleanup
+      _pruneExpiredBlockedProxies();
     }
   }
 
@@ -290,9 +328,7 @@ class ProxyManager {
       if (!_hasFetched) await (_fetchingProxiesFuture ?? _fetchProxies());
       if (_hasFetched && _proxiesByCountry.isEmpty) await _fetchProxies();
       if (_proxiesByCountry.isEmpty) return null;
-      _workingProxies.removeWhere(
-        (candidate) => _isBlockedProxyAddress(candidate.address),
-      );
+
       ProxyInfo proxy;
       String countryCode;
       final workingProxies = _workingProxies
@@ -416,7 +452,8 @@ class ProxyManager {
     bool closeResources = true,
   }) {
     final address = proxy.address;
-    _blockedProxyAddresses.add(address);
+    _blockedProxyAddresses[address] = DateTime.now();
+    _enforceBlockedProxiesLimit();
 
     _proxiesByCountry.removeWhere((_, proxies) {
       proxies.removeWhere((candidate) => candidate.address == address);
