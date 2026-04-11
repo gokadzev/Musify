@@ -1,0 +1,22 @@
+include: package:lints/recommended.yaml
+
+analyzer:
+  errors:
+    invalid_annotation_target: ignore
+
+  language:
+    strict-casts: false
+
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "example/video_downloader_flutter/"
+
+linter:
+  rules:
+    library_private_types_in_public_api: false
+    parameter_assignments: false
+    always_use_package_imports: false
+    prefer_relative_imports: true
+    avoid_dynamic_calls: false
+    no_runtimeType_toString: false

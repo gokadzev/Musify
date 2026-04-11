@@ -1,0 +1,9 @@
+export 'fatal_failure_exception.dart';
+export 'http_client_closed.dart';
+export 'request_limit_exceeded_exception.dart';
+export 'search_item_section_exception.dart';
+export 'transient_failure_exception.dart';
+export 'video_requires_purchase_exception.dart';
+export 'video_unavailable_exception.dart';
+export 'video_unplayable_exception.dart';
+export 'youtube_explode_exception.dart';

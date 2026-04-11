@@ -1,0 +1,75 @@
+name: Bug Report
+description: Create a bug report, make sure to follow the template otherwise the issue might be closed.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping the library improve! Please complete all sections to ensure we have everything needed to resolve the issue and avoid the issue to be closed.
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: |
+        Write a a description of the bug and what does not work. 
+        Make sure to include:
+        - The relevant code that triggers the issue.
+        - (If relevant) the affected video/playlist id.
+        - A minimal reproducible example. E.g. if you are using the library in a flutter application don't paste the whole broken widget but try to isolate the portion of the code related to this library that does not work.
+      placeholder: Write here about the problem!
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: |
+        Please copy and paste any relevant log output in the next section. Before submitting the logs make sure to run the following code to enable verbose logging: 
+        ```dart
+        import 'package:logging/logging.dart';
+        // ...
+        Logger.root.level = Level.FINER;
+        Logger.root.onRecord.listen((e)  {
+          print(e);
+          if (e.error != null) {
+           print(e.error);
+           print(e.stackTrace);
+          }
+        });
+        ```
+  - type: textarea
+    id: logs
+    attributes:
+      label: Stacktrace / error logs.
+      description: Include any relevant stacktrace or error logs here! Make sure to enable verbose logging as shown before!
+      placeholder: Paste the logs here!
+      render: shell
+    validations:
+      required: false
+  - type: input
+    id: lib_ver
+    attributes:
+      label: Package (youtube_explode_dart) version
+      placeholder: 2.3.5
+  - type: checkboxes
+    attributes:
+      label: Checklist
+      description: |
+        Please make sure to check all the following boxes before submitting the issue.
+      options:
+        - label: I have provided a descriptive title
+          required: true
+        - label: I have searched the issues of this repository and believe that this is not a duplicate
+          required: true
+        - label: I have tested with the latest version of the library
+          required: true
+        - label: (If relevant) I can open the video/playlist in a incognito/private window without being logged in.
+          required: false
+        - label: I have sponsored the project
+          required: false
+  - type: textarea
+    id: final
+    attributes:
+      label: Additional notes
+      description: Write any additional info that might be related to the reported issue. For example if you tried with yt-dlp or youtube-dl and it worked, or if you have any other relevant information.
+    validations:
+      required: false

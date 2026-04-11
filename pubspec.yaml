@@ -37,9 +37,7 @@ dependencies:
   rxdart: ^0.28.0
   url_launcher: ^6.3.2
   youtube_explode_dart:
-    git:
-      url: https://github.com/Hexer10/youtube_explode_dart
-      ref: e00fed3be4e4c8c07efdd1bc8c40329c966e7ba2
+    path: ./packages/youtube_explode_dart
 
 dev_dependencies:
   flutter_test:
