@@ -171,6 +171,7 @@ class ProxyManager {
             error: e,
             stackTrace: stackTrace,
           );
+          _discardProxy(proxy, reason: 'shared client init failed');
           continue;
         }
       } while (true);
@@ -224,6 +225,7 @@ class ProxyManager {
         error: e,
         stackTrace: stackTrace,
       );
+      _discardProxy(proxy, reason: 'validation failed');
       return null;
     } finally {
       try {
@@ -268,7 +270,8 @@ class ProxyManager {
             _proxiesByCountry.containsKey(preferredCountry)) {
           countryCode = preferredCountry;
         } else {
-          countryCode = _proxiesByCountry.keys.first;
+          final countries = _proxiesByCountry.keys.toList(growable: false);
+          countryCode = countries[_random.nextInt(countries.length)];
         }
         final countryProxies = _proxiesByCountry[countryCode];
         if (countryProxies == null || countryProxies.isEmpty) {
@@ -363,6 +366,43 @@ class ProxyManager {
     }
   }
 
+  void _discardProxy(ProxyInfo proxy, {String? reason}) {
+    final address = proxy.address;
+
+    _proxiesByCountry.removeWhere((_, proxies) {
+      proxies.removeWhere((candidate) => candidate.address == address);
+      return proxies.isEmpty;
+    });
+    _workingProxies.removeWhere((candidate) => candidate.address == address);
+
+    final resources = _proxyResources.remove(address);
+    if (resources != null) {
+      try {
+        resources.close();
+      } catch (e, stackTrace) {
+        logger.log(
+          'ProxyManager: Error closing discarded proxy resources',
+          error: e,
+          stackTrace: stackTrace,
+        );
+      }
+    }
+
+    if (_sharedProxyAddress == address) {
+      if (_sharedYt != null && _sharedYt != _defaultYt) {
+        try {
+          _sharedYt?.close();
+        } catch (_) {}
+      }
+      _sharedYt = _defaultYt;
+      _sharedProxyAddress = null;
+    }
+
+    logger.log(
+      'ProxyManager: discarded proxy $address${reason != null ? ' ($reason)' : ''}',
+    );
+  }
+
   Future<StreamManifest?> getSongManifest(String songId) async {
     if (!useProxy.value) {
       return _validateDirect(songId, _validateDirectTimeout);
@@ -402,7 +442,9 @@ class ProxyManager {
     int timeoutSeconds = 10,
   }) async {
     if (!useProxy.value || _sharedProxyAddress == null) {
-      return http.get(uri, headers: headers).timeout(
+      return http
+          .get(uri, headers: headers)
+          .timeout(
             Duration(seconds: timeoutSeconds),
             onTimeout: () => http.Response('Timeout', 408),
           );
@@ -410,13 +452,17 @@ class ProxyManager {
 
     final res = _proxyResources[_sharedProxyAddress!];
     if (res == null) {
-      return http.get(uri, headers: headers).timeout(
+      return http
+          .get(uri, headers: headers)
+          .timeout(
             Duration(seconds: timeoutSeconds),
             onTimeout: () => http.Response('Timeout', 408),
           );
     }
 
-    return res.ioClient.get(uri, headers: headers).timeout(
+    return res.ioClient
+        .get(uri, headers: headers)
+        .timeout(
           Duration(seconds: timeoutSeconds),
           onTimeout: () => http.Response('Timeout', 408),
         );
@@ -475,6 +521,7 @@ class ProxyManager {
           error: e,
           stackTrace: stackTrace,
         );
+        _discardProxy(proxy, reason: 'youtube client creation failed');
         continue;
       }
     } while (true);

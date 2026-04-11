@@ -64,7 +64,7 @@ String? lastFetchedLyrics;
 final _clients = [customAndroidVr, customAndroidSdkless];
 
 // Timeouts and durations used across manifest fetching and cache validation.
-const Duration _manifestTimeout = Duration(seconds: 12);
+const Duration _manifestTimeout = Duration(seconds: 30);
 const Duration _cacheValidationDuration = Duration(hours: 1);
 
 /// Fetches a stream manifest for a song, honoring proxy settings.
