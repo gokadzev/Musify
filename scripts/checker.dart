@@ -1,8 +1,8 @@
 // ignore_for_file: avoid_print
 
 import 'package:http/http.dart' as http;
-import 'package:musify/DB/albums.db.dart';
-import 'package:musify/DB/playlists.db.dart';
+import 'package:musify/database/albums.db.dart';
+import 'package:musify/database/playlists.db.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 List playlists = [...playlistsDB, ...albumsDB];
