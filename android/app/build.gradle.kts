@@ -109,3 +109,7 @@ android {
 flutter {
     source = "../.."
 }
+
+afterEvaluate {
+    apply(from = "../no-build-id.gradle")
+}
