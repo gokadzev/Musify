@@ -1,0 +1,9 @@
+Enhancements
+- Added equalizer presets
+- Improved lyrics support
+
+Bug fixes
+- Fixed queue and shuffle bugs
+- Fixed original recommendations
+- Fixed automatic song picker
+- Full changelog: https://github.com/gokadzev/Musify/releases
