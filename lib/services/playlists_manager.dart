@@ -1148,3 +1148,39 @@ void _unpinPlaylist(String playlistId) {
   pinnedPlaylistIds.value = updated;
   unawaited(addOrUpdateData('user', 'pinnedPlaylistIds', updated));
 }
+
+/// Updates the offline playlist metadata (title, image, source) when a custom
+/// playlist is renamed or modified. This ensures the offline playlist section
+/// in the library displays the updated information.
+Future<void> syncOfflinePlaylistMetadata(Map updatedPlaylist) async {
+  final playlistId = updatedPlaylist['ytid']?.toString();
+  if (playlistId == null ||
+      !offlinePlaylistService.isPlaylistDownloaded(playlistId)) {
+    return;
+  }
+
+  final offlinePlaylists = List<dynamic>.from(
+    offlinePlaylistService.offlinePlaylists.value,
+  );
+  final offlineIndex = offlinePlaylists.indexWhere(
+    (p) => p['ytid']?.toString() == playlistId,
+  );
+
+  if (offlineIndex == -1) return;
+
+  // Update the offline playlist with the new metadata
+  offlinePlaylists[offlineIndex] = {
+    ...offlinePlaylists[offlineIndex],
+    'title': updatedPlaylist['title'],
+    'image': updatedPlaylist['image'],
+    'source': updatedPlaylist['source'],
+  };
+
+  // Create a new list to trigger ValueNotifier listeners
+  offlinePlaylistService.offlinePlaylists.value = List<dynamic>.from(
+    offlinePlaylists,
+  );
+  unawaited(
+    addOrUpdateData('userNoBackup', 'offlinePlaylists', offlinePlaylists),
+  );
+}

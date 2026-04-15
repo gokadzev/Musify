@@ -634,6 +634,10 @@ class PlaylistBar extends StatelessWidget {
         unawaited(
           addOrUpdateData('user', 'customPlaylists', userCustomPlaylists.value),
         );
+
+        // Update offline playlist if it exists
+        unawaited(syncOfflinePlaylistMetadata(result));
+
         final appCtx = NavigationManager().context;
         showToast(appCtx, appCtx.l10n!.playlistUpdated);
       }

@@ -497,6 +497,9 @@ class _PlaylistPageState extends State<PlaylistPage> {
             );
           }
 
+          // Update offline playlist if it exists
+          unawaited(syncOfflinePlaylistMetadata(updatedPlaylist));
+
           setState(() => _playlist = updatedPlaylist);
           showToast(context, context.l10n!.playlistUpdated);
         }
