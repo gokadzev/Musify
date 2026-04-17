@@ -202,6 +202,7 @@
   "restoredSuccess": "Dados restaurados com sucesso",
   "search": "Buscar",
   "searchHistoryMsg": "Histórico de buscas limpo",
+  "searchIsDisabledInOfflineMode": "A busca está desativada no modo offline",
   "selectDuration": "Selecionar duração",
   "setTimer": "Definir",
   "settingChangedMsg": "Configuração alterada",
