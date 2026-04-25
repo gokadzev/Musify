@@ -217,17 +217,32 @@ class OfflinePlaylistService {
     try {
       final progressNotifier = getProgressNotifier(playlistId);
       progressNotifier.value.isCancelled = true;
-      
-      // Immediately remove from active downloads to update status
-      activeDownloads.remove(playlistId);
-      
-      // Notify listeners so the UI rebuilds instantly with the new status
       progressNotifier.notifyListeners();
+
+      // Immediate visual feedback
+      showToast(context, '${context.l10n!.cancel}...');
+
+      const maxWaitTime = Duration(seconds: 30);
+      final startTime = DateTime.now();
+
+      // Wait for the ongoing tasks to complete with timeout
+      while (activeDownloads.contains(playlistId)) {
+        await Future.delayed(const Duration(milliseconds: 100));
+
+        if (DateTime.now().difference(startTime) > maxWaitTime) {
+          logger.log('Timeout waiting for download cancellation');
+          activeDownloads.remove(playlistId);
+          cleanupProgressNotifier(playlistId);
+          break;
+        }
+      }
 
       showToast(context, context.l10n!.downloadCancelled);
     } catch (e, stackTrace) {
       logger.log('Error cancelling download', error: e, stackTrace: stackTrace);
+      // Force remove from active downloads and cleanup on error
       activeDownloads.remove(playlistId);
+      cleanupProgressNotifier(playlistId);
     }
   }
 
