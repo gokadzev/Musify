@@ -206,11 +206,18 @@ class _UserSongsPageState extends State<UserSongsPage> {
                     label: Text(context.l10n!.play),
                     onPressed: () {
                       final songsList = getSongsList(widget.page);
+                      var sortedList = songsList;
+                      if (isOfflineSongs) {
+                        sortedList = _sortOfflineSongsLocal(
+                          songsList,
+                          _getCurrentOfflineSortType(),
+                        );
+                      }
                       final playlist = {
                         'ytid': '',
                         'title': title,
                         'source': 'user-created',
-                        'list': songsList,
+                        'list': sortedList,
                       };
                       audioHandler.playPlaylistSong(
                         playlist: playlist,
@@ -334,11 +341,18 @@ class _UserSongsPageState extends State<UserSongsPage> {
           builder: (_, searchQuery, __) {
             final isSearching = searchQuery.isNotEmpty;
             final displayList = _getDisplayList(songsList);
+            var sortedList = songsList;
+            if (isOfflineSongs) {
+              sortedList = _sortOfflineSongsLocal(
+                songsList,
+                _getCurrentOfflineSortType(),
+              );
+            }
             final playlist = {
               'ytid': '',
               'title': title,
               'source': 'user-created',
-              'list': songsList,
+              'list': sortedList,
             };
 
             if (displayList.isEmpty) {
