@@ -555,22 +555,23 @@ class _PlaylistPageState extends State<PlaylistPage> {
                           width: 40,
                           height: 40,
                           child: CircularProgressIndicator(
-                            value: progress.progress,
+                            value: progress.isCancelled ? null : progress.progress,
                             strokeWidth: 3,
                             backgroundColor: Theme.of(
                               context,
                             ).colorScheme.primaryContainer,
                           ),
                         ),
-                        IconButton(
-                          icon: const Icon(
-                            FluentIcons.dismiss_24_filled,
-                            size: 16,
+                        if (!progress.isCancelled)
+                          IconButton(
+                            icon: const Icon(
+                              FluentIcons.dismiss_24_filled,
+                              size: 16,
+                            ),
+                            onPressed: () => offlinePlaylistService
+                                .cancelDownload(context, playlistId),
+                            tooltip: context.l10n!.cancel,
                           ),
-                          onPressed: () => offlinePlaylistService
-                              .cancelDownload(context, playlistId),
-                          tooltip: context.l10n!.cancel,
-                        ),
                       ],
                     ),
                   );

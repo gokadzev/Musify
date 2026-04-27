@@ -219,6 +219,9 @@ class OfflinePlaylistService {
       progressNotifier.value.isCancelled = true;
       progressNotifier.notifyListeners();
 
+      // Immediate visual feedback
+      showToast(context, context.l10n!.cancellingDownload);
+
       const maxWaitTime = Duration(seconds: 30);
       final startTime = DateTime.now();
 
@@ -399,8 +402,8 @@ class OfflinePlaylistService {
   void cleanupProgressNotifier(String playlistId) {
     try {
       if (downloadProgressNotifiers.containsKey(playlistId)) {
-        final notifier = downloadProgressNotifiers.remove(playlistId);
-        notifier?.dispose();
+        final notifier = downloadProgressNotifiers[playlistId];
+        notifier?.value = DownloadProgress(total: 0);
       }
     } catch (e, stackTrace) {
       logger.log(
