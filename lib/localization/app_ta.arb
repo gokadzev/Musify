@@ -66,6 +66,7 @@
   "download": "பதிவிறக்கம்",
   "downloadAppUpdate": "பயன்பாட்டு புதுப்பிப்பை பதிவிறக்கு",
   "downloadCancelled": "பதிவிறக்கம் ரத்து செய்யப்பட்டது",
+  "cancellingDownload": "Cancelling download...",
   "downloadFailed": "பதிவிறக்கம் தோல்வியடைந்தது",
   "downloadPlaylist": "பிளேலிஸ்டை பதிவிறக்கு",
   "downloadsDeleted": "Downloads deleted successfully",
