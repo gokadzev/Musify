@@ -66,6 +66,7 @@
   "download": "Λήψη",
   "downloadAppUpdate": "Λήψη ενημέρωσης εφαρμογής",
   "downloadCancelled": "Η λήψη ακυρώθηκε",
+  "cancellingDownload": "Cancelling download...",
   "downloadFailed": "Αποτυχία λήψης",
   "downloadPlaylist": "Λήψη λίστας αναπαραγωγής",
   "downloadsDeleted": "Downloads deleted successfully",
