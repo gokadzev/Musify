@@ -66,6 +66,7 @@
   "download": "Загрузить",
   "downloadAppUpdate": "Загрузить обновление приложения",
   "downloadCancelled": "Загрузка отменена",
+  "cancellingDownload": "Отмена загрузки...",
   "downloadFailed": "Загрузка не удалась",
   "downloadPlaylist": "Загрузить плейлист",
   "downloadsDeleted": "Загрузки успешно удалены",
