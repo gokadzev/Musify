@@ -66,6 +66,7 @@
   "download": "다운로드",
   "downloadAppUpdate": "앱 업데이트 다운로드",
   "downloadCancelled": "다운로드 취소됨",
+  "cancellingDownload": "Cancelling download...",
   "downloadFailed": "다운로드 실패함",
   "downloadPlaylist": "재생목록 다운로드",
   "downloadsDeleted": "다운로드된 항목이 성공적으로 삭제됨",
