@@ -66,6 +66,7 @@
   "download": "הורדה",
   "downloadAppUpdate": "הורד ועדכן",
   "downloadCancelled": "הורדה בוטלה",
+  "cancellingDownload": "Cancelling download...",
   "downloadFailed": "הורדה נכשלה",
   "downloadPlaylist": "הורד רשימת השמעה",
   "downloadsDeleted": "Downloads deleted successfully",
