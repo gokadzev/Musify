@@ -66,6 +66,7 @@
   "download": "Télécharger",
   "downloadAppUpdate": "Télécharger la mise à jour",
   "downloadCancelled": "Téléchargement annulé",
+  "cancellingDownload": "Annulation du téléchargement...",
   "downloadFailed": "Échec du téléchargement",
   "downloadPlaylist": "Télécharger la playlist",
   "downloadsDeleted": "Téléchargements supprimés avec succès",

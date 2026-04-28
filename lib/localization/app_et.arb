@@ -66,6 +66,7 @@
   "download": "Laadi alla",
   "downloadAppUpdate": "Laadi rakenduse uuendus alla",
   "downloadCancelled": "Allalaadimine tühistatud",
+  "cancellingDownload": "Cancelling download...",
   "downloadFailed": "Allalaadimine ebaõnnestus",
   "downloadPlaylist": "Laadi nimekiri alla",
   "downloadsDeleted": "Downloads deleted successfully",

@@ -66,6 +66,7 @@
   "download": "Завантажити",
   "downloadAppUpdate": "Завантажити оновлення програми",
   "downloadCancelled": "Завантаження скасовано",
+  "cancellingDownload": "Скасування завантаження...",
   "downloadFailed": "Завантаження не вдалося",
   "downloadPlaylist": "Завантажити плейлист",
   "downloadsDeleted": "Завантаження успішно видалені",

@@ -66,6 +66,7 @@
   "download": "Ladda ner",
   "downloadAppUpdate": "Ladda ner appuppdatering",
   "downloadCancelled": "Nerladdningen avbruten",
+  "cancellingDownload": "Cancelling download...",
   "downloadFailed": "Nerladdningen misslyckades",
   "downloadPlaylist": "Ladda ner spellista",
   "downloadsDeleted": "Downloads deleted successfully",

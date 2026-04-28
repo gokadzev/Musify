@@ -66,6 +66,7 @@
   "download": "डाउनलोड करें",
   "downloadAppUpdate": "ऐप अपडेट डाउनलोड करें",
   "downloadCancelled": "Download cancelled",
+  "cancellingDownload": "Cancelling download...",
   "downloadFailed": "Download failed",
   "downloadPlaylist": "Download playlist",
   "downloadsDeleted": "Downloads deleted successfully",
