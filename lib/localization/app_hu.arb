@@ -66,6 +66,7 @@
   "download": "Letöltés",
   "downloadAppUpdate": "Alkalmazás frissítés letöltése",
   "downloadCancelled": "Letöltés megszakítva",
+  "cancellingDownload": "Cancelling download...",
   "downloadFailed": "Sikertelen letöltés",
   "downloadPlaylist": "Lejátszási lista letöltése",
   "downloadsDeleted": "Downloads deleted successfully",
