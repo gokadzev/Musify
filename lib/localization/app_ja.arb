@@ -66,6 +66,7 @@
   "download": "ダウンロード",
   "downloadAppUpdate": "アプリの最新版をダウンロード",
   "downloadCancelled": "ダウンロードをキャンセルしました",
+  "cancellingDownload": "Cancelling download...",
   "downloadFailed": "ダウンロード失敗",
   "downloadPlaylist": "再生リストをダウンロード",
   "downloadsDeleted": "Downloads deleted successfully",
