@@ -414,6 +414,36 @@ class OfflinePlaylistService {
     }
   }
 
+  /// Registers a playlist as offline without downloading anything.
+  /// Used when all songs are already downloaded (e.g. via another playlist).
+  void registerAsOffline(Map playlist) {
+    final playlistId = playlist['ytid']?.toString();
+    if (playlistId == null || playlistId.isEmpty) return;
+
+    // Already registered — nothing to do
+    if (isPlaylistDownloaded(playlistId)) return;
+
+    final offlinePlaylist = {
+      'ytid': playlistId,
+      'title': playlist['title'],
+      'image': playlist['image'],
+      'source': playlist['source'],
+      'list': playlist['list'] ?? [],
+      'downloadedAt': DateTime.now().millisecondsSinceEpoch,
+    };
+
+    final updatedPlaylists = List<dynamic>.from(offlinePlaylists.value)
+      ..add(offlinePlaylist);
+    offlinePlaylists.value = updatedPlaylists;
+    unawaited(
+      addOrUpdateData(
+        'userNoBackup',
+        'offlinePlaylists',
+        offlinePlaylists.value,
+      ),
+    );
+  }
+
   Map<String, dynamic> getDownloadStatus(String playlistId) {
     final isDownloaded = isPlaylistDownloaded(playlistId);
     final isDownloading = isPlaylistDownloading(playlistId);

@@ -525,6 +525,14 @@ class _PlaylistPageState extends State<PlaylistPage> {
             playlistOfflineStatus = isPlaylistFullyOffline(playlistSongs);
 
             if (playlistOfflineStatus) {
+              // Auto-register as offline playlist if not already registered.
+              // This handles the case where all songs were downloaded via
+              // another playlist, so the album/playlist shows the download
+              // icon but doesn't appear in the offline playlists section.
+              if (!offlinePlaylistService.isPlaylistDownloaded(playlistId)) {
+                offlinePlaylistService.registerAsOffline(_playlist);
+              }
+
               return IconButton.filled(
                 icon: Icon(
                   FluentIcons.arrow_download_off_24_filled,
