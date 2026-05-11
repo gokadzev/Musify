@@ -437,7 +437,6 @@ Future<String?> fetchSongStreamUrl(String songId, bool isLive) async {
     if (isLive) {
       final streamInfo = await ytClient.videos.streamsClient
           .getHttpLiveStreamUrl(VideoId(songId));
-      unawaited(updateRecentlyPlayed(songId));
       return streamInfo;
     }
 
@@ -447,7 +446,6 @@ Future<String?> fetchSongStreamUrl(String songId, bool isLive) async {
     // Try to get from cache
     final cachedUrl = await _getCachedSongUrl(cacheKey, _cacheDuration);
     if (cachedUrl != null) {
-      unawaited(updateRecentlyPlayed(songId));
       return cachedUrl;
     }
 
@@ -466,7 +464,6 @@ Future<String?> fetchSongStreamUrl(String songId, bool isLive) async {
 
     unawaited(addOrUpdateData('cache', cacheKey, url));
 
-    unawaited(updateRecentlyPlayed(songId));
     return url;
   } on TimeoutException catch (_) {
     logger.log('fetchSongStreamUrl request timed out for $songId');
@@ -705,7 +702,16 @@ Future<File?> _downloadAndSaveArtworkFile(String url, String filePath) async {
 
 const recentlyPlayedSongsLimit = 250;
 
-Future<void> updateRecentlyPlayed(dynamic songId) async {
+/// Updates the recently played list and listening count for [songId].
+///
+/// When [songFallback] is provided, its metadata is used to seed the history
+/// entry if the song has never been played before. This avoids a network
+/// request when registering offline songs whose metadata is already available
+/// locally (e.g. from [userOfflineSongs]).
+Future<void> updateRecentlyPlayed(
+  dynamic songId, {
+  Map? songFallback,
+}) async {
   try {
     if (userRecentlyPlayed.isNotEmpty &&
         userRecentlyPlayed[0]['ytid'] == songId) {
@@ -734,7 +740,9 @@ Future<void> updateRecentlyPlayed(dynamic songId) async {
       song['lastPlayed'] = DateTime.now();
       userRecentlyPlayed.insert(0, song);
     } else {
-      final newSongDetails = await getSongDetails(0, songId);
+      final newSongDetails = songFallback != null
+          ? Map<String, dynamic>.from(songFallback)
+          : await getSongDetails(0, songId);
       newSongDetails['listeningCount'] = 1;
       newSongDetails['lastPlayed'] = DateTime.now();
       userRecentlyPlayed.insert(0, newSongDetails);
