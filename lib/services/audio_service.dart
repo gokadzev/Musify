@@ -1498,6 +1498,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
       await audioPlayer.play();
 
+      unawaited(updateRecentlyPlayed(song['ytid'], songFallback: song));
+
       if (!isOffline) {
         final cacheKey =
             'song_${song['ytid']}_${audioQualitySetting.value}_url';
