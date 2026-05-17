@@ -26,6 +26,7 @@ import 'dart:math';
 
 import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
+import 'package:musify/constants/clients.dart';
 import 'package:musify/main.dart';
 import 'package:musify/models/proxy_model.dart';
 import 'package:musify/services/settings_manager.dart';
@@ -259,7 +260,7 @@ class ProxyManager {
   ) async {
     try {
       final manifest = await _defaultYt.videos.streams
-          .getManifest(songId, ytClients: [YoutubeApiClient.androidVr])
+          .getManifest(songId, ytClients: customClients)
           .timeout(Duration(seconds: timeoutSeconds));
       return manifest;
     } catch (e) {
@@ -279,7 +280,7 @@ class ProxyManager {
       final res = _ensureProxyResources(proxy, timeoutSeconds: timeoutSeconds);
       ytClient = YoutubeExplode(httpClient: YoutubeHttpClient(res.ioClient));
       final manifest = await ytClient.videos.streams
-          .getManifest(songId, ytClients: [YoutubeApiClient.androidVr])
+          .getManifest(songId, ytClients: customClients)
           .timeout(Duration(seconds: timeoutSeconds));
       _workingProxies.add(proxy);
       shouldCloseClient = true;

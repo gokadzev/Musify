@@ -61,8 +61,6 @@ final recentlyPlayedVersion = ValueNotifier<int>(0);
 final lyrics = ValueNotifier<String?>(null);
 String? lastFetchedLyrics;
 
-final _clients = [customAndroidVr, customAndroidSdkless];
-
 // Timeouts and durations used across manifest fetching and cache validation.
 const Duration _manifestTimeout = Duration(seconds: 30);
 const Duration _cacheValidationDuration = Duration(hours: 1);
@@ -74,7 +72,7 @@ Future<StreamManifest?> _fetchStreamManifest(String songId) async {
   }
 
   return ytClient.videos.streams
-      .getManifest(songId, ytClients: _clients)
+      .getManifest(songId, ytClients: customClients)
       .timeout(_manifestTimeout);
 }
 
@@ -708,10 +706,7 @@ const recentlyPlayedSongsLimit = 250;
 /// entry if the song has never been played before. This avoids a network
 /// request when registering offline songs whose metadata is already available
 /// locally (e.g. from [userOfflineSongs]).
-Future<void> updateRecentlyPlayed(
-  dynamic songId, {
-  Map? songFallback,
-}) async {
+Future<void> updateRecentlyPlayed(dynamic songId, {Map? songFallback}) async {
   try {
     if (userRecentlyPlayed.isNotEmpty &&
         userRecentlyPlayed[0]['ytid'] == songId) {
