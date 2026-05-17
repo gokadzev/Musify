@@ -134,10 +134,8 @@ class _DenoProcess {
     _process.stdin.writeln(request.code); // Send the code to Deno
   }
 
-  static Future<_DenoProcess> init({
-      required String initCode,
-      String? denoExe
-    }) async {
+  static Future<_DenoProcess> init(
+      {required String initCode, String? denoExe}) async {
     final tmpDir = await Directory.systemTemp.createTemp('yt_deno_');
     final tmpFile = File(path.join(tmpDir.path, 'deno_init.js'));
     await tmpFile.writeAsString(initCode);

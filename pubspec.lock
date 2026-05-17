@@ -887,7 +887,7 @@ packages:
       path: "packages/youtube_explode_dart"
       relative: true
     source: path
-    version: "3.0.5"
+    version: "3.1.0"
 sdks:
   dart: ">=3.11.0 <4.0.0"
   flutter: ">=3.41.6 <4.0.0"

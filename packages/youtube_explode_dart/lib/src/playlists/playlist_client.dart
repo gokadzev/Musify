@@ -41,19 +41,12 @@ class PlaylistClient {
 
     while (page != null) {
       for (final video in page.videos) {
-        final videoId = video.id;
-
-        // Already added
-        if (!encounteredVideoIds.add(videoId)) {
-          continue;
-        }
-
-        if (video.channelId.isEmpty) {
-          continue;
-        }
+        // Track every ID we've seen, even filtered ones, so the loop terminates.
+        if (!encounteredVideoIds.add(video.id)) continue;
+        if (video.channelId.isEmpty) continue;
 
         yield Video(
-          VideoId(videoId),
+          VideoId(video.id),
           video.title,
           video.author,
           ChannelId(video.channelId),
@@ -62,15 +55,15 @@ class PlaylistClient {
           null,
           video.description,
           video.duration,
-          ThumbnailSet(videoId),
+          ThumbnailSet(video.id),
           null,
           Engagement(video.viewCount, null, null),
           false,
         );
       }
-      if (encounteredVideoIds.length == prevLength) {
-        break;
-      }
+
+      // If this page added no new IDs we've reached the end.
+      if (encounteredVideoIds.length == prevLength) break;
       prevLength = encounteredVideoIds.length;
       page = await page.nextPage(_httpClient);
     }

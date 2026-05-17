@@ -70,47 +70,40 @@ class _InitialData extends InitialData {
   _InitialData(super.root);
 
   JsonMap _getContentContext() {
-    return root
-        .get('contents')!
-        .get('twoColumnBrowseResultsRenderer')!
-        .getList('tabs')!
-        .firstWhere((e) => e['tabRenderer']?['content'] != null)
-        .get('tabRenderer')!
-        .get('content')!
-        .get('sectionListRenderer')!
-        .getList('contents')!
-        .firstOrNull!
-        .get('itemSectionRenderer')!
-        .getList('contents')!
-        .firstOrNull!
-        .get('channelAboutFullMetadataRenderer')!;
+    final tabs = root.getJson<List<dynamic>>(
+        'contents/twoColumnBrowseResultsRenderer/tabs')!;
+    final tabWithContent =
+        tabs.firstWhere((e) => e['tabRenderer']?['content'] != null) as JsonMap;
+    final sectionContents = tabWithContent
+        .getJson<JsonMap>('tabRenderer/content/sectionListRenderer')!
+        .getJson<List<dynamic>>('contents')!;
+    final firstSection = sectionContents.firstOrNull! as JsonMap;
+    final itemContents =
+        firstSection.getJson<List<dynamic>>('itemSectionRenderer/contents')!;
+    final firstItem = itemContents.firstOrNull! as JsonMap;
+    return firstItem.getJson<JsonMap>('channelAboutFullMetadataRenderer')!;
   }
 
   late final String? description =
-      content.get('description')?.getT<String>('simpleText');
+      content.getJson<String>('description/simpleText');
 
   late final List<ChannelLink> channelLinks = content
-          .getList('primaryLinks')
+          .getJson<List<dynamic>>('primaryLinks')
           ?.map(
             (e) => ChannelLink(
-              e.get('title')?.getT<String>('simpleText') ?? '',
+              (e as JsonMap).getJson<String>('title/simpleText') ?? '',
               extractUrl(
-                e
-                        .get('navigationEndpoint')
-                        ?.get('commandMetadata')
-                        ?.get('webCommandMetadata')
-                        ?.getT<String>('url') ??
-                    e
-                        .get('navigationEndpoint')
-                        ?.get('urlEndpoint')
-                        ?.getT<String>('url') ??
+                (e).getJson<String>(
+                      'navigationEndpoint/commandMetadata/webCommandMetadata/url',
+                    ) ??
+                    (e).getJson<String>(
+                      'navigationEndpoint/urlEndpoint/url',
+                    ) ??
                     '',
               ),
               Uri.parse(
-                e
-                        .get('icon')
-                        ?.getList('thumbnails')
-                        ?.firstOrNull
+                ((e).getJson<List<dynamic>>('icon/thumbnails')?.firstOrNull
+                            as JsonMap?)
                         ?.getT<String>('url') ??
                     '',
               ),
@@ -118,14 +111,14 @@ class _InitialData extends InitialData {
           )
           .toList() ??
       content
-          .getList('links')
+          .getJson<List<dynamic>>('links')
           ?.map((e) => e['channelExternalLinkViewModel'])
           .nonNulls
           .cast<Map<String, dynamic>>()
           .map((e) {
         return ChannelLink(
-          e.get('title')?.getT<String>('content') ?? '',
-          Uri.parse('https://${e.get('link')!.getT<String>('content')!}'),
+          e.getJson<String>('title/content') ?? '',
+          Uri.parse('https://${e.getJson<String>('link/content')!}'),
           // Youtube doesn't provide icons anymore.
           Uri(),
         );
@@ -133,18 +126,18 @@ class _InitialData extends InitialData {
       [];
 
   late final int? viewCount =
-      content.get('viewCountText')?.getT<String>('simpleText').parseInt();
+      content.getJson<String>('viewCountText/simpleText').parseInt();
 
-  late final String? joinDate =
-      content.get('joinedDateText')?.getList('runs')?[1].getT<String>('text');
+  late final String? joinDate = content
+      .getJson<List<dynamic>>('joinedDateText/runs')?[1]
+      .getT<String>('text');
 
-  late final String title = content.get('title')!.getT<String>('simpleText')!;
+  late final String title = content.getJson<String>('title/simpleText')!;
 
   late final List<JsonMap> avatar =
-      content.get('avatar')!.getList('thumbnails')!;
+      content.getJson<List<dynamic>>('avatar/thumbnails')!.cast<JsonMap>();
 
-  late final String? country =
-      content.get('country')?.getT<String>('simpleText');
+  late final String? country = content.getJson<String>('country/simpleText');
 
   Uri extractUrl(String text) =>
       Uri.parse(Uri.decodeFull(_urlExp.firstMatch(text)?.group(1) ?? ''));

@@ -111,12 +111,11 @@ class _InitialData extends InitialData {
   _InitialData(super.root);
 
   int? get subscribersCount {
-    final renderer = root.get('header')?.get('c4TabbedHeaderRenderer');
+    final renderer = root.getJson<JsonMap>('header/c4TabbedHeaderRenderer');
     if (renderer?['subscriberCountText'] == null) {
       return null;
     }
-    final subText =
-        renderer?.get('subscriberCountText')?.getT<String>('simpleText');
+    final subText = renderer?.getJson<String>('subscriberCountText/simpleText');
     if (subText == null) {
       return null;
     }
@@ -148,11 +147,10 @@ class _InitialData extends InitialData {
     return (count * multiplier).toInt();
   }
 
-  String? get bannerUrl => root
-      .get('header')
-      ?.get('c4TabbedHeaderRenderer')
-      ?.get('banner')
-      ?.getList('thumbnails')
-      ?.first
-      .getT<String>('url');
+  String? get bannerUrl => (root
+          .getJson<List<dynamic>>(
+            'header/c4TabbedHeaderRenderer/banner/thumbnails',
+          )
+          ?.first as JsonMap?)
+      ?.getT<String>('url');
 }

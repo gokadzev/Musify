@@ -19,6 +19,7 @@ enum VideoIdData {
   withHighDynamicRangeStreams('vX2vsvdq8nw'),
   withClosedCaptions('YltHGKX80Y8'),
   withBrokenClosedCaptions('1VKIIw05JnE'),
+  recent('X1GtdZkiJC4'),
   // used only for testing music data extraction
   music('jNm_wrWquPs');
 

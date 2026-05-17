@@ -61,59 +61,52 @@ class _InitialData extends InitialData {
 
   List<JsonMap>? getContentContext() {
     if (root['contents'] != null) {
-      return root
-          .get('contents')
-          ?.get('twoColumnSearchResultsRenderer')
-          ?.get('primaryContents')
-          ?.get('sectionListRenderer')
-          ?.getList('contents')
-          ?.firstOrNull
-          ?.get('itemSectionRenderer')
-          ?.getList('contents');
+      final sectionContents = root.getJson<List<dynamic>>(
+        'contents/twoColumnSearchResultsRenderer/primaryContents/sectionListRenderer/contents',
+      );
+      final firstSection = sectionContents?.firstOrNull as JsonMap?;
+      return firstSection
+          ?.getJson<List<dynamic>>('itemSectionRenderer/contents')
+          ?.cast<JsonMap>();
     }
     if (root['onResponseReceivedCommands'] != null) {
-      return root
-          .getList('onResponseReceivedCommands')
-          ?.firstOrNull
-          ?.get('appendContinuationItemsAction')
-          ?.getList('continuationItems')
-          ?.firstOrNull
-          ?.get('itemSectionRenderer')
-          ?.getList('contents');
+      final commands =
+          root.getJson<List<dynamic>>('onResponseReceivedCommands');
+      final firstCmd = commands?.firstOrNull as JsonMap?;
+      final continuationItems = firstCmd?.getJson<List<dynamic>>(
+        'appendContinuationItemsAction/continuationItems',
+      );
+      final firstItem = continuationItems?.firstOrNull as JsonMap?;
+      return firstItem
+          ?.getJson<List<dynamic>>('itemSectionRenderer/contents')
+          ?.cast<JsonMap>();
     }
     return null;
   }
 
   String? _getContinuationToken() {
     if (root['contents'] != null) {
-      final contents = root
-          .get('contents')
-          ?.get('twoColumnSearchResultsRenderer')
-          ?.get('primaryContents')
-          ?.get('sectionListRenderer')
-          ?.getList('contents');
+      final contents = root.getJson<List<dynamic>>(
+        'contents/twoColumnSearchResultsRenderer/primaryContents/sectionListRenderer/contents',
+      );
 
       if (contents == null || contents.length <= 1) {
         return null;
       }
-      return contents
-          .elementAtSafe(1)
-          ?.get('continuationItemRenderer')
-          ?.get('continuationEndpoint')
-          ?.get('continuationCommand')
-          ?.getT<String>('token');
+      return (contents.elementAtSafe(1) as JsonMap?)?.getJson<String>(
+        'continuationItemRenderer/continuationEndpoint/continuationCommand/token',
+      );
     }
     if (root['onResponseReceivedCommands'] != null) {
-      return root
-          .getList('onResponseReceivedCommands')
-          ?.firstOrNull
-          ?.get('appendContinuationItemsAction')
-          ?.getList('continuationItems')
-          ?.elementAtSafe(1)
-          ?.get('continuationItemRenderer')
-          ?.get('continuationEndpoint')
-          ?.get('continuationCommand')
-          ?.getT<String>('token');
+      final commands =
+          root.getJson<List<dynamic>>('onResponseReceivedCommands');
+      final firstCmd = commands?.firstOrNull as JsonMap?;
+      final continuationItems = firstCmd?.getJson<List<dynamic>>(
+        'appendContinuationItemsAction/continuationItems',
+      );
+      return (continuationItems?.elementAtSafe(1) as JsonMap?)?.getJson<String>(
+        'continuationItemRenderer/continuationEndpoint/continuationCommand/token',
+      );
     }
     return null;
   }
@@ -122,21 +115,15 @@ class _InitialData extends InitialData {
   late final List<SearchResult> searchContent =
       getContentContext()?.map(_parseContent).nonNulls.toList() ?? const [];
 
-  List<SearchResult> get relatedVideos =>
-      getContentContext()
-          ?.where((e) => e['shelfRenderer'] != null)
-          .map(
-            (e) => e
-                .get('shelfRenderer')
-                ?.get('content')
-                ?.get('verticalListRenderer')
-                ?.getList('items'),
-          )
-          .firstOrNull
-          ?.map(_parseContent)
-          .nonNulls
-          .toList() ??
-      const [];
+  List<SearchResult> get relatedVideos {
+    final context = getContentContext();
+    final shelf = context?.where((e) => e['shelfRenderer'] != null).firstOrNull;
+    final items = shelf?.getJson<List<dynamic>>(
+      'shelfRenderer/content/verticalListRenderer/items',
+    );
+    return items?.map((e) => _parseContent(e as JsonMap?)).nonNulls.toList() ??
+        const [];
+  }
 
   late final String? continuationToken = _getContinuationToken();
 
@@ -163,54 +150,51 @@ class _InitialData extends InitialData {
       return null;
     }
     if (content['videoRenderer'] != null) {
-      final renderer = content.get('videoRenderer')!;
+      final renderer = content.getJson<JsonMap>('videoRenderer')!;
 
-      //       root.get('ownerText')?.getT<List<dynamic>>('runs')?.parseRuns() ??
       return SearchVideo(
           VideoId(renderer.getT<String>('videoId')!),
           renderer
-              .get('title')!
-              .getT<List<dynamic>>('runs')!
+              .getJson<List<dynamic>>('title/runs')!
               .cast<Map<dynamic, dynamic>>()
               .parseRuns(),
           renderer
-              .get('ownerText')!
-              .getT<List<dynamic>>('runs')!
+              .getJson<List<dynamic>>('ownerText/runs')!
               .cast<Map<dynamic, dynamic>>()
               .parseRuns(),
           renderer
-                  .getList('detailedMetadataSnippets')
-                  ?.firstOrNull
-                  ?.get('snippetText')
-                  ?.getT<List<dynamic>>('runs')
+                  .getJson<List<dynamic>>(
+                    'detailedMetadataSnippets/0/snippetText/runs',
+                  )
                   ?.cast<Map<dynamic, dynamic>>()
                   .parseRuns() ??
               '',
-          renderer.get('lengthText')?.getT<String>('simpleText') ?? '',
+          renderer.getJson<String>('lengthText/simpleText') ?? '',
           int.parse(
             renderer
-                    .get('viewCountText')
-                    ?.getT<String>('simpleText')
+                    .getJson<String>('viewCountText/simpleText')
                     ?.stripNonDigits()
                     .nullIfWhitespace ??
                 renderer
-                    .get('viewCountText')
-                    ?.getList('runs')
+                    .getJson<List<dynamic>>('viewCountText/runs')
                     ?.firstOrNull
                     ?.getT<String>('text')
                     ?.stripNonDigits()
                     .nullIfWhitespace ??
                 '0',
           ),
-          (renderer.get('thumbnail')?.getList('thumbnails') ?? const [])
+          (renderer.getJson<List<dynamic>>('thumbnail/thumbnails') ?? const [])
               .map(
-                (e) => Thumbnail(Uri.parse(e['url']), e['height'], e['width']),
+                (e) => Thumbnail(
+                  Uri.parse((e as Map)['url'] as String),
+                  (e)['height'],
+                  (e)['width'],
+                ),
               )
               .toList(),
-          renderer.get('publishedTimeText')?.getT<String>('simpleText'),
+          renderer.getJson<String>('publishedTimeText/simpleText'),
           renderer
-                  .get('viewCountText')
-                  ?.getList('runs')
+                  .getJson<List<dynamic>>('viewCountText/runs')
                   ?.elementAtSafe(1)
                   ?.getT<String>('text')
                   ?.trim() ==
@@ -220,46 +204,55 @@ class _InitialData extends InitialData {
 
     if (content['radioRenderer'] != null ||
         content['playlistRenderer'] != null) {
-      final renderer =
-          (content.get('radioRenderer') ?? content.get('playlistRenderer'))!;
+      final renderer = content.getJson<JsonMap>('radioRenderer') ??
+          content.getJson<JsonMap>('playlistRenderer')!;
 
+      final thumbnails =
+          renderer.getJson<List<dynamic>>('thumbnails/0/thumbnails') ??
+              const [];
       return SearchPlaylist(
         PlaylistId(renderer.getT<String>('playlistId')!),
-        renderer.get('title')!.getT<String>('simpleText')!,
+        renderer.getJson<String>('title/simpleText')!,
         renderer
-                .get('videoCountText')
-                ?.getT<List<dynamic>>('runs')
+                .getJson<List<dynamic>>('videoCountText/runs')
                 ?.cast<Map<dynamic, dynamic>>()
                 .parseRuns()
                 .parseInt() ??
             0,
-        (renderer.getList('thumbnails')?[0].getList('thumbnails') ?? const [])
-            .map((e) => Thumbnail(Uri.parse(e['url']), e['height'], e['width']))
+        thumbnails
+            .map((e) => Thumbnail(
+                  Uri.parse((e as Map)['url'] as String),
+                  (e)['height'],
+                  (e)['width'],
+                ))
             .toList(),
       );
     }
     if (content['channelRenderer'] != null) {
-      final renderer = content.get('channelRenderer')!;
+      final renderer = content.getJson<JsonMap>('channelRenderer')!;
 
       return SearchChannel(
         ChannelId(renderer.getT<String>('channelId')!),
-        renderer.get('title')!.getT<String>('simpleText')!,
-        renderer.get('descriptionSnippet')?.getList('runs')?.parseRuns() ?? '',
+        renderer.getJson<String>('title/simpleText')!,
         renderer
-                .get('videoCountText')
-                ?.getList('runs')
+                .getJson<List<dynamic>>('descriptionSnippet/runs')
+                ?.cast<Map<dynamic, dynamic>>()
+                .parseRuns() ??
+            '',
+        renderer
+                .getJson<List<dynamic>>('videoCountText/runs')
                 ?.first
                 .getT<String>('text')
                 .parseInt() ??
             -1,
-        (renderer.get('thumbnail')?.getList('thumbnails') ?? const [])
-            .map((e) => Thumbnail(
-                Uri.parse('https:${e['url']}'), e['height'], e['width']))
+        (renderer.getJson<List<dynamic>>('thumbnail/thumbnails') ?? const [])
+            .map((e) => Thumbnail(Uri.parse('https:${(e as Map)['url']}'),
+                (e)['height'], (e)['width']))
             .toList(),
       );
     }
     if (content['lockupViewModel'] != null) {
-      final viewModel = content.get('lockupViewModel')!;
+      final viewModel = content.getJson<JsonMap>('lockupViewModel')!;
 
       final type = viewModel.getT<String>('contentType');
       if (type != 'LOCKUP_CONTENT_TYPE_PLAYLIST') {

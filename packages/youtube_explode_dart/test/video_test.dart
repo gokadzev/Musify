@@ -105,9 +105,9 @@ void main() {
 
     expect(video.musicData.length, 2);
     final musicData = video.musicData.first;
-    expect(musicData.song, 'Hello (Single Edit) (Single Edit)');
-    expect(musicData.artist, 'Martin Solveig, Dragonette');
-    expect(musicData.album, 'Smash');
+    expect(musicData.song, 'Hello (Single Edit)');
+    expect(musicData.artist, 'Martin Solveig');
+    expect(musicData.album, 'Fixin To Thrill');
     expect(musicData.image, isNotNull);
   });
 }

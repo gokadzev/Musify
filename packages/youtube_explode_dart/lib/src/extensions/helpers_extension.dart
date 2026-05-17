@@ -309,7 +309,7 @@ extension GetOrNullMap on Map {
         return null;
       }
     }
-    return value as T;
+    return value as T?;
   }
 }
 

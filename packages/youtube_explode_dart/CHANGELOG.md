@@ -1,3 +1,8 @@
+## 3.1.0
+- Code refactoring
+- Update EJS module to 0.8.0
+- Fix: channel, playlist, videos apis.
+
 ## 3.0.5
 - Re-add requireWatchPage functionality to `getManifest`.
 - Allow specifying deno path. Thanks to @obemu.

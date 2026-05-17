@@ -32,15 +32,15 @@ class StreamClient {
   ///
   /// See [YoutubeApiClient] for all the possible clients that can be set using the [ytClients] parameter.
   /// If [ytClients] is null the library automatically manages the clients, otherwise only the clients provided are used.
-  /// Currently by default the  [YoutubeApiClient.android] clients is used,
-  /// and if a js solver is provided the [YoutubeApiClient.tv] is used additionally.
+  /// Currently by default the  [YoutubeApiClient.androidSdkless] client is used,
+  /// and if a js solver is provided the [YoutubeApiClient.safari] is used additionally.
   ///
   ///
   /// Note: if using any android client youtube often prevents downloading the same stream multiple times or downloading more than one stream from the same manifest.
   /// Note: that age restricted videos are no longer support due to the changes in the YouTube API.
   ///
   /// If [requireWatchPage] (default: true) is set to false the watch page is not used to extract the streams (so the process can be faster) but
-  /// it COULD be less reliable (not tested thoroughly).
+  /// it probably will be less reliable.
   /// If the extracted streams require signature decoding for which the watch page is required, the client will automatically fetch the watch page anyways (e.g. [YoutubeApiClient.tv]).
   ///
   /// If the extraction fails an exception is thrown, to diagnose the issue enable the logging from the `logging` package, and open an issue with the output.
@@ -68,7 +68,7 @@ class StreamClient {
     final clients = ytClients ?? [YoutubeApiClient.androidSdkless];
 
     if (_jsChallengeSolver != null && ytClients == null) {
-      clients.add(YoutubeApiClient.tv);
+      clients.add(YoutubeApiClient.safari);
     }
 
     final uniqueStreams = LinkedHashSet<StreamInfo>(

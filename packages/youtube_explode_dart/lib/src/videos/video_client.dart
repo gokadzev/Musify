@@ -83,8 +83,10 @@ class VideoClient {
     for (var i = 0; i < 3; i++) {
       final client = await RelatedVideosClient.get(_httpClient, video);
       if (client != null) {
-        return RelatedVideosList(
-            client.relatedVideos().toList(), client, _httpClient);
+        final videos = client.relatedVideos().toList();
+        if (videos.isNotEmpty) {
+          return RelatedVideosList(videos, client, _httpClient);
+        }
       }
     }
     return null;

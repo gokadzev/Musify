@@ -78,44 +78,50 @@ class _InitialData extends InitialData {
   List<JsonMap> getContentContext() {
     List<JsonMap>? context;
     if (root.containsKey('contents')) {
-      var render = root
-          .get('contents')
-          ?.get('twoColumnBrowseResultsRenderer')
-          ?.getList('tabs')
+      final tabs = root.getJson<List<dynamic>>(
+        'contents/twoColumnBrowseResultsRenderer/tabs',
+      );
+      final selectedTab = tabs
           ?.map((e) => e['tabRenderer'])
           .cast<JsonMap>()
-          .firstWhereOrNull((e) => e['selected'] as bool? ?? false)
-          ?.get('content');
+          .firstWhereOrNull((e) => e['selected'] as bool? ?? false);
+      var render = selectedTab?.getJson<JsonMap>('content');
 
       if (render != null) {
         if (render.containsKey('sectionListRenderer')) {
-          render = render
-              .get('sectionListRenderer')
-              ?.getList('contents')
-              ?.firstOrNull
-              ?.get('itemSectionRenderer')
-              ?.getList('contents')
-              ?.firstOrNull;
+          final sectionContents = render.getJson<List<dynamic>>(
+            'sectionListRenderer/contents',
+          );
+          final firstSection = sectionContents?.firstOrNull as JsonMap?;
+          render = firstSection
+              ?.getJson<List<dynamic>>(
+                'itemSectionRenderer/contents',
+              )
+              ?.firstOrNull as JsonMap?;
 
           if (render?.containsKey('gridRenderer') ?? false) {
-            context =
-                render?.get('gridRenderer')?.getList('items')?.cast<JsonMap>();
+            context = render
+                ?.getJson<List<dynamic>>('gridRenderer/items')
+                ?.cast<JsonMap>();
           } else if (render?.containsKey('messageRenderer') ?? false) {
             // Workaround for no-videos.
             context = const [];
           }
         } else if (render.containsKey('richGridRenderer')) {
-          context =
-              render.get('richGridRenderer')?.getList('contents') ?? const [];
+          context = render
+                  .getJson<List<dynamic>>('richGridRenderer/contents')
+                  ?.cast<JsonMap>() ??
+              const [];
         }
       }
     }
     if (context == null && root.containsKey('onResponseReceivedActions')) {
-      context = root
-          .getList('onResponseReceivedActions')
-          ?.firstOrNull
-          ?.get('appendContinuationItemsAction')
-          ?.getList('continuationItems')
+      final firstAction = root
+          .getJson<List<dynamic>>('onResponseReceivedActions')
+          ?.firstOrNull as JsonMap?;
+      context = firstAction
+          ?.getJson<List<dynamic>>(
+              'appendContinuationItemsAction/continuationItems')
           ?.cast<JsonMap>();
     }
     if (context == null) {
@@ -125,49 +131,57 @@ class _InitialData extends InitialData {
   }
 
   JsonMap? getContinuationContext() {
-    final continuationItemRenderer = getContentContext()
-        .firstWhereOrNull((e) => e['continuationItemRenderer'] != null)
-        ?.get('continuationItemRenderer');
+    final contentContext = getContentContext();
+    final continuationItem = contentContext
+        .firstWhereOrNull((e) => e['continuationItemRenderer'] != null);
+    final continuationItemRenderer =
+        continuationItem?.getJson<JsonMap>('continuationItemRenderer');
     if (continuationItemRenderer != null) {
-      final command = continuationItemRenderer
-          .get('continuationEndpoint')
-          ?.get('continuationCommand');
+      final command = continuationItemRenderer.getJson<JsonMap>(
+        'continuationEndpoint/continuationCommand',
+      );
       if (command != null) {
         return command;
       }
     }
     if (root.containsKey('contents')) {
-      return root
-          .get('contents')
-          ?.get('twoColumnBrowseResultsRenderer')
-          ?.getList('tabs')
+      final tabs = root.getJson<List<dynamic>>(
+        'contents/twoColumnBrowseResultsRenderer/tabs',
+      );
+      final selectedTab = tabs
           ?.map((e) => e['tabRenderer'])
           .cast<JsonMap>()
-          .firstWhereOrNull((e) => e['selected'] as bool? ?? false)
-          ?.get('content')
-          ?.get('sectionListRenderer')
-          ?.getList('contents')
-          ?.firstOrNull
-          ?.get('itemSectionRenderer')
-          ?.getList('contents')
-          ?.firstOrNull
-          ?.get('gridRenderer')
-          ?.getList('items')
-          ?.firstWhereOrNull((e) => e['continuationItemRenderer'] != null)
-          ?.get('continuationItemRenderer')
-          ?.get('continuationEndpoint')
-          ?.get('continuationCommand');
+          .firstWhereOrNull((e) => e['selected'] as bool? ?? false);
+      final sectionContents = selectedTab?.getJson<List<dynamic>>(
+        'content/sectionListRenderer/contents',
+      );
+      final firstSection = sectionContents?.firstOrNull as JsonMap?;
+      final firstContentBlock = firstSection
+          ?.getJson<List<dynamic>>(
+            'itemSectionRenderer/contents',
+          )
+          ?.firstOrNull as JsonMap?;
+      final items =
+          firstContentBlock?.getJson<List<dynamic>>('gridRenderer/items');
+      final continuationItemFromGrid =
+          items?.firstWhereOrNull((e) => e['continuationItemRenderer'] != null)
+              as JsonMap?;
+      return continuationItemFromGrid?.getJson<JsonMap>(
+        'continuationItemRenderer/continuationEndpoint/continuationCommand',
+      );
     }
     if (root.containsKey('onResponseReceivedActions')) {
-      return root
-          .getList('onResponseReceivedActions')
-          ?.firstOrNull
-          ?.get('appendContinuationItemsAction')
-          ?.getList('continuationItems')
-          ?.firstWhereOrNull((e) => e['continuationItemRenderer'] != null)
-          ?.get('continuationItemRenderer')
-          ?.get('continuationEndpoint')
-          ?.get('continuationCommand');
+      final firstAction = root
+          .getJson<List<dynamic>>('onResponseReceivedActions')
+          ?.firstOrNull as JsonMap?;
+      final continuationItems = firstAction?.getJson<List<dynamic>>(
+        'appendContinuationItemsAction/continuationItems',
+      );
+      final continuationItemFromAction = continuationItems?.firstWhereOrNull(
+          (e) => e['continuationItemRenderer'] != null) as JsonMap?;
+      return continuationItemFromAction?.getJson<JsonMap>(
+        'continuationItemRenderer/continuationEndpoint/continuationCommand',
+      );
     }
     return null;
   }
@@ -178,47 +192,83 @@ class _InitialData extends InitialData {
     }
 
     Map<String, dynamic>? video;
+    bool isLockup = false;
     if (content.containsKey('gridVideoRenderer')) {
-      video = content.get('gridVideoRenderer');
+      video = content.getJson<JsonMap>('gridVideoRenderer');
     } else if (content.containsKey('richItemRenderer')) {
-      video = content
-          .get('richItemRenderer')
-          ?.get('content')
-          ?.get(type.youtubeRenderText);
+      video = content.getJson<JsonMap>(
+        'richItemRenderer/content/${type.youtubeRenderText}',
+      );
+      if (video == null && type == VideoType.normal) {
+        video = content
+            .getJson<JsonMap>('richItemRenderer/content/lockupViewModel');
+        if (video != null &&
+            video['contentType'] == 'LOCKUP_CONTENT_TYPE_VIDEO') {
+          isLockup = true;
+        } else {
+          video = null;
+        }
+      }
       if (type == VideoType.shorts && video != null) {
         return ChannelVideo(
             VideoId(video.getJson<String>(
                 'onTap/innertubeCommand/reelWatchEndpoint/videoId')!),
             video.getJson<String>('overlayMetadata/primaryText/content')!,
             Duration.zero,
-            video.getJson<String>('thumbnail/sources/0/url')!,
+            video.getJson<String>('thumbnail/sources/0/url') ??
+                video.getJson<String>(
+                    'thumbnailViewModel/thumbnailViewModel/image/sources/0/url') ??
+                '',
             '',
             video
-                .getJson<String>('overlayMetadata/secondaryText/content')!
-                .parseInt()!);
+                    .getJson<String>('overlayMetadata/secondaryText/content')
+                    .parseInt() ??
+                0);
       }
     }
 
     if (video == null) {
       return null;
     }
+
+    if (isLockup) {
+      return ChannelVideo(
+        VideoId(video.getJson<String>(
+            'rendererContext/commandContext/onTap/innertubeCommand/watchEndpoint/videoId')!),
+        video.getJson<String>('metadata/primaryText/content') ?? '',
+        video
+                .getJson<String>(
+                    'imageOverlays/0/thumbnailOverlayTimeStatusRenderer/text/simpleText')
+                ?.toDuration() ??
+            Duration.zero,
+        video.getJson<String>(
+                'thumbnailViewModel/thumbnailViewModel/image/sources/0/url') ??
+            '',
+        video.getJson<String>('metadata/metadataParts/1/text/content') ?? '',
+        video.getJson<String>('metadata/metadataText/content').parseInt() ?? 0,
+      );
+    }
+
     return ChannelVideo(
       VideoId(video.getT<String>('videoId')!),
-      video.get('title')?.getT<String>('simpleText') ??
-          video.get('title')?.getList('runs')?.map((e) => e['text']).join() ??
+      video.getJson<String>('title/simpleText') ??
+          video
+              .getJson<List<dynamic>>('title/runs')
+              ?.map((e) => (e as Map)['text'])
+              .join() ??
           '',
-      video
-              .getList('thumbnailOverlays')
-              ?.firstOrNull
-              ?.get('thumbnailOverlayTimeStatusRenderer')
-              ?.get('text')
-              ?.getT<String>('simpleText')
+      (video.getJson<List<dynamic>>('thumbnailOverlays')?.firstOrNull
+                  as JsonMap?)
+              ?.getJson<String>(
+                'thumbnailOverlayTimeStatusRenderer/text/simpleText',
+              )
               ?.toDuration() ??
           Duration.zero,
-      video.get('thumbnail')?.getList('thumbnails')?.last.getT<String>('url') ??
+      (video.getJson<List<dynamic>>('thumbnail/thumbnails')?.last as JsonMap?)
+              ?.getT<String>('url') ??
           '',
-      video.get('publishedTimeText')?.getT<String>('simpleText') ?? '',
-      video.get('viewCountText')?.getT<String>('simpleText').parseInt() ?? 0,
+      video.getJson<String>('publishedTimeText/simpleText') ?? '',
+      video.getJson<String>('viewCountText/simpleText').parseInt() ?? 0,
     );
   }
 }

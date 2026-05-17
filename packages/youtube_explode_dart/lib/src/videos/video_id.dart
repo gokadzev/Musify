@@ -104,7 +104,7 @@ abstract class VideoId with _$VideoId {
     if (!liveMatch.isNullOrWhiteSpace && validateVideoId(liveMatch!)) {
       return liveMatch;
     }
-    
+
     return null;
   }
 }
