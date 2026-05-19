@@ -58,37 +58,17 @@ Material UI & accent colors & dynamic colors (Android 12+) <br/>
 [<img src="https://github.com/gokadzev/Musify/raw/master/.github/assets/get-it-on-github.png" alt="Get it on Github" height="80">](https://github.com/gokadzev/Musify/releases/latest)
 [<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on Fdroid" height="80">](https://f-droid.org/packages/com.gokadzev.musify.fdroid)
 
+
 ---
 
-## License
+## Contributors
 
+Special thanks to all contributors for their time and effort.
 
-```
-Copyright © 2026 Valeri Gokadze
+<a href="https://github.com/gokadzev/Musify/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=gokadzev/Musify" alt="Contributors"/>
+</a>
 
-Musify is a free software licensed under GPL v3.0
-It is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-```
-
-```
-Being Open Source doesn't mean you can just make a copy of the app and upload it on playstore or sell
-a closed source copy of the same.
-Read the following carefully:
-1. Any copy of a software under GPL must be under same license. So you can't upload the app on a closed source
-  app repository like PlayStore/AppStore without distributing the source code.
-2. You can't sell any copied/modified version of the app under any "non-free" license.
-   You must provide the copy with the original software or with instructions on how to obtain original software,
-   should clearly state all changes, should clearly disclose full source code, should include same license
-   and all copyrights should be retained.
-
-In simple words, You can ONLY use the source code of this app for `Open Source` Project under `GPL v3.0` or later
-with all your source code CLEARLY DISCLOSED on any code hosting platform like GitHub, with clear INSTRUCTIONS on
-how to obtain the original software, should clearly STATE ALL CHANGES made and should RETAIN all copyrights.
-Use of this software under any "non-free" license is NOT permitted.
-```
-
-See the [GNU General Public License](https://github.com/gokadzev/Musify/blob/master/LICENSE) for more details.
 
 ---
 
@@ -106,21 +86,33 @@ You can see frequently asked questions and their answers [here](https://github.c
 
 ## Credits
 
-[Musify](https://github.com/Harsh-23/Musify) - Original inspiration for the concept and app name, while our implementation took a different direction with a complete rewrite, a rebranded logo, and a redesigned layout and UI.
+[Musify](https://github.com/Harsh-23/Musify) - Original inspiration for the concept and name. It is now completely reimplemented with new design and branding.
+
+
+---
+
+## License
+
+```
+Copyright © 2026 Valeri Gokadze
+
+Musify is free software licensed under GPL v3.0. You may use, modify, and distribute
+this software freely, but must keep the source code open and publicly available, retain
+all copyright notices, disclose all changes made, and use the same GPL v3.0 license.
+
+Prohibited: Closed-source distributions or commercial redistribution of modified versions.
+```
+
+See the [GNU General Public License](https://github.com/gokadzev/Musify/blob/master/LICENSE) for full details.
 
 ---
 
 ## Disclaimer
 
 ```
-Musify does not possess or maintain any association with the songs and other content accessible through the app.
-All songs and other content are the property of their respective owners and are safeguarded by copyright law.
-Musify holds no liability for any copyright infringement or other violations of intellectual property rights
-that may arise from the use of the songs and other content accessible through the app.
-Musify employs third-party plugins and assumes no responsibility for any harm or damage to the respective owners or
-any other parties resulting from the utilization of the songs and other content through the third-party plugins.
-By using the app, you consent to utilizing the songs and other content exclusively for personal,
-non-commercial purposes and in accordance with all applicable laws and regulations.
+Musify and its contributors do not host, own, or distribute any copyrighted audio content.
+The app provides access to content through plugins and external sources. All trademarks, songs, audio files, and related content remain the property of their respective owners and are protected by applicable copyright laws.
+Included plugins are provided for interoperability and educational purposes only. Users are solely responsible for ensuring that their use of the app complies with local laws, copyright regulations, and the terms of service of the respective content providers.
+The developers of Musify do not encourage or endorse copyright infringement and assume no liability for misuse of the software or third-party plugins.
 ```
-
 ---
