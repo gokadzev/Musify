@@ -288,7 +288,7 @@ class _QueueWidgetState extends State<QueueWidget> {
       buildDefaultDragHandles: false,
       padding: const EdgeInsets.only(top: 4, bottom: 24, left: 8, right: 8),
       itemCount: _queue.length,
-      onReorder: (oldIndex, newIndex) {
+      onReorderItem: (oldIndex, newIndex) {
         if (newIndex > oldIndex) newIndex--;
         setState(() {
           final item = _queue.removeAt(oldIndex);

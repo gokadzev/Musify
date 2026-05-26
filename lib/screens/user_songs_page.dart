@@ -387,7 +387,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
                     ),
                   );
                 },
-                onReorder: (oldIndex, newIndex) {
+                onReorderItem: (oldIndex, newIndex) {
                   setState(() {
                     if (oldIndex < newIndex) newIndex -= 1;
                     moveLikedSong(oldIndex, newIndex);
