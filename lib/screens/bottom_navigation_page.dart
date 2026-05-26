@@ -96,10 +96,17 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
                               _onTabTapped(index, items),
                         ),
                       Expanded(
-                        child: Column(
+                        child: Stack(
+                          alignment: Alignment.bottomCenter,
                           children: [
-                            Expanded(child: widget.child),
-                            const MiniPlayer(),
+                            widget.child,
+                            const Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 8,
+                              ),
+                              child: MiniPlayer(),
+                            ),
                           ],
                         ),
                       ),

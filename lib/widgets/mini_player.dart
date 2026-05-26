@@ -180,6 +180,7 @@ class _MiniPlayerBodyState extends State<_MiniPlayerBody>
               height: MiniPlayer.playerHeight,
               decoration: BoxDecoration(
                 color: colorScheme.surfaceContainerHigh,
+                borderRadius: BorderRadius.circular(MiniPlayer._borderRadius),
                 boxShadow: [
                   BoxShadow(
                     color: colorScheme.shadow.withValues(alpha: 0.08),
