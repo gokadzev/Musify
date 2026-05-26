@@ -67,6 +67,28 @@ class PlaylistUtils {
         .toList();
   }
 
+  /// Returns IDs of offline playlists that are not inside user folders.
+  static Set<String> offlinePlaylistIdsNotInFolders(
+    List<dynamic> rawOfflinePlaylists,
+    List<dynamic> folders,
+  ) {
+    final items = filterOfflinePlaylistsNotInFolders(
+      rawOfflinePlaylists,
+      folders,
+    );
+    return items.map((p) => p['ytid']?.toString()).whereType<String>().toSet();
+  }
+
+  /// Returns playlists with any entry whose ytid is present in ids removed.
+  static List<dynamic> excludePlaylistsWithIds(
+    List<dynamic> playlists,
+    Set<String> ids,
+  ) {
+    return playlists
+        .where((p) => p is Map && !ids.contains(p['ytid']?.toString()))
+        .toList();
+  }
+
   /// Find the index of a song in a playlist by its ytid.
   /// Returns the index if found, -1 if not found.
   static int findSongIndexByYtid(Map playlist, String songYtid) {

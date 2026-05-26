@@ -169,16 +169,29 @@ class _LibraryPageState extends State<LibraryPage> {
     final colorScheme = Theme.of(context).colorScheme;
     final isOffline = offlineMode.value;
 
+    final rawOfflinePlaylists = offlinePlaylistService.offlinePlaylists.value;
     final folders = isOffline
         ? userPlaylistFolders.value
               .where(PlaylistUtils.folderHasOfflinePlaylists)
               .toList()
         : userPlaylistFolders.value;
-    final playlistsNotInFolders = isOffline
-        ? getPlaylistsNotInFolders()
-              .where(PlaylistUtils.isPlaylistOffline)
-              .toList()
-        : getPlaylistsNotInFolders();
+
+    final offlinePlaylistsNotInFolders =
+        PlaylistUtils.filterOfflinePlaylistsNotInFolders(
+          rawOfflinePlaylists,
+          folders,
+        );
+
+    final offlineIdsNotInFolders = PlaylistUtils.offlinePlaylistIdsNotInFolders(
+      rawOfflinePlaylists,
+      folders,
+    );
+
+    final allPlaylistsNotInFolders = getPlaylistsNotInFolders();
+    final playlistsNotInFolders = PlaylistUtils.excludePlaylistsWithIds(
+      allPlaylistsNotInFolders,
+      offlineIdsNotInFolders,
+    );
 
     final hasFolders = folders.isNotEmpty;
     final hasCustomPlaylists = playlistsNotInFolders.isNotEmpty;
@@ -186,7 +199,7 @@ class _LibraryPageState extends State<LibraryPage> {
 
     final slivers = <Widget>[];
 
-    if (!isOffline || hasAnythingAfterOffline) {
+    if (hasAnythingAfterOffline) {
       slivers.add(
         SliverToBoxAdapter(
           child: Column(
@@ -235,21 +248,21 @@ class _LibraryPageState extends State<LibraryPage> {
                   cubeIcon: FluentIcons.heart_24_regular,
                   showBuildActions: false,
                 ),
+                PlaylistBar(
+                  context.l10n!.offlineSongs,
+                  onPressed: () =>
+                      NavigationManager.router.go('/library/userSongs/offline'),
+                  cubeIcon: FluentIcons.cloud_off_24_regular,
+                  borderRadius: !isOffline
+                      ? (hasAnythingAfterOffline
+                            ? BorderRadius.zero
+                            : commonCustomBarRadiusLast)
+                      : (hasAnythingAfterOffline
+                            ? commonCustomBarRadiusFirst
+                            : commonCustomBarRadius),
+                  showBuildActions: false,
+                ),
               ],
-              PlaylistBar(
-                context.l10n!.offlineSongs,
-                onPressed: () =>
-                    NavigationManager.router.go('/library/userSongs/offline'),
-                cubeIcon: FluentIcons.cloud_off_24_regular,
-                borderRadius: !isOffline
-                    ? (hasAnythingAfterOffline
-                          ? BorderRadius.zero
-                          : commonCustomBarRadiusLast)
-                    : (hasAnythingAfterOffline
-                          ? commonCustomBarRadiusFirst
-                          : commonCustomBarRadius),
-                showBuildActions: false,
-              ),
             ],
           ),
         ),
@@ -265,11 +278,7 @@ class _LibraryPageState extends State<LibraryPage> {
       }
     }
 
-    final rawOfflinePlaylists = offlinePlaylistService.offlinePlaylists.value;
-    final offlinePlaylists = PlaylistUtils.filterOfflinePlaylistsNotInFolders(
-      rawOfflinePlaylists,
-      folders,
-    );
+    final offlinePlaylists = offlinePlaylistsNotInFolders;
 
     if (offlinePlaylists.isNotEmpty) {
       slivers
