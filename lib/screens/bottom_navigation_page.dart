@@ -25,6 +25,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:musify/extensions/l10n.dart';
+import 'package:musify/main.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/flutter_bottom_sheet.dart'
     show closeCurrentBottomSheet;
@@ -96,18 +97,36 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
                               _onTabTapped(index, items),
                         ),
                       Expanded(
-                        child: Stack(
-                          alignment: Alignment.bottomCenter,
-                          children: [
-                            widget.child,
-                            const Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 8,
-                              ),
-                              child: MiniPlayer(),
-                            ),
-                          ],
+                        child: StreamBuilder<Object?>(
+                          stream: audioHandler.mediaItem,
+                          builder: (context, snapshot) {
+                            final mediaQuery = MediaQuery.of(context);
+                            final bottomPadding = snapshot.data == null
+                                ? mediaQuery.padding.bottom
+                                : mediaQuery.padding.bottom +
+                                      MiniPlayer.playerHeight;
+
+                            return Stack(
+                              alignment: Alignment.bottomCenter,
+                              children: [
+                                MediaQuery(
+                                  data: mediaQuery.copyWith(
+                                    padding: mediaQuery.padding.copyWith(
+                                      bottom: bottomPadding,
+                                    ),
+                                  ),
+                                  child: widget.child,
+                                ),
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 8,
+                                  ),
+                                  child: MiniPlayer(),
+                                ),
+                              ],
+                            );
+                          },
                         ),
                       ),
                     ],
