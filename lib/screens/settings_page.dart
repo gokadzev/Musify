@@ -182,7 +182,6 @@ class SettingsPage extends StatelessWidget {
                 context.l10n!.automaticUpdateChecks,
                 FluentIcons.arrow_sync_24_regular,
                 description: context.l10n!.automaticUpdateChecksDescription,
-                borderRadius: commonCustomBarRadiusLast,
                 trailing: Switch(
                   value: value ?? false,
                   onChanged: (value) =>
