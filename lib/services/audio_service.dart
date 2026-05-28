@@ -654,7 +654,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
           if (nextRecommendedSong != null) {
             final songToAdd = nextRecommendedSong;
             nextRecommendedSong = null;
-            await addToQueue(songToAdd);
+            await _insertRecommendedSong(songToAdd);
             logger.log('Background song added: "${songToAdd['title']}"');
           }
         } catch (e, stackTrace) {
@@ -726,6 +726,33 @@ class MusifyAudioHandler extends BaseAudioHandler {
       }
     } catch (e, stackTrace) {
       logger.log('Error adding to queue', error: e, stackTrace: stackTrace);
+    }
+  }
+
+  Future<void> _insertRecommendedSong(Map song) async {
+    try {
+      if (song['ytid'] == null || song['ytid'].toString().isEmpty) {
+        logger.log('Invalid recommended song data for queue');
+        return;
+      }
+
+      final insertIndex = _queueList.length;
+      final queueSong = _queueEntryIds.createSong(song);
+      queueSong['isAutoPicked'] = true;
+      _queueList.insert(insertIndex, queueSong);
+
+      if (_currentQueueIndex < 0) {
+        _currentQueueIndex = 0;
+      }
+
+      _updateQueueMediaItems();
+      _cleanupOldPreloadedSongs();
+
+      if (!audioPlayer.playing && _queueList.length == 1) {
+        await _playFromQueue(0);
+      }
+    } catch (e, stackTrace) {
+      logger.log('Error inserting recommended song', error: e, stackTrace: stackTrace);
     }
   }
 
@@ -1280,9 +1307,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
   /// Returns unplayed manually added songs after the current queue index.
   List<Map> _getUnplayedManualSongs() {
     return _queueList
-        .skip(_currentQueueIndex >= 0 ? _currentQueueIndex + 1 : 0)
-        .where((song) => song['isManuallyAdded'] == true)
-        .toList();
+      .skip(_currentQueueIndex >= 0 ? _currentQueueIndex + 1 : 0)
+      .where((song) =>
+        song['isManuallyAdded'] == true && song['isAutoPicked'] != true)
+      .toList();
   }
 
   void _resetPreloadingState() {
