@@ -22,6 +22,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:audio_service/audio_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
@@ -42,6 +43,7 @@ class QueueWidget extends StatefulWidget {
 class _QueueWidgetState extends State<QueueWidget> {
   List<Map> _queue = [];
   late StreamSubscription<List<Map>> _subscription;
+  late StreamSubscription<MediaItem?> _mediaSubscription;
   bool _isDismissing = false;
   bool _hasScrolledToInitial = false;
   final ScrollController _scrollController = ScrollController();
@@ -60,6 +62,12 @@ class _QueueWidgetState extends State<QueueWidget> {
         }
       }
     });
+    // listen to mediaItem changes UI reflects current song accurately.
+    _mediaSubscription = audioHandler.mediaItem
+        .distinct((prev, next) => prev?.id == next?.id)
+        .listen((_) {
+          if (mounted && !_isDismissing) setState(() {});
+        });
   }
 
   void _scrollToCurrentSong() {
@@ -85,6 +93,7 @@ class _QueueWidgetState extends State<QueueWidget> {
   @override
   void dispose() {
     _subscription.cancel();
+    _mediaSubscription.cancel();
     _scrollController.dispose();
     super.dispose();
   }
