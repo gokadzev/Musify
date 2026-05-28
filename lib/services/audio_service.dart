@@ -912,6 +912,54 @@ class MusifyAudioHandler extends BaseAudioHandler {
     }
   }
 
+  Future<void> reorderQueueById(String queueEntryId, int targetIndex) async {
+    try {
+      _queueEntryIds.ensureIds(_queueList);
+
+      final oldIndex = _queueList.indexWhere(
+        (s) => _queueEntryIds.ensureId(s) == queueEntryId,
+      );
+      if (oldIndex == -1) return;
+
+      // Clamp target index to valid range (allow insert at end)
+      if (targetIndex < 0) targetIndex = 0;
+      if (targetIndex > _queueList.length) targetIndex = _queueList.length;
+
+      final song = _queueList.removeAt(oldIndex);
+      var newIndex = targetIndex;
+      if (newIndex > _queueList.length) newIndex = _queueList.length;
+      _queueList.insert(newIndex, song);
+
+      if (oldIndex == _currentQueueIndex) {
+        _currentQueueIndex = newIndex;
+      } else if (oldIndex < _currentQueueIndex &&
+          newIndex >= _currentQueueIndex) {
+        _currentQueueIndex--;
+      } else if (oldIndex > _currentQueueIndex &&
+          newIndex <= _currentQueueIndex) {
+        _currentQueueIndex++;
+      }
+
+      if (oldIndex == _currentLoadingIndex) {
+        _currentLoadingIndex = newIndex;
+      } else if (oldIndex < _currentLoadingIndex &&
+          newIndex >= _currentLoadingIndex) {
+        _currentLoadingIndex--;
+      } else if (oldIndex > _currentLoadingIndex &&
+          newIndex <= _currentLoadingIndex) {
+        _currentLoadingIndex++;
+      }
+
+      _updateQueueMediaItems();
+    } catch (e, stackTrace) {
+      logger.log(
+        'Error reordering queue by id',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
+  }
+
   void clearQueue() {
     try {
       _queueList.clear();
