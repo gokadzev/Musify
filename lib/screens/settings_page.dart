@@ -80,6 +80,8 @@ class SettingsPage extends StatelessWidget {
     Color activatedColor,
     Color inactivatedColor,
   ) {
+    final isOffline = offlineMode.value;
+
     return Column(
       children: [
         SectionHeader(
@@ -167,6 +169,9 @@ class SettingsPage extends StatelessWidget {
               context.l10n!.offlineMode,
               FluentIcons.cloud_off_24_regular,
               description: context.l10n!.offlineModeDescription,
+              borderRadius: isOffline && isFdroidBuild
+                  ? commonCustomBarRadiusLast
+                  : BorderRadius.zero,
               trailing: Switch(
                 value: value,
                 onChanged: (value) => _toggleOfflineMode(context, value),
@@ -182,6 +187,9 @@ class SettingsPage extends StatelessWidget {
                 context.l10n!.automaticUpdateChecks,
                 FluentIcons.arrow_sync_24_regular,
                 description: context.l10n!.automaticUpdateChecksDescription,
+                borderRadius: offlineMode.value
+                    ? commonCustomBarRadiusLast
+                    : BorderRadius.zero,
                 trailing: Switch(
                   value: value ?? false,
                   onChanged: (value) =>
