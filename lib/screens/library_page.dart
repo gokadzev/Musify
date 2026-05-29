@@ -195,11 +195,11 @@ class _LibraryPageState extends State<LibraryPage> {
 
     final hasFolders = folders.isNotEmpty;
     final hasCustomPlaylists = playlistsNotInFolders.isNotEmpty;
-    final hasAnythingAfterOffline = hasFolders || hasCustomPlaylists;
+    final hasLibraryContent = !isOffline || hasFolders || hasCustomPlaylists;
 
     final slivers = <Widget>[];
 
-    if (hasAnythingAfterOffline) {
+    if (hasLibraryContent) {
       slivers.add(
         SliverToBoxAdapter(
           child: Column(
@@ -254,10 +254,10 @@ class _LibraryPageState extends State<LibraryPage> {
                       NavigationManager.router.go('/library/userSongs/offline'),
                   cubeIcon: FluentIcons.cloud_off_24_regular,
                   borderRadius: !isOffline
-                      ? (hasAnythingAfterOffline
+                      ? (hasCustomPlaylists || hasFolders
                             ? BorderRadius.zero
                             : commonCustomBarRadiusLast)
-                      : (hasAnythingAfterOffline
+                      : (hasCustomPlaylists || hasFolders
                             ? commonCustomBarRadiusFirst
                             : commonCustomBarRadius),
                   showBuildActions: false,
