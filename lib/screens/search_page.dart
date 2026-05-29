@@ -354,6 +354,7 @@ class _SearchPageState extends State<SearchPage> {
       for (var index = 0; index < playlistsCount; index++) {
         final playlist = _playlistsSearchResult[index];
         final isLast = index == playlistsCount - 1;
+        final borderRadius = getItemBorderRadius(index, playlistsCount);
 
         widgets.add(
           Padding(
@@ -364,6 +365,7 @@ class _SearchPageState extends State<SearchPage> {
               playlistId: playlist['ytid'],
               playlistArtwork: playlist['image'],
               cubeIcon: FluentIcons.apps_list_24_filled,
+              borderRadius: borderRadius,
             ),
           ),
         );
