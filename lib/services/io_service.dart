@@ -43,15 +43,9 @@ class FilePaths {
 
   // Ensure directories exist
   static Future<void> ensureDirectoriesExist() async {
-    final tracksDirectory = Directory('$applicationDirPath/$tracksDir');
-    final artworksDirectory = Directory('$applicationDirPath/$artworksDir');
-
-    if (!await tracksDirectory.exists()) {
-      await tracksDirectory.create(recursive: true);
-    }
-
-    if (!await artworksDirectory.exists()) {
-      await artworksDirectory.create(recursive: true);
-    }
+    await Future.wait([
+      Directory('$applicationDirPath/$tracksDir').create(recursive: true),
+      Directory('$applicationDirPath/$artworksDir').create(recursive: true),
+    ]);
   }
 }

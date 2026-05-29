@@ -249,6 +249,9 @@ void main() async {
   await initialisation();
 
   runApp(const Musify());
+  SchedulerBinding.instance.addPostFrameCallback((_) {
+    unawaited(postRunInitialisation());
+  });
 }
 
 Future<void> initialisation() async {
@@ -287,16 +290,37 @@ Future<void> initialisation() async {
     } on PlatformException {
       logger.log('Failed to get initial uri');
     }
-
-    if (isFdroidBuild && !offlineMode.value) {
-      await fetchAnnouncementOnly();
-    }
   } catch (e, stackTrace) {
     logger.log('Initialization Error', error: e, stackTrace: stackTrace);
   }
 
   applicationDirPath = (await getApplicationDocumentsDirectory()).path;
-  await FilePaths.ensureDirectoriesExist();
+  unawaited(
+    FilePaths.ensureDirectoriesExist().catchError((
+      Object error,
+      StackTrace stackTrace,
+    ) {
+      logger.log(
+        'Failed to create application directories',
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }),
+  );
+}
+
+Future<void> postRunInitialisation() async {
+  try {
+    if (isFdroidBuild && !offlineMode.value) {
+      await fetchAnnouncementOnly();
+    }
+  } catch (e, stackTrace) {
+    logger.log(
+      'Post-run initialization error',
+      error: e,
+      stackTrace: stackTrace,
+    );
+  }
 }
 
 void handleIncomingLink(Uri? uri) async {

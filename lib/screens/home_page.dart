@@ -43,6 +43,52 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  late Future<List<dynamic>> _suggestedPlaylistsFuture;
+  late Future<List<dynamic>> _likedPlaylistsFuture;
+  late Future<List<dynamic>> _recommendedSongsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _suggestedPlaylistsFuture = _loadSuggestedPlaylists();
+    _likedPlaylistsFuture = _loadSuggestedPlaylists(showOnlyLiked: true);
+    _recommendedSongsFuture = _loadRecommendedSongs();
+    currentLikedPlaylistsLength.addListener(_refreshLikedPlaylists);
+    externalRecommendations.addListener(_refreshRecommendedSongs);
+  }
+
+  @override
+  void dispose() {
+    currentLikedPlaylistsLength.removeListener(_refreshLikedPlaylists);
+    externalRecommendations.removeListener(_refreshRecommendedSongs);
+    super.dispose();
+  }
+
+  Future<List<dynamic>> _loadSuggestedPlaylists({
+    bool showOnlyLiked = false,
+  }) async {
+    return getPlaylists(
+      playlistsNum: recommendedCubesNumber,
+      onlyLiked: showOnlyLiked,
+    );
+  }
+
+  Future<List<dynamic>> _loadRecommendedSongs() async {
+    return getRecommendedSongs();
+  }
+
+  void _refreshLikedPlaylists() {
+    setState(() {
+      _likedPlaylistsFuture = _loadSuggestedPlaylists(showOnlyLiked: true);
+    });
+  }
+
+  void _refreshRecommendedSongs() {
+    setState(() {
+      _recommendedSongsFuture = _loadRecommendedSongs();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final playlistHeight = MediaQuery.sizeOf(context).height * 0.25 / 1.1;
@@ -94,10 +140,7 @@ class _HomePageState extends State<HomePage> {
         ? context.l10n!.backToFavorites
         : context.l10n!.suggestedPlaylists;
     return AsyncLoader<List<dynamic>>(
-      future: getPlaylists(
-        playlistsNum: recommendedCubesNumber,
-        onlyLiked: showOnlyLiked,
-      ),
+      future: showOnlyLiked ? _likedPlaylistsFuture : _suggestedPlaylistsFuture,
 
       builder: (context, playlists) {
         final itemsNumber = playlists.length.clamp(0, recommendedCubesNumber);
@@ -165,7 +208,7 @@ class _HomePageState extends State<HomePage> {
       valueListenable: externalRecommendations,
       builder: (_, recommendations, __) {
         return AsyncLoader<List<dynamic>>(
-          future: getRecommendedSongs(),
+          future: _recommendedSongsFuture,
 
           builder: (context, data) {
             if (data.isEmpty) return const SizedBox.shrink();
