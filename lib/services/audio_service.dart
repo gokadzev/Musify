@@ -97,6 +97,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
   static const Duration _errorRetryDelay = Duration(seconds: 2);
   static const Duration _songTransitionTimeout = Duration(seconds: 30);
   static const Duration _debounceInterval = Duration(milliseconds: 150);
+  static const String _recentMediaIdPrefix = 'recent:';
 
   int _activePreloadCount = 0;
   final Set<String> _preloadingYtIds = <String>{};
@@ -752,7 +753,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
         await _playFromQueue(0);
       }
     } catch (e, stackTrace) {
-      logger.log('Error inserting recommended song', error: e, stackTrace: stackTrace);
+      logger.log(
+        'Error inserting recommended song',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
   }
 
@@ -1256,6 +1261,183 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   bool get hasPrevious => _currentQueueIndex > 0 || _historyList.isNotEmpty;
 
+  String _recentMediaId(String ytid) => '$_recentMediaIdPrefix$ytid';
+
+  String? _ytidFromMediaId(String mediaId) {
+    if (mediaId.startsWith(_recentMediaIdPrefix)) {
+      return mediaId.substring(_recentMediaIdPrefix.length);
+    }
+    return mediaId.isEmpty ? null : mediaId;
+  }
+
+  String? _songYtid(Map song) {
+    final ytid = song['ytid']?.toString();
+    return ytid == null || ytid.isEmpty ? null : ytid;
+  }
+
+  Map? _firstPlayableSong(Iterable songs) {
+    for (final song in songs.whereType<Map>()) {
+      if (_songYtid(song) != null) {
+        return song;
+      }
+    }
+    return null;
+  }
+
+  Map? _findSongInList(Iterable songs, String ytid) {
+    for (final song in songs.whereType<Map>()) {
+      if (_songYtid(song) == ytid) {
+        return song;
+      }
+    }
+    return null;
+  }
+
+  Map? _findSongByYtid(String? ytid) {
+    if (ytid == null || ytid.isEmpty) return null;
+
+    final activeSong = currentSong;
+    if (activeSong?['ytid']?.toString() == ytid) {
+      return activeSong;
+    }
+
+    for (final source in [
+      _queueList,
+      userRecentlyPlayed,
+      userOfflineSongs,
+      userLikedSongsList,
+    ]) {
+      final song = _findSongInList(source, ytid);
+      if (song != null) return song;
+    }
+
+    return null;
+  }
+
+  Map? _latestResumableSong() {
+    final activeSong = currentSong;
+    if (activeSong != null && _songYtid(activeSong) != null) {
+      return activeSong;
+    }
+
+    final activeMediaItem = mediaItem.valueOrNull;
+    final activeYtid = activeMediaItem?.extras?['ytid']?.toString();
+    final activeMediaSong = _findSongByYtid(activeYtid);
+    if (activeMediaSong != null) return activeMediaSong;
+    if (activeYtid != null &&
+        activeYtid.isNotEmpty &&
+        activeMediaItem != null) {
+      return mediaItemToMap(activeMediaItem);
+    }
+
+    return _firstPlayableSong(userRecentlyPlayed) ??
+        _firstPlayableSong(userOfflineSongs) ??
+        _firstPlayableSong(userLikedSongsList);
+  }
+
+  Map<String, dynamic>? _normaliseResumableSong(Map song) {
+    final ytid = _songYtid(song);
+    if (ytid == null) return null;
+
+    final normalised = cloneMap(song);
+    normalised['id'] = ytid;
+    normalised['ytid'] = ytid;
+    normalised['highResImage'] ??=
+        normalised['image'] ?? normalised['lowResImage'] ?? '';
+    normalised['lowResImage'] ??= normalised['highResImage'];
+    normalised['isLive'] ??= false;
+    return normalised;
+  }
+
+  MediaItem? _mediaItemForResumption(Map song) {
+    final normalisedSong = _normaliseResumableSong(song);
+    if (normalisedSong == null) return null;
+
+    final ytid = normalisedSong['ytid'].toString();
+    final artist = normalisedSong['artist']?.toString().trim() ?? '';
+    return mapToMediaItem(normalisedSong).copyWith(
+      id: _recentMediaId(ytid),
+      displayTitle: normalisedSong['title']?.toString(),
+      displaySubtitle: artist.isEmpty ? 'Musify' : artist,
+    );
+  }
+
+  Future<void> _playResumableSong(Map song) async {
+    final normalisedSong = _normaliseResumableSong(song);
+    if (normalisedSong == null) return;
+
+    await playPlaylistSong(
+      playlist: {
+        'title': 'Musify',
+        'source': 'system-recent',
+        'list': [normalisedSong],
+      },
+      songIndex: 0,
+    );
+  }
+
+  @override
+  Future<List<MediaItem>> getChildren(
+    String parentMediaId, [
+    Map<String, dynamic>? options,
+  ]) async {
+    if (parentMediaId != AudioService.recentRootId &&
+        parentMediaId != AudioService.browsableRootId) {
+      return [];
+    }
+
+    final recentSong = _latestResumableSong();
+    final recentItem = recentSong == null
+        ? null
+        : _mediaItemForResumption(recentSong);
+    return recentItem == null ? [] : [recentItem];
+  }
+
+  @override
+  Future<MediaItem?> getMediaItem(String mediaId) async {
+    final song = _findSongByYtid(_ytidFromMediaId(mediaId));
+    return song == null ? null : _mediaItemForResumption(song);
+  }
+
+  @override
+  Future<void> prepareFromMediaId(
+    String mediaId, [
+    Map<String, dynamic>? extras,
+  ]) async {
+    final item = await getMediaItem(mediaId);
+    if (item == null) return;
+
+    mediaItem.add(item);
+    queue.add([item]);
+    playbackState.add(
+      PlaybackState(
+        controls: _pausedControls,
+        systemActions: const {
+          MediaAction.seek,
+          MediaAction.seekForward,
+          MediaAction.seekBackward,
+        },
+        androidCompactActionIndices: const [0, 1, 3],
+        processingState: AudioProcessingState.ready,
+        queueIndex: 0,
+        updateTime: DateTime.now(),
+      ),
+    );
+  }
+
+  @override
+  Future<void> playFromMediaId(
+    String mediaId, [
+    Map<String, dynamic>? extras,
+  ]) async {
+    final song = _findSongByYtid(_ytidFromMediaId(mediaId));
+    if (song == null) {
+      logger.log('No resumable song found for media id: $mediaId');
+      return;
+    }
+    await _playResumableSong(song);
+  }
+
   @override
   Future<void> onTaskRemoved() async {
     try {
@@ -1271,6 +1453,13 @@ class MusifyAudioHandler extends BaseAudioHandler {
   @override
   Future<void> play() async {
     try {
+      if (audioPlayer.audioSource == null) {
+        final recentSong = _latestResumableSong();
+        if (recentSong != null) {
+          await _playResumableSong(recentSong);
+          return;
+        }
+      }
       await audioPlayer.play();
     } catch (e, stackTrace) {
       logger.log('Error in play()', error: e, stackTrace: stackTrace);
@@ -1307,10 +1496,12 @@ class MusifyAudioHandler extends BaseAudioHandler {
   /// Returns unplayed manually added songs after the current queue index.
   List<Map> _getUnplayedManualSongs() {
     return _queueList
-      .skip(_currentQueueIndex >= 0 ? _currentQueueIndex + 1 : 0)
-      .where((song) =>
-        song['isManuallyAdded'] == true && song['isAutoPicked'] != true)
-      .toList();
+        .skip(_currentQueueIndex >= 0 ? _currentQueueIndex + 1 : 0)
+        .where(
+          (song) =>
+              song['isManuallyAdded'] == true && song['isAutoPicked'] != true,
+        )
+        .toList();
   }
 
   void _resetPreloadingState() {
