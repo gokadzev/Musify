@@ -57,6 +57,8 @@ final currentRecentlyPlayedLength = ValueNotifier<int>(
   userRecentlyPlayed.length,
 );
 final recentlyPlayedVersion = ValueNotifier<int>(0);
+var _songLikeUpdateToken = 0;
+final _latestSongLikeUpdateTokens = <String, int>{};
 
 final lyrics = ValueNotifier<String?>(null);
 String? lastFetchedLyrics;
@@ -213,20 +215,44 @@ List _deduplicateAndShuffle(List playlistSongs) {
   return uniqueSongs;
 }
 
-Future<void> updateSongLikeStatus(dynamic songId, bool add) async {
+Future<void> updateSongLikeStatus(
+  dynamic songId,
+  bool add, {
+  Map? songData,
+}) async {
   try {
-    if (add) {
-      if (!userLikedSongsList.any((song) => song['ytid'] == songId)) {
-        final songDetails = await getSongDetails(
-          userLikedSongsList.length,
-          songId,
-        );
-        userLikedSongsList.add(songDetails);
-      }
-    } else {
-      userLikedSongsList.removeWhere((song) => song['ytid'] == songId);
+    final normalizedSongId = songId?.toString().trim() ?? '';
+    if (normalizedSongId.isEmpty) return;
+
+    final updateToken = ++_songLikeUpdateToken;
+    _latestSongLikeUpdateTokens[normalizedSongId] = updateToken;
+
+    final songToAdd = add
+        ? await _resolveSongForLikedStatus(normalizedSongId, songData)
+        : null;
+
+    if (_latestSongLikeUpdateTokens[normalizedSongId] != updateToken) {
+      return;
     }
 
+    final updatedLikedSongs = _deduplicateLikedSongs(userLikedSongsList);
+
+    if (add) {
+      if (songToAdd != null &&
+          !updatedLikedSongs.any(
+            (song) => song['ytid']?.toString() == normalizedSongId,
+          )) {
+        updatedLikedSongs.add(songToAdd);
+      }
+    } else {
+      updatedLikedSongs.removeWhere(
+        (song) => song['ytid']?.toString() == normalizedSongId,
+      );
+    }
+
+    if (_likedSongIdsAreEqual(userLikedSongsList, updatedLikedSongs)) return;
+
+    userLikedSongsList = updatedLikedSongs;
     currentLikedSongsLength.value = userLikedSongsList.length;
     unawaited(addOrUpdateData('user', 'likedSongs', userLikedSongsList));
   } catch (e, stackTrace) {
@@ -236,6 +262,68 @@ Future<void> updateSongLikeStatus(dynamic songId, bool add) async {
       stackTrace: stackTrace,
     );
   }
+}
+
+Future<Map?> _resolveSongForLikedStatus(String songId, Map? songData) async {
+  if (songData?['ytid']?.toString() == songId) {
+    return Map<String, dynamic>.from(songData!);
+  }
+
+  final cachedSong = _findSongById(userLikedSongsList, songId);
+  if (cachedSong != null) return Map<String, dynamic>.from(cachedSong);
+
+  return getSongDetails(userLikedSongsList.length, songId);
+}
+
+Map? _findSongById(Iterable<dynamic> songs, String songId) {
+  for (final song in songs) {
+    if (song is Map && song['ytid']?.toString() == songId) return song;
+  }
+
+  return null;
+}
+
+List _deduplicateLikedSongs(Iterable<dynamic> likedSongs) {
+  final seenSongIds = <String>{};
+  final deduplicatedSongs = [];
+
+  for (final song in likedSongs) {
+    if (song is! Map) {
+      deduplicatedSongs.add(song);
+      continue;
+    }
+
+    final songId = song['ytid']?.toString();
+    if (songId == null || songId.isEmpty) {
+      deduplicatedSongs.add(song);
+      continue;
+    }
+
+    if (seenSongIds.add(songId)) {
+      deduplicatedSongs.add(song);
+    }
+  }
+
+  return deduplicatedSongs;
+}
+
+bool _likedSongIdsAreEqual(List previous, List updated) {
+  if (previous.length != updated.length) return false;
+
+  for (var i = 0; i < previous.length; i++) {
+    final previousSong = previous[i];
+    final updatedSong = updated[i];
+    if (previousSong is! Map || updatedSong is! Map) {
+      if (previousSong != updatedSong) return false;
+      continue;
+    }
+
+    if (previousSong['ytid']?.toString() != updatedSong['ytid']?.toString()) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 void moveLikedSong(int oldIndex, int newIndex) {
@@ -275,11 +363,17 @@ Future<void> renameSongInLikedSongs(
   }
 }
 
-bool isSongAlreadyLiked(songIdToCheck) =>
-    userLikedSongsList.any((song) => song['ytid'] == songIdToCheck);
+bool isSongAlreadyLiked(songIdToCheck) {
+  final songId = songIdToCheck?.toString();
+  return userLikedSongsList.any((song) => song['ytid']?.toString() == songId);
+}
 
-bool isPlaylistAlreadyLiked(playlistIdToCheck) =>
-    userLikedPlaylists.any((playlist) => playlist['ytid'] == playlistIdToCheck);
+bool isPlaylistAlreadyLiked(playlistIdToCheck) {
+  final playlistId = playlistIdToCheck?.toString();
+  return userLikedPlaylists.any(
+    (playlist) => playlist['ytid']?.toString() == playlistId,
+  );
+}
 
 bool isSongAlreadyOffline(songIdToCheck) =>
     userOfflineSongs.any((song) => song['ytid'] == songIdToCheck);

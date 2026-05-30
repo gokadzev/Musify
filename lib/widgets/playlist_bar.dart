@@ -206,8 +206,13 @@ class PlaylistBar extends StatelessWidget {
           case 'like':
             if (_resolvedPlaylistId != null) {
               final isLiked = isPlaylistAlreadyLiked(_resolvedPlaylistId);
-              updatePlaylistLikeStatus(_resolvedPlaylistId!, !isLiked);
-              currentLikedPlaylistsLength.value += !isLiked ? 1 : -1;
+              unawaited(
+                updatePlaylistLikeStatus(
+                  _resolvedPlaylistId!,
+                  !isLiked,
+                  playlistData: playlistData,
+                ),
+              );
             }
             break;
           case 'pin':
