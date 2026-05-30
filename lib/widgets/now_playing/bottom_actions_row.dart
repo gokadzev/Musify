@@ -155,7 +155,11 @@ class _BottomActionsRowState extends State<BottomActionsRow> {
               statusNotifier: _songLikeStatus,
               activeColor: colorScheme.primary,
               onPressed: () {
-                updateSongLikeStatus(widget.audioId, !_songLikeStatus.value);
+                updateSongLikeStatus(
+                  widget.audioId,
+                  !_songLikeStatus.value,
+                  songData: mediaItemToMap(widget.metadata),
+                );
                 _songLikeStatus.value = !_songLikeStatus.value;
               },
               tooltip: l10n.likedSongs,

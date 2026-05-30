@@ -101,6 +101,8 @@ const pinnedPlaylistsLimit = 5;
 final currentLikedPlaylistsLength = ValueNotifier<int>(
   userLikedPlaylists.length,
 );
+var _playlistLikeUpdateToken = 0;
+final _latestPlaylistLikeUpdateTokens = <String, int>{};
 
 Future<List<dynamic>> getUserPlaylists() async {
   final futures = userPlaylists.value.map((playlistID) async {
@@ -467,9 +469,16 @@ bool _removePlaylistFromFolders(String playlistId) {
 }
 
 bool _removePlaylistFromLikedPlaylists(String playlistId) {
-  final previousLength = userLikedPlaylists.length;
-  userLikedPlaylists.removeWhere((playlist) => playlist['ytid'] == playlistId);
-  return userLikedPlaylists.length != previousLength;
+  final updatedLikedPlaylists = _deduplicateLikedPlaylists(userLikedPlaylists)
+    ..removeWhere((playlist) => playlist['ytid']?.toString() == playlistId);
+
+  if (_likedPlaylistIdsAreEqual(userLikedPlaylists, updatedLikedPlaylists)) {
+    return false;
+  }
+
+  userLikedPlaylists = updatedLikedPlaylists;
+  currentLikedPlaylistsLength.value = userLikedPlaylists.length;
+  return true;
 }
 
 String createPlaylistFolder(String folderName, [BuildContext? context]) {
@@ -1084,32 +1093,51 @@ Future<void> renameSongInPlaylist(
   }
 }
 
-Future<void> updatePlaylistLikeStatus(String playlistId, bool add) async {
+Future<void> updatePlaylistLikeStatus(
+  String playlistId,
+  bool add, {
+  Map? playlistData,
+}) async {
   try {
-    if (add) {
-      if (!userLikedPlaylists.any(
-        (playlist) => playlist['ytid'] == playlistId,
-      )) {
-        final playlist = playlists.firstWhere(
-          (playlist) => playlist['ytid'] == playlistId,
-          orElse: () => <String, dynamic>{},
-        );
+    final normalizedPlaylistId = playlistId.trim();
+    if (normalizedPlaylistId.isEmpty) return;
 
-        if (playlist.isNotEmpty) {
-          userLikedPlaylists.add(playlist);
-        } else {
-          final playlistInfo = await getPlaylistInfoForWidget(playlistId);
-          if (playlistInfo != null) {
-            userLikedPlaylists.add(playlistInfo);
-          }
-        }
+    final updateToken = ++_playlistLikeUpdateToken;
+    _latestPlaylistLikeUpdateTokens[normalizedPlaylistId] = updateToken;
+
+    final playlistToAdd = add
+        ? await _resolvePlaylistForLikedStatus(
+            normalizedPlaylistId,
+            playlistData,
+          )
+        : null;
+
+    if (_latestPlaylistLikeUpdateTokens[normalizedPlaylistId] != updateToken) {
+      return;
+    }
+
+    final updatedLikedPlaylists = _deduplicateLikedPlaylists(
+      userLikedPlaylists,
+    );
+
+    if (add) {
+      if (playlistToAdd != null &&
+          !updatedLikedPlaylists.any(
+            (playlist) => playlist['ytid']?.toString() == normalizedPlaylistId,
+          )) {
+        updatedLikedPlaylists.add(playlistToAdd);
       }
     } else {
-      userLikedPlaylists.removeWhere(
-        (playlist) => playlist['ytid'] == playlistId,
+      updatedLikedPlaylists.removeWhere(
+        (playlist) => playlist['ytid']?.toString() == normalizedPlaylistId,
       );
     }
 
+    if (_likedPlaylistIdsAreEqual(userLikedPlaylists, updatedLikedPlaylists)) {
+      return;
+    }
+
+    userLikedPlaylists = updatedLikedPlaylists;
     currentLikedPlaylistsLength.value = userLikedPlaylists.length;
     unawaited(addOrUpdateData('user', 'likedPlaylists', userLikedPlaylists));
   } catch (e, stackTrace) {
@@ -1119,6 +1147,54 @@ Future<void> updatePlaylistLikeStatus(String playlistId, bool add) async {
       stackTrace: stackTrace,
     );
   }
+}
+
+List<Map> _deduplicateLikedPlaylists(Iterable<Map> likedPlaylists) {
+  final seenPlaylistIds = <String>{};
+  final deduplicatedPlaylists = <Map>[];
+
+  for (final playlist in likedPlaylists) {
+    final playlistId = playlist['ytid']?.toString();
+    if (playlistId == null || playlistId.isEmpty) {
+      deduplicatedPlaylists.add(playlist);
+      continue;
+    }
+
+    if (seenPlaylistIds.add(playlistId)) {
+      deduplicatedPlaylists.add(playlist);
+    }
+  }
+
+  return deduplicatedPlaylists;
+}
+
+bool _likedPlaylistIdsAreEqual(List<Map> previous, List<Map> updated) {
+  if (previous.length != updated.length) return false;
+
+  for (var i = 0; i < previous.length; i++) {
+    if (previous[i]['ytid']?.toString() != updated[i]['ytid']?.toString()) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+Future<Map?> _resolvePlaylistForLikedStatus(
+  String playlistId,
+  Map? playlistData,
+) async {
+  if (playlistData?['ytid']?.toString() == playlistId) {
+    return Map<String, dynamic>.from(playlistData!);
+  }
+
+  final cachedPlaylist = _searchAppPlaylistsById(playlistId);
+  if (cachedPlaylist != null) {
+    return Map<String, dynamic>.from(cachedPlaylist);
+  }
+
+  final playlistInfo = await getPlaylistInfoForWidget(playlistId);
+  return playlistInfo == null ? null : Map<String, dynamic>.from(playlistInfo);
 }
 
 bool isPlaylistPinned(String playlistId) =>

@@ -369,10 +369,9 @@ class _PlaylistPageState extends State<PlaylistPage> {
                     updatePlaylistLikeStatus(
                       _playlist['ytid'],
                       playlistLikeStatus.value,
+                      playlistData: _playlist,
                     ),
                   );
-                  currentLikedPlaylistsLength.value =
-                      currentLikedPlaylistsLength.value - 1;
                 },
                 tooltip: context.l10n!.removeFromLikedSongs,
               )
@@ -385,10 +384,9 @@ class _PlaylistPageState extends State<PlaylistPage> {
                     updatePlaylistLikeStatus(
                       _playlist['ytid'],
                       playlistLikeStatus.value,
+                      playlistData: _playlist,
                     ),
                   );
-                  currentLikedPlaylistsLength.value =
-                      currentLikedPlaylistsLength.value + 1;
                 },
                 tooltip: context.l10n!.addToLikedSongs,
               );

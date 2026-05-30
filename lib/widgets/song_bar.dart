@@ -255,16 +255,12 @@ class _SongBarState extends State<SongBar> {
       case 'like':
         final newValue = !_songLikeStatus.value;
         _songLikeStatus.value = newValue;
-        final likedSongsLength = currentLikedSongsLength.value;
-        currentLikedSongsLength.value = newValue
-            ? likedSongsLength + 1
-            : likedSongsLength - 1;
-        updateSongLikeStatus(_ytid, newValue).catchError((e) {
-          logger.log('Error updating song like status', error: e);
-          // Revert on error
-          _songLikeStatus.value = !newValue;
-          currentLikedSongsLength.value = likedSongsLength;
-        });
+        updateSongLikeStatus(_ytid, newValue, songData: widget.song).catchError(
+          (e) {
+            logger.log('Error updating song like status', error: e);
+            _songLikeStatus.value = !newValue;
+          },
+        );
         showToast(
           context,
           newValue
