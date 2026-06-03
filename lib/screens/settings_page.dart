@@ -42,6 +42,7 @@ import 'package:musify/utilities/url_launcher.dart';
 import 'package:musify/widgets/bottom_sheet_bar.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/custom_bar.dart';
+import 'package:musify/widgets/mini_player_bottom_space.dart';
 import 'package:musify/widgets/section_header.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -68,6 +69,7 @@ class SettingsPage extends StatelessWidget {
             if (!offlineMode.value) _buildOnlineFeaturesSection(context),
             _buildOthersSection(context),
             const SizedBox(height: 20),
+            const MiniPlayerBottomSpace(),
           ],
         ),
       ),

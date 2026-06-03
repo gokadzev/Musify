@@ -30,6 +30,7 @@ import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/playlist_utils.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/dialog_item.dart';
+import 'package:musify/widgets/mini_player_bottom_space.dart';
 import 'package:musify/widgets/playlist_bar.dart';
 
 class PlaylistFolderPage extends StatefulWidget {
@@ -171,6 +172,7 @@ class _PlaylistFolderPageState extends State<PlaylistFolderPage> {
                     },
                   ),
                 ),
+              const SliverMiniPlayerBottomSpace(),
             ],
           ),
         );

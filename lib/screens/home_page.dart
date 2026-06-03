@@ -31,6 +31,7 @@ import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/app_utils.dart';
 import 'package:musify/utilities/async_loader.dart';
 import 'package:musify/widgets/announcement_box.dart';
+import 'package:musify/widgets/mini_player_bottom_space.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/section_header.dart';
 import 'package:musify/widgets/song_bar.dart';
@@ -80,6 +81,7 @@ class _HomePageState extends State<HomePage> {
             _buildSuggestedPlaylists(playlistHeight, showOnlyLiked: true),
             _buildMostPlayedSection(),
             _buildRecommendedSongsSection(),
+            const MiniPlayerBottomSpace(),
           ],
         ),
       ),

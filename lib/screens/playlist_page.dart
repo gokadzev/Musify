@@ -41,6 +41,7 @@ import 'package:musify/utilities/playlist_utils.dart';
 import 'package:musify/utilities/song_filtering.dart';
 import 'package:musify/utilities/sort_utils.dart';
 import 'package:musify/widgets/edit_playlist_dialog.dart';
+import 'package:musify/widgets/mini_player_bottom_space.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/playlist_page/empty_playlist_state.dart';
 import 'package:musify/widgets/playlist_page/playlist_header.dart';
@@ -194,6 +195,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                   ),
                 ] else
                   EmptyPlaylistState(message: context.l10n!.noSongsInPlaylist),
+                const SliverMiniPlayerBottomSpace(),
               ],
             )
           : SizedBox(
