@@ -38,6 +38,7 @@ import 'package:musify/utilities/offline_playlist_dialogs.dart';
 import 'package:musify/utilities/playlist_dialogs.dart';
 import 'package:musify/utilities/playlist_utils.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
+import 'package:musify/widgets/mini_player_bottom_space.dart';
 import 'package:musify/widgets/playlist_bar.dart';
 import 'package:musify/widgets/section_header.dart';
 
@@ -132,6 +133,7 @@ class _LibraryPageState extends State<LibraryPage> {
                 ..._buildUserPlaylistsSlivers(primaryColor),
                 if (!offlineMode.value)
                   ..._buildLikedPlaylistsSlivers(primaryColor),
+                const SliverMiniPlayerBottomSpace(),
               ],
             ),
           );

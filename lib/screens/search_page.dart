@@ -34,6 +34,7 @@ import 'package:musify/utilities/app_utils.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/custom_bar.dart';
 import 'package:musify/widgets/custom_search_bar.dart';
+import 'package:musify/widgets/mini_player_bottom_space.dart';
 import 'package:musify/widgets/playlist_bar.dart';
 import 'package:musify/widgets/section_title.dart';
 import 'package:musify/widgets/song_bar.dart';
@@ -268,6 +269,7 @@ class _SearchPageState extends State<SearchPage> {
                     )
                   : _buildSearchResults(context, primaryColor),
             ),
+            const MiniPlayerBottomSpace(),
           ],
         ),
       ),

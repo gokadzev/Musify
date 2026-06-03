@@ -25,6 +25,7 @@ import 'package:musify/constants/app_constants.dart';
 import 'package:musify/constants/version.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/utilities/url_launcher.dart';
+import 'package:musify/widgets/mini_player_bottom_space.dart';
 
 class AboutPage extends StatelessWidget {
   const AboutPage({super.key});
@@ -159,6 +160,7 @@ class AboutPage extends StatelessWidget {
                 ),
               ),
             ),
+            const MiniPlayerBottomSpace(),
           ],
         ),
       ),

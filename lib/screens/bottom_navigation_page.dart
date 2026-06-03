@@ -24,6 +24,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:musify/constants/app_constants.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/settings_manager.dart';
@@ -41,6 +42,10 @@ class BottomNavigationPage extends StatefulWidget {
 }
 
 class _BottomNavigationPageState extends State<BottomNavigationPage> {
+  late final _miniPlayerVisibilityStream = audioHandler.mediaItem
+      .map((mediaItem) => mediaItem != null)
+      .distinct();
+
   bool? _previousOfflineMode;
 
   /// Track the previously selected tab index to detect double-taps on the same tab.
@@ -97,14 +102,16 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
                               _onTabTapped(index, items),
                         ),
                       Expanded(
-                        child: StreamBuilder<Object?>(
-                          stream: audioHandler.mediaItem,
+                        child: StreamBuilder<bool>(
+                          initialData: audioHandler.mediaItem.value != null,
+                          stream: _miniPlayerVisibilityStream,
                           builder: (context, snapshot) {
                             final mediaQuery = MediaQuery.of(context);
-                            final bottomPadding = snapshot.data == null
+                            final isMiniPlayerVisible = snapshot.data ?? false;
+                            final bottomPadding = !isMiniPlayerVisible
                                 ? mediaQuery.padding.bottom
                                 : mediaQuery.padding.bottom +
-                                      MiniPlayer.playerHeight;
+                                      miniPlayerTotalHeight;
 
                             return Stack(
                               alignment: Alignment.bottomCenter,
