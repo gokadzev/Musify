@@ -158,7 +158,11 @@ class _MiniPlayerBodyState extends State<_MiniPlayerBody>
     final metadata = widget.metadata;
     final state = widget.state;
 
-    final totalDuration = metadata.duration ?? Duration.zero;
+    final metadataDuration = metadata.duration;
+    final totalDuration =
+        metadataDuration != null && metadataDuration.inMilliseconds > 0
+        ? metadataDuration
+        : state.position.duration;
     final progress = totalDuration.inMilliseconds == 0
         ? 0.0
         : (state.position.position.inMilliseconds /

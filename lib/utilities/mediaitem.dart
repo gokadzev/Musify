@@ -32,6 +32,7 @@ Map mediaItemToMap(MediaItem mediaItem) {
     'title': mediaItem.title,
     'highResImage': extras?['highResImage'] ?? mediaItem.artUri.toString(),
     'lowResImage': extras?['lowResImage'],
+    'duration': mediaItem.duration?.inSeconds,
     'isLive': extras?['isLive'] ?? false,
   };
 }

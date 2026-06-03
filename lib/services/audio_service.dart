@@ -249,6 +249,56 @@ class MusifyAudioHandler extends BaseAudioHandler {
     return mapToMediaItem(song).copyWith(id: _queueEntryIds.ensureId(song));
   }
 
+  void _setSongDuration(Map song, Duration duration) {
+    if (duration.inMilliseconds <= 0) return;
+
+    final previousDuration = song['duration'];
+    if (previousDuration is int &&
+        durationEquals(Duration(seconds: previousDuration), duration)) {
+      return;
+    }
+
+    song['duration'] = duration.inSeconds;
+  }
+
+  void _cacheQueueSongDuration(String queueEntryId, Duration duration) {
+    if (duration.inMilliseconds <= 0) return;
+
+    for (final song in _queueList) {
+      if (song['queueEntryId']?.toString() == queueEntryId) {
+        _setSongDuration(song, duration);
+      }
+    }
+
+    for (final song in _originalQueueList) {
+      if (song['queueEntryId']?.toString() == queueEntryId) {
+        _setSongDuration(song, duration);
+      }
+    }
+  }
+
+  Duration? _knownDurationForCurrentItem(MediaItem currentMediaItem) {
+    final itemDuration = currentMediaItem.duration;
+    if (itemDuration != null && itemDuration.inMilliseconds > 0) {
+      return itemDuration;
+    }
+
+    final activeMediaItem = mediaItem.valueOrNull;
+    if (activeMediaItem?.id != currentMediaItem.id) return null;
+
+    final activeDuration = activeMediaItem?.duration;
+    if (activeDuration != null && activeDuration.inMilliseconds > 0) {
+      return activeDuration;
+    }
+
+    final playerDuration = audioPlayer.duration;
+    if (playerDuration != null && playerDuration.inMilliseconds > 0) {
+      return playerDuration;
+    }
+
+    return null;
+  }
+
   void _updateCurrentMediaItemWithDuration(Duration duration) {
     final capturedQueueIndex = _currentQueueIndex;
     final capturedTransitionCounter = _songTransitionCounter;
@@ -264,8 +314,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
         }
 
         final currentSong = _queueList[capturedQueueIndex];
+        final uniqueId = _queueEntryIds.ensureId(currentSong);
+        _cacheQueueSongDuration(uniqueId, duration);
+
         final currentMediaItem = _getMediaItemForQueue(currentSong);
-        final uniqueId = currentMediaItem.id;
         final currentItem = mediaItem.valueOrNull;
 
         if (currentItem != null &&
@@ -1015,12 +1067,22 @@ class MusifyAudioHandler extends BaseAudioHandler {
           .entries
           .map((entry) => _getMediaItemForQueue(entry.value))
           .toList();
-      queue.add(mediaItems);
 
+      MediaItem? currentMediaItem;
+      if (_currentQueueIndex < mediaItems.length) {
+        currentMediaItem = mediaItems[_currentQueueIndex];
+        final duration = _knownDurationForCurrentItem(currentMediaItem);
+        if (duration != null) {
+          _cacheQueueSongDuration(currentMediaItem.id, duration);
+          currentMediaItem = currentMediaItem.copyWith(duration: duration);
+          mediaItems[_currentQueueIndex] = currentMediaItem;
+        }
+      }
+
+      queue.add(mediaItems);
       _queueMapStream.add(List.unmodifiable(_queueList));
 
-      if (_currentQueueIndex < mediaItems.length) {
-        final currentMediaItem = mediaItems[_currentQueueIndex];
+      if (currentMediaItem != null) {
         mediaItem.add(currentMediaItem);
       }
     } catch (e, stackTrace) {
@@ -1753,14 +1815,18 @@ class MusifyAudioHandler extends BaseAudioHandler {
         return false;
       }
 
-      if (audioPlayer.duration != null) {
+      final duration = audioPlayer.duration;
+      if (duration != null) {
+        _setSongDuration(song, duration);
+        if (mediaId != null) {
+          _cacheQueueSongDuration(mediaId, duration);
+        }
+
         var currentMediaItem = mapToMediaItem(song);
         if (mediaId != null) {
           currentMediaItem = currentMediaItem.copyWith(id: mediaId);
         }
-        mediaItem.add(
-          currentMediaItem.copyWith(duration: audioPlayer.duration),
-        );
+        mediaItem.add(currentMediaItem.copyWith(duration: duration));
       }
 
       await audioPlayer.play();
