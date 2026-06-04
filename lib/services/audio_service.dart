@@ -83,6 +83,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
   int _currentLoadingIndex = -1;
   int _currentLoadingTransitionId = -1;
   bool _isUpdatingState = false;
+  bool _pendingPlaybackStateUpdate = false;
   int _songTransitionCounter = 0;
   bool _completionEventPending = false;
   bool _completionHandlerLoadStarted = false;
@@ -97,13 +98,15 @@ class MusifyAudioHandler extends BaseAudioHandler {
   static const Duration _errorRetryDelay = Duration(seconds: 2);
   static const Duration _songTransitionTimeout = Duration(seconds: 30);
   static const Duration _debounceInterval = Duration(milliseconds: 150);
+  static const Duration _positionDataThreshold = Duration(milliseconds: 250);
+  static const Duration _playbackStateHeartbeat = Duration(seconds: 1);
   static const String _recentMediaIdPrefix = 'recent:';
 
   int _activePreloadCount = 0;
   final Set<String> _preloadingYtIds = <String>{};
   final Set<String> _preloadedYtIds = <String>{};
 
-  Stream<PositionData> get positionDataStream =>
+  late final Stream<PositionData> _positionDataStream =
       Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
         audioPlayer.positionStream,
         audioPlayer.bufferedPositionStream,
@@ -111,18 +114,31 @@ class MusifyAudioHandler extends BaseAudioHandler {
         (position, bufferedPosition, duration) =>
             PositionData(position, bufferedPosition, duration ?? Duration.zero),
       ).distinct((prev, curr) {
-        const threshold = Duration(milliseconds: 500);
-        return (prev.position - curr.position).abs() < threshold &&
+        return (prev.position - curr.position).abs() < _positionDataThreshold &&
             prev.duration == curr.duration &&
-            (prev.bufferedPosition - curr.bufferedPosition).abs() < threshold;
-      });
+            (prev.bufferedPosition - curr.bufferedPosition).abs() <
+                _positionDataThreshold;
+      }).asBroadcastStream();
 
-  Stream<PlaybackState> get playbackStateStream => playbackState.distinct(
-    (prev, curr) =>
-        prev.playing == curr.playing &&
-        prev.processingState == curr.processingState &&
-        prev.queueIndex == curr.queueIndex,
-  );
+  Stream<PositionData> get positionDataStream => _positionDataStream;
+
+  late final Stream<PlaybackState> _playbackStateStream = playbackState
+      .distinct((prev, curr) {
+        final prevPositionBucket =
+            prev.updatePosition.inMilliseconds ~/
+            _positionDataThreshold.inMilliseconds;
+        final currPositionBucket =
+            curr.updatePosition.inMilliseconds ~/
+            _positionDataThreshold.inMilliseconds;
+        return prev.playing == curr.playing &&
+            prev.processingState == curr.processingState &&
+            prev.queueIndex == curr.queueIndex &&
+            prev.speed == curr.speed &&
+            prevPositionBucket == currPositionBucket;
+      })
+      .asBroadcastStream();
+
+  Stream<PlaybackState> get playbackStateStream => _playbackStateStream;
 
   static const _playingControls = [
     MediaControl.skipToPrevious,
@@ -174,7 +190,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
     );
 
     audioPlayer.durationStream
-        .distinct()
         .throttleTime(const Duration(milliseconds: 200))
         .listen(
           (duration) {
@@ -250,51 +265,58 @@ class MusifyAudioHandler extends BaseAudioHandler {
   }
 
   void _updateCurrentMediaItemWithDuration(Duration duration) {
-    final capturedQueueIndex = _currentQueueIndex;
-    final capturedTransitionCounter = _songTransitionCounter;
+    try {
+      final queueIndex = _currentQueueIndex;
+      if (queueIndex < 0 || queueIndex >= _queueList.length) return;
 
-    Future.microtask(() async {
-      try {
-        if (_currentQueueIndex >= _queueList.length) return;
+      final currentSong = _queueList[queueIndex];
+      final currentMediaItem = _getMediaItemForQueue(currentSong);
+      final currentSongYtid = currentSong['ytid']?.toString();
+      final currentItem = mediaItem.valueOrNull;
 
-        // If state changed while waiting for microtask, abort
-        if (capturedQueueIndex != _currentQueueIndex ||
-            capturedTransitionCounter != _songTransitionCounter) {
-          return;
+      final sameQueueEntry = currentItem?.id == currentMediaItem.id;
+      final sameYtid =
+          currentSongYtid != null &&
+          currentSongYtid.isNotEmpty &&
+          currentItem?.extras?['ytid']?.toString() == currentSongYtid;
+
+      if (currentItem != null &&
+          (sameQueueEntry || sameYtid) &&
+          (currentItem.duration == null ||
+              !durationEquals(currentItem.duration, duration))) {
+        mediaItem.add(currentItem.copyWith(duration: duration));
+      }
+
+      final existingQueue = queue.valueOrNull;
+      if (existingQueue != null && queueIndex < existingQueue.length) {
+        final queueItem = existingQueue[queueIndex];
+        if (queueItem.duration == null ||
+            !durationEquals(queueItem.duration, duration)) {
+          final updatedQueue = List<MediaItem>.from(existingQueue);
+          updatedQueue[queueIndex] = queueItem.copyWith(duration: duration);
+          queue.add(updatedQueue);
         }
+        return;
+      }
 
-        final currentSong = _queueList[capturedQueueIndex];
-        final currentMediaItem = _getMediaItemForQueue(currentSong);
-        final uniqueId = currentMediaItem.id;
-        final currentItem = mediaItem.valueOrNull;
-
-        if (currentItem != null &&
-            currentItem.id == uniqueId &&
-            (currentItem.duration == null ||
-                !durationEquals(currentItem.duration, duration))) {
-          mediaItem.add(currentMediaItem.copyWith(duration: duration));
-        }
-
-        final newQueue = _queueList
-            .asMap()
-            .entries
-            .map((entry) => _getMediaItemForQueue(entry.value))
-            .toList();
-
-        if (capturedQueueIndex < newQueue.length) {
-          newQueue[capturedQueueIndex] = newQueue[capturedQueueIndex].copyWith(
-            duration: duration,
-          );
-          queue.add(newQueue);
-        }
-      } catch (e, stackTrace) {
-        logger.log(
-          'Error updating media item with duration',
-          error: e,
-          stackTrace: stackTrace,
+      final rebuiltQueue = _queueList
+          .asMap()
+          .entries
+          .map((entry) => _getMediaItemForQueue(entry.value))
+          .toList();
+      if (queueIndex < rebuiltQueue.length) {
+        rebuiltQueue[queueIndex] = rebuiltQueue[queueIndex].copyWith(
+          duration: duration,
         );
       }
-    });
+      queue.add(rebuiltQueue);
+    } catch (e, stackTrace) {
+      logger.log(
+        'Error updating media item with duration',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
   }
 
   Future<void> _initialize() async {
@@ -472,7 +494,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
   }
 
   void _updatePlaybackState() {
-    if (_isUpdatingState) return;
+    if (_isUpdatingState) {
+      _pendingPlaybackStateUpdate = true;
+      return;
+    }
 
     _isUpdatingState = true;
 
@@ -485,12 +510,25 @@ class MusifyAudioHandler extends BaseAudioHandler {
         final newProcessingState =
             processingStateMap[audioPlayer.processingState] ??
             AudioProcessingState.idle;
+        final bufferedPosition = audioPlayer.bufferedPosition;
+
+        final shouldEmitProgressTick =
+            currentState != null &&
+            isPlaying &&
+            now.difference(currentState.updateTime) >= _playbackStateHeartbeat;
+        final hasBufferedPositionChange =
+            currentState == null ||
+            (bufferedPosition - currentState.bufferedPosition).abs() >=
+                const Duration(seconds: 1);
 
         final shouldUpdate =
             currentState == null ||
             currentState.playing != isPlaying ||
             currentState.processingState != newProcessingState ||
             currentState.queueIndex != _currentQueueIndex ||
+            currentState.speed != audioPlayer.speed ||
+            shouldEmitProgressTick ||
+            hasBufferedPositionChange ||
             (_hasSignificantPositionChange(
               currentPosition,
               currentState.updatePosition,
@@ -512,7 +550,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
               processingState: newProcessingState,
               playing: isPlaying,
               updatePosition: currentPosition,
-              bufferedPosition: audioPlayer.bufferedPosition,
+              bufferedPosition: bufferedPosition,
               speed: audioPlayer.speed,
               queueIndex: _currentQueueIndex < _queueList.length
                   ? _currentQueueIndex
@@ -529,6 +567,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
         );
       } finally {
         _isUpdatingState = false;
+        if (_pendingPlaybackStateUpdate) {
+          _pendingPlaybackStateUpdate = false;
+          _updatePlaybackState();
+        }
       }
     });
   }
@@ -1754,13 +1796,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       }
 
       if (audioPlayer.duration != null) {
-        var currentMediaItem = mapToMediaItem(song);
-        if (mediaId != null) {
-          currentMediaItem = currentMediaItem.copyWith(id: mediaId);
-        }
-        mediaItem.add(
-          currentMediaItem.copyWith(duration: audioPlayer.duration),
-        );
+        _updateCurrentMediaItemWithDuration(audioPlayer.duration!);
       }
 
       await audioPlayer.play();
