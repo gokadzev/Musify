@@ -242,7 +242,7 @@ Future<void> updateSongLikeStatus(
           !updatedLikedSongs.any(
             (song) => song['ytid']?.toString() == normalizedSongId,
           )) {
-        updatedLikedSongs.add(songToAdd);
+        updatedLikedSongs.insert(0, songToAdd);
       }
     } else {
       updatedLikedSongs.removeWhere(
