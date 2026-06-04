@@ -306,6 +306,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
       valueListenable: _searchQueryNotifier,
       builder: (_, searchQuery, __) {
         final songsList = getSongsList(widget.page);
+        final listKeyScope = 'user_song_${widget.page}';
         final isSearching = searchQuery.isNotEmpty;
         final displayList = _getDisplayList(songsList);
         var sortedList = songsList;
@@ -340,7 +341,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
             final song = displayList[index];
             final borderRadius = getItemBorderRadius(index, displayList.length);
             return RepaintBoundary(
-              key: listItemKey('offline_song', index, song),
+              key: listItemKey(listKeyScope, index, song),
               child: _buildSongBar(
                 song,
                 index,
