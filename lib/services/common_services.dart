@@ -252,7 +252,9 @@ Future<void> updateSongLikeStatus(
 
     if (_likedSongIdsAreEqual(userLikedSongsList, updatedLikedSongs)) return;
 
-    userLikedSongsList = updatedLikedSongs;
+    userLikedSongsList
+      ..clear()
+      ..addAll(updatedLikedSongs);
     currentLikedSongsLength.value = userLikedSongsList.length;
     unawaited(addOrUpdateData('user', 'likedSongs', userLikedSongsList));
   } catch (e, stackTrace) {
