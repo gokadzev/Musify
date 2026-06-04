@@ -52,7 +52,6 @@ class UserSongsPage extends StatefulWidget {
 }
 
 class _UserSongsPageState extends State<UserSongsPage> {
-  bool _isEditEnabled = false;
   final ValueNotifier<String> _searchQueryNotifier = ValueNotifier('');
   late final TextEditingController _searchController;
   late final FocusNode _searchFocusNode;
@@ -333,59 +332,25 @@ class _UserSongsPageState extends State<UserSongsPage> {
           );
         }
 
-        if (isLikedSongs && !isSearching) {
-          return SliverReorderableList(
-            itemCount: displayList.length,
-            itemBuilder: (context, index) {
-              final song = displayList[index];
-              final borderRadius = getItemBorderRadius(
+        return SliverList(
+          key: isOfflineSongs && !isSearching
+              ? ValueKey(_getCurrentOfflineSortType())
+              : null,
+          delegate: SliverChildBuilderDelegate((context, index) {
+            final song = displayList[index];
+            final borderRadius = getItemBorderRadius(index, displayList.length);
+            return RepaintBoundary(
+              key: listItemKey('offline_song', index, song),
+              child: _buildSongBar(
+                song,
                 index,
-                displayList.length,
-              );
-              return ReorderableDragStartListener(
-                enabled: _isEditEnabled,
-                key: listItemKey('liked_song', index, song),
-                index: index,
-                child: _buildSongBar(
-                  song,
-                  index,
-                  borderRadius,
-                  playlist,
-                  isRecentSong: isRecentlyPlayed,
-                ),
-              );
-            },
-            onReorderItem: (oldIndex, newIndex) {
-              setState(() {
-                if (oldIndex < newIndex) newIndex -= 1;
-                moveLikedSong(oldIndex, newIndex);
-              });
-            },
-          );
-        } else {
-          return SliverList(
-            key: isOfflineSongs && !isSearching
-                ? ValueKey(_getCurrentOfflineSortType())
-                : null,
-            delegate: SliverChildBuilderDelegate((context, index) {
-              final song = displayList[index];
-              final borderRadius = getItemBorderRadius(
-                index,
-                displayList.length,
-              );
-              return RepaintBoundary(
-                key: listItemKey('offline_song', index, song),
-                child: _buildSongBar(
-                  song,
-                  index,
-                  borderRadius,
-                  playlist,
-                  isRecentSong: isRecentlyPlayed,
-                ),
-              );
-            }, childCount: displayList.length),
-          );
-        }
+                borderRadius,
+                playlist,
+                isRecentSong: isRecentlyPlayed,
+              ),
+            );
+          }, childCount: displayList.length),
+        );
       },
     );
   }
