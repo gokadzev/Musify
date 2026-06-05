@@ -1344,9 +1344,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
     for (final source in [
       _queueList,
-      userRecentlyPlayed,
-      userOfflineSongs,
-      userLikedSongsList,
+      userRecentlyPlayed.value,
+      userOfflineSongs.value,
+      userLikedSongsList.value,
     ]) {
       final song = _findSongInList(source, ytid);
       if (song != null) return song;
@@ -1371,9 +1371,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
       return mediaItemToMap(activeMediaItem);
     }
 
-    return _firstPlayableSong(userRecentlyPlayed) ??
-        _firstPlayableSong(userOfflineSongs) ??
-        _firstPlayableSong(userLikedSongsList);
+    return _firstPlayableSong(userRecentlyPlayed.value) ??
+        _firstPlayableSong(userOfflineSongs.value) ??
+        _firstPlayableSong(userLikedSongsList.value);
   }
 
   Map<String, dynamic>? _normaliseResumableSong(Map song) {
@@ -1749,7 +1749,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
     logger.log('Offline audio file not found: $audioPath');
 
-    final offlineSong = userOfflineSongs.firstWhere(
+    final offlineSong = userOfflineSongs.value.firstWhere(
       (s) => s['ytid'] == song['ytid'],
       orElse: () => <String, dynamic>{},
     );

@@ -290,15 +290,15 @@ class OfflinePlaylistService {
               });
 
           // Also check if song is in user's liked songs or OTHER custom playlists
-          final isInLikedSongs = userLikedSongsList.any(
+          final isInLikedSongs = userLikedSongsList.value.any(
             (s) => s['ytid'] == songId,
           );
           final isInOtherCustomPlaylists = getUserCustomPlaylists()
               .where((p) => p['ytid']?.toString() != normalizedPlaylistId)
               .any((p) {
-            final customPlaylistSongs = p['list'] as List<dynamic>? ?? [];
-            return customPlaylistSongs.any((s) => s['ytid'] == songId);
-          });
+                final customPlaylistSongs = p['list'] as List<dynamic>? ?? [];
+                return customPlaylistSongs.any((s) => s['ytid'] == songId);
+              });
 
           // Only remove if not used elsewhere
           if (!isUsedInOtherPlaylists &&
@@ -374,8 +374,7 @@ class OfflinePlaylistService {
 
       await FilePaths.ensureDirectoriesExist();
 
-      userOfflineSongs.clear();
-      currentOfflineSongsLength.value = 0;
+      userOfflineSongs.value.clear();
 
       offlinePlaylists.value = [];
 

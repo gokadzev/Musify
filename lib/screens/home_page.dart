@@ -181,8 +181,8 @@ class _HomePageState extends State<HomePage> {
   Widget _buildMostPlayedSection() {
     final sectionTitle = context.l10n!.mostPlayed;
 
-    return ValueListenableBuilder<int>(
-      valueListenable: currentRecentlyPlayedLength,
+    return ValueListenableBuilder<List>(
+      valueListenable: userRecentlyPlayed,
       builder: (_, __, ___) {
         return ValueListenableBuilder<int>(
           valueListenable: recentlyPlayedVersion,

@@ -515,10 +515,10 @@ class _PlaylistPageState extends State<PlaylistPage> {
       return const SizedBox.shrink();
     }
 
-    return ValueListenableBuilder<int>(
-      valueListenable: currentOfflineSongsLength,
+    return ValueListenableBuilder<List>(
+      valueListenable: userOfflineSongs,
       builder: (context, _, __) {
-        return ValueListenableBuilder<List<dynamic>>(
+        return ValueListenableBuilder<List>(
           valueListenable: offlinePlaylistService.offlinePlaylists,
           builder: (context, offlinePlaylists, _) {
             final playlistSongs = _playlist?['list'] as List? ?? [];
@@ -555,7 +555,9 @@ class _PlaylistPageState extends State<PlaylistPage> {
                           width: 40,
                           height: 40,
                           child: CircularProgressIndicator(
-                            value: progress.isCancelled ? null : progress.progress,
+                            value: progress.isCancelled
+                                ? null
+                                : progress.progress,
                             strokeWidth: 3,
                             backgroundColor: Theme.of(
                               context,

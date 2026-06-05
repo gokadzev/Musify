@@ -62,7 +62,7 @@ class _LibraryPageState extends State<LibraryPage> {
           userCustomPlaylists.value.isNotEmpty;
       final hasOfflinePlaylists =
           offlinePlaylistService.offlinePlaylists.value.isNotEmpty;
-      final hasOfflineSongs = currentOfflineSongsLength.value > 0;
+      final hasOfflineSongs = userOfflineSongs.value.isNotEmpty;
 
       if (!hasUserContent && !hasOfflinePlaylists && !hasOfflineSongs) {
         final colorScheme = Theme.of(context).colorScheme;

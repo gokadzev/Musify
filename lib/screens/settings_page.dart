@@ -300,7 +300,7 @@ class SettingsPage extends StatelessWidget {
             context: context,
             confirmationMessage: context.l10n!.clearRecentlyPlayedQuestion,
             onSubmit: () {
-              userRecentlyPlayed = [];
+              userRecentlyPlayed.value = [];
               deleteData('user', 'recentlyPlayedSongs');
               showToast(context, '${context.l10n!.recentlyPlayedMsg}!');
             },

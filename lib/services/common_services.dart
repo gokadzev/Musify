@@ -40,22 +40,19 @@ import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 List globalSongs = [];
 
-List userLikedSongsList = Hive.box('user').get('likedSongs', defaultValue: []);
+ValueNotifier<List> userLikedSongsList = ValueNotifier<List>(
+  Hive.box('user').get('likedSongs', defaultValue: []),
+);
 
-List userRecentlyPlayed = Hive.box(
-  'user',
-).get('recentlyPlayedSongs', defaultValue: []);
-List userOfflineSongs = Hive.box(
-  'userNoBackup',
-).get('offlineSongs', defaultValue: []);
+ValueNotifier<List> userRecentlyPlayed = ValueNotifier<List>(
+  Hive.box('user').get('recentlyPlayedSongs', defaultValue: []),
+);
+ValueNotifier<List> userOfflineSongs = ValueNotifier<List>(
+  Hive.box('userNoBackup').get('offlineSongs', defaultValue: []),
+);
 
 dynamic nextRecommendedSong;
 
-final currentLikedSongsLength = ValueNotifier<int>(userLikedSongsList.length);
-final currentOfflineSongsLength = ValueNotifier<int>(userOfflineSongs.length);
-final currentRecentlyPlayedLength = ValueNotifier<int>(
-  userRecentlyPlayed.length,
-);
 final recentlyPlayedVersion = ValueNotifier<int>(0);
 var _songLikeUpdateToken = 0;
 final _latestSongLikeUpdateTokens = <String, int>{};
@@ -139,7 +136,7 @@ Future<List> fetchSongsList(String searchQuery) async {
 
 Future<List> getRecommendedSongs() async {
   try {
-    if (externalRecommendations.value && userRecentlyPlayed.isNotEmpty) {
+    if (externalRecommendations.value && userRecentlyPlayed.value.isNotEmpty) {
       return await _getRecommendationsFromRecentlyPlayed();
     } else {
       return await _getRecommendationsFromMixedSources();
@@ -155,7 +152,9 @@ Future<List> getRecommendedSongs() async {
 }
 
 Future<List> _getRecommendationsFromRecentlyPlayed() async {
-  final recent = (List.from(userRecentlyPlayed)..shuffle()).take(3).toList();
+  final recent = (List.from(
+    userRecentlyPlayed.value,
+  )..shuffle()).take(3).toList();
 
   final futures = recent.map((songData) async {
     try {
@@ -180,7 +179,10 @@ Future<List> _getRecommendationsFromRecentlyPlayed() async {
 }
 
 Future<List> _getRecommendationsFromMixedSources() async {
-  final playlistSongs = [...userLikedSongsList, ...userRecentlyPlayed];
+  final playlistSongs = [
+    ...userLikedSongsList.value,
+    ...userRecentlyPlayed.value,
+  ];
 
   if (globalSongs.isEmpty) {
     const playlistId = 'PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx';
@@ -235,7 +237,7 @@ Future<void> updateSongLikeStatus(
       return;
     }
 
-    final updatedLikedSongs = _deduplicateLikedSongs(userLikedSongsList);
+    final updatedLikedSongs = _deduplicateLikedSongs(userLikedSongsList.value);
 
     if (add) {
       if (songToAdd != null &&
@@ -250,11 +252,11 @@ Future<void> updateSongLikeStatus(
       );
     }
 
-    if (_likedSongIdsAreEqual(userLikedSongsList, updatedLikedSongs)) return;
+    if (_likedSongIdsAreEqual(userLikedSongsList.value, updatedLikedSongs))
+      return;
 
-    userLikedSongsList = updatedLikedSongs;
-    currentLikedSongsLength.value = userLikedSongsList.length;
-    unawaited(addOrUpdateData('user', 'likedSongs', userLikedSongsList));
+    userLikedSongsList.value = updatedLikedSongs;
+    unawaited(addOrUpdateData('user', 'likedSongs', userLikedSongsList.value));
   } catch (e, stackTrace) {
     logger.log(
       'Error updating song like status',
@@ -269,10 +271,10 @@ Future<Map?> _resolveSongForLikedStatus(String songId, Map? songData) async {
     return Map<String, dynamic>.from(songData!);
   }
 
-  final cachedSong = _findSongById(userLikedSongsList, songId);
+  final cachedSong = _findSongById(userLikedSongsList.value, songId);
   if (cachedSong != null) return Map<String, dynamic>.from(cachedSong);
 
-  return getSongDetails(userLikedSongsList.length, songId);
+  return getSongDetails(userLikedSongsList.value.length, songId);
 }
 
 Map? _findSongById(Iterable<dynamic> songs, String songId) {
@@ -330,10 +332,9 @@ void moveLikedSong(int oldIndex, int newIndex) {
   if (oldIndex < newIndex) {
     newIndex -= 1;
   }
-  final _song = userLikedSongsList.removeAt(oldIndex);
-  userLikedSongsList.insert(newIndex, _song);
-  currentLikedSongsLength.value = userLikedSongsList.length;
-  unawaited(addOrUpdateData('user', 'likedSongs', userLikedSongsList));
+  final _song = userLikedSongsList.value.removeAt(oldIndex);
+  userLikedSongsList.value.insert(newIndex, _song);
+  unawaited(addOrUpdateData('user', 'likedSongs', userLikedSongsList.value));
 }
 
 Future<void> renameSongInLikedSongs(
@@ -342,16 +343,17 @@ Future<void> renameSongInLikedSongs(
   String newArtist,
 ) async {
   try {
-    final songIndex = userLikedSongsList.indexWhere(
+    final songIndex = userLikedSongsList.value.indexWhere(
       (song) => song['ytid'] == songId,
     );
 
     if (songIndex != -1) {
-      userLikedSongsList[songIndex]['title'] = newTitle;
-      userLikedSongsList[songIndex]['artist'] = newArtist;
+      userLikedSongsList.value[songIndex]['title'] = newTitle;
+      userLikedSongsList.value[songIndex]['artist'] = newArtist;
 
-      currentLikedSongsLength.value = userLikedSongsList.length;
-      unawaited(addOrUpdateData('user', 'likedSongs', userLikedSongsList));
+      unawaited(
+        addOrUpdateData('user', 'likedSongs', userLikedSongsList.value),
+      );
     }
   } catch (e, stackTrace) {
     logger.log(
@@ -365,7 +367,9 @@ Future<void> renameSongInLikedSongs(
 
 bool isSongAlreadyLiked(songIdToCheck) {
   final songId = songIdToCheck?.toString();
-  return userLikedSongsList.any((song) => song['ytid']?.toString() == songId);
+  return userLikedSongsList.value.any(
+    (song) => song['ytid']?.toString() == songId,
+  );
 }
 
 bool isPlaylistAlreadyLiked(playlistIdToCheck) {
@@ -376,17 +380,17 @@ bool isPlaylistAlreadyLiked(playlistIdToCheck) {
 }
 
 bool isSongAlreadyOffline(songIdToCheck) =>
-    userOfflineSongs.any((song) => song['ytid'] == songIdToCheck);
+    userOfflineSongs.value.any((song) => song['ytid'] == songIdToCheck);
 
 bool isPlaylistFullyOffline(List songs) {
   if (songs.isEmpty) return false;
-  final offlineIds = userOfflineSongs.map((s) => s['ytid']).toSet();
+  final offlineIds = userOfflineSongs.value.map((s) => s['ytid']).toSet();
   return songs.every((s) => offlineIds.contains(s['ytid']));
 }
 
 Map<String, dynamic> getOfflineSongByYtid(String ytid) {
   try {
-    final song = userOfflineSongs.firstWhere(
+    final song = userOfflineSongs.value.firstWhere(
       (s) => s['ytid'] == ytid,
       orElse: () => <String, dynamic>{},
     );
@@ -683,20 +687,19 @@ Future<bool> makeSongOffline(dynamic song) async {
     offlineSong['dateAdded'] = DateTime.now().millisecondsSinceEpoch;
 
     try {
-      final existingIndex = userOfflineSongs.indexWhere(
+      final existingIndex = userOfflineSongs.value.indexWhere(
         (s) => s['ytid'] == ytid,
       );
 
       if (existingIndex != -1) {
-        userOfflineSongs[existingIndex] = offlineSong;
+        userOfflineSongs.value[existingIndex] = offlineSong;
       } else {
-        userOfflineSongs.add(offlineSong);
+        userOfflineSongs.value.add(offlineSong);
       }
 
       unawaited(
-        addOrUpdateData('userNoBackup', 'offlineSongs', userOfflineSongs),
+        addOrUpdateData('userNoBackup', 'offlineSongs', userOfflineSongs.value),
       );
-      currentOfflineSongsLength.value = userOfflineSongs.length;
     } catch (e, st) {
       logger.log(
         'Error updating global offline songs list',
@@ -736,10 +739,9 @@ Future<bool> removeSongFromOffline(dynamic songId) async {
     }
 
     try {
-      userOfflineSongs.removeWhere((song) => song['ytid'] == songId);
-      currentOfflineSongsLength.value = userOfflineSongs.length;
+      userOfflineSongs.value.removeWhere((song) => song['ytid'] == songId);
       unawaited(
-        addOrUpdateData('userNoBackup', 'offlineSongs', userOfflineSongs),
+        addOrUpdateData('userNoBackup', 'offlineSongs', userOfflineSongs.value),
       );
     } catch (e, st) {
       logger.log(
@@ -802,42 +804,45 @@ const recentlyPlayedSongsLimit = 250;
 /// locally (e.g. from [userOfflineSongs]).
 Future<void> updateRecentlyPlayed(dynamic songId, {Map? songFallback}) async {
   try {
-    if (userRecentlyPlayed.isNotEmpty &&
-        userRecentlyPlayed[0]['ytid'] == songId) {
-      final existing = userRecentlyPlayed[0] as Map;
+    if (userRecentlyPlayed.value.isNotEmpty &&
+        userRecentlyPlayed.value[0]['ytid'] == songId) {
+      final existing = userRecentlyPlayed.value[0] as Map;
       existing['listeningCount'] = (existing['listeningCount'] ?? 0) + 1;
       existing['lastPlayed'] = DateTime.now();
       recentlyPlayedVersion.value++;
       unawaited(
-        addOrUpdateData('user', 'recentlyPlayedSongs', userRecentlyPlayed),
+        addOrUpdateData(
+          'user',
+          'recentlyPlayedSongs',
+          userRecentlyPlayed.value,
+        ),
       );
       return;
     }
 
-    final existingIndex = userRecentlyPlayed.indexWhere(
+    final existingIndex = userRecentlyPlayed.value.indexWhere(
       (song) => song['ytid'] == songId,
     );
 
     if (existingIndex == -1 &&
-        userRecentlyPlayed.length >= recentlyPlayedSongsLimit) {
-      userRecentlyPlayed.removeLast();
+        userRecentlyPlayed.value.length >= recentlyPlayedSongsLimit) {
+      userRecentlyPlayed.value.removeLast();
     }
 
     if (existingIndex != -1) {
-      final song = userRecentlyPlayed.removeAt(existingIndex) as Map;
+      final song = userRecentlyPlayed.value.removeAt(existingIndex) as Map;
       song['listeningCount'] = (song['listeningCount'] ?? 0) + 1;
       song['lastPlayed'] = DateTime.now();
-      userRecentlyPlayed.insert(0, song);
+      userRecentlyPlayed.value.insert(0, song);
     } else {
       final newSongDetails = songFallback != null
           ? Map<String, dynamic>.from(songFallback)
           : await getSongDetails(0, songId);
       newSongDetails['listeningCount'] = 1;
       newSongDetails['lastPlayed'] = DateTime.now();
-      userRecentlyPlayed.insert(0, newSongDetails);
+      userRecentlyPlayed.value.insert(0, newSongDetails);
     }
 
-    currentRecentlyPlayedLength.value = userRecentlyPlayed.length;
     recentlyPlayedVersion.value++;
     unawaited(
       addOrUpdateData('user', 'recentlyPlayedSongs', userRecentlyPlayed),
@@ -852,12 +857,11 @@ Future<void> updateRecentlyPlayed(dynamic songId, {Map? songFallback}) async {
 }
 
 Future<void> removeFromRecentlyPlayed(dynamic songId) async {
-  if (userRecentlyPlayed.any((song) => song['ytid'] == songId)) {
-    userRecentlyPlayed.removeWhere((song) => song['ytid'] == songId);
-    currentRecentlyPlayedLength.value = userRecentlyPlayed.length;
+  if (userRecentlyPlayed.value.any((song) => song['ytid'] == songId)) {
+    userRecentlyPlayed.value.removeWhere((song) => song['ytid'] == songId);
     recentlyPlayedVersion.value++;
     unawaited(
-      addOrUpdateData('user', 'recentlyPlayedSongs', userRecentlyPlayed),
+      addOrUpdateData('user', 'recentlyPlayedSongs', userRecentlyPlayed.value),
     );
   }
 }
@@ -865,7 +869,7 @@ Future<void> removeFromRecentlyPlayed(dynamic songId) async {
 /// Returns the most-played songs, ordered by `listeningCount` desc and
 /// `lastPlayed` desc as a tiebreaker. Does not mutate the persisted list.
 List<Map> getMostPlayed({int limit = 20, bool deduplicate = true}) {
-  final copy = List<Map>.from(userRecentlyPlayed);
+  final copy = List<Map>.from(userRecentlyPlayed.value);
 
   if (deduplicate) {
     final seen = <String>{};
