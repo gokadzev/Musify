@@ -98,16 +98,8 @@ List<Map> resolvePinnedPlaylists(List<String> ids) {
 
 const pinnedPlaylistsLimit = 5;
 
-final currentLikedPlaylistsLength = ValueNotifier<int>(
-  userLikedPlaylists.value.length,
-);
 var _playlistLikeUpdateToken = 0;
 final _latestPlaylistLikeUpdateTokens = <String, int>{};
-
-void _setUserLikedPlaylists(List<Map> playlists) {
-  userLikedPlaylists.value = List<Map>.from(playlists);
-  currentLikedPlaylistsLength.value = userLikedPlaylists.value.length;
-}
 
 Future<List<dynamic>> getUserPlaylists() async {
   final futures = userPlaylists.value.map((playlistID) async {
@@ -514,8 +506,7 @@ bool _removePlaylistFromFolders(String playlistId) {
 bool _removePlaylistFromLikedPlaylists(String playlistId) {
   final updatedLikedPlaylists = _deduplicateLikedPlaylists(
     userLikedPlaylists.value,
-  )
-    ..removeWhere((playlist) => playlist['ytid']?.toString() == playlistId);
+  )..removeWhere((playlist) => playlist['ytid']?.toString() == playlistId);
 
   if (_likedPlaylistIdsAreEqual(
     userLikedPlaylists.value,
@@ -523,8 +514,7 @@ bool _removePlaylistFromLikedPlaylists(String playlistId) {
   )) {
     return false;
   }
-
-  _setUserLikedPlaylists(updatedLikedPlaylists);
+  userLikedPlaylists.value = List<Map>.from(updatedLikedPlaylists);
   return true;
 }
 
@@ -1211,7 +1201,7 @@ Future<void> updatePlaylistLikeStatus(
       return;
     }
 
-    _setUserLikedPlaylists(updatedLikedPlaylists);
+    userLikedPlaylists.value = List<Map>.from(updatedLikedPlaylists);
     unawaited(
       addOrUpdateData<List>('user', 'likedPlaylists', userLikedPlaylists.value),
     );
