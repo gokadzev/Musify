@@ -30,11 +30,20 @@ import 'package:musify/main.dart';
 import 'package:musify/models/position_data.dart';
 import 'package:musify/services/common_services.dart';
 import 'package:musify/services/data_manager.dart';
+import 'package:musify/services/listening_stats_service.dart';
 import 'package:musify/services/settings_manager.dart';
+import 'package:musify/utilities/listening_stats_utils.dart';
 import 'package:musify/utilities/map_utils.dart';
 import 'package:musify/utilities/mediaitem.dart';
 import 'package:musify/utilities/queue_entry_utils.dart';
 import 'package:rxdart/rxdart.dart';
+
+class _ListeningStatsTick {
+  const _ListeningStatsTick(this.listenedAt, this.duration);
+
+  final DateTime listenedAt;
+  final Duration duration;
+}
 
 class MusifyAudioHandler extends BaseAudioHandler {
   MusifyAudioHandler() {
@@ -88,6 +97,15 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   bool _completionEventPending = false;
   bool _completionHandlerLoadStarted = false;
+
+  Timer? _listeningStatsTimer;
+  Map? _listeningStatsSong;
+  String? _listeningStatsSongId;
+  Duration? _listeningStatsDuration;
+  Duration _listeningStatsListened = Duration.zero;
+  DateTime? _listeningStatsLastTick;
+  bool _listeningStatsQualified = false;
+  final List<_ListeningStatsTick> _pendingListeningStatsTicks = [];
 
   String? _lastError;
   int _consecutiveErrors = 0;
@@ -238,6 +256,15 @@ class MusifyAudioHandler extends BaseAudioHandler {
     });
   }
 
+  void _startAudioPlayer() {
+    unawaited(
+      audioPlayer.play().catchError((Object e, StackTrace stackTrace) {
+        logger.log('Error starting playback', error: e, stackTrace: stackTrace);
+        _lastError = e.toString();
+      }),
+    );
+  }
+
   void _hydrateQueueEntryIds() {
     _queueEntryIds
       ..ensureIds(_queueList)
@@ -295,6 +322,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
         mediaItem.add(currentMediaItem.copyWith(duration: duration));
       }
 
+      if (_listeningStatsSongId == currentSongYtid) {
+        _listeningStatsDuration = duration;
+      }
+
       final existingQueue = queue.valueOrNull;
       if (existingQueue != null && queueIndex < existingQueue.length) {
         final queueItem = existingQueue[queueIndex];
@@ -320,6 +351,154 @@ class MusifyAudioHandler extends BaseAudioHandler {
         stackTrace: stackTrace,
       );
     }
+  }
+
+  void _startListeningStatsSession(Map song) {
+    final ytid = song['ytid']?.toString();
+    if (ytid == null || ytid.isEmpty) return;
+
+    _listeningStatsSong = cloneMap(song);
+    _listeningStatsSongId = ytid;
+    _listeningStatsDuration = audioPlayer.duration ?? _durationFromSong(song);
+    _listeningStatsListened = Duration.zero;
+    _listeningStatsQualified = false;
+    _listeningStatsLastTick = DateTime.now();
+    _pendingListeningStatsTicks.clear();
+
+    _listeningStatsTimer?.cancel();
+    _listeningStatsTimer = Timer.periodic(
+      const Duration(seconds: 1),
+      (_) => _tickListeningStatsSession(),
+    );
+  }
+
+  void _tickListeningStatsSession({bool force = false}) {
+    final song = _listeningStatsSong;
+    if (song == null) return;
+
+    final now = DateTime.now();
+    final lastTick = _listeningStatsLastTick;
+    _listeningStatsLastTick = now;
+    if (lastTick == null) return;
+
+    final shouldCount =
+        audioPlayer.playing ||
+        (force && audioPlayer.processingState == ProcessingState.completed);
+    if (!shouldCount) return;
+
+    var listenedDuration = now.difference(lastTick);
+    if (listenedDuration <= Duration.zero) return;
+    if (listenedDuration > const Duration(seconds: 5)) {
+      listenedDuration = const Duration(seconds: 5);
+    }
+
+    if (!wrappedEnabled.value) {
+      _pendingListeningStatsTicks.clear();
+      return;
+    }
+
+    _listeningStatsListened += listenedDuration;
+    listeningStatsService.recordListeningTime(
+      listenedDuration,
+      listenedAt: now,
+    );
+    final tick = _ListeningStatsTick(now, listenedDuration);
+
+    if (!_listeningStatsQualified) {
+      _pendingListeningStatsTicks.add(tick);
+      _trimPendingListeningStatsTicks();
+
+      if (_listeningStatsListened >=
+          qualifiedPlaybackThreshold(_listeningStatsDuration)) {
+        _listeningStatsQualified = true;
+        _recordPendingListeningStatsTicks();
+      }
+      return;
+    }
+
+    listeningStatsService.recordListening(
+      song,
+      tick.duration,
+      listenedAt: now,
+      countTotalSeconds: false,
+    );
+  }
+
+  void _recordPendingListeningStatsTicks() {
+    final song = _listeningStatsSong;
+    if (song == null || _pendingListeningStatsTicks.isEmpty) return;
+
+    final pendingTicks = List<_ListeningStatsTick>.from(
+      _pendingListeningStatsTicks,
+    );
+    _pendingListeningStatsTicks.clear();
+    final listenedDuration = pendingTicks.fold<Duration>(
+      Duration.zero,
+      (total, tick) => total + tick.duration,
+    );
+    if (listenedDuration <= Duration.zero) return;
+
+    listeningStatsService.recordListening(
+      song,
+      listenedDuration,
+      listenedAt: pendingTicks.last.listenedAt,
+      incrementPlayCount: true,
+      countTotalSeconds: false,
+    );
+  }
+
+  void _finishListeningStatsSession({bool countCurrentTick = false}) {
+    if (_listeningStatsSong == null) return;
+
+    if (countCurrentTick) {
+      _tickListeningStatsSession(force: true);
+    }
+
+    _listeningStatsTimer?.cancel();
+    _listeningStatsTimer = null;
+    _listeningStatsSong = null;
+    _listeningStatsSongId = null;
+    _listeningStatsDuration = null;
+    _listeningStatsListened = Duration.zero;
+    _listeningStatsLastTick = null;
+    _listeningStatsQualified = false;
+    _pendingListeningStatsTicks.clear();
+    listeningStatsService.flush();
+  }
+
+  void _trimPendingListeningStatsTicks() {
+    final maxTicks =
+        qualifiedPlaybackThreshold(_listeningStatsDuration).inSeconds + 5;
+    if (_pendingListeningStatsTicks.length > maxTicks) {
+      _pendingListeningStatsTicks.removeRange(
+        0,
+        _pendingListeningStatsTicks.length - maxTicks,
+      );
+    }
+  }
+
+  Duration? _durationFromSong(Map song) {
+    final duration = song['duration'];
+    if (duration is Duration) return duration;
+    if (duration is int) return Duration(seconds: duration);
+    if (duration is num) return Duration(seconds: duration.toInt());
+
+    final text = duration?.toString();
+    if (text == null || text.isEmpty) return null;
+
+    final numericSeconds = int.tryParse(text);
+    if (numericSeconds != null) return Duration(seconds: numericSeconds);
+
+    final parts = text.split(':').map(int.tryParse).toList();
+    if (parts.any((part) => part == null)) return null;
+    if (parts.length == 2) {
+      return Duration(minutes: parts[0]!, seconds: parts[1]!);
+    }
+    if (parts.length == 3) {
+      return Duration(hours: parts[0]!, minutes: parts[1]!, seconds: parts[2]!);
+    }
+
+    return null;
   }
 
   Future<void> _initialize() async {
@@ -585,6 +764,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
   void _handleProcessingStateChange(ProcessingState state) {
     try {
       if (state == ProcessingState.completed) {
+        _finishListeningStatsSession(countCurrentTick: true);
+
         if (!sleepTimerExpired && !_completionEventPending) {
           _completionEventPending = true;
 
@@ -1505,7 +1686,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
           return;
         }
       }
-      await audioPlayer.play();
+      _startAudioPlayer();
+      if (_listeningStatsSong == null && currentSong != null) {
+        _startListeningStatsSession(currentSong!);
+      }
     } catch (e, stackTrace) {
       logger.log('Error in play()', error: e, stackTrace: stackTrace);
       _lastError = e.toString();
@@ -1515,6 +1699,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
   @override
   Future<void> pause() async {
     try {
+      _tickListeningStatsSession(force: true);
+      listeningStatsService.flush();
       await audioPlayer.pause();
     } catch (e, stackTrace) {
       logger.log('Error in pause()', error: e, stackTrace: stackTrace);
@@ -1528,6 +1714,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
     _currentLoadingIndex = -1;
     _currentLoadingTransitionId = -1;
     try {
+      _finishListeningStatsSession(countCurrentTick: true);
       await audioPlayer.stop();
       _lastError = null;
       _consecutiveErrors = 0;
@@ -1786,6 +1973,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
         return false;
       }
 
+      _finishListeningStatsSession(countCurrentTick: true);
+
       await audioPlayer
           .setAudioSource(audioSource)
           .timeout(_songTransitionTimeout);
@@ -1802,8 +1991,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
         _updateCurrentMediaItemWithDuration(audioPlayer.duration!);
       }
 
-      await audioPlayer.play();
-
+      _startAudioPlayer();
+      _startListeningStatsSession(song);
       unawaited(updateRecentlyPlayed(song['ytid'], songFallback: song));
 
       if (!isOffline) {
@@ -2091,10 +2280,12 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   Future<void> playAgain() async {
     try {
+      _finishListeningStatsSession(countCurrentTick: true);
       await audioPlayer.seek(Duration.zero);
-      // Track the replay as a new listen
-      if (currentSong != null) {
-        await updateRecentlyPlayed(currentSong!['ytid']);
+      final song = currentSong;
+      if (song != null) {
+        _startListeningStatsSession(song);
+        unawaited(updateRecentlyPlayed(song['ytid'], songFallback: song));
       }
     } catch (e, stackTrace) {
       logger.log('Error playing again', error: e, stackTrace: stackTrace);

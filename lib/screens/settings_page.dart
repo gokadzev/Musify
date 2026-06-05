@@ -29,6 +29,7 @@ import 'package:musify/main.dart';
 import 'package:musify/screens/search_page.dart';
 import 'package:musify/services/common_services.dart';
 import 'package:musify/services/data_manager.dart';
+import 'package:musify/services/listening_stats_service.dart';
 import 'package:musify/services/playlist_download_service.dart';
 import 'package:musify/services/router_service.dart';
 import 'package:musify/services/settings_manager.dart';
@@ -160,6 +161,20 @@ class SettingsPage extends StatelessWidget {
                   addOrUpdateData<bool>('settings', 'useProxy', value);
                   showToast(context, context.l10n!.settingChangedMsg);
                 },
+              ),
+            );
+          },
+        ),
+        ValueListenableBuilder<bool>(
+          valueListenable: wrappedEnabled,
+          builder: (_, value, __) {
+            return CustomBar(
+              context.l10n!.listeningStats,
+              FluentIcons.clock_24_regular,
+              description: context.l10n!.listeningStatsDescription,
+              trailing: Switch(
+                value: value,
+                onChanged: (value) => _toggleWrapped(context, value),
               ),
             );
           },
@@ -307,6 +322,22 @@ class SettingsPage extends StatelessWidget {
           ),
         ),
         CustomBar(
+          context.l10n!.clearListeningStats,
+          FluentIcons.delete_24_regular,
+          onTap: () => _showConfirmationDialog(
+            context: context,
+            confirmationMessage: context.l10n!.clearListeningStatsQuestion,
+            submitMessage: context.l10n!.delete,
+            isDangerous: true,
+            onSubmit: () async {
+              await listeningStatsService.clearStats();
+              if (context.mounted) {
+                showToast(context, '${context.l10n!.listeningStatsCleared}!');
+              }
+            },
+          ),
+        ),
+        CustomBar(
           context.l10n!.deleteDownloads,
           FluentIcons.delete_24_regular,
           onTap: () => _showConfirmationDialog(
@@ -339,6 +370,10 @@ class SettingsPage extends StatelessWidget {
           onTap: () async {
             try {
               final result = await restoreData(context);
+              if (result.success) {
+                reloadBackedUpUserData();
+                listeningStatsService.reload();
+              }
               if (context.mounted) {
                 showToast(
                   context,
@@ -699,6 +734,13 @@ class SettingsPage extends StatelessWidget {
         ? const PredictiveBackPageTransitionsBuilder()
         : const CupertinoPageTransitionsBuilder();
     Musify.updateAppState(context);
+    showToast(context, context.l10n!.settingChangedMsg);
+  }
+
+  void _toggleWrapped(BuildContext context, bool value) {
+    addOrUpdateData('settings', 'wrappedEnabled', value);
+    wrappedEnabled.value = value;
+    listeningStatsService.reload();
     showToast(context, context.l10n!.settingChangedMsg);
   }
 

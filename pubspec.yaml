@@ -35,6 +35,7 @@ dependencies:
   receive_sharing_intent:
     path: ./packages/receive_sharing_intent
   rxdart: ^0.28.0
+  share_plus: ^12.0.2
   url_launcher: ^6.3.2
   youtube_explode_dart:
     path: ./packages/youtube_explode_dart
@@ -52,6 +53,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/licenses/
+    - assets/icons/musify_icon.png
 
   fonts:
     - family: paytoneOne
