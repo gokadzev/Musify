@@ -44,8 +44,8 @@ final userPlaylists = ValueNotifier<List<String>>(
 final userCustomPlaylists = ValueNotifier<List<Map>>(
   List<Map>.from(Hive.box('user').get('customPlaylists', defaultValue: [])),
 );
-List<Map> userLikedPlaylists = List<Map>.from(
-  Hive.box('user').get('likedPlaylists', defaultValue: []),
+final userLikedPlaylists = ValueNotifier<List<Map>>(
+  List<Map>.from(Hive.box('user').get('likedPlaylists', defaultValue: [])),
 );
 final userPlaylistFolders = ValueNotifier<List<Map>>(
   List<Map>.from(Hive.box('user').get('playlistFolders', defaultValue: [])),
@@ -71,7 +71,7 @@ Map? _searchAppPlaylistsById(String id) {
       if (p['ytid']?.toString() == id) return p as Map;
     }
   }
-  for (final p in userLikedPlaylists) {
+  for (final p in userLikedPlaylists.value) {
     if (p['ytid']?.toString() == id) return p;
   }
   for (final p in onlinePlaylists.value) {
@@ -99,10 +99,15 @@ List<Map> resolvePinnedPlaylists(List<String> ids) {
 const pinnedPlaylistsLimit = 5;
 
 final currentLikedPlaylistsLength = ValueNotifier<int>(
-  userLikedPlaylists.length,
+  userLikedPlaylists.value.length,
 );
 var _playlistLikeUpdateToken = 0;
 final _latestPlaylistLikeUpdateTokens = <String, int>{};
+
+void _setUserLikedPlaylists(List<Map> playlists) {
+  userLikedPlaylists.value = List<Map>.from(playlists);
+  currentLikedPlaylistsLength.value = userLikedPlaylists.value.length;
+}
 
 Future<List<dynamic>> getUserPlaylists() async {
   final futures = userPlaylists.value.map((playlistID) async {
@@ -402,7 +407,7 @@ void removeUserPlaylist(String playlistId) {
   }
   if (likedChanged) {
     unawaited(
-      addOrUpdateData<List>('user', 'likedPlaylists', userLikedPlaylists),
+      addOrUpdateData<List>('user', 'likedPlaylists', userLikedPlaylists.value),
     );
   }
 }
@@ -466,7 +471,11 @@ void removeUserCustomPlaylist(dynamic playlist) {
     }
     if (likedChanged) {
       unawaited(
-        addOrUpdateData<List>('user', 'likedPlaylists', userLikedPlaylists),
+        addOrUpdateData<List>(
+          'user',
+          'likedPlaylists',
+          userLikedPlaylists.value,
+        ),
       );
     }
   } catch (e, stackTrace) {
@@ -503,15 +512,19 @@ bool _removePlaylistFromFolders(String playlistId) {
 }
 
 bool _removePlaylistFromLikedPlaylists(String playlistId) {
-  final updatedLikedPlaylists = _deduplicateLikedPlaylists(userLikedPlaylists)
+  final updatedLikedPlaylists = _deduplicateLikedPlaylists(
+    userLikedPlaylists.value,
+  )
     ..removeWhere((playlist) => playlist['ytid']?.toString() == playlistId);
 
-  if (_likedPlaylistIdsAreEqual(userLikedPlaylists, updatedLikedPlaylists)) {
+  if (_likedPlaylistIdsAreEqual(
+    userLikedPlaylists.value,
+    updatedLikedPlaylists,
+  )) {
     return false;
   }
 
-  userLikedPlaylists = updatedLikedPlaylists;
-  currentLikedPlaylistsLength.value = userLikedPlaylists.length;
+  _setUserLikedPlaylists(updatedLikedPlaylists);
   return true;
 }
 
@@ -774,9 +787,9 @@ Future<List> getPlaylists({
 }) async {
   if (onlyLiked) {
     if (playlistsNum != null) {
-      return userLikedPlaylists.take(playlistsNum).toList();
+      return userLikedPlaylists.value.take(playlistsNum).toList();
     }
-    return userLikedPlaylists;
+    return userLikedPlaylists.value;
   }
 
   if (playlists.isEmpty || (playlistsNum == null && query == null)) {
@@ -1175,7 +1188,7 @@ Future<void> updatePlaylistLikeStatus(
     }
 
     final updatedLikedPlaylists = _deduplicateLikedPlaylists(
-      userLikedPlaylists,
+      userLikedPlaylists.value,
     );
 
     if (add) {
@@ -1191,14 +1204,16 @@ Future<void> updatePlaylistLikeStatus(
       );
     }
 
-    if (_likedPlaylistIdsAreEqual(userLikedPlaylists, updatedLikedPlaylists)) {
+    if (_likedPlaylistIdsAreEqual(
+      userLikedPlaylists.value,
+      updatedLikedPlaylists,
+    )) {
       return;
     }
 
-    userLikedPlaylists = updatedLikedPlaylists;
-    currentLikedPlaylistsLength.value = userLikedPlaylists.length;
+    _setUserLikedPlaylists(updatedLikedPlaylists);
     unawaited(
-      addOrUpdateData<List>('user', 'likedPlaylists', userLikedPlaylists),
+      addOrUpdateData<List>('user', 'likedPlaylists', userLikedPlaylists.value),
     );
   } catch (e, stackTrace) {
     logger.log(

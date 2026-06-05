@@ -62,6 +62,22 @@ class _BottomActionsRowState extends State<BottomActionsRow> {
     _songOfflineStatus = ValueNotifier<bool>(
       isSongAlreadyOffline(widget.audioId),
     );
+    userLikedSongsList.addListener(_syncLikeStatus);
+    userOfflineSongs.addListener(_syncOfflineStatus);
+  }
+
+  void _syncLikeStatus() {
+    final newStatus = isSongAlreadyLiked(widget.audioId);
+    if (_songLikeStatus.value != newStatus) {
+      _songLikeStatus.value = newStatus;
+    }
+  }
+
+  void _syncOfflineStatus() {
+    final newStatus = isSongAlreadyOffline(widget.audioId);
+    if (_songOfflineStatus.value != newStatus) {
+      _songOfflineStatus.value = newStatus;
+    }
   }
 
   @override
@@ -75,6 +91,8 @@ class _BottomActionsRowState extends State<BottomActionsRow> {
 
   @override
   void dispose() {
+    userLikedSongsList.removeListener(_syncLikeStatus);
+    userOfflineSongs.removeListener(_syncOfflineStatus);
     _songLikeStatus.dispose();
     _songOfflineStatus.dispose();
     super.dispose();
