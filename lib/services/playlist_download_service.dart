@@ -374,7 +374,7 @@ class OfflinePlaylistService {
 
       await FilePaths.ensureDirectoriesExist();
 
-      userOfflineSongs.value.clear();
+      userOfflineSongs.value = [];
 
       offlinePlaylists.value = [];
 

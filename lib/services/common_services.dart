@@ -687,11 +687,13 @@ Future<bool> makeSongOffline(dynamic song) async {
         (s) => s['ytid'] == ytid,
       );
 
+      final updatedOfflineSongs = List.from(userOfflineSongs.value);
       if (existingIndex != -1) {
-        userOfflineSongs.value[existingIndex] = offlineSong;
+        updatedOfflineSongs[existingIndex] = offlineSong;
       } else {
-        userOfflineSongs.value.add(offlineSong);
+        updatedOfflineSongs.add(offlineSong);
       }
+      userOfflineSongs.value = updatedOfflineSongs;
 
       unawaited(
         addOrUpdateData<List>(
@@ -739,7 +741,8 @@ Future<bool> removeSongFromOffline(dynamic songId) async {
     }
 
     try {
-      userOfflineSongs.value.removeWhere((song) => song['ytid'] == songId);
+      userOfflineSongs.value = List.from(userOfflineSongs.value)
+        ..removeWhere((song) => song['ytid'] == songId);
       unawaited(
         addOrUpdateData<List>(
           'userNoBackup',
@@ -810,9 +813,12 @@ Future<void> updateRecentlyPlayed(dynamic songId, {Map? songFallback}) async {
   try {
     if (userRecentlyPlayed.value.isNotEmpty &&
         userRecentlyPlayed.value[0]['ytid'] == songId) {
-      final existing = userRecentlyPlayed.value[0] as Map;
+      final updatedList = List.from(userRecentlyPlayed.value);
+      final existing = Map.from(updatedList[0] as Map);
       existing['listeningCount'] = (existing['listeningCount'] ?? 0) + 1;
       existing['lastPlayed'] = DateTime.now();
+      updatedList[0] = existing;
+      userRecentlyPlayed.value = updatedList;
       recentlyPlayedVersion.value++;
       unawaited(
         addOrUpdateData<List>(
@@ -828,25 +834,27 @@ Future<void> updateRecentlyPlayed(dynamic songId, {Map? songFallback}) async {
       (song) => song['ytid'] == songId,
     );
 
-    if (existingIndex == -1 &&
-        userRecentlyPlayed.value.length >= recentlyPlayedSongsLimit) {
-      userRecentlyPlayed.value.removeLast();
+    final updatedList = List.from(userRecentlyPlayed.value);
+
+    if (existingIndex == -1 && updatedList.length >= recentlyPlayedSongsLimit) {
+      updatedList.removeLast();
     }
 
     if (existingIndex != -1) {
-      final song = userRecentlyPlayed.value.removeAt(existingIndex) as Map;
+      final song = Map.from(updatedList.removeAt(existingIndex) as Map);
       song['listeningCount'] = (song['listeningCount'] ?? 0) + 1;
       song['lastPlayed'] = DateTime.now();
-      userRecentlyPlayed.value.insert(0, song);
+      updatedList.insert(0, song);
     } else {
       final newSongDetails = songFallback != null
           ? Map<String, dynamic>.from(songFallback)
           : await getSongDetails(0, songId);
       newSongDetails['listeningCount'] = 1;
       newSongDetails['lastPlayed'] = DateTime.now();
-      userRecentlyPlayed.value.insert(0, newSongDetails);
+      updatedList.insert(0, newSongDetails);
     }
 
+    userRecentlyPlayed.value = updatedList;
     recentlyPlayedVersion.value++;
     unawaited(
       addOrUpdateData<List>(
@@ -866,7 +874,8 @@ Future<void> updateRecentlyPlayed(dynamic songId, {Map? songFallback}) async {
 
 Future<void> removeFromRecentlyPlayed(dynamic songId) async {
   if (userRecentlyPlayed.value.any((song) => song['ytid'] == songId)) {
-    userRecentlyPlayed.value.removeWhere((song) => song['ytid'] == songId);
+    userRecentlyPlayed.value = List.from(userRecentlyPlayed.value)
+      ..removeWhere((song) => song['ytid'] == songId);
     recentlyPlayedVersion.value++;
     unawaited(
       addOrUpdateData<List>(
