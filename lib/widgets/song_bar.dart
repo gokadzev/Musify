@@ -213,19 +213,19 @@ class _SongBarState extends State<SongBar> {
         widget.showMusicDuration && widget.song['duration'] != null;
 
     return ValueListenableBuilder<bool>(
-      valueListenable: _songLikeStatus,
-      builder: (_, isLiked, __) {
-        return ValueListenableBuilder<bool>(
-          valueListenable: _songOfflineStatus,
-          builder: (_, isOffline, __) {
-            if (isOffline && _artworkPath != null) {
-              return _OfflineArtwork(
-                artworkPath: _artworkPath,
-                size: size,
-                colorScheme: colorScheme,
-              );
-            }
+      valueListenable: _songOfflineStatus,
+      builder: (_, isOffline, __) {
+        if (isOffline && _artworkPath != null) {
+          return _OfflineArtwork(
+            artworkPath: _artworkPath,
+            size: size,
+            colorScheme: colorScheme,
+          );
+        }
 
+        return ValueListenableBuilder<bool>(
+          valueListenable: _songLikeStatus,
+          builder: (_, isLiked, __) {
             return _OnlineArtwork(
               lowResImageUrl: _lowResImageUrl,
               size: size,
