@@ -330,17 +330,6 @@ bool _likedSongIdsAreEqual(List previous, List updated) {
   return true;
 }
 
-void moveLikedSong(int oldIndex, int newIndex) {
-  if (oldIndex < newIndex) {
-    newIndex -= 1;
-  }
-  final _song = userLikedSongsList.value.removeAt(oldIndex);
-  userLikedSongsList.value.insert(newIndex, _song);
-  unawaited(
-    addOrUpdateData<List>('user', 'likedSongs', userLikedSongsList.value),
-  );
-}
-
 Future<void> renameSongInLikedSongs(
   dynamic songId,
   String newTitle,
@@ -352,8 +341,11 @@ Future<void> renameSongInLikedSongs(
     );
 
     if (songIndex != -1) {
-      userLikedSongsList.value[songIndex]['title'] = newTitle;
-      userLikedSongsList.value[songIndex]['artist'] = newArtist;
+      final updatedList = List.from(userLikedSongsList.value);
+      updatedList[songIndex] = Map.from(updatedList[songIndex] as Map)
+        ..['title'] = newTitle
+        ..['artist'] = newArtist;
+      userLikedSongsList.value = updatedList;
 
       unawaited(
         addOrUpdateData<List>('user', 'likedSongs', userLikedSongsList.value),
