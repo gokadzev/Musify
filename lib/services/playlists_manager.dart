@@ -772,16 +772,8 @@ List<Map> getPlaylistsNotInFolders() {
 Future<List> getPlaylists({
   String? query,
   int? playlistsNum,
-  bool onlyLiked = false,
   String type = 'all',
 }) async {
-  if (onlyLiked) {
-    if (playlistsNum != null) {
-      return userLikedPlaylists.value.take(playlistsNum).toList();
-    }
-    return userLikedPlaylists.value;
-  }
-
   if (playlists.isEmpty || (playlistsNum == null && query == null)) {
     logger.log('No playlists available');
     return [];
