@@ -104,6 +104,14 @@ class _SongBarState extends State<SongBar> {
     _songLikeStatus = ValueNotifier(isSongAlreadyLiked(_ytid));
     final isOffline = isSongAlreadyOffline(_ytid);
     _songOfflineStatus = ValueNotifier(isOffline);
+    userLikedSongsList.addListener(_syncLikeStatus);
+  }
+
+  void _syncLikeStatus() {
+    final newStatus = isSongAlreadyLiked(_ytid);
+    if (_songLikeStatus.value != newStatus) {
+      _songLikeStatus.value = newStatus;
+    }
   }
 
   @override
@@ -124,6 +132,7 @@ class _SongBarState extends State<SongBar> {
 
   @override
   void dispose() {
+    userLikedSongsList.removeListener(_syncLikeStatus);
     _songLikeStatus.dispose();
     _songOfflineStatus.dispose();
     super.dispose();
