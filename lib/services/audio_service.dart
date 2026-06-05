@@ -427,7 +427,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
     try {
       await _androidEqualizer.setEnabled(enabled);
       equalizerEnabled.value = enabled;
-      unawaited(addOrUpdateData('settings', 'equalizerEnabled', enabled));
+      unawaited(addOrUpdateData<bool>('settings', 'equalizerEnabled', enabled));
     } catch (e, stackTrace) {
       logger.log(
         'Failed to set equalizer enabled state',
@@ -452,7 +452,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
       final gains = params.bands.map((band) => band.gain).toList();
       equalizerBandGains.value = gains;
-      unawaited(addOrUpdateData('settings', 'equalizerBandGains', gains));
+      unawaited(
+        addOrUpdateData<List<double>>('settings', 'equalizerBandGains', gains),
+      );
     } catch (e, stackTrace) {
       logger.log(
         'Failed to set equalizer band gain',
@@ -473,7 +475,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
       }
       final gains = List<double>.filled(params.bands.length, 0);
       equalizerBandGains.value = gains;
-      unawaited(addOrUpdateData('settings', 'equalizerBandGains', gains));
+      unawaited(
+        addOrUpdateData<List<double>>('settings', 'equalizerBandGains', gains),
+      );
     } catch (e, stackTrace) {
       logger.log(
         'Failed to reset equalizer bands',
@@ -1805,7 +1809,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       if (!isOffline) {
         final cacheKey =
             'song_${song['ytid']}_${audioQualitySetting.value}_url';
-        unawaited(addOrUpdateData('cache', cacheKey, songUrl));
+        unawaited(addOrUpdateData<String>('cache', cacheKey, songUrl));
       }
 
       _updatePlaybackState();
@@ -2251,7 +2255,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
   void changeSponsorBlockStatus() {
     sponsorBlockSupport.value = !sponsorBlockSupport.value;
     unawaited(
-      addOrUpdateData(
+      addOrUpdateData<bool>(
         'settings',
         'sponsorBlockSupport',
         sponsorBlockSupport.value,
@@ -2262,7 +2266,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
   void changeAutoPlayNextStatus() {
     playNextSongAutomatically.value = !playNextSongAutomatically.value;
     unawaited(
-      addOrUpdateData(
+      addOrUpdateData<bool>(
         'settings',
         'playNextSongAutomatically',
         playNextSongAutomatically.value,

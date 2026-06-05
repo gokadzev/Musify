@@ -303,7 +303,11 @@ class _PlaylistPageState extends State<PlaylistPage> {
             onSelected: (type) {
               setState(() {
                 _sortType = type;
-                addOrUpdateData('settings', 'playlistSortType', type.name);
+                addOrUpdateData<String>(
+                  'settings',
+                  'playlistSortType',
+                  type.name,
+                );
                 playlistSortSetting = type.name;
                 _sortPlaylist(type);
               });
@@ -465,7 +469,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
             updatedPlaylists[rootIndex] = updatedPlaylist;
             userCustomPlaylists.value = updatedPlaylists;
             unawaited(
-              addOrUpdateData(
+              addOrUpdateData<List>(
                 'user',
                 'customPlaylists',
                 userCustomPlaylists.value,
@@ -489,7 +493,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
             }
             userPlaylistFolders.value = updatedFolders;
             unawaited(
-              addOrUpdateData(
+              addOrUpdateData<List>(
                 'user',
                 'playlistFolders',
                 userPlaylistFolders.value,

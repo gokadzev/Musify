@@ -157,7 +157,7 @@ class SettingsPage extends StatelessWidget {
                 value: value,
                 onChanged: (value) {
                   useProxy.value = value;
-                  addOrUpdateData('settings', 'useProxy', value);
+                  addOrUpdateData<bool>('settings', 'useProxy', value);
                   showToast(context, context.l10n!.settingChangedMsg);
                 },
               ),
@@ -517,7 +517,11 @@ class SettingsPage extends StatelessWidget {
 
             return GestureDetector(
               onTap: () {
-                addOrUpdateData('settings', 'accentColor', color.toARGB32());
+                addOrUpdateData<int>(
+                  'settings',
+                  'accentColor',
+                  color.toARGB32(),
+                );
                 Musify.updateAppState(
                   context,
                   newAccentColor: color,
@@ -578,7 +582,7 @@ class SettingsPage extends StatelessWidget {
           return BottomSheetBar(
             modeNames[mode.index],
             () {
-              addOrUpdateData('settings', 'themeIndex', mode.index);
+              addOrUpdateData<int>('settings', 'themeIndex', mode.index);
               Musify.updateAppState(context, newThemeMode: mode);
               Navigator.pop(context);
             },
@@ -615,7 +619,11 @@ class SettingsPage extends StatelessWidget {
           return BottomSheetBar(
             getLanguageDisplayName(context, language),
             () {
-              addOrUpdateData('settings', 'languageCode', newLocaleFullCode);
+              addOrUpdateData<String>(
+                'settings',
+                'languageCode',
+                newLocaleFullCode,
+              );
               Musify.updateAppState(context, newLocale: newLocale);
               showToast(context, context.l10n!.languageMsg);
               Navigator.pop(context);
@@ -653,7 +661,7 @@ class SettingsPage extends StatelessWidget {
           return BottomSheetBar(
             qualityNames[index],
             () {
-              addOrUpdateData('settings', 'audioQuality', quality);
+              addOrUpdateData<String>('settings', 'audioQuality', quality);
               audioQualitySetting.value = quality;
               showToast(context, context.l10n!.audioQualityMsg);
               Navigator.pop(context);
@@ -667,7 +675,7 @@ class SettingsPage extends StatelessWidget {
   }
 
   void _toggleSystemColor(BuildContext context, bool value) {
-    addOrUpdateData('settings', 'useSystemColor', value);
+    addOrUpdateData<bool>('settings', 'useSystemColor', value);
     useSystemColor.value = value;
     Musify.updateAppState(
       context,
@@ -678,14 +686,14 @@ class SettingsPage extends StatelessWidget {
   }
 
   void _togglePureBlack(BuildContext context, bool value) {
-    addOrUpdateData('settings', 'usePureBlackColor', value);
+    addOrUpdateData<bool>('settings', 'usePureBlackColor', value);
     usePureBlackColor.value = value;
     Musify.updateAppState(context);
     showToast(context, context.l10n!.settingChangedMsg);
   }
 
   void _togglePredictiveBack(BuildContext context, bool value) {
-    addOrUpdateData('settings', 'predictiveBack', value);
+    addOrUpdateData<bool>('settings', 'predictiveBack', value);
     predictiveBack.value = value;
     transitionsBuilder = value
         ? const PredictiveBackPageTransitionsBuilder()
@@ -695,7 +703,7 @@ class SettingsPage extends StatelessWidget {
   }
 
   void _toggleOfflineMode(BuildContext context, bool value) {
-    addOrUpdateData('settings', 'offlineMode', value);
+    addOrUpdateData<bool>('settings', 'offlineMode', value);
     offlineMode.value = value;
 
     // Trigger router refresh and notify about the change
@@ -705,19 +713,19 @@ class SettingsPage extends StatelessWidget {
   }
 
   void _toggleSponsorBlock(BuildContext context, bool value) {
-    addOrUpdateData('settings', 'sponsorBlockSupport', value);
+    addOrUpdateData<bool>('settings', 'sponsorBlockSupport', value);
     sponsorBlockSupport.value = value;
     showToast(context, context.l10n!.settingChangedMsg);
   }
 
   void _toggleAutomaticUpdateChecks(BuildContext context, bool value) {
-    addOrUpdateData('settings', 'shouldWeCheckUpdates', value);
+    addOrUpdateData<bool>('settings', 'shouldWeCheckUpdates', value);
     shouldWeCheckUpdates.value = value;
     showToast(context, context.l10n!.settingChangedMsg);
   }
 
   void _toggleExternalRecommendations(BuildContext context, bool value) {
-    addOrUpdateData('settings', 'externalRecommendations', value);
+    addOrUpdateData<bool>('settings', 'externalRecommendations', value);
     externalRecommendations.value = value;
     showToast(context, context.l10n!.settingChangedMsg);
   }

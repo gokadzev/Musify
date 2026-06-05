@@ -637,7 +637,11 @@ class PlaylistBar extends StatelessWidget {
         updatedPlaylists[index] = result;
         userCustomPlaylists.value = updatedPlaylists;
         unawaited(
-          addOrUpdateData('user', 'customPlaylists', userCustomPlaylists.value),
+          addOrUpdateData<List<Map>>(
+            'user',
+            'customPlaylists',
+            userCustomPlaylists.value,
+          ),
         );
 
         // Update offline playlist if it exists

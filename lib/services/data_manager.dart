@@ -73,7 +73,7 @@ void _trimMemoryCacheIfNeeded() {
   }
 }
 
-Future<void> addOrUpdateData(String category, String key, dynamic value) async {
+Future<void> addOrUpdateData<T>(String category, String key, T value) async {
   final _box = await _openBox(category);
   await _box.put(key, value);
 

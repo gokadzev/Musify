@@ -177,7 +177,7 @@ class OfflinePlaylistService {
 
         offlinePlaylists.value = updatedPlaylists;
         unawaited(
-          addOrUpdateData(
+          addOrUpdateData<List>(
             'userNoBackup',
             'offlinePlaylists',
             offlinePlaylists.value,
@@ -322,7 +322,7 @@ class OfflinePlaylistService {
         );
       offlinePlaylists.value = updatedPlaylists;
       unawaited(
-        addOrUpdateData(
+        addOrUpdateData<List>(
           'userNoBackup',
           'offlinePlaylists',
           offlinePlaylists.value,
@@ -384,8 +384,8 @@ class OfflinePlaylistService {
       downloadProgressNotifiers.clear();
       activeDownloads.clear();
 
-      unawaited(addOrUpdateData('userNoBackup', 'offlineSongs', []));
-      unawaited(addOrUpdateData('userNoBackup', 'offlinePlaylists', []));
+      unawaited(addOrUpdateData<List>('userNoBackup', 'offlineSongs', []));
+      unawaited(addOrUpdateData<List>('userNoBackup', 'offlinePlaylists', []));
 
       logger.log('All downloads deleted successfully');
     } catch (e, stackTrace) {

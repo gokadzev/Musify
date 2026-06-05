@@ -246,7 +246,11 @@ class _UserSongsPageState extends State<UserSongsPage> {
             sortTypeToString: _getSortTypeDisplayText,
             onSelected: (type) {
               setState(() {
-                addOrUpdateData('settings', 'offlineSortType', type.name);
+                addOrUpdateData<String>(
+                  'settings',
+                  'offlineSortType',
+                  type.name,
+                );
                 offlineSortSetting = type.name;
               });
             },
@@ -292,7 +296,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
               onSubmit: () {
                 Navigator.pop(context);
                 userRecentlyPlayed.value = [];
-                addOrUpdateData('user', 'recentlyPlayedSongs', []);
+                addOrUpdateData<List>('user', 'recentlyPlayedSongs', []);
                 showToast(context, context.l10n!.recentlyPlayedMsg);
               },
             );

@@ -256,7 +256,9 @@ Future<void> updateSongLikeStatus(
       return;
 
     userLikedSongsList.value = updatedLikedSongs;
-    unawaited(addOrUpdateData('user', 'likedSongs', userLikedSongsList.value));
+    unawaited(
+      addOrUpdateData<List>('user', 'likedSongs', userLikedSongsList.value),
+    );
   } catch (e, stackTrace) {
     logger.log(
       'Error updating song like status',
@@ -334,7 +336,9 @@ void moveLikedSong(int oldIndex, int newIndex) {
   }
   final _song = userLikedSongsList.value.removeAt(oldIndex);
   userLikedSongsList.value.insert(newIndex, _song);
-  unawaited(addOrUpdateData('user', 'likedSongs', userLikedSongsList.value));
+  unawaited(
+    addOrUpdateData<List>('user', 'likedSongs', userLikedSongsList.value),
+  );
 }
 
 Future<void> renameSongInLikedSongs(
@@ -352,7 +356,7 @@ Future<void> renameSongInLikedSongs(
       userLikedSongsList.value[songIndex]['artist'] = newArtist;
 
       unawaited(
-        addOrUpdateData('user', 'likedSongs', userLikedSongsList.value),
+        addOrUpdateData<List>('user', 'likedSongs', userLikedSongsList.value),
       );
     }
   } catch (e, stackTrace) {
@@ -558,7 +562,7 @@ Future<String?> fetchSongStreamUrl(String songId, bool isLive) async {
     );
     final url = selectedStream.url.toString();
 
-    unawaited(addOrUpdateData('cache', cacheKey, url));
+    unawaited(addOrUpdateData<String>('cache', cacheKey, url));
 
     return url;
   } on TimeoutException catch (_) {
@@ -698,7 +702,11 @@ Future<bool> makeSongOffline(dynamic song) async {
       }
 
       unawaited(
-        addOrUpdateData('userNoBackup', 'offlineSongs', userOfflineSongs.value),
+        addOrUpdateData<List>(
+          'userNoBackup',
+          'offlineSongs',
+          userOfflineSongs.value,
+        ),
       );
     } catch (e, st) {
       logger.log(
@@ -741,7 +749,11 @@ Future<bool> removeSongFromOffline(dynamic songId) async {
     try {
       userOfflineSongs.value.removeWhere((song) => song['ytid'] == songId);
       unawaited(
-        addOrUpdateData('userNoBackup', 'offlineSongs', userOfflineSongs.value),
+        addOrUpdateData<List>(
+          'userNoBackup',
+          'offlineSongs',
+          userOfflineSongs.value,
+        ),
       );
     } catch (e, st) {
       logger.log(
@@ -811,7 +823,7 @@ Future<void> updateRecentlyPlayed(dynamic songId, {Map? songFallback}) async {
       existing['lastPlayed'] = DateTime.now();
       recentlyPlayedVersion.value++;
       unawaited(
-        addOrUpdateData(
+        addOrUpdateData<List>(
           'user',
           'recentlyPlayedSongs',
           userRecentlyPlayed.value,
@@ -845,7 +857,11 @@ Future<void> updateRecentlyPlayed(dynamic songId, {Map? songFallback}) async {
 
     recentlyPlayedVersion.value++;
     unawaited(
-      addOrUpdateData('user', 'recentlyPlayedSongs', userRecentlyPlayed),
+      addOrUpdateData<List>(
+        'user',
+        'recentlyPlayedSongs',
+        userRecentlyPlayed.value,
+      ),
     );
   } catch (e, stackTrace) {
     logger.log(
@@ -861,7 +877,11 @@ Future<void> removeFromRecentlyPlayed(dynamic songId) async {
     userRecentlyPlayed.value.removeWhere((song) => song['ytid'] == songId);
     recentlyPlayedVersion.value++;
     unawaited(
-      addOrUpdateData('user', 'recentlyPlayedSongs', userRecentlyPlayed.value),
+      addOrUpdateData<List>(
+        'user',
+        'recentlyPlayedSongs',
+        userRecentlyPlayed.value,
+      ),
     );
   }
 }

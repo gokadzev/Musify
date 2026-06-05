@@ -201,7 +201,7 @@ void showUpdateCheckDialog(BuildContext context) {
           OutlinedButton(
             onPressed: () {
               shouldWeCheckUpdates.value = false;
-              addOrUpdateData('settings', 'shouldWeCheckUpdates', false);
+              addOrUpdateData<bool>('settings', 'shouldWeCheckUpdates', false);
               Navigator.of(context).pop();
             },
             style: OutlinedButton.styleFrom(
@@ -215,7 +215,7 @@ void showUpdateCheckDialog(BuildContext context) {
           FilledButton(
             onPressed: () {
               shouldWeCheckUpdates.value = true;
-              addOrUpdateData('settings', 'shouldWeCheckUpdates', true);
+              addOrUpdateData<bool>('settings', 'shouldWeCheckUpdates', true);
               if (!isFdroidBuild && kReleaseMode && !offlineMode.value) {
                 checkAppUpdates();
                 isUpdateChecked = true;
