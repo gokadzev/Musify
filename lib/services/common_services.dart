@@ -370,7 +370,8 @@ bool isSongAlreadyLiked(songIdToCheck) {
 
 bool isPlaylistAlreadyLiked(playlistIdToCheck) {
   final playlistId = playlistIdToCheck?.toString();
-  return userLikedPlaylists.any(
+  if (playlistId == null || playlistId.isEmpty) return false;
+  return userLikedPlaylists.value.any(
     (playlist) => playlist['ytid']?.toString() == playlistId,
   );
 }

@@ -92,36 +92,54 @@ class _HomePageState extends State<HomePage> {
     double playlistHeight, {
     bool showOnlyLiked = false,
   }) {
+    if (showOnlyLiked) {
+      return ValueListenableBuilder<List<Map>>(
+        valueListenable: userLikedPlaylists,
+        builder: (_, likedPlaylists, __) => _buildSuggestedPlaylistsSection(
+          playlistHeight,
+          likedPlaylists.take(recommendedCubesNumber).toList(),
+          showOnlyLiked: true,
+        ),
+      );
+    }
+
+    return AsyncLoader<List<dynamic>>(
+      future: getPlaylists(playlistsNum: recommendedCubesNumber),
+      builder: (context, playlists) => _buildSuggestedPlaylistsSection(
+        playlistHeight,
+        playlists,
+      ),
+    );
+  }
+
+  Widget _buildSuggestedPlaylistsSection(
+    double playlistHeight,
+    List<dynamic> playlists, {
+    bool showOnlyLiked = false,
+  }) {
+    if (playlists.isEmpty) return const SizedBox.shrink();
+
     final sectionTitle = showOnlyLiked
         ? context.l10n!.backToFavorites
         : context.l10n!.suggestedPlaylists;
-    return AsyncLoader<List<dynamic>>(
-      future: getPlaylists(
-        playlistsNum: recommendedCubesNumber,
-        onlyLiked: showOnlyLiked,
-      ),
+    final itemsNumber = playlists.length.clamp(0, recommendedCubesNumber);
+    final isLargeScreen = MediaQuery.of(context).size.width > 480;
 
-      builder: (context, playlists) {
-        final itemsNumber = playlists.length.clamp(0, recommendedCubesNumber);
-        final isLargeScreen = MediaQuery.of(context).size.width > 480;
-
-        return Column(
-          children: [
-            SectionHeader(
-              title: sectionTitle,
-              icon: showOnlyLiked
-                  ? FluentIcons.heart_24_filled
-                  : FluentIcons.list_24_filled,
-            ),
-            ConstrainedBox(
-              constraints: BoxConstraints(maxHeight: playlistHeight),
-              child: isLargeScreen
-                  ? _buildHorizontalList(playlists, itemsNumber, playlistHeight)
-                  : _buildCarouselView(playlists, itemsNumber, playlistHeight),
-            ),
-          ],
-        );
-      },
+    return Column(
+      children: [
+        SectionHeader(
+          title: sectionTitle,
+          icon: showOnlyLiked
+              ? FluentIcons.heart_24_filled
+              : FluentIcons.list_24_filled,
+        ),
+        ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: playlistHeight),
+          child: isLargeScreen
+              ? _buildHorizontalList(playlists, itemsNumber, playlistHeight)
+              : _buildCarouselView(playlists, itemsNumber, playlistHeight),
+        ),
+      ],
     );
   }
 

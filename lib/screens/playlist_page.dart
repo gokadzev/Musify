@@ -76,9 +76,14 @@ class _PlaylistPageState extends State<PlaylistPage> {
   _originalPlaylistList; // Keep original order separately
 
   late final playlistLikeStatus = ValueNotifier<bool>(
-    isPlaylistAlreadyLiked(widget.playlistId),
+    isPlaylistAlreadyLiked(_resolvedPlaylistId),
   );
   bool playlistOfflineStatus = false;
+
+  String? get _resolvedPlaylistId =>
+      _playlist?['ytid']?.toString() ??
+      widget.playlistData?['ytid']?.toString() ??
+      widget.playlistId;
 
   // Sorting
   late PlaylistSortType _sortType = PlaylistSortType.values.firstWhere(
@@ -101,15 +106,25 @@ class _PlaylistPageState extends State<PlaylistPage> {
     super.initState();
     _searchController = TextEditingController();
     _searchFocusNode = FocusNode();
+    userLikedPlaylists.addListener(_syncPlaylistLikeStatus);
     _initializePlaylist();
   }
 
   @override
   void dispose() {
+    userLikedPlaylists.removeListener(_syncPlaylistLikeStatus);
+    playlistLikeStatus.dispose();
     _searchController.dispose();
     _searchFocusNode.dispose();
     _searchQueryNotifier.dispose();
     super.dispose();
+  }
+
+  void _syncPlaylistLikeStatus() {
+    final newStatus = isPlaylistAlreadyLiked(_resolvedPlaylistId);
+    if (playlistLikeStatus.value != newStatus) {
+      playlistLikeStatus.value = newStatus;
+    }
   }
 
   Future<void> _initializePlaylist() async {
@@ -140,6 +155,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
       if (_playlist != null && _playlist['list'] != null) {
         _originalPlaylistList = List<dynamic>.from(_playlist['list'] as List);
         _sortPlaylist(_sortType);
+        _syncPlaylistLikeStatus();
         if (mounted) {
           setState(() {});
         }

@@ -120,7 +120,7 @@ class _LibraryPageState extends State<LibraryPage> {
           userCustomPlaylists,
           userPlaylistFolders,
           offlinePlaylistService.offlinePlaylists,
-          currentLikedPlaylistsLength,
+          userLikedPlaylists,
           onlinePlaylists,
           userPlaylists,
         ]),
@@ -338,7 +338,7 @@ class _LibraryPageState extends State<LibraryPage> {
   }
 
   List<Widget> _buildLikedPlaylistsSlivers(Color primaryColor) {
-    if (userLikedPlaylists.isEmpty) return [];
+    if (userLikedPlaylists.value.isEmpty) return [];
     return [
       SliverToBoxAdapter(
         child: SectionHeader(
@@ -346,7 +346,7 @@ class _LibraryPageState extends State<LibraryPage> {
           icon: FluentIcons.heart_24_filled,
         ),
       ),
-      _buildSliverPlaylistList(userLikedPlaylists),
+      _buildSliverPlaylistList(userLikedPlaylists.value),
     ];
   }
 
