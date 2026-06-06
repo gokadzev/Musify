@@ -44,6 +44,32 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  late final Future<List> _suggestedPlaylistsFuture;
+  late Future<List> _recommendedSongsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _suggestedPlaylistsFuture = getPlaylists(
+      playlistsNum: recommendedCubesNumber,
+    );
+    _recommendedSongsFuture = getRecommendedSongs();
+    externalRecommendations.addListener(_refreshRecommendedSongs);
+  }
+
+  @override
+  void dispose() {
+    externalRecommendations.removeListener(_refreshRecommendedSongs);
+    super.dispose();
+  }
+
+  void _refreshRecommendedSongs() {
+    if (!mounted) return;
+    setState(() {
+      _recommendedSongsFuture = getRecommendedSongs();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final playlistHeight = MediaQuery.sizeOf(context).height * 0.25 / 1.1;
@@ -104,11 +130,9 @@ class _HomePageState extends State<HomePage> {
     }
 
     return AsyncLoader<List<dynamic>>(
-      future: getPlaylists(playlistsNum: recommendedCubesNumber),
-      builder: (context, playlists) => _buildSuggestedPlaylistsSection(
-        playlistHeight,
-        playlists,
-      ),
+      future: _suggestedPlaylistsFuture,
+      builder: (context, playlists) =>
+          _buildSuggestedPlaylistsSection(playlistHeight, playlists),
     );
   }
 
@@ -181,17 +205,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildRecommendedSongsSection() {
-    return ValueListenableBuilder<bool>(
-      valueListenable: externalRecommendations,
-      builder: (_, recommendations, __) {
-        return AsyncLoader<List<dynamic>>(
-          future: getRecommendedSongs(),
-
-          builder: (context, data) {
-            if (data.isEmpty) return const SizedBox.shrink();
-            return _buildRecommendedForYouSection(context, data);
-          },
-        );
+    return AsyncLoader<List<dynamic>>(
+      future: _recommendedSongsFuture,
+      builder: (context, data) {
+        if (data.isEmpty) return const SizedBox.shrink();
+        return _buildRecommendedForYouSection(context, data);
       },
     );
   }
