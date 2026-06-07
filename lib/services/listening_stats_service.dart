@@ -139,6 +139,9 @@ class ListeningStatsService {
   }
 
   void reload() {
+    _persistTimer?.cancel();
+    _persistTimer = null;
+    _listeningTimeRemainder = Duration.zero;
     _stats = null;
   }
 
@@ -154,10 +157,10 @@ class ListeningStatsService {
     await deleteData('user', storageKey);
   }
 
-  void flush() {
+  Future<void> flush() async {
     _persistTimer?.cancel();
     _persistTimer = null;
-    unawaited(_persist());
+    await _persist();
   }
 
   Map<String, dynamic> _readStats([DateTime? now]) {

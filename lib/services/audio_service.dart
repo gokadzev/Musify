@@ -447,7 +447,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
     );
   }
 
-  void _finishListeningStatsSession({bool countCurrentTick = false}) {
+  void _finishListeningStatsSession({
+    bool countCurrentTick = false,
+    bool flushStats = true,
+  }) {
     if (_listeningStatsSong == null) return;
 
     if (countCurrentTick) {
@@ -463,7 +466,28 @@ class MusifyAudioHandler extends BaseAudioHandler {
     _listeningStatsLastTick = null;
     _listeningStatsQualified = false;
     _pendingListeningStatsTicks.clear();
-    listeningStatsService.flush();
+    if (flushStats) unawaited(listeningStatsService.flush());
+  }
+
+  void resetListeningStatsSession({
+    bool countCurrentTick = false,
+    bool flushStats = true,
+  }) {
+    _finishListeningStatsSession(
+      countCurrentTick: countCurrentTick,
+      flushStats: flushStats,
+    );
+  }
+
+  void startListeningStatsSessionIfNeeded() {
+    if (!wrappedEnabled.value ||
+        _listeningStatsSong != null ||
+        !audioPlayer.playing) {
+      return;
+    }
+
+    final song = currentSong;
+    if (song != null) _startListeningStatsSession(song);
   }
 
   void _trimPendingListeningStatsTicks() {
@@ -1700,7 +1724,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
   Future<void> pause() async {
     try {
       _tickListeningStatsSession(force: true);
-      listeningStatsService.flush();
+      unawaited(listeningStatsService.flush());
       await audioPlayer.pause();
     } catch (e, stackTrace) {
       logger.log('Error in pause()', error: e, stackTrace: stackTrace);

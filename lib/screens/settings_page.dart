@@ -323,14 +323,16 @@ class SettingsPage extends StatelessWidget {
         ),
         CustomBar(
           context.l10n!.clearListeningStats,
-          FluentIcons.delete_24_regular,
+          FluentIcons.clock_24_regular,
           onTap: () => _showConfirmationDialog(
             context: context,
             confirmationMessage: context.l10n!.clearListeningStatsQuestion,
             submitMessage: context.l10n!.delete,
             isDangerous: true,
             onSubmit: () async {
+              audioHandler.resetListeningStatsSession(flushStats: false);
               await listeningStatsService.clearStats();
+              audioHandler.startListeningStatsSessionIfNeeded();
               if (context.mounted) {
                 showToast(context, '${context.l10n!.listeningStatsCleared}!');
               }
@@ -737,11 +739,24 @@ class SettingsPage extends StatelessWidget {
     showToast(context, context.l10n!.settingChangedMsg);
   }
 
-  void _toggleWrapped(BuildContext context, bool value) {
-    addOrUpdateData('settings', 'wrappedEnabled', value);
+  Future<void> _toggleWrapped(BuildContext context, bool value) async {
+    if (!value) {
+      audioHandler.resetListeningStatsSession(
+        countCurrentTick: true,
+        flushStats: false,
+      );
+      await listeningStatsService.flush();
+    }
+
+    await addOrUpdateData<bool>('settings', 'wrappedEnabled', value);
     wrappedEnabled.value = value;
     listeningStatsService.reload();
-    showToast(context, context.l10n!.settingChangedMsg);
+    if (value) {
+      audioHandler.startListeningStatsSessionIfNeeded();
+    }
+    if (context.mounted) {
+      showToast(context, context.l10n!.settingChangedMsg);
+    }
   }
 
   void _toggleOfflineMode(BuildContext context, bool value) {
