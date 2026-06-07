@@ -508,78 +508,76 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
     _isUpdatingState = true;
 
-    Future.microtask(() {
-      try {
-        final now = DateTime.now();
-        final currentPosition = audioPlayer.position;
-        final isPlaying = audioPlayer.playing;
-        final currentState = playbackState.valueOrNull;
-        final newProcessingState =
-            _processingStateMap[audioPlayer.processingState] ??
-            AudioProcessingState.idle;
-        final bufferedPosition = audioPlayer.bufferedPosition;
+    try {
+      final now = DateTime.now();
+      final currentPosition = audioPlayer.position;
+      final isPlaying = audioPlayer.playing;
+      final currentState = playbackState.valueOrNull;
+      final newProcessingState =
+          _processingStateMap[audioPlayer.processingState] ??
+          AudioProcessingState.idle;
+      final bufferedPosition = audioPlayer.bufferedPosition;
 
-        final shouldEmitProgressTick =
-            currentState != null &&
-            isPlaying &&
-            now.difference(currentState.updateTime) >= _playbackStateHeartbeat;
-        final hasBufferedPositionChange =
-            currentState == null ||
-            (bufferedPosition - currentState.bufferedPosition).abs() >=
-                const Duration(seconds: 1);
+      final shouldEmitProgressTick =
+          currentState != null &&
+          isPlaying &&
+          now.difference(currentState.updateTime) >= _playbackStateHeartbeat;
+      final hasBufferedPositionChange =
+          currentState == null ||
+          (bufferedPosition - currentState.bufferedPosition).abs() >=
+              const Duration(seconds: 1);
 
-        final shouldUpdate =
-            currentState == null ||
-            currentState.playing != isPlaying ||
-            currentState.processingState != newProcessingState ||
-            currentState.queueIndex != _currentQueueIndex ||
-            currentState.speed != audioPlayer.speed ||
-            shouldEmitProgressTick ||
-            hasBufferedPositionChange ||
-            (_hasSignificantPositionChange(
-              currentPosition,
-              currentState.updatePosition,
-              currentState.updateTime,
-              now,
-              currentState.speed,
-            ));
+      final shouldUpdate =
+          currentState == null ||
+          currentState.playing != isPlaying ||
+          currentState.processingState != newProcessingState ||
+          currentState.queueIndex != _currentQueueIndex ||
+          currentState.speed != audioPlayer.speed ||
+          shouldEmitProgressTick ||
+          hasBufferedPositionChange ||
+          (_hasSignificantPositionChange(
+            currentPosition,
+            currentState.updatePosition,
+            currentState.updateTime,
+            now,
+            currentState.speed,
+          ));
 
-        if (shouldUpdate) {
-          playbackState.add(
-            PlaybackState(
-              controls: isPlaying ? _playingControls : _pausedControls,
-              systemActions: const {
-                MediaAction.seek,
-                MediaAction.seekForward,
-                MediaAction.seekBackward,
-              },
-              androidCompactActionIndices: const [0, 1, 3],
-              processingState: newProcessingState,
-              playing: isPlaying,
-              updatePosition: currentPosition,
-              bufferedPosition: bufferedPosition,
-              speed: audioPlayer.speed,
-              queueIndex: _currentQueueIndex < _queueList.length
-                  ? _currentQueueIndex
-                  : null,
-              updateTime: now,
-            ),
-          );
-        }
-      } catch (e, stackTrace) {
-        logger.log(
-          'Error updating playback state',
-          error: e,
-          stackTrace: stackTrace,
+      if (shouldUpdate) {
+        playbackState.add(
+          PlaybackState(
+            controls: isPlaying ? _playingControls : _pausedControls,
+            systemActions: const {
+              MediaAction.seek,
+              MediaAction.seekForward,
+              MediaAction.seekBackward,
+            },
+            androidCompactActionIndices: const [0, 1, 3],
+            processingState: newProcessingState,
+            playing: isPlaying,
+            updatePosition: currentPosition,
+            bufferedPosition: bufferedPosition,
+            speed: audioPlayer.speed,
+            queueIndex: _currentQueueIndex < _queueList.length
+                ? _currentQueueIndex
+                : null,
+            updateTime: now,
+          ),
         );
-      } finally {
-        _isUpdatingState = false;
-        if (_pendingPlaybackStateUpdate) {
-          _pendingPlaybackStateUpdate = false;
-          _updatePlaybackState();
-        }
       }
-    });
+    } catch (e, stackTrace) {
+      logger.log(
+        'Error updating playback state',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    } finally {
+      _isUpdatingState = false;
+      if (_pendingPlaybackStateUpdate) {
+        _pendingPlaybackStateUpdate = false;
+        _updatePlaybackState();
+      }
+    }
   }
 
   void _handleProcessingStateChange(ProcessingState state) {
