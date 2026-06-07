@@ -655,7 +655,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       // Determine what to play next based on queue position and repeat mode
       if (repeatNotifier.value == AudioServiceRepeatMode.one) {
         // Repeat single song - play current song again
-        await _playFromQueue(_currentQueueIndex);
+        await playAgain();
       } else {
         // For all other cases (next song, repeat all, auto-play), skipToNext handles it
         await skipToNext();
@@ -2100,10 +2100,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   Future<void> playAgain() async {
     try {
+      // Seek back to start
       await audioPlayer.seek(Duration.zero);
       // Track the replay as a new listen
       if (currentSong != null) {
-        await updateRecentlyPlayed(currentSong!['ytid']);
+        unawaited(updateRecentlyPlayed(currentSong!['ytid']));
       }
     } catch (e, stackTrace) {
       logger.log('Error playing again', error: e, stackTrace: stackTrace);
