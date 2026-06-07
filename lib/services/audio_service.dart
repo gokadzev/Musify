@@ -787,6 +787,13 @@ class MusifyAudioHandler extends BaseAudioHandler {
       }
 
       final insertIndex = _queueList.length;
+      final shouldPlayInsertedSong =
+          playNextSongAutomatically.value &&
+          !sleepTimerExpired &&
+          _currentLoadingIndex == -1 &&
+          audioPlayer.processingState == ProcessingState.completed &&
+          _queueList.isNotEmpty &&
+          _currentQueueIndex == _queueList.length - 1;
       final queueSong = _queueEntryIds.createSong(song);
       queueSong['isAutoPicked'] = true;
       _queueList.insert(insertIndex, queueSong);
@@ -798,7 +805,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
       _updateQueueMediaItems();
       _cleanupOldPreloadedSongs();
 
-      if (!audioPlayer.playing && _queueList.length == 1) {
+      if (shouldPlayInsertedSong) {
+        await _playFromQueue(insertIndex);
+      } else if (!audioPlayer.playing && _queueList.length == 1) {
         await _playFromQueue(0);
       }
     } catch (e, stackTrace) {
