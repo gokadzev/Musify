@@ -558,7 +558,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
             updatePosition: currentPosition,
             bufferedPosition: bufferedPosition,
             speed: audioPlayer.speed,
-            queueIndex: _currentQueueIndex < _queueList.length
+            queueIndex:
+                _currentQueueIndex >= 0 &&
+                    _currentQueueIndex < _queueList.length
                 ? _currentQueueIndex
                 : null,
             updateTime: now,
