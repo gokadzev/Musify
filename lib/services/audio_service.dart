@@ -38,13 +38,6 @@ import 'package:musify/utilities/mediaitem.dart';
 import 'package:musify/utilities/queue_entry_utils.dart';
 import 'package:rxdart/rxdart.dart';
 
-class _ListeningStatsTick {
-  const _ListeningStatsTick(this.listenedAt, this.duration);
-
-  final DateTime listenedAt;
-  final Duration duration;
-}
-
 class MusifyAudioHandler extends BaseAudioHandler {
   MusifyAudioHandler() {
     _androidEqualizer = AndroidEqualizer();
@@ -98,14 +91,13 @@ class MusifyAudioHandler extends BaseAudioHandler {
   bool _completionEventPending = false;
   bool _completionHandlerLoadStarted = false;
 
-  Timer? _listeningStatsTimer;
   Map? _listeningStatsSong;
   String? _listeningStatsSongId;
   Duration? _listeningStatsDuration;
   Duration _listeningStatsListened = Duration.zero;
   DateTime? _listeningStatsLastTick;
   bool _listeningStatsQualified = false;
-  final List<_ListeningStatsTick> _pendingListeningStatsTicks = [];
+  bool _lastAudioPlayerPlaying = false;
 
   String? _lastError;
   int _consecutiveErrors = 0;
@@ -221,6 +213,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
         .throttleTime(const Duration(milliseconds: 100))
         .listen(
           (state) {
+            _handlePlayerStateForListeningStats(state);
             if (state.processingState == ProcessingState.idle &&
                 !state.playing &&
                 _lastError != null) {
@@ -354,6 +347,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
   }
 
   void _startListeningStatsSession(Map song) {
+    if (!wrappedEnabled.value) return;
+
     final ytid = song['ytid']?.toString();
     if (ytid == null || ytid.isEmpty) return;
 
@@ -363,16 +358,27 @@ class MusifyAudioHandler extends BaseAudioHandler {
     _listeningStatsListened = Duration.zero;
     _listeningStatsQualified = false;
     _listeningStatsLastTick = DateTime.now();
-    _pendingListeningStatsTicks.clear();
-
-    _listeningStatsTimer?.cancel();
-    _listeningStatsTimer = Timer.periodic(
-      const Duration(seconds: 1),
-      (_) => _tickListeningStatsSession(),
-    );
   }
 
-  void _tickListeningStatsSession({bool force = false}) {
+  void _resumeListeningStatsSession() {
+    if (!wrappedEnabled.value) return;
+
+    final song = currentSong;
+    if (song == null) return;
+
+    final ytid = song['ytid']?.toString();
+    if (ytid == null || ytid.isEmpty) return;
+
+    if (_listeningStatsSongId != ytid) {
+      _finishListeningStatsSession(countCurrentTick: true);
+      _startListeningStatsSession(song);
+      return;
+    }
+
+    _listeningStatsLastTick = DateTime.now();
+  }
+
+  void _recordListeningStatsProgress({bool force = false, bool? wasPlaying}) {
     final song = _listeningStatsSong;
     if (song == null) return;
 
@@ -382,18 +388,14 @@ class MusifyAudioHandler extends BaseAudioHandler {
     if (lastTick == null) return;
 
     final shouldCount =
-        audioPlayer.playing ||
+        (wasPlaying ?? audioPlayer.playing) ||
         (force && audioPlayer.processingState == ProcessingState.completed);
     if (!shouldCount) return;
 
-    var listenedDuration = now.difference(lastTick);
+    final listenedDuration = now.difference(lastTick);
     if (listenedDuration <= Duration.zero) return;
-    if (listenedDuration > const Duration(seconds: 5)) {
-      listenedDuration = const Duration(seconds: 5);
-    }
 
     if (!wrappedEnabled.value) {
-      _pendingListeningStatsTicks.clear();
       return;
     }
 
@@ -402,49 +404,43 @@ class MusifyAudioHandler extends BaseAudioHandler {
       listenedDuration,
       listenedAt: now,
     );
-    final tick = _ListeningStatsTick(now, listenedDuration);
 
     if (!_listeningStatsQualified) {
-      _pendingListeningStatsTicks.add(tick);
-      _trimPendingListeningStatsTicks();
-
       if (_listeningStatsListened >=
           qualifiedPlaybackThreshold(_listeningStatsDuration)) {
         _listeningStatsQualified = true;
-        _recordPendingListeningStatsTicks();
+        listeningStatsService.recordListening(
+          song,
+          _listeningStatsListened,
+          listenedAt: now,
+          incrementPlayCount: true,
+          countTotalSeconds: false,
+        );
       }
       return;
     }
 
     listeningStatsService.recordListening(
       song,
-      tick.duration,
+      listenedDuration,
       listenedAt: now,
       countTotalSeconds: false,
     );
   }
 
-  void _recordPendingListeningStatsTicks() {
-    final song = _listeningStatsSong;
-    if (song == null || _pendingListeningStatsTicks.isEmpty) return;
+  void _handlePlayerStateForListeningStats(PlayerState state) {
+    if (state.playing == _lastAudioPlayerPlaying) return;
 
-    final pendingTicks = List<_ListeningStatsTick>.from(
-      _pendingListeningStatsTicks,
-    );
-    _pendingListeningStatsTicks.clear();
-    final listenedDuration = pendingTicks.fold<Duration>(
-      Duration.zero,
-      (total, tick) => total + tick.duration,
-    );
-    if (listenedDuration <= Duration.zero) return;
+    if (state.playing) {
+      _resumeListeningStatsSession();
+    } else {
+      _recordListeningStatsProgress(
+        force: state.processingState == ProcessingState.completed,
+        wasPlaying: _lastAudioPlayerPlaying,
+      );
+    }
 
-    listeningStatsService.recordListening(
-      song,
-      listenedDuration,
-      listenedAt: pendingTicks.last.listenedAt,
-      incrementPlayCount: true,
-      countTotalSeconds: false,
-    );
+    _lastAudioPlayerPlaying = state.playing;
   }
 
   void _finishListeningStatsSession({
@@ -454,18 +450,15 @@ class MusifyAudioHandler extends BaseAudioHandler {
     if (_listeningStatsSong == null) return;
 
     if (countCurrentTick) {
-      _tickListeningStatsSession(force: true);
+      _recordListeningStatsProgress(force: true);
     }
 
-    _listeningStatsTimer?.cancel();
-    _listeningStatsTimer = null;
     _listeningStatsSong = null;
     _listeningStatsSongId = null;
     _listeningStatsDuration = null;
     _listeningStatsListened = Duration.zero;
     _listeningStatsLastTick = null;
     _listeningStatsQualified = false;
-    _pendingListeningStatsTicks.clear();
     if (flushStats) unawaited(listeningStatsService.flush());
   }
 
@@ -488,17 +481,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
     final song = currentSong;
     if (song != null) _startListeningStatsSession(song);
-  }
-
-  void _trimPendingListeningStatsTicks() {
-    final maxTicks =
-        qualifiedPlaybackThreshold(_listeningStatsDuration).inSeconds + 5;
-    if (_pendingListeningStatsTicks.length > maxTicks) {
-      _pendingListeningStatsTicks.removeRange(
-        0,
-        _pendingListeningStatsTicks.length - maxTicks,
-      );
-    }
   }
 
   Duration? _durationFromSong(Map song) {
@@ -1711,9 +1693,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
         }
       }
       _startAudioPlayer();
-      if (_listeningStatsSong == null && currentSong != null) {
-        _startListeningStatsSession(currentSong!);
-      }
+      _resumeListeningStatsSession();
     } catch (e, stackTrace) {
       logger.log('Error in play()', error: e, stackTrace: stackTrace);
       _lastError = e.toString();
@@ -1723,7 +1703,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
   @override
   Future<void> pause() async {
     try {
-      _tickListeningStatsSession(force: true);
+      _recordListeningStatsProgress();
       unawaited(listeningStatsService.flush());
       await audioPlayer.pause();
     } catch (e, stackTrace) {
@@ -1769,6 +1749,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
   @override
   Future<void> seek(Duration position) async {
     try {
+      _recordListeningStatsProgress();
       await audioPlayer.seek(position);
     } catch (e, stackTrace) {
       logger.log('Error in seek()', error: e, stackTrace: stackTrace);
@@ -1838,7 +1819,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
       }
 
       _lastError = null;
-      if (audioPlayer.playing) await audioPlayer.pause();
+      if (audioPlayer.playing) {
+        _recordListeningStatsProgress();
+        await audioPlayer.pause();
+      }
 
       final playback = await _resolvePlaybackSource(songData);
 
