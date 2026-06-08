@@ -231,7 +231,7 @@ class SettingsPage extends StatelessWidget {
               trailing: Switch(
                 value: value,
                 onChanged: (value) {
-                  audioHandler.changeAutoPlayNextStatus();
+                  _toggleAutoPlayNext(context, value);
                   showToast(context, context.l10n!.settingChangedMsg);
                 },
               ),
@@ -715,6 +715,12 @@ class SettingsPage extends StatelessWidget {
   void _toggleSponsorBlock(BuildContext context, bool value) {
     addOrUpdateData<bool>('settings', 'sponsorBlockSupport', value);
     sponsorBlockSupport.value = value;
+    showToast(context, context.l10n!.settingChangedMsg);
+  }
+
+  void _toggleAutoPlayNext(BuildContext context, bool value) {
+    addOrUpdateData<bool>('settings', 'playNextSongAutomatically', value);
+    playNextSongAutomatically.value = value;
     showToast(context, context.l10n!.settingChangedMsg);
   }
 

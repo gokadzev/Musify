@@ -1302,8 +1302,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
     }
   }
 
-  List<Map> get currentQueue => List.unmodifiable(_queueList);
-  List<Map> get playHistory => List.unmodifiable(_historyList);
   Stream<List<Map>> get queueAsMapStream => _queueMapStream.stream;
   int get currentQueueIndex => _currentQueueIndex;
   Map? get currentSong =>
@@ -2260,28 +2258,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
         stackTrace: stackTrace,
       );
     }
-  }
-
-  void changeSponsorBlockStatus() {
-    sponsorBlockSupport.value = !sponsorBlockSupport.value;
-    unawaited(
-      addOrUpdateData<bool>(
-        'settings',
-        'sponsorBlockSupport',
-        sponsorBlockSupport.value,
-      ),
-    );
-  }
-
-  void changeAutoPlayNextStatus() {
-    playNextSongAutomatically.value = !playNextSongAutomatically.value;
-    unawaited(
-      addOrUpdateData<bool>(
-        'settings',
-        'playNextSongAutomatically',
-        playNextSongAutomatically.value,
-      ),
-    );
   }
 
   @override
