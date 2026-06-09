@@ -839,6 +839,7 @@ Future<List> getPlaylists({
           final playlistMap = {
             'ytid': playlist.id.toString(),
             'title': playlist.title,
+            'image': playlist.thumbnails.first.url.toString(),
             'source': 'youtube',
             'list': [],
           };
@@ -1010,7 +1011,7 @@ Future<Map?> _fetchYouTubePlaylist(String id) async {
       playlist = {
         'ytid': ytPlaylist.id.toString(),
         'title': ytPlaylist.title,
-        'image': null,
+        'image': ytPlaylist.thumbnails.mediumResUrl,
         'source': 'user-youtube',
         'list': [],
       };
