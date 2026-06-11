@@ -1,0 +1,17 @@
+{
+  "name": "musify-server",
+  "version": "1.0.0",
+  "description": "Express server mimicking Musify's backend logic",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@distube/ytdl-core": "^4.16.12",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "ytpl": "^2.3.0",
+    "ytsr": "^3.8.4"
+  }
+}
