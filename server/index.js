@@ -1,8 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import ytdl from '@distube/ytdl-core';
-import ytsr from 'ytsr';
-import ytpl from 'ytpl';
+import ytSearch from 'yt-search';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -22,17 +21,15 @@ app.get('/api/search', async (req, res) => {
       return res.status(400).json({ error: 'Search query "q" is required' });
     }
 
-    const filters = await ytsr.getFilters(query);
-    const filter = filters.get('Type').get('Video');
-    const searchResults = await ytsr(filter.url, { limit: 20 });
+    const searchResults = await ytSearch(query);
 
     // Map to a simplified Musify-like structure
-    const results = searchResults.items.map(video => ({
-      ytid: video.id,
+    const results = searchResults.videos.slice(0, 20).map(video => ({
+      ytid: video.videoId,
       title: video.title,
       artist: video.author?.name,
-      duration: video.duration,
-      thumbnail: video.bestThumbnail?.url,
+      duration: video.timestamp,
+      thumbnail: video.thumbnail,
       viewCount: video.views
     }));
 
@@ -91,18 +88,22 @@ app.get('/api/song/:ytid/stream', async (req, res) => {
 app.get('/api/playlist/:playlistId', async (req, res) => {
   try {
     const playlistId = req.params.playlistId;
-    const playlist = await ytpl(playlistId);
+    const playlist = await ytSearch({ listId: playlistId });
 
-    const videos = playlist.items.map(video => ({
-      ytid: video.id,
+    if (!playlist || !playlist.videos) {
+       return res.status(404).json({ error: 'Playlist not found or empty' });
+    }
+
+    const videos = playlist.videos.map(video => ({
+      ytid: video.videoId,
       title: video.title,
       artist: video.author?.name,
-      duration: video.duration,
-      thumbnail: video.bestThumbnail?.url
+      duration: video.duration?.seconds,
+      thumbnail: video.thumbnail
     }));
 
     res.json({
-      id: playlist.id,
+      id: playlist.listId,
       title: playlist.title,
       author: playlist.author?.name,
       videos: videos
