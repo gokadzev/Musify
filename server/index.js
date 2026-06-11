@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import ytdl from '@distube/ytdl-core';
 import ytSearch from 'yt-search';
+import { getYtdlAgent, markProxyAsFailed } from './proxyManager.js';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -65,19 +66,42 @@ app.get('/api/song/:ytid/stream', async (req, res) => {
   try {
     const ytid = req.params.ytid;
 
-    const info = await ytdl.getInfo(ytid);
-    const format = ytdl.chooseFormat(info.formats, { quality: 'highestaudio' });
+    // Retry loop for proxies
+    let attempts = 0;
+    while (attempts < 5) {
+       attempts++;
+       const { agent, proxyUrl } = await getYtdlAgent();
 
-    if (!format) {
-       return res.status(404).json({ error: 'No suitable audio format found' });
+       try {
+           const info = await ytdl.getInfo(ytid, { agent });
+           const format = ytdl.chooseFormat(info.formats, { quality: 'highestaudio' });
+
+           if (!format) {
+              return res.status(404).json({ error: 'No suitable audio format found' });
+           }
+
+           return res.json({
+             ytid: ytid,
+             url: format.url,
+             mimeType: format.mimeType,
+             bitrate: format.audioBitrate
+           });
+
+       } catch (e) {
+           console.error(`Attempt ${attempts} failed with proxy ${proxyUrl}: ${e.message}`);
+           if (e.message.includes('429') || e.message.includes('socket') || e.message.includes('timeout') || e.message.includes('fetch')) {
+               await markProxyAsFailed(proxyUrl);
+           } else if (e.statusCode === 410) {
+               return res.status(410).json({ error: 'Video is unavailable (410 Gone). It might be age-restricted or private.' });
+           } else {
+               // If it's a completely different error, stop retrying
+               throw e;
+           }
+       }
     }
 
-    res.json({
-      ytid: ytid,
-      url: format.url,
-      mimeType: format.mimeType,
-      bitrate: format.audioBitrate
-    });
+    return res.status(429).json({ error: 'Failed to fetch stream URL due to proxy limits (429). Please try again later.' });
+
   } catch (error) {
     console.error('Error fetching stream:', error);
     res.status(500).json({ error: 'Failed to fetch stream URL', details: error.message });
