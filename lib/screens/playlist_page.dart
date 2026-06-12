@@ -79,6 +79,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
     isPlaylistAlreadyLiked(_resolvedPlaylistId),
   );
   bool playlistOfflineStatus = false;
+  bool _isInitializingPlaylist = true;
 
   String? get _resolvedPlaylistId =>
       _playlist?['ytid']?.toString() ??
@@ -142,6 +143,9 @@ class _PlaylistPageState extends State<PlaylistPage> {
               await getPlaylistInfoForWidget(
                 resolvedId,
                 isArtist: widget.isArtist,
+                artistName: initialPlaylist?['title']?.toString(),
+                artistImage: initialPlaylist?['image']?.toString(),
+                sourceSongId: initialPlaylist?['sourceSongId']?.toString(),
               ) ??
               initialPlaylist;
         }
@@ -149,6 +153,9 @@ class _PlaylistPageState extends State<PlaylistPage> {
         _playlist = await getPlaylistInfoForWidget(
           resolvedId,
           isArtist: widget.isArtist,
+          artistName: initialPlaylist?['title']?.toString(),
+          artistImage: initialPlaylist?['image']?.toString(),
+          sourceSongId: initialPlaylist?['sourceSongId']?.toString(),
         );
       }
 
@@ -156,9 +163,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
         _originalPlaylistList = List<dynamic>.from(_playlist['list'] as List);
         _sortPlaylist(_sortType);
         _syncPlaylistLikeStatus();
-        if (mounted) {
-          setState(() {});
-        }
       }
     } catch (e, stackTrace) {
       logger.log(
@@ -168,6 +172,11 @@ class _PlaylistPageState extends State<PlaylistPage> {
       );
       if (mounted) {
         showToast(context, context.l10n!.error);
+      }
+    } finally {
+      _isInitializingPlaylist = false;
+      if (mounted) {
+        setState(() {});
       }
     }
   }
@@ -183,7 +192,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
           tooltip: context.l10n!.back,
         ),
       ),
-      body: _playlist != null
+      body: _playlist != null && !_isInitializingPlaylist
           ? CustomScrollView(
               slivers: [
                 SliverToBoxAdapter(child: _buildHeaderSection()),
@@ -249,6 +258,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
           _playlist['title'],
           songsLength,
           isAlbum: _playlist['isAlbum'] == true,
+          isArtist: widget.isArtist,
         ),
         if (songsLength > 0) ...[
           Padding(
@@ -291,7 +301,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
             ),
           ),
         ],
-        if (hasSecondaryActions) ...[
+        if (!widget.isArtist && hasSecondaryActions) ...[
           const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,

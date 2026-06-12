@@ -241,8 +241,9 @@ class _InitialData extends InitialData {
             '',
         renderer
                 .getJson<List<dynamic>>('videoCountText/runs')
-                ?.first
-                .getT<String>('text')
+                ?.cast<Map<dynamic, dynamic>>()
+                .firstOrNull
+                ?.getT<String>('text')
                 .parseInt() ??
             -1,
         (renderer.getJson<List<dynamic>>('thumbnail/thumbnails') ?? const [])

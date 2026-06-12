@@ -23,6 +23,7 @@ import 'dart:async';
 
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:musify/constants/app_constants.dart';
 import 'package:musify/extensions/l10n.dart';
@@ -30,7 +31,9 @@ import 'package:musify/main.dart';
 import 'package:musify/services/common_services.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/playlists_manager.dart';
+import 'package:musify/services/router_service.dart';
 import 'package:musify/utilities/app_utils.dart';
+import 'package:musify/widgets/artist_bar.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/custom_bar.dart';
 import 'package:musify/widgets/custom_search_bar.dart';
@@ -63,6 +66,7 @@ class _SearchPageState extends State<SearchPage> {
   final ValueNotifier<bool> _fetchingSongs = ValueNotifier(false);
   int maxSongsInList = 15;
   List<dynamic> _songsSearchResult = [];
+  List<Map<String, dynamic>> _artistsSearchResult = [];
   List<dynamic> _albumsSearchResult = [];
   List<dynamic> _playlistsSearchResult = [];
   List<String> _suggestionsList = [];
@@ -100,6 +104,7 @@ class _SearchPageState extends State<SearchPage> {
 
     if (query.isEmpty) {
       _songsSearchResult = [];
+      _artistsSearchResult = [];
       _albumsSearchResult = [];
       _playlistsSearchResult = [];
       _suggestionsList = [];
@@ -115,12 +120,20 @@ class _SearchPageState extends State<SearchPage> {
     }
 
     try {
-      _songsSearchResult = await fetchSongsList(query);
-      _albumsSearchResult = await getPlaylists(query: query, type: 'album');
-      _playlistsSearchResult = await getPlaylists(
-        query: query,
-        type: 'playlist',
-      );
+      final results = await Future.wait<List<dynamic>>([
+        fetchSongsList(query),
+        searchArtists(query),
+        getPlaylists(query: query, type: 'album'),
+        getPlaylists(query: query, type: 'playlist'),
+      ]);
+
+      _songsSearchResult = results[0];
+      _artistsSearchResult = results[1]
+          .whereType<Map>()
+          .map(Map<String, dynamic>.from)
+          .toList();
+      _albumsSearchResult = results[2];
+      _playlistsSearchResult = results[3];
     } catch (e, stackTrace) {
       logger.log(
         'Error while searching online songs',
@@ -208,6 +221,7 @@ class _SearchPageState extends State<SearchPage> {
               child:
                   (_suggestionsList.isNotEmpty ||
                       (_songsSearchResult.isEmpty &&
+                          _artistsSearchResult.isEmpty &&
                           _albumsSearchResult.isEmpty &&
                           _playlistsSearchResult.isEmpty))
                   ? ValueListenableBuilder<List>(
@@ -278,6 +292,43 @@ class _SearchPageState extends State<SearchPage> {
 
   Widget _buildSearchResults(BuildContext context, Color primaryColor) {
     final widgets = <Widget>[];
+
+    // Artists section
+    if (_artistsSearchResult.isNotEmpty) {
+      widgets.add(
+        SectionTitle(
+          context.l10n!.suggestedArtists,
+          primaryColor,
+          icon: FluentIcons.person_24_filled,
+        ),
+      );
+
+      final artistsCount = _artistsSearchResult.length > maxSongsInList
+          ? maxSongsInList
+          : _artistsSearchResult.length;
+
+      for (var index = 0; index < artistsCount; index++) {
+        final artist = _artistsSearchResult[index];
+        final artistId =
+            artist['ytid']?.toString() ?? artist['title']?.toString() ?? '';
+        if (artistId.isEmpty) continue;
+
+        final borderRadius = getItemBorderRadius(index, artistsCount);
+        widgets.add(
+          ArtistBar(
+            key: listItemKey('search_artist', index, artist),
+            artist: artist,
+            borderRadius: borderRadius,
+            onTap: () {
+              context.push(
+                '${NavigationManager.searchPath}/artist/${Uri.encodeComponent(artistId)}',
+                extra: artist,
+              );
+            },
+          ),
+        );
+      }
+    }
 
     // Songs section
     if (_songsSearchResult.isNotEmpty) {
@@ -376,7 +427,7 @@ class _SearchPageState extends State<SearchPage> {
 
     return Column(
       key: ValueKey(
-        'results-${_songsSearchResult.length}-${_albumsSearchResult.length}-${_playlistsSearchResult.length}',
+        'results-${_songsSearchResult.length}-${_artistsSearchResult.length}-${_albumsSearchResult.length}-${_playlistsSearchResult.length}',
       ),
       children: widgets,
     );

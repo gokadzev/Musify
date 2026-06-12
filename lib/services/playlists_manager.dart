@@ -56,6 +56,8 @@ final pinnedPlaylistIds = ValueNotifier<List<String>>(
   ),
 );
 final onlinePlaylists = ValueNotifier<List<Map>>([]);
+const _artistSongsLimit = 100;
+
 void _updateOnlineCache(Map? p) {
   if (p != null && !onlinePlaylists.value.any((x) => x['ytid'] == p['ytid'])) {
     onlinePlaylists.value = [...onlinePlaylists.value, p];
@@ -875,6 +877,53 @@ Future<List> getPlaylists({
   return playlists;
 }
 
+Future<List<Map<String, dynamic>>> searchArtists(
+  String query, {
+  int limit = 5,
+}) async {
+  final normalizedQuery = query.trim();
+  if (normalizedQuery.isEmpty) return [];
+
+  final cacheKey = 'search_artists_${normalizedQuery.toLowerCase()}';
+  final cachedArtists = await getData('cache', cacheKey);
+  if (cachedArtists is List && cachedArtists.isNotEmpty) {
+    return cachedArtists
+        .whereType<Map>()
+        .map(Map<String, dynamic>.from)
+        .take(limit)
+        .toList();
+  }
+
+  try {
+    final results = await ytClient.search.searchContent(
+      normalizedQuery,
+      filter: TypeFilters.channel,
+    );
+
+    final seen = <String>{};
+    final artists = <Map<String, dynamic>>[];
+    for (final result in results.whereType<SearchChannel>()) {
+      final artist = _artistMapFromSearchChannel(result);
+      final artistId = artist['ytid']?.toString();
+      if (artistId == null || artistId.isEmpty || !seen.add(artistId)) {
+        continue;
+      }
+      artists.add(artist);
+      if (artists.length >= limit) break;
+    }
+
+    unawaited(addOrUpdateData<List>('cache', cacheKey, artists));
+    return artists;
+  } catch (e, stackTrace) {
+    logger.log(
+      'Error while searching artists',
+      error: e,
+      stackTrace: stackTrace,
+    );
+    return [];
+  }
+}
+
 Future<List<dynamic>> getUserPlaylistsNotInFolders() async {
   final playlistsInFolders = <String>{};
   for (final folder in userPlaylistFolders.value) {
@@ -928,11 +977,21 @@ int findPlaylistIndexByYtId(String ytid) {
 Future<Map?> getPlaylistInfoForWidget(
   dynamic id, {
   bool isArtist = false,
+  String? artistName,
+  String? artistImage,
+  String? sourceSongId,
 }) async {
   if (id == null) return null;
   final normalizedId = id.toString().trim();
   if (normalizedId.isEmpty || normalizedId == 'null') return null;
-  if (isArtist) return _fetchArtistPlaylist(normalizedId);
+  if (isArtist) {
+    return _fetchArtistPlaylist(
+      normalizedId,
+      artistName: artistName,
+      artistImage: artistImage,
+      sourceSongId: sourceSongId,
+    );
+  }
   if (normalizedId.startsWith('customId-')) {
     return _findCustomPlaylist(normalizedId)?.playlist;
   }
@@ -943,22 +1002,458 @@ Future<Map?> getPlaylistInfoForWidget(
   return _fetchYouTubePlaylist(normalizedId);
 }
 
-Future<Map> _fetchArtistPlaylist(String artistName) async {
+Future<Map> _fetchArtistPlaylist(
+  String artistLookup, {
+  String? artistName,
+  String? artistImage,
+  String? sourceSongId,
+}) async {
   try {
-    final searchResults = await ytClient.search.search(artistName);
-    return {
-      'title': artistName,
-      'list': searchResults.map((v) => returnSongLayout(0, v)).toList(),
+    final artist = await _resolveArtist(
+      artistLookup,
+      preferredName: artistName,
+      preferredImage: artistImage,
+      sourceSongId: sourceSongId,
+    );
+
+    if (artist == null) {
+      return {
+        'ytid': artistLookup,
+        'title': artistName ?? artistLookup,
+        'image': artistImage,
+        'source': 'youtube-artist',
+        'isArtist': true,
+        'list': [],
+      };
+    }
+
+    final artistId = artist['ytid']?.toString() ?? artistLookup;
+    final cacheKey = 'artist_v4_$artistId';
+    final cachedArtist = await getData('cache', cacheKey);
+    if (cachedArtist is Map &&
+        cachedArtist['list'] is List &&
+        (cachedArtist['list'] as List).isNotEmpty) {
+      return Map<String, dynamic>.from(cachedArtist);
+    }
+
+    final songs = await _loadArtistSongs(artist);
+    final artistPlaylist = {
+      ...artist,
+      'source': 'youtube-artist',
+      'isArtist': true,
+      'list': songs,
     };
+
+    unawaited(addOrUpdateData<Map>('cache', cacheKey, artistPlaylist));
+    return artistPlaylist;
   } catch (e, stackTrace) {
     logger.log(
-      'Error fetching artist songs for $artistName',
+      'Error fetching artist songs for $artistLookup',
       error: e,
       stackTrace: stackTrace,
     );
-    return {'title': artistName, 'list': []};
+    return {
+      'ytid': artistLookup,
+      'title': artistName ?? artistLookup,
+      'image': artistImage,
+      'source': 'youtube-artist',
+      'isArtist': true,
+      'list': [],
+    };
   }
 }
+
+Future<Map<String, dynamic>?> _resolveArtist(
+  String artistLookup, {
+  String? preferredName,
+  String? preferredImage,
+  String? sourceSongId,
+}) async {
+  final lookup = artistLookup.trim();
+  final displayName = preferredName?.trim();
+  final seedId = _isChannelId(lookup) ? lookup : null;
+  final normalizedSourceSongId = sourceSongId?.trim();
+  final candidates = <Map<String, dynamic>>[];
+  String? sourceVideoAuthor;
+  String? sourceChannelId;
+
+  if (seedId != null) {
+    try {
+      final channel = await ytClient.channels.get(seedId);
+      candidates.add(_artistMapFromChannel(channel));
+    } catch (e, stackTrace) {
+      logger.log(
+        'Could not load seeded artist channel $seedId',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
+  }
+
+  if (seedId == null &&
+      normalizedSourceSongId != null &&
+      normalizedSourceSongId.isNotEmpty) {
+    try {
+      final sourceVideo = await ytClient.videos.get(normalizedSourceSongId);
+      sourceVideoAuthor = sourceVideo.author.trim();
+      sourceChannelId = sourceVideo.channelId.toString();
+      if (_isChannelId(sourceChannelId)) {
+        final channel = await ytClient.channels.get(sourceChannelId);
+        candidates.add(_artistMapFromChannel(channel));
+      }
+    } catch (e, stackTrace) {
+      logger.log(
+        'Could not load source video $normalizedSourceSongId for artist lookup',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
+  }
+
+  final searchTerms = <String>{
+    if (displayName != null && displayName.isNotEmpty) displayName,
+    if (sourceVideoAuthor != null && sourceVideoAuthor.isNotEmpty)
+      sourceVideoAuthor,
+    if (seedId == null && lookup.isNotEmpty && lookup != normalizedSourceSongId)
+      lookup,
+  };
+
+  for (final searchTerm in searchTerms) {
+    candidates.addAll(await searchArtists(searchTerm, limit: 8));
+  }
+
+  final uniqueCandidates = _dedupeArtists(candidates);
+  if (uniqueCandidates.isEmpty) {
+    return null;
+  }
+
+  uniqueCandidates.sort((a, b) {
+    final scoringName = displayName ?? sourceVideoAuthor ?? lookup;
+    final scoreA = _scoreArtistCandidate(
+      a,
+      preferredName: scoringName,
+      seedId: seedId,
+      sourceChannelId: sourceChannelId,
+    );
+    final scoreB = _scoreArtistCandidate(
+      b,
+      preferredName: scoringName,
+      seedId: seedId,
+      sourceChannelId: sourceChannelId,
+    );
+    return scoreB.compareTo(scoreA);
+  });
+
+  final best = Map<String, dynamic>.from(uniqueCandidates.first);
+  if ((best['image'] == null || best['image'].toString().isEmpty) &&
+      preferredImage != null &&
+      preferredImage.isNotEmpty) {
+    best['image'] = preferredImage;
+  }
+
+  final bestId = best['ytid']?.toString();
+  if (bestId != null && _isChannelId(bestId)) {
+    try {
+      final channel = await ytClient.channels.get(bestId);
+      return {...best, ..._artistMapFromChannel(channel)};
+    } catch (e, stackTrace) {
+      logger.log(
+        'Could not refresh artist channel $bestId',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
+  }
+
+  return best;
+}
+
+Future<List<Map<String, dynamic>>> _loadArtistSongs(
+  Map<String, dynamic> artist,
+) async {
+  final artistId = artist['ytid']?.toString() ?? '';
+  final artistTitle = artist['title']?.toString() ?? artistId;
+  final songs = <Map<String, dynamic>>[
+    ...await _searchSongsForArtist(
+      artistTitle,
+      artistId: artistId,
+      maxResults: 80,
+    ),
+  ];
+
+  if (_isChannelId(artistId)) {
+    try {
+      var page = await ytClient.channels.getUploadsFromPage(artistId);
+
+      while (songs.length < _artistSongsLimit) {
+        for (final video in page) {
+          songs.add(returnSongLayout(songs.length, video));
+          if (songs.length >= _artistSongsLimit) break;
+        }
+
+        if (songs.length >= _artistSongsLimit) break;
+        final nextPage = await page.nextPage();
+        if (nextPage == null || nextPage.isEmpty) break;
+        page = nextPage;
+      }
+    } catch (e, stackTrace) {
+      logger.log(
+        'Could not load uploads for artist $artistId',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
+  }
+
+  return _dedupeSongs(songs).take(_artistSongsLimit).toList();
+}
+
+Future<List<Map<String, dynamic>>> _searchSongsForArtist(
+  String artistName, {
+  String? artistId,
+  int maxResults = 20,
+}) async {
+  try {
+    final songs = <Map<String, dynamic>>[];
+    final searchQueries = <String>{
+      '$artistName songs',
+      '$artistName official audio',
+      '$artistName topic',
+      artistName,
+    };
+
+    for (final query in searchQueries) {
+      final querySongs = await _collectArtistSearchSongs(
+        query,
+        maxResults: (maxResults / searchQueries.length).ceil() + 12,
+      );
+      songs.addAll(querySongs);
+    }
+
+    final canonicalArtist = _canonicalArtistName(artistName);
+    final dedupedSongs = _dedupeSongs(songs)
+      ..sort((a, b) {
+        final scoreA = _scoreArtistSong(
+          a,
+          canonicalArtist: canonicalArtist,
+          artistId: artistId,
+        );
+        final scoreB = _scoreArtistSong(
+          b,
+          canonicalArtist: canonicalArtist,
+          artistId: artistId,
+        );
+        return scoreB.compareTo(scoreA);
+      });
+
+    return dedupedSongs.take(maxResults).toList();
+  } catch (e, stackTrace) {
+    logger.log(
+      'Error searching artist songs for $artistName',
+      error: e,
+      stackTrace: stackTrace,
+    );
+    return [];
+  }
+}
+
+Future<List<Map<String, dynamic>>> _collectArtistSearchSongs(
+  String query, {
+  required int maxResults,
+}) async {
+  var results = await ytClient.search.search(query);
+  final songs = <Map<String, dynamic>>[];
+
+  while (songs.length < maxResults) {
+    for (final video in results) {
+      songs.add(returnSongLayout(songs.length, video));
+      if (songs.length >= maxResults) break;
+    }
+
+    if (songs.length >= maxResults) break;
+    final nextPage = await results.nextPage();
+    if (nextPage == null || nextPage.isEmpty) break;
+    results = nextPage;
+  }
+
+  return songs;
+}
+
+int _scoreArtistSong(
+  Map<String, dynamic> song, {
+  required String canonicalArtist,
+  String? artistId,
+}) {
+  final songArtistId = song['artistId']?.toString();
+  final videoAuthor = _canonicalArtistName(
+    song['videoAuthor']?.toString() ?? '',
+  );
+  final songArtist = _canonicalArtistName(song['artist']?.toString() ?? '');
+  final title = _canonicalArtistName(song['title']?.toString() ?? '');
+  var score = 0;
+
+  if (artistId != null && artistId.isNotEmpty && songArtistId == artistId) {
+    score += 120;
+  }
+
+  if (songArtist == canonicalArtist) {
+    score += 100;
+  } else if (_sameArtistCandidate(songArtist, canonicalArtist)) {
+    score += 55;
+  }
+
+  if (videoAuthor == canonicalArtist) {
+    score += 90;
+  } else if (_sameArtistCandidate(videoAuthor, canonicalArtist)) {
+    score += 45;
+  }
+
+  if (title.contains(canonicalArtist)) {
+    score += 10;
+  }
+
+  final searchableText =
+      '${song['title'] ?? ''} ${song['artist'] ?? ''} ${song['videoAuthor'] ?? ''}'
+          .toLowerCase();
+  if (searchableText.contains('cover') ||
+      searchableText.contains('reaction') ||
+      searchableText.contains('interview')) {
+    score -= 35;
+  }
+
+  return score;
+}
+
+bool _sameArtistCandidate(String candidate, String artist) {
+  if (candidate.isEmpty || artist.isEmpty) return false;
+  return candidate.contains(artist) || artist.contains(candidate);
+}
+
+List<Map<String, dynamic>> _dedupeArtists(List<Map<String, dynamic>> artists) {
+  final seen = <String>{};
+  final unique = <Map<String, dynamic>>[];
+  for (final artist in artists) {
+    final id = artist['ytid']?.toString();
+    final title = artist['title']?.toString();
+    final key = (id != null && id.isNotEmpty) ? id : title;
+    if (key == null || key.isEmpty || !seen.add(key)) continue;
+    unique.add(artist);
+  }
+  return unique;
+}
+
+List<Map<String, dynamic>> _dedupeSongs(List<Map<String, dynamic>> songs) {
+  final seenIds = <String>{};
+  final seenTitles = <String>{};
+  final unique = <Map<String, dynamic>>[];
+  for (final song in songs) {
+    final id = song['ytid']?.toString();
+    if (id == null || id.isEmpty || !seenIds.add(id)) continue;
+
+    final title = formatSongTitle(song['title']?.toString() ?? '');
+    final artist = song['artist']?.toString() ?? '';
+    if (title.trim().isEmpty || _sameArtistPageSongTitle(title, artist)) {
+      continue;
+    }
+
+    final titleKey =
+        '${_canonicalArtistName(artist)}:${_canonicalArtistName(title)}';
+    if (!seenTitles.add(titleKey)) {
+      continue;
+    }
+
+    unique.add(song);
+  }
+  return unique;
+}
+
+bool _sameArtistPageSongTitle(String title, String artist) {
+  final canonicalTitle = _canonicalArtistName(title);
+  final canonicalArtist = _canonicalArtistName(artist);
+  return canonicalTitle.isNotEmpty && canonicalTitle == canonicalArtist;
+}
+
+Map<String, dynamic> _artistMapFromChannel(Channel channel) {
+  return {
+    'ytid': channel.id.toString(),
+    'title': channel.title,
+    'image': channel.logoUrl,
+    'bannerImage': channel.bannerUrl,
+    'source': 'youtube-artist',
+    'isArtist': true,
+    'list': [],
+  };
+}
+
+Map<String, dynamic> _artistMapFromSearchChannel(SearchChannel artist) {
+  final thumbnail = artist.thumbnails.isNotEmpty
+      ? artist.thumbnails.last.url.toString()
+      : null;
+
+  return {
+    'ytid': artist.id.toString(),
+    'title': artist.name,
+    'image': thumbnail,
+    'source': 'youtube-artist',
+    'isArtist': true,
+    'list': [],
+  };
+}
+
+int _scoreArtistCandidate(
+  Map<String, dynamic> artist, {
+  required String preferredName,
+  String? seedId,
+  String? sourceChannelId,
+}) {
+  final candidateId = artist['ytid']?.toString();
+  final candidateName = artist['title']?.toString() ?? '';
+  final canonicalCandidate = _canonicalArtistName(candidateName);
+  final canonicalPreferred = _canonicalArtistName(preferredName);
+  var score = 0;
+
+  if (seedId != null && candidateId == seedId) {
+    score += 240;
+  }
+
+  if (sourceChannelId != null && candidateId == sourceChannelId) {
+    score += 180;
+  }
+
+  if (canonicalPreferred.isEmpty || canonicalCandidate.isEmpty) {
+    return score;
+  }
+
+  if (canonicalCandidate == canonicalPreferred) {
+    score += 120;
+  } else if (canonicalCandidate.contains(canonicalPreferred) ||
+      canonicalPreferred.contains(canonicalCandidate)) {
+    score += 60;
+  }
+
+  final lowerName = candidateName.toLowerCase();
+  if (lowerName.contains('official') ||
+      lowerName.contains('vevo') ||
+      lowerName.contains('topic')) {
+    score += 10;
+  }
+
+  return score;
+}
+
+String _canonicalArtistName(String value) {
+  final cleaned = value
+      .toLowerCase()
+      .replaceAll('&amp;', '&')
+      .replaceAll(RegExp(r'\b(official|vevo|topic|music|channel)\b'), '')
+      .replaceAll(RegExp('[^a-z0-9]+'), '');
+
+  if (cleaned.isNotEmpty) return cleaned;
+
+  return value.toLowerCase().replaceAll(RegExp(r'\s+'), '');
+}
+
+bool _isChannelId(String value) => ChannelId.validateChannelId(value);
 
 ({Map playlist, bool isFromFolder})? _findCustomPlaylist(String playlistId) {
   for (final playlist in userCustomPlaylists.value) {
