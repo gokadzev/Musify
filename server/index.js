@@ -10,7 +10,9 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-app.get('/', (req, res) => {
+app.use(express.static('public'));
+
+app.get('/api', (req, res) => {
   res.send('Musify Express API is running');
 });
 
