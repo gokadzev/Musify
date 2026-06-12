@@ -413,20 +413,6 @@ class OfflinePlaylistService {
     }
   }
 
-  Map<String, dynamic> getDownloadStatus(String playlistId) {
-    final isDownloaded = isPlaylistDownloaded(playlistId);
-    final isDownloading = isPlaylistDownloading(playlistId);
-    final progress = downloadProgressNotifiers.containsKey(playlistId)
-        ? downloadProgressNotifiers[playlistId]!.value
-        : null;
-
-    return {
-      'isDownloaded': isDownloaded,
-      'isDownloading': isDownloading,
-      'progress': progress,
-    };
-  }
-
   Future<void> _processDownloadQueue(
     Queue<dynamic> songQueue,
     ValueNotifier<DownloadProgress> progressNotifier,
@@ -495,13 +481,6 @@ class DownloadProgress {
     if (total <= 0) return 0;
     final totalProcessed = completed + failed;
     return totalProcessed > total ? 1.0 : totalProcessed / total;
-  }
-
-  bool get isComplete => completed + failed >= total;
-
-  double get successRate {
-    final totalProcessed = completed + failed;
-    return totalProcessed > 0 ? completed / totalProcessed : 0.0;
   }
 
   @override
