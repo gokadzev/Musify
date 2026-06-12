@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Musify API Demo</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #121212; color: #fff; }
+        h1 { border-bottom: 1px solid #333; padding-bottom: 10px; }
+        section { background: #1e1e1e; padding: 20px; margin-bottom: 20px; border-radius: 8px; }
+        input, button { padding: 10px; margin-right: 10px; border: none; border-radius: 4px; }
+        input { width: 300px; }
+        button { background: #D3BEAB; color: #000; cursor: pointer; font-weight: bold; }
+        button:hover { background: #bba796; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 15px; }
+        .card { background: #2a2a2a; padding: 10px; border-radius: 6px; text-align: center; }
+        .card img { max-width: 100%; border-radius: 4px; }
+        .card h4 { margin: 10px 0 5px; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card p { margin: 0; font-size: 12px; color: #aaa; }
+        pre { background: #000; padding: 10px; border-radius: 4px; overflow-x: auto; color: #0f0; }
+        .loader { display: none; color: #D3BEAB; margin-top: 10px; }
+        audio { width: 100%; margin-top: 15px; }
+    </style>
+</head>
+<body>
+    <h1>Musify Web Demo</h1>
+    <p>A demonstration employing all of the available Express backend endpoints.</p>
+
+    <!-- SECTION 1: Search API -->
+    <section id="search-section">
+        <h2>1. Search API</h2>
+        <input type="text" id="searchInput" value="Adele Hello" placeholder="Search for a song...">
+        <button onclick="doSearch()">Search</button>
+        <span id="searchLoader" class="loader">Loading...</span>
+        <div class="grid" id="searchResults"></div>
+    </section>
+
+    <!-- SECTION 2: Details API -->
+    <section id="details-section">
+        <h2>2. Song Details API</h2>
+        <input type="text" id="detailsInput" value="YQHsXMglC9A" placeholder="Enter YouTube ID...">
+        <button onclick="getDetails()">Get Details</button>
+        <span id="detailsLoader" class="loader">Loading...</span>
+        <pre id="detailsResult">Waiting for input...</pre>
+    </section>
+
+    <!-- SECTION 3: Stream API -->
+    <section id="stream-section">
+        <h2>3. Stream & Play Audio API</h2>
+        <input type="text" id="streamInput" value="YQHsXMglC9A" placeholder="Enter YouTube ID...">
+        <button onclick="getStream()">Load Audio Stream</button>
+        <span id="streamLoader" class="loader">Loading proxy... this may take a moment</span>
+        <audio id="audioPlayer" controls></audio>
+        <pre id="streamResult" style="margin-top:10px;">Waiting for input...</pre>
+    </section>
+
+    <!-- SECTION 4: Related API -->
+    <section id="related-section">
+        <h2>4. Related Videos API</h2>
+        <input type="text" id="relatedInput" value="YQHsXMglC9A" placeholder="Enter YouTube ID...">
+        <button onclick="getRelated()">Find Related</button>
+        <span id="relatedLoader" class="loader">Loading...</span>
+        <div class="grid" id="relatedResults"></div>
+    </section>
+
+    <!-- SECTION 5: Playlist / Albums API -->
+    <section id="playlist-section">
+        <h2>5. Album / Playlist API</h2>
+        <input type="text" id="playlistInput" value="PLMC9KNkIncKtPzgY-5rmhvj7fax8fdxoj" placeholder="Enter Playlist ID...">
+        <button onclick="getPlaylist()">Load Collection</button>
+        <span id="playlistLoader" class="loader">Loading...</span>
+        <h3 id="playlistTitle"></h3>
+        <div class="grid" id="playlistResults"></div>
+    </section>
+
+    <script>
+        async function fetchAPI(endpoint, loaderId) {
+            document.getElementById(loaderId).style.display = 'inline';
+            try {
+                const res = await fetch(endpoint);
+                const data = await res.json();
+                document.getElementById(loaderId).style.display = 'none';
+                return data;
+            } catch (err) {
+                document.getElementById(loaderId).style.display = 'none';
+                alert('Error fetching data');
+                console.error(err);
+            }
+        }
+
+        function createCard(video) {
+            return `
+                <div class="card">
+                    <img src="${video.thumbnail || video.thumbnail?.url || ''}" alt="Thumbnail">
+                    <h4>${video.title}</h4>
+                    <p>${video.artist || 'Unknown Artist'}</p>
+                    <button onclick="autoFill('${video.ytid}')" style="margin-top:10px; padding:5px; font-size:11px;">Use this ID</button>
+                </div>
+            `;
+        }
+
+        function autoFill(ytid) {
+            document.getElementById('detailsInput').value = ytid;
+            document.getElementById('streamInput').value = ytid;
+            document.getElementById('relatedInput').value = ytid;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        async function doSearch() {
+            const query = document.getElementById('searchInput').value;
+            const data = await fetchAPI(`/api/search?q=${encodeURIComponent(query)}`, 'searchLoader');
+            if (data && !data.error) {
+                document.getElementById('searchResults').innerHTML = data.map(createCard).join('');
+            }
+        }
+
+        async function getDetails() {
+            const id = document.getElementById('detailsInput').value;
+            const data = await fetchAPI(`/api/song/${id}/details`, 'detailsLoader');
+            document.getElementById('detailsResult').textContent = JSON.stringify(data, null, 2);
+        }
+
+        async function getStream() {
+            const id = document.getElementById('streamInput').value;
+            const data = await fetchAPI(`/api/song/${id}/stream`, 'streamLoader');
+            document.getElementById('streamResult').textContent = JSON.stringify(data, null, 2);
+            if (data && data.url) {
+                const player = document.getElementById('audioPlayer');
+                player.src = data.url;
+                player.play();
+            }
+        }
+
+        async function getRelated() {
+            const id = document.getElementById('relatedInput').value;
+            const data = await fetchAPI(`/api/song/${id}/related`, 'relatedLoader');
+            if (data && Array.isArray(data)) {
+                document.getElementById('relatedResults').innerHTML = data.map(createCard).join('');
+            }
+        }
+
+        async function getPlaylist() {
+            const id = document.getElementById('playlistInput').value;
+            const data = await fetchAPI(`/api/playlist/${id}`, 'playlistLoader');
+            if (data && !data.error) {
+                document.getElementById('playlistTitle').textContent = `${data.title} - ${data.author}`;
+                document.getElementById('playlistResults').innerHTML = data.videos.map(createCard).join('');
+            }
+        }
+    </script>
+</body>
+</html>
