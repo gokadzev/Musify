@@ -1,8 +1,8 @@
 import express from 'express';
 import cors from 'cors';
-import ytdl from '@distube/ytdl-core';
 import ytSearch from 'yt-search';
-import { getYtdlAgent, markProxyAsFailed } from './proxyManager.js';
+import ytDlp from 'yt-dlp-exec';
+import { getProxyForYtdlp, markProxyAsFailed } from './proxyManager.js';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -47,15 +47,15 @@ app.get('/api/search', async (req, res) => {
 app.get('/api/song/:ytid/details', async (req, res) => {
   try {
     const ytid = req.params.ytid;
-    const info = await ytdl.getBasicInfo(ytid);
+    const searchResult = await ytSearch({ videoId: ytid });
 
     res.json({
-      ytid: info.videoDetails.videoId,
-      title: info.videoDetails.title,
-      artist: info.videoDetails.author?.name,
-      duration: info.videoDetails.lengthSeconds,
-      thumbnail: info.videoDetails.thumbnails?.[0]?.url,
-      viewCount: info.videoDetails.viewCount
+      ytid: searchResult.videoId,
+      title: searchResult.title,
+      artist: searchResult.author?.name,
+      duration: searchResult.seconds,
+      thumbnail: searchResult.thumbnail,
+      viewCount: searchResult.views
     });
   } catch (error) {
     console.error('Error fetching song details:', error);
@@ -68,41 +68,39 @@ app.get('/api/song/:ytid/stream', async (req, res) => {
   try {
     const ytid = req.params.ytid;
 
-    // Retry loop for proxies
     let attempts = 0;
-    while (attempts < 5) {
-       attempts++;
-       const { agent, proxyUrl } = await getYtdlAgent();
+    while(attempts < 10) {
+        attempts++;
+        const proxyUrl = await getProxyForYtdlp();
 
-       try {
-           const info = await ytdl.getInfo(ytid, { agent });
-           const format = ytdl.chooseFormat(info.formats, { quality: 'highestaudio' });
+        try {
+            const options = {
+                dumpJson: true,
+                format: 'bestaudio',
+            };
+            if (proxyUrl) {
+                options.proxy = proxyUrl;
+            }
 
-           if (!format) {
-              return res.status(404).json({ error: 'No suitable audio format found' });
-           }
+            const output = await ytDlp(`https://www.youtube.com/watch?v=${ytid}`, options);
 
-           return res.json({
-             ytid: ytid,
-             url: format.url,
-             mimeType: format.mimeType,
-             bitrate: format.audioBitrate
-           });
-
-       } catch (e) {
-           console.error(`Attempt ${attempts} failed with proxy ${proxyUrl}: ${e.message}`);
-           if (e.message.includes('429') || e.message.includes('socket') || e.message.includes('timeout') || e.message.includes('fetch')) {
-               await markProxyAsFailed(proxyUrl);
-           } else if (e.statusCode === 410) {
-               return res.status(410).json({ error: 'Video is unavailable (410 Gone). It might be age-restricted or private.' });
-           } else {
-               // If it's a completely different error, stop retrying
-               throw e;
-           }
-       }
+            if (output && output.url) {
+                return res.json({
+                    ytid: ytid,
+                    url: output.url,
+                    mimeType: `audio/${output.ext}`,
+                    bitrate: output.abr
+                });
+            } else {
+                 console.error(`Attempt ${attempts} failed: No URL in output`);
+            }
+        } catch (error) {
+            console.error(`Attempt ${attempts} failed with proxy ${proxyUrl}:`, error.message);
+            await markProxyAsFailed(proxyUrl);
+        }
     }
 
-    return res.status(429).json({ error: 'Failed to fetch stream URL due to proxy limits (429). Please try again later.' });
+    return res.status(429).json({ error: 'Failed to fetch stream URL due to YouTube rate limits (429) or bot blocks.' });
 
   } catch (error) {
     console.error('Error fetching stream:', error);
@@ -144,15 +142,17 @@ app.get('/api/playlist/:playlistId', async (req, res) => {
 app.get('/api/song/:ytid/related', async (req, res) => {
   try {
     const ytid = req.params.ytid;
-    const info = await ytdl.getBasicInfo(ytid);
+    const searchResult = await ytSearch({ videoId: ytid });
 
-    const relatedVideos = info.related_videos.map(video => ({
-      ytid: video.id,
+    const searchResults = await ytSearch(searchResult.author?.name || searchResult.title);
+
+    const relatedVideos = searchResults.videos.slice(0, 10).map(video => ({
+      ytid: video.videoId,
       title: video.title,
-      artist: video.author?.name || (typeof video.author === 'string' ? video.author : 'Unknown'),
-      duration: video.length_seconds,
-      thumbnail: video.thumbnails?.[0]?.url,
-      viewCount: video.view_count
+      artist: video.author?.name,
+      duration: video.timestamp,
+      thumbnail: video.thumbnail,
+      viewCount: video.views
     }));
 
     res.json(relatedVideos);
