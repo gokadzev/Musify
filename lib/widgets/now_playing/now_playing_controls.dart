@@ -19,11 +19,15 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
+import 'dart:async';
+
 import 'package:audio_service/audio_service.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
+import 'package:musify/services/router_service.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/app_utils.dart';
 import 'package:musify/widgets/now_playing/marquee_text_widget.dart';
@@ -53,6 +57,7 @@ class NowPlayingControls extends StatelessWidget {
 
     final titleFontSize = getResponsiveTitleFontSize(size);
     final artistFontSize = getResponsiveArtistFontSize(size);
+    final canOpenArtist = _canOpenArtist(metadata);
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -93,11 +98,19 @@ class NowPlayingControls extends StatelessWidget {
                   ),
                   SizedBox(height: spacing),
                   if (metadata.artist != null)
-                    MarqueeTextWidget(
-                      text: metadata.artist!,
-                      fontColor: colorScheme.onSurfaceVariant,
-                      fontSize: artistFontSize * fontScale,
-                      fontWeight: FontWeight.w500,
+                    GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: canOpenArtist
+                          ? () {
+                              _openArtistPage(context, metadata);
+                            }
+                          : null,
+                      child: MarqueeTextWidget(
+                        text: metadata.artist!,
+                        fontColor: colorScheme.onSurfaceVariant,
+                        fontSize: artistFontSize * fontScale,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                 ],
               ),
@@ -120,6 +133,64 @@ class NowPlayingControls extends StatelessWidget {
         );
       },
     );
+  }
+
+  bool _canOpenArtist(MediaItem metadata) {
+    final artist = metadata.artist?.trim() ?? '';
+    final artistId = metadata.extras?['artistId']?.toString().trim() ?? '';
+    final sourceSongId = metadata.extras?['ytid']?.toString().trim() ?? '';
+
+    return !offlineMode.value &&
+        (artist.isNotEmpty || artistId.isNotEmpty || sourceSongId.isNotEmpty);
+  }
+
+  void _openArtistPage(BuildContext context, MediaItem metadata) {
+    final artist = metadata.artist?.trim() ?? '';
+    final artistId = metadata.extras?['artistId']?.toString().trim() ?? '';
+    final sourceSongId = metadata.extras?['ytid']?.toString().trim() ?? '';
+    final videoAuthor =
+        metadata.extras?['videoAuthor']?.toString().trim() ?? '';
+    final lookup = artistId.isNotEmpty
+        ? artistId
+        : artist.isNotEmpty
+        ? artist
+        : sourceSongId;
+
+    if (lookup.isEmpty) return;
+
+    final router = GoRouter.of(context);
+    final basePath = _artistRouteBasePath(context);
+    final artistData = {
+      'ytid': artistId.isNotEmpty ? artistId : lookup,
+      if (artist.isNotEmpty) 'title': artist,
+      if (sourceSongId.isNotEmpty) 'sourceSongId': sourceSongId,
+      if (videoAuthor.isNotEmpty) 'videoAuthor': videoAuthor,
+      'source': 'youtube-artist',
+      'isArtist': true,
+      'list': [],
+    };
+
+    Navigator.of(context).pop();
+    unawaited(
+      router.push(
+        '$basePath/artist/${Uri.encodeComponent(lookup)}',
+        extra: artistData,
+      ),
+    );
+  }
+
+  String _artistRouteBasePath(BuildContext context) {
+    try {
+      final currentPath = GoRouterState.of(context).uri.path;
+      if (currentPath.startsWith(NavigationManager.searchPath)) {
+        return NavigationManager.searchPath;
+      }
+      if (currentPath.startsWith(NavigationManager.libraryPath)) {
+        return NavigationManager.libraryPath;
+      }
+    } catch (_) {}
+
+    return NavigationManager.homePath;
   }
 }
 

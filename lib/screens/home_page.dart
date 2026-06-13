@@ -97,7 +97,10 @@ class _HomePageState extends State<HomePage> {
         valueListenable: userLikedPlaylists,
         builder: (_, likedPlaylists, __) => _buildSuggestedPlaylistsSection(
           playlistHeight,
-          likedPlaylists.take(recommendedCubesNumber).toList(),
+          likedPlaylists
+              .where((playlist) => !isArtistPlaylist(playlist))
+              .take(recommendedCubesNumber)
+              .toList(),
           showOnlyLiked: true,
         ),
       );
@@ -105,10 +108,8 @@ class _HomePageState extends State<HomePage> {
 
     return AsyncLoader<List<dynamic>>(
       future: getPlaylists(playlistsNum: recommendedCubesNumber),
-      builder: (context, playlists) => _buildSuggestedPlaylistsSection(
-        playlistHeight,
-        playlists,
-      ),
+      builder: (context, playlists) =>
+          _buildSuggestedPlaylistsSection(playlistHeight, playlists),
     );
   }
 

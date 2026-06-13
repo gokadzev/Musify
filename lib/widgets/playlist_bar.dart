@@ -26,6 +26,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:musify/constants/app_constants.dart';
 import 'package:musify/extensions/l10n.dart';
+import 'package:musify/services/artist_service.dart';
 import 'package:musify/services/common_services.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/playlists_manager.dart';
@@ -77,6 +78,11 @@ class PlaylistBar extends StatelessWidget {
   bool get isFolder =>
       playlistData != null && PlaylistUtils.isFolder(playlistData!);
 
+  bool get isArtist {
+    final data = playlistData;
+    return data != null && isArtistPlaylist(data);
+  }
+
   String? get _resolvedPlaylistId =>
       playlistId ?? playlistData?['ytid']?.toString();
 
@@ -85,6 +91,9 @@ class PlaylistBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final displayTitle = isArtist
+        ? normalizeArtistDisplayTitle(playlistTitle)
+        : playlistTitle;
     Map<dynamic, dynamic>? updatedPlaylist;
     return Padding(
       padding: commonBarPadding,
@@ -129,7 +138,7 @@ class PlaylistBar extends StatelessWidget {
                             ),
                           Expanded(
                             child: Text(
-                              playlistTitle,
+                              displayTitle,
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 15,
@@ -161,11 +170,14 @@ class PlaylistBar extends StatelessWidget {
   }
 
   Widget _buildPlaylistIcon(ColorScheme colorScheme) {
-    if (playlistArtwork != null && playlistArtwork!.isNotEmpty) {
+    final artwork = isArtist
+        ? normalizeArtistThumbnailUrl(playlistArtwork)
+        : playlistArtwork;
+    if (artwork != null && artwork.isNotEmpty) {
       return ClipRRect(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(isArtist ? 26 : 12),
         child: Image(
-          image: ArtworkProvider.get(playlistArtwork!),
+          image: ArtworkProvider.get(artwork),
           width: 52,
           height: 52,
           fit: BoxFit.cover,
@@ -182,7 +194,8 @@ class PlaylistBar extends StatelessWidget {
       height: 52,
       decoration: BoxDecoration(
         color: colorScheme.secondaryContainer,
-        borderRadius: BorderRadius.circular(12),
+        shape: isArtist ? BoxShape.circle : BoxShape.rectangle,
+        borderRadius: isArtist ? null : BorderRadius.circular(12),
       ),
       child: Icon(cubeIcon, size: 26, color: colorScheme.onSecondaryContainer),
     );
@@ -569,17 +582,41 @@ class PlaylistBar extends StatelessWidget {
           '/home/folder/${playlistData!['id']}/${Uri.encodeComponent(playlistTitle)}',
         );
       };
-    } else {
-      return () {
-        if (_resolvedPlaylistId == null ||
-            _resolvedPlaylistId!.isEmpty ||
-            _resolvedPlaylistId == 'null') {
-          showToast(context, context.l10n!.error);
-          return;
-        }
-        context.push('/home/playlist/$_resolvedPlaylistId');
-      };
     }
+
+    return () {
+      if (_resolvedPlaylistId == null ||
+          _resolvedPlaylistId!.isEmpty ||
+          _resolvedPlaylistId == 'null') {
+        showToast(context, context.l10n!.error);
+        return;
+      }
+
+      if (isArtist) {
+        final basePath = _routeBasePath(context);
+        context.push(
+          '$basePath/artist/${Uri.encodeComponent(_resolvedPlaylistId!)}',
+          extra: playlistData,
+        );
+        return;
+      }
+
+      context.push('/home/playlist/$_resolvedPlaylistId');
+    };
+  }
+
+  String _routeBasePath(BuildContext context) {
+    try {
+      final currentPath = GoRouterState.of(context).uri.path;
+      if (currentPath.startsWith(NavigationManager.searchPath)) {
+        return NavigationManager.searchPath;
+      }
+      if (currentPath.startsWith(NavigationManager.libraryPath)) {
+        return NavigationManager.libraryPath;
+      }
+    } catch (_) {}
+
+    return NavigationManager.homePath;
   }
 
   Future<void> _handleAddPlaylistToPlaylist(BuildContext context) async {
@@ -598,7 +635,14 @@ class PlaylistBar extends StatelessWidget {
     );
 
     try {
-      final fullPlaylist = await getPlaylistInfoForWidget(_resolvedPlaylistId);
+      final fullPlaylist = await getPlaylistInfoForWidget(
+        _resolvedPlaylistId,
+        isArtist: isArtist,
+        artistName: isArtist ? playlistTitle : null,
+        artistImage: isArtist ? playlistArtwork : null,
+        preferredVerified:
+            isArtist && playlistData?['isVerifiedArtist'] == true,
+      );
       if (!navContext.mounted) return;
       Navigator.pop(navContext);
 

@@ -38,6 +38,8 @@ dependencies:
   url_launcher: ^6.3.2
   youtube_explode_dart:
     path: ./packages/youtube_explode_dart
+  youtube_music_explode_dart:
+    path: ./packages/youtube_music_explode_dart
 
 dev_dependencies:
   flutter_test:

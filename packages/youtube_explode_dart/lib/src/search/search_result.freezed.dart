@@ -421,7 +421,7 @@ class _$SearchPlaylistCopyWithImpl<$Res>
 
 class SearchChannel extends SearchResult {
   const SearchChannel(this.id, this.name, this.description, this.videoCount,
-      final List<Thumbnail> thumbnails)
+      final List<Thumbnail> thumbnails, this.isVerifiedArtist)
       : _thumbnails = thumbnails,
         super._();
 
@@ -450,6 +450,9 @@ class SearchChannel extends SearchResult {
     return EqualUnmodifiableListView(_thumbnails);
   }
 
+  /// True when YouTube marks this channel as an official artist channel.
+  final bool isVerifiedArtist;
+
   /// Create a copy of SearchResult
   /// with the given fields replaced by the non-null parameter values.
   @override
@@ -470,16 +473,24 @@ class SearchChannel extends SearchResult {
             (identical(other.videoCount, videoCount) ||
                 other.videoCount == videoCount) &&
             const DeepCollectionEquality()
-                .equals(other._thumbnails, _thumbnails));
+                .equals(other._thumbnails, _thumbnails) &&
+            (identical(other.isVerifiedArtist, isVerifiedArtist) ||
+                other.isVerifiedArtist == isVerifiedArtist));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, description,
-      videoCount, const DeepCollectionEquality().hash(_thumbnails));
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      name,
+      description,
+      videoCount,
+      const DeepCollectionEquality().hash(_thumbnails),
+      isVerifiedArtist);
 
   @override
   String toString() {
-    return 'SearchResult.channel(id: $id, name: $name, description: $description, videoCount: $videoCount, thumbnails: $thumbnails)';
+    return 'SearchResult.channel(id: $id, name: $name, description: $description, videoCount: $videoCount, thumbnails: $thumbnails, isVerifiedArtist: $isVerifiedArtist)';
   }
 }
 
@@ -496,7 +507,8 @@ abstract mixin class $SearchChannelCopyWith<$Res>
       String name,
       String description,
       int videoCount,
-      List<Thumbnail> thumbnails});
+      List<Thumbnail> thumbnails,
+      bool isVerifiedArtist});
 
   $ChannelIdCopyWith<$Res> get id;
 }
@@ -519,6 +531,7 @@ class _$SearchChannelCopyWithImpl<$Res>
     Object? description = null,
     Object? videoCount = null,
     Object? thumbnails = null,
+    Object? isVerifiedArtist = null,
   }) {
     return _then(SearchChannel(
       null == id
@@ -541,6 +554,10 @@ class _$SearchChannelCopyWithImpl<$Res>
           ? _self._thumbnails
           : thumbnails // ignore: cast_nullable_to_non_nullable
               as List<Thumbnail>,
+      null == isVerifiedArtist
+          ? _self.isVerifiedArtist
+          : isVerifiedArtist // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 

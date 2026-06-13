@@ -69,14 +69,17 @@ Map<String, dynamic> returnSongLayout(
 }) {
   // Split only on the first ' - ' so dashes inside the title are preserved.
   final sep = song.title.indexOf(' - ');
-  final artist = sep != -1 ? song.title.substring(0, sep) : song.title;
+  final artist = sep != -1 ? song.title.substring(0, sep) : song.author;
   final rawTitle = sep != -1 ? song.title.substring(sep + 3) : song.title;
+  final title = formatSongTitle(rawTitle);
 
   return {
     'id': index,
     'ytid': song.id.toString(),
-    'title': formatSongTitle(rawTitle),
+    'title': title.isEmpty ? rawTitle.trim() : title,
     'artist': artist,
+    'artistId': song.channelId.toString(),
+    'videoAuthor': song.author,
     'image': playlistImage ?? song.thumbnails.standardResUrl,
     'lowResImage': playlistImage ?? song.thumbnails.lowResUrl,
     'highResImage': playlistImage ?? song.thumbnails.maxResUrl,
