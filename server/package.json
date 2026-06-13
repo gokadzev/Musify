@@ -12,6 +12,7 @@
     "axios": "^1.17.0",
     "cors": "^2.8.5",
     "express": "^4.18.2",
+    "http-proxy-agent": "^9.1.0",
     "https-proxy-agent": "^9.1.0",
     "play-dl": "^1.9.7",
     "undici": "^7.27.2",
