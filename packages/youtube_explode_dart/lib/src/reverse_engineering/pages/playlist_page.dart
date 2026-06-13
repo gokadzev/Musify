@@ -140,9 +140,19 @@ class _InitialData extends InitialData {
     final items = _videoItems;
     if (items == null) return null;
 
-    final endpoint = items
-        .firstWhereOrNull((e) => e['continuationItemRenderer'] != null)
-        ?.getJson<JsonMap>('continuationItemRenderer/continuationEndpoint');
+    final item = items.firstWhereOrNull((e) =>
+        e['continuationItemRenderer'] != null ||
+        e['continuationItemViewModel'] != null);
+    if (item == null) return null;
+
+    final viewModelToken = item.getJson<String>(
+            'continuationItemViewModel/continuationCommand/innertubeCommand/continuationCommand/token') ??
+        item.getJson<String>(
+            'continuationItemViewModel/continuationCommand/token');
+    if (viewModelToken != null) return viewModelToken;
+
+    final endpoint =
+        item.getJson<JsonMap>('continuationItemRenderer/continuationEndpoint');
     if (endpoint == null) return null;
 
     // Direct token.
@@ -174,7 +184,9 @@ class _InitialData extends InitialData {
       }
     }
 
-    // Initial page: tabs → sectionList → itemSection → playlistVideoListRenderer.
+    // Initial page: tabs -> sectionList -> itemSection.
+    // Newer YouTube pages put videos directly in itemSection as lockupViewModel;
+    // older pages nest them under playlistVideoListRenderer.
     final tabs = root
         .getJson<List<dynamic>>('contents/twoColumnBrowseResultsRenderer/tabs');
     if (tabs == null) return null;
@@ -189,7 +201,10 @@ class _InitialData extends InitialData {
             section.getJson<List<dynamic>>('itemSectionRenderer/contents');
         if (itemContents == null) continue;
 
-        for (final item in itemContents.cast<JsonMap>()) {
+        final items = itemContents.cast<JsonMap>();
+        if (items.any(_isVideoListItem)) return items;
+
+        for (final item in items) {
           final contents =
               item.getJson<List<dynamic>>('playlistVideoListRenderer/contents');
           if (contents != null) return contents.cast<JsonMap>();
@@ -203,24 +218,47 @@ class _InitialData extends InitialData {
     final items = _videoItems;
     if (items == null) return const [];
 
-    return items
-        .map((item) =>
-            item['playlistVideoRenderer'] as JsonMap? ??
-            item['richItemRenderer']?['content']?['playlistVideoRenderer']
-                as JsonMap?)
-        .nonNulls
-        .map(_Video.new)
-        .toList();
+    return items.map(_Video.fromItem).nonNulls.toList();
   }
+
+  static bool _isVideoListItem(JsonMap item) =>
+      item['playlistVideoRenderer'] != null ||
+      item.getJson<JsonMap>('richItemRenderer/content/playlistVideoRenderer') !=
+          null ||
+      item['lockupViewModel'] != null ||
+      item['continuationItemRenderer'] != null ||
+      item['continuationItemViewModel'] != null;
 }
 
 class _Video {
   final JsonMap root;
   _Video(this.root);
 
-  String get id => root.getT<String>('videoId')!;
+  static _Video? fromItem(JsonMap item) {
+    final renderer = item['playlistVideoRenderer'] as JsonMap? ??
+        item.getJson<JsonMap>('richItemRenderer/content/playlistVideoRenderer');
+    if (renderer != null) return _Video(renderer);
+
+    final viewModel = item.getJson<JsonMap>('lockupViewModel');
+    if (viewModel == null ||
+        viewModel.getT<String>('contentType') != 'LOCKUP_CONTENT_TYPE_VIDEO') {
+      return null;
+    }
+
+    return _Video(viewModel);
+  }
+
+  bool get _isLockupViewModel =>
+      root.getT<String>('contentType') == 'LOCKUP_CONTENT_TYPE_VIDEO';
+
+  String get id =>
+      root.getT<String>('videoId') ??
+      root.getT<String>('contentId') ??
+      root.getJson<String>(
+          'rendererContext/commandContext/onTap/innertubeCommand/watchEndpoint/videoId')!;
 
   String get author =>
+      _metadataPartText(0, 0) ??
       root
           .getJson<List<dynamic>>('ownerText/runs')
           ?.cast<Map<dynamic, dynamic>>()
@@ -232,6 +270,13 @@ class _Video {
       '';
 
   String get channelId =>
+      root.getJson<String>('metadata/lockupMetadataViewModel/metadata/contentMetadataViewModel/metadataRows/0/metadataParts/0/text/commandRuns/0/onTap/innertubeCommand/browseEndpoint/browseId') ??
+      root.getJson<String>(
+          'metadata/lockupMetadataViewModel/image/decoratedAvatarViewModel/rendererContext/commandContext/onTap/innertubeCommand/browseEndpoint/browseId') ??
+      root.getJson<String>(
+          'metadata/lockupMetadataViewModel/image/avatarStackViewModel/rendererContext/commandContext/onTap/innertubeCommand/showDialogCommand/panelLoadingStrategy/inlineContent/dialogViewModel/customContent/listViewModel/listItems/0/listItemViewModel/rendererContext/commandContext/onTap/innertubeCommand/browseEndpoint/browseId') ??
+      root.getJson<String>(
+          'metadata/lockupMetadataViewModel/image/avatarStackViewModel/rendererContext/commandContext/onTap/innertubeCommand/showDialogCommand/panelLoadingStrategy/inlineContent/dialogViewModel/customContent/listViewModel/listItems/0/listItemViewModel/title/commandRuns/0/onTap/innertubeCommand/browseEndpoint/browseId') ??
       root.getJson<String>(
           'ownerText/runs/0/navigationEndpoint/browseEndpoint/browseId') ??
       root.getJson<String>(
@@ -241,6 +286,7 @@ class _Video {
       '';
 
   String get title =>
+      root.getJson<String>('metadata/lockupMetadataViewModel/title/content') ??
       root
           .getJson<List<dynamic>>('title/runs')
           ?.cast<Map<dynamic, dynamic>>()
@@ -255,17 +301,30 @@ class _Video {
       '';
 
   Duration? get duration =>
+      root
+          .getJson<String>(
+              'contentImage/thumbnailViewModel/overlays/0/thumbnailBottomOverlayViewModel/badges/0/thumbnailBadgeViewModel/text')
+          ?.toDuration() ??
       root.getJson<String>('lengthText/simpleText')?.toDuration();
 
   int get viewCount =>
+      _metadataPartText(1, 0).parseIntWithUnits() ??
       root.getJson<String>('viewCountText/simpleText').parseInt() ??
       _videoInfo?.split('•').elementAtSafe(0)?.stripNonDigits().parseInt() ??
       0;
 
-  String? get uploadDateRaw => _videoInfo?.split('•').elementAtSafe(1);
+  String? get uploadDateRaw =>
+      _metadataPartText(1, 1) ?? _videoInfo?.split('•').elementAtSafe(1);
 
   String? get _videoInfo => root
       .getJson<List<dynamic>>('videoInfo/runs')
       ?.cast<Map<dynamic, dynamic>>()
       .parseRuns();
+
+  String? _metadataPartText(int row, int part) {
+    if (!_isLockupViewModel) return null;
+
+    return root.getJson<String>(
+        'metadata/lockupMetadataViewModel/metadata/contentMetadataViewModel/metadataRows/$row/metadataParts/$part/text/content');
+  }
 }
