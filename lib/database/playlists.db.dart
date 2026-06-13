@@ -64,12 +64,6 @@ List<Map<String, dynamic>> playlistsDB = [
     'list': [],
   },
   {
-    'ytid': 'PLSR9lWowvoE3A9i4JVVHtQFjlJt0_LItG',
-    'title': 'TikTok Songs 2026',
-    'image': 'https://i.scdn.co/image/ab67616d0000b2739da92b8aa7cbcd57a20fe10e',
-    'list': [],
-  },
-  {
     'ytid': 'PLp9rb04pybWKvMIfxkdAKDmGoliDpJ87U',
     'title': 'sped up songs',
     'image': 'https://i.scdn.co/image/ab67706f0000000328f3caa600067067bb348a0a',
@@ -84,7 +78,6 @@ List<Map<String, dynamic>> playlistsDB = [
   {
     'ytid': 'PLgzTt0k8mXzHcKebL8d0uYHfawiARhQja',
     'title': 'Best Sad and Emotional Songs',
-    'image': 'https://i.scdn.co/image/ab67706f000000026a529b45bf70807cc16b1a88',
     'list': [],
   },
   {
@@ -381,8 +374,6 @@ List<Map<String, dynamic>> playlistsDB = [
   {
     'ytid': 'PLXpMeQYR1ilKXzjYmIb-FIKmYnzWZ7v4b',
     'title': 'New House Songs 2026',
-    'image':
-        'https://image-cdn-ak.spotifycdn.com/image/ab67706c0000d72c7d5dc51b5b4c6c698d4fff2d',
     'list': [],
   },
   {

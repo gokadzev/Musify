@@ -866,4 +866,32 @@ List albumsDB = [
     'isAlbum': true,
     'list': [],
   },
+  {
+    'ytid': 'OLAK5uy_lcy1zl8904j5_xCdHRayqrAjZfW5zkQb0',
+    'title': 'Bruno Mars - The Romantic',
+    'image': 'https://i.scdn.co/image/ab67616d0000b2733eb8dc748f7efb1470f74395',
+    'isAlbum': true,
+    'list': [],
+  },
+  {
+    'ytid': 'OLAK5uy_msXc3-S9ZBROLuBx5ASXTYjYed6FiPqkI',
+    'title': 'Harry Styles - Kiss All The Time. Disco, Occasionally.',
+    'image': 'https://i.scdn.co/image/ab67616d0000b27374959140f550b11049c18a38',
+    'isAlbum': true,
+    'list': [],
+  },
+  {
+    'ytid': 'OLAK5uy_nSfjYPAVpid5DkvObz5Ff9GRr-3fLQq8w',
+    'title': 'Don Toliver - Octane',
+    'image': 'https://i.scdn.co/image/ab67616d0000b27325c28f3c9fbdbab1a88dd619',
+    'isAlbum': true,
+    'list': [],
+  },
+  {
+    'ytid': 'OLAK5uy_n-ILXqnNS71YHbWdlXOaQ_jx9d1l_8C2I',
+    'title': 'Olivia Rodrigo - you seem pretty sad for a girl so in love',
+    'image': 'https://i.scdn.co/image/ab67616d00001e026949b83f85d782b21ce70583',
+    'isAlbum': true,
+    'list': [],
+  },
 ];
