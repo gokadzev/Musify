@@ -32,6 +32,7 @@ import 'package:musify/screens/playlist_folder_page.dart';
 import 'package:musify/screens/playlist_page.dart';
 import 'package:musify/screens/search_page.dart';
 import 'package:musify/screens/settings_page.dart';
+import 'package:musify/screens/time_machine_page.dart';
 import 'package:musify/screens/user_songs_page.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/widgets/offline_search_placeholder.dart';
@@ -71,8 +72,9 @@ class NavigationManager {
         final isOffline = offlineMode.value;
         final currentPath = state.matchedLocation;
 
-        if (isOffline && currentPath == searchPath) {
-          // Redirect search to home in offline mode
+        if (isOffline &&
+            (currentPath == searchPath || currentPath == timeMachinePath)) {
+          // Redirect unavailable pages to home in offline mode
           return homePath;
         }
 
@@ -114,6 +116,7 @@ class NavigationManager {
       router.routeInformationParser;
 
   static const String homePath = '/home';
+  static const String timeMachinePath = '$homePath/time-machine';
   static const String settingsPath = '/settings';
   static const String searchPath = '/search';
   static const String libraryPath = '/library';
@@ -147,6 +150,11 @@ class NavigationManager {
               );
             },
             routes: [
+              GoRoute(
+                path: 'time-machine',
+                pageBuilder: (context, state) =>
+                    _pushPage(child: const TimeMachinePage(), state: state),
+              ),
               GoRoute(
                 path: 'library',
                 pageBuilder: (context, state) =>

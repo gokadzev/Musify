@@ -60,6 +60,17 @@ final _latestSongLikeUpdateTokens = <String, int>{};
 final lyrics = ValueNotifier<String?>(null);
 String? lastFetchedLyrics;
 
+void reloadBackedUpUserData() {
+  final userBox = Hive.box('user');
+  userLikedSongsList.value = List.from(
+    userBox.get('likedSongs', defaultValue: []),
+  );
+  userRecentlyPlayed.value = List.from(
+    userBox.get('recentlyPlayedSongs', defaultValue: []),
+  );
+  recentlyPlayedVersion.value++;
+}
+
 // Timeouts and durations used across manifest fetching and cache validation.
 const Duration _manifestTimeout = Duration(seconds: 30);
 const Duration _cacheValidationDuration = Duration(hours: 1);
@@ -802,7 +813,7 @@ Future<File?> _downloadAndSaveArtworkFile(String url, String filePath) async {
   return null;
 }
 
-const recentlyPlayedSongsLimit = 250;
+const recentlyPlayedSongsLimit = 100;
 
 /// Updates the recently played list and listening count for [songId].
 ///
@@ -886,43 +897,4 @@ Future<void> removeFromRecentlyPlayed(dynamic songId) async {
       ),
     );
   }
-}
-
-/// Returns the most-played songs, ordered by `listeningCount` desc and
-/// `lastPlayed` desc as a tiebreaker. Does not mutate the persisted list.
-List<Map> getMostPlayed({int limit = 20, bool deduplicate = true}) {
-  final copy = List<Map>.from(userRecentlyPlayed.value);
-
-  if (deduplicate) {
-    final seen = <String>{};
-    copy.removeWhere((m) {
-      final id = m['ytid']?.toString();
-      if (id == null) return true;
-      if (seen.contains(id)) return true;
-      seen.add(id);
-      return false;
-    });
-  }
-
-  copy.sort((a, b) {
-    final ai = (a['listeningCount'] is int)
-        ? a['listeningCount'] as int
-        : int.tryParse(a['listeningCount']?.toString() ?? '') ?? 0;
-    final bi = (b['listeningCount'] is int)
-        ? b['listeningCount'] as int
-        : int.tryParse(b['listeningCount']?.toString() ?? '') ?? 0;
-    if (ai != bi) return bi.compareTo(ai);
-
-    final ad = a['lastPlayed'] is DateTime
-        ? a['lastPlayed'] as DateTime
-        : DateTime.tryParse(a['lastPlayed']?.toString() ?? '') ??
-              DateTime.fromMillisecondsSinceEpoch(0);
-    final bd = b['lastPlayed'] is DateTime
-        ? b['lastPlayed'] as DateTime
-        : DateTime.tryParse(b['lastPlayed']?.toString() ?? '') ??
-              DateTime.fromMillisecondsSinceEpoch(0);
-    return bd.compareTo(ad);
-  });
-
-  return copy.take(limit).toList();
 }
