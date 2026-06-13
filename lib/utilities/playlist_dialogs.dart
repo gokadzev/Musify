@@ -413,12 +413,14 @@ void showAddToPlaylistDialog(
                 );
               }
 
-              return ListView(
+              return ListView.builder(
+                itemCount: folders.length + topLevelPlaylists.length,
                 shrinkWrap: true,
-                children: [
-                  // Folders as expansion tiles
-                  for (final folder in folders)
-                    Padding(
+                itemBuilder: (context, index) {
+                  if (index < folders.length) {
+                    final folder = folders[index];
+
+                    return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 6),
                       child: ExpansionTile(
                         collapsedBackgroundColor:
@@ -494,45 +496,44 @@ void showAddToPlaylistDialog(
                             ),
                         ],
                       ),
-                    ),
+                    );
+                  }
 
-                  // Top-level playlists
-                  if (topLevelPlaylists.isNotEmpty) ...[
-                    const SizedBox(height: 8),
-                    for (final playlist in topLevelPlaylists)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 6),
-                        child: DialogItem(
-                          icon: FluentIcons.text_bullet_list_24_filled,
-                          iconColor: colorScheme.tertiary,
-                          iconBgColor: colorScheme.tertiaryContainer,
-                          label: playlist['title'] ?? '',
-                          onTap: () {
-                            if (song != null) {
-                              showToast(
-                                context,
-                                addSongInCustomPlaylist(
-                                  context,
-                                  playlist['ytid'],
-                                  song,
-                                ),
-                              );
-                            } else if (songs != null && songs.isNotEmpty) {
-                              showToast(
-                                context,
-                                addSongsInCustomPlaylist(
-                                  context,
-                                  playlist['ytid'],
-                                  songs,
-                                ),
-                              );
-                            }
-                            Navigator.pop(context);
-                          },
-                        ),
-                      ),
-                  ],
-                ],
+                  final playlistIndex = index - folders.length;
+                  final playlist = topLevelPlaylists[playlistIndex];
+
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 6),
+                    child: DialogItem(
+                      icon: FluentIcons.text_bullet_list_24_filled,
+                      iconColor: colorScheme.tertiary,
+                      iconBgColor: colorScheme.tertiaryContainer,
+                      label: playlist['title'] ?? '',
+                      onTap: () {
+                        if (song != null) {
+                          showToast(
+                            context,
+                            addSongInCustomPlaylist(
+                              context,
+                              playlist['ytid'],
+                              song,
+                            ),
+                          );
+                        } else if (songs != null && songs.isNotEmpty) {
+                          showToast(
+                            context,
+                            addSongsInCustomPlaylist(
+                              context,
+                              playlist['ytid'],
+                              songs,
+                            ),
+                          );
+                        }
+                        Navigator.pop(context);
+                      },
+                    ),
+                  );
+                },
               );
             },
           ),
