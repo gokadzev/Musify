@@ -24,6 +24,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:musify/constants/version.dart';
 import 'package:musify/screens/about_page.dart';
+import 'package:musify/screens/artist_page.dart';
 import 'package:musify/screens/bottom_navigation_page.dart';
 import 'package:musify/screens/equalizer_page.dart';
 import 'package:musify/screens/home_page.dart';
@@ -73,6 +74,10 @@ class NavigationManager {
 
         if (isOffline && currentPath == searchPath) {
           // Redirect search to home in offline mode
+          return homePath;
+        }
+
+        if (isOffline && currentPath.contains('/artist/')) {
           return homePath;
         }
 
@@ -162,6 +167,18 @@ class NavigationManager {
                 ),
               ),
               GoRoute(
+                path: 'artist/:artistId',
+                pageBuilder: (context, state) => _pushPage(
+                  child: ArtistPage(
+                    artistId: _decodePathParameter(
+                      state.pathParameters['artistId'],
+                    ),
+                    artistData: _extraAsMap(state.extra),
+                  ),
+                  state: state,
+                ),
+              ),
+              GoRoute(
                 path: 'folder/:folderId/:folderName',
                 pageBuilder: (context, state) => _pushPage(
                   child: PlaylistFolderPage(
@@ -194,6 +211,20 @@ class NavigationManager {
                 state: state,
               );
             },
+            routes: [
+              GoRoute(
+                path: 'artist/:artistId',
+                pageBuilder: (context, state) => _pushPage(
+                  child: ArtistPage(
+                    artistId: _decodePathParameter(
+                      state.pathParameters['artistId'],
+                    ),
+                    artistData: _extraAsMap(state.extra),
+                  ),
+                  state: state,
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -212,6 +243,18 @@ class NavigationManager {
                 pageBuilder: (context, state) => _pushPage(
                   child: UserSongsPage(
                     page: state.pathParameters['page'] ?? 'liked',
+                  ),
+                  state: state,
+                ),
+              ),
+              GoRoute(
+                path: 'artist/:artistId',
+                pageBuilder: (context, state) => _pushPage(
+                  child: ArtistPage(
+                    artistId: _decodePathParameter(
+                      state.pathParameters['artistId'],
+                    ),
+                    artistData: _extraAsMap(state.extra),
                   ),
                   state: state,
                 ),
@@ -255,6 +298,16 @@ class NavigationManager {
         ],
       ),
     ];
+  }
+
+  static String _decodePathParameter(String? value) {
+    if (value == null || value.isEmpty) return '';
+    return Uri.decodeComponent(value);
+  }
+
+  static Map? _extraAsMap(Object? extra) {
+    if (extra is Map) return Map<String, dynamic>.from(extra);
+    return null;
   }
 
   static Page<void> getPage({

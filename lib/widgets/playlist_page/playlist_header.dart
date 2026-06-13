@@ -30,12 +30,14 @@ class PlaylistHeader extends StatelessWidget {
     this.songsLength, {
     super.key,
     this.isAlbum,
+    this.isArtist = false,
   });
 
   final Widget image;
   final String title;
   final int songsLength;
   final bool? isAlbum;
+  final bool isArtist;
 
   @override
   Widget build(BuildContext context) {
@@ -46,24 +48,27 @@ class PlaylistHeader extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(24, 20, 24, 8),
       child: Column(
         children: [
-          ClipPath(
-            clipper: const ShapeBorderClipper(
-              shape: StarBorder(
-                points: 8,
-                pointRounding: 0.8,
-                valleyRounding: 0.2,
-                innerRadiusRatio: 0.6,
+          if (isArtist)
+            ClipOval(child: image)
+          else
+            ClipPath(
+              clipper: const ShapeBorderClipper(
+                shape: StarBorder(
+                  points: 8,
+                  pointRounding: 0.8,
+                  valleyRounding: 0.2,
+                  innerRadiusRatio: 0.6,
+                ),
               ),
+              child: image,
             ),
-            child: image,
-          ),
           const SizedBox(height: 24),
           Text(
             title,
             style: theme.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.w700,
               color: colorScheme.onSurface,
-              letterSpacing: -0.3,
+              letterSpacing: 0,
             ),
             overflow: TextOverflow.ellipsis,
             maxLines: 2,
@@ -74,7 +79,15 @@ class PlaylistHeader extends StatelessWidget {
             alignment: WrapAlignment.center,
             spacing: 8,
             children: [
-              if (isAlbum != null)
+              if (isArtist)
+                _Chip(
+                  icon: FluentIcons.person_16_regular,
+                  label: context.l10n!.artist,
+                  color: colorScheme.primaryContainer,
+                  onColor: colorScheme.onPrimaryContainer,
+                  theme: theme,
+                )
+              else if (isAlbum != null)
                 _Chip(
                   icon: isAlbum!
                       ? FluentIcons.cd_16_regular
