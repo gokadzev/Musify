@@ -1,14 +1,11 @@
 import axios from 'axios';
-import { ProxyAgent } from 'undici';
-import ytdl from '@distube/ytdl-core';
 
 let workingProxies = [];
 let lastFetch = 0;
 
-// Replicate Musify's logic of grabbing proxies from ProxyScrape
 async function fetchProxies() {
   try {
-    console.log("Fetching new proxies...");
+    console.log("Fetching new proxies for yt-dlp...");
     const url = 'https://api.proxyscrape.com/v4/free-proxy-list/get?request=display_proxies&proxy_format=protocolipport&format=json&protocol=http&ssl=yes';
     const response = await axios.get(url, { timeout: 10000 });
 
@@ -26,7 +23,7 @@ async function fetchProxies() {
   }
 }
 
-function getRandomProxy() {
+export function getRandomProxy() {
   if (workingProxies.length === 0) return null;
   const randomIndex = Math.floor(Math.random() * workingProxies.length);
   return workingProxies[randomIndex];
@@ -40,22 +37,13 @@ async function discardProxy(proxy) {
     }
 }
 
-export async function getYtdlAgent() {
+export async function getProxyForYtdlp() {
   if (workingProxies.length < 5 || Date.now() - lastFetch > 30 * 60 * 1000) {
     await fetchProxies();
   }
 
   const proxyUrl = getRandomProxy();
-  if (!proxyUrl) {
-     console.warn("No proxies available, falling back to direct connection.");
-     return { agent: ytdl.createAgent(), proxyUrl: null };
-  }
-
-  console.log(`Creating ytdl dispatcher with proxy: ${proxyUrl}`);
-  const dispatcher = new ProxyAgent({ uri: proxyUrl });
-  const agent = ytdl.createAgent(undefined, { fetchOptions: { dispatcher } });
-
-  return { agent, proxyUrl };
+  return proxyUrl;
 }
 
 export async function markProxyAsFailed(proxyUrl) {
