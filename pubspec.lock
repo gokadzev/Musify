@@ -661,10 +661,10 @@ packages:
     dependency: transitive
     description:
       name: sqflite_common
-      sha256: cce558075afe2a83f3fd7fc123acd6b090683e4f23910d44fbb31ecd7800b014
+      sha256: "5bf6a55c166e73bf651ba7ec3ed486e577620e3dc8f3a9c6a258a8031b624590"
       url: "https://pub.dev"
     source: hosted
-    version: "2.5.9"
+    version: "2.5.11"
   sqflite_darwin:
     dependency: transitive
     description:
@@ -882,4 +882,4 @@ packages:
     version: "3.1.0"
 sdks:
   dart: ">=3.12.0 <4.0.0"
-  flutter: ">=3.44.0 <4.0.0"
+  flutter: ">=3.44.2 <4.0.0"
