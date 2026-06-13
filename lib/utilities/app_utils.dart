@@ -24,13 +24,22 @@ import 'package:musify/constants/app_constants.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
-BorderRadius getItemBorderRadius(int index, int totalLength) {
-  if (totalLength == 1) {
-    return commonCustomBarRadius; // Only one item
-  } else if (index == 0) {
-    return commonCustomBarRadiusFirst; // First item
-  } else if (index == totalLength - 1) {
-    return commonCustomBarRadiusLast; // Last item
+BorderRadius getItemBorderRadius(
+  int index,
+  int totalLength, {
+  bool hasItemsBefore = false,
+  bool hasItemsAfter = false,
+}) {
+  // Determine if this item is the absolute top or absolute bottom of the visual block
+  final isAbsoluteFirst = index == 0 && !hasItemsBefore;
+  final isAbsoluteLast = index == totalLength - 1 && !hasItemsAfter;
+
+  if (isAbsoluteFirst && isAbsoluteLast) {
+    return commonCustomBarRadius; // Single item in the entire block
+  } else if (isAbsoluteFirst) {
+    return commonCustomBarRadiusFirst; // Top of the block
+  } else if (isAbsoluteLast) {
+    return commonCustomBarRadiusLast; // Bottom of the block
   }
   return BorderRadius.zero; // Default for middle items
 }
