@@ -44,6 +44,16 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  late final Future<List> _suggestedPlaylistsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _suggestedPlaylistsFuture = getPlaylists(
+      playlistsNum: recommendedCubesNumber,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final playlistHeight = MediaQuery.sizeOf(context).height * 0.25 / 1.1;
@@ -104,11 +114,9 @@ class _HomePageState extends State<HomePage> {
     }
 
     return AsyncLoader<List<dynamic>>(
-      future: getPlaylists(playlistsNum: recommendedCubesNumber),
-      builder: (context, playlists) => _buildSuggestedPlaylistsSection(
-        playlistHeight,
-        playlists,
-      ),
+      future: _suggestedPlaylistsFuture,
+      builder: (context, playlists) =>
+          _buildSuggestedPlaylistsSection(playlistHeight, playlists),
     );
   }
 
@@ -183,14 +191,10 @@ class _HomePageState extends State<HomePage> {
   Widget _buildRecommendedSongsSection() {
     return ValueListenableBuilder<bool>(
       valueListenable: externalRecommendations,
-      builder: (_, recommendations, __) {
-        return AsyncLoader<List<dynamic>>(
-          future: getRecommendedSongs(),
-
-          builder: (context, data) {
-            if (data.isEmpty) return const SizedBox.shrink();
-            return _buildRecommendedForYouSection(context, data);
-          },
+      builder: (_, useExternalRecommendations, __) {
+        return _RecommendedSongsLoader(
+          useExternalRecommendations: useExternalRecommendations,
+          builder: _buildRecommendedForYouSection,
         );
       },
     );
@@ -302,6 +306,51 @@ class _HomePageState extends State<HomePage> {
           },
         ),
       ],
+    );
+  }
+}
+
+class _RecommendedSongsLoader extends StatefulWidget {
+  const _RecommendedSongsLoader({
+    required this.useExternalRecommendations,
+    required this.builder,
+  });
+
+  final bool useExternalRecommendations;
+  final Widget Function(BuildContext, List<dynamic>) builder;
+
+  @override
+  State<_RecommendedSongsLoader> createState() =>
+      _RecommendedSongsLoaderState();
+}
+
+class _RecommendedSongsLoaderState extends State<_RecommendedSongsLoader> {
+  late Future<List> _recommendedSongsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _recommendedSongsFuture = getRecommendedSongs();
+  }
+
+  @override
+  void didUpdateWidget(covariant _RecommendedSongsLoader oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.useExternalRecommendations !=
+        widget.useExternalRecommendations) {
+      _recommendedSongsFuture = getRecommendedSongs();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AsyncLoader<List<dynamic>>(
+      future: _recommendedSongsFuture,
+      builder: (context, data) {
+        if (data.isEmpty) return const SizedBox.shrink();
+        return widget.builder(context, data);
+      },
     );
   }
 }
