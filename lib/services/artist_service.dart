@@ -263,27 +263,39 @@ String? normalizeArtistThumbnailUrl(String? value) {
   final thumbnail = value?.trim();
   if (thumbnail == null || thumbnail.isEmpty) return null;
 
+  late final String normalized;
   if (thumbnail.startsWith('//')) {
-    return 'https:$thumbnail';
+    normalized = 'https:$thumbnail';
+  } else if (thumbnail.startsWith('https:') &&
+      !thumbnail.startsWith('https://')) {
+    normalized =
+        'https://${thumbnail.substring(6).replaceFirst(RegExp('^/+'), '')}';
+  } else if (thumbnail.startsWith('http:') &&
+      !thumbnail.startsWith('http://')) {
+    normalized =
+        'https://${thumbnail.substring(5).replaceFirst(RegExp('^/+'), '')}';
+  } else if (thumbnail.startsWith('http://') ||
+      thumbnail.startsWith('https://')) {
+    normalized = thumbnail;
+  } else if (thumbnail.startsWith('/')) {
+    normalized = 'https://www.youtube.com$thumbnail';
+  } else {
+    normalized = 'https://$thumbnail';
   }
 
-  if (thumbnail.startsWith('https:') && !thumbnail.startsWith('https://')) {
-    return 'https://${thumbnail.substring(6).replaceFirst(RegExp('^/+'), '')}';
-  }
+  return _upgradeArtistThumbnailResolution(normalized);
+}
 
-  if (thumbnail.startsWith('http:') && !thumbnail.startsWith('http://')) {
-    return 'https://${thumbnail.substring(5).replaceFirst(RegExp('^/+'), '')}';
-  }
-
-  if (thumbnail.startsWith('http://') || thumbnail.startsWith('https://')) {
+String _upgradeArtistThumbnailResolution(String thumbnail) {
+  final uri = Uri.tryParse(thumbnail);
+  final host = uri?.host.toLowerCase() ?? '';
+  if (!host.endsWith('googleusercontent.com') && !host.endsWith('ggpht.com')) {
     return thumbnail;
   }
 
-  if (thumbnail.startsWith('/')) {
-    return 'https://www.youtube.com$thumbnail';
-  }
-
-  return 'https://$thumbnail';
+  return thumbnail
+      .replaceFirst(RegExp(r'=w\d+-h\d+'), '=w544-h544')
+      .replaceFirst(RegExp(r'=s\d+'), '=s544');
 }
 
 String normalizeArtistDisplayTitle(String value) =>

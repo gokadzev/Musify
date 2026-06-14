@@ -60,11 +60,17 @@ class _LibraryPageState extends State<LibraryPage> {
           userPlaylistFolders.value.isNotEmpty ||
           userPlaylists.value.isNotEmpty ||
           userCustomPlaylists.value.isNotEmpty;
-      final hasOfflinePlaylists =
-          offlinePlaylistService.offlinePlaylists.value.isNotEmpty;
+      final hasOfflinePlaylists = offlinePlaylistService.offlinePlaylists.value
+          .any((p) => p is Map && !PlaylistUtils.isArtistPlaylist(p));
+      final hasOfflineArtists = getLikedArtistItems(
+        offlineOnly: true,
+      ).isNotEmpty;
       final hasOfflineSongs = userOfflineSongs.value.isNotEmpty;
 
-      if (!hasUserContent && !hasOfflinePlaylists && !hasOfflineSongs) {
+      if (!hasUserContent &&
+          !hasOfflinePlaylists &&
+          !hasOfflineArtists &&
+          !hasOfflineSongs) {
         final colorScheme = Theme.of(context).colorScheme;
         return Scaffold(
           appBar: AppBar(title: Text(context.l10n!.library)),
@@ -173,6 +179,9 @@ class _LibraryPageState extends State<LibraryPage> {
     final isOffline = offlineMode.value;
 
     final rawOfflinePlaylists = offlinePlaylistService.offlinePlaylists.value;
+    final visibleOfflinePlaylists = rawOfflinePlaylists
+        .where((p) => p is Map && !PlaylistUtils.isArtistPlaylist(p))
+        .toList();
     final folders = isOffline
         ? userPlaylistFolders.value
               .where(PlaylistUtils.folderHasOfflinePlaylists)
@@ -181,12 +190,12 @@ class _LibraryPageState extends State<LibraryPage> {
 
     final offlinePlaylistsNotInFolders =
         PlaylistUtils.filterOfflinePlaylistsNotInFolders(
-          rawOfflinePlaylists,
+          visibleOfflinePlaylists,
           folders,
         );
 
     final offlineIdsNotInFolders = PlaylistUtils.offlinePlaylistIdsNotInFolders(
-      rawOfflinePlaylists,
+      visibleOfflinePlaylists,
       folders,
     );
 

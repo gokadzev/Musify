@@ -59,9 +59,7 @@ final pinnedPlaylistIds = ValueNotifier<List<String>>(
 final onlinePlaylists = ValueNotifier<List<Map>>([]);
 
 bool isArtistPlaylist(dynamic playlist) =>
-    playlist is Map &&
-    (playlist['isArtist'] == true ||
-        playlist['source']?.toString() == 'youtube-artist');
+    PlaylistUtils.isArtistPlaylist(playlist);
 
 List<Map> getLikedPlaylistItems({bool includeArtists = false}) {
   return userLikedPlaylists.value
