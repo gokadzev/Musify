@@ -42,8 +42,6 @@ import 'package:musify/widgets/mini_player_bottom_space.dart';
 import 'package:musify/widgets/playlist_bar.dart';
 import 'package:musify/widgets/section_header.dart';
 
-enum _LibraryPlaylistListKind { normal, artist }
-
 class LibraryPage extends StatefulWidget {
   const LibraryPage({super.key});
 
@@ -373,10 +371,7 @@ class _LibraryPageState extends State<LibraryPage> {
           icon: FluentIcons.person_24_filled,
         ),
       ),
-      _buildSliverPlaylistList(
-        likedArtists,
-        listKind: _LibraryPlaylistListKind.artist,
-      ),
+      _buildSliverPlaylistList(likedArtists),
     ];
   }
 
@@ -385,16 +380,14 @@ class _LibraryPageState extends State<LibraryPage> {
     bool isOfflinePlaylists = false,
     bool hasItemsAfter = false,
     bool hasItemsBefore = false,
-    _LibraryPlaylistListKind listKind = _LibraryPlaylistListKind.normal,
   }) {
-    final isArtistList = listKind == _LibraryPlaylistListKind.artist;
-
     return SliverPadding(
       padding: hasItemsAfter ? EdgeInsets.zero : commonListViewBottomPadding,
       sliver: SliverList.builder(
         itemCount: playlists.length,
         itemBuilder: (BuildContext context, index) {
           final playlist = playlists[index];
+          final isArtist = playlist['source']?.toString() == 'youtube-artist';
           final borderRadius = getItemBorderRadius(
             index,
             playlists.length,
@@ -406,12 +399,12 @@ class _LibraryPageState extends State<LibraryPage> {
             playlist['title'],
             playlistId: playlist['ytid'],
             playlistArtwork: playlist['image'],
-            cubeIcon: isArtistList
+            cubeIcon: isArtist
                 ? FluentIcons.person_24_filled
                 : FluentIcons.text_bullet_list_24_filled,
-            isAlbum: isArtistList ? false : playlist['isAlbum'],
+            isAlbum: isArtist ? false : playlist['isAlbum'],
             playlistData:
-                isArtistList ||
+                isArtist ||
                     playlist['source'] == 'user-created' ||
                     playlist['source'] == 'user-youtube' ||
                     isOfflinePlaylists

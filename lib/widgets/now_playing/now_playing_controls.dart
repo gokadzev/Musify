@@ -101,9 +101,7 @@ class NowPlayingControls extends StatelessWidget {
                     GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onTap: canOpenArtist
-                          ? () {
-                              _openArtistPage(context, metadata);
-                            }
+                          ? () => _openArtistPage(context, metadata)
                           : null,
                       child: MarqueeTextWidget(
                         text: metadata.artist!,
