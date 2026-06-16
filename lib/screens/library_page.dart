@@ -42,6 +42,8 @@ import 'package:musify/widgets/mini_player_bottom_space.dart';
 import 'package:musify/widgets/playlist_bar.dart';
 import 'package:musify/widgets/section_header.dart';
 
+enum _LibraryPlaylistListKind { normal, artist }
+
 class LibraryPage extends StatefulWidget {
   const LibraryPage({super.key});
 
@@ -371,7 +373,10 @@ class _LibraryPageState extends State<LibraryPage> {
           icon: FluentIcons.person_24_filled,
         ),
       ),
-      _buildSliverPlaylistList(likedArtists, isArtistList: true),
+      _buildSliverPlaylistList(
+        likedArtists,
+        listKind: _LibraryPlaylistListKind.artist,
+      ),
     ];
   }
 
@@ -380,8 +385,10 @@ class _LibraryPageState extends State<LibraryPage> {
     bool isOfflinePlaylists = false,
     bool hasItemsAfter = false,
     bool hasItemsBefore = false,
-    bool isArtistList = false,
+    _LibraryPlaylistListKind listKind = _LibraryPlaylistListKind.normal,
   }) {
+    final isArtistList = listKind == _LibraryPlaylistListKind.artist;
+
     return SliverPadding(
       padding: hasItemsAfter ? EdgeInsets.zero : commonListViewBottomPadding,
       sliver: SliverList.builder(
@@ -458,12 +465,12 @@ class _LibraryPageState extends State<LibraryPage> {
       padding: hasItemsAfter ? EdgeInsets.zero : commonListViewBottomPadding,
       itemBuilder: (BuildContext context, index) {
         final playlist = playlists[index];
-        final isLastItem = index == playlists.length - 1;
-        final borderRadius = (hasItemsBefore && index == 0)
-            ? (isLastItem ? commonCustomBarRadiusLast : BorderRadius.zero)
-            : (hasItemsAfter && isLastItem)
-            ? BorderRadius.zero
-            : getItemBorderRadius(index, playlists.length);
+        final borderRadius = getItemBorderRadius(
+          index,
+          playlists.length,
+          hasItemsBefore: hasItemsBefore,
+          hasItemsAfter: hasItemsAfter,
+        );
         return PlaylistBar(
           key: listItemKey('library_playlist', index, playlist),
           playlist['title'],
