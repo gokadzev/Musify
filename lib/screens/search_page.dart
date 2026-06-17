@@ -320,8 +320,42 @@ class _SearchPageState extends State<SearchPage> {
   Widget _buildSearchResults(BuildContext context, Color primaryColor) {
     final widgets = <Widget>[];
 
-    // Songs section, with verified artists mixed in as first-class results.
-    if (_songsSearchResult.isNotEmpty || _artistsSearchResult.isNotEmpty) {
+    // Artists section
+    if (_artistsSearchResult.isNotEmpty) {
+      widgets.add(
+        SectionTitle(
+          context.l10n!.artists,
+          primaryColor,
+          icon: FluentIcons.person_24_filled,
+        ),
+      );
+
+      final artists = _artistsSearchResult.take(3).toList();
+      for (var index = 0; index < artists.length; index++) {
+        final artist = Map<String, dynamic>.from(artists[index]);
+        final artistId =
+            artist['ytid']?.toString() ?? artist['title']?.toString() ?? '';
+        if (artistId.isEmpty) continue;
+
+        final borderRadius = getItemBorderRadius(index, artists.length);
+        widgets.add(
+          ArtistBar(
+            key: listItemKey('search_artist', index, artist),
+            artist: artist,
+            borderRadius: borderRadius,
+            onTap: () {
+              context.push(
+                '${NavigationManager.searchPath}/artist/${Uri.encodeComponent(artistId)}',
+                extra: artist,
+              );
+            },
+          ),
+        );
+      }
+    }
+
+    // Songs section
+    if (_songsSearchResult.isNotEmpty) {
       widgets.add(
         SectionTitle(
           context.l10n!.songs,
@@ -333,60 +367,19 @@ class _SearchPageState extends State<SearchPage> {
       final songsCount = _songsSearchResult.length > maxSongsInList
           ? maxSongsInList
           : _songsSearchResult.length;
-      final artists = _artistsSearchResult.take(3).toList();
-      final mixedItems = <({String type, dynamic value})>[];
-      var artistIndex = 0;
 
       for (var index = 0; index < songsCount; index++) {
-        mixedItems.add((type: 'song', value: _songsSearchResult[index]));
-        final shouldInsertArtist =
-            artistIndex < artists.length &&
-            (index == 1 || (index + 1) % 5 == 0);
-        if (shouldInsertArtist) {
-          mixedItems.add((type: 'artist', value: artists[artistIndex]));
-          artistIndex++;
-        }
-      }
-
-      while (artistIndex < artists.length) {
-        mixedItems.add((type: 'artist', value: artists[artistIndex]));
-        artistIndex++;
-      }
-
-      for (var index = 0; index < mixedItems.length; index++) {
-        final item = mixedItems[index];
-        final borderRadius = getItemBorderRadius(index, mixedItems.length);
-        if (item.type == 'artist') {
-          final artist = Map<String, dynamic>.from(item.value as Map);
-          final artistId =
-              artist['ytid']?.toString() ?? artist['title']?.toString() ?? '';
-          if (artistId.isEmpty) continue;
-
-          widgets.add(
-            ArtistBar(
-              key: listItemKey('search_artist', index, artist),
-              artist: artist,
-              borderRadius: borderRadius,
-              onTap: () {
-                context.push(
-                  '${NavigationManager.searchPath}/artist/${Uri.encodeComponent(artistId)}',
-                  extra: artist,
-                );
-              },
-            ),
-          );
-        } else {
-          final song = item.value;
-          widgets.add(
-            SongBar(
-              song,
-              true,
-              key: listItemKey('search_song', index, song),
-              showMusicDuration: true,
-              borderRadius: borderRadius,
-            ),
-          );
-        }
+        final song = _songsSearchResult[index];
+        final borderRadius = getItemBorderRadius(index, songsCount);
+        widgets.add(
+          SongBar(
+            song,
+            true,
+            key: listItemKey('search_song', index, song),
+            showMusicDuration: true,
+            borderRadius: borderRadius,
+          ),
+        );
       }
     }
 

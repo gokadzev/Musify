@@ -489,10 +489,6 @@ Future<List<Map<String, dynamic>>> _buildArtistCatalogFromMusic(
     }
 
     final catalog = dedupeArtistCatalogSongs(songs);
-    logger.log(
-      'YouTube Music catalog for $artistName ($artistId): '
-      '${releases.length} releases -> ${catalog.length} tracks',
-    );
     return catalog;
   } catch (e, stackTrace) {
     logger.log(
