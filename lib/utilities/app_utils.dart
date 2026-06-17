@@ -24,13 +24,22 @@ import 'package:musify/constants/app_constants.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
-BorderRadius getItemBorderRadius(int index, int totalLength) {
-  if (totalLength == 1) {
-    return commonCustomBarRadius; // Only one item
-  } else if (index == 0) {
-    return commonCustomBarRadiusFirst; // First item
-  } else if (index == totalLength - 1) {
-    return commonCustomBarRadiusLast; // Last item
+BorderRadius getItemBorderRadius(
+  int index,
+  int totalLength, {
+  bool hasItemsBefore = false,
+  bool hasItemsAfter = false,
+}) {
+  // Determine if this item is the absolute top or absolute bottom of the visual block
+  final isAbsoluteFirst = index == 0 && !hasItemsBefore;
+  final isAbsoluteLast = index == totalLength - 1 && !hasItemsAfter;
+
+  if (isAbsoluteFirst && isAbsoluteLast) {
+    return commonCustomBarRadius; // Single item in the entire block
+  } else if (isAbsoluteFirst) {
+    return commonCustomBarRadiusFirst; // Top of the block
+  } else if (isAbsoluteLast) {
+    return commonCustomBarRadiusLast; // Bottom of the block
   }
   return BorderRadius.zero; // Default for middle items
 }
@@ -81,26 +90,6 @@ final RegExp _youtubePlaylistIdRegExp = RegExp('[&?]list=([a-zA-Z0-9_-]+)');
 bool isSponsorshipAnnouncementUrl(String url) {
   final host = Uri.tryParse(url)?.host.toLowerCase();
   return host != null && (host == 'ko-fi.com' || host.endsWith('.ko-fi.com'));
-}
-
-/// Selects the best audio stream based on the configured quality.
-AudioStreamInfo selectAudioStreamForQuality(
-  List<AudioStreamInfo> availableSources,
-) {
-  final compatibleSources = _filterCompatibleSources(availableSources);
-  final selectionPool = compatibleSources.isNotEmpty
-      ? compatibleSources
-      : availableSources;
-
-  final qualitySetting = audioQualitySetting.value;
-
-  if (qualitySetting == 'low') {
-    return selectionPool.last;
-  } else if (qualitySetting == 'medium') {
-    return selectionPool[selectionPool.length ~/ 2];
-  }
-
-  return selectionPool.withHighestBitrate();
 }
 
 AudioOnlyStreamInfo selectAudioOnlyStreamForQuality(
@@ -172,30 +161,11 @@ int _audioOnlyCompatibilityScore(AudioOnlyStreamInfo stream) {
   return 1;
 }
 
-List<AudioStreamInfo> _filterCompatibleSources(List<AudioStreamInfo> sources) {
-  return sources.where((stream) {
-    final codec = stream.codec.toString().toLowerCase();
-
-    if (_isDolbyCodec(codec)) {
-      return false;
-    }
-
-    return _isPreferredCodec(codec);
-  }).toList();
-}
-
 bool _isDolbyCodec(String codec) {
   return codec.contains('ec-3') ||
       codec.contains('ac-3') ||
       codec.contains('eac3') ||
       codec.contains('dolby');
-}
-
-bool _isPreferredCodec(String codec) {
-  return codec.contains('mp4a') ||
-      codec.contains('aac') ||
-      codec.contains('opus') ||
-      codec.contains('vorbis');
 }
 
 bool _isPreferredAudioOnlyCodec(String codec, String container) {

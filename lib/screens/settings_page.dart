@@ -30,6 +30,7 @@ import 'package:musify/screens/search_page.dart';
 import 'package:musify/services/common_services.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/playlist_download_service.dart';
+import 'package:musify/services/playlists_manager.dart';
 import 'package:musify/services/router_service.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/services/update_manager.dart';
@@ -231,7 +232,7 @@ class SettingsPage extends StatelessWidget {
               trailing: Switch(
                 value: value,
                 onChanged: (value) {
-                  audioHandler.changeAutoPlayNextStatus();
+                  _toggleAutoPlayNext(context, value);
                   showToast(context, context.l10n!.settingChangedMsg);
                 },
               ),
@@ -339,6 +340,11 @@ class SettingsPage extends StatelessWidget {
           onTap: () async {
             try {
               final result = await restoreData(context);
+              if (result.success) {
+                reloadSongLibraryStateFromStorage();
+                reloadPlaylistLibraryStateFromStorage();
+                reloadSearchHistoryFromStorage();
+              }
               if (context.mounted) {
                 showToast(
                   context,
@@ -715,6 +721,12 @@ class SettingsPage extends StatelessWidget {
   void _toggleSponsorBlock(BuildContext context, bool value) {
     addOrUpdateData<bool>('settings', 'sponsorBlockSupport', value);
     sponsorBlockSupport.value = value;
+    showToast(context, context.l10n!.settingChangedMsg);
+  }
+
+  void _toggleAutoPlayNext(BuildContext context, bool value) {
+    addOrUpdateData<bool>('settings', 'playNextSongAutomatically', value);
+    playNextSongAutomatically.value = value;
     showToast(context, context.l10n!.settingChangedMsg);
   }
 

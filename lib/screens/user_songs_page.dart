@@ -145,15 +145,6 @@ class _UserSongsPageState extends State<UserSongsPage> {
     };
   }
 
-  int getLength(String page) {
-    return switch (page) {
-      'liked' => userLikedSongsList.value.length,
-      'offline' => userOfflineSongs.value.length,
-      'recents' => userRecentlyPlayed.value.length,
-      _ => userLikedSongsList.value.length,
-    };
-  }
-
   Widget _buildHeaderSection(
     String title,
     IconData icon,

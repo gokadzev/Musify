@@ -123,7 +123,10 @@ class _HomePageState extends State<HomePage> {
         valueListenable: userLikedPlaylists,
         builder: (_, likedPlaylists, __) => _buildSuggestedPlaylistsSection(
           playlistHeight,
-          likedPlaylists.take(recommendedCubesNumber).toList(),
+          likedPlaylists
+              .where((playlist) => !isArtistPlaylist(playlist))
+              .take(recommendedCubesNumber)
+              .toList(),
           showOnlyLiked: true,
         ),
       );
