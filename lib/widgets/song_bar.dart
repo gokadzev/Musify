@@ -25,11 +25,13 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:musify/constants/app_constants.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/common_services.dart';
 import 'package:musify/services/playlists_manager.dart';
+import 'package:musify/services/router_service.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/formatter.dart';
@@ -277,6 +279,14 @@ class _SongBarState extends State<SongBar> {
           duration: const Duration(seconds: 1),
         );
         break;
+      case 'go_to_artist':
+        final artistName = widget.song['artist']?.toString().trim() ?? '';
+        if (artistName.isEmpty) return;
+        context.push(
+          '${NavigationManager.searchPath}/artist/${Uri.encodeComponent(artistName)}',
+          extra: {'title': artistName, 'ytid': artistName},
+        );
+        break;
       case 'add_to_queue':
         audioHandler.addToQueue(widget.song);
         showToast(
@@ -443,6 +453,20 @@ class _SongBarState extends State<SongBar> {
               const SizedBox(width: 8),
               Text(
                 playNextText,
+                style: TextStyle(color: colorScheme.secondary),
+              ),
+            ],
+          ),
+        ),
+      if (_songArtist.isNotEmpty)
+        PopupMenuItem<String>(
+          value: 'go_to_artist',
+          child: Row(
+            children: [
+              Icon(FluentIcons.person_24_regular, color: colorScheme.primary),
+              const SizedBox(width: 8),
+              Text(
+                l10n.goToArtist,
                 style: TextStyle(color: colorScheme.secondary),
               ),
             ],
