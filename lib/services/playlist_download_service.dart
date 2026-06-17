@@ -154,6 +154,7 @@ class OfflinePlaylistService {
           progressNotifier.value.completed > progressNotifier.value.failed) {
         // Create an offline version of the playlist
         final offlinePlaylist = {
+          ...playlist,
           'ytid': playlistId,
           'title': playlist['title'],
           'image': playlist['image'],

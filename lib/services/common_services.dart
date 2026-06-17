@@ -60,6 +60,16 @@ final _latestSongLikeUpdateTokens = <String, int>{};
 final lyrics = ValueNotifier<String?>(null);
 String? lastFetchedLyrics;
 
+void reloadSongLibraryStateFromStorage() {
+  final userBox = Hive.box('user');
+  userLikedSongsList.value = List.from(
+    userBox.get('likedSongs', defaultValue: []),
+  );
+  userRecentlyPlayed.value = List.from(
+    userBox.get('recentlyPlayedSongs', defaultValue: []),
+  );
+}
+
 // Timeouts and durations used across manifest fetching and cache validation.
 const Duration _manifestTimeout = Duration(seconds: 30);
 const Duration _cacheValidationDuration = Duration(hours: 1);

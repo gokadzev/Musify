@@ -60,11 +60,17 @@ class _LibraryPageState extends State<LibraryPage> {
           userPlaylistFolders.value.isNotEmpty ||
           userPlaylists.value.isNotEmpty ||
           userCustomPlaylists.value.isNotEmpty;
-      final hasOfflinePlaylists =
-          offlinePlaylistService.offlinePlaylists.value.isNotEmpty;
+      final hasOfflinePlaylists = offlinePlaylistService.offlinePlaylists.value
+          .any((p) => p is Map && !PlaylistUtils.isArtistPlaylist(p));
+      final hasOfflineArtists = getLikedArtistItems(
+        offlineOnly: true,
+      ).isNotEmpty;
       final hasOfflineSongs = userOfflineSongs.value.isNotEmpty;
 
-      if (!hasUserContent && !hasOfflinePlaylists && !hasOfflineSongs) {
+      if (!hasUserContent &&
+          !hasOfflinePlaylists &&
+          !hasOfflineArtists &&
+          !hasOfflineSongs) {
         final colorScheme = Theme.of(context).colorScheme;
         return Scaffold(
           appBar: AppBar(title: Text(context.l10n!.library)),
@@ -133,6 +139,7 @@ class _LibraryPageState extends State<LibraryPage> {
                 ..._buildUserPlaylistsSlivers(primaryColor),
                 if (!offlineMode.value)
                   ..._buildLikedPlaylistsSlivers(primaryColor),
+                ..._buildLikedArtistsSlivers(primaryColor),
                 const SliverMiniPlayerBottomSpace(),
               ],
             ),
@@ -172,6 +179,9 @@ class _LibraryPageState extends State<LibraryPage> {
     final isOffline = offlineMode.value;
 
     final rawOfflinePlaylists = offlinePlaylistService.offlinePlaylists.value;
+    final visibleOfflinePlaylists = rawOfflinePlaylists
+        .where((p) => p is Map && !PlaylistUtils.isArtistPlaylist(p))
+        .toList();
     final folders = isOffline
         ? userPlaylistFolders.value
               .where(PlaylistUtils.folderHasOfflinePlaylists)
@@ -180,12 +190,12 @@ class _LibraryPageState extends State<LibraryPage> {
 
     final offlinePlaylistsNotInFolders =
         PlaylistUtils.filterOfflinePlaylistsNotInFolders(
-          rawOfflinePlaylists,
+          visibleOfflinePlaylists,
           folders,
         );
 
     final offlineIdsNotInFolders = PlaylistUtils.offlinePlaylistIdsNotInFolders(
-      rawOfflinePlaylists,
+      visibleOfflinePlaylists,
       folders,
     );
 
@@ -271,20 +281,11 @@ class _LibraryPageState extends State<LibraryPage> {
       );
 
       if (hasFolders) {
-        slivers.add(
-          _buildFolderSliverList(
-            folders,
-            hasItemsBefore: !isOffline,
-            hasItemsAfter: hasCustomPlaylists,
-          ),
-        );
+        slivers.add(_buildFolderSliverList(folders, hasCustomPlaylists));
       }
       if (hasCustomPlaylists) {
         slivers.add(
-          _buildSliverPlaylistList(
-            playlistsNotInFolders,
-            hasItemsBefore: !isOffline || hasFolders,
-          ),
+          _buildSliverPlaylistList(playlistsNotInFolders, hasItemsBefore: true),
         );
       }
     }
@@ -347,7 +348,8 @@ class _LibraryPageState extends State<LibraryPage> {
   }
 
   List<Widget> _buildLikedPlaylistsSlivers(Color primaryColor) {
-    if (userLikedPlaylists.value.isEmpty) return [];
+    final likedPlaylists = getLikedPlaylistItems();
+    if (likedPlaylists.isEmpty) return [];
     return [
       SliverToBoxAdapter(
         child: SectionHeader(
@@ -355,7 +357,21 @@ class _LibraryPageState extends State<LibraryPage> {
           icon: FluentIcons.heart_24_filled,
         ),
       ),
-      _buildSliverPlaylistList(userLikedPlaylists.value),
+      _buildSliverPlaylistList(likedPlaylists),
+    ];
+  }
+
+  List<Widget> _buildLikedArtistsSlivers(Color primaryColor) {
+    final likedArtists = getLikedArtistItems(offlineOnly: offlineMode.value);
+    if (likedArtists.isEmpty) return [];
+    return [
+      SliverToBoxAdapter(
+        child: SectionHeader(
+          title: context.l10n!.artist,
+          icon: FluentIcons.person_24_filled,
+        ),
+      ),
+      _buildSliverPlaylistList(likedArtists),
     ];
   }
 
@@ -371,21 +387,25 @@ class _LibraryPageState extends State<LibraryPage> {
         itemCount: playlists.length,
         itemBuilder: (BuildContext context, index) {
           final playlist = playlists[index];
+          final isArtist = playlist['source']?.toString() == 'youtube-artist';
           final borderRadius = getItemBorderRadius(
             index,
             playlists.length,
             hasItemsBefore: hasItemsBefore,
             hasItemsAfter: hasItemsAfter,
           );
-
           return PlaylistBar(
             key: listItemKey('library_playlist', index, playlist),
             playlist['title'],
             playlistId: playlist['ytid'],
             playlistArtwork: playlist['image'],
-            isAlbum: playlist['isAlbum'],
+            cubeIcon: isArtist
+                ? FluentIcons.person_24_filled
+                : FluentIcons.text_bullet_list_24_filled,
+            isAlbum: isArtist ? false : playlist['isAlbum'],
             playlistData:
-                playlist['source'] == 'user-created' ||
+                isArtist ||
+                    playlist['source'] == 'user-created' ||
                     playlist['source'] == 'user-youtube' ||
                     isOfflinePlaylists
                 ? playlist
@@ -405,22 +425,15 @@ class _LibraryPageState extends State<LibraryPage> {
     );
   }
 
-  Widget _buildFolderSliverList(
-    List folders, {
-    bool hasItemsBefore = false,
-    bool hasItemsAfter = false,
-  }) {
+  Widget _buildFolderSliverList(List folders, bool hasPlaylistsAfter) {
     return SliverList.builder(
       itemCount: folders.length,
       itemBuilder: (BuildContext context, index) {
         final folder = folders[index];
-        final borderRadius = getItemBorderRadius(
-          index,
-          folders.length,
-          hasItemsBefore: hasItemsBefore,
-          hasItemsAfter: hasItemsAfter,
-        );
-
+        final isLastFolder = index == folders.length - 1;
+        final borderRadius = isLastFolder && !hasPlaylistsAfter
+            ? commonCustomBarRadiusLast
+            : BorderRadius.zero;
         return PlaylistBar(
           folder['name'],
           playlistData: folder,

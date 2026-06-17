@@ -79,6 +79,9 @@ abstract class SearchResult with _$SearchResult {
 
     /// Channel thumbnails.
     List<Thumbnail> thumbnails,
+
+    /// True when YouTube marks this channel as an official artist channel.
+    bool isVerifiedArtist,
   ) = SearchChannel;
 }
 

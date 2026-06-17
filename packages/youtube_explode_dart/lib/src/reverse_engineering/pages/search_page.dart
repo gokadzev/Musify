@@ -145,6 +145,60 @@ class _InitialData extends InitialData {
     return '';
   }
 
+  bool _hasVerifiedArtistBadge(JsonMap renderer) {
+    final badges = <dynamic>[
+      ...?renderer.getJson<List<dynamic>>('ownerBadges'),
+      ...?renderer.getJson<List<dynamic>>('badges'),
+    ];
+
+    for (final badge in badges) {
+      if (badge is! JsonMap) {
+        continue;
+      }
+
+      final metadata = badge.getJson<JsonMap>('metadataBadgeRenderer');
+      if (metadata == null) {
+        continue;
+      }
+
+      final style = metadata.getT<String>('style') ?? '';
+      final tooltip = metadata.getT<String>('tooltip') ?? '';
+      final label = metadata.getJson<String>('accessibilityData/label') ??
+          metadata.getJson<String>('icon/tooltip') ??
+          '';
+      final searchableBadgeText = '$style $tooltip $label'.toLowerCase();
+
+      if (searchableBadgeText.contains('verified_artist') ||
+          searchableBadgeText.contains('official artist')) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  Uri _parseThumbnailUri(String value) {
+    final thumbnail = value.trim();
+    if (thumbnail.startsWith('//')) {
+      return Uri.parse('https:$thumbnail');
+    }
+    if (thumbnail.startsWith('https:') && !thumbnail.startsWith('https://')) {
+      return Uri.parse(
+          'https://${thumbnail.substring(6).replaceFirst(RegExp('^/+'), '')}');
+    }
+    if (thumbnail.startsWith('http:') && !thumbnail.startsWith('http://')) {
+      return Uri.parse(
+          'https://${thumbnail.substring(5).replaceFirst(RegExp('^/+'), '')}');
+    }
+    if (thumbnail.startsWith('http://') || thumbnail.startsWith('https://')) {
+      return Uri.parse(thumbnail);
+    }
+    if (thumbnail.startsWith('/')) {
+      return Uri.parse('https://www.youtube.com$thumbnail');
+    }
+    return Uri.parse('https://$thumbnail');
+  }
+
   SearchResult? _parseContent(JsonMap? content) {
     if (content == null) {
       return null;
@@ -241,14 +295,16 @@ class _InitialData extends InitialData {
             '',
         renderer
                 .getJson<List<dynamic>>('videoCountText/runs')
-                ?.first
-                .getT<String>('text')
+                ?.cast<Map<dynamic, dynamic>>()
+                .firstOrNull
+                ?.getT<String>('text')
                 .parseInt() ??
             -1,
         (renderer.getJson<List<dynamic>>('thumbnail/thumbnails') ?? const [])
-            .map((e) => Thumbnail(Uri.parse('https:${(e as Map)['url']}'),
+            .map((e) => Thumbnail(_parseThumbnailUri((e as Map)['url']),
                 (e)['height'], (e)['width']))
             .toList(),
+        _hasVerifiedArtistBadge(renderer),
       );
     }
     if (content['lockupViewModel'] != null) {

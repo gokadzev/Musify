@@ -23,8 +23,16 @@ import 'dart:math';
 import 'package:musify/services/playlist_download_service.dart';
 
 class PlaylistUtils {
-  static bool isPlaylistOffline(Map playlist) => offlinePlaylistService
-      .isPlaylistDownloaded(playlist['ytid']?.toString() ?? '');
+  static bool isArtistPlaylist(dynamic playlist) =>
+      playlist is Map &&
+      (playlist['isArtist'] == true ||
+          playlist['source']?.toString() == 'youtube-artist');
+
+  static bool isPlaylistOffline(Map playlist) =>
+      !isArtistPlaylist(playlist) &&
+      offlinePlaylistService.isPlaylistDownloaded(
+        playlist['ytid']?.toString() ?? '',
+      );
 
   static bool folderHasOfflinePlaylists(Map folder) {
     final playlists = folder['playlists'] as List? ?? [];
