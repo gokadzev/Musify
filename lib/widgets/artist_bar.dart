@@ -76,7 +76,7 @@ class ArtistBar extends StatelessWidget {
                       ),
                       const SizedBox(height: 3),
                       Text(
-                        context.l10n!.artist.toLowerCase(),
+                        context.l10n!.artist,
                         style: TextStyle(
                           color: colorScheme.onSurfaceVariant,
                           fontSize: 12,
