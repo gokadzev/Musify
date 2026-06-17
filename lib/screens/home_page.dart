@@ -223,62 +223,54 @@ class _HomePageState extends State<HomePage> {
     return ValueListenableBuilder<List>(
       valueListenable: userRecentlyPlayed,
       builder: (_, __, ___) {
-        return ValueListenableBuilder<int>(
-          valueListenable: recentlyPlayedVersion,
-          builder: (_, __, ___) {
-            final mostPlayedSongs = getMostPlayed(limit: 5);
-            if (mostPlayedSongs.isEmpty) {
-              return const SizedBox.shrink();
-            }
+        final mostPlayedSongs = getMostPlayed(limit: 5);
+        if (mostPlayedSongs.isEmpty) {
+          return const SizedBox.shrink();
+        }
 
-            return Column(
-              children: [
-                SectionHeader(
-                  title: sectionTitle,
-                  icon: FluentIcons.music_note_2_24_filled,
-                  actionButton: IconButton(
-                    onPressed: () async {
-                      await audioHandler.playPlaylistSong(
-                        playlist: {
-                          'title': sectionTitle,
-                          'list': mostPlayedSongs,
-                        },
-                        songIndex: 0,
-                      );
-                    },
-                    icon: Icon(
-                      FluentIcons.play_circle_24_filled,
-                      color: Theme.of(context).colorScheme.primary,
-                      size: 30,
-                    ),
+        return Column(
+          children: [
+            SectionHeader(
+              title: sectionTitle,
+              icon: FluentIcons.music_note_2_24_filled,
+              actionButton: IconButton(
+                onPressed: () async {
+                  await audioHandler.playPlaylistSong(
+                    playlist: {'title': sectionTitle, 'list': mostPlayedSongs},
+                    songIndex: 0,
+                  );
+                },
+                icon: Icon(
+                  FluentIcons.play_circle_24_filled,
+                  color: Theme.of(context).colorScheme.primary,
+                  size: 30,
+                ),
+              ),
+            ),
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const BouncingScrollPhysics(),
+              itemCount: mostPlayedSongs.length,
+              padding: commonListViewBottomPadding,
+              itemBuilder: (context, index) {
+                final borderRadius = getItemBorderRadius(
+                  index,
+                  mostPlayedSongs.length,
+                );
+                final song = mostPlayedSongs[index];
+
+                return RepaintBoundary(
+                  key: listItemKey('home_most_played', index, song),
+                  child: SongBar(
+                    song,
+                    true,
+                    borderRadius: borderRadius,
+                    showPlayTime: true,
                   ),
-                ),
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: mostPlayedSongs.length,
-                  padding: commonListViewBottomPadding,
-                  itemBuilder: (context, index) {
-                    final borderRadius = getItemBorderRadius(
-                      index,
-                      mostPlayedSongs.length,
-                    );
-                    final song = mostPlayedSongs[index];
-
-                    return RepaintBoundary(
-                      key: listItemKey('home_most_played', index, song),
-                      child: SongBar(
-                        song,
-                        true,
-                        borderRadius: borderRadius,
-                        showPlayTime: true,
-                      ),
-                    );
-                  },
-                ),
-              ],
-            );
-          },
+                );
+              },
+            ),
+          ],
         );
       },
     );

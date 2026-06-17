@@ -53,7 +53,6 @@ ValueNotifier<List> userOfflineSongs = ValueNotifier<List>(
 
 dynamic nextRecommendedSong;
 
-final recentlyPlayedVersion = ValueNotifier<int>(0);
 var _songLikeUpdateToken = 0;
 final _latestSongLikeUpdateTokens = <String, int>{};
 
@@ -830,7 +829,6 @@ Future<void> updateRecentlyPlayed(dynamic songId, {Map? songFallback}) async {
       existing['lastPlayed'] = DateTime.now();
       updatedList[0] = existing;
       userRecentlyPlayed.value = updatedList;
-      recentlyPlayedVersion.value++;
       unawaited(
         addOrUpdateData<List>(
           'user',
@@ -866,7 +864,6 @@ Future<void> updateRecentlyPlayed(dynamic songId, {Map? songFallback}) async {
     }
 
     userRecentlyPlayed.value = updatedList;
-    recentlyPlayedVersion.value++;
     unawaited(
       addOrUpdateData<List>(
         'user',
@@ -887,7 +884,6 @@ Future<void> removeFromRecentlyPlayed(dynamic songId) async {
   if (userRecentlyPlayed.value.any((song) => song['ytid'] == songId)) {
     userRecentlyPlayed.value = List.from(userRecentlyPlayed.value)
       ..removeWhere((song) => song['ytid'] == songId);
-    recentlyPlayedVersion.value++;
     unawaited(
       addOrUpdateData<List>(
         'user',
