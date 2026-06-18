@@ -37,15 +37,12 @@ class _PositionSliderState extends State<PositionSlider> {
 
   @override
   Widget build(BuildContext context) {
-    final primaryColor = Theme.of(context).colorScheme.primary;
-
     return StreamBuilder<PositionData>(
       stream: audioHandler.positionDataStream,
       builder: (context, snapshot) {
-        final hasData = snapshot.hasData && snapshot.data != null;
-        final positionData = hasData
-            ? snapshot.data!
-            : PositionData(Duration.zero, Duration.zero, Duration.zero);
+        final positionData =
+            snapshot.data ??
+            PositionData(Duration.zero, Duration.zero, Duration.zero);
 
         final maxDuration = positionData.duration.inSeconds > 0
             ? positionData.duration.inSeconds.toDouble()
@@ -60,49 +57,44 @@ class _PositionSliderState extends State<PositionSlider> {
           children: [
             Slider(
               value: currentValue.clamp(0.0, maxDuration),
-              onChanged: hasData
-                  ? (value) {
-                      setState(() {
-                        _isDragging = true;
-                        _dragValue = value;
-                      });
-                    }
-                  : null,
-              onChangeEnd: hasData
-                  ? (value) {
-                      audioHandler.seek(Duration(seconds: value.toInt()));
-                      setState(() {
-                        _isDragging = false;
-                      });
-                    }
-                  : null,
+              onChanged: (value) {
+                setState(() {
+                  _isDragging = true;
+                  _dragValue = value;
+                });
+              },
+              onChangeEnd: (value) {
+                audioHandler.seek(Duration(seconds: value.toInt()));
+                setState(() {
+                  _isDragging = false;
+                });
+              },
               max: maxDuration,
               semanticFormatterCallback: (value) =>
                   formatDuration(value.toInt()),
             ),
-            _buildPositionRow(context, primaryColor, positionData),
+            _buildPositionRow(context, positionData),
           ],
         );
       },
     );
   }
 
-  Widget _buildPositionRow(
-    BuildContext context,
-    Color fontColor,
-    PositionData positionData,
-  ) {
-    final positionText = formatDuration(positionData.position.inSeconds);
+  static const _textStyle = TextStyle(fontSize: 15);
+
+  Widget _buildPositionRow(BuildContext context, PositionData positionData) {
+    final positionText = formatDuration(
+      _isDragging ? _dragValue.toInt() : positionData.position.inSeconds,
+    );
     final durationText = formatDuration(positionData.duration.inSeconds);
-    final textStyle = TextStyle(fontSize: 15, color: fontColor);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 22),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(positionText, style: textStyle),
-          Text(durationText, style: textStyle),
+          Text(positionText, style: _textStyle),
+          Text(durationText, style: _textStyle),
         ],
       ),
     );
