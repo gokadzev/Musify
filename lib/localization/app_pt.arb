@@ -214,6 +214,7 @@
   "sleepTimer": "Timer",
   "sleepTimerCancelled": "Timer cancelado",
   "sleepTimerSet": "Timer ativado",
+  "endOfSong": "Fim da faixa",
   "songAdded": "Música adicionada",
   "songAddedToOffline": "Música está disponível offline",
   "songAlreadyInPlaylist": "Esta música já está na playlist",

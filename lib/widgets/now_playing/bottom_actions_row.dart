@@ -396,9 +396,28 @@ void _showSleepTimerDialog(BuildContext context) {
                   spacing: 8,
                   runSpacing: 8,
                   alignment: WrapAlignment.center,
-                  children: [15, 30, 45, 60].map((mins) {
-                    return ActionChip(
-                      label: Text('$mins min'),
+                  children: [
+                    ...[15, 30, 45, 60].map((mins) {
+                      return ActionChip(
+                        label: Text('$mins min'),
+                        backgroundColor: colorScheme.surfaceContainerHighest,
+                        labelStyle: TextStyle(
+                          color: colorScheme.onSurfaceVariant,
+                          fontSize: 12,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            hours = mins ~/ 60;
+                            minutes = mins % 60;
+                          });
+                        },
+                      );
+                    }),
+                    ActionChip(
+                      label: Text(context.l10n!.endOfSong),
                       backgroundColor: colorScheme.surfaceContainerHighest,
                       labelStyle: TextStyle(
                         color: colorScheme.onSurfaceVariant,
@@ -408,13 +427,16 @@ void _showSleepTimerDialog(BuildContext context) {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       onPressed: () {
-                        setState(() {
-                          hours = mins ~/ 60;
-                          minutes = mins % 60;
-                        });
+                        audioHandler.setSleepTimerEndOfSong();
+                        showToast(
+                          context,
+                          context.l10n!.sleepTimerSet,
+                          duration: const Duration(seconds: 1, milliseconds: 500),
+                        );
+                        Navigator.pop(context);
                       },
-                    );
-                  }).toList(),
+                    ),
+                  ],
                 ),
               ],
             ),

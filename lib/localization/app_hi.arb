@@ -214,6 +214,7 @@
   "sleepTimer": "Sleep timer",
   "sleepTimerCancelled": "Sleep timer cancelled",
   "sleepTimerSet": "Sleep timer set",
+  "endOfSong": "गाने का अंत",
   "songAdded": "गाना जोड़ा गया",
   "songAddedToOffline": "गाना अब ऑफ़लाइन उपलब्ध है",
   "songAlreadyInPlaylist": "गाना पहले से ही प्लेलिस्ट में है",

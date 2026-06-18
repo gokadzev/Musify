@@ -214,6 +214,7 @@
   "sleepTimer": "Sleep timer",
   "sleepTimerCancelled": "Insomningstimern avbruten",
   "sleepTimerSet": "Insomningstimern inställd",
+  "endOfSong": "Låtens slut",
   "songAdded": "Låt tillagd",
   "songAddedToOffline": "Låten är nu tillgänglig offline",
   "songAlreadyInPlaylist": "Låten finns redan i spellistan",

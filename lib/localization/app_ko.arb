@@ -214,6 +214,7 @@
   "sleepTimer": "취침 타이머",
   "sleepTimerCancelled": "수면 타이머가 취소되었음",
   "sleepTimerSet": "수면 타이머가 설정되었음",
+  "endOfSong": "곡 끝",
   "songAdded": "노래가 추가되었음",
   "songAddedToOffline": "이제 노래는 오프라인에서 사용할 수 있음",
   "songAlreadyInPlaylist": "노래가 이미 재생목록에 있음",

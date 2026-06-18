@@ -214,6 +214,7 @@
   "sleepTimer": "Sleep timer",
   "sleepTimerCancelled": "Elalvás időzítő törölve",
   "sleepTimerSet": "Elalvás időzítő beállítva",
+  "endOfSong": "Dal vége",
   "songAdded": "Zene hozzáadva",
   "songAddedToOffline": "Zene már elérhető Offline ",
   "songAlreadyInPlaylist": "Zene már megtalálható a lejátszási listán",

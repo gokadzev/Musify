@@ -72,6 +72,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
   Timer? _sleepTimer;
   Timer? _debounceTimer;
   bool sleepTimerExpired = false;
+  bool sleepTimerEndOfSong = false;
 
   final List<Map> _queueList = [];
   final List<Map> _originalQueueList = [];
@@ -585,6 +586,14 @@ class MusifyAudioHandler extends BaseAudioHandler {
   void _handleProcessingStateChange(ProcessingState state) {
     try {
       if (state == ProcessingState.completed) {
+        if (sleepTimerEndOfSong) {
+          sleepTimerExpired = true;
+          sleepTimerEndOfSong = false;
+          stop();
+          sleepTimerNotifier.value = null;
+          return;
+        }
+        
         if (!sleepTimerExpired && !_completionEventPending) {
           _completionEventPending = true;
 
@@ -612,6 +621,13 @@ class MusifyAudioHandler extends BaseAudioHandler {
       } else if (state == ProcessingState.ready) {
         _completionEventPending = false;
         _completionHandlerLoadStarted = false;
+
+        // Clear the expired flag so future song completions are not
+        // blocked after a sleep timer fired in a previous session.
+        // Do NOT touch sleepTimerEndOfSong here — 'ready' fires not
+        // only for new songs but also on buffering recovery within the
+        // same song, which would cancel an active "end of song" timer.
+        sleepTimerExpired = false;
       }
     } catch (e, stackTrace) {
       logger.log(
@@ -2237,8 +2253,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
       _sleepTimer = Timer(duration, () async {
         sleepTimerExpired = true;
-        await pause();
-        sleepTimerNotifier.value = Duration.zero;
+        await stop();
+        sleepTimerNotifier.value = null;
       });
     } catch (e, stackTrace) {
       logger.log('Error setting sleep timer', error: e, stackTrace: stackTrace);
@@ -2250,10 +2266,26 @@ class MusifyAudioHandler extends BaseAudioHandler {
       _sleepTimer?.cancel();
       _sleepTimer = null;
       sleepTimerExpired = false;
+      sleepTimerEndOfSong = false;
       sleepTimerNotifier.value = Duration.zero;
     } catch (e, stackTrace) {
       logger.log(
         'Error canceling sleep timer',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
+  }
+
+  Future<void> setSleepTimerEndOfSong() async {
+    try {
+      _sleepTimer?.cancel();
+      sleepTimerExpired = false;
+      sleepTimerEndOfSong = true;
+      sleepTimerNotifier.value = const Duration(milliseconds: -1);
+    } catch (e, stackTrace) {
+      logger.log(
+        'Error setting sleep timer end of song',
         error: e,
         stackTrace: stackTrace,
       );

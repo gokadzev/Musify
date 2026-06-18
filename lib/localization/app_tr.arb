@@ -214,6 +214,7 @@
   "sleepTimer": "Uyku zamanlayıcısı",
   "sleepTimerCancelled": "Uyku zamanlayıcısı iptal edildi",
   "sleepTimerSet": "Uyku zamanlayıcısı ayarlandı",
+  "endOfSong": "Parça sonu",
   "songAdded": "Parça Eklendi",
   "songAddedToOffline": "Parça artık çevrim dışında kullanılabilir",
   "songAlreadyInPlaylist": "Bu parça zaten listede var",

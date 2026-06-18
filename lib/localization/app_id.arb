@@ -214,6 +214,7 @@
   "sleepTimer": "Pewaktu tidur",
   "sleepTimerCancelled": "Pewaktu tidur dibatalkan",
   "sleepTimerSet": "Pewaktu tidur diatur",
+  "endOfSong": "Akhir lagu",
   "songAdded": "Lagu berhasil ditambahkan",
   "songAddedToOffline": "Lagu ini sekarang tersedia secara offline",
   "songAlreadyInPlaylist": "Lagu sudah ada dalam daftar putar",

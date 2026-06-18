@@ -214,6 +214,7 @@
   "sleepTimer": "Sleep timer",
   "sleepTimerCancelled": "உறக்க டைமர் ரத்து செய்யப்பட்டது",
   "sleepTimerSet": "உறக்க டைமர் அமைக்கப்பட்டது",
+  "endOfSong": "பாடலின் முடிவு",
   "songAdded": "பாடல் சேர்க்கப்பட்டது",
   "songAddedToOffline": "பாடல் இப்போது ஆஃப்லைனில் கிடைக்கிறது",
   "songAlreadyInPlaylist": "பாடல் ஏற்கனவே பிளேலிஸ்டில் உள்ளது",

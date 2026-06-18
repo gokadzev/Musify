@@ -214,6 +214,7 @@
   "sleepTimer": "Sleep timer",
   "sleepTimerCancelled": "Unetaimer tühistatud",
   "sleepTimerSet": "Unetaimer seatud",
+  "endOfSong": "Laulu lõpp",
   "songAdded": "Laul lisatud",
   "songAddedToOffline": "Laul on nüüd saadaval ilma võrguühenduseta",
   "songAlreadyInPlaylist": "Laul on juba nimekirjas",

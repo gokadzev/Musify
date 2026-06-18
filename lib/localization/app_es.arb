@@ -214,6 +214,7 @@
   "sleepTimer": "Temporizador de apagado",
   "sleepTimerCancelled": "Temporizador de apagado cancelado",
   "sleepTimerSet": "Temporizador de apagado programado",
+  "endOfSong": "Fin de canción",
   "songAdded": "Canción añadida",
   "songAddedToOffline": "La canción ya está disponible sin conexión",
   "songAlreadyInPlaylist": "La canción ya está en la lista de reproducción",
