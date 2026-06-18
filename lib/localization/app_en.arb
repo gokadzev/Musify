@@ -216,6 +216,7 @@
   "sleepTimer": "Sleep timer",
   "sleepTimerCancelled": "Sleep timer cancelled",
   "sleepTimerSet": "Sleep timer set",
+  "endOfSong": "End of song",
   "songAdded": "Song added",
   "songAddedToOffline": "Song is now available offline",
   "songAlreadyInPlaylist": "Song is already in the playlist",

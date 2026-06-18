@@ -214,6 +214,7 @@
   "sleepTimer": "Таймер сна",
   "sleepTimerCancelled": "Таймер сна отменен",
   "sleepTimerSet": "Таймер сна установлен",
+  "endOfSong": "Конец песни",
   "songAdded": "Песню добавлено",
   "songAddedToOffline": "Песня теперь доступна офлайн",
   "songAlreadyInPlaylist": "Песня уже в плейлисте",

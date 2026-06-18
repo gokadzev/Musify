@@ -214,6 +214,7 @@
   "sleepTimer": "睡眠定时器",
   "sleepTimerCancelled": "睡眠定时器已取消",
   "sleepTimerSet": "睡眠定时器已设置",
+  "endOfSong": "歌曲结束",
   "songAdded": "歌曲已添加",
   "songAddedToOffline": "歌曲现已离线可用",
   "songAlreadyInPlaylist": "歌曲已在播放列表中",

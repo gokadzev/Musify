@@ -214,6 +214,7 @@
   "sleepTimer": "Minuterie de mise en veille",
   "sleepTimerCancelled": "Minuterie de sommeil annulée",
   "sleepTimerSet": "Minuterie de sommeil réglée",
+  "endOfSong": "Fin du morceau",
   "songAdded": "Titre ajouté avec succès !",
   "songAddedToOffline": "Le titre est désormais disponible hors ligne",
   "songAlreadyInPlaylist": "Le titre est déjà dans la playlist",

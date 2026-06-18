@@ -214,6 +214,7 @@
   "sleepTimer": "Sleep timer",
   "sleepTimerCancelled": "טיימר שינה בוטל",
   "sleepTimerSet": "טיימר שינה הוגדר",
+  "endOfSong": "סוף השיר",
   "songAdded": "השיר נוסף",
   "songAddedToOffline": "השיר זמין עכשיו במצב לא מקוון",
   "songAlreadyInPlaylist": "השיר כבר נמצא ברשימת ההשמעה",

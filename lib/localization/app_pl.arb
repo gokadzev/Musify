@@ -214,6 +214,7 @@
   "sleepTimer": "Sleep timer",
   "sleepTimerCancelled": "Wyłącznik czasowy został anulowany",
   "sleepTimerSet": "Czas uśpienia ustawiony",
+  "endOfSong": "Koniec utworu",
   "songAdded": "Utwór pomyślnie dodany!",
   "songAddedToOffline": "Utwór jest teraz dostępny w trybie offline",
   "songAlreadyInPlaylist": "Utwór jest już na liście odtwarzania",

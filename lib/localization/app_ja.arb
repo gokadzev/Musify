@@ -214,6 +214,7 @@
   "sleepTimer": "Sleep timer",
   "sleepTimerCancelled": "スリープタイマーをキャンセルしました",
   "sleepTimerSet": "スリープタイマーを設定",
+  "endOfSong": "曲の終わり",
   "songAdded": "曲を追加しました",
   "songAddedToOffline": "曲がオフラインで利用可能になりました",
   "songAlreadyInPlaylist": "曲は既に再生リストに含まれます",

@@ -214,6 +214,7 @@
   "sleepTimer": "Timer di spegnimento",
   "sleepTimerCancelled": "Timer di sospensione annullato",
   "sleepTimerSet": "Timer di spegnimento impostato",
+  "endOfSong": "Fine del brano",
   "songAdded": "Brano aggiunto con successo",
   "songAddedToOffline": "Il brano è ora disponibile offline",
   "songAlreadyInPlaylist": "Il brano è già contenuto nella playlist",
