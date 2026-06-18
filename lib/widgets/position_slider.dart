@@ -24,6 +24,12 @@ import 'package:musify/main.dart';
 import 'package:musify/models/position_data.dart';
 import 'package:musify/utilities/formatter.dart';
 
+PositionData _positionData = PositionData(
+  Duration.zero,
+  Duration.zero,
+  Duration.zero,
+);
+
 class PositionSlider extends StatefulWidget {
   const PositionSlider({super.key});
 
@@ -40,17 +46,17 @@ class _PositionSliderState extends State<PositionSlider> {
     return StreamBuilder<PositionData>(
       stream: audioHandler.positionDataStream,
       builder: (context, snapshot) {
-        final positionData =
-            snapshot.data ??
-            PositionData(Duration.zero, Duration.zero, Duration.zero);
+        if (snapshot.data != null && snapshot.data!.position.inSeconds > 0) {
+          _positionData = snapshot.data!;
+        }
 
-        final maxDuration = positionData.duration.inSeconds > 0
-            ? positionData.duration.inSeconds.toDouble()
+        final maxDuration = _positionData.duration.inSeconds > 0
+            ? _positionData.duration.inSeconds.toDouble()
             : 1.0;
 
         final currentValue = _isDragging
             ? _dragValue
-            : positionData.position.inSeconds.toDouble();
+            : _positionData.position.inSeconds.toDouble();
 
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -73,7 +79,7 @@ class _PositionSliderState extends State<PositionSlider> {
               semanticFormatterCallback: (value) =>
                   formatDuration(value.toInt()),
             ),
-            _buildPositionRow(context, positionData),
+            _buildPositionRow(context, _positionData),
           ],
         );
       },
