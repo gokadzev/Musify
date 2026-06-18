@@ -252,6 +252,16 @@ class _SongBarState extends State<SongBar> {
     );
   }
 
+  Widget _menuItem(IconData icon, String label, ColorScheme colorScheme) {
+    return Row(
+      children: [
+        Icon(icon, color: colorScheme.primary),
+        const SizedBox(width: 8),
+        Text(label, style: TextStyle(color: colorScheme.secondary)),
+      ],
+    );
+  }
+
   Widget _buildActionButtons(BuildContext context, ColorScheme colorScheme) {
     return PopupMenuButton<String>(
       borderRadius: BorderRadius.circular(_menuHitAreaWidth / 2),
@@ -444,69 +454,43 @@ class _SongBarState extends State<SongBar> {
       if (widget.showQueueActions)
         PopupMenuItem<String>(
           value: 'play_next',
-          child: Row(
-            children: [
-              Icon(
-                FluentIcons.receipt_play_24_regular,
-                color: colorScheme.primary,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                playNextText,
-                style: TextStyle(color: colorScheme.secondary),
-              ),
-            ],
+          child: _menuItem(
+            FluentIcons.receipt_play_24_regular,
+            playNextText,
+            colorScheme,
           ),
         ),
+
       if (_songArtist.isNotEmpty)
         PopupMenuItem<String>(
           value: 'go_to_artist',
-          child: Row(
-            children: [
-              Icon(FluentIcons.person_24_regular, color: colorScheme.primary),
-              const SizedBox(width: 8),
-              Text(
-                l10n.goToArtist,
-                style: TextStyle(color: colorScheme.secondary),
-              ),
-            ],
+          child: _menuItem(
+            FluentIcons.person_24_regular,
+            l10n.goToArtist,
+            colorScheme,
           ),
         ),
+
       if (widget.showQueueActions)
         PopupMenuItem<String>(
           value: 'add_to_queue',
-          child: Row(
-            children: [
-              Icon(
-                FluentIcons.text_bullet_list_add_24_regular,
-                color: colorScheme.primary,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                addToQueueText,
-                style: TextStyle(color: colorScheme.secondary),
-              ),
-            ],
+          child: _menuItem(
+            FluentIcons.text_bullet_list_add_24_regular,
+            addToQueueText,
+            colorScheme,
           ),
         ),
+
       if (!offlineMode.value)
         PopupMenuItem<String>(
           value: 'like',
           child: ValueListenableBuilder<bool>(
             valueListenable: _songLikeStatus,
             builder: (_, value, __) {
-              return Row(
-                children: [
-                  Icon(
-                    likeStatusToIconMapper[value],
-                    color: colorScheme.primary,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    value ? removeFromLikedSongsText : addToLikedSongsText,
-                    style: TextStyle(color: colorScheme.secondary),
-                  ),
-                ],
+              return _menuItem(
+                likeStatusToIconMapper[value]!,
+                value ? removeFromLikedSongsText : addToLikedSongsText,
+                colorScheme,
               );
             },
           ),
@@ -514,60 +498,37 @@ class _SongBarState extends State<SongBar> {
       if (canRename)
         PopupMenuItem<String>(
           value: 'rename',
-          child: Row(
-            children: [
-              Icon(FluentIcons.edit_24_regular, color: colorScheme.primary),
-              const SizedBox(width: 8),
-              Text(
-                renameSongText,
-                style: TextStyle(color: colorScheme.secondary),
-              ),
-            ],
+          child: _menuItem(
+            FluentIcons.edit_24_regular,
+            renameSongText,
+            colorScheme,
           ),
         ),
       if (widget.onRemove != null)
         PopupMenuItem<String>(
           value: 'remove',
-          child: Row(
-            children: [
-              Icon(FluentIcons.delete_24_regular, color: colorScheme.primary),
-              const SizedBox(width: 8),
-              Text(
-                removeFromPlaylistText,
-                style: TextStyle(color: colorScheme.secondary),
-              ),
-            ],
+          child: _menuItem(
+            FluentIcons.delete_24_regular,
+            removeFromPlaylistText,
+            colorScheme,
           ),
         ),
       if (!offlineMode.value)
         PopupMenuItem<String>(
           value: 'add_to_playlist',
-          child: Row(
-            children: [
-              Icon(
-                FluentIcons.album_add_24_regular,
-                color: colorScheme.primary,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                addToPlaylistText,
-                style: TextStyle(color: colorScheme.secondary),
-              ),
-            ],
+          child: _menuItem(
+            FluentIcons.album_add_24_regular,
+            addToPlaylistText,
+            colorScheme,
           ),
         ),
       if (widget.isRecentSong == true)
         PopupMenuItem<String>(
           value: 'remove_from_recents',
-          child: Row(
-            children: [
-              Icon(FluentIcons.delete_24_regular, color: colorScheme.primary),
-              const SizedBox(width: 8),
-              Text(
-                removeFromRecentlyPlayedText,
-                style: TextStyle(color: colorScheme.secondary),
-              ),
-            ],
+          child: _menuItem(
+            FluentIcons.delete_24_regular,
+            removeFromRecentlyPlayedText,
+            colorScheme,
           ),
         ),
       if (!offlineMode.value || _songOfflineStatus.value)
@@ -576,20 +537,12 @@ class _SongBarState extends State<SongBar> {
           child: ValueListenableBuilder<bool>(
             valueListenable: _songOfflineStatus,
             builder: (_, value, __) {
-              return Row(
-                children: [
-                  Icon(
-                    value
-                        ? FluentIcons.cloud_dismiss_24_regular
-                        : FluentIcons.cloud_arrow_down_24_regular,
-                    color: colorScheme.primary,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    value ? removeOfflineText : makeOfflineText,
-                    style: TextStyle(color: colorScheme.secondary),
-                  ),
-                ],
+              return _menuItem(
+                value
+                    ? FluentIcons.cloud_dismiss_24_regular
+                    : FluentIcons.cloud_arrow_down_24_regular,
+                value ? removeOfflineText : makeOfflineText,
+                colorScheme,
               );
             },
           ),
