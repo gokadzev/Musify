@@ -57,7 +57,7 @@ class SongBar extends StatefulWidget {
     super.key,
   });
 
-  final Map song;
+  final dynamic song;
   final bool clearPlaylist;
   final Color? backgroundColor;
   final VoidCallback? onRemove;
@@ -692,7 +692,7 @@ class _OnlineArtwork extends StatelessWidget {
   final double size;
   final bool isDurationAvailable;
   final ColorScheme colorScheme;
-  final int duration;
+  final dynamic duration;
   final bool isOffline;
   final bool isLiked;
 
