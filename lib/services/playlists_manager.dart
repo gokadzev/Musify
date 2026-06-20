@@ -1232,12 +1232,11 @@ Future<void> renameSongInPlaylist(
   String newArtist,
 ) async {
   try {
-    final playlist = userCustomPlaylists.value.firstWhere(
-      (p) => p['ytid'] == playlistId,
-      orElse: () => <String, dynamic>{},
-    );
+    final found = _findCustomPlaylist(playlistId.toString());
+    final playlist = found?.playlist;
+    final isFromFolder = found?.isFromFolder ?? false;
 
-    if (playlist.isNotEmpty && playlist['list'] != null) {
+    if (playlist != null && playlist['list'] != null) {
       final songIndex = (playlist['list'] as List).indexWhere(
         (song) => song['ytid'] == songId,
       );
@@ -1249,19 +1248,26 @@ Future<void> renameSongInPlaylist(
               ..['title'] = newTitle
               ..['artist'] = newArtist;
 
-        final updatedPlaylist = Map<String, dynamic>.from(playlist)
-          ..['list'] = updatedSongs;
+        playlist['list'] = updatedSongs;
 
-        // Update the playlist in storage
-        final updatedPlaylists = userCustomPlaylists.value
-            .map((p) => p['ytid'] == playlistId ? updatedPlaylist : p)
-            .toList();
-        userCustomPlaylists.value = updatedPlaylists;
-
-        // Save to database
-        unawaited(
-          addOrUpdateData<List>('user', 'customPlaylists', updatedPlaylists),
-        );
+        if (isFromFolder) {
+          userPlaylistFolders.value = List<Map>.from(userPlaylistFolders.value);
+          unawaited(
+            addOrUpdateData<List>(
+              'user',
+              'playlistFolders',
+              userPlaylistFolders.value,
+            ),
+          );
+        } else {
+          final updatedPlaylists = userCustomPlaylists.value
+              .map((p) => p['ytid'] == playlistId ? playlist : p)
+              .toList();
+          userCustomPlaylists.value = updatedPlaylists;
+          unawaited(
+            addOrUpdateData<List>('user', 'customPlaylists', updatedPlaylists),
+          );
+        }
       }
     }
   } catch (e, stackTrace) {
