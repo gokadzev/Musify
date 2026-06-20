@@ -382,6 +382,7 @@ bool removeSongFromPlaylist(
             });
 
         if (isInFolder) {
+          userPlaylistFolders.value = List<Map>.from(userPlaylistFolders.value);
           unawaited(
             addOrUpdateData<List>(
               'user',
@@ -399,9 +400,36 @@ bool removeSongFromPlaylist(
           );
         }
       } else {
-        unawaited(
-          addOrUpdateData<List>('user', 'playlists', userPlaylists.value),
+        final playlistId = playlist['ytid']?.toString();
+
+        final likedIndex = userLikedPlaylists.value.indexWhere(
+          (p) => p['ytid']?.toString() == playlistId,
         );
+        if (likedIndex != -1) {
+          final updatedLiked = List<Map>.from(userLikedPlaylists.value);
+          updatedLiked[likedIndex] = {
+            ...updatedLiked[likedIndex],
+            'list': playlistSongs,
+          };
+          userLikedPlaylists.value = updatedLiked;
+          unawaited(
+            addOrUpdateData<List>(
+              'user',
+              'likedPlaylists',
+              userLikedPlaylists.value,
+            ),
+          );
+        }
+
+        if (playlistId != null && playlistId.isNotEmpty) {
+          unawaited(
+            addOrUpdateData<List>(
+              'cache',
+              'playlistSongs$playlistId',
+              playlistSongs,
+            ),
+          );
+        }
       }
     } catch (e, stackTrace) {
       logger.log(
