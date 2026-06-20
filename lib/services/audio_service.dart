@@ -143,19 +143,22 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   Stream<PlaybackState> get playbackStateStream => _playbackStateStream;
 
-  static const _playingControls = [
-    MediaControl.skipToPrevious,
-    MediaControl.pause,
-    MediaControl.stop,
-    MediaControl.skipToNext,
-  ];
+  List<MediaControl> _controls(bool playing) {
+    final hasMultipleTracks = _queueList.length > 1;
 
-  static const _pausedControls = [
-    MediaControl.skipToPrevious,
-    MediaControl.play,
-    MediaControl.stop,
-    MediaControl.skipToNext,
-  ];
+    return [
+      if (hasMultipleTracks)
+        MediaControl.skipToPrevious
+      else
+        MediaControl.rewind,
+      if (playing) MediaControl.pause else MediaControl.play,
+      MediaControl.stop,
+      if (hasMultipleTracks)
+        MediaControl.skipToNext
+      else
+        MediaControl.fastForward,
+    ];
+  }
 
   final _processingStateMap = {
     ProcessingState.idle: AudioProcessingState.idle,
@@ -547,7 +550,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       if (shouldUpdate) {
         playbackState.add(
           PlaybackState(
-            controls: isPlaying ? _playingControls : _pausedControls,
+            controls: _controls(isPlaying),
             systemActions: const {
               MediaAction.seek,
               MediaAction.seekForward,
@@ -1479,7 +1482,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
     queue.add([item]);
     playbackState.add(
       PlaybackState(
-        controls: _pausedControls,
+        controls: _controls(false),
         systemActions: const {
           MediaAction.seek,
           MediaAction.seekForward,
