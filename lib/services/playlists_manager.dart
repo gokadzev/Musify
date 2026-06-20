@@ -1208,7 +1208,12 @@ Future<List> getSongsFromPlaylist(
 
 Future updatePlaylistList(BuildContext context, String playlistId) async {
   final index = findPlaylistIndexByYtId(playlistId);
-  if (index != -1) {
+  if (index == -1) {
+    logger.log('Playlist with id $playlistId not found for update');
+    return null;
+  }
+
+  try {
     final songList = [];
     await for (final song in ytClient.playlists.getVideos(playlistId)) {
       songList.add(returnSongLayout(songList.length, song));
@@ -1220,9 +1225,14 @@ Future updatePlaylistList(BuildContext context, String playlistId) async {
     );
     showToast(context, context.l10n!.playlistUpdated);
     return playlists[index];
+  } catch (e, stackTrace) {
+    logger.log(
+      'Error updating playlist list for $playlistId',
+      error: e,
+      stackTrace: stackTrace,
+    );
+    return null;
   }
-  logger.log('Playlist with id $playlistId not found for update');
-  return null;
 }
 
 Future<void> renameSongInPlaylist(
