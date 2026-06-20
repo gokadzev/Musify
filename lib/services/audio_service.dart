@@ -593,7 +593,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
           sleepTimerNotifier.value = null;
           return;
         }
-        
+
         if (!sleepTimerExpired && !_completionEventPending) {
           _completionEventPending = true;
 
@@ -1588,12 +1588,21 @@ class MusifyAudioHandler extends BaseAudioHandler {
   }
 
   @override
-  Future<void> fastForward() =>
-      seek(Duration(seconds: audioPlayer.position.inSeconds + 15));
+  Future<void> fastForward() {
+    final target = audioPlayer.position + const Duration(seconds: 15);
+    final trackDuration = audioPlayer.duration;
+    final clamped = (trackDuration != null && target > trackDuration)
+        ? trackDuration
+        : target;
+    return seek(clamped);
+  }
 
   @override
-  Future<void> rewind() =>
-      seek(Duration(seconds: audioPlayer.position.inSeconds - 15));
+  Future<void> rewind() {
+    final target = audioPlayer.position - const Duration(seconds: 15);
+    final clamped = target < Duration.zero ? Duration.zero : target;
+    return seek(clamped);
+  }
 
   Future<bool> _resolveOfflineAndSetPaths(Map songData) async {
     try {
