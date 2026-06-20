@@ -627,7 +627,10 @@ Future<bool> makeSongOffline(dynamic song) async {
     }
 
     if (isSongAlreadyOffline(ytid)) {
-      return true;
+      final existingPath = FilePaths.getAudioPath(ytid);
+      if (await File(existingPath).exists()) {
+        return true;
+      }
     }
 
     final offlineSong = Map<String, dynamic>.from(song as Map);
