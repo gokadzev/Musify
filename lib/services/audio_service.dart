@@ -662,6 +662,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
     if (_canRetryPlayback()) {
       Future.delayed(_errorRetryDelay, skipToNext);
+    } else {
+      _lastError = null;
     }
   }
 
