@@ -1186,6 +1186,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
     try {
       final previousQueueIndex = _currentQueueIndex;
+      final previousMediaItem = mediaItem.valueOrNull;
       _currentQueueIndex = index;
 
       final currentSong = _queueList[_currentQueueIndex];
@@ -1218,6 +1219,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
           }
         } else {
           _currentQueueIndex = previousQueueIndex;
+          if (previousMediaItem != null) {
+            mediaItem.add(previousMediaItem);
+          }
+          _updatePlaybackState();
           _handlePlaybackError();
         }
       }
