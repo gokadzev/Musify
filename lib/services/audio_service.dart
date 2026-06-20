@@ -1553,10 +1553,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
     _completionEventPending = false;
     _currentLoadingIndex = -1;
     _currentLoadingTransitionId = -1;
+    _lastError = null;
+    _consecutiveErrors = 0;
     try {
       await audioPlayer.stop();
-      _lastError = null;
-      _consecutiveErrors = 0;
       _resetPreloadingState();
     } catch (e, stackTrace) {
       logger.log('Error in stop()', error: e, stackTrace: stackTrace);
