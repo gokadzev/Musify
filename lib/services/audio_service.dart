@@ -1073,13 +1073,25 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   void clearQueue() {
     try {
+      final currentSong = _currentQueueIndex >= 0 &&
+              _currentQueueIndex < _queueList.length
+          ? cloneMap(_queueList[_currentQueueIndex])
+          : null;
+
       _queueList.clear();
       _originalQueueList.clear();
+
+      if (currentSong != null) {
+        _queueList.add(currentSong);
+        _originalQueueList.add(cloneMap(currentSong));
+      }
+
       _currentQueueIndex = 0;
       _currentLoadingIndex = -1;
       _currentLoadingTransitionId = -1;
       _resetPreloadingState();
       _updateQueueMediaItems();
+      _updatePlaybackState();
     } catch (e, stackTrace) {
       logger.log('Error clearing queue', error: e, stackTrace: stackTrace);
     }
