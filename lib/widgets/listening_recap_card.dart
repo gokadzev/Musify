@@ -282,8 +282,11 @@ class _RecapSongArtwork extends StatelessWidget {
         imageUrl: remoteArtworkUrl,
         width: size,
         height: size,
+        // Only constrain the decode width: passing both width and height makes
+        // ResizeImage use its default `exact` policy, which squashes the image
+        // to NxN ignoring aspect ratio (~BoxFit.fill). A single dimension keeps
+        // the aspect ratio so the BoxFit.cover below can frame it as a square.
         memCacheWidth: cacheExtent,
-        memCacheHeight: cacheExtent,
         imageBuilder: (_, imageProvider) => Image(
           image: imageProvider,
           width: size,
@@ -304,8 +307,10 @@ class _RecapSongArtwork extends StatelessWidget {
       width: size,
       height: size,
       fit: BoxFit.cover,
+      // Single decode dimension only: both width+height would force an
+      // aspect-ratio-ignoring resize (ResizeImagePolicy.exact ~ BoxFit.fill)
+      // that stretches non-square covers before BoxFit.cover can frame them.
       cacheWidth: cacheExtent,
-      cacheHeight: cacheExtent,
       errorBuilder: (_, __, ___) => _fallback(),
     );
   }
