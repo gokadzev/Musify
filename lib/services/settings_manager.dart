@@ -48,6 +48,10 @@ final offlineMode = ValueNotifier<bool>(
   Hive.box('settings').get('offlineMode', defaultValue: false),
 );
 
+final wrappedEnabled = ValueNotifier<bool>(
+  Hive.box('settings').get('wrappedEnabled', defaultValue: true),
+);
+
 final predictiveBack = ValueNotifier<bool>(
   Hive.box('settings').get('predictiveBack', defaultValue: true),
 );

@@ -26,11 +26,14 @@ import 'package:musify/constants/app_constants.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/common_services.dart';
+import 'package:musify/services/listening_stats_service.dart';
 import 'package:musify/services/playlists_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/app_utils.dart';
 import 'package:musify/utilities/async_loader.dart';
+import 'package:musify/utilities/listening_stats_utils.dart';
 import 'package:musify/widgets/announcement_box.dart';
+import 'package:musify/widgets/listening_recap_card.dart';
 import 'package:musify/widgets/mini_player_bottom_space.dart';
 import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/section_header.dart';
@@ -105,7 +108,7 @@ class _HomePageState extends State<HomePage> {
             ),
             _buildSuggestedPlaylists(playlistHeight),
             _buildSuggestedPlaylists(playlistHeight, showOnlyLiked: true),
-            _buildMostPlayedSection(),
+            _buildCurrentMonthRecapSection(),
             _buildRecommendedSongsSection(),
             const MiniPlayerBottomSpace(),
           ],
@@ -217,62 +220,74 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildMostPlayedSection() {
-    final sectionTitle = context.l10n!.mostPlayed;
+  Widget _buildCurrentMonthRecapSection() {
+    return ValueListenableBuilder<bool>(
+      valueListenable: wrappedEnabled,
+      builder: (_, isEnabled, __) {
+        if (!isEnabled) return const SizedBox.shrink();
 
-    return ValueListenableBuilder<List>(
-      valueListenable: userRecentlyPlayed,
-      builder: (_, __, ___) {
-        final mostPlayedSongs = getMostPlayed(limit: 5);
-        if (mostPlayedSongs.isEmpty) {
+        final currentMonthKey = listeningStatsMonthKey(DateTime.now());
+        final monthStats = listeningStatsService.monthStats(currentMonthKey);
+        final songs = listeningStatsService.monthTopSongs(currentMonthKey);
+        final displayMinutes = monthDisplayMinutes(monthStats);
+        if (displayMinutes <= 0 && songs.isEmpty) {
           return const SizedBox.shrink();
         }
+
+        final previewSongs = songs.take(wrappedShareSongsLimit).toList();
+        final periodLabel = formatMonthPeriodLabel(
+          Localizations.localeOf(context),
+          currentMonthKey,
+        );
 
         return Column(
           children: [
             SectionHeader(
-              title: sectionTitle,
-              icon: FluentIcons.music_note_2_24_filled,
-              actionButton: IconButton(
-                onPressed: () async {
-                  await audioHandler.playPlaylistSong(
-                    playlist: {'title': sectionTitle, 'list': mostPlayedSongs},
-                    songIndex: 0,
-                  );
-                },
-                icon: Icon(
-                  FluentIcons.play_circle_24_filled,
-                  color: Theme.of(context).colorScheme.primary,
-                  size: 30,
+              title: context.l10n!.timeMachine,
+              icon: FluentIcons.data_trending_24_filled,
+            ),
+            ListeningRecapCard(
+              periodLabel: periodLabel,
+              minutes: displayMinutes,
+              songs: previewSongs,
+              onSongTap: (index) => _playRecapSongs(songs, index),
+              onSongLongPress: (index, position) =>
+                  _showRecapSongMenu(previewSongs, index, position),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 10, 8, 0),
+              child: SizedBox(
+                width: double.infinity,
+                child: FilledButton.tonalIcon(
+                  onPressed: () => context.push('/home/timeMachine'),
+                  icon: const Icon(FluentIcons.arrow_right_24_regular),
+                  label: Text(context.l10n!.listeningStats),
                 ),
               ),
-            ),
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const BouncingScrollPhysics(),
-              itemCount: mostPlayedSongs.length,
-              padding: commonListViewBottomPadding,
-              itemBuilder: (context, index) {
-                final borderRadius = getItemBorderRadius(
-                  index,
-                  mostPlayedSongs.length,
-                );
-                final song = mostPlayedSongs[index];
-
-                return RepaintBoundary(
-                  key: listItemKey('home_most_played', index, song),
-                  child: SongBar(
-                    song,
-                    true,
-                    borderRadius: borderRadius,
-                    showPlayTime: true,
-                  ),
-                );
-              },
             ),
           ],
         );
       },
+    );
+  }
+
+  void _showRecapSongMenu(
+    List<Map<String, dynamic>> songs,
+    int index,
+    Offset position,
+  ) {
+    if (index < 0 || index >= songs.length) return;
+    showSongBarMenu(context, songs[index], globalPosition: position);
+  }
+
+  Future<void> _playRecapSongs(
+    List<Map<String, dynamic>> songs,
+    int index,
+  ) async {
+    if (songs.isEmpty) return;
+    await audioHandler.playPlaylistSong(
+      playlist: {'title': context.l10n!.timeMachine, 'list': songs},
+      songIndex: index,
     );
   }
 
