@@ -302,10 +302,10 @@ class YoutubeHttpClient extends http.BaseClient {
       'context': const {
         'client': {
           'browserName': 'Chrome',
-          'browserVersion': '105.0.0.0',
+          'browserVersion': '125.0.0.0',
           'clientFormFactor': 'UNKNOWN_FORM_FACTOR',
           'clientName': "WEB",
-          'clientVersion': "2.20220921.00.00",
+          'clientVersion': "2.20260618.05.00",
         },
       },
       ...data,
