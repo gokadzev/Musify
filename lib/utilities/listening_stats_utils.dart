@@ -65,7 +65,7 @@ Map<String, dynamic> createEmptyListeningStats(
 
   return {
     'schemaVersion': wrappedListeningStatsSchemaVersion,
-    'year': _parseMonthKey(monthKey)?.year ?? year,
+    'year': year,
     'currentMonthKey': monthKey,
     'currentMonth': _createEmptyMonth(),
     'history': <String, dynamic>{},
@@ -298,7 +298,7 @@ int annualTotalSecondsFromStats(Map<String, dynamic> source, DateTime now) {
   final months = annualListeningMonthsFromStats(source, now);
   return months.values.fold<int>(
     0,
-    (total, month) => total + monthTotalSeconds(_asMap(month)),
+    (total, month) => total + monthTotalSeconds(_normalizeMap(month)),
   );
 }
 
@@ -309,7 +309,7 @@ bool hasDisplayableAnnualListeningStats(
   final months = annualListeningMonthsFromStats(source, now);
   final totalSeconds = months.values.fold<int>(
     0,
-    (total, month) => total + monthTotalSeconds(_asMap(month)),
+    (total, month) => total + monthTotalSeconds(_normalizeMap(month)),
   );
   if (totalSeconds >= Duration.secondsPerMinute) return true;
 
@@ -597,11 +597,6 @@ DateTime? _parseMonthKey(String monthKey) {
   return DateTime(year, month);
 }
 
-Map<String, dynamic>? _asMap(dynamic value) {
-  if (value is! Map) return null;
-  return Map<String, dynamic>.from(value);
-}
-
 void _copyLatestSongMetadata(
   Map<String, dynamic> target,
   Map<String, dynamic> source,
@@ -628,7 +623,8 @@ void _copyLatestSongMetadata(
     )
     ..['lastPlayed'] = source['lastPlayed'];
 
-  if (source['duration'] != null) target['duration'] = source['duration'];
+  final duration = _readPersistableDuration(source['duration']);
+  if (duration != null) target['duration'] = duration;
 }
 
 int _compareSongStats(Map<String, dynamic> a, Map<String, dynamic> b) {
