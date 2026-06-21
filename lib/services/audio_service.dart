@@ -30,6 +30,7 @@ import 'package:musify/main.dart';
 import 'package:musify/models/position_data.dart';
 import 'package:musify/services/common_services.dart';
 import 'package:musify/services/data_manager.dart';
+import 'package:musify/services/listening_stats_service.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/map_utils.dart';
 import 'package:musify/utilities/mediaitem.dart';
@@ -207,6 +208,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
         .throttleTime(const Duration(milliseconds: 100))
         .listen(
           (state) {
+            listeningStatsService.handlePlayerStateForListeningStats(
+              state,
+              currentSong: currentSong,
+            );
             if (state.processingState == ProcessingState.idle &&
                 !state.playing &&
                 _lastError != null) {
@@ -299,6 +304,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
         mediaItem.add(currentMediaItem.copyWith(duration: duration));
       }
 
+      listeningStatsService.updateListeningSessionDuration(
+        currentSongYtid,
+        duration,
+      );
+
       final existingQueue = queue.valueOrNull;
       if (existingQueue != null && queueIndex < existingQueue.length) {
         final queueItem = existingQueue[queueIndex];
@@ -324,6 +334,23 @@ class MusifyAudioHandler extends BaseAudioHandler {
         stackTrace: stackTrace,
       );
     }
+  }
+
+  void resetListeningStatsSession({
+    bool countCurrentTick = false,
+    bool flushStats = true,
+  }) {
+    listeningStatsService.resetListeningSession(
+      countCurrentTick: countCurrentTick,
+      flushStats: flushStats,
+    );
+  }
+
+  void startListeningStatsSessionIfNeeded() {
+    listeningStatsService.startListeningSessionIfNeeded(
+      currentSong: currentSong,
+      isPlaying: audioPlayer.playing,
+    );
   }
 
   Future<void> _initialize() async {
@@ -596,6 +623,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
           sleepTimerNotifier.value = null;
           return;
         }
+
+        listeningStatsService.finishListeningSession(
+          countCurrentTick: true,
+          wasPlaying: true,
+        );
 
         if (!sleepTimerExpired && !_completionEventPending) {
           _completionEventPending = true;
@@ -1538,7 +1570,20 @@ class MusifyAudioHandler extends BaseAudioHandler {
           return;
         }
       }
-      await audioPlayer.play();
+      // Do NOT await play(): its future only completes when playback pauses/
+      // stops/finishes (just_audio semantics), which would defer the resume
+      // below until the song ended - losing the whole session.
+      unawaited(
+        audioPlayer.play().catchError((Object e, StackTrace stackTrace) {
+          logger.log(
+            'Error starting playback',
+            error: e,
+            stackTrace: stackTrace,
+          );
+          _lastError = e.toString();
+        }),
+      );
+      listeningStatsService.resumeListeningSession(currentSong: currentSong);
     } catch (e, stackTrace) {
       logger.log('Error in play()', error: e, stackTrace: stackTrace);
       _lastError = e.toString();
@@ -1548,6 +1593,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
   @override
   Future<void> pause() async {
     try {
+      listeningStatsService.recordListeningSessionProgress(
+        wasPlaying: audioPlayer.playing,
+      );
+      unawaited(listeningStatsService.flush());
       await audioPlayer.pause();
     } catch (e, stackTrace) {
       logger.log('Error in pause()', error: e, stackTrace: stackTrace);
@@ -1563,6 +1612,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
     _lastError = null;
     _consecutiveErrors = 0;
     try {
+      listeningStatsService.finishListeningSession(
+        countCurrentTick: true,
+        wasPlaying: audioPlayer.playing,
+      );
       await audioPlayer.stop();
       _resetPreloadingState();
     } catch (e, stackTrace) {
@@ -1591,7 +1644,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
   @override
   Future<void> seek(Duration position) async {
     try {
+      listeningStatsService.recordListeningSessionProgress(
+        wasPlaying: audioPlayer.playing,
+      );
       await audioPlayer.seek(position);
+      unawaited(listeningStatsService.flush());
     } catch (e, stackTrace) {
       logger.log('Error in seek()', error: e, stackTrace: stackTrace);
     }
@@ -1669,7 +1726,12 @@ class MusifyAudioHandler extends BaseAudioHandler {
       }
 
       _lastError = null;
-      if (audioPlayer.playing) await audioPlayer.pause();
+      if (audioPlayer.playing) {
+        listeningStatsService.recordListeningSessionProgress(
+          wasPlaying: audioPlayer.playing,
+        );
+        await audioPlayer.pause();
+      }
 
       final playback = await _resolvePlaybackSource(songData);
 
@@ -1828,6 +1890,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
         return false;
       }
 
+      // Snapshot the pre-swap playing state now: by the time we're committed
+      // to this transition (below), audioPlayer.playing reflects the new
+      // source, not whatever session we're about to finish.
+      final wasPlayingBeforeSwap = audioPlayer.playing;
+
       await audioPlayer
           .setAudioSource(audioSource)
           .timeout(_songTransitionTimeout);
@@ -1844,8 +1911,28 @@ class MusifyAudioHandler extends BaseAudioHandler {
         _updateCurrentMediaItemWithDuration(audioPlayer.duration!);
       }
 
-      await audioPlayer.play();
-
+      // Do NOT await play(): in just_audio its future completes only when
+      // playback pauses/stops/finishes, not when it starts. Awaiting would park
+      // the session start below until the song ended, recording nothing.
+      unawaited(
+        audioPlayer.play().catchError((Object e, StackTrace stackTrace) {
+          logger.log(
+            'Error starting playback',
+            error: e,
+            stackTrace: stackTrace,
+          );
+          _lastError = e.toString();
+        }),
+      );
+      // Finish the old session and start the new one as one atomic pair, only
+      // after every abort path above is cleared. Finishing before the staleness
+      // re-check let a stale transition kill a newer transition's session.
+      listeningStatsService
+        ..finishListeningSession(
+          countCurrentTick: true,
+          wasPlaying: wasPlayingBeforeSwap,
+        )
+        ..startListeningSession(song, duration: audioPlayer.duration);
       unawaited(updateRecentlyPlayed(song['ytid'], songFallback: song));
 
       if (!isOffline) {
@@ -2133,11 +2220,18 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   Future<void> playAgain() async {
     try {
-      // Seek back to start
+      listeningStatsService.finishListeningSession(
+        countCurrentTick: true,
+        wasPlaying: audioPlayer.playing,
+      );
       await audioPlayer.seek(Duration.zero);
-      // Track the replay as a new listen
-      if (currentSong != null) {
-        unawaited(updateRecentlyPlayed(currentSong!['ytid']));
+      final song = currentSong;
+      if (song != null) {
+        listeningStatsService.startListeningSession(
+          song,
+          duration: audioPlayer.duration,
+        );
+        unawaited(updateRecentlyPlayed(song['ytid'], songFallback: song));
       }
     } catch (e, stackTrace) {
       logger.log('Error playing again', error: e, stackTrace: stackTrace);

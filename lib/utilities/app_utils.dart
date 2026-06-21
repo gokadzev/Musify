@@ -20,6 +20,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:musify/constants/app_constants.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
@@ -90,6 +91,24 @@ final RegExp _youtubePlaylistIdRegExp = RegExp('[&?]list=([a-zA-Z0-9_-]+)');
 bool isSponsorshipAnnouncementUrl(String url) {
   final host = Uri.tryParse(url)?.host.toLowerCase();
   return host != null && (host == 'ko-fi.com' || host.endsWith('.ko-fi.com'));
+}
+
+/// Formats a [monthKey] (e.g. "2026-06") into a locale-aware month label
+/// such as "June 2026". Falls back to [monthKey] if parsing fails.
+String formatMonthPeriodLabel(Locale locale, String monthKey) {
+  final parts = monthKey.split('-');
+  if (parts.length != 2) return monthKey;
+
+  final year = int.tryParse(parts[0]);
+  final month = int.tryParse(parts[1]);
+  if (year == null || month == null) return monthKey;
+
+  final label = DateFormat.yMMMM(locale.toString()).format(
+    DateTime(year, month),
+  );
+  return label.isEmpty
+      ? monthKey
+      : '${label[0].toUpperCase()}${label.substring(1)}';
 }
 
 AudioOnlyStreamInfo selectAudioOnlyStreamForQuality(
