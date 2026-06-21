@@ -511,13 +511,24 @@ class _ArtworkThumbnail extends StatelessWidget {
     }
     final imageUrl = song['lowResImage']?.toString() ?? '';
     if (imageUrl.isEmpty) return _fallback();
+    // Low-res YouTube 'default.jpg' thumbnails ship with baked-in black
+    // letterbox bars, so BoxFit.cover keeps them visible. Detect that case and
+    // stretch over the bars with fill + centerSlice, otherwise crop with cover —
+    // matching SongBar so the queue frames covers the same way (no black bars).
+    final isImageSmall = imageUrl.contains('default.jpg');
     return CachedNetworkImage(
       width: size,
       height: size,
       imageUrl: imageUrl,
       imageBuilder: (_, imageProvider) => ClipRRect(
         borderRadius: BorderRadius.circular(radius),
-        child: Image(image: imageProvider, fit: BoxFit.cover),
+        child: Image(
+          image: imageProvider,
+          width: size,
+          height: size,
+          fit: isImageSmall ? BoxFit.fill : BoxFit.cover,
+          centerSlice: isImageSmall ? const Rect.fromLTRB(1, 1, 1, 1) : null,
+        ),
       ),
       placeholder: (_, __) => _loading(),
       errorWidget: (_, __, ___) => _fallback(),
