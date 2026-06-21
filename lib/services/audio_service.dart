@@ -758,7 +758,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
             final songToAdd = nextRecommendedSong;
             nextRecommendedSong = null;
             await _insertRecommendedSong(songToAdd);
-            logger.log('Background song added: "${songToAdd['title']}"');
           }
         } catch (e, stackTrace) {
           logger.log(
