@@ -1911,28 +1911,21 @@ class MusifyAudioHandler extends BaseAudioHandler {
         _updateCurrentMediaItemWithDuration(audioPlayer.duration!);
       }
 
-      // Do NOT await play(): in just_audio its future completes only when
-      // playback pauses/stops/finishes, not when it starts. Awaiting would park
-      // the session start below until the song ended, recording nothing.
-      unawaited(
-        audioPlayer.play().catchError((Object e, StackTrace stackTrace) {
-          logger.log(
-            'Error starting playback',
-            error: e,
-            stackTrace: stackTrace,
-          );
-          _lastError = e.toString();
-        }),
-      );
       // Finish the old session and start the new one as one atomic pair, only
       // after every abort path above is cleared. Finishing before the staleness
       // re-check let a stale transition kill a newer transition's session.
+      // Do this before awaiting play() so Wrapped starts counting from the
+      // first moments of the new track, not after the async handoff.
       listeningStatsService
         ..finishListeningSession(
           countCurrentTick: true,
           wasPlaying: wasPlayingBeforeSwap,
         )
         ..startListeningSession(song, duration: audioPlayer.duration);
+      await audioPlayer.play().catchError((Object e, StackTrace stackTrace) {
+        logger.log('Error starting playback', error: e, stackTrace: stackTrace);
+        _lastError = e.toString();
+      });
       unawaited(updateRecentlyPlayed(song['ytid'], songFallback: song));
 
       if (!isOffline) {
