@@ -54,7 +54,7 @@ class ListeningStatsService {
 
   bool get hasStats {
     final now = DateTime.now();
-    final stats = _readStats();
+    final stats = _readStats(now);
     final history = stats['history'] as Map<String, dynamic>;
     return hasDisplayableListeningStats(_asMap(stats['currentMonth'])) ||
         history.values.any(
@@ -193,6 +193,11 @@ class ListeningStatsService {
     if (ytid == null || ytid.isEmpty) return;
 
     if (_sessionSongId != ytid) {
+      // Reached from handlePlayerStateForListeningStats before
+      // _sessionLastAudioPlayerPlaying is updated, so the flag still holds the
+      // pre-transition value (false). We just got a "playing" event for a
+      // different song, meaning the previous one was playing up to this tick;
+      // pass wasPlaying: true explicitly so its final tick isn't dropped.
       finishListeningSession(countCurrentTick: true, wasPlaying: true);
       startListeningSession(song);
       return;
@@ -203,7 +208,6 @@ class ListeningStatsService {
   }
 
   void recordListeningSessionProgress({
-    bool force = false,
     bool? wasPlaying,
   }) {
     final song = _sessionSong;
@@ -214,9 +218,7 @@ class ListeningStatsService {
     _sessionLastTick = now;
     if (lastTick == null) return;
 
-    final shouldCount =
-        (wasPlaying ?? _sessionLastAudioPlayerPlaying) ||
-        (force && _sessionLastAudioPlayerPlaying);
+    final shouldCount = wasPlaying ?? _sessionLastAudioPlayerPlaying;
     if (!shouldCount) return;
 
     final listenedDuration = now.difference(lastTick);
@@ -264,7 +266,6 @@ class ListeningStatsService {
       resumeListeningSession(currentSong: currentSong);
     } else {
       recordListeningSessionProgress(
-        force: state.processingState == ProcessingState.completed,
         wasPlaying: _sessionLastAudioPlayerPlaying,
       );
     }
@@ -281,7 +282,6 @@ class ListeningStatsService {
 
     if (countCurrentTick) {
       recordListeningSessionProgress(
-        force: true,
         wasPlaying: wasPlaying,
       );
     }
@@ -302,16 +302,6 @@ class ListeningStatsService {
         );
       }));
     }
-  }
-
-  void resetListeningSession({
-    bool countCurrentTick = false,
-    bool flushStats = true,
-  }) {
-    finishListeningSession(
-      countCurrentTick: countCurrentTick,
-      flushStats: flushStats,
-    );
   }
 
   void startListeningSessionIfNeeded({

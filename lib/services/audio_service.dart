@@ -340,7 +340,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
     bool countCurrentTick = false,
     bool flushStats = true,
   }) {
-    listeningStatsService.resetListeningSession(
+    listeningStatsService.finishListeningSession(
       countCurrentTick: countCurrentTick,
       flushStats: flushStats,
     );
