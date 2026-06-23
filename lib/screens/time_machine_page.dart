@@ -254,8 +254,6 @@ class _TimeMachinePageState extends State<TimeMachinePage> {
               ),
               songs: previewSongs,
               onSongTap: (index) => _playSongs(previewSongs, index),
-              highlightMinutes: true,
-              outlined: true,
             ),
           ),
           if (songs.length > previewSongs.length)

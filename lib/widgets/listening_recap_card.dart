@@ -31,8 +31,6 @@ class ListeningRecapCard extends StatelessWidget {
     required this.minutes,
     required this.songs,
     required this.onSongTap,
-    this.highlightMinutes = false,
-    this.outlined = false,
     super.key,
   });
 
@@ -40,8 +38,6 @@ class ListeningRecapCard extends StatelessWidget {
   final int minutes;
   final List<Map<String, dynamic>> songs;
   final ValueChanged<int> onSongTap;
-  final bool highlightMinutes;
-  final bool outlined;
 
   @override
   Widget build(BuildContext context) {
@@ -71,10 +67,8 @@ class ListeningRecapCard extends StatelessWidget {
                             '$minutes',
                             maxLines: 1,
                             style: TextStyle(
-                              color: highlightMinutes
-                                  ? colorScheme.primary
-                                  : colorScheme.onSurface,
-                              fontSize: highlightMinutes ? 36 : 34,
+                              color: colorScheme.primary,
+                              fontSize: 36,
                               fontWeight: FontWeight.w800,
                               height: 1,
                             ),
@@ -88,9 +82,7 @@ class ListeningRecapCard extends StatelessWidget {
                         style: TextStyle(
                           color: colorScheme.onSurfaceVariant,
                           fontSize: 13,
-                          fontWeight: highlightMinutes
-                              ? FontWeight.w700
-                              : FontWeight.w600,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                     ],
