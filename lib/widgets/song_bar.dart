@@ -27,7 +27,6 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:musify/constants/app_constants.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/common_services.dart';
@@ -39,76 +38,6 @@ import 'package:musify/utilities/formatter.dart';
 import 'package:musify/utilities/playlist_dialogs.dart';
 import 'package:musify/widgets/no_artwork_cube.dart';
 import 'package:musify/widgets/rename_song_dialog.dart';
-
-Future<void> showSongBarMenu(
-  BuildContext context,
-  dynamic song, {
-  Offset? globalPosition,
-  bool isRecentSong = false,
-  bool showQueueActions = true,
-}) async {
-  final ytid = _readSongYtid(song);
-  if (ytid.isEmpty) return;
-
-  final colorScheme = Theme.of(context).colorScheme;
-  final songLikeStatus = ValueNotifier(isSongAlreadyLiked(ytid));
-  final songOfflineStatus = ValueNotifier(isSongAlreadyOffline(ytid));
-  final hasArtist =
-      song is Map && (song['artist']?.toString().trim().isNotEmpty ?? false);
-
-  try {
-    final selected = await showMenu<String>(
-      context: context,
-      position: _songMenuPosition(context, globalPosition),
-      items: _buildSongMenuItems(
-        context: context,
-        colorScheme: colorScheme,
-        songLikeStatus: songLikeStatus,
-        songOfflineStatus: songOfflineStatus,
-        showQueueActions: showQueueActions,
-        isRecentSong: isRecentSong,
-        showGoToArtist: hasArtist,
-      ),
-    );
-
-    if (selected == null || !context.mounted) return;
-
-    await _handleSongMenuAction(
-      context: context,
-      value: selected,
-      song: song,
-      ytid: ytid,
-      songLikeStatus: songLikeStatus,
-      songOfflineStatus: songOfflineStatus,
-    );
-  } finally {
-    songLikeStatus.dispose();
-    songOfflineStatus.dispose();
-  }
-}
-
-RelativeRect _songMenuPosition(BuildContext context, Offset? globalPosition) {
-  final overlay = Overlay.maybeOf(context)?.context.findRenderObject();
-  if (overlay is RenderBox) {
-    final position = globalPosition == null
-        ? Offset(overlay.size.width / 2, overlay.size.height / 2)
-        : overlay.globalToLocal(globalPosition);
-    return RelativeRect.fromRect(
-      Rect.fromLTWH(position.dx, position.dy, 1, 1),
-      Offset.zero & overlay.size,
-    );
-  }
-
-  final size = MediaQuery.sizeOf(context);
-  final position = globalPosition ?? Offset(size.width / 2, size.height / 2);
-  return RelativeRect.fromRect(
-    Rect.fromLTWH(position.dx, position.dy, 1, 1),
-    Offset.zero & size,
-  );
-}
-
-String _readSongYtid(dynamic song) =>
-    song is Map ? song['ytid']?.toString() ?? '' : '';
 
 List<PopupMenuEntry<String>> _buildSongMenuItems({
   required BuildContext context,
