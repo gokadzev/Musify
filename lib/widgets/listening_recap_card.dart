@@ -20,7 +20,6 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:musify/constants/app_constants.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/widgets/song_bar.dart';
 
@@ -47,92 +46,82 @@ class ListeningRecapCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final child = Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                flex: 2,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox(
-                      width: double.infinity,
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        alignment: AlignmentDirectional.centerStart,
-                        child: Text(
-                          '$minutes',
-                          maxLines: 1,
-                          style: TextStyle(
-                            color: highlightMinutes
-                                ? colorScheme.primary
-                                : colorScheme.onSurface,
-                            fontSize: highlightMinutes ? 36 : 34,
-                            fontWeight: FontWeight.w800,
-                            height: 1,
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(
+                        width: double.infinity,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: AlignmentDirectional.centerStart,
+                          child: Text(
+                            '$minutes',
+                            maxLines: 1,
+                            style: TextStyle(
+                              color: highlightMinutes
+                                  ? colorScheme.primary
+                                  : colorScheme.onSurface,
+                              fontSize: highlightMinutes ? 36 : 34,
+                              fontWeight: FontWeight.w800,
+                              height: 1,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      context.l10n!.minutesListened,
-                      maxLines: 2,
-                      style: TextStyle(
-                        color: colorScheme.onSurfaceVariant,
-                        fontSize: 13,
-                        fontWeight: highlightMinutes
-                            ? FontWeight.w700
-                            : FontWeight.w600,
+                      const SizedBox(height: 5),
+                      Text(
+                        context.l10n!.minutesListened,
+                        maxLines: 2,
+                        style: TextStyle(
+                          color: colorScheme.onSurfaceVariant,
+                          fontSize: 13,
+                          fontWeight: highlightMinutes
+                              ? FontWeight.w700
+                              : FontWeight.w600,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(width: 12),
-              Flexible(
-                flex: 3,
-                child: Align(
-                  alignment: AlignmentDirectional.centerEnd,
-                  child: _RecapBrandHeader(periodLabel: periodLabel),
+                const SizedBox(width: 12),
+                Flexible(
+                  flex: 3,
+                  child: Align(
+                    alignment: AlignmentDirectional.centerEnd,
+                    child: _RecapBrandHeader(periodLabel: periodLabel),
+                  ),
                 ),
-              ),
+              ],
+            ),
+            if (songs.isNotEmpty) ...[
+              for (var i = 0; i < songs.length; i++)
+                SongBar(
+                  songs[i],
+                  false,
+                  showPlayTime: true,
+                  rank: i + 1,
+                  onPlay: () => onSongTap(i),
+                  barPadding: const EdgeInsetsDirectional.symmetric(
+                    vertical: 10,
+                  ),
+                ),
             ],
-          ),
-          if (songs.isNotEmpty) ...[
-            for (var i = 0; i < songs.length; i++)
-              SongBar(
-                songs[i],
-                false,
-                showPlayTime: true,
-                rank: i + 1,
-                onPlay: () => onSongTap(i),
-                barPadding: const EdgeInsetsDirectional.symmetric(vertical: 10),
-              ),
           ],
-        ],
+        ),
       ),
-    );
-
-    return Material(
-      color: colorScheme.surfaceContainerLow,
-      shape: outlined
-          ? RoundedRectangleBorder(
-              borderRadius: commonCustomBarRadius,
-              side: BorderSide(
-                color: colorScheme.primary.withValues(alpha: 0.16),
-              ),
-            )
-          : null,
-      borderRadius: outlined ? null : commonCustomBarRadius,
-      clipBehavior: Clip.antiAlias,
-      child: child,
     );
   }
 }
