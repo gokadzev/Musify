@@ -251,8 +251,6 @@ class _HomePageState extends State<HomePage> {
               minutes: displayMinutes,
               songs: previewSongs,
               onSongTap: (index) => _playRecapSongs(previewSongs, index),
-              onSongLongPress: (index, position) =>
-                  _showRecapSongMenu(previewSongs, index, position),
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(8, 10, 8, 0),
@@ -269,15 +267,6 @@ class _HomePageState extends State<HomePage> {
         );
       },
     );
-  }
-
-  void _showRecapSongMenu(
-    List<Map<String, dynamic>> songs,
-    int index,
-    Offset position,
-  ) {
-    if (index < 0 || index >= songs.length) return;
-    showSongBarMenu(context, songs[index], globalPosition: position);
   }
 
   Future<void> _playRecapSongs(

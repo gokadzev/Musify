@@ -413,6 +413,8 @@ class SongBar extends StatefulWidget {
     this.playlistId,
     this.onRenamed,
     this.rank,
+    this.barPadding,
+    this.applyCommonBarPadding = true,
     super.key,
   });
 
@@ -429,8 +431,9 @@ class SongBar extends StatefulWidget {
   final bool showQueueActions;
   final String? playlistId;
   final VoidCallback? onRenamed;
+  final bool? applyCommonBarPadding;
+  final EdgeInsetsGeometry? barPadding;
   final int? rank;
-
   @override
   State<SongBar> createState() => _SongBarState();
 }
@@ -520,7 +523,9 @@ class _SongBarState extends State<SongBar> {
         : null;
 
     return Padding(
-      padding: commonBarPadding,
+      padding: widget.applyCommonBarPadding == true
+          ? commonBarPadding
+          : EdgeInsets.zero,
       child: Material(
         color: widget.backgroundColor ?? colorScheme.surfaceContainerLow,
         borderRadius: widget.borderRadius,
@@ -530,12 +535,14 @@ class _SongBarState extends State<SongBar> {
           child: Stack(
             children: [
               Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(
-                  12,
-                  10,
-                  _menuHitAreaWidth,
-                  10,
-                ),
+                padding:
+                    widget.barPadding ??
+                    const EdgeInsetsDirectional.fromSTEB(
+                      12,
+                      10,
+                      _menuHitAreaWidth,
+                      10,
+                    ),
                 child: Row(
                   children: [
                     if (widget.rank != null) ...[

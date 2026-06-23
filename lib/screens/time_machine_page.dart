@@ -217,8 +217,6 @@ class _TimeMachinePageState extends State<TimeMachinePage> {
               minutes: monthDisplayMinutes(monthStats),
               songs: previewSongs,
               onSongTap: (index) => _playSongs(previewSongs, index),
-              onSongLongPress: (index, position) =>
-                  _showSongMenu(previewSongs, index, position),
             ),
           ),
           if (songs.length > previewSongs.length)
@@ -256,9 +254,6 @@ class _TimeMachinePageState extends State<TimeMachinePage> {
               ),
               songs: previewSongs,
               onSongTap: (index) => _playSongs(previewSongs, index),
-              onSongLongPress: (index, position) =>
-                  _showSongMenu(previewSongs, index, position),
-              featureFirstSong: true,
               highlightMinutes: true,
               outlined: true,
             ),
@@ -379,15 +374,6 @@ class _TimeMachinePageState extends State<TimeMachinePage> {
         );
       },
     );
-  }
-
-  void _showSongMenu(
-    List<Map<String, dynamic>> songs,
-    int index,
-    Offset position,
-  ) {
-    if (index < 0 || index >= songs.length) return;
-    showSongBarMenu(context, songs[index], globalPosition: position);
   }
 
   Future<void> _playSongs(List<Map<String, dynamic>> songs, int index) async {

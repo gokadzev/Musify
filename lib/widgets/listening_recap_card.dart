@@ -19,12 +19,10 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/constants/app_constants.dart';
 import 'package:musify/extensions/l10n.dart';
-import 'package:musify/utilities/mediaitem.dart';
-import 'package:musify/widgets/song_artwork.dart';
+import 'package:musify/widgets/song_bar.dart';
 
 const _musifyIconAsset = 'assets/icons/musify_icon.png';
 
@@ -34,8 +32,6 @@ class ListeningRecapCard extends StatelessWidget {
     required this.minutes,
     required this.songs,
     required this.onSongTap,
-    this.onSongLongPress,
-    this.featureFirstSong = false,
     this.highlightMinutes = false,
     this.outlined = false,
     super.key,
@@ -45,8 +41,6 @@ class ListeningRecapCard extends StatelessWidget {
   final int minutes;
   final List<Map<String, dynamic>> songs;
   final ValueChanged<int> onSongTap;
-  final void Function(int index, Offset globalPosition)? onSongLongPress;
-  final bool featureFirstSong;
   final bool highlightMinutes;
   final bool outlined;
 
@@ -112,29 +106,16 @@ class ListeningRecapCard extends StatelessWidget {
             ],
           ),
           if (songs.isNotEmpty) ...[
-            SizedBox(height: featureFirstSong ? 14 : 12),
-            if (featureFirstSong) ...[
-              _FeaturedSongPreviewRow(
-                index: 0,
-                song: songs.first,
-                onTap: () => onSongTap(0),
-                onLongPress: onSongLongPress,
+            for (var i = 0; i < songs.length; i++)
+              SongBar(
+                songs[i],
+                false,
+                showPlayTime: true,
+                rank: i + 1,
+                onPlay: () => onSongTap(i),
+                barPadding: const EdgeInsetsDirectional.fromSTEB(0, 10, 10, 10),
+                applyCommonBarPadding: false,
               ),
-              for (var i = 1; i < songs.length; i++)
-                _SongPreviewRow(
-                  index: i,
-                  song: songs[i],
-                  onTap: () => onSongTap(i),
-                  onLongPress: onSongLongPress,
-                ),
-            ] else
-              for (var i = 0; i < songs.length; i++)
-                _SongPreviewRow(
-                  index: i,
-                  song: songs[i],
-                  onTap: () => onSongTap(i),
-                  onLongPress: onSongLongPress,
-                ),
           ],
         ],
       ),
@@ -225,225 +206,6 @@ class _RecapBrandHeader extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-}
-
-int _songPlayCount(Map<String, dynamic> song) {
-  return int.tryParse(
-        (song['playCount'] ?? song['listeningCount'] ?? '').toString(),
-      ) ??
-      0;
-}
-
-class _FeaturedSongPreviewRow extends StatelessWidget {
-  const _FeaturedSongPreviewRow({
-    required this.index,
-    required this.song,
-    required this.onTap,
-    required this.onLongPress,
-  });
-
-  final int index;
-  final Map<String, dynamic> song;
-  final VoidCallback onTap;
-  final void Function(int index, Offset globalPosition)? onLongPress;
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final playCount = _songPlayCount(song);
-
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onLongPressStart: onLongPress == null
-          ? null
-          : (details) => onLongPress!(index, details.globalPosition),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(12),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Row(
-              children: [
-                SizedBox(
-                  width: 34,
-                  child: Text(
-                    '${index + 1}',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: colorScheme.primary,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                SongArtworkWidget(metadata: mapToMediaItem(song), size: 58),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        song['title']?.toString() ?? '',
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: colorScheme.onSurface,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        song['artist']?.toString() ?? '',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: colorScheme.onSurfaceVariant,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                if (playCount > 0)
-                  Padding(
-                    padding: const EdgeInsetsDirectional.only(end: 6),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const SizedBox(width: 8),
-                        Icon(
-                          FluentIcons.headphones_20_filled,
-                          size: 15,
-                          color: colorScheme.primary,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          '$playCount',
-                          style: TextStyle(
-                            color: colorScheme.primary,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _SongPreviewRow extends StatelessWidget {
-  const _SongPreviewRow({
-    required this.index,
-    required this.song,
-    required this.onTap,
-    required this.onLongPress,
-  });
-
-  final int index;
-  final Map<String, dynamic> song;
-  final VoidCallback onTap;
-  final void Function(int index, Offset globalPosition)? onLongPress;
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final playCount = _songPlayCount(song);
-
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onLongPressStart: onLongPress == null
-          ? null
-          : (details) => onLongPress!(index, details.globalPosition),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(10),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Row(
-              children: [
-                SizedBox(
-                  width: 28,
-                  child: Text(
-                    '${index + 1}',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: colorScheme.primary,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                SongArtworkWidget(metadata: mapToMediaItem(song), size: 42),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        song['title']?.toString() ?? '',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: colorScheme.onSurface,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      Text(
-                        song['artist']?.toString() ?? '',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: colorScheme.onSurfaceVariant,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                if (playCount > 0)
-                  Padding(
-                    padding: const EdgeInsetsDirectional.only(end: 6),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const SizedBox(width: 8),
-                        Icon(
-                          FluentIcons.headphones_20_filled,
-                          size: 14,
-                          color: colorScheme.primary,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          '$playCount',
-                          style: TextStyle(
-                            color: colorScheme.primary,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        ),
-      ),
     );
   }
 }
