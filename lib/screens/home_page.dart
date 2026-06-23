@@ -250,7 +250,7 @@ class _HomePageState extends State<HomePage> {
               periodLabel: periodLabel,
               minutes: displayMinutes,
               songs: previewSongs,
-              onSongTap: (index) => _playRecapSongs(songs, index),
+              onSongTap: (index) => _playRecapSongs(previewSongs, index),
               onSongLongPress: (index, position) =>
                   _showRecapSongMenu(previewSongs, index, position),
             ),

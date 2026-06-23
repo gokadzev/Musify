@@ -216,7 +216,7 @@ class _TimeMachinePageState extends State<TimeMachinePage> {
               periodLabel: periodLabel,
               minutes: monthDisplayMinutes(monthStats),
               songs: previewSongs,
-              onSongTap: (index) => _playSongs(songs, index),
+              onSongTap: (index) => _playSongs(previewSongs, index),
               onSongLongPress: (index, position) =>
                   _showSongMenu(previewSongs, index, position),
             ),
@@ -255,7 +255,7 @@ class _TimeMachinePageState extends State<TimeMachinePage> {
                 hasQualifiedSongs: songs.isNotEmpty,
               ),
               songs: previewSongs,
-              onSongTap: (index) => _playSongs(songs, index),
+              onSongTap: (index) => _playSongs(previewSongs, index),
               onSongLongPress: (index, position) =>
                   _showSongMenu(previewSongs, index, position),
               featureFirstSong: true,
