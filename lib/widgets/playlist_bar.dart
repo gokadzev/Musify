@@ -24,7 +24,6 @@ import 'dart:async';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:musify/constants/app_constants.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/services/artist_service.dart';
 import 'package:musify/services/common_services.dart';
@@ -95,74 +94,70 @@ class PlaylistBar extends StatelessWidget {
         ? normalizeArtistDisplayTitle(playlistTitle)
         : playlistTitle;
     Map<dynamic, dynamic>? updatedPlaylist;
-    return Padding(
-      padding: commonBarPadding,
-      child: Material(
-        color: colorScheme.surfaceContainerLow,
-        borderRadius: borderRadius,
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onPressed ?? _getDefaultOnPressed(context, updatedPlaylist),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
-            child: Row(
-              children: [
-                if (isFolder)
-                  _buildFolderIcon(colorScheme)
-                else
-                  _buildPlaylistIcon(colorScheme),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Row(
-                        children: [
-                          if (!isFolder && _resolvedPlaylistId != null)
-                            ValueListenableBuilder<List<String>>(
-                              valueListenable: pinnedPlaylistIds,
-                              builder: (_, ids, __) {
-                                if (!ids.contains(_resolvedPlaylistId)) {
-                                  return const SizedBox.shrink();
-                                }
-                                return Padding(
-                                  padding: const EdgeInsets.only(right: 6),
-                                  child: Icon(
-                                    FluentIcons.pin_24_filled,
-                                    size: 13,
-                                    color: colorScheme.primary,
-                                  ),
-                                );
-                              },
-                            ),
-                          Expanded(
-                            child: Text(
-                              displayTitle,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 15,
-                                color: colorScheme.onSurface,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
+    return Material(
+      color: colorScheme.surfaceContainerLow,
+      borderRadius: borderRadius,
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onPressed ?? _getDefaultOnPressed(context, updatedPlaylist),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+          child: Row(
+            children: [
+              if (isFolder)
+                _buildFolderIcon(colorScheme)
+              else
+                _buildPlaylistIcon(colorScheme),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      children: [
+                        if (!isFolder && _resolvedPlaylistId != null)
+                          ValueListenableBuilder<List<String>>(
+                            valueListenable: pinnedPlaylistIds,
+                            builder: (_, ids, __) {
+                              if (!ids.contains(_resolvedPlaylistId)) {
+                                return const SizedBox.shrink();
+                              }
+                              return Padding(
+                                padding: const EdgeInsets.only(right: 6),
+                                child: Icon(
+                                  FluentIcons.pin_24_filled,
+                                  size: 13,
+                                  color: colorScheme.primary,
+                                ),
+                              );
+                            },
                           ),
-                        ],
-                      ),
-                      if (isFolder) ...[
-                        const SizedBox(height: 3),
-                        _buildFolderSubtitle(context) ??
-                            const SizedBox.shrink(),
+                        Expanded(
+                          child: Text(
+                            displayTitle,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15,
+                              color: colorScheme.onSurface,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
                       ],
+                    ),
+                    if (isFolder) ...[
+                      const SizedBox(height: 3),
+                      _buildFolderSubtitle(context) ?? const SizedBox.shrink(),
                     ],
-                  ),
+                  ],
                 ),
-                if (showBuildActions) ...[
-                  const SizedBox(width: 4),
-                  _buildActionButtons(context, colorScheme),
-                ],
+              ),
+              if (showBuildActions) ...[
+                const SizedBox(width: 4),
+                _buildActionButtons(context, colorScheme),
               ],
-            ),
+            ],
           ),
         ),
       ),

@@ -522,66 +522,61 @@ class _SongBarState extends State<SongBar> {
                     0
         : null;
 
-    return Padding(
-      padding: widget.applyCommonBarPadding == true
-          ? commonBarPadding
-          : EdgeInsets.zero,
-      child: Material(
-        color: widget.backgroundColor ?? colorScheme.surfaceContainerLow,
-        borderRadius: widget.borderRadius,
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: _handleSongTap,
-          child: Stack(
-            children: [
-              Padding(
-                padding:
-                    widget.barPadding ??
-                    const EdgeInsetsDirectional.fromSTEB(
-                      12,
-                      10,
-                      _menuHitAreaWidth,
-                      10,
-                    ),
-                child: Row(
-                  children: [
-                    if (widget.rank != null) ...[
-                      SizedBox(
-                        width: 28,
-                        child: Text(
-                          '${widget.rank}',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: colorScheme.primary,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w800,
-                          ),
+    return Material(
+      color: widget.backgroundColor ?? colorScheme.surfaceContainerLow,
+      borderRadius: widget.borderRadius,
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: _handleSongTap,
+        child: Stack(
+          children: [
+            Padding(
+              padding:
+                  widget.barPadding ??
+                  const EdgeInsetsDirectional.fromSTEB(
+                    12,
+                    10,
+                    _menuHitAreaWidth,
+                    10,
+                  ),
+              child: Row(
+                children: [
+                  if (widget.rank != null) ...[
+                    SizedBox(
+                      width: 28,
+                      child: Text(
+                        '${widget.rank}',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: colorScheme.primary,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w800,
                         ),
                       ),
-                      const SizedBox(width: 10),
-                    ],
-                    _buildAlbumArt(colorScheme),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: _SongInfo(
-                        title: _songTitle,
-                        artist: _songArtist,
-                        plays: _plays,
-                        colorScheme: colorScheme,
-                      ),
                     ),
+                    const SizedBox(width: 10),
                   ],
-                ),
+                  _buildAlbumArt(colorScheme),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: _SongInfo(
+                      title: _songTitle,
+                      artist: _songArtist,
+                      plays: _plays,
+                      colorScheme: colorScheme,
+                    ),
+                  ),
+                ],
               ),
-              PositionedDirectional(
-                top: 0,
-                end: 0,
-                bottom: 0,
-                width: _menuHitAreaWidth,
-                child: _buildActionButtons(context, colorScheme),
-              ),
-            ],
-          ),
+            ),
+            PositionedDirectional(
+              top: 0,
+              end: 0,
+              bottom: 0,
+              width: _menuHitAreaWidth,
+              child: _buildActionButtons(context, colorScheme),
+            ),
+          ],
         ),
       ),
     );

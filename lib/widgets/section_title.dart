@@ -33,7 +33,7 @@ class SectionTitle extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 10),
+      padding: const EdgeInsets.symmetric(vertical: 16),
       child: Row(
         children: [
           if (icon != null) ...[

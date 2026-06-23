@@ -121,22 +121,19 @@ class ListeningRecapCard extends StatelessWidget {
       ),
     );
 
-    return Padding(
-      padding: commonBarPadding,
-      child: Material(
-        color: colorScheme.surfaceContainerLow,
-        shape: outlined
-            ? RoundedRectangleBorder(
-                borderRadius: commonCustomBarRadius,
-                side: BorderSide(
-                  color: colorScheme.primary.withValues(alpha: 0.16),
-                ),
-              )
-            : null,
-        borderRadius: outlined ? null : commonCustomBarRadius,
-        clipBehavior: Clip.antiAlias,
-        child: child,
-      ),
+    return Material(
+      color: colorScheme.surfaceContainerLow,
+      shape: outlined
+          ? RoundedRectangleBorder(
+              borderRadius: commonCustomBarRadius,
+              side: BorderSide(
+                color: colorScheme.primary.withValues(alpha: 0.16),
+              ),
+            )
+          : null,
+      borderRadius: outlined ? null : commonCustomBarRadius,
+      clipBehavior: Clip.antiAlias,
+      child: child,
     );
   }
 }

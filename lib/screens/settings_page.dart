@@ -432,75 +432,69 @@ class SettingsPage extends StatelessWidget {
           title: context.l10n!.becomeSponsor,
           icon: FluentIcons.heart_24_filled,
         ),
-        Padding(
-          padding: commonBarPadding,
-          child: Card(
-            margin: const EdgeInsets.only(bottom: 3),
-            elevation: 0,
-            shape: RoundedRectangleBorder(
+        Card(
+          margin: const EdgeInsets.only(bottom: 3),
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: DecoratedBox(
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(15)),
+            child: Material(
+              color: colorScheme.primaryContainer,
               borderRadius: BorderRadius.circular(15),
-            ),
-            child: DecoratedBox(
-              decoration: BoxDecoration(
+              child: InkWell(
                 borderRadius: BorderRadius.circular(15),
-              ),
-              child: Material(
-                color: colorScheme.primaryContainer,
-                borderRadius: BorderRadius.circular(15),
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(15),
-                  onTap: () =>
-                      launchURL(Uri.parse('https://ko-fi.com/gokadzev')),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 12,
-                      horizontal: 16,
-                    ),
-                    child: SizedBox(
-                      height: 45,
-                      child: Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: colorScheme.onPrimaryContainer.withValues(
-                                alpha: 0.15,
-                              ),
-                              borderRadius: BorderRadius.circular(12),
+                onTap: () => launchURL(Uri.parse('https://ko-fi.com/gokadzev')),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 12,
+                    horizontal: 16,
+                  ),
+                  child: SizedBox(
+                    height: 45,
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: colorScheme.onPrimaryContainer.withValues(
+                              alpha: 0.15,
                             ),
-                            child: Icon(
-                              FluentIcons.heart_24_regular,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(
+                            FluentIcons.heart_24_regular,
+                            color: colorScheme.onPrimaryContainer,
+                            size: 24,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Text(
+                            context.l10n!.sponsorProject,
+                            style: TextStyle(
                               color: colorScheme.onPrimaryContainer,
-                              size: 24,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Text(
-                              context.l10n!.sponsorProject,
-                              style: TextStyle(
-                                color: colorScheme.onPrimaryContainer,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: colorScheme.onPrimaryContainer.withValues(
+                              alpha: 0.1,
                             ),
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                          Container(
-                            padding: const EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                              color: colorScheme.onPrimaryContainer.withValues(
-                                alpha: 0.1,
-                              ),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Icon(
-                              FluentIcons.arrow_right_24_regular,
-                              color: colorScheme.onPrimaryContainer,
-                              size: 16,
-                            ),
+                          child: Icon(
+                            FluentIcons.arrow_right_24_regular,
+                            color: colorScheme.onPrimaryContainer,
+                            size: 16,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),

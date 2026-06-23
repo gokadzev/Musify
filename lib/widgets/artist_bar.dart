@@ -21,7 +21,6 @@
 
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:musify/constants/app_constants.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/services/artist_service.dart';
 import 'package:musify/utilities/artwork_provider.dart';
@@ -46,53 +45,50 @@ class ArtistBar extends StatelessWidget {
     );
     final image = normalizeArtistThumbnailUrl(artist['image']?.toString());
 
-    return Padding(
-      padding: commonBarPadding,
-      child: Material(
-        color: colorScheme.surfaceContainerLow,
-        borderRadius: borderRadius,
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
-            child: Row(
-              children: [
-                _ArtistArtwork(image: image),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        title,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 15,
-                          color: colorScheme.onSurface,
-                        ),
-                        overflow: TextOverflow.ellipsis,
+    return Material(
+      color: colorScheme.surfaceContainerLow,
+      borderRadius: borderRadius,
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+          child: Row(
+            children: [
+              _ArtistArtwork(image: image),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 15,
+                        color: colorScheme.onSurface,
                       ),
-                      const SizedBox(height: 3),
-                      Text(
-                        context.l10n!.artist,
-                        style: TextStyle(
-                          color: colorScheme.onSurfaceVariant,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      context.l10n!.artist,
+                      style: TextStyle(
+                        color: colorScheme.onSurfaceVariant,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                Icon(
-                  FluentIcons.chevron_right_24_regular,
-                  color: colorScheme.onSurfaceVariant,
-                  size: 20,
-                ),
-              ],
-            ),
+              ),
+              Icon(
+                FluentIcons.chevron_right_24_regular,
+                color: colorScheme.onSurfaceVariant,
+                size: 20,
+              ),
+            ],
           ),
         ),
       ),
