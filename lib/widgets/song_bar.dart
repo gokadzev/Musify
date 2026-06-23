@@ -37,6 +37,7 @@ import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/formatter.dart';
 import 'package:musify/utilities/playlist_dialogs.dart';
 import 'package:musify/widgets/no_artwork_cube.dart';
+import 'package:musify/widgets/overflow_menu_button.dart';
 import 'package:musify/widgets/rename_song_dialog.dart';
 
 List<PopupMenuEntry<String>> _buildSongMenuItems({
@@ -366,8 +367,6 @@ class SongBar extends StatefulWidget {
 }
 
 class _SongBarState extends State<SongBar> {
-  static const _menuHitAreaWidth = 72.0;
-
   static const likeStatusToIconMapper = {
     true: FluentIcons.heart_off_24_regular,
     false: FluentIcons.heart_24_regular,
@@ -455,55 +454,58 @@ class _SongBarState extends State<SongBar> {
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: _handleSongTap,
-        child: Stack(
-          children: [
-            Padding(
-              padding:
-                  widget.barPadding ??
-                  const EdgeInsetsDirectional.fromSTEB(
-                    12,
-                    10,
-                    _menuHitAreaWidth,
-                    10,
-                  ),
-              child: Row(
-                children: [
-                  if (widget.rank != null) ...[
-                    SizedBox(
-                      width: 28,
-                      child: Text(
-                        '${widget.rank}',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: colorScheme.primary,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                  ],
-                  _buildAlbumArt(colorScheme),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: _SongInfo(
-                      title: _songTitle,
-                      artist: _songArtist,
-                      plays: _plays,
-                      colorScheme: colorScheme,
-                    ),
-                  ),
-                ],
+        child: Padding(
+          padding:
+              widget.barPadding ??
+              const EdgeInsetsDirectional.symmetric(
+                vertical: 10,
+                horizontal: 12,
               ),
-            ),
-            PositionedDirectional(
-              top: 0,
-              end: 0,
-              bottom: 0,
-              width: _menuHitAreaWidth,
-              child: _buildActionButtons(context, colorScheme),
-            ),
-          ],
+          child: Row(
+            children: [
+              if (widget.rank != null) ...[
+                SizedBox(
+                  width: 28,
+                  child: Text(
+                    '${widget.rank}',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: colorScheme.primary,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+              ],
+
+              _buildAlbumArt(colorScheme),
+              const SizedBox(width: 14),
+
+              Expanded(
+                child: _SongInfo(
+                  title: _songTitle,
+                  artist: _songArtist,
+                  plays: _plays,
+                  colorScheme: colorScheme,
+                ),
+              ),
+
+              OverflowMenuButton<String>(
+                onSelected: (value) => _handleSongMenuAction(
+                  context: context,
+                  value: value,
+                  song: widget.song,
+                  ytid: _ytid,
+                  songLikeStatus: _songLikeStatus,
+                  songOfflineStatus: _songOfflineStatus,
+                  onRemove: widget.onRemove,
+                  onRename: () => _handleRenameSong(context),
+                ),
+                itemBuilder: (context) => _buildMenuItems(context, colorScheme),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -553,35 +555,6 @@ class _SongBarState extends State<SongBar> {
           },
         );
       },
-    );
-  }
-
-  Widget _buildActionButtons(BuildContext context, ColorScheme colorScheme) {
-    return PopupMenuButton<String>(
-      borderRadius: BorderRadius.circular(12),
-      padding: EdgeInsets.zero,
-      onSelected: (value) => _handleMenuAction(context, value),
-      itemBuilder: (context) => _buildMenuItems(context, colorScheme),
-      icon: Icon(
-        FluentIcons.more_vertical_24_regular,
-        color: colorScheme.onSurfaceVariant,
-        size: 20,
-      ),
-    );
-  }
-
-  void _handleMenuAction(BuildContext context, String value) {
-    unawaited(
-      _handleSongMenuAction(
-        context: context,
-        value: value,
-        song: widget.song,
-        ytid: _ytid,
-        songLikeStatus: _songLikeStatus,
-        songOfflineStatus: _songOfflineStatus,
-        onRemove: widget.onRemove,
-        onRename: () => _handleRenameSong(context),
-      ),
     );
   }
 
