@@ -343,7 +343,6 @@ class SongBar extends StatefulWidget {
     this.onRenamed,
     this.rank,
     this.barPadding,
-    this.applyCommonBarPadding = true,
     super.key,
   });
 
@@ -360,7 +359,6 @@ class SongBar extends StatefulWidget {
   final bool showQueueActions;
   final String? playlistId;
   final VoidCallback? onRenamed;
-  final bool? applyCommonBarPadding;
   final EdgeInsetsGeometry? barPadding;
   final int? rank;
   @override
@@ -560,17 +558,14 @@ class _SongBarState extends State<SongBar> {
 
   Widget _buildActionButtons(BuildContext context, ColorScheme colorScheme) {
     return PopupMenuButton<String>(
-      borderRadius: BorderRadius.circular(_menuHitAreaWidth / 2),
+      borderRadius: BorderRadius.circular(12),
       padding: EdgeInsets.zero,
-      splashRadius: 28,
       onSelected: (value) => _handleMenuAction(context, value),
       itemBuilder: (context) => _buildMenuItems(context, colorScheme),
-      child: Center(
-        child: Icon(
-          FluentIcons.more_vertical_24_regular,
-          color: colorScheme.onSurfaceVariant,
-          size: 20,
-        ),
+      icon: Icon(
+        FluentIcons.more_vertical_24_regular,
+        color: colorScheme.onSurfaceVariant,
+        size: 20,
       ),
     );
   }

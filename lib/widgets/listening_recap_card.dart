@@ -48,7 +48,7 @@ class ListeningRecapCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final child = Padding(
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -113,8 +113,7 @@ class ListeningRecapCard extends StatelessWidget {
                 showPlayTime: true,
                 rank: i + 1,
                 onPlay: () => onSongTap(i),
-                barPadding: const EdgeInsetsDirectional.fromSTEB(0, 10, 10, 10),
-                applyCommonBarPadding: false,
+                barPadding: const EdgeInsetsDirectional.symmetric(vertical: 10),
               ),
           ],
         ],
