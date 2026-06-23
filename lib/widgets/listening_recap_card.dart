@@ -19,14 +19,12 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
-import 'dart:io';
-
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/constants/app_constants.dart';
 import 'package:musify/extensions/l10n.dart';
-import 'package:musify/widgets/no_artwork_cube.dart';
+import 'package:musify/utilities/mediaitem.dart';
+import 'package:musify/widgets/song_artwork.dart';
 
 const _musifyIconAsset = 'assets/icons/musify_icon.png';
 
@@ -231,125 +229,6 @@ class _RecapBrandHeader extends StatelessWidget {
   }
 }
 
-class _RecapSongArtwork extends StatelessWidget {
-  const _RecapSongArtwork({
-    required this.song,
-    required this.size,
-    required this.borderRadius,
-  });
-
-  final Map<String, dynamic> song;
-  final double size;
-  final double borderRadius;
-
-  @override
-  Widget build(BuildContext context) {
-    final cacheExtent = (size * MediaQuery.of(context).devicePixelRatio)
-        .round()
-        .clamp(96, 768);
-    final artworkPath = _firstNonEmptyString([
-      song['artworkPath'],
-      song['artWorkPath'],
-    ]);
-
-    final imageUrl = _firstNonEmptyString([
-      song['highResImage'],
-      song['image'],
-      song['lowResImage'],
-    ]);
-
-    return SizedBox(
-      width: size,
-      height: size,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(borderRadius),
-        child: _buildArtwork(artworkPath, imageUrl, cacheExtent),
-      ),
-    );
-  }
-
-  Widget _buildArtwork(String? artworkPath, String? imageUrl, int cacheExtent) {
-    final localArtworkPath =
-        _localFilePath(artworkPath) ?? _localFilePath(imageUrl);
-    if (localArtworkPath != null) {
-      return _buildFileArtwork(localArtworkPath, cacheExtent);
-    }
-
-    final remoteArtworkUrl =
-        _remoteImageUrl(imageUrl) ?? _remoteImageUrl(artworkPath);
-    if (remoteArtworkUrl != null) {
-      return CachedNetworkImage(
-        imageUrl: remoteArtworkUrl,
-        width: size,
-        height: size,
-        // Only constrain the decode width: passing both width and height makes
-        // ResizeImage use its default `exact` policy, which squashes the image
-        // to NxN ignoring aspect ratio (~BoxFit.fill). A single dimension keeps
-        // the aspect ratio so the BoxFit.cover below can frame it as a square.
-        memCacheWidth: cacheExtent,
-        imageBuilder: (_, imageProvider) => Image(
-          image: imageProvider,
-          width: size,
-          height: size,
-          fit: BoxFit.cover,
-        ),
-        placeholder: (_, __) => _fallback(),
-        errorWidget: (_, __, ___) => _fallback(),
-      );
-    }
-
-    return _fallback();
-  }
-
-  Widget _buildFileArtwork(String artworkPath, int cacheExtent) {
-    return Image.file(
-      File(artworkPath),
-      width: size,
-      height: size,
-      fit: BoxFit.cover,
-      // Single decode dimension only: both width+height would force an
-      // aspect-ratio-ignoring resize (ResizeImagePolicy.exact ~ BoxFit.fill)
-      // that stretches non-square covers before BoxFit.cover can frame them.
-      cacheWidth: cacheExtent,
-      errorBuilder: (_, __, ___) => _fallback(),
-    );
-  }
-
-  Widget _fallback() => NullArtworkWidget(
-    size: size,
-    borderRadius: borderRadius,
-    iconSize: size * 0.45,
-  );
-
-  String? _localFilePath(String? artwork) {
-    if (artwork == null || artwork.isEmpty) return null;
-    if (artwork.startsWith('file://')) {
-      try {
-        return Uri.parse(artwork).toFilePath();
-      } catch (_) {
-        return artwork.replaceFirst('file://', '');
-      }
-    }
-
-    if (artwork.startsWith('/')) return artwork;
-    return null;
-  }
-
-  String? _remoteImageUrl(String? artwork) {
-    if (artwork == null || artwork.isEmpty) return null;
-    return artwork.startsWith('http') ? artwork : null;
-  }
-
-  String? _firstNonEmptyString(List<dynamic> values) {
-    for (final value in values) {
-      if (value is! String) continue;
-      if (value.isNotEmpty) return value;
-    }
-
-    return null;
-  }
-}
-
 int _songPlayCount(Map<String, dynamic> song) {
   return int.tryParse(
         (song['playCount'] ?? song['listeningCount'] ?? '').toString(),
@@ -402,7 +281,7 @@ class _FeaturedSongPreviewRow extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 8),
-                _RecapSongArtwork(song: song, size: 58, borderRadius: 10),
+                SongArtworkWidget(metadata: mapToMediaItem(song), size: 58),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -509,7 +388,7 @@ class _SongPreviewRow extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 8),
-                _RecapSongArtwork(song: song, size: 42, borderRadius: 8),
+                SongArtworkWidget(metadata: mapToMediaItem(song), size: 42),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Column(
