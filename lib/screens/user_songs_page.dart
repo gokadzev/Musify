@@ -87,17 +87,20 @@ class _UserSongsPageState extends State<UserSongsPage> {
 
     return Scaffold(
       appBar: AppBar(title: offlineMode.value ? Text(title) : null),
-      body: ValueListenableBuilder(
-        valueListenable: widget.page == 'liked'
-            ? userLikedSongsList
-            : widget.page == 'offline'
-            ? userOfflineSongs
-            : userRecentlyPlayed,
-        builder: (_, songsList, __) => _buildCustomScrollView(
-          title,
-          icon,
-          songsList.length,
-          isOfflineSongs,
+      body: Padding(
+        padding: commonSingleChildScrollViewPadding,
+        child: ValueListenableBuilder(
+          valueListenable: widget.page == 'liked'
+              ? userLikedSongsList
+              : widget.page == 'offline'
+              ? userOfflineSongs
+              : userRecentlyPlayed,
+          builder: (_, songsList, __) => _buildCustomScrollView(
+            title,
+            icon,
+            songsList.length,
+            isOfflineSongs,
+          ),
         ),
       ),
     );

@@ -203,55 +203,60 @@ class _PlaylistPageState extends State<PlaylistPage> {
           tooltip: context.l10n!.back,
         ),
       ),
-      body: _isInitializingPlaylist
-          ? SizedBox(
-              height: MediaQuery.sizeOf(context).height - 100,
-              child: const Spinner(),
-            )
-          : _playlist != null
-          ? CustomScrollView(
-              slivers: [
-                SliverToBoxAdapter(child: _buildHeaderSection()),
-                if ((_playlist['list'] as List? ?? const []).isNotEmpty) ...[
-                  ValueListenableBuilder<String>(
-                    valueListenable: _searchQueryNotifier,
-                    builder: (context, searchQuery, _) {
-                      final sourceList = _getSourceList(searchQuery);
-                      return SliverPadding(
-                        padding: commonListViewBottomPadding,
-                        sliver: SliverList.builder(
-                          itemCount: sourceList.length,
-                          itemBuilder: (context, index) {
-                            final isRemovable =
-                                _playlist['source'] == 'user-created';
-                            return _buildSongListItem(
-                              sourceList[index],
-                              index,
-                              isRemovable,
-                            );
-                          },
-                        ),
-                      );
-                    },
-                  ),
-                ] else if (_isArtistCatalogLoading)
-                  SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: Center(
-                      child: SizedBox(
-                        height: MediaQuery.sizeOf(context).height * 0.3,
-                        child: const Spinner(),
-                      ),
+      body: Padding(
+        padding: commonSingleChildScrollViewPadding,
+        child: _isInitializingPlaylist
+            ? SizedBox(
+                height: MediaQuery.sizeOf(context).height - 100,
+                child: const Spinner(),
+              )
+            : _playlist != null
+            ? CustomScrollView(
+                slivers: [
+                  SliverToBoxAdapter(child: _buildHeaderSection()),
+                  if ((_playlist['list'] as List? ?? const []).isNotEmpty) ...[
+                    ValueListenableBuilder<String>(
+                      valueListenable: _searchQueryNotifier,
+                      builder: (context, searchQuery, _) {
+                        final sourceList = _getSourceList(searchQuery);
+                        return SliverPadding(
+                          padding: commonListViewBottomPadding,
+                          sliver: SliverList.builder(
+                            itemCount: sourceList.length,
+                            itemBuilder: (context, index) {
+                              final isRemovable =
+                                  _playlist['source'] == 'user-created';
+                              return _buildSongListItem(
+                                sourceList[index],
+                                index,
+                                isRemovable,
+                              );
+                            },
+                          ),
+                        );
+                      },
                     ),
-                  )
-                else if (_isArtistCatalogFailed)
-                  EmptyPlaylistState(message: context.l10n!.error)
-                else
-                  EmptyPlaylistState(message: context.l10n!.noSongsInPlaylist),
-                const SliverMiniPlayerBottomSpace(),
-              ],
-            )
-          : EmptyPlaylistState(message: context.l10n!.error),
+                  ] else if (_isArtistCatalogLoading)
+                    SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: Center(
+                        child: SizedBox(
+                          height: MediaQuery.sizeOf(context).height * 0.3,
+                          child: const Spinner(),
+                        ),
+                      ),
+                    )
+                  else if (_isArtistCatalogFailed)
+                    EmptyPlaylistState(message: context.l10n!.error)
+                  else
+                    EmptyPlaylistState(
+                      message: context.l10n!.noSongsInPlaylist,
+                    ),
+                  const SliverMiniPlayerBottomSpace(),
+                ],
+              )
+            : EmptyPlaylistState(message: context.l10n!.error),
+      ),
     );
   }
 
