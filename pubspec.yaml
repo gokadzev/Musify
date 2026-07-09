@@ -13,8 +13,8 @@ environment:
 
 dependencies:
   app_links: ^7.2.0
-  audio_service: ^0.18.18
-  audio_session: ^0.2.3
+  audio_service: ^0.18.19
+  audio_session: ^0.2.4
   cached_network_image: ^3.4.1
   dynamic_color: ^1.8.1
   file_picker: ^11.0.2
@@ -30,7 +30,7 @@ dependencies:
   html: ^0.15.6
   http: ^1.6.0
   intl: ^0.20.2
-  just_audio: 0.10.5
+  just_audio: ^0.10.6
   path_provider: ^2.1.6
   receive_sharing_intent:
     path: ./packages/receive_sharing_intent
