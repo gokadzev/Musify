@@ -51,7 +51,7 @@ import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/sort_chips.dart';
 import 'package:musify/widgets/spinner.dart';
 
-enum PlaylistSortType { default_, title, artist }
+enum PlaylistSortType { default_, title, artist, dateAdded }
 
 class PlaylistPage extends StatefulWidget {
   const PlaylistPage({
@@ -740,6 +740,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
         return context.l10n!.name;
       case PlaylistSortType.artist:
         return context.l10n!.artist;
+      case PlaylistSortType.dateAdded:
+        return context.l10n!.dateAdded;
     }
   }
 
@@ -760,6 +762,9 @@ class _PlaylistPageState extends State<PlaylistPage> {
         final playlist = List<dynamic>.from(_playlist['list']);
         sortSongsByKey(playlist, 'artist');
         _playlist['list'] = playlist;
+        break;
+      case PlaylistSortType.dateAdded:
+        _playlist['list'] = List<dynamic>.from(_originalPlaylistList.reversed);
         break;
     }
   }
