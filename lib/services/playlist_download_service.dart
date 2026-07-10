@@ -176,6 +176,29 @@ class OfflinePlaylistService {
           updatedPlaylists.add(offlinePlaylist);
         }
 
+        // Also mark albums/playlists whose songs are now fully offline
+        final offlineSongIds = userOfflineSongs.value
+            .map((s) => s['ytid'])
+            .toSet();
+        for (final p in playlists) {
+          final pList = p['list'] as List?;
+          if (pList == null ||
+              pList.isEmpty ||
+              p['ytid'] == playlistId ||
+              isPlaylistDownloaded(
+                p['ytid']?.toString() ?? '',
+              )) {
+            continue;
+          }
+          if (pList.every((s) => offlineSongIds.contains(s['ytid']))) {
+            updatedPlaylists.add({
+              ...p,
+              'list': pList,
+              'downloadedAt': DateTime.now().millisecondsSinceEpoch,
+            });
+          }
+        }
+
         offlinePlaylists.value = updatedPlaylists;
         unawaited(
           addOrUpdateData<List>(
