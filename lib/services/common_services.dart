@@ -161,7 +161,9 @@ Future<List> getRecommendedSongs() async {
 }
 
 Future<List> _getRecommendationsFromRecentlyPlayed() async {
-  final recent = (List.from(userRecentlyPlayed.value)..shuffle()).take(5).toList();
+  final recent = (List.from(
+    userRecentlyPlayed.value,
+  )..shuffle()).take(5).toList();
 
   final scores = <String, double>{};
   final songMap = <String, Map>{};
@@ -181,15 +183,21 @@ Future<List> _getRecommendationsFromRecentlyPlayed() async {
         songMap[id] = s;
       }
     } catch (e, st) {
-      logger.log('related videos error for ${songData['ytid']}', error: e, stackTrace: st);
+      logger.log(
+        'related videos error for ${songData['ytid']}',
+        error: e,
+        stackTrace: st,
+      );
     }
   }).toList();
 
   await Future.wait(futures);
 
-  final sorted = scores.entries.toList()..sort((a, b) => b.value.compareTo(a.value));
+  final sorted = scores.entries.toList()
+    ..sort((a, b) => b.value.compareTo(a.value));
   return sorted.take(15).map((e) => songMap[e.key]!).toList();
 }
+
 Future<List> _getRecommendationsFromMixedSources() async {
   final playlistSongs = [
     ...userLikedSongsList.value,
@@ -827,12 +835,14 @@ const recentlyPlayedSongsLimit = 100;
 /// locally (e.g. from [userOfflineSongs]).
 Future<void> updateRecentlyPlayed(dynamic songId, {Map? songFallback}) async {
   try {
+    final now = DateTime.now();
+
     if (userRecentlyPlayed.value.isNotEmpty &&
         userRecentlyPlayed.value[0]['ytid'] == songId) {
       final updatedList = List.from(userRecentlyPlayed.value);
       final existing = Map.from(updatedList[0] as Map);
       existing['listeningCount'] = (existing['listeningCount'] ?? 0) + 1;
-      existing['lastPlayed'] = DateTime.now();
+      existing['lastPlayed'] = now;
       updatedList[0] = existing;
       userRecentlyPlayed.value = updatedList;
       unawaited(
@@ -858,14 +868,22 @@ Future<void> updateRecentlyPlayed(dynamic songId, {Map? songFallback}) async {
     if (existingIndex != -1) {
       final song = Map.from(updatedList.removeAt(existingIndex) as Map);
       song['listeningCount'] = (song['listeningCount'] ?? 0) + 1;
-      song['lastPlayed'] = DateTime.now();
+      song['lastPlayed'] = now;
       updatedList.insert(0, song);
     } else {
-      final newSongDetails = songFallback != null
+      final dynamic fetchedSongDetails = songFallback != null
           ? Map<String, dynamic>.from(songFallback)
           : await getSongDetails(0, songId);
+
+      if (fetchedSongDetails is! Map) {
+        logger.log('Failed to update recently played: invalid song details');
+        return;
+      }
+
+      final newSongDetails = Map<String, dynamic>.from(fetchedSongDetails);
+      newSongDetails['ytid'] ??= songId;
       newSongDetails['listeningCount'] = 1;
-      newSongDetails['lastPlayed'] = DateTime.now();
+      newSongDetails['lastPlayed'] = now;
       updatedList.insert(0, newSongDetails);
     }
 
