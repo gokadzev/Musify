@@ -640,9 +640,7 @@ Future<bool> makeSongOffline(dynamic song) async {
     if (isSongAlreadyOffline(ytid)) {
       final existingPath = FilePaths.getAudioPath(ytid);
       if (await File(existingPath).exists()) {
-        if (sponsorBlockSupport.value) {
-          unawaited(cacheSponsorBlockSegments(ytid));
-        }
+        unawaited(cacheSponsorBlockSegments(ytid));
         return true;
       }
     }
@@ -670,9 +668,7 @@ Future<bool> makeSongOffline(dynamic song) async {
       await fileStream.close();
       fileStream = null;
 
-      if (sponsorBlockSupport.value) {
-        unawaited(cacheSponsorBlockSegments(ytid));
-      }
+      unawaited(cacheSponsorBlockSegments(ytid));
     } catch (e, stackTrace) {
       logger.log(
         'Error downloading audio file',
@@ -800,11 +796,16 @@ Future<bool> removeSongFromOffline(dynamic songId) async {
   }
 }
 
+bool _sponsorSerialFirstCall = true;
 Future<void> _sponsorSerialChain = Future.value();
 
 Future<T> _sponsorSerialCall<T>(Future<T> Function() action) {
   final result = _sponsorSerialChain.then((_) async {
-    await Future.delayed(const Duration(seconds: 1));
+    if (_sponsorSerialFirstCall) {
+      _sponsorSerialFirstCall = false;
+    } else {
+      await Future.delayed(const Duration(seconds: 1));
+    }
     return action();
   });
   _sponsorSerialChain = result.then((_) {}, onError: (_) {});
