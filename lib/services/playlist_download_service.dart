@@ -180,7 +180,17 @@ class OfflinePlaylistService {
         final offlineSongIds = userOfflineSongs.value
             .map((s) => s['ytid'])
             .toSet();
-        for (final p in playlists) {
+
+        final seenIds = <String>{};
+        final userPlaylistSources = <Map>[
+          ...userCustomPlaylists.value,
+          ...userLikedPlaylists.value,
+          ...playlists,
+        ].where((p) {
+          final id = p['ytid']?.toString();
+          return id != null && seenIds.add(id);
+        }).toList();
+        for (final p in userPlaylistSources) {
           final pList = p['list'] as List?;
           if (pList == null ||
               pList.isEmpty ||
