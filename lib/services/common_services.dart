@@ -640,6 +640,9 @@ Future<bool> makeSongOffline(dynamic song) async {
     if (isSongAlreadyOffline(ytid)) {
       final existingPath = FilePaths.getAudioPath(ytid);
       if (await File(existingPath).exists()) {
+        if (sponsorBlockSupport.value) {
+          unawaited(cacheSponsorBlockSegments(ytid));
+        }
         return true;
       }
     }
@@ -666,6 +669,10 @@ Future<bool> makeSongOffline(dynamic song) async {
       await fileStream.flush();
       await fileStream.close();
       fileStream = null;
+
+      if (sponsorBlockSupport.value) {
+        unawaited(cacheSponsorBlockSegments(ytid));
+      }
     } catch (e, stackTrace) {
       logger.log(
         'Error downloading audio file',
@@ -790,6 +797,53 @@ Future<bool> removeSongFromOffline(dynamic songId) async {
       stackTrace: stackTrace,
     );
     return false;
+  }
+}
+
+Future<void> _sponsorSerialChain = Future.value();
+
+Future<T> _sponsorSerialCall<T>(Future<T> Function() action) {
+  final result = _sponsorSerialChain.then((_) async {
+    await Future.delayed(const Duration(seconds: 1));
+    return action();
+  });
+  _sponsorSerialChain = result.then((_) {}, onError: (_) {});
+  return result;
+}
+
+Future<void> cacheSponsorBlockSegments(String ytid) async {
+  try {
+    final cacheBox = Hive.box('cache');
+    if (cacheBox.containsKey('sponsorSegments_$ytid')) return;
+    for (var attempt = 0; attempt < 2; attempt++) {
+      final segments = await _sponsorSerialCall(
+        () => getSkipSegments(ytid),
+      );
+      await cacheBox.put('sponsorSegments_$ytid', segments);
+      if (segments.isNotEmpty) return;
+      if (attempt == 0) await Future.delayed(const Duration(seconds: 1));
+    }
+  } catch (e, stackTrace) {
+    logger.log(
+      'Error caching sponsor block for $ytid',
+      error: e,
+      stackTrace: stackTrace,
+    );
+  }
+}
+
+List<Map<String, int>>? getCachedSponsorBlockSegments(String ytid) {
+  try {
+    final cacheBox = Hive.box('cache');
+    final cached = cacheBox.get('sponsorSegments_$ytid');
+    if (cached is List) {
+      return cached
+          .map((e) => Map<String, int>.from(e as Map))
+          .toList();
+    }
+    return null;
+  } catch (_) {
+    return null;
   }
 }
 

@@ -2075,7 +2075,17 @@ class MusifyAudioHandler extends BaseAudioHandler {
       final tag = mapToMediaItem(song);
 
       if (isOffline) {
-        return AudioSource.file(songUrl, tag: tag);
+        final fileSource = AudioSource.file(songUrl, tag: tag);
+
+        if (sponsorBlockSupport.value) {
+          final offlineSpbSource = _applyOfflineSponsorBlock(
+            fileSource,
+            song['ytid'],
+          );
+          return offlineSpbSource ?? fileSource;
+        }
+
+        return fileSource;
       }
 
       final uri = Uri.parse(songUrl);
@@ -2100,6 +2110,20 @@ class MusifyAudioHandler extends BaseAudioHandler {
     }
   }
 
+  AudioSource? _applyOfflineSponsorBlock(
+    UriAudioSource audioSource,
+    String songId,
+  ) {
+    final segments = getCachedSponsorBlockSegments(songId);
+    if (segments != null && segments.isNotEmpty) {
+      return _buildSkippedAudioSource(audioSource, segments);
+    }
+    if (segments == null && !offlineMode.value) {
+      unawaited(cacheSponsorBlockSegments(songId));
+    }
+    return null;
+  }
+
   Future<AudioSource?> checkIfSponsorBlockIsAvailable(
     UriAudioSource audioSource,
     String songId,
@@ -2107,49 +2131,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
     try {
       final segments = await getSkipSegments(songId);
       if (segments.isEmpty) return null;
-
-      // Sort segments by start time
-      segments.sort((a, b) => (a['start'] ?? 0).compareTo(b['start'] ?? 0));
-
-      final children = <AudioSource>[];
-      var lastEnd = 0;
-
-      for (final segment in segments) {
-        final start = segment['start'] ?? 0;
-        final end = segment['end'] ?? 0;
-
-        // Add the "good" part before this sponsor segment
-        if (start > lastEnd) {
-          children.add(
-            ClippingAudioSource(
-              child: audioSource,
-              start: Duration(seconds: lastEnd),
-              end: Duration(seconds: start),
-            ),
-          );
-        }
-
-        // Advance lastEnd, handling overlapping segments
-        if (end > lastEnd) {
-          lastEnd = end;
-        }
-      }
-
-      // Add the final part from the last sponsor segment to the end of the song
-      children.add(
-        ClippingAudioSource(
-          child: audioSource,
-          start: Duration(seconds: lastEnd),
-          // end: null means play until the end of the file
-        ),
-      );
-
-      if (children.length == 1) {
-        return children.first;
-      }
-
-      // ignore: deprecated_member_use
-      return ConcatenatingAudioSource(children: children);
+      return _buildSkippedAudioSource(audioSource, segments);
     } catch (e, stackTrace) {
       logger.log(
         'Error checking sponsor block',
@@ -2158,6 +2140,34 @@ class MusifyAudioHandler extends BaseAudioHandler {
       );
       return null;
     }
+  }
+
+  static AudioSource? _buildSkippedAudioSource(
+    UriAudioSource source,
+    List<Map<String, int>> segments,
+  ) {
+    segments.sort((a, b) => (a['start'] ?? 0).compareTo(b['start'] ?? 0));
+    final children = <AudioSource>[];
+    var lastEnd = 0;
+    for (final segment in segments) {
+      final start = segment['start'] ?? 0;
+      final end = segment['end'] ?? 0;
+      if (start > lastEnd) {
+        children.add(ClippingAudioSource(
+          child: source,
+          start: Duration(seconds: lastEnd),
+          end: Duration(seconds: start),
+        ));
+      }
+      if (end > lastEnd) lastEnd = end;
+    }
+    children.add(ClippingAudioSource(
+      child: source,
+      start: Duration(seconds: lastEnd),
+    ));
+    if (children.length == 1) return children.first;
+    // ignore: deprecated_member_use
+    return ConcatenatingAudioSource(children: children);
   }
 
   Future<void> skipToSong(int newIndex) async {
