@@ -185,6 +185,8 @@ class OfflinePlaylistService {
         final userPlaylistSources = <Map>[
           ...userCustomPlaylists.value,
           ...userLikedPlaylists.value,
+          for (final folder in userPlaylistFolders.value)
+            ...List<Map>.from(folder['playlists'] ?? []),
           ...playlists,
         ].where((p) {
           final id = p['ytid']?.toString();
