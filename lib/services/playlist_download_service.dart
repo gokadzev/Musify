@@ -70,6 +70,43 @@ class OfflinePlaylistService {
     return activeDownloads.contains(playlistId);
   }
 
+  /// Checks whether [playlist] now has 100% of its songs downloaded offline
+  /// and, if so, marks it offline too.
+  ///
+  /// Unlike the batch scan in [_handleDownloadCompletion] (which only runs
+  /// right after a playlist finishes downloading), this is meant to be
+  /// called any time a single playlist's song list or like-status changes —
+  /// e.g. after adding a song to a custom playlist, or liking a playlist —
+  /// so playlists created/modified *after* the triggering download aren't
+  /// silently skipped.
+  void checkAndAutoMarkOffline(Map playlist) {
+    final id = playlist['ytid']?.toString();
+    final pList = playlist['list'] as List?;
+    if (id == null || pList == null || pList.isEmpty) return;
+    if (isPlaylistDownloaded(id)) return;
+
+    final offlineSongIds = userOfflineSongs.value
+        .map((s) => s['ytid'])
+        .toSet();
+    if (!pList.every((s) => offlineSongIds.contains(s['ytid']))) return;
+
+    offlinePlaylists.value = [
+      ...offlinePlaylists.value,
+      {
+        ...playlist,
+        'list': pList,
+        'downloadedAt': DateTime.now().millisecondsSinceEpoch,
+      },
+    ];
+    unawaited(
+      addOrUpdateData<List>(
+        'userNoBackup',
+        'offlinePlaylists',
+        offlinePlaylists.value,
+      ),
+    );
+  }
+
   Future<void> downloadPlaylist(BuildContext context, Map playlist) async {
     final playlistId = playlist['ytid'] as String? ?? playlist['title'];
 

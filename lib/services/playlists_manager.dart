@@ -276,6 +276,7 @@ String addSongInCustomPlaylist(
       );
     }
 
+    offlinePlaylistService.checkAndAutoMarkOffline(customPlaylist);
     return context.l10n!.songAdded;
   } else {
     logger.log('Custom playlist not found for ytid: $playlistId');
@@ -336,6 +337,7 @@ String addSongsInCustomPlaylist(
           ),
         );
       }
+      offlinePlaylistService.checkAndAutoMarkOffline(customPlaylist);
       return context.l10n!.addedSuccess;
     } else {
       return context.l10n!.songAlreadyInPlaylist;
@@ -1323,6 +1325,7 @@ Future<void> updatePlaylistLikeStatus(
             (playlist) => playlist['ytid']?.toString() == normalizedPlaylistId,
           )) {
         updatedLikedPlaylists.add(playlistToAdd);
+        offlinePlaylistService.checkAndAutoMarkOffline(playlistToAdd);
       }
     } else {
       updatedLikedPlaylists.removeWhere(
