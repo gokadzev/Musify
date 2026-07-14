@@ -426,6 +426,7 @@ class _PeriodSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.only(top: 18),
       child: Column(
@@ -438,15 +439,19 @@ class _PeriodSection extends StatelessWidget {
                 Expanded(
                   child: Text(
                     title,
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    style: theme.textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.w800,
+                      color: theme.colorScheme.secondary,
                     ),
                   ),
                 ),
                 IconButton(
                   tooltip: context.l10n!.shareRecap,
                   onPressed: onShare,
-                  icon: const Icon(FluentIcons.share_24_regular),
+                  icon: Icon(
+                    FluentIcons.share_24_regular,
+                    color: theme.colorScheme.primary,
+                  ),
                 ),
               ],
             ),

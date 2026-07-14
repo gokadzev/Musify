@@ -67,7 +67,7 @@ class PlaylistHeader extends StatelessWidget {
             title,
             style: theme.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.w700,
-              color: colorScheme.onSurface,
+              color: colorScheme.secondary,
               letterSpacing: 0,
             ),
             overflow: TextOverflow.ellipsis,
