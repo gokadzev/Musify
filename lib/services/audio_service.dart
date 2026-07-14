@@ -2078,7 +2078,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
         final fileSource = AudioSource.file(songUrl, tag: tag);
 
         if (sponsorBlockSupport.value) {
-          final offlineSpbSource = _applyOfflineSponsorBlock(
+          final offlineSpbSource = await _applyOfflineSponsorBlock(
             fileSource,
             song['ytid'],
           );
@@ -2110,11 +2110,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
     }
   }
 
-  AudioSource? _applyOfflineSponsorBlock(
+  Future<AudioSource?> _applyOfflineSponsorBlock(
     UriAudioSource audioSource,
     String songId,
-  ) {
-    final segments = getCachedSponsorBlockSegments(songId);
+  ) async {
+    final segments = await getCachedSponsorBlockSegments(songId);
     if (segments != null && segments.isNotEmpty) {
       return _buildSkippedAudioSource(audioSource, segments);
     }

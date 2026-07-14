@@ -814,13 +814,13 @@ Future<T> _sponsorSerialCall<T>(Future<T> Function() action) {
 
 Future<void> cacheSponsorBlockSegments(String ytid) async {
   try {
-    final cacheBox = Hive.box('cache');
-    if (cacheBox.containsKey('sponsorSegments_$ytid')) return;
+    final cacheKey = 'sponsorSegments_$ytid';
+    if (await getData('cache', cacheKey) != null) return;
     for (var attempt = 0; attempt < 2; attempt++) {
       final segments = await _sponsorSerialCall(
         () => getSkipSegments(ytid),
       );
-      await cacheBox.put('sponsorSegments_$ytid', segments);
+      await addOrUpdateData<List>('cache', cacheKey, segments);
       if (segments.isNotEmpty) return;
       if (attempt == 0) await Future.delayed(const Duration(seconds: 1));
     }
@@ -833,14 +833,13 @@ Future<void> cacheSponsorBlockSegments(String ytid) async {
   }
 }
 
-List<Map<String, int>>? getCachedSponsorBlockSegments(String ytid) {
+Future<List<Map<String, int>>?> getCachedSponsorBlockSegments(
+  String ytid,
+) async {
   try {
-    final cacheBox = Hive.box('cache');
-    final cached = cacheBox.get('sponsorSegments_$ytid');
+    final cached = await getData('cache', 'sponsorSegments_$ytid');
     if (cached is List) {
-      return cached
-          .map((e) => Map<String, int>.from(e as Map))
-          .toList();
+      return cached.map((e) => Map<String, int>.from(e as Map)).toList();
     }
     return null;
   } catch (_) {
