@@ -35,13 +35,11 @@ import 'package:musify/widgets/queue_list_view.dart';
 class BottomActionsRow extends StatefulWidget {
   const BottomActionsRow({
     super.key,
-    required this.audioId,
     required this.metadata,
     required this.iconSize,
     required this.isLargeScreen,
     required this.lyricsController,
   });
-  final dynamic audioId;
   final MediaItem metadata;
   final double iconSize;
   final bool isLargeScreen;
@@ -54,27 +52,26 @@ class BottomActionsRow extends StatefulWidget {
 class _BottomActionsRowState extends State<BottomActionsRow> {
   late final ValueNotifier<bool> _songLikeStatus;
   late final ValueNotifier<bool> _songOfflineStatus;
+  late final String? audioId = widget.metadata.id;
 
   @override
   void initState() {
     super.initState();
-    _songLikeStatus = ValueNotifier<bool>(isSongAlreadyLiked(widget.audioId));
-    _songOfflineStatus = ValueNotifier<bool>(
-      isSongAlreadyOffline(widget.audioId),
-    );
+    _songLikeStatus = ValueNotifier<bool>(isSongAlreadyLiked(audioId));
+    _songOfflineStatus = ValueNotifier<bool>(isSongAlreadyOffline(audioId));
     userLikedSongsList.addListener(_syncLikeStatus);
     userOfflineSongs.addListener(_syncOfflineStatus);
   }
 
   void _syncLikeStatus() {
-    final newStatus = isSongAlreadyLiked(widget.audioId);
+    final newStatus = isSongAlreadyLiked(audioId);
     if (_songLikeStatus.value != newStatus) {
       _songLikeStatus.value = newStatus;
     }
   }
 
   void _syncOfflineStatus() {
-    final newStatus = isSongAlreadyOffline(widget.audioId);
+    final newStatus = isSongAlreadyOffline(audioId);
     if (_songOfflineStatus.value != newStatus) {
       _songOfflineStatus.value = newStatus;
     }
@@ -83,9 +80,9 @@ class _BottomActionsRowState extends State<BottomActionsRow> {
   @override
   void didUpdateWidget(BottomActionsRow oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.audioId != widget.audioId) {
-      _songLikeStatus.value = isSongAlreadyLiked(widget.audioId);
-      _songOfflineStatus.value = isSongAlreadyOffline(widget.audioId);
+    if (oldWidget.metadata.id != widget.metadata.id) {
+      _songLikeStatus.value = isSongAlreadyLiked(audioId);
+      _songOfflineStatus.value = isSongAlreadyOffline(audioId);
     }
   }
 
@@ -121,11 +118,11 @@ class _BottomActionsRowState extends State<BottomActionsRow> {
             colorScheme: colorScheme,
             size: responsiveIconSize,
             statusNotifier: _songOfflineStatus,
-            onPressed: widget.audioId == null
+            onPressed: audioId == null
                 ? null
                 : () => _toggleOffline(
                     _songOfflineStatus,
-                    widget.audioId,
+                    audioId,
                     widget.metadata,
                   ),
             tooltip: l10n.makeOffline,
@@ -174,7 +171,7 @@ class _BottomActionsRowState extends State<BottomActionsRow> {
               activeColor: colorScheme.primary,
               onPressed: () {
                 updateSongLikeStatus(
-                  widget.audioId,
+                  audioId,
                   !_songLikeStatus.value,
                   songData: mediaItemToMap(widget.metadata),
                 );
@@ -308,7 +305,7 @@ class _BottomActionsRowState extends State<BottomActionsRow> {
 
 Future<void> _toggleOffline(
   ValueNotifier<bool> status,
-  dynamic audioId,
+  String? audioId,
   MediaItem metadata,
 ) async {
   final originalValue = status.value;
@@ -431,7 +428,10 @@ void _showSleepTimerDialog(BuildContext context) {
                         showToast(
                           context,
                           context.l10n!.sleepTimerSet,
-                          duration: const Duration(seconds: 1, milliseconds: 500),
+                          duration: const Duration(
+                            seconds: 1,
+                            milliseconds: 500,
+                          ),
                         );
                         Navigator.pop(context);
                       },

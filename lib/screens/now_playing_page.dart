@@ -160,7 +160,6 @@ class _DesktopLayout extends StatelessWidget {
                     ),
                   ),
                 BottomActionsRow(
-                  audioId: metadata.extras?['ytid'],
                   metadata: metadata,
                   iconSize: adjustedMiniIconSize,
                   isLargeScreen: true,
@@ -231,7 +230,6 @@ class _MobileLayout extends StatelessWidget {
               ),
             ),
           BottomActionsRow(
-            audioId: metadata.extras?['ytid'],
             metadata: metadata,
             iconSize: adjustedMiniIconSize,
             isLargeScreen: isLargeScreen,
@@ -275,7 +273,6 @@ class _MobileLayout extends StatelessWidget {
                     ),
                   ),
                 BottomActionsRow(
-                  audioId: metadata.extras?['ytid'],
                   metadata: metadata,
                   iconSize: adjustedMiniIconSize,
                   isLargeScreen: isLargeScreen,
