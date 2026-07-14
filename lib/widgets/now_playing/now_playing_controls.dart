@@ -134,35 +134,30 @@ class NowPlayingControls extends StatelessWidget {
   }
 
   bool _canOpenArtist(MediaItem metadata) {
-    final artist = metadata.artist?.trim() ?? '';
-    final artistId = metadata.extras?['artistId']?.toString().trim() ?? '';
-    final sourceSongId = metadata.extras?['ytid']?.toString().trim() ?? '';
-
+    final info = _extractArtistInfo(metadata);
     return !offlineMode.value &&
-        (artist.isNotEmpty || artistId.isNotEmpty || sourceSongId.isNotEmpty);
+        (info.artist.isNotEmpty ||
+            info.artistId.isNotEmpty ||
+            info.sourceSongId.isNotEmpty);
   }
 
   void _openArtistPage(BuildContext context, MediaItem metadata) {
-    final artist = metadata.artist?.trim() ?? '';
-    final artistId = metadata.extras?['artistId']?.toString().trim() ?? '';
-    final sourceSongId = metadata.extras?['ytid']?.toString().trim() ?? '';
-    final videoAuthor =
-        metadata.extras?['videoAuthor']?.toString().trim() ?? '';
-    final lookup = artistId.isNotEmpty
-        ? artistId
-        : artist.isNotEmpty
-        ? artist
-        : sourceSongId;
+    final info = _extractArtistInfo(metadata);
+    final lookup = info.artistId.isNotEmpty
+        ? info.artistId
+        : info.artist.isNotEmpty
+        ? info.artist
+        : info.sourceSongId;
 
     if (lookup.isEmpty) return;
 
     final router = GoRouter.of(context);
     final basePath = _artistRouteBasePath(context);
     final artistData = {
-      'ytid': artistId.isNotEmpty ? artistId : lookup,
-      if (artist.isNotEmpty) 'title': artist,
-      if (sourceSongId.isNotEmpty) 'sourceSongId': sourceSongId,
-      if (videoAuthor.isNotEmpty) 'videoAuthor': videoAuthor,
+      'ytid': info.artistId.isNotEmpty ? info.artistId : lookup,
+      if (info.artist.isNotEmpty) 'title': info.artist,
+      if (info.sourceSongId.isNotEmpty) 'sourceSongId': info.sourceSongId,
+      if (info.videoAuthor.isNotEmpty) 'videoAuthor': info.videoAuthor,
       'source': 'youtube-artist',
       'isArtist': true,
       'list': [],
@@ -174,6 +169,16 @@ class NowPlayingControls extends StatelessWidget {
         '$basePath/artist/${Uri.encodeComponent(lookup)}',
         extra: artistData,
       ),
+    );
+  }
+
+  ({String artist, String artistId, String sourceSongId, String videoAuthor})
+  _extractArtistInfo(MediaItem metadata) {
+    return (
+      artist: metadata.artist?.trim() ?? '',
+      artistId: metadata.extras?['artistId']?.toString().trim() ?? '',
+      sourceSongId: metadata.extras?['ytid']?.toString().trim() ?? '',
+      videoAuthor: metadata.extras?['videoAuthor']?.toString().trim() ?? '',
     );
   }
 
