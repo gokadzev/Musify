@@ -283,7 +283,8 @@ class _QueueWidgetState extends State<QueueWidget> {
   }
 
   String _queueEntryKey(Map song, int index) {
-    return song['queueEntryId']?.toString() ?? 'legacy_${song['ytid']}_$index';
+    final entryId = song['queueEntryId']?.toString() ?? song['ytid'];
+    return '${entryId}_$index';
   }
 
   Widget _buildList(
