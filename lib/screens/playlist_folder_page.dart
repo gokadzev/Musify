@@ -32,6 +32,7 @@ import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/dialog_item.dart';
 import 'package:musify/widgets/mini_player_bottom_space.dart';
 import 'package:musify/widgets/playlist_bar.dart';
+import 'package:musify/widgets/popup_menu_item.dart';
 
 class PlaylistFolderPage extends StatefulWidget {
   const PlaylistFolderPage({
@@ -84,55 +85,33 @@ class _PlaylistFolderPageState extends State<PlaylistFolderPage> {
                     ),
                     color: Theme.of(context).colorScheme.surface,
                     itemBuilder: (context) => [
-                      PopupMenuItem<String>(
+                      buildPopupMenuItem<String>(
                         value: 'add',
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              FluentIcons.add_24_regular,
-                              color: Theme.of(context).colorScheme.primary,
-                              size: 18,
-                            ),
-                            const SizedBox(width: 10),
-                            Text(context.l10n!.addPlaylist),
-                          ],
-                        ),
+                        icon: FluentIcons.add_24_regular,
+                        label: context.l10n!.addPlaylist,
+                        colorScheme: Theme.of(context).colorScheme,
+                        iconSize: 18,
+                        spacing: 10,
                       ),
-                      PopupMenuItem<String>(
+                      buildPopupMenuItem<String>(
                         value: 'rename',
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              FluentIcons.edit_24_regular,
-                              color: Theme.of(context).colorScheme.primary,
-                              size: 18,
-                            ),
-                            const SizedBox(width: 10),
-                            Text(context.l10n!.editFolder),
-                          ],
-                        ),
+                        icon: FluentIcons.edit_24_regular,
+                        label: context.l10n!.editFolder,
+                        colorScheme: Theme.of(context).colorScheme,
+                        iconSize: 18,
+                        spacing: 10,
                       ),
-                      PopupMenuItem<String>(
+                      buildPopupMenuItem<String>(
                         value: 'delete',
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              FluentIcons.delete_24_regular,
-                              color: Theme.of(context).colorScheme.error,
-                              size: 18,
-                            ),
-                            const SizedBox(width: 10),
-                            Text(
-                              context.l10n!.deleteFolder,
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.error,
-                              ),
-                            ),
-                          ],
+                        icon: FluentIcons.delete_24_regular,
+                        label: context.l10n!.deleteFolder,
+                        colorScheme: Theme.of(context).colorScheme,
+                        iconColor: Theme.of(context).colorScheme.error,
+                        labelStyle: TextStyle(
+                          color: Theme.of(context).colorScheme.error,
                         ),
+                        iconSize: 18,
+                        spacing: 10,
                       ),
                     ],
                     onSelected: (value) {

@@ -38,6 +38,7 @@ import 'package:musify/utilities/playlist_utils.dart';
 import 'package:musify/widgets/dialog_item.dart';
 import 'package:musify/widgets/edit_playlist_dialog.dart';
 import 'package:musify/widgets/overflow_menu_button.dart';
+import 'package:musify/widgets/popup_menu_item.dart';
 import 'package:musify/widgets/spinner.dart';
 
 class PlaylistBar extends StatelessWidget {
@@ -237,136 +238,75 @@ class PlaylistBar extends StatelessWidget {
 
                     return [
                       if (!isFolder && _resolvedPlaylistId != null)
-                        PopupMenuItem<String>(
+                        buildPopupMenuItem<String>(
                           value: 'pin',
-                          child: Row(
-                            children: [
-                              Icon(
-                                isPinned
-                                    ? FluentIcons.pin_off_24_regular
-                                    : FluentIcons.pin_24_regular,
-                                color: colorScheme.primary,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                isPinned
-                                    ? context.l10n!.unpinFromLibrary
-                                    : context.l10n!.pinToLibrary,
-                              ),
-                            ],
-                          ),
+                          icon: isPinned
+                              ? FluentIcons.pin_off_24_regular
+                              : FluentIcons.pin_24_regular,
+                          label: isPinned
+                              ? context.l10n!.unpinFromLibrary
+                              : context.l10n!.pinToLibrary,
+                          colorScheme: colorScheme,
                         ),
-
                       if (!isFolder && (onDelete == null || !isUserCreated))
-                        PopupMenuItem<String>(
+                        buildPopupMenuItem<String>(
                           value: 'like',
-                          child: Row(
-                            children: [
-                              Icon(
-                                likeStatusToIconMapper[isLiked],
-                                color: colorScheme.primary,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                isLiked
-                                    ? context.l10n!.removeFromLikedPlaylists
-                                    : context.l10n!.addToLikedPlaylists,
-                              ),
-                            ],
-                          ),
+                          icon: likeStatusToIconMapper[isLiked]!,
+                          label: isLiked
+                              ? context.l10n!.removeFromLikedPlaylists
+                              : context.l10n!.addToLikedPlaylists,
+                          colorScheme: colorScheme,
                         ),
-
                       if (_canAddToPlaylist)
-                        PopupMenuItem<String>(
+                        buildPopupMenuItem<String>(
                           value: 'add_to_playlist',
-                          child: Row(
-                            children: [
-                              Icon(
-                                FluentIcons.album_add_24_regular,
-                                color: colorScheme.primary,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(context.l10n!.addToPlaylist),
-                            ],
-                          ),
+                          icon: FluentIcons.album_add_24_regular,
+                          label: context.l10n!.addToPlaylist,
+                          colorScheme: colorScheme,
                         ),
-
                       if (isOffline)
-                        PopupMenuItem<String>(
+                        buildPopupMenuItem<String>(
                           value: 'remove_offline',
-                          child: Row(
-                            children: [
-                              Icon(
-                                FluentIcons.cloud_off_24_regular,
-                                color: colorScheme.error,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(context.l10n!.removeOffline),
-                            ],
-                          ),
+                          icon: FluentIcons.cloud_off_24_regular,
+                          label: context.l10n!.removeOffline,
+                          colorScheme: colorScheme,
+                          iconColor: colorScheme.error,
                         ),
-
                       if (playlistData != null &&
                           !isFolder &&
                           (playlistData!['source'] == 'user-created' ||
                               playlistData!['source'] == 'user-youtube'))
-                        PopupMenuItem<String>(
+                        buildPopupMenuItem<String>(
                           value: 'moveToFolder',
-                          child: Row(
-                            children: [
-                              Icon(
-                                FluentIcons.folder_24_regular,
-                                color: colorScheme.primary,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(context.l10n!.moveToFolder),
-                            ],
-                          ),
+                          icon: FluentIcons.folder_24_regular,
+                          label: context.l10n!.moveToFolder,
+                          colorScheme: colorScheme,
                         ),
-
                       if (playlistData != null &&
                           (isFolder ||
                               playlistData!['source'] == 'user-created'))
-                        PopupMenuItem<String>(
+                        buildPopupMenuItem<String>(
                           value: 'edit',
-                          child: Row(
-                            children: [
-                              Icon(
-                                FluentIcons.edit_24_regular,
-                                color: colorScheme.primary,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                isFolder
-                                    ? context.l10n!.editFolder
-                                    : context.l10n!.editPlaylist,
-                              ),
-                            ],
-                          ),
+                          icon: FluentIcons.edit_24_regular,
+                          label: isFolder
+                              ? context.l10n!.editFolder
+                              : context.l10n!.editPlaylist,
+                          colorScheme: colorScheme,
                         ),
-
                       if (onDelete != null)
-                        PopupMenuItem<String>(
+                        buildPopupMenuItem<String>(
                           value: 'delete',
-                          child: Row(
-                            children: [
-                              Icon(
-                                FluentIcons.delete_24_regular,
-                                color: isFolder
-                                    ? colorScheme.error
-                                    : colorScheme.primary,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                isFolder
-                                    ? context.l10n!.deleteFolder
-                                    : context.l10n!.deletePlaylist,
-                                style: isFolder
-                                    ? TextStyle(color: colorScheme.error)
-                                    : null,
-                              ),
-                            ],
-                          ),
+                          icon: FluentIcons.delete_24_regular,
+                          label: isFolder
+                              ? context.l10n!.deleteFolder
+                              : context.l10n!.deletePlaylist,
+                          colorScheme: colorScheme,
+                          iconColor: isFolder
+                              ? colorScheme.error
+                              : colorScheme.primary,
+                          labelStyle: isFolder
+                              ? TextStyle(color: colorScheme.error)
+                              : null,
                         ),
                     ];
                   },

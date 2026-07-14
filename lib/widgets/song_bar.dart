@@ -38,6 +38,7 @@ import 'package:musify/utilities/formatter.dart';
 import 'package:musify/utilities/playlist_dialogs.dart';
 import 'package:musify/widgets/no_artwork_cube.dart';
 import 'package:musify/widgets/overflow_menu_button.dart';
+import 'package:musify/widgets/popup_menu_item.dart';
 import 'package:musify/widgets/rename_song_dialog.dart';
 
 List<PopupMenuEntry<String>> _buildSongMenuItems({
@@ -65,21 +66,21 @@ List<PopupMenuEntry<String>> _buildSongMenuItems({
 
   return [
     if (showQueueActions)
-      _buildSimpleMenuItem(
+      buildPopupMenuItem<String>(
         value: 'play_next',
         icon: FluentIcons.receipt_play_24_regular,
         label: playNextText,
         colorScheme: colorScheme,
       ),
     if (showGoToArtist)
-      _buildSimpleMenuItem(
+      buildPopupMenuItem<String>(
         value: 'go_to_artist',
         icon: FluentIcons.person_24_regular,
         label: l10n.goToArtist,
         colorScheme: colorScheme,
       ),
     if (showQueueActions)
-      _buildSimpleMenuItem(
+      buildPopupMenuItem<String>(
         value: 'add_to_queue',
         icon: FluentIcons.text_bullet_list_add_24_regular,
         label: addToQueueText,
@@ -91,37 +92,45 @@ List<PopupMenuEntry<String>> _buildSongMenuItems({
         child: ValueListenableBuilder<bool>(
           valueListenable: songLikeStatus,
           builder: (_, value, __) {
-            return _MenuItemContent(
-              icon: _SongBarState.likeStatusToIconMapper[value]!,
-              label: value ? removeFromLikedSongsText : addToLikedSongsText,
-              colorScheme: colorScheme,
+            return Row(
+              children: [
+                Icon(
+                  _SongBarState.likeStatusToIconMapper[value],
+                  color: colorScheme.primary,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  value ? removeFromLikedSongsText : addToLikedSongsText,
+                  style: TextStyle(color: colorScheme.onSurface),
+                ),
+              ],
             );
           },
         ),
       ),
     if (canRename)
-      _buildSimpleMenuItem(
+      buildPopupMenuItem<String>(
         value: 'rename',
         icon: FluentIcons.edit_24_regular,
         label: renameSongText,
         colorScheme: colorScheme,
       ),
     if (canRemove)
-      _buildSimpleMenuItem(
+      buildPopupMenuItem<String>(
         value: 'remove',
         icon: FluentIcons.delete_24_regular,
         label: removeFromPlaylistText,
         colorScheme: colorScheme,
       ),
     if (!offlineMode.value)
-      _buildSimpleMenuItem(
+      buildPopupMenuItem<String>(
         value: 'add_to_playlist',
         icon: FluentIcons.album_add_24_regular,
         label: addToPlaylistText,
         colorScheme: colorScheme,
       ),
     if (isRecentSong)
-      _buildSimpleMenuItem(
+      buildPopupMenuItem<String>(
         value: 'remove_from_recents',
         icon: FluentIcons.delete_24_regular,
         label: removeFromRecentlyPlayedText,
@@ -133,12 +142,20 @@ List<PopupMenuEntry<String>> _buildSongMenuItems({
         child: ValueListenableBuilder<bool>(
           valueListenable: songOfflineStatus,
           builder: (_, value, __) {
-            return _MenuItemContent(
-              icon: value
-                  ? FluentIcons.cloud_dismiss_24_regular
-                  : FluentIcons.cloud_arrow_down_24_regular,
-              label: value ? removeOfflineText : makeOfflineText,
-              colorScheme: colorScheme,
+            return Row(
+              children: [
+                Icon(
+                  value
+                      ? FluentIcons.cloud_dismiss_24_regular
+                      : FluentIcons.cloud_arrow_down_24_regular,
+                  color: colorScheme.primary,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  value ? removeOfflineText : makeOfflineText,
+                  style: TextStyle(color: colorScheme.onSurface),
+                ),
+              ],
             );
           },
         ),
@@ -843,41 +860,6 @@ class _ArtworkDisplay extends StatelessWidget {
           },
         );
       },
-    );
-  }
-}
-
-PopupMenuEntry<String> _buildSimpleMenuItem({
-  required String value,
-  required IconData icon,
-  required String label,
-  required ColorScheme colorScheme,
-}) {
-  return PopupMenuItem<String>(
-    value: value,
-    child: _MenuItemContent(icon: icon, label: label, colorScheme: colorScheme),
-  );
-}
-
-class _MenuItemContent extends StatelessWidget {
-  const _MenuItemContent({
-    required this.icon,
-    required this.label,
-    required this.colorScheme,
-  });
-
-  final IconData icon;
-  final String label;
-  final ColorScheme colorScheme;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Icon(icon, color: colorScheme.primary),
-        const SizedBox(width: 8),
-        Text(label, style: TextStyle(color: colorScheme.secondary)),
-      ],
     );
   }
 }
