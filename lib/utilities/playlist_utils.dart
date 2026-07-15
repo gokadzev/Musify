@@ -103,4 +103,30 @@ class PlaylistUtils {
     final list = playlist['list'] as List<dynamic>? ?? [];
     return list.indexWhere((s) => s is Map && s['ytid'] == songYtid);
   }
+
+  /// Check if a playlist already exists by title and song ytids.
+  static bool playlistExists(
+    Map<String, dynamic> playlist,
+    List<String> incomingYtids,
+    List<dynamic> playlistsToCheck,
+  ) {
+    return playlistsToCheck.any((p) {
+      if (p['title'] != playlist['title']) return false;
+      final existingList = (p['list'] as List<dynamic>?) ?? [];
+      final existingYtids = existingList
+          .map((s) => s['ytid']?.toString())
+          .where((e) => e != null)
+          .toList();
+      if (existingYtids.length != incomingYtids.length) return false;
+      return listsEqual(existingYtids, incomingYtids);
+    });
+  }
+
+  /// Compare two lists of strings for equality.
+  static bool listsEqual(List<String?> list1, List<String> list2) {
+    for (var i = 0; i < list1.length; i++) {
+      if (list1[i] != list2[i]) return false;
+    }
+    return true;
+  }
 }

@@ -325,73 +325,64 @@ Future<void> initialisation() async {
 }
 
 void handleIncomingLink(Uri? uri) async {
-  if (uri != null && uri.scheme == 'musify' && uri.host == 'playlist') {
-    try {
-      if (uri.pathSegments[0] == 'custom') {
-        final encodedPlaylist = uri.pathSegments[1];
+  if (uri == null || uri.scheme != 'musify' || uri.host != 'playlist') return;
 
-        final playlist = await PlaylistSharingService.decodeAndExpandPlaylist(
-          encodedPlaylist,
-        );
+  if (uri.pathSegments.length < 2 || uri.pathSegments[0] != 'custom') return;
 
-        if (playlist != null) {
-          // Ensure the incoming playlist has a unique id so it can be removed later
-          if (playlist['ytid'] == null || playlist['ytid'].toString().isEmpty) {
-            playlist['ytid'] = PlaylistUtils.generateCustomPlaylistId();
-          }
-          // Check for duplicate by title and song ytids
-          final incomingYtids = (playlist['list'] as List<dynamic>)
-              .map((s) => s['ytid'].toString())
-              .toList();
+  try {
+    final encodedPlaylist = uri.pathSegments[1];
+    final playlist = await PlaylistSharingService.decodeAndExpandPlaylist(
+      encodedPlaylist,
+    );
 
-          final exists = userCustomPlaylists.value.any((p) {
-            if (p['title'] != playlist['title']) return false;
-            final existingList = (p['list'] as List<dynamic>?) ?? [];
-            final existingYtids = existingList
-                .map((s) => s['ytid']?.toString())
-                .where((e) => e != null)
-                .toList();
-            if (existingYtids.length != incomingYtids.length) return false;
-            for (var i = 0; i < incomingYtids.length; i++) {
-              if (existingYtids[i] != incomingYtids[i]) return false;
-            }
-            return true;
-          });
+    if (playlist == null) {
+      _showPlaylistError();
+      return;
+    }
 
-          if (exists) {
-            showToast(
-              NavigationManager().context,
-              NavigationManager().context.l10n!.playlistAlreadyExists,
-            );
-          } else {
-            userCustomPlaylists.value = [
-              ...userCustomPlaylists.value,
-              playlist,
-            ];
-            unawaited(
-              addOrUpdateData<List>(
-                'user',
-                'customPlaylists',
-                userCustomPlaylists.value,
-              ),
-            );
-            showToast(
-              NavigationManager().context,
-              '${NavigationManager().context.l10n!.addedSuccess}!',
-            );
-          }
-        } else {
-          showToast(
-            NavigationManager().context,
-            NavigationManager().context.l10n!.failedToLoadPlaylist,
-          );
-        }
-      }
-    } catch (e) {
+    // Ensure the incoming playlist has a unique id so it can be removed later
+    if (playlist['ytid'] == null || playlist['ytid'].toString().isEmpty) {
+      playlist['ytid'] = PlaylistUtils.generateCustomPlaylistId();
+    }
+
+    // Check for duplicate by title and song ytids
+    final incomingYtids = (playlist['list'] as List<dynamic>)
+        .map((s) => s['ytid'].toString())
+        .toList();
+
+    final isDuplicate = PlaylistUtils.playlistExists(
+      playlist,
+      incomingYtids,
+      userCustomPlaylists.value,
+    );
+
+    if (isDuplicate) {
       showToast(
         NavigationManager().context,
-        NavigationManager().context.l10n!.failedToLoadPlaylist,
+        NavigationManager().context.l10n!.playlistAlreadyExists,
+      );
+    } else {
+      userCustomPlaylists.value = [...userCustomPlaylists.value, playlist];
+      unawaited(
+        addOrUpdateData<List>(
+          'user',
+          'customPlaylists',
+          userCustomPlaylists.value,
+        ),
+      );
+      showToast(
+        NavigationManager().context,
+        '${NavigationManager().context.l10n!.addedSuccess}!',
       );
     }
+  } catch (e) {
+    _showPlaylistError();
   }
+}
+
+void _showPlaylistError() {
+  showToast(
+    NavigationManager().context,
+    NavigationManager().context.l10n!.failedToLoadPlaylist,
+  );
 }

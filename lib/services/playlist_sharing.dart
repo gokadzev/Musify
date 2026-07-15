@@ -28,7 +28,9 @@ import 'package:musify/utilities/formatter.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 class PlaylistSharingService {
-  static Map createCompactPlaylist(Map fullPlaylist) {
+  static Map<String, dynamic> createCompactPlaylist(
+    Map<String, dynamic> fullPlaylist,
+  ) {
     return {
       'title': fullPlaylist['title'],
       if (fullPlaylist['image'] != null) 'image': fullPlaylist['image'],
@@ -37,7 +39,9 @@ class PlaylistSharingService {
     };
   }
 
-  static Future<Map> expandCompactPlaylist(Map compactPlaylist) async {
+  static Future<Map<String, dynamic>> expandCompactPlaylist(
+    Map<String, dynamic> compactPlaylist,
+  ) async {
     final List<dynamic> songIds = compactPlaylist['list'];
     YoutubeExplode? ytClient;
     try {
@@ -76,15 +80,17 @@ class PlaylistSharingService {
     }
   }
 
-  static String encodePlaylist(Map playlist) {
+  static String encodePlaylist(Map<String, dynamic> playlist) {
     final compactPlaylist = createCompactPlaylist(playlist);
     return base64Url.encode(utf8.encode(json.encode(compactPlaylist)));
   }
 
-  static Future<Map?> decodeAndExpandPlaylist(String encodedPlaylist) async {
+  static Future<Map<String, dynamic>?> decodeAndExpandPlaylist(
+    String encodedPlaylist,
+  ) async {
     try {
       final jsonString = utf8.decode(base64Url.decode(encodedPlaylist));
-      final compactPlaylist = json.decode(jsonString) as Map;
+      final compactPlaylist = json.decode(jsonString) as Map<String, dynamic>;
       return await expandCompactPlaylist(compactPlaylist);
     } catch (e, stackTrace) {
       logger.log('Failed to decode playlist', error: e, stackTrace: stackTrace);
