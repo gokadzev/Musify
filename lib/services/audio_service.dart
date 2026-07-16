@@ -1104,8 +1104,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   void clearQueue() {
     try {
-      final currentSong = _currentQueueIndex >= 0 &&
-              _currentQueueIndex < _queueList.length
+      final currentSong =
+          _currentQueueIndex >= 0 && _currentQueueIndex < _queueList.length
           ? cloneMap(_queueList[_currentQueueIndex])
           : null;
 
@@ -2063,6 +2063,90 @@ class MusifyAudioHandler extends BaseAudioHandler {
       }
     } catch (e, stackTrace) {
       logger.log('Error playing playlist', error: e, stackTrace: stackTrace);
+    }
+  }
+
+  /// Play a radio stream directly without queue management
+  Future<bool> playRadioStream({
+    required String id,
+    required String name,
+    required String streamUrl,
+    required String image,
+    String? genre,
+  }) async {
+    try {
+      // Create a song-like map for the radio stream
+      final radioSong = {
+        'id': id,
+        'ytid': id, // Use radio ID as ytid for compatibility
+        'title': name,
+        'artist': genre ?? 'Radio Station',
+        'album': 'Live Stream',
+        'highResImage': image,
+        'lowResImage': image,
+        'duration': null, // Radio streams are live
+        'isLive': true,
+      };
+
+      _lastError = null;
+      if (audioPlayer.playing) {
+        listeningStatsService.recordListeningSessionProgress(
+          wasPlaying: audioPlayer.playing,
+        );
+        await audioPlayer.pause();
+      }
+
+      // Update media item and queue for mini player visibility
+      final mediaItem = mapToMediaItem(radioSong);
+      this.mediaItem.add(mediaItem);
+      queue.add([mediaItem]);
+
+      // Build audio source from stream URL
+      final audioSource = await buildAudioSource(
+        radioSong,
+        streamUrl,
+        false, // Radio streams are always online
+      );
+
+      if (audioSource == null) {
+        logger.log('Failed to build audio source for radio stream: $id');
+        _lastError = 'Failed to load radio stream';
+        return false;
+      }
+
+      // Play the radio stream
+      final wasPlayingBeforeSwap = audioPlayer.playing;
+
+      await audioPlayer
+          .setAudioSource(audioSource)
+          .timeout(_songTransitionTimeout);
+
+      listeningStatsService
+        ..finishListeningSession(
+          countCurrentTick: true,
+          wasPlaying: wasPlayingBeforeSwap,
+        )
+        ..startListeningSession(radioSong, duration: Duration.zero);
+
+      await audioPlayer.play().catchError((Object e, StackTrace stackTrace) {
+        logger.log(
+          'Error starting radio playback',
+          error: e,
+          stackTrace: stackTrace,
+        );
+        _lastError = e.toString();
+      });
+
+      _updatePlaybackState();
+      return true;
+    } catch (e, stackTrace) {
+      logger.log(
+        'Error playing radio stream',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      _lastError = e.toString();
+      return false;
     }
   }
 

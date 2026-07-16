@@ -26,19 +26,23 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:musify/constants/app_constants.dart';
+import 'package:musify/database/radio_stations.db.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
+import 'package:musify/models/radio_model.dart';
 import 'package:musify/services/common_services.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/playlists_manager.dart';
 import 'package:musify/services/router_service.dart';
 import 'package:musify/utilities/app_utils.dart';
+import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/widgets/artist_bar.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/custom_bar.dart';
 import 'package:musify/widgets/custom_search_bar.dart';
 import 'package:musify/widgets/mini_player_bottom_space.dart';
 import 'package:musify/widgets/playlist_bar.dart';
+import 'package:musify/widgets/radio_station_card.dart';
 import 'package:musify/widgets/section_title.dart';
 import 'package:musify/widgets/song_bar.dart';
 
@@ -75,6 +79,7 @@ class _SearchPageState extends State<SearchPage> {
   List<Map<String, dynamic>> _artistsSearchResult = [];
   List<dynamic> _albumsSearchResult = [];
   List<dynamic> _playlistsSearchResult = [];
+  List<RadioStation> _radioStationsSearchResult = [];
   List<String> _suggestionsList = [];
   Timer? _debounce;
   int _latestSuggestionRequest = 0;
@@ -113,6 +118,7 @@ class _SearchPageState extends State<SearchPage> {
       _artistsSearchResult = [];
       _albumsSearchResult = [];
       _playlistsSearchResult = [];
+      _radioStationsSearchResult = [];
       _suggestionsList = [];
       if (mounted) setState(() {});
       return;
@@ -143,6 +149,16 @@ class _SearchPageState extends State<SearchPage> {
       }
       _albumsSearchResult = results[2];
       _playlistsSearchResult = results[3];
+
+      // Filter radio stations by name or genre
+      _radioStationsSearchResult = radioStationsDB
+          .where(
+            (station) =>
+                station.name.toLowerCase().contains(query.toLowerCase()) ||
+                (station.genre?.toLowerCase().contains(query.toLowerCase()) ??
+                    false),
+          )
+          .toList();
     } catch (e, stackTrace) {
       logger.log(
         'Error while searching online songs',
@@ -250,7 +266,8 @@ class _SearchPageState extends State<SearchPage> {
                       (_songsSearchResult.isEmpty &&
                           _artistsSearchResult.isEmpty &&
                           _albumsSearchResult.isEmpty &&
-                          _playlistsSearchResult.isEmpty))
+                          _playlistsSearchResult.isEmpty &&
+                          _radioStationsSearchResult.isEmpty))
                   ? ValueListenableBuilder<List>(
                       valueListenable: searchHistoryNotifier,
                       builder: (context, searchHistory, _) {
@@ -444,6 +461,48 @@ class _SearchPageState extends State<SearchPage> {
               playlistArtwork: playlist['image'],
               cubeIcon: FluentIcons.apps_list_24_filled,
               borderRadius: borderRadius,
+            ),
+          ),
+        );
+      }
+    }
+
+    // Radio Stations section
+    if (_radioStationsSearchResult.isNotEmpty) {
+      widgets.add(
+        SectionTitle(
+          'Radio Stations',
+          primaryColor,
+          icon: FluentIcons.speaker_2_24_filled,
+        ),
+      );
+
+      final stationsCount = _radioStationsSearchResult.length > maxSongsInList
+          ? maxSongsInList
+          : _radioStationsSearchResult.length;
+
+      for (var index = 0; index < stationsCount; index++) {
+        final station = _radioStationsSearchResult[index];
+        final isLast = index == stationsCount - 1;
+
+        widgets.add(
+          Padding(
+            padding: isLast ? commonListViewBottomPadding : EdgeInsets.zero,
+            child: RadioStationCard(
+              key: listItemKey('search_radio_station', index, station),
+              station: station,
+              onPressed: () async {
+                final success = await audioHandler.playRadioStream(
+                  id: station.id,
+                  name: station.name,
+                  streamUrl: station.streamUrl,
+                  image: station.image,
+                  genre: station.genre,
+                );
+                if (!success && context.mounted) {
+                  showToast(context, 'Failed to play radio station');
+                }
+              },
             ),
           ),
         );

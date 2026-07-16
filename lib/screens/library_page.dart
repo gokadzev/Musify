@@ -265,13 +265,16 @@ class _LibraryPageState extends State<LibraryPage> {
                   onPressed: () =>
                       NavigationManager.router.go('/library/userSongs/offline'),
                   cubeIcon: FluentIcons.cloud_off_24_regular,
-                  borderRadius: !isOffline
-                      ? (hasCustomPlaylists || hasFolders
-                            ? BorderRadius.zero
-                            : commonCustomBarRadiusLast)
-                      : (hasCustomPlaylists || hasFolders
-                            ? commonCustomBarRadiusFirst
-                            : commonCustomBarRadius),
+                  showBuildActions: false,
+                ),
+                PlaylistBar(
+                  context.l10n!.radioStations,
+                  onPressed: () =>
+                      NavigationManager.router.go('/library/radioStations'),
+                  cubeIcon: FluentIcons.sound_source_24_regular,
+                  borderRadius: hasCustomPlaylists || hasFolders
+                      ? BorderRadius.zero
+                      : commonCustomBarRadiusLast,
                   showBuildActions: false,
                 ),
               ],
