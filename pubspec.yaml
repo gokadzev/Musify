@@ -9,7 +9,7 @@ version: 10.1.0+175 # run update.sh after changing the version
 
 environment:
   sdk: '>=3.12.0 <4.0.0'
-  flutter: ^3.44.5
+  flutter: ^3.44.6
 
 dependencies:
   app_links: ^7.2.1
