@@ -44,6 +44,13 @@ ValueNotifier<List> userLikedSongsList = ValueNotifier<List>(
   Hive.box('user').get('likedSongs', defaultValue: []),
 );
 
+ValueNotifier<List<String>> userLikedRadioStations =
+    ValueNotifier<List<String>>(
+      List<String>.from(
+        Hive.box('user').get('likedRadioStations', defaultValue: []),
+      ),
+    );
+
 ValueNotifier<List> userRecentlyPlayed = ValueNotifier<List>(
   Hive.box('user').get('recentlyPlayedSongs', defaultValue: []),
 );
@@ -394,6 +401,34 @@ bool isPlaylistAlreadyLiked(playlistIdToCheck) {
   return userLikedPlaylists.value.any(
     (playlist) => playlist['ytid']?.toString() == playlistId,
   );
+}
+
+bool isRadioStationLiked(String radioStationId) {
+  return userLikedRadioStations.value.contains(radioStationId);
+}
+
+Future<void> addRadioStationToLiked(String radioStationId) async {
+  if (!userLikedRadioStations.value.contains(radioStationId)) {
+    final updatedList = List<String>.from(userLikedRadioStations.value)
+      ..add(radioStationId);
+    userLikedRadioStations.value = updatedList;
+    await addOrUpdateData<List<String>>(
+      'user',
+      'likedRadioStations',
+      updatedList,
+    );
+  }
+}
+
+Future<void> removeRadioStationFromLiked(String radioStationId) async {
+  if (userLikedRadioStations.value.contains(radioStationId)) {
+    final updatedList = List<String>.from(userLikedRadioStations.value)
+      ..remove(radioStationId);
+    userLikedRadioStations.value = updatedList;
+    unawaited(
+      addOrUpdateData<List<String>>('user', 'likedRadioStations', updatedList),
+    );
+  }
 }
 
 bool isSongAlreadyOffline(songIdToCheck) =>

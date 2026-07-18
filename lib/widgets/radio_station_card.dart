@@ -22,6 +22,7 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/models/radio_model.dart';
+import 'package:musify/services/common_services.dart';
 import 'package:musify/utilities/artwork_provider.dart';
 
 class RadioStationCard extends StatefulWidget {
@@ -29,10 +30,12 @@ class RadioStationCard extends StatefulWidget {
     super.key,
     required this.station,
     required this.onPressed,
+    this.onFavoritesChanged,
   });
 
   final RadioStation station;
   final VoidCallback onPressed;
+  final VoidCallback? onFavoritesChanged;
 
   @override
   State<RadioStationCard> createState() => _RadioStationCardState();
@@ -43,6 +46,7 @@ class _RadioStationCardState extends State<RadioStationCard>
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
   late Animation<double> _opacityAnimation;
+  late ValueNotifier<bool> _isFavorited;
 
   @override
   void initState() {
@@ -59,10 +63,22 @@ class _RadioStationCardState extends State<RadioStationCard>
     _opacityAnimation = Tween<double>(begin: 1, end: 0.85).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
+
+    _isFavorited = ValueNotifier<bool>(isRadioStationLiked(widget.station.id));
+    userLikedRadioStations.addListener(_onFavoritesUpdated);
+  }
+
+  void _onFavoritesUpdated() {
+    final newStatus = isRadioStationLiked(widget.station.id);
+    if (_isFavorited.value != newStatus) {
+      _isFavorited.value = newStatus;
+    }
   }
 
   @override
   void dispose() {
+    userLikedRadioStations.removeListener(_onFavoritesUpdated);
+    _isFavorited.dispose();
     _animationController.dispose();
     super.dispose();
   }
@@ -78,6 +94,15 @@ class _RadioStationCardState extends State<RadioStationCard>
 
   void _onTapCancel() {
     _animationController.reverse();
+  }
+
+  Future<void> _handleFavoriteTap() async {
+    if (isRadioStationLiked(widget.station.id)) {
+      await removeRadioStationFromLiked(widget.station.id);
+    } else {
+      await addRadioStationToLiked(widget.station.id);
+    }
+    widget.onFavoritesChanged?.call();
   }
 
   @override
@@ -187,8 +212,42 @@ class _RadioStationCardState extends State<RadioStationCard>
                       ),
                     ),
 
-                    /// Play button
+                    /// Favorite and play buttons
                     const SizedBox(width: 12),
+                    ValueListenableBuilder<bool>(
+                      valueListenable: _isFavorited,
+                      builder: (context, isFavorited, _) {
+                        return GestureDetector(
+                          onTap: _handleFavoriteTap,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: isFavorited
+                                  ? colorScheme.primaryContainer
+                                  : colorScheme.surface,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: colorScheme.outline.withValues(
+                                  alpha: 0.3,
+                                ),
+                              ),
+                            ),
+                            padding: const EdgeInsets.all(10),
+                            child: Icon(
+                              isFavorited
+                                  ? FluentIcons.heart_24_filled
+                                  : FluentIcons.heart_24_regular,
+                              color: isFavorited
+                                  ? colorScheme.onPrimaryContainer
+                                  : colorScheme.onSurface,
+                              size: 20,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+
+                    /// Play button
+                    const SizedBox(width: 8),
                     Container(
                       decoration: BoxDecoration(
                         color: colorScheme.primary.withValues(alpha: 0.15),
