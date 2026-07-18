@@ -41,30 +41,14 @@ class RadioStationCard extends StatefulWidget {
   State<RadioStationCard> createState() => _RadioStationCardState();
 }
 
-class _RadioStationCardState extends State<RadioStationCard>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _scaleAnimation;
-  late Animation<double> _opacityAnimation;
-  late ValueNotifier<bool> _isFavorited;
+class _RadioStationCardState extends State<RadioStationCard> {
+  late final ValueNotifier<bool> _isFavorited = ValueNotifier<bool>(
+    isRadioStationLiked(widget.station.id),
+  );
 
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
-
-    _scaleAnimation = Tween<double>(begin: 1, end: 0.98).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
-    );
-
-    _opacityAnimation = Tween<double>(begin: 1, end: 0.85).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
-    );
-
-    _isFavorited = ValueNotifier<bool>(isRadioStationLiked(widget.station.id));
     userLikedRadioStations.addListener(_onFavoritesUpdated);
   }
 
@@ -79,191 +63,126 @@ class _RadioStationCardState extends State<RadioStationCard>
   void dispose() {
     userLikedRadioStations.removeListener(_onFavoritesUpdated);
     _isFavorited.dispose();
-    _animationController.dispose();
     super.dispose();
   }
 
-  void _onTapDown(TapDownDetails details) {
-    _animationController.forward();
-  }
-
-  void _onTapUp(TapUpDetails details) {
-    _animationController.reverse();
-    widget.onPressed();
-  }
-
-  void _onTapCancel() {
-    _animationController.reverse();
-  }
-
   Future<void> _handleFavoriteTap() async {
-    if (isRadioStationLiked(widget.station.id)) {
-      await removeRadioStationFromLiked(widget.station.id);
-    } else {
-      await addRadioStationToLiked(widget.station.id);
+    final wasFavorited = _isFavorited.value;
+    _isFavorited.value = !wasFavorited;
+
+    try {
+      if (wasFavorited) {
+        await removeRadioStationFromLiked(widget.station.id);
+      } else {
+        await addRadioStationToLiked(widget.station.id);
+      }
+      widget.onFavoritesChanged?.call();
+    } catch (e) {
+      _isFavorited.value = wasFavorited; // revert on failure
     }
-    widget.onFavoritesChanged?.call();
   }
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
 
-    return GestureDetector(
-      onTapDown: _onTapDown,
-      onTapUp: _onTapUp,
-      onTapCancel: _onTapCancel,
-      child: ScaleTransition(
-        scale: _scaleAnimation,
-        child: AnimatedBuilder(
-          animation: _opacityAnimation,
-          builder: (context, child) =>
-              Opacity(opacity: _opacityAnimation.value, child: child),
-          child: DecoratedBox(
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
-            child: Material(
-              color: colorScheme.surfaceContainer,
-              borderRadius: BorderRadius.circular(16),
-              child: Padding(
-                padding: const EdgeInsets.all(14),
-                child: Row(
+    return Card(
+      elevation: 0,
+      color: colorScheme.surfaceContainer,
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      margin: EdgeInsets.zero,
+      child: InkWell(
+        onTap: widget.onPressed,
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image(
+                  image: ArtworkProvider.get(widget.station.image),
+                  width: 56,
+                  height: 56,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    width: 56,
+                    height: 56,
+                    color: colorScheme.primaryContainer,
+                    child: Icon(
+                      FluentIcons.speaker_2_24_filled,
+                      color: colorScheme.onPrimaryContainer,
+                      size: 26,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    /// Album artwork
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Image(
-                        image: ArtworkProvider.get(widget.station.image),
-                        width: 72,
-                        height: 72,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            width: 72,
-                            height: 72,
-                            decoration: BoxDecoration(
-                              color: colorScheme.primaryContainer,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Icon(
-                              FluentIcons.speaker_2_24_filled,
-                              color: colorScheme.onPrimaryContainer,
-                              size: 32,
-                            ),
-                          );
-                        },
+                    Text(
+                      widget.station.name,
+                      style: textTheme.titleSmall?.copyWith(
+                        color: colorScheme.onSurface,
+                        fontWeight: FontWeight.w700,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(width: 16),
-
-                    /// Station details
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          /// Station name
-                          Text(
-                            widget.station.name,
-                            style: Theme.of(context).textTheme.titleMedium
-                                ?.copyWith(
-                                  color: colorScheme.onSurface,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-
-                          /// Genre label
-                          if (widget.station.genre != null) ...[
-                            const SizedBox(height: 6),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 3,
-                              ),
-                              decoration: BoxDecoration(
-                                color: colorScheme.secondaryContainer
-                                    .withValues(alpha: 0.6),
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Text(
-                                widget.station.genre!,
-                                style: Theme.of(context).textTheme.labelSmall
-                                    ?.copyWith(
-                                      color: colorScheme.onSecondaryContainer,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ] else ...[
-                            const SizedBox(height: 6),
-                            Text(
-                              'Radio Station',
-                              style: Theme.of(context).textTheme.labelSmall
-                                  ?.copyWith(
-                                    color: colorScheme.onSurfaceVariant,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                            ),
-                          ],
-                        ],
+                    const SizedBox(height: 2),
+                    Text(
+                      widget.station.genre ?? 'Radio Station',
+                      style: textTheme.labelSmall?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                        fontWeight: FontWeight.w500,
                       ),
-                    ),
-
-                    /// Favorite and play buttons
-                    const SizedBox(width: 12),
-                    ValueListenableBuilder<bool>(
-                      valueListenable: _isFavorited,
-                      builder: (context, isFavorited, _) {
-                        return GestureDetector(
-                          onTap: _handleFavoriteTap,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: isFavorited
-                                  ? colorScheme.primaryContainer
-                                  : colorScheme.surface,
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: colorScheme.outline.withValues(
-                                  alpha: 0.3,
-                                ),
-                              ),
-                            ),
-                            padding: const EdgeInsets.all(10),
-                            child: Icon(
-                              isFavorited
-                                  ? FluentIcons.heart_24_filled
-                                  : FluentIcons.heart_24_regular,
-                              color: isFavorited
-                                  ? colorScheme.onPrimaryContainer
-                                  : colorScheme.onSurface,
-                              size: 20,
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-
-                    /// Play button
-                    const SizedBox(width: 8),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: colorScheme.primary.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      padding: const EdgeInsets.all(10),
-                      child: Icon(
-                        FluentIcons.play_24_filled,
-                        color: colorScheme.primary,
-                        size: 24,
-                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
               ),
-            ),
+              const SizedBox(width: 5),
+              ValueListenableBuilder<bool>(
+                valueListenable: _isFavorited,
+                builder: (context, isFavorited, _) {
+                  return IconButton.filledTonal(
+                    onPressed: _handleFavoriteTap,
+                    icon: Icon(
+                      isFavorited
+                          ? FluentIcons.heart_24_filled
+                          : FluentIcons.heart_24_regular,
+                      size: 18,
+                    ),
+                    style: IconButton.styleFrom(
+                      backgroundColor: isFavorited
+                          ? colorScheme.primaryContainer
+                          : colorScheme.surfaceContainerHighest,
+                      foregroundColor: isFavorited
+                          ? colorScheme.onPrimaryContainer
+                          : colorScheme.onSurfaceVariant,
+                      minimumSize: const Size(36, 36),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(width: 5),
+              IconButton.filled(
+                onPressed: widget.onPressed,
+                icon: const Icon(FluentIcons.play_24_filled, size: 18),
+                style: IconButton.styleFrom(
+                  backgroundColor: colorScheme.primary.withValues(alpha: 0.15),
+                  foregroundColor: colorScheme.primary,
+                  minimumSize: const Size(48, 48),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+              ),
+            ],
           ),
         ),
       ),
