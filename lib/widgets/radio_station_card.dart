@@ -111,7 +111,7 @@ class _RadioStationCardState extends State<RadioStationCard> {
                     height: 56,
                     color: colorScheme.primaryContainer,
                     child: Icon(
-                      FluentIcons.speaker_2_24_filled,
+                      FluentIcons.sound_source_24_regular,
                       color: colorScheme.onPrimaryContainer,
                       size: 26,
                     ),
