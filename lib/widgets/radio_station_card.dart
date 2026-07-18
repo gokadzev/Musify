@@ -93,7 +93,7 @@ class _RadioStationCardState extends State<RadioStationCard> {
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       margin: EdgeInsets.zero,
-      child: InkWell(
+      child: GestureDetector(
         onTap: widget.onPressed,
         child: Padding(
           padding: const EdgeInsets.all(10),
