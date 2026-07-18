@@ -162,7 +162,7 @@ class _BottomActionsRowState extends State<BottomActionsRow> {
               ),
               tooltip: l10n.addToPlaylist,
             ),
-          if (queue.isNotEmpty && !widget.isLargeScreen)
+          if (queue.isNotEmpty && !isRadioStation && !widget.isLargeScreen)
             _buildSimpleActionButton(
               context: context,
               icon: FluentIcons.apps_list_24_filled,
@@ -175,14 +175,15 @@ class _BottomActionsRowState extends State<BottomActionsRow> {
               tooltip: l10n.queue,
             ),
           if (!offlineMode.value) ...[
-            _buildSimpleActionButton(
-              context: context,
-              icon: FluentIcons.text_quote_24_regular,
-              colorScheme: colorScheme,
-              size: responsiveIconSize,
-              onPressed: widget.lyricsController.flipcard,
-              tooltip: l10n.lyrics,
-            ),
+            if (!isRadioStation)
+              _buildSimpleActionButton(
+                context: context,
+                icon: FluentIcons.text_quote_24_regular,
+                colorScheme: colorScheme,
+                size: responsiveIconSize,
+                onPressed: widget.lyricsController.flipcard,
+                tooltip: l10n.lyrics,
+              ),
             _buildActionButton(
               context: context,
               icon: FluentIcons.heart_24_regular,

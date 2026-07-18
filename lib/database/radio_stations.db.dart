@@ -41,7 +41,8 @@ List<RadioStation> radioStationsDB = [
   const RadioStation(
     id: 'r_bigfm',
     name: 'bigFM',
-    image: 'https://upload.wikimedia.org/wikipedia/de/f/f4/BigFM.svg',
+    image:
+        'https://file.atsw.de/production/static/1783676137495/ab66799083e298839f274a7a8dd9fa15.svg',
     streamUrl: 'https://stream.bigfm.de/deutschland/mp3-128/',
     genre: 'Pop',
   ),
