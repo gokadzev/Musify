@@ -675,6 +675,7 @@ Future<bool> makeSongOffline(dynamic song) async {
     if (isSongAlreadyOffline(ytid)) {
       final existingPath = FilePaths.getAudioPath(ytid);
       if (await File(existingPath).exists()) {
+        unawaited(cacheSponsorBlockSegments(ytid));
         return true;
       }
     }
@@ -701,6 +702,8 @@ Future<bool> makeSongOffline(dynamic song) async {
       await fileStream.flush();
       await fileStream.close();
       fileStream = null;
+
+      unawaited(cacheSponsorBlockSegments(ytid));
     } catch (e, stackTrace) {
       logger.log(
         'Error downloading audio file',
@@ -825,6 +828,57 @@ Future<bool> removeSongFromOffline(dynamic songId) async {
       stackTrace: stackTrace,
     );
     return false;
+  }
+}
+
+bool _sponsorSerialFirstCall = true;
+Future<void> _sponsorSerialChain = Future.value();
+
+Future<T> _sponsorSerialCall<T>(Future<T> Function() action) {
+  final result = _sponsorSerialChain.then((_) async {
+    if (_sponsorSerialFirstCall) {
+      _sponsorSerialFirstCall = false;
+    } else {
+      await Future.delayed(const Duration(seconds: 1));
+    }
+    return action();
+  });
+  _sponsorSerialChain = result.then((_) {}, onError: (_) {});
+  return result;
+}
+
+Future<void> cacheSponsorBlockSegments(String ytid) async {
+  try {
+    final cacheKey = 'sponsorSegments_$ytid';
+    if (await getData('cache', cacheKey) != null) return;
+    for (var attempt = 0; attempt < 2; attempt++) {
+      final segments = await _sponsorSerialCall(
+        () => getSkipSegments(ytid),
+      );
+      await addOrUpdateData<List>('cache', cacheKey, segments);
+      if (segments.isNotEmpty) return;
+      if (attempt == 0) await Future.delayed(const Duration(seconds: 1));
+    }
+  } catch (e, stackTrace) {
+    logger.log(
+      'Error caching sponsor block for $ytid',
+      error: e,
+      stackTrace: stackTrace,
+    );
+  }
+}
+
+Future<List<Map<String, int>>?> getCachedSponsorBlockSegments(
+  String ytid,
+) async {
+  try {
+    final cached = await getData('cache', 'sponsorSegments_$ytid');
+    if (cached is List) {
+      return cached.map((e) => Map<String, int>.from(e as Map)).toList();
+    }
+    return null;
+  } catch (_) {
+    return null;
   }
 }
 
