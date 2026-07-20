@@ -1497,21 +1497,111 @@ class MusifyAudioHandler extends BaseAudioHandler {
     );
   }
 
+  static const _rootLiked = 'liked_songs';
+  static const _rootOffline = 'offline_songs';
+  static const _rootRecent = 'recently_played';
+  static const _rootQueue = 'current_queue';
+
   @override
   Future<List<MediaItem>> getChildren(
     String parentMediaId, [
     Map<String, dynamic>? options,
   ]) async {
-    if (parentMediaId != AudioService.recentRootId &&
-        parentMediaId != AudioService.browsableRootId) {
-      return [];
+    if (parentMediaId == AudioService.recentRootId) {
+      final recentSong = _latestResumableSong();
+      final recentItem = recentSong == null
+          ? null
+          : _mediaItemForResumption(recentSong);
+      return recentItem == null ? [] : [recentItem];
     }
 
-    final recentSong = _latestResumableSong();
-    final recentItem = recentSong == null
-        ? null
-        : _mediaItemForResumption(recentSong);
-    return recentItem == null ? [] : [recentItem];
+    if (parentMediaId == AudioService.browsableRootId) {
+      return [
+        const MediaItem(
+          id: _rootQueue,
+          title: 'Now Playing Queue',
+          playable: false,
+          extras: {'isBrowsable': true},
+        ),
+        const MediaItem(
+          id: _rootLiked,
+          title: 'Liked Songs',
+          playable: false,
+          extras: {'isBrowsable': true},
+        ),
+        const MediaItem(
+          id: _rootOffline,
+          title: 'Downloaded',
+          playable: false,
+          extras: {'isBrowsable': true},
+        ),
+        const MediaItem(
+          id: _rootRecent,
+          title: 'Recently Played',
+          playable: false,
+          extras: {'isBrowsable': true},
+        ),
+      ];
+    }
+
+    switch (parentMediaId) {
+      case _rootQueue:
+        return _queueList.map(_getMediaItemForQueue).toList();
+      case _rootLiked:
+        return userLikedSongsList.value
+            .whereType<Map>()
+            .map((s) => mapToMediaItem(s).copyWith(playable: true))
+            .toList();
+      case _rootOffline:
+        return userOfflineSongs.value
+            .whereType<Map>()
+            .map((s) => mapToMediaItem(s).copyWith(playable: true))
+            .toList();
+      case _rootRecent:
+        return userRecentlyPlayed.value
+            .whereType<Map>()
+            .map((s) => mapToMediaItem(s).copyWith(playable: true))
+            .toList();
+      default:
+        return [];
+    }
+  }
+
+  @override
+  Future<void> playFromSearch(
+    String query, [
+    Map<String, dynamic>? extras,
+  ]) async {
+    if (query.trim().isEmpty) {
+      // "Play music" with no specifics
+      if (_queueList.isNotEmpty) {
+        await play();
+        return;
+      }
+      final recentSong = _latestResumableSong();
+      if (recentSong != null) await _playResumableSong(recentSong);
+      return;
+    }
+
+    final q = query.toLowerCase();
+    final candidates = [
+      ..._queueList,
+      ...userLikedSongsList.value.whereType<Map>(),
+      ...userOfflineSongs.value.whereType<Map>(),
+      ...userRecentlyPlayed.value.whereType<Map>(),
+    ];
+
+    final match = candidates.firstWhere((s) {
+      final title = s['title']?.toString().toLowerCase() ?? '';
+      final artist = s['artist']?.toString().toLowerCase() ?? '';
+      return title.contains(q) || artist.contains(q);
+    }, orElse: () => const {});
+
+    if (match.isNotEmpty) {
+      await _playResumableSong(match);
+    } else {
+      logger.log('playFromSearch: no local match for "$query"');
+    }
   }
 
   @override
