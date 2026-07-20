@@ -74,6 +74,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
   Timer? _debounceTimer;
   bool sleepTimerExpired = false;
   bool sleepTimerEndOfSong = false;
+  bool _sleepTimerFading = false;
+  double _preFadeVolume = 1;
+
+  static const int _sleepTimerFadeSteps = 20;
+  static const Duration _sleepTimerFadeDuration = Duration(seconds: 6);
 
   final List<Map> _queueList = [];
   final List<Map> _originalQueueList = [];
@@ -2539,12 +2544,14 @@ class MusifyAudioHandler extends BaseAudioHandler {
   Future<void> setSleepTimer(Duration duration) async {
     try {
       _sleepTimer?.cancel();
+      _sleepTimerFading = false;
       sleepTimerExpired = false;
       sleepTimerNotifier.value = duration;
 
-      _sleepTimer = Timer(duration, () async {
+      // Start the fade so total playback duration lands on the exact target
+      _sleepTimer = Timer(duration - _sleepTimerFadeDuration, () async {
         sleepTimerExpired = true;
-        await stop();
+        await _performSleepTimerFadeOut();
         sleepTimerNotifier.value = null;
       });
     } catch (e, stackTrace) {
@@ -2552,8 +2559,51 @@ class MusifyAudioHandler extends BaseAudioHandler {
     }
   }
 
-  void cancelSleepTimer() {
+  Future<void> _performSleepTimerFadeOut() async {
+    _sleepTimerFading = true;
+    _preFadeVolume = audioPlayer.volume;
+    final start = DateTime.now();
+
+    for (var i = 1; i <= _sleepTimerFadeSteps; i++) {
+      // Anchor each step to elapsed wall-clock time instead of summing fixed
+      // delays, so the setVolume platform-channel call overhead doesn't
+      // accumulate into extra seconds by the end of the fade.
+      final targetElapsed = _sleepTimerFadeDuration * i ~/ _sleepTimerFadeSteps;
+      final remaining = targetElapsed - DateTime.now().difference(start);
+      if (remaining > Duration.zero) {
+        await Future.delayed(remaining);
+      }
+      if (!_sleepTimerFading) {
+        await audioPlayer.setVolume(_preFadeVolume);
+        return;
+      }
+      await audioPlayer.setVolume(
+        _preFadeVolume * (1 - (i / _sleepTimerFadeSteps)),
+      );
+    }
+
+    _sleepTimerFading = false;
+    await stop();
+    // Restore volume only after stop to avoid audible click
+    await audioPlayer.setVolume(_preFadeVolume);
+  }
+
+  Future<void> _cancelSleepTimerFade() async {
+    if (_sleepTimerFading) {
+      _sleepTimerFading = false;
+      await audioPlayer.setVolume(_preFadeVolume);
+
+      _sleepTimer?.cancel();
+      _sleepTimer = null;
+      sleepTimerExpired = false;
+      sleepTimerEndOfSong = false;
+      sleepTimerNotifier.value = null;
+    }
+  }
+
+  Future<void> cancelSleepTimer() async {
     try {
+      await _cancelSleepTimerFade();
       _sleepTimer?.cancel();
       _sleepTimer = null;
       sleepTimerExpired = false;
