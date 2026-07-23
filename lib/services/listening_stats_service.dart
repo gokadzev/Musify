@@ -207,9 +207,7 @@ class ListeningStatsService {
     _sessionLastAudioPlayerPlaying = true;
   }
 
-  void recordListeningSessionProgress({
-    bool? wasPlaying,
-  }) {
+  void recordListeningSessionProgress({bool? wasPlaying}) {
     final song = _sessionSong;
     if (song == null) return;
 
@@ -229,10 +227,7 @@ class ListeningStatsService {
     }
 
     _sessionListened += listenedDuration;
-    recordListeningTime(
-      listenedDuration,
-      listenedAt: now,
-    );
+    recordListeningTime(listenedDuration, listenedAt: now);
 
     if (!_sessionQualified) {
       if (_sessionListened >= qualifiedPlaybackThreshold(_sessionDuration)) {
@@ -281,9 +276,7 @@ class ListeningStatsService {
     if (_sessionSong == null) return;
 
     if (countCurrentTick) {
-      recordListeningSessionProgress(
-        wasPlaying: wasPlaying,
-      );
+      recordListeningSessionProgress(wasPlaying: wasPlaying);
     }
 
     _sessionSong = null;
@@ -294,13 +287,99 @@ class ListeningStatsService {
     _sessionQualified = false;
     _sessionLastAudioPlayerPlaying = false;
     if (flushStats) {
-      unawaited(flush().catchError((error, stackTrace) {
-        logger.log(
-          'Error flushing listening stats',
-          error: error,
-          stackTrace: stackTrace,
-        );
-      }));
+      unawaited(
+        flush().catchError((error, stackTrace) {
+          logger.log(
+            'Error flushing listening stats',
+            error: error,
+            stackTrace: stackTrace,
+          );
+        }),
+      );
+    }
+  }
+
+  static final RegExp _youtubeIdPattern = RegExp(r'^[A-Za-z0-9_-]{11}$');
+
+  static const _radioStatsPurgedKey = 'radioStreamStatsPurged';
+
+  bool _looksLikeNonYoutubeEntry(Map<String, dynamic> song) {
+    final ytid = song['ytid']?.toString() ?? '';
+    return !_youtubeIdPattern.hasMatch(ytid);
+  }
+
+  int _readSeconds(dynamic seconds) {
+    if (seconds is int) return seconds;
+    if (seconds is num) return seconds.toInt();
+    return int.tryParse(seconds?.toString() ?? '') ?? 0;
+  }
+
+  /// Removes legacy radio-stream entries from already-persisted Wrapped
+  /// stats. Safe to call on every app startup: it only does real work, and
+  /// only writes to disk, the first time (guarded via Hive), and is a no-op
+  /// once the stats are clean.
+  Future<void> purgeLegacyRadioStreamStats() async {
+    try {
+      final settingsBox = Hive.box('settings');
+      if (settingsBox.get(_radioStatsPurgedKey) == true) return;
+
+      final stats = Map<String, dynamic>.from(_readStats());
+      var changedAnyMonth = false;
+
+      Map<String, dynamic> cleanMonth(dynamic monthValue) {
+        final month = Map<String, dynamic>.from(_asMap(monthValue) ?? {});
+        final songs = Map<String, dynamic>.from(_asMap(month['songs']) ?? {});
+
+        final strayKeys = <String>[];
+        var removedSeconds = 0;
+        for (final entry in songs.entries) {
+          final song = _asMap(entry.value);
+          if (song == null) continue;
+          if (_looksLikeNonYoutubeEntry(song)) {
+            strayKeys.add(entry.key);
+            removedSeconds += _readSeconds(song['seconds']);
+          }
+        }
+
+        if (strayKeys.isEmpty) return month;
+
+        changedAnyMonth = true;
+        for (final key in strayKeys) {
+          songs.remove(key);
+        }
+        month['songs'] = songs;
+
+        // totalSeconds tracks all listening time, including the radio time
+        // attributed to the entries just removed above, so correct it too.
+        final currentTotal = _readSeconds(month['totalSeconds']);
+        final newTotal = currentTotal - removedSeconds;
+        month['totalSeconds'] = newTotal > 0 ? newTotal : 0;
+
+        return month;
+      }
+
+      stats['currentMonth'] = cleanMonth(stats['currentMonth']);
+
+      final history = _asMap(stats['history']) ?? const <String, dynamic>{};
+      final newHistory = <String, dynamic>{};
+      for (final entry in history.entries) {
+        newHistory[entry.key] = cleanMonth(entry.value);
+      }
+      stats['history'] = newHistory;
+
+      if (changedAnyMonth) {
+        _stats = stats;
+        _markDirty();
+        await flush();
+      }
+
+      await settingsBox.put(_radioStatsPurgedKey, true);
+    } catch (e, stackTrace) {
+      logger.log(
+        'Error purging legacy radio stream stats',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
   }
 
@@ -336,11 +415,7 @@ class ListeningStatsService {
       return Duration(minutes: parts[0]!, seconds: parts[1]!);
     }
     if (parts.length == 3) {
-      return Duration(
-        hours: parts[0]!,
-        minutes: parts[1]!,
-        seconds: parts[2]!,
-      );
+      return Duration(hours: parts[0]!, minutes: parts[1]!, seconds: parts[2]!);
     }
 
     return null;
