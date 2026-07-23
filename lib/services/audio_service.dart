@@ -2211,12 +2211,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
           .setAudioSource(audioSource)
           .timeout(_songTransitionTimeout);
 
-      listeningStatsService
-        ..finishListeningSession(
-          countCurrentTick: true,
-          wasPlaying: wasPlayingBeforeSwap,
-        )
-        ..startListeningSession(radioSong, duration: Duration.zero);
+
+      listeningStatsService.finishListeningSession(
+        countCurrentTick: true,
+        wasPlaying: wasPlayingBeforeSwap,
+      );
 
       await audioPlayer.play().catchError((Object e, StackTrace stackTrace) {
         logger.log(
