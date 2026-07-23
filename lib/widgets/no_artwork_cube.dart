@@ -29,7 +29,7 @@ class NullArtworkWidget extends StatelessWidget {
     this.size = 220,
     this.iconSize,
     this.title,
-    this.borderRadius = 12,
+    this.borderRadius = 20,
   });
 
   final IconData icon;
@@ -41,9 +41,10 @@ class NullArtworkWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
 
-    // Calculate icon size based on container size if not provided
-    final calculatedIconSize = iconSize ?? (size * 0.3);
+    final badgeSize = size * 0.4;
+    final calculatedIconSize = iconSize ?? (badgeSize * 0.5);
 
     return SizedBox(
       width: size,
@@ -53,32 +54,41 @@ class NullArtworkWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(borderRadius),
           color: colorScheme.surfaceContainerHighest,
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Icon(
-              icon,
-              size: calculatedIconSize,
-              color: colorScheme.onSurfaceVariant,
-            ),
-            if (title != null) ...[
-              SizedBox(height: size * 0.04),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: size * 0.08),
-                child: Text(
-                  title!,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: colorScheme.onSurfaceVariant,
-                    fontSize: (size * 0.06).clamp(11.0, 14.0),
-                    fontWeight: FontWeight.w500,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 2,
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Container(
+                width: badgeSize,
+                height: badgeSize,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: colorScheme.primaryContainer.withValues(alpha: 0.55),
+                ),
+                child: Icon(
+                  icon,
+                  size: calculatedIconSize,
+                  color: colorScheme.onPrimaryContainer,
                 ),
               ),
+              if (title != null) ...[
+                SizedBox(height: size * 0.045),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: size * 0.08),
+                  child: Text(
+                    title!,
+                    textAlign: TextAlign.center,
+                    style: textTheme.labelMedium?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                  ),
+                ),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );
