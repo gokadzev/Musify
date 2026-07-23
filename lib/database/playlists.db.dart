@@ -319,8 +319,6 @@ List<Map<String, dynamic>> playlistsDB = [
   {
     'ytid': 'PLXpMeQYR1ilIgQ0klpqWf7-RdfouCeJLj',
     'title': 'Remix music 2026',
-    'image':
-        'https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da84be56484cc9d25aa2af1ea3e4',
     'list': [],
   },
   {

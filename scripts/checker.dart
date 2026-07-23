@@ -30,16 +30,22 @@ void main() async {
           }
         }
 
-        final imageAvailability = await isImageAvailable(playlist['image']);
-        if (!imageAvailability) {
-          if (playlist['isAlbum'] != null && playlist['isAlbum']) {
-            print(
-              '> The album artwork with the URL ${playlist['image']} is not available.',
-            );
-          } else {
-            print(
-              '> The playlist artwork with the URL ${playlist['image']} is not available.',
-            );
+        if (playlist['image'] == null) {
+          print(
+            '> The playlist with the ID ${playlist['ytid']} does not have an image URL.',
+          );
+        } else {
+          final imageAvailability = await isImageAvailable(playlist['image']);
+          if (!imageAvailability) {
+            if (playlist['isAlbum'] != null && playlist['isAlbum']) {
+              print(
+                '> The album artwork with the URL ${playlist['image']} is not available.',
+              );
+            } else {
+              print(
+                '> The playlist artwork with the URL ${playlist['image']} is not available.',
+              );
+            }
           }
         }
       } catch (e) {
