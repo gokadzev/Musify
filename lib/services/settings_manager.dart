@@ -72,6 +72,10 @@ final audioQualitySetting = ValueNotifier<String>(
   Hive.box('settings').get('audioQuality', defaultValue: 'high'),
 );
 
+final showAudioQualityBadge = ValueNotifier<bool>(
+  Hive.box('settings').get('showAudioQualityBadge', defaultValue: false),
+);
+
 List<double> _readEqualizerGains() {
   final raw = Hive.box(
     'settings',

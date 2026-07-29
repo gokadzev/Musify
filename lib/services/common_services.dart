@@ -547,6 +547,51 @@ Future<void> getSimilarSong(String songYtId) async {
   }
 }
 
+/// In-memory cache of the audio stream picked for a song at the current
+/// quality setting. The Hive cache only keeps the URL, so without this every
+/// caller that needs the stream itself (bitrate, codec) would fetch the
+/// manifest again right after playback already resolved it.
+final Map<String, ({AudioOnlyStreamInfo stream, DateTime resolvedAt})>
+_selectedAudioStreams = {};
+
+const _maxSelectedAudioStreams = 50;
+
+String _selectedAudioStreamKey(String songId) =>
+    '${songId}_${audioQualitySetting.value}';
+
+/// Returns the stream resolved earlier for a song, unless it is old enough
+/// that its URL may have expired.
+AudioOnlyStreamInfo? _getSelectedAudioStream(String songId) {
+  final key = _selectedAudioStreamKey(songId);
+  final entry = _selectedAudioStreams[key];
+  if (entry == null) return null;
+
+  if (DateTime.now().difference(entry.resolvedAt) > _cacheValidationDuration) {
+    _selectedAudioStreams.remove(key);
+    return null;
+  }
+
+  return entry.stream;
+}
+
+void _cacheSelectedAudioStream(String songId, AudioOnlyStreamInfo stream) {
+  if (_selectedAudioStreams.length >= _maxSelectedAudioStreams) {
+    _selectedAudioStreams.remove(_selectedAudioStreams.keys.first);
+  }
+
+  _selectedAudioStreams[_selectedAudioStreamKey(songId)] = (
+    stream: stream,
+    resolvedAt: DateTime.now(),
+  );
+}
+
+/// Drops both cached forms of a song's stream, so the next request resolves
+/// it again. Used when a cached URL turns out to be dead.
+Future<void> invalidateSongStreamCache(String songId) async {
+  _selectedAudioStreams.remove(_selectedAudioStreamKey(songId));
+  await deleteData('cache', 'song_${songId}_${audioQualitySetting.value}_url');
+}
+
 /// Fetches the best available audio stream for a song.
 Future<AudioOnlyStreamInfo?> fetchBestAudioStream(String? songId) async {
   try {
@@ -555,13 +600,21 @@ Future<AudioOnlyStreamInfo?> fetchBestAudioStream(String? songId) async {
       return null;
     }
 
+    final cachedStream = _getSelectedAudioStream(songId);
+    if (cachedStream != null) return cachedStream;
+
     final manifest = await _fetchStreamManifest(songId);
     final audioStream = manifest?.audioOnly;
     if (audioStream == null || audioStream.isEmpty) {
       logger.log('fetchBestAudioStream: no audio streams for $songId');
       return null;
     }
-    return selectAudioOnlyStreamForQuality(audioStream.sortByBitrate());
+
+    final selectedStream = selectAudioOnlyStreamForQuality(
+      audioStream.sortByBitrate(),
+    );
+    _cacheSelectedAudioStream(songId, selectedStream);
+    return selectedStream;
   } on TimeoutException catch (_) {
     logger.log('fetchBestAudioStream request timed out for $songId');
     return null;
@@ -597,17 +650,13 @@ Future<String?> fetchSongStreamUrl(String songId, bool isLive) async {
       return cachedUrl;
     }
 
-    // Get fresh URL
-    final manifest = await _fetchStreamManifest(songId);
-    final audioStreams = manifest?.audioOnly;
-    if (audioStreams == null || audioStreams.isEmpty) {
+    // Get fresh URL, reusing the stream already resolved for this song.
+    final selectedStream = await fetchBestAudioStream(songId);
+    if (selectedStream == null) {
       logger.log('fetchSongStreamUrl: no audio streams for $songId');
       return null;
     }
 
-    final selectedStream = selectAudioOnlyStreamForQuality(
-      audioStreams.sortByBitrate(),
-    );
     final url = selectedStream.url.toString();
 
     unawaited(addOrUpdateData<String>('cache', cacheKey, url));
@@ -687,6 +736,8 @@ Future<bool> makeSongOffline(dynamic song) async {
 
     await audioFile.parent.create(recursive: true);
 
+    int? audioBitrateKbps;
+    String? audioCodec;
     IOSink? fileStream;
     try {
       final audioManifest = await fetchBestAudioStream(ytid);
@@ -694,6 +745,8 @@ Future<bool> makeSongOffline(dynamic song) async {
         logger.log('makeSongOffline: audioManifest is null for $ytid');
         return false;
       }
+      audioBitrateKbps = audioManifest.bitrate.kiloBitsPerSecond.round();
+      audioCodec = audioManifest.audioCodec;
 
       final stream = ytClient.videos.streamsClient.get(audioManifest);
       fileStream = audioFile.openWrite();
@@ -739,6 +792,8 @@ Future<bool> makeSongOffline(dynamic song) async {
     }
 
     offlineSong['audioPath'] = audioFile.path;
+    offlineSong['audioBitrateKbps'] = audioBitrateKbps;
+    offlineSong['audioCodec'] = audioCodec;
     offlineSong['dateAdded'] = DateTime.now().millisecondsSinceEpoch;
 
     try {
