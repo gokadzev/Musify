@@ -159,7 +159,11 @@ class _UserSongsPageState extends State<UserSongsPage> {
 
     return Column(
       children: [
-        PlaylistHeader(_buildPlaylistImage(title, icon), title, songsLength),
+        PlaylistHeader(
+          _buildPlaylistImage(title, icon),
+          title,
+          songsLength: songsLength,
+        ),
         if (songsLength > 0) ...[
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
