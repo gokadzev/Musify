@@ -91,4 +91,18 @@ List<RadioStation> radioStationsDB = [
     streamUrl: 'https://live.powerhitz.com/lit',
     genre: 'Hip Hop',
   ),
+  const RadioStation(
+    id: 'r_011fm_hiphop',
+    name: '011.FM - Hip Hop Hits',
+    image: 'https://static2.mytuner.mobi/media/tvos_radios/u9af7yyuprlu.png',
+    streamUrl: 'https://listen.011fm.com/stream13',
+    genre: 'Hip Hop',
+  ),
+  const RadioStation(
+    id: 'r_phonk_radio',
+    name: 'Phonk Radio',
+    image: 'https://i.scdn.co/image/ab676161000051740e5f02df5be105222ceda8c0',
+    streamUrl: 'https://stream.laut.fm/phonk',
+    genre: 'Phonk',
+  ),
 ];
