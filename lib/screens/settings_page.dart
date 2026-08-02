@@ -113,6 +113,20 @@ class SettingsPage extends StatelessWidget {
           FluentIcons.music_note_1_24_regular,
           onTap: () => _showAudioQualityPicker(context),
         ),
+        ValueListenableBuilder<bool>(
+          valueListenable: showAudioQualityBadge,
+          builder: (_, value, __) {
+            return CustomBar(
+              context.l10n!.audioQualityBadge,
+              FluentIcons.badge_24_regular,
+              description: context.l10n!.audioQualityBadgeDescription,
+              trailing: Switch(
+                value: value,
+                onChanged: (value) => _toggleAudioQualityBadge(context, value),
+              ),
+            );
+          },
+        ),
         CustomBar(
           context.l10n!.equalizer,
           FluentIcons.data_histogram_24_regular,
@@ -745,6 +759,12 @@ class SettingsPage extends StatelessWidget {
         ? const PredictiveBackPageTransitionsBuilder()
         : const CupertinoPageTransitionsBuilder();
     Musify.updateAppState(context);
+    showToast(context, context.l10n!.settingChangedMsg);
+  }
+
+  void _toggleAudioQualityBadge(BuildContext context, bool value) {
+    addOrUpdateData<bool>('settings', 'showAudioQualityBadge', value);
+    showAudioQualityBadge.value = value;
     showToast(context, context.l10n!.settingChangedMsg);
   }
 

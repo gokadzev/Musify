@@ -2072,8 +2072,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
         }
         final songId = song['ytid']?.toString();
         if (songId != null && songId.isNotEmpty) {
-          final cacheKey = 'song_${songId}_${audioQualitySetting.value}_url';
-          await deleteData('cache', cacheKey);
+          await invalidateSongStreamCache(songId);
 
           final refreshedUrl = await fetchSongStreamUrl(
             songId,
