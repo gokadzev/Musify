@@ -52,7 +52,7 @@ class BottomActionsRow extends StatefulWidget {
 class _BottomActionsRowState extends State<BottomActionsRow> {
   late final ValueNotifier<bool> _songLikeStatus;
   late final ValueNotifier<bool> _songOfflineStatus;
-  late final String? audioId = widget.metadata.id;
+  late final String? audioId = widget.metadata.extras?['ytid'];
   late final bool isRadioStation = widget.metadata.extras?['isLive'] ?? false;
 
   @override
@@ -93,7 +93,8 @@ class _BottomActionsRowState extends State<BottomActionsRow> {
   @override
   void didUpdateWidget(BottomActionsRow oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.metadata.id != widget.metadata.id) {
+    final oldAudioId = oldWidget.metadata.extras?['ytid'];
+    if (oldAudioId != audioId) {
       if (isRadioStation) {
         _songLikeStatus.value = isRadioStationLiked(audioId ?? '');
       } else {
