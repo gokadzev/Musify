@@ -2155,6 +2155,79 @@ class MusifyAudioHandler extends BaseAudioHandler {
     }
   }
 
+  /// Intelligently play a song from a source (e.g., offline, liked songs) without
+  /// destroying the existing queue:
+  /// - If the song is already in the queue, jump to it
+  /// - If not, add it and play it
+  /// - Only add songs from the source that aren't already queued
+  ///
+  /// This preserves the user's curated queue while allowing them to play songs
+  /// from any source without frustration.
+  Future<void> playSongSmartly({
+    required Map song,
+    Map<dynamic, dynamic>? sourcePlaylist,
+  }) async {
+    try {
+      final songYtid = song['ytid']?.toString();
+
+      if (songYtid == null || songYtid.isEmpty) {
+        // Fallback if no ytid
+        await playSong(song);
+        return;
+      }
+
+      // Check if song is already in queue
+      final existingIndex = _queueList.indexWhere(
+        (s) => s['ytid']?.toString() == songYtid,
+      );
+      if (existingIndex != -1) {
+        // Song already in queue, just skip to it
+        await skipToQueueItem(existingIndex);
+        return;
+      }
+
+      // Song not in queue, add it and play it
+      await addToQueue(song);
+
+      // If a source playlist is provided, also add new songs from it to queue
+      // (songs not already there), for better discoverability
+      if (sourcePlaylist != null && sourcePlaylist['list'] is List) {
+        await addNewSongsToQueue(List<Map>.from(sourcePlaylist['list']));
+      }
+    } catch (e, stackTrace) {
+      logger.log(
+        'Error playing song smartly',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
+  }
+
+  /// Adds songs to the queue that aren't already there. Used to intelligently
+  /// merge playlists without destroying the existing queue.
+  Future<void> addNewSongsToQueue(List<Map> songs) async {
+    try {
+      final currentYtids = {
+        for (final song in _queueList) song['ytid']?.toString(),
+      };
+
+      final newSongs = [
+        for (final song in songs)
+          if (!currentYtids.contains(song['ytid']?.toString())) song,
+      ];
+
+      if (newSongs.isNotEmpty) {
+        await addPlaylistToQueue(newSongs);
+      }
+    } catch (e, stackTrace) {
+      logger.log(
+        'Error adding new songs to queue',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
+  }
+
   /// Play a radio stream directly without queue management
   Future<bool> playRadioStream({
     required String id,
@@ -2209,7 +2282,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
       await audioPlayer
           .setAudioSource(audioSource)
           .timeout(_songTransitionTimeout);
-
 
       listeningStatsService.finishListeningSession(
         countCurrentTick: true,

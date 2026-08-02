@@ -377,19 +377,29 @@ class _UserSongsPageState extends State<UserSongsPage> {
       song,
       true,
       onPlay: () {
-        final fullIndex = PlaylistUtils.findSongIndexByYtid(
-          playlist,
-          song['ytid'],
-        );
-        if (fullIndex == -1) {
-          logger.log(
-            'Warning: Song ${song['ytid']} not found in full song list',
+        // For offline and liked songs, use smart queue management to preserve
+        // the user's curated queue. For recently played, use traditional
+        // full queue replacement.
+        final isOfflineOrLiked =
+            playlist['title'] == context.l10n!.offlineSongs || isLikedSongs;
+
+        if (isOfflineOrLiked) {
+          audioHandler.playSongSmartly(song: song, sourcePlaylist: playlist);
+        } else {
+          final fullIndex = PlaylistUtils.findSongIndexByYtid(
+            playlist,
+            song['ytid'],
+          );
+          if (fullIndex == -1) {
+            logger.log(
+              'Warning: Song ${song['ytid']} not found in full song list',
+            );
+          }
+          audioHandler.playPlaylistSong(
+            playlist: playlist,
+            songIndex: fullIndex != -1 ? fullIndex : index,
           );
         }
-        audioHandler.playPlaylistSong(
-          playlist: playlist,
-          songIndex: fullIndex != -1 ? fullIndex : index,
-        );
       },
       borderRadius: borderRadius,
       isRecentSong: isRecentSong,
