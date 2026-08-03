@@ -33,7 +33,7 @@ const artistCatalogCacheVersion = 15;
 const artistSearchCacheVersion = 10;
 const artistProfileCacheVersion = 4;
 const artistAlbumCacheVersion = 2;
-const artistChannelCacheVersion = 1;
+const artistChannelCacheVersion = 2;
 const _artistRequestTimeout = Duration(seconds: 12);
 const _artistProfileTimeout = Duration(seconds: 25);
 const _musicAlbumTimeout = Duration(seconds: 12);
@@ -226,22 +226,12 @@ Future<Map<String, dynamic>?> getArtistProfile(
       return null;
     }
 
-    final resolvedId = artist['ytid']?.toString() ?? lookup;
-    // Where the channel of the song led, so that the browse which came back
-    // without an artist page, and the search that had to follow it, are paid
-    // once instead of on every visit.
-    if (isChannelLookup && resolvedId != lookup) {
-      unawaited(
-        addOrUpdateData<String>(
-          'cache',
-          _artistChannelCacheKey(lookup),
-          resolvedId,
-        ),
-      );
-    }
-
+    // Where this landed is deliberately not remembered for the channel that was
+    // looked up: a channel that has no artist page of its own is a channel that
+    // uploads for many artists, and which one this is was decided by the name
+    // of the song it was opened from, not by the channel.
     return _artistPageOf(
-      resolvedId,
+      artist['ytid']?.toString() ?? lookup,
       forceRefresh: forceRefresh,
       artist: artist,
     );
@@ -541,8 +531,10 @@ String _artistCatalogCacheKey(String artistId) =>
 String _artistProfileCacheKey(String artistId) =>
     'artist_profile_v${artistProfileCacheVersion}_$artistId';
 
-/// Where the artist page of a channel that only uploads for an artist is, so
-/// that the page of a song of a label is not looked up twice.
+/// Where the artist page of a channel of the artist itself is, for the channel
+/// that uploads its videos. Only ever written from what a page says about the
+/// channel it was read with, never from what a song was resolved into: a
+/// channel that uploads for several artists has no single artist page.
 String _artistChannelCacheKey(String channelId) =>
     'artist_channel_v${artistChannelCacheVersion}_$channelId';
 
