@@ -17,6 +17,7 @@
   "alreadyDownloading": "Already downloading",
   "appUpdateIsAvailable": "An update is available",
   "artist": "Artist",
+  "artistNotFound": "Artist not found. Check logs or try again.",
   "artists": "Artists",
   "audioQuality": "Audio quality",
   "audioQualityBadge": "Show audio quality badge",

@@ -83,8 +83,11 @@ class _ArtistPageState extends State<ArtistPage> {
   @override
   void didUpdateWidget(covariant ArtistPage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.artistId != widget.artistId ||
-        oldWidget.artistData != widget.artistData) {
+    // Only the id says which artist this is. What came with the navigation is
+    // a fresh copy of the same seed on every rebuild of the route, and a Map
+    // compares by identity, so reading it here would reload the page — and
+    // flash the loader over it — every time a page is pushed on top of it.
+    if (oldWidget.artistId != widget.artistId) {
       _artistFuture = offlineMode.value ? Future.value() : _loadArtist();
     }
   }
@@ -205,9 +208,10 @@ class _ArtistPageState extends State<ArtistPage> {
       appBar: AppBar(),
       body: CustomScrollView(
         slivers: [
+          // Not finding an artist is an answer, not a failure of the app.
           EmptyPlaylistState(
             icon: FluentIcons.person_24_filled,
-            message: context.l10n!.error,
+            message: context.l10n!.artistNotFound,
           ),
           const SliverMiniPlayerBottomSpace(),
         ],
