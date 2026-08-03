@@ -270,17 +270,14 @@ Future<Map<String, dynamic>?> _artistPageOf(
   String? preferredImage,
   bool followCanonical = true,
 }) async {
+  // Nothing is dropped before the page is in hand: a refresh that fails on a
+  // bad connection would otherwise leave the artist with no page at all.
   final cacheKey = _artistProfileCacheKey(artistId);
   if (!forceRefresh) {
     final cachedProfile = await getData('cache', cacheKey);
     if (cachedProfile is Map) {
       return Map<String, dynamic>.from(cachedProfile);
     }
-  } else {
-    await _dropFromCache(cacheKey);
-    // The song catalog is built from this discography, so it went stale too.
-    // It is rebuilt the next time the songs of the artist are needed.
-    await _dropFromCache(_artistCatalogCacheKey(artistId));
   }
 
   final profile = await ytMusicClient.music
@@ -359,6 +356,11 @@ Future<Map<String, dynamic>?> _artistPageOf(
     return artist == null ? null : artistProfile;
   }
 
+  if (forceRefresh) {
+    // The song catalog is built from this discography, so it went stale with
+    // it. It is rebuilt the next time the songs of the artist are needed.
+    await _dropFromCache(_artistCatalogCacheKey(artistId));
+  }
   unawaited(addOrUpdateData<Map>('cache', cacheKey, artistProfile));
   return artistProfile;
 }

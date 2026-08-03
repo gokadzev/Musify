@@ -85,7 +85,7 @@ class _ArtistPageState extends State<ArtistPage> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.artistId != widget.artistId ||
         oldWidget.artistData != widget.artistData) {
-      _artistFuture = _loadArtist();
+      _artistFuture = offlineMode.value ? Future.value() : _loadArtist();
     }
   }
 
