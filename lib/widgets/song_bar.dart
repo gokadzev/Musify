@@ -680,7 +680,7 @@ class _OfflineArtwork extends StatelessWidget {
               height: size,
               fit: BoxFit.cover,
               errorBuilder: (_, __, ___) =>
-                  const NullArtworkWidget(iconSize: 30),
+                  NullArtworkWidget(iconSize: 30, size: size),
             ),
             Positioned(
               top: 3,
@@ -795,7 +795,7 @@ class _OnlineArtwork extends StatelessWidget {
               ),
             ),
             errorWidget: (context, url, error) =>
-                const NullArtworkWidget(iconSize: 30),
+                NullArtworkWidget(iconSize: 30, size: size),
           ),
           if (isDurationAvailable && !isOffline)
             Positioned(
