@@ -162,6 +162,9 @@ class _PlaylistDownloadButtonState extends State<PlaylistDownloadButton> {
     Map? playlist;
     try {
       playlist = await widget.resolvePlaylist();
+    } catch (_) {
+      if (context.mounted) showToast(context, context.l10n!.error);
+      return;
     } finally {
       if (mounted) setState(() => _isResolving = false);
     }
