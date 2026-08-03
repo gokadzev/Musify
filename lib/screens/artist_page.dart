@@ -60,7 +60,9 @@ class ArtistPage extends StatefulWidget {
 }
 
 class _ArtistPageState extends State<ArtistPage> {
-  late Future<Map<String, dynamic>?> _artistFuture;
+  /// Read the first time the page is shown online, and left alone offline,
+  /// where the artist is its downloaded songs and there is nothing to read.
+  Future<Map<String, dynamic>?>? _artistFuture;
 
   Map<String, dynamic>? _artist;
   List<Map<String, dynamic>> _topSongs = const [];
@@ -72,12 +74,23 @@ class _ArtistPageState extends State<ArtistPage> {
   /// Whether the songs of the artist are being read for the play buttons.
   final _isLoadingCatalog = ValueNotifier<bool>(false);
 
-  @override
-  void initState() {
-    super.initState();
-    // This page is the online layer: offline the artist collapses to the songs
-    // of it that were downloaded, so there is nothing to load.
-    _artistFuture = offlineMode.value ? Future.value() : _loadArtist();
+  /// Reads the artist again, showing the loader while it does. A read that
+  /// fails puts back the page that was on screen, instead of replacing an
+  /// artist that had loaded fine with the not-found page.
+  Future<void> _refresh() async {
+    final loaded = _artistFuture;
+    final refreshed = _loadArtist(forceRefresh: true);
+    // A block, not an arrow: an arrow returns what it assigns, and setState
+    // rejects a callback that returns a Future.
+    setState(() {
+      _artistFuture = refreshed;
+    });
+
+    if (await refreshed != null || !mounted) return;
+    setState(() {
+      _artistFuture = loaded;
+    });
+    showToast(context, context.l10n!.error);
   }
 
   @override
@@ -87,9 +100,7 @@ class _ArtistPageState extends State<ArtistPage> {
     // a fresh copy of the same seed on every rebuild of the route, and a Map
     // compares by identity, so reading it here would reload the page — and
     // flash the loader over it — every time a page is pushed on top of it.
-    if (oldWidget.artistId != widget.artistId) {
-      _artistFuture = offlineMode.value ? Future.value() : _loadArtist();
-    }
+    if (oldWidget.artistId != widget.artistId) _artistFuture = null;
   }
 
   @override
@@ -142,10 +153,14 @@ class _ArtistPageState extends State<ArtistPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Offline the artist is the songs of it that were downloaded, so there is
+    // nothing to read; online it is read here, the first time the page is
+    // shown, which is also what brings it back when offline mode is turned off
+    // with the page still open.
     if (offlineMode.value) return _buildAllSongsPage();
 
     return AsyncLoader<Map<String, dynamic>?>(
-      future: _artistFuture,
+      future: _artistFuture ??= _loadArtist(),
       loadingWidget: Scaffold(appBar: AppBar(), body: const Spinner()),
       emptyWidget: _buildNotFoundPage(),
       builder: (context, _) => Scaffold(
@@ -195,8 +210,8 @@ class _ArtistPageState extends State<ArtistPage> {
       playlistId: widget.artistId,
       playlistData: artistPlaylistData({
         'ytid': widget.artistId,
-        'title': widget.artistData?['title'],
-        'image': widget.artistData?['image'],
+        'title': _artistTitle,
+        'image': _artist?['image'] ?? widget.artistData?['image'],
       }),
       cubeIcon: FluentIcons.person_24_filled,
       isArtist: true,
@@ -258,9 +273,7 @@ class _ArtistPageState extends State<ArtistPage> {
             IconButton.filledTonal(
               icon: const Icon(FluentIcons.arrow_sync_24_filled),
               iconSize: 24,
-              onPressed: () => setState(() {
-                _artistFuture = _loadArtist(forceRefresh: true);
-              }),
+              onPressed: _refresh,
               tooltip: context.l10n!.update,
             ),
           ],
