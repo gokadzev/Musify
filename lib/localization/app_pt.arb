@@ -18,6 +18,8 @@
   "artist": "Artista",
   "artists": "Artistas",
   "audioQuality": "Qualidade de áudio",
+  "audioQualityBadge": "Show audio quality badge",
+  "audioQualityBadgeDescription": "Display a small bitrate/codec badge on the now playing artwork.",
   "audioQualityHigh": "Alta",
   "audioQualityLow": "Baixa",
   "audioQualityMedium": "Média",
