@@ -18,6 +18,8 @@
   "artist": "कलाकार",
   "artists": "Artists",
   "audioQuality": "आवाज़ की गुणवत्ता",
+  "audioQualityBadge": "Show audio quality badge",
+  "audioQualityBadgeDescription": "Display a small bitrate/codec badge on the now playing artwork.",
   "audioQualityHigh": "तेज़",
   "audioQualityLow": "कम",
   "audioQualityMedium": "मध्य",

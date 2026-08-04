@@ -18,6 +18,8 @@
   "artist": "Исполнитель",
   "artists": "Исполнители",
   "audioQuality": "Качество звука",
+  "audioQualityBadge": "Показать значок качества звука",
+  "audioQualityBadgeDescription": "Показать небольшой значок битрейта/кодека на обложке, играя произведение искусства.",
   "audioQualityHigh": "Высокое",
   "audioQualityLow": "Низкое",
   "audioQualityMedium": "Среднее",

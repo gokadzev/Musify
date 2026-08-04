@@ -18,6 +18,8 @@
   "artist": "아티스트",
   "artists": "Artists",
   "audioQuality": "오디오 품질",
+  "audioQualityBadge": "Show audio quality badge",
+  "audioQualityBadgeDescription": "Display a small bitrate/codec badge on the now playing artwork.",
   "audioQualityHigh": "높음",
   "audioQualityLow": "낮음",
   "audioQualityMedium": "보통",

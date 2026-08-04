@@ -18,6 +18,8 @@
   "artist": "Виконавець",
   "artists": "Виконавці",
   "audioQuality": "Якість звуку",
+  "audioQualityBadge": "Показати значок якості звуку",
+  "audioQualityBadgeDescription": "Показати невеликий значок бітрейту/кодека на обкладинці, граючи витвір мистецтва.",
   "audioQualityHigh": "Висока",
   "audioQualityLow": "Низька",
   "audioQualityMedium": "Середня",
