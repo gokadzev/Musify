@@ -478,7 +478,13 @@ class _PlaylistPageState extends State<PlaylistPage> {
           // Update offline playlist if it exists
           unawaited(syncOfflinePlaylistMetadata(updatedPlaylist));
 
-          setState(() => _playlist = updatedPlaylist);
+          setState(() {
+            _playlist = updatedPlaylist;
+            _originalPlaylistList = List<dynamic>.from(
+              updatedPlaylist['list'] as List? ?? const [],
+            );
+            _sortPlaylist(_sortType);
+          });
           showToast(context, context.l10n!.playlistUpdated);
         }
       },
@@ -530,9 +536,10 @@ class _PlaylistPageState extends State<PlaylistPage> {
     if (updated != null && mounted) {
       setState(() {
         _playlist = updated;
-        if (_playlist['list'] != null) {
-          _originalPlaylistList = List<dynamic>.from(_playlist['list'] as List);
-        }
+        _originalPlaylistList = List<dynamic>.from(
+          _playlist['list'] as List? ?? const [],
+        );
+        _sortPlaylist(_sortType);
       });
       if (isCachedPage) {
         showToast(context, context.l10n!.playlistUpdated);
@@ -550,12 +557,23 @@ class _PlaylistPageState extends State<PlaylistPage> {
         context.l10n!.songRemoved,
         context.l10n!.undo.toUpperCase(),
         () {
-          addSongInCustomPlaylist(
+          final result = addSongInCustomPlaylist(
             context,
             playlistId,
             songToRemove,
             indexToInsert: indexOfRemovedSong,
           );
+          if (result == context.l10n!.songAdded &&
+              !_originalPlaylistList.any(
+                (song) => song['ytid'] == songToRemove['ytid'],
+              )) {
+            final safeIndex = indexOfRemovedSong.clamp(
+              0,
+              _originalPlaylistList.length,
+            );
+            _originalPlaylistList.insert(safeIndex, songToRemove);
+            _sortPlaylist(_sortType);
+          }
           if (mounted) setState(() {});
         },
       );
