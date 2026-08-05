@@ -297,10 +297,10 @@ packages:
     dependency: "direct main"
     description:
       name: go_router
-      sha256: "5922b2861e2235a3504896f0d6fa07d84141b480cf52eecd2f42cd25585a9e8a"
+      sha256: "55973bf1b27790489f8710ea615fe939f911ddcc5986fe97305e4fc19fa29ee9"
       url: "https://pub.dev"
     source: hosted
-    version: "17.3.0"
+    version: "17.4.0"
   gtk:
     dependency: transitive
     description:
