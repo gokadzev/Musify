@@ -19,6 +19,7 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
+import 'package:audio_service/audio_service.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -392,22 +393,32 @@ class SettingsPage extends StatelessWidget {
             try {
               final result = await restoreData(context);
               if (result.success) {
+                reloadSettingsFromStorage();
                 reloadSongLibraryStateFromStorage();
                 reloadPlaylistLibraryStateFromStorage();
                 reloadSearchHistoryFromStorage();
-                // The restored settings box may carry a different
-                // wrappedEnabled value than the one already loaded into this
-                // ValueNotifier; without resyncing it here, recording silently
-                // keeps following the pre-restore value until the next cold
-                // start, when it would suddenly flip without explanation.
-                wrappedEnabled.value =
-                    await getData(
-                          'settings',
-                          'wrappedEnabled',
-                          defaultValue: true,
-                        )
-                        as bool;
                 listeningStatsService.reload();
+                await audioHandler.setShuffleMode(
+                  shuffleNotifier.value
+                      ? AudioServiceShuffleMode.all
+                      : AudioServiceShuffleMode.none,
+                );
+                await audioHandler.setRepeatMode(repeatNotifier.value);
+                themeMode = getThemeMode(themeModeSetting);
+                brightness = getBrightnessFromThemeMode(themeMode);
+                transitionsBuilder = predictiveBack.value
+                    ? const PredictiveBackPageTransitionsBuilder()
+                    : const CupertinoPageTransitionsBuilder();
+                if (context.mounted) {
+                  await Musify.updateAppState(
+                    context,
+                    newThemeMode: themeMode,
+                    newLocale: languageSetting,
+                    newAccentColor: primaryColorSetting,
+                    useSystemColor: useSystemColor.value,
+                  );
+                  NavigationManager.refreshRouter();
+                }
               }
               if (context.mounted) {
                 showToast(
@@ -825,33 +836,7 @@ class SettingsPage extends StatelessWidget {
   }
 
   Future<void> _backupUserData(BuildContext context) async {
-    final colorScheme = Theme.of(context).colorScheme;
-
     try {
-      await showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            icon: Icon(
-              FluentIcons.info_24_regular,
-              color: colorScheme.primary,
-              size: 32,
-            ),
-            content: Text(
-              context.l10n!.folderRestrictions,
-              style: TextStyle(color: colorScheme.onSurfaceVariant),
-              textAlign: TextAlign.center,
-            ),
-            actionsAlignment: MainAxisAlignment.center,
-            actions: <Widget>[
-              FilledButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text(context.l10n!.understand),
-              ),
-            ],
-          );
-        },
-      );
       final result = await backupData(context);
       if (context.mounted) {
         showToast(
