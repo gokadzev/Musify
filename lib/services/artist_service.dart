@@ -21,6 +21,7 @@
 
 import 'dart:async';
 
+import 'package:musify/constants/artist_constants.dart';
 import 'package:musify/main.dart' show logger;
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/proxy_manager.dart';
@@ -28,19 +29,6 @@ import 'package:musify/utilities/app_utils.dart';
 import 'package:musify/utilities/formatter.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 import 'package:youtube_music_explode_dart/youtube_music_explode_dart.dart';
-
-const artistCatalogCacheVersion = 15;
-const artistSearchCacheVersion = 10;
-const artistProfileCacheVersion = 4;
-const artistAlbumCacheVersion = 2;
-const artistChannelCacheVersion = 2;
-const _artistRequestTimeout = Duration(seconds: 12);
-const _artistProfileTimeout = Duration(seconds: 25);
-const _musicAlbumTimeout = Duration(seconds: 12);
-const _musicAlbumBatchSize = 6;
-
-/// Leading number of a YouTube Music counter, e.g. `331M` of `331M plays`.
-final _countTokenPattern = RegExp(r'^[\d.,]+\s?[KMBkmb]?\b');
 
 final ytMusicClient = YoutubeMusicExplode();
 
@@ -63,7 +51,7 @@ Future<List<Map<String, dynamic>>> searchVerifiedArtists(
     final artists = _dedupeResolvedArtists(
       (await ytMusicClient.music
               .searchArtists(normalizedQuery)
-              .timeout(_artistRequestTimeout))
+              .timeout(artistRequestTimeout))
           .where((artist) => !looksUnofficialArtistName(artist.name))
           .map(_artistMapFromMusicArtist),
     ).take(limit).toList();
@@ -123,7 +111,7 @@ Future<Map<String, dynamic>?> resolveArtist(
     try {
       final sourceVideo = await ytClient.videos
           .get(normalizedSourceSongId)
-          .timeout(_artistRequestTimeout);
+          .timeout(artistRequestTimeout);
       addAliases(_artistNameFromVideoTitle(sourceVideo.title));
       addAliases(sourceVideo.author);
       for (final musicData in sourceVideo.musicData) {
@@ -142,7 +130,7 @@ Future<Map<String, dynamic>?> resolveArtist(
     try {
       final channel = await ytClient.channels
           .get(normalizedLookup)
-          .timeout(_artistRequestTimeout);
+          .timeout(artistRequestTimeout);
       addAliases(channel.title);
     } catch (e, stackTrace) {
       logger.log(
@@ -272,7 +260,7 @@ Future<Map<String, dynamic>?> _artistPageOf(
 
   final profile = await ytMusicClient.music
       .getArtistProfile(artistId)
-      .timeout(_artistProfileTimeout);
+      .timeout(artistProfileTimeout);
 
   // The channel uploads for the artist without being it: its page is a partial
   // copy without the top songs, so the canonical one it points at is read
@@ -438,9 +426,9 @@ Future<List<Map<String, dynamic>>> _catalogSongsOf(
   final releases = asMapList(artist['releases']);
 
   final songs = <Map<String, dynamic>>[];
-  for (var index = 0; index < releases.length; index += _musicAlbumBatchSize) {
+  for (var index = 0; index < releases.length; index += musicAlbumBatchSize) {
     final albums = await Future.wait([
-      for (final release in releases.skip(index).take(_musicAlbumBatchSize))
+      for (final release in releases.skip(index).take(musicAlbumBatchSize))
         getArtistAlbum(release['ytid']?.toString() ?? ''),
     ]);
     for (final album in albums) {
@@ -487,7 +475,7 @@ Future<Map<String, dynamic>?> getArtistAlbum(
   try {
     final release = await ytMusicClient.music
         .getAlbum(normalizedAlbumId)
-        .timeout(_musicAlbumTimeout);
+        .timeout(musicAlbumTimeout);
 
     final album = {
       'ytid': normalizedAlbumId,
@@ -569,7 +557,7 @@ String? _extractCountToken(String? value) {
   final text = value?.trim();
   if (text == null || text.isEmpty) return null;
 
-  final match = _countTokenPattern.firstMatch(text);
+  final match = ArtistPatterns.countToken.firstMatch(text);
   final token = match?.group(0)?.trim();
   return (token == null || token.isEmpty) ? text : token;
 }
@@ -677,7 +665,7 @@ Future<Map<String, dynamic>?> _resolveMusicArtistFromTerms(
     try {
       candidates = await ytMusicClient.music
           .searchArtists(term)
-          .timeout(_artistRequestTimeout);
+          .timeout(artistRequestTimeout);
     } catch (e, stackTrace) {
       logger.log(
         'YouTube Music artist search failed for "$term"',
@@ -779,32 +767,35 @@ Set<String> _artistSearchAliases(String value) {
   if (cleaned.isEmpty) return {};
 
   final aliases = <String>{cleaned, _spaceCamelCaseArtistTitle(cleaned)};
-  final featureSplit = cleaned.split(
-    RegExp(r'\s+(?:feat\.?|ft\.?|featuring|with)\s+', caseSensitive: false),
-  );
-  if (featureSplit.first.trim().isNotEmpty) {
-    aliases
-      ..add(featureSplit.first.trim())
-      ..add(_spaceCamelCaseArtistTitle(featureSplit.first.trim()));
+
+  void _addAlias(String term) {
+    final trimmed = term.trim();
+    if (trimmed.isNotEmpty) {
+      aliases
+        ..add(trimmed)
+        ..add(_spaceCamelCaseArtistTitle(trimmed));
+    }
   }
 
-  final joinedArtists = cleaned.split(
-    RegExp(r'\s+(?:x|\+|&)\s+', caseSensitive: false),
-  );
-  if (joinedArtists.first.trim().isNotEmpty) {
-    aliases
-      ..add(joinedArtists.first.trim())
-      ..add(_spaceCamelCaseArtistTitle(joinedArtists.first.trim()));
+  // Handle featuring artists
+  final featureSplit = cleaned.split(ArtistPatterns.feature);
+  if (featureSplit.isNotEmpty) {
+    _addAlias(featureSplit.first);
   }
 
+  // Handle collaborations (featured artists joined with &, x, +)
+  final joinedArtists = cleaned.split(ArtistPatterns.collaboration);
+  if (joinedArtists.isNotEmpty) {
+    _addAlias(joinedArtists.first);
+  }
+
+  // Handle comma-separated artists
   final commaParts = cleaned.split(',');
   if (commaParts.length > 1 && commaParts.first.trim().length > 3) {
-    aliases
-      ..add(commaParts.first.trim())
-      ..add(_spaceCamelCaseArtistTitle(commaParts.first.trim()));
+    _addAlias(commaParts.first);
   }
 
-  return aliases.where((alias) => alias.trim().isNotEmpty).toSet();
+  return aliases;
 }
 
 String _spaceCamelCaseArtistTitle(String value) {
@@ -827,20 +818,11 @@ String _spaceCamelCaseArtistTitle(String value) {
 }
 
 String _cleanArtistSearchTerm(String value) {
-  return _stripLegacyArtistSuffixes(_normalizeArtistText(value))
-      .replaceAll(RegExp(r'\s*vevo\s*$', caseSensitive: false), '')
-      .replaceAll(
-        RegExp(r'\s*official artist channel\s*$', caseSensitive: false),
-        '',
-      )
-      .trim();
-}
-
-String _stripLegacyArtistSuffixes(String value) {
   return _normalizeArtistText(value)
-      .trim()
-      .replaceAll(RegExp(r'\s*topic channel\s*$', caseSensitive: false), '')
-      .replaceAll(RegExp(r'\s*-\s*topic\s*$', caseSensitive: false), '')
+      .replaceAll(ArtistPatterns.topicChannel, '')
+      .replaceAll(ArtistPatterns.topicSuffix, '')
+      .replaceAll(ArtistPatterns.vevo, '')
+      .replaceAll(ArtistPatterns.officialArtistChannel, '')
       .trim();
 }
 
@@ -855,13 +837,12 @@ String _strictArtistTitleKey(String value) {
   return _cleanArtistSearchTerm(value)
       .toLowerCase()
       .replaceAll('&amp;', '&')
-      .replaceAll(RegExp(r'\bofficial artist channel\b'), '')
-      .replaceAll(RegExp(r'\bofficial channel\b'), '')
-      .replaceAll(RegExp(r'\bmusic channel\b'), '')
-      .replaceAll(RegExp(r'\bofficial\b'), '')
-      .replaceAll(RegExp(r'\bvevo\b'), '')
-      .replaceAll(RegExp('[^a-z0-9&]+'), ' ')
-      .replaceAll(RegExp(r'\s+'), ' ')
+      .replaceAll(ArtistPatterns.officialChannel, '')
+      .replaceAll(ArtistPatterns.musicChannel, '')
+      .replaceAll(ArtistPatterns.official, '')
+      .replaceAll(ArtistPatterns.vevoWord, '')
+      .replaceAll(ArtistPatterns.nonAlphanumeric, ' ')
+      .replaceAll(ArtistPatterns.multipleSpaces, ' ')
       .trim();
 }
 
@@ -891,31 +872,12 @@ int? _normalizeStyledRune(int rune) {
     return null;
   }
 
-  for (final range in const [
-    (0x1D400, 0x1D41A),
-    (0x1D434, 0x1D44E),
-    (0x1D468, 0x1D482),
-    (0x1D4D0, 0x1D4EA),
-    (0x1D56C, 0x1D586),
-    (0x1D5A0, 0x1D5BA),
-    (0x1D5D4, 0x1D5EE),
-    (0x1D608, 0x1D622),
-    (0x1D63C, 0x1D656),
-    (0x1D670, 0x1D68A),
-    (0xFF21, 0xFF41),
-  ]) {
-    final mapped = mapLetters(range.$1, range.$2);
+  for (final (upperStart, lowerStart) in StyledCharacterRanges.charRanges) {
+    final mapped = mapLetters(upperStart, lowerStart);
     if (mapped != null) return mapped;
   }
 
-  for (final digitStart in const [
-    0x1D7CE,
-    0x1D7D8,
-    0x1D7E2,
-    0x1D7EC,
-    0x1D7F6,
-    0xFF10,
-  ]) {
+  for (final digitStart in StyledCharacterRanges.digitStarts) {
     final mapped = mapDigits(digitStart);
     if (mapped != null) return mapped;
   }
@@ -927,25 +889,21 @@ String _canonicalSongTitle(String value) {
   return formatSongTitle(value)
       .toLowerCase()
       .replaceAll('&amp;', '&')
-      .replaceAll(
-        RegExp(r'\b(official|audio|video|lyrics?|visuali[sz]er)\b'),
-        '',
-      )
-      .replaceAll(RegExp('[^a-z0-9]+'), '');
+      .replaceAll(ArtistPatterns.audioVideoLyrics, '')
+      .replaceAll(ArtistPatterns.nonAlphanumeric, '');
 }
 
 String _canonicalArtistName(String value) {
   final lower = _normalizeArtistText(value)
       .toLowerCase()
       .replaceAll('&amp;', '&')
-      .replaceAll(RegExp(r'\s*-\s*topic\b'), '')
-      .replaceAll(RegExp(r'\bofficial artist channel\b'), '')
-      .replaceAll(RegExp(r'\bofficial channel\b'), '')
-      .replaceAll(RegExp(r'\bmusic channel\b'), '')
-      .replaceAll(RegExp(r'\bofficial\b'), '')
+      .replaceAll(ArtistPatterns.topicSuffix, '')
+      .replaceAll(ArtistPatterns.officialChannel, '')
+      .replaceAll(ArtistPatterns.musicChannel, '')
+      .replaceAll(ArtistPatterns.official, '')
       .trim();
 
-  var cleaned = lower.replaceAll(RegExp('[^a-z0-9]+'), '');
+  var cleaned = lower.replaceAll(ArtistPatterns.nonAlphanumeric, '');
   var previous = '';
   while (cleaned != previous) {
     previous = cleaned;
@@ -957,7 +915,7 @@ String _canonicalArtistName(String value) {
 
   if (cleaned.isNotEmpty) return cleaned;
 
-  return lower.replaceAll(RegExp(r'\s+'), '');
+  return lower.replaceAll(ArtistPatterns.multipleSpaces, '');
 }
 
 bool _isChannelId(String value) => ChannelId.validateChannelId(value);

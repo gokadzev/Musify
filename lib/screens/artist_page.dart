@@ -74,6 +74,12 @@ class _ArtistPageState extends State<ArtistPage> {
   /// Whether the songs of the artist are being read for the play buttons.
   final _isLoadingCatalog = ValueNotifier<bool>(false);
 
+  /// Cache for the resolved artist ID to avoid repeated lookups.
+  String? _cachedResolvedArtistId;
+
+  /// Cache for the artist title to avoid repeated lookups.
+  String? _cachedArtistTitle;
+
   /// Reads the artist again, showing the loader while it does. A read that
   /// fails puts back the page that was on screen, instead of replacing an
   /// artist that had loaded fine with the not-found page.
@@ -100,7 +106,11 @@ class _ArtistPageState extends State<ArtistPage> {
     // a fresh copy of the same seed on every rebuild of the route, and a Map
     // compares by identity, so reading it here would reload the page — and
     // flash the loader over it — every time a page is pushed on top of it.
-    if (oldWidget.artistId != widget.artistId) _artistFuture = null;
+    if (oldWidget.artistId != widget.artistId) {
+      _artistFuture = null;
+      _cachedResolvedArtistId = null;
+      _cachedArtistTitle = null;
+    }
   }
 
   @override
@@ -109,10 +119,10 @@ class _ArtistPageState extends State<ArtistPage> {
     super.dispose();
   }
 
-  String get _resolvedArtistId =>
+  String get _resolvedArtistId => _cachedResolvedArtistId ??=
       _artist?['ytid']?.toString() ?? widget.artistId;
 
-  String get _artistTitle =>
+  String get _artistTitle => _cachedArtistTitle ??=
       _artist?['title']?.toString() ??
       widget.artistData?['title']?.toString() ??
       '';
@@ -131,6 +141,9 @@ class _ArtistPageState extends State<ArtistPage> {
     if (artist == null) return null;
 
     _artist = artist;
+    // Clear caches when artist data updates
+    _cachedResolvedArtistId = null;
+    _cachedArtistTitle = null;
     // Each entry of the shelf is a song and its play count, side by side.
     final topSongs = asMapList(
       artist['topSongs'],
