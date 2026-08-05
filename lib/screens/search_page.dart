@@ -477,7 +477,7 @@ class _SearchPageState extends State<SearchPage> {
     if (_radioStationsSearchResult.isNotEmpty) {
       widgets.add(
         SectionTitle(
-          'Radio Stations',
+          context.l10n!.radioStations,
           primaryColor,
           icon: FluentIcons.speaker_2_24_filled,
         ),
@@ -506,7 +506,7 @@ class _SearchPageState extends State<SearchPage> {
                   genre: station.genre,
                 );
                 if (!success && context.mounted) {
-                  showToast(context, 'Failed to play radio station');
+                  showToast(context, context.l10n!.failedPlayingRadio);
                 }
               },
             ),
