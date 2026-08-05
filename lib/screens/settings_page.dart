@@ -451,71 +451,45 @@ class SettingsPage extends StatelessWidget {
           icon: FluentIcons.heart_24_filled,
         ),
         Card(
-          margin: const EdgeInsets.only(bottom: 3),
+          margin: const EdgeInsets.only(bottom: 8),
           elevation: 0,
+          color: colorScheme.primaryContainer,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(16),
           ),
-          child: DecoratedBox(
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(15)),
-            child: Material(
-              color: colorScheme.primaryContainer,
-              borderRadius: BorderRadius.circular(15),
-              child: InkWell(
-                borderRadius: BorderRadius.circular(15),
-                onTap: () => launchURL(Uri.parse('https://ko-fi.com/gokadzev')),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 12,
-                    horizontal: 16,
-                  ),
-                  child: SizedBox(
-                    height: 45,
-                    child: Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: colorScheme.onPrimaryContainer.withValues(
-                              alpha: 0.15,
-                            ),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Icon(
-                            FluentIcons.heart_24_regular,
-                            color: colorScheme.onPrimaryContainer,
-                            size: 24,
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Text(
-                            context.l10n!.sponsorProject,
-                            style: TextStyle(
-                              color: colorScheme.onPrimaryContainer,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            color: colorScheme.onPrimaryContainer.withValues(
-                              alpha: 0.1,
-                            ),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Icon(
-                            FluentIcons.arrow_right_24_regular,
-                            color: colorScheme.onPrimaryContainer,
-                            size: 16,
-                          ),
-                        ),
-                      ],
+          child: InkWell(
+            onTap: () => launchURL(Uri.parse('https://ko-fi.com/gokadzev')),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 12, 12),
+              child: Row(
+                children: [
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: colorScheme.onPrimaryContainer.withValues(
+                        alpha: 0.14,
+                      ),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      FluentIcons.heart_24_filled,
+                      color: colorScheme.onPrimaryContainer,
+                      size: 24,
                     ),
                   ),
-                ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Text(
+                      context.l10n!.sponsorProject,
+                      style: TextStyle(
+                        color: colorScheme.onPrimaryContainer,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
