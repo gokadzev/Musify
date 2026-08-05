@@ -152,7 +152,7 @@ class NowPlayingControls extends StatelessWidget {
     if (lookup.isEmpty) return;
 
     final router = GoRouter.of(context);
-    final basePath = _artistRouteBasePath(context);
+    final artistPath = NavigationManager.artistPath(context, lookup);
     final artistData = {
       'ytid': info.artistId.isNotEmpty ? info.artistId : lookup,
       if (info.artist.isNotEmpty) 'title': info.artist,
@@ -164,12 +164,7 @@ class NowPlayingControls extends StatelessWidget {
     };
 
     Navigator.of(context).pop();
-    unawaited(
-      router.push(
-        '$basePath/artist/${Uri.encodeComponent(lookup)}',
-        extra: artistData,
-      ),
-    );
+    unawaited(router.push(artistPath, extra: artistData));
   }
 
   ({String artist, String artistId, String sourceSongId, String videoAuthor})
@@ -180,20 +175,6 @@ class NowPlayingControls extends StatelessWidget {
       sourceSongId: metadata.extras?['ytid']?.toString().trim() ?? '',
       videoAuthor: metadata.extras?['videoAuthor']?.toString().trim() ?? '',
     );
-  }
-
-  String _artistRouteBasePath(BuildContext context) {
-    try {
-      final currentPath = GoRouterState.of(context).uri.path;
-      if (currentPath.startsWith(NavigationManager.searchPath)) {
-        return NavigationManager.searchPath;
-      }
-      if (currentPath.startsWith(NavigationManager.libraryPath)) {
-        return NavigationManager.libraryPath;
-      }
-    } catch (_) {}
-
-    return NavigationManager.homePath;
   }
 }
 

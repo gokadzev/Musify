@@ -24,16 +24,23 @@ import 'dart:async';
 import 'package:musify/main.dart' show logger;
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/proxy_manager.dart';
+import 'package:musify/utilities/app_utils.dart';
 import 'package:musify/utilities/formatter.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 import 'package:youtube_music_explode_dart/youtube_music_explode_dart.dart';
 
 const artistCatalogCacheVersion = 15;
 const artistSearchCacheVersion = 10;
+const artistProfileCacheVersion = 4;
+const artistAlbumCacheVersion = 2;
+const artistChannelCacheVersion = 2;
 const _artistRequestTimeout = Duration(seconds: 12);
-const _musicDiscographyTimeout = Duration(seconds: 25);
+const _artistProfileTimeout = Duration(seconds: 25);
 const _musicAlbumTimeout = Duration(seconds: 12);
 const _musicAlbumBatchSize = 6;
+
+/// Leading number of a YouTube Music counter, e.g. `331M` of `331M plays`.
+final _countTokenPattern = RegExp(r'^[\d.,]+\s?[KMBkmb]?\b');
 
 final ytMusicClient = YoutubeMusicExplode();
 
@@ -49,11 +56,7 @@ Future<List<Map<String, dynamic>>> searchVerifiedArtists(
       '_${normalizedQuery.toLowerCase()}';
   final cachedArtists = await getData('cache', cacheKey);
   if (cachedArtists is List) {
-    return cachedArtists
-        .whereType<Map>()
-        .map(Map<String, dynamic>.from)
-        .take(limit)
-        .toList();
+    return asMapList(cachedArtists).take(limit).toList();
   }
 
   try {
@@ -101,15 +104,12 @@ Future<Map<String, dynamic>?> resolveArtist(
         name: displayName,
         thumbnailUrl: preferredImage,
       ),
-      preferredTitle: displayName,
       preferredImage: preferredImage,
     );
   }
 
   final normalizedSourceSongId = sourceSongId?.trim();
   final terms = <String>{};
-  String? sourceVideoArtist;
-  var resolvedSourceVideoAuthor = sourceVideoAuthor?.trim();
 
   void addAliases(String? value) {
     if (value == null) return;
@@ -117,16 +117,15 @@ Future<Map<String, dynamic>?> resolveArtist(
   }
 
   addAliases(displayName);
+  addAliases(sourceVideoAuthor);
 
   if (normalizedSourceSongId != null && normalizedSourceSongId.isNotEmpty) {
     try {
       final sourceVideo = await ytClient.videos
           .get(normalizedSourceSongId)
           .timeout(_artistRequestTimeout);
-      resolvedSourceVideoAuthor = sourceVideo.author.trim();
-      sourceVideoArtist = _artistNameFromVideoTitle(sourceVideo.title);
-      addAliases(sourceVideoArtist);
-      addAliases(resolvedSourceVideoAuthor);
+      addAliases(_artistNameFromVideoTitle(sourceVideo.title));
+      addAliases(sourceVideo.author);
       for (final musicData in sourceVideo.musicData) {
         addAliases(musicData.artist);
       }
@@ -156,15 +155,10 @@ Future<Map<String, dynamic>?> resolveArtist(
     addAliases(normalizedLookup);
   }
 
-  final scoringName =
-      displayName ??
-      sourceVideoArtist ??
-      _cleanArtistSearchTerm(resolvedSourceVideoAuthor ?? normalizedLookup);
   final artist = await _resolveMusicArtistFromTerms(
     terms,
     trustedLookupId: normalizedLookup,
     preferredImage: preferredImage,
-    preferredTitle: scoringName,
     allowFirstResultForTrustedSeed: preferredVerified && displayName != null,
   );
 
@@ -179,6 +173,190 @@ Future<Map<String, dynamic>?> resolveArtist(
   return artist;
 }
 
+/// Loads the artist page: header details, top songs, discography and the
+/// artists YouTube Music suggests next to it.
+///
+/// This is the entry point for anything about an artist. [getArtistCatalog]
+/// then turns the discography into the song list of the artist.
+Future<Map<String, dynamic>?> getArtistProfile(
+  String artistId, {
+  bool forceRefresh = false,
+  String? sourceSongId,
+  String? sourceVideoAuthor,
+  String? preferredName,
+  String? preferredImage,
+  bool preferredVerified = false,
+}) async {
+  try {
+    final lookup = artistId.trim();
+    final isChannelLookup = _isChannelId(lookup);
+
+    // A channel id is read straight away: one browse answers both who the
+    // artist is and what its page holds. The search that turns a name into a
+    // channel is only paid when that browse comes back with a channel that has
+    // no artist page of its own, e.g. the label that uploaded the song.
+    if (isChannelLookup) {
+      final knownChannel = await getData(
+        'cache',
+        _artistChannelCacheKey(lookup),
+      );
+      final profile = await _artistPageOf(
+        knownChannel?.toString() ?? lookup,
+        forceRefresh: forceRefresh,
+        preferredName: preferredName,
+        preferredImage: preferredImage,
+      );
+      if (profile != null) return profile;
+    }
+
+    final artist = await resolveArtist(
+      lookup,
+      preferredName: preferredName,
+      preferredImage: preferredImage,
+      sourceSongId: sourceSongId,
+      sourceVideoAuthor: sourceVideoAuthor,
+      preferredVerified: preferredVerified,
+    );
+
+    if (artist == null) {
+      logger.log(
+        'Artist profile not found: lookup=$artistId; '
+        'sourceSongId=$sourceSongId; preferredName=$preferredName',
+      );
+      return null;
+    }
+
+    // Where this landed is deliberately not remembered for the channel that was
+    // looked up: a channel that has no artist page of its own is a channel that
+    // uploads for many artists, and which one this is was decided by the name
+    // of the song it was opened from, not by the channel.
+    return _artistPageOf(
+      artist['ytid']?.toString() ?? lookup,
+      forceRefresh: forceRefresh,
+      artist: artist,
+    );
+  } catch (e, stackTrace) {
+    logger.log(
+      'Error fetching artist profile for $artistId',
+      error: e,
+      stackTrace: stackTrace,
+    );
+    return null;
+  }
+}
+
+/// The artist page of [artistId], from the cache unless [forceRefresh].
+///
+/// [artist] is what a lookup by name already resolved about the artist;
+/// without it the page names itself, and null is returned when the channel
+/// turns out to have no artist page at all — YouTube Music answers a browse of
+/// any channel, and one that only uploads music comes back with neither
+/// releases nor top songs.
+Future<Map<String, dynamic>?> _artistPageOf(
+  String artistId, {
+  required bool forceRefresh,
+  Map<String, dynamic>? artist,
+  String? preferredName,
+  String? preferredImage,
+  bool followCanonical = true,
+}) async {
+  // Nothing is dropped before the page is in hand: a refresh that fails on a
+  // bad connection would otherwise leave the artist with no page at all.
+  final cacheKey = _artistProfileCacheKey(artistId);
+  if (!forceRefresh) {
+    final cachedProfile = await getData('cache', cacheKey);
+    if (cachedProfile is Map) {
+      return Map<String, dynamic>.from(cachedProfile);
+    }
+  }
+
+  final profile = await ytMusicClient.music
+      .getArtistProfile(artistId)
+      .timeout(_artistProfileTimeout);
+
+  // The channel uploads for the artist without being it: its page is a partial
+  // copy without the top songs, so the canonical one it points at is read
+  // instead. Remembered, so the detour is paid once and not on every visit.
+  if (followCanonical && profile.id != artistId) {
+    unawaited(
+      addOrUpdateData<String>(
+        'cache',
+        _artistChannelCacheKey(artistId),
+        profile.id,
+      ),
+    );
+    return _artistPageOf(
+      profile.id,
+      forceRefresh: forceRefresh,
+      artist: artist,
+      preferredName: preferredName,
+      preferredImage: preferredImage,
+      followCanonical: false,
+    );
+  }
+
+  final knownArtist =
+      artist ??
+      _artistMapFromMusicArtist(
+        MusicArtist(
+          id: profile.id,
+          name: profile.name.isEmpty ? (preferredName ?? '') : profile.name,
+          thumbnailUrl: profile.thumbnailUrl,
+        ),
+        preferredImage: preferredImage,
+      );
+
+  final artistName = normalizeArtistDisplayTitle(
+    knownArtist['title']?.toString() ?? profile.name,
+  );
+  final artistProfile = {
+    ...knownArtist,
+    'title': artistName.isEmpty ? profile.name : artistName,
+    'image':
+        knownArtist['image']?.toString() ??
+        normalizeArtistThumbnailUrl(profile.thumbnailUrl),
+    'description': profile.description,
+    'monthlyListeners': _extractCountToken(profile.monthlyListeners),
+    // The play count is kept next to the song, never inside it: song maps
+    // travel into the queue and into the library of the user, where the
+    // counter of an artist shelf has no meaning.
+    'topSongs': [
+      for (final (index, song) in profile.topSongs.indexed)
+        {
+          'song': returnSongLayout(index, song.video),
+          'playCount': _extractCountToken(song.playCount),
+        },
+    ],
+    'releases': [
+      for (final release in profile.releases)
+        _releaseMapFromMusicAlbum(release, knownArtist),
+    ]..sort(_compareReleasesByYearDesc),
+    'relatedArtists': [
+      for (final related in profile.relatedArtists)
+        _artistMapFromMusicArtist(related),
+    ],
+  };
+
+  // An artist page with nothing on it is either a channel that is not an
+  // artist, or YouTube Music answering with something unexpected. Neither is
+  // worth keeping for a week, and a channel nobody vouched for is not shown.
+  if ((artistProfile['topSongs'] as List).isEmpty &&
+      (artistProfile['releases'] as List).isEmpty) {
+    logger.log('Artist page empty: $artistId (${profile.name})');
+    return artist == null ? null : artistProfile;
+  }
+
+  if (forceRefresh) {
+    // The song catalog is built from this discography, so it went stale with
+    // it. It is rebuilt the next time the songs of the artist are needed.
+    await _dropFromCache(_artistCatalogCacheKey(artistId));
+  }
+  unawaited(addOrUpdateData<Map>('cache', cacheKey, artistProfile));
+  return artistProfile;
+}
+
+/// The artist as a playlist of every song of its discography, which is what
+/// the "All songs" page shows and what downloading an artist stores.
 Future<Map<String, dynamic>?> getArtistCatalog(
   String artistId, {
   bool forceRefresh = false,
@@ -189,64 +367,41 @@ Future<Map<String, dynamic>?> getArtistCatalog(
   bool preferredVerified = false,
 }) async {
   try {
-    final artist = await resolveArtist(
+    final artist = await getArtistProfile(
       artistId,
+      forceRefresh: forceRefresh,
       preferredName: preferredName,
       preferredImage: preferredImage,
       sourceSongId: sourceSongId,
       sourceVideoAuthor: sourceVideoAuthor,
       preferredVerified: preferredVerified,
     );
+    if (artist == null) return null;
 
-    if (artist == null) {
-      logger.log(
-        'Artist catalog not found: lookup=$artistId; '
-        'sourceSongId=$sourceSongId; preferredName=$preferredName',
-      );
-      return null;
+    // No [forceRefresh] check: refreshing the profile already dropped this key.
+    final cacheKey = _artistCatalogCacheKey(
+      artist['ytid']?.toString() ?? artistId,
+    );
+    final cachedArtist = await getData('cache', cacheKey);
+    if (cachedArtist is Map &&
+        cachedArtist['list'] is List &&
+        (cachedArtist['list'] as List).isNotEmpty) {
+      return Map<String, dynamic>.from(cachedArtist);
     }
 
-    final resolvedArtistId = artist['ytid']?.toString() ?? artistId;
-    final cacheKey =
-        'artist_catalog_v${artistCatalogCacheVersion}_$resolvedArtistId';
-    if (!forceRefresh) {
-      final cachedArtist = await getData('cache', cacheKey);
-      if (cachedArtist is Map &&
-          cachedArtist['list'] is List &&
-          (cachedArtist['list'] as List).isNotEmpty) {
-        return Map<String, dynamic>.from(cachedArtist);
-      }
-    } else {
-      await deleteData('cache', cacheKey);
-      await deleteData('cache', '${cacheKey}_date');
-    }
-
-    final songs = await _buildArtistCatalogFromMusic(artist);
+    final songs = await _catalogSongsOf(artist);
     if (songs.isEmpty) {
       logger.log(
-        'Artist catalog not found: no YouTube Music releases for '
-        '${artist['title']} (${artist['ytid']}); lookup=$artistId; '
-        'sourceSongId=$sourceSongId; preferredName=$preferredName',
+        'Artist catalog empty: no YouTube Music releases for '
+        '${artist['title']} (${artist['ytid']}); lookup=$artistId',
       );
       return {
-        ...artist,
-        'source': 'youtube-artist',
-        'isArtist': true,
+        ...artistPlaylistData(artist, songs: const []),
         'catalogStatus': 'failed',
-        'isCatalogComplete': false,
-        'list': [],
       };
     }
 
-    final artistPlaylist = {
-      ...artist,
-      'source': 'youtube-artist',
-      'isArtist': true,
-      'catalogStatus': 'complete',
-      'isCatalogComplete': true,
-      'list': songs,
-    };
-
+    final artistPlaylist = artistPlaylistData(artist, songs: songs);
     unawaited(addOrUpdateData<Map>('cache', cacheKey, artistPlaylist));
     return artistPlaylist;
   } catch (e, stackTrace) {
@@ -257,6 +412,166 @@ Future<Map<String, dynamic>?> getArtistCatalog(
     );
     return null;
   }
+}
+
+/// The artist as a playlist: the shape stored by the liked artists, the offline
+/// downloads and the "All songs" page. [songs] is left null while they are
+/// still unknown, which is what makes the playlist page load them itself.
+Map<String, dynamic> artistPlaylistData(Map artist, {List? songs}) {
+  return {
+    'ytid': artist['ytid']?.toString(),
+    'title': artist['title']?.toString() ?? '',
+    'image': artist['image'],
+    'source': 'youtube-artist',
+    'isArtist': true,
+    'isVerifiedArtist': true,
+    'list': songs,
+  };
+}
+
+/// Every song of the discography of [artist], one batch of releases at a time.
+Future<List<Map<String, dynamic>>> _catalogSongsOf(
+  Map<String, dynamic> artist,
+) async {
+  final artistId = artist['ytid']?.toString();
+  final artistName = artist['title']?.toString() ?? '';
+  final releases = asMapList(artist['releases']);
+
+  final songs = <Map<String, dynamic>>[];
+  for (var index = 0; index < releases.length; index += _musicAlbumBatchSize) {
+    final albums = await Future.wait([
+      for (final release in releases.skip(index).take(_musicAlbumBatchSize))
+        getArtistAlbum(release['ytid']?.toString() ?? ''),
+    ]);
+    for (final album in albums) {
+      // These are the songs of the artist whose discography is being read, so
+      // they are credited to it and not to whoever the release names, which
+      // for a compilation or a collaboration is somebody else.
+      for (final song in asMapList(album?['list'])) {
+        songs.add({
+          ...song,
+          if (artistName.isNotEmpty) 'artist': artistName,
+          if (artistId != null && artistId.isNotEmpty) 'artistId': artistId,
+        });
+      }
+    }
+  }
+
+  return dedupeArtistCatalogSongs(songs);
+}
+
+/// Loads a YouTube Music release as a playlist, always as itself: one cache
+/// entry answers everyone reading the release, so nothing that depends on who
+/// is reading it may be stored in it. Crediting the tracks to the artist whose
+/// discography is being walked happens after the read, in [_catalogSongsOf].
+Future<Map<String, dynamic>?> getArtistAlbum(
+  String albumId, {
+  bool forceRefresh = false,
+}) async {
+  final normalizedAlbumId = albumId.trim();
+  if (normalizedAlbumId.isEmpty) return null;
+
+  final cacheKey =
+      'artist_album_v${artistAlbumCacheVersion}_$normalizedAlbumId';
+  if (!forceRefresh) {
+    final cachedAlbum = await getData('cache', cacheKey);
+    if (cachedAlbum is Map &&
+        cachedAlbum['list'] is List &&
+        (cachedAlbum['list'] as List).isNotEmpty) {
+      return Map<String, dynamic>.from(cachedAlbum);
+    }
+  } else {
+    await _dropFromCache(cacheKey);
+  }
+
+  try {
+    final release = await ytMusicClient.music
+        .getAlbum(normalizedAlbumId)
+        .timeout(_musicAlbumTimeout);
+
+    final album = {
+      'ytid': normalizedAlbumId,
+      'title': release.title,
+      'image': normalizeArtistThumbnailUrl(release.thumbnailUrl),
+      'artist': release.artist,
+      'artistId': release.artistId,
+      'year': release.year,
+      'source': 'youtube-album',
+      'isAlbum': true,
+      'list': [
+        for (final (index, track) in release.tracks.indexed)
+          returnSongLayout(index, track),
+      ],
+    };
+
+    if (release.tracks.isNotEmpty) {
+      unawaited(addOrUpdateData<Map>('cache', cacheKey, album));
+    }
+    return album;
+  } catch (e, stackTrace) {
+    logger.log(
+      'Could not load YouTube Music album $normalizedAlbumId',
+      error: e,
+      stackTrace: stackTrace,
+    );
+    return null;
+  }
+}
+
+/// Whether a release of an artist profile is a single or an EP. YouTube Music
+/// only labels those, so everything else is listed as an album.
+bool isSingleOrEpRelease(Map release) {
+  final type = release['releaseType']?.toString();
+  return type == 'single' || type == 'ep';
+}
+
+String _artistCatalogCacheKey(String artistId) =>
+    'artist_catalog_v${artistCatalogCacheVersion}_$artistId';
+
+String _artistProfileCacheKey(String artistId) =>
+    'artist_profile_v${artistProfileCacheVersion}_$artistId';
+
+/// Where the artist page of a channel of the artist itself is, for the channel
+/// that uploads its videos. Only ever written from what a page says about the
+/// channel it was read with, never from what a song was resolved into: a
+/// channel that uploads for several artists has no single artist page.
+String _artistChannelCacheKey(String channelId) =>
+    'artist_channel_v${artistChannelCacheVersion}_$channelId';
+
+Future<void> _dropFromCache(String cacheKey) async {
+  await deleteData('cache', cacheKey);
+  await deleteData('cache', '${cacheKey}_date');
+}
+
+Map<String, dynamic> _releaseMapFromMusicAlbum(MusicAlbum album, Map artist) {
+  return {
+    'ytid': album.id,
+    'title': album.title,
+    'image': normalizeArtistThumbnailUrl(album.thumbnailUrl),
+    'year': album.year,
+    'releaseType': album.type.name,
+    'artist': artist['title']?.toString(),
+    'artistId': artist['ytid']?.toString(),
+    'source': 'youtube-album',
+    'isAlbum': true,
+  };
+}
+
+int _compareReleasesByYearDesc(Map<String, dynamic> a, Map<String, dynamic> b) {
+  final yearA = int.tryParse(a['year']?.toString() ?? '') ?? 0;
+  final yearB = int.tryParse(b['year']?.toString() ?? '') ?? 0;
+  if (yearA != yearB) return yearB.compareTo(yearA);
+  return (a['title']?.toString() ?? '').compareTo(b['title']?.toString() ?? '');
+}
+
+/// Reduces YouTube Music counters like `331M monthly audience` to `331M`.
+String? _extractCountToken(String? value) {
+  final text = value?.trim();
+  if (text == null || text.isEmpty) return null;
+
+  final match = _countTokenPattern.firstMatch(text);
+  final token = match?.group(0)?.trim();
+  return (token == null || token.isEmpty) ? text : token;
 }
 
 String? normalizeArtistThumbnailUrl(String? value) {
@@ -347,7 +662,6 @@ Future<Map<String, dynamic>?> _resolveMusicArtistFromTerms(
   Set<String> terms, {
   required String trustedLookupId,
   required String? preferredImage,
-  required String preferredTitle,
   required bool allowFirstResultForTrustedSeed,
 }) async {
   final normalizedTerms = terms
@@ -382,7 +696,6 @@ Future<Map<String, dynamic>?> _resolveMusicArtistFromTerms(
           )) {
         return _artistMapFromMusicArtist(
           candidate,
-          preferredTitle: preferredTitle,
           preferredImage: preferredImage,
         );
       }
@@ -418,16 +731,11 @@ bool _canAcceptMusicArtist(
 
 Map<String, dynamic> _artistMapFromMusicArtist(
   MusicArtist artist, {
-  String? preferredTitle,
   String? preferredImage,
 }) {
-  final title = normalizeArtistDisplayTitle(artist.name);
   return {
     'ytid': artist.id,
-    'title': title,
-    'sourceTitle': artist.name,
-    if (preferredTitle != null && preferredTitle.trim().isNotEmpty)
-      'lookupTitle': normalizeArtistDisplayTitle(preferredTitle),
+    'title': normalizeArtistDisplayTitle(artist.name),
     'image': normalizeArtistThumbnailUrl(artist.thumbnailUrl ?? preferredImage),
     'source': 'youtube-artist',
     'isArtist': true,
@@ -452,72 +760,6 @@ List<Map<String, dynamic>> _dedupeResolvedArtists(
   }
 
   return unique;
-}
-
-Future<List<Map<String, dynamic>>> _buildArtistCatalogFromMusic(
-  Map<String, dynamic> artist,
-) async {
-  final artistId = artist['ytid']?.toString() ?? '';
-  if (!_isChannelId(artistId)) return [];
-
-  final artistName = normalizeArtistDisplayTitle(
-    artist['title']?.toString() ??
-        artist['sourceTitle']?.toString() ??
-        artist['lookupTitle']?.toString() ??
-        '',
-  );
-
-  try {
-    final releases = await ytMusicClient.music
-        .getArtistReleases(artistId)
-        .timeout(_musicDiscographyTimeout);
-
-    if (releases.isEmpty) {
-      logger.log('YouTube Music discography empty for $artistName ($artistId)');
-      return [];
-    }
-
-    final songs = <Map<String, dynamic>>[];
-    for (var i = 0; i < releases.length; i += _musicAlbumBatchSize) {
-      final batch = releases.skip(i).take(_musicAlbumBatchSize);
-      final batchResults = await Future.wait(
-        batch.map((album) => _loadAlbumSongs(album, artistId, artistName)),
-      );
-      for (final albumSongs in batchResults) {
-        songs.addAll(albumSongs);
-      }
-    }
-
-    final catalog = dedupeArtistCatalogSongs(songs);
-    return catalog;
-  } catch (e, stackTrace) {
-    logger.log(
-      'YouTube Music discography failed for $artistName ($artistId)',
-      error: e,
-      stackTrace: stackTrace,
-    );
-    return [];
-  }
-}
-
-Future<List<Map<String, dynamic>>> _loadAlbumSongs(
-  MusicAlbum album,
-  String channelId,
-  String artistName,
-) async {
-  try {
-    final tracks = await ytMusicClient.music
-        .getAlbumTracks(album.id, author: artistName, channelId: channelId)
-        .timeout(_musicAlbumTimeout);
-    return [for (final track in tracks) returnSongLayout(0, track)];
-  } catch (e, stackTrace) {
-    logger.log(
-      'Could not load YouTube Music album ${album.title} (${album.id})',
-      error: e,
-      stackTrace: stackTrace,
-    );
-    return [];
-  }
 }
 
 bool _sameArtistPageSongTitle(String title, String artist) {

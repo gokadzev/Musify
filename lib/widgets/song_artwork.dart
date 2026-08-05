@@ -64,7 +64,7 @@ class SongArtworkWidget extends StatelessWidget {
             ),
             placeholder: (context, url) => const Spinner(),
             errorWidget: (context, url, error) =>
-                NullArtworkWidget(iconSize: errorWidgetIconSize),
+                NullArtworkWidget(iconSize: errorWidgetIconSize, size: size),
           );
   }
 }

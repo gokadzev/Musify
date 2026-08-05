@@ -24,19 +24,22 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:musify/extensions/l10n.dart';
 
+/// Play and shuffle whatever the page is about, shared by the playlist and the
+/// artist pages. While [isLoading] the songs are still being read, so both
+/// buttons wait instead of playing an incomplete list.
 class PlaylistActionButtons extends StatelessWidget {
   const PlaylistActionButtons({
     super.key,
-    required this.songs,
     required this.onPlay,
     required this.onShuffle,
+    this.isLoading = false,
   });
-
-  final List<dynamic> songs;
 
   final VoidCallback onPlay;
 
   final AsyncCallback onShuffle;
+
+  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
@@ -48,9 +51,11 @@ class PlaylistActionButtons extends StatelessWidget {
         children: [
           Expanded(
             child: FilledButton.icon(
-              icon: const Icon(FluentIcons.play_24_regular),
+              icon: isLoading
+                  ? const _Spinner()
+                  : const Icon(FluentIcons.play_24_filled),
               label: Text(context.l10n!.play),
-              onPressed: onPlay,
+              onPressed: isLoading ? null : onPlay,
             ),
           ),
           const SizedBox(width: 12),
@@ -60,13 +65,29 @@ class PlaylistActionButtons extends StatelessWidget {
                 backgroundColor: colorScheme.secondaryContainer,
                 foregroundColor: colorScheme.onSecondaryContainer,
               ),
-              icon: const Icon(FluentIcons.arrow_shuffle_24_regular),
+              icon: isLoading
+                  ? const _Spinner()
+                  : const Icon(FluentIcons.arrow_shuffle_24_filled),
               label: Text(context.l10n!.shuffle),
-              onPressed: songs.isEmpty ? null : onShuffle,
+              onPressed: isLoading ? null : onShuffle,
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Replaces the icon of a button while its songs are being read.
+class _Spinner extends StatelessWidget {
+  const _Spinner();
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox(
+      width: 18,
+      height: 18,
+      child: CircularProgressIndicator(strokeWidth: 2),
     );
   }
 }

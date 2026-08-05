@@ -16,9 +16,18 @@ class MusicArtist {
   final String? thumbnailUrl;
 }
 
+/// Kind of a release listed on a YouTube Music artist page.
+enum MusicReleaseType { album, single, ep, other }
+
 /// A release (album, single or EP) as listed on a YouTube Music artist page.
 class MusicAlbum {
-  const MusicAlbum(this.id, this.title, {this.thumbnailUrl});
+  const MusicAlbum(
+    this.id,
+    this.title, {
+    this.thumbnailUrl,
+    this.type = MusicReleaseType.other,
+    this.year,
+  });
 
   /// Browse id of the release, e.g. `MPREb_...`.
   final String id;
@@ -29,8 +38,102 @@ class MusicAlbum {
   /// Release artwork URL, when YouTube Music exposes one.
   final String? thumbnailUrl;
 
+  /// Whether YouTube Music lists this release as a single or an EP. Album
+  /// shelves only label their entries in the full grid, so an unlabelled
+  /// release is [MusicReleaseType.other].
+  final MusicReleaseType type;
+
+  /// Release year, when YouTube Music exposes one.
+  final String? year;
+
   @override
   String toString() => 'MusicAlbum($id, $title)';
+}
+
+/// A YouTube Music release page: the release itself plus its tracks.
+class MusicReleasePage {
+  const MusicReleasePage({
+    required this.id,
+    required this.title,
+    this.artist,
+    this.artistId,
+    this.thumbnailUrl,
+    this.year,
+    this.tracks = const [],
+  });
+
+  /// Browse id of the release, e.g. `MPREb_...`.
+  final String id;
+
+  /// Display title of the release.
+  final String title;
+
+  /// Artist credited for the release, when YouTube Music exposes one.
+  final String? artist;
+
+  /// Channel id of that artist, when its name links to its page.
+  final String? artistId;
+
+  /// Release artwork URL, when YouTube Music exposes one.
+  final String? thumbnailUrl;
+
+  /// Release year, when YouTube Music exposes one.
+  final String? year;
+
+  /// The tracks of the release, in order.
+  final List<Video> tracks;
+}
+
+/// A track of the artist page "Top songs" shelf.
+class MusicTopSong {
+  const MusicTopSong(this.video, this.playCount);
+
+  /// The track itself.
+  final Video video;
+
+  /// Play count as displayed by YouTube Music, e.g. `1.2B plays`, when the
+  /// shelf lists one.
+  final String? playCount;
+}
+
+/// A YouTube Music artist page.
+class MusicArtistProfile {
+  const MusicArtistProfile({
+    required this.id,
+    required this.name,
+    this.thumbnailUrl,
+    this.description,
+    this.monthlyListeners,
+    this.topSongs = const [],
+    this.releases = const [],
+    this.relatedArtists = const [],
+  });
+
+  /// Canonical `UC...` artist channel id, not necessarily the one the page was
+  /// asked for: see [MusicClient.getArtistProfile].
+  final String id;
+
+  /// Display name returned by YouTube Music.
+  final String name;
+
+  /// Header artwork URL, when YouTube Music exposes one.
+  final String? thumbnailUrl;
+
+  /// Artist biography, when YouTube Music exposes one.
+  final String? description;
+
+  /// Monthly listeners as displayed by YouTube Music, e.g.
+  /// `331M monthly audience`.
+  final String? monthlyListeners;
+
+  /// The tracks of the artist page "Top songs" shelf.
+  final List<MusicTopSong> topSongs;
+
+  /// Every release of the artist: albums, singles and EPs.
+  final List<MusicAlbum> releases;
+
+  /// Artists the "Fans might also like" shelf points to.
+  final List<MusicArtist> relatedArtists;
 }
 
 /// Queries the YouTube Music (`WEB_REMIX`) browse endpoints.
@@ -52,6 +155,16 @@ class MusicClient {
   static const _artistsSearchParams = 'EgWKAQIgAWoMEA4QChADEAQQCRAF';
 
   static const _artistPageType = 'MUSIC_PAGE_TYPE_ARTIST';
+
+  /// Stands in for the channel of a track whose artist page is unknown.
+  static const _unknownChannelId = 'UC0000000000000000000000';
+
+  /// Matches the play count of a top song, e.g. `1.2B plays`. The client asks
+  /// for `hl: en`, so the wording is stable.
+  static final _playCountPattern = RegExp(
+    r'^[\d.,]+\s?[KMB]?\s+plays$',
+    caseSensitive: false,
+  );
 
   /// Searches YouTube Music for canonical artist entries matching [query].
   Future<List<MusicArtist>> searchArtists(String query) async {
@@ -82,96 +195,71 @@ class MusicClient {
           ?.getValue<String>('pageType');
       if (pageType != _artistPageType) continue;
 
-      final name = _firstFlexColumnText(item) ?? '';
+      final name = _flexColumnText(item, 0) ?? '';
       if (name.trim().isEmpty) continue;
 
       results.add(
         MusicArtist(
           id: id,
           name: name.trim(),
-          thumbnailUrl: _listItemThumbnailUrl(item),
+          thumbnailUrl: _thumbnailUrl(item, 'thumbnail'),
         ),
       );
     }
     return results;
   }
 
-  /// Returns the full discography (albums, singles and EPs) of a YouTube Music
-  /// artist.
-  Future<List<MusicAlbum>> getArtistReleases(dynamic channelId) async {
+  /// Returns a YouTube Music artist page: header details, top songs, the full
+  /// discography and the artists it points to.
+  ///
+  /// [channelId] does not have to be the channel of the artist itself: the
+  /// channel that uploads its videos — a label, a VEVO channel — answers with
+  /// a partial page of the same artist, whose header still points at the
+  /// canonical channel. [MusicArtistProfile.id] holds that one, so a caller
+  /// that asked with an uploader can tell and read the real page instead.
+  Future<MusicArtistProfile> getArtistProfile(dynamic channelId) async {
     final id = ChannelId.fromString(channelId).value;
     final root = await _browse(id);
 
-    final releases = <String, MusicAlbum>{};
-    _collectReleases(root, releases);
+    final header =
+        _firstRenderer(root, 'musicImmersiveHeaderRenderer') ??
+        _firstRenderer(root, 'musicVisualHeaderRenderer');
+    final name = (_runsText(header?.getMap('title')) ?? '').trim();
+    final canonicalId = _headerChannelId(header) ?? id;
 
-    for (final more in _collectMoreReleaseBrowses(root)) {
-      try {
-        final grid = await _browse(more.$1, params: more.$2);
-        _collectReleases(grid, releases);
-      } catch (_) {
-        // Keep inline releases if a secondary grid fails.
-      }
-    }
-
-    return releases.values.toList();
+    return MusicArtistProfile(
+      id: canonicalId,
+      name: name,
+      thumbnailUrl: _thumbnailUrl(header, 'thumbnail'),
+      description: _runsText(header?.getMap('description')),
+      monthlyListeners: _runsText(header?.getMap('monthlyListenerCount')),
+      topSongs: _parseTopSongs(root, channelId: canonicalId, author: name),
+      releases: await _collectDiscography(root),
+      relatedArtists: _collectRelatedArtists(
+        root,
+      ).where((artist) => artist.id != canonicalId).toList(),
+    );
   }
 
-  /// Returns the top tracks shown on the YouTube Music artist page.
-  Future<List<Video>> getArtistTopTracks(
-    dynamic channelId, {
-    required String author,
-    int limit = 10,
-  }) async {
-    final id = ChannelId.fromString(channelId).value;
-    final root = await _browse(id);
-    final resolvedChannelId = ChannelId(id);
-    final videos = <Video>[];
-    final seen = <String>{};
-
-    for (final item in _findRenderers(
-      root,
-      'musicResponsiveListItemRenderer',
-    )) {
-      final videoId = _trackVideoId(item);
-      if (videoId == null || !seen.add(videoId)) continue;
-
-      final title = _firstFlexColumnText(item);
-      if (title == null || title.isEmpty) continue;
-
-      videos.add(
-        Video(
-          VideoId(videoId),
-          title,
-          author,
-          resolvedChannelId,
-          null,
-          null,
-          null,
-          '',
-          _parseDuration(_fixedColumnText(item)),
-          ThumbnailSet(videoId),
-          null,
-          const Engagement(0, null, null),
-          false,
-        ),
-      );
-      if (videos.length >= limit) break;
-    }
-
-    return videos;
+  /// Channel the subscribe button of a page header subscribes to, which is the
+  /// artist itself even on the page of a channel that only uploads for it.
+  String? _headerChannelId(_JsonMap? header) {
+    final channelId = header
+        ?.getMap('subscriptionButton')
+        ?.getMap('subscribeButtonRenderer')
+        ?.getValue<String>('channelId');
+    return (channelId != null && channelId.startsWith('UC')) ? channelId : null;
   }
 
-  /// Returns the tracks of a release as [Video]s.
-  Future<List<Video>> getAlbumTracks(
-    String albumBrowseId, {
-    required String author,
-    String? channelId,
-  }) async {
+  /// Returns a release with its tracks, credited to the artist its own header
+  /// names.
+  Future<MusicReleasePage> getAlbum(String albumBrowseId) async {
     final root = await _browse(albumBrowseId);
-    final resolvedChannelId = (channelId != null && channelId.isNotEmpty)
-        ? ChannelId.fromString(channelId)
-        : ChannelId('UC0000000000000000000000');
+    final header =
+        _firstRenderer(root, 'musicResponsiveHeaderRenderer') ??
+        _firstRenderer(root, 'musicDetailHeaderRenderer');
+    final albumArtist = _runsText(header?.getMap('straplineTextOne'))?.trim();
+    final albumArtistId = _straplineChannelId(header);
 
     final videos = <Video>[];
     final seen = <String>{};
@@ -182,29 +270,38 @@ class MusicClient {
       final videoId = _trackVideoId(item);
       if (videoId == null || !seen.add(videoId)) continue;
 
-      final title = _firstFlexColumnText(item);
+      final title = _flexColumnText(item, 0);
       if (title == null || title.isEmpty) continue;
 
       videos.add(
-        Video(
-          VideoId(videoId),
-          title,
-          author,
-          resolvedChannelId,
-          null,
-          null,
-          null,
-          '',
-          _parseDuration(_fixedColumnText(item)),
-          ThumbnailSet(videoId),
-          null,
-          const Engagement(0, null, null),
-          false,
-        ),
+        _trackVideo(item, videoId, title, albumArtist ?? '', albumArtistId),
       );
     }
 
-    return videos;
+    return MusicReleasePage(
+      id: albumBrowseId,
+      title: _runsText(header?.getMap('title'))?.trim() ?? '',
+      artist: albumArtist,
+      artistId: albumArtistId,
+      thumbnailUrl: _thumbnailUrl(header, 'thumbnail'),
+      year: _releaseYearOf(_subtitleParts(header)),
+      tracks: videos,
+    );
+  }
+
+  /// Channel id behind the artist name of a release header, when it links to
+  /// the page of that artist.
+  String? _straplineChannelId(_JsonMap? header) {
+    final runs = header?.getMap('straplineTextOne')?.getList('runs');
+    for (final run in runs?.whereType<Map>() ?? const <Map>[]) {
+      final browseId = run
+          .cast<String, dynamic>()
+          .getMap('navigationEndpoint')
+          ?.getMap('browseEndpoint')
+          ?.getValue<String>('browseId');
+      if (browseId != null && browseId.startsWith('UC')) return browseId;
+    }
+    return null;
   }
 
   Future<_JsonMap> _browse(String browseId, {String? params}) {
@@ -215,7 +312,102 @@ class MusicClient {
     });
   }
 
-  void _collectReleases(_JsonMap root, Map<String, MusicAlbum> into) {
+  /// Every release of the artist page: the grid behind each shelf's "More"
+  /// button, plus the entries only shown inline.
+  Future<List<MusicAlbum>> _collectDiscography(_JsonMap root) async {
+    final grids = await Future.wait([
+      for (final more in _collectMoreReleaseBrowses(root))
+        _browse(
+          more.$1,
+          params: more.$2,
+        ).catchError((_) => <String, dynamic>{}),
+    ]);
+
+    // Grids first: they label the release type, the inline previews of an
+    // album shelf do not, and [_collectReleases] keeps the first entry seen.
+    final releases = <String, MusicAlbum>{};
+    for (final grid in grids) {
+      _collectReleases(grid, releases);
+    }
+    _collectReleases(root, releases);
+    return releases.values.toList();
+  }
+
+  List<MusicTopSong> _parseTopSongs(
+    _JsonMap root, {
+    required String channelId,
+    required String author,
+  }) {
+    final shelf = _firstRenderer(root, 'musicShelfRenderer');
+    if (shelf == null) return const [];
+
+    final songs = <MusicTopSong>[];
+    final seen = <String>{};
+    for (final item in _findRenderers(
+      shelf,
+      'musicResponsiveListItemRenderer',
+    )) {
+      final videoId = _trackVideoId(item);
+      if (videoId == null || !seen.add(videoId)) continue;
+
+      final title = _flexColumnText(item, 0);
+      if (title == null || title.isEmpty) continue;
+
+      final trackAuthor = _flexColumnText(item, 1);
+      songs.add(
+        MusicTopSong(
+          _trackVideo(
+            item,
+            videoId,
+            title,
+            (trackAuthor == null || trackAuthor.isEmpty) ? author : trackAuthor,
+            channelId,
+          ),
+          _playCountText(item),
+        ),
+      );
+    }
+
+    return songs;
+  }
+
+  /// One track row of a shelf or of a release, as a [Video]. Only the fields
+  /// YouTube Music lists in a row are known, the rest is left empty.
+  Video _trackVideo(
+    _JsonMap item,
+    String videoId,
+    String title,
+    String author,
+    String? channelId,
+  ) {
+    return Video(
+      VideoId(videoId),
+      title,
+      author,
+      ChannelId.fromString(channelId ?? _unknownChannelId),
+      null,
+      null,
+      null,
+      '',
+      _parseDuration(_fixedColumnText(item)),
+      ThumbnailSet(videoId),
+      null,
+      const Engagement(0, null, null),
+      false,
+    );
+  }
+
+  /// The play count column of a top song, when the shelf lists one. Its
+  /// position varies, so every column after the title is probed.
+  String? _playCountText(_JsonMap item) {
+    for (var index = 1; index < 4; index++) {
+      final text = _flexColumnText(item, index);
+      if (text != null && _playCountPattern.hasMatch(text)) return text;
+    }
+    return null;
+  }
+
+  void _collectReleases(dynamic root, Map<String, MusicAlbum> into) {
     for (final item in _findRenderers(root, 'musicTwoRowItemRenderer')) {
       final browseId = item
           .getMap('navigationEndpoint')
@@ -223,20 +415,53 @@ class MusicClient {
           ?.getValue<String>('browseId');
       if (browseId == null || !browseId.startsWith('MPRE')) continue;
 
-      final title = item
-          .getMap('title')
-          ?.getList('runs')
-          ?.whereType<Map>()
-          .parseRuns();
+      final title = _runsText(item.getMap('title'));
+      // `Album • 2019`, `Single • 2021`, or just the year when the entry is an
+      // inline preview.
+      final subtitle = _subtitleParts(item);
       into.putIfAbsent(
         browseId,
         () => MusicAlbum(
           browseId,
           title?.trim() ?? '',
-          thumbnailUrl: _twoRowThumbnailUrl(item),
+          thumbnailUrl: _thumbnailUrl(item, 'thumbnailRenderer'),
+          type: _releaseTypeOf(subtitle),
+          year: _releaseYearOf(subtitle),
         ),
       );
     }
+  }
+
+  /// Collects the artists of the "Fans might also like" shelf. They sit in the
+  /// same rows as the releases, told apart by their channel browse id.
+  List<MusicArtist> _collectRelatedArtists(dynamic root) {
+    final artists = <String, MusicArtist>{};
+    for (final item in _findRenderers(root, 'musicTwoRowItemRenderer')) {
+      final endpoint = item
+          .getMap('navigationEndpoint')
+          ?.getMap('browseEndpoint');
+      final browseId = endpoint?.getValue<String>('browseId');
+      if (browseId == null || !browseId.startsWith('UC')) continue;
+
+      final pageType = endpoint
+          ?.getMap('browseEndpointContextSupportedConfigs')
+          ?.getMap('browseEndpointContextMusicConfig')
+          ?.getValue<String>('pageType');
+      if (pageType != _artistPageType) continue;
+
+      final name = _runsText(item.getMap('title'))?.trim();
+      if (name == null || name.isEmpty) continue;
+
+      artists.putIfAbsent(
+        browseId,
+        () => MusicArtist(
+          id: browseId,
+          name: name,
+          thumbnailUrl: _thumbnailUrl(item, 'thumbnailRenderer'),
+        ),
+      );
+    }
+    return artists.values.toList();
   }
 
   List<(String, String?)> _collectMoreReleaseBrowses(_JsonMap root) {
@@ -257,6 +482,37 @@ class MusicClient {
     return result;
   }
 
+  List<String> _subtitleParts(_JsonMap? item) {
+    final subtitle = _runsText(item?.getMap('subtitle'));
+    if (subtitle == null) return const [];
+    return subtitle
+        .split('•')
+        .map((part) => part.trim())
+        .where((part) => part.isNotEmpty)
+        .toList();
+  }
+
+  MusicReleaseType _releaseTypeOf(List<String> subtitleParts) {
+    for (final part in subtitleParts) {
+      switch (part.toLowerCase()) {
+        case 'album':
+          return MusicReleaseType.album;
+        case 'single':
+          return MusicReleaseType.single;
+        case 'ep':
+          return MusicReleaseType.ep;
+      }
+    }
+    return MusicReleaseType.other;
+  }
+
+  String? _releaseYearOf(List<String> subtitleParts) {
+    for (final part in subtitleParts) {
+      if (RegExp(r'^(19|20)\d{2}$').hasMatch(part)) return part;
+    }
+    return null;
+  }
+
   String? _trackVideoId(_JsonMap item) {
     return item
         .getMap('overlay')
@@ -268,18 +524,22 @@ class MusicClient {
         ?.getValue<String>('videoId');
   }
 
-  String? _firstFlexColumnText(_JsonMap item) {
+  String? _flexColumnText(_JsonMap item, int index) {
     final columns = item.getList('flexColumns');
-    if (columns == null || columns.isEmpty) return null;
-    final firstColumn = columns.first;
-    if (firstColumn is! Map) return null;
-    return firstColumn
-        .cast<String, dynamic>()
-        .getMap('musicResponsiveListItemFlexColumnRenderer')
-        ?.getMap('text')
-        ?.getList('runs')
-        ?.whereType<Map>()
-        .parseRuns();
+    if (columns == null || columns.length <= index) return null;
+    final column = columns[index];
+    if (column is! Map) return null;
+    return _runsText(
+      column
+          .cast<String, dynamic>()
+          .getMap('musicResponsiveListItemFlexColumnRenderer')
+          ?.getMap('text'),
+    );
+  }
+
+  String? _runsText(_JsonMap? node) {
+    final runs = node?.getList('runs')?.whereType<Map>().parseRuns();
+    return (runs == null || runs.isEmpty) ? null : runs;
   }
 
   String? _fixedColumnText(_JsonMap item) {
@@ -296,21 +556,11 @@ class MusicClient {
         .parseRuns();
   }
 
-  String? _listItemThumbnailUrl(_JsonMap item) {
-    final thumbnails = item
-        .getMap('thumbnail')
-        ?.getMap('musicThumbnailRenderer')
-        ?.getMap('thumbnail')
-        ?.getList('thumbnails');
-    if (thumbnails == null || thumbnails.isEmpty) return null;
-    final thumbnail = thumbnails.last;
-    if (thumbnail is! Map) return null;
-    return thumbnail.cast<String, dynamic>().getValue<String>('url');
-  }
-
-  String? _twoRowThumbnailUrl(_JsonMap item) {
-    final thumbnails = item
-        .getMap('thumbnailRenderer')
+  /// The largest artwork URL under [key], which holds a thumbnail renderer:
+  /// `thumbnail` on headers and list items, `thumbnailRenderer` on shelf rows.
+  String? _thumbnailUrl(_JsonMap? node, String key) {
+    final thumbnails = node
+        ?.getMap(key)
         ?.getMap('musicThumbnailRenderer')
         ?.getMap('thumbnail')
         ?.getList('thumbnails');
@@ -332,6 +582,13 @@ class MusicClient {
       seconds = seconds * 60 + n;
     }
     return Duration(seconds: seconds);
+  }
+
+  _JsonMap? _firstRenderer(dynamic node, String rendererKey) {
+    for (final renderer in _findRenderers(node, rendererKey)) {
+      return renderer;
+    }
+    return null;
   }
 
   Iterable<_JsonMap> _findRenderers(dynamic node, String rendererKey) sync* {
