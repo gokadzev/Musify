@@ -83,6 +83,7 @@ class _SearchPageState extends State<SearchPage> {
   List<String> _suggestionsList = [];
   Timer? _debounce;
   int _latestSuggestionRequest = 0;
+  int _latestSearchRequest = 0;
 
   Future<void> _submitSearch([String? query]) async {
     if (query != null) {
@@ -112,6 +113,7 @@ class _SearchPageState extends State<SearchPage> {
 
   Future<void> search() async {
     final query = _searchBar.text;
+    final requestId = ++_latestSearchRequest;
 
     if (query.isEmpty) {
       _songsSearchResult = [];
@@ -138,6 +140,8 @@ class _SearchPageState extends State<SearchPage> {
         getPlaylists(query: query, type: 'album'),
         getPlaylists(query: query, type: 'playlist'),
       ]);
+
+      if (!mounted || requestId != _latestSearchRequest) return;
 
       _songsSearchResult = results[0];
       _artistsSearchResult = results[1]
@@ -166,8 +170,10 @@ class _SearchPageState extends State<SearchPage> {
         stackTrace: stackTrace,
       );
     } finally {
-      _fetchingSongs.value = false;
-      if (mounted) setState(() {});
+      if (requestId == _latestSearchRequest) {
+        _fetchingSongs.value = false;
+        if (mounted) setState(() {});
+      }
     }
   }
 
