@@ -73,7 +73,7 @@ final class ArtistPatterns {
   );
 
   // Pattern for YouTube Music counters (e.g., "331M plays")
-  static final countToken = RegExp(r'^\d+[\.,]+\s?[KMBkmb]?\b');
+  static final countToken = RegExp(r'^\d+(?:[\.,]\d+)?\s?[KMBkmb]?\b');
 }
 
 /// Unicode ranges for styled character normalization (bold, italic, etc.)

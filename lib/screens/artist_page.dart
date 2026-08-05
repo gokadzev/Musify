@@ -80,8 +80,11 @@ class _ArtistPageState extends State<ArtistPage> {
   /// Cache for the artist title to avoid repeated lookups.
   String? _cachedArtistTitle;
 
+  int _artistLoadGeneration = 0;
+
   /// Refresh artist data, preserving current state on failure.
   Future<void> _refresh() async {
+    final generation = ++_artistLoadGeneration;
     final loaded = _artistFuture;
     final refreshed = _loadArtist(forceRefresh: true);
     // Block syntax: setState doesn't accept Future-returning callbacks
@@ -89,7 +92,12 @@ class _ArtistPageState extends State<ArtistPage> {
       _artistFuture = refreshed;
     });
 
-    if (await refreshed != null || !mounted) return;
+    final refreshedArtist = await refreshed;
+    if (!mounted ||
+        generation != _artistLoadGeneration ||
+        refreshedArtist != null) {
+      return;
+    }
     setState(() {
       _artistFuture = loaded;
     });
@@ -101,6 +109,7 @@ class _ArtistPageState extends State<ArtistPage> {
     super.didUpdateWidget(oldWidget);
     // Artist identity is determined by ID only (data seed changes on rebuild)
     if (oldWidget.artistId != widget.artistId) {
+      _artistLoadGeneration++;
       _artistFuture = null;
       _cachedResolvedArtistId = null;
       _cachedArtistTitle = null;
@@ -122,6 +131,7 @@ class _ArtistPageState extends State<ArtistPage> {
       '';
 
   Future<Map<String, dynamic>?> _loadArtist({bool forceRefresh = false}) async {
+    final generation = _artistLoadGeneration;
     final artistData = widget.artistData;
     final artist = await getArtistProfile(
       widget.artistId,
@@ -132,7 +142,9 @@ class _ArtistPageState extends State<ArtistPage> {
       sourceVideoAuthor: artistData?['videoAuthor']?.toString(),
       preferredVerified: artistData?['isVerifiedArtist'] == true,
     );
-    if (artist == null) return null;
+    if (artist == null || !mounted || generation != _artistLoadGeneration) {
+      return null;
+    }
 
     _artist = artist;
     // Clear caches when artist data updates
@@ -368,29 +380,32 @@ class _ArtistPageState extends State<ArtistPage> {
     isArtist: true,
     artistName: _artistTitle,
     artistImage: _artist?['image']?.toString(),
-    preferredVerified: true,
+    preferredVerified: _artist?['isVerifiedArtist'] == true,
   );
 
   Future<void> _playArtist({bool shuffle = false}) async {
     _isLoadingCatalog.value = true;
-    final catalog = await _loadCatalog();
-    if (!mounted) return;
-    _isLoadingCatalog.value = false;
+    try {
+      final catalog = await _loadCatalog();
+      if (!mounted) return;
 
-    final songs = catalog?['list'] as List? ?? const [];
-    if (songs.isEmpty) {
-      showToast(context, context.l10n!.error);
-      return;
-    }
+      final songs = catalog?['list'] as List? ?? const [];
+      if (songs.isEmpty) {
+        showToast(context, context.l10n!.error);
+        return;
+      }
 
-    if (shuffle) {
-      await audioHandler.addPlaylistToQueue(
-        List<Map>.from(songs.whereType<Map>())..shuffle(),
-        replace: true,
-        startIndex: 0,
-      );
-    } else {
-      await audioHandler.playPlaylistSong(playlist: catalog, songIndex: 0);
+      if (shuffle) {
+        await audioHandler.addPlaylistToQueue(
+          List<Map>.from(songs.whereType<Map>())..shuffle(),
+          replace: true,
+          startIndex: 0,
+        );
+      } else {
+        await audioHandler.playPlaylistSong(playlist: catalog, songIndex: 0);
+      }
+    } finally {
+      if (mounted) _isLoadingCatalog.value = false;
     }
   }
 
