@@ -23,6 +23,7 @@ import 'package:musify/constants/app_constants.dart';
 import 'package:musify/database/radio_stations.db.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
+import 'package:musify/models/radio_model.dart';
 import 'package:musify/services/common_services.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/widgets/mini_player_bottom_space.dart';
@@ -67,7 +68,7 @@ class RadioStationsPage extends StatelessWidget {
                       );
 
                       if (!success && context.mounted) {
-                        showToast(context, 'Failed to play radio station');
+                        showToast(context, context.l10n!.error);
                       }
                     },
                   ),
@@ -82,13 +83,15 @@ class RadioStationsPage extends StatelessWidget {
   }
 }
 
-List<T> _sortWithLikedFirst<T>(List<T> stations, Set<String> likedIds) {
-  final liked = <T>[];
-  final rest = <T>[];
+List<RadioStation> _sortWithLikedFirst(
+  List<RadioStation> stations,
+  Set<String> likedIds,
+) {
+  final liked = <RadioStation>[];
+  final rest = <RadioStation>[];
 
   for (final station in stations) {
-    final id = (station as dynamic).id as String;
-    if (likedIds.contains(id)) {
+    if (likedIds.contains(station.id)) {
       liked.add(station);
     } else {
       rest.add(station);
