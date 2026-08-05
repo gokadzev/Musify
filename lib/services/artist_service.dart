@@ -161,11 +161,7 @@ Future<Map<String, dynamic>?> resolveArtist(
   return artist;
 }
 
-/// Loads the artist page: header details, top songs, discography and the
-/// artists YouTube Music suggests next to it.
-///
-/// This is the entry point for anything about an artist. [getArtistCatalog]
-/// then turns the discography into the song list of the artist.
+/// Entry point for artist profile: page info, top songs, releases, and suggestions.
 Future<Map<String, dynamic>?> getArtistProfile(
   String artistId, {
   bool forceRefresh = false,
@@ -233,13 +229,8 @@ Future<Map<String, dynamic>?> getArtistProfile(
   }
 }
 
-/// The artist page of [artistId], from the cache unless [forceRefresh].
-///
-/// [artist] is what a lookup by name already resolved about the artist;
-/// without it the page names itself, and null is returned when the channel
-/// turns out to have no artist page at all — YouTube Music answers a browse of
-/// any channel, and one that only uploads music comes back with neither
-/// releases nor top songs.
+/// Loads the artist page from cache or API.
+/// Returns null if [artistId] has no artist page (e.g., a generic upload channel).
 Future<Map<String, dynamic>?> _artistPageOf(
   String artistId, {
   required bool forceRefresh,
@@ -262,9 +253,7 @@ Future<Map<String, dynamic>?> _artistPageOf(
       .getArtistProfile(artistId)
       .timeout(artistProfileTimeout);
 
-  // The channel uploads for the artist without being it: its page is a partial
-  // copy without the top songs, so the canonical one it points at is read
-  // instead. Remembered, so the detour is paid once and not on every visit.
+  // Non-artist channels are cached to avoid repeated lookups
   if (followCanonical && profile.id != artistId) {
     unawaited(
       addOrUpdateData<String>(
@@ -325,9 +314,7 @@ Future<Map<String, dynamic>?> _artistPageOf(
     ],
   };
 
-  // An artist page with nothing on it is either a channel that is not an
-  // artist, or YouTube Music answering with something unexpected. Neither is
-  // worth keeping for a week, and a channel nobody vouched for is not shown.
+  // Don't cache empty pages from unverified channels
   if ((artistProfile['topSongs'] as List).isEmpty &&
       (artistProfile['releases'] as List).isEmpty) {
     logger.log('Artist page empty: $artistId (${profile.name})');
@@ -343,8 +330,7 @@ Future<Map<String, dynamic>?> _artistPageOf(
   return artistProfile;
 }
 
-/// The artist as a playlist of every song of its discography, which is what
-/// the "All songs" page shows and what downloading an artist stores.
+/// Artist catalog: all songs from the discography as a single playlist.
 Future<Map<String, dynamic>?> getArtistCatalog(
   String artistId, {
   bool forceRefresh = false,
@@ -402,9 +388,7 @@ Future<Map<String, dynamic>?> getArtistCatalog(
   }
 }
 
-/// The artist as a playlist: the shape stored by the liked artists, the offline
-/// downloads and the "All songs" page. [songs] is left null while they are
-/// still unknown, which is what makes the playlist page load them itself.
+/// Artist as playlist (for library storage, downloads, and song lists).
 Map<String, dynamic> artistPlaylistData(Map artist, {List? songs}) {
   return {
     'ytid': artist['ytid']?.toString(),
@@ -417,7 +401,7 @@ Map<String, dynamic> artistPlaylistData(Map artist, {List? songs}) {
   };
 }
 
-/// Every song of the discography of [artist], one batch of releases at a time.
+/// Collects all songs from artist's discography in batches.
 Future<List<Map<String, dynamic>>> _catalogSongsOf(
   Map<String, dynamic> artist,
 ) async {
@@ -432,9 +416,7 @@ Future<List<Map<String, dynamic>>> _catalogSongsOf(
         getArtistAlbum(release['ytid']?.toString() ?? ''),
     ]);
     for (final album in albums) {
-      // These are the songs of the artist whose discography is being read, so
-      // they are credited to it and not to whoever the release names, which
-      // for a compilation or a collaboration is somebody else.
+      // Credit songs to the artist, not the release owner (compilations, features)
       for (final song in asMapList(album?['list'])) {
         songs.add({
           ...song,
@@ -448,10 +430,7 @@ Future<List<Map<String, dynamic>>> _catalogSongsOf(
   return dedupeArtistCatalogSongs(songs);
 }
 
-/// Loads a YouTube Music release as a playlist, always as itself: one cache
-/// entry answers everyone reading the release, so nothing that depends on who
-/// is reading it may be stored in it. Crediting the tracks to the artist whose
-/// discography is being walked happens after the read, in [_catalogSongsOf].
+/// Load release as standalone playlist (crediting happens later in catalog builder).
 Future<Map<String, dynamic>?> getArtistAlbum(
   String albumId, {
   bool forceRefresh = false,
@@ -506,8 +485,7 @@ Future<Map<String, dynamic>?> getArtistAlbum(
   }
 }
 
-/// Whether a release of an artist profile is a single or an EP. YouTube Music
-/// only labels those, so everything else is listed as an album.
+/// Check if release is single/EP (YouTube Music explicitly labels only these).
 bool isSingleOrEpRelease(Map release) {
   final type = release['releaseType']?.toString();
   return type == 'single' || type == 'ep';
@@ -519,10 +497,7 @@ String _artistCatalogCacheKey(String artistId) =>
 String _artistProfileCacheKey(String artistId) =>
     'artist_profile_v${artistProfileCacheVersion}_$artistId';
 
-/// Where the artist page of a channel of the artist itself is, for the channel
-/// that uploads its videos. Only ever written from what a page says about the
-/// channel it was read with, never from what a song was resolved into: a
-/// channel that uploads for several artists has no single artist page.
+/// Canonical artist page for a channel (channels may host multiple artists).
 String _artistChannelCacheKey(String channelId) =>
     'artist_channel_v${artistChannelCacheVersion}_$channelId';
 

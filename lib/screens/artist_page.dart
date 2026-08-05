@@ -80,14 +80,11 @@ class _ArtistPageState extends State<ArtistPage> {
   /// Cache for the artist title to avoid repeated lookups.
   String? _cachedArtistTitle;
 
-  /// Reads the artist again, showing the loader while it does. A read that
-  /// fails puts back the page that was on screen, instead of replacing an
-  /// artist that had loaded fine with the not-found page.
+  /// Refresh artist data, preserving current state on failure.
   Future<void> _refresh() async {
     final loaded = _artistFuture;
     final refreshed = _loadArtist(forceRefresh: true);
-    // A block, not an arrow: an arrow returns what it assigns, and setState
-    // rejects a callback that returns a Future.
+    // Block syntax: setState doesn't accept Future-returning callbacks
     setState(() {
       _artistFuture = refreshed;
     });
@@ -102,10 +99,7 @@ class _ArtistPageState extends State<ArtistPage> {
   @override
   void didUpdateWidget(covariant ArtistPage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Only the id says which artist this is. What came with the navigation is
-    // a fresh copy of the same seed on every rebuild of the route, and a Map
-    // compares by identity, so reading it here would reload the page — and
-    // flash the loader over it — every time a page is pushed on top of it.
+    // Artist identity is determined by ID only (data seed changes on rebuild)
     if (oldWidget.artistId != widget.artistId) {
       _artistFuture = null;
       _cachedResolvedArtistId = null;
@@ -166,10 +160,7 @@ class _ArtistPageState extends State<ArtistPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Offline the artist is the songs of it that were downloaded, so there is
-    // nothing to read; online it is read here, the first time the page is
-    // shown, which is also what brings it back when offline mode is turned off
-    // with the page still open.
+    // Offline: show downloaded songs only; online: fetch full profile
     if (offlineMode.value) return _buildAllSongsPage();
 
     return AsyncLoader<Map<String, dynamic>?>(
@@ -277,8 +268,7 @@ class _ArtistPageState extends State<ArtistPage> {
               playlistId: _resolvedArtistId,
               playlistData: () => artistPlaylistData(_artist!, songs: const []),
             ),
-            // Downloading an artist downloads its songs, which is exactly what
-            // the "All songs" playlist holds.
+            // Downloading artist = downloading all its songs
             PlaylistDownloadButton(
               playlistId: _resolvedArtistId,
               resolvePlaylist: _loadCatalog,
@@ -295,9 +285,7 @@ class _ArtistPageState extends State<ArtistPage> {
     );
   }
 
-  /// Playing the artist plays every song of it, the same list "All songs"
-  /// holds, so pressing play here also fills that page and the other way
-  /// around.
+  /// Play all artist songs (synced with "All songs" queue).
   Widget _buildPlaybackButtons() {
     return ValueListenableBuilder<bool>(
       valueListenable: _isLoadingCatalog,
@@ -344,7 +332,7 @@ class _ArtistPageState extends State<ArtistPage> {
 
   Widget _buildAllSongsButton() {
     return Padding(
-      // Lined up with the play and shuffle buttons of the header.
+      // Align with header action buttons
       padding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
       child: SizedBox(
         width: double.infinity,
@@ -374,9 +362,7 @@ class _ArtistPageState extends State<ArtistPage> {
     return year == null || year.isEmpty ? type : '$type • $year';
   }
 
-  /// Every song of the artist, read through the same call the "All songs" page
-  /// makes: both show the same songs, the downloaded ones when the artist was
-  /// downloaded, and the catalog is only walked once for the two of them.
+  // Shares catalog with "All songs" page (read once, reused everywhere)
   Future<Map?> _loadCatalog() => getPlaylistInfoForWidget(
     _resolvedArtistId,
     isArtist: true,
