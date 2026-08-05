@@ -55,21 +55,15 @@ class ProxyManager {
     _defaultYt = YoutubeExplode();
     _sharedYt = _defaultYt;
     if (useProxy.value) {
-      _initSharedProxyClient();
+      unawaited(_initSharedProxyClient());
     }
-    useProxy.addListener(() async {
-      if (useProxy.value) {
-        await _initSharedProxyClient();
-      } else {
-        if (_sharedYt != _defaultYt) {
-          try {
-            _sharedYt?.close();
-          } catch (_) {}
-          _sharedYt = _defaultYt;
-        }
-        _sharedProxyAddress = null;
-        _closeAllProxyResources();
+    useProxy.addListener(() {
+      final generation = ++_proxySettingsGeneration;
+      if (!useProxy.value) {
+        _disableProxyClient();
+        return;
       }
+      unawaited(_initializeForGeneration(generation));
     });
   }
   // Timeout constants
@@ -95,6 +89,7 @@ class ProxyManager {
 
   Future<void>? _fetchingProxiesFuture;
   Completer<void>? _initializationCompletion;
+  var _proxySettingsGeneration = 0;
   bool _hasFetched = false;
   final Map<String, List<ProxyInfo>> _proxiesByCountry = {};
   final Set<ProxyInfo> _workingProxies = {};
@@ -113,8 +108,35 @@ class ProxyManager {
 
   String? _sharedProxyAddress;
 
+  Future<void> _initializeForGeneration(int generation) async {
+    await _initSharedProxyClient(generation: generation);
+    if (generation != _proxySettingsGeneration ||
+        !useProxy.value ||
+        _sharedYt != _defaultYt) {
+      return;
+    }
+    await _initSharedProxyClient(generation: generation);
+  }
+
+  void _disableProxyClient() {
+    if (_sharedYt != _defaultYt) {
+      try {
+        _sharedYt?.close();
+      } catch (_) {}
+      _sharedYt = _defaultYt;
+    }
+    _sharedProxyAddress = null;
+    _workingProxies.clear();
+    _closeAllProxyResources();
+  }
+
   Future<void> _fetchProxies() async {
     if (!useProxy.value) return;
+    final activeFetch = _fetchingProxiesFuture;
+    if (activeFetch != null) {
+      await activeFetch;
+      return;
+    }
     try {
       // Clear existing candidates to avoid duplicates and stale proxies
       _proxiesByCountry.clear();
@@ -124,8 +146,9 @@ class ProxyManager {
         ..add(_fetchGeonode())
         ..add(_fetchOpenProxyList())
         ..add(_fetchSpysMe());
-      _fetchingProxiesFuture = Future.wait(fetchTasks);
-      await _fetchingProxiesFuture?.whenComplete(() {
+      final fetch = Future.wait(fetchTasks);
+      _fetchingProxiesFuture = fetch;
+      await fetch.whenComplete(() {
         _hasFetched = true;
         _lastFetched = DateTime.now();
         _pruneStaleProxyResources();
@@ -136,6 +159,8 @@ class ProxyManager {
         error: e,
         stackTrace: stackTrace,
       );
+    } finally {
+      _fetchingProxiesFuture = null;
     }
   }
 
@@ -198,7 +223,10 @@ class ProxyManager {
   }
 
   /// Initialize a shared YoutubeExplode client that uses a working proxy.
-  Future<void> _initSharedProxyClient({int timeoutSeconds = 5}) async {
+  Future<void> _initSharedProxyClient({
+    int timeoutSeconds = 5,
+    int? generation,
+  }) async {
     if (_initializationCompletion != null) {
       return _initializationCompletion!.future;
     }
@@ -207,10 +235,18 @@ class ProxyManager {
     try {
       if (!_hasFetched) await _fetchProxies();
       if (_proxiesByCountry.isEmpty) await _fetchProxies();
+      if (!useProxy.value ||
+          (generation != null && generation != _proxySettingsGeneration)) {
+        return;
+      }
 
       do {
         final proxy = await _getRandomProxy();
         if (proxy == null) break;
+        if (!useProxy.value ||
+            (generation != null && generation != _proxySettingsGeneration)) {
+          break;
+        }
         try {
           final res = _ensureProxyResources(
             proxy,
@@ -275,7 +311,6 @@ class ProxyManager {
   ) async {
     if (!useProxy.value) return null;
     YoutubeExplode? ytClient;
-    var shouldCloseClient = false;
     try {
       final res = _ensureProxyResources(proxy, timeoutSeconds: timeoutSeconds);
       ytClient = YoutubeExplode(httpClient: YoutubeHttpClient(res.ioClient));
@@ -283,7 +318,6 @@ class ProxyManager {
           .getManifest(songId, ytClients: customClients)
           .timeout(Duration(seconds: timeoutSeconds));
       _workingProxies.add(proxy);
-      shouldCloseClient = true;
       return manifest;
     } catch (e, stackTrace) {
       logger.log(
@@ -294,9 +328,9 @@ class ProxyManager {
       _discardProxy(proxy, reason: 'validation failed', closeResources: false);
       return null;
     } finally {
-      if (shouldCloseClient) {
+      if (ytClient != null) {
         try {
-          ytClient?.close();
+          ytClient.close();
         } catch (_) {}
       }
     }
@@ -707,10 +741,10 @@ class ProxyManager {
       for (final proxyData in (result['proxies'] as List)) {
         if (proxyData is! Map) continue;
 
-        if (proxyData['ip_data'] != null &&
+        if (proxyData['ip_data'] is Map &&
             (proxyData['alive'] ?? false) &&
             proxyData['ip_data']['countryCode'] != null) {
-          final country = proxyData['ip_data']['countryCode'];
+          final country = proxyData['ip_data']['countryCode'].toString();
           _addProxyCandidate(
             source: 'proxyscrape.com',
             address: '${proxyData['ip']}:${proxyData['port']}',
