@@ -85,9 +85,7 @@ class OfflinePlaylistService {
     if (id == null || pList == null || pList.isEmpty) return;
     if (isPlaylistDownloaded(id)) return;
 
-    final offlineSongIds = userOfflineSongs.value
-        .map((s) => s['ytid'])
-        .toSet();
+    final offlineSongIds = userOfflineSongs.value.map((s) => s['ytid']).toSet();
     if (!pList.every((s) => offlineSongIds.contains(s['ytid']))) return;
 
     offlinePlaylists.value = [
@@ -219,24 +217,23 @@ class OfflinePlaylistService {
             .toSet();
 
         final seenIds = <String>{};
-        final userPlaylistSources = <Map>[
-          ...userCustomPlaylists.value,
-          ...userLikedPlaylists.value,
-          for (final folder in userPlaylistFolders.value)
-            ...List<Map>.from(folder['playlists'] ?? []),
-          ...playlists,
-        ].where((p) {
-          final id = p['ytid']?.toString();
-          return id != null && seenIds.add(id);
-        }).toList();
+        final userPlaylistSources =
+            <Map>[
+              ...userCustomPlaylists.value,
+              ...userLikedPlaylists.value,
+              for (final folder in userPlaylistFolders.value)
+                ...List<Map>.from(folder['playlists'] ?? []),
+              ...playlists,
+            ].where((p) {
+              final id = p['ytid']?.toString();
+              return id != null && seenIds.add(id);
+            }).toList();
         for (final p in userPlaylistSources) {
           final pList = p['list'] as List?;
           if (pList == null ||
               pList.isEmpty ||
               p['ytid'] == playlistId ||
-              isPlaylistDownloaded(
-                p['ytid']?.toString() ?? '',
-              )) {
+              isPlaylistDownloaded(p['ytid']?.toString() ?? '')) {
             continue;
           }
           if (pList.every((s) => offlineSongIds.contains(s['ytid']))) {
@@ -343,6 +340,10 @@ class OfflinePlaylistService {
 
       // Get songs that are only in this playlist
       final songsInPlaylist = playlist['list'] as List<dynamic>? ?? [];
+      final songIdsUsedElsewhere = _getSongIdsUsedElsewhere(
+        normalizedPlaylistId,
+      );
+
       for (final song in songsInPlaylist) {
         try {
           final songId = song['ytid'] as String?;
@@ -351,32 +352,8 @@ class OfflinePlaylistService {
             continue;
           }
 
-          // Check if this song is used in other offline playlists
-          final isUsedInOtherPlaylists = offlinePlaylists.value
-              .where(
-                (p) =>
-                    p is Map && p['ytid']?.toString() != normalizedPlaylistId,
-              ) // Exclude current playlist
-              .any((p) {
-                final playlistSongs = p['list'] as List<dynamic>? ?? [];
-                return playlistSongs.any((s) => s['ytid'] == songId);
-              });
-
-          // Also check if song is in user's liked songs or OTHER custom playlists
-          final isInLikedSongs = userLikedSongsList.value.any(
-            (s) => s['ytid'] == songId,
-          );
-          final isInOtherCustomPlaylists = getUserCustomPlaylists()
-              .where((p) => p['ytid']?.toString() != normalizedPlaylistId)
-              .any((p) {
-                final customPlaylistSongs = p['list'] as List<dynamic>? ?? [];
-                return customPlaylistSongs.any((s) => s['ytid'] == songId);
-              });
-
-          // Only remove if not used elsewhere
-          if (!isUsedInOtherPlaylists &&
-              !isInLikedSongs &&
-              !isInOtherCustomPlaylists) {
+          // Only remove if not used elsewhere.
+          if (!songIdsUsedElsewhere.contains(songId)) {
             await removeSongFromOffline(songId);
           }
         } catch (e, stackTrace) {
@@ -408,6 +385,25 @@ class OfflinePlaylistService {
         stackTrace: stackTrace,
       );
     }
+  }
+
+  // Returns a set of song IDs that are used in other playlists or liked songs,
+  Set<String> _getSongIdsUsedElsewhere(String excludedPlaylistId) {
+    final songIds = <String>{
+      for (final playlist in offlinePlaylists.value)
+        if (playlist is Map &&
+            playlist['ytid']?.toString() != excludedPlaylistId)
+          for (final song in playlist['list'] as List<dynamic>? ?? [])
+            if (song['ytid'] is String) song['ytid'] as String,
+      for (final song in userLikedSongsList.value)
+        if (song['ytid'] is String) song['ytid'] as String,
+      for (final playlist in getUserCustomPlaylists())
+        if (playlist['ytid']?.toString() != excludedPlaylistId)
+          for (final song in playlist['list'] as List<dynamic>? ?? [])
+            if (song['ytid'] is String) song['ytid'] as String,
+    };
+
+    return songIds;
   }
 
   Future<void> deleteAllDownloads() async {
