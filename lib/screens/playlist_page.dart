@@ -94,8 +94,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
   late final TextEditingController _searchController;
   late final FocusNode _searchFocusNode;
 
-  List<dynamic> _getSourceList(String searchQuery) {
-    final list = _playlist?['list'] as List<dynamic>? ?? [];
+  List _getSourceList(String searchQuery) {
+    final list = _playlist?['list'] as List? ?? [];
     return filterSongsByQuery(list, searchQuery);
   }
 
@@ -213,6 +213,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                                 sourceList[index],
                                 index,
                                 isRemovable,
+                                sourceList,
                               );
                             },
                           ),
@@ -621,8 +622,12 @@ class _PlaylistPageState extends State<PlaylistPage> {
     }
   }
 
-  Widget _buildSongListItem(dynamic song, int index, bool isRemovable) {
-    final sourceList = _getSourceList(_searchQueryNotifier.value);
+  Widget _buildSongListItem(
+    Map song,
+    int index,
+    bool isRemovable,
+    List sourceList,
+  ) {
     final totalItems = sourceList.length;
     final borderRadius = getItemBorderRadius(index, totalItems);
     final isUserCreatedPlaylist = _playlist?['source'] == 'user-created';
