@@ -173,7 +173,6 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
         icon: FluentIcons.home_24_regular,
         selectedIcon: FluentIcons.home_24_filled,
         label: context.l10n?.home ?? 'Home',
-        route: '/home',
         shellIndex: 0,
       ),
     ];
@@ -185,7 +184,6 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
           icon: FluentIcons.search_24_regular,
           selectedIcon: FluentIcons.search_24_filled,
           label: context.l10n?.search ?? 'Search',
-          route: '/search',
           shellIndex: 1,
         ),
       );
@@ -196,14 +194,12 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
         icon: FluentIcons.book_24_regular,
         selectedIcon: FluentIcons.book_24_filled,
         label: context.l10n?.library ?? 'Library',
-        route: '/library',
         shellIndex: 2,
       ),
       _NavigationItem(
         icon: FluentIcons.settings_24_regular,
         selectedIcon: FluentIcons.settings_24_filled,
         label: context.l10n?.settings ?? 'Settings',
-        route: '/settings',
         shellIndex: 3,
       ),
     ]);
@@ -268,13 +264,11 @@ class _NavigationItem {
     required this.icon,
     required this.selectedIcon,
     required this.label,
-    required this.route,
     required this.shellIndex,
   });
 
   final IconData icon;
   final IconData selectedIcon;
   final String label;
-  final String route;
   final int shellIndex;
 }
