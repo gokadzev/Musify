@@ -48,7 +48,7 @@ import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/spinner.dart';
 
 /// The page an artist opens on: who the artist is, its top songs, its releases
-/// and where to go next. Its song list lives one tap away, in "All songs".
+/// and related artists.
 class ArtistPage extends StatefulWidget {
   const ArtistPage({super.key, required this.artistId, this.artistData});
 
@@ -187,30 +187,40 @@ class _ArtistPageState extends State<ArtistPage> {
             children: [
               _buildHeaderSection(),
               _buildTopSongsSection(),
-              ArtistShelf(
-                title: context.l10n!.albums,
-                icon: FluentIcons.cd_16_regular,
-                items: _albums,
-                subtitleOf: _releaseSubtitle,
-                onTap: _openRelease,
-              ),
-              ArtistShelf(
-                title: context.l10n!.singlesAndEps,
-                icon: FluentIcons.music_note_2_24_regular,
-                items: _singles,
-                subtitleOf: _releaseSubtitle,
-                onTap: _openRelease,
-              ),
-              // Everything of the artist first, then where to go next.
-              _buildAllSongsButton(),
-              ArtistShelf(
-                title: context.l10n!.suggestedArtists,
-                icon: FluentIcons.person_24_regular,
-                items: _relatedArtists,
-                cubeIcon: FluentIcons.person_24_filled,
-                circular: true,
-                onTap: _openArtist,
-              ),
+              if (_albums.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 24),
+                  child: ArtistShelf(
+                    title: context.l10n!.albums,
+                    icon: FluentIcons.cd_16_regular,
+                    items: _albums,
+                    subtitleOf: _releaseSubtitle,
+                    onTap: _openRelease,
+                  ),
+                ),
+              if (_singles.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 24),
+                  child: ArtistShelf(
+                    title: context.l10n!.singlesAndEps,
+                    icon: FluentIcons.music_note_2_24_regular,
+                    items: _singles,
+                    subtitleOf: _releaseSubtitle,
+                    onTap: _openRelease,
+                  ),
+                ),
+              if (_relatedArtists.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 24),
+                  child: ArtistShelf(
+                    title: context.l10n!.suggestedArtists,
+                    icon: FluentIcons.person_24_regular,
+                    items: _relatedArtists,
+                    cubeIcon: FluentIcons.person_24_filled,
+                    circular: true,
+                    onTap: _openArtist,
+                  ),
+                ),
               const SizedBox(height: 16),
               const MiniPlayerBottomSpace(),
             ],
@@ -314,6 +324,7 @@ class _ArtistPageState extends State<ArtistPage> {
 
     return Column(
       children: [
+        const SizedBox(height: 24),
         SectionHeader(
           title: context.l10n!.topSongs,
           icon: FluentIcons.music_note_2_24_filled,
@@ -339,28 +350,6 @@ class _ArtistPageState extends State<ArtistPage> {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildAllSongsButton() {
-    return Padding(
-      // Align with header action buttons
-      padding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
-      child: SizedBox(
-        width: double.infinity,
-        child: FilledButton.tonalIcon(
-          icon: const Icon(FluentIcons.arrow_right_24_regular),
-          iconAlignment: IconAlignment.end,
-          label: Text(context.l10n!.allSongs),
-          style: FilledButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-          ),
-          onPressed: () => context.push(
-            NavigationManager.artistSongsPath(context, _resolvedArtistId),
-            extra: artistPlaylistData(_artist!),
-          ),
-        ),
-      ),
     );
   }
 
