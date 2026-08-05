@@ -46,6 +46,12 @@ class _CacheEntry {
   }
 }
 
+DateTime? _parseCacheDate(dynamic value) {
+  if (value is DateTime) return value;
+  if (value is String) return DateTime.tryParse(value);
+  return null;
+}
+
 // Maximum number of entries allowed in the memory cache
 const int _maxMemoryCacheSize = 500;
 const int _memoryCacheTrimSize = 100;
@@ -118,7 +124,8 @@ Future<dynamic> getData(
 
   // Store in memory cache for faster access next time
   if (data != null && category == 'cache') {
-    final timestamp = await _box.get('${key}_date') ?? DateTime.now();
+    final timestamp =
+        _parseCacheDate(await _box.get('${key}_date')) ?? DateTime.now();
     _setMemoryCacheEntry(cacheKey, _CacheEntry(data, timestamp));
   }
 
@@ -162,17 +169,21 @@ Future<void> cleanupOldCacheEntries() async {
     for (final key in keys) {
       final dateKey = '${key}_date';
       final date = cacheBox.get(dateKey);
+      final cacheKey = 'cache_$key';
 
-      if (date == null) {
+      if (_parseCacheDate(date) == null) {
         await cacheBox.delete(key);
+        await cacheBox.delete(dateKey);
+        _memoryCache.remove(cacheKey);
         continue;
       }
 
-      final age = now.difference(date);
+      final age = now.difference(_parseCacheDate(date)!);
       // Very old cache entries (older than 30 days) should be removed
       if (age > const Duration(days: 30)) {
         await cacheBox.delete(key);
         await cacheBox.delete(dateKey);
+        _memoryCache.remove(cacheKey);
       }
     }
   } catch (e, stackTrace) {
@@ -186,7 +197,7 @@ Future<void> cleanupOldCacheEntries() async {
 
 // Check if the cache is still valid based on the caching duration
 bool isCacheValid(Box box, String key, Duration cachingDuration) {
-  final date = box.get('${key}_date');
+  final date = _parseCacheDate(box.get('${key}_date'));
   if (date == null) {
     return false;
   }
