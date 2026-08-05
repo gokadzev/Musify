@@ -113,6 +113,45 @@ class SettingsPage extends StatelessWidget {
           FluentIcons.music_note_1_24_regular,
           onTap: () => _showAudioQualityPicker(context),
         ),
+        CustomBar(
+          context.l10n!.equalizer,
+          FluentIcons.data_histogram_24_regular,
+          onTap: () => context.push('/settings/equalizer'),
+        ),
+        if (themeMode == ThemeMode.dark)
+          CustomBar(
+            context.l10n!.pureBlackTheme,
+            FluentIcons.color_background_24_regular,
+            description: context.l10n!.pureBlackThemeDescription,
+            trailing: Switch(
+              value: usePureBlackColor.value,
+              onChanged: (value) => _togglePureBlack(context, value),
+            ),
+          ),
+        CustomBar(
+          context.l10n!.dynamicColor,
+          FluentIcons.toggle_left_24_regular,
+          description: context.l10n!.dynamicColorDescription,
+          trailing: Switch(
+            value: useSystemColor.value,
+            onChanged: (value) => _toggleSystemColor(context, value),
+          ),
+        ),
+        ValueListenableBuilder<bool>(
+          valueListenable: predictiveBack,
+          builder: (_, value, __) {
+            return CustomBar(
+              context.l10n!.predictiveBack,
+              FluentIcons.position_backward_24_regular,
+              description: context.l10n!.predictiveBackDescription,
+              trailing: Switch(
+                value: value,
+                onChanged: (value) => _togglePredictiveBack(context, value),
+              ),
+            );
+          },
+        ),
+
         ValueListenableBuilder<bool>(
           valueListenable: showAudioQualityBadge,
           builder: (_, value, __) {
@@ -123,41 +162,6 @@ class SettingsPage extends StatelessWidget {
               trailing: Switch(
                 value: value,
                 onChanged: (value) => _toggleAudioQualityBadge(context, value),
-              ),
-            );
-          },
-        ),
-        CustomBar(
-          context.l10n!.equalizer,
-          FluentIcons.data_histogram_24_regular,
-          onTap: () => context.push('/settings/equalizer'),
-        ),
-        CustomBar(
-          context.l10n!.dynamicColor,
-          FluentIcons.toggle_left_24_regular,
-          trailing: Switch(
-            value: useSystemColor.value,
-            onChanged: (value) => _toggleSystemColor(context, value),
-          ),
-        ),
-        if (themeMode == ThemeMode.dark)
-          CustomBar(
-            context.l10n!.pureBlackTheme,
-            FluentIcons.color_background_24_regular,
-            trailing: Switch(
-              value: usePureBlackColor.value,
-              onChanged: (value) => _togglePureBlack(context, value),
-            ),
-          ),
-        ValueListenableBuilder<bool>(
-          valueListenable: predictiveBack,
-          builder: (_, value, __) {
-            return CustomBar(
-              context.l10n!.predictiveBack,
-              FluentIcons.position_backward_24_regular,
-              trailing: Switch(
-                value: value,
-                onChanged: (value) => _togglePredictiveBack(context, value),
               ),
             );
           },
