@@ -1583,7 +1583,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       return;
     }
 
-    final q = query.toLowerCase();
+    final q = query.trim().toLowerCase();
     final candidates = [
       ..._queueList,
       ...userLikedSongsList.value.whereType<Map>(),
@@ -1894,6 +1894,13 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   Future<_PlaybackSource?> _resolvePlaybackSource(Map songData) async {
     final isOffline = await _resolveOfflineAndSetPaths(songData);
+    if (!isOffline && offlineMode.value) {
+      logger.log(
+        'Offline mode enabled and no local file found for ${songData['ytid']}',
+      );
+      return null;
+    }
+
     final songUrl = await _getPlaybackUrl(songData, isOffline);
 
     if (songUrl == null || songUrl.isEmpty) {
@@ -1945,7 +1952,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
   }
 
   Future<String?> _getOfflineSongUrl(Map song) async {
-    final audioPath = song['audioPath'];
+    final audioPath = song['audioPath']?.toString();
     if (audioPath == null || audioPath.isEmpty) {
       logger.log('Missing audioPath for offline song: ${song['ytid']}');
       return null;
@@ -1964,7 +1971,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
     );
 
     if (offlineSong.isNotEmpty && offlineSong['audioPath'] != null) {
-      final fallbackPath = offlineSong['audioPath'];
+      final fallbackPath = offlineSong['audioPath']?.toString();
+      if (fallbackPath == null || fallbackPath.isEmpty) return null;
       final fallbackFile = File(fallbackPath);
       if (await fallbackFile.exists()) {
         song['audioPath'] = fallbackPath;
@@ -2178,6 +2186,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       };
 
       _lastError = null;
+      final wasPlayingBeforeSwap = audioPlayer.playing;
       if (audioPlayer.playing) {
         listeningStatsService.recordListeningSessionProgress(
           wasPlaying: audioPlayer.playing,
@@ -2204,12 +2213,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
       }
 
       // Play the radio stream
-      final wasPlayingBeforeSwap = audioPlayer.playing;
-
       await audioPlayer
           .setAudioSource(audioSource)
           .timeout(_songTransitionTimeout);
-
 
       listeningStatsService.finishListeningSession(
         countCurrentTick: true,
