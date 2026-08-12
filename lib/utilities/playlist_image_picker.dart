@@ -26,13 +26,10 @@ import 'package:flutter/material.dart';
 import 'package:musify/extensions/l10n.dart';
 
 Future<String?> pickImage() async {
-  final result = await FilePicker.pickFiles(
-    type: FileType.image,
-    withData: true,
-  );
+  final file = await FilePicker.pickFile(type: FileType.image);
 
-  if (result != null && result.files.single.bytes != null) {
-    final file = result.files.single;
+  if (file != null) {
+    final bytes = await file.readAsBytes();
     String? mimeType;
 
     if (file.extension != null) {
@@ -60,7 +57,7 @@ Future<String?> pickImage() async {
       mimeType = 'application/octet-stream';
     }
 
-    return 'data:$mimeType;base64,${base64Encode(file.bytes!)}';
+    return 'data:$mimeType;base64,${base64Encode(bytes)}';
   }
 
   return null;

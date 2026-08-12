@@ -279,8 +279,6 @@ Future<({String message, bool success})> restoreData(
 ) async {
   final boxNames = ['user', 'settings'];
   final result = await FilePicker.pickFiles(
-    allowMultiple: true,
-    withData: true,
     type: FileType.custom,
     allowedExtensions: ['hive'],
   );
@@ -378,12 +376,7 @@ Future<({String message, bool success})> restoreData(
 }
 
 Future<Uint8List> _readPickedFile(PlatformFile file) async {
-  if (file.bytes != null) return file.bytes!;
-  final path = file.path;
-  if (path == null) {
-    throw StateError('The selected file is not readable');
-  }
-  return Uint8List.fromList(await File(path).readAsBytes());
+  return file.readAsBytes();
 }
 
 Future<void> _validateHiveBytes(String boxName, Uint8List bytes) async {
