@@ -16,7 +16,7 @@ dependencies:
   audio_service: ^0.18.19
   audio_session: ^0.2.4
   cached_network_image: ^3.4.1
-  dynamic_color: ^1.8.1
+  dynamic_color: ^1.9.0
   file_picker: ^11.0.3
   fluentui_system_icons: ^1.1.273
   flutter:

@@ -24,7 +24,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:musify/services/settings_manager.dart';
-import 'package:musify/theme/dynamic_color_compat.dart';
 
 ThemeMode themeMode = getThemeMode(themeModeSetting);
 Brightness brightness = getBrightnessFromThemeMode(themeMode);
@@ -56,17 +55,6 @@ ColorScheme getAppColorScheme(
   ColorScheme? lightColorScheme,
   ColorScheme? darkColorScheme,
 ) {
-  if (useSystemColor.value &&
-      lightColorScheme != null &&
-      darkColorScheme != null) {
-    // Temporary fix until this will be fixed: https://github.com/material-foundation/flutter-packages/issues/582
-
-    (lightColorScheme, darkColorScheme) = tempGenerateDynamicColourSchemes(
-      lightColorScheme,
-      darkColorScheme,
-    );
-  }
-
   final selectedScheme = (brightness == Brightness.light)
       ? lightColorScheme
       : darkColorScheme;
