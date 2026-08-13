@@ -33,9 +33,7 @@
         android:label="Musify"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
-        android:enableOnBackInvokedCallback="true"
-        android:extractNativeLibs="true"
-        tools:replace="android:extractNativeLibs">
+        android:enableOnBackInvokedCallback="true">
 
         <!-- AudioServiceActivity -->
         <activity
