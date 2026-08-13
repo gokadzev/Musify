@@ -214,7 +214,7 @@ Future<Map<String, dynamic>?> getArtistProfile(
     // looked up: a channel that has no artist page of its own is a channel that
     // uploads for many artists, and which one this is was decided by the name
     // of the song it was opened from, not by the channel.
-    return _artistPageOf(
+    return await _artistPageOf(
       artist['ytid']?.toString() ?? lookup,
       forceRefresh: forceRefresh,
       artist: artist,

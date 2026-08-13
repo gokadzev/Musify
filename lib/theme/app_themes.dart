@@ -25,6 +25,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:musify/services/settings_manager.dart';
 
+// TODO: migrate to material_ui
+// dart fix --apply --code=migrate_design_widgets
+
 ThemeMode themeMode = getThemeMode(themeModeSetting);
 Brightness brightness = getBrightnessFromThemeMode(themeMode);
 

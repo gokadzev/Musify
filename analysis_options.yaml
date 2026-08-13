@@ -3,6 +3,13 @@ analyzer:
     - packages/**
     - scripts/**
     - test/**
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**
 
 linter:
   rules:
@@ -84,7 +91,6 @@ linter:
     - throw_in_finally
     - type_init_formals
     - unawaited_futures
-    - unnecessary_await_in_return
     - unnecessary_brace_in_string_interps
     - unnecessary_const
     - unnecessary_constructor_name
