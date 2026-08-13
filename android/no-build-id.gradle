@@ -2,6 +2,14 @@
 // Direct run: ./gradlew assembleRelease --no-daemon --init-script no-build-id.gradle
 // Verification of '.note.gnu.build-id' removal: readelf --wide --notes libdartjni.so
 
+import javax.inject.Inject
+import org.gradle.process.ExecOperations
+
+abstract class NoBuildIdExecOperations {
+    @Inject
+    abstract ExecOperations getExecOperations()
+}
+
 def home = System.getenv("ANDROID_HOME") ?: ""
 println "[no-build-id] ANDROID_HOME environment variable value: ${home}"
 def objcopy = null
@@ -27,6 +35,7 @@ if (!objcopy) {
     return
 }
 final String oc = objcopy
+def execOperations = project.objects.newInstance(NoBuildIdExecOperations).execOperations
 tasks.matching { it.name.startsWith("merge") && it.name.endsWith("NativeLibs") }
     .configureEach { t ->
         t.doLast {
@@ -34,7 +43,9 @@ tasks.matching { it.name.startsWith("merge") && it.name.endsWith("NativeLibs") }
                 if (!(dir instanceof File) || !dir.isDirectory()) return
                 dir.eachFileRecurse { f ->
                     if (!f.name.endsWith('.so')) return
-                    exec { commandLine oc, '--remove-section', '.note.gnu.build-id', f.absolutePath }
+                    execOperations.exec {
+                        commandLine oc, '--remove-section', '.note.gnu.build-id', f.absolutePath
+                    }
                     println "[no-build-id] stripped Build ID: ${f.name}"
                 }
             }
