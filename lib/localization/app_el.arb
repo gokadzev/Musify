@@ -193,8 +193,6 @@
   "playlistRemovedFromOffline": "Η λίστα αναπαραγωγής αφαιρέθηκε από αποσυνδεδεμένο χώρο",
   "playlistUpdated": "Η λίστα αναπαραγωγής ενημερώθηκε επιτυχώς",
   "playlists": "Λίστες αναπαραγωγής",
-  "predictiveBack": "Predictive back animations (Android 14+)",
-  "predictiveBackDescription": "Show the destination preview while swiping back from the edge.",
   "preferences": "Ρυθμίσεις",
   "provideIdOrNameError": "Παρακαλώ παρέχετε είτε αναγνωριστικό YouTube είτε όνομα προσαρμοσμένης λίστας αναπαραγωγής",
   "pureBlackTheme": "Καθαρό μαύρο θέμα",

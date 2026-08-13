@@ -193,8 +193,6 @@
   "playlistRemovedFromOffline": "Плейлист удален из офлайн хранилища",
   "playlistUpdated": "Плейлист успешно обновлен",
   "playlists": "Плейлисты",
-  "predictiveBack": "Анимация подсказки жеста \"Назад\" (Android 14+)",
-  "predictiveBackDescription": "Show the destination preview while swiping back from the edge.",
   "preferences": "Настройка",
   "provideIdOrNameError": "Пожалуйста, предоставьте YouTube ID или имя собственного плейлиста",
   "pureBlackTheme": "Чисто черная тема",

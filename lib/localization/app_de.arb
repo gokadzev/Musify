@@ -193,8 +193,6 @@
   "playlistRemovedFromOffline": "Wiedergabeliste vom Offline-Speicher entfernt",
   "playlistUpdated": "Playlist erfolgreich aktualisiert",
   "playlists": "Wiedergabelisten",
-  "predictiveBack": "Predective-Back Animationen aktivieren (Android 14+)",
-  "predictiveBackDescription": "Show the destination preview while swiping back from the edge.",
   "preferences": "Einstellungen",
   "provideIdOrNameError": "Bitte gib eine YouTube-ID oder einen benutzerdefinierten Playlist-Namen an",
   "pureBlackTheme": "Richtig dunkler Modus",

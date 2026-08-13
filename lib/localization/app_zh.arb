@@ -193,8 +193,6 @@
   "playlistRemovedFromOffline": "播放列表已从离线存储中移除",
   "playlistUpdated": "播放列表更新成功",
   "playlists": "播放列表",
-  "predictiveBack": "预测性返回（Android 14+）",
-  "predictiveBackDescription": "Show the destination preview while swiping back from the edge.",
   "preferences": "偏好设置",
   "provideIdOrNameError": "请提供 YouTube ID 或自定义播放列表名称",
   "pureBlackTheme": "纯黑主题",

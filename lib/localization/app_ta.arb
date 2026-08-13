@@ -193,8 +193,6 @@
   "playlistRemovedFromOffline": "பிளேலிஸ்ட் ஆஃப்லைனிலிருந்து நீக்கப்பட்டது",
   "playlistUpdated": "பிளேலிஸ்ட் வெற்றிகரமாக புதுப்பிக்கப்பட்டது",
   "playlists": "பிளேலிஸ்ட்கள்",
-  "predictiveBack": "முன்னறிவு பின்செல் (Android 14+)",
-  "predictiveBackDescription": "Show the destination preview while swiping back from the edge.",
   "preferences": "விருப்பத்தேர்வுகள்",
   "provideIdOrNameError": "YouTube ID அல்லது பிளேலிஸ்ட் பெயரை வழங்கவும்",
   "pureBlackTheme": "முழு கருப்பு தீம்",

@@ -193,8 +193,6 @@
   "playlistRemovedFromOffline": "오프라인 저장소에서 재생목록이 제거되었음",
   "playlistUpdated": "재생목록이 성공적으로 업데이트되었음",
   "playlists": "재생목록",
-  "predictiveBack": "뒤로 탐색 예측 (안드로이드 14+)",
-  "predictiveBackDescription": "Show the destination preview while swiping back from the edge.",
   "preferences": "환경 설정",
   "provideIdOrNameError": "유튜브 ID 또는 커스텀 재생목록 이름 입력",
   "pureBlackTheme": "순수 검정색 테마",

@@ -193,8 +193,6 @@
   "playlistRemovedFromOffline": "Playlist supprimée du stockage hors ligne",
   "playlistUpdated": "Playlist mise à jour avec succès",
   "playlists": "Playlists",
-  "predictiveBack": "Fonction « Retour prédictif » (Android 14 et versions ultérieures)",
-  "predictiveBackDescription": "Affichez l'aperçu de la destination en balayant vers l'arrière depuis le bord de l'écran.",
   "preferences": "Préférences",
   "provideIdOrNameError": "Veuillez indiquer un identifiant YouTube ou le nom d'une playlist personnalisée",
   "pureBlackTheme": "Thème sombre",

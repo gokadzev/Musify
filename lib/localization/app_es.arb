@@ -193,8 +193,6 @@
   "playlistRemovedFromOffline": "Lista de reproducción eliminada del almacenamiento sin conexión",
   "playlistUpdated": "Lista de reproducción actualizada",
   "playlists": "Listas de reproducción",
-  "predictiveBack": "Retroceso predictivo (Android 14+)",
-  "predictiveBackDescription": "Show the destination preview while swiping back from the edge.",
   "preferences": "Preferencias",
   "provideIdOrNameError": "Por favor, proporciona un ID de YouTube o un nombre personalizado para la lista de reproducción",
   "pureBlackTheme": "Tema negro puro",

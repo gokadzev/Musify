@@ -193,8 +193,6 @@
   "playlistRemovedFromOffline": "Lejátszási lista eltávolítva az Offline tárhelyről",
   "playlistUpdated": "Lejátszási lista sikeresen frissítve",
   "playlists": "Lejátszási listák",
-  "predictiveBack": "Predictív visszalépés (Android 14+)",
-  "predictiveBackDescription": "Show the destination preview while swiping back from the edge.",
   "preferences": "Személyes beállítások",
   "provideIdOrNameError": "Kérem adjon meg egy YouTube azonosítót vagy lejátszási lista nevet",
   "pureBlackTheme": "Teljesen fekete téma",

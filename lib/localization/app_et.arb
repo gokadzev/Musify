@@ -193,8 +193,6 @@
   "playlistRemovedFromOffline": "Esitusloend eemaldati võrguühenduseta režiimist",
   "playlistUpdated": "Esitusloend edukalt uuendatud",
   "playlists": "Esitusloendid",
-  "predictiveBack": "Ennustav tagasiliikumine (Android 14+)",
-  "predictiveBackDescription": "Show the destination preview while swiping back from the edge.",
   "preferences": "Eelistused",
   "provideIdOrNameError": "Palun sisesta YouTube'i ID või kohandatud esitusloendi nimi",
   "pureBlackTheme": "Täielik must teema",

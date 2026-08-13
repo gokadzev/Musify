@@ -193,8 +193,6 @@
   "playlistRemovedFromOffline": "プレイリストをオフラインから削除しました",
   "playlistUpdated": "プレイリストを更新しました",
   "playlists": "プレイリスト",
-  "predictiveBack": "予測型戻るアニメーションを使用 (Android 14以上)",
-  "predictiveBackDescription": "Show the destination preview while swiping back from the edge.",
   "preferences": "環境設定",
   "provideIdOrNameError": "YouTubeプレイリストIDまたはカスタムプレイリスト名を入力してください",
   "pureBlackTheme": "完全な黒テーマ",

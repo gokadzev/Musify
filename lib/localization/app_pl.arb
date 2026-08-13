@@ -193,8 +193,6 @@
   "playlistRemovedFromOffline": "Lista odtwarzania usunięta z pamięci offline",
   "playlistUpdated": "Playlista zaktualizowana pomyślnie",
   "playlists": "Playlisty",
-  "predictiveBack": "Gest przewidywanego przejścia wstecz (Android 14+)",
-  "predictiveBackDescription": "Show the destination preview while swiping back from the edge.",
   "preferences": "Preferencje",
   "provideIdOrNameError": "Podaj ID YouTube lub własną nazwę playlisty",
   "pureBlackTheme": "Motyw czarny",

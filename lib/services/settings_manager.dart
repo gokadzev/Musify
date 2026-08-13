@@ -52,10 +52,6 @@ final wrappedEnabled = ValueNotifier<bool>(
   Hive.box('settings').get('wrappedEnabled', defaultValue: true),
 );
 
-final predictiveBack = ValueNotifier<bool>(
-  Hive.box('settings').get('predictiveBack', defaultValue: true),
-);
-
 final sponsorBlockSupport = ValueNotifier<bool>(
   Hive.box('settings').get('sponsorBlockSupport', defaultValue: false),
 );
@@ -145,7 +141,6 @@ void reloadSettingsFromStorage() {
   );
   offlineMode.value = settings.get('offlineMode', defaultValue: false);
   wrappedEnabled.value = settings.get('wrappedEnabled', defaultValue: true);
-  predictiveBack.value = settings.get('predictiveBack', defaultValue: true);
   sponsorBlockSupport.value = settings.get(
     'sponsorBlockSupport',
     defaultValue: false,

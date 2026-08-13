@@ -20,7 +20,6 @@
  */
 
 import 'package:audio_service/audio_service.dart';
-import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
@@ -137,20 +136,6 @@ class SettingsPage extends StatelessWidget {
             value: useSystemColor.value,
             onChanged: (value) => _toggleSystemColor(context, value),
           ),
-        ),
-        ValueListenableBuilder<bool>(
-          valueListenable: predictiveBack,
-          builder: (_, value, __) {
-            return CustomBar(
-              context.l10n!.predictiveBack,
-              FluentIcons.position_backward_24_regular,
-              description: context.l10n!.predictiveBackDescription,
-              trailing: Switch(
-                value: value,
-                onChanged: (value) => _togglePredictiveBack(context, value),
-              ),
-            );
-          },
         ),
 
         ValueListenableBuilder<bool>(
@@ -406,9 +391,6 @@ class SettingsPage extends StatelessWidget {
                 await audioHandler.setRepeatMode(repeatNotifier.value);
                 themeMode = getThemeMode(themeModeSetting);
                 brightness = getBrightnessFromThemeMode(themeMode);
-                transitionsBuilder = predictiveBack.value
-                    ? const PredictiveBackPageTransitionsBuilder()
-                    : const CupertinoPageTransitionsBuilder();
                 if (context.mounted) {
                   await Musify.updateAppState(
                     context,
@@ -733,16 +715,6 @@ class SettingsPage extends StatelessWidget {
   void _togglePureBlack(BuildContext context, bool value) {
     addOrUpdateData<bool>('settings', 'usePureBlackColor', value);
     usePureBlackColor.value = value;
-    Musify.updateAppState(context);
-    showToast(context, context.l10n!.settingChangedMsg);
-  }
-
-  void _togglePredictiveBack(BuildContext context, bool value) {
-    addOrUpdateData<bool>('settings', 'predictiveBack', value);
-    predictiveBack.value = value;
-    transitionsBuilder = value
-        ? const PredictiveBackPageTransitionsBuilder()
-        : const CupertinoPageTransitionsBuilder();
     Musify.updateAppState(context);
     showToast(context, context.l10n!.settingChangedMsg);
   }
