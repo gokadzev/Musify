@@ -1037,12 +1037,12 @@ Future<Map?> getPlaylistInfoForWidget(
   if (normalizedId.isEmpty || normalizedId == 'null') return null;
   if (isArtist) {
     final offlineArtist = _findOfflinePlaylist(normalizedId);
-    if (offlineArtist != null && (!forceRefresh || offlineMode.value)) {
-      return offlineArtist;
-    }
-    if (offlineMode.value) return null;
+    if (offlineMode.value) return offlineArtist;
 
-    return getArtistCatalog(
+    // An offline artist is a snapshot of the last successful download, not an
+    // online cache. Prefer the current catalog while online so a new release
+    // cannot disappear again immediately after the artist is refreshed.
+    final catalog = await getArtistCatalog(
       normalizedId,
       preferredName: artistName,
       preferredImage: artistImage,
@@ -1051,6 +1051,10 @@ Future<Map?> getPlaylistInfoForWidget(
       forceRefresh: forceRefresh,
       preferredVerified: preferredVerified,
     );
+    if (catalog == null || catalog['catalogStatus'] == 'failed') {
+      return forceRefresh ? catalog : offlineArtist ?? catalog;
+    }
+    return catalog;
   }
   if (normalizedId.startsWith('customId-')) {
     return _findCustomPlaylist(normalizedId)?.playlist;

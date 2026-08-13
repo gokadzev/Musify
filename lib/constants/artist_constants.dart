@@ -20,9 +20,9 @@
  */
 
 /// Cache versioning constants for artist-related data
-const int artistCatalogCacheVersion = 15;
+const int artistCatalogCacheVersion = 16;
 const int artistSearchCacheVersion = 10;
-const int artistProfileCacheVersion = 4;
+const int artistProfileCacheVersion = 5;
 const int artistAlbumCacheVersion = 2;
 const int artistChannelCacheVersion = 2;
 

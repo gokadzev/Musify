@@ -66,6 +66,15 @@ class OfflinePlaylistService {
     );
   }
 
+  Map? getOfflinePlaylist(String playlistId) {
+    for (final playlist in offlinePlaylists.value) {
+      if (playlist is Map && playlist['ytid']?.toString() == playlistId) {
+        return playlist;
+      }
+    }
+    return null;
+  }
+
   bool isPlaylistDownloading(String playlistId) {
     return activeDownloads.contains(playlistId);
   }

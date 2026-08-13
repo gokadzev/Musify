@@ -40,6 +40,7 @@ class PlaylistDownloadButton extends StatefulWidget {
     required this.playlistId,
     required this.resolvePlaylist,
     this.songs,
+    this.requireSnapshotMatch = false,
   });
 
   final String playlistId;
@@ -50,6 +51,11 @@ class PlaylistDownloadButton extends StatefulWidget {
   /// The songs already on screen, when the caller has the whole list. Without
   /// them the button falls back to whether the playlist was downloaded.
   final List? songs;
+
+  /// Also require the stored playlist snapshot to contain [songs]. Artists use
+  /// this after refresh so files downloaded through another playlist cannot
+  /// hide a newly discovered release.
+  final bool requireSnapshotMatch;
 
   @override
   State<PlaylistDownloadButton> createState() => _PlaylistDownloadButtonState();
@@ -63,9 +69,24 @@ class _PlaylistDownloadButtonState extends State<PlaylistDownloadButton> {
 
   String get playlistId => widget.playlistId;
 
-  bool get _isOffline => widget.songs != null
-      ? isPlaylistFullyOffline(widget.songs!)
-      : offlinePlaylistService.isPlaylistDownloaded(playlistId);
+  bool get _isOffline {
+    final songs = widget.songs;
+    if (songs == null) {
+      return offlinePlaylistService.isPlaylistDownloaded(playlistId);
+    }
+    if (!isPlaylistFullyOffline(songs)) return false;
+    if (!widget.requireSnapshotMatch) return true;
+
+    // The files may already exist because another playlist downloaded them.
+    // The artist itself is only current offline when its stored snapshot also
+    // contains every song of the catalog now on screen.
+    final snapshot = offlinePlaylistService.getOfflinePlaylist(playlistId);
+    if (snapshot == null) return false;
+    final snapshotIds = (snapshot['list'] as List? ?? const [])
+        .map((song) => song['ytid'])
+        .toSet();
+    return songs.every((song) => snapshotIds.contains(song['ytid']));
+  }
 
   @override
   Widget build(BuildContext context) {

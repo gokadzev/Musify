@@ -38,6 +38,7 @@ import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/widgets/artist_shelf.dart';
 import 'package:musify/widgets/mini_player_bottom_space.dart';
 import 'package:musify/widgets/playlist_cube.dart';
+import 'package:musify/widgets/playlist_page/add_to_playlist_button.dart';
 import 'package:musify/widgets/playlist_page/download_button.dart';
 import 'package:musify/widgets/playlist_page/empty_playlist_state.dart';
 import 'package:musify/widgets/playlist_page/like_button.dart';
@@ -65,6 +66,8 @@ class _ArtistPageState extends State<ArtistPage> {
   Future<Map<String, dynamic>?>? _artistFuture;
 
   Map<String, dynamic>? _artist;
+  Map<String, dynamic>? _catalog;
+  Future<Map?>? _catalogFuture;
   List<Map<String, dynamic>> _topSongs = const [];
   List<String?> _topSongPlayCounts = const [];
   List<Map<String, dynamic>> _albums = const [];
@@ -86,13 +89,18 @@ class _ArtistPageState extends State<ArtistPage> {
   Future<void> _refresh() async {
     final generation = ++_artistLoadGeneration;
     final loaded = _artistFuture;
-    final refreshed = _loadArtist(forceRefresh: true);
+    final refreshed = _loadArtist(forceRefresh: true, refreshCatalog: true);
     // Block syntax: setState doesn't accept Future-returning callbacks
     setState(() {
       _artistFuture = refreshed;
     });
 
-    final refreshedArtist = await refreshed;
+    Map<String, dynamic>? refreshedArtist;
+    try {
+      refreshedArtist = await refreshed;
+    } catch (_) {
+      refreshedArtist = null;
+    }
     if (!mounted ||
         generation != _artistLoadGeneration ||
         refreshedArtist != null) {
@@ -111,6 +119,8 @@ class _ArtistPageState extends State<ArtistPage> {
     if (oldWidget.artistId != widget.artistId) {
       _artistLoadGeneration++;
       _artistFuture = null;
+      _catalog = null;
+      _catalogFuture = null;
       _cachedResolvedArtistId = null;
       _cachedArtistTitle = null;
     }
@@ -130,12 +140,16 @@ class _ArtistPageState extends State<ArtistPage> {
       widget.artistData?['title']?.toString() ??
       '';
 
-  Future<Map<String, dynamic>?> _loadArtist({bool forceRefresh = false}) async {
+  Future<Map<String, dynamic>?> _loadArtist({
+    bool forceRefresh = false,
+    bool refreshCatalog = false,
+  }) async {
     final generation = _artistLoadGeneration;
     final artistData = widget.artistData;
     final artist = await getArtistProfile(
       widget.artistId,
       forceRefresh: forceRefresh,
+      cacheResult: !refreshCatalog,
       preferredName: artistData?['title']?.toString(),
       preferredImage: artistData?['image']?.toString(),
       sourceSongId: artistData?['sourceSongId']?.toString(),
@@ -146,14 +160,30 @@ class _ArtistPageState extends State<ArtistPage> {
       return null;
     }
 
+    Map<String, dynamic>? catalog;
+    if (refreshCatalog) {
+      catalog = await getArtistCatalogFromProfile(artist, forceRebuild: true);
+      if (catalog == null ||
+          catalog['catalogStatus'] == 'failed' ||
+          !mounted ||
+          generation != _artistLoadGeneration) {
+        return null;
+      }
+      await cacheArtistProfile(artist);
+    }
+
     _artist = artist;
+    if (refreshCatalog) {
+      _catalog = catalog;
+      _catalogFuture = null;
+    }
     // Clear caches when artist data updates
     _cachedResolvedArtistId = null;
     _cachedArtistTitle = null;
     // Each entry of the shelf is a song and its play count, side by side.
-    final topSongs = asMapList(artist['topSongs'])
-        .where((entry) => entry['song'] is Map)
-        .toList();
+    final topSongs = asMapList(
+      artist['topSongs'],
+    ).where((entry) => entry['song'] is Map).toList();
     _topSongs = [
       for (final entry in topSongs)
         Map<String, dynamic>.from(entry['song'] as Map),
@@ -290,10 +320,13 @@ class _ArtistPageState extends State<ArtistPage> {
               playlistId: _resolvedArtistId,
               playlistData: () => artistPlaylistData(_artist!, songs: const []),
             ),
+            PlaylistAddToPlaylistButton(resolvePlaylist: _loadCatalog),
             // Downloading artist = downloading all its songs
             PlaylistDownloadButton(
               playlistId: _resolvedArtistId,
               resolvePlaylist: _loadCatalog,
+              songs: _catalog?['list'] as List?,
+              requireSnapshotMatch: true,
             ),
             IconButton.filledTonal(
               icon: const Icon(FluentIcons.arrow_sync_24_filled),
@@ -363,14 +396,40 @@ class _ArtistPageState extends State<ArtistPage> {
     return year == null || year.isEmpty ? type : '$type • $year';
   }
 
-  // Shares catalog with "All songs" page (read once, reused everywhere)
-  Future<Map?> _loadCatalog() => getPlaylistInfoForWidget(
-    _resolvedArtistId,
-    isArtist: true,
-    artistName: _artistTitle,
-    artistImage: _artist?['image']?.toString(),
-    preferredVerified: _artist?['isVerifiedArtist'] == true,
-  );
+  // Shares the complete catalog with "All songs" and keeps it after the first
+  // action so play, add and download cannot resolve different song snapshots.
+  Future<Map?> _loadCatalog() async {
+    final loadedCatalog = _catalog;
+    if (loadedCatalog != null) return loadedCatalog;
+
+    final inFlight = _catalogFuture;
+    if (inFlight != null) return inFlight;
+
+    final future = _resolveCatalog();
+    _catalogFuture = future;
+    final catalog = await future;
+
+    if (catalog != null && catalog['catalogStatus'] != 'failed' && mounted) {
+      setState(() {
+        _catalog = Map<String, dynamic>.from(catalog);
+      });
+    }
+    if (identical(_catalogFuture, future)) _catalogFuture = null;
+    return catalog;
+  }
+
+  Future<Map?> _resolveCatalog() {
+    final artist = _artist;
+    if (artist != null) return getArtistCatalogFromProfile(artist);
+
+    return getPlaylistInfoForWidget(
+      _resolvedArtistId,
+      isArtist: true,
+      artistName: _artistTitle,
+      artistImage: _artist?['image']?.toString(),
+      preferredVerified: _artist?['isVerifiedArtist'] == true,
+    );
+  }
 
   Future<void> _playArtist({bool shuffle = false}) async {
     _isLoadingCatalog.value = true;
