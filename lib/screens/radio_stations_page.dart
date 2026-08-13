@@ -18,7 +18,7 @@
  *     For more information about Musify, including how to contribute,
  *     please visit: https://github.com/gokadzev/Musify
  */
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:musify/constants/app_constants.dart';
 import 'package:musify/database/radio_stations.db.dart';
 import 'package:musify/extensions/l10n.dart';

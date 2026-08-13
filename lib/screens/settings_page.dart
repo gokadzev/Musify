@@ -20,10 +20,10 @@
  */
 
 import 'package:audio_service/audio_service.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:musify/constants/app_constants.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
@@ -665,20 +665,16 @@ class SettingsPage extends StatelessWidget {
               ? '${newLocale.languageCode}-${newLocale.scriptCode}'
               : newLocale.languageCode;
 
-          return BottomSheetBar(
-            getLanguageDisplayName(context, language),
-            () {
-              addOrUpdateData<String>(
-                'settings',
-                'languageCode',
-                newLocaleFullCode,
-              );
-              Musify.updateAppState(context, newLocale: newLocale);
-              showToast(context, context.l10n!.languageMsg);
-              Navigator.pop(context);
-            },
-            activeLanguageFullCode == newLocaleFullCode,
-          );
+          return BottomSheetBar(getLanguageDisplayName(context, language), () {
+            addOrUpdateData<String>(
+              'settings',
+              'languageCode',
+              newLocaleFullCode,
+            );
+            Musify.updateAppState(context, newLocale: newLocale);
+            showToast(context, context.l10n!.languageMsg);
+            Navigator.pop(context);
+          }, activeLanguageFullCode == newLocaleFullCode);
         },
       ),
     );

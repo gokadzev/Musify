@@ -16,6 +16,7 @@ dependencies:
   audio_service: ^0.18.19
   audio_session: ^0.2.4
   cached_network_image: ^3.4.1
+  cupertino_ui: any
   dynamic_color: ^1.9.0
   file_picker: ^12.0.0-beta.7
   fluentui_system_icons: ^1.1.273
@@ -31,6 +32,7 @@ dependencies:
   http: ^1.6.0
   intl: ^0.20.2
   just_audio: ^0.10.6
+  material_ui: any
   path_provider: ^2.1.6
   receive_sharing_intent:
     path: ./packages/receive_sharing_intent
@@ -41,7 +43,6 @@ dependencies:
     path: ./packages/youtube_explode_dart
   youtube_music_explode_dart:
     path: ./packages/youtube_music_explode_dart
-
 dev_dependencies:
   flutter_test:
     sdk: flutter

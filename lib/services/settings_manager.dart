@@ -20,8 +20,8 @@
  */
 
 import 'package:audio_service/audio_service.dart';
-import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:musify/screens/playlist_page.dart';
 import 'package:musify/screens/user_songs_page.dart';
 import 'package:musify/utilities/language_utils.dart';
@@ -77,9 +77,8 @@ final showAudioQualityBadge = ValueNotifier<bool>(
 );
 
 List<double> _readEqualizerGains() {
-  final raw = Hive.box(
-    'settings',
-  ).get('equalizerBandGains', defaultValue: const <dynamic>[]);
+  final raw = Hive.box('settings')
+      .get('equalizerBandGains', defaultValue: const <dynamic>[]);
 
   if (raw is List) {
     return raw.map((value) => value is num ? value.toDouble() : 0.0).toList();
@@ -101,13 +100,11 @@ Locale languageSetting = getLocaleFromLanguageCode(
 int themeModeSetting =
     Hive.box('settings').get('themeIndex', defaultValue: 0) as int;
 
-String playlistSortSetting = Hive.box(
-  'settings',
-).get('playlistSortType', defaultValue: PlaylistSortType.default_.name);
+String playlistSortSetting = Hive.box('settings')
+    .get('playlistSortType', defaultValue: PlaylistSortType.default_.name);
 
-String offlineSortSetting = Hive.box(
-  'settings',
-).get('offlineSortType', defaultValue: OfflineSortType.default_.name);
+String offlineSortSetting = Hive.box('settings')
+    .get('offlineSortType', defaultValue: OfflineSortType.default_.name);
 
 Color primaryColorSetting = Color(
   Hive.box('settings').get('accentColor', defaultValue: 0xff91cef4),
@@ -118,9 +115,8 @@ final shuffleNotifier = ValueNotifier<bool>(
 );
 
 final repeatNotifier = ValueNotifier<AudioServiceRepeatMode>(
-  AudioServiceRepeatMode.values[Hive.box(
-    'settings',
-  ).get('repeatMode', defaultValue: 0)],
+  AudioServiceRepeatMode.values[Hive.box('settings')
+      .get('repeatMode', defaultValue: 0)],
 );
 
 // Non-storage notifiers

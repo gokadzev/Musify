@@ -19,7 +19,7 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Creates a PopupMenuItem with consistent icon + label styling
 PopupMenuItem<T> buildPopupMenuItem<T>({

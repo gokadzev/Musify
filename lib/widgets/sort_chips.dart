@@ -19,7 +19,7 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 typedef SortTypeToStringConverter<T> = String Function(T type);
 typedef OnSortTypeSelected<T> = void Function(T type);

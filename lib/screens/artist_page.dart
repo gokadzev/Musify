@@ -22,8 +22,8 @@
 import 'dart:async';
 
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:musify/constants/app_constants.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
@@ -151,9 +151,9 @@ class _ArtistPageState extends State<ArtistPage> {
     _cachedResolvedArtistId = null;
     _cachedArtistTitle = null;
     // Each entry of the shelf is a song and its play count, side by side.
-    final topSongs = asMapList(
-      artist['topSongs'],
-    ).where((entry) => entry['song'] is Map).toList();
+    final topSongs = asMapList(artist['topSongs'])
+        .where((entry) => entry['song'] is Map)
+        .toList();
     _topSongs = [
       for (final entry in topSongs)
         Map<String, dynamic>.from(entry['song'] as Map),
