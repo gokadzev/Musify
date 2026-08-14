@@ -177,15 +177,9 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
   @override
   Widget build(BuildContext context) {
+    final showPlaylist = !_isInitializingPlaylist && _playlist != null;
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(FluentIcons.arrow_left_24_regular),
-          onPressed: () =>
-              Navigator.pop(context, widget.playlistData == _playlist),
-          tooltip: context.l10n!.back,
-        ),
-      ),
+      appBar: showPlaylist ? null : _buildAppBar(context),
       body: Padding(
         padding: commonSingleChildScrollViewPadding,
         child: _isInitializingPlaylist
@@ -196,6 +190,38 @@ class _PlaylistPageState extends State<PlaylistPage> {
             : _playlist != null
             ? CustomScrollView(
                 slivers: [
+                  SliverAppBar(
+                    leading: _buildBackButton(context),
+                    pinned: true,
+                    expandedHeight:
+                        MediaQuery.sizeOf(context).width >
+                            MediaQuery.sizeOf(context).height
+                        ? 380
+                        : 320,
+                    flexibleSpace: FlexibleSpaceBar(
+                      centerTitle: true,
+                      expandedTitleScale: 1.35,
+                      titlePadding: const EdgeInsetsDirectional.only(
+                        start: 64,
+                        end: 64,
+                        bottom: 16,
+                      ),
+                      title: Text(
+                        _playlistTitle,
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: Theme.of(context).colorScheme.onSurface,
+                          letterSpacing: 0,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      background: Padding(
+                        padding: const EdgeInsets.only(top: 56, bottom: 64),
+                        child: Center(child: _buildPlaylistHeroArtwork()),
+                      ),
+                    ),
+                  ),
                   SliverToBoxAdapter(child: _buildHeaderSection()),
                   if ((_playlist['list'] as List? ?? const []).isNotEmpty) ...[
                     ValueListenableBuilder<String>(
@@ -234,6 +260,22 @@ class _PlaylistPageState extends State<PlaylistPage> {
     );
   }
 
+  PreferredSizeWidget _buildAppBar(BuildContext context) {
+    return AppBar(leading: _buildBackButton(context));
+  }
+
+  Widget _buildBackButton(BuildContext context) {
+    return IconButton(
+      icon: const Icon(FluentIcons.arrow_left_24_regular),
+      onPressed: () => Navigator.pop(context, widget.playlistData == _playlist),
+      tooltip: context.l10n!.back,
+    );
+  }
+
+  String get _playlistTitle => widget.isArtist
+      ? normalizeArtistDisplayTitle(_playlist['title']?.toString() ?? '')
+      : _playlist['title']?.toString() ?? '';
+
   Widget _buildPlaylistImage() {
     final screenWidth = MediaQuery.sizeOf(context).width;
     final isLandscape = screenWidth > MediaQuery.sizeOf(context).height;
@@ -253,13 +295,26 @@ class _PlaylistPageState extends State<PlaylistPage> {
     );
   }
 
+  Widget _buildPlaylistHeroArtwork() {
+    final image = _buildPlaylistImage();
+    if (widget.isArtist) return ClipOval(child: image);
+
+    return ClipPath(
+      clipper: const ShapeBorderClipper(
+        shape: StarBorder(
+          points: 8,
+          pointRounding: 0.8,
+          valleyRounding: 0.2,
+          innerRadiusRatio: 0.6,
+        ),
+      ),
+      child: image,
+    );
+  }
+
   Widget _buildHeaderSection() {
     final songsLength = (_playlist['list'] as List? ?? const []).length;
     final isUserCreated = _playlist['source'] == 'user-created';
-    final playlistTitle = widget.isArtist
-        ? normalizeArtistDisplayTitle(_playlist['title']?.toString() ?? '')
-        : _playlist['title']?.toString() ?? '';
-
     final hasSecondaryActions =
         (widget.playlistId != null && !isUserCreated && !offlineMode.value) ||
         !offlineMode.value ||
@@ -269,10 +324,12 @@ class _PlaylistPageState extends State<PlaylistPage> {
       children: [
         PlaylistHeader(
           _buildPlaylistImage(),
-          playlistTitle,
+          _playlistTitle,
           songsLength: songsLength,
           isAlbum: _playlist['isAlbum'] == true,
           isArtist: widget.isArtist,
+          showImage: false,
+          showTitle: false,
         ),
         if (songsLength > 0)
           PlaylistActionButtons(
