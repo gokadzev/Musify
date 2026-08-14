@@ -30,7 +30,7 @@ dependencies:
   http: ^1.6.0
   intl: ^0.20.2
   just_audio: ^0.10.6
-  material_ui: any
+  material_ui: ^1.0.0
   path_provider: ^2.1.6
   receive_sharing_intent:
     path: ./packages/receive_sharing_intent
