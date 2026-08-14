@@ -20,6 +20,7 @@
  */
 
 import 'dart:convert';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:material_ui/material_ui.dart';
@@ -32,8 +33,10 @@ Future<String?> pickImage() async {
     final bytes = await file.readAsBytes();
     String? mimeType;
 
-    if (file.extension != null) {
-      switch (file.extension!.toLowerCase()) {
+    final fileName = file.name;
+    final extensionStart = fileName.lastIndexOf('.') + 1;
+    if (extensionStart > 0 && extensionStart < fileName.length) {
+      switch (fileName.substring(extensionStart).toLowerCase()) {
         case 'jpg':
         case 'jpeg':
           mimeType = 'image/jpeg';

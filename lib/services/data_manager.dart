@@ -283,13 +283,13 @@ Future<({String message, bool success})> restoreData(
     allowedExtensions: ['hive'],
   );
 
-  if (result == null || result.files.isEmpty) {
+  if (result.isEmpty) {
     return (message: '${context.l10n!.chooseBackupFiles}!', success: false);
   }
 
   final selectedFiles = <String, PlatformFile>{};
   for (final boxName in boxNames) {
-    final backupFile = result.files
+    final backupFile = result
         .where(
           (file) =>
               file.name == '$boxName.hive' ||
