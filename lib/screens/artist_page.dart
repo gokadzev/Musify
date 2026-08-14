@@ -89,6 +89,7 @@ class _ArtistPageState extends State<ArtistPage> {
   Future<void> _refresh() async {
     final generation = ++_artistLoadGeneration;
     final loaded = _artistFuture;
+    _catalogFuture = null;
     final refreshed = _loadArtist(forceRefresh: true, refreshCatalog: true);
     // Block syntax: setState doesn't accept Future-returning callbacks
     setState(() {
@@ -405,11 +406,18 @@ class _ArtistPageState extends State<ArtistPage> {
     final inFlight = _catalogFuture;
     if (inFlight != null) return inFlight;
 
+    final generation = _artistLoadGeneration;
+    final artistId = _resolvedArtistId;
     final future = _resolveCatalog();
     _catalogFuture = future;
     final catalog = await future;
 
-    if (catalog != null && catalog['catalogStatus'] != 'failed' && mounted) {
+    final isCurrent =
+        mounted &&
+        generation == _artistLoadGeneration &&
+        artistId == _resolvedArtistId &&
+        identical(_catalogFuture, future);
+    if (catalog != null && catalog['catalogStatus'] != 'failed' && isCurrent) {
       setState(() {
         _catalog = Map<String, dynamic>.from(catalog);
       });
