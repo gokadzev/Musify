@@ -328,7 +328,7 @@ Future<Map<String, dynamic>?> _artistPageOf(
   }
 
   if (cacheResult) {
-    await cacheArtistProfile(artistProfile);
+    cacheArtistProfileInBackground(artistProfile);
   }
   return artistProfile;
 }
@@ -340,6 +340,18 @@ Future<void> cacheArtistProfile(Map artist) async {
     'cache',
     _artistProfileCacheKey(artistId),
     Map<String, dynamic>.from(artist),
+  );
+}
+
+void cacheArtistProfileInBackground(Map artist) {
+  unawaited(
+    cacheArtistProfile(artist).catchError((error, stackTrace) {
+      logger.log(
+        'Failed to cache artist profile',
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }),
   );
 }
 
@@ -373,7 +385,7 @@ Future<Map<String, dynamic>?> getArtistCatalog(
     if (forceRefresh &&
         catalog != null &&
         catalog['catalogStatus'] != 'failed') {
-      await cacheArtistProfile(artist);
+      cacheArtistProfileInBackground(artist);
     }
     return catalog;
   } catch (e, stackTrace) {

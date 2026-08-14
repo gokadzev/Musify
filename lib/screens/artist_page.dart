@@ -170,7 +170,7 @@ class _ArtistPageState extends State<ArtistPage> {
           generation != _artistLoadGeneration) {
         return null;
       }
-      await cacheArtistProfile(artist);
+      cacheArtistProfileInBackground(artist);
     }
 
     _artist = artist;
@@ -182,9 +182,9 @@ class _ArtistPageState extends State<ArtistPage> {
     _cachedResolvedArtistId = null;
     _cachedArtistTitle = null;
     // Each entry of the shelf is a song and its play count, side by side.
-    final topSongs = asMapList(
-      artist['topSongs'],
-    ).where((entry) => entry['song'] is Map).toList();
+    final topSongs = asMapList(artist['topSongs'])
+        .where((entry) => entry['song'] is Map)
+        .toList();
     _topSongs = [
       for (final entry in topSongs)
         Map<String, dynamic>.from(entry['song'] as Map),
@@ -412,17 +412,20 @@ class _ArtistPageState extends State<ArtistPage> {
     _catalogFuture = future;
     final catalog = await future;
 
+    final ownsFuture = identical(_catalogFuture, future);
     final isCurrent =
         mounted &&
         generation == _artistLoadGeneration &&
         artistId == _resolvedArtistId &&
-        identical(_catalogFuture, future);
-    if (catalog != null && catalog['catalogStatus'] != 'failed' && isCurrent) {
+        ownsFuture;
+    if (ownsFuture) _catalogFuture = null;
+    if (!isCurrent) return null;
+
+    if (catalog != null && catalog['catalogStatus'] != 'failed') {
       setState(() {
         _catalog = Map<String, dynamic>.from(catalog);
       });
     }
-    if (identical(_catalogFuture, future)) _catalogFuture = null;
     return catalog;
   }
 
