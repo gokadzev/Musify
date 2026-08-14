@@ -31,6 +31,7 @@ import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 import 'package:youtube_music_explode_dart/youtube_music_explode_dart.dart';
 
 final ytMusicClient = YoutubeMusicExplode();
+final Map<String, Future<void>> _artistCatalogOperationTails = {};
 
 Future<List<Map<String, dynamic>>> searchVerifiedArtists(
   String query, {
@@ -165,6 +166,7 @@ Future<Map<String, dynamic>?> resolveArtist(
 Future<Map<String, dynamic>?> getArtistProfile(
   String artistId, {
   bool forceRefresh = false,
+  bool cacheResult = true,
   String? sourceSongId,
   String? sourceVideoAuthor,
   String? preferredName,
@@ -187,6 +189,7 @@ Future<Map<String, dynamic>?> getArtistProfile(
       final profile = await _artistPageOf(
         knownChannel?.toString() ?? lookup,
         forceRefresh: forceRefresh,
+        cacheResult: cacheResult,
         preferredName: preferredName,
         preferredImage: preferredImage,
       );
@@ -217,6 +220,7 @@ Future<Map<String, dynamic>?> getArtistProfile(
     return await _artistPageOf(
       artist['ytid']?.toString() ?? lookup,
       forceRefresh: forceRefresh,
+      cacheResult: cacheResult,
       artist: artist,
     );
   } catch (e, stackTrace) {
@@ -238,6 +242,7 @@ Future<Map<String, dynamic>?> _artistPageOf(
   String? preferredName,
   String? preferredImage,
   bool followCanonical = true,
+  bool cacheResult = true,
 }) async {
   // Nothing is dropped before the page is in hand: a refresh that fails on a
   // bad connection would otherwise leave the artist with no page at all.
@@ -265,6 +270,7 @@ Future<Map<String, dynamic>?> _artistPageOf(
     return _artistPageOf(
       profile.id,
       forceRefresh: forceRefresh,
+      cacheResult: cacheResult,
       artist: artist,
       preferredName: preferredName,
       preferredImage: preferredImage,
@@ -307,7 +313,7 @@ Future<Map<String, dynamic>?> _artistPageOf(
     'releases': [
       for (final release in profile.releases)
         _releaseMapFromMusicAlbum(release, knownArtist),
-    ]..sort(_compareReleasesByYearDesc),
+    ],
     'relatedArtists': [
       for (final related in profile.relatedArtists)
         _artistMapFromMusicArtist(related),
@@ -321,13 +327,32 @@ Future<Map<String, dynamic>?> _artistPageOf(
     return artist == null ? null : artistProfile;
   }
 
-  if (forceRefresh) {
-    // The song catalog is built from this discography, so it went stale with
-    // it. It is rebuilt the next time the songs of the artist are needed.
-    await _dropFromCache(_artistCatalogCacheKey(artistId));
+  if (cacheResult) {
+    cacheArtistProfileInBackground(artistProfile);
   }
-  unawaited(addOrUpdateData<Map>('cache', cacheKey, artistProfile));
   return artistProfile;
+}
+
+Future<void> cacheArtistProfile(Map artist) async {
+  final artistId = artist['ytid']?.toString();
+  if (artistId == null || artistId.isEmpty) return;
+  await addOrUpdateData<Map>(
+    'cache',
+    _artistProfileCacheKey(artistId),
+    Map<String, dynamic>.from(artist),
+  );
+}
+
+void cacheArtistProfileInBackground(Map artist) {
+  unawaited(
+    cacheArtistProfile(artist).catchError((error, stackTrace) {
+      logger.log(
+        'Failed to cache artist profile',
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }),
+  );
 }
 
 /// Artist catalog: all songs from the discography as a single playlist.
@@ -344,6 +369,7 @@ Future<Map<String, dynamic>?> getArtistCatalog(
     final artist = await getArtistProfile(
       artistId,
       forceRefresh: forceRefresh,
+      cacheResult: !forceRefresh,
       preferredName: preferredName,
       preferredImage: preferredImage,
       sourceSongId: sourceSongId,
@@ -352,32 +378,16 @@ Future<Map<String, dynamic>?> getArtistCatalog(
     );
     if (artist == null) return null;
 
-    // No [forceRefresh] check: refreshing the profile already dropped this key.
-    final cacheKey = _artistCatalogCacheKey(
-      artist['ytid']?.toString() ?? artistId,
+    final catalog = await getArtistCatalogFromProfile(
+      artist,
+      forceRebuild: forceRefresh,
     );
-    final cachedArtist = await getData('cache', cacheKey);
-    if (cachedArtist is Map &&
-        cachedArtist['list'] is List &&
-        (cachedArtist['list'] as List).isNotEmpty) {
-      return Map<String, dynamic>.from(cachedArtist);
+    if (forceRefresh &&
+        catalog != null &&
+        catalog['catalogStatus'] != 'failed') {
+      cacheArtistProfileInBackground(artist);
     }
-
-    final songs = await _catalogSongsOf(artist);
-    if (songs.isEmpty) {
-      logger.log(
-        'Artist catalog empty: no YouTube Music releases for '
-        '${artist['title']} (${artist['ytid']}); lookup=$artistId',
-      );
-      return {
-        ...artistPlaylistData(artist, songs: const []),
-        'catalogStatus': 'failed',
-      };
-    }
-
-    final artistPlaylist = artistPlaylistData(artist, songs: songs);
-    unawaited(addOrUpdateData<Map>('cache', cacheKey, artistPlaylist));
-    return artistPlaylist;
+    return catalog;
   } catch (e, stackTrace) {
     logger.log(
       'Error fetching artist catalog for $artistId',
@@ -385,6 +395,106 @@ Future<Map<String, dynamic>?> getArtistCatalog(
       stackTrace: stackTrace,
     );
     return null;
+  }
+}
+
+/// Materializes the complete song catalog from a profile that was already
+/// loaded. This keeps refresh atomic: the landing page and the song list use
+/// the exact same release snapshot without reading the profile cache again.
+Future<Map<String, dynamic>?> getArtistCatalogFromProfile(
+  Map artist, {
+  bool forceRebuild = false,
+}) async {
+  final artistId = artist['ytid']?.toString();
+  if (artistId == null || artistId.isEmpty) return null;
+
+  return _serializeArtistCatalogOperation(
+    artistId,
+    () => _getArtistCatalogFromProfile(
+      artist,
+      artistId: artistId,
+      forceRebuild: forceRebuild,
+    ),
+  );
+}
+
+Future<Map<String, dynamic>?> _getArtistCatalogFromProfile(
+  Map artist, {
+  required String artistId,
+  required bool forceRebuild,
+}) async {
+  try {
+    final cacheKey = _artistCatalogCacheKey(artistId);
+    if (!forceRebuild) {
+      final cachedArtist = await getData('cache', cacheKey);
+      if (cachedArtist is Map &&
+          cachedArtist['list'] is List &&
+          (cachedArtist['list'] as List).isNotEmpty) {
+        return Map<String, dynamic>.from(cachedArtist);
+      }
+    }
+
+    final catalog = await _catalogSongsOf(Map<String, dynamic>.from(artist));
+    if ((forceRebuild && !catalog.isComplete) || catalog.songs.isEmpty) {
+      logger.log(
+        'Artist catalog incomplete: one or more YouTube Music releases could '
+        'not be read for ${artist['title']} ($artistId)',
+      );
+      return {
+        ...artistPlaylistData(artist, songs: const []),
+        'catalogStatus': 'failed',
+      };
+    }
+
+    if (!catalog.isComplete) {
+      logger.log(
+        'Artist catalog partially loaded for ${artist['title']} ($artistId)',
+      );
+    }
+
+    final artistPlaylist = artistPlaylistData(artist, songs: catalog.songs);
+    // A refresh may immediately read this key to update another view. Finish
+    // the local write before exposing the new catalog so stale data cannot win
+    // that race.
+    await addOrUpdateData<Map>('cache', cacheKey, artistPlaylist);
+    return artistPlaylist;
+  } catch (e, stackTrace) {
+    logger.log(
+      'Error building artist catalog from refreshed profile',
+      error: e,
+      stackTrace: stackTrace,
+    );
+    return null;
+  }
+}
+
+/// Runs catalog materializations for one artist in order. In particular, a
+/// normal action that started just before refresh must finish before the forced
+/// rebuild, so it cannot overwrite the fresh catalog after refresh completes.
+Future<T> _serializeArtistCatalogOperation<T>(
+  String artistId,
+  Future<T> Function() operation,
+) async {
+  final previous = _artistCatalogOperationTails[artistId];
+  final completion = Completer<void>();
+  final tail = completion.future;
+  _artistCatalogOperationTails[artistId] = tail;
+
+  if (previous != null) {
+    try {
+      await previous;
+    } catch (_) {
+      // The next materialization should still run after a failed predecessor.
+    }
+  }
+
+  try {
+    return await operation();
+  } finally {
+    completion.complete();
+    if (identical(_artistCatalogOperationTails[artistId], tail)) {
+      unawaited(_artistCatalogOperationTails.remove(artistId));
+    }
   }
 }
 
@@ -402,7 +512,7 @@ Map<String, dynamic> artistPlaylistData(Map artist, {List? songs}) {
 }
 
 /// Collects all songs from artist's discography in batches.
-Future<List<Map<String, dynamic>>> _catalogSongsOf(
+Future<({List<Map<String, dynamic>> songs, bool isComplete})> _catalogSongsOf(
   Map<String, dynamic> artist,
 ) async {
   final artistId = artist['ytid']?.toString();
@@ -410,14 +520,19 @@ Future<List<Map<String, dynamic>>> _catalogSongsOf(
   final releases = asMapList(artist['releases']);
 
   final songs = <Map<String, dynamic>>[];
+  var isComplete = true;
   for (var index = 0; index < releases.length; index += musicAlbumBatchSize) {
     final albums = await Future.wait([
       for (final release in releases.skip(index).take(musicAlbumBatchSize))
         getArtistAlbum(release['ytid']?.toString() ?? ''),
     ]);
     for (final album in albums) {
+      if (album == null) {
+        isComplete = false;
+        continue;
+      }
       // Credit songs to the artist, not the release owner (compilations, features)
-      for (final song in asMapList(album?['list'])) {
+      for (final song in asMapList(album['list'])) {
         songs.add({
           ...song,
           if (artistName.isNotEmpty) 'artist': artistName,
@@ -427,7 +542,7 @@ Future<List<Map<String, dynamic>>> _catalogSongsOf(
     }
   }
 
-  return dedupeArtistCatalogSongs(songs);
+  return (songs: dedupeArtistCatalogSongs(songs), isComplete: isComplete);
 }
 
 /// Load release as standalone playlist (crediting happens later in catalog builder).
@@ -518,13 +633,6 @@ Map<String, dynamic> _releaseMapFromMusicAlbum(MusicAlbum album, Map artist) {
     'source': 'youtube-album',
     'isAlbum': true,
   };
-}
-
-int _compareReleasesByYearDesc(Map<String, dynamic> a, Map<String, dynamic> b) {
-  final yearA = int.tryParse(a['year']?.toString() ?? '') ?? 0;
-  final yearB = int.tryParse(b['year']?.toString() ?? '') ?? 0;
-  if (yearA != yearB) return yearB.compareTo(yearA);
-  return (a['title']?.toString() ?? '').compareTo(b['title']?.toString() ?? '');
 }
 
 /// Reduces YouTube Music counters like `331M monthly audience` to `331M`.

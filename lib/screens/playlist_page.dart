@@ -35,13 +35,13 @@ import 'package:musify/services/playlists_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/app_utils.dart';
 import 'package:musify/utilities/flutter_toast.dart';
-import 'package:musify/utilities/playlist_dialogs.dart';
 import 'package:musify/utilities/playlist_utils.dart';
 import 'package:musify/utilities/song_filtering.dart';
 import 'package:musify/utilities/sort_utils.dart';
 import 'package:musify/widgets/edit_playlist_dialog.dart';
 import 'package:musify/widgets/mini_player_bottom_space.dart';
 import 'package:musify/widgets/playlist_cube.dart';
+import 'package:musify/widgets/playlist_page/add_to_playlist_button.dart';
 import 'package:musify/widgets/playlist_page/download_button.dart';
 import 'package:musify/widgets/playlist_page/empty_playlist_state.dart';
 import 'package:musify/widgets/playlist_page/like_button.dart';
@@ -361,7 +361,9 @@ class _PlaylistPageState extends State<PlaylistPage> {
                   playlistData: () => _playlist,
                 ),
               if (!offlineMode.value) ...[
-                _buildAddToPlaylistButton(),
+                PlaylistAddToPlaylistButton(
+                  resolvePlaylist: () async => _playlist,
+                ),
                 if (!isUserCreated) _buildSyncButton(),
               ],
               if (songsLength > 0) _buildDownloadButton(),
@@ -439,28 +441,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
       onPressed: _handleSyncPlaylist,
       tooltip: context.l10n!.update,
     );
-  }
-
-  Widget _buildAddToPlaylistButton() {
-    return IconButton.filledTonal(
-      icon: const Icon(FluentIcons.album_add_24_regular),
-      iconSize: 24,
-      onPressed: _handleAddFullPlaylistToPlaylist,
-      tooltip: context.l10n!.addToPlaylist,
-    );
-  }
-
-  void _handleAddFullPlaylistToPlaylist() {
-    if (_playlist != null && _playlist['list'] != null) {
-      final List<dynamic> tracks = _playlist['list'];
-      if (tracks.isEmpty) {
-        showToast(context, context.l10n!.noSongsInPlaylist);
-        return;
-      }
-      showAddToPlaylistDialog(context, songs: tracks);
-    } else {
-      showToast(context, context.l10n!.loading);
-    }
   }
 
   Widget _buildEditButton() {
@@ -591,6 +571,10 @@ class _PlaylistPageState extends State<PlaylistPage> {
         : isCachedPage
         ? await getPlaylistInfoForWidget(playlistId, forceRefresh: true)
         : await updatePlaylistList(context, playlistId);
+    if (updated?['catalogStatus'] == 'failed') {
+      if (mounted) showToast(context, context.l10n!.error);
+      return;
+    }
     if (updated != null && mounted) {
       setState(() {
         _playlist = updated;
