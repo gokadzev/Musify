@@ -342,8 +342,17 @@ class _SongBarState extends State<SongBar> {
     // Cache frequently accessed values
     _songTitle = widget.song['title'] ?? '';
     _songArtist = widget.song['artist']?.toString() ?? '';
-    _artworkPath = widget.song['artworkPath'];
-    _lowResImageUrl = widget.song['lowResImage']?.toString() ?? '';
+    _artworkPath = _firstNonEmptyString([
+      widget.song['artworkPath'],
+      widget.song['artWorkPath'],
+    ]);
+    _lowResImageUrl =
+        _firstNonEmptyString([
+          widget.song['lowResImage'],
+          widget.song['image'],
+          widget.song['highResImage'],
+        ]) ??
+        '';
     _ytid = widget.song['ytid'] ?? '';
 
     // Initialize ValueNotifiers only once
@@ -652,6 +661,14 @@ class _SongInfo extends StatelessWidget {
       ],
     );
   }
+}
+
+String? _firstNonEmptyString(Iterable<Object?> values) {
+  for (final value in values) {
+    final stringValue = value?.toString().trim();
+    if (stringValue != null && stringValue.isNotEmpty) return stringValue;
+  }
+  return null;
 }
 
 class _OfflineArtwork extends StatelessWidget {
