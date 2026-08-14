@@ -23,12 +23,12 @@ import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
-import 'package:flutter_flip_card/flutter_flip_card.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/services/common_services.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/async_loader.dart';
+import 'package:musify/widgets/flip_card.dart';
 import 'package:musify/widgets/song_artwork.dart';
 
 class NowPlayingArtwork extends StatelessWidget {

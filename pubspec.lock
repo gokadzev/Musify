@@ -270,14 +270,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.4.2"
-  flutter_flip_card:
-    dependency: "direct main"
-    description:
-      name: flutter_flip_card
-      sha256: cf67f31e85fa4452f493cac2f3c123bcacacb0f7feb3cc5f831faeea77cdc671
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.6"
   flutter_localizations:
     dependency: "direct main"
     description: flutter
