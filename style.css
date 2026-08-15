@@ -1,40 +1,40 @@
 body.dark {
-  --primary: #ffb4a9;
-  --on-primary: #5f150f;
-  --primary-container: #7d2b22;
-  --on-primary-container: #ffdad5;
-  --secondary: #e7bdb7;
-  --on-secondary: #442926;
-  --secondary-container: #5d3f3b;
-  --on-secondary-container: #ffdad5;
-  --tertiary: #dfc38c;
-  --on-tertiary: #3e2e04;
-  --tertiary-container: #574419;
-  --on-tertiary-container: #fcdfa6;
+  --primary: #a6c8ff;
+  --on-primary: #003258;
+  --primary-container: #00497d;
+  --on-primary-container: #d1e4ff;
+  --secondary: #b9c8da;
+  --on-secondary: #24323f;
+  --secondary-container: #3a4856;
+  --on-secondary-container: #d5e4f7;
+  --tertiary: #d2c2e8;
+  --on-tertiary: #38274d;
+  --tertiary-container: #4f3d64;
+  --on-tertiary-container: #eedcff;
   --error: #ffb4ab;
   --on-error: #690005;
   --error-container: #93000a;
   --on-error-container: #ffb4ab;
-  --background: #201a19;
-  --on-background: #ede0de;
-  --surface: #181211;
-  --on-surface: #ede0de;
-  --surface-variant: #534341;
-  --on-surface-variant: #d8c2be;
-  --outline: #a08c89;
-  --outline-variant: #534341;
+  --background: #111a24;
+  --on-background: #e1e2e8;
+  --surface: #0e141b;
+  --on-surface: #e1e2e8;
+  --surface-variant: #41474f;
+  --on-surface-variant: #c1c7d0;
+  --outline: #8b919a;
+  --outline-variant: #41474f;
   --shadow: #000000;
   --scrim: #000000;
-  --inverse-surface: #ede0de;
-  --inverse-on-surface: #362f2e;
-  --inverse-primary: #9c4237;
-  --surface-dim: #181211;
-  --surface-bright: #3f3736;
-  --surface-container-lowest: #120d0c;
-  --surface-container-low: #201a19;
-  --surface-container: #251e1d;
-  --surface-container-high: #2f2827;
-  --surface-container-highest: #3b3332;
+  --inverse-surface: #e1e2e8;
+  --inverse-on-surface: #2e3136;
+  --inverse-primary: #00629b;
+  --surface-dim: #0e141b;
+  --surface-bright: #343a42;
+  --surface-container-lowest: #090f16;
+  --surface-container-low: #161c23;
+  --surface-container: #1a2028;
+  --surface-container-high: #252b33;
+  --surface-container-highest: #30363e;
 }
 
 html {
@@ -53,8 +53,8 @@ main {
 
 /* Navigation */
 .musify-logo {
-  filter: invert(0) sepia(1) hue-rotate(-45deg) saturate(0.8) brightness(1.05)
-    contrast(1.1) !important;
+  filter: brightness(-1) saturate(100%) invert(79%) sepia(17%) saturate(1134%)
+    hue-rotate(183deg) brightness(104%) contrast(102%) !important;
 }
 
 @media only screen and (max-width: 760px) {
