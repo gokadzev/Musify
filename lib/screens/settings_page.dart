@@ -367,6 +367,11 @@ class SettingsPage extends StatelessWidget {
           ),
         ),
         CustomBar(
+          context.l10n!.importSpotifyPlaylist,
+          FluentIcons.arrow_upload_24_regular,
+          onTap: () => context.push('/settings/import-spotify-playlist'),
+        ),
+        CustomBar(
           context.l10n!.backupUserData,
           FluentIcons.cloud_sync_24_regular,
           onTap: () => _backupUserData(context),

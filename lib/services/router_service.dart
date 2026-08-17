@@ -29,6 +29,7 @@ import 'package:musify/screens/artist_page.dart';
 import 'package:musify/screens/bottom_navigation_page.dart';
 import 'package:musify/screens/equalizer_page.dart';
 import 'package:musify/screens/home_page.dart';
+import 'package:musify/screens/import_spotify_playlist_page.dart';
 import 'package:musify/screens/library_page.dart';
 import 'package:musify/screens/playlist_folder_page.dart';
 import 'package:musify/screens/playlist_page.dart';
@@ -285,6 +286,13 @@ class NavigationManager {
                 path: 'equalizer',
                 pageBuilder: (context, state) =>
                     _pushPage(child: const EqualizerPage(), state: state),
+              ),
+              GoRoute(
+                path: 'import-spotify-playlist',
+                pageBuilder: (context, state) => _pushPage(
+                  child: const ImportSpotifyPlaylistPage(),
+                  state: state,
+                ),
               ),
             ],
           ),
