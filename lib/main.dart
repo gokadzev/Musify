@@ -319,9 +319,6 @@ Future<void> initialisation() async {
 
   applicationDirPath = (await getApplicationDocumentsDirectory()).path;
   await FilePaths.ensureDirectoriesExist();
-
-  // TODO: Remove after a few versions (da179ca0599aa267bb0b543daf1f11ffa06ffbae)
-  unawaited(listeningStatsService.purgeLegacyRadioStreamStats());
 }
 
 void handleIncomingLink(Uri? uri) async {
