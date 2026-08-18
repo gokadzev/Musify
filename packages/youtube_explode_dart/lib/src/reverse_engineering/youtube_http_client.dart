@@ -182,7 +182,7 @@ class YoutubeHttpClient extends http.BaseClient {
     for (final fragment in streamInfo.fragments) {
       final req = await retry(
         this,
-        () => get(Uri.parse(url.toString() + fragment.path)),
+        () => get(Uri.parse(url.toString() + fragment.path), headers: headers),
       );
       yield req.bodyBytes;
     }
@@ -215,6 +215,12 @@ class YoutubeHttpClient extends http.BaseClient {
             request =
                 http.Request('get', url.setQueryParam('range', '$from-$to'));
           }
+          // NOTE: `headers` was previously accepted but never applied here,
+          // so byte-range downloads always fell back to the generic default
+          // User-Agent regardless of which client resolved the stream URL —
+          // causing 403s for app-style clients (ANDROID_VR, ANDROID, IOS,
+          // VISIONOS) whose URLs are tied to a matching User-Agent.
+          request.headers.addAll(headers);
           return send(request);
         });
         if (validate) {
@@ -302,10 +308,10 @@ class YoutubeHttpClient extends http.BaseClient {
       'context': const {
         'client': {
           'browserName': 'Chrome',
-          'browserVersion': '125.0.0.0',
+          'browserVersion': '105.0.0.0',
           'clientFormFactor': 'UNKNOWN_FORM_FACTOR',
           'clientName': "WEB",
-          'clientVersion': "2.20260618.05.00",
+          'clientVersion': "2.20220921.00.00",
         },
       },
       ...data,

@@ -15,6 +15,26 @@ import '../youtube_api_client.dart';
 import 'stream_controller.dart';
 import 'streams.dart';
 
+/// Builds the HTTP headers that must accompany any request to a stream URL
+/// minted by [client] (both the manifest-validation HEAD check and the
+/// actual byte-range download).
+///
+/// YouTube's googlevideo.com CDN ties a streaming URL to the identity of the
+/// client that requested it (in particular its `User-Agent`) for app-style
+/// clients such as ANDROID_VR, ANDROID, and IOS. Requesting that URL later
+/// with a different (e.g. generic desktandroidVrop-Chrome) `User-Agent` reliably
+/// yields an HTTP 403, even though the URL itself is valid and doesn't
+/// require a PO Token. This mismatch — not an invalid/expired URL — is the
+/// most common cause of "returned 403 (stream: ...)" errors.
+Map<String, String> clientRequestHeaders(YoutubeApiClient client) {
+  final clientCtx = client.payload['context']?['client'];
+  final userAgent = clientCtx is Map ? clientCtx['userAgent'] as String? : null;
+  return {
+    if (userAgent != null) 'user-agent': userAgent,
+    for (final entry in client.headers.entries) entry.key: '${entry.value}',
+  };
+}
+
 /// Queries related to media streams of YouTube videos.
 class StreamClient {
   static final _logger = Logger('YoutubeExplode.StreamsClient');
@@ -32,7 +52,8 @@ class StreamClient {
   ///
   /// See [YoutubeApiClient] for all the possible clients that can be set using the [ytClients] parameter.
   /// If [ytClients] is null the library automatically manages the clients, otherwise only the clients provided are used.
-  /// Currently by default the  [YoutubeApiClient.androidSdkless] client is used,
+  /// Currently by default the [YoutubeApiClient.visionOs] and [YoutubeApiClient.androidVr] clients are used
+  /// (in that order, mirroring yt-dlp's current default client chain, neither of which normally requires a PO Token),
   /// and if a js solver is provided the [YoutubeApiClient.safari] is used additionally.
   ///
   ///
@@ -65,7 +86,11 @@ class StreamClient {
         'ytClients cannot be an empty list');
 
     videoId = VideoId.fromString(videoId);
-    final clients = ytClients ?? [YoutubeApiClient.androidSdkless];
+    final clients = ytClients ??
+        [
+          YoutubeApiClient.visionOs,
+          YoutubeApiClient.androidVr,
+        ];
 
     if (_jsChallengeSolver != null && ytClients == null) {
       clients.add(YoutubeApiClient.safari);
@@ -105,7 +130,13 @@ class StreamClient {
             );
           }
 
-          final response = await _httpClient.head(streams.first.url);
+          // Must use the same User-Agent/headers the client used to obtain
+          // this URL, or googlevideo.com will return 403 even for a
+          // perfectly valid, PO-Token-exempt stream.
+          final response = await _httpClient.head(
+            streams.first.url,
+            headers: clientRequestHeaders(client),
+          );
           if (response.statusCode == 403) {
             throw YoutubeExplodeException(
               'Video $videoId returned 403 (stream: ${streams.first.tag})',
@@ -168,8 +199,28 @@ class StreamClient {
   /// Gets the actual stream which is identified by the specified metadata.
   /// Usually this downloads the bytes of the stream.
   /// For HLS streams all the fragments are concatenated into a single stream.
-  Stream<List<int>> get(StreamInfo streamInfo) =>
-      _httpClient.getStream(streamInfo, streamClient: this);
+  ///
+  /// IMPORTANT: if [streamInfo] came from a non-web [YoutubeApiClient]
+  /// (e.g. [YoutubeApiClient.androidVr], [YoutubeApiClient.visionOs],
+  /// [YoutubeApiClient.android], [YoutubeApiClient.ios]), you should pass
+  /// the *same* client used in [getManifest] as [ytClient] here (or supply
+  /// [headers] directly). YouTube's CDN ties a stream URL to the identity
+  /// (in particular the `User-Agent`) of the client that requested it;
+  /// downloading it with a mismatched/default `User-Agent` commonly results
+  /// in an HTTP 403 even though the URL itself is perfectly valid.
+  Stream<List<int>> get(
+    StreamInfo streamInfo, {
+    YoutubeApiClient? ytClient,
+    Map<String, String>? headers,
+  }) =>
+      _httpClient.getStream(
+        streamInfo,
+        streamClient: this,
+        headers: {
+          if (ytClient != null) ...clientRequestHeaders(ytClient),
+          if (headers != null) ...headers,
+        },
+      );
 
   Stream<StreamInfo> _getStreams(VideoId videoId,
       {required YoutubeApiClient ytClient,
@@ -208,24 +259,26 @@ class StreamClient {
       );
     }
     yield* _parseStreamInfo(playerResponse.streams,
-        watchPage: watchPage, videoId: videoId);
+        watchPage: watchPage, videoId: videoId, ytClient: ytClient);
 
     if (!playerResponse.dashManifestUrl.isNullOrWhiteSpace) {
       final dashManifest =
           await _controller.getDashManifest(playerResponse.dashManifestUrl!);
       yield* _parseStreamInfo(dashManifest.streams,
-          watchPage: watchPage, videoId: videoId);
+          watchPage: watchPage, videoId: videoId, ytClient: ytClient);
     }
     if (!playerResponse.hlsManifestUrl.isNullOrWhiteSpace) {
       final hlsManifest =
           await _controller.getHlsManifest(playerResponse.hlsManifestUrl!);
       yield* _parseStreamInfo(hlsManifest.streams,
-          watchPage: watchPage, videoId: videoId);
+          watchPage: watchPage, videoId: videoId, ytClient: ytClient);
     }
   }
 
   Stream<StreamInfo> _parseStreamInfo(Iterable<StreamInfoProvider> streams,
-      {WatchPage? watchPage, VideoId? videoId}) async* {
+      {WatchPage? watchPage,
+      VideoId? videoId,
+      required YoutubeApiClient ytClient}) async* {
     // First pass: collect all unique challenges
     final nChallenges = <String>{};
     final sigChallenges = <String>{};
@@ -325,7 +378,11 @@ class StreamClient {
       }
 
       final contentLength = stream.contentLength ??
-          (await _httpClient.getContentLength(url, validate: false)) ??
+          (await _httpClient.getContentLength(
+            url,
+            headers: clientRequestHeaders(ytClient),
+            validate: false,
+          )) ??
           0;
 
       if (contentLength <= 0) {
