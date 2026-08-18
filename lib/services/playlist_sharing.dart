@@ -28,9 +28,7 @@ import 'package:musify/utilities/formatter.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 class PlaylistSharingService {
-  static Map<String, dynamic> createCompactPlaylist(
-    Map<String, dynamic> fullPlaylist,
-  ) {
+  static Map<String, dynamic> createCompactPlaylist(Map fullPlaylist) {
     return {
       'title': fullPlaylist['title'],
       if (fullPlaylist['image'] != null) 'image': fullPlaylist['image'],
@@ -80,7 +78,7 @@ class PlaylistSharingService {
     }
   }
 
-  static String encodePlaylist(Map<String, dynamic> playlist) {
+  static String encodePlaylist(Map playlist) {
     final compactPlaylist = createCompactPlaylist(playlist);
     return base64Url.encode(utf8.encode(json.encode(compactPlaylist)));
   }
