@@ -209,6 +209,65 @@ class MusicClient {
     return results;
   }
 
+  /// Searches YouTube Music for a track matching [query] and returns the
+  /// best match, or `null` if nothing resolves to a playable video.
+  ///
+  /// Goes through the same `WEB_REMIX` browse/search endpoints as
+  /// [getArtistProfile] instead of the public search results page, which is
+  /// what keeps this from tripping YouTube's anti-scraping rate limiting the
+  /// way scraping `youtube.com/results` repeatedly does.
+  ///
+  /// Unlike an artist page's "Top songs" shelf, a search result row's second
+  /// column is a single `Song • Artist • Album` (or `Video • Channel •
+  /// Views`) line rather than a bare artist name, so it has to be split on
+  /// the bullet separator first.
+  Future<Video?> searchSong(String query) async {
+    final normalizedQuery = query.trim();
+    if (normalizedQuery.isEmpty) return null;
+
+    final root = await _httpClient.sendPost('search', {
+      'context': _remixContext,
+      'query': normalizedQuery,
+    }, validate: true);
+
+    Video? fallback;
+    for (final item in _findRenderers(
+      root,
+      'musicResponsiveListItemRenderer',
+    )) {
+      final videoId = _trackVideoId(item);
+      if (videoId == null) continue;
+
+      final title = _flexColumnText(item, 0);
+      if (title == null || title.isEmpty) continue;
+
+      final subtitleParts = _splitBullets(_flexColumnText(item, 1));
+      final type = subtitleParts.isNotEmpty
+          ? subtitleParts.first.toLowerCase()
+          : '';
+      final artist = subtitleParts.length >= 2
+          ? subtitleParts[1]
+          : (subtitleParts.isNotEmpty ? subtitleParts.first : '');
+
+      final video = _trackVideo(item, videoId, title, artist, null);
+      // Prefer a canonical "Song" row over a "Video"/other row further down.
+      if (type == 'song') return video;
+      fallback ??= video;
+    }
+    return fallback;
+  }
+
+  /// Splits a `Song • Artist • Album` style subtitle line on its bullet
+  /// separators.
+  List<String> _splitBullets(String? text) {
+    if (text == null) return const [];
+    return text
+        .split('•')
+        .map((part) => part.trim())
+        .where((part) => part.isNotEmpty)
+        .toList();
+  }
+
   /// Returns a YouTube Music artist page: header details, top songs, the full
   /// discography and the artists it points to.
   ///

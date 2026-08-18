@@ -296,8 +296,17 @@ class YoutubeHttpClient extends http.BaseClient {
       sendPost(action, {'continuation': token}, headers: headers);
 
   /// Sends a call to the youtube api endpoint.
-  Future<JsonMap> sendPost(String action, Map<String, dynamic> data,
-      {Map<String, String>? headers}) {
+  ///
+  /// [validate] defaults to `false` to preserve existing behavior for
+  /// callers that don't expect a thrown [RequestLimitExceededException] or
+  /// [FatalFailureException]; pass `true` to have those raised instead of
+  /// silently returning whatever body the server sent back.
+  Future<JsonMap> sendPost(
+    String action,
+    Map<String, dynamic> data, {
+    Map<String, String>? headers,
+    bool validate = false,
+  }) {
     assert(action == 'next' || action == 'browse' || action == 'search');
 
     final url = Uri.parse(
@@ -318,7 +327,12 @@ class YoutubeHttpClient extends http.BaseClient {
     };
 
     return retry<JsonMap>(this, () async {
-      final raw = await post(url, body: json.encode(body), headers: headers);
+      final raw = await post(
+        url,
+        body: json.encode(body),
+        headers: headers,
+        validate: validate,
+      );
       if (_closed) throw HttpClientClosedException();
 
       //final now = DateTime.now();
