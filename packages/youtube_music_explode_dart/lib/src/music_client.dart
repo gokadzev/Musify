@@ -221,7 +221,23 @@ class MusicClient {
   /// column is a single `Song • Artist • Album` (or `Video • Channel •
   /// Views`) line rather than a bare artist name, so it has to be split on
   /// the bullet separator first.
-  Future<Video?> searchSong(String query) async {
+  ///
+  /// [expectedArtist] and [expectedTitle], when given, reject any row whose
+  /// credited artist or title doesn't loosely match them (see
+  /// [_looselyMatch]) instead of trusting YouTube Music's top result
+  /// blindly. This matters for callers matching a known (title, artist)
+  /// pair — e.g. a Spotify CSV import — where a viral cover/remix of a
+  /// common title can otherwise rank above the original (wrong artist,
+  /// matching title), and checking the artist alone isn't enough either:
+  /// the next-best same-artist result can just as easily be a completely
+  /// different song by them (matching artist, wrong title). Both checks
+  /// together bring the risk down to "no result" rather than either kind of
+  /// wrong one.
+  Future<Video?> searchSong(
+    String query, {
+    String? expectedArtist,
+    String? expectedTitle,
+  }) async {
     final normalizedQuery = query.trim();
     if (normalizedQuery.isEmpty) return null;
 
@@ -230,7 +246,9 @@ class MusicClient {
       'query': normalizedQuery,
     }, validate: true);
 
+    final isValidating = expectedArtist != null || expectedTitle != null;
     Video? fallback;
+    Video? bestMatch;
     for (final item in _findRenderers(
       root,
       'musicResponsiveListItemRenderer',
@@ -250,11 +268,24 @@ class MusicClient {
           : (subtitleParts.isNotEmpty ? subtitleParts.first : '');
 
       final video = _trackVideo(item, videoId, title, artist, null);
+      fallback ??= video;
+
+      final artistOk =
+          expectedArtist == null || _looselyMatch(artist, expectedArtist);
+      final titleOk =
+          expectedTitle == null || _looselyMatch(title, expectedTitle);
+      if (!artistOk || !titleOk) continue;
+
       // Prefer a canonical "Song" row over a "Video"/other row further down.
       if (type == 'song') return video;
-      fallback ??= video;
+      bestMatch ??= video;
     }
-    return fallback;
+
+    // Without anything to validate, preserve the original behavior: fall
+    // back to the first result of any type. With validation requested, a
+    // mismatched top result is worse than no result, so don't fall back
+    // to it.
+    return bestMatch ?? (isValidating ? null : fallback);
   }
 
   /// Splits a `Song • Artist • Album` style subtitle line on its bullet
@@ -267,6 +298,26 @@ class MusicClient {
         .where((part) => part.isNotEmpty)
         .toList();
   }
+
+  /// Loose match used to reject a search row whose title or credited artist
+  /// clearly isn't the one being searched for. Both sides are compared by
+  /// substring containment after stripping punctuation, so e.g. "Arctic
+  /// Monkeys" matches "Arctic Monkeys", and "Sia" matches a row crediting
+  /// the multi-artist string "Sia & Diplo". An empty/unparseable side
+  /// doesn't block a match, since that just means the row didn't carry a
+  /// usable string to check in the first place.
+  bool _looselyMatch(String candidate, String expected) {
+    final a = _normalizeForMatch(candidate);
+    final b = _normalizeForMatch(expected);
+    if (a.isEmpty || b.isEmpty) return true;
+    return a.contains(b) || b.contains(a);
+  }
+
+  String _normalizeForMatch(String input) => input
+      .toLowerCase()
+      .replaceAll(RegExp(r'[^\w\s]'), ' ')
+      .replaceAll(RegExp(r'\s+'), ' ')
+      .trim();
 
   /// Returns a YouTube Music artist page: header details, top songs, the full
   /// discography and the artists it points to.

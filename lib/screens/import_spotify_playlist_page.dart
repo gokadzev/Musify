@@ -126,6 +126,8 @@ class _ImportSpotifyPlaylistPageState extends State<ImportSpotifyPlaylistPage> {
                 : '';
             final (match, wasRateLimited) = await _findSongWithRetry(
               '$title $artist',
+              expectedArtist: artist,
+              expectedTitle: title,
             );
             return (title, artist, match, wasRateLimited);
           }),
@@ -195,11 +197,19 @@ class _ImportSpotifyPlaylistPageState extends State<ImportSpotifyPlaylistPage> {
   /// The second value is `true` when YouTube is actively rate-limiting this
   /// device, so the caller can stop the whole import instead of retrying
   /// every remaining song for minutes on end.
-  Future<(Map<String, dynamic>?, bool)> _findSongWithRetry(String query) async {
+  Future<(Map<String, dynamic>?, bool)> _findSongWithRetry(
+    String query, {
+    String? expectedArtist,
+    String? expectedTitle,
+  }) async {
     const maxAttempts = 2;
     for (var attempt = 0; attempt < maxAttempts; attempt++) {
       try {
-        final video = await ytMusicClient.music.searchSong(query);
+        final video = await ytMusicClient.music.searchSong(
+          query,
+          expectedArtist: expectedArtist,
+          expectedTitle: expectedTitle,
+        );
         if (video == null) return (null, false);
         return (Map<String, dynamic>.from(returnSongLayout(0, video)), false);
       } on RequestLimitExceededException {
