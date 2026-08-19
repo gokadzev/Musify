@@ -104,61 +104,47 @@ class _ImportSpotifyPlaylistPageState extends State<ImportSpotifyPlaylistPage> {
       return;
     }
 
+    final rows = songs
+        .map(
+          (row) => (
+            title: row[songIndex].trim(),
+            artist: row.length > artistIndex ? row[artistIndex].trim() : '',
+          ),
+        )
+        .toList();
+
     _importRunning = true;
     setState(() {
       _isImporting = true;
       _processedCount = 0;
-      _totalCount = songs.length;
+      _totalCount = rows.length;
     });
 
-    final foundSongs = <Map>[];
-    final missingSongs = <String>[];
+    List<Map> foundSongs;
+    List<({String title, String artist})> missingRows;
     var rateLimited = false;
     try {
-      const batchSize = 2;
-      for (var i = 0; i < songs.length; i += batchSize) {
-        final batch = songs.skip(i).take(batchSize).toList();
-        final batchResults = await Future.wait(
-          batch.map((row) async {
-            final title = row[songIndex].trim();
-            final artist = row.length > artistIndex
-                ? row[artistIndex].trim()
-                : '';
-            final (match, wasRateLimited) = await _findSongWithRetry(
-              '$title $artist',
-              expectedArtist: artist,
-              expectedTitle: title,
-            );
-            return (title, artist, match, wasRateLimited);
-          }),
-        );
-        var batchRateLimited = false;
-        for (final (title, artist, match, wasRateLimited) in batchResults) {
-          if (wasRateLimited) batchRateLimited = true;
-          if (match == null) {
-            missingSongs.add('$title - $artist');
-          } else {
-            foundSongs.add(match);
-          }
-        }
-        if (mounted) setState(() => _processedCount += batchResults.length);
-        if (batchRateLimited) {
-          // YouTube is actively blocking this device; grinding through the
-          // rest of the playlist one retry at a time would just take
-          // forever, so stop early and hand back whatever was found so far.
-          rateLimited = true;
-          for (final row in songs.skip(i + batchSize)) {
-            final title = row[songIndex].trim();
-            final artist = row.length > artistIndex
-                ? row[artistIndex].trim()
-                : '';
-            missingSongs.add('$title - $artist');
-          }
-          break;
-        }
-        // Small pause between batches to avoid tripping YouTube's rate
-        // limiter in the first place.
-        await Future.delayed(const Duration(milliseconds: 400));
+      final firstPass = await _searchBatch(
+        rows,
+        onProgress: (n) {
+          if (mounted) setState(() => _processedCount += n);
+        },
+      );
+      foundSongs = firstPass.found;
+      missingRows = firstPass.missing;
+      rateLimited = firstPass.rateLimited;
+
+      // A miss is often just a transient dip in search quality rather than
+      // a real absence (see the "Ato 1" import, where songs like "Toxic" or
+      // "Hurt" failed mid-run but matched fine moments later), so give the
+      // whole batch of misses one more pass once things have settled —
+      // unless YouTube is actively rate-limiting the device, in which case
+      // grinding through it again would just make things worse.
+      if (!rateLimited && missingRows.isNotEmpty) {
+        final retryPass = await _searchBatch(missingRows, onProgress: (_) {});
+        foundSongs = [...foundSongs, ...retryPass.found];
+        missingRows = retryPass.missing;
+        rateLimited = retryPass.rateLimited;
       }
     } finally {
       _importRunning = false;
@@ -170,13 +156,15 @@ class _ImportSpotifyPlaylistPageState extends State<ImportSpotifyPlaylistPage> {
     setState(() => _isImporting = false);
 
     final resultText = rateLimited
-        ? '${context.l10n!.spotifyPlaylistImportFailed}\n${context.l10n!.spotifyPlaylistImportResult(foundSongs.length, songs.length)}'
+        ? '${context.l10n!.spotifyPlaylistImportFailed}\n${context.l10n!.spotifyPlaylistImportResult(foundSongs.length, rows.length)}'
         : context.l10n!.spotifyPlaylistImportResult(
             foundSongs.length,
-            songs.length,
+            rows.length,
           );
-    if (missingSongs.isNotEmpty) {
-      final missingText = missingSongs.join('\n');
+    if (missingRows.isNotEmpty) {
+      final missingText = missingRows
+          .map((row) => '${row.title} - ${row.artist}')
+          .join('\n');
       await Clipboard.setData(ClipboardData(text: missingText));
       if (mounted) {
         showToastWithButton(
@@ -191,6 +179,58 @@ class _ImportSpotifyPlaylistPageState extends State<ImportSpotifyPlaylistPage> {
     } else {
       showToast(context, resultText);
     }
+  }
+
+  /// Resolves every (title, artist) pair in [rows] to a song, in small
+  /// batches with a pause between them to avoid tripping YouTube's rate
+  /// limiter. Stops early — leaving the rest of [rows] in `missing` — the
+  /// moment a batch reports active rate-limiting, rather than retrying the
+  /// remainder one at a time for minutes on end.
+  Future<
+    ({
+      List<Map> found,
+      List<({String title, String artist})> missing,
+      bool rateLimited,
+    })
+  >
+  _searchBatch(
+    List<({String title, String artist})> rows, {
+    required void Function(int processedCount) onProgress,
+  }) async {
+    const batchSize = 2;
+    final found = <Map>[];
+    final missing = <({String title, String artist})>[];
+    for (var i = 0; i < rows.length; i += batchSize) {
+      final batch = rows.skip(i).take(batchSize).toList();
+      final batchResults = await Future.wait(
+        batch.map((row) async {
+          final (match, wasRateLimited) = await _findSongWithRetry(
+            '${row.title} ${row.artist}',
+            expectedArtist: row.artist,
+            expectedTitle: row.title,
+          );
+          return (row, match, wasRateLimited);
+        }),
+      );
+      var batchRateLimited = false;
+      for (final (row, match, wasRateLimited) in batchResults) {
+        if (wasRateLimited) batchRateLimited = true;
+        if (match == null) {
+          missing.add(row);
+        } else {
+          found.add(match);
+        }
+      }
+      onProgress(batchResults.length);
+      if (batchRateLimited) {
+        missing.addAll(rows.skip(i + batchSize));
+        return (found: found, missing: missing, rateLimited: true);
+      }
+      // Small pause between batches to avoid tripping YouTube's rate
+      // limiter in the first place.
+      await Future.delayed(const Duration(milliseconds: 400));
+    }
+    return (found: found, missing: missing, rateLimited: false);
   }
 
   /// Returns the best match for [query], or `null` if none was found.
