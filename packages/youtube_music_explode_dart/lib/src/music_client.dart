@@ -305,24 +305,34 @@ class MusicClient {
   }
 
   /// Loose match used to reject a search row whose title or credited artist
-  /// clearly isn't the one being searched for. Both sides are compared by
-  /// substring containment after stripping punctuation, so e.g. "Arctic
-  /// Monkeys" matches "Arctic Monkeys", and "Sia" matches a row crediting
-  /// the multi-artist string "Sia & Diplo". An empty/unparseable side
-  /// doesn't block a match, since that just means the row didn't carry a
-  /// usable string to check in the first place.
+  /// clearly isn't the one being searched for. Compares the two as *sets*
+  /// of normalized words rather than as ordered text, so it doesn't care
+  /// about word order or connector words — only whether the shorter side's
+  /// words are all present on the longer side. That one rule is what makes
+  /// "Arctic Monkeys" match "Arctic Monkeys", "Sia" match a row crediting
+  /// "Sia & Diplo", a comma-joined CSV artist list ("Queen,David Bowie")
+  /// match YouTube Music's own "Queen & David Bowie" or "Hugo e Guilherme"
+  /// (Portuguese) credit for the same track, and a title with a
+  /// differently-placed qualifier ("love nwantiti (Remix) (feat. ...)" vs
+  /// "love nwantiti (feat. ...) - Remix") still match — without hand-coding
+  /// each connector word or language. An empty/unparseable side doesn't
+  /// block a match, since that just means the row didn't carry a usable
+  /// string to check in the first place.
   bool _looselyMatch(String candidate, String expected) {
-    final a = _normalizeForMatch(candidate);
-    final b = _normalizeForMatch(expected);
+    final a = _wordsForMatch(candidate);
+    final b = _wordsForMatch(expected);
     if (a.isEmpty || b.isEmpty) return true;
-    return a.contains(b) || b.contains(a);
+    final shorter = a.length <= b.length ? a : b;
+    final longer = identical(shorter, a) ? b : a;
+    return shorter.every(longer.contains);
   }
 
-  String _normalizeForMatch(String input) => input
+  Set<String> _wordsForMatch(String input) => input
       .toLowerCase()
       .replaceAll(RegExp(r'[^\w\s]'), ' ')
-      .replaceAll(RegExp(r'\s+'), ' ')
-      .trim();
+      .split(RegExp(r'\s+'))
+      .where((word) => word.isNotEmpty)
+      .toSet();
 
   /// Returns a YouTube Music artist page: header details, top songs, the full
   /// discography and the artists it points to.
