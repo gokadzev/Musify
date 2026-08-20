@@ -14,6 +14,11 @@ import 'package:musify/utilities/url_launcher.dart';
 import 'package:musify/widgets/mini_player.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
+/// One CSV row's song/artist text plus its original position in the file,
+/// so results from separate search passes (a retry over misses, in
+/// particular) can still be placed back in CSV order.
+typedef _ImportRow = ({int index, String title, String artist});
+
 class ImportSpotifyPlaylistPage extends StatefulWidget {
   const ImportSpotifyPlaylistPage({super.key});
 
@@ -110,11 +115,14 @@ class _ImportSpotifyPlaylistPageState extends State<ImportSpotifyPlaylistPage> {
       return;
     }
 
-    final rows = songs
+    // Every row here already satisfies `row.length > artistIndex` per the
+    // filter above.
+    final rows = songs.indexed
         .map(
-          (row) => (
-            title: row[songIndex].trim(),
-            artist: row.length > artistIndex ? row[artistIndex].trim() : '',
+          (entry) => (
+            index: entry.$1,
+            title: entry.$2[songIndex].trim(),
+            artist: entry.$2[artistIndex].trim(),
           ),
         )
         .toList();
@@ -126,8 +134,11 @@ class _ImportSpotifyPlaylistPageState extends State<ImportSpotifyPlaylistPage> {
       _totalCount = rows.length;
     });
 
-    List<Map> foundSongs;
-    List<({String title, String artist})> missingRows;
+    // Keyed by each row's original CSV position so a song recovered on the
+    // retry pass still lands where it belongs in the imported playlist,
+    // instead of getting appended after everything the first pass found.
+    final foundByIndex = <int, Map>{};
+    List<_ImportRow> missingRows;
     var rateLimited = false;
     try {
       final firstPass = await _searchBatch(
@@ -136,7 +147,7 @@ class _ImportSpotifyPlaylistPageState extends State<ImportSpotifyPlaylistPage> {
           if (mounted) setState(() => _processedCount += n);
         },
       );
-      foundSongs = firstPass.found;
+      foundByIndex.addAll(firstPass.found);
       missingRows = firstPass.missing;
       rateLimited = firstPass.rateLimited;
 
@@ -147,14 +158,28 @@ class _ImportSpotifyPlaylistPageState extends State<ImportSpotifyPlaylistPage> {
       // unless YouTube is actively rate-limiting the device, in which case
       // grinding through it again would just make things worse.
       if (!rateLimited && missingRows.isNotEmpty) {
-        final retryPass = await _searchBatch(missingRows, onProgress: (_) {});
-        foundSongs = [...foundSongs, ...retryPass.found];
+        // The bar was already full after the first pass; stretch the total
+        // so a retry pass still visibly moves it instead of just sitting at
+        // 100% while work keeps happening.
+        if (mounted) setState(() => _totalCount += missingRows.length);
+        final retryPass = await _searchBatch(
+          missingRows,
+          onProgress: (n) {
+            if (mounted) setState(() => _processedCount += n);
+          },
+        );
+        foundByIndex.addAll(retryPass.found);
         missingRows = retryPass.missing;
         rateLimited = retryPass.rateLimited;
       }
     } finally {
       _importRunning = false;
     }
+
+    final foundSongs = [
+      for (final row in rows)
+        if (foundByIndex[row.index] case final song?) song,
+    ];
 
     if (!mounted) return;
     final (_, playlistId) = createCustomPlaylist(playlistName, null, context);
@@ -187,28 +212,24 @@ class _ImportSpotifyPlaylistPageState extends State<ImportSpotifyPlaylistPage> {
     }
   }
 
-  /// Resolves every (title, artist) pair in [rows] to a song, in batches
-  /// with a short pause between them. The Songs-shelf search endpoint
-  /// tolerates far more concurrency than the scraped search this import
-  /// used to run through — 500 back-to-back probe requests at up to 24
-  /// concurrent never got rate-limited — so [_batchSize]/[_batchPause] stay
-  /// well under that ceiling rather than at the old scraper's pace. Stops
-  /// early — leaving the rest of [rows] in `missing` — the moment a batch
-  /// reports active rate-limiting, rather than retrying the remainder one
-  /// at a time for minutes on end.
-  Future<
-    ({
-      List<Map> found,
-      List<({String title, String artist})> missing,
-      bool rateLimited,
-    })
-  >
+  /// Resolves every row in [rows] to a song, in batches with a short pause
+  /// between them. The Songs-shelf search endpoint tolerates far more
+  /// concurrency than the scraped search this import used to run through —
+  /// 500 back-to-back probe requests at up to 24 concurrent never got
+  /// rate-limited — so [_batchSize]/[_batchPause] stay well under that
+  /// ceiling rather than at the old scraper's pace. Stops early — leaving
+  /// the rest of [rows] in `missing` — the moment a batch reports active
+  /// rate-limiting, rather than retrying the remainder one at a time for
+  /// minutes on end. `found` is keyed by each row's original index so a
+  /// caller merging results from more than one pass (e.g. a retry over
+  /// just the misses) can still place them at their original position.
+  Future<({Map<int, Map> found, List<_ImportRow> missing, bool rateLimited})>
   _searchBatch(
-    List<({String title, String artist})> rows, {
+    List<_ImportRow> rows, {
     required void Function(int processedCount) onProgress,
   }) async {
-    final found = <Map>[];
-    final missing = <({String title, String artist})>[];
+    final found = <int, Map>{};
+    final missing = <_ImportRow>[];
     for (var i = 0; i < rows.length; i += _batchSize) {
       final batch = rows.skip(i).take(_batchSize).toList();
       final batchResults = await Future.wait(
@@ -227,7 +248,7 @@ class _ImportSpotifyPlaylistPageState extends State<ImportSpotifyPlaylistPage> {
         if (match == null) {
           missing.add(row);
         } else {
-          found.add(match);
+          found[row.index] = match;
         }
       }
       onProgress(batchResults.length);

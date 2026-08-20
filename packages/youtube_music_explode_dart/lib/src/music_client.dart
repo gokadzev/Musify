@@ -327,12 +327,60 @@ class MusicClient {
     return shorter.every(longer.contains);
   }
 
-  Set<String> _wordsForMatch(String input) => input
-      .toLowerCase()
-      .replaceAll(RegExp(r'[^\w\s]'), ' ')
-      .split(RegExp(r'\s+'))
-      .where((word) => word.isNotEmpty)
-      .toSet();
+  Set<String> _wordsForMatch(String input) =>
+      _foldDiacritics(input.toLowerCase())
+          // `\w` is ASCII-only, so anchoring on it here would strip Cyrillic/
+          // CJK/etc. text down to nothing on both sides and silently disable
+          // matching entirely (both sides empty → the isEmpty check above just
+          // waves it through). `\p{L}`/`\p{N}` (any Unicode letter/number) keep
+          // non-Latin scripts intact while still stripping real punctuation.
+          .replaceAll(RegExp(r'[^\p{L}\p{N}\s]', unicode: true), ' ')
+          .split(RegExp(r'\s+'))
+          .where((word) => word.isNotEmpty)
+          .toSet();
+
+  /// Folds common Latin accented letters to their base form (e.g. "é" → "e")
+  /// so a CSV's plain-ASCII spelling of an accented title/artist still
+  /// matches YouTube Music's accented one, and vice versa. Scripts outside
+  /// this table (Cyrillic, CJK, Arabic...) pass through untouched.
+  String _foldDiacritics(String input) {
+    final buffer = StringBuffer();
+    for (final rune in input.runes) {
+      final char = String.fromCharCode(rune);
+      buffer.write(_diacriticFold[char] ?? char);
+    }
+    return buffer.toString();
+  }
+
+  static const _diacriticFold = {
+    'á': 'a',
+    'à': 'a',
+    'â': 'a',
+    'ã': 'a',
+    'ä': 'a',
+    'å': 'a',
+    'é': 'e',
+    'è': 'e',
+    'ê': 'e',
+    'ë': 'e',
+    'í': 'i',
+    'ì': 'i',
+    'î': 'i',
+    'ï': 'i',
+    'ó': 'o',
+    'ò': 'o',
+    'ô': 'o',
+    'õ': 'o',
+    'ö': 'o',
+    'ú': 'u',
+    'ù': 'u',
+    'û': 'u',
+    'ü': 'u',
+    'ý': 'y',
+    'ÿ': 'y',
+    'ç': 'c',
+    'ñ': 'n',
+  };
 
   /// Returns a YouTube Music artist page: header details, top songs, the full
   /// discography and the artists it points to.
