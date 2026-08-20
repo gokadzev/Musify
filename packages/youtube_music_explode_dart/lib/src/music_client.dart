@@ -162,27 +162,6 @@ class MusicClient {
   /// differently-titled track above the actual song.
   static const _songsSearchParams = 'EgWKAQIIAWoMEA4QChADEAQQCRAF';
 
-  /// Words that mark a title as a different recording than the plain
-  /// original (a live take, a remix, a cover...). A candidate carrying one
-  /// of these that the searched-for title doesn't is rejected even though
-  /// it's a loose substring match — otherwise "Bad" matches "Bad (Live)"
-  /// since "Bad" is literally a substring of it.
-  static const _alternateVersionKeywords = [
-    'live',
-    'remix',
-    'karaoke',
-    'karaokê',
-    'cover',
-    'acoustic',
-    'unplugged',
-    'instrumental',
-    'demo',
-    'rehearsal',
-    'session',
-    'reprise',
-    'tribute',
-  ];
-
   static const _artistPageType = 'MUSIC_PAGE_TYPE_ARTIST';
 
   /// Stands in for the channel of a track whose artist page is unknown.
@@ -255,17 +234,17 @@ class MusicClient {
   /// type label to skip.
   ///
   /// [expectedArtist] and [expectedTitle], when given, reject any row whose
-  /// credited artist or title doesn't match them closely enough (see
-  /// [_looselyMatch] and [_titleMatches]) instead of trusting YouTube
-  /// Music's top result blindly. This matters for callers matching a known
-  /// (title, artist) pair — e.g. a Spotify CSV import — where a viral
-  /// cover/remix of a common title can otherwise rank above the original
-  /// (wrong artist, matching title), checking the artist alone isn't enough
-  /// either since the next-best same-artist result can just as easily be a
-  /// different song by them (matching artist, wrong title), and even a
-  /// title that matches by substring can still be a live/remix/cover
-  /// recording rather than the original. All three checks together bring
-  /// the risk down to "no result" rather than any of those wrong ones.
+  /// credited artist or title doesn't loosely match them (see
+  /// [_looselyMatch]) instead of trusting YouTube Music's top result
+  /// blindly. This matters for callers matching a known (title, artist)
+  /// pair — e.g. a Spotify CSV import — where a viral cover/remix of a
+  /// common title can otherwise rank above the original (wrong artist,
+  /// matching title), and checking the artist alone isn't enough either:
+  /// the next-best same-artist result can just as easily be a completely
+  /// different song by them (matching artist, wrong title). A CSV row that
+  /// itself asks for a specific recording (its title says "Live" or
+  /// "Remix") still gets it, since that's now part of the expected title
+  /// being matched against.
   Future<Video?> searchSong(
     String query, {
     String? expectedArtist,
@@ -301,7 +280,7 @@ class MusicClient {
       if (expectedArtist != null && !_looselyMatch(artist, expectedArtist)) {
         continue;
       }
-      if (expectedTitle != null && !_titleMatches(title, expectedTitle)) {
+      if (expectedTitle != null && !_looselyMatch(title, expectedTitle)) {
         continue;
       }
 
@@ -337,24 +316,6 @@ class MusicClient {
     final b = _normalizeForMatch(expected);
     if (a.isEmpty || b.isEmpty) return true;
     return a.contains(b) || b.contains(a);
-  }
-
-  /// Like [_looselyMatch], but additionally rejects a candidate title that
-  /// carries an [_alternateVersionKeywords] word the expected title doesn't
-  /// — e.g. expected "Mother" doesn't accept candidate "Mother (Live 1989)"
-  /// just because "mother" is a substring of it.
-  bool _titleMatches(String candidate, String expected) {
-    if (!_looselyMatch(candidate, expected)) return false;
-
-    final candidateWords = _normalizeForMatch(candidate).split(' ').toSet();
-    final expectedWords = _normalizeForMatch(expected).split(' ').toSet();
-    for (final keyword in _alternateVersionKeywords) {
-      if (candidateWords.contains(keyword) &&
-          !expectedWords.contains(keyword)) {
-        return false;
-      }
-    }
-    return true;
   }
 
   String _normalizeForMatch(String input) => input
