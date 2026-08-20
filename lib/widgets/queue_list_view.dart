@@ -344,7 +344,8 @@ class _QueueWidgetState extends State<QueueWidget> {
           },
           onDismissed: () {
             final actualIndex = _queue.indexWhere(
-              (item) => item['queueEntryId']?.toString() == queueEntryId,
+              (item) =>
+                  _queueEntryKey(item, _queue.indexOf(item)) == queueEntryId,
             );
             if (actualIndex == -1) return;
             setState(() {
