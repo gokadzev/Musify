@@ -132,6 +132,8 @@
   "spotifyPlaylistInvalid": "Le fichier CSV ne contient pas de colonnes « Titre » et « Artiste »",
   "spotifyPlaylistImporting": "Importation de la playlist...",
   "spotifyPlaylistImportResult": "{found} sur {total} de titres importés",
+  "spotifyPlaylistProgress": "Recherche {done} sur {total}",
+  "spotifyPlaylistAlreadyImporting": "Une importation est déjà en cours",
   "spotifyPlaylistMissingSongs": "Titres introuvables",
   "spotifyPlaylistImportFailed": "Échec de l'importation de la playlist",
   "invalidYouTubePlaylist": "Playlist YouTube invalide",
