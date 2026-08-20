@@ -154,6 +154,14 @@ class MusicClient {
   /// Search filter that restricts results to artists only.
   static const _artistsSearchParams = 'EgWKAQIgAWoMEA4QChADEAQQCRAF';
 
+  /// Search filter that restricts results to the dedicated "Songs" shelf
+  /// (same encoding as [_artistsSearchParams], `II` in place of `Ig`).
+  /// Scored candidates only, no cross-category noise from videos/albums/
+  /// artists sharing the query — which is also what keeps a query like
+  /// "Bad Michael Jackson" from surfacing a live recording or a
+  /// differently-titled track above the actual song.
+  static const _songsSearchParams = 'EgWKAQIIAWoMEA4QChADEAQQCRAF';
+
   static const _artistPageType = 'MUSIC_PAGE_TYPE_ARTIST';
 
   /// Stands in for the channel of a track whose artist page is unknown.
@@ -209,27 +217,49 @@ class MusicClient {
     return results;
   }
 
-  /// Searches YouTube Music for a track matching [query] and returns the
-  /// best match, or `null` if nothing resolves to a playable video.
+  /// Searches YouTube Music's dedicated "Songs" shelf for a track matching
+  /// [query] and returns the best match, or `null` if nothing resolves to a
+  /// playable video.
   ///
   /// Goes through the same `WEB_REMIX` browse/search endpoints as
   /// [getArtistProfile] instead of the public search results page, which is
   /// what keeps this from tripping YouTube's anti-scraping rate limiting the
-  /// way scraping `youtube.com/results` repeatedly does.
+  /// way scraping `youtube.com/results` repeatedly does. Filtering to the
+  /// Songs shelf specifically (rather than the general mixed search) also
+  /// keeps videos/albums/artists sharing the query from crowding out the
+  /// actual song candidates.
   ///
-  /// Unlike an artist page's "Top songs" shelf, a search result row's second
-  /// column is a single `Song • Artist • Album` (or `Video • Channel •
-  /// Views`) line rather than a bare artist name, so it has to be split on
-  /// the bullet separator first.
-  Future<Video?> searchSong(String query) async {
+  /// Every row in this shelf is already a song, so unlike a general search
+  /// result its subtitle is `Artist • Album • Duration`, with no leading
+  /// type label to skip.
+  ///
+  /// [expectedArtist] and [expectedTitle], when given, reject any row whose
+  /// credited artist or title doesn't loosely match them (see
+  /// [_looselyMatch]) instead of trusting YouTube Music's top result
+  /// blindly. This matters for callers matching a known (title, artist)
+  /// pair — e.g. a Spotify CSV import — where a viral cover/remix of a
+  /// common title can otherwise rank above the original (wrong artist,
+  /// matching title), and checking the artist alone isn't enough either:
+  /// the next-best same-artist result can just as easily be a completely
+  /// different song by them (matching artist, wrong title). A CSV row that
+  /// itself asks for a specific recording (its title says "Live" or
+  /// "Remix") still gets it, since that's now part of the expected title
+  /// being matched against.
+  Future<Video?> searchSong(
+    String query, {
+    String? expectedArtist,
+    String? expectedTitle,
+  }) async {
     final normalizedQuery = query.trim();
     if (normalizedQuery.isEmpty) return null;
 
     final root = await _httpClient.sendPost('search', {
       'context': _remixContext,
       'query': normalizedQuery,
+      'params': _songsSearchParams,
     }, validate: true);
 
+    final isValidating = expectedArtist != null || expectedTitle != null;
     Video? fallback;
     for (final item in _findRenderers(
       root,
@@ -242,19 +272,25 @@ class MusicClient {
       if (title == null || title.isEmpty) continue;
 
       final subtitleParts = _splitBullets(_flexColumnText(item, 1));
-      final type = subtitleParts.isNotEmpty
-          ? subtitleParts.first.toLowerCase()
-          : '';
-      final artist = subtitleParts.length >= 2
-          ? subtitleParts[1]
-          : (subtitleParts.isNotEmpty ? subtitleParts.first : '');
+      final artist = subtitleParts.isNotEmpty ? subtitleParts.first : '';
 
       final video = _trackVideo(item, videoId, title, artist, null);
-      // Prefer a canonical "Song" row over a "Video"/other row further down.
-      if (type == 'song') return video;
       fallback ??= video;
+
+      if (expectedArtist != null && !_looselyMatch(artist, expectedArtist)) {
+        continue;
+      }
+      if (expectedTitle != null && !_looselyMatch(title, expectedTitle)) {
+        continue;
+      }
+
+      return video;
     }
-    return fallback;
+
+    // Without anything to validate, preserve the original behavior: fall
+    // back to the first result. With validation requested, a mismatched
+    // top result is worse than no result, so don't fall back to it.
+    return isValidating ? null : fallback;
   }
 
   /// Splits a `Song • Artist • Album` style subtitle line on its bullet
@@ -267,6 +303,84 @@ class MusicClient {
         .where((part) => part.isNotEmpty)
         .toList();
   }
+
+  /// Loose match used to reject a search row whose title or credited artist
+  /// clearly isn't the one being searched for. Compares the two as *sets*
+  /// of normalized words rather than as ordered text, so it doesn't care
+  /// about word order or connector words — only whether the shorter side's
+  /// words are all present on the longer side. That one rule is what makes
+  /// "Arctic Monkeys" match "Arctic Monkeys", "Sia" match a row crediting
+  /// "Sia & Diplo", a comma-joined CSV artist list ("Queen,David Bowie")
+  /// match YouTube Music's own "Queen & David Bowie" or "Hugo e Guilherme"
+  /// (Portuguese) credit for the same track, and a title with a
+  /// differently-placed qualifier ("love nwantiti (Remix) (feat. ...)" vs
+  /// "love nwantiti (feat. ...) - Remix") still match — without hand-coding
+  /// each connector word or language. An empty/unparseable side doesn't
+  /// block a match, since that just means the row didn't carry a usable
+  /// string to check in the first place.
+  bool _looselyMatch(String candidate, String expected) {
+    final a = _wordsForMatch(candidate);
+    final b = _wordsForMatch(expected);
+    if (a.isEmpty || b.isEmpty) return true;
+    final shorter = a.length <= b.length ? a : b;
+    final longer = identical(shorter, a) ? b : a;
+    return shorter.every(longer.contains);
+  }
+
+  Set<String> _wordsForMatch(String input) =>
+      _foldDiacritics(input.toLowerCase())
+          // `\w` is ASCII-only, so anchoring on it here would strip Cyrillic/
+          // CJK/etc. text down to nothing on both sides and silently disable
+          // matching entirely (both sides empty → the isEmpty check above just
+          // waves it through). `\p{L}`/`\p{N}` (any Unicode letter/number) keep
+          // non-Latin scripts intact while still stripping real punctuation.
+          .replaceAll(RegExp(r'[^\p{L}\p{N}\s]', unicode: true), ' ')
+          .split(RegExp(r'\s+'))
+          .where((word) => word.isNotEmpty)
+          .toSet();
+
+  /// Folds common Latin accented letters to their base form (e.g. "é" → "e")
+  /// so a CSV's plain-ASCII spelling of an accented title/artist still
+  /// matches YouTube Music's accented one, and vice versa. Scripts outside
+  /// this table (Cyrillic, CJK, Arabic...) pass through untouched.
+  String _foldDiacritics(String input) {
+    final buffer = StringBuffer();
+    for (final rune in input.runes) {
+      final char = String.fromCharCode(rune);
+      buffer.write(_diacriticFold[char] ?? char);
+    }
+    return buffer.toString();
+  }
+
+  static const _diacriticFold = {
+    'á': 'a',
+    'à': 'a',
+    'â': 'a',
+    'ã': 'a',
+    'ä': 'a',
+    'å': 'a',
+    'é': 'e',
+    'è': 'e',
+    'ê': 'e',
+    'ë': 'e',
+    'í': 'i',
+    'ì': 'i',
+    'î': 'i',
+    'ï': 'i',
+    'ó': 'o',
+    'ò': 'o',
+    'ô': 'o',
+    'õ': 'o',
+    'ö': 'o',
+    'ú': 'u',
+    'ù': 'u',
+    'û': 'u',
+    'ü': 'u',
+    'ý': 'y',
+    'ÿ': 'y',
+    'ç': 'c',
+    'ñ': 'n',
+  };
 
   /// Returns a YouTube Music artist page: header details, top songs, the full
   /// discography and the artists it points to.
