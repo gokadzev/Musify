@@ -26,6 +26,7 @@ import 'dart:io';
 import 'package:flutter/widgets.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
+import 'package:musify/constants/clients.dart';
 import 'package:musify/main.dart' show logger;
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/io_service.dart';
@@ -85,7 +86,9 @@ Future<StreamManifest?> _fetchStreamManifest(String songId) async {
     return ProxyManager().getSongManifest(songId).timeout(_manifestTimeout);
   }
 
-  return ytClient.videos.streams.getManifest(songId).timeout(_manifestTimeout);
+  return ytClient.videos.streams
+      .getManifest(songId, ytClients: customClients)
+      .timeout(_manifestTimeout);
 }
 
 /// Returns a cached song URL if present and still valid.
