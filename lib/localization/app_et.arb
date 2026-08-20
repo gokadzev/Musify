@@ -132,6 +132,8 @@
   "spotifyPlaylistInvalid": "The CSV does not contain Song and Artist columns",
   "spotifyPlaylistImporting": "Importing playlist...",
   "spotifyPlaylistImportResult": "{found} of {total} songs imported",
+  "spotifyPlaylistProgress": "Searching {done} of {total}",
+  "spotifyPlaylistAlreadyImporting": "An import is already in progress",
   "spotifyPlaylistMissingSongs": "Songs not found",
   "spotifyPlaylistImportFailed": "Playlist import failed",
   "invalidYouTubePlaylist": "Vigane YouTube'i esitusloend",
