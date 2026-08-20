@@ -14,9 +14,7 @@ import 'package:musify/utilities/url_launcher.dart';
 import 'package:musify/widgets/mini_player.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
-/// One CSV row's song/artist text plus its original position in the file,
-/// so results from separate search passes (a retry over misses, in
-/// particular) can still be placed back in CSV order.
+/// A CSV row and its original position, used to preserve playlist order.
 typedef _ImportRow = ({int index, String title, String artist});
 
 class ImportSpotifyPlaylistPage extends StatefulWidget {
@@ -32,9 +30,7 @@ class _ImportSpotifyPlaylistPageState extends State<ImportSpotifyPlaylistPage> {
   // can't spawn a second import running concurrently with the first.
   static bool _importRunning = false;
 
-  // Kept well under the ~24-concurrent ceiling a rate-limit probe against
-  // the Songs-shelf search endpoint ran clean at (500 requests, no
-  // throttling) — plenty of headroom for real-world query variance.
+  // Limit concurrency and leave a short pause between batches.
   static const _batchSize = 12;
   static const _batchPause = Duration(milliseconds: 150);
 
@@ -115,8 +111,6 @@ class _ImportSpotifyPlaylistPageState extends State<ImportSpotifyPlaylistPage> {
       return;
     }
 
-    // Every row here already satisfies `row.length > artistIndex` per the
-    // filter above.
     final rows = songs.indexed
         .map(
           (entry) => (
@@ -134,9 +128,7 @@ class _ImportSpotifyPlaylistPageState extends State<ImportSpotifyPlaylistPage> {
       _totalCount = rows.length;
     });
 
-    // Keyed by each row's original CSV position so a song recovered on the
-    // retry pass still lands where it belongs in the imported playlist,
-    // instead of getting appended after everything the first pass found.
+    // Key results by their CSV position so retry results remain ordered.
     final foundByIndex = <int, Map>{};
     List<_ImportRow> missingRows;
     var rateLimited = false;
@@ -151,16 +143,9 @@ class _ImportSpotifyPlaylistPageState extends State<ImportSpotifyPlaylistPage> {
       missingRows = firstPass.missing;
       rateLimited = firstPass.rateLimited;
 
-      // A miss is often just a transient dip in search quality rather than
-      // a real absence (see the "Ato 1" import, where songs like "Toxic" or
-      // "Hurt" failed mid-run but matched fine moments later), so give the
-      // whole batch of misses one more pass once things have settled —
-      // unless YouTube is actively rate-limiting the device, in which case
-      // grinding through it again would just make things worse.
+      // Retry misses once, unless the service is actively rate-limiting us.
       if (!rateLimited && missingRows.isNotEmpty) {
-        // The bar was already full after the first pass; stretch the total
-        // so a retry pass still visibly moves it instead of just sitting at
-        // 100% while work keeps happening.
+        // Include the retry work in the progress total.
         if (mounted) setState(() => _totalCount += missingRows.length);
         final retryPass = await _searchBatch(
           missingRows,
@@ -212,17 +197,8 @@ class _ImportSpotifyPlaylistPageState extends State<ImportSpotifyPlaylistPage> {
     }
   }
 
-  /// Resolves every row in [rows] to a song, in batches with a short pause
-  /// between them. The Songs-shelf search endpoint tolerates far more
-  /// concurrency than the scraped search this import used to run through —
-  /// 500 back-to-back probe requests at up to 24 concurrent never got
-  /// rate-limited — so [_batchSize]/[_batchPause] stay well under that
-  /// ceiling rather than at the old scraper's pace. Stops early — leaving
-  /// the rest of [rows] in `missing` — the moment a batch reports active
-  /// rate-limiting, rather than retrying the remainder one at a time for
-  /// minutes on end. `found` is keyed by each row's original index so a
-  /// caller merging results from more than one pass (e.g. a retry over
-  /// just the misses) can still place them at their original position.
+  /// Resolves [rows] in batches and stops when rate limiting is detected.
+  /// Results are keyed by the rows' original positions for retry merging.
   Future<({Map<int, Map> found, List<_ImportRow> missing, bool rateLimited})>
   _searchBatch(
     List<_ImportRow> rows, {

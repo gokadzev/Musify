@@ -154,12 +154,7 @@ class MusicClient {
   /// Search filter that restricts results to artists only.
   static const _artistsSearchParams = 'EgWKAQIgAWoMEA4QChADEAQQCRAF';
 
-  /// Search filter that restricts results to the dedicated "Songs" shelf
-  /// (same encoding as [_artistsSearchParams], `II` in place of `Ig`).
-  /// Scored candidates only, no cross-category noise from videos/albums/
-  /// artists sharing the query — which is also what keeps a query like
-  /// "Bad Michael Jackson" from surfacing a live recording or a
-  /// differently-titled track above the actual song.
+  /// Search filter for the dedicated "Songs" shelf.
   static const _songsSearchParams = 'EgWKAQIIAWoMEA4QChADEAQQCRAF';
 
   static const _artistPageType = 'MUSIC_PAGE_TYPE_ARTIST';
@@ -217,34 +212,11 @@ class MusicClient {
     return results;
   }
 
-  /// Searches YouTube Music's dedicated "Songs" shelf for a track matching
-  /// [query] and returns the best match, or `null` if nothing resolves to a
-  /// playable video.
+  /// Searches the YouTube Music "Songs" shelf for [query].
   ///
-  /// Goes through the same `WEB_REMIX` browse/search endpoints as
-  /// [getArtistProfile] instead of the public search results page, which is
-  /// what keeps this from tripping YouTube's anti-scraping rate limiting the
-  /// way scraping `youtube.com/results` repeatedly does. Filtering to the
-  /// Songs shelf specifically (rather than the general mixed search) also
-  /// keeps videos/albums/artists sharing the query from crowding out the
-  /// actual song candidates.
-  ///
-  /// Every row in this shelf is already a song, so unlike a general search
-  /// result its subtitle is `Artist • Album • Duration`, with no leading
-  /// type label to skip.
-  ///
-  /// [expectedArtist] and [expectedTitle], when given, reject any row whose
-  /// credited artist or title doesn't loosely match them (see
-  /// [_looselyMatch]) instead of trusting YouTube Music's top result
-  /// blindly. This matters for callers matching a known (title, artist)
-  /// pair — e.g. a Spotify CSV import — where a viral cover/remix of a
-  /// common title can otherwise rank above the original (wrong artist,
-  /// matching title), and checking the artist alone isn't enough either:
-  /// the next-best same-artist result can just as easily be a completely
-  /// different song by them (matching artist, wrong title). A CSV row that
-  /// itself asks for a specific recording (its title says "Live" or
-  /// "Remix") still gets it, since that's now part of the expected title
-  /// being matched against.
+  /// When supplied, [expectedArtist] and [expectedTitle] must loosely match
+  /// the result's credited artist and title. This prevents common-title
+  /// searches from returning the wrong recording.
   Future<Video?> searchSong(
     String query, {
     String? expectedArtist,
@@ -287,9 +259,7 @@ class MusicClient {
       return video;
     }
 
-    // Without anything to validate, preserve the original behavior: fall
-    // back to the first result. With validation requested, a mismatched
-    // top result is worse than no result, so don't fall back to it.
+    // Only use the first result when no expected values were provided.
     return isValidating ? null : fallback;
   }
 
@@ -304,20 +274,7 @@ class MusicClient {
         .toList();
   }
 
-  /// Loose match used to reject a search row whose title or credited artist
-  /// clearly isn't the one being searched for. Compares the two as *sets*
-  /// of normalized words rather than as ordered text, so it doesn't care
-  /// about word order or connector words — only whether the shorter side's
-  /// words are all present on the longer side. That one rule is what makes
-  /// "Arctic Monkeys" match "Arctic Monkeys", "Sia" match a row crediting
-  /// "Sia & Diplo", a comma-joined CSV artist list ("Queen,David Bowie")
-  /// match YouTube Music's own "Queen & David Bowie" or "Hugo e Guilherme"
-  /// (Portuguese) credit for the same track, and a title with a
-  /// differently-placed qualifier ("love nwantiti (Remix) (feat. ...)" vs
-  /// "love nwantiti (feat. ...) - Remix") still match — without hand-coding
-  /// each connector word or language. An empty/unparseable side doesn't
-  /// block a match, since that just means the row didn't carry a usable
-  /// string to check in the first place.
+  /// Compares normalized word sets, allowing word-order and credit changes.
   bool _looselyMatch(String candidate, String expected) {
     final a = _wordsForMatch(candidate);
     final b = _wordsForMatch(expected);
@@ -329,20 +286,14 @@ class MusicClient {
 
   Set<String> _wordsForMatch(String input) =>
       _foldDiacritics(input.toLowerCase())
-          // `\w` is ASCII-only, so anchoring on it here would strip Cyrillic/
-          // CJK/etc. text down to nothing on both sides and silently disable
-          // matching entirely (both sides empty → the isEmpty check above just
-          // waves it through). `\p{L}`/`\p{N}` (any Unicode letter/number) keep
-          // non-Latin scripts intact while still stripping real punctuation.
+          // Keep Unicode letters and numbers so non-Latin titles remain
+          // matchable.
           .replaceAll(RegExp(r'[^\p{L}\p{N}\s]', unicode: true), ' ')
           .split(RegExp(r'\s+'))
           .where((word) => word.isNotEmpty)
           .toSet();
 
-  /// Folds common Latin accented letters to their base form (e.g. "é" → "e")
-  /// so a CSV's plain-ASCII spelling of an accented title/artist still
-  /// matches YouTube Music's accented one, and vice versa. Scripts outside
-  /// this table (Cyrillic, CJK, Arabic...) pass through untouched.
+  /// Folds common Latin accents to improve matching across spellings.
   String _foldDiacritics(String input) {
     final buffer = StringBuffer();
     for (final rune in input.runes) {
