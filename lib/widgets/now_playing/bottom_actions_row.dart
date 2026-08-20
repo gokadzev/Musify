@@ -25,6 +25,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/common_services.dart';
+import 'package:musify/services/playlist_download_service.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/flutter_bottom_sheet.dart';
 import 'package:musify/utilities/flutter_toast.dart';
@@ -356,7 +357,11 @@ Future<void> _toggleOffline(
   try {
     final bool success;
     if (originalValue) {
-      success = await removeSongFromOffline(audioId);
+      success =
+          !(audioId == null) &&
+          await OfflinePlaylistService().removeSongFromOfflineAndResync(
+            audioId,
+          );
     } else {
       success = await makeSongOffline(mediaItemToMap(metadata));
     }

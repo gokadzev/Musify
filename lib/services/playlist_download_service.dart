@@ -79,15 +79,7 @@ class OfflinePlaylistService {
     return activeDownloads.contains(playlistId);
   }
 
-  /// Checks whether [playlist] now has 100% of its songs downloaded offline
-  /// and, if so, marks it offline too.
-  ///
-  /// Unlike the batch scan in [_handleDownloadCompletion] (which only runs
-  /// right after a playlist finishes downloading), this is meant to be
-  /// called any time a single playlist's song list or like-status changes —
-  /// e.g. after adding a song to a custom playlist, or liking a playlist —
-  /// so playlists created/modified *after* the triggering download aren't
-  /// silently skipped.
+  /// Marks [playlist] offline when all of its songs are available locally.
   void checkAndAutoMarkOffline(Map playlist) {
     final id = playlist['ytid']?.toString();
     final pList = playlist['list'] as List?;
@@ -394,6 +386,51 @@ class OfflinePlaylistService {
         stackTrace: stackTrace,
       );
     }
+  }
+
+  /// Removes [songId] from offline storage and updates offline playlist flags.
+  Future<bool> removeSongFromOfflineAndResync(String songId) async {
+    final success = await removeSongFromOffline(songId);
+    if (success) {
+      unawaited(_resyncOfflinePlaylistFlags());
+    }
+    return success;
+  }
+
+  /// Removes stale entries from [offlinePlaylists].
+  Future<void> _resyncOfflinePlaylistFlags() async {
+    final current = offlinePlaylists.value;
+    final stillFullyOffline = <dynamic>[];
+    var changed = false;
+
+    for (final playlist in current) {
+      if (playlist is! Map) {
+        stillFullyOffline.add(playlist);
+        continue;
+      }
+
+      final songs = playlist['list'] as List<dynamic>? ?? [];
+      if (isPlaylistFullyOffline(songs)) {
+        stillFullyOffline.add(playlist);
+      } else {
+        changed = true;
+        logger.log(
+          'Dropping stale offline flag for playlist '
+          '${playlist['ytid']}: no longer fully offline',
+        );
+      }
+    }
+
+    if (!changed) return;
+
+    offlinePlaylists.value = stillFullyOffline;
+    unawaited(
+      addOrUpdateData<List>(
+        'userNoBackup',
+        'offlinePlaylists',
+        offlinePlaylists.value,
+      ),
+    );
   }
 
   // Returns a set of song IDs that are used in other playlists or liked songs,

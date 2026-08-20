@@ -30,6 +30,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/common_services.dart';
+import 'package:musify/services/playlist_download_service.dart';
 import 'package:musify/services/playlists_manager.dart';
 import 'package:musify/services/router_service.dart';
 import 'package:musify/services/settings_manager.dart';
@@ -261,7 +262,9 @@ Future<void> _toggleSongOfflineStatus(
   try {
     final bool success;
     if (originalValue) {
-      success = await removeSongFromOffline(ytid);
+      success = await OfflinePlaylistService().removeSongFromOfflineAndResync(
+        ytid,
+      );
       if (success && context.mounted) {
         showToast(context, context.l10n!.songRemovedFromOffline);
       }
