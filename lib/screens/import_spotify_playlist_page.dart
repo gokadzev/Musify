@@ -27,6 +27,12 @@ class _ImportSpotifyPlaylistPageState extends State<ImportSpotifyPlaylistPage> {
   // can't spawn a second import running concurrently with the first.
   static bool _importRunning = false;
 
+  // Kept well under the ~24-concurrent ceiling a rate-limit probe against
+  // the Songs-shelf search endpoint ran clean at (500 requests, no
+  // throttling) — plenty of headroom for real-world query variance.
+  static const _batchSize = 12;
+  static const _batchPause = Duration(milliseconds: 150);
+
   final _csvController = TextEditingController();
   final _playlistNameController = TextEditingController();
   bool _isImporting = false;
@@ -181,11 +187,15 @@ class _ImportSpotifyPlaylistPageState extends State<ImportSpotifyPlaylistPage> {
     }
   }
 
-  /// Resolves every (title, artist) pair in [rows] to a song, in small
-  /// batches with a pause between them to avoid tripping YouTube's rate
-  /// limiter. Stops early — leaving the rest of [rows] in `missing` — the
-  /// moment a batch reports active rate-limiting, rather than retrying the
-  /// remainder one at a time for minutes on end.
+  /// Resolves every (title, artist) pair in [rows] to a song, in batches
+  /// with a short pause between them. The Songs-shelf search endpoint
+  /// tolerates far more concurrency than the scraped search this import
+  /// used to run through — 500 back-to-back probe requests at up to 24
+  /// concurrent never got rate-limited — so [_batchSize]/[_batchPause] stay
+  /// well under that ceiling rather than at the old scraper's pace. Stops
+  /// early — leaving the rest of [rows] in `missing` — the moment a batch
+  /// reports active rate-limiting, rather than retrying the remainder one
+  /// at a time for minutes on end.
   Future<
     ({
       List<Map> found,
@@ -197,11 +207,10 @@ class _ImportSpotifyPlaylistPageState extends State<ImportSpotifyPlaylistPage> {
     List<({String title, String artist})> rows, {
     required void Function(int processedCount) onProgress,
   }) async {
-    const batchSize = 2;
     final found = <Map>[];
     final missing = <({String title, String artist})>[];
-    for (var i = 0; i < rows.length; i += batchSize) {
-      final batch = rows.skip(i).take(batchSize).toList();
+    for (var i = 0; i < rows.length; i += _batchSize) {
+      final batch = rows.skip(i).take(_batchSize).toList();
       final batchResults = await Future.wait(
         batch.map((row) async {
           final (match, wasRateLimited) = await _findSongWithRetry(
@@ -223,12 +232,10 @@ class _ImportSpotifyPlaylistPageState extends State<ImportSpotifyPlaylistPage> {
       }
       onProgress(batchResults.length);
       if (batchRateLimited) {
-        missing.addAll(rows.skip(i + batchSize));
+        missing.addAll(rows.skip(i + _batchSize));
         return (found: found, missing: missing, rateLimited: true);
       }
-      // Small pause between batches to avoid tripping YouTube's rate
-      // limiter in the first place.
-      await Future.delayed(const Duration(milliseconds: 400));
+      await Future.delayed(_batchPause);
     }
     return (found: found, missing: missing, rateLimited: false);
   }
