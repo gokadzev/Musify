@@ -327,9 +327,9 @@ class _BottomActionsRowState extends State<BottomActionsRow> {
               borderRadius: BorderRadius.circular(12),
             ),
           ),
-          onPressed: () {
+          onPressed: () async {
             if (isActive) {
-              audioHandler.cancelSleepTimer();
+              await audioHandler.cancelSleepTimer();
               sleepTimerNotifier.value = null;
               showToast(
                 context,
