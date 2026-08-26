@@ -18,11 +18,17 @@ class YoutubeApiClient {
 
   // Client definitions are kept in sync with yt-dlp's INNERTUBE_CLIENTS:
   // https://github.com/yt-dlp/yt-dlp/blob/master/yt_dlp/extractor/youtube/_base.py
-  // Last cross-checked against yt-dlp master (commit b375e1d, 2026-08-18).
+  // Last cross-checked against yt-dlp master (commit 5d5b634, 2026-08-18).
+  //
+  // 2026-08-18 update: `android_vr` is now BROKEN (YouTube 403s all its
+  // formats as of 2026-08-17) and yt-dlp has dropped it from its defaults
+  // in favor of `visionos` alone (yt-dlp#17461/#17462, closing #17456).
+  // See [androidVr] and [visionOs] below.
 
   /// Has limited streams but doesn't require signature deciphering.
   /// Now requires a PO Token for HTTPS/DASH GVS streams unless a player
-  /// token is present (see [android]/[androidVr] for tokenless options).
+  /// token is present (see [android] for another non-tokenless option, or
+  /// [visionOs] which currently doesn't need one at all).
   static final ios = YoutubeApiClient({
     'context': {
       'client': {
@@ -44,10 +50,10 @@ class YoutubeApiClient {
   }, 'https://www.youtube.com/youtubei/v1/player?key=AIzaSyB-63vPrdThhKuerbB2N_l7Kwwcxj6yUAc&prettyPrint=false');
 
   /// This provides also muxed streams but seems less reliable than [ios].
-  /// If you require an android client use [androidVr] instead.
   /// Note: This client includes androidSdkVersion, which yt-dlp now marks as
   /// requiring a PO Token for GVS HTTPS/DASH streams (unless a player token
-  /// is present). [androidVr] is currently the more reliable tokenless pick.
+  /// is present). [visionOs] is currently the more reliable tokenless pick
+  /// (the previous recommendation here, [androidVr], is now broken).
   static const android = YoutubeApiClient({
     'context': {
       'client': {
@@ -68,9 +74,9 @@ class YoutubeApiClient {
   /// yt-dlp removed its `android_sdkless` client in Jan 2026 (yt-dlp#15726):
   /// YouTube's CDN started blocking it outright. It is kept here only for
   /// source compatibility and now simply forwards to [android].
-  /// Prefer [androidVr] (or [android]) instead.
+  /// Prefer [visionOs] (or [android]) instead.
   @Deprecated(
-      'YouTube blocks the android_sdkless variant as of 2026. Use androidVr or android instead.')
+      'YouTube blocks the android_sdkless variant as of 2026. Use visionOs or android instead.')
   static const androidSdkless = android;
 
   /// yt-dlp dropped the dedicated `android_music` (ANDROID_MUSIC) client;
@@ -94,16 +100,19 @@ class YoutubeApiClient {
     },
   }, 'https://music.youtube.com/youtubei/v1/player?key=AIzaSyAOghZGza2MQSZkY_zfZ370N-PUdXEo8AI&prettyPrint=false');
 
-  /// Provides high quality videos (not only VR) and, as of yt-dlp master,
-  /// does not require a PO Token for most requests. It is currently the
-  /// **default fallback client** used by yt-dlp itself (together with
-  /// [visionOs] and [safari]/web).
+  /// ⚠️ BROKEN as of 2026-08-17: YouTube began 403'ing **all** formats
+  /// requested through this client's clientVersion (including the itag-18
+  /// fallback that used to survive the earlier partial POT enforcement).
+  /// yt-dlp removed `android_vr` from its default client list entirely on
+  /// 2026-08-18 (yt-dlp#17461, closing yt-dlp#17456) — it is no longer part
+  /// of yt-dlp's `_DEFAULT_CLIENTS`/`_DEFAULT_JSLESS_CLIENTS`.
   ///
-  /// Note (from yt-dlp): "Made for kids" videos aren't available with this
-  /// client. Using a clientVersion above 1.65 may return SABR-only streams,
-  /// and since 2026-07 YouTube has been observed to intermittently/
-  /// selectively enforce PO Tokens on this client for non-HLS formats. If
-  /// this client starts failing, fall back to [visionOs] or [safari].
+  /// Kept here for completeness/experimentation (YouTube's enforcement is
+  /// known to be inconsistent/rolled out gradually, so this *may* start
+  /// working again for you), but **do not rely on it** — use [visionOs]
+  /// instead, which is yt-dlp's sole default tokenless client right now.
+  @Deprecated(
+      'YouTube 403s all android_vr formats as of 2026-08-17 (yt-dlp#17456). Use visionOs instead.')
   static const androidVr = YoutubeApiClient({
     'context': {
       'client': {
@@ -123,11 +132,17 @@ class YoutubeApiClient {
     },
   }, 'https://www.youtube.com/youtubei/v1/player?prettyPrint=false');
 
-  /// Apple Vision Pro client. As of yt-dlp master this is the **first**
-  /// entry in yt-dlp's default client list (ahead of [androidVr]), likely
-  /// because it currently doesn't require a PO Token at all and hasn't seen
-  /// the intermittent enforcement [androidVr] has. "Made for kids" videos
-  /// aren't available with this client either.
+  /// Apple Vision Pro client. As of yt-dlp master (2026-08-18) this is
+  /// yt-dlp's **only** default anonymous/no-JS client
+  /// (`_DEFAULT_JSLESS_CLIENTS = ('visionos',)`), now that [androidVr] has
+  /// been dropped for being fully blocked. It doesn't require a PO Token.
+  /// "Made for kids" videos aren't available with this client.
+  ///
+  /// Because this is now carrying all tokenless traffic essentially alone,
+  /// treat it as a single point of failure: if YouTube starts blocking it
+  /// too, your only remaining options become a client that needs a real PO
+  /// Token/JS-challenge solver (see [safari]/`web`) or [webEmbedded]/
+  /// [tvDowngraded] as yt-dlp-style fallbacks.
   static const visionOs = YoutubeApiClient({
     'context': {
       'client': {
@@ -146,8 +161,23 @@ class YoutubeApiClient {
     },
   }, 'https://www.youtube.com/youtubei/v1/player?prettyPrint=false');
 
-  /// This client also provide high quality muxed stream in the HLS manifest.
-  /// The streams are in m3u8 format.
+  /// Used by yt-dlp as a fallback for age-gated/age-restricted videos when
+  /// [visionOs] can't access them (`WEB_EMBEDDED_PLAYER`, embed-page
+  /// context). Only works for videos the owner allows to be embedded, and
+  /// only "sometimes" works around the age gate per yt-dlp's own docs.
+  static const webEmbedded = YoutubeApiClient({
+    'context': {
+      'client': {
+        'clientName': 'WEB_EMBEDDED_PLAYER',
+        'clientVersion': '2.20260708.00.00',
+        'hl': 'en',
+        'timeZone': 'UTC',
+        'utcOffsetMinutes': 0,
+      },
+    },
+  }, 'https://www.youtube.com/youtubei/v1/player?prettyPrint=false');
+
+
   /// Note: since 2026-07 YouTube only returns these merged HLS formats for
   /// some logged-in or "trusted" sessions; anonymous requests may get fewer
   /// formats than before.

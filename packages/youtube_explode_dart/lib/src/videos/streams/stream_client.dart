@@ -22,7 +22,7 @@ import 'streams.dart';
 /// YouTube's googlevideo.com CDN ties a streaming URL to the identity of the
 /// client that requested it (in particular its `User-Agent`) for app-style
 /// clients such as ANDROID_VR, ANDROID, and IOS. Requesting that URL later
-/// with a different (e.g. generic desktandroidVrop-Chrome) `User-Agent` reliably
+/// with a different (e.g. generic desktop-Chrome) `User-Agent` reliably
 /// yields an HTTP 403, even though the URL itself is valid and doesn't
 /// require a PO Token. This mismatch — not an invalid/expired URL — is the
 /// most common cause of "returned 403 (stream: ...)" errors.
@@ -52,9 +52,11 @@ class StreamClient {
   ///
   /// See [YoutubeApiClient] for all the possible clients that can be set using the [ytClients] parameter.
   /// If [ytClients] is null the library automatically manages the clients, otherwise only the clients provided are used.
-  /// Currently by default the [YoutubeApiClient.visionOs] and [YoutubeApiClient.androidVr] clients are used
-  /// (in that order, mirroring yt-dlp's current default client chain, neither of which normally requires a PO Token),
-  /// and if a js solver is provided the [YoutubeApiClient.safari] is used additionally.
+  /// Currently by default only [YoutubeApiClient.visionOs] is used (mirroring yt-dlp's
+  /// `_DEFAULT_JSLESS_CLIENTS`, current as of 2026-08-18), since [YoutubeApiClient.androidVr]
+  /// — the previous secondary default — was blocked by YouTube on 2026-08-17 and dropped
+  /// from yt-dlp's own defaults the next day. If a js solver is provided,
+  /// [YoutubeApiClient.safari] (`web`) is added as well, matching yt-dlp's `_DEFAULT_CLIENTS`.
   ///
   ///
   /// Note: if using any android client youtube often prevents downloading the same stream multiple times or downloading more than one stream from the same manifest.
@@ -89,7 +91,6 @@ class StreamClient {
     final clients = ytClients ??
         [
           YoutubeApiClient.visionOs,
-          YoutubeApiClient.androidVr,
         ];
 
     if (_jsChallengeSolver != null && ytClients == null) {
@@ -200,27 +201,81 @@ class StreamClient {
   /// Usually this downloads the bytes of the stream.
   /// For HLS streams all the fragments are concatenated into a single stream.
   ///
-  /// IMPORTANT: if [streamInfo] came from a non-web [YoutubeApiClient]
-  /// (e.g. [YoutubeApiClient.androidVr], [YoutubeApiClient.visionOs],
-  /// [YoutubeApiClient.android], [YoutubeApiClient.ios]), you should pass
-  /// the *same* client used in [getManifest] as [ytClient] here (or supply
-  /// [headers] directly). YouTube's CDN ties a stream URL to the identity
-  /// (in particular the `User-Agent`) of the client that requested it;
-  /// downloading it with a mismatched/default `User-Agent` commonly results
-  /// in an HTTP 403 even though the URL itself is perfectly valid.
+  /// If you already know which [YoutubeApiClient] produced [streamInfo]
+  /// (e.g. because you called [getManifest] with a single explicit
+  /// `ytClients: [...]`), pass it as [ytClient] (or supply [headers]
+  /// yourself) — this is the fastest and most reliable option, since
+  /// YouTube's CDN ties a stream URL to the identity (in particular the
+  /// `User-Agent`) of the client that requested it, and a mismatched
+  /// `User-Agent` commonly causes an HTTP 403 even for a perfectly valid URL.
+  ///
+  /// If you omit both (the common case when [getManifest] was called with
+  /// its default, multi-client behaviour and you can't tell which client a
+  /// given stream came from), this method automatically probes a short list
+  /// of the most likely clients with a cheap HEAD request and uses whichever
+  /// one YouTube actually accepts for this URL. This adds one small extra
+  /// request but means you can safely skip [ytClient]/[headers] entirely.
   Stream<List<int>> get(
     StreamInfo streamInfo, {
     YoutubeApiClient? ytClient,
     Map<String, String>? headers,
-  }) =>
-      _httpClient.getStream(
-        streamInfo,
-        streamClient: this,
-        headers: {
-          if (ytClient != null) ...clientRequestHeaders(ytClient),
-          if (headers != null) ...headers,
-        },
-      );
+  }) async* {
+    final Map<String, String> resolvedHeaders;
+    if (ytClient != null || headers != null) {
+      resolvedHeaders = {
+        if (ytClient != null) ...clientRequestHeaders(ytClient),
+        if (headers != null) ...headers,
+      };
+    } else {
+      resolvedHeaders = await _resolveHeadersFor(streamInfo);
+    }
+
+    yield* _httpClient.getStream(
+      streamInfo,
+      streamClient: this,
+      headers: resolvedHeaders,
+    );
+  }
+
+  /// Candidate clients tried by [get] when the caller doesn't say which
+  /// client produced a [StreamInfo], ordered roughly by how likely/cheap
+  /// each one is (matches the default [getManifest] client chain, plus
+  /// [YoutubeApiClient.safari] for streams obtained via a JS solver, and
+  /// [YoutubeApiClient.webEmbedded] as a last-resort fallback like yt-dlp
+  /// uses when its primary default clients fail).
+  ///
+  /// [YoutubeApiClient.androidVr] is intentionally NOT included here: as of
+  /// 2026-08-17 YouTube 403s all of its formats, so probing it would just
+  /// waste a round trip. If it starts working again, add it back near the
+  /// front of this list.
+  static const _autoHeaderCandidates = [
+    YoutubeApiClient.visionOs,
+    YoutubeApiClient.safari,
+    YoutubeApiClient.webEmbedded,
+  ];
+
+  /// Probes [streamInfo.url] with each of [_autoHeaderCandidates] (cheapest
+  /// first) via a HEAD request, and returns the first header set that isn't
+  /// rejected with a 403. Falls back to no special headers (the old,
+  /// best-effort default) if none of them work, rather than throwing here —
+  /// the real download attempt will surface any genuine failure.
+  Future<Map<String, String>> _resolveHeadersFor(StreamInfo streamInfo) async {
+    for (final candidate in _autoHeaderCandidates) {
+      try {
+        final candidateHeaders = clientRequestHeaders(candidate);
+        final response = await _httpClient.head(
+          streamInfo.url,
+          headers: candidateHeaders,
+        );
+        if (response.statusCode != 403) {
+          return candidateHeaders;
+        }
+      } catch (_) {
+        // Try the next candidate.
+      }
+    }
+    return const {};
+  }
 
   Stream<StreamInfo> _getStreams(VideoId videoId,
       {required YoutubeApiClient ytClient,
