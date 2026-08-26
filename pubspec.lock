@@ -977,4 +977,4 @@ packages:
     version: "0.0.1"
 sdks:
   dart: ">=3.13.0 <4.0.0"
-  flutter: ">=3.47.0 <4.0.0"
+  flutter: ">=3.47.1 <4.0.0"
