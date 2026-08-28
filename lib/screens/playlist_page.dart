@@ -155,7 +155,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
       }
 
       if (_playlist != null && _playlist['list'] != null) {
-        _originalPlaylistList = List<dynamic>.from(_playlist['list'] as List);
+        _adoptPlaylist(_playlist);
         _sortPlaylist(_sortType);
       }
     } catch (e, stackTrace) {
@@ -517,10 +517,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
           unawaited(syncOfflinePlaylistMetadata(updatedPlaylist));
 
           setState(() {
-            _playlist = updatedPlaylist;
-            _originalPlaylistList = List<dynamic>.from(
-              updatedPlaylist['list'] as List? ?? const [],
-            );
+            _adoptPlaylist(updatedPlaylist);
             _sortPlaylist(_sortType);
           });
           showToast(context, context.l10n!.playlistUpdated);
@@ -577,10 +574,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
     }
     if (updated != null && mounted) {
       setState(() {
-        _playlist = updated;
-        _originalPlaylistList = List<dynamic>.from(
-          _playlist['list'] as List? ?? const [],
-        );
+        _adoptPlaylist(updated);
         _sortPlaylist(_sortType);
       });
       if (isCachedPage) {
@@ -637,6 +631,25 @@ class _PlaylistPageState extends State<PlaylistPage> {
       case PlaylistSortType.dateAdded:
         return context.l10n!.dateAdded;
     }
+  }
+
+  /// Take a page-owned copy of [source] and snapshot its untouched order.
+  ///
+  /// `getPlaylistInfoForWidget` hands back the very map instances kept in the
+  /// playlist caches. `_sortPlaylist` rewrites `_playlist['list']`, so without a
+  /// copy a sort leaks back into the cache: reopening the page then read the
+  /// already-reordered list as the "original", and `default_`/`dateAdded`
+  /// (which are defined relative to that snapshot) showed the wrong order while
+  /// the saved sort chip still looked selected.
+  void _adoptPlaylist(dynamic source) {
+    if (source is! Map) {
+      _playlist = source;
+      _originalPlaylistList = <dynamic>[];
+      return;
+    }
+    _playlist = Map<String, dynamic>.from(source);
+    final list = source['list'];
+    _originalPlaylistList = list is List ? List<dynamic>.from(list) : <dynamic>[];
   }
 
   void _sortPlaylist(PlaylistSortType type) {
