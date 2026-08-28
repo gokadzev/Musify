@@ -73,9 +73,25 @@ class _PlaylistFolderPageState extends State<PlaylistFolderPage> {
             slivers: [
               SliverAppBar(
                 pinned: true,
-                expandedHeight: 300,
+                expandedHeight: 320,
                 flexibleSpace: FlexibleSpaceBar(
-                  collapseMode: CollapseMode.pin,
+                  centerTitle: true,
+                  expandedTitleScale: 1.35,
+                  titlePadding: const EdgeInsetsDirectional.only(
+                    start: 64,
+                    end: 64,
+                    bottom: 16,
+                  ),
+                  title: Text(
+                    _folderName,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: Theme.of(context).colorScheme.onSurface,
+                      letterSpacing: 0,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                   background: _buildHeader(context, playlists.length),
                 ),
                 actions: [
@@ -164,7 +180,9 @@ class _PlaylistFolderPageState extends State<PlaylistFolderPage> {
     final theme = Theme.of(context);
     return Container(
       alignment: Alignment.center,
-      padding: const EdgeInsets.fromLTRB(24, 20, 24, 16),
+      // Extra bottom room for the folder name, which slides up into the app bar
+      // from the FlexibleSpaceBar title as the header collapses.
+      padding: const EdgeInsets.fromLTRB(24, 20, 24, 56),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -189,18 +207,6 @@ class _PlaylistFolderPageState extends State<PlaylistFolderPage> {
             ),
           ),
           const SizedBox(height: 20),
-          Text(
-            _folderName,
-            style: theme.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.w700,
-              color: colorScheme.onSurface,
-              letterSpacing: -0.3,
-            ),
-            overflow: TextOverflow.ellipsis,
-            maxLines: 2,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 10),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
             decoration: BoxDecoration(
