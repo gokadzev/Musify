@@ -86,7 +86,6 @@ class _UserSongsPageState extends State<UserSongsPage> {
     final isOfflineSongs = title == context.l10n!.offlineSongs;
 
     return Scaffold(
-      appBar: AppBar(title: offlineMode.value ? Text(title) : null),
       body: Padding(
         padding: commonSingleChildScrollViewPadding,
         child: ValueListenableBuilder(
@@ -121,12 +120,57 @@ class _UserSongsPageState extends State<UserSongsPage> {
   ) {
     return CustomScrollView(
       slivers: [
+        SliverAppBar(
+          pinned: true,
+          expandedHeight:
+              MediaQuery.sizeOf(context).width >
+                  MediaQuery.sizeOf(context).height
+              ? 380
+              : 320,
+          flexibleSpace: FlexibleSpaceBar(
+            centerTitle: true,
+            expandedTitleScale: 1.35,
+            titlePadding: const EdgeInsetsDirectional.only(
+              start: 64,
+              end: 64,
+              bottom: 16,
+            ),
+            title: Text(
+              title,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w700,
+                color: Theme.of(context).colorScheme.onSurface,
+                letterSpacing: 0,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            background: Padding(
+              padding: const EdgeInsets.only(top: 56, bottom: 64),
+              child: Center(child: _buildHeroArtwork(title, icon)),
+            ),
+          ),
+        ),
         SliverToBoxAdapter(
           child: _buildHeaderSection(title, icon, songsLength, isOfflineSongs),
         ),
         buildSongList(title),
         const SliverMiniPlayerBottomSpace(),
       ],
+    );
+  }
+
+  Widget _buildHeroArtwork(String title, IconData icon) {
+    return ClipPath(
+      clipper: const ShapeBorderClipper(
+        shape: StarBorder(
+          points: 8,
+          pointRounding: 0.8,
+          valleyRounding: 0.2,
+          innerRadiusRatio: 0.6,
+        ),
+      ),
+      child: _buildPlaylistImage(title, icon),
     );
   }
 
@@ -163,6 +207,8 @@ class _UserSongsPageState extends State<UserSongsPage> {
           _buildPlaylistImage(title, icon),
           title,
           songsLength: songsLength,
+          showImage: false,
+          showTitle: false,
         ),
         if (songsLength > 0) ...[
           Padding(
