@@ -15,9 +15,9 @@ dependencies:
   app_links: ^7.2.1
   audio_service: ^0.18.19
   audio_session: ^0.2.4
-  cached_network_image: ^3.4.1
+  cached_network_image: ^4.0.0
   dynamic_color: ^2.1.0
-  file_picker: ^12.1.1
+  file_picker: ^12.1.2
   fluentui_system_icons: ^1.1.273
   flutter:
     sdk: flutter
@@ -26,7 +26,7 @@ dependencies:
   go_router: ^18.0.0
   hive: ^2.2.3
   hive_flutter: ^1.1.0
-  html: ^0.15.6
+  html: ^0.15.7
   http: ^1.6.0
   intl: ^0.20.2
   just_audio: ^0.10.6
