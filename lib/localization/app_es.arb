@@ -128,7 +128,7 @@
   "spotifyCsvHint": "Pegar el contenido del CSV aquí",
   "spotifyPlaylistNameHint": "Lista de reproducción de Spotify importada",
   "spotifyPlaylistEmpty": "Primero elige un archivo CSV o pega el contenido de un CSV",
-  "enterPlaylistName": "Please enter a playlist name",
+  "enterPlaylistName": "Por favor, introduzca el nombre de la playlist",
   "spotifyPlaylistInvalid": "El CSV no contiene columnas de canción y artista",
   "spotifyPlaylistImporting": "Importando lista de reproducción...",
   "spotifyPlaylistImportResult": "{found} de {total} canciones importadas",
