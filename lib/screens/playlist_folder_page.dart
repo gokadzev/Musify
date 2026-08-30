@@ -64,9 +64,9 @@ class _PlaylistFolderPageState extends State<PlaylistFolderPage> {
       builder: (context, _, __) {
         final isOffline = offlineMode.value;
         final playlists = isOffline
-            ? getPlaylistsInFolder(
-                widget.folderId,
-              ).where(PlaylistUtils.isPlaylistOffline).toList()
+            ? getPlaylistsInFolder(widget.folderId)
+                  .where(PlaylistUtils.isPlaylistOffline)
+                  .toList()
             : getPlaylistsInFolder(widget.folderId);
         return Scaffold(
           body: CustomScrollView(
@@ -180,8 +180,6 @@ class _PlaylistFolderPageState extends State<PlaylistFolderPage> {
     final theme = Theme.of(context);
     return Container(
       alignment: Alignment.center,
-      // Extra bottom room for the folder name, which slides up into the app bar
-      // from the FlexibleSpaceBar title as the header collapses.
       padding: const EdgeInsets.fromLTRB(24, 20, 24, 56),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

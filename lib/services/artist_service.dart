@@ -398,9 +398,7 @@ Future<Map<String, dynamic>?> getArtistCatalog(
   }
 }
 
-/// Materializes the complete song catalog from a profile that was already
-/// loaded. This keeps refresh atomic: the landing page and the song list use
-/// the exact same release snapshot without reading the profile cache again.
+/// Builds the song catalog from the already-loaded profile to keep the release snapshot consistent.
 Future<Map<String, dynamic>?> getArtistCatalogFromProfile(
   Map artist, {
   bool forceRebuild = false,
@@ -468,9 +466,7 @@ Future<Map<String, dynamic>?> _getArtistCatalogFromProfile(
   }
 }
 
-/// Runs catalog materializations for one artist in order. In particular, a
-/// normal action that started just before refresh must finish before the forced
-/// rebuild, so it cannot overwrite the fresh catalog after refresh completes.
+/// Serializes catalog builds per artist so refreshes cannot be overwritten by older operations.
 Future<T> _serializeArtistCatalogOperation<T>(
   String artistId,
   Future<T> Function() operation,

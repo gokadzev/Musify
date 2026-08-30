@@ -552,9 +552,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
       return;
     }
 
-    // Neither an artist nor a release is one of the built-in playlists
-    // updatePlaylistList knows: they are refreshed by dropping the cache entry
-    // they were read from, and they report the refresh themselves.
+    // Artists/releases aren't built-in playlists; refresh by dropping their cache entry.
     final isCachedPage = widget.isArtist || playlistId.startsWith('MPRE');
     final updated = widget.isArtist
         ? await getPlaylistInfoForWidget(
@@ -633,14 +631,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
     }
   }
 
-  /// Take a page-owned copy of [source] and snapshot its untouched order.
-  ///
-  /// `getPlaylistInfoForWidget` hands back the very map instances kept in the
-  /// playlist caches. `_sortPlaylist` rewrites `_playlist['list']`, so without a
-  /// copy a sort leaks back into the cache: reopening the page then read the
-  /// already-reordered list as the "original", and `default_`/`dateAdded`
-  /// (which are defined relative to that snapshot) showed the wrong order while
-  /// the saved sort chip still looked selected.
+  /// Copy source and snapshot its original item order.
+  /// Prevents sorting changes from affecting shared cached playlist data.
   void _adoptPlaylist(dynamic source) {
     if (source is! Map) {
       _playlist = source;
@@ -649,7 +641,9 @@ class _PlaylistPageState extends State<PlaylistPage> {
     }
     _playlist = Map<String, dynamic>.from(source);
     final list = source['list'];
-    _originalPlaylistList = list is List ? List<dynamic>.from(list) : <dynamic>[];
+    _originalPlaylistList = list is List
+        ? List<dynamic>.from(list)
+        : <dynamic>[];
   }
 
   void _sortPlaylist(PlaylistSortType type) {
