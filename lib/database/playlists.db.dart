@@ -23,8 +23,7 @@ List<Map<String, dynamic>> playlistsDB = [
   {
     'ytid': 'PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx',
     'title': 'Top 50 Global',
-    'image':
-        'https://charts-images.scdn.co/assets/locale_en/regional/daily/region_global_large.jpg',
+    'image': 'https://charts-images.scdn.co/assets/locale_en/regional/daily/region_global_large.jpg',
     'list': [],
   },
   {
@@ -78,6 +77,7 @@ List<Map<String, dynamic>> playlistsDB = [
   {
     'ytid': 'PLgzTt0k8mXzHcKebL8d0uYHfawiARhQja',
     'title': 'Best Sad and Emotional Songs',
+    'image': 'https://i.scdn.co/image/ab67706f000000026a529b45bf70807cc16b1a88',
     'list': [],
   },
   {
@@ -197,8 +197,7 @@ List<Map<String, dynamic>> playlistsDB = [
   {
     'ytid': 'PL-_a53M3g7u1CXZnQ4gK6C9T_vMnj6YTq',
     'title': 'One Love Spotify - Best Reggae Spotify Playlist',
-    'image':
-        'https://routenote.com/blog/wp-content/uploads/2021/08/1.-Reggae-Classics.jpg',
+    'image': 'https://routenote.com/blog/wp-content/uploads/2021/08/1.-Reggae-Classics.jpg',
     'list': [],
   },
   {
@@ -312,13 +311,13 @@ List<Map<String, dynamic>> playlistsDB = [
   {
     'ytid': 'PLXpMeQYR1ilK2M6PUwdA75st7uAUrH7Z_',
     'title': 'Canciones 2026 Reggaeton',
-    'image':
-        'https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da84b5e0600f19f06bc9f6be1382',
+    'image': 'https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da84b5e0600f19f06bc9f6be1382',
     'list': [],
   },
   {
     'ytid': 'PLXpMeQYR1ilIgQ0klpqWf7-RdfouCeJLj',
     'title': 'Remix music 2026',
+    'image': 'https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da84a1f10cfe0a8d4bf11214d0a3',
     'list': [],
   },
   {
@@ -372,6 +371,7 @@ List<Map<String, dynamic>> playlistsDB = [
   {
     'ytid': 'PLXpMeQYR1ilKXzjYmIb-FIKmYnzWZ7v4b',
     'title': 'New House Songs 2026',
+    'image': 'https://image-cdn-fa.spotifycdn.com/image/ab67706c0000da84fb2271a716b0a02624b0fcc3',
     'list': [],
   },
   {
@@ -479,8 +479,7 @@ List<Map<String, dynamic>> playlistsDB = [
   {
     'ytid': 'PLgzTt0k8mXzGjD1gQXkqC3bE0GzYwBnSD',
     'title': 'Best travel songs',
-    'image':
-        'https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da84fa66fb0b18a66df9963b542b',
+    'image': 'https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da84fa66fb0b18a66df9963b542b',
     'list': [],
   },
 ];
