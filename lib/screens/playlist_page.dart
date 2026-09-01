@@ -277,11 +277,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
       : _playlist['title']?.toString() ?? '';
 
   Widget _buildPlaylistHeroArtwork() {
-    return PlaylistHeroArtwork(
-      _playlist,
-      cubeIcon: widget.cubeIcon,
-      isArtist: widget.isArtist,
-    );
+    return PlaylistHeroArtwork(_playlist, cubeIcon: widget.cubeIcon);
   }
 
   Widget _buildHeaderSection() {

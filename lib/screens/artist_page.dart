@@ -37,7 +37,7 @@ import 'package:musify/utilities/async_loader.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/widgets/artist_shelf.dart';
 import 'package:musify/widgets/mini_player_bottom_space.dart';
-import 'package:musify/widgets/playlist_cube.dart';
+import 'package:musify/widgets/playlist_hero_artwork.dart';
 import 'package:musify/widgets/playlist_page/add_to_playlist_button.dart';
 import 'package:musify/widgets/playlist_page/download_button.dart';
 import 'package:musify/widgets/playlist_page/empty_playlist_state.dart';
@@ -211,50 +211,91 @@ class _ArtistPageState extends State<ArtistPage> {
       loadingWidget: Scaffold(appBar: AppBar(), body: const Spinner()),
       emptyWidget: _buildNotFoundPage(),
       builder: (context, _) => Scaffold(
-        appBar: AppBar(),
-        body: SingleChildScrollView(
+        body: Padding(
           padding: commonSingleChildScrollViewPadding,
-          child: Column(
-            children: [
-              _buildHeaderSection(),
-              _buildTopSongsSection(),
-              _buildAllSongsButton(),
+          child: CustomScrollView(
+            slivers: [
+              SliverAppBar(
+                pinned: true,
+                expandedHeight:
+                    MediaQuery.sizeOf(context).width >
+                        MediaQuery.sizeOf(context).height
+                    ? 380
+                    : 320,
+                flexibleSpace: FlexibleSpaceBar(
+                  centerTitle: true,
+                  expandedTitleScale: 1.35,
+                  titlePadding: const EdgeInsetsDirectional.only(
+                    start: 64,
+                    end: 64,
+                    bottom: 16,
+                  ),
+                  title: Text(
+                    _artistTitle,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: Theme.of(context).colorScheme.onSurface,
+                      letterSpacing: 0,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  background: Padding(
+                    padding: const EdgeInsets.only(top: 56, bottom: 64),
+                    child: Center(
+                      child: PlaylistHeroArtwork(
+                        _artist!,
+                        cubeIcon: FluentIcons.person_24_filled,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SliverToBoxAdapter(child: _buildHeaderSection()),
+              SliverToBoxAdapter(child: _buildTopSongsSection()),
+              SliverToBoxAdapter(child: _buildAllSongsButton()),
               if (_albums.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(top: 24),
-                  child: ArtistShelf(
-                    title: context.l10n!.albums,
-                    icon: FluentIcons.cd_16_regular,
-                    items: _albums,
-                    subtitleOf: _releaseSubtitle,
-                    onTap: _openRelease,
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 24),
+                    child: ArtistShelf(
+                      title: context.l10n!.albums,
+                      icon: FluentIcons.cd_16_regular,
+                      items: _albums,
+                      subtitleOf: _releaseSubtitle,
+                      onTap: _openRelease,
+                    ),
                   ),
                 ),
               if (_singles.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(top: 24),
-                  child: ArtistShelf(
-                    title: context.l10n!.singlesAndEps,
-                    icon: FluentIcons.music_note_2_24_regular,
-                    items: _singles,
-                    subtitleOf: _releaseSubtitle,
-                    onTap: _openRelease,
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 24),
+                    child: ArtistShelf(
+                      title: context.l10n!.singlesAndEps,
+                      icon: FluentIcons.music_note_2_24_regular,
+                      items: _singles,
+                      subtitleOf: _releaseSubtitle,
+                      onTap: _openRelease,
+                    ),
                   ),
                 ),
               if (_relatedArtists.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(top: 24),
-                  child: ArtistShelf(
-                    title: context.l10n!.suggestedArtists,
-                    icon: FluentIcons.person_24_regular,
-                    items: _relatedArtists,
-                    cubeIcon: FluentIcons.person_24_filled,
-                    circular: true,
-                    onTap: _openArtist,
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 24),
+                    child: ArtistShelf(
+                      title: context.l10n!.suggestedArtists,
+                      icon: FluentIcons.person_24_regular,
+                      items: _relatedArtists,
+                      cubeIcon: FluentIcons.person_24_filled,
+                      circular: true,
+                      onTap: _openArtist,
+                    ),
                   ),
                 ),
-              const SizedBox(height: 16),
-              const MiniPlayerBottomSpace(),
+              const SliverToBoxAdapter(child: SizedBox(height: 16)),
+              const SliverToBoxAdapter(child: MiniPlayerBottomSpace()),
             ],
           ),
         ),
@@ -293,22 +334,12 @@ class _ArtistPageState extends State<ArtistPage> {
   }
 
   Widget _buildHeaderSection() {
-    final screenSize = MediaQuery.sizeOf(context);
-    final isLandscape = screenSize.width > screenSize.height;
-
     return Column(
       children: [
         PlaylistHeader(
-          image: PlaylistCube(
-            _artist!,
-            size: isLandscape
-                ? 250
-                : screenSize.width / commonPlaylistArtworkDivision,
-            cubeIcon: FluentIcons.person_24_filled,
-            showTypeLabel: false,
-          ),
           title: _artistTitle,
           isArtist: true,
+          showTitle: false,
           monthlyListeners: _artist!['monthlyListeners']?.toString(),
           description: _artist!['description']?.toString(),
         ),

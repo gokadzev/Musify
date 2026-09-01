@@ -25,12 +25,10 @@ class PlaylistHeroArtwork extends StatelessWidget {
     this.playlist, {
     super.key,
     this.cubeIcon = FluentIcons.text_bullet_list_24_filled,
-    this.isArtist = false,
   });
 
   final Map playlist;
   final IconData cubeIcon;
-  final bool isArtist;
 
   @override
   Widget build(BuildContext context) {
@@ -44,8 +42,6 @@ class PlaylistHeroArtwork extends StatelessWidget {
       cubeIcon: cubeIcon,
       showTypeLabel: false,
     );
-
-    if (isArtist) return ClipOval(child: artwork);
 
     return ClipPath(
       clipper: const ShapeBorderClipper(
