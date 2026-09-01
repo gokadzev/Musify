@@ -36,6 +36,7 @@ import 'package:musify/widgets/mini_player_bottom_space.dart';
 import 'package:musify/widgets/playlist_hero_artwork.dart';
 import 'package:musify/widgets/playlist_page/empty_playlist_state.dart';
 import 'package:musify/widgets/playlist_page/playlist_header.dart';
+import 'package:musify/widgets/playlist_page/playlist_sliver_app_bar.dart';
 import 'package:musify/widgets/playlist_page/search_bar_section.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/sort_chips.dart';
@@ -120,36 +121,9 @@ class _UserSongsPageState extends State<UserSongsPage> {
   ) {
     return CustomScrollView(
       slivers: [
-        SliverAppBar(
-          pinned: true,
-          expandedHeight:
-              MediaQuery.sizeOf(context).width >
-                  MediaQuery.sizeOf(context).height
-              ? 380
-              : 320,
-          flexibleSpace: FlexibleSpaceBar(
-            centerTitle: true,
-            expandedTitleScale: 1.35,
-            titlePadding: const EdgeInsetsDirectional.only(
-              start: 64,
-              end: 64,
-              bottom: 16,
-            ),
-            title: Text(
-              title,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w700,
-                color: Theme.of(context).colorScheme.onSurface,
-                letterSpacing: 0,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            background: Padding(
-              padding: const EdgeInsets.only(top: 56, bottom: 64),
-              child: Center(child: _buildPlaylistImage(title, icon)),
-            ),
-          ),
+        PlaylistSliverAppBar(
+          title: title,
+          artwork: _buildPlaylistImage(title, icon),
         ),
         SliverToBoxAdapter(
           child: _buildHeaderSection(title, icon, songsLength, isOfflineSongs),
