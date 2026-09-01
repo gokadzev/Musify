@@ -231,13 +231,20 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
     ),
     snackBarTheme: SnackBarThemeData(
       backgroundColor: effectiveColorScheme.secondaryContainer,
+      closeIconColor: effectiveColorScheme.onSecondaryContainer,
       contentTextStyle: TextStyle(
         color: effectiveColorScheme.onSecondaryContainer,
         fontWeight: FontWeight.w500,
       ),
       behavior: SnackBarBehavior.floating,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 6,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(
+          color: effectiveColorScheme.outlineVariant,
+          width: 0.2,
+        ),
+      ),
+      elevation: 0,
       actionTextColor: effectiveColorScheme.secondary,
     ),
     visualDensity: VisualDensity.adaptivePlatformDensity,

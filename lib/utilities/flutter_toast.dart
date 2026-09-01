@@ -71,7 +71,7 @@ void showToastWithButton(
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       margin: EdgeInsets.fromLTRB(16, 12, 16, bottomMargin),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       content: Row(
         children: [
           Icon(
