@@ -36,7 +36,7 @@ class PlaylistSliverAppBar extends StatelessWidget {
     return SliverAppBar(
       leading: leading,
       pinned: true,
-      expandedHeight: screenSize.width > screenSize.height ? 380 : 320,
+      expandedHeight: screenSize.width > screenSize.height ? 380 : 340,
       flexibleSpace: FlexibleSpaceBar(
         centerTitle: true,
         expandedTitleScale: 1.35,

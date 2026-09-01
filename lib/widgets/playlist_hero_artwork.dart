@@ -38,8 +38,8 @@ class PlaylistHeroArtwork extends StatelessWidget {
       builder: (context, constraints) {
         final screenSize = MediaQuery.sizeOf(context);
         final preferredSize = screenSize.width > screenSize.height
-            ? 250.0
-            : screenSize.width / commonPlaylistArtworkDivision;
+            ? 240.0
+            : screenSize.width / (commonPlaylistArtworkDivision - 0.1);
         final size = preferredSize
             .clamp(0.0, min(constraints.maxWidth, constraints.maxHeight))
             .toDouble();
