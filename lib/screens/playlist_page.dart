@@ -515,6 +515,12 @@ class _PlaylistPageState extends State<PlaylistPage> {
   }
 
   void _updateSongsListOnRemove(int indexOfRemovedSong, dynamic songToRemove) {
+    final originalIndex = _originalPlaylistList.indexWhere(
+      (song) => song is Map && song['ytid'] == songToRemove['ytid'],
+    );
+    final indexToRestore = originalIndex == -1
+        ? indexOfRemovedSong
+        : originalIndex;
     _originalPlaylistList.removeWhere((s) => s['ytid'] == songToRemove['ytid']);
     final playlistId = _playlist['ytid'];
     if (mounted) {
@@ -528,17 +534,18 @@ class _PlaylistPageState extends State<PlaylistPage> {
             context,
             playlistId,
             songToRemove,
-            indexToInsert: indexOfRemovedSong,
+            indexToInsert: indexToRestore,
           );
           if (result == context.l10n!.songAdded &&
               !_originalPlaylistList.any(
                 (song) => song['ytid'] == songToRemove['ytid'],
               )) {
-            final safeIndex = indexOfRemovedSong.clamp(
+            final safeIndex = indexToRestore.clamp(
               0,
               _originalPlaylistList.length,
             );
             _originalPlaylistList.insert(safeIndex, songToRemove);
+            _playlist['list'] = List<dynamic>.from(_originalPlaylistList);
             _sortPlaylist(_sortType);
           }
           if (mounted) setState(() {});

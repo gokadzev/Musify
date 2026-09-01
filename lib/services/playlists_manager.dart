@@ -381,6 +381,10 @@ bool removeSongFromPlaylist(
     try {
       if (playlist['source'] == 'user-created') {
         final playlistId = playlist['ytid']?.toString();
+        final storedPlaylist = playlistId == null
+            ? null
+            : _findCustomPlaylist(playlistId)?.playlist;
+        storedPlaylist?['list'] = playlistSongs;
         final isInFolder =
             playlistId != null &&
             userPlaylistFolders.value.any((folder) {
@@ -401,6 +405,7 @@ bool removeSongFromPlaylist(
             ),
           );
         } else {
+          userCustomPlaylists.value = List<Map>.from(userCustomPlaylists.value);
           unawaited(
             addOrUpdateData<List>(
               'user',
