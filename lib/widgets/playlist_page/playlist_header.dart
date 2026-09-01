@@ -23,12 +23,10 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:musify/extensions/l10n.dart';
 
-/// The top of a playlist, album or artist page: artwork, title and the chips
-/// describing what is being shown.
+/// The metadata and actions below a playlist, album or artist hero.
 class PlaylistHeader extends StatelessWidget {
   const PlaylistHeader({
     super.key,
-    this.image,
     required this.title,
     this.songsLength,
     this.isAlbum,
@@ -38,7 +36,6 @@ class PlaylistHeader extends StatelessWidget {
     this.description,
   });
 
-  final Widget? image;
   final String title;
 
   /// Left null by the artist page, which does not hold the song list itself.
@@ -62,22 +59,6 @@ class PlaylistHeader extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(24, 20, 24, 8),
       child: Column(
         children: [
-          if (image != null) ...[
-            if (isArtist)
-              ClipOval(child: image)
-            else
-              ClipPath(
-                clipper: const ShapeBorderClipper(
-                  shape: StarBorder(
-                    points: 8,
-                    pointRounding: 0.8,
-                    valleyRounding: 0.2,
-                    innerRadiusRatio: 0.6,
-                  ),
-                ),
-                child: image,
-              ),
-          ],
           if (showTitle) ...[
             const SizedBox(height: 24),
             Text(
