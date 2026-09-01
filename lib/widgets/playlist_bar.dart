@@ -39,6 +39,7 @@ import 'package:musify/widgets/dialog_item.dart';
 import 'package:musify/widgets/edit_playlist_dialog.dart';
 import 'package:musify/widgets/overflow_menu_button.dart';
 import 'package:musify/widgets/popup_menu_item.dart';
+import 'package:musify/widgets/seven_sided_cookie_shape.dart';
 import 'package:musify/widgets/spinner.dart';
 
 class PlaylistBar extends StatelessWidget {
@@ -339,14 +340,25 @@ class PlaylistBar extends StatelessWidget {
   }
 
   Widget _buildIconFallback(ColorScheme colorScheme) {
-    return Container(
-      width: 52,
-      height: 52,
-      decoration: BoxDecoration(
-        color: colorScheme.secondaryContainer,
-        shape: isArtist ? BoxShape.circle : BoxShape.rectangle,
-        borderRadius: isArtist ? null : BorderRadius.circular(12),
-      ),
+    if (isArtist) {
+      return Container(
+        width: 52,
+        height: 52,
+        decoration: BoxDecoration(
+          color: colorScheme.secondaryContainer,
+          shape: BoxShape.circle,
+        ),
+        child: Icon(
+          cubeIcon,
+          size: 26,
+          color: colorScheme.onSecondaryContainer,
+        ),
+      );
+    }
+
+    return SevenSidedCookieShape(
+      size: 52,
+      color: colorScheme.secondaryContainer,
       child: Icon(cubeIcon, size: 26, color: colorScheme.onSecondaryContainer),
     );
   }
