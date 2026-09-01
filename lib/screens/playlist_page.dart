@@ -40,7 +40,6 @@ import 'package:musify/utilities/song_filtering.dart';
 import 'package:musify/utilities/sort_utils.dart';
 import 'package:musify/widgets/edit_playlist_dialog.dart';
 import 'package:musify/widgets/mini_player_bottom_space.dart';
-import 'package:musify/widgets/playlist_cube.dart';
 import 'package:musify/widgets/playlist_hero_artwork.dart';
 import 'package:musify/widgets/playlist_page/add_to_playlist_button.dart';
 import 'package:musify/widgets/playlist_page/download_button.dart';
@@ -277,25 +276,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
       ? normalizeArtistDisplayTitle(_playlist['title']?.toString() ?? '')
       : _playlist['title']?.toString() ?? '';
 
-  Widget _buildPlaylistImage() {
-    final screenWidth = MediaQuery.sizeOf(context).width;
-    final isLandscape = screenWidth > MediaQuery.sizeOf(context).height;
-    final playlist = widget.isArtist
-        ? {
-            ..._playlist,
-            'image': normalizeArtistThumbnailUrl(
-              _playlist['image']?.toString(),
-            ),
-          }
-        : _playlist;
-    return PlaylistCube(
-      playlist,
-      size: isLandscape ? 250 : screenWidth / commonPlaylistArtworkDivision,
-      cubeIcon: widget.cubeIcon,
-      showTypeLabel: false,
-    );
-  }
-
   Widget _buildPlaylistHeroArtwork() {
     return PlaylistHeroArtwork(
       _playlist,
@@ -315,7 +295,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
     return Column(
       children: [
         PlaylistHeader(
-          _buildPlaylistImage(),
+          const SizedBox.shrink(),
           _playlistTitle,
           songsLength: songsLength,
           isAlbum: _playlist['isAlbum'] == true,

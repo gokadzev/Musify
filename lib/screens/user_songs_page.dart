@@ -190,7 +190,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
     return Column(
       children: [
         PlaylistHeader(
-          _buildPlaylistImage(title, icon),
+          const SizedBox.shrink(),
           title,
           songsLength: songsLength,
           showImage: false,
