@@ -295,12 +295,10 @@ class _PlaylistPageState extends State<PlaylistPage> {
     return Column(
       children: [
         PlaylistHeader(
-          const SizedBox.shrink(),
-          _playlistTitle,
+          title: _playlistTitle,
           songsLength: songsLength,
           isAlbum: _playlist['isAlbum'] == true,
           isArtist: widget.isArtist,
-          showImage: false,
           showTitle: false,
         ),
         if (songsLength > 0)

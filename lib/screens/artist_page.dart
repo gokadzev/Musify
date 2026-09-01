@@ -299,7 +299,7 @@ class _ArtistPageState extends State<ArtistPage> {
     return Column(
       children: [
         PlaylistHeader(
-          PlaylistCube(
+          image: PlaylistCube(
             _artist!,
             size: isLandscape
                 ? 250
@@ -307,7 +307,7 @@ class _ArtistPageState extends State<ArtistPage> {
             cubeIcon: FluentIcons.person_24_filled,
             showTypeLabel: false,
           ),
-          _artistTitle,
+          title: _artistTitle,
           isArtist: true,
           monthlyListeners: _artist!['monthlyListeners']?.toString(),
           description: _artist!['description']?.toString(),

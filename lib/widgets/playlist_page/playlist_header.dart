@@ -26,27 +26,25 @@ import 'package:musify/extensions/l10n.dart';
 /// The top of a playlist, album or artist page: artwork, title and the chips
 /// describing what is being shown.
 class PlaylistHeader extends StatelessWidget {
-  const PlaylistHeader(
-    this.image,
-    this.title, {
+  const PlaylistHeader({
     super.key,
+    this.image,
+    required this.title,
     this.songsLength,
     this.isAlbum,
     this.isArtist = false,
-    this.showImage = true,
     this.showTitle = true,
     this.monthlyListeners,
     this.description,
   });
 
-  final Widget image;
+  final Widget? image;
   final String title;
 
   /// Left null by the artist page, which does not hold the song list itself.
   final int? songsLength;
   final bool? isAlbum;
   final bool isArtist;
-  final bool showImage;
   final bool showTitle;
 
   /// Monthly listeners of an artist, already shortened, e.g. `447M`.
@@ -64,7 +62,7 @@ class PlaylistHeader extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(24, 20, 24, 8),
       child: Column(
         children: [
-          if (showImage) ...[
+          if (image != null) ...[
             if (isArtist)
               ClipOval(child: image)
             else

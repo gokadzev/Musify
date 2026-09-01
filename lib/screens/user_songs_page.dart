@@ -190,10 +190,8 @@ class _UserSongsPageState extends State<UserSongsPage> {
     return Column(
       children: [
         PlaylistHeader(
-          const SizedBox.shrink(),
-          title,
+          title: title,
           songsLength: songsLength,
-          showImage: false,
           showTitle: false,
         ),
         if (songsLength > 0) ...[
