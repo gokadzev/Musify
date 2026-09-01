@@ -178,9 +178,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
   @override
   Widget build(BuildContext context) {
-    final showPlaylist = !_isInitializingPlaylist && _playlist != null;
     return Scaffold(
-      appBar: showPlaylist ? null : AppBar(leading: _buildBackButton(context)),
       body: Padding(
         padding: commonSingleChildScrollViewPadding,
         child: _isInitializingPlaylist
