@@ -180,7 +180,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
   Widget build(BuildContext context) {
     final showPlaylist = !_isInitializingPlaylist && _playlist != null;
     return Scaffold(
-      appBar: showPlaylist ? null : _buildAppBar(context),
+      appBar: showPlaylist ? null : AppBar(leading: _buildBackButton(context)),
       body: Padding(
         padding: commonSingleChildScrollViewPadding,
         child: _isInitializingPlaylist
@@ -194,7 +194,10 @@ class _PlaylistPageState extends State<PlaylistPage> {
                   PlaylistSliverAppBar(
                     leading: _buildBackButton(context),
                     title: _playlistTitle,
-                    artwork: _buildPlaylistHeroArtwork(),
+                    artwork: PlaylistHeroArtwork(
+                      _playlist,
+                      cubeIcon: widget.cubeIcon,
+                    ),
                   ),
                   SliverToBoxAdapter(child: _buildHeaderSection()),
                   if ((_playlist['list'] as List? ?? const []).isNotEmpty) ...[
@@ -234,10 +237,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
     );
   }
 
-  PreferredSizeWidget _buildAppBar(BuildContext context) {
-    return AppBar(leading: _buildBackButton(context));
-  }
-
   Widget _buildBackButton(BuildContext context) {
     return IconButton(
       icon: const Icon(FluentIcons.arrow_left_24_regular),
@@ -249,10 +248,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
   String get _playlistTitle => widget.isArtist
       ? normalizeArtistDisplayTitle(_playlist['title']?.toString() ?? '')
       : _playlist['title']?.toString() ?? '';
-
-  Widget _buildPlaylistHeroArtwork() {
-    return PlaylistHeroArtwork(_playlist, cubeIcon: widget.cubeIcon);
-  }
 
   Widget _buildHeaderSection() {
     final songsLength = (_playlist['list'] as List? ?? const []).length;

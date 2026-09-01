@@ -123,7 +123,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
       slivers: [
         PlaylistSliverAppBar(
           title: title,
-          artwork: _buildPlaylistImage(title, icon),
+          artwork: PlaylistHeroArtwork({'title': title}, cubeIcon: icon),
         ),
         SliverToBoxAdapter(
           child: _buildHeaderSection(title, icon, songsLength, isOfflineSongs),
@@ -270,10 +270,6 @@ class _UserSongsPageState extends State<UserSongsPage> {
         const SizedBox(height: 16),
       ],
     );
-  }
-
-  Widget _buildPlaylistImage(String title, IconData icon) {
-    return PlaylistHeroArtwork({'title': title}, cubeIcon: icon);
   }
 
   Widget _buildClearRecentsButton(Color primaryColor) {
