@@ -129,6 +129,16 @@ class _UserSongsPageState extends State<UserSongsPage> {
           child: _buildHeaderSection(title, icon, songsLength, isOfflineSongs),
         ),
         buildSongList(title),
+        if (songsLength == 0)
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height:
+                  MediaQuery.sizeOf(context).width >
+                      MediaQuery.sizeOf(context).height
+                  ? 320
+                  : 280,
+            ),
+          ),
         const SliverMiniPlayerBottomSpace(),
       ],
     );
