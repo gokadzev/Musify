@@ -41,6 +41,7 @@ import 'package:musify/utilities/sort_utils.dart';
 import 'package:musify/widgets/edit_playlist_dialog.dart';
 import 'package:musify/widgets/mini_player_bottom_space.dart';
 import 'package:musify/widgets/playlist_cube.dart';
+import 'package:musify/widgets/playlist_hero_artwork.dart';
 import 'package:musify/widgets/playlist_page/add_to_playlist_button.dart';
 import 'package:musify/widgets/playlist_page/download_button.dart';
 import 'package:musify/widgets/playlist_page/empty_playlist_state.dart';
@@ -296,19 +297,10 @@ class _PlaylistPageState extends State<PlaylistPage> {
   }
 
   Widget _buildPlaylistHeroArtwork() {
-    final image = _buildPlaylistImage();
-    if (widget.isArtist) return ClipOval(child: image);
-
-    return ClipPath(
-      clipper: const ShapeBorderClipper(
-        shape: StarBorder(
-          points: 8,
-          pointRounding: 0.8,
-          valleyRounding: 0.2,
-          innerRadiusRatio: 0.6,
-        ),
-      ),
-      child: image,
+    return PlaylistHeroArtwork(
+      _playlist,
+      cubeIcon: widget.cubeIcon,
+      isArtist: widget.isArtist,
     );
   }
 

@@ -33,7 +33,7 @@ import 'package:musify/utilities/playlist_utils.dart';
 import 'package:musify/utilities/song_filtering.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/mini_player_bottom_space.dart';
-import 'package:musify/widgets/playlist_cube.dart';
+import 'package:musify/widgets/playlist_hero_artwork.dart';
 import 'package:musify/widgets/playlist_page/empty_playlist_state.dart';
 import 'package:musify/widgets/playlist_page/playlist_header.dart';
 import 'package:musify/widgets/playlist_page/search_bar_section.dart';
@@ -147,7 +147,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
             ),
             background: Padding(
               padding: const EdgeInsets.only(top: 56, bottom: 64),
-              child: Center(child: _buildHeroArtwork(title, icon)),
+              child: Center(child: _buildPlaylistImage(title, icon)),
             ),
           ),
         ),
@@ -157,20 +157,6 @@ class _UserSongsPageState extends State<UserSongsPage> {
         buildSongList(title),
         const SliverMiniPlayerBottomSpace(),
       ],
-    );
-  }
-
-  Widget _buildHeroArtwork(String title, IconData icon) {
-    return ClipPath(
-      clipper: const ShapeBorderClipper(
-        shape: StarBorder(
-          points: 8,
-          pointRounding: 0.8,
-          valleyRounding: 0.2,
-          innerRadiusRatio: 0.6,
-        ),
-      ),
-      child: _buildPlaylistImage(title, icon),
     );
   }
 
@@ -315,13 +301,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
   }
 
   Widget _buildPlaylistImage(String title, IconData icon) {
-    final screenWidth = MediaQuery.sizeOf(context).width;
-    final isLandscape = screenWidth > MediaQuery.sizeOf(context).height;
-    return PlaylistCube(
-      {'title': title},
-      size: isLandscape ? 250 : screenWidth / commonPlaylistArtworkDivision,
-      cubeIcon: icon,
-    );
+    return PlaylistHeroArtwork({'title': title}, cubeIcon: icon);
   }
 
   Widget _buildClearRecentsButton(Color primaryColor) {
