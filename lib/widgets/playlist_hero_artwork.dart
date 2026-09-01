@@ -15,6 +15,8 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import 'dart:math';
+
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:musify/constants/app_constants.dart';
@@ -32,27 +34,34 @@ class PlaylistHeroArtwork extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.sizeOf(context);
-    final size = screenSize.width > screenSize.height
-        ? 250.0
-        : screenSize.width / commonPlaylistArtworkDivision;
-    final artwork = PlaylistCube(
-      playlist,
-      size: size,
-      cubeIcon: cubeIcon,
-      showTypeLabel: false,
-    );
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final screenSize = MediaQuery.sizeOf(context);
+        final preferredSize = screenSize.width > screenSize.height
+            ? 250.0
+            : screenSize.width / commonPlaylistArtworkDivision;
+        final size = preferredSize
+            .clamp(0.0, min(constraints.maxWidth, constraints.maxHeight))
+            .toDouble();
+        final artwork = PlaylistCube(
+          playlist,
+          size: size,
+          cubeIcon: cubeIcon,
+          showTypeLabel: false,
+        );
 
-    return ClipPath(
-      clipper: const ShapeBorderClipper(
-        shape: StarBorder(
-          points: 8,
-          pointRounding: 0.8,
-          valleyRounding: 0.2,
-          innerRadiusRatio: 0.6,
-        ),
-      ),
-      child: artwork,
+        return ClipPath(
+          clipper: const ShapeBorderClipper(
+            shape: StarBorder(
+              points: 8,
+              pointRounding: 0.8,
+              valleyRounding: 0.2,
+              innerRadiusRatio: 0.6,
+            ),
+          ),
+          child: artwork,
+        );
+      },
     );
   }
 }
