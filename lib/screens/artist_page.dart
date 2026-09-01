@@ -218,6 +218,7 @@ class _ArtistPageState extends State<ArtistPage> {
             children: [
               _buildHeaderSection(),
               _buildTopSongsSection(),
+              _buildAllSongsButton(),
               if (_albums.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.only(top: 24),
@@ -384,6 +385,28 @@ class _ArtistPageState extends State<ArtistPage> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildAllSongsButton() {
+    return Padding(
+      // Align with header action buttons
+      padding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
+      child: SizedBox(
+        width: double.infinity,
+        child: FilledButton.tonalIcon(
+          icon: const Icon(FluentIcons.arrow_right_24_regular),
+          iconAlignment: IconAlignment.end,
+          label: Text(context.l10n!.allSongs),
+          style: FilledButton.styleFrom(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+          ),
+          onPressed: () => context.push(
+            NavigationManager.artistSongsPath(context, _resolvedArtistId),
+            extra: artistPlaylistData(_artist!),
+          ),
+        ),
+      ),
     );
   }
 
