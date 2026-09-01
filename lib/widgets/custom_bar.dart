@@ -20,7 +20,7 @@
  */
 
 import 'package:material_ui/material_ui.dart';
-import 'package:musify/widgets/four_sided_cookie_shape.dart';
+import 'package:musify/widgets/shapes/four_sided_cookie_shape.dart';
 
 class CustomBar extends StatelessWidget {
   CustomBar(

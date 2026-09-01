@@ -39,7 +39,7 @@ import 'package:musify/widgets/dialog_item.dart';
 import 'package:musify/widgets/edit_playlist_dialog.dart';
 import 'package:musify/widgets/overflow_menu_button.dart';
 import 'package:musify/widgets/popup_menu_item.dart';
-import 'package:musify/widgets/seven_sided_cookie_shape.dart';
+import 'package:musify/widgets/shapes/seven_sided_cookie_shape.dart';
 import 'package:musify/widgets/spinner.dart';
 
 class PlaylistBar extends StatelessWidget {
