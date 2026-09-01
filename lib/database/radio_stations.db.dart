@@ -25,48 +25,42 @@ List<RadioStation> radioStationsDB = [
   const RadioStation(
     id: 'r_cap_london',
     name: 'Capital London',
-    image:
-        'https://www.radio.net/300/capitalfmuk.png?version=5949ecef911a9e5232d0dba9643c8ba5b7da9363',
+    image: 'https://www.radio.net/300/capitalfmuk.png?version=5949ecef911a9e5232d0dba9643c8ba5b7da9363',
     streamUrl: 'https://media-ssl.musicradio.com/CapitalMP3',
     genre: 'Pop',
   ),
   const RadioStation(
     id: 'r_top_hits',
     name: 'Top Hits',
-    image:
-        'https://static2.mytuner.mobi/media/tvos_radios/407/hot106.c2263eb2.png',
+    image: 'https://static2.mytuner.mobi/media/tvos_radios/407/hot106.c2263eb2.png',
     streamUrl: 'https://cdn.onlyhitsradio.net/tophits',
     genre: 'Pop',
   ),
   const RadioStation(
     id: 'r_bigfm',
     name: 'bigFM',
-    image:
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrP01loD-Ip9YGCPJg11UekrqSwGIfOvIxBexLvKJ1BBQQcKe-HM3kNpep&s=10',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrP01loD-Ip9YGCPJg11UekrqSwGIfOvIxBexLvKJ1BBQQcKe-HM3kNpep&s=10',
     streamUrl: 'https://stream.bigfm.de/deutschland/mp3-128/',
     genre: 'Pop',
   ),
   const RadioStation(
     id: 'r_kissfm',
     name: 'KissFM 104,5',
-    image:
-        'https://static2.mytuner.mobi/media/tvos_radios/192/kissfm-1045.9092a318.png',
+    image: 'https://static2.mytuner.mobi/media/tvos_radios/192/kissfm-1045.9092a318.png',
     streamUrl: 'https://ice-11.spilarinn.is/kissfm',
     genre: 'Pop',
   ),
   const RadioStation(
     id: 'r_rockfm',
     name: 'RockFM',
-    image:
-        'https://static.wikia.nocookie.net/logopedia/images/3/31/Let%C3%B6lt%C3%A9s_%281%29.jpg/revision/latest',
+    image: 'https://static.wikia.nocookie.net/logopedia/images/3/31/Let%C3%B6lt%C3%A9s_%281%29.jpg/revision/latest',
     streamUrl: 'https://rockfm-cope-rrcast.flumotion.com/cope/rockfm-low.mp3',
     genre: 'Rock',
   ),
   const RadioStation(
     id: 'r_radio1rock',
     name: 'Radio 1 Rock',
-    image:
-        'https://store-images.s-microsoft.com/image/apps.12530.13510798887910876.18d0136c-d60d-4ba6-8188-4b6b2c74c26a.59760b1b-858a-4207-8103-f9a26b79ae8a',
+    image: 'https://store-images.s-microsoft.com/image/apps.12530.13510798887910876.18d0136c-d60d-4ba6-8188-4b6b2c74c26a.59760b1b-858a-4207-8103-f9a26b79ae8a',
     streamUrl: 'https://live.radio.si/Radio1Rock',
     genre: 'Rock',
   ),
@@ -104,5 +98,40 @@ List<RadioStation> radioStationsDB = [
     image: 'https://i.scdn.co/image/ab676161000051740e5f02df5be105222ceda8c0',
     streamUrl: 'https://stream.laut.fm/phonk',
     genre: 'Phonk',
+  ),
+  const RadioStation(
+    id: 'r_technobase',
+    name: 'Technobase.FM',
+    image: 'https://kuasark.com/files/stations-logos/technobasefm.png',
+    streamUrl: 'https://mp3.stream.tb-group.fm/tb.mp3',
+    genre: 'Techno',
+  ),
+  const RadioStation(
+    id: 'r_housetime',
+    name: 'Housetime.FM',
+    image: 'https://kuasark.com/files/stations-logos/housetimefm.png',
+    streamUrl: 'https://mp3.stream.tb-group.fm/ht.mp3',
+    genre: 'House',
+  ),
+  const RadioStation(
+    id: 'r_trancebase',
+    name: 'Trancebase.FM',
+    image: 'https://kuasark.com/files/stations-logos/trancebasefm.png',
+    streamUrl: 'https://mp3.stream.tb-group.fm/trb.mp3',
+    genre: 'Trance',
+  ),
+  const RadioStation(
+    id: 'r_lofi_radio',
+    name: 'Lofi Radio',
+    image: 'https://upload.wikimedia.org/wikipedia/en/f/f5/Lofi_Girl_logo_2024.jpg',
+    streamUrl: 'https://play.streamafrica.net/lofiradio',
+    genre: 'Lofi',
+  ),
+  const RadioStation(
+    id: 'r_181fm_the_box',
+    name: '181.FM - The Box Urban',
+    image: 'https://cdn-profiles.tunein.com/s51095/images/logoq.jpg',
+    streamUrl: 'https://listen.181fm.com/181-thebox_128k.mp3',
+    genre: 'Hip Hop',
   ),
 ];
