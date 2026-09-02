@@ -33,6 +33,7 @@ import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/listening_stats_service.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/map_utils.dart';
+import 'package:musify/utilities/media_duration.dart';
 import 'package:musify/utilities/mediaitem.dart';
 import 'package:musify/utilities/queue_entry_utils.dart';
 import 'package:rxdart/rxdart.dart';
@@ -86,6 +87,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
   int _currentLoadingTransitionId = -1;
   bool _isUpdatingState = false;
   bool _pendingPlaybackStateUpdate = false;
+  bool _pendingForcedPlaybackStateUpdate = false;
   int _songTransitionCounter = 0;
 
   bool _completionEventPending = false;
@@ -194,8 +196,13 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
     audioPlayer.durationStream.listen(
       (duration) {
-        if (_currentQueueIndex < _queueList.length && duration != null) {
-          _updateCurrentMediaItemWithDuration(duration);
+        if (_currentQueueIndex < _queueList.length &&
+            duration != null &&
+            _playerSourceMatchesCurrentSong()) {
+          _updateCurrentMediaItemWithDuration(
+            duration,
+            preserveLongerKnown: _currentPlayerSourceIsClipped(),
+          );
         }
       },
       onError: (error, stackTrace) {
@@ -260,6 +267,36 @@ class MusifyAudioHandler extends BaseAudioHandler {
   List<MediaItem> _buildQueueMediaItems() =>
       _queueList.map(_getMediaItemForQueue).toList(growable: false);
 
+  bool _playerSourceMatchesCurrentSong() {
+    if (_currentQueueIndex < 0 || _currentQueueIndex >= _queueList.length) {
+      return false;
+    }
+
+    final sourceTag = audioPlayer.sequenceState.currentSource?.tag;
+    if (sourceTag is! MediaItem) return false;
+
+    final sourceYtid = sourceTag.extras?['ytid']?.toString();
+    final currentYtid = _queueList[_currentQueueIndex]['ytid']?.toString();
+    if (sourceYtid != null &&
+        sourceYtid.isNotEmpty &&
+        currentYtid != null &&
+        currentYtid.isNotEmpty) {
+      return sourceYtid == currentYtid;
+    }
+
+    final currentId = _queueList[_currentQueueIndex]['id']?.toString();
+    return currentId != null &&
+        currentId.isNotEmpty &&
+        sourceTag.id == currentId;
+  }
+
+  bool _currentPlayerSourceIsClipped() {
+    // A clipped SponsorBlock child can report only its own duration. Keeping
+    // the longer track metadata deliberately favors a stable full-track total
+    // over briefly publishing a segment length in the system notification.
+    return audioPlayer.sequenceState.currentSource is ClippingAudioSource;
+  }
+
   bool _shouldUpdateDuration(Duration? currentDuration, Duration nextDuration) {
     return currentDuration == null ||
         !durationEquals(currentDuration, nextDuration);
@@ -281,7 +318,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
         currentItem.extras?['ytid']?.toString() == currentSongYtid;
   }
 
-  void _updateCurrentMediaItemWithDuration(Duration duration) {
+  void _updateCurrentMediaItemWithDuration(
+    Duration duration, {
+    bool preserveLongerKnown = false,
+  }) {
     try {
       final queueIndex = _currentQueueIndex;
       if (queueIndex < 0 || queueIndex >= _queueList.length) return;
@@ -296,26 +336,82 @@ class MusifyAudioHandler extends BaseAudioHandler {
         currentSongYtid,
       );
 
+      final existingQueue = queue.valueOrNull;
+      final queueItem =
+          existingQueue != null && queueIndex < existingQueue.length
+          ? existingQueue[queueIndex]
+          : null;
+      final storedDuration = readMediaDuration(currentSong['duration']);
+      var stableDuration = storedDuration;
+      if (isMatchingCurrentItem) {
+        stableDuration = preferStableMediaDuration(
+          stableDuration,
+          currentItem?.duration,
+          preserveLongerKnown: true,
+        );
+      }
+      stableDuration = preferStableMediaDuration(
+        stableDuration,
+        queueItem?.duration,
+        preserveLongerKnown: true,
+      );
+      stableDuration = preferStableMediaDuration(
+        stableDuration,
+        duration,
+        preserveLongerKnown: preserveLongerKnown,
+      );
+      if (stableDuration == null) return;
+
+      final durationSeconds = stableDuration.inSeconds;
+      var queueMapChanged = false;
+      if (_shouldUpdateDuration(storedDuration, stableDuration)) {
+        currentSong['duration'] = durationSeconds;
+        queueMapChanged = true;
+      }
+      final queueEntryId = _queueEntryIds.ensureId(currentSong);
+      for (final originalSong in _originalQueueList) {
+        if (_queueEntryIds.ensureId(originalSong) == queueEntryId) {
+          if (_shouldUpdateDuration(
+            readMediaDuration(originalSong['duration']),
+            stableDuration,
+          )) {
+            originalSong['duration'] = durationSeconds;
+          }
+          break;
+        }
+      }
+
+      var mediaItemChanged = false;
       if (currentItem != null &&
           isMatchingCurrentItem &&
-          _shouldUpdateDuration(currentItem.duration, duration)) {
-        mediaItem.add(currentItem.copyWith(duration: duration));
+          _shouldUpdateDuration(currentItem.duration, stableDuration)) {
+        mediaItem.add(currentItem.copyWith(duration: stableDuration));
+        mediaItemChanged = true;
       } else if (!isMatchingCurrentItem) {
-        mediaItem.add(currentMediaItem.copyWith(duration: duration));
+        mediaItem.add(currentMediaItem.copyWith(duration: stableDuration));
+        mediaItemChanged = true;
       }
 
       listeningStatsService.updateListeningSessionDuration(
         currentSongYtid,
-        duration,
+        stableDuration,
       );
 
-      final existingQueue = queue.valueOrNull;
       if (existingQueue != null && queueIndex < existingQueue.length) {
-        final queueItem = existingQueue[queueIndex];
-        if (_shouldUpdateDuration(queueItem.duration, duration)) {
+        var publishedQueueChanged = false;
+        if (_shouldUpdateDuration(queueItem?.duration, stableDuration)) {
           final updatedQueue = List<MediaItem>.from(existingQueue);
-          updatedQueue[queueIndex] = queueItem.copyWith(duration: duration);
+          updatedQueue[queueIndex] = queueItem!.copyWith(
+            duration: stableDuration,
+          );
           queue.add(updatedQueue);
+          publishedQueueChanged = true;
+        }
+        if (queueMapChanged) {
+          _queueMapStream.add(List.unmodifiable(_queueList));
+        }
+        if (mediaItemChanged || publishedQueueChanged) {
+          _updatePlaybackState(force: true);
         }
         return;
       }
@@ -323,10 +419,14 @@ class MusifyAudioHandler extends BaseAudioHandler {
       final rebuiltQueue = _buildQueueMediaItems();
       if (queueIndex < rebuiltQueue.length) {
         rebuiltQueue[queueIndex] = rebuiltQueue[queueIndex].copyWith(
-          duration: duration,
+          duration: stableDuration,
         );
       }
       queue.add(rebuiltQueue);
+      if (queueMapChanged) {
+        _queueMapStream.add(List.unmodifiable(_queueList));
+      }
+      _updatePlaybackState(force: true);
     } catch (e, stackTrace) {
       logger.log(
         'Error updating media item with duration',
@@ -531,9 +631,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
         const Duration(milliseconds: 500);
   }
 
-  void _updatePlaybackState() {
+  void _updatePlaybackState({bool force = false}) {
     if (_isUpdatingState) {
       _pendingPlaybackStateUpdate = true;
+      _pendingForcedPlaybackStateUpdate |= force;
       return;
     }
 
@@ -574,7 +675,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
             currentState.speed,
           ));
 
-      if (shouldUpdate) {
+      if (force || shouldUpdate) {
         playbackState.add(
           PlaybackState(
             controls: _controls(isPlaying),
@@ -607,8 +708,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
     } finally {
       _isUpdatingState = false;
       if (_pendingPlaybackStateUpdate) {
+        final forcePendingUpdate = _pendingForcedPlaybackStateUpdate;
         _pendingPlaybackStateUpdate = false;
-        _updatePlaybackState();
+        _pendingForcedPlaybackStateUpdate = false;
+        _updatePlaybackState(force: forcePendingUpdate);
       }
     }
   }
@@ -2004,7 +2107,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       // source, not whatever session we're about to finish.
       final wasPlayingBeforeSwap = audioPlayer.playing;
 
-      await audioPlayer
+      final loadedDuration = await audioPlayer
           .setAudioSource(audioSource)
           .timeout(_songTransitionTimeout);
 
@@ -2016,8 +2119,12 @@ class MusifyAudioHandler extends BaseAudioHandler {
         return false;
       }
 
-      if (audioPlayer.duration != null) {
-        _updateCurrentMediaItemWithDuration(audioPlayer.duration!);
+      final resolvedDuration = loadedDuration ?? audioPlayer.duration;
+      if (resolvedDuration != null && _playerSourceMatchesCurrentSong()) {
+        _updateCurrentMediaItemWithDuration(
+          resolvedDuration,
+          preserveLongerKnown: _currentPlayerSourceIsClipped(),
+        );
       }
 
       // Finish the old session and start the new one as one atomic pair, only
@@ -2335,6 +2442,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
             child: source,
             start: Duration(seconds: lastEnd),
             end: Duration(seconds: start),
+            tag: source.tag,
           ),
         );
       }
@@ -2344,6 +2452,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       ClippingAudioSource(
         child: source,
         start: Duration(seconds: lastEnd),
+        tag: source.tag,
       ),
     );
     if (children.length == 1) return children.first;
