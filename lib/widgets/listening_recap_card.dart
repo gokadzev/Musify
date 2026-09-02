@@ -101,6 +101,10 @@ class ListeningRecapCard extends StatelessWidget {
             if (songs.isNotEmpty) ...[
               for (var i = 0; i < songs.length; i++)
                 SongBar(
+                  // Key by song identity so a reordered recap list rebinds each
+                  // row to its own song instead of reusing the previous
+                  // occupant's cached artwork.
+                  key: ValueKey(songs[i]['ytid'] ?? i),
                   songs[i],
                   false,
                   showPlayTime: true,
