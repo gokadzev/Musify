@@ -145,19 +145,15 @@ class MusifyAudioHandler extends BaseAudioHandler {
   Stream<PlaybackState> get playbackStateStream => _playbackStateStream;
 
   List<MediaControl> _controls(bool playing) {
-    final hasMultipleTracks = _queueList.length > 1;
-
+    // Keep a fixed control layout: swapping skipToPrevious/skipToNext for
+    // rewind/fastForward on single-track queues makes some system media UIs
+    // (e.g. HyperOS) mismap the action buttons against MediaControl.stop.
+    // skipToNext/skipToPrevious already no-op safely at the queue edges.
     return [
-      if (hasMultipleTracks)
-        MediaControl.skipToPrevious
-      else
-        MediaControl.rewind,
+      MediaControl.skipToPrevious,
       if (playing) MediaControl.pause else MediaControl.play,
       MediaControl.stop,
-      if (hasMultipleTracks)
-        MediaControl.skipToNext
-      else
-        MediaControl.fastForward,
+      MediaControl.skipToNext,
     ];
   }
 
