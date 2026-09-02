@@ -90,7 +90,7 @@ class _RadioStationCardState extends State<RadioStationCard> {
 
     return Card(
       elevation: 0,
-      color: colorScheme.surfaceContainer,
+      color: colorScheme.surfaceContainerLow,
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       margin: EdgeInsets.zero,
