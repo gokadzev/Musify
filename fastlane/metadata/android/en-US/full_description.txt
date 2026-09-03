@@ -4,6 +4,10 @@
 * Offline listening support
 * Import & export your data and never lose it
 * Add custom playlists with link
+* Artist Page
+* Listening Recaps
+* Spotify playlist import
+* Radio stations
 * Optimized sound experience
 * SponsorBlock support
 * Built-in equalizer with presets

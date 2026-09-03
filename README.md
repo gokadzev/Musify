@@ -29,6 +29,10 @@ Online song search with suggestions <br/>
 Offline listening support <br/>
 Import & export your data and never lose it <br/>
 Add custom playlists with link <br/>
+Artist Page <br/>
+Listening Recaps <br/>
+Spotify playlist import <br/>
+Radio stations <br/>
 Optimized sound experience <br/>
 SponsorBlock support <br/>
 Lyrics support <br/>
