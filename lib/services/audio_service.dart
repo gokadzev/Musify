@@ -24,6 +24,7 @@ import 'dart:io';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
+import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:musify/main.dart';
@@ -31,6 +32,7 @@ import 'package:musify/models/position_data.dart';
 import 'package:musify/services/common_services.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/listening_stats_service.dart';
+import 'package:musify/services/playlists_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/map_utils.dart';
 import 'package:musify/utilities/mediaitem.dart';
@@ -52,6 +54,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
     );
 
     _setupEventSubscriptions();
+    _setupMediaBrowserSubscriptions();
     _updatePlaybackState();
 
     audioPlayer.setAndroidAudioAttributes(
@@ -1388,6 +1391,12 @@ class MusifyAudioHandler extends BaseAudioHandler {
     if (mediaId.startsWith(_recentMediaIdPrefix)) {
       return mediaId.substring(_recentMediaIdPrefix.length);
     }
+    // Browse-tree ids carry their container; only the trailing token is a ytid,
+    // and for the queue it is a queue entry id that no lookup will match.
+    final song = _parseSongMediaId(mediaId);
+    if (song != null) {
+      return song.container == _rootQueue ? null : song.token;
+    }
     return mediaId.isEmpty ? null : mediaId;
   }
 
@@ -1497,16 +1506,263 @@ class MusifyAudioHandler extends BaseAudioHandler {
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // Android Auto / MediaBrowserService interface
+  // ---------------------------------------------------------------------------
+  //
+  // The car never sees Musify's widgets. It talks to the MediaBrowserService
+  // that audio_service registers for us, and everything the driver can do goes
+  // through four calls: [getChildren] builds the browse tree, [search] answers
+  // the search box, and [playFromMediaId] / [playFromSearch] start playback.
+  //
+  // A media id is the only thing that survives the trip to the head unit, so it
+  // carries both halves of what playback needs: the container the song was
+  // listed under, and the song's own token within it. That is what lets a tap
+  // rebuild the whole list as a queue rather than playing one orphaned track -
+  // without it the skip buttons on the steering wheel have nowhere to go.
+
   static const _rootLiked = 'liked_songs';
   static const _rootOffline = 'offline_songs';
   static const _rootRecent = 'recently_played';
   static const _rootQueue = 'current_queue';
+  static const _rootPlaylists = 'playlists';
+  static const _rootSearch = 'search_results';
+
+  static const String _songMediaIdPrefix = 'song:';
+  static const String _playlistMediaIdPrefix = 'playlist:';
+  static const int _maxSearchResults = 30;
+  static const Duration _browserFetchTimeout = Duration(seconds: 15);
+
+  /// Results of the most recent [search], kept so that tapping one of them can
+  /// enqueue the others behind it.
+  List<Map> _lastSearchResults = const [];
+
+  final Map<String, BehaviorSubject<Map<String, dynamic>>> _childrenSubjects =
+      {};
+
+  /// `song:<containerId>:<token>`. The token never contains a colon, so the
+  /// container id is free to contain separators of its own - playlist ids do.
+  String _songMediaId(String containerId, String token) =>
+      '$_songMediaIdPrefix$containerId:$token';
+
+  ({String container, String token})? _parseSongMediaId(String mediaId) {
+    if (!mediaId.startsWith(_songMediaIdPrefix)) return null;
+    final body = mediaId.substring(_songMediaIdPrefix.length);
+    final separator = body.lastIndexOf(':');
+    if (separator <= 0 || separator >= body.length - 1) return null;
+    return (
+      container: body.substring(0, separator),
+      token: body.substring(separator + 1),
+    );
+  }
+
+  String _playlistMediaId(String source, String id) =>
+      '$_playlistMediaIdPrefix$source:$id';
+
+  ({String source, String id})? _parsePlaylistMediaId(String mediaId) {
+    if (!mediaId.startsWith(_playlistMediaIdPrefix)) return null;
+    final body = mediaId.substring(_playlistMediaIdPrefix.length);
+    final separator = body.indexOf(':');
+    if (separator <= 0 || separator >= body.length - 1) return null;
+    return (
+      source: body.substring(0, separator),
+      id: body.substring(separator + 1),
+    );
+  }
+
+  /// Identifies a song inside its container.
+  ///
+  /// The queue is keyed by queue entry id rather than ytid because the same
+  /// song may legitimately sit in it more than once, and tapping the second
+  /// copy should not jump to the first.
+  String? _songToken(Map song, String containerId) => containerId == _rootQueue
+      ? _queueEntryIds.ensureId(song)
+      : _songYtid(song);
+
+  int _indexOfSongToken(List<Map> songs, String containerId, String token) =>
+      songs.indexWhere((song) => _songToken(song, containerId) == token);
+
+  // ---------------------------------------------------------------------------
+  // Browse tree
+  // ---------------------------------------------------------------------------
+
+  MediaItem _browsableCategory(
+    String id,
+    String title, {
+    int playableHint = AndroidContentStyle.listItemHintValue,
+  }) => MediaItem(
+    id: id,
+    title: title,
+    playable: false,
+    extras: {
+      'isBrowsable': true,
+      AndroidContentStyle.playableHintKey: playableHint,
+    },
+  );
+
+  MediaItem? _browsableSong(Map song, String containerId) {
+    final token = _songToken(song, containerId);
+    if (token == null || token.isEmpty) return null;
+
+    final normalised = _normaliseResumableSong(song);
+    if (normalised == null) return null;
+
+    final artist = normalised['artist']?.toString().trim() ?? '';
+    return mapToMediaItem(normalised).copyWith(
+      id: _songMediaId(containerId, token),
+      playable: true,
+      displayTitle: normalised['title']?.toString(),
+      displaySubtitle: artist.isEmpty ? 'Musify' : artist,
+    );
+  }
+
+  List<MediaItem> _browsableSongs(Iterable songs, String containerId) {
+    final items = <MediaItem>[];
+    for (final song in songs.whereType<Map>()) {
+      final item = _browsableSong(song, containerId);
+      if (item != null) items.add(item);
+    }
+    return items;
+  }
+
+  /// Android Auto draws an empty browse list as a blank screen, which reads as
+  /// a broken app. Saying why it is empty is worth one disabled row.
+  List<MediaItem> _emptyCategory(String parentMediaId, String message) => [
+    MediaItem(
+      id: '$parentMediaId:__empty__',
+      title: message,
+      playable: false,
+      extras: const {'isBrowsable': false},
+    ),
+  ];
+
+  String? _emptyCategoryMessage(String parentMediaId) {
+    switch (parentMediaId) {
+      case _rootQueue:
+        return 'Nothing in the queue yet';
+      case _rootLiked:
+        return 'No liked songs yet';
+      case _rootOffline:
+        return 'Nothing downloaded yet';
+      case _rootRecent:
+        return 'Nothing played yet';
+      case _rootPlaylists:
+        return 'No playlists yet';
+    }
+    return _parsePlaylistMediaId(parentMediaId) == null
+        ? null
+        : 'This playlist is empty';
+  }
+
+  /// User-created playlists first: they are stored locally, so they open
+  /// instantly and keep working with no signal.
+  List<Map> _browsablePlaylists() => [
+    ...getUserCustomPlaylists(),
+    ...getLikedPlaylistItems(),
+  ];
+
+  String _playlistSource(Map playlist) =>
+      playlist['source']?.toString() ?? 'user-created';
+
+  String? _playlistIdOf(Map playlist) {
+    final id = (playlist['ytid'] ?? playlist['id'])?.toString();
+    return id == null || id.isEmpty ? null : id;
+  }
+
+  MediaItem _playlistMediaItem(Map playlist, String id) {
+    final image = playlist['image']?.toString();
+    return MediaItem(
+      id: _playlistMediaId(_playlistSource(playlist), id),
+      title: playlist['title']?.toString() ?? 'Playlist',
+      playable: false,
+      artUri: image == null || image.isEmpty ? null : Uri.tryParse(image),
+      extras: const {'isBrowsable': true},
+    );
+  }
+
+  List<MediaItem> _playlistChildren() {
+    final items = <MediaItem>[];
+    for (final playlist in _browsablePlaylists()) {
+      final id = _playlistIdOf(playlist);
+      if (id != null) items.add(_playlistMediaItem(playlist, id));
+    }
+    return items;
+  }
+
+  Future<List<Map>> _songsForPlaylist(String source, String id) async {
+    final playlist = _browsablePlaylists().firstWhere(
+      (p) => _playlistIdOf(p) == id && _playlistSource(p) == source,
+      orElse: () => const {},
+    );
+    if (playlist.isEmpty) return const [];
+
+    // Custom playlists carry their songs inline; online ones have to be fetched.
+    final inline = playlist['list'];
+    if (inline is List && inline.isNotEmpty) {
+      return inline.whereType<Map>().toList();
+    }
+
+    // A user-created playlist is inline or it is empty - its id is a local
+    // timestamp, so asking YouTube about it would only buy a timeout.
+    if (source == 'user-created' || offlineMode.value) return const [];
+
+    try {
+      final songs = await getSongsFromPlaylist(
+        id,
+        playlistImage: playlist['image']?.toString(),
+      ).timeout(_browserFetchTimeout);
+      return songs.whereType<Map>().toList();
+    } catch (e, stackTrace) {
+      logger.log(
+        'Error loading playlist $id for the media browser',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      return const [];
+    }
+  }
+
+  /// Resolves a container id back to the songs it lists, in the order shown.
+  Future<List<Map>> _songsForContainer(String containerId) async {
+    switch (containerId) {
+      case _rootQueue:
+        return List<Map>.from(_queueList);
+      case _rootLiked:
+        return userLikedSongsList.value.whereType<Map>().toList();
+      case _rootOffline:
+        return userOfflineSongs.value.whereType<Map>().toList();
+      case _rootRecent:
+        return userRecentlyPlayed.value.whereType<Map>().toList();
+      case _rootSearch:
+        return List<Map>.from(_lastSearchResults);
+    }
+
+    final playlist = _parsePlaylistMediaId(containerId);
+    return playlist == null
+        ? const []
+        : _songsForPlaylist(playlist.source, playlist.id);
+  }
 
   @override
   Future<List<MediaItem>> getChildren(
     String parentMediaId, [
     Map<String, dynamic>? options,
   ]) async {
+    try {
+      return await _buildChildren(parentMediaId);
+    } catch (e, stackTrace) {
+      logger.log(
+        'Error building browse children for $parentMediaId',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      return const [];
+    }
+  }
+
+  Future<List<MediaItem>> _buildChildren(String parentMediaId) async {
+    // The recent root backs the "continue listening" tile the car shows before
+    // anything is playing, so it holds exactly one item.
     if (parentMediaId == AudioService.recentRootId) {
       final recentSong = _latestResumableSong();
       final recentItem = recentSong == null
@@ -1517,53 +1773,152 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
     if (parentMediaId == AudioService.browsableRootId) {
       return [
-        const MediaItem(
-          id: _rootQueue,
-          title: 'Now Playing Queue',
-          playable: false,
-          extras: {'isBrowsable': true},
+        _browsableCategory(_rootQueue, 'Now Playing Queue'),
+        _browsableCategory(_rootLiked, 'Liked Songs'),
+        _browsableCategory(
+          _rootPlaylists,
+          'Playlists',
+          playableHint: AndroidContentStyle.gridItemHintValue,
         ),
-        const MediaItem(
-          id: _rootLiked,
-          title: 'Liked Songs',
-          playable: false,
-          extras: {'isBrowsable': true},
-        ),
-        const MediaItem(
-          id: _rootOffline,
-          title: 'Downloaded',
-          playable: false,
-          extras: {'isBrowsable': true},
-        ),
-        const MediaItem(
-          id: _rootRecent,
-          title: 'Recently Played',
-          playable: false,
-          extras: {'isBrowsable': true},
-        ),
+        _browsableCategory(_rootOffline, 'Downloaded'),
+        _browsableCategory(_rootRecent, 'Recently Played'),
       ];
     }
 
-    switch (parentMediaId) {
-      case _rootQueue:
-        return _queueList.map(_getMediaItemForQueue).toList();
-      case _rootLiked:
-        return userLikedSongsList.value
-            .whereType<Map>()
-            .map((s) => mapToMediaItem(s).copyWith(playable: true))
-            .toList();
-      case _rootOffline:
-        return userOfflineSongs.value
-            .whereType<Map>()
-            .map((s) => mapToMediaItem(s).copyWith(playable: true))
-            .toList();
-      case _rootRecent:
-        return userRecentlyPlayed.value
-            .whereType<Map>()
-            .map((s) => mapToMediaItem(s).copyWith(playable: true))
-            .toList();
-      default:
-        return [];
+    if (parentMediaId == _rootPlaylists) {
+      final playlists = _playlistChildren();
+      return playlists.isEmpty
+          ? _emptyCategory(parentMediaId, _emptyCategoryMessage(parentMediaId)!)
+          : playlists;
+    }
+
+    final songs = await _songsForContainer(parentMediaId);
+    if (songs.isNotEmpty) return _browsableSongs(songs, parentMediaId);
+
+    final message = _emptyCategoryMessage(parentMediaId);
+    return message == null ? const [] : _emptyCategory(parentMediaId, message);
+  }
+
+  /// Without this the car keeps showing the library exactly as it was when it
+  /// connected: liking a song on the phone, or finishing a download, would not
+  /// show up until the driver unplugged and plugged back in. Each root
+  /// republishes when its backing data changes, and audio_service turns that
+  /// into the `notifyChildrenChanged` the Android media browser listens for.
+  @override
+  ValueStream<Map<String, dynamic>> subscribeToChildren(String parentMediaId) {
+    return _childrenSubjects.putIfAbsent(
+      parentMediaId,
+      () => BehaviorSubject<Map<String, dynamic>>.seeded(<String, dynamic>{}),
+    );
+  }
+
+  void _notifyChildrenChanged(List<String> parentMediaIds) {
+    for (final parentMediaId in parentMediaIds) {
+      final subject = _childrenSubjects[parentMediaId];
+      if (subject != null && !subject.isClosed) {
+        subject.add(<String, dynamic>{});
+      }
+    }
+  }
+
+  void _setupMediaBrowserSubscriptions() {
+    void watch(Listenable source, List<String> parents) {
+      source.addListener(() => _notifyChildrenChanged(parents));
+    }
+
+    watch(userLikedSongsList, const [_rootLiked]);
+    watch(userOfflineSongs, const [_rootOffline]);
+    watch(userRecentlyPlayed, const [_rootRecent, AudioService.recentRootId]);
+    watch(userCustomPlaylists, const [_rootPlaylists]);
+    watch(userLikedPlaylists, const [_rootPlaylists]);
+    watch(userPlaylistFolders, const [_rootPlaylists]);
+
+    // The queue republishes several times per song (duration fills in, the
+    // index moves), and every emission costs a round trip to the head unit.
+    // Throttling keeps the car in sync without narrating each update.
+    queue
+        .throttleTime(const Duration(seconds: 2), trailing: true)
+        .listen(
+          (_) => _notifyChildrenChanged(const [_rootQueue]),
+          onError: (Object error, StackTrace stackTrace) {
+            _logStreamError('Queue browse stream error', error, stackTrace);
+          },
+        );
+  }
+
+  // ---------------------------------------------------------------------------
+  // Search
+  // ---------------------------------------------------------------------------
+
+  bool _songMatches(Map song, String needle) {
+    final title = song['title']?.toString().toLowerCase() ?? '';
+    if (title.contains(needle)) return true;
+    final artist = song['artist']?.toString().toLowerCase() ?? '';
+    return artist.contains(needle);
+  }
+
+  /// Searches the device first - that answers instantly and works with no
+  /// connection - then tops the list up from YouTube.
+  Future<List<Map>> _searchSongs(String query) async {
+    final trimmed = query.trim();
+    if (trimmed.isEmpty) return const [];
+
+    final needle = trimmed.toLowerCase();
+    final results = <Map>[];
+    final seen = <String>{};
+
+    void collect(Iterable songs) {
+      for (final song in songs.whereType<Map>()) {
+        if (results.length >= _maxSearchResults) return;
+        final ytid = _songYtid(song);
+        if (ytid == null || seen.contains(ytid)) continue;
+        if (!_songMatches(song, needle)) continue;
+        seen.add(ytid);
+        results.add(song);
+      }
+    }
+
+    collect(userLikedSongsList.value);
+    collect(userOfflineSongs.value);
+    collect(userRecentlyPlayed.value);
+    collect(_queueList);
+
+    if (results.length >= _maxSearchResults || offlineMode.value) {
+      return results;
+    }
+
+    try {
+      final online = await fetchSongsList(trimmed)
+          .timeout(_browserFetchTimeout);
+      for (final song in online.whereType<Map>()) {
+        if (results.length >= _maxSearchResults) break;
+        final ytid = _songYtid(song);
+        if (ytid == null || !seen.add(ytid)) continue;
+        results.add(song);
+      }
+    } catch (e, stackTrace) {
+      logger.log(
+        'Media browser search failed for "$trimmed"',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
+
+    return results;
+  }
+
+  @override
+  Future<List<MediaItem>> search(
+    String query, [
+    Map<String, dynamic>? extras,
+  ]) async {
+    try {
+      final results = await _searchSongs(query);
+      _lastSearchResults = results;
+      return _browsableSongs(results, _rootSearch);
+    } catch (e, stackTrace) {
+      logger.log('Error in search', error: e, stackTrace: stackTrace);
+      return const [];
     }
   }
 
@@ -1572,42 +1927,53 @@ class MusifyAudioHandler extends BaseAudioHandler {
     String query, [
     Map<String, dynamic>? extras,
   ]) async {
-    if (query.trim().isEmpty) {
-      // "Play music" with no specifics
-      if (_queueList.isNotEmpty) {
-        await play();
+    try {
+      // "Play music", with nothing specific asked for.
+      if (query.trim().isEmpty) {
+        if (_queueList.isNotEmpty) {
+          await play();
+          return;
+        }
+        final recentSong = _latestResumableSong();
+        if (recentSong != null) await _playResumableSong(recentSong);
         return;
       }
-      final recentSong = _latestResumableSong();
-      if (recentSong != null) await _playResumableSong(recentSong);
-      return;
-    }
 
-    final q = query.trim().toLowerCase();
-    final candidates = [
-      ..._queueList,
-      ...userLikedSongsList.value.whereType<Map>(),
-      ...userOfflineSongs.value.whereType<Map>(),
-      ...userRecentlyPlayed.value.whereType<Map>(),
-    ];
+      final results = await _searchSongs(query);
+      if (results.isEmpty) {
+        logger.log('playFromSearch: no match for "$query"');
+        return;
+      }
 
-    final match = candidates.firstWhere((s) {
-      final title = s['title']?.toString().toLowerCase() ?? '';
-      final artist = s['artist']?.toString().toLowerCase() ?? '';
-      return title.contains(q) || artist.contains(q);
-    }, orElse: () => const {});
-
-    if (match.isNotEmpty) {
-      await _playResumableSong(match);
-    } else {
-      logger.log('playFromSearch: no local match for "$query"');
+      // Queue every hit, not just the best one, so the car has something to
+      // skip to when the first guess was wrong.
+      _lastSearchResults = results;
+      await addPlaylistToQueue(results, replace: true, startIndex: 0);
+    } catch (e, stackTrace) {
+      logger.log('Error in playFromSearch', error: e, stackTrace: stackTrace);
     }
   }
 
+  // ---------------------------------------------------------------------------
+  // Playback from the browse tree
+  // ---------------------------------------------------------------------------
+
   @override
   Future<MediaItem?> getMediaItem(String mediaId) async {
-    final song = _findSongByYtid(_ytidFromMediaId(mediaId));
-    return song == null ? null : _mediaItemForResumption(song);
+    try {
+      final parsed = _parseSongMediaId(mediaId);
+      if (parsed != null) {
+        final songs = await _songsForContainer(parsed.container);
+        final index = _indexOfSongToken(songs, parsed.container, parsed.token);
+        if (index >= 0) return _browsableSong(songs[index], parsed.container);
+      }
+
+      final song = _findSongByYtid(_ytidFromMediaId(mediaId));
+      return song == null ? null : _mediaItemForResumption(song);
+    } catch (e, stackTrace) {
+      logger.log('Error in getMediaItem', error: e, stackTrace: stackTrace);
+      return null;
+    }
   }
 
   @override
@@ -1636,17 +2002,50 @@ class MusifyAudioHandler extends BaseAudioHandler {
     );
   }
 
+  /// Plays [token] with the rest of [containerId] queued behind it, so the
+  /// car's skip controls walk the list the driver was just looking at.
+  Future<bool> _playFromContainer(String containerId, String token) async {
+    final songs = await _songsForContainer(containerId);
+    if (songs.isEmpty) return false;
+
+    final index = _indexOfSongToken(songs, containerId, token);
+    if (index < 0) return false;
+
+    // The queue is already loaded - jumping is cheaper than rebuilding it, and
+    // it keeps anything the user queued manually in place.
+    if (containerId == _rootQueue) {
+      await skipToQueueItem(index);
+      return true;
+    }
+
+    await addPlaylistToQueue(songs, replace: true, startIndex: index);
+    return true;
+  }
+
   @override
   Future<void> playFromMediaId(
     String mediaId, [
     Map<String, dynamic>? extras,
   ]) async {
-    final song = _findSongByYtid(_ytidFromMediaId(mediaId));
-    if (song == null) {
-      logger.log('No resumable song found for media id: $mediaId');
-      return;
+    try {
+      final parsed = _parseSongMediaId(mediaId);
+      if (parsed != null &&
+          await _playFromContainer(parsed.container, parsed.token)) {
+        return;
+      }
+
+      // Ids that did not come from the browse tree - the resume tile, or one
+      // the head unit remembered from a previous session - still name a song.
+      final song = _findSongByYtid(_ytidFromMediaId(mediaId));
+      if (song != null) {
+        await _playResumableSong(song);
+        return;
+      }
+
+      logger.log('No playable song found for media id: $mediaId');
+    } catch (e, stackTrace) {
+      logger.log('Error in playFromMediaId', error: e, stackTrace: stackTrace);
     }
-    await _playResumableSong(song);
   }
 
   @override
