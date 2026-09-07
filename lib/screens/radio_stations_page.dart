@@ -75,8 +75,6 @@ class RadioStationsPage extends StatelessWidget {
                     ),
                   );
                 }),
-                // Lets the list scroll under the floating mini player instead of
-                // ending in a blank strip above it.
                 const MiniPlayerBottomSpace(),
               ],
             ),
