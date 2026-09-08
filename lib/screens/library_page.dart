@@ -60,9 +60,8 @@ class _LibraryPageState extends State<LibraryPage> {
           userCustomPlaylists.value.isNotEmpty;
       final hasOfflinePlaylists = offlinePlaylistService.offlinePlaylists.value
           .any((p) => p is Map && !PlaylistUtils.isArtistPlaylist(p));
-      final hasOfflineArtists = getLikedArtistItems(
-        offlineOnly: true,
-      ).isNotEmpty;
+      final hasOfflineArtists = getLikedArtistItems(offlineOnly: true)
+          .isNotEmpty;
       final hasOfflineSongs = userOfflineSongs.value.isNotEmpty;
 
       if (!hasUserContent &&
@@ -102,9 +101,8 @@ class _LibraryPageState extends State<LibraryPage> {
                   const SizedBox(height: 8),
                   Text(
                     context.l10n!.noOfflineLibraryContent,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                    ),
+                    style: Theme.of(context).textTheme.bodyMedium
+                        ?.copyWith(color: colorScheme.onSurfaceVariant),
                     textAlign: TextAlign.center,
                   ),
                 ],

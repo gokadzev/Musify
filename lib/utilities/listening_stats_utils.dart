@@ -254,9 +254,8 @@ List<Map<String, dynamic>> annualListeningSongsFromMonths(
       existing['playCount'] =
           _readInt(existing['playCount']) + _readInt(source['playCount']);
       existing['listeningCount'] = existing['playCount'];
-      if (_readDate(
-        source['lastPlayed'],
-      ).isAfter(_readDate(existing['lastPlayed']))) {
+      if (_readDate(source['lastPlayed'])
+          .isAfter(_readDate(existing['lastPlayed']))) {
         _copyLatestSongMetadata(existing, source);
       }
       songs[ytid] = existing;
@@ -427,9 +426,8 @@ Map<String, dynamic> _mergeMonthStats(
         _readInt(existing['playCount']) + _readInt(sourceSong['playCount']);
     existing['listeningCount'] = existing['playCount'];
 
-    if (_readDate(
-      sourceSong['lastPlayed'],
-    ).isAfter(_readDate(existing['lastPlayed']))) {
+    if (_readDate(sourceSong['lastPlayed'])
+        .isAfter(_readDate(existing['lastPlayed']))) {
       _copyLatestSongMetadata(existing, sourceSong);
     }
 
@@ -628,14 +626,12 @@ void _copyLatestSongMetadata(
 }
 
 int _compareSongStats(Map<String, dynamic> a, Map<String, dynamic> b) {
-  final playComparison = _readInt(
-    b['playCount'],
-  ).compareTo(_readInt(a['playCount']));
+  final playComparison = _readInt(b['playCount'])
+      .compareTo(_readInt(a['playCount']));
   if (playComparison != 0) return playComparison;
 
-  final secondsComparison = _readInt(
-    b['seconds'],
-  ).compareTo(_readInt(a['seconds']));
+  final secondsComparison = _readInt(b['seconds'])
+      .compareTo(_readInt(a['seconds']));
   if (secondsComparison != 0) return secondsComparison;
 
   return _readDate(b['lastPlayed']).compareTo(_readDate(a['lastPlayed']));

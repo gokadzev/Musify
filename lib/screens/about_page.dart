@@ -75,9 +75,9 @@ class AboutPage extends StatelessWidget {
                     child: Text(
                       'v$appVersion',
                       style: TextStyle(
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.onSecondaryContainer,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSecondaryContainer,
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.2,
@@ -125,9 +125,9 @@ class AboutPage extends StatelessWidget {
                           Text(
                             'WEB & APP Developer',
                             style: TextStyle(
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.onSurfaceVariant,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurfaceVariant,
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
                             ),

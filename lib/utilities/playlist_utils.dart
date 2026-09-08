@@ -20,6 +20,7 @@
  */
 
 import 'dart:math';
+
 import 'package:musify/services/playlist_download_service.dart';
 
 class PlaylistUtils {

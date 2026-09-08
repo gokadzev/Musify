@@ -81,8 +81,7 @@ String getLanguageDisplayName(BuildContext context, String languageCode) {
     case 'uk':
       return l10n.languageUk;
     default:
-      return l10n
-          .languageEn; // Fallback to English if the language code is not recognized
+      return l10n.languageEn; // Fallback to English if the language code is not recognized
   }
 }
 
