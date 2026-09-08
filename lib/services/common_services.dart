@@ -58,6 +58,28 @@ ValueNotifier<List> userOfflineSongs = ValueNotifier<List>(
   Hive.box('userNoBackup').get('offlineSongs', defaultValue: []),
 );
 
+Set<String> _createSongIdCache(ValueNotifier<List> source) {
+  final cache = _songIds(source.value);
+
+  source.addListener(() {
+    cache
+      ..clear()
+      ..addAll(_songIds(source.value));
+  });
+
+  return cache;
+}
+
+Set<String> _songIds(Iterable songs) => songs
+    .whereType<Map>()
+    .map((song) => song['ytid']?.toString())
+    .whereType<String>()
+    .where((ytid) => ytid.isNotEmpty)
+    .toSet();
+
+final _cachedLikedSongIds = _createSongIdCache(userLikedSongsList);
+final _cachedOfflineSongIds = _createSongIdCache(userOfflineSongs);
+
 dynamic nextRecommendedSong;
 
 var _songLikeUpdateToken = 0;
@@ -390,9 +412,7 @@ Future<void> renameSongInLikedSongs(
 
 bool isSongAlreadyLiked(songIdToCheck) {
   final songId = songIdToCheck?.toString();
-  return userLikedSongsList.value.any(
-    (song) => song['ytid']?.toString() == songId,
-  );
+  return songId != null && _cachedLikedSongIds.contains(songId);
 }
 
 bool isPlaylistAlreadyLiked(playlistIdToCheck) {
@@ -431,8 +451,10 @@ Future<void> removeRadioStationFromLiked(String radioStationId) async {
   }
 }
 
-bool isSongAlreadyOffline(songIdToCheck) =>
-    userOfflineSongs.value.any((song) => song['ytid'] == songIdToCheck);
+bool isSongAlreadyOffline(songIdToCheck) {
+  final songId = songIdToCheck?.toString();
+  return songId != null && _cachedOfflineSongIds.contains(songId);
+}
 
 bool isPlaylistFullyOffline(List songs) {
   if (songs.isEmpty) return false;
