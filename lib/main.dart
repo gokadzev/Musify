@@ -50,7 +50,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
 late MusifyAudioHandler audioHandler;
-late StreamSubscription<String?> sharingIntentSubscription;
+StreamSubscription<String?>? sharingIntentSubscription;
+StreamSubscription<Uri?>? appLinksSubscription;
 
 final logger = Logger();
 final appLinks = AppLinks();
@@ -215,7 +216,8 @@ class _MusifyState extends State<Musify> with WidgetsBindingObserver {
     offlineMode.removeListener(_onOfflineModeChanged);
 
     Hive.close();
-    sharingIntentSubscription.cancel();
+    unawaited(sharingIntentSubscription?.cancel());
+    unawaited(appLinksSubscription?.cancel());
     super.dispose();
   }
 
@@ -300,7 +302,7 @@ Future<void> initialisation() async {
 
     try {
       // Listen to incoming links while app is running
-      appLinks.uriLinkStream.listen(
+      appLinksSubscription = appLinks.uriLinkStream.listen(
         handleIncomingLink,
         onError: (err) {
           logger.log('URI link error:', error: err);
