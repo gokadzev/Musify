@@ -214,6 +214,7 @@ class _MusifyState extends State<Musify> with WidgetsBindingObserver {
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     offlineMode.removeListener(_onOfflineModeChanged);
+    PlatformDispatcher.instance.onPlatformBrightnessChanged = null;
 
     Hive.close();
     unawaited(sharingIntentSubscription?.cancel());
