@@ -622,9 +622,14 @@ Future<AudioOnlyStreamInfo?> fetchBestAudioStream(String? songId) async {
       return null;
     }
 
-    final selectedStream = selectAudioOnlyStreamForQuality(
-      audioStream.sortByBitrate(),
-    );
+    final selectedStream = selectAudioOnlyStreamForQuality(audioStream);
+    if (selectedStream == null) {
+      logger.log(
+        'fetchBestAudioStream: no compatible audio streams for $songId',
+      );
+      return null;
+    }
+
     _cacheSelectedAudioStream(songId, selectedStream);
     return selectedStream;
   } on TimeoutException catch (_) {

@@ -110,61 +110,42 @@ String formatMonthPeriodLabel(Locale locale, String monthKey) {
   final month = int.tryParse(parts[1]);
   if (year == null || month == null) return monthKey;
 
-  final label = DateFormat.yMMMM(locale.toString()).format(
-    DateTime(year, month),
-  );
+  final label = DateFormat.yMMMM(locale.toString())
+      .format(DateTime(year, month));
   return label.isEmpty
       ? monthKey
       : '${label[0].toUpperCase()}${label.substring(1)}';
 }
 
-AudioOnlyStreamInfo selectAudioOnlyStreamForQuality(
+AudioOnlyStreamInfo? selectAudioOnlyStreamForQuality(
   List<AudioOnlyStreamInfo> availableSources,
 ) {
-  final sortedByCompatibility = _sortAudioOnlyByCompatibility(availableSources);
-  final compatibleSources = _filterCompatibleAudioOnlySources(
-    sortedByCompatibility,
-  );
-  final selectionPool = compatibleSources.isNotEmpty
-      ? compatibleSources
-      : sortedByCompatibility;
+  if (availableSources.isEmpty) return null;
+
+  final compatibleSources = _filterCompatibleAudioOnlySources(availableSources);
+  final selectionPool =
+      (compatibleSources.isNotEmpty
+            ? compatibleSources
+            : List<AudioOnlyStreamInfo>.from(availableSources))
+        ..sort((a, b) => b.bitrate.compareTo(a.bitrate));
 
   final qualitySetting = audioQualitySetting.value;
 
   if (qualitySetting == 'low') {
     return selectionPool.last;
   } else if (qualitySetting == 'medium') {
-    return selectionPool[selectionPool.length ~/ 2];
+    return selectionPool[(selectionPool.length - 1) ~/ 2];
   }
 
-  return selectionPool.withHighestBitrate();
+  return selectionPool.first;
 }
 
 List<AudioOnlyStreamInfo> _filterCompatibleAudioOnlySources(
   List<AudioOnlyStreamInfo> sources,
 ) {
-  return sources.where((stream) {
-    final codec = stream.codec.toString().toLowerCase();
-    final container = stream.container.name.toLowerCase();
-
-    if (_isDolbyCodec(codec)) {
-      return false;
-    }
-
-    return _isPreferredAudioOnlyCodec(codec, container);
-  }).toList();
-}
-
-List<AudioOnlyStreamInfo> _sortAudioOnlyByCompatibility(
-  List<AudioOnlyStreamInfo> sources,
-) {
-  final sorted = List<AudioOnlyStreamInfo>.from(sources)
-    ..sort((a, b) {
-      final aScore = _audioOnlyCompatibilityScore(a);
-      final bScore = _audioOnlyCompatibilityScore(b);
-      return bScore.compareTo(aScore);
-    });
-  return sorted;
+  return sources
+      .where((stream) => _audioOnlyCompatibilityScore(stream) >= 2)
+      .toList();
 }
 
 int _audioOnlyCompatibilityScore(AudioOnlyStreamInfo stream) {
@@ -192,13 +173,4 @@ bool _isDolbyCodec(String codec) {
       codec.contains('ac-3') ||
       codec.contains('eac3') ||
       codec.contains('dolby');
-}
-
-bool _isPreferredAudioOnlyCodec(String codec, String container) {
-  if ((codec.contains('mp4a') || codec.contains('aac')) &&
-      (container == 'mp4' || container == 'm4a')) {
-    return true;
-  }
-
-  return codec.contains('opus') || codec.contains('vorbis');
 }
