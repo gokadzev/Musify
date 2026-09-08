@@ -58,12 +58,6 @@ final ValueNotifier<List> searchHistoryNotifier = ValueNotifier<List>(
   Hive.box('user').get('searchHistory', defaultValue: []),
 );
 
-// Backward compatibility - keep the global variable for existing code
-List get searchHistory => searchHistoryNotifier.value;
-set searchHistory(List value) {
-  searchHistoryNotifier.value = value;
-}
-
 void reloadSearchHistoryFromStorage() {
   searchHistoryNotifier.value = Hive.box('user')
       .get('searchHistory', defaultValue: []);
@@ -131,17 +125,18 @@ class _SearchPageState extends State<SearchPage> {
     _albumsSearchResult = [];
     _playlistsSearchResult = [];
     _radioStationsSearchResult = radioStationsDB
-      .where(
-        (station) =>
-          station.name.toLowerCase().contains(query.toLowerCase()) ||
-          (station.genre?.toLowerCase().contains(query.toLowerCase()) ??
-            false),
-      )
-      .toList();
+        .where(
+          (station) =>
+              station.name.toLowerCase().contains(query.toLowerCase()) ||
+              (station.genre?.toLowerCase().contains(query.toLowerCase()) ??
+                  false),
+        )
+        .toList();
     if (mounted) setState(() {});
 
-    if (!searchHistory.contains(query)) {
-      final updatedHistory = List.from(searchHistory)..insert(0, query);
+    if (!searchHistoryNotifier.value.contains(query)) {
+      final updatedHistory = List.from(searchHistoryNotifier.value)
+        ..insert(0, query);
       searchHistoryNotifier.value = updatedHistory;
       unawaited(addOrUpdateData<List>('user', 'searchHistory', updatedHistory));
     }
