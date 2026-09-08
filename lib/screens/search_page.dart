@@ -111,7 +111,7 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Future<void> search() async {
-    final query = _searchBar.text;
+    final query = _searchBar.text.trim();
     final requestId = ++_latestSearchRequest;
 
     if (query.isEmpty) {
@@ -126,6 +126,20 @@ class _SearchPageState extends State<SearchPage> {
     }
     _fetchingSongs.value = true;
 
+    _songsSearchResult = [];
+    _artistsSearchResult = [];
+    _albumsSearchResult = [];
+    _playlistsSearchResult = [];
+    _radioStationsSearchResult = radioStationsDB
+      .where(
+        (station) =>
+          station.name.toLowerCase().contains(query.toLowerCase()) ||
+          (station.genre?.toLowerCase().contains(query.toLowerCase()) ??
+            false),
+      )
+      .toList();
+    if (mounted) setState(() {});
+
     if (!searchHistory.contains(query)) {
       final updatedHistory = List.from(searchHistory)..insert(0, query);
       searchHistoryNotifier.value = updatedHistory;
@@ -133,35 +147,91 @@ class _SearchPageState extends State<SearchPage> {
     }
 
     try {
-      final results = await Future.wait<List<dynamic>>([
-        fetchSongsList(query),
-        searchArtists(query),
-        getPlaylists(query: query, type: 'album'),
-        getPlaylists(query: query, type: 'playlist'),
-      ]);
+      final artistsFuture = searchArtists(query);
 
-      if (!mounted || requestId != _latestSearchRequest) return;
+      Future<void> publishSongs() async {
+        try {
+          var songs = await fetchSongsList(query);
+          if (!mounted || requestId != _latestSearchRequest) return;
 
-      _songsSearchResult = results[0];
-      _artistsSearchResult = results[1]
-          .whereType<Map>()
-          .map(Map<String, dynamic>.from)
-          .toList();
-      if (_songsSearchResult.isEmpty && _artistsSearchResult.isNotEmpty) {
-        _songsSearchResult = await _fetchSongsForResolvedArtist(query);
+          if (songs.isEmpty) {
+            final artists = await artistsFuture;
+            if (!mounted || requestId != _latestSearchRequest) return;
+            if (_artistsSearchResult.isEmpty) {
+              _artistsSearchResult = artists
+                  .whereType<Map>()
+                  .map(Map<String, dynamic>.from)
+                  .toList();
+            }
+            if (_artistsSearchResult.isNotEmpty) {
+              songs = await _fetchSongsForResolvedArtist(query);
+            }
+          }
+
+          if (!mounted || requestId != _latestSearchRequest) return;
+          setState(() => _songsSearchResult = songs);
+        } catch (e, stackTrace) {
+          logger.log(
+            'Error while searching online songs',
+            error: e,
+            stackTrace: stackTrace,
+          );
+        }
       }
-      _albumsSearchResult = results[2];
-      _playlistsSearchResult = results[3];
 
-      // Filter radio stations by name or genre
-      _radioStationsSearchResult = radioStationsDB
-          .where(
-            (station) =>
-                station.name.toLowerCase().contains(query.toLowerCase()) ||
-                (station.genre?.toLowerCase().contains(query.toLowerCase()) ??
-                    false),
-          )
-          .toList();
+      Future<void> publishArtists() async {
+        try {
+          final artists = await artistsFuture;
+          if (!mounted || requestId != _latestSearchRequest) return;
+          setState(() {
+            _artistsSearchResult = artists
+                .whereType<Map>()
+                .map(Map<String, dynamic>.from)
+                .toList();
+          });
+        } catch (e, stackTrace) {
+          logger.log(
+            'Error while searching online artists',
+            error: e,
+            stackTrace: stackTrace,
+          );
+        }
+      }
+
+      Future<void> publishAlbums() async {
+        try {
+          final albums = await getPlaylists(query: query, type: 'album');
+          if (!mounted || requestId != _latestSearchRequest) return;
+          setState(() => _albumsSearchResult = albums);
+        } catch (e, stackTrace) {
+          logger.log(
+            'Error while searching online albums',
+            error: e,
+            stackTrace: stackTrace,
+          );
+        }
+      }
+
+      Future<void> publishPlaylists() async {
+        try {
+          final playlists = await getPlaylists(query: query, type: 'playlist');
+          if (!mounted || requestId != _latestSearchRequest) return;
+          setState(() => _playlistsSearchResult = playlists);
+        } catch (e, stackTrace) {
+          logger.log(
+            'Error while searching online playlists',
+            error: e,
+            stackTrace: stackTrace,
+          );
+        }
+      }
+
+      await Future.wait([
+        publishSongs(),
+        publishArtists(),
+        publishAlbums(),
+        publishPlaylists(),
+      ]);
     } catch (e, stackTrace) {
       logger.log(
         'Error while searching online songs',
