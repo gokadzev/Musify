@@ -22,6 +22,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/widgets.dart';
 import 'package:hive/hive.dart';
@@ -194,10 +195,26 @@ Future<List> _getRecommendationsFromRecentlyPlayed() async {
     userRecentlyPlayed.value,
   )..shuffle()).take(5).toList();
 
+  return _getRecommendationsFromSeedSongs(recent);
+}
+
+/// Expands a handful of seed songs into their related videos and ranks the
+/// result by how high each pick appeared and how early its seed was listed.
+///
+/// This is the shared core behind both the home screen's "recommended for
+/// you" list (seeded from the user's history) and the per-playlist
+/// "recommended songs" section (seeded from the playlist's own tracks).
+Future<List> _getRecommendationsFromSeedSongs(List seedSongs) async {
+  final seeds = seedSongs
+      .whereType<Map>()
+      .where((song) => (song['ytid']?.toString() ?? '').isNotEmpty)
+      .toList();
+  if (seeds.isEmpty) return [];
+
   final scores = <String, double>{};
   final songMap = <String, Map>{};
 
-  final futures = recent.asMap().entries.map((entry) async {
+  final futures = seeds.asMap().entries.map((entry) async {
     final seedIndex = entry.key;
     final songData = entry.value;
     try {
@@ -207,7 +224,7 @@ Future<List> _getRecommendationsFromRecentlyPlayed() async {
         final s = returnSongLayout(0, related[i]);
         final id = s['ytid'];
         final positionWeight = 1.0 - (i / 8);
-        final recencyWeight = 1.0 - (seedIndex / recent.length);
+        final recencyWeight = 1.0 - (seedIndex / seeds.length);
         scores[id] = (scores[id] ?? 0) + positionWeight * recencyWeight;
         songMap[id] = s;
       }
@@ -225,6 +242,91 @@ Future<List> _getRecommendationsFromRecentlyPlayed() async {
   final sorted = scores.entries.toList()
     ..sort((a, b) => b.value.compareTo(a.value));
   return sorted.take(15).map((e) => songMap[e.key]!).toList();
+}
+
+/// Number of playlist tracks used to seed recommendations. Deliberately
+/// small: the network cost stays flat no matter how large the playlist is,
+/// and a fresh random draw each call keeps a big playlist from always
+/// surfacing the same picks.
+const _playlistRecommendationSeedCount = 5;
+
+/// Last fetched recommendations per playlist (keyed by playlist ytid). A
+/// module-level variable, so it lives only for the current app run: killing
+/// and reopening the app clears it like any other in-memory state, which is
+/// exactly when a fresh batch makes sense.
+final Map<String, List> _playlistRecommendationsCache = {};
+
+/// Recommendations seeded from a playlist's own songs rather than the user's
+/// listening history. Backs the "recommended songs" section shown under a
+/// custom playlist while online.
+///
+/// Reuses the last fetched batch for [playlistId] for as long as it still
+/// has songs that aren't already in the playlist, so reopening the same
+/// playlist doesn't refetch every time. A real fetch only happens the first
+/// time, once the cached batch runs dry, or after the app restarts (the
+/// cache is gone with it). A handful of seed tracks are sampled at random
+/// on every real fetch, so the batch itself still rotates. Returns an empty
+/// list on any failure (offline, network error) so the caller can simply
+/// hide the section.
+Future<List> getRecommendedSongsForPlaylist(
+  String playlistId,
+  List playlistSongs,
+) async {
+  try {
+    final existingIds = playlistSongs
+        .whereType<Map>()
+        .map((song) => song['ytid']?.toString())
+        .toSet();
+
+    final cached = _playlistRecommendationsCache[playlistId];
+    if (cached != null) {
+      final stillFresh = cached
+          .where((song) => !existingIds.contains(song['ytid']?.toString()))
+          .toList();
+      if (stillFresh.isNotEmpty) return stillFresh;
+    }
+
+    final seeds = _sampleSeedSongs(
+      playlistSongs,
+      _playlistRecommendationSeedCount,
+    );
+    final recommendations = await _getRecommendationsFromSeedSongs(seeds);
+    final filtered = recommendations
+        .where((song) => !existingIds.contains(song['ytid']?.toString()))
+        .toList();
+
+    _playlistRecommendationsCache[playlistId] = filtered;
+    return filtered;
+  } catch (e, stackTrace) {
+    logger.log(
+      'Error in getRecommendedSongsForPlaylist',
+      error: e,
+      stackTrace: stackTrace,
+    );
+    return [];
+  }
+}
+
+/// Uniformly samples up to [count] songs with a non-empty `ytid` in a single
+/// pass (reservoir sampling), without copying or shuffling the whole list —
+/// playlists can hold thousands of tracks.
+List<Map> _sampleSeedSongs(List songs, int count) {
+  final random = Random();
+  final reservoir = <Map>[];
+  var seen = 0;
+
+  for (final song in songs) {
+    if (song is! Map || (song['ytid']?.toString() ?? '').isEmpty) continue;
+    seen++;
+    if (reservoir.length < count) {
+      reservoir.add(song);
+    } else {
+      final slot = random.nextInt(seen);
+      if (slot < count) reservoir[slot] = song;
+    }
+  }
+
+  return reservoir;
 }
 
 Future<List> _getRecommendationsFromMixedSources() async {
