@@ -295,6 +295,17 @@ Future<void> initialisation() async {
         androidNotificationIcon: 'drawable/ic_launcher_foreground',
         androidShowNotificationBadge: true,
         androidStopForegroundOnPause: false,
+        // Handed to Android Auto on the browsable root. Without the search
+        // flag the car never offers a search box, and without the content
+        // style keys it falls back to an undifferentiated list of everything.
+        androidBrowsableRootExtras: {
+          AndroidContentStyle.supportedKey: true,
+          AndroidContentStyle.browsableHintKey:
+              AndroidContentStyle.gridItemHintValue,
+          AndroidContentStyle.playableHintKey:
+              AndroidContentStyle.listItemHintValue,
+          'android.media.browse.SEARCH_SUPPORTED': true,
+        },
       ),
     );
 
