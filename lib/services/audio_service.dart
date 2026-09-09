@@ -1609,20 +1609,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
     );
   }
 
-  // ---------------------------------------------------------------------------
-  // Android Auto / MediaBrowserService interface
-  // ---------------------------------------------------------------------------
-  //
-  // The car never sees Musify's widgets. It talks to the MediaBrowserService
-  // that audio_service registers for us, and everything the driver can do goes
-  // through four calls: [getChildren] builds the browse tree, [search] answers
-  // the search box, and [playFromMediaId] / [playFromSearch] start playback.
-  //
-  // A media id is the only thing that survives the trip to the head unit, so it
-  // carries both halves of what playback needs: the container the song was
-  // listed under, and the song's own token within it. That is what lets a tap
-  // rebuild the whole list as a queue rather than playing one orphaned track -
-  // without it the skip buttons on the steering wheel have nowhere to go.
+  // Android Auto / MediaBrowserService
 
   static const _rootLiked = 'liked_songs';
   static const _rootOffline = 'offline_songs';
@@ -1636,15 +1623,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
   static const int _maxSearchResults = 30;
   static const Duration _browserFetchTimeout = Duration(seconds: 15);
 
-  /// Results of the most recent [search], kept so that tapping one of them can
-  /// enqueue the others behind it.
   List<Map> _lastSearchResults = const [];
 
   final Map<String, BehaviorSubject<Map<String, dynamic>>> _childrenSubjects =
       {};
 
-  /// `song:<containerId>:<token>`. The token never contains a colon, so the
-  /// container id is free to contain separators of its own - playlist ids do.
   String _songMediaId(String containerId, String token) =>
       '$_songMediaIdPrefix$containerId:$token';
 
@@ -1673,11 +1656,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
     );
   }
 
-  /// Identifies a song inside its container.
-  ///
-  /// The queue is keyed by queue entry id rather than ytid because the same
-  /// song may legitimately sit in it more than once, and tapping the second
-  /// copy should not jump to the first.
   String? _songToken(Map song, String containerId) => containerId == _rootQueue
       ? _queueEntryIds.ensureId(song)
       : _songYtid(song);
@@ -1685,9 +1663,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
   int _indexOfSongToken(List<Map> songs, String containerId, String token) =>
       songs.indexWhere((song) => _songToken(song, containerId) == token);
 
-  // ---------------------------------------------------------------------------
   // Browse tree
-  // ---------------------------------------------------------------------------
 
   MediaItem _browsableCategory(
     String id,
@@ -1728,8 +1704,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
     return items;
   }
 
-  /// Android Auto draws an empty browse list as a blank screen, which reads as
-  /// a broken app. Saying why it is empty is worth one disabled row.
   List<MediaItem> _emptyCategory(String parentMediaId, String message) => [
     MediaItem(
       id: '$parentMediaId:__empty__',
@@ -1757,8 +1731,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
         : 'This playlist is empty';
   }
 
-  /// User-created playlists first: they are stored locally, so they open
-  /// instantly and keep working with no signal.
   List<Map> _browsablePlaylists() => [
     ...getUserCustomPlaylists(),
     ...getLikedPlaylistItems(),
@@ -1799,14 +1771,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
     );
     if (playlist.isEmpty) return const [];
 
-    // Custom playlists carry their songs inline; online ones have to be fetched.
     final inline = playlist['list'];
     if (inline is List && inline.isNotEmpty) {
       return inline.whereType<Map>().toList();
     }
 
-    // A user-created playlist is inline or it is empty - its id is a local
-    // timestamp, so asking YouTube about it would only buy a timeout.
     if (source == 'user-created' || offlineMode.value) return const [];
 
     try {
@@ -1825,7 +1794,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
     }
   }
 
-  /// Resolves a container id back to the songs it lists, in the order shown.
   Future<List<Map>> _songsForContainer(String containerId) async {
     switch (containerId) {
       case _rootQueue:
@@ -1864,8 +1832,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
   }
 
   Future<List<MediaItem>> _buildChildren(String parentMediaId) async {
-    // The recent root backs the "continue listening" tile the car shows before
-    // anything is playing, so it holds exactly one item.
     if (parentMediaId == AudioService.recentRootId) {
       final recentSong = _latestResumableSong();
       final recentItem = recentSong == null
@@ -1902,11 +1868,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
     return message == null ? const [] : _emptyCategory(parentMediaId, message);
   }
 
-  /// Without this the car keeps showing the library exactly as it was when it
-  /// connected: liking a song on the phone, or finishing a download, would not
-  /// show up until the driver unplugged and plugged back in. Each root
-  /// republishes when its backing data changes, and audio_service turns that
-  /// into the `notifyChildrenChanged` the Android media browser listens for.
   @override
   ValueStream<Map<String, dynamic>> subscribeToChildren(String parentMediaId) {
     return _childrenSubjects.putIfAbsent(
@@ -1936,9 +1897,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
     watch(userLikedPlaylists, const [_rootPlaylists]);
     watch(userPlaylistFolders, const [_rootPlaylists]);
 
-    // The queue republishes several times per song (duration fills in, the
-    // index moves), and every emission costs a round trip to the head unit.
-    // Throttling keeps the car in sync without narrating each update.
     queue
         .throttleTime(const Duration(seconds: 2), trailing: true)
         .listen(
@@ -1949,9 +1907,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
         );
   }
 
-  // ---------------------------------------------------------------------------
   // Search
-  // ---------------------------------------------------------------------------
 
   bool _songMatches(Map song, String needle) {
     final title = song['title']?.toString().toLowerCase() ?? '';
@@ -1960,8 +1916,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
     return artist.contains(needle);
   }
 
-  /// Searches the device first - that answers instantly and works with no
-  /// connection - then tops the list up from YouTube.
   Future<List<Map>> _searchSongs(String query) async {
     final trimmed = query.trim();
     if (trimmed.isEmpty) return const [];
@@ -2031,7 +1985,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
     Map<String, dynamic>? extras,
   ]) async {
     try {
-      // "Play music", with nothing specific asked for.
       if (query.trim().isEmpty) {
         if (_queueList.isNotEmpty) {
           await play();
@@ -2048,8 +2001,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
         return;
       }
 
-      // Queue every hit, not just the best one, so the car has something to
-      // skip to when the first guess was wrong.
       _lastSearchResults = results;
       await addPlaylistToQueue(results, replace: true, startIndex: 0);
     } catch (e, stackTrace) {
@@ -2057,9 +2008,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
     }
   }
 
-  // ---------------------------------------------------------------------------
   // Playback from the browse tree
-  // ---------------------------------------------------------------------------
 
   @override
   Future<MediaItem?> getMediaItem(String mediaId) async {
@@ -2105,8 +2054,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
     );
   }
 
-  /// Plays [token] with the rest of [containerId] queued behind it, so the
-  /// car's skip controls walk the list the driver was just looking at.
   Future<bool> _playFromContainer(String containerId, String token) async {
     final songs = await _songsForContainer(containerId);
     if (songs.isEmpty) return false;
@@ -2114,8 +2061,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
     final index = _indexOfSongToken(songs, containerId, token);
     if (index < 0) return false;
 
-    // The queue is already loaded - jumping is cheaper than rebuilding it, and
-    // it keeps anything the user queued manually in place.
     if (containerId == _rootQueue) {
       await skipToQueueItem(index);
       return true;
@@ -2137,8 +2082,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
         return;
       }
 
-      // Ids that did not come from the browse tree - the resume tile, or one
-      // the head unit remembered from a previous session - still name a song.
       final song = _findSongByYtid(_ytidFromMediaId(mediaId));
       if (song != null) {
         await _playResumableSong(song);
