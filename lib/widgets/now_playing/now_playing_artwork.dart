@@ -111,70 +111,95 @@ class NowPlayingArtwork extends StatelessWidget {
             ),
           ],
         ),
-        child: AsyncLoader<String?>(
-          future: getSongLyrics(metadata.artist, metadata.title),
-          emptyWidget: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  FluentIcons.text_quote_24_regular,
-                  size: 48,
-                  color: colorScheme.onSecondaryContainer.withValues(
-                    alpha: 0.5,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  context.l10n!.lyricsNotAvailable,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                    color: colorScheme.onSecondaryContainer,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
+        child: _LyricsView(metadata: metadata),
+      ),
+    );
+  }
+}
+
+/// Fetches and shows the current song's lyrics.
+///
+/// Kept as its own widget so the network fetch in [getSongLyrics] only fires
+/// when the flip card actually mounts this side: opening Now Playing and never
+/// flipping to the lyrics costs no request. Resolves a single time per song
+/// (whenever [metadata]'s artist/title changes), like [_AudioQualityBadge].
+class _LyricsView extends StatefulWidget {
+  const _LyricsView({required this.metadata});
+  final MediaItem metadata;
+
+  @override
+  State<_LyricsView> createState() => _LyricsViewState();
+}
+
+class _LyricsViewState extends State<_LyricsView> {
+  String? _resolvedKey;
+  late Future<String?> _lyricsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _resolveIfNeeded();
+  }
+
+  @override
+  void didUpdateWidget(_LyricsView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _resolveIfNeeded();
+  }
+
+  void _resolveIfNeeded() {
+    final key = '${widget.metadata.artist} - ${widget.metadata.title}';
+    if (key == _resolvedKey) return;
+    _resolvedKey = key;
+    _lyricsFuture = getSongLyrics(
+      widget.metadata.artist,
+      widget.metadata.title,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    Widget unavailable() => Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            FluentIcons.text_quote_24_regular,
+            size: 48,
+            color: colorScheme.onSecondaryContainer.withValues(alpha: 0.5),
           ),
-          errorBuilder: (ctx, error, stack) => Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  FluentIcons.text_quote_24_regular,
-                  size: 48,
-                  color: colorScheme.onSecondaryContainer.withValues(
-                    alpha: 0.5,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  context.l10n!.lyricsNotAvailable,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                    color: colorScheme.onSecondaryContainer,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
+          const SizedBox(height: 16),
+          Text(
+            context.l10n!.lyricsNotAvailable,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+              color: colorScheme.onSecondaryContainer,
             ),
+            textAlign: TextAlign.center,
           ),
-          builder: (context, lyrics) => SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            physics: const BouncingScrollPhysics(),
-            child: Text(
-              lyrics ?? context.l10n!.lyricsNotAvailable,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-                color: colorScheme.onSecondaryContainer,
-                height: 1.6,
-              ),
-              textAlign: TextAlign.center,
-            ),
+        ],
+      ),
+    );
+
+    return AsyncLoader<String?>(
+      future: _lyricsFuture,
+      emptyWidget: unavailable(),
+      errorBuilder: (ctx, error, stack) => unavailable(),
+      builder: (context, lyrics) => SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        physics: const BouncingScrollPhysics(),
+        child: Text(
+          lyrics ?? context.l10n!.lyricsNotAvailable,
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w500,
+            color: colorScheme.onSecondaryContainer,
+            height: 1.6,
           ),
+          textAlign: TextAlign.center,
         ),
       ),
     );
