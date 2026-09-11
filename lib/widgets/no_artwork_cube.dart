@@ -61,6 +61,7 @@ class NullArtworkWidget extends StatelessWidget {
               Container(
                 width: badgeSize,
                 height: badgeSize,
+                alignment: Alignment.center,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: colorScheme.primaryContainer.withValues(alpha: 0.55),
