@@ -308,6 +308,7 @@ class SongBar extends StatefulWidget {
     this.rank,
     this.playCount,
     this.barPadding,
+    this.onAdd,
     super.key,
   });
 
@@ -330,6 +331,12 @@ class SongBar extends StatefulWidget {
   /// Play count to show next to the artist, e.g. `1.2B`. Presentation only,
   /// like [rank]: it belongs to where the song is listed, not to the song.
   final String? playCount;
+
+  /// When set, the trailing overflow menu is replaced with a single "add"
+  /// button that calls this instead. For contexts where the only action
+  /// that makes sense is adding the song somewhere (e.g. a suggestion list),
+  /// rather than the full song menu.
+  final VoidCallback? onAdd;
 
   @override
   State<SongBar> createState() => _SongBarState();
@@ -472,20 +479,32 @@ class _SongBarState extends State<SongBar> {
                 ),
               ),
 
-              OverflowMenuButton<String>(
-                onSelected: (value) => _handleSongMenuAction(
-                  context: context,
-                  value: value,
-                  song: widget.song,
-                  ytid: _ytid,
-                  songLikeStatus: _songLikeStatus,
-                  songOfflineStatus: _songOfflineStatus,
-                  songDownloadStatus: _songDownloadStatus,
-                  onRemove: widget.onRemove,
-                  onRename: () => _handleRenameSong(context),
+              if (widget.onAdd != null)
+                IconButton(
+                  padding: EdgeInsets.zero,
+                  icon: Icon(
+                    FluentIcons.add_circle_24_regular,
+                    color: colorScheme.primary,
+                  ),
+                  tooltip: context.l10n!.addToPlaylist,
+                  onPressed: widget.onAdd,
+                )
+              else
+                OverflowMenuButton<String>(
+                  onSelected: (value) => _handleSongMenuAction(
+                    context: context,
+                    value: value,
+                    song: widget.song,
+                    ytid: _ytid,
+                    songLikeStatus: _songLikeStatus,
+                    songOfflineStatus: _songOfflineStatus,
+                    songDownloadStatus: _songDownloadStatus,
+                    onRemove: widget.onRemove,
+                    onRename: () => _handleRenameSong(context),
+                  ),
+                  itemBuilder: (context) =>
+                      _buildMenuItems(context, colorScheme),
                 ),
-                itemBuilder: (context) => _buildMenuItems(context, colorScheme),
-              ),
             ],
           ),
         ),

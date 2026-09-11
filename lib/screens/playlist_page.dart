@@ -28,12 +28,14 @@ import 'package:musify/constants/app_constants.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
 import 'package:musify/services/artist_service.dart';
+import 'package:musify/services/common_services.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/playlist_download_service.dart';
 import 'package:musify/services/playlist_sharing.dart';
 import 'package:musify/services/playlists_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/app_utils.dart';
+import 'package:musify/utilities/async_loader.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/playlist_utils.dart';
 import 'package:musify/utilities/song_filtering.dart';
@@ -49,6 +51,7 @@ import 'package:musify/widgets/playlist_page/playlist_action_buttons.dart';
 import 'package:musify/widgets/playlist_page/playlist_header.dart';
 import 'package:musify/widgets/playlist_page/playlist_sliver_app_bar.dart';
 import 'package:musify/widgets/playlist_page/search_bar_section.dart';
+import 'package:musify/widgets/recommended_songs_section.dart';
 import 'package:musify/widgets/song_bar.dart';
 import 'package:musify/widgets/sort_chips.dart';
 import 'package:musify/widgets/spinner.dart';
@@ -78,6 +81,22 @@ class _PlaylistPageState extends State<PlaylistPage> {
   late List<dynamic> _originalPlaylistList; // Keep original order separately
 
   bool _isInitializingPlaylist = true;
+
+  /// Playlist-seeded recommendations shown under custom playlists while
+  /// online. Null when the section does not apply (not user-created,
+  /// offline, or empty playlist).
+  Future<List>? _recommendedSongsFuture;
+
+  /// Ytids added from the recommended songs section during this page visit,
+  /// so an added song drops out of the (already-fetched) recommendation
+  /// list immediately instead of waiting for the next visit's refetch.
+  final Set<String> _addedRecommendedSongIds = {};
+
+  /// Max recommended songs rendered at once, purely to bound how many
+  /// artwork loads happen in a single frame. Not a "window" that refills —
+  /// it never triggers a new fetch, it just caps what's shown from the
+  /// batch already in memory.
+  static const _visibleRecommendedSongsCount = 5;
 
   String? get _resolvedPlaylistId =>
       _playlist?['ytid']?.toString() ??
@@ -159,6 +178,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
         _adoptPlaylist(_playlist);
         _sortPlaylist(_sortType);
       }
+      _maybeLoadRecommendations();
     } catch (e, stackTrace) {
       logger.log(
         'Error initializing playlist:',
@@ -227,12 +247,76 @@ class _PlaylistPageState extends State<PlaylistPage> {
                     EmptyPlaylistState(
                       message: context.l10n!.noSongsInPlaylist,
                     ),
+                  _buildRecommendedSongsSliver(),
                   const SliverMiniPlayerBottomSpace(),
                 ],
               )
             : EmptyPlaylistState(message: context.l10n!.error),
       ),
     );
+  }
+
+  Widget _buildRecommendedSongsSliver() {
+    final future = _recommendedSongsFuture;
+    if (future == null) return const SliverToBoxAdapter();
+
+    return SliverToBoxAdapter(
+      child: AsyncLoader<List<dynamic>>(
+        future: future,
+        // Stay invisible until (and unless) real recommendations arrive, so a
+        // failed or empty fetch simply leaves no trace.
+        loadingWidget: const SizedBox.shrink(),
+        errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+        builder: (context, data) {
+          // Cap how many render at once: each row loads its own artwork, and
+          // building all ~15 fetched candidates in the single frame where
+          // this section appears is enough to visibly stutter on low-end
+          // devices. This is a render cap only — it doesn't refetch or
+          // backfill; the card just has fewer left to show as songs are
+          // added, same as before.
+          final visibleSongs = data
+              .where(
+                (song) =>
+                    !_addedRecommendedSongIds.contains(
+                      song['ytid']?.toString(),
+                    ),
+              )
+              .take(_visibleRecommendedSongsCount)
+              .toList();
+          if (visibleSongs.isEmpty) return const SizedBox.shrink();
+
+          return Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: RecommendedSongsSection(
+              title: context.l10n!.recommendedSongs,
+              songs: visibleSongs,
+              listKeyPrefix: 'playlist_recommended',
+              onAddSong: _handleAddRecommendedSong,
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  /// Adds a recommended song straight into the current playlist. Mirrors
+  /// what the "add to playlist" dialog does, but skipped in favor of a
+  /// single tap since the target playlist is already the one on screen.
+  void _handleAddRecommendedSong(Map song) {
+    final playlistId = _resolvedPlaylistId;
+    if (playlistId == null) return;
+
+    final result = addSongInCustomPlaylist(context, playlistId, song);
+    showToast(context, result);
+
+    if (result == context.l10n!.songAdded) {
+      setState(() {
+        _addedRecommendedSongIds.add(song['ytid']?.toString() ?? '');
+        _originalPlaylistList.add(song);
+        _playlist['list'] = List<dynamic>.from(_originalPlaylistList);
+        _sortPlaylist(_sortType);
+      });
+    }
   }
 
   Widget _buildBackButton(BuildContext context) {
@@ -568,6 +652,28 @@ class _PlaylistPageState extends State<PlaylistPage> {
         return context.l10n!.artist;
       case PlaylistSortType.dateAdded:
         return context.l10n!.dateAdded;
+    }
+  }
+
+  /// Kicks off (or clears) the "recommended songs" fetch. The section only
+  /// applies to non-empty user-created playlists while online; the fetch
+  /// itself returns an empty list on failure so the section stays hidden if
+  /// the device has no connectivity despite online mode.
+  void _maybeLoadRecommendations() {
+    final isUserCreated = _playlist?['source'] == 'user-created';
+    final songs = _playlist?['list'] as List? ?? const [];
+    final playlistId = _resolvedPlaylistId;
+
+    if (isUserCreated &&
+        !offlineMode.value &&
+        songs.isNotEmpty &&
+        playlistId != null) {
+      _recommendedSongsFuture = getRecommendedSongsForPlaylist(
+        playlistId,
+        songs,
+      );
+    } else {
+      _recommendedSongsFuture = null;
     }
   }
 
