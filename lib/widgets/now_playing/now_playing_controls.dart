@@ -193,7 +193,7 @@ Future<void> _copyNowPlayingSong(
   final title = metadata.title.trim();
   final text = artist == null || artist.isEmpty ? title : '$artist - $title';
   await Clipboard.setData(ClipboardData(text: text));
-  if (context.mounted) showToast(context, context.l10n!.copy);
+  if (context.mounted) showToast(context, context.l10n!.songInfoCopied);
 }
 
 class PlayerControlButtons extends StatelessWidget {

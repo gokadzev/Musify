@@ -59,6 +59,7 @@
   "copyLogs": "Copy logs",
   "copyLogsNoLogs": "No logs to copy",
   "copyLogsSuccess": "Logs copied successfully",
+  "songInfoCopied": "Song info copied to clipboard",
   "create": "Create",
   "createFolder": "Create folder",
   "custom": "Custom",
