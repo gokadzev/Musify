@@ -84,6 +84,11 @@ class RecommendedSongsSection extends StatelessWidget {
               child: SongBar(
                 song,
                 true,
+                barPadding: const EdgeInsetsDirectional.only(
+                  top: 10,
+                  bottom: 10,
+                  start: 12,
+                ),
                 borderRadius: borderRadius,
                 onAdd: onAddSong != null && song is Map
                     ? () => onAddSong!(song)
