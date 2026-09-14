@@ -117,12 +117,7 @@ class NowPlayingArtwork extends StatelessWidget {
   }
 }
 
-/// Fetches and shows the current song's lyrics.
-///
-/// Kept as its own widget so the network fetch in [getSongLyrics] only fires
-/// when the flip card actually mounts this side: opening Now Playing and never
-/// flipping to the lyrics costs no request. Resolves a single time per song
-/// (whenever [metadata]'s artist/title changes), like [_AudioQualityBadge].
+/// Fetches and caches lyrics lazily per song.
 class _LyricsView extends StatefulWidget {
   const _LyricsView({required this.metadata});
   final MediaItem metadata;
@@ -214,9 +209,7 @@ String _normalizeCodec(String codec) => switch (codec) {
   final c => c,
 };
 
-/// Resolves once per song: reads the quality stored at download time for a
-/// downloaded song (no network, works offline), otherwise reads the stream
-/// resolved for playback. Returns null if there's nothing to show.
+/// Resolves a song's stored or playback audio quality, or null if unavailable.
 Future<_AudioQualityInfo?> _resolveAudioQuality(String ytid) async {
   final offlineSong = getOfflineSongByYtid(ytid);
   final offlineBitrate = offlineSong['audioBitrateKbps'] as int?;
@@ -237,13 +230,7 @@ Future<_AudioQualityInfo?> _resolveAudioQuality(String ytid) async {
   );
 }
 
-/// Shows the current song's audio bitrate/codec once it's resolved.
-///
-/// Resolves the info a single time per song (whenever [metadata]'s ytid
-/// changes) instead of watching anything, since the badge is a one-shot,
-/// purely cosmetic overlay. Reopening the screen resolves again, which is what
-/// makes it pick up a change of the setting without listening to it — the
-/// stream is cached per quality setting, so that costs nothing.
+/// Shows the current song's resolved audio bitrate and codec.
 class _AudioQualityBadge extends StatefulWidget {
   const _AudioQualityBadge({required this.metadata});
   final MediaItem metadata;
