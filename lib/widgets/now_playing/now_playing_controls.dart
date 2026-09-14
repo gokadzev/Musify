@@ -23,6 +23,7 @@ import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:musify/extensions/l10n.dart';
@@ -30,6 +31,7 @@ import 'package:musify/main.dart';
 import 'package:musify/services/router_service.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/app_utils.dart';
+import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/widgets/now_playing/marquee_text_widget.dart';
 import 'package:musify/widgets/playback_icon_button.dart';
 import 'package:musify/widgets/position_slider.dart';
@@ -90,11 +92,15 @@ class NowPlayingControls extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  MarqueeTextWidget(
-                    text: metadata.title,
-                    fontColor: colorScheme.secondary,
-                    fontSize: titleFontSize * fontScale,
-                    fontWeight: FontWeight.bold,
+                  GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onLongPress: () => _copyNowPlayingSong(context, metadata),
+                    child: MarqueeTextWidget(
+                      text: metadata.title,
+                      fontColor: colorScheme.secondary,
+                      fontSize: titleFontSize * fontScale,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   SizedBox(height: spacing),
                   if (metadata.artist != null)
@@ -103,6 +109,7 @@ class NowPlayingControls extends StatelessWidget {
                       onTap: canOpenArtist
                           ? () => _openArtistPage(context, metadata)
                           : null,
+                      onLongPress: () => _copyNowPlayingSong(context, metadata),
                       child: MarqueeTextWidget(
                         text: metadata.artist!,
                         fontColor: colorScheme.onSurfaceVariant,
@@ -176,6 +183,17 @@ class NowPlayingControls extends StatelessWidget {
       videoAuthor: metadata.extras?['videoAuthor']?.toString().trim() ?? '',
     );
   }
+}
+
+Future<void> _copyNowPlayingSong(
+  BuildContext context,
+  MediaItem metadata,
+) async {
+  final artist = metadata.artist?.trim();
+  final title = metadata.title.trim();
+  final text = artist == null || artist.isEmpty ? title : '$artist - $title';
+  await Clipboard.setData(ClipboardData(text: text));
+  if (context.mounted) showToast(context, context.l10n!.copy);
 }
 
 class PlayerControlButtons extends StatelessWidget {
