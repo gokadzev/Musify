@@ -82,20 +82,13 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
   bool _isInitializingPlaylist = true;
 
-  /// Playlist-seeded recommendations shown under custom playlists while
-  /// online. Null when the section does not apply (not user-created,
-  /// offline, or empty playlist).
+  /// Playlist-seeded recommendations for eligible online custom playlists.
   Future<List>? _recommendedSongsFuture;
 
-  /// Ytids added from the recommended songs section during this page visit,
-  /// so an added song drops out of the (already-fetched) recommendation
-  /// list immediately instead of waiting for the next visit's refetch.
+  /// Ytids added during this visit, removed from the fetched recommendations immediately.
   final Set<String> _addedRecommendedSongIds = {};
 
-  /// Max recommended songs rendered at once, purely to bound how many
-  /// artwork loads happen in a single frame. Not a "window" that refills —
-  /// it never triggers a new fetch, it just caps what's shown from the
-  /// batch already in memory.
+  /// Maximum recommendations rendered at once to bound artwork loads per frame.
   static const _visibleRecommendedSongsCount = 5;
 
   String? get _resolvedPlaylistId =>
@@ -263,17 +256,11 @@ class _PlaylistPageState extends State<PlaylistPage> {
     return SliverToBoxAdapter(
       child: AsyncLoader<List<dynamic>>(
         future: future,
-        // Stay invisible until (and unless) real recommendations arrive, so a
-        // failed or empty fetch simply leaves no trace.
+        // Keep the section hidden when recommendations fail or are empty.
         loadingWidget: const SizedBox.shrink(),
         errorBuilder: (_, __, ___) => const SizedBox.shrink(),
         builder: (context, data) {
-          // Cap how many render at once: each row loads its own artwork, and
-          // building all ~15 fetched candidates in the single frame where
-          // this section appears is enough to visibly stutter on low-end
-          // devices. This is a render cap only — it doesn't refetch or
-          // backfill; the card just has fewer left to show as songs are
-          // added, same as before.
+          // Cap rendered rows to limit simultaneous artwork loads; do not refetch or backfill.
           final visibleSongs = data
               .where(
                 (song) =>
@@ -299,9 +286,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
     );
   }
 
-  /// Adds a recommended song straight into the current playlist. Mirrors
-  /// what the "add to playlist" dialog does, but skipped in favor of a
-  /// single tap since the target playlist is already the one on screen.
+  /// Adds a recommendation directly to the current playlist with one tap.
   void _handleAddRecommendedSong(Map song) {
     final playlistId = _resolvedPlaylistId;
     if (playlistId == null) return;
@@ -655,10 +640,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
     }
   }
 
-  /// Kicks off (or clears) the "recommended songs" fetch. The section only
-  /// applies to non-empty user-created playlists while online; the fetch
-  /// itself returns an empty list on failure so the section stays hidden if
-  /// the device has no connectivity despite online mode.
+  /// Loads recommendations only for non-empty online user-created playlists.
   void _maybeLoadRecommendations() {
     final isUserCreated = _playlist?['source'] == 'user-created';
     final songs = _playlist?['list'] as List? ?? const [];

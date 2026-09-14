@@ -332,10 +332,7 @@ class SongBar extends StatefulWidget {
   /// like [rank]: it belongs to where the song is listed, not to the song.
   final String? playCount;
 
-  /// When set, the trailing overflow menu is replaced with a single "add"
-  /// button that calls this instead. For contexts where the only action
-  /// that makes sense is adding the song somewhere (e.g. a suggestion list),
-  /// rather than the full song menu.
+  /// Replaces the trailing overflow menu with an add button when set.
   final VoidCallback? onAdd;
 
   @override

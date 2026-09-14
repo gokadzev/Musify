@@ -27,10 +27,7 @@ import 'package:musify/utilities/app_utils.dart';
 import 'package:musify/widgets/section_header.dart';
 import 'package:musify/widgets/song_bar.dart';
 
-/// A titled list of recommended songs with an optional "play all" button.
-///
-/// Shared by the home screen ("recommended for you") and the per-playlist
-/// "recommended songs" section so both render identically.
+/// Shared titled list of recommended songs with an optional "play all" button.
 class RecommendedSongsSection extends StatelessWidget {
   const RecommendedSongsSection({
     super.key,
@@ -48,8 +45,7 @@ class RecommendedSongsSection extends StatelessWidget {
   final String listKeyPrefix;
   final bool showPlayButton;
 
-  /// When set, each row shows a single "add" button (via [SongBar.onAdd])
-  /// instead of the full song overflow menu.
+  /// When set, each row shows an add button instead of the overflow menu.
   final void Function(Map song)? onAddSong;
 
   @override
