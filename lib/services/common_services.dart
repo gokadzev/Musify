@@ -22,6 +22,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/widgets.dart';
 import 'package:hive/hive.dart';
@@ -194,10 +195,21 @@ Future<List> _getRecommendationsFromRecentlyPlayed() async {
     userRecentlyPlayed.value,
   )..shuffle()).take(5).toList();
 
+  return _getRecommendationsFromSeedSongs(recent);
+}
+
+/// Expands seed songs into related videos and ranks them for home and playlist recommendations.
+Future<List> _getRecommendationsFromSeedSongs(List seedSongs) async {
+  final seeds = seedSongs
+      .whereType<Map>()
+      .where((song) => (song['ytid']?.toString() ?? '').isNotEmpty)
+      .toList();
+  if (seeds.isEmpty) return [];
+
   final scores = <String, double>{};
   final songMap = <String, Map>{};
 
-  final futures = recent.asMap().entries.map((entry) async {
+  final futures = seeds.asMap().entries.map((entry) async {
     final seedIndex = entry.key;
     final songData = entry.value;
     try {
@@ -207,7 +219,7 @@ Future<List> _getRecommendationsFromRecentlyPlayed() async {
         final s = returnSongLayout(0, related[i]);
         final id = s['ytid'];
         final positionWeight = 1.0 - (i / 8);
-        final recencyWeight = 1.0 - (seedIndex / recent.length);
+        final recencyWeight = 1.0 - (seedIndex / seeds.length);
         scores[id] = (scores[id] ?? 0) + positionWeight * recencyWeight;
         songMap[id] = s;
       }
@@ -225,6 +237,72 @@ Future<List> _getRecommendationsFromRecentlyPlayed() async {
   final sorted = scores.entries.toList()
     ..sort((a, b) => b.value.compareTo(a.value));
   return sorted.take(15).map((e) => songMap[e.key]!).toList();
+}
+
+/// Number of playlist tracks used to seed recommendations while keeping network cost bounded.
+const _playlistRecommendationSeedCount = 5;
+
+/// In-memory recommendations cache keyed by playlist ytid and cleared on app restart.
+final Map<String, List> _playlistRecommendationsCache = {};
+
+/// Gets playlist-seeded recommendations, reusing cached results and returning an empty list on failure.
+Future<List> getRecommendedSongsForPlaylist(
+  String playlistId,
+  List playlistSongs,
+) async {
+  try {
+    final existingIds = playlistSongs
+        .whereType<Map>()
+        .map((song) => song['ytid']?.toString())
+        .toSet();
+
+    final cached = _playlistRecommendationsCache[playlistId];
+    if (cached != null) {
+      final stillFresh = cached
+          .where((song) => !existingIds.contains(song['ytid']?.toString()))
+          .toList();
+      if (stillFresh.isNotEmpty) return stillFresh;
+    }
+
+    final seeds = _sampleSeedSongs(
+      playlistSongs,
+      _playlistRecommendationSeedCount,
+    );
+    final recommendations = await _getRecommendationsFromSeedSongs(seeds);
+    final filtered = recommendations
+        .where((song) => !existingIds.contains(song['ytid']?.toString()))
+        .toList();
+
+    _playlistRecommendationsCache[playlistId] = filtered;
+    return filtered;
+  } catch (e, stackTrace) {
+    logger.log(
+      'Error in getRecommendedSongsForPlaylist',
+      error: e,
+      stackTrace: stackTrace,
+    );
+    return [];
+  }
+}
+
+/// Uniformly samples up to [count] valid songs in one pass without copying or shuffling the playlist.
+List<Map> _sampleSeedSongs(List songs, int count) {
+  final random = Random();
+  final reservoir = <Map>[];
+  var seen = 0;
+
+  for (final song in songs) {
+    if (song is! Map || (song['ytid']?.toString() ?? '').isEmpty) continue;
+    seen++;
+    if (reservoir.length < count) {
+      reservoir.add(song);
+    } else {
+      final slot = random.nextInt(seen);
+      if (slot < count) reservoir[slot] = song;
+    }
+  }
+
+  return reservoir;
 }
 
 Future<List> _getRecommendationsFromMixedSources() async {

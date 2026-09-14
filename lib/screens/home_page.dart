@@ -36,8 +36,8 @@ import 'package:musify/widgets/announcement_box.dart';
 import 'package:musify/widgets/listening_recap_card.dart';
 import 'package:musify/widgets/mini_player_bottom_space.dart';
 import 'package:musify/widgets/playlist_cube.dart';
+import 'package:musify/widgets/recommended_songs_section.dart';
 import 'package:musify/widgets/section_header.dart';
-import 'package:musify/widgets/song_bar.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -284,41 +284,10 @@ class _HomePageState extends State<HomePage> {
     BuildContext context,
     List<dynamic> data,
   ) {
-    final recommendedTitle = context.l10n!.recommendedForYou;
-
-    return Column(
-      children: [
-        SectionHeader(
-          title: recommendedTitle,
-          icon: FluentIcons.sparkle_24_filled,
-          actionButton: IconButton(
-            onPressed: () async {
-              await audioHandler.playPlaylistSong(
-                playlist: {'title': recommendedTitle, 'list': data},
-                songIndex: 0,
-              );
-            },
-            icon: Icon(
-              FluentIcons.play_circle_24_filled,
-              color: Theme.of(context).colorScheme.primary,
-              size: 30,
-            ),
-          ),
-        ),
-        ListView.builder(
-          shrinkWrap: true,
-          physics: const BouncingScrollPhysics(),
-          itemCount: data.length,
-          padding: commonListViewBottomPadding,
-          itemBuilder: (context, index) {
-            final borderRadius = getItemBorderRadius(index, data.length);
-            return RepaintBoundary(
-              key: listItemKey('home_recommended', index, data[index]),
-              child: SongBar(data[index], true, borderRadius: borderRadius),
-            );
-          },
-        ),
-      ],
+    return RecommendedSongsSection(
+      title: context.l10n!.recommendedForYou,
+      songs: data,
+      listKeyPrefix: 'home_recommended',
     );
   }
 }
