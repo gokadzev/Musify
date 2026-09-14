@@ -111,70 +111,90 @@ class NowPlayingArtwork extends StatelessWidget {
             ),
           ],
         ),
-        child: AsyncLoader<String?>(
-          future: getSongLyrics(metadata.artist, metadata.title),
-          emptyWidget: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  FluentIcons.text_quote_24_regular,
-                  size: 48,
-                  color: colorScheme.onSecondaryContainer.withValues(
-                    alpha: 0.5,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  context.l10n!.lyricsNotAvailable,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                    color: colorScheme.onSecondaryContainer,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
+        child: _LyricsView(metadata: metadata),
+      ),
+    );
+  }
+}
+
+/// Fetches and caches lyrics lazily per song.
+class _LyricsView extends StatefulWidget {
+  const _LyricsView({required this.metadata});
+  final MediaItem metadata;
+
+  @override
+  State<_LyricsView> createState() => _LyricsViewState();
+}
+
+class _LyricsViewState extends State<_LyricsView> {
+  String? _resolvedKey;
+  late Future<String?> _lyricsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _resolveIfNeeded();
+  }
+
+  @override
+  void didUpdateWidget(_LyricsView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _resolveIfNeeded();
+  }
+
+  void _resolveIfNeeded() {
+    final key = '${widget.metadata.artist} - ${widget.metadata.title}';
+    if (key == _resolvedKey) return;
+    _resolvedKey = key;
+    _lyricsFuture = getSongLyrics(
+      widget.metadata.artist,
+      widget.metadata.title,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    Widget unavailable() => Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            FluentIcons.text_quote_24_regular,
+            size: 48,
+            color: colorScheme.onSecondaryContainer.withValues(alpha: 0.5),
           ),
-          errorBuilder: (ctx, error, stack) => Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  FluentIcons.text_quote_24_regular,
-                  size: 48,
-                  color: colorScheme.onSecondaryContainer.withValues(
-                    alpha: 0.5,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  context.l10n!.lyricsNotAvailable,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                    color: colorScheme.onSecondaryContainer,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
+          const SizedBox(height: 16),
+          Text(
+            context.l10n!.lyricsNotAvailable,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+              color: colorScheme.onSecondaryContainer,
             ),
+            textAlign: TextAlign.center,
           ),
-          builder: (context, lyrics) => SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            physics: const BouncingScrollPhysics(),
-            child: Text(
-              lyrics ?? context.l10n!.lyricsNotAvailable,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-                color: colorScheme.onSecondaryContainer,
-                height: 1.6,
-              ),
-              textAlign: TextAlign.center,
-            ),
+        ],
+      ),
+    );
+
+    return AsyncLoader<String?>(
+      future: _lyricsFuture,
+      emptyWidget: unavailable(),
+      errorBuilder: (ctx, error, stack) => unavailable(),
+      builder: (context, lyrics) => SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        physics: const BouncingScrollPhysics(),
+        child: Text(
+          lyrics ?? context.l10n!.lyricsNotAvailable,
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w500,
+            color: colorScheme.onSecondaryContainer,
+            height: 1.6,
           ),
+          textAlign: TextAlign.center,
         ),
       ),
     );
@@ -189,9 +209,7 @@ String _normalizeCodec(String codec) => switch (codec) {
   final c => c,
 };
 
-/// Resolves once per song: reads the quality stored at download time for a
-/// downloaded song (no network, works offline), otherwise reads the stream
-/// resolved for playback. Returns null if there's nothing to show.
+/// Resolves a song's stored or playback audio quality, or null if unavailable.
 Future<_AudioQualityInfo?> _resolveAudioQuality(String ytid) async {
   final offlineSong = getOfflineSongByYtid(ytid);
   final offlineBitrate = offlineSong['audioBitrateKbps'] as int?;
@@ -212,13 +230,7 @@ Future<_AudioQualityInfo?> _resolveAudioQuality(String ytid) async {
   );
 }
 
-/// Shows the current song's audio bitrate/codec once it's resolved.
-///
-/// Resolves the info a single time per song (whenever [metadata]'s ytid
-/// changes) instead of watching anything, since the badge is a one-shot,
-/// purely cosmetic overlay. Reopening the screen resolves again, which is what
-/// makes it pick up a change of the setting without listening to it — the
-/// stream is cached per quality setting, so that costs nothing.
+/// Shows the current song's resolved audio bitrate and codec.
 class _AudioQualityBadge extends StatefulWidget {
   const _AudioQualityBadge({required this.metadata});
   final MediaItem metadata;
