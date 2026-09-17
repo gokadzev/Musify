@@ -131,13 +131,44 @@ AudioOnlyStreamInfo? selectAudioOnlyStreamForQuality(
 
   final qualitySetting = audioQualitySetting.value;
 
+  final AudioOnlyStreamInfo selected;
   if (qualitySetting == 'low') {
-    return selectionPool.last;
+    selected = selectionPool.last;
   } else if (qualitySetting == 'medium') {
-    return selectionPool[(selectionPool.length - 1) ~/ 2];
+    selected = selectionPool[(selectionPool.length - 1) ~/ 2];
+  } else {
+    selected = selectionPool.first;
   }
 
-  return selectionPool.first;
+  return _preferUnthrottledStream(selectionPool, selected);
+}
+
+/// How far below the selected bitrate an unthrottled stream may sit and still
+/// count as the same quality.
+const _unthrottledBitrateTolerance = 0.1;
+
+/// YouTube caps the delivery rate of a stream whose URL isn't flagged
+/// `ratebypass`, which starves the player's buffer during playback since it
+/// reads the stream in one long request. Swap in an unthrottled stream when
+/// one is offered at the quality [selected] already settled on.
+AudioOnlyStreamInfo _preferUnthrottledStream(
+  List<AudioOnlyStreamInfo> selectionPool,
+  AudioOnlyStreamInfo selected,
+) {
+  if (!selected.isThrottled) return selected;
+
+  final minBitrate =
+      selected.bitrate.bitsPerSecond * (1 - _unthrottledBitrateTolerance);
+
+  // selectionPool is sorted by descending bitrate, so the first match is the
+  // best stream that qualifies.
+  for (final stream in selectionPool) {
+    if (!stream.isThrottled && stream.bitrate.bitsPerSecond >= minBitrate) {
+      return stream;
+    }
+  }
+
+  return selected;
 }
 
 List<AudioOnlyStreamInfo> _filterCompatibleAudioOnlySources(
