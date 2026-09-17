@@ -27,6 +27,7 @@ import 'package:audio_session/audio_session.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:musify/constants/clients.dart';
 import 'package:musify/main.dart';
 import 'package:musify/models/position_data.dart';
 import 'package:musify/services/common_services.dart';
@@ -2713,7 +2714,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
       }
 
       final uri = Uri.parse(songUrl);
-      final audioSource = AudioSource.uri(uri, tag: tag);
+      final audioSource = AudioSource.uri(
+        uri,
+        headers: _isYoutubeStreamUri(uri) ? customClientHeaders : null,
+        tag: tag,
+      );
 
       if (!sponsorBlockSupport.value) {
         return audioSource;
@@ -2732,6 +2737,13 @@ class MusifyAudioHandler extends BaseAudioHandler {
       );
       return null;
     }
+  }
+
+  /// Whether [uri] points at a YouTube stream, and so needs the headers of
+  /// the client that minted it. Radio stations keep the player's own headers.
+  static bool _isYoutubeStreamUri(Uri uri) {
+    final host = uri.host.toLowerCase();
+    return host == 'googlevideo.com' || host.endsWith('.googlevideo.com');
   }
 
   AudioSource? _applyOfflineSponsorBlock(
