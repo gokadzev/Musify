@@ -255,9 +255,14 @@ class ListeningStatsService {
     PlayerState state, {
     Map? currentSong,
   }) {
-    if (state.playing == _sessionLastAudioPlayerPlaying) return;
+    // just_audio keeps `playing` true after completion, so treat it as paused.
+    final playing =
+        state.playing &&
+        state.processingState != ProcessingState.completed &&
+        state.processingState != ProcessingState.idle;
+    if (playing == _sessionLastAudioPlayerPlaying) return;
 
-    if (state.playing) {
+    if (playing) {
       resumeListeningSession(currentSong: currentSong);
     } else {
       recordListeningSessionProgress(
@@ -265,7 +270,7 @@ class ListeningStatsService {
       );
     }
 
-    _sessionLastAudioPlayerPlaying = state.playing;
+    _sessionLastAudioPlayerPlaying = playing;
   }
 
   void finishListeningSession({
