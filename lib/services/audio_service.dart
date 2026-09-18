@@ -33,6 +33,7 @@ import 'package:musify/services/common_services.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/listening_stats_service.dart';
 import 'package:musify/services/playlists_manager.dart';
+import 'package:musify/services/queue_persistence_service.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/map_utils.dart';
 import 'package:musify/utilities/media_duration.dart';
@@ -95,6 +96,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   bool _completionEventPending = false;
   bool _completionHandlerLoadStarted = false;
+
+  /// Where a queue restored at launch should pick playback up, kept with the
+  /// entry it was saved on so no other song starts in the middle.
+  Duration? _restoredPosition;
+  String? _restoredPositionEntryId;
 
   String? _lastError;
   int _consecutiveErrors = 0;
@@ -197,6 +203,15 @@ class MusifyAudioHandler extends BaseAudioHandler {
       },
     );
 
+    audioPlayer.positionStream
+        .throttleTime(const Duration(seconds: 1))
+        .listen(
+          _savePlaybackPosition,
+          onError: (error, stackTrace) {
+            _logStreamError('Position stream error', error, stackTrace);
+          },
+        );
+
     audioPlayer.durationStream.listen(
       (duration) {
         if (_currentQueueIndex < _queueList.length &&
@@ -255,6 +270,79 @@ class MusifyAudioHandler extends BaseAudioHandler {
         _updatePlaybackState();
       }
     });
+  }
+
+  /// Hands the queue to storage so the next launch can bring it back. Called
+  /// on every queue and current-song change; the write itself is debounced.
+  void _persistQueue() {
+    queuePersistenceService.saveQueue(
+      _queueList,
+      _originalQueueList,
+      _currentQueueIndex,
+    );
+  }
+
+  void _savePlaybackPosition(Duration position, {bool force = false}) {
+    final song = currentSong;
+    if (song == null) return;
+
+    queuePersistenceService.savePosition(
+      _currentQueueIndex,
+      _queueEntryIds.ensureId(song),
+      position,
+      force: force,
+    );
+  }
+
+  /// Writes the queue and the position it stands at without waiting for the
+  /// debounce. Called when playback stops and when the app leaves the
+  /// foreground, the last moment before the process can be taken away.
+  Future<void> persistPlaybackState() async {
+    _persistQueue();
+    _savePlaybackPosition(audioPlayer.position, force: true);
+    await queuePersistenceService.flush();
+  }
+
+  /// Brings back the queue the last session left behind. Nothing is fetched
+  /// here: the songs are published so the player shows where it stopped, and
+  /// the stream is only resolved once playback is actually asked for.
+  Future<void> _restorePersistedQueue() async {
+    // Something already playing means the launch had its own idea of what to
+    // play — a shared link, or a media button naming a song.
+    if (_queueList.isNotEmpty) return;
+
+    try {
+      final restored = queuePersistenceService.read();
+      if (restored == null) return;
+
+      _queueList.addAll(restored.queue);
+      _originalQueueList.addAll(restored.originalQueue);
+      _currentQueueIndex = restored.index;
+      _hydrateQueueEntryIds();
+
+      final resumedSong = currentSong;
+      if (restored.position > Duration.zero && resumedSong != null) {
+        _restoredPosition = restored.position;
+        _restoredPositionEntryId = _queueEntryIds.ensureId(resumedSong);
+      }
+
+      _updateQueueMediaItems();
+      _updatePlaybackState(force: true);
+    } catch (e, stackTrace) {
+      logger.log('Error restoring queue', error: e, stackTrace: stackTrace);
+    }
+  }
+
+  /// The position a restored queue resumes at, given out once and only for the
+  /// song it was saved on. Every other song starts from its beginning.
+  Duration? _consumeRestoredPosition(Map song) {
+    final position = _restoredPosition;
+    final entryId = _restoredPositionEntryId;
+    _restoredPosition = null;
+    _restoredPositionEntryId = null;
+
+    if (position == null || entryId == null) return null;
+    return song['queueEntryId']?.toString() == entryId ? position : null;
   }
 
   void _hydrateQueueEntryIds() {
@@ -467,6 +555,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
       // Apply stored shuffle mode to audio player
       await audioPlayer.setShuffleModeEnabled(shuffleNotifier.value);
+
+      await _restorePersistedQueue();
 
       // Initialize equalizer once at startup
       unawaited(_ensureEqualizerConfigured());
@@ -1247,6 +1337,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
         final currentMediaItem = mediaItems[_currentQueueIndex];
         mediaItem.add(currentMediaItem);
       }
+
+      _persistQueue();
     } catch (e, stackTrace) {
       logger.log(
         'Error updating queue media items',
@@ -1361,6 +1453,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       if (currentTransitionId == _currentLoadingTransitionId) {
         if (success) {
           _consecutiveErrors = 0;
+          _persistQueue();
           _preloadUpcomingSongs();
           // Trigger background song addition if auto-play is enabled
           if (playNextSongAutomatically.value) {
@@ -2110,6 +2203,13 @@ class MusifyAudioHandler extends BaseAudioHandler {
   Future<void> play() async {
     try {
       if (audioPlayer.audioSource == null) {
+        // A queue restored at launch carries no loaded source yet. Start it
+        // where it stopped, rather than dropping it for a recently played song.
+        if (_currentQueueIndex >= 0 && _currentQueueIndex < _queueList.length) {
+          await _playFromQueue(_currentQueueIndex);
+          return;
+        }
+
         final recentSong = _latestResumableSong();
         if (recentSong != null) {
           await _playResumableSong(recentSong);
@@ -2143,6 +2243,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
         wasPlaying: audioPlayer.playing,
       );
       unawaited(listeningStatsService.flush());
+      unawaited(persistPlaybackState());
       await audioPlayer.pause();
     } catch (e, stackTrace) {
       logger.log('Error in pause()', error: e, stackTrace: stackTrace);
@@ -2162,6 +2263,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
         countCurrentTick: true,
         wasPlaying: audioPlayer.playing,
       );
+      // Before the player is stopped: stopping takes the position back to
+      // zero, and this is the path a swiped-away app goes out through.
+      await persistPlaybackState();
       await audioPlayer.stop();
       _resetPreloadingState();
     } catch (e, stackTrace) {
@@ -2329,6 +2433,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
         playback.isOffline,
         mediaId: mediaId,
         transitionId: transitionId,
+        initialPosition: _consumeRestoredPosition(songData),
       );
     } catch (e, stackTrace) {
       logger.log('Error playing song', error: e, stackTrace: stackTrace);
@@ -2436,6 +2541,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
     String? mediaId,
     bool allowOnlineRetry = true,
     int? transitionId,
+    Duration? initialPosition,
   }) async {
     try {
       // Final staleness check before we touch the audio player.
@@ -2450,7 +2556,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       final wasPlayingBeforeSwap = audioPlayer.playing;
 
       final loadedDuration = await audioPlayer
-          .setAudioSource(audioSource)
+          .setAudioSource(audioSource, initialPosition: initialPosition)
           .timeout(_songTransitionTimeout);
 
       // Check once more after the async setAudioSource: a fast offline song
@@ -2519,6 +2625,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
           song,
           mediaId: mediaId,
           transitionId: transitionId,
+          initialPosition: initialPosition,
         );
       }
 
@@ -2552,6 +2659,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
                 mediaId: mediaId,
                 allowOnlineRetry: false,
                 transitionId: transitionId,
+                initialPosition: initialPosition,
               );
             }
           }
@@ -2567,6 +2675,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
     Map song, {
     String? mediaId,
     int? transitionId,
+    Duration? initialPosition,
   }) async {
     // Do not attempt any network calls when offline mode is enabled.
     if (offlineMode.value) return false;
@@ -2585,6 +2694,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
           false,
           mediaId: mediaId,
           transitionId: transitionId,
+          initialPosition: initialPosition,
         );
       }
     }
