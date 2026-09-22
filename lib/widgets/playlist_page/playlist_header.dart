@@ -56,7 +56,7 @@ class PlaylistHeader extends StatelessWidget {
     final colorScheme = theme.colorScheme;
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 20, 24, 8),
+      padding: EdgeInsets.fromLTRB(24, showTitle ? 20 : 0, 24, 8),
       child: Column(
         children: [
           if (showTitle) ...[
