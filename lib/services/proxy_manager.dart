@@ -293,10 +293,11 @@ class ProxyManager {
   Future<StreamManifest?> _validateDirect(
     String songId,
     int timeoutSeconds,
+    List<YoutubeApiClient> ytClients,
   ) async {
     try {
       final manifest = await _defaultYt.videos.streams
-          .getManifest(songId, ytClients: customClients)
+          .getManifest(songId, ytClients: ytClients)
           .timeout(Duration(seconds: timeoutSeconds));
       return manifest;
     } catch (e) {
@@ -308,6 +309,7 @@ class ProxyManager {
     ProxyInfo proxy,
     String songId,
     int timeoutSeconds,
+    List<YoutubeApiClient> ytClients,
   ) async {
     if (!useProxy.value) return null;
     YoutubeExplode? ytClient;
@@ -315,7 +317,7 @@ class ProxyManager {
       final res = _ensureProxyResources(proxy, timeoutSeconds: timeoutSeconds);
       ytClient = YoutubeExplode(httpClient: YoutubeHttpClient(res.ioClient));
       final manifest = await ytClient.videos.streams
-          .getManifest(songId, ytClients: customClients)
+          .getManifest(songId, ytClients: ytClients)
           .timeout(Duration(seconds: timeoutSeconds));
       _workingProxies.add(proxy);
       return manifest;
@@ -541,11 +543,19 @@ class ProxyManager {
     );
   }
 
-  Future<StreamManifest?> getSongManifest(String songId) async {
+  Future<StreamManifest?> getSongManifest(
+    String songId, {
+    List<YoutubeApiClient>? ytClients,
+  }) async {
+    final clients = ytClients ?? customClients;
     if (!useProxy.value) {
-      return _validateDirect(songId, _validateDirectTimeout);
+      return _validateDirect(songId, _validateDirectTimeout, clients);
     }
-    var manifest = await _validateDirect(songId, _validateDirectTimeout);
+    var manifest = await _validateDirect(
+      songId,
+      _validateDirectTimeout,
+      clients,
+    );
     if (manifest != null) return manifest;
 
     if (DateTime.now().difference(_lastFetched).inMinutes >=
@@ -555,11 +565,14 @@ class ProxyManager {
 
     _maybeCleanupProxies();
 
-    manifest = await _tryProxies(songId);
+    manifest = await _tryProxies(songId, clients);
     return manifest;
   }
 
-  Future<StreamManifest?> _tryProxies(String songId) async {
+  Future<StreamManifest?> _tryProxies(
+    String songId,
+    List<YoutubeApiClient> ytClients,
+  ) async {
     if (!useProxy.value) return null;
     StreamManifest? manifest;
     var attempts = 0;
@@ -568,7 +581,7 @@ class ProxyManager {
       if (attempts++ >= maxAttempts) break;
       final proxy = await _getRandomProxy();
       if (proxy == null) break;
-      manifest = await _validateProxy(proxy, songId, 5);
+      manifest = await _validateProxy(proxy, songId, 5, ytClients);
     } while (manifest == null);
     return manifest;
   }
