@@ -286,10 +286,12 @@ class _SearchPageState extends State<SearchPage> {
                       final query = value;
                       final requestId = ++_latestSuggestionRequest;
 
-                      // Clear suggestions immediately if input is empty
+                      // An emptied field goes back to the search history, and
+                      // the history only shows while nothing has been found
+                      // yet. Dropping the suggestions is not enough: the
+                      // results of the last search have to go with them.
                       if (query.isEmpty) {
-                        _suggestionsList = [];
-                        if (mounted) setState(() {});
+                        unawaited(search());
                         return;
                       }
 
