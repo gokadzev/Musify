@@ -1587,6 +1587,20 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
   Stream<List<MediaItem>> get browserQueueStream => queue;
 
   @override
+  Stream<void> get browserNowPlayingStream => mediaItem.distinct();
+
+  @override
+  ({int index, double? progress}) get browserPlaybackProgress {
+    final duration = audioPlayer.duration;
+    final progress = duration == null || duration <= Duration.zero
+        ? null
+        : (audioPlayer.position.inMilliseconds / duration.inMilliseconds)
+              .clamp(0.0, 1.0);
+
+    return (index: _currentQueueIndex, progress: progress);
+  }
+
+  @override
   String ensureBrowserQueueEntryId(Map song) => _queueEntryIds.ensureId(song);
 
   @override
