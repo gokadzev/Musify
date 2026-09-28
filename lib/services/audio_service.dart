@@ -36,6 +36,7 @@ import 'package:musify/services/listening_stats_service.dart';
 import 'package:musify/services/playlists_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/services/stream_buffer_service.dart';
+import 'package:musify/utilities/app_utils.dart';
 import 'package:musify/utilities/map_utils.dart';
 import 'package:musify/utilities/media_duration.dart';
 import 'package:musify/utilities/mediaitem.dart';
@@ -800,7 +801,12 @@ class MusifyAudioHandler extends BaseAudioHandler {
           _queueList.isNotEmpty) ||
       playNextSongAutomatically.value;
 
-  void _handlePlaybackError() {
+  /// [failedIndex] is where in the queue the song that just failed sits, when
+  /// the failure came from the queue at all. It is needed because the index
+  /// has by then been rolled back to where playback stood: asking for the next
+  /// song would walk straight back onto the one that failed, and keep doing so
+  /// until the error count stopped playback altogether.
+  void _handlePlaybackError({int? failedIndex}) {
     _consecutiveErrors++;
     logger.log(
       'Playback error occurred. Consecutive errors: $_consecutiveErrors',
@@ -813,11 +819,26 @@ class MusifyAudioHandler extends BaseAudioHandler {
       return;
     }
 
-    if (_canRetryPlayback()) {
-      Future.delayed(_errorRetryDelay, skipToNext);
-    } else {
+    if (!_canRetryPlayback()) {
       _lastError = null;
+      return;
     }
+
+    if (failedIndex == null) {
+      Future.delayed(_errorRetryDelay, skipToNext);
+      return;
+    }
+
+    final resumeAt = queuePositionAfterFailure(failedIndex, _queueList.length);
+    if (resumeAt == null) {
+      // Nothing behind the song that failed is worth going back for: leave the
+      // queue where it stands rather than wrap around and replay it.
+      logger.log('Nothing left after the song that failed, staying put.');
+      _lastError = null;
+      return;
+    }
+
+    Future.delayed(_errorRetryDelay, () => _playFromQueue(resumeAt));
   }
 
   Future<void> _handleSongCompletion() async {
@@ -1387,12 +1408,12 @@ class MusifyAudioHandler extends BaseAudioHandler {
             mediaItem.add(previousMediaItem);
           }
           _updatePlaybackState();
-          _handlePlaybackError();
+          _handlePlaybackError(failedIndex: index);
         }
       }
     } catch (e, stackTrace) {
       logger.log('Error playing from queue', error: e, stackTrace: stackTrace);
-      _handlePlaybackError();
+      _handlePlaybackError(failedIndex: index);
     } finally {
       // Only reset if this is still the transition that started it
       if (currentTransitionId == _currentLoadingTransitionId) {

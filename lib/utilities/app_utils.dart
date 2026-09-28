@@ -205,3 +205,16 @@ bool _isDolbyCodec(String codec) {
       codec.contains('eac3') ||
       codec.contains('dolby');
 }
+
+/// The queue position to try after the song at [failedIndex] failed to load,
+/// or null when nothing is left worth trying.
+///
+/// By the time a failure is handled the current index has been rolled back to
+/// where playback stood, so asking the queue for its next entry walks straight
+/// back onto the song that just failed. Recovery has to step past it instead.
+int? queuePositionAfterFailure(int failedIndex, int queueLength) {
+  if (failedIndex < 0 || queueLength <= 0) return null;
+
+  final resumeAt = failedIndex + 1;
+  return resumeAt < queueLength ? resumeAt : null;
+}
