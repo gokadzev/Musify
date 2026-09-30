@@ -216,6 +216,17 @@ class _InitialData extends InitialData {
               item.getJson<List<dynamic>>('playlistVideoListRenderer/contents');
           if (contents != null) return contents.cast<JsonMap>();
         }
+
+        // Newer layout: the videos sit directly in itemSectionRenderer/contents
+        // as lockupViewModel entries, with no playlistVideoListRenderer wrapper
+        // at all. Confirmed against live playlists on 2026-09-27 (see
+        // https://github.com/OrionZ43/youtube_explode_dart/commit/cf8f881).
+        if (itemContents.any((e) =>
+            e is Map &&
+            (e.containsKey('lockupViewModel') ||
+                e.containsKey('continuationItemRenderer')))) {
+          return itemContents.cast<JsonMap>();
+        }
       }
     }
     return null;
@@ -231,143 +242,47 @@ class _InitialData extends InitialData {
           item['richItemRenderer']?['content']?['playlistVideoRenderer']
               as JsonMap?;
       if (renderer != null) {
-        result.add(_Video(renderer));
+        result.add(_RendererVideo(renderer));
         continue;
       }
 
-      // YouTube increasingly serves playlist rows (especially on
-      // continuation/pagination requests) as `lockupViewModel` entries
-      // instead of the classic `playlistVideoRenderer`. Without this,
-      // every page made up of lockupViewModels parses to zero videos,
-      // which both truncates the visible list AND makes getVideos() stop
-      // paginating early (it thinks it reached the end because a page
-      // contributed no new videos, even though a continuation token
-      // still exists). See yt-dlp's `_extract_lockup_view_model`.
+      // YouTube moved playlist rows (both on the initial page and on
+      // continuation/pagination requests) to a component-based
+      // `lockupViewModel` layout. Playlists also list channels and other
+      // playlists this way, so only keep entries that are actually videos.
       final lockup = item['lockupViewModel'] as JsonMap?;
-      if (lockup != null) {
-        final normalized = _normalizeLockupViewModel(lockup);
-        if (normalized != null) result.add(_Video(normalized));
+      if (lockup != null &&
+          lockup['contentType'] == 'LOCKUP_CONTENT_TYPE_VIDEO') {
+        result.add(_LockupVideo(lockup));
       }
     }
     return result;
   }
 }
 
-/// Normalizes a `lockupViewModel` (YouTube's newer playlist/grid row format)
-/// into the same shape as a classic `playlistVideoRenderer`, so it can be
-/// parsed by the existing [_Video] class unchanged. Returns null for
-/// non-video lockups (e.g. a playlist/podcast nested inside a playlist).
-JsonMap? _normalizeLockupViewModel(JsonMap lockup) {
-  final contentId = lockup.getT<String>('contentId');
-  final contentType = lockup.getT<String>('contentType');
-  if (contentId == null || contentType != 'LOCKUP_CONTENT_TYPE_VIDEO') {
-    return null;
-  }
-
-  final lockupMdvm =
-      lockup.getJson<JsonMap>('metadata/lockupMetadataViewModel');
-  final contentMdvm =
-      lockupMdvm?.getJson<JsonMap>('metadata/contentMetadataViewModel');
-  final title = lockupMdvm?.getJson<String>('title/content');
-
-  final metadataRows = contentMdvm
-      ?.getJson<List<dynamic>>('metadataRows')
-      ?.cast<JsonMap>();
-
-  // Channel info: first metadataRow/metadataPart whose text carries a
-  // browseEndpoint (i.e. is a clickable channel name).
-  String? channel;
-  String? channelId;
-  if (metadataRows != null) {
-    outer:
-    for (final row in metadataRows) {
-      final parts =
-          row.getJson<List<dynamic>>('metadataParts')?.cast<JsonMap>();
-      if (parts == null) continue;
-      for (final part in parts) {
-        final browseId = part.getJson<String>(
-            'text/commandRuns/0/onTap/innertubeCommand/browseEndpoint/browseId');
-        if (browseId != null) {
-          channel = part.getJson<String>('text/content');
-          channelId = browseId;
-          break outer;
-        }
-      }
-    }
-  }
-
-  // View count + relative upload time: the metadataRow whose last part
-  // carries an accessibilityLabel (yt-dlp uses the same signal — the
-  // label sits as a sibling of `text`, not nested inside it).
-  String? viewCountText;
-  String? timeText;
-  if (metadataRows != null) {
-    for (final row in metadataRows) {
-      final parts =
-          row.getJson<List<dynamic>>('metadataParts')?.cast<JsonMap>();
-      if (parts == null || parts.isEmpty) continue;
-      final last = parts.last;
-      if (last['accessibilityLabel'] == null) continue;
-      timeText = last.getJson<String>('text/content');
-      if (parts.length == 2) {
-        viewCountText = parts.first.getJson<String>('text/content');
-      }
-    }
-  }
-
-  // Duration, from a thumbnail overlay badge.
-  String? durationText;
-  final overlays = lockup
-      .getJson<List<dynamic>>('contentImage/thumbnailViewModel/overlays')
-      ?.cast<JsonMap>();
-  if (overlays != null) {
-    for (final overlay in overlays) {
-      final badgeText = overlay.getJson<String>(
-              'thumbnailBottomOverlayViewModel/badges/0/thumbnailBadgeViewModel/text') ??
-          overlay.getJson<String>(
-              'thumbnailOverlayBadgeViewModel/thumbnailBadges/0/thumbnailBadgeViewModel/text');
-      if (badgeText != null) {
-        durationText = badgeText;
-        break;
-      }
-    }
-  }
-
-  return {
-    'videoId': contentId,
-    'title': {
-      'runs': [
-        {'text': title ?? ''},
-      ],
-    },
-    'ownerText': {
-      'runs': [
-        {
-          'text': channel ?? '',
-          if (channelId != null)
-            'navigationEndpoint': {
-              'browseEndpoint': {'browseId': channelId},
-            },
-        },
-      ],
-    },
-    if (durationText != null) 'lengthText': {'simpleText': durationText},
-    'videoInfo': {
-      'runs': [
-        if (viewCountText != null) {'text': viewCountText},
-        {'text': ' • '},
-        if (timeText != null) {'text': timeText},
-      ],
-    },
-  };
+/// A single entry of a playlist page, in either of the two layouts YouTube
+/// serves: the classic `playlistVideoRenderer` or the newer `lockupViewModel`.
+abstract class _Video {
+  String get id;
+  String get author;
+  String get channelId;
+  String get title;
+  String get description;
+  Duration? get duration;
+  int get viewCount;
+  String? get uploadDateRaw;
 }
 
-class _Video {
+/// The classic playlist row: `playlistVideoRenderer` (or the same, nested
+/// inside `richItemRenderer`).
+class _RendererVideo implements _Video {
   final JsonMap root;
-  _Video(this.root);
+  _RendererVideo(this.root);
 
+  @override
   String get id => root.getT<String>('videoId')!;
 
+  @override
   String get author =>
       root
           .getJson<List<dynamic>>('ownerText/runs')
@@ -379,6 +294,7 @@ class _Video {
           .parseRuns() ??
       '';
 
+  @override
   String get channelId =>
       root.getJson<String>(
           'ownerText/runs/0/navigationEndpoint/browseEndpoint/browseId') ??
@@ -388,6 +304,7 @@ class _Video {
           'shortBylineText/runs/0/navigationEndpoint/showDialogCommand/panelLoadingStrategy/inlineContent/dialogViewModel/customContent/listViewModel/listItems/0/listItemViewModel/rendererContext/commandContext/onTap/innertubeCommand/browseEndpoint/browseId') ??
       '';
 
+  @override
   String get title =>
       root
           .getJson<List<dynamic>>('title/runs')
@@ -395,6 +312,7 @@ class _Video {
           .parseRuns() ??
       '';
 
+  @override
   String get description =>
       root
           .getJson<List<dynamic>>('descriptionSnippet')
@@ -402,18 +320,85 @@ class _Video {
           .parseRuns() ??
       '';
 
+  @override
   Duration? get duration =>
       root.getJson<String>('lengthText/simpleText')?.toDuration();
 
+  @override
   int get viewCount =>
       root.getJson<String>('viewCountText/simpleText').parseInt() ??
       _videoInfo?.split('•').elementAtSafe(0)?.stripNonDigits().parseInt() ??
       0;
 
+  @override
   String? get uploadDateRaw => _videoInfo?.split('•').elementAtSafe(1);
 
   String? get _videoInfo => root
       .getJson<List<dynamic>>('videoInfo/runs')
       ?.cast<Map<dynamic, dynamic>>()
       .parseRuns();
+}
+
+/// The layout YouTube moved playlists to: every entry is a `lockupViewModel`
+/// with a flat `contentId` and a `lockupMetadataViewModel` for the text.
+class _LockupVideo implements _Video {
+  final JsonMap root;
+  _LockupVideo(this.root);
+
+  JsonMap? get _metadata =>
+      root.getJson<JsonMap>('metadata/lockupMetadataViewModel');
+
+  @override
+  String get id => root.getT<String>('contentId') ?? '';
+
+  @override
+  String get title =>
+      _metadata?.getJson<String>('title/content') ??
+      root.getJson<String>('metadata/lockupMetadataViewModel/title/content') ??
+      '';
+
+  /// The channel name is the first metadata row under the title.
+  @override
+  String get author =>
+      _metadata?.getJson<String>(
+          'metadata/contentMetadataViewModel/metadataRows/0/metadataParts/0/text/content') ??
+      '';
+
+  @override
+  String get channelId =>
+      _metadata?.getJson<String>('image/decoratedAvatarViewModel/avatar/avatarViewModel/rendererContext/commandContext/onTap/innertubeCommand/browseEndpoint/browseId') ??
+      _metadata?.getJson<String>(
+          'image/decoratedAvatarViewModel/rendererContext/commandContext/onTap/innertubeCommand/browseEndpoint/browseId') ??
+      _metadata?.getJson<String>(
+          'metadata/contentMetadataViewModel/metadataRows/0/metadataParts/0/text/commandRuns/0/onTap/innertubeCommand/browseEndpoint/browseId') ??
+      '';
+
+  @override
+  String get description => '';
+
+  /// Duration lives in the badge drawn over the thumbnail ("4:20").
+  @override
+  Duration? get duration {
+    final overlays =
+        root.getJson<List<dynamic>>('contentImage/thumbnailViewModel/overlays');
+    if (overlays == null) return null;
+    for (final overlay in overlays.cast<JsonMap>()) {
+      final badges = overlay
+          .getJson<List<dynamic>>('thumbnailBottomOverlayViewModel/badges');
+      if (badges == null) continue;
+      for (final badge in badges.cast<JsonMap>()) {
+        final text = badge.getJson<String>('thumbnailBadgeViewModel/text');
+        final parsed = text?.toDuration();
+        if (parsed != null) return parsed;
+      }
+    }
+    return null;
+  }
+
+  /// Not served in this layout.
+  @override
+  int get viewCount => 0;
+
+  @override
+  String? get uploadDateRaw => null;
 }
