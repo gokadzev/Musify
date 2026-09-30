@@ -133,6 +133,19 @@ class _QueueWidgetState extends State<QueueWidget> {
     );
   }
 
+  Future<void> _shuffleQueue() async {
+    await audioHandler.shuffleQueue();
+    if (mounted && _scrollController.hasClients) {
+      unawaited(
+        _scrollController.animateTo(
+          0,
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeOut,
+        ),
+      );
+    }
+  }
+
   void _confirmClearQueue(BuildContext context) {
     showDialog<void>(
       context: context,
@@ -207,7 +220,15 @@ class _QueueWidgetState extends State<QueueWidget> {
               ],
             ),
           ),
-          if (_queue.isNotEmpty)
+          if (_queue.length > 1)
+            IconButton.filledTonal(
+              onPressed: _shuffleQueue,
+              icon: const Icon(FluentIcons.arrow_shuffle_24_filled, size: 18),
+              tooltip: context.l10n!.shuffle,
+              visualDensity: VisualDensity.compact,
+            ),
+          if (_queue.isNotEmpty) ...[
+            const SizedBox(width: 8),
             FilledButton.tonalIcon(
               onPressed: () => _confirmClearQueue(context),
               icon: const Icon(FluentIcons.dismiss_24_regular, size: 18),
@@ -220,6 +241,7 @@ class _QueueWidgetState extends State<QueueWidget> {
                 visualDensity: VisualDensity.compact,
               ),
             ),
+          ],
         ],
       ),
     );

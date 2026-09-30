@@ -2994,6 +2994,15 @@ class MusifyAudioHandler extends BaseAudioHandler {
       ..clear()
       ..addAll(cloneMaps(_queueList));
 
+    _shuffleQueueList(unplayedManualSongs, manualSongIds);
+  }
+
+  /// Shuffles the whole queue, keeping the current song first and any
+  /// unplayed manually added songs right after it.
+  void _shuffleQueueList(
+    List<Map> unplayedManualSongs,
+    Set<String> manualSongIds,
+  ) {
     final currentSong = _queueList[_currentQueueIndex];
     final currentQueueEntryId = _queueEntryIds.ensureId(currentSong);
 
@@ -3050,6 +3059,31 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
     _originalQueueList.clear();
     _updateQueueMediaItems();
+  }
+
+  /// Reshuffles the queue on every call. Leaves the saved original order
+  /// untouched so turning shuffle mode off still restores it.
+  Future<void> shuffleQueue() async {
+    try {
+      if (_queueList.length < 2 ||
+          _currentQueueIndex < 0 ||
+          _currentQueueIndex >= _queueList.length) {
+        return;
+      }
+
+      _hydrateQueueEntryIds();
+      final unplayedManualSongs = _getUnplayedManualSongs();
+      final manualSongIds = unplayedManualSongs
+          .map(_queueEntryIds.ensureId)
+          .toSet();
+      _shuffleQueueList(unplayedManualSongs, manualSongIds);
+
+      _cleanupOldPreloadedSongs();
+      _preloadUpcomingSongs();
+      _updatePlaybackState(force: true);
+    } catch (e, stackTrace) {
+      logger.log('Error shuffling queue', error: e, stackTrace: stackTrace);
+    }
   }
 
   @override
