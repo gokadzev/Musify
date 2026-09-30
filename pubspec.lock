@@ -109,26 +109,26 @@ packages:
     dependency: "direct main"
     description:
       name: cached_network_image
-      sha256: "3d8cca7b14130f094aa38e3a58cb132bd38eb12664d7d094e7995fdcc8640863"
+      sha256: "64a6c35e63cfd22865238d11fe8608bb538306ece5b2eb951106280441fdbb0c"
       url: "https://pub.dev"
     source: hosted
-    version: "4.0.2"
+    version: "4.0.4"
   cached_network_image_platform_interface:
     dependency: transitive
     description:
       name: cached_network_image_platform_interface
-      sha256: a6de45d11286a05e8a6df3e8d158f51c2833b86b83521d21d3375bb3fb20fc5f
+      sha256: "555e287d3882fbb36cde50d24214cb3f6a272d39c4386e8afe00cb188d35b285"
       url: "https://pub.dev"
     source: hosted
-    version: "5.0.2"
+    version: "5.0.3"
   cached_network_image_web:
     dependency: transitive
     description:
       name: cached_network_image_web
-      sha256: "49b1034a1a6c74d61387f44ae81da8e66b66d0d7debc6190072fb1af228f0227"
+      sha256: "38762ec3bd2295f4d79545add118f525bd5a105a53692c06208c4875f2abde62"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.2"
+    version: "2.0.3"
   characters:
     dependency: transitive
     description:
@@ -337,10 +337,10 @@ packages:
     dependency: "direct main"
     description:
       name: go_router
-      sha256: "008ab21d89d0de8ccd79586838f7533f126c2d894f50bf25f2947888d3c225b5"
+      sha256: "530dcbb298dc7c319aea9e3b7c580a61effb2abee2c93825d2dd8d5af0e230f1"
       url: "https://pub.dev"
     source: hosted
-    version: "18.0.1"
+    version: "18.0.2"
   gtk:
     dependency: transitive
     description:
@@ -521,10 +521,10 @@ packages:
     dependency: "direct main"
     description:
       name: material_ui
-      sha256: "134ab2f0843545c4e661e4ba2753fe1bcf0753cb690d5a9ee4870638a40411e9"
+      sha256: "32d98f11cf5942a095a8c3e01b03e4de3b17941437713dcf36b1088fb62e23d2"
       url: "https://pub.dev"
     source: hosted
-    version: "1.4.0"
+    version: "1.5.0"
   meta:
     dependency: transitive
     description:
@@ -625,10 +625,10 @@ packages:
     dependency: transitive
     description:
       name: petitparser
-      sha256: "91bd59303e9f769f108f8df05e371341b15d59e995e6806aefab827b58336675"
+      sha256: "2f1564aadb14215e478563b5406cb80729d022158c01dc50c96013c2f7eb4790"
       url: "https://pub.dev"
     source: hosted
-    version: "7.0.2"
+    version: "7.1.0"
   platform:
     dependency: transitive
     description:

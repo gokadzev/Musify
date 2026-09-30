@@ -15,7 +15,7 @@ dependencies:
   app_links: ^7.2.1
   audio_service: ^0.18.19
   audio_session: ^0.2.4
-  cached_network_image: ^4.0.2
+  cached_network_image: ^4.0.4
   dynamic_color: ^2.1.0
   file_picker: ^13.1.0
   fluentui_system_icons: ^1.1.273
@@ -23,14 +23,14 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  go_router: ^18.0.1
+  go_router: ^18.0.2
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   html: ^0.15.7
   http: ^1.6.0
   intl: ^0.20.2
   just_audio: ^0.10.6
-  material_ui: ^1.4.0
+  material_ui: ^1.5.0
   path_provider: ^2.1.6
   receive_sharing_intent:
     path: ./packages/receive_sharing_intent
