@@ -843,52 +843,48 @@ class MusifyAudioHandler extends BaseAudioHandler {
     }
   }
 
+  /// Queues one similar song when the current song is the last of the queue.
   Future<void> _backgroundAddSongsToQueue() async {
-    // Fire and forget - this runs as a background task without blocking playback
-    if (offlineMode.value) return;
+    // Repeat modes keep the queue cycling, so extending it would corrupt it.
+    if (offlineMode.value ||
+        hasNext ||
+        repeatNotifier.value != AudioServiceRepeatMode.none) {
+      return;
+    }
 
-    // Use microtask to avoid blocking the current operation
-    unawaited(
-      Future.microtask(() async {
-        try {
-          // Only add songs if we're still playing
-          if (!audioPlayer.playing) {
-            return;
-          }
+    final baseYtid = _getCurrentSongForRecommendations()?['ytid']?.toString();
+    if (baseYtid == null || baseYtid.isEmpty) return;
 
-          final baseSong = _getCurrentSongForRecommendations();
-          if (baseSong == null) {
-            return;
-          }
+    try {
+      final knownYtids = {
+        for (final song in [..._queueList, ..._historyList])
+          if (song['ytid'] != null) song['ytid'].toString(),
+      };
 
-          // Fetch similar songs silently in the background
-          await getSimilarSong(baseSong['ytid']).timeout(
+      final recommended =
+          await getSimilarSong(baseYtid, excludedYtIds: knownYtids).timeout(
             const Duration(seconds: 10),
             onTimeout: () {
               logger.log('Background song fetch timed out');
+              return null;
             },
           );
 
-          // If we got a recommendation, add it to the queue
-          // But only if still playing (user might have paused during fetch)
-          if (!audioPlayer.playing) {
-            return;
-          }
+      // The user may have skipped, paused or extended the queue meanwhile.
+      final isStillRelevant =
+          audioPlayer.playing &&
+          !hasNext &&
+          _getCurrentSongForRecommendations()?['ytid']?.toString() == baseYtid;
+      if (recommended == null || !isStillRelevant) return;
 
-          if (nextRecommendedSong != null) {
-            final songToAdd = nextRecommendedSong;
-            nextRecommendedSong = null;
-            await _insertRecommendedSong(songToAdd);
-          }
-        } catch (e, stackTrace) {
-          logger.log(
-            'Error in background song addition',
-            error: e,
-            stackTrace: stackTrace,
-          );
-        }
-      }),
-    );
+      await _insertRecommendedSong(recommended);
+    } catch (e, stackTrace) {
+      logger.log(
+        'Error in background song addition',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
   }
 
   Map? _getCurrentSongForRecommendations() {

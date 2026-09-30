@@ -81,8 +81,6 @@ Set<String> _songIds(Iterable songs) => songs
 final _cachedLikedSongIds = _createSongIdCache(userLikedSongsList);
 final _cachedOfflineSongIds = _createSongIdCache(userOfflineSongs);
 
-dynamic nextRecommendedSong;
-
 var _songLikeUpdateToken = 0;
 final _latestSongLikeUpdateTokens = <String, int>{};
 
@@ -640,16 +638,22 @@ Future<List<Map<String, int>>> getSkipSegments(String id) async {
   }
 }
 
-Future<void> getSimilarSong(String songYtId) async {
+/// The first song related to [songYtId] whose ytid is not in [excludedYtIds].
+Future<Map<String, dynamic>?> getSimilarSong(
+  String songYtId, {
+  Set<String> excludedYtIds = const {},
+}) async {
   try {
     final song = await ytClient.videos.get(songYtId);
     final relatedSongs = await ytClient.videos.getRelatedVideos(song) ?? [];
 
-    if (relatedSongs.isNotEmpty) {
-      nextRecommendedSong = returnSongLayout(0, relatedSongs[0]);
-    } else {
-      logger.log('No related songs found for $songYtId');
+    for (final video in relatedSongs) {
+      final candidate = returnSongLayout(0, video);
+      if (!excludedYtIds.contains(candidate['ytid']?.toString())) {
+        return candidate;
+      }
     }
+    logger.log('No new related songs found for $songYtId');
   } catch (e, stackTrace) {
     logger.log(
       'Error while fetching next similar song:',
@@ -657,6 +661,7 @@ Future<void> getSimilarSong(String songYtId) async {
       stackTrace: stackTrace,
     );
   }
+  return null;
 }
 
 /// In-memory cache of the audio stream picked for a song at the current
