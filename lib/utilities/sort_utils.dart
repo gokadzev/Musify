@@ -37,3 +37,25 @@ List<dynamic> sortSongsByKey(List<dynamic> songs, String sortKey) {
 /// Returns a new list with the most recently appended songs first.
 List<dynamic> sortSongsNewestFirst(List<dynamic> songs) =>
     List<dynamic>.of(songs.reversed);
+
+/// Returns a new list ordered by newest [dateKey], preserving ties.
+List<dynamic> sortSongsByDateAdded(
+  List<dynamic> songs, {
+  String dateKey = 'dateAdded',
+}) {
+  int dateOf(dynamic song) {
+    final value = song is Map ? song[dateKey] : null;
+    if (value is num) return value.toInt();
+    return int.tryParse(value?.toString() ?? '') ?? 0;
+  }
+
+  final indexed =
+      [
+        for (var i = 0; i < songs.length; i++)
+          (index: i, date: dateOf(songs[i])),
+      ]..sort((a, b) {
+        final byDate = b.date.compareTo(a.date);
+        return byDate != 0 ? byDate : a.index.compareTo(b.index);
+      });
+  return [for (final entry in indexed) songs[entry.index]];
+}

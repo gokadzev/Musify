@@ -31,6 +31,7 @@ import 'package:musify/utilities/app_utils.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/playlist_utils.dart';
 import 'package:musify/utilities/song_filtering.dart';
+import 'package:musify/utilities/sort_utils.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/mini_player_bottom_space.dart';
 import 'package:musify/widgets/playlist_hero_artwork.dart';
@@ -415,32 +416,11 @@ class _UserSongsPageState extends State<UserSongsPage> {
   }
 
   List _sortOfflineSongsLocal(List list, OfflineSortType type) {
-    final sortedList = List<dynamic>.from(list);
-    switch (type) {
-      case OfflineSortType.default_:
-        return sortedList;
-      case OfflineSortType.title:
-        sortedList.sort((a, b) {
-          final titleA = (a['title'] ?? '').toString().toLowerCase();
-          final titleB = (b['title'] ?? '').toString().toLowerCase();
-          return titleA.compareTo(titleB);
-        });
-        break;
-      case OfflineSortType.artist:
-        sortedList.sort((a, b) {
-          final artistA = (a['artist'] ?? '').toString().toLowerCase();
-          final artistB = (b['artist'] ?? '').toString().toLowerCase();
-          return artistA.compareTo(artistB);
-        });
-        break;
-      case OfflineSortType.dateAdded:
-        sortedList.sort((a, b) {
-          final dateA = a['dateAdded'] as int? ?? 0;
-          final dateB = b['dateAdded'] as int? ?? 0;
-          return dateB.compareTo(dateA);
-        });
-        break;
-    }
-    return sortedList;
+    return switch (type) {
+      OfflineSortType.default_ => List<dynamic>.of(list),
+      OfflineSortType.title => sortSongsByKey(list, 'title'),
+      OfflineSortType.artist => sortSongsByKey(list, 'artist'),
+      OfflineSortType.dateAdded => sortSongsByDateAdded(list),
+    };
   }
 }

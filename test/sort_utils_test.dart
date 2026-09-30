@@ -44,4 +44,18 @@ void main() {
       expect(sortSongsNewestFirst(songs).first['ytid'], '3');
     });
   });
+
+  test('sortSongsByDateAdded handles legacy values and preserves ties', () {
+    final songs = [
+      {'ytid': 'old', 'dateAdded': '100'},
+      {'ytid': 'missing'},
+      {'ytid': 'new', 'dateAdded': 200},
+      {'ytid': 'tie', 'dateAdded': 200},
+    ];
+
+    final sorted = sortSongsByDateAdded(songs);
+
+    expect(sorted.map((s) => s['ytid']), ['new', 'tie', 'old', 'missing']);
+    expect(songs.map((s) => s['ytid']), ['old', 'missing', 'new', 'tie']);
+  });
 }
