@@ -115,6 +115,10 @@ class _SearchPageState extends State<SearchPage> {
       _playlistsSearchResult = [];
       _radioStationsSearchResult = [];
       _suggestionsList = [];
+      // The search still in flight will not clear this itself: bumping the
+      // request id above just made it stale, and only the latest request is
+      // allowed to touch the indicator on its way out.
+      _fetchingSongs.value = false;
       if (mounted) setState(() {});
       return;
     }
@@ -286,10 +290,12 @@ class _SearchPageState extends State<SearchPage> {
                       final query = value;
                       final requestId = ++_latestSuggestionRequest;
 
-                      // Clear suggestions immediately if input is empty
+                      // An emptied field goes back to the search history, and
+                      // the history only shows while nothing has been found
+                      // yet. Dropping the suggestions is not enough: the
+                      // results of the last search have to go with them.
                       if (query.isEmpty) {
-                        _suggestionsList = [];
-                        if (mounted) setState(() {});
+                        unawaited(search());
                         return;
                       }
 
