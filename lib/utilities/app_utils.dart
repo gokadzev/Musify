@@ -205,3 +205,70 @@ bool _isDolbyCodec(String codec) {
       codec.contains('eac3') ||
       codec.contains('dolby');
 }
+
+/// What a playback failure leads to.
+enum PlaybackRecovery {
+  /// The same failure reported a second time while the first is being dealt
+  /// with; there is nothing left to decide.
+  ignore,
+
+  /// Too many failures in a row: playback stops rather than grind on.
+  stop,
+
+  /// Nothing worth trying, the queue is left where it stands.
+  standStill,
+
+  /// The failure did not come from the queue, so the ordinary skip handles it.
+  skipToNext,
+
+  /// Step past the queue entry that failed and carry on from there.
+  resumeAfterFailure,
+}
+
+/// Works out what a playback failure leads to, away from the player so that
+/// the handler's reasoning can be tested without one.
+///
+/// [consecutiveErrors] counts this failure in. [recoveryPending] says whether
+/// a recovery from an earlier failure is still waiting out its delay, which is
+/// the case when the player reports idle over a failure already being handled.
+PlaybackRecovery planPlaybackRecovery({
+  required int consecutiveErrors,
+  required int maxConsecutiveErrors,
+  required bool canRetry,
+  required bool recoveryPending,
+  required bool cameFromQueue,
+}) {
+  if (recoveryPending) return PlaybackRecovery.ignore;
+  if (consecutiveErrors >= maxConsecutiveErrors) return PlaybackRecovery.stop;
+  if (!canRetry) return PlaybackRecovery.standStill;
+
+  return cameFromQueue
+      ? PlaybackRecovery.resumeAfterFailure
+      : PlaybackRecovery.skipToNext;
+}
+
+/// The queue position to pick up at after the entry [failedEntryId] failed to
+/// load, or null when nothing is left worth trying.
+///
+/// The entry is looked up in [queueEntryIds] rather than trusted to still sit
+/// where it did: by the time a failure is recovered from, the queue may have
+/// been reordered, added to or replaced entirely, and a position captured
+/// beforehand would point at another song. An entry that is no longer queued
+/// takes its recovery with it.
+///
+/// Stepping past the entry is the whole point: by the time a failure is
+/// handled the current index has been rolled back to where playback stood, so
+/// asking the queue for its next entry walks straight back onto the song that
+/// just failed.
+int? queuePositionAfterFailure(
+  List<String?> queueEntryIds,
+  String? failedEntryId,
+) {
+  if (failedEntryId == null || failedEntryId.isEmpty) return null;
+
+  final failedIndex = queueEntryIds.indexOf(failedEntryId);
+  if (failedIndex < 0) return null;
+
+  final resumeAt = failedIndex + 1;
+  return resumeAt < queueEntryIds.length ? resumeAt : null;
+}
