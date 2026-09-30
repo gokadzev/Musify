@@ -115,6 +115,10 @@ class _SearchPageState extends State<SearchPage> {
       _playlistsSearchResult = [];
       _radioStationsSearchResult = [];
       _suggestionsList = [];
+      // The search still in flight will not clear this itself: bumping the
+      // request id above just made it stale, and only the latest request is
+      // allowed to touch the indicator on its way out.
+      _fetchingSongs.value = false;
       if (mounted) setState(() {});
       return;
     }
