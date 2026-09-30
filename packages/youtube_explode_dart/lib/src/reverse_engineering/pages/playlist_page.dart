@@ -8,9 +8,20 @@ import '../models/initial_data.dart';
 import '../models/youtube_page.dart';
 import '../youtube_http_client.dart';
 
+// The WEB client stops issuing continuation tokens after ~200 videos; WEB_REMIX does not.
+const _musicContext = {
+  'client': {
+    'clientName': 'WEB_REMIX',
+    'clientVersion': '1.20250922.03.00',
+    'hl': 'en',
+    'gl': 'US',
+  },
+};
+
 class PlaylistPage extends YoutubePage<_InitialData> {
   final String playlistId;
   final String? _visitorData;
+  final bool _useMusicClient;
 
   late final List<_Video> videos = initialData.playlistVideos;
   late final String? title = initialData.title;
@@ -20,27 +31,46 @@ class PlaylistPage extends YoutubePage<_InitialData> {
   late final int? videoCount = initialData.videoCount;
 
   PlaylistPage.id(this.playlistId, _InitialData initialData,
-      [this._visitorData])
+      [this._visitorData, this._useMusicClient = false])
       : super.fromInitialData(initialData);
 
   PlaylistPage.parse(String raw, this.playlistId)
       : _visitorData = null,
+        _useMusicClient = false,
         super(parser.parse(raw), (root) => _InitialData(root));
 
   Future<PlaylistPage?> nextPage(YoutubeHttpClient httpClient) async {
     final token = initialData.continuationToken;
     if (token == null || token.isEmpty) return null;
 
-    final data = await httpClient.sendContinuation('browse', token, headers: {
-      'x-youtube-client-name': '1',
-      'x-goog-visitor-id': _visitorData ?? '',
-    });
+    final data = _useMusicClient
+        ? await httpClient.sendPost('browse', {
+            'context': _musicContext,
+            'continuation': token,
+          })
+        : await httpClient.sendContinuation('browse', token, headers: {
+            'x-youtube-client-name': '1',
+            'x-goog-visitor-id': _visitorData ?? '',
+          });
 
     final newInitialData = _InitialData(data);
     // Guard against infinite loops with a stuck token.
     if (newInitialData.continuationToken == token) return null;
 
-    return PlaylistPage.id(playlistId, newInitialData, _visitorData);
+    return PlaylistPage.id(
+        playlistId, newInitialData, _visitorData, _useMusicClient);
+  }
+
+  /// Fetches the first page through the WEB_REMIX client, whose pagination is not capped.
+  static Future<PlaylistPage> getViaMusicClient(
+      YoutubeHttpClient httpClient, String id) {
+    return retry(httpClient, () async {
+      final data = await httpClient.sendPost('browse', {
+        'context': _musicContext,
+        'browseId': id.startsWith('VL') ? id : 'VL$id',
+      });
+      return PlaylistPage.id(id, _InitialData(data), null, true);
+    });
   }
 
   static Future<PlaylistPage> get(YoutubeHttpClient httpClient, String id) {
@@ -196,6 +226,15 @@ class _InitialData extends InitialData {
       }
     }
 
+    // Music client: the rows sit in a musicPlaylistShelfRenderer.
+    final musicSections = root.getJson<List<dynamic>>(
+        'contents/twoColumnBrowseResultsRenderer/secondaryContents/sectionListRenderer/contents');
+    for (final section in musicSections?.cast<JsonMap>() ?? const <JsonMap>[]) {
+      final contents =
+          section.getJson<List<dynamic>>('musicPlaylistShelfRenderer/contents');
+      if (contents != null) return contents.cast<JsonMap>();
+    }
+
     // Initial page: tabs → sectionList → itemSection → playlistVideoListRenderer.
     final tabs = root
         .getJson<List<dynamic>>('contents/twoColumnBrowseResultsRenderer/tabs');
@@ -254,6 +293,14 @@ class _InitialData extends InitialData {
       if (lockup != null &&
           lockup['contentType'] == 'LOCKUP_CONTENT_TYPE_VIDEO') {
         result.add(_LockupVideo(lockup));
+        continue;
+      }
+
+      final musicRow = item['musicResponsiveListItemRenderer'] as JsonMap?;
+      if (musicRow != null) {
+        final video = _MusicVideo(musicRow);
+        // Rows for unavailable tracks carry no video id.
+        if (video.id.isNotEmpty) result.add(video);
       }
     }
     return result;
@@ -396,6 +443,50 @@ class _LockupVideo implements _Video {
   }
 
   /// Not served in this layout.
+  @override
+  int get viewCount => 0;
+
+  @override
+  String? get uploadDateRaw => null;
+}
+
+/// A row of the WEB_REMIX layout: `musicResponsiveListItemRenderer`.
+class _MusicVideo implements _Video {
+  final JsonMap root;
+  _MusicVideo(this.root);
+
+  List<Map<dynamic, dynamic>> _runs(int column) =>
+      root
+          .getJson<List<dynamic>>(
+              'flexColumns/$column/musicResponsiveListItemFlexColumnRenderer/text/runs')
+          ?.cast<Map<dynamic, dynamic>>() ??
+      const [];
+
+  @override
+  String get id => root.getJson<String>('playlistItemData/videoId') ?? '';
+
+  @override
+  String get title => _runs(0).parseRuns();
+
+  @override
+  String get author => _runs(1).parseRuns();
+
+  // Tracks without an artist page still need a syntactically valid channel id.
+  @override
+  String get channelId =>
+      root.getJson<String>(
+          'flexColumns/1/musicResponsiveListItemFlexColumnRenderer/text/runs/0/navigationEndpoint/browseEndpoint/browseId') ??
+      'UC0000000000000000000000';
+
+  @override
+  String get description => '';
+
+  @override
+  Duration? get duration => root
+      .getJson<String>(
+          'fixedColumns/0/musicResponsiveListItemFixedColumnRenderer/text/runs/0/text')
+      ?.toDuration();
+
   @override
   int get viewCount => 0;
 

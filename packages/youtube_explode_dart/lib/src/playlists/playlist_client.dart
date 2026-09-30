@@ -37,7 +37,14 @@ class PlaylistClient {
     id = PlaylistId.fromString(id);
     final encounteredVideoIds = <String>{};
     var prevLength = 0;
-    PlaylistPage? page = await PlaylistPage.get(_httpClient, id.value);
+    PlaylistPage? page;
+    try {
+      page = await PlaylistPage.getViaMusicClient(_httpClient, id.value);
+    } catch (_) {}
+    // Uploads, mixes and similar playlists are not served by the music client.
+    if (page == null || page.videos.isEmpty) {
+      page = await PlaylistPage.get(_httpClient, id.value);
+    }
 
     while (page != null) {
       for (final video in page.videos) {
