@@ -1635,6 +1635,17 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   static const String _songMediaIdPrefix = 'song:';
   static const String _playlistMediaIdPrefix = 'playlist:';
+
+  /// The extras a car reads to put a tick on a browse row already listened to,
+  /// and a progress bar on the one still playing. The keys are the ones
+  /// androidx.media publishes; there is no constant for them in audio_service.
+  static const String _completionStatusKey =
+      'android.media.extra.PLAYBACK_STATUS';
+  static const String _completionPercentageKey =
+      'androidx.media.MediaItem.Extras.COMPLETION_PERCENTAGE';
+  static const int _completionNotPlayed = 0;
+  static const int _completionPartiallyPlayed = 1;
+  static const int _completionFullyPlayed = 2;
   static const int _maxSearchResults = 30;
   static const Duration _browserFetchTimeout = Duration(seconds: 15);
 
@@ -1694,7 +1705,37 @@ class MusifyAudioHandler extends BaseAudioHandler {
     },
   );
 
-  MediaItem? _browsableSong(Map song, String containerId) {
+  /// How far the queue entry at [index] has been listened to, in the form a
+  /// car puts on a browse row. Only the queue is marked: everywhere else is a
+  /// library, where what was played earlier says nothing about the row.
+  ///
+  /// Read when the car asks for the children rather than when the queue is
+  /// published, so the percentage is the one playback stands at.
+  Map<String, dynamic>? _completionExtras(String containerId, int index) {
+    if (containerId != _rootQueue) return null;
+    if (index < 0 || _currentQueueIndex < 0) return null;
+
+    if (index < _currentQueueIndex) {
+      return const {_completionStatusKey: _completionFullyPlayed};
+    }
+    if (index > _currentQueueIndex) {
+      return const {_completionStatusKey: _completionNotPlayed};
+    }
+
+    final duration = audioPlayer.duration;
+    if (duration == null || duration <= Duration.zero) {
+      return const {_completionStatusKey: _completionPartiallyPlayed};
+    }
+
+    final played =
+        audioPlayer.position.inMilliseconds / duration.inMilliseconds;
+    return {
+      _completionStatusKey: _completionPartiallyPlayed,
+      _completionPercentageKey: played.clamp(0.0, 1.0),
+    };
+  }
+
+  MediaItem? _browsableSong(Map song, String containerId, [int index = -1]) {
     final token = _songToken(song, containerId);
     if (token == null || token.isEmpty) return null;
 
@@ -1702,18 +1743,26 @@ class MusifyAudioHandler extends BaseAudioHandler {
     if (normalised == null) return null;
 
     final artist = normalised['artist']?.toString().trim() ?? '';
-    return mapToMediaItem(normalised).copyWith(
+    final item = mapToMediaItem(normalised).copyWith(
       id: _songMediaId(containerId, token),
       playable: true,
       displayTitle: normalised['title']?.toString(),
       displaySubtitle: artist.isEmpty ? 'Musify' : artist,
     );
+
+    final completion = _completionExtras(containerId, index);
+    return completion == null
+        ? item
+        : item.copyWith(extras: {...?item.extras, ...completion});
   }
 
   List<MediaItem> _browsableSongs(Iterable songs, String containerId) {
     final items = <MediaItem>[];
+    // Counted over the source list, not the built one: a song that yields no
+    // item still occupies its place in the queue the marks refer to.
+    var index = 0;
     for (final song in songs.whereType<Map>()) {
-      final item = _browsableSong(song, containerId);
+      final item = _browsableSong(song, containerId, index++);
       if (item != null) items.add(item);
     }
     return items;
@@ -1912,7 +1961,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
     watch(userLikedPlaylists, const [_rootPlaylists]);
     watch(userPlaylistFolders, const [_rootPlaylists]);
 
-    queue
+    // What the queue holds, and the song within it playback has reached: both
+    // move the marks a car draws on the rows, so both have to send it back
+    // for the children.
+    Rx.merge<void>([queue, mediaItem.distinct()])
         .throttleTime(const Duration(seconds: 2), trailing: true)
         .listen(
           (_) => _notifyChildrenChanged(const [_rootQueue]),
