@@ -482,12 +482,16 @@ class _ArtistPageState extends State<ArtistPage> {
 
       if (shuffle) {
         await audioHandler.addPlaylistToQueue(
-          List<Map>.from(songs.whereType<Map>())..shuffle(),
+          List<Map>.from(songs.whereType<Map>()),
           replace: true,
-          startIndex: 0,
+          shuffle: true,
         );
       } else {
-        await audioHandler.playPlaylistSong(playlist: catalog, songIndex: 0);
+        await audioHandler.playPlaylistSong(
+          playlist: catalog,
+          songIndex: 0,
+          shuffle: false,
+        );
       }
     } finally {
       if (mounted) _isLoadingCatalog.value = false;

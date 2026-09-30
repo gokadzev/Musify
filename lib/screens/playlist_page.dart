@@ -337,14 +337,15 @@ class _PlaylistPageState extends State<PlaylistPage> {
             onPlay: () => audioHandler.playPlaylistSong(
               playlist: _playlist,
               songIndex: 0,
+              shuffle: false,
             ),
             onShuffle: () async {
               final songs = _playlist['list'] as List? ?? [];
               if (songs.isEmpty) return;
               await audioHandler.addPlaylistToQueue(
-                List<Map>.from(songs.whereType<Map>())..shuffle(),
+                List<Map>.from(songs.whereType<Map>()),
                 replace: true,
-                startIndex: 0,
+                shuffle: true,
               );
             },
           ),

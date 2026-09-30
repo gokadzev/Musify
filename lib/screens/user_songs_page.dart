@@ -210,6 +210,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
                       audioHandler.playPlaylistSong(
                         playlist: playlist,
                         songIndex: 0,
+                        shuffle: false,
                       );
                     },
                   ),
@@ -230,12 +231,10 @@ class _UserSongsPageState extends State<UserSongsPage> {
                           ? userOfflineSongs.value
                           : userRecentlyPlayed.value;
                       if (songs.isEmpty) return;
-                      final shuffled = List<Map>.from(songs.whereType<Map>())
-                        ..shuffle();
                       await audioHandler.addPlaylistToQueue(
-                        shuffled,
+                        List<Map>.from(songs.whereType<Map>()),
                         replace: true,
-                        startIndex: 0,
+                        shuffle: true,
                       );
                     },
                   ),

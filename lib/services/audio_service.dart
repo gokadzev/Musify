@@ -1002,9 +1002,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
     List<Map> songs, {
     bool replace = false,
     int? startIndex,
+    bool? shuffle,
   }) async {
     try {
       final manuallyAddedSongs = replace ? _getUnplayedManualSongs() : <Map>[];
+      final shuffleAfterReplace = shuffle ?? shuffleNotifier.value;
       if (replace) {
         _queueList.clear();
         _originalQueueList.clear();
@@ -1012,20 +1014,43 @@ class MusifyAudioHandler extends BaseAudioHandler {
         _currentLoadingIndex = -1;
         _currentLoadingTransitionId = -1;
         _resetPreloadingState();
-        shuffleNotifier.value = false;
-        unawaited(Hive.box('settings').put('shuffleEnabled', false));
-        await audioPlayer.setShuffleModeEnabled(false);
+        if (shuffleNotifier.value != shuffleAfterReplace) {
+          shuffleNotifier.value = shuffleAfterReplace;
+          unawaited(
+            Hive.box('settings').put('shuffleEnabled', shuffleAfterReplace),
+          );
+          await audioPlayer.setShuffleModeEnabled(shuffleAfterReplace);
+        }
       }
 
       int? targetQueueIndex;
+      Map? startSong;
+      final newSongs = <Map>[];
 
       for (var i = 0; i < songs.length; i++) {
         final song = songs[i];
         if (song['ytid'] != null && song['ytid'].toString().isNotEmpty) {
-          _queueList.add(_queueEntryIds.createSong(song));
+          final queueSong = _queueEntryIds.createSong(song);
+          newSongs.add(queueSong);
+          if (replace && startIndex == i) startSong = queueSong;
+          if (!replace) _queueList.add(queueSong);
+        }
+      }
 
-          if (replace && startIndex == i) {
-            targetQueueIndex = _queueList.length - 1;
+      if (replace) {
+        if (shuffleAfterReplace && newSongs.isNotEmpty) {
+          _originalQueueList.addAll(cloneMaps(newSongs));
+          final rest = List<Map>.of(newSongs)
+            ..remove(startSong)
+            ..shuffle();
+          _queueList
+            ..addAll(startSong != null ? [startSong] : <Map>[])
+            ..addAll(rest);
+          targetQueueIndex = 0;
+        } else {
+          _queueList.addAll(newSongs);
+          if (startSong != null) {
+            targetQueueIndex = _queueList.indexOf(startSong);
           }
         }
       }
@@ -2563,6 +2588,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
   Future<void> playPlaylistSong({
     Map<dynamic, dynamic>? playlist,
     required int songIndex,
+    bool? shuffle,
   }) async {
     try {
       if (playlist != null && playlist['list'] != null) {
@@ -2570,6 +2596,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
           List<Map>.from(playlist['list']),
           replace: true,
           startIndex: songIndex,
+          shuffle: shuffle,
         );
       }
     } catch (e, stackTrace) {
