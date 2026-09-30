@@ -104,14 +104,45 @@ const Duration _manifestTimeout = Duration(seconds: 30);
 const Duration _cacheValidationDuration = Duration(hours: 1);
 
 /// Fetches a stream manifest for a song, honoring proxy settings.
+///
+/// Clients are tried one at a time until one answers with something playable.
+/// visionOs has no way of reporting that it won't serve a "made for kids"
+/// video other than failing or answering with nothing usable, so the fallback
+/// is tried on any empty result rather than on a specific error.
 Future<StreamManifest?> _fetchStreamManifest(String songId) async {
-  if (useProxy.value) {
-    return ProxyManager().getSongManifest(songId).timeout(_manifestTimeout);
+  var manifest = await _fetchStreamManifestWith(songId, customClients);
+  if (manifest != null && playableAudioSources(manifest).isNotEmpty) {
+    return manifest;
   }
 
-  return ytClient.videos.streams
-      .getManifest(songId, ytClients: customClients)
-      .timeout(_manifestTimeout);
+  for (final client in fallbackClients) {
+    final fallback = await _fetchStreamManifestWith(songId, [client]);
+    if (fallback == null) continue;
+    if (playableAudioSources(fallback).isNotEmpty) return fallback;
+    manifest ??= fallback;
+  }
+
+  return manifest;
+}
+
+Future<StreamManifest?> _fetchStreamManifestWith(
+  String songId,
+  List<YoutubeApiClient> clients,
+) async {
+  try {
+    if (useProxy.value) {
+      return await ProxyManager()
+          .getSongManifest(songId, ytClients: clients)
+          .timeout(_manifestTimeout);
+    }
+
+    return await ytClient.videos.streams
+        .getManifest(songId, ytClients: clients)
+        .timeout(_manifestTimeout);
+  } catch (e) {
+    logger.log('No manifest for $songId from ${clients.length} client(s): $e');
+    return null;
+  }
 }
 
 /// Returns a cached song URL if present and still valid.
@@ -663,7 +694,7 @@ Future<void> getSimilarSong(String songYtId) async {
 /// quality setting. The Hive cache only keeps the URL, so without this every
 /// caller that needs the stream itself (bitrate, codec) would fetch the
 /// manifest again right after playback already resolved it.
-final Map<String, ({AudioOnlyStreamInfo stream, DateTime resolvedAt})>
+final Map<String, ({AudioStreamInfo stream, DateTime resolvedAt})>
 _selectedAudioStreams = {};
 
 const _maxSelectedAudioStreams = 50;
@@ -673,7 +704,7 @@ String _selectedAudioStreamKey(String songId) =>
 
 /// Returns the stream resolved earlier for a song, unless it is old enough
 /// that its URL may have expired.
-AudioOnlyStreamInfo? _getSelectedAudioStream(String songId) {
+AudioStreamInfo? _getSelectedAudioStream(String songId) {
   final key = _selectedAudioStreamKey(songId);
   final entry = _selectedAudioStreams[key];
   if (entry == null) return null;
@@ -686,7 +717,7 @@ AudioOnlyStreamInfo? _getSelectedAudioStream(String songId) {
   return entry.stream;
 }
 
-void _cacheSelectedAudioStream(String songId, AudioOnlyStreamInfo stream) {
+void _cacheSelectedAudioStream(String songId, AudioStreamInfo stream) {
   if (_selectedAudioStreams.length >= _maxSelectedAudioStreams) {
     _selectedAudioStreams.remove(_selectedAudioStreams.keys.first);
   }
@@ -705,7 +736,7 @@ Future<void> invalidateSongStreamCache(String songId) async {
 }
 
 /// Fetches the best available audio stream for a song.
-Future<AudioOnlyStreamInfo?> fetchBestAudioStream(String? songId) async {
+Future<AudioStreamInfo?> fetchBestAudioStream(String? songId) async {
   try {
     if (songId == null || songId.isEmpty) {
       logger.log('fetchBestAudioStream: songId is null or empty');
@@ -716,13 +747,18 @@ Future<AudioOnlyStreamInfo?> fetchBestAudioStream(String? songId) async {
     if (cachedStream != null) return cachedStream;
 
     final manifest = await _fetchStreamManifest(songId);
-    final audioStream = manifest?.audioOnly;
-    if (audioStream == null || audioStream.isEmpty) {
+    if (manifest == null) {
+      logger.log('fetchBestAudioStream: no manifest for $songId');
+      return null;
+    }
+
+    final audioStream = playableAudioSources(manifest);
+    if (audioStream.isEmpty) {
       logger.log('fetchBestAudioStream: no audio streams for $songId');
       return null;
     }
 
-    final selectedStream = selectAudioOnlyStreamForQuality(audioStream);
+    final selectedStream = selectAudioStreamForQuality(audioStream);
     if (selectedStream == null) {
       logger.log(
         'fetchBestAudioStream: no compatible audio streams for $songId',
@@ -732,9 +768,6 @@ Future<AudioOnlyStreamInfo?> fetchBestAudioStream(String? songId) async {
 
     _cacheSelectedAudioStream(songId, selectedStream);
     return selectedStream;
-  } on TimeoutException catch (_) {
-    logger.log('fetchBestAudioStream request timed out for $songId');
-    return null;
   } catch (e, stackTrace) {
     logger.log(
       'Error while fetching best audio stream',
