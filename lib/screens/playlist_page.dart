@@ -78,7 +78,9 @@ class PlaylistPage extends StatefulWidget {
 
 class _PlaylistPageState extends State<PlaylistPage> {
   dynamic _playlist;
-  late List<dynamic> _originalPlaylistList; // Keep original order separately
+
+  /// Canonical (storage) order; `_playlist['list']` is always derived from it.
+  List<dynamic> _originalPlaylistList = [];
 
   bool _isInitializingPlaylist = true;
 
@@ -169,7 +171,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
       if (_playlist != null && _playlist['list'] != null) {
         _adoptPlaylist(_playlist);
-        _sortPlaylist(_sortType);
       }
       _maybeLoadRecommendations();
     } catch (e, stackTrace) {
@@ -263,10 +264,9 @@ class _PlaylistPageState extends State<PlaylistPage> {
           // Cap rendered rows to limit simultaneous artwork loads; do not refetch or backfill.
           final visibleSongs = data
               .where(
-                (song) =>
-                    !_addedRecommendedSongIds.contains(
-                      song['ytid']?.toString(),
-                    ),
+                (song) => !_addedRecommendedSongIds.contains(
+                  song['ytid']?.toString(),
+                ),
               )
               .take(_visibleRecommendedSongsCount)
               .toList();
@@ -298,8 +298,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
       setState(() {
         _addedRecommendedSongIds.add(song['ytid']?.toString() ?? '');
         _originalPlaylistList.add(song);
-        _playlist['list'] = List<dynamic>.from(_originalPlaylistList);
-        _sortPlaylist(_sortType);
+        _applySort();
       });
     }
   }
@@ -388,7 +387,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                   type.name,
                 );
                 playlistSortSetting = type.name;
-                _sortPlaylist(type);
+                _applySort();
               });
             },
           ),
@@ -518,10 +517,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
           // Update offline playlist if it exists
           unawaited(syncOfflinePlaylistMetadata(updatedPlaylist));
 
-          setState(() {
-            _adoptPlaylist(updatedPlaylist);
-            _sortPlaylist(_sortType);
-          });
+          setState(() => _adoptPlaylist(updatedPlaylist));
           showToast(context, context.l10n!.playlistUpdated);
         }
       },
@@ -573,24 +569,36 @@ class _PlaylistPageState extends State<PlaylistPage> {
       return;
     }
     if (updated != null && mounted) {
-      setState(() {
-        _adoptPlaylist(updated);
-        _sortPlaylist(_sortType);
-      });
+      setState(() => _adoptPlaylist(updated));
       if (isCachedPage) {
         showToast(context, context.l10n!.playlistUpdated);
       }
     }
   }
 
-  void _updateSongsListOnRemove(int indexOfRemovedSong, dynamic songToRemove) {
-    final originalIndex = _originalPlaylistList.indexWhere(
-      (song) => song is Map && song['ytid'] == songToRemove['ytid'],
+  /// Removes [song] from the canonical list (and storage), then re-derives the view.
+  void _removeSong(Map song) {
+    final canonicalIndex = _originalPlaylistList.indexWhere(
+      (s) => s is Map && s['ytid'] == song['ytid'],
     );
-    final indexToRestore = originalIndex == -1
-        ? indexOfRemovedSong
-        : originalIndex;
-    _originalPlaylistList.removeWhere((s) => s['ytid'] == songToRemove['ytid']);
+    if (canonicalIndex == -1) return;
+
+    // Persist in canonical order, never the sorted view order.
+    final canonicalPlaylist = {..._playlist, 'list': _originalPlaylistList};
+    if (!removeSongFromPlaylist(
+      canonicalPlaylist,
+      song,
+      removeOneAtIndex: canonicalIndex,
+    )) {
+      return;
+    }
+    _updateSongsListOnRemove(canonicalIndex, song);
+  }
+
+  void _updateSongsListOnRemove(int indexToRestore, dynamic songToRemove) {
+    _originalPlaylistList = List<dynamic>.from(_originalPlaylistList)
+      ..removeAt(indexToRestore);
+    _applySort();
     final playlistId = _playlist['ytid'];
     if (mounted) {
       setState(() {});
@@ -614,8 +622,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
               _originalPlaylistList.length,
             );
             _originalPlaylistList.insert(safeIndex, songToRemove);
-            _playlist['list'] = List<dynamic>.from(_originalPlaylistList);
-            _sortPlaylist(_sortType);
+            _applySort();
           }
           if (mounted) setState(() {});
         },
@@ -659,7 +666,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
     }
   }
 
-  /// Copy source and snapshot its original item order.
+  /// Copy source, snapshot its canonical order and apply the current sort.
   /// Prevents sorting changes from affecting shared cached playlist data.
   void _adoptPlaylist(dynamic source) {
     if (source is! Map) {
@@ -672,30 +679,22 @@ class _PlaylistPageState extends State<PlaylistPage> {
     _originalPlaylistList = list is List
         ? List<dynamic>.from(list)
         : <dynamic>[];
+    _applySort();
   }
 
-  void _sortPlaylist(PlaylistSortType type) {
-    if (_playlist == null || _playlist['list'] == null) return;
+  /// Rebuilds the displayed list from the canonical list for [_sortType].
+  void _applySort() {
+    if (_playlist is! Map || _playlist['list'] == null) return;
 
-    switch (type) {
-      case PlaylistSortType.default_:
-        // Restore original order from backup
-        _playlist['list'] = List<dynamic>.from(_originalPlaylistList);
-        break;
-      case PlaylistSortType.title:
-        final playlist = List<dynamic>.from(_playlist['list']);
-        sortSongsByKey(playlist, 'title');
-        _playlist['list'] = playlist;
-        break;
-      case PlaylistSortType.artist:
-        final playlist = List<dynamic>.from(_playlist['list']);
-        sortSongsByKey(playlist, 'artist');
-        _playlist['list'] = playlist;
-        break;
-      case PlaylistSortType.dateAdded:
-        _playlist['list'] = List<dynamic>.from(_originalPlaylistList.reversed);
-        break;
-    }
+    _playlist['list'] = switch (_sortType) {
+      PlaylistSortType.default_ => List<dynamic>.of(_originalPlaylistList),
+      PlaylistSortType.title => sortSongsByKey(_originalPlaylistList, 'title'),
+      PlaylistSortType.artist => sortSongsByKey(
+        _originalPlaylistList,
+        'artist',
+      ),
+      PlaylistSortType.dateAdded => sortSongsNewestFirst(_originalPlaylistList),
+    };
   }
 
   Widget _buildSongListItem(
@@ -721,17 +720,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
       song,
       true,
       key: listItemKey('playlist_song', index, song),
-      onRemove: (isRemovable && !isSearching)
-          ? () {
-              if (removeSongFromPlaylist(
-                _playlist,
-                song,
-                removeOneAtIndex: index,
-              )) {
-                _updateSongsListOnRemove(index, song);
-              }
-            }
-          : null,
+      onRemove: (isRemovable && !isSearching) ? () => _removeSong(song) : null,
       onPlay: () {
         audioHandler.playPlaylistSong(
           playlist: _playlist,
