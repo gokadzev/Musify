@@ -105,6 +105,13 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   String? _lastError;
   int _consecutiveErrors = 0;
+
+  /// The recovery waiting out [_errorRetryDelay], if any. Held as a token
+  /// rather than a flag so that a transition started in the meantime can
+  /// retire it: the queue it was going to resume may no longer be the one
+  /// playing by the time it fires.
+  int? _pendingRecovery;
+  int _recoveryCounter = 0;
   static const int _maxConsecutiveErrors = 3;
 
   static const int _maxHistorySize = 50;
@@ -801,45 +808,88 @@ class MusifyAudioHandler extends BaseAudioHandler {
           _queueList.isNotEmpty) ||
       playNextSongAutomatically.value;
 
-  /// [failedIndex] is where in the queue the song that just failed sits, when
-  /// the failure came from the queue at all. It is needed because the index
-  /// has by then been rolled back to where playback stood: asking for the next
-  /// song would walk straight back onto the one that failed, and keep doing so
-  /// until the error count stopped playback altogether.
-  void _handlePlaybackError({int? failedIndex}) {
+  /// [failedEntryId] is the queue entry the song that failed was playing from,
+  /// when the failure came from the queue at all. Recovery cannot just ask the
+  /// queue for its next song: the index has by then been rolled back to where
+  /// playback stood, so the next song is the one that just failed, and it
+  /// would keep being it until the error count stopped playback altogether.
+  void _handlePlaybackError({String? failedEntryId}) {
+    final plan = planPlaybackRecovery(
+      consecutiveErrors: _consecutiveErrors + 1,
+      maxConsecutiveErrors: _maxConsecutiveErrors,
+      canRetry: _canRetryPlayback(),
+      recoveryPending: _pendingRecovery != null,
+      cameFromQueue: failedEntryId != null,
+    );
+
+    if (plan == PlaybackRecovery.ignore) {
+      // The same failure reaches here twice: once from the transition that
+      // saw it, once from the player falling idle with _lastError still set.
+      // Letting the second one through would schedule a second recovery on
+      // top of the first, and a blind skipToNext back onto the failed song.
+      logger.log('A recovery is already pending, ignoring the repeat report.');
+      return;
+    }
+
     _consecutiveErrors++;
     logger.log(
       'Playback error occurred. Consecutive errors: $_consecutiveErrors',
       error: _lastError,
     );
 
-    if (_consecutiveErrors >= _maxConsecutiveErrors) {
-      logger.log('Max consecutive errors reached. Stopping playback.');
-      stop();
-      return;
-    }
+    // Whatever happens next, the failure has been taken into account. Leaving
+    // it set is what let the idle player report it all over again.
+    _lastError = null;
 
-    if (!_canRetryPlayback()) {
-      _lastError = null;
-      return;
+    switch (plan) {
+      // ignore was dealt with above, it is only named here for exhaustiveness.
+      case PlaybackRecovery.ignore:
+      case PlaybackRecovery.standStill:
+        return;
+      case PlaybackRecovery.stop:
+        logger.log('Max consecutive errors reached. Stopping playback.');
+        stop();
+      case PlaybackRecovery.skipToNext:
+        _scheduleRecovery((_) => skipToNext());
+      case PlaybackRecovery.resumeAfterFailure:
+        _scheduleRecovery((_) => _resumeAfterFailure(failedEntryId!));
     }
-
-    if (failedIndex == null) {
-      Future.delayed(_errorRetryDelay, skipToNext);
-      return;
-    }
-
-    final resumeAt = queuePositionAfterFailure(failedIndex, _queueList.length);
-    if (resumeAt == null) {
-      // Nothing behind the song that failed is worth going back for: leave the
-      // queue where it stands rather than wrap around and replay it.
-      logger.log('Nothing left after the song that failed, staying put.');
-      _lastError = null;
-      return;
-    }
-
-    Future.delayed(_errorRetryDelay, () => _playFromQueue(resumeAt));
   }
+
+  /// Runs [recovery] once [_errorRetryDelay] is out, unless something started
+  /// playing in the meantime and retired it.
+  void _scheduleRecovery(void Function(int token) recovery) {
+    final token = ++_recoveryCounter;
+    _pendingRecovery = token;
+
+    Future.delayed(_errorRetryDelay, () {
+      if (_pendingRecovery != token) return;
+      _pendingRecovery = null;
+      recovery(token);
+    });
+  }
+
+  /// Picks up the queue after the entry that failed, looking up where that
+  /// entry sits *now*: the delay recovery waits out is long enough for the
+  /// queue to be reordered, added to or replaced, and an index captured
+  /// before it would by then point at another song.
+  void _resumeAfterFailure(String failedEntryId) {
+    final resumeAt = queuePositionAfterFailure(_queueEntryIdList, failedEntryId);
+
+    if (resumeAt == null) {
+      // Either the song that failed is no longer queued, or it was the last
+      // one: nothing to step onto, so the queue is left where it stands
+      // rather than wrapped around and played again.
+      logger.log('Nothing left after the song that failed, staying put.');
+      return;
+    }
+
+    unawaited(_playFromQueue(resumeAt));
+  }
+
+  List<String?> get _queueEntryIdList => _queueList
+      .map((song) => song['queueEntryId']?.toString())
+      .toList(growable: false);
 
   Future<void> _handleSongCompletion() async {
     try {
@@ -1368,6 +1418,13 @@ class MusifyAudioHandler extends BaseAudioHandler {
     final currentTransitionId = _songTransitionCounter;
     _currentLoadingIndex = index;
     _currentLoadingTransitionId = currentTransitionId;
+    // Whatever recovery was waiting was aiming at a queue this transition is
+    // about to make obsolete.
+    _pendingRecovery = null;
+
+    // Kept outside the try so that the failure paths below can name the queue
+    // entry they belong to, rather than an index the delay would make stale.
+    String? failedEntryId;
 
     try {
       final previousQueueIndex = _currentQueueIndex;
@@ -1377,6 +1434,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       final currentSong = _queueList[_currentQueueIndex];
       final currentMediaItem = _getMediaItemForQueue(currentSong);
       final uniqueId = currentMediaItem.id;
+      failedEntryId = uniqueId;
 
       await Future.microtask(() {
         mediaItem.add(currentMediaItem);
@@ -1408,12 +1466,12 @@ class MusifyAudioHandler extends BaseAudioHandler {
             mediaItem.add(previousMediaItem);
           }
           _updatePlaybackState();
-          _handlePlaybackError(failedIndex: index);
+          _handlePlaybackError(failedEntryId: failedEntryId);
         }
       }
     } catch (e, stackTrace) {
       logger.log('Error playing from queue', error: e, stackTrace: stackTrace);
-      _handlePlaybackError(failedIndex: index);
+      _handlePlaybackError(failedEntryId: failedEntryId);
     } finally {
       // Only reset if this is still the transition that started it
       if (currentTransitionId == _currentLoadingTransitionId) {
