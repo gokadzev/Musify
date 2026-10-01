@@ -31,7 +31,6 @@ class FilePaths {
   // Directory names
   static const String tracksDir = 'tracks';
   static const String artworksDir = 'artworks';
-  static const String streamBufferDir = 'stream_buffer';
 
   // Get full paths for various file types
   static String getAudioPath(String songId) {
@@ -40,12 +39,6 @@ class FilePaths {
 
   static String getArtworkPath(String songId) {
     return '$applicationDirPath/$artworksDir/$songId$artworkExtension';
-  }
-
-  // Holds the song being played while it downloads. Temporary, unlike the
-  // songs the user deliberately downloaded into tracksDir.
-  static String getStreamBufferDirPath() {
-    return '$applicationDirPath/$streamBufferDir';
   }
 
   // Ensure directories exist
@@ -59,11 +52,6 @@ class FilePaths {
 
     if (!await artworksDirectory.exists()) {
       await artworksDirectory.create(recursive: true);
-    }
-
-    final streamBufferDirectory = Directory(getStreamBufferDirPath());
-    if (!await streamBufferDirectory.exists()) {
-      await streamBufferDirectory.create(recursive: true);
     }
   }
 }
