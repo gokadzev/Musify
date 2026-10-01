@@ -2340,6 +2340,13 @@ class MusifyAudioHandler extends BaseAudioHandler {
         playback.isOffline,
         mediaId: mediaId,
         transitionId: transitionId,
+        rung: playback.isOffline
+            ? _StreamingRung.direct
+            : _effectiveRung(
+                songData,
+                Uri.parse(playback.songUrl),
+                _StreamingRung.buffered,
+              ),
       );
     } catch (e, stackTrace) {
       logger.log('Error playing song', error: e, stackTrace: stackTrace);
@@ -2447,6 +2454,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
     String? mediaId,
     bool allowOnlineRetry = true,
     int? transitionId,
+    _StreamingRung rung = _StreamingRung.buffered,
   }) async {
     try {
       // Final staleness check before we touch the audio player.
@@ -2478,6 +2486,13 @@ class MusifyAudioHandler extends BaseAudioHandler {
           resolvedDuration,
           preserveLongerKnown: _currentPlayerSourceIsClipped(),
         );
+      }
+
+      // The rung a song ends up playing on is the one thing a user's copied
+      // logs can tell us about a device we cannot reproduce: anything below
+      // the top rung names the optimisation that does not hold there.
+      if (!isOffline) {
+        logger.log('Playing ${song['ytid']} on ${rung.name}');
       }
 
       // Finish the old session and start the new one as one atomic pair, only
@@ -2540,6 +2555,24 @@ class MusifyAudioHandler extends BaseAudioHandler {
         }
         final songId = song['ytid']?.toString();
         if (songId != null && songId.isNotEmpty) {
+          // Why the player refused this source is not in the exception, so ask
+          // the stream directly while the failure is fresh.
+          unawaited(_probeStreamFailure(songId, songUrl, rung));
+
+          final nextRung = _rungBelow(rung);
+          if (nextRung == null) {
+            logger.log(
+              'No rung left under ${rung.name} for $songId, giving up on it',
+            );
+            _lastError = e.toString();
+            return false;
+          }
+
+          logger.log(
+            'Source failed on ${rung.name} for $songId, '
+            'falling back to ${nextRung.name}',
+          );
+
           await invalidateSongStreamCache(songId);
 
           final refreshedUrl = await fetchSongStreamUrl(
@@ -2552,6 +2585,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
               song,
               refreshedUrl,
               false,
+              rung: nextRung,
             );
 
             if (refreshedSource != null) {
@@ -2561,11 +2595,15 @@ class MusifyAudioHandler extends BaseAudioHandler {
                 refreshedUrl,
                 false,
                 mediaId: mediaId,
-                allowOnlineRetry: false,
                 transitionId: transitionId,
+                rung: _effectiveRung(song, Uri.parse(refreshedUrl), nextRung),
               );
             }
           }
+
+          logger.log(
+            'Could not rebuild $songId on ${nextRung.name}, nothing left to try',
+          );
         }
       }
 
@@ -2596,6 +2634,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
           false,
           mediaId: mediaId,
           transitionId: transitionId,
+          rung: _effectiveRung(
+            song,
+            Uri.parse(onlineUrl),
+            _StreamingRung.buffered,
+          ),
         );
       }
     }
@@ -2707,8 +2750,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
   Future<AudioSource?> buildAudioSource(
     Map song,
     String songUrl,
-    bool isOffline,
-  ) async {
+    bool isOffline, {
+    _StreamingRung rung = _StreamingRung.buffered,
+  }) async {
     try {
       final tag = mapToMediaItem(song);
 
@@ -2729,12 +2773,20 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
       final uri = Uri.parse(songUrl);
 
-      final bufferedSource = await _buildBufferedAudioSource(song, uri, tag);
-      if (bufferedSource != null) return bufferedSource;
+      if (rung == _StreamingRung.buffered) {
+        final bufferedSource = await _buildBufferedAudioSource(song, uri, tag);
+        if (bufferedSource != null) return bufferedSource;
+      }
+
+      // Below the top rung the headers are dropped too, which is what takes
+      // the song off just_audio's local proxy and back onto the player's own
+      // request.
+      final sendClientHeaders =
+          rung != _StreamingRung.direct && _isYoutubeStreamUri(uri);
 
       final audioSource = AudioSource.uri(
         uri,
-        headers: _isYoutubeStreamUri(uri) ? customClientHeaders : null,
+        headers: sendClientHeaders ? customClientHeaders : null,
         tag: tag,
       );
 
@@ -2766,12 +2818,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
     Uri uri,
     MediaItem tag,
   ) async {
-    if (!streamBufferEnabled) return null;
-
     final songId = song['ytid']?.toString();
-    if (songId == null || songId.isEmpty) return null;
-    if (song['isLive'] == true) return null;
-    if (!_isYoutubeStreamUri(uri)) return null;
+    if (songId == null || !_canUseStreamBuffer(song, uri)) return null;
 
     try {
       final streamInfo = await fetchBestAudioStream(songId);
@@ -2791,6 +2839,87 @@ class MusifyAudioHandler extends BaseAudioHandler {
         stackTrace: stackTrace,
       );
       return null;
+    }
+  }
+
+  /// Whether a song can be played out of a buffer file at all, which decides
+  /// both whether the top rung is used and, when it isn't, which rung a
+  /// failure should step down from.
+  static bool _canUseStreamBuffer(Map song, Uri uri) {
+    if (!streamBufferEnabled) return false;
+
+    final songId = song['ytid']?.toString();
+    if (songId == null || songId.isEmpty) return false;
+    if (song['isLive'] == true) return false;
+
+    return _isYoutubeStreamUri(uri);
+  }
+
+  /// The rung [requested] actually lands on for this song. Asking for a rung
+  /// whose condition does not hold silently gives the one below, and stepping
+  /// down from the rung that was asked for rather than the one that ran would
+  /// retry the very same source.
+  static _StreamingRung _effectiveRung(
+    Map song,
+    Uri uri,
+    _StreamingRung requested,
+  ) {
+    var rung = requested;
+
+    if (rung == _StreamingRung.buffered && !_canUseStreamBuffer(song, uri)) {
+      rung = _StreamingRung.withClientHeaders;
+    }
+    if (rung == _StreamingRung.withClientHeaders &&
+        !_isYoutubeStreamUri(uri)) {
+      rung = _StreamingRung.direct;
+    }
+
+    return rung;
+  }
+
+  /// Asks for the first bytes of [songUrl] the way the rung that just failed
+  /// would have, and writes down what comes back.
+  ///
+  /// just_audio reports every source failure as a bare `Source error`: the
+  /// reason ExoPlayer saw is written to logcat and never reaches the app, so a
+  /// user's copied logs cannot say whether the stream was refused, timed out
+  /// or served something unplayable. This asks the question again from Dart,
+  /// where the answer can be written where the user can reach it.
+  Future<void> _probeStreamFailure(
+    String? songId,
+    String songUrl,
+    _StreamingRung rung,
+  ) async {
+    final client = HttpClient()
+      ..connectionTimeout = const Duration(seconds: 10);
+
+    try {
+      final uri = Uri.parse(songUrl);
+      final request = await client.getUrl(uri);
+
+      if (rung != _StreamingRung.direct && _isYoutubeStreamUri(uri)) {
+        customClientHeaders.forEach(request.headers.set);
+      }
+      // The status is the whole point, so stop at the first bytes rather than
+      // pull a song down a second time.
+      request.headers.set(HttpHeaders.rangeHeader, 'bytes=0-1');
+
+      final response = await request.close().timeout(
+        const Duration(seconds: 15),
+      );
+      await response.drain<void>();
+
+      logger.log(
+        'Stream probe for $songId on ${rung.name}: '
+        'HTTP ${response.statusCode} ${response.reasonPhrase}, '
+        'type ${response.headers.contentType}, '
+        'length ${response.headers.value(HttpHeaders.contentLengthHeader)}, '
+        'host ${uri.host}',
+      );
+    } catch (e) {
+      logger.log('Stream probe for $songId on ${rung.name} failed', error: e);
+    } finally {
+      client.close(force: true);
     }
   }
 
@@ -3230,3 +3359,31 @@ class _PlaybackSource {
   final String songUrl;
   final bool isOffline;
 }
+
+/// How a streamed song is handed to the player.
+///
+/// Each rung gives up one of the things the rung above it relies on, down to
+/// [direct], which is the player fetching the URL on its own and is what every
+/// song used before the buffer and the client headers arrived. A song that
+/// fails on one rung is tried again on the next, so an optimisation that does
+/// not hold on some device or network costs quality, not silence.
+enum _StreamingRung {
+  /// Downloaded into a buffer file the player reads from as it fills.
+  buffered,
+
+  /// Streamed from its URL, carrying the headers of the client that minted it.
+  /// just_audio serves these through a local HTTP proxy rather than letting
+  /// the player request the URL itself.
+  withClientHeaders,
+
+  /// Streamed from its URL by the player, with nothing added.
+  direct,
+}
+
+/// The rung to try after [rung] failed, or null when there is nothing left to
+/// give up.
+_StreamingRung? _rungBelow(_StreamingRung rung) => switch (rung) {
+  _StreamingRung.buffered => _StreamingRung.withClientHeaders,
+  _StreamingRung.withClientHeaders => _StreamingRung.direct,
+  _StreamingRung.direct => null,
+};
