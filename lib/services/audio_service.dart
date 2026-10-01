@@ -36,6 +36,7 @@ import 'package:musify/services/listening_stats_service.dart';
 import 'package:musify/services/playlists_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/services/stream_buffer_service.dart';
+import 'package:musify/utilities/app_utils.dart';
 import 'package:musify/utilities/map_utils.dart';
 import 'package:musify/utilities/media_duration.dart';
 import 'package:musify/utilities/mediaitem.dart';
@@ -2942,6 +2943,18 @@ class MusifyAudioHandler extends BaseAudioHandler {
   @override
   Future<void> skipToPrevious() async {
     try {
+      // Back a few seconds into a song means "play this again", not "play the
+      // one before": stepping back and forward again is a chore, and it counts
+      // songs as played that nobody asked for.
+      if (currentSong != null &&
+          skipBackRestartsSong(
+            position: audioPlayer.position,
+            hasPrevious: hasPrevious,
+          )) {
+        await playAgain();
+        return;
+      }
+
       if (_currentQueueIndex > 0) {
         await _playFromQueue(_currentQueueIndex - 1);
       } else if (_historyList.isNotEmpty) {
