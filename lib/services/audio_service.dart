@@ -2955,20 +2955,15 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
       if (_queueList.isEmpty) return;
 
-      if (shuffleEnabled && !wasShuffled) {
+      if (shuffleEnabled != wasShuffled) {
         _hydrateQueueEntryIds();
-        final unplayedManualSongs = _getUnplayedManualSongs();
-        final manualSongIds = unplayedManualSongs
-            .map(_queueEntryIds.ensureId)
-            .toSet();
-        _enableShuffle(unplayedManualSongs, manualSongIds);
-      } else if (!shuffleEnabled && wasShuffled) {
-        _hydrateQueueEntryIds();
-        final unplayedManualSongs = _getUnplayedManualSongs();
-        final manualSongIds = unplayedManualSongs
-            .map(_queueEntryIds.ensureId)
-            .toSet();
-        _disableShuffle(unplayedManualSongs, manualSongIds);
+        final (unplayedManualSongs, manualSongIds) = _getManualSongData();
+
+        if (shuffleEnabled) {
+          _enableShuffle(unplayedManualSongs, manualSongIds);
+        } else {
+          _disableShuffle(unplayedManualSongs, manualSongIds);
+        }
       }
     } catch (e, stackTrace) {
       logger.log(
@@ -2977,6 +2972,14 @@ class MusifyAudioHandler extends BaseAudioHandler {
         stackTrace: stackTrace,
       );
     }
+  }
+
+  (List<Map>, Set<String>) _getManualSongData() {
+    final unplayedManualSongs = _getUnplayedManualSongs();
+    final manualSongIds = unplayedManualSongs
+        .map(_queueEntryIds.ensureId)
+        .toSet();
+    return (unplayedManualSongs, manualSongIds);
   }
 
   @override
