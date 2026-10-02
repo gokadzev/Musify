@@ -749,13 +749,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
                 _completionEventPending = false;
                 _completionHandlerLoadStarted = false;
               }
-              // else {
-              //   logger.log(
-              //     '[COMPLETION] Flag already false in finally block (was overridden)',
-              //     null,
-              //     null,
-              //   );
-              // }
             }
           });
         }
@@ -1115,6 +1108,13 @@ class MusifyAudioHandler extends BaseAudioHandler {
     }
   }
 
+  int _indexAfterReorder(int index, int oldIndex, int newIndex) {
+    if (index == oldIndex) return newIndex;
+    if (oldIndex < index && newIndex >= index) return index - 1;
+    if (oldIndex > index && newIndex <= index) return index + 1;
+    return index;
+  }
+
   Future<void> reorderQueue(int oldIndex, int newIndex) async {
     try {
       _queueEntryIds.ensureIds(_queueList);
@@ -1129,26 +1129,16 @@ class MusifyAudioHandler extends BaseAudioHandler {
       final song = _queueList.removeAt(oldIndex);
       _queueList.insert(newIndex, song);
 
-      if (oldIndex == _currentQueueIndex) {
-        _currentQueueIndex = newIndex;
-      } else if (oldIndex < _currentQueueIndex &&
-          newIndex >= _currentQueueIndex) {
-        _currentQueueIndex--;
-      } else if (oldIndex > _currentQueueIndex &&
-          newIndex <= _currentQueueIndex) {
-        _currentQueueIndex++;
-      }
-
-      // Also update _currentLoadingIndex if the currently-loading song is being reordered
-      if (oldIndex == _currentLoadingIndex) {
-        _currentLoadingIndex = newIndex;
-      } else if (oldIndex < _currentLoadingIndex &&
-          newIndex >= _currentLoadingIndex) {
-        _currentLoadingIndex--;
-      } else if (oldIndex > _currentLoadingIndex &&
-          newIndex <= _currentLoadingIndex) {
-        _currentLoadingIndex++;
-      }
+      _currentQueueIndex = _indexAfterReorder(
+        _currentQueueIndex,
+        oldIndex,
+        newIndex,
+      );
+      _currentLoadingIndex = _indexAfterReorder(
+        _currentLoadingIndex,
+        oldIndex,
+        newIndex,
+      );
 
       _updateQueueMediaItems();
     } catch (e, stackTrace) {
@@ -1174,25 +1164,16 @@ class MusifyAudioHandler extends BaseAudioHandler {
       if (newIndex > _queueList.length) newIndex = _queueList.length;
       _queueList.insert(newIndex, song);
 
-      if (oldIndex == _currentQueueIndex) {
-        _currentQueueIndex = newIndex;
-      } else if (oldIndex < _currentQueueIndex &&
-          newIndex >= _currentQueueIndex) {
-        _currentQueueIndex--;
-      } else if (oldIndex > _currentQueueIndex &&
-          newIndex <= _currentQueueIndex) {
-        _currentQueueIndex++;
-      }
-
-      if (oldIndex == _currentLoadingIndex) {
-        _currentLoadingIndex = newIndex;
-      } else if (oldIndex < _currentLoadingIndex &&
-          newIndex >= _currentLoadingIndex) {
-        _currentLoadingIndex--;
-      } else if (oldIndex > _currentLoadingIndex &&
-          newIndex <= _currentLoadingIndex) {
-        _currentLoadingIndex++;
-      }
+      _currentQueueIndex = _indexAfterReorder(
+        _currentQueueIndex,
+        oldIndex,
+        newIndex,
+      );
+      _currentLoadingIndex = _indexAfterReorder(
+        _currentLoadingIndex,
+        oldIndex,
+        newIndex,
+      );
 
       _updateQueueMediaItems();
     } catch (e, stackTrace) {
