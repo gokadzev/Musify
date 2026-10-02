@@ -1045,9 +1045,15 @@ class MusifyAudioHandler extends BaseAudioHandler {
       if (targetQueueIndex != null) {
         await _playFromQueue(targetQueueIndex);
       } else if (startIndex != null &&
-          startIndex < _queueList.length &&
+          startIndex >= 0 &&
+          startIndex < songs.length &&
           !replace) {
-        await _playFromQueue(startIndex);
+        final safeQueueIndex = startIndex < _queueList.length
+            ? startIndex
+            : _queueList.length - 1;
+        if (safeQueueIndex >= 0) {
+          await _playFromQueue(safeQueueIndex);
+        }
       } else if (replace && _queueList.isNotEmpty) {
         await _playFromQueue(0);
       }
@@ -1176,7 +1182,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
         _originalQueueList.add(cloneMap(currentSong));
       }
 
-      _currentQueueIndex = 0;
+      _currentQueueIndex = currentSong != null ? 0 : -1;
       _currentLoadingIndex = -1;
       _currentLoadingTransitionId = -1;
       _resetPreloadingState();
@@ -1437,7 +1443,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
       ? _queueList[_currentQueueIndex]
       : null;
 
-  bool get hasNext => _currentQueueIndex < _queueList.length - 1;
+  bool get hasNext =>
+      _currentQueueIndex >= 0 && _currentQueueIndex < _queueList.length - 1;
 
   bool get hasPrevious => _currentQueueIndex > 0 || _historyList.isNotEmpty;
 
