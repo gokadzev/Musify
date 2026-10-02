@@ -59,6 +59,7 @@
   "copyLogs": "Copiar logs",
   "copyLogsNoLogs": "Nenhum log para copiar",
   "copyLogsSuccess": "Logs copiados com sucesso",
+  "songInfoCopied": "Informação da música copiada",
   "create": "Criar",
   "createFolder": "Criar pasta",
   "custom": "Personalizado",
