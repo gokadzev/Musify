@@ -892,30 +892,17 @@ class MusifyAudioHandler extends BaseAudioHandler {
         return;
       }
 
-      int insertIndex;
+      final insertIndex = playNext
+          ? (_currentQueueIndex + 1).clamp(0, _queueList.length)
+          : _queueList.length;
 
-      if (playNext) {
-        insertIndex = _currentQueueIndex + 1;
-        if (insertIndex < 0) insertIndex = 0;
-        if (insertIndex > _queueList.length) {
-          insertIndex = _queueList.length;
-        }
-      } else {
-        insertIndex = _queueList.length;
-      }
+      final isFirstSong = await _insertSongToQueueInternal(
+        song,
+        insertIndex,
+        flagName: 'isManuallyAdded',
+      );
 
-      final queueSong = _queueEntryIds.createSong(song);
-      queueSong['isManuallyAdded'] = true;
-      _queueList.insert(insertIndex, queueSong);
-
-      if (_currentQueueIndex < 0) {
-        _currentQueueIndex = 0;
-      }
-
-      _updateQueueMediaItems();
-      _cleanupOldPreloadedSongs();
-
-      if (!audioPlayer.playing && _queueList.length == 1) {
+      if (isFirstSong) {
         await _playFromQueue(0);
       }
     } catch (e, stackTrace) {
@@ -931,27 +918,24 @@ class MusifyAudioHandler extends BaseAudioHandler {
       }
 
       final insertIndex = _queueList.length;
+      final isFirstSong = await _insertSongToQueueInternal(
+        song,
+        insertIndex,
+        flagName: 'isAutoPicked',
+      );
+
       final shouldPlayInsertedSong =
           playNextSongAutomatically.value &&
           !sleepTimerExpired &&
           _currentLoadingIndex == -1 &&
           audioPlayer.processingState == ProcessingState.completed &&
           _queueList.isNotEmpty &&
-          _currentQueueIndex == _queueList.length - 1;
-      final queueSong = _queueEntryIds.createSong(song);
-      queueSong['isAutoPicked'] = true;
-      _queueList.insert(insertIndex, queueSong);
-
-      if (_currentQueueIndex < 0) {
-        _currentQueueIndex = 0;
-      }
-
-      _updateQueueMediaItems();
-      _cleanupOldPreloadedSongs();
+          _currentQueueIndex ==
+              _queueList.length - 2; // -2 because song was just added
 
       if (shouldPlayInsertedSong) {
         await _playFromQueue(insertIndex);
-      } else if (!audioPlayer.playing && _queueList.length == 1) {
+      } else if (isFirstSong) {
         await _playFromQueue(0);
       }
     } catch (e, stackTrace) {
@@ -961,6 +945,26 @@ class MusifyAudioHandler extends BaseAudioHandler {
         stackTrace: stackTrace,
       );
     }
+  }
+
+  Future<bool> _insertSongToQueueInternal(
+    Map song,
+    int insertIndex, {
+    required String flagName,
+  }) async {
+    final queueSong = _queueEntryIds.createSong(song);
+    queueSong[flagName] = true;
+    _queueList.insert(insertIndex, queueSong);
+
+    final isFirstSong = _currentQueueIndex < 0;
+    if (isFirstSong) {
+      _currentQueueIndex = 0;
+    }
+
+    _updateQueueMediaItems();
+    _cleanupOldPreloadedSongs();
+
+    return !audioPlayer.playing && _queueList.length == 1;
   }
 
   void _cleanupOldPreloadedSongs() {
