@@ -400,36 +400,33 @@ class MusifyAudioHandler extends BaseAudioHandler {
         stableDuration,
       );
 
-      if (existingQueue != null && queueIndex < existingQueue.length) {
-        var publishedQueueChanged = false;
-        if (_shouldUpdateDuration(queueItem?.duration, stableDuration)) {
+      var publishedQueueChanged = false;
+      if (existingQueue != null && queueItem != null) {
+        if (_shouldUpdateDuration(queueItem.duration, stableDuration)) {
           final updatedQueue = List<MediaItem>.from(existingQueue);
-          updatedQueue[queueIndex] = queueItem!.copyWith(
+          updatedQueue[queueIndex] = queueItem.copyWith(
             duration: stableDuration,
           );
           queue.add(updatedQueue);
           publishedQueueChanged = true;
         }
-        if (queueMapChanged) {
-          _queueMapStream.add(List.unmodifiable(_queueList));
+      } else {
+        final rebuiltQueue = _buildQueueMediaItems();
+        if (queueIndex < rebuiltQueue.length) {
+          rebuiltQueue[queueIndex] = rebuiltQueue[queueIndex].copyWith(
+            duration: stableDuration,
+          );
         }
-        if (mediaItemChanged || publishedQueueChanged) {
-          _updatePlaybackState(force: true);
-        }
-        return;
+        queue.add(rebuiltQueue);
+        publishedQueueChanged = true;
       }
 
-      final rebuiltQueue = _buildQueueMediaItems();
-      if (queueIndex < rebuiltQueue.length) {
-        rebuiltQueue[queueIndex] = rebuiltQueue[queueIndex].copyWith(
-          duration: stableDuration,
-        );
-      }
-      queue.add(rebuiltQueue);
       if (queueMapChanged) {
         _queueMapStream.add(List.unmodifiable(_queueList));
       }
-      _updatePlaybackState(force: true);
+      if (mediaItemChanged || publishedQueueChanged) {
+        _updatePlaybackState(force: true);
+      }
     } catch (e, stackTrace) {
       logger.log(
         'Error updating media item with duration',
