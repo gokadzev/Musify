@@ -199,7 +199,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
     audioPlayer.durationStream.listen(
       (duration) {
-        if (_currentQueueIndex < _queueList.length &&
+        if (_currentQueueIndex >= 0 &&
+            _currentQueueIndex < _queueList.length &&
             duration != null &&
             _playerSourceMatchesCurrentSong()) {
           _updateCurrentMediaItemWithDuration(
@@ -784,7 +785,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
     if (_consecutiveErrors >= _maxConsecutiveErrors) {
       logger.log('Max consecutive errors reached. Stopping playback.');
-      stop();
+      unawaited(stop());
       return;
     }
 
@@ -1195,7 +1196,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
       _queueMapStream.add(List.unmodifiable(_queueList));
 
-      if (_currentQueueIndex < mediaItems.length) {
+      if (_currentQueueIndex >= 0 && _currentQueueIndex < mediaItems.length) {
         final currentMediaItem = mediaItems[_currentQueueIndex];
         mediaItem.add(currentMediaItem);
       }
@@ -1242,7 +1243,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
           processingState: AudioProcessingState.loading,
           queueIndex:
               queueIndex ??
-              (_currentQueueIndex < _queueList.length
+              (_currentQueueIndex >= 0 && _currentQueueIndex < _queueList.length
                   ? _currentQueueIndex
                   : null),
           updateTime: DateTime.now(),
@@ -1340,8 +1341,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
   }
 
   void _preloadUpcomingSongs() {
-    // Don't attempt to preload while offline mode is enabled
-    if (offlineMode.value) return;
+    // Don't attempt to preload while offline mode is enabled or no current song
+    if (offlineMode.value || _currentQueueIndex < 0) return;
 
     Future.microtask(() async {
       try {
@@ -2324,7 +2325,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
           return null;
         }
       } catch (_) {
-        // If offlineMode isn't available for some reason, continue with fallback.
+        // If offlineMode isn't accessible, fail rather than fallback to online
+        logger.log('Could not check offline mode, failing playback');
+        return null;
       }
 
       logger.log(
@@ -2805,6 +2808,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
         final lastSong = cloneMap(_historyList.removeLast());
         _queueList.insert(0, lastSong);
         _currentQueueIndex = 0;
+        _currentLoadingIndex = -1;
+        _currentLoadingTransitionId = -1;
         _updateQueueMediaItems();
         await _playFromQueue(0);
       }
@@ -2888,7 +2893,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
     List<Map> unplayedManualSongs,
     Set<String> manualSongIds,
   ) {
-    if (_originalQueueList.isEmpty) return;
+    if (_originalQueueList.isEmpty ||
+        _currentQueueIndex < 0 ||
+        _currentQueueIndex >= _queueList.length)
+      return;
 
     final currentSong = _queueList[_currentQueueIndex];
     final currentQueueEntryId = _queueEntryIds.ensureId(currentSong);
@@ -2954,6 +2962,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
       await audioPlayer.setShuffleModeEnabled(shuffleEnabled);
 
       if (_queueList.isEmpty) return;
+
+      // Can't shuffle if current queue index is invalid
+      if (_currentQueueIndex < 0 || _currentQueueIndex >= _queueList.length)
+        return;
 
       if (shuffleEnabled != wasShuffled) {
         _hydrateQueueEntryIds();
