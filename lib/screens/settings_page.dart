@@ -114,6 +114,20 @@ class SettingsPage extends StatelessWidget {
           FluentIcons.music_note_1_24_regular,
           onTap: () => _showAudioQualityPicker(context),
         ),
+        ValueListenableBuilder<bool>(
+          valueListenable: streamBufferSupport,
+          builder: (_, value, __) {
+            return CustomBar(
+              context.l10n!.streamBuffer,
+              FluentIcons.cloud_sync_24_regular,
+              description: context.l10n!.streamBufferDescription,
+              trailing: Switch(
+                value: value,
+                onChanged: (value) => _toggleStreamBuffer(context, value),
+              ),
+            );
+          },
+        ),
         CustomBar(
           context.l10n!.equalizer,
           FluentIcons.data_histogram_24_regular,
@@ -701,6 +715,12 @@ class SettingsPage extends StatelessWidget {
         },
       ),
     );
+  }
+
+  void _toggleStreamBuffer(BuildContext context, bool value) {
+    addOrUpdateData<bool>('settings', 'streamBufferSupport', value);
+    streamBufferSupport.value = value;
+    showToast(context, context.l10n!.settingChangedMsg);
   }
 
   void _toggleSystemColor(BuildContext context, bool value) {
