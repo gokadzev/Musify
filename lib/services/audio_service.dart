@@ -1612,6 +1612,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
   static const _rootRecent = 'recently_played';
   static const _rootQueue = 'current_queue';
   static const _rootPlaylists = 'playlists';
+  static const _rootArtists = 'artists';
+  static const _artistSource = 'artist';
   static const _rootSearch = 'search_results';
 
   static const String _songMediaIdPrefix = 'song:';
@@ -1721,9 +1723,13 @@ class MusifyAudioHandler extends BaseAudioHandler {
         return 'Nothing played yet';
       case _rootPlaylists:
         return 'No playlists yet';
+      case _rootArtists:
+        return 'No liked artists yet';
     }
-    return _parsePlaylistMediaId(parentMediaId) == null
-        ? null
+    final collection = _parsePlaylistMediaId(parentMediaId);
+    if (collection == null) return null;
+    return collection.source == _artistSource
+        ? 'No songs found for this artist'
         : 'This playlist is empty';
   }
 
@@ -1760,7 +1766,46 @@ class MusifyAudioHandler extends BaseAudioHandler {
     return items;
   }
 
+  List<MediaItem> _artistChildren() {
+    final items = <MediaItem>[];
+    for (final artist in getLikedArtistItems()) {
+      final id = _playlistIdOf(artist);
+      if (id == null) continue;
+      final image = artist['image']?.toString();
+      items.add(
+        MediaItem(
+          id: _playlistMediaId(_artistSource, id),
+          title: artist['title']?.toString() ?? 'Artist',
+          playable: false,
+          artUri: image == null || image.isEmpty ? null : Uri.tryParse(image),
+          extras: const {'isBrowsable': true},
+        ),
+      );
+    }
+    return items;
+  }
+
+  Future<List<Map>> _songsForArtist(String id) async {
+    try {
+      final artist = await getPlaylistInfoForWidget(
+        id,
+        isArtist: true,
+      ).timeout(_browserFetchTimeout);
+      final songs = artist?['list'];
+      return songs is List ? songs.whereType<Map>().toList() : const [];
+    } catch (e, stackTrace) {
+      logger.log(
+        'Error loading artist $id for the media browser',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      return const [];
+    }
+  }
+
   Future<List<Map>> _songsForPlaylist(String source, String id) async {
+    if (source == _artistSource) return _songsForArtist(id);
+
     final playlist = _browsablePlaylists().firstWhere(
       (p) => _playlistIdOf(p) == id && _playlistSource(p) == source,
       orElse: () => const {},
@@ -1845,6 +1890,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
           'Playlists',
           playableHint: AndroidContentStyle.gridItemHintValue,
         ),
+        _browsableCategory(
+          _rootArtists,
+          'Artists',
+          playableHint: AndroidContentStyle.gridItemHintValue,
+        ),
         _browsableCategory(_rootOffline, 'Downloaded'),
         _browsableCategory(_rootRecent, 'Recently Played'),
       ];
@@ -1855,6 +1905,13 @@ class MusifyAudioHandler extends BaseAudioHandler {
       return playlists.isEmpty
           ? _emptyCategory(parentMediaId, _emptyCategoryMessage(parentMediaId)!)
           : playlists;
+    }
+
+    if (parentMediaId == _rootArtists) {
+      final artists = _artistChildren();
+      return artists.isEmpty
+          ? _emptyCategory(parentMediaId, _emptyCategoryMessage(parentMediaId)!)
+          : artists;
     }
 
     final songs = await _songsForContainer(parentMediaId);
@@ -1890,6 +1947,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
     watch(userOfflineSongs, const [_rootOffline]);
     watch(userRecentlyPlayed, const [_rootRecent, AudioService.recentRootId]);
     watch(userCustomPlaylists, const [_rootPlaylists]);
+    watch(userLikedPlaylists, const [_rootArtists]);
     watch(userLikedPlaylists, const [_rootPlaylists]);
     watch(userPlaylistFolders, const [_rootPlaylists]);
 
