@@ -1564,10 +1564,19 @@ class MusifyAudioHandler extends BaseAudioHandler {
     if (normalisedSong == null) return null;
 
     final ytid = normalisedSong['ytid'].toString();
-    final artist = normalisedSong['artist']?.toString().trim() ?? '';
-    return mapToMediaItem(normalisedSong).copyWith(
-      id: _recentMediaId(ytid),
-      displayTitle: normalisedSong['title']?.toString(),
+    return _systemMediaItem(normalisedSong, _recentMediaId(ytid));
+  }
+
+  MediaItem _systemMediaItem(
+    Map<String, dynamic> song,
+    String mediaId, {
+    bool? playable,
+  }) {
+    final artist = song['artist']?.toString().trim() ?? '';
+    return mapToMediaItem(song).copyWith(
+      id: mediaId,
+      playable: playable,
+      displayTitle: song['title']?.toString(),
       displaySubtitle: artist.isEmpty ? 'Musify' : artist,
     );
   }
@@ -1663,12 +1672,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
     final normalised = _normaliseResumableSong(song);
     if (normalised == null) return null;
 
-    final artist = normalised['artist']?.toString().trim() ?? '';
-    return mapToMediaItem(normalised).copyWith(
-      id: _songMediaId(containerId, token),
+    return _systemMediaItem(
+      normalised,
+      _songMediaId(containerId, token),
       playable: true,
-      displayTitle: normalised['title']?.toString(),
-      displaySubtitle: artist.isEmpty ? 'Musify' : artist,
     );
   }
 
