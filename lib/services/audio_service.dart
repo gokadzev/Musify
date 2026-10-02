@@ -1155,13 +1155,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
       );
       if (oldIndex == -1) return;
 
-      // Clamp target index to valid range (allow insert at end)
-      if (targetIndex < 0) targetIndex = 0;
-      if (targetIndex > _queueList.length) targetIndex = _queueList.length;
-
       final song = _queueList.removeAt(oldIndex);
-      var newIndex = targetIndex;
-      if (newIndex > _queueList.length) newIndex = _queueList.length;
+      final newIndex = targetIndex.clamp(0, _queueList.length);
       _queueList.insert(newIndex, song);
 
       _currentQueueIndex = _indexAfterReorder(
