@@ -956,28 +956,29 @@ Future<bool> makeSongOffline(dynamic song) async {
   }
 }
 
+Future<void> _deleteFileIfExists(File file, String errorDescription) async {
+  try {
+    if (await file.exists()) {
+      await file.delete(recursive: true);
+    }
+  } catch (e, stackTrace) {
+    logger.log(
+      'Error deleting $errorDescription',
+      error: e,
+      stackTrace: stackTrace,
+    );
+  }
+}
+
 Future<bool> removeSongFromOffline(dynamic songId) async {
   try {
     final audioPath = FilePaths.getAudioPath(songId);
-    final audioFile = File(audioPath);
     final artworkPath = FilePaths.getArtworkPath(songId);
-    final artworkFile = File(artworkPath);
 
-    try {
-      if (await audioFile.exists()) await audioFile.delete(recursive: true);
-    } catch (e, stackTrace) {
-      logger.log('Error deleting audio file', error: e, stackTrace: stackTrace);
-    }
-
-    try {
-      if (await artworkFile.exists()) await artworkFile.delete(recursive: true);
-    } catch (e, stackTrace) {
-      logger.log(
-        'Error deleting artwork file',
-        error: e,
-        stackTrace: stackTrace,
-      );
-    }
+    await Future.wait([
+      _deleteFileIfExists(File(audioPath), 'audio file'),
+      _deleteFileIfExists(File(artworkPath), 'artwork file'),
+    ]);
 
     try {
       userOfflineSongs.value = List.from(userOfflineSongs.value)
