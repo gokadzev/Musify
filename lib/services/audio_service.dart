@@ -971,26 +971,14 @@ class MusifyAudioHandler extends BaseAudioHandler {
             .where((ytid) => ytid != null)
             .toSet();
 
-        final oldPreloadedSongs = _preloadedYtIds
-            .where((ytid) => !queueYtIds.contains(ytid))
-            .toList();
+        final removed = _preloadedYtIds.length + _preloadingYtIds.length;
+        _preloadedYtIds.removeWhere((ytid) => !queueYtIds.contains(ytid));
+        _preloadingYtIds.removeWhere((ytid) => !queueYtIds.contains(ytid));
+        final cleaned =
+            removed - (_preloadedYtIds.length + _preloadingYtIds.length);
 
-        for (final ytid in oldPreloadedSongs) {
-          _preloadedYtIds.remove(ytid);
-        }
-
-        final stalePreloadingEntries = _preloadingYtIds
-            .where((ytid) => !queueYtIds.contains(ytid))
-            .toList();
-
-        for (final ytid in stalePreloadingEntries) {
-          _preloadingYtIds.remove(ytid);
-        }
-
-        if (oldPreloadedSongs.isNotEmpty || stalePreloadingEntries.isNotEmpty) {
-          logger.log(
-            'Cleaned up ${oldPreloadedSongs.length + stalePreloadingEntries.length} old preload entries',
-          );
+        if (cleaned > 0) {
+          logger.log('Cleaned up $cleaned old preload entries');
         }
       } catch (e, stackTrace) {
         logger.log(
