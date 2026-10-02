@@ -1115,6 +1115,22 @@ class MusifyAudioHandler extends BaseAudioHandler {
     return index;
   }
 
+  void _moveQueueEntry(int oldIndex, int newIndex) {
+    final song = _queueList.removeAt(oldIndex);
+    _queueList.insert(newIndex, song);
+    _currentQueueIndex = _indexAfterReorder(
+      _currentQueueIndex,
+      oldIndex,
+      newIndex,
+    );
+    _currentLoadingIndex = _indexAfterReorder(
+      _currentLoadingIndex,
+      oldIndex,
+      newIndex,
+    );
+    _updateQueueMediaItems();
+  }
+
   Future<void> reorderQueue(int oldIndex, int newIndex) async {
     try {
       _queueEntryIds.ensureIds(_queueList);
@@ -1126,21 +1142,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
         return;
       }
 
-      final song = _queueList.removeAt(oldIndex);
-      _queueList.insert(newIndex, song);
-
-      _currentQueueIndex = _indexAfterReorder(
-        _currentQueueIndex,
-        oldIndex,
-        newIndex,
-      );
-      _currentLoadingIndex = _indexAfterReorder(
-        _currentLoadingIndex,
-        oldIndex,
-        newIndex,
-      );
-
-      _updateQueueMediaItems();
+      _moveQueueEntry(oldIndex, newIndex);
     } catch (e, stackTrace) {
       logger.log('Error reordering queue', error: e, stackTrace: stackTrace);
     }
@@ -1155,22 +1157,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
       );
       if (oldIndex == -1) return;
 
-      final song = _queueList.removeAt(oldIndex);
-      final newIndex = targetIndex.clamp(0, _queueList.length);
-      _queueList.insert(newIndex, song);
-
-      _currentQueueIndex = _indexAfterReorder(
-        _currentQueueIndex,
-        oldIndex,
-        newIndex,
-      );
-      _currentLoadingIndex = _indexAfterReorder(
-        _currentLoadingIndex,
-        oldIndex,
-        newIndex,
-      );
-
-      _updateQueueMediaItems();
+      final newIndex = targetIndex.clamp(0, _queueList.length - 1);
+      _moveQueueEntry(oldIndex, newIndex);
     } catch (e, stackTrace) {
       logger.log(
         'Error reordering queue by id',
