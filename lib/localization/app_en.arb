@@ -267,6 +267,8 @@
   "songs": "Songs",
   "sponsorBlockDescription": "Skip sponsored segments in supported tracks.",
   "sponsorProject": "Sponsor the project",
+  "streamBuffer": "Buffer while streaming",
+  "streamBufferDescription": "Download the playing song to a temporary file the player reads from, so a slow moment on the network is not heard. Off streams it directly instead.",
   "suggestedArtists": "Suggested artists",
   "suggestedPlaylists": "Suggested playlists",
   "tapToView": "Tap to view",
