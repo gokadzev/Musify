@@ -2497,35 +2497,12 @@ class MusifyAudioHandler extends BaseAudioHandler {
           _lastError = e.toString();
           return false;
         }
-        final songId = song['ytid']?.toString();
-        if (songId != null && songId.isNotEmpty) {
-          await invalidateSongStreamCache(songId);
-
-          final refreshedUrl = await fetchSongStreamUrl(
-            songId,
-            song['isLive'] ?? false,
-          );
-
-          if (refreshedUrl != null && refreshedUrl.isNotEmpty) {
-            final refreshedSource = await buildAudioSource(
-              song,
-              refreshedUrl,
-              false,
-            );
-
-            if (refreshedSource != null) {
-              return _setAudioSourceAndPlay(
-                song,
-                refreshedSource,
-                refreshedUrl,
-                false,
-                mediaId: mediaId,
-                allowOnlineRetry: false,
-                transitionId: transitionId,
-              );
-            }
-          }
-        }
+        return _retryPlayWithFreshUrl(
+          song,
+          mediaId: mediaId,
+          transitionId: transitionId,
+          invalidateCache: true,
+        );
       }
 
       _lastError = e.toString();
@@ -2533,32 +2510,45 @@ class MusifyAudioHandler extends BaseAudioHandler {
     }
   }
 
+  Future<bool> _retryPlayWithFreshUrl(
+    Map song, {
+    String? mediaId,
+    int? transitionId,
+    bool invalidateCache = false,
+  }) async {
+    final songId = song['ytid']?.toString();
+    if (songId == null || songId.isEmpty) return false;
+
+    if (invalidateCache) await invalidateSongStreamCache(songId);
+
+    final freshUrl = await fetchSongStreamUrl(songId, song['isLive'] ?? false);
+    if (freshUrl == null || freshUrl.isEmpty) return false;
+
+    final freshSource = await buildAudioSource(song, freshUrl, false);
+    if (freshSource == null) return false;
+
+    return _setAudioSourceAndPlay(
+      song,
+      freshSource,
+      freshUrl,
+      false,
+      mediaId: mediaId,
+      allowOnlineRetry: false,
+      transitionId: transitionId,
+    );
+  }
+
   Future<bool> _attemptOfflineFallback(
     Map song, {
     String? mediaId,
     int? transitionId,
   }) async {
-    // Do not attempt any network calls when offline mode is enabled.
     if (offlineMode.value) return false;
-
-    final onlineUrl = await fetchSongStreamUrl(
-      song['ytid'],
-      song['isLive'] ?? false,
+    return _retryPlayWithFreshUrl(
+      song,
+      mediaId: mediaId,
+      transitionId: transitionId,
     );
-    if (onlineUrl != null && onlineUrl.isNotEmpty) {
-      final onlineSource = await buildAudioSource(song, onlineUrl, false);
-      if (onlineSource != null) {
-        return _setAudioSourceAndPlay(
-          song,
-          onlineSource,
-          onlineUrl,
-          false,
-          mediaId: mediaId,
-          transitionId: transitionId,
-        );
-      }
-    }
-    return false;
   }
 
   Future<void> playNext(Map song) async {
