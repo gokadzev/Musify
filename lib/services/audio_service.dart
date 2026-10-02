@@ -918,6 +918,11 @@ class MusifyAudioHandler extends BaseAudioHandler {
       }
 
       final insertIndex = _queueList.length;
+
+      // Check BEFORE insertion: is the current song the last in queue?
+      final isCurrentSongAtEnd =
+          _queueList.isNotEmpty && _currentQueueIndex == _queueList.length - 1;
+
       final isFirstSong = await _insertSongToQueueInternal(
         song,
         insertIndex,
@@ -929,9 +934,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
           !sleepTimerExpired &&
           _currentLoadingIndex == -1 &&
           audioPlayer.processingState == ProcessingState.completed &&
-          _queueList.isNotEmpty &&
-          _currentQueueIndex ==
-              _queueList.length - 2; // -2 because song was just added
+          isCurrentSongAtEnd;
 
       if (shouldPlayInsertedSong) {
         await _playFromQueue(insertIndex);
