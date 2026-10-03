@@ -882,7 +882,12 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   void _addToHistory(Map song) {
     try {
-      _historyList.insert(0, cloneMap(song));
+      final historySong = cloneMap(song);
+      _historyList.insert(0, historySong);
+
+      // Clear manually added/auto-picked flags since song has been played
+      song['isManuallyAdded'] = false;
+      song['isAutoPicked'] = false;
 
       if (_historyList.length > _maxHistorySize) {
         _historyList.removeRange(_maxHistorySize, _historyList.length);
