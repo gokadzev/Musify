@@ -2828,6 +2828,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
           _currentLoadingIndex == -1) {
         // At end of queue with auto-play enabled - trigger background fetch
         unawaited(_backgroundAddSongsToQueue());
+      } else {
+        // At end of queue with no repeat/auto-play - stop gracefully
+        await stop();
       }
 
       _cleanupOldPreloadedSongs();
