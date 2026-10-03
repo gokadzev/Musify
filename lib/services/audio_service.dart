@@ -637,10 +637,13 @@ class MusifyAudioHandler extends BaseAudioHandler {
     try {
       final now = DateTime.now();
       final currentPosition = audioPlayer.position;
-      final isPlaying = audioPlayer.playing;
+      final playerProcessingState = audioPlayer.processingState;
+      final isPlaying =
+          audioPlayer.playing &&
+          playerProcessingState != ProcessingState.completed;
       final currentState = playbackState.valueOrNull;
       final newProcessingState =
-          _processingStateMap[audioPlayer.processingState] ??
+          _processingStateMap[playerProcessingState] ??
           AudioProcessingState.idle;
       final bufferedPosition = audioPlayer.bufferedPosition;
 
@@ -2803,8 +2806,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
         // At end of queue with auto-play enabled - trigger background fetch
         unawaited(_backgroundAddSongsToQueue());
       } else {
-        // At end of queue with no repeat/auto-play - stop gracefully
-        await stop();
+        if (audioPlayer.processingState != ProcessingState.completed) {
+          await stop();
+        }
       }
 
       _cleanupOldPreloadedSongs();
