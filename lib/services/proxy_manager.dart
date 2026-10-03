@@ -68,6 +68,7 @@ class ProxyManager {
   }
   // Timeout constants
   static const int _validateDirectTimeout = 5;
+  static const int _fetchProxyTimeoutSeconds = 15;
   static const int _proxyRefreshIntervalMinutes = 60;
 
   // Regex patterns (compiled once)
@@ -109,12 +110,6 @@ class ProxyManager {
   String? _sharedProxyAddress;
 
   Future<void> _initializeForGeneration(int generation) async {
-    await _initSharedProxyClient(generation: generation);
-    if (generation != _proxySettingsGeneration ||
-        !useProxy.value ||
-        _sharedYt != _defaultYt) {
-      return;
-    }
     await _initSharedProxyClient(generation: generation);
   }
 
@@ -164,13 +159,15 @@ class ProxyManager {
     }
   }
 
+  bool _isProxyExpired(DateTime blockedAt) {
+    return DateTime.now().difference(blockedAt).inMinutes >
+        _blockedProxyTtlMinutes;
+  }
+
   bool _isBlockedProxyAddress(String address) {
     final blockedAt = _blockedProxyAddresses[address];
     if (blockedAt == null) return false;
-
-    // Check if TTL has expired
-    if (DateTime.now().difference(blockedAt).inMinutes >
-        _blockedProxyTtlMinutes) {
+    if (_isProxyExpired(blockedAt)) {
       _blockedProxyAddresses.remove(address);
       return false;
     }
@@ -178,21 +175,20 @@ class ProxyManager {
   }
 
   void _pruneExpiredBlockedProxies() {
-    final now = DateTime.now();
     _blockedProxyAddresses.removeWhere(
-      (_, blockedAt) =>
-          now.difference(blockedAt).inMinutes > _blockedProxyTtlMinutes,
+      (_, blockedAt) => _isProxyExpired(blockedAt),
     );
   }
 
   void _enforceBlockedProxiesLimit() {
     if (_blockedProxyAddresses.length <= _maxBlockedProxiesSize) return;
 
-    // Remove oldest entries when exceeding limit
+    // Remove oldest entries when exceeding limit, keep 75% capacity
     final entries = _blockedProxyAddresses.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
 
-    final toKeep = entries.take(_maxBlockedProxiesSize ~/ 2).toList();
+    final targetSize = (_maxBlockedProxiesSize * 0.75).toInt();
+    final toKeep = entries.take(targetSize).toList();
     _blockedProxyAddresses.clear();
     for (final entry in toKeep) {
       _blockedProxyAddresses[entry.key] = entry.value;
@@ -374,7 +370,6 @@ class ProxyManager {
             ? 0
             : _random.nextInt(workingProxies.length);
         proxy = workingProxies[idx];
-        _workingProxies.remove(proxy);
       } else {
         if (preferredCountry != null &&
             _proxiesByCountry.containsKey(preferredCountry)) {
@@ -723,7 +718,7 @@ class ProxyManager {
       final response = await http
           .get(Uri.parse(url))
           .timeout(
-            const Duration(seconds: 15),
+            const Duration(seconds: _fetchProxyTimeoutSeconds),
             onTimeout: () => http.Response('', 408),
           );
       if (response.statusCode != 200) return;
@@ -766,7 +761,7 @@ class ProxyManager {
       final response = await http
           .get(Uri.parse(url))
           .timeout(
-            const Duration(seconds: 15),
+            const Duration(seconds: _fetchProxyTimeoutSeconds),
             onTimeout: () => http.Response('', 408),
           );
       if (response.statusCode != 200) return;
@@ -798,7 +793,7 @@ class ProxyManager {
       final response = await http
           .get(Uri.parse(url))
           .timeout(
-            const Duration(seconds: 15),
+            const Duration(seconds: _fetchProxyTimeoutSeconds),
             onTimeout: () => http.Response('', 408),
           );
       if (response.statusCode != 200) return;
