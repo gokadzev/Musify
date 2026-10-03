@@ -1229,15 +1229,25 @@ Future<List> getSongsFromPlaylist(
   final songList = await getData('cache', 'playlistSongs$playlistId') ?? [];
 
   if (songList.isEmpty) {
-    await for (final song in ytClient.playlists.getVideos(playlistId)) {
-      songList.add(
-        returnSongLayout(songList.length, song, playlistImage: playlistImage),
+    try {
+      await for (final song in ytClient.playlists.getVideos(playlistId)) {
+        songList.add(
+          returnSongLayout(songList.length, song, playlistImage: playlistImage),
+        );
+      }
+      // Only cache if stream completed successfully
+      unawaited(
+        addOrUpdateData<List>('cache', 'playlistSongs$playlistId', songList),
       );
+    } catch (e, stackTrace) {
+      logger.log(
+        'Error fetching songs from playlist $playlistId',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      // Clear partial data to allow retry next time
+      songList.clear();
     }
-
-    unawaited(
-      addOrUpdateData<List>('cache', 'playlistSongs$playlistId', songList),
-    );
   }
 
   return songList;
