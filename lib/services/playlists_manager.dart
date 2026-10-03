@@ -1206,7 +1206,9 @@ Future<List> _loadSongsForPlaylist(Map playlist) async {
       playlist['ytid'],
       playlistImage: playlistImage,
     );
-    if (!playlists.contains(playlist)) {
+    final playlistId = _playlistId(playlist['ytid']);
+    if (playlistId != null &&
+        !playlists.any((p) => _playlistId(p['ytid']) == playlistId)) {
       playlists.add(playlist);
     }
     return songs;
