@@ -272,9 +272,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       _queueList.map(_getMediaItemForQueue).toList(growable: false);
 
   bool _playerSourceMatchesCurrentSong() {
-    if (_currentQueueIndex < 0 || _currentQueueIndex >= _queueList.length) {
-      return false;
-    }
+    if (!_hasCurrentQueueIndex) return false;
 
     final sourceTag = audioPlayer.sequenceState.currentSource?.tag;
     if (sourceTag is! MediaItem) return false;
@@ -804,7 +802,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   Future<void> _handleSongCompletion() async {
     try {
-      if (_currentQueueIndex >= 0 && _currentQueueIndex < _queueList.length) {
+      if (_hasCurrentQueueIndex) {
         _addToHistory(_queueList[_currentQueueIndex]);
       }
 
@@ -1205,8 +1203,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   void clearQueue() {
     try {
-      final currentSong =
-          _currentQueueIndex >= 0 && _currentQueueIndex < _queueList.length
+      final currentSong = _hasCurrentQueueIndex
           ? cloneMap(_queueList[_currentQueueIndex])
           : null;
 
@@ -1285,10 +1282,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
           androidCompactActionIndices: const [0, 1, 3],
           processingState: AudioProcessingState.loading,
           queueIndex:
-              queueIndex ??
-              (_currentQueueIndex >= 0 && _currentQueueIndex < _queueList.length
-                  ? _currentQueueIndex
-                  : null),
+              queueIndex ?? (_hasCurrentQueueIndex ? _currentQueueIndex : null),
           updateTime: DateTime.now(),
         ),
       );
@@ -1475,13 +1469,14 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   Stream<List<Map>> get queueAsMapStream => _queueMapStream.stream;
   int get currentQueueIndex => _currentQueueIndex;
+  bool get _hasCurrentQueueIndex =>
+      _currentQueueIndex >= 0 && _currentQueueIndex < _queueList.length;
+
   Map? get currentSong =>
-      _currentQueueIndex >= 0 && _currentQueueIndex < _queueList.length
-      ? _queueList[_currentQueueIndex]
-      : null;
+      _hasCurrentQueueIndex ? _queueList[_currentQueueIndex] : null;
 
   bool get hasNext =>
-      _currentQueueIndex >= 0 && _currentQueueIndex < _queueList.length - 1;
+      _hasCurrentQueueIndex && _currentQueueIndex < _queueList.length - 1;
 
   bool get hasPrevious => _currentQueueIndex > 0 || _historyList.isNotEmpty;
 
@@ -3018,8 +3013,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       if (_queueList.isEmpty) return;
 
       // Can't shuffle if current queue index is invalid
-      if (_currentQueueIndex < 0 || _currentQueueIndex >= _queueList.length)
-        return;
+      if (!_hasCurrentQueueIndex) return;
 
       if (shuffleEnabled != wasShuffled) {
         _hydrateQueueEntryIds();
