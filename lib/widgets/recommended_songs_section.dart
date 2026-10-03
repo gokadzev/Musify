@@ -61,6 +61,7 @@ class RecommendedSongsSection extends StatelessWidget {
                     await audioHandler.playPlaylistSong(
                       playlist: {'title': title, 'list': songs},
                       songIndex: 0,
+                      shuffle: false,
                     );
                   },
                   icon: Icon(

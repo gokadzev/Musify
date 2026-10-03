@@ -39,11 +39,10 @@ class ShufflePlayButton extends StatelessWidget {
         if (songs.isEmpty) return;
         final shuffledSongs = List<Map>.from(songs.whereType<Map>());
         if (shuffledSongs.isEmpty) return;
-        shuffledSongs.shuffle();
         await audioHandler.addPlaylistToQueue(
           shuffledSongs,
           replace: true,
-          startIndex: 0,
+          shuffle: true,
         );
       },
     );
