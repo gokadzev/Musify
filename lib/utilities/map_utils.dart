@@ -26,3 +26,15 @@ Map<String, dynamic> cloneMap(Map source) {
 List<Map<String, dynamic>> cloneMaps(Iterable<Map> sources) {
   return sources.map(cloneMap).toList();
 }
+
+String? songYtid(Map song) {
+  final ytid = song['ytid']?.toString();
+  return ytid == null || ytid.isEmpty ? null : ytid;
+}
+
+Map? findSongByYtid(Iterable<dynamic> songs, String ytid) {
+  for (final song in songs) {
+    if (song is Map && songYtid(song) == ytid) return song;
+  }
+  return null;
+}

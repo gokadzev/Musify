@@ -37,6 +37,7 @@ import 'package:musify/services/proxy_manager.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/app_utils.dart';
 import 'package:musify/utilities/formatter.dart';
+import 'package:musify/utilities/map_utils.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 List globalSongs = [];
@@ -71,12 +72,8 @@ Set<String> _createSongIdCache(ValueNotifier<List> source) {
   return cache;
 }
 
-Set<String> _songIds(Iterable songs) => songs
-    .whereType<Map>()
-    .map((song) => song['ytid']?.toString())
-    .whereType<String>()
-    .where((ytid) => ytid.isNotEmpty)
-    .toSet();
+Set<String> _songIds(Iterable songs) =>
+    songs.whereType<Map>().map(songYtid).whereType<String>().toSet();
 
 final _cachedLikedSongIds = _createSongIdCache(userLikedSongsList);
 final _cachedOfflineSongIds = _createSongIdCache(userOfflineSongs);
@@ -398,18 +395,10 @@ Future<Map?> _resolveSongForLikedStatus(String songId, Map? songData) async {
     return Map<String, dynamic>.from(songData!);
   }
 
-  final cachedSong = _findSongById(userLikedSongsList.value, songId);
+  final cachedSong = findSongByYtid(userLikedSongsList.value, songId);
   if (cachedSong != null) return Map<String, dynamic>.from(cachedSong);
 
   return getSongDetails(userLikedSongsList.value.length, songId);
-}
-
-Map? _findSongById(Iterable<dynamic> songs, String songId) {
-  for (final song in songs) {
-    if (song is Map && song['ytid']?.toString() == songId) return song;
-  }
-
-  return null;
 }
 
 List _deduplicateLikedSongs(Iterable<dynamic> likedSongs) {

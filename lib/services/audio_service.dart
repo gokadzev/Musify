@@ -299,11 +299,6 @@ class MusifyAudioHandler extends BaseAudioHandler {
     return audioPlayer.sequenceState.currentSource is ClippingAudioSource;
   }
 
-  bool _shouldUpdateDuration(Duration? currentDuration, Duration nextDuration) {
-    return currentDuration == null ||
-        !durationEquals(currentDuration, nextDuration);
-  }
-
   bool _isCurrentMediaItemMatchingSong(
     MediaItem? currentItem,
     MediaItem currentQueueMediaItem,
@@ -366,14 +361,14 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
       final durationSeconds = stableDuration.inSeconds;
       var queueMapChanged = false;
-      if (_shouldUpdateDuration(storedDuration, stableDuration)) {
+      if (!durationEquals(storedDuration, stableDuration)) {
         currentSong['duration'] = durationSeconds;
         queueMapChanged = true;
       }
       final queueEntryId = _queueEntryIds.ensureId(currentSong);
       for (final originalSong in _originalQueueList) {
         if (_queueEntryIds.ensureId(originalSong) == queueEntryId) {
-          if (_shouldUpdateDuration(
+          if (!durationEquals(
             readMediaDuration(originalSong['duration']),
             stableDuration,
           )) {
@@ -386,7 +381,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       var mediaItemChanged = false;
       if (currentItem != null &&
           isMatchingCurrentItem &&
-          _shouldUpdateDuration(currentItem.duration, stableDuration)) {
+          !durationEquals(currentItem.duration, stableDuration)) {
         mediaItem.add(currentItem.copyWith(duration: stableDuration));
         mediaItemChanged = true;
       } else if (!isMatchingCurrentItem) {
@@ -401,7 +396,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
       var publishedQueueChanged = false;
       if (existingQueue != null && queueItem != null) {
-        if (_shouldUpdateDuration(queueItem.duration, stableDuration)) {
+        if (!durationEquals(queueItem.duration, stableDuration)) {
           final updatedQueue = List<MediaItem>.from(existingQueue);
           updatedQueue[queueIndex] = queueItem.copyWith(
             duration: stableDuration,
@@ -1141,22 +1136,15 @@ class MusifyAudioHandler extends BaseAudioHandler {
     }
   }
 
-  int _indexAfterReorder(int index, int oldIndex, int newIndex) {
-    if (index == oldIndex) return newIndex;
-    if (oldIndex < index && newIndex >= index) return index - 1;
-    if (oldIndex > index && newIndex <= index) return index + 1;
-    return index;
-  }
-
   void _moveQueueEntry(int oldIndex, int newIndex) {
     final song = _queueList.removeAt(oldIndex);
     _queueList.insert(newIndex, song);
-    _currentQueueIndex = _indexAfterReorder(
+    _currentQueueIndex = indexAfterQueueReorder(
       _currentQueueIndex,
       oldIndex,
       newIndex,
     );
-    _currentLoadingIndex = _indexAfterReorder(
+    _currentLoadingIndex = indexAfterQueueReorder(
       _currentLoadingIndex,
       oldIndex,
       newIndex,
@@ -1495,23 +1483,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
     return mediaId.isEmpty ? null : mediaId;
   }
 
-  String? _songYtid(Map song) {
-    final ytid = song['ytid']?.toString();
-    return ytid == null || ytid.isEmpty ? null : ytid;
-  }
-
   Map? _firstPlayableSong(Iterable songs) {
     for (final song in songs.whereType<Map>()) {
-      if (_songYtid(song) != null) {
-        return song;
-      }
-    }
-    return null;
-  }
-
-  Map? _findSongInList(Iterable songs, String ytid) {
-    for (final song in songs.whereType<Map>()) {
-      if (_songYtid(song) == ytid) {
+      if (songYtid(song) != null) {
         return song;
       }
     }
@@ -1532,7 +1506,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       userOfflineSongs.value,
       userLikedSongsList.value,
     ]) {
-      final song = _findSongInList(source, ytid);
+      final song = findSongByYtid(source, ytid);
       if (song != null) return song;
     }
 
@@ -1541,7 +1515,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   Map? _latestResumableSong() {
     final activeSong = currentSong;
-    if (activeSong != null && _songYtid(activeSong) != null) {
+    if (activeSong != null && songYtid(activeSong) != null) {
       return activeSong;
     }
 
@@ -1561,7 +1535,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
   }
 
   Map<String, dynamic>? _normaliseResumableSong(Map song) {
-    final ytid = _songYtid(song);
+    final ytid = songYtid(song);
     if (ytid == null) return null;
 
     final normalised = cloneMap(song);
@@ -1659,7 +1633,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
 
   String? _songToken(Map song, String containerId) => containerId == _rootQueue
       ? _queueEntryIds.ensureId(song)
-      : _songYtid(song);
+      : songYtid(song);
 
   int _indexOfSongToken(List<Map> songs, String containerId, String token) =>
       songs.indexWhere((song) => _songToken(song, containerId) == token);
@@ -1926,7 +1900,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
     void collect(Iterable songs) {
       for (final song in songs.whereType<Map>()) {
         if (results.length >= _maxSearchResults) return;
-        final ytid = _songYtid(song);
+        final ytid = songYtid(song);
         if (ytid == null || seen.contains(ytid)) continue;
         if (!_songMatches(song, needle)) continue;
         seen.add(ytid);
@@ -1948,7 +1922,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
           .timeout(_browserFetchTimeout);
       for (final song in online.whereType<Map>()) {
         if (results.length >= _maxSearchResults) break;
-        final ytid = _songYtid(song);
+        final ytid = songYtid(song);
         if (ytid == null || !seen.add(ytid)) continue;
         results.add(song);
       }

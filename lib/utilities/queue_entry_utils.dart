@@ -19,6 +19,13 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
+int indexAfterQueueReorder(int index, int oldIndex, int newIndex) {
+  if (index == oldIndex) return newIndex;
+  if (oldIndex < index && newIndex >= index) return index - 1;
+  if (oldIndex > index && newIndex <= index) return index + 1;
+  return index;
+}
+
 class QueueEntryIdManager {
   int _counter = 0;
 
