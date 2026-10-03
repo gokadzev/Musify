@@ -2915,6 +2915,9 @@ class MusifyAudioHandler extends BaseAudioHandler {
       _queueList
         ..removeAt(newCurrentIndex)
         ..insert(0, currentSong);
+    } else if (newCurrentIndex == -1) {
+      // Current song was removed during shuffle, restore it at position 0
+      _queueList.insert(0, currentSong);
     }
 
     _queueList.insertAll(_queueList.isNotEmpty ? 1 : 0, unplayedManualSongs);
@@ -2950,6 +2953,8 @@ class MusifyAudioHandler extends BaseAudioHandler {
     );
 
     if (_currentQueueIndex == -1) {
+      // Current song not found in restored queue, restore it at position 0
+      _queueList.insert(0, currentSong);
       _currentQueueIndex = 0;
     }
 
