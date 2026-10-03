@@ -790,7 +790,13 @@ class MusifyAudioHandler extends BaseAudioHandler {
     }
 
     if (_canRetryPlayback()) {
-      Future.delayed(_errorRetryDelay, skipToNext);
+      final failedSongIndex = _currentQueueIndex;
+      Future.delayed(_errorRetryDelay, () {
+        // Only retry if still on the same song (user didn't manually change tracks)
+        if (_currentQueueIndex == failedSongIndex) {
+          skipToNext();
+        }
+      });
     } else {
       _lastError = null;
     }
@@ -1211,6 +1217,7 @@ class MusifyAudioHandler extends BaseAudioHandler {
       _currentLoadingIndex = -1;
       _currentLoadingTransitionId = -1;
       _resetPreloadingState();
+      _hydrateQueueEntryIds();
       _updateQueueMediaItems();
       _updatePlaybackState();
     } catch (e, stackTrace) {
