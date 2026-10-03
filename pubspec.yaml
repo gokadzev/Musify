@@ -9,7 +9,7 @@ version: 10.5.1+183 # run update.sh after changing the version
 
 environment:
   sdk: '>=3.13.0 <4.0.0'
-  flutter: ^3.47.4
+  flutter: ^3.47.6
 
 dependencies:
   app_links: ^7.2.1
@@ -35,8 +35,8 @@ dependencies:
   receive_sharing_intent:
     path: ./packages/receive_sharing_intent
   rxdart: ^0.28.0
-  share_plus: ^13.3.0
-  url_launcher: ^6.3.2
+  share_plus: ^13.3.1
+  url_launcher: ^6.3.3
   youtube_explode_dart:
     path: ./packages/youtube_explode_dart
   youtube_music_explode_dart:
