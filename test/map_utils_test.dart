@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:musify/utilities/map_utils.dart';
 
@@ -31,6 +33,48 @@ void main() {
         ], 'missing'),
         isNull,
       );
+    });
+  });
+
+  group('sampleUniqueSongs', () {
+    test(
+      'returns at most the requested number of unique songs across sources',
+      () {
+        final recommendations = sampleUniqueSongs(
+          [
+            [
+              {'ytid': 'one'},
+              {'ytid': 'two'},
+              {'ytid': 'one'},
+            ],
+            [
+              {'ytid': 'three'},
+              {'ytid': 'four'},
+              {'ytid': ''},
+              'invalid',
+            ],
+          ],
+          3,
+          random: Random(1),
+        );
+
+        expect(recommendations, hasLength(3));
+        expect(
+          recommendations.map((song) => songYtid(song)).toSet().length,
+          recommendations.length,
+        );
+        expect(
+          recommendations
+              .map(songYtid)
+              .every((ytid) => {'one', 'two', 'three', 'four'}.contains(ytid)),
+          isTrue,
+        );
+      },
+    );
+
+    test('returns an empty sample for nonpositive limits', () {
+      expect(sampleUniqueSongs([[]], 0), isEmpty);
+      expect(sampleUniqueSongs([[]], -1), isEmpty);
     });
   });
 }

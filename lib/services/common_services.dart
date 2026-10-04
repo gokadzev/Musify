@@ -301,42 +301,25 @@ List<Map> _sampleSeedSongs(List songs, int count) {
 }
 
 Future<List> _getRecommendationsFromMixedSources() async {
-  final playlistSongs = [
-    ...userLikedSongsList.value,
-    ...userRecentlyPlayed.value,
+  final recommendationSources = <Iterable<dynamic>>[
+    userLikedSongsList.value,
+    userRecentlyPlayed.value,
   ];
 
   if (globalSongs.isEmpty) {
     const playlistId = 'PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx';
     globalSongs = await getSongsFromPlaylist(playlistId);
   }
-  playlistSongs.addAll(globalSongs.take(10));
+  recommendationSources.add(globalSongs.take(10));
 
   if (userCustomPlaylists.value.isNotEmpty) {
     for (final userPlaylist in userCustomPlaylists.value) {
-      final _list = List.from(userPlaylist['list'] as List)..shuffle();
-      playlistSongs.addAll(_list.take(5));
+      final playlistSongs = userPlaylist['list'] as List;
+      recommendationSources.add(_sampleSeedSongs(playlistSongs, 5));
     }
   }
 
-  return _deduplicateAndShuffle(playlistSongs);
-}
-
-List _deduplicateAndShuffle(List playlistSongs) {
-  final seenYtIds = <String>{};
-  final uniqueSongs = <Map>[];
-
-  playlistSongs.shuffle();
-
-  for (final song in playlistSongs) {
-    if (song['ytid'] != null && seenYtIds.add(song['ytid'])) {
-      uniqueSongs.add(song);
-      // Early exit when we have enough songs
-      if (uniqueSongs.length >= 15) break;
-    }
-  }
-
-  return uniqueSongs;
+  return sampleUniqueSongs(recommendationSources, 15);
 }
 
 Future<void> updateSongLikeStatus(
