@@ -79,6 +79,7 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
   // Queue contents and active positions.
   final List<Map> _queueList = [];
   final List<Map> _originalQueueList = [];
+  final Map<String, Map> _originalQueueEntriesById = {};
   final List<Map> _historyList = [];
   final BehaviorSubject<List<Map>> _queueMapStream =
       BehaviorSubject<List<Map>>.seeded([]);
@@ -281,6 +282,16 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
       ..ensureIds(_originalQueueList);
   }
 
+  void _rebuildOriginalQueueEntryIndex() {
+    _originalQueueEntriesById
+      ..clear()
+      ..addEntries(
+        _originalQueueList.map(
+          (song) => MapEntry(_queueEntryIds.ensureId(song), song),
+        ),
+      );
+  }
+
   MediaItem _getMediaItemForQueue(Map song) {
     return mapToMediaItem(song).copyWith(id: _queueEntryIds.ensureId(song));
   }
@@ -383,16 +394,13 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
         queueMapChanged = true;
       }
       final queueEntryId = _queueEntryIds.ensureId(currentSong);
-      for (final originalSong in _originalQueueList) {
-        if (_queueEntryIds.ensureId(originalSong) == queueEntryId) {
-          if (!durationEquals(
+      final originalSong = _originalQueueEntriesById[queueEntryId];
+      if (originalSong != null &&
+          !durationEquals(
             readMediaDuration(originalSong['duration']),
             stableDuration,
           )) {
-            originalSong['duration'] = durationSeconds;
-          }
-          break;
-        }
+        originalSong['duration'] = durationSeconds;
       }
 
       var mediaItemChanged = false;
@@ -1034,6 +1042,7 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
       if (replace) {
         _queueList.clear();
         _originalQueueList.clear();
+        _originalQueueEntriesById.clear();
         _currentQueueIndex = 0;
         _currentLoadingIndex = -1;
         _currentLoadingTransitionId = -1;
@@ -1074,6 +1083,7 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
       if (replace) {
         if (shuffleAfterReplace && newSongs.isNotEmpty) {
           _originalQueueList.addAll(cloneMaps(newSongs));
+          _rebuildOriginalQueueEntryIndex();
           final rest = List<Map>.of(newSongs)
             ..remove(startSong)
             ..shuffle();
@@ -1129,6 +1139,7 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
         _originalQueueList.removeWhere(
           (s) => _queueEntryIds.ensureId(s) == removedQueueEntryId,
         );
+        _rebuildOriginalQueueEntryIndex();
       }
 
       if (index == _currentLoadingIndex) {
@@ -1219,10 +1230,12 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
 
       _queueList.clear();
       _originalQueueList.clear();
+      _originalQueueEntriesById.clear();
 
       if (currentSong != null) {
         _queueList.add(currentSong);
         _originalQueueList.add(cloneMap(currentSong));
+        _rebuildOriginalQueueEntryIndex();
       }
 
       _currentQueueIndex = currentSong != null ? 0 : -1;
@@ -2447,6 +2460,7 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
     _originalQueueList
       ..clear()
       ..addAll(cloneMaps(_queueList));
+    _rebuildOriginalQueueEntryIndex();
 
     _shuffleQueueList(unplayedManualSongs, manualSongIds);
   }
@@ -2520,6 +2534,7 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
     _queueList.insertAll(insertIndex, unplayedManualSongs);
 
     _originalQueueList.clear();
+    _originalQueueEntriesById.clear();
     _updateQueueMediaItems();
   }
 
