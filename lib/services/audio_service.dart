@@ -859,10 +859,13 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
     if (baseYtid == null || baseYtid.isEmpty) return;
 
     try {
-      final knownYtids = {
-        for (final song in [..._queueList, ..._historyList])
-          if (song['ytid'] != null) song['ytid'].toString(),
-      };
+      final knownYtids = <String>{};
+      for (final song in _queueList) {
+        if (song['ytid'] != null) knownYtids.add(song['ytid'].toString());
+      }
+      for (final song in _historyList) {
+        if (song['ytid'] != null) knownYtids.add(song['ytid'].toString());
+      }
 
       final recommended =
           await getSimilarSong(baseYtid, excludedYtIds: knownYtids).timeout(
