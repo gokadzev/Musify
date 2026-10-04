@@ -34,6 +34,7 @@ import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/listening_stats_service.dart';
 import 'package:musify/services/playlists_manager.dart';
 import 'package:musify/services/settings_manager.dart';
+import 'package:musify/services/stream_buffer_service.dart';
 import 'package:musify/utilities/map_utils.dart';
 import 'package:musify/utilities/media_duration.dart';
 import 'package:musify/utilities/mediaitem.dart';
@@ -88,6 +89,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
   int _currentQueueIndex = 0;
   int _currentLoadingIndex = -1;
   int _currentLoadingTransitionId = -1;
+
+  /// Segments to seek past while the current song streams, kept with the song
+  /// they were looked up for so a stale transition can't skip another song.
+  ({String ytid, List<Map<String, int>> segments})? _activeSkipSegments;
   bool _isUpdatingState = false;
   bool _pendingPlaybackStateUpdate = false;
   bool _pendingForcedPlaybackStateUpdate = false;
@@ -196,6 +201,15 @@ class MusifyAudioHandler extends BaseAudioHandler {
         _logStreamError('Processing state stream error', error, stackTrace);
       },
     );
+
+    audioPlayer.positionStream
+        .throttleTime(const Duration(milliseconds: 200))
+        .listen(
+          _skipSponsoredSegment,
+          onError: (error, stackTrace) {
+            _logStreamError('Position stream error', error, stackTrace);
+          },
+        );
 
     audioPlayer.durationStream.listen(
       (duration) {
@@ -2677,6 +2691,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
     try {
       final tag = mapToMediaItem(song);
 
+      // Only a song served from the growing buffer file needs segments skipped
+      // as it plays; every other source has them clipped out of its audio.
+      _activeSkipSegments = null;
+
       if (isOffline) {
         final fileSource = AudioSource.file(songUrl, tag: tag);
 
@@ -2689,6 +2707,10 @@ class MusifyAudioHandler extends BaseAudioHandler {
       }
 
       final uri = Uri.parse(songUrl);
+
+      final bufferedSource = await _buildBufferedAudioSource(song, uri, tag);
+      if (bufferedSource != null) return bufferedSource;
+
       final audioSource = AudioSource.uri(uri, tag: tag);
 
       if (!sponsorBlockSupport.value) {
@@ -2708,6 +2730,109 @@ class MusifyAudioHandler extends BaseAudioHandler {
       );
       return null;
     }
+  }
+
+  /// Plays a song out of a buffer file downloading in ranged chunks, which
+  /// fills faster than playback drains it. Returns null for anything the
+  /// buffer doesn't apply to — radio stations, live tracks, a stream that
+  /// couldn't be resolved — leaving the caller on the plain streaming path.
+  Future<AudioSource?> _buildBufferedAudioSource(
+    Map song,
+    Uri uri,
+    MediaItem tag,
+  ) async {
+    final songId = song['ytid']?.toString();
+    if (songId == null || songId.isEmpty) {
+      logger.log('Not buffering ${song['title']}: it has no video id');
+      return null;
+    }
+
+    // Every one of these sends the song down the plain streaming path, and a
+    // bug report cannot tell the two paths apart from the outside. Saying
+    // which rule applied costs one line and answers the first question asked
+    // of any playback report.
+    final String? skipReason;
+    if (!streamBufferEnabled) {
+      skipReason = 'the setting is off';
+    } else if (song['isLive'] == true) {
+      skipReason = 'it is live';
+    } else if (!_isYoutubeStreamUri(uri)) {
+      skipReason = 'it is not a YouTube stream (${uri.host})';
+    } else {
+      skipReason = null;
+    }
+
+    if (skipReason != null) {
+      logger.log('Not buffering $songId: $skipReason');
+      return null;
+    }
+
+    try {
+      final streamInfo = await fetchBestAudioStream(songId);
+      if (streamInfo == null) {
+        logger.log('Not buffering $songId: no stream resolved for it');
+        return null;
+      }
+
+      await _loadSkipSegmentsForPlayback(songId);
+
+      logger.log(
+        'Buffering $songId: ${streamInfo.size.totalMegaBytes.toStringAsFixed(1)}MB '
+        'of ${streamInfo.audioCodec} at '
+        '${streamInfo.bitrate.kiloBitsPerSecond.round()}kbps',
+      );
+
+      return BufferedStreamAudioSource(
+        songId: songId,
+        streamInfo: streamInfo,
+        tag: tag,
+      );
+    } catch (e, stackTrace) {
+      logger.log(
+        'Error building buffered audio source for $songId',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      return null;
+    }
+  }
+
+  /// Arms [_skipSponsoredSegment] for [songId], since a growing buffer file
+  /// can't be clipped into segments the way a finished file can.
+  Future<void> _loadSkipSegmentsForPlayback(String songId) async {
+    if (!sponsorBlockSupport.value) return;
+
+    final segments = await getSkipSegments(songId);
+    if (segments.isEmpty) return;
+
+    segments.sort((a, b) => (a['start'] ?? 0).compareTo(b['start'] ?? 0));
+    _activeSkipSegments = (ytid: songId, segments: segments);
+  }
+
+  /// Seeks past a sponsored segment as playback reaches it.
+  void _skipSponsoredSegment(Duration position) {
+    final active = _activeSkipSegments;
+    if (active == null || !audioPlayer.playing) return;
+    if (currentSong?['ytid']?.toString() != active.ytid) return;
+
+    final seconds = position.inSeconds;
+    for (final segment in active.segments) {
+      final start = segment['start'] ?? 0;
+      final end = segment['end'] ?? 0;
+      if (end <= start) continue;
+
+      if (seconds >= start && seconds < end) {
+        unawaited(audioPlayer.seek(Duration(seconds: end)));
+        return;
+      }
+    }
+  }
+
+  /// Whether [uri] points at a YouTube stream, and so needs the headers of
+  /// the client that minted it. Radio stations keep the player's own headers.
+  static bool _isYoutubeStreamUri(Uri uri) {
+    final host = uri.host.toLowerCase();
+    return host == 'googlevideo.com' || host.endsWith('.googlevideo.com');
   }
 
   AudioSource? _applyOfflineSponsorBlock(
