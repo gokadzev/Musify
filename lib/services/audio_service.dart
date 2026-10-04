@@ -68,6 +68,7 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
     _initialize();
   }
 
+  // Player and service collaborators.
   late final AndroidEqualizer _androidEqualizer;
   late final AudioPlayer audioPlayer;
   late final AndroidAutoBrowser _androidAutoBrowser;
@@ -75,11 +76,7 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
   Future<bool>? _equalizerInitFuture;
   DateTime _equalizerRetryNotBefore = DateTime.fromMillisecondsSinceEpoch(0);
 
-  Timer? _sleepTimer;
-  Timer? _debounceTimer;
-  bool sleepTimerExpired = false;
-  bool sleepTimerEndOfSong = false;
-
+  // Queue contents and active positions.
   final List<Map> _queueList = [];
   final List<Map> _originalQueueList = [];
   final List<Map> _historyList = [];
@@ -89,18 +86,30 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
   int _currentQueueIndex = 0;
   int _currentLoadingIndex = -1;
   int _currentLoadingTransitionId = -1;
+
+  // Playback transition and state-update coordination.
   bool _isUpdatingState = false;
   bool _pendingPlaybackStateUpdate = false;
   bool _pendingForcedPlaybackStateUpdate = false;
   int _songTransitionCounter = 0;
-
   bool _completionEventPending = false;
   bool _completionHandlerLoadStarted = false;
-
   String? _lastError;
   int _consecutiveErrors = 0;
-  static const int _maxConsecutiveErrors = 3;
 
+  // Timers and sleep-timer state.
+  Timer? _sleepTimer;
+  Timer? _debounceTimer;
+  bool sleepTimerExpired = false;
+  bool sleepTimerEndOfSong = false;
+
+  // Background stream preload state.
+  int _activePreloadCount = 0;
+  final Set<String> _preloadingYtIds = <String>{};
+  final Set<String> _preloadedYtIds = <String>{};
+
+  // Playback, history, and timing limits.
+  static const int _maxConsecutiveErrors = 3;
   static const int _maxHistorySize = 50;
   static const int _queueLookahead = 3;
   static const int _maxConcurrentPreloads = 2;
@@ -110,10 +119,7 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
   static const Duration _positionDataThreshold = Duration(milliseconds: 250);
   static const Duration _playbackStateHeartbeat = Duration(seconds: 1);
 
-  int _activePreloadCount = 0;
-  final Set<String> _preloadingYtIds = <String>{};
-  final Set<String> _preloadedYtIds = <String>{};
-
+  // Derived player streams.
   late final Stream<PositionData> _positionDataStream =
       Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
         audioPlayer.positionStream,
@@ -147,6 +153,18 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
       .asBroadcastStream();
 
   Stream<PlaybackState> get playbackStateStream => _playbackStateStream;
+  Stream<List<Map>> get queueAsMapStream => _queueMapStream.stream;
+  int get currentQueueIndex => _currentQueueIndex;
+  bool get _hasCurrentQueueIndex =>
+      _currentQueueIndex >= 0 && _currentQueueIndex < _queueList.length;
+
+  Map? get currentSong =>
+      _hasCurrentQueueIndex ? _queueList[_currentQueueIndex] : null;
+
+  bool get hasNext =>
+      _hasCurrentQueueIndex && _currentQueueIndex < _queueList.length - 1;
+
+  bool get hasPrevious => _currentQueueIndex > 0 || _historyList.isNotEmpty;
 
   List<MediaControl> _controls(bool playing) {
     final hasMultipleTracks = _queueList.length > 1;
@@ -1456,19 +1474,6 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
       }
     }
   }
-
-  Stream<List<Map>> get queueAsMapStream => _queueMapStream.stream;
-  int get currentQueueIndex => _currentQueueIndex;
-  bool get _hasCurrentQueueIndex =>
-      _currentQueueIndex >= 0 && _currentQueueIndex < _queueList.length;
-
-  Map? get currentSong =>
-      _hasCurrentQueueIndex ? _queueList[_currentQueueIndex] : null;
-
-  bool get hasNext =>
-      _hasCurrentQueueIndex && _currentQueueIndex < _queueList.length - 1;
-
-  bool get hasPrevious => _currentQueueIndex > 0 || _historyList.isNotEmpty;
 
   Map? _firstPlayableSong(Iterable songs) {
     for (final song in songs.whereType<Map>()) {
