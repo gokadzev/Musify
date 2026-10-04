@@ -1050,14 +1050,24 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
       int? targetQueueIndex;
       Map? startSong;
       final newSongs = <Map>[];
+      final appendedStartQueueIndex = !replace && startIndex != null
+          ? appendedQueueIndexForSourceIndex(
+              songs,
+              startIndex,
+              _queueList.length,
+            )
+          : null;
 
       for (var i = 0; i < songs.length; i++) {
         final song = songs[i];
         if (song['ytid'] != null && song['ytid'].toString().isNotEmpty) {
           final queueSong = _queueEntryIds.createSong(song);
-          newSongs.add(queueSong);
-          if (replace && startIndex == i) startSong = queueSong;
-          if (!replace) _queueList.add(queueSong);
+          if (replace) {
+            newSongs.add(queueSong);
+            if (startIndex == i) startSong = queueSong;
+          } else {
+            _queueList.add(queueSong);
+          }
         }
       }
 
@@ -1093,16 +1103,8 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
 
       if (targetQueueIndex != null) {
         await _playFromQueue(targetQueueIndex);
-      } else if (startIndex != null &&
-          startIndex >= 0 &&
-          startIndex < songs.length &&
-          !replace) {
-        final safeQueueIndex = startIndex < _queueList.length
-            ? startIndex
-            : _queueList.length - 1;
-        if (safeQueueIndex >= 0) {
-          await _playFromQueue(safeQueueIndex);
-        }
+      } else if (appendedStartQueueIndex != null) {
+        await _playFromQueue(appendedStartQueueIndex);
       } else if (replace && _queueList.isNotEmpty) {
         await _playFromQueue(0);
       }

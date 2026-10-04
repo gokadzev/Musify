@@ -26,6 +26,25 @@ int indexAfterQueueReorder(int index, int oldIndex, int newIndex) {
   return index;
 }
 
+int? appendedQueueIndexForSourceIndex(
+  List<Map> songs,
+  int sourceIndex,
+  int existingQueueLength,
+) {
+  if (sourceIndex < 0 || sourceIndex >= songs.length) return null;
+
+  var appendedSongCount = 0;
+  for (var index = 0; index <= sourceIndex; index++) {
+    final song = songs[index];
+    final ytid = song['ytid']?.toString();
+    if (ytid == null || ytid.isEmpty) continue;
+    if (index == sourceIndex) return existingQueueLength + appendedSongCount;
+    appendedSongCount++;
+  }
+
+  return null;
+}
+
 class QueueEntryIdManager {
   int _counter = 0;
 

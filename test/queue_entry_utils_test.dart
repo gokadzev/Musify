@@ -17,4 +17,60 @@ void main() {
       expect(indexAfterQueueReorder(5, 1, 3), 5);
     });
   });
+
+  group('appendedQueueIndexForSourceIndex', () {
+    test('accounts for existing queue entries', () {
+      expect(
+        appendedQueueIndexForSourceIndex(
+          [
+            {'ytid': 'first'},
+            {'ytid': 'selected'},
+          ],
+          1,
+          4,
+        ),
+        5,
+      );
+    });
+
+    test('accounts for invalid songs skipped during append', () {
+      expect(
+        appendedQueueIndexForSourceIndex(
+          [
+            {'title': 'invalid'},
+            {'ytid': 'selected'},
+          ],
+          1,
+          4,
+        ),
+        4,
+      );
+      expect(
+        appendedQueueIndexForSourceIndex(
+          [
+            {'ytid': 'first'},
+            {'title': 'invalid'},
+            {'ytid': 'selected'},
+          ],
+          2,
+          4,
+        ),
+        5,
+      );
+    });
+
+    test('returns null for an invalid source index or invalid target song', () {
+      expect(appendedQueueIndexForSourceIndex([], 0, 3), isNull);
+      expect(
+        appendedQueueIndexForSourceIndex(
+          [
+            {'title': 'invalid'},
+          ],
+          0,
+          3,
+        ),
+        isNull,
+      );
+    });
+  });
 }
