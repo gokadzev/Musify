@@ -1084,12 +1084,12 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
         if (shuffleAfterReplace && newSongs.isNotEmpty) {
           _originalQueueList.addAll(cloneMaps(newSongs));
           _rebuildOriginalQueueEntryIndex();
-          final rest = List<Map>.of(newSongs)
+          newSongs
             ..remove(startSong)
             ..shuffle();
           _queueList
             ..addAll(startSong != null ? [startSong] : <Map>[])
-            ..addAll(rest);
+            ..addAll(newSongs);
           targetQueueIndex = 0;
         } else {
           _queueList.addAll(newSongs);
@@ -2449,10 +2449,6 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
     }
   }
 
-  Map<Map, String> _buildIdMap(List<Map> songs) {
-    return {for (final song in songs) song: _queueEntryIds.ensureId(song)};
-  }
-
   void _enableShuffle(
     List<Map> unplayedManualSongs,
     Set<String> manualSongIds,
@@ -2472,29 +2468,17 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
     Set<String> manualSongIds,
   ) {
     final currentSong = _queueList[_currentQueueIndex];
-    final currentQueueEntryId = _queueEntryIds.ensureId(currentSong);
-
-    final queueIdMap = _buildIdMap(_queueList);
-    _queueList
-      ..removeWhere((song) => manualSongIds.contains(queueIdMap[song]))
-      ..shuffle();
-
-    final newCurrentIndex = _queueList.indexWhere(
-      (song) => _queueEntryIds.ensureId(song) == currentQueueEntryId,
+    final shuffledQueue = shuffleQueueOrder(
+      songs: _queueList,
+      currentSong: currentSong,
+      unplayedManualSongs: unplayedManualSongs,
+      manualSongIds: manualSongIds,
+      queueEntryIds: _queueEntryIds,
     );
-
-    if (newCurrentIndex != -1 && newCurrentIndex != 0) {
-      _queueList
-        ..removeAt(newCurrentIndex)
-        ..insert(0, currentSong);
-    } else if (newCurrentIndex == -1) {
-      // Current song was removed during shuffle, restore it at position 0
-      _queueList.insert(0, currentSong);
-    }
-
-    _queueList.insertAll(_queueList.isNotEmpty ? 1 : 0, unplayedManualSongs);
-
-    _currentQueueIndex = 0;
+    _queueList
+      ..clear()
+      ..addAll(shuffledQueue.songs);
+    _currentQueueIndex = shuffledQueue.currentIndex;
     _updateQueueMediaItems();
   }
 
@@ -2508,30 +2492,17 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
       return;
 
     final currentSong = _queueList[_currentQueueIndex];
-    final currentQueueEntryId = _queueEntryIds.ensureId(currentSong);
-
-    final restoredQueue = cloneMaps(_originalQueueList);
-    final restoredQueueIdMap = _buildIdMap(restoredQueue);
-    restoredQueue.removeWhere(
-      (song) => manualSongIds.contains(restoredQueueIdMap[song]),
+    final restoredQueue = restoreQueueOrder(
+      originalSongs: _originalQueueList,
+      currentSong: currentSong,
+      unplayedManualSongs: unplayedManualSongs,
+      manualSongIds: manualSongIds,
+      queueEntryIds: _queueEntryIds,
     );
-
     _queueList
       ..clear()
-      ..addAll(restoredQueue);
-
-    _currentQueueIndex = _queueList.indexWhere(
-      (song) => _queueEntryIds.ensureId(song) == currentQueueEntryId,
-    );
-
-    if (_currentQueueIndex == -1) {
-      // Current song not found in restored queue, restore it at position 0
-      _queueList.insert(0, currentSong);
-      _currentQueueIndex = 0;
-    }
-
-    final insertIndex = _currentQueueIndex + 1;
-    _queueList.insertAll(insertIndex, unplayedManualSongs);
+      ..addAll(restoredQueue.songs);
+    _currentQueueIndex = restoredQueue.currentIndex;
 
     _originalQueueList.clear();
     _originalQueueEntriesById.clear();

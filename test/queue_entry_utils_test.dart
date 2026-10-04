@@ -73,4 +73,88 @@ void main() {
       );
     });
   });
+
+  group('shuffleQueueOrder', () {
+    test('keeps current first and manual songs immediately after it', () {
+      final queueEntryIds = QueueEntryIdManager();
+      final currentSong = {'ytid': 'current'};
+      final firstSong = {'ytid': 'first'};
+      final manualSong = {'ytid': 'manual'};
+      final lastSong = {'ytid': 'last'};
+      final manualSongId = queueEntryIds.ensureId(manualSong);
+
+      final result = shuffleQueueOrder(
+        songs: [firstSong, currentSong, manualSong, lastSong],
+        currentSong: currentSong,
+        unplayedManualSongs: [manualSong],
+        manualSongIds: {manualSongId},
+        queueEntryIds: queueEntryIds,
+      );
+
+      expect(result.currentIndex, 0);
+      expect(result.songs[0], same(currentSong));
+      expect(result.songs[1], same(manualSong));
+      expect(result.songs.skip(2).map((song) => song['ytid']).toSet(), {
+        'first',
+        'last',
+      });
+      expect(result.songs, hasLength(4));
+    });
+  });
+
+  group('restoreQueueOrder', () {
+    test(
+      'restores original order and reinserts manual songs after current',
+      () {
+        final queueEntryIds = QueueEntryIdManager();
+        final currentSong = {'ytid': 'current'};
+        final manualSong = {'ytid': 'manual'};
+        final manualSongId = queueEntryIds.ensureId(manualSong);
+
+        final result = restoreQueueOrder(
+          originalSongs: [
+            {'ytid': 'first'},
+            currentSong,
+            manualSong,
+            {'ytid': 'last'},
+          ],
+          currentSong: currentSong,
+          unplayedManualSongs: [manualSong],
+          manualSongIds: {manualSongId},
+          queueEntryIds: queueEntryIds,
+        );
+
+        expect(result.currentIndex, 1);
+        expect(result.songs.map((song) => song['ytid']), [
+          'first',
+          'current',
+          'manual',
+          'last',
+        ]);
+      },
+    );
+
+    test('restores a missing current song at the front', () {
+      final queueEntryIds = QueueEntryIdManager();
+      final currentSong = {'ytid': 'current'};
+
+      final result = restoreQueueOrder(
+        originalSongs: [
+          {'ytid': 'first'},
+          {'ytid': 'last'},
+        ],
+        currentSong: currentSong,
+        unplayedManualSongs: const [],
+        manualSongIds: const {},
+        queueEntryIds: queueEntryIds,
+      );
+
+      expect(result.currentIndex, 0);
+      expect(result.songs.map((song) => song['ytid']), [
+        'current',
+        'first',
+        'last',
+      ]);
+    });
+  });
 }

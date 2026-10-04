@@ -45,6 +45,60 @@ int? appendedQueueIndexForSourceIndex(
   return null;
 }
 
+({List<Map> songs, int currentIndex}) shuffleQueueOrder({
+  required Iterable<Map> songs,
+  required Map currentSong,
+  required List<Map> unplayedManualSongs,
+  required Set<String> manualSongIds,
+  required QueueEntryIdManager queueEntryIds,
+}) {
+  final currentQueueEntryId = queueEntryIds.ensureId(currentSong);
+  final shuffledSongs = <Map>[];
+
+  for (final song in songs) {
+    final queueEntryId = queueEntryIds.ensureId(song);
+    if (queueEntryId != currentQueueEntryId &&
+        !manualSongIds.contains(queueEntryId)) {
+      shuffledSongs.add(song);
+    }
+  }
+
+  shuffledSongs.shuffle();
+  return (
+    songs: [currentSong, ...unplayedManualSongs, ...shuffledSongs],
+    currentIndex: 0,
+  );
+}
+
+({List<Map> songs, int currentIndex}) restoreQueueOrder({
+  required Iterable<Map> originalSongs,
+  required Map currentSong,
+  required List<Map> unplayedManualSongs,
+  required Set<String> manualSongIds,
+  required QueueEntryIdManager queueEntryIds,
+}) {
+  final currentQueueEntryId = queueEntryIds.ensureId(currentSong);
+  final restoredSongs = <Map>[];
+  var currentIndex = -1;
+
+  for (final song in originalSongs) {
+    final queueEntryId = queueEntryIds.ensureId(song);
+    if (manualSongIds.contains(queueEntryId)) continue;
+    if (queueEntryId == currentQueueEntryId) {
+      currentIndex = restoredSongs.length;
+    }
+    restoredSongs.add(song);
+  }
+
+  if (currentIndex == -1) {
+    restoredSongs.insert(0, currentSong);
+    currentIndex = 0;
+  }
+  restoredSongs.insertAll(currentIndex + 1, unplayedManualSongs);
+
+  return (songs: restoredSongs, currentIndex: currentIndex);
+}
+
 class QueueEntryIdManager {
   int _counter = 0;
 
