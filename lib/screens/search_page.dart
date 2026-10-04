@@ -105,10 +105,11 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Future<void> search() async {
-    final query = _searchBar.text.trim();
+    // Checks if the input is a url
+    final query = parseVideoId(_searchBar.text.trim());
     final requestId = ++_latestSearchRequest;
 
-    if (query.isEmpty) {
+    if (query!.isEmpty) {
       _songsSearchResult = [];
       _artistsSearchResult = [];
       _albumsSearchResult = [];

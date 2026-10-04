@@ -24,6 +24,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:musify/constants/app_constants.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
+import 'package:youtube_explode_dart/src/videos/video_id.dart';
 
 BorderRadius getItemBorderRadius(
   int index,
@@ -173,4 +174,13 @@ bool _isDolbyCodec(String codec) {
       codec.contains('ac-3') ||
       codec.contains('eac3') ||
       codec.contains('dolby');
+}
+
+/// Parses a video id from url
+String? parseVideoId(String url) {
+    final id = VideoId.parseVideoId(url);
+    if(id == null) {
+      return url;
+    }
+    return id;
 }
