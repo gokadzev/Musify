@@ -60,7 +60,7 @@ void main() {
 
         expect(recommendations, hasLength(3));
         expect(
-          recommendations.map((song) => songYtid(song)).toSet().length,
+          recommendations.map(songYtid).toSet().length,
           recommendations.length,
         );
         expect(
