@@ -178,9 +178,9 @@ bool _isDolbyCodec(String codec) {
 
 /// Parses a video id from url
 String? parseVideoId(String url) {
-    final id = VideoId.parseVideoId(url);
-    if(id == null) {
-      return url;
-    }
-    return id;
+  final id = VideoId.parseVideoId(url);
+  if (id == null) {
+    return url;
+  }
+  return id;
 }

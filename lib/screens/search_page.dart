@@ -106,6 +106,7 @@ class _SearchPageState extends State<SearchPage> {
 
   Future<void> search() async {
     // Checks if the input is a url
+    // The value of original query stays untouched if the input is not a url
     final query = parseVideoId(_searchBar.text.trim());
     final requestId = ++_latestSearchRequest;
 
