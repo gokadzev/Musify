@@ -24,7 +24,7 @@ class YoutubeHttpClient extends http.BaseClient {
 
   static const Map<String, String> defaultHeaders = {
     'user-agent':
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.18 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.7827.232 Safari/537.36',
     'cookie': 'CONSENT=YES+cb',
     'accept':
         'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
@@ -317,10 +317,10 @@ class YoutubeHttpClient extends http.BaseClient {
       'context': const {
         'client': {
           'browserName': 'Chrome',
-          'browserVersion': '105.0.0.0',
+          'browserVersion': '149.0.7827.232',
           'clientFormFactor': 'UNKNOWN_FORM_FACTOR',
           'clientName': "WEB",
-          'clientVersion': "2.20220921.00.00",
+          'clientVersion': "2.20260708.00.00",
         },
       },
       ...data,
