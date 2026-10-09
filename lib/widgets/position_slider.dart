@@ -46,6 +46,7 @@ class _PositionSliderState extends State<PositionSlider> {
   Widget build(BuildContext context) {
     return StreamBuilder<PositionData>(
       stream: audioHandler.positionDataStream,
+      initialData: audioHandler.currentPositionData,
       builder: (context, snapshot) {
         final mediaId = audioHandler.mediaItem.valueOrNull?.id;
         if (mediaId != _currentMediaId) {

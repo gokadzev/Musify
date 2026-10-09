@@ -138,6 +138,14 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
 
   Stream<PositionData> get positionDataStream => _positionDataStream;
 
+  /// Current snapshot, for listeners that subscribe while paused and would
+  /// otherwise see nothing until the next position event.
+  PositionData get currentPositionData => PositionData(
+    audioPlayer.position,
+    audioPlayer.bufferedPosition,
+    audioPlayer.duration ?? Duration.zero,
+  );
+
   late final Stream<PlaybackState> _playbackStateStream = playbackState
       .distinct((prev, curr) {
         final prevPositionBucket =
