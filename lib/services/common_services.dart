@@ -146,7 +146,10 @@ Future<String?> _getCachedSongUrl(
 /// Checks if a cached URL still responds successfully.
 Future<bool> _validateCachedUrl(String cachedUrl) async {
   try {
-    final response = await http.head(Uri.parse(cachedUrl));
+    final response = await http.head(
+      Uri.parse(cachedUrl),
+      headers: streamPlaybackHeaders,
+    );
     return response.statusCode >= 200 && response.statusCode < 300;
   } catch (_) {
     return false;
