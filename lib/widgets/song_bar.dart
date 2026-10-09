@@ -655,7 +655,7 @@ class _SongBarState extends State<SongBar> {
       isRecentSong: widget.isRecentSong == true,
       canRename: canRename,
       canRemove: widget.onRemove != null,
-      showGoToArtist: _songArtist.isNotEmpty,
+      showGoToArtist: !offlineMode.value && _songArtist.isNotEmpty,
     );
   }
 }
