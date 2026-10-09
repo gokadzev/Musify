@@ -69,4 +69,13 @@ abstract class StreamInfoProvider {
   bool get videoOnly => false;
 
   int? get audioItag => null;
+
+  /// Whether the stream is DRM protected (encrypted).
+  bool get isDrmProtected => false;
+
+  /// Whether the stream is an OTF fragmented format needing `sq` requests.
+  bool get isOtf => false;
+
+  /// Whether this is the dynamic-range-compressed variant of an audio format.
+  bool get isDrc => false;
 }

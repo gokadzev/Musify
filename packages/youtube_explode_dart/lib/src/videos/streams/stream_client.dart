@@ -334,6 +334,12 @@ class StreamClient {
       {WatchPage? watchPage,
       VideoId? videoId,
       required YoutubeApiClient ytClient}) async* {
+    // Drop DRM, OTF (fragment-only) and DRC formats (same itag as the regular
+    // audio, so dedup would otherwise depend on response order).
+    streams = streams
+        .where((s) => !s.isDrmProtected && !s.isOtf && !s.isDrc)
+        .toList();
+
     // First pass: collect all unique challenges
     final nChallenges = <String>{};
     final sigChallenges = <String>{};

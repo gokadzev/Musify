@@ -246,6 +246,15 @@ class _StreamInfo extends StreamInfoProvider {
     return null;
   }();
 
+  @override
+  late final bool isDrmProtected = root.containsKey('drmFamilies');
+
+  @override
+  late final bool isOtf = root.getT<String>('type') == 'FORMAT_STREAM_TYPE_OTF';
+
+  @override
+  late final bool isDrc = root.getT<bool>('isDrc') ?? false;
+
   MediaType? _getMimeType() {
     final mime = root.getT<String>('mimeType');
     if (mime == null) {
