@@ -63,7 +63,8 @@ class NowPlayingArtwork extends StatelessWidget {
 
     return FlipCard(
       rotateSide: RotateSide.right,
-      onTapFlipping: !offlineMode.value,
+      onTapFlipping:
+          !offlineMode.value && !(metadata.extras?['isLive'] ?? false),
       controller: lyricsController,
       frontWidget: DecoratedBox(
         decoration: BoxDecoration(
