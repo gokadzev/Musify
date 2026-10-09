@@ -104,13 +104,12 @@ Future<StreamManifest?> _fetchStreamManifest(String songId) async {
     return ProxyManager().getSongManifest(songId).timeout(_manifestTimeout);
   }
 
-  return ytClient.videos.streams
-      .getManifest(songId, ytClients: customClients)
-      .timeout(_manifestTimeout);
+  return getManifestWithFallback(ytClient, songId, timeout: _manifestTimeout);
 }
 
 /// Returns a cached song URL if present and still valid.
 Future<String?> _getCachedSongUrl(
+  String songId,
   String cacheKey,
   Duration cacheDuration,
 ) async {
@@ -134,7 +133,7 @@ Future<String?> _getCachedSongUrl(
     return cachedUrl;
   }
 
-  if (await _validateCachedUrl(cachedUrl)) {
+  if (await _validateCachedUrl(songId, cachedUrl)) {
     return cachedUrl;
   }
 
@@ -144,11 +143,11 @@ Future<String?> _getCachedSongUrl(
 }
 
 /// Checks if a cached URL still responds successfully.
-Future<bool> _validateCachedUrl(String cachedUrl) async {
+Future<bool> _validateCachedUrl(String songId, String cachedUrl) async {
   try {
     final response = await http.head(
       Uri.parse(cachedUrl),
-      headers: streamPlaybackHeaders,
+      headers: streamPlaybackHeaders(songId),
     );
     return response.statusCode >= 200 && response.statusCode < 300;
   } catch (_) {
@@ -742,7 +741,7 @@ Future<String?> fetchSongStreamUrl(String songId, bool isLive) async {
     final cacheKey = 'song_${songId}_${audioQualitySetting.value}_url';
 
     // Try to get from cache
-    final cachedUrl = await _getCachedSongUrl(cacheKey, _cacheDuration);
+    final cachedUrl = await _getCachedSongUrl(songId, cacheKey, _cacheDuration);
     if (cachedUrl != null) {
       return cachedUrl;
     }

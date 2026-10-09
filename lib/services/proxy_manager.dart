@@ -291,9 +291,11 @@ class ProxyManager {
     int timeoutSeconds,
   ) async {
     try {
-      final manifest = await _defaultYt.videos.streams
-          .getManifest(songId, ytClients: customClients)
-          .timeout(Duration(seconds: timeoutSeconds));
+      final manifest = await getManifestWithFallback(
+        _defaultYt,
+        songId,
+        timeout: Duration(seconds: timeoutSeconds),
+      );
       return manifest;
     } catch (e) {
       return null;
@@ -310,9 +312,11 @@ class ProxyManager {
     try {
       final res = _ensureProxyResources(proxy, timeoutSeconds: timeoutSeconds);
       ytClient = YoutubeExplode(httpClient: YoutubeHttpClient(res.ioClient));
-      final manifest = await ytClient.videos.streams
-          .getManifest(songId, ytClients: customClients)
-          .timeout(Duration(seconds: timeoutSeconds));
+      final manifest = await getManifestWithFallback(
+        ytClient,
+        songId,
+        timeout: Duration(seconds: timeoutSeconds),
+      );
       _workingProxies.add(proxy);
       return manifest;
     } catch (e, stackTrace) {

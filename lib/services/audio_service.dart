@@ -2280,7 +2280,9 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
           song['isLive'] != true && uri.host.endsWith('googlevideo.com');
       final audioSource = AudioSource.uri(
         uri,
-        headers: needsClientHeaders ? streamPlaybackHeaders : null,
+        headers: needsClientHeaders
+            ? streamPlaybackHeaders(song['ytid']?.toString())
+            : null,
         tag: tag,
       );
 
