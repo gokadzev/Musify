@@ -3,7 +3,6 @@ const checkApiUrl =
 const versionElement = document.getElementById("version");
 const downloadElement = document.getElementById("download");
 const changelogElement = document.getElementById("changelog_element");
-const featuresElement = document.getElementById("features_element");
 
 function makeHttpRequest(url, callback) {
   const xmlHttp = new XMLHttpRequest();
@@ -16,6 +15,9 @@ function makeHttpRequest(url, callback) {
   xmlHttp.send(null);
 }
 document.addEventListener("DOMContentLoaded", function () {
+  const year = document.getElementById("year");
+  if (year) year.textContent = new Date().getFullYear();
+  if (!document.getElementById("screenshot-carousel") || !window.Splide) return;
   new Splide("#screenshot-carousel", {
     type: "loop",
     perPage: 3,
@@ -34,11 +36,7 @@ window.onload = function () {
   assignNavClass();
   window.addEventListener("resize", assignNavClass);
 
-  fetchAppMetadata(checkApiUrl);
-
-  fetchAppFeatures(
-    "https://raw.githubusercontent.com/gokadzev/Musify/refs/heads/master/fastlane/metadata/android/en-US/full_description.txt",
-  );
+  if (versionElement) fetchAppMetadata(checkApiUrl);
 };
 
 function fetchAppMetadata(apiUrl) {
@@ -64,67 +62,8 @@ function fetchAppMetadata(apiUrl) {
   });
 }
 
-function fetchAppFeatures(featuresUrl) {
-  const featureIcons = [
-    "search",
-    "cloud_download",
-    "import_export",
-    "playlist_add",
-    "high_quality",
-    "block",
-    "equalizer",
-    "lyrics",
-    "ad_off",
-    "done_all",
-    "language",
-    "palette",
-  ];
-
-  makeHttpRequest(featuresUrl, (res) => {
-    try {
-      const lines = res.split(/\r?\n/).filter((line) => line.trim() !== "");
-
-      const features = lines
-        .slice(1)
-        .map((line) =>
-          line
-            .trim()
-            .replace(/^\*\s*/, "")
-            .trim(),
-        )
-        .filter((line) => line.length > 0);
-
-      if (features.length > 0) {
-        features.forEach((feature, index) => {
-          const card = document.createElement("article");
-          card.className = "feature-card";
-
-          const icon = document.createElement("i");
-          icon.textContent = featureIcons[index % featureIcons.length];
-
-          const text = document.createElement("span");
-          text.textContent = feature;
-
-          card.appendChild(icon);
-          card.appendChild(text);
-          featuresElement.appendChild(card);
-        });
-
-        const extraCard = document.createElement("article");
-        extraCard.className = "feature-card";
-        extraCard.innerHTML = "<i>more_horiz</i><span>And much more...</span>";
-        featuresElement.appendChild(extraCard);
-      } else {
-        console.warn("No features found in the response.");
-      }
-    } catch (error) {
-      console.error("Error processing app features:", error);
-    }
-  });
-}
-
 function parseChangelog(text) {
-  const lines = text.split("\r\n").filter((line) => line.trim() !== "");
+  const lines = text.split(/\r?\n/).filter((line) => line.trim() !== "");
 
   lines.forEach((line) => {
     const itemMatch = line.match(/^\*\s+(.+)$/);
@@ -140,6 +79,7 @@ function parseChangelog(text) {
 
 function assignNavClass() {
   const nav = document.getElementById("navigation-bar");
+  if (!nav) return;
   if (window.innerWidth > 760) {
     nav.classList.remove("bottom");
     nav.classList.add("left");
