@@ -20,86 +20,92 @@
   <meta name="robots" content="index,follow" />
 
   <link href="assets/favicon.ico" rel="icon" />
-  <link href="https://cdn.jsdelivr.net/npm/beercss@5.0.3/dist/cdn/beer.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css" />
-  <link rel="stylesheet" type="text/css" href="style.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&display=block" />
+    <link rel="stylesheet" href="style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
     href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400;8..144,500;8..144,700;8..144,900&display=swap"
     rel="stylesheet" />
+  <script>document.documentElement.classList.add("js");</script>
 </head>
 
 <body class="dark">
   <a class="skip-link" href="#main">Skip to content</a>
   <nav id="navigation-bar" aria-label="Main">
-    <header class="musify-nav-logo">
-      <img class="large musify-logo"
+    <a class="musify-nav-logo" href="index.html" aria-label="Musify home">
+      <img class="nav-logo musify-logo"
         src="https://github.com/gokadzev/Musify/raw/master/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
         alt="Musify logo" width="64" height="64" />
-    </header>
-    <a href="#hero" class="active">
-      <i>home</i>
+    </a>
+    <a href="#hero" aria-current="true">
+      <i aria-hidden="true">home</i>
       <span>Home</span>
     </a>
     <a href="#features">
-      <i>stars</i>
+      <i aria-hidden="true">stars</i>
       <span>Features</span>
     </a>
     <a href="#screenshots">
-      <i>photo_library</i>
+      <i aria-hidden="true">photo_library</i>
       <span>Gallery</span>
     </a>
     <a href="#faq">
-      <i>help</i>
+      <i aria-hidden="true">help</i>
       <span>FAQ</span>
     </a>
     <a href="about.html">
-      <i>info</i>
+      <i aria-hidden="true">info</i>
       <span>About</span>
     </a>
   </nav>
 
-  <main id="main" class="responsive">
+  <main id="main">
     <!-- Hero Section -->
     <section id="hero" class="hero-section">
       <div class="hero-content">
-        <div class="shape loading-indicator extra">
-          <img class="hero-logo musify-logo responsive"
-            src="https://github.com/gokadzev/Musify/raw/master/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_adaptive_fore.png"
-            alt="Musify logo" />
+        <div class="hero-badge reveal" style="--d: 0">
+          <img class="musify-logo" src="https://github.com/gokadzev/Musify/raw/master/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" alt="" width="28" height="28" />
+          <span>Open source &middot; Ad-free &middot; Material You</span>
         </div>
-        <h1 class="hero-title">Musify</h1>
-        <p class="hero-subtitle">
-          Free, open-source, ad-free music app for Android that offers
+        <h1 class="hero-title reveal" style="--d: 1">Music,<br /><span>your way.</span></h1>
+        <p class="hero-subtitle reveal" style="--d: 2">
+          Musify is a free, open-source, ad-free music app for Android that offers
           streaming and offline listening.
         </p>
-        <p class="hero-description">
-          Musify is a Flutter-based Android music player built around a
-          clean Material You interface. Search for songs, build playlists,
-          read lyrics and save tracks for offline playback, with no
+        <p class="hero-description reveal" style="--d: 3">
+          Built around a clean Material You interface. Search for songs, build
+          playlists, read lyrics and save tracks for offline playback, with no
           advertisements and no account required.
         </p>
-        <div class="hero-actions">
-          <a id="download" class="button large round" href="https://github.com/gokadzev/Musify/releases/latest">
-            <i>download</i>
+        <div class="hero-actions reveal" style="--d: 4">
+          <a id="download" class="btn btn-filled" href="https://github.com/gokadzev/Musify/releases/latest">
+            <i aria-hidden="true">download</i>
             <span>Download <span id="version"></span></span>
           </a>
-          <a class="button round border" href="https://github.com/gokadzev/Musify">
-            <i>star</i>
+          <a class="btn btn-outlined" href="https://github.com/gokadzev/Musify">
+            <i aria-hidden="true">star</i>
             <span>Star on GitHub</span>
           </a>
-          <a class="button round border" href="https://ko-fi.com/gokadzev" rel="noopener">
-            <i>favorite</i>
+          <a class="btn btn-outlined" href="https://ko-fi.com/gokadzev" rel="noopener">
+            <i aria-hidden="true">favorite</i>
             <span>Sponsor</span>
           </a>
+        </div>
+      </div>
+      <div class="hero-visual reveal" style="--d: 3" aria-hidden="true">
+        <div class="phone phone-back">
+          <img src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/02.jpg" alt="" />
+        </div>
+        <div class="phone phone-front">
+          <img src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/01.jpg" alt="" />
         </div>
       </div>
     </section>
 
     <!-- Notice Banner -->
-    <article id="notice" class="notice-banner">
-      <i>info</i>
+    <article id="notice" class="notice-banner reveal">
+      <i aria-hidden="true">info</i>
       <div>
         <strong>Official Sources Only</strong>
         <p>
@@ -113,12 +119,12 @@
     <!-- Statistics Section -->
     <section id="statistics" class="section stats-section">
       <h2 class="section-title">
-        <i>trending_up</i>
+        <i aria-hidden="true">trending_up</i>
         <span>Project Stats</span>
       </h2>
       <div class="stats-grid">
-        <article class="stat-card">
-          <i>star</i>
+        <article class="stat-card reveal">
+          <i aria-hidden="true">star</i>
           <div class="stat-content">
             <span class="stat-label">Stars</span>
             <a href="https://github.com/gokadzev/Musify/stargazers">
@@ -128,8 +134,8 @@
             </a>
           </div>
         </article>
-        <article class="stat-card">
-          <i>fork_right</i>
+        <article class="stat-card reveal">
+          <i aria-hidden="true">fork_right</i>
           <div class="stat-content">
             <span class="stat-label">Forks</span>
             <a href="https://github.com/gokadzev/Musify/fork">
@@ -139,8 +145,8 @@
             </a>
           </div>
         </article>
-        <article class="stat-card">
-          <i>download</i>
+        <article class="stat-card reveal">
+          <i aria-hidden="true">download</i>
           <div class="stat-content">
             <span class="stat-label">Downloads</span>
             <a href="https://github.com/gokadzev/Musify/releases">
@@ -156,60 +162,60 @@
     <!-- Features Section -->
     <section id="features" class="section features-section">
       <h2 class="section-title">
-        <i>auto_awesome</i>
+        <i aria-hidden="true">auto_awesome</i>
         <span>Features</span>
       </h2>
       <div class="features-grid">
-        <article class="feature-card">
+        <article class="feature-card reveal">
           <i aria-hidden="true">search</i>
           <div>
             <h3>Search and stream</h3>
             <p>Find songs, albums, artists and playlists and start listening instantly over Wi-Fi or mobile data.</p>
           </div>
         </article>
-        <article class="feature-card">
+        <article class="feature-card reveal">
           <i aria-hidden="true">cloud_download</i>
           <div>
             <h3>Offline listening</h3>
             <p>Download the tracks you love and play them anywhere, even with no connection at all.</p>
           </div>
         </article>
-        <article class="feature-card">
+        <article class="feature-card reveal">
           <i aria-hidden="true">playlist_add</i>
           <div>
             <h3>Custom playlists</h3>
             <p>Create, rename and reorder your own playlists, or import existing ones from online sources.</p>
           </div>
         </article>
-        <article class="feature-card">
+        <article class="feature-card reveal">
           <i aria-hidden="true">lyrics</i>
           <div>
             <h3>Lyrics support</h3>
             <p>Follow along with song lyrics shown directly in the player while the music plays.</p>
           </div>
         </article>
-        <article class="feature-card">
+        <article class="feature-card reveal">
           <i aria-hidden="true">equalizer</i>
           <div>
             <h3>Audio control</h3>
             <p>Pick the audio quality that fits your data plan and tune playback to your taste.</p>
           </div>
         </article>
-        <article class="feature-card">
+        <article class="feature-card reveal">
           <i aria-hidden="true">palette</i>
           <div>
             <h3>Material You design</h3>
             <p>Dynamic colors, light and dark themes and smooth animations that match your device.</p>
           </div>
         </article>
-        <article class="feature-card">
+        <article class="feature-card reveal">
           <i aria-hidden="true">ad_off</i>
           <div>
             <h3>Ad-free and private</h3>
             <p>No banners, no audio ads, no tracking inside the app. The full source code is public.</p>
           </div>
         </article>
-        <article class="feature-card">
+        <article class="feature-card reveal">
           <i aria-hidden="true">language</i>
           <div>
             <h3>Many languages</h3>
@@ -222,43 +228,20 @@
     <!-- Screenshots Section -->
     <section id="screenshots" class="screenshots-section">
       <h2 class="section-title">
-        <i>photo_library</i>
+        <i aria-hidden="true">photo_library</i>
         <span>Screenshots</span>
       </h2>
-      <div id="screenshot-carousel" class="splide">
-        <div class="splide__track">
-          <ul class="splide__list">
-            <li class="splide__slide">
-              <div class="screenshot-item">
-                <img
-                  src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/01.jpg"
-                  alt="Musify Screenshot 1" class="screenshot-img" loading="lazy" />
-              </div>
-            </li>
-            <li class="splide__slide">
-              <div class="screenshot-item">
-                <img
-                  src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/02.jpg"
-                  alt="Musify Screenshot 2" class="screenshot-img" loading="lazy" />
-              </div>
-            </li>
-            <li class="splide__slide">
-              <div class="screenshot-item">
-                <img
-                  src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/03.jpg"
-                  alt="Musify Screenshot 3" class="screenshot-img" loading="lazy" />
-              </div>
-            </li>
-            <li class="splide__slide">
-              <div class="screenshot-item">
-                <img
-                  src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/04.jpg"
-                  alt="Musify Screenshot 4" class="screenshot-img" loading="lazy" />
-              </div>
-            </li>
-          </ul>
-        </div>
+      <div class="gallery-wrap">
+        <button class="gallery-btn" id="gallery-prev" type="button" aria-label="Previous screenshot"><i aria-hidden="true">chevron_left</i></button>
+        <ul class="gallery" id="gallery" tabindex="0" aria-label="Musify screenshots">
+          <li><img src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/01.jpg" alt="Musify screenshot 1" loading="lazy" /></li>
+          <li><img src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/02.jpg" alt="Musify screenshot 2" loading="lazy" /></li>
+          <li><img src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/03.jpg" alt="Musify screenshot 3" loading="lazy" /></li>
+          <li><img src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/04.jpg" alt="Musify screenshot 4" loading="lazy" /></li>
+        </ul>
+        <button class="gallery-btn" id="gallery-next" type="button" aria-label="Next screenshot"><i aria-hidden="true">chevron_right</i></button>
       </div>
+      <div class="gallery-dots" id="gallery-dots" aria-hidden="true"></div>
     </section>
 
     <!-- How it works -->
@@ -268,7 +251,7 @@
         <span>Get Started in Three Steps</span>
       </h2>
       <div class="steps-grid">
-        <article class="step-card">
+        <article class="step-card reveal">
           <span class="step-number">1</span>
           <h3>Download</h3>
           <p>
@@ -276,7 +259,7 @@
             install Musify from F-Droid to receive automatic updates.
           </p>
         </article>
-        <article class="step-card">
+        <article class="step-card reveal">
           <span class="step-number">2</span>
           <h3>Install</h3>
           <p>
@@ -284,7 +267,7 @@
             browser or file manager if Android asks. Musify needs no sign-up.
           </p>
         </article>
-        <article class="step-card">
+        <article class="step-card reveal">
           <span class="step-number">3</span>
           <h3>Listen</h3>
           <p>
@@ -302,7 +285,7 @@
         <span>Frequently Asked Questions</span>
       </h2>
       <div class="faq-list">
-        <details class="faq-item">
+        <details class="faq-item reveal">
           <summary>Is Musify really free?</summary>
           <p>
             Yes. Musify is free and open source under the GPL-3.0 license.
@@ -310,21 +293,21 @@
             inside the app. Development is supported by voluntary donations.
           </p>
         </details>
-        <details class="faq-item">
+        <details class="faq-item reveal">
           <summary>Which platforms are supported?</summary>
           <p>
             Musify is built for Android. Download the APK from GitHub or
             install the F-Droid build from the F-Droid store.
           </p>
         </details>
-        <details class="faq-item">
+        <details class="faq-item reveal">
           <summary>Can I listen offline?</summary>
           <p>
             Yes. Download any track from within the app and it stays on your
             device so you can play it without an internet connection.
           </p>
         </details>
-        <details class="faq-item">
+        <details class="faq-item reveal">
           <summary>Does Musify collect my personal data?</summary>
           <p>
             The app does not require an account and does not include
@@ -333,7 +316,7 @@
             the app and this website.
           </p>
         </details>
-        <details class="faq-item">
+        <details class="faq-item reveal">
           <summary>Where can I report a bug or request a feature?</summary>
           <p>
             Open an issue on
@@ -341,7 +324,7 @@
             or visit the <a href="contact.html">contact page</a>.
           </p>
         </details>
-        <details class="faq-item">
+        <details class="faq-item reveal">
           <summary>Is this website the only official source?</summary>
           <p>
             Musify's official sources are the GitHub repository and F-Droid.
@@ -354,10 +337,10 @@
     <!-- Changelog Section -->
     <section id="changelog" class="section changelog-section">
       <h2 class="section-title">
-        <i>history</i>
+        <i aria-hidden="true">history</i>
         <span>What's New</span>
       </h2>
-      <article class="changelog-card">
+      <article class="changelog-card reveal">
         <div id="changelog_element"></div>
       </article>
     </section>
@@ -386,8 +369,6 @@
       </div>
     </footer>
   </main>
-  <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
-  <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@5.0.3/dist/cdn/beer.min.js"></script>
   <script type="text/javascript" src="assets/js/script.js"></script>
 </body>
 

@@ -9,24 +9,24 @@
     <meta name="robots" content="index,follow" />
     <meta name="theme-color" content="#0e141b" />
     <link href="assets/favicon.ico" rel="icon" />
-    <link href="https://cdn.jsdelivr.net/npm/beercss@5.0.3/dist/cdn/beer.min.css" rel="stylesheet" />
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400;8..144,500;8..144,700;8..144,900&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" type="text/css" href="style.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&display=block" />
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body class="dark">
     <a class="skip-link" href="#main">Skip to content</a>
     <nav id="navigation-bar" aria-label="Main">
-      <header class="musify-nav-logo">
-        <img class="large musify-logo" src="https://github.com/gokadzev/Musify/raw/master/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" alt="Musify logo" width="64" height="64" />
-      </header>
-      <a href="index.html"><i>home</i><span>Home</span></a>
-      <a href="index.html#features"><i>stars</i><span>Features</span></a>
-      <a href="index.html#faq"><i>help</i><span>FAQ</span></a>
-      <a href="about.html"><i>info</i><span>About</span></a>
+      <a class="musify-nav-logo" href="index.html" aria-label="Musify home">
+        <img class="nav-logo musify-logo" src="https://github.com/gokadzev/Musify/raw/master/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" alt="Musify logo" width="64" height="64" />
+      </a>
+      <a href="index.html"><i aria-hidden="true">home</i><span>Home</span></a>
+      <a href="index.html#features"><i aria-hidden="true">stars</i><span>Features</span></a>
+      <a href="index.html#faq"><i aria-hidden="true">help</i><span>FAQ</span></a>
+      <a href="about.html"><i aria-hidden="true">info</i><span>About</span></a>
     </nav>
-    <main id="main" class="responsive">
+    <main id="main">
       <article class="doc">
         <h1 class="doc-title"><i aria-hidden="true">shield</i><span>Privacy Policy</span></h1>
 
@@ -72,7 +72,6 @@
         </div>
       </footer>
     </main>
-    <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@5.0.3/dist/cdn/beer.min.js"></script>
     <script src="assets/js/script.js"></script>
   </body>
 </html>
