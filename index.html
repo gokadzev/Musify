@@ -1,414 +1,394 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <title>Musify - Free Open-Source Android Music Player</title>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, viewport-fit=cover"
-    />
-    <meta name="author" content="Valeri Gokadze" />
-    <meta
-      name="keywords"
-      content="open source music app android, Musify, free music app android, offline music player android, music app with lyrics, F-Droid music app, music streaming apps, no ads, ad-free"
-    />
-    <meta
-      name="description"
-      content="Musify - an open-source Android music app for streaming and offline listening. Free, ad-free, with lyrics support, custom playlists, and F‑Droid builds. Download the latest Musify APK."
-    />
-    <meta
-      property="og:title"
-      content="Musify - Open-source Android Music App"
-    />
-    <meta
-      property="og:description"
-      content="Open-source Android music app for streaming and offline listening. Free, ad-free, lyrics support and custom playlists."
-    />
-    <meta
-      property="og:image"
-      content="https://github.com/gokadzev/Musify/raw/master/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
-    />
-    <meta property="og:type" content="website" />
-    <meta name="theme-color" content="#0e141b" />
-    <meta name="robots" content="index,follow" />
 
-    <link href="assets/favicon.ico" rel="icon" />
-    <link
-      href="https://cdn.jsdelivr.net/npm/beercss@5.0.3/dist/cdn/beer.min.css"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css"
-    />
-    <link rel="stylesheet" type="text/css" href="style.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400;8..144,500;8..144,700;8..144,900&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body class="dark">
-    <a class="skip-link" href="#main">Skip to content</a>
-    <nav id="navigation-bar" aria-label="Main">
-      <header class="musify-nav-logo">
-        <img
-          class="large musify-logo"
-          src="https://github.com/gokadzev/Musify/raw/master/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
-          alt="Musify logo"
-          width="64"
-          height="64"
-        />
-      </header>
-      <a href="#hero" class="active">
-        <i>home</i>
-        <span>Home</span>
-      </a>
-      <a href="#features">
-        <i>stars</i>
-        <span>Features</span>
-      </a>
-      <a href="#screenshots">
-        <i>photo_library</i>
-        <span>Gallery</span>
-      </a>
-      <a href="#faq">
-        <i>help</i>
-        <span>FAQ</span>
-      </a>
-      <a href="about.html">
-        <i>info</i>
-        <span>About</span>
-      </a>
-    </nav>
+<head>
+  <title>Musify - Free Open-Source Android Music Player</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="author" content="Valeri Gokadze" />
+  <meta name="keywords"
+    content="open source music app android, Musify, free music app android, offline music player android, music app with lyrics, F-Droid music app, music streaming apps, no ads, ad-free" />
+  <meta name="description"
+    content="Musify - an open-source Android music app for streaming and offline listening. Free, ad-free, with lyrics support, custom playlists, and F‑Droid builds. Download the latest Musify APK." />
+  <meta property="og:title" content="Musify - Open-source Android Music App" />
+  <meta property="og:description"
+    content="Open-source Android music app for streaming and offline listening. Free, ad-free, lyrics support and custom playlists." />
+  <meta property="og:image"
+    content="https://github.com/gokadzev/Musify/raw/master/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#0e141b" />
+  <meta name="robots" content="index,follow" />
 
-    <main id="main" class="responsive">
-      <!-- Hero Section -->
-      <section id="hero" class="hero-section">
-        <div class="hero-content">
-          <div class="shape loading-indicator extra">
-            <img
-              class="hero-logo musify-logo responsive"
-              src="https://github.com/gokadzev/Musify/raw/master/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_adaptive_fore.png"
-              alt="Musify logo"
-            />
-          </div>
-          <h1 class="hero-title">Musify</h1>
-          <p class="hero-subtitle">
-            Free, open-source, ad-free music app for Android that offers
-            streaming and offline listening.
-          </p>
-          <p class="hero-description">
-            Musify is a Flutter-based Android music player built around a
-            clean Material You interface. Search for songs, build playlists,
-            read synced lyrics and save tracks for offline playback, with no
-            advertisements and no account required.
-          </p>
-          <div class="hero-actions">
-            <a id="download" class="button large round" href="https://github.com/gokadzev/Musify/releases/latest">
-              <i>download</i>
-              <span>Download <span id="version"></span></span>
-            </a>
-            <a class="button round border" href="https://github.com/gokadzev/Musify">
-              <i>star</i>
-              <span>Star on GitHub</span>
-            </a>
-            <a class="button round border" href="https://ko-fi.com/gokadzev" rel="noopener">
-              <i>favorite</i>
-              <span>Sponsor</span>
-            </a>
-          </div>
+  <link href="assets/favicon.ico" rel="icon" />
+  <link href="https://cdn.jsdelivr.net/npm/beercss@5.0.3/dist/cdn/beer.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css" />
+  <link rel="stylesheet" type="text/css" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400;8..144,500;8..144,700;8..144,900&display=swap"
+    rel="stylesheet" />
+</head>
+
+<body class="dark">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <nav id="navigation-bar" aria-label="Main">
+    <header class="musify-nav-logo">
+      <img class="large musify-logo"
+        src="https://github.com/gokadzev/Musify/raw/master/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
+        alt="Musify logo" width="64" height="64" />
+    </header>
+    <a href="#hero" class="active">
+      <i>home</i>
+      <span>Home</span>
+    </a>
+    <a href="#features">
+      <i>stars</i>
+      <span>Features</span>
+    </a>
+    <a href="#screenshots">
+      <i>photo_library</i>
+      <span>Gallery</span>
+    </a>
+    <a href="#faq">
+      <i>help</i>
+      <span>FAQ</span>
+    </a>
+    <a href="about.html">
+      <i>info</i>
+      <span>About</span>
+    </a>
+  </nav>
+
+  <main id="main" class="responsive">
+    <!-- Hero Section -->
+    <section id="hero" class="hero-section">
+      <div class="hero-content">
+        <div class="shape loading-indicator extra">
+          <img class="hero-logo musify-logo responsive"
+            src="https://github.com/gokadzev/Musify/raw/master/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_adaptive_fore.png"
+            alt="Musify logo" />
         </div>
-      </section>
-
-      <!-- Notice Banner -->
-      <article id="notice" class="notice-banner">
-        <i>info</i>
-        <div>
-          <strong>Official Sources Only</strong>
-          <p>
-            Musify does not have any other official websites. Download only from
-            <a href="https://github.com/gokadzev/Musify">GitHub</a> or
-            <a href="https://f-droid.org/packages/com.gokadzev.musify.fdroid"
-              >F-Droid</a
-            >.
-          </p>
-        </div>
-      </article>
-
-      <!-- Statistics Section -->
-      <section id="statistics" class="section stats-section">
-        <h2 class="section-title">
-          <i>trending_up</i>
-          <span>Project Stats</span>
-        </h2>
-        <div class="stats-grid">
-          <article class="stat-card">
-            <i>star</i>
-            <div class="stat-content">
-              <span class="stat-label">Stars</span>
-              <a href="https://github.com/gokadzev/Musify/stargazers">
-                <img
-                  src="https://img.shields.io/github/stars/gokadzev/Musify?style=flat-square&color=003258&labelColor=A6C8FF&label=STARS"
-                  alt="Stars"
-                />
-              </a>
-            </div>
-          </article>
-          <article class="stat-card">
-            <i>fork_right</i>
-            <div class="stat-content">
-              <span class="stat-label">Forks</span>
-              <a href="https://github.com/gokadzev/Musify/fork">
-                <img
-                  src="https://img.shields.io/github/forks/gokadzev/Musify?style=flat-square&color=003258&labelColor=A6C8FF&label=FORKS"
-                  alt="Forks"
-                />
-              </a>
-            </div>
-          </article>
-          <article class="stat-card">
+        <h1 class="hero-title">Musify</h1>
+        <p class="hero-subtitle">
+          Free, open-source, ad-free music app for Android that offers
+          streaming and offline listening.
+        </p>
+        <p class="hero-description">
+          Musify is a Flutter-based Android music player built around a
+          clean Material You interface. Search for songs, build playlists,
+          read lyrics and save tracks for offline playback, with no
+          advertisements and no account required.
+        </p>
+        <div class="hero-actions">
+          <a id="download" class="button large round" href="https://github.com/gokadzev/Musify/releases/latest">
             <i>download</i>
-            <div class="stat-content">
-              <span class="stat-label">Downloads</span>
-              <a href="https://github.com/gokadzev/Musify/releases">
-                <img
-                  src="https://img.shields.io/github/downloads/gokadzev/Musify/total?style=flat-square&color=003258&labelColor=A6C8FF&label=DOWNLOADS"
-                  alt="Downloads"
-                />
-              </a>
-            </div>
-          </article>
+            <span>Download <span id="version"></span></span>
+          </a>
+          <a class="button round border" href="https://github.com/gokadzev/Musify">
+            <i>star</i>
+            <span>Star on GitHub</span>
+          </a>
+          <a class="button round border" href="https://ko-fi.com/gokadzev" rel="noopener">
+            <i>favorite</i>
+            <span>Sponsor</span>
+          </a>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- Features Section -->
-      <section id="features" class="section features-section">
-        <h2 class="section-title">
-          <i>auto_awesome</i>
-          <span>Features</span>
-        </h2>
-        <div class="features-grid">
-          <article class="feature-card">
-            <i aria-hidden="true">search</i>
-            <div><h3>Search and stream</h3><p>Find songs, albums, artists and playlists and start listening instantly over Wi-Fi or mobile data.</p></div>
-          </article>
-          <article class="feature-card">
-            <i aria-hidden="true">cloud_download</i>
-            <div><h3>Offline listening</h3><p>Download the tracks you love and play them anywhere, even with no connection at all.</p></div>
-          </article>
-          <article class="feature-card">
-            <i aria-hidden="true">playlist_add</i>
-            <div><h3>Custom playlists</h3><p>Create, rename and reorder your own playlists, or import existing ones from online sources.</p></div>
-          </article>
-          <article class="feature-card">
-            <i aria-hidden="true">lyrics</i>
-            <div><h3>Lyrics support</h3><p>Follow along with song lyrics shown directly in the player while the music plays.</p></div>
-          </article>
-          <article class="feature-card">
-            <i aria-hidden="true">equalizer</i>
-            <div><h3>Audio control</h3><p>Pick the audio quality that fits your data plan and tune playback to your taste.</p></div>
-          </article>
-          <article class="feature-card">
-            <i aria-hidden="true">palette</i>
-            <div><h3>Material You design</h3><p>Dynamic colors, light and dark themes and smooth animations that match your device.</p></div>
-          </article>
-          <article class="feature-card">
-            <i aria-hidden="true">ad_off</i>
-            <div><h3>Ad-free and private</h3><p>No banners, no audio ads, no tracking inside the app. The full source code is public.</p></div>
-          </article>
-          <article class="feature-card">
-            <i aria-hidden="true">language</i>
-            <div><h3>Many languages</h3><p>The interface is translated into dozens of languages by the community.</p></div>
-          </article>
-        </div>
-      </section>
+    <!-- Notice Banner -->
+    <article id="notice" class="notice-banner">
+      <i>info</i>
+      <div>
+        <strong>Official Sources Only</strong>
+        <p>
+          Musify does not have any other official websites. Download only from
+          <a href="https://github.com/gokadzev/Musify">GitHub</a> or
+          <a href="https://f-droid.org/packages/com.gokadzev.musify.fdroid">F-Droid</a>.
+        </p>
+      </div>
+    </article>
 
-      <!-- Screenshots Section -->
-      <section id="screenshots" class="screenshots-section">
-        <h2 class="section-title">
-          <i>photo_library</i>
-          <span>Screenshots</span>
-        </h2>
-        <div id="screenshot-carousel" class="splide">
-          <div class="splide__track">
-            <ul class="splide__list">
-              <li class="splide__slide">
-                <div class="screenshot-item">
-                  <img
-                    src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/01.jpg"
-                    alt="Musify Screenshot 1"
-                    class="screenshot-img" loading="lazy"
-                  />
-                </div>
-              </li>
-              <li class="splide__slide">
-                <div class="screenshot-item">
-                  <img
-                    src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/02.jpg"
-                    alt="Musify Screenshot 2"
-                    class="screenshot-img" loading="lazy"
-                  />
-                </div>
-              </li>
-              <li class="splide__slide">
-                <div class="screenshot-item">
-                  <img
-                    src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/03.jpg"
-                    alt="Musify Screenshot 3"
-                    class="screenshot-img" loading="lazy"
-                  />
-                </div>
-              </li>
-              <li class="splide__slide">
-                <div class="screenshot-item">
-                  <img
-                    src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/04.jpg"
-                    alt="Musify Screenshot 4"
-                    class="screenshot-img" loading="lazy"
-                  />
-                </div>
-              </li>
-            </ul>
+    <!-- Statistics Section -->
+    <section id="statistics" class="section stats-section">
+      <h2 class="section-title">
+        <i>trending_up</i>
+        <span>Project Stats</span>
+      </h2>
+      <div class="stats-grid">
+        <article class="stat-card">
+          <i>star</i>
+          <div class="stat-content">
+            <span class="stat-label">Stars</span>
+            <a href="https://github.com/gokadzev/Musify/stargazers">
+              <img
+                src="https://img.shields.io/github/stars/gokadzev/Musify?style=flat-square&color=003258&labelColor=A6C8FF&label=STARS"
+                alt="Stars" />
+            </a>
           </div>
-        </div>
-      </section>
-
-      <!-- How it works -->
-      <section id="how-it-works" class="section">
-        <h2 class="section-title">
-          <i aria-hidden="true">route</i>
-          <span>Get Started in Three Steps</span>
-        </h2>
-        <div class="steps-grid">
-          <article class="step-card">
-            <span class="step-number">1</span>
-            <h3>Download</h3>
-            <p>
-              Get the latest APK from the official GitHub releases page, or
-              install Musify from F-Droid to receive automatic updates.
-            </p>
-          </article>
-          <article class="step-card">
-            <span class="step-number">2</span>
-            <h3>Install</h3>
-            <p>
-              Open the downloaded file and allow installation from your
-              browser or file manager if Android asks. Musify needs no sign-up.
-            </p>
-          </article>
-          <article class="step-card">
-            <span class="step-number">3</span>
-            <h3>Listen</h3>
-            <p>
-              Search for your favorite music, add songs to playlists and
-              download them for offline playback.
-            </p>
-          </article>
-        </div>
-      </section>
-
-      <!-- FAQ -->
-      <section id="faq" class="section">
-        <h2 class="section-title">
-          <i aria-hidden="true">help</i>
-          <span>Frequently Asked Questions</span>
-        </h2>
-        <div class="faq-list">
-          <details class="faq-item">
-            <summary>Is Musify really free?</summary>
-            <p>
-              Yes. Musify is free and open source under the GPL-3.0 license.
-              There are no subscriptions, in-app purchases or advertisements
-              inside the app. Development is supported by voluntary donations.
-            </p>
-          </details>
-          <details class="faq-item">
-            <summary>Which platforms are supported?</summary>
-            <p>
-              Musify is built for Android. Download the APK from GitHub or
-              install the F-Droid build from the F-Droid store.
-            </p>
-          </details>
-          <details class="faq-item">
-            <summary>Can I listen offline?</summary>
-            <p>
-              Yes. Download any track from within the app and it stays on your
-              device so you can play it without an internet connection.
-            </p>
-          </details>
-          <details class="faq-item">
-            <summary>Does Musify collect my personal data?</summary>
-            <p>
-              The app does not require an account and does not include
-              advertising trackers. Read our
-              <a href="privacy.html">Privacy Policy</a> for details about both
-              the app and this website.
-            </p>
-          </details>
-          <details class="faq-item">
-            <summary>Where can I report a bug or request a feature?</summary>
-            <p>
-              Open an issue on
-              <a href="https://github.com/gokadzev/Musify/issues">GitHub</a>
-              or visit the <a href="contact.html">contact page</a>.
-            </p>
-          </details>
-          <details class="faq-item">
-            <summary>Is this website the only official source?</summary>
-            <p>
-              Musify's official sources are the GitHub repository and F-Droid.
-              Be careful with copies of the app from other sites.
-            </p>
-          </details>
-        </div>
-      </section>
-
-      <!-- Changelog Section -->
-      <section id="changelog" class="section changelog-section">
-        <h2 class="section-title">
-          <i>history</i>
-          <span>What's New</span>
-        </h2>
-        <article class="changelog-card">
-          <div id="changelog_element"></div>
         </article>
-      </section>
-
-      <!-- Footer -->
-      <footer class="site-footer">
-        <div class="footer-content">
-          <div class="footer-brand">
-            <img
-              src="https://github.com/gokadzev/Musify/raw/master/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
-              alt="Musify logo"
-              class="musify-logo"
-              width="40"
-              height="40"
-            />
-            <span>Musify</span>
+        <article class="stat-card">
+          <i>fork_right</i>
+          <div class="stat-content">
+            <span class="stat-label">Forks</span>
+            <a href="https://github.com/gokadzev/Musify/fork">
+              <img
+                src="https://img.shields.io/github/forks/gokadzev/Musify?style=flat-square&color=003258&labelColor=A6C8FF&label=FORKS"
+                alt="Forks" />
+            </a>
           </div>
-          <nav class="footer-links" aria-label="Footer">
-            <a href="about.html"><i aria-hidden="true">info</i><span>About</span></a>
-            <a href="contact.html"><i aria-hidden="true">mail</i><span>Contact</span></a>
-            <a href="privacy.html"><i aria-hidden="true">shield</i><span>Privacy Policy</span></a>
-            <a href="terms.html"><i aria-hidden="true">gavel</i><span>Terms of Use</span></a>
-            <a href="https://github.com/gokadzev/Musify"><i aria-hidden="true">code</i><span>Source Code</span></a>
-            <a href="https://ko-fi.com/gokadzev" rel="noopener"><i aria-hidden="true">favorite</i><span>Support</span></a>
-          </nav>
-          <p class="footer-copyright">
-            &copy; <span id="year">2026</span> Valeri Gokadze. Musify is
-            released under the GPL-3.0 license.
-          </p>
+        </article>
+        <article class="stat-card">
+          <i>download</i>
+          <div class="stat-content">
+            <span class="stat-label">Downloads</span>
+            <a href="https://github.com/gokadzev/Musify/releases">
+              <img
+                src="https://img.shields.io/github/downloads/gokadzev/Musify/total?style=flat-square&color=003258&labelColor=A6C8FF&label=DOWNLOADS"
+                alt="Downloads" />
+            </a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="section features-section">
+      <h2 class="section-title">
+        <i>auto_awesome</i>
+        <span>Features</span>
+      </h2>
+      <div class="features-grid">
+        <article class="feature-card">
+          <i aria-hidden="true">search</i>
+          <div>
+            <h3>Search and stream</h3>
+            <p>Find songs, albums, artists and playlists and start listening instantly over Wi-Fi or mobile data.</p>
+          </div>
+        </article>
+        <article class="feature-card">
+          <i aria-hidden="true">cloud_download</i>
+          <div>
+            <h3>Offline listening</h3>
+            <p>Download the tracks you love and play them anywhere, even with no connection at all.</p>
+          </div>
+        </article>
+        <article class="feature-card">
+          <i aria-hidden="true">playlist_add</i>
+          <div>
+            <h3>Custom playlists</h3>
+            <p>Create, rename and reorder your own playlists, or import existing ones from online sources.</p>
+          </div>
+        </article>
+        <article class="feature-card">
+          <i aria-hidden="true">lyrics</i>
+          <div>
+            <h3>Lyrics support</h3>
+            <p>Follow along with song lyrics shown directly in the player while the music plays.</p>
+          </div>
+        </article>
+        <article class="feature-card">
+          <i aria-hidden="true">equalizer</i>
+          <div>
+            <h3>Audio control</h3>
+            <p>Pick the audio quality that fits your data plan and tune playback to your taste.</p>
+          </div>
+        </article>
+        <article class="feature-card">
+          <i aria-hidden="true">palette</i>
+          <div>
+            <h3>Material You design</h3>
+            <p>Dynamic colors, light and dark themes and smooth animations that match your device.</p>
+          </div>
+        </article>
+        <article class="feature-card">
+          <i aria-hidden="true">ad_off</i>
+          <div>
+            <h3>Ad-free and private</h3>
+            <p>No banners, no audio ads, no tracking inside the app. The full source code is public.</p>
+          </div>
+        </article>
+        <article class="feature-card">
+          <i aria-hidden="true">language</i>
+          <div>
+            <h3>Many languages</h3>
+            <p>The interface is translated into dozens of languages by the community.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Screenshots Section -->
+    <section id="screenshots" class="screenshots-section">
+      <h2 class="section-title">
+        <i>photo_library</i>
+        <span>Screenshots</span>
+      </h2>
+      <div id="screenshot-carousel" class="splide">
+        <div class="splide__track">
+          <ul class="splide__list">
+            <li class="splide__slide">
+              <div class="screenshot-item">
+                <img
+                  src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/01.jpg"
+                  alt="Musify Screenshot 1" class="screenshot-img" loading="lazy" />
+              </div>
+            </li>
+            <li class="splide__slide">
+              <div class="screenshot-item">
+                <img
+                  src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/02.jpg"
+                  alt="Musify Screenshot 2" class="screenshot-img" loading="lazy" />
+              </div>
+            </li>
+            <li class="splide__slide">
+              <div class="screenshot-item">
+                <img
+                  src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/03.jpg"
+                  alt="Musify Screenshot 3" class="screenshot-img" loading="lazy" />
+              </div>
+            </li>
+            <li class="splide__slide">
+              <div class="screenshot-item">
+                <img
+                  src="https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/04.jpg"
+                  alt="Musify Screenshot 4" class="screenshot-img" loading="lazy" />
+              </div>
+            </li>
+          </ul>
         </div>
-      </footer>
-    </main>
-    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
-  <script
-    type="module"
-    src="https://cdn.jsdelivr.net/npm/beercss@5.0.3/dist/cdn/beer.min.js"
-  ></script>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section id="how-it-works" class="section">
+      <h2 class="section-title">
+        <i aria-hidden="true">route</i>
+        <span>Get Started in Three Steps</span>
+      </h2>
+      <div class="steps-grid">
+        <article class="step-card">
+          <span class="step-number">1</span>
+          <h3>Download</h3>
+          <p>
+            Get the latest APK from the official GitHub releases page, or
+            install Musify from F-Droid to receive automatic updates.
+          </p>
+        </article>
+        <article class="step-card">
+          <span class="step-number">2</span>
+          <h3>Install</h3>
+          <p>
+            Open the downloaded file and allow installation from your
+            browser or file manager if Android asks. Musify needs no sign-up.
+          </p>
+        </article>
+        <article class="step-card">
+          <span class="step-number">3</span>
+          <h3>Listen</h3>
+          <p>
+            Search for your favorite music, add songs to playlists and
+            download them for offline playback.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="section">
+      <h2 class="section-title">
+        <i aria-hidden="true">help</i>
+        <span>Frequently Asked Questions</span>
+      </h2>
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary>Is Musify really free?</summary>
+          <p>
+            Yes. Musify is free and open source under the GPL-3.0 license.
+            There are no subscriptions, in-app purchases or advertisements
+            inside the app. Development is supported by voluntary donations.
+          </p>
+        </details>
+        <details class="faq-item">
+          <summary>Which platforms are supported?</summary>
+          <p>
+            Musify is built for Android. Download the APK from GitHub or
+            install the F-Droid build from the F-Droid store.
+          </p>
+        </details>
+        <details class="faq-item">
+          <summary>Can I listen offline?</summary>
+          <p>
+            Yes. Download any track from within the app and it stays on your
+            device so you can play it without an internet connection.
+          </p>
+        </details>
+        <details class="faq-item">
+          <summary>Does Musify collect my personal data?</summary>
+          <p>
+            The app does not require an account and does not include
+            advertising trackers. Read our
+            <a href="privacy.html">Privacy Policy</a> for details about both
+            the app and this website.
+          </p>
+        </details>
+        <details class="faq-item">
+          <summary>Where can I report a bug or request a feature?</summary>
+          <p>
+            Open an issue on
+            <a href="https://github.com/gokadzev/Musify/issues">GitHub</a>
+            or visit the <a href="contact.html">contact page</a>.
+          </p>
+        </details>
+        <details class="faq-item">
+          <summary>Is this website the only official source?</summary>
+          <p>
+            Musify's official sources are the GitHub repository and F-Droid.
+            Be careful with copies of the app from other sites.
+          </p>
+        </details>
+      </div>
+    </section>
+
+    <!-- Changelog Section -->
+    <section id="changelog" class="section changelog-section">
+      <h2 class="section-title">
+        <i>history</i>
+        <span>What's New</span>
+      </h2>
+      <article class="changelog-card">
+        <div id="changelog_element"></div>
+      </article>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <img
+            src="https://github.com/gokadzev/Musify/raw/master/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
+            alt="Musify logo" class="musify-logo" width="40" height="40" />
+          <span>Musify</span>
+        </div>
+        <nav class="footer-links" aria-label="Footer">
+          <a href="about.html"><i aria-hidden="true">info</i><span>About</span></a>
+          <a href="contact.html"><i aria-hidden="true">mail</i><span>Contact</span></a>
+          <a href="privacy.html"><i aria-hidden="true">shield</i><span>Privacy Policy</span></a>
+          <a href="terms.html"><i aria-hidden="true">gavel</i><span>Terms of Use</span></a>
+          <a href="https://github.com/gokadzev/Musify"><i aria-hidden="true">code</i><span>Source Code</span></a>
+          <a href="https://ko-fi.com/gokadzev" rel="noopener"><i aria-hidden="true">favorite</i><span>Support</span></a>
+        </nav>
+        <p class="footer-copyright">
+          &copy; <span id="year">2026</span> Valeri Gokadze. Musify is
+          released under the GPL-3.0 license.
+        </p>
+      </div>
+    </footer>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@5.0.3/dist/cdn/beer.min.js"></script>
   <script type="text/javascript" src="assets/js/script.js"></script>
 </body>
+
 </html>
