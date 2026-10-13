@@ -33,8 +33,8 @@ import 'package:musify/services/audio_service_android_auto.dart';
 import 'package:musify/services/common_services.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/listening_stats_service.dart';
+import 'package:musify/services/playback_failure_recovery.dart';
 import 'package:musify/services/settings_manager.dart';
-import 'package:musify/utilities/app_utils.dart';
 import 'package:musify/utilities/map_utils.dart';
 import 'package:musify/utilities/media_duration.dart';
 import 'package:musify/utilities/mediaitem.dart';
@@ -97,15 +97,16 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
   int _songTransitionCounter = 0;
   bool _completionEventPending = false;
   bool _completionHandlerLoadStarted = false;
-  String? _lastError;
-  int _consecutiveErrors = 0;
 
-  /// The recovery waiting out [_errorRetryDelay], if any. Held as a token
-  /// rather than a flag so that a transition started in the meantime can
-  /// retire it: the queue it was going to resume may no longer be the one
-  /// playing by the time it fires.
-  int? _pendingRecovery;
-  int _recoveryCounter = 0;
+  /// Where playback failures are accounted for and acted on. Apart from this
+  /// handler so that what a failure leads to can be tested without a player.
+  late final PlaybackFailureRecovery _failures = PlaybackFailureRecovery(
+    queueEntryIds: () => _queueEntryIdList,
+    onStop: stop,
+    onSkipToNext: skipToNext,
+    onResumeAt: (index) => unawaited(_playFromQueue(index)),
+    log: logger.log,
+  );
 
   // Timers and sleep-timer state.
   Timer? _sleepTimer;
@@ -119,11 +120,9 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
   final Set<String> _preloadedYtIds = <String>{};
 
   // Playback, history, and timing limits.
-  static const int _maxConsecutiveErrors = 3;
   static const int _maxHistorySize = 50;
   static const int _queueLookahead = 3;
   static const int _maxConcurrentPreloads = 2;
-  static const Duration _errorRetryDelay = Duration(seconds: 2);
   static const Duration _songTransitionTimeout = Duration(seconds: 30);
   static const Duration _debounceInterval = Duration(milliseconds: 150);
   static const Duration _positionDataThreshold = Duration(milliseconds: 250);
@@ -260,7 +259,7 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
             );
             if (state.processingState == ProcessingState.idle &&
                 !state.playing &&
-                _lastError != null) {
+                _failures.lastError != null) {
               Future.microtask(_handlePlaybackError);
             }
             _debouncedStateUpdate();
@@ -815,87 +814,16 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
       playNextSongAutomatically.value;
 
   /// [failedEntryId] is the queue entry the song that failed was playing from,
-  /// when the failure came from the queue at all. Recovery cannot just ask the
-  /// queue for its next song: the index has by then been rolled back to where
-  /// playback stood, so the next song is the one that just failed, and it
-  /// would keep being it until the error count stopped playback altogether.
-  void _handlePlaybackError({String? failedEntryId}) {
-    final plan = planPlaybackRecovery(
-      consecutiveErrors: _consecutiveErrors + 1,
-      maxConsecutiveErrors: _maxConsecutiveErrors,
-      canRetry: _canRetryPlayback(),
-      recoveryPending: _pendingRecovery != null,
-      cameFromQueue: failedEntryId != null,
-    );
-
-    if (plan == PlaybackRecovery.ignore) {
-      // The same failure reaches here twice: once from the transition that
-      // saw it, once from the player falling idle with _lastError still set.
-      // Letting the second one through would schedule a second recovery on
-      // top of the first, and a blind skipToNext back onto the failed song.
-      logger.log('A recovery is already pending, ignoring the repeat report.');
-      return;
-    }
-
-    _consecutiveErrors++;
-    logger.log(
-      'Playback error occurred. Consecutive errors: $_consecutiveErrors',
-      error: _lastError,
-    );
-
-    // The "only retry if still on the same song" guard this replaces could
-    // never hold anything back: the index is rolled back to where playback
-    // stood before the retry is scheduled, so it *is* still the same song,
-    // and the song it is still on is the one that failed.
-    // Whatever happens next, the failure has been taken into account. Leaving
-    // it set is what let the idle player report it all over again.
-    _lastError = null;
-
-    switch (plan) {
-      // ignore was dealt with above, it is only named here for exhaustiveness.
-      case PlaybackRecovery.ignore:
-      case PlaybackRecovery.standStill:
-        return;
-      case PlaybackRecovery.stop:
-        logger.log('Max consecutive errors reached. Stopping playback.');
-        unawaited(stop());
-      case PlaybackRecovery.skipToNext:
-        _scheduleRecovery((_) => skipToNext());
-      case PlaybackRecovery.resumeAfterFailure:
-        _scheduleRecovery((_) => _resumeAfterFailure(failedEntryId!));
-    }
-  }
-
-  /// Runs [recovery] once [_errorRetryDelay] is out, unless something started
-  /// playing in the meantime and retired it.
-  void _scheduleRecovery(void Function(int token) recovery) {
-    final token = ++_recoveryCounter;
-    _pendingRecovery = token;
-
-    Future.delayed(_errorRetryDelay, () {
-      if (_pendingRecovery != token) return;
-      _pendingRecovery = null;
-      recovery(token);
-    });
-  }
-
-  /// Picks up the queue after the entry that failed, looking up where that
-  /// entry sits *now*: the delay recovery waits out is long enough for the
-  /// queue to be reordered, added to or replaced, and an index captured
-  /// before it would by then point at another song.
-  void _resumeAfterFailure(String failedEntryId) {
-    final resumeAt = queuePositionAfterFailure(_queueEntryIdList, failedEntryId);
-
-    if (resumeAt == null) {
-      // Either the song that failed is no longer queued, or it was the last
-      // one: nothing to step onto, so the queue is left where it stands
-      // rather than wrapped around and played again.
-      logger.log('Nothing left after the song that failed, staying put.');
-      return;
-    }
-
-    unawaited(_playFromQueue(resumeAt));
-  }
+  /// when the failure came from the queue at all.
+  ///
+  /// The "only retry if still on the same song" guard this replaces could
+  /// never hold anything back: the index is rolled back to where playback
+  /// stood before the retry is scheduled, so it *is* still the same song, and
+  /// the song it is still on is the one that failed.
+  void _handlePlaybackError({String? failedEntryId}) => _failures.report(
+    canRetry: _canRetryPlayback(),
+    failedEntryId: failedEntryId,
+  );
 
   List<String?> get _queueEntryIdList => _queueList
       .map((song) => song['queueEntryId']?.toString())
@@ -1428,7 +1356,7 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
     _currentLoadingTransitionId = currentTransitionId;
     // Whatever recovery was waiting was aiming at a queue this transition is
     // about to make obsolete.
-    _pendingRecovery = null;
+    _failures.retirePending();
 
     // Kept outside the try so that the failure paths below can name the queue
     // entry they belong to, rather than an index the delay would make stale.
@@ -1462,7 +1390,7 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
       // Only process result if this is still the current transition
       if (currentTransitionId == _currentLoadingTransitionId) {
         if (success) {
-          _consecutiveErrors = 0;
+          _failures.songStarted();
           _preloadUpcomingSongs();
           // Trigger background song addition if auto-play is enabled
           if (playNextSongAutomatically.value) {
@@ -1774,13 +1702,13 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
             error: e,
             stackTrace: stackTrace,
           );
-          _lastError = e.toString();
+          _failures.lastError = e.toString();
         }),
       );
       listeningStatsService.resumeListeningSession(currentSong: currentSong);
     } catch (e, stackTrace) {
       logger.log('Error in play()', error: e, stackTrace: stackTrace);
-      _lastError = e.toString();
+      _failures.lastError = e.toString();
     }
   }
 
@@ -1803,8 +1731,7 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
     _completionEventPending = false;
     _currentLoadingIndex = -1;
     _currentLoadingTransitionId = -1;
-    _lastError = null;
-    _consecutiveErrors = 0;
+    _failures.reset();
     try {
       listeningStatsService.finishListeningSession(
         countCurrentTick: true,
@@ -1919,7 +1846,7 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
         return false;
       }
 
-      _lastError = null;
+      _failures.lastError = null;
       if (audioPlayer.playing) {
         listeningStatsService.recordListeningSessionProgress(
           wasPlaying: audioPlayer.playing,
@@ -1940,7 +1867,7 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
       }
 
       if (playback == null) {
-        _lastError = 'Failed to get song URL';
+        _failures.lastError = 'Failed to get song URL';
         return false;
       }
 
@@ -1966,7 +1893,7 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
 
       if (audioSource == null) {
         logger.log('Failed to build audio source for ${songData['ytid']}');
-        _lastError = 'Failed to build audio source';
+        _failures.lastError = 'Failed to build audio source';
         return false;
       }
 
@@ -1980,7 +1907,7 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
       );
     } catch (e, stackTrace) {
       logger.log('Error playing song', error: e, stackTrace: stackTrace);
-      _lastError = e.toString();
+      _failures.lastError = e.toString();
       return false;
     }
   }
@@ -2137,7 +2064,7 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
             error: e,
             stackTrace: stackTrace,
           );
-          _lastError = e.toString();
+          _failures.lastError = e.toString();
         }),
       );
       unawaited(updateRecentlyPlayed(song['ytid'], songFallback: song));
@@ -2180,7 +2107,7 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
 
       if (allowOnlineRetry) {
         if (offlineMode.value) {
-          _lastError = e.toString();
+          _failures.lastError = e.toString();
           return false;
         }
         return _retryPlayWithFreshUrl(
@@ -2191,7 +2118,7 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
         );
       }
 
-      _lastError = e.toString();
+      _failures.lastError = e.toString();
       return false;
     }
   }
@@ -2282,7 +2209,7 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
         'isLive': true,
       };
 
-      _lastError = null;
+      _failures.lastError = null;
       final wasPlayingBeforeSwap = audioPlayer.playing;
       if (audioPlayer.playing) {
         listeningStatsService.recordListeningSessionProgress(
@@ -2305,7 +2232,7 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
 
       if (audioSource == null) {
         logger.log('Failed to build audio source for radio stream: $id');
-        _lastError = 'Failed to load radio stream';
+        _failures.lastError = 'Failed to load radio stream';
         return false;
       }
 
@@ -2325,7 +2252,7 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
           error: e,
           stackTrace: stackTrace,
         );
-        _lastError = e.toString();
+        _failures.lastError = e.toString();
       });
 
       _updatePlaybackState();
@@ -2336,7 +2263,7 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
         error: e,
         stackTrace: stackTrace,
       );
-      _lastError = e.toString();
+      _failures.lastError = e.toString();
       return false;
     }
   }

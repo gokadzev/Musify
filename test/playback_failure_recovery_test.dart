@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:musify/services/playback_failure_recovery.dart';
 import 'package:musify/utilities/app_utils.dart';
 
 /// A song YouTube refuses to hand over — anything marked made for children,
@@ -111,9 +112,206 @@ void main() {
 
     test('stopping wins over a queue that has somewhere to go', () {
       expect(
-        plan(consecutiveErrors: 3, canRetry: true),
+        plan(consecutiveErrors: 3),
         PlaybackRecovery.stop,
       );
     });
   });
+
+  // Long enough that the queue still has somewhere to go after three
+  // failures in a row, so what stops playback is the count and not the end.
+  final longQueue = <String?>[
+    'entry-0',
+    'entry-1',
+    'entry-2',
+    'entry-3',
+    'entry-4',
+  ];
+
+  // The two groups above test the reasoning in isolation. This one drives the
+  // handler itself: the failure count it keeps, the error it clears, the
+  // recovery it leaves waiting and the queue it reads when that wait is over.
+  group('the handler a failure is reported to', () {
+    test('it steps past the song that failed once the delay is out', () {
+      final session = _Session()..failOn('entry-0');
+
+      expect(
+        session.resumedAt,
+        isEmpty,
+        reason: 'the recovery waits out its delay first',
+      );
+
+      session.letTheDelayRunOut();
+      expect(session.resumedAt, [1]);
+      expect(session.skipped, 0);
+    });
+
+    // The failure used to stay set, so the player falling idle over it was
+    // taken for a fresh one and scheduled the blind skip this fix replaces —
+    // straight back onto the song that had just failed.
+    test('the failure is cleared as soon as it has been accounted for', () {
+      final session = _Session()..failOn('entry-0');
+
+      expect(session.recovery.lastError, isNull);
+    });
+
+    test('the repeat report an idle player makes is no second recovery', () {
+      final session = _Session()
+        ..failOn('entry-0')
+        ..failOn(null)
+        ..letTheDelayRunOut();
+
+      expect(session.resumedAt, [1]);
+      expect(
+        session.skipped,
+        0,
+        reason: 'the repeat must not schedule a skip of its own',
+      );
+      expect(
+        session.recovery.consecutiveErrors,
+        1,
+        reason: 'one failure, however many times it is reported',
+      );
+    });
+
+    test('a queue reordered during the delay still resumes behind the song', () {
+      // The queue moves while the recovery waits out its delay.
+      final session = _Session()
+        ..failOn('entry-0')
+        ..queue = ['entry-2', 'entry-0', 'entry-1']
+        ..letTheDelayRunOut();
+
+      expect(session.resumedAt, [2]);
+    });
+
+    test('a song pulled out of the queue takes its recovery with it', () {
+      // The queue moves while the recovery waits out its delay.
+      final session = _Session()
+        ..failOn('entry-0')
+        ..queue = ['entry-1', 'entry-2']
+        ..letTheDelayRunOut();
+
+      expect(session.resumedAt, isEmpty);
+    });
+
+    test('a transition started during the delay retires the recovery', () {
+      final session = _Session()
+        ..failOn('entry-0')
+        ..transitionStarted()
+        ..letTheDelayRunOut();
+
+      expect(session.resumedAt, isEmpty);
+      expect(session.skipped, 0);
+    });
+
+    test('stopping retires a recovery still waiting', () {
+      final session = _Session()..failOn('entry-0');
+
+      session.recovery.reset();
+      session.letTheDelayRunOut();
+
+      expect(session.resumedAt, isEmpty);
+      expect(session.recovery.consecutiveErrors, 0);
+    });
+
+    test('a failure outside the queue falls back to the ordinary skip', () {
+      final session = _Session()
+        ..failOn(null)
+        ..letTheDelayRunOut();
+
+      expect(session.skipped, 1);
+      expect(session.resumedAt, isEmpty);
+    });
+
+    test('nothing to retry counts the failure and leaves the queue alone', () {
+      final session = _Session(canRetry: false)
+        ..failOn('entry-0')
+        ..letTheDelayRunOut();
+
+      expect(session.resumedAt, isEmpty);
+      expect(session.skipped, 0);
+      expect(session.recovery.consecutiveErrors, 1);
+      expect(session.recovery.lastError, isNull);
+    });
+
+    test('failures in a row stop playback rather than grind on', () {
+      final session = _Session(queue: longQueue)
+        ..failOn('entry-0')
+        ..letTheDelayRunOut()
+        ..failOn('entry-1')
+        ..letTheDelayRunOut();
+      expect(session.resumedAt, [1, 2]);
+      expect(session.stopped, 0);
+
+      session
+        ..failOn('entry-2')
+        ..letTheDelayRunOut();
+      expect(session.stopped, 1);
+      expect(
+        session.resumedAt,
+        [1, 2],
+        reason: 'stopping wins over a queue that has somewhere to go',
+      );
+    });
+
+    test('a song starting clears the run of failures', () {
+      final session = _Session(queue: longQueue)
+        ..failOn('entry-0')
+        ..letTheDelayRunOut()
+        ..failOn('entry-1')
+        ..letTheDelayRunOut();
+
+      session.recovery.songStarted();
+
+      session
+        ..failOn('entry-2')
+        ..letTheDelayRunOut();
+
+      expect(session.stopped, 0);
+      expect(session.resumedAt, [1, 2, 3]);
+    });
+  });
+}
+
+/// Drives [PlaybackFailureRecovery] the way the audio handler does, with the
+/// retry delay in the test's hands rather than the clock's and the player
+/// replaced by a record of what it was asked to do.
+class _Session {
+  _Session({List<String?>? queue, this.canRetry = true})
+    : queue = queue ?? ['entry-0', 'entry-1', 'entry-2'] {
+    recovery = PlaybackFailureRecovery(
+      queueEntryIds: () => this.queue,
+      onStop: () => stopped++,
+      onSkipToNext: () => skipped++,
+      onResumeAt: resumedAt.add,
+      scheduler: (_, action) => _waiting.add(action),
+    );
+  }
+
+  late final PlaybackFailureRecovery recovery;
+  List<String?> queue;
+  final bool canRetry;
+
+  int stopped = 0;
+  int skipped = 0;
+  final List<int> resumedAt = [];
+
+  /// The recoveries waiting out their delay, oldest first.
+  final List<void Function()> _waiting = [];
+
+  void failOn(String? entryId, {String error = 'boom'}) {
+    recovery.lastError = error;
+    recovery.report(canRetry: canRetry, failedEntryId: entryId);
+  }
+
+  /// The delay runs out: every recovery that was waiting fires.
+  void letTheDelayRunOut() {
+    final due = List.of(_waiting);
+    _waiting.clear();
+    for (final recovery in due) {
+      recovery();
+    }
+  }
+
+  void transitionStarted() => recovery.retirePending();
 }
