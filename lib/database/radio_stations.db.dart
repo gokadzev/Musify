@@ -134,4 +134,32 @@ List<RadioStation> radioStationsDB = [
     streamUrl: 'https://listen.181fm.com/181-thebox_128k.mp3',
     genre: 'Hip Hop',
   ),
+  const RadioStation(
+    id: 'r_swr1',
+    name: 'SWR1',
+    image: 'https://www.swr.de/assets/swr/swr1/apple-touch-icon.png',
+    streamUrl: 'https://liveradio.swr.de/sw282p3/swr1bw/play.mp3',
+    genre: 'Pop, Rock, Oldies',
+  ),
+  const RadioStation(
+    id: 'r_swr3',
+    name: 'SWR3',
+    image: 'https://swr3.de/assets/swr3/icons/apple-touch-icon.png',
+    streamUrl: 'https://liveradio.swr.de/sw282p3/swr3/play.mp3',
+    genre: 'Pop, Pop-Rock',
+  ),
+  const RadioStation(
+    id: 'r_dasding',
+    name: 'DASDING',
+    image: 'https://www.dasding.de/assets/dasding/apple-touch-icon.png',
+    streamUrl: 'https://liveradio.swr.de/sw282p3/dasding/play.mp3',
+    genre: 'Contemporary Pop, Urban, Hip-Hop',
+  ),
+  const RadioStation(
+    id: 'r_1live',
+    name: '1LIVE',
+    image: 'https://www1.wdr.de/radio/1live/resources/img/favicon/apple-touch-icon.png',
+    streamUrl: 'https://wdr-1live-live.icecast.wdr.de/wdr/1live/live/mp3/128/stream.mp3',
+    genre: 'Pop, Hip-Hop, Urban, Dance',
+  ),
 ];
