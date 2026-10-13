@@ -196,9 +196,10 @@ class _MusifyState extends State<Musify> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    // Persist listening stats when the app leaves the foreground. This is the
-    // reliable moment to snapshot and flush: unlike widget dispose, these
-    // callbacks are delivered before the OS suspends or terminates the process.
+    // Persist listening stats and the playing queue when the app leaves the
+    // foreground. This is the reliable moment to snapshot and flush: unlike
+    // widget dispose, these callbacks are delivered before the OS suspends or
+    // terminates the process.
     if (state == AppLifecycleState.inactive ||
         state == AppLifecycleState.paused ||
         state == AppLifecycleState.hidden ||
@@ -207,6 +208,7 @@ class _MusifyState extends State<Musify> with WidgetsBindingObserver {
         wasPlaying: audioHandler.audioPlayer.playing,
       );
       unawaited(listeningStatsService.flush());
+      unawaited(audioHandler.persistPlaybackState());
     }
   }
 
