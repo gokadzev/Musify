@@ -26,6 +26,7 @@ import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart' show logger, audioHandler;
 import 'package:musify/services/common_services.dart';
 import 'package:musify/services/data_manager.dart';
+import 'package:musify/services/playlist_download_service.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/app_utils.dart';
 import 'package:musify/utilities/flutter_toast.dart';
@@ -66,6 +67,29 @@ class _UserSongsPageState extends State<UserSongsPage> {
     return list;
   }
 
+  /// The songs of the page, minus the ones the active filters hide.
+  List _getSongsList() {
+    return switch (widget.page) {
+      'liked' => userLikedSongsList.value,
+      'offline' => _filterOfflineSongs(userOfflineSongs.value),
+      _ => userRecentlyPlayed.value,
+    };
+  }
+
+  /// Downloading a playlist or an artist downloads every song in it, and all
+  /// of them land in the offline list. This drops them when asked to, leaving
+  /// only what was downloaded song by song.
+  List _filterOfflineSongs(List songsList) {
+    if (!hideOfflinePlaylistSongs.value) return songsList;
+
+    final playlistSongIds = offlinePlaylistService.getPlaylistSongIds();
+    if (playlistSongIds.isEmpty) return songsList;
+
+    return songsList
+        .where((song) => !playlistSongIds.contains(song['ytid']?.toString()))
+        .toList();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -90,19 +114,29 @@ class _UserSongsPageState extends State<UserSongsPage> {
     return Scaffold(
       body: Padding(
         padding: commonSingleChildScrollViewPadding,
-        child: ValueListenableBuilder(
-          valueListenable: widget.page == 'liked'
-              ? userLikedSongsList
-              : widget.page == 'offline'
-              ? userOfflineSongs
-              : userRecentlyPlayed,
-          builder: (_, songsList, __) => _buildCustomScrollView(
-            title,
-            icon,
-            songsList.length,
-            isOfflineSongs,
-          ),
-        ),
+        child: widget.page == 'offline'
+            ? ValueListenableBuilder<bool>(
+                valueListenable: hideOfflinePlaylistSongs,
+                builder: (_, __, ___) =>
+                    _buildSongsView(title, icon, isOfflineSongs),
+              )
+            : _buildSongsView(title, icon, isOfflineSongs),
+      ),
+    );
+  }
+
+  Widget _buildSongsView(String title, IconData icon, bool isOfflineSongs) {
+    return ValueListenableBuilder(
+      valueListenable: widget.page == 'liked'
+          ? userLikedSongsList
+          : widget.page == 'offline'
+          ? userOfflineSongs
+          : userRecentlyPlayed,
+      builder: (_, __, ___) => _buildCustomScrollView(
+        title,
+        icon,
+        _getSongsList().length,
+        isOfflineSongs,
       ),
     );
   }
@@ -189,11 +223,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
                     icon: const Icon(FluentIcons.play_24_filled),
                     label: Text(context.l10n!.play),
                     onPressed: () {
-                      final songsList = widget.page == 'liked'
-                          ? userLikedSongsList.value
-                          : widget.page == 'offline'
-                          ? userOfflineSongs.value
-                          : userRecentlyPlayed.value;
+                      final songsList = _getSongsList();
                       var sortedList = songsList;
                       if (isOfflineSongs) {
                         sortedList = _sortOfflineSongsLocal(
@@ -225,11 +255,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
                     icon: const Icon(FluentIcons.arrow_shuffle_24_filled),
                     label: Text(context.l10n!.shuffle),
                     onPressed: () async {
-                      final songs = widget.page == 'liked'
-                          ? userLikedSongsList.value
-                          : widget.page == 'offline'
-                          ? userOfflineSongs.value
-                          : userRecentlyPlayed.value;
+                      final songs = _getSongsList();
                       if (songs.isEmpty) return;
                       await audioHandler.addPlaylistToQueue(
                         List<Map>.from(songs.whereType<Map>()),
@@ -250,7 +276,9 @@ class _UserSongsPageState extends State<UserSongsPage> {
             ),
           ],
         ],
-        if (isOfflineSongs && songsLength > 1) ...[
+        // Gated on the whole offline list, not on what is left of it: the
+        // filter has to stay reachable once it has emptied the page.
+        if (isOfflineSongs && userOfflineSongs.value.length > 1) ...[
           const SizedBox(height: 20),
           SortChips<OfflineSortType>(
             currentSortType: _getCurrentOfflineSortType(),
@@ -266,6 +294,13 @@ class _UserSongsPageState extends State<UserSongsPage> {
                 offlineSortSetting = type.name;
               });
             },
+            trailing: [
+              SortChip(
+                label: context.l10n!.hidePlaylistSongs,
+                isSelected: hideOfflinePlaylistSongs.value,
+                onSelected: _toggleHidePlaylistSongs,
+              ),
+            ],
           ),
         ],
         if (songsLength > 0) ...[
@@ -280,6 +315,12 @@ class _UserSongsPageState extends State<UserSongsPage> {
         const SizedBox(height: 16),
       ],
     );
+  }
+
+  void _toggleHidePlaylistSongs() {
+    final hide = !hideOfflinePlaylistSongs.value;
+    hideOfflinePlaylistSongs.value = hide;
+    addOrUpdateData<bool>('settings', 'hideOfflinePlaylistSongs', hide);
   }
 
   Widget _buildClearRecentsButton(Color primaryColor) {
@@ -316,11 +357,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
     return ValueListenableBuilder<String>(
       valueListenable: _searchQueryNotifier,
       builder: (_, searchQuery, __) {
-        final songsList = widget.page == 'liked'
-            ? userLikedSongsList.value
-            : widget.page == 'offline'
-            ? userOfflineSongs.value
-            : userRecentlyPlayed.value;
+        final songsList = _getSongsList();
         final listKeyScope = 'user_song_${widget.page}';
         final isSearching = searchQuery.isNotEmpty;
         final displayList = _getDisplayList(songsList);

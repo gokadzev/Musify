@@ -79,6 +79,24 @@ class OfflinePlaylistService {
     return activeDownloads.contains(playlistId);
   }
 
+  /// Ids of the songs that are offline because a whole playlist, album or
+  /// artist was downloaded. A song downloaded on its own is not in here,
+  /// unless it also belongs to one of those.
+  Set<String> getPlaylistSongIds() {
+    final songIds = <String>{};
+
+    for (final playlist in offlinePlaylists.value) {
+      if (playlist is! Map) continue;
+      for (final song in playlist['list'] as List<dynamic>? ?? []) {
+        if (song is! Map) continue;
+        final songId = song['ytid']?.toString();
+        if (songId != null && songId.isNotEmpty) songIds.add(songId);
+      }
+    }
+
+    return songIds;
+  }
+
   /// Marks [playlist] offline when all of its songs are available locally.
   void checkAndAutoMarkOffline(Map playlist) {
     final id = playlist['ytid']?.toString();
