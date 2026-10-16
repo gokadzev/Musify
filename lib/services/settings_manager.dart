@@ -68,6 +68,12 @@ final audioQualitySetting = ValueNotifier<String>(
   Hive.box('settings').get('audioQuality', defaultValue: 'high'),
 );
 
+/// Whether a streamed song is downloaded into a buffer file the player reads
+/// from, instead of being streamed straight from its URL.
+final streamBufferSupport = ValueNotifier<bool>(
+  Hive.box('settings').get('streamBufferSupport', defaultValue: true),
+);
+
 final showAudioQualityBadge = ValueNotifier<bool>(
   Hive.box('settings').get('showAudioQualityBadge', defaultValue: false),
 );
@@ -153,6 +159,10 @@ void reloadSettingsFromStorage() {
   audioQualitySetting.value = settings.get(
     'audioQuality',
     defaultValue: 'high',
+  );
+  streamBufferSupport.value = settings.get(
+    'streamBufferSupport',
+    defaultValue: true,
   );
   showAudioQualityBadge.value = settings.get(
     'showAudioQualityBadge',
