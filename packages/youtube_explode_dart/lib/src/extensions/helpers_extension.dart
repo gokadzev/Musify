@@ -166,40 +166,37 @@ extension StringUtility2 on String? {
     return false;
   }
 
-  /// Format: {quantity} {unit} ago (5 years ago)
+  static final _relativeDate = RegExp(
+    r'^(?:(?:streamed|premiered)(?:\s+live)?\s+)?(\d+)\s*'
+    r'([a-z]+)\s+ago$',
+    caseSensitive: false,
+  );
+
+  /// Unknown publication labels are optional metadata, not invalid videos.
   DateTime? toDateTime() {
-    if (this == null) {
-      return null;
-    }
-
-    var parts = this!.trim().split(' ');
-    if (parts.length == 4) {
-      // Streamed x y ago
-      parts = parts.skip(1).toList();
-    }
-
-    if (parts.length != 3) {
-      return null;
-    }
-
-    final qty = int.parse(parts.first);
-
-    // Try to get the unit
-    final unit = parts[1];
-
-    final time = switch (unit) {
-      _ when unit.startsWith('second') => Duration(seconds: qty),
-      _ when unit.startsWith('minute') => Duration(minutes: qty),
-      _ when unit.startsWith('hour') => Duration(hours: qty),
-      _ when unit.startsWith('day') => Duration(days: qty),
-      _ when unit.startsWith('week') => Duration(days: qty * 7),
-      _ when unit.startsWith('month') => Duration(days: qty * 30),
-      _ when unit.startsWith('year') => Duration(days: qty * 365),
-      _ => throw StateError("Couldn't parse $unit unit of time. "
-          'Please report this to the project page!')
+    final match = _relativeDate.firstMatch(this?.trim() ?? '');
+    if (match == null) return null;
+    final qty = int.tryParse(match[1]!);
+    if (qty == null) return null;
+    final secondsPerUnit = switch (match[2]!.toLowerCase()) {
+      's' || 'sec' || 'second' || 'seconds' => 1,
+      'm' || 'min' || 'minute' || 'minutes' => 60,
+      'h' || 'hr' || 'hour' || 'hours' => 3600,
+      'd' || 'day' || 'days' => 86400,
+      'w' || 'wk' || 'week' || 'weeks' => 604800,
+      'mo' || 'month' || 'months' => 2592000,
+      'y' || 'yr' || 'year' || 'years' => 31536000,
+      _ => null,
     };
-
-    return DateTime.now().subtract(time);
+    // Keep the duration within DateTime's supported range.
+    if (secondsPerUnit == null || qty > 8640000000000 ~/ secondsPerUnit) {
+      return null;
+    }
+    try {
+      return DateTime.now().subtract(Duration(seconds: qty * secondsPerUnit));
+    } on ArgumentError {
+      return null;
+    }
   }
 
   Uri? toUri() {
