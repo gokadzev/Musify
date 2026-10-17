@@ -28,6 +28,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:just_audio_media_kit/just_audio_media_kit.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/localization/app_localizations.dart';
@@ -44,6 +45,7 @@ import 'package:musify/services/update_manager.dart';
 import 'package:musify/theme/app_themes.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/language_utils.dart';
+import 'package:musify/utilities/platform_utils.dart';
 import 'package:musify/utilities/playlist_utils.dart';
 import 'package:musify/utilities/sharing_intent.dart';
 import 'package:path_provider/path_provider.dart';
@@ -117,7 +119,9 @@ class _MusifyState extends State<Musify> with WidgetsBindingObserver {
 
     WidgetsBinding.instance.addObserver(this);
 
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    if (isMobilePlatform) {
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    }
 
     final platformDispatcher = PlatformDispatcher.instance;
 
@@ -132,24 +136,26 @@ class _MusifyState extends State<Musify> with WidgetsBindingObserver {
 
     offlineMode.addListener(_onOfflineModeChanged);
 
-    sharingIntentSubscription = ReceiveSharingIntent.getTextStream().listen(
-      (String? value) async {
-        await consumeYoutubeSharedTextIntent(
-          value,
-          audioHandler: audioHandler,
-          onError: (error, stackTrace) {
-            logger.log(
-              'Error while playing shared song:',
-              error: error,
-              stackTrace: stackTrace,
-            );
-          },
-        );
-      },
-      onError: (err) {
-        logger.log('getTextStream error:', error: err);
-      },
-    );
+    if (isMobilePlatform) {
+      sharingIntentSubscription = ReceiveSharingIntent.getTextStream().listen(
+        (String? value) async {
+          await consumeYoutubeSharedTextIntent(
+            value,
+            audioHandler: audioHandler,
+            onError: (error, stackTrace) {
+              logger.log(
+                'Error while playing shared song:',
+                error: error,
+                stackTrace: stackTrace,
+              );
+            },
+          );
+        },
+        onError: (err) {
+          logger.log('getTextStream error:', error: err);
+        },
+      );
+    }
 
     try {
       LicenseRegistry.addLicense(() async* {
@@ -166,7 +172,7 @@ class _MusifyState extends State<Musify> with WidgetsBindingObserver {
       );
     }
 
-    if (!isFdroidBuild) {
+    if (!isFdroidBuild && isMobilePlatform) {
       if (shouldWeCheckUpdates.value == true) {
         if (!isUpdateChecked && kReleaseMode) {
           SchedulerBinding.instance.addPostFrameCallback((_) {
@@ -287,27 +293,34 @@ Future<void> initialisation() async {
       Hive.openBox('cache'),
     ]);
 
-    audioHandler = await AudioService.init(
-      builder: MusifyAudioHandler.new,
-      config: const AudioServiceConfig(
-        androidNotificationChannelId: 'com.gokadzev.musify',
-        androidNotificationChannelName: 'Musify',
-        androidNotificationIcon: 'drawable/ic_launcher_foreground',
-        androidShowNotificationBadge: true,
-        androidStopForegroundOnPause: false,
-        // Handed to Android Auto on the browsable root. Without the search
-        // flag the car never offers a search box, and without the content
-        // style keys it falls back to an undifferentiated list of everything.
-        androidBrowsableRootExtras: {
-          AndroidContentStyle.supportedKey: true,
-          AndroidContentStyle.browsableHintKey:
-              AndroidContentStyle.gridItemHintValue,
-          AndroidContentStyle.playableHintKey:
-              AndroidContentStyle.listItemHintValue,
-          'android.media.browse.SEARCH_SUPPORTED': true,
-        },
-      ),
-    );
+    if (isMobilePlatform) {
+      audioHandler = await AudioService.init(
+        builder: MusifyAudioHandler.new,
+        config: const AudioServiceConfig(
+          androidNotificationChannelId: 'com.gokadzev.musify',
+          androidNotificationChannelName: 'Musify',
+          androidNotificationIcon: 'drawable/ic_launcher_foreground',
+          androidShowNotificationBadge: true,
+          androidStopForegroundOnPause: false,
+          // Handed to Android Auto on the browsable root. Without the search
+          // flag the car never offers a search box, and without the content
+          // style keys it falls back to an undifferentiated list of everything.
+          androidBrowsableRootExtras: {
+            AndroidContentStyle.supportedKey: true,
+            AndroidContentStyle.browsableHintKey:
+                AndroidContentStyle.gridItemHintValue,
+            AndroidContentStyle.playableHintKey:
+                AndroidContentStyle.listItemHintValue,
+            'android.media.browse.SEARCH_SUPPORTED': true,
+          },
+        ),
+      );
+    } else {
+      // Desktop has no audio_service platform implementation. Register the
+      // media_kit backend for just_audio and construct the handler directly.
+      JustAudioMediaKit.ensureInitialized(windows: false);
+      audioHandler = MusifyAudioHandler();
+    }
 
     // Init router
     NavigationManager.instance;

@@ -32,6 +32,7 @@ import 'package:musify/main.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/router_service.dart';
 import 'package:musify/services/settings_manager.dart';
+import 'package:musify/utilities/platform_utils.dart';
 import 'package:musify/utilities/url_launcher.dart';
 import 'package:musify/widgets/auto_format_text.dart';
 
@@ -44,6 +45,8 @@ const String downloadUrlArm64Key = 'arm64url';
 const String downloadFilename = 'Musify.apk';
 
 Future<void> checkAppUpdates() async {
+  // Update distribution targets Android APK builds only.
+  if (!isMobilePlatform) return;
   try {
     final response = await http.get(Uri.parse(checkUrl));
 
