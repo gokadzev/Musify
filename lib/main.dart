@@ -34,7 +34,9 @@ import 'package:musify/extensions/l10n.dart';
 import 'package:musify/localization/app_localizations.dart';
 import 'package:musify/services/audio_service.dart';
 import 'package:musify/services/data_manager.dart';
+import 'package:musify/services/desktop_media_artwork.dart';
 import 'package:musify/services/io_service.dart';
+import 'package:musify/services/linux_media_controls.dart';
 import 'package:musify/services/listening_stats_service.dart';
 import 'package:musify/services/logger_service.dart';
 import 'package:musify/services/playlist_sharing.dart';
@@ -52,6 +54,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
 late MusifyAudioHandler audioHandler;
+LinuxMediaControls? linuxMediaControls;
+final desktopMediaArtwork = DesktopMediaArtwork();
 StreamSubscription<String?>? sharingIntentSubscription;
 StreamSubscription<Uri?>? appLinksSubscription;
 
@@ -222,6 +226,7 @@ class _MusifyState extends State<Musify> with WidgetsBindingObserver {
     offlineMode.removeListener(_onOfflineModeChanged);
     PlatformDispatcher.instance.onPlatformBrightnessChanged = null;
 
+    unawaited(linuxMediaControls?.dispose());
     Hive.close();
     unawaited(sharingIntentSubscription?.cancel());
     unawaited(appLinksSubscription?.cancel());
@@ -320,6 +325,41 @@ Future<void> initialisation() async {
       JustAudioMediaKit.title = 'Musify';
       JustAudioMediaKit.ensureInitialized();
       audioHandler = MusifyAudioHandler();
+    }
+
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.linux) {
+      final controls = LinuxMediaControls(
+        handler: audioHandler,
+        resolveArtwork: desktopMediaArtwork.resolve,
+        volume: () => audioHandler.volume,
+        volumeStream: audioHandler.volumeStream,
+        setVolume: audioHandler.setVolume,
+        canGoNext: () => audioHandler.canSkipToNext,
+        navigationChanges: Listenable.merge([
+          repeatNotifier,
+          playNextSongAutomatically,
+          offlineMode,
+        ]),
+        canGoPrevious: () => audioHandler.hasPrevious,
+        raise: () =>
+            const MethodChannel('musify/window').invokeMethod<void>('raise'),
+        position: () => audioHandler.currentPositionData.position,
+        onError: (error, stackTrace) => logger.log(
+          'Linux media controls error',
+          error: error,
+          stackTrace: stackTrace,
+        ),
+      );
+      try {
+        await controls.start();
+        linuxMediaControls = controls;
+      } catch (error, stackTrace) {
+        logger.log(
+          'Could not initialize Linux media controls',
+          error: error,
+          stackTrace: stackTrace,
+        );
+      }
     }
 
     // Init router
