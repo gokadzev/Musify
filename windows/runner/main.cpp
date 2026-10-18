@@ -1,8 +1,10 @@
 #include <flutter/dart_project.h>
 #include <flutter/flutter_view_controller.h>
 #include <windows.h>
+#include <roapi.h>
 
 #include "flutter_window.h"
+#include "app_identity.h"
 #include "utils.h"
 
 int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
@@ -12,8 +14,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
     CreateAndAttachConsole();
   }
 
-  // Initialize COM for desktop plugins.
-  ::CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
+  // Initialize COM and WinRT for desktop plugins and SMTC.
+  if (FAILED(::RoInitialize(RO_INIT_SINGLETHREADED))) {
+    return EXIT_FAILURE;
+  }
+  ConfigureAppIdentity();
 
   flutter::DartProject project(L"data");
 
@@ -36,6 +41,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
     ::DispatchMessage(&msg);
   }
 
-  ::CoUninitialize();
+  ::RoUninitialize();
   return EXIT_SUCCESS;
 }
