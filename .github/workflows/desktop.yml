@@ -1,0 +1,81 @@
+name: Desktop builds
+
+on:
+  push:
+    paths: &desktop_paths
+      - 'lib/**'
+      - 'packages/just_audio_media_kit/**'
+      - 'test/**'
+      - 'windows/**'
+      - 'linux/**'
+      - 'pubspec.*'
+      - '.github/workflows/desktop.yml'
+      - '.github/scripts/check_windows_icons.py'
+      - '.github/scripts/check_desktop_startup.py'
+  pull_request:
+    paths: *desktop_paths
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            platform: linux
+            artifact: build/musify-linux-x64.tar.gz
+          - os: windows-latest
+            platform: windows
+            artifact: build/windows/x64/runner/Release/
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install Linux dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libmpv-dev pulseaudio xvfb
+      - name: Resolve Flutter version
+        shell: bash
+        run: |
+          echo "FLUTTER_VERSION=$(sed -n 's/^  flutter: \^*//p' pubspec.yaml)" >> "$GITHUB_ENV"
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test
+      - run: flutter build ${{ matrix.platform }} --release
+      - name: Test native playback
+        shell: bash
+        run: |
+          if [[ "$RUNNER_OS" == "Linux" ]]; then
+            pulseaudio --start --exit-idle-time=-1
+            pactl load-module module-null-sink sink_name=musify-test
+            export MUSIFY_TEST_LIBMPV=/usr/lib/x86_64-linux-gnu/libmpv.so.2
+          else
+            export MUSIFY_TEST_LIBMPV="$(pwd)/build/windows/x64/runner/Release/libmpv-2.dll"
+          fi
+          flutter test test/desktop_audio_native_test.dart
+      - name: Check Linux startup
+        if: runner.os == 'Linux'
+        run: dbus-run-session -- xvfb-run -a python .github/scripts/check_desktop_startup.py build/linux/x64/release/bundle/musify
+      - name: Check Windows startup
+        if: runner.os == 'Windows'
+        run: python .github/scripts/check_desktop_startup.py build/windows/x64/runner/Release/musify.exe
+      - name: Check Windows icons
+        if: runner.os == 'Windows'
+        run: python .github/scripts/check_windows_icons.py build/windows/x64/runner/Release/musify.exe
+      - name: Archive Linux bundle
+        if: runner.os == 'Linux'
+        run: tar -czf build/musify-linux-x64.tar.gz -C build/linux/x64/release/bundle .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: musify-${{ matrix.platform }}-x64
+          path: ${{ matrix.artifact }}
+          if-no-files-found: error
