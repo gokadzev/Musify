@@ -316,9 +316,9 @@ Future<void> initialisation() async {
         ),
       );
     } else {
-      // Desktop has no audio_service platform implementation. Register the
-      // media_kit backend for just_audio and construct the handler directly.
-      JustAudioMediaKit.ensureInitialized(windows: false);
+      // Use the desktop audio backend without mobile service plugins.
+      JustAudioMediaKit.title = 'Musify';
+      JustAudioMediaKit.ensureInitialized();
       audioHandler = MusifyAudioHandler();
     }
 
