@@ -92,9 +92,8 @@ class DesktopMediaArtwork {
       if (!await file.exists()) {
         final bytes = await _read(source).timeout(const Duration(seconds: 8));
         final png = await _square(bytes);
-        final temporary = File(
-          '${file.path}.$pid.${DateTime.now().microsecondsSinceEpoch}.tmp',
-        );
+        final staging = await directory.createTemp('.pending-');
+        final temporary = File('${staging.path}/$key.png');
         try {
           await temporary.writeAsBytes(png, flush: true);
           try {
@@ -103,7 +102,7 @@ class DesktopMediaArtwork {
             if (!await file.exists()) rethrow;
           }
         } finally {
-          if (await temporary.exists()) await temporary.delete();
+          await staging.delete(recursive: true);
         }
       }
       await file.setLastModified(DateTime.now());

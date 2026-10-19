@@ -309,17 +309,23 @@ void main() {
     });
 
     test('emits metadata changes and releases its bus name on exit', () async {
+      final released = observer.nameOwnerChanged
+          .firstWhere(
+            (event) => event.name == controls.name && event.newOwner == null,
+          )
+          .timeout(const Duration(seconds: 2));
       final signal = remote.propertiesChanged.firstWhere(
         (signal) => signal.changedProperties.containsKey('Metadata'),
       );
-      // Let the remote signal match be installed before emitting.
-      await flush();
+      // Complete a round trip after installing the signal matches.
+      expect(await observer.nameHasOwner(controls.name), true);
       handler.mediaItem.add(const MediaItem(id: 'next', title: 'Next song'));
       expect(
         (await signal.timeout(const Duration(seconds: 2))).changedProperties,
         contains('Metadata'),
       );
       await controls.dispose();
+      await released;
       expect(await observer.nameHasOwner(controls.name), false);
     });
     test(

@@ -198,7 +198,7 @@ void main() {
     final source = Uri.parse('https://example.com/shared.png');
     final results = await Future.wait(
       List.generate(
-        4,
+        32,
         (_) => DesktopMediaArtwork(
           cacheDirectory: () async => directory,
           read: (_) async => bytes,
@@ -218,7 +218,7 @@ void main() {
     expect(
       await File.fromUri(results.first!).parent
           .list()
-          .where((f) => f.path.endsWith('.tmp'))
+          .where((f) => f is Directory || f.path.endsWith('.tmp'))
           .toList(),
       isEmpty,
     );
