@@ -59,29 +59,105 @@ class DesktopMediaArtwork {
 
   final Future<Directory> Function() _directory;
   final Future<List<int>> Function(Uri) _read;
+  static const maxCacheEntries = 64;
+  static const maxCacheBytes = 32 * 1024 * 1024;
   final _pending = <Uri, Future<Uri?>>{};
+  final _recent = <String>[];
+  Future<void> _maintenance = Future.value();
 
-  Future<Uri?> resolve(Uri source) => _pending.putIfAbsent(source, () async {
+  Future<Uri?> resolve(Uri source) {
+    final key = sha256.convert(utf8.encode(source.toString())).toString();
+    _recent
+      ..remove(key)
+      ..add(key);
+    if (_recent.length > 2) _recent.removeAt(0);
+    final existing = _pending[source];
+    if (existing != null) return existing;
+    final future = _resolve(source, key);
+    _pending[source] = future;
+    unawaited(
+      future.whenComplete(() {
+        _pending.remove(source);
+      }),
+    );
+    return future;
+  }
+
+  Future<Uri?> _resolve(Uri source, String key) async {
     try {
       final root = await _directory();
       final directory = await Directory('${root.path}/musify-media-artwork')
           .create(recursive: true);
-      final key = sha256.convert(utf8.encode(source.toString()));
       final file = File('${directory.path}/$key.png');
       if (!await file.exists()) {
         final bytes = await _read(source).timeout(const Duration(seconds: 8));
         final png = await _square(bytes);
-        await file.writeAsBytes(png, flush: true);
+        final temporary = File(
+          '${file.path}.$pid.${DateTime.now().microsecondsSinceEpoch}.tmp',
+        );
+        try {
+          await temporary.writeAsBytes(png, flush: true);
+          try {
+            await temporary.rename(file.path);
+          } on FileSystemException {
+            if (!await file.exists()) rethrow;
+          }
+        } finally {
+          if (await temporary.exists()) await temporary.delete();
+        }
       }
-      if (_pending.length > 64) {
-        final oldest = _pending.keys.firstWhere((key) => key != source);
-        _pending.remove(oldest)?.ignore();
-      }
+      await file.setLastModified(DateTime.now());
+      _maintenance = _maintenance
+          .then((_) => _prune(directory))
+          .catchError((_) {});
+      await _maintenance;
       return file.uri;
     } catch (_) {
       return null;
     }
-  });
+  }
+
+  Future<void> _prune(Directory directory) async {
+    final files = <({File file, FileStat stat, bool protected})>[];
+    final pattern = RegExp(r'[/\\]([a-f0-9]{64})\.png$');
+    await for (final entity in directory.list(followLinks: false)) {
+      if (entity is! File) continue;
+      final match = pattern.firstMatch(entity.path);
+      if (match == null) continue;
+      try {
+        final stat = await entity.stat();
+        if (stat.type == FileSystemEntityType.file) {
+          files.add((
+            file: entity,
+            stat: stat,
+            protected: _recent.contains(match[1]),
+          ));
+        }
+      } on FileSystemException {
+        // Another process may have removed the file.
+      }
+    }
+    files.sort((a, b) {
+      if (a.protected != b.protected) return a.protected ? -1 : 1;
+      return b.stat.modified.compareTo(a.stat.modified);
+    });
+    var bytes = 0;
+    var entries = 0;
+    for (final item in files) {
+      if (item.protected ||
+          (entries < maxCacheEntries &&
+              bytes + item.stat.size <= maxCacheBytes)) {
+        entries++;
+        bytes += item.stat.size;
+        continue;
+      }
+      try {
+        await item.file.delete();
+      } on FileSystemException {
+        // Cache cleanup must not prevent playback metadata updates.
+      }
+    }
+  }
 
   static Future<List<int>> _readSource(Uri source) async {
     if (source.scheme == 'file') return File.fromUri(source).readAsBytes();

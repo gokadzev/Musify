@@ -61,6 +61,9 @@ jobs:
       - name: Check Windows icons
         if: runner.os == 'Windows'
         run: python .github/scripts/check_windows_icons.py build/windows/x64/runner/Release/musify.exe
+      - name: Package Linux desktop integration
+        if: runner.os == 'Linux'
+        run: bash .github/scripts/package_linux_desktop.sh
       - name: Archive Linux bundle
         if: runner.os == 'Linux'
         run: tar -czf build/musify-linux-x64.tar.gz -C build/linux/x64/release/bundle .
@@ -84,6 +87,17 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ${{ matrix.artifact }}
           asset_name: Musify-${{ matrix.platform }}-x64.${{ matrix.platform == 'linux' && 'tar.gz' || 'zip' }}
+          tag: ${{ steps.extract_version.outputs.version }}
+          prerelease: ${{ steps.extract_version.outputs.prerelease }}
+          overwrite: true
+      - name: Release Linux package
+        if: runner.os == 'Linux'
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_name: gokadzev/Musify
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: build/desktop-artifacts/Musify-linux-x64.deb
+          asset_name: Musify-linux-x64.deb
           tag: ${{ steps.extract_version.outputs.version }}
           prerelease: ${{ steps.extract_version.outputs.prerelease }}
           overwrite: true
