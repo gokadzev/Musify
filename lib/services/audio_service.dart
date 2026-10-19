@@ -98,6 +98,7 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
   int _currentQueueIndex = 0;
   int _currentLoadingIndex = -1;
   int _currentLoadingTransitionId = -1;
+  double _volumeBeforeMute = 1;
 
   // Playback transition and state-update coordination.
   bool _isUpdatingState = false;
@@ -147,6 +148,9 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
       }).asBroadcastStream();
 
   Stream<PositionData> get positionDataStream => _positionDataStream;
+
+  Stream<double> get volumeStream => audioPlayer.volumeStream;
+  double get volume => audioPlayer.volume;
 
   /// Current snapshot, for listeners that subscribe while paused and would
   /// otherwise see nothing until the next position event.
@@ -1735,6 +1739,14 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
     }
   }
 
+  Future<void> toggleMute() {
+    if (volume > 0) {
+      _volumeBeforeMute = volume;
+      return setVolume(0);
+    }
+    return setVolume(_volumeBeforeMute);
+  }
+
   @override
   Future<void> pause() async {
     try {
@@ -1745,6 +1757,14 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
       await audioPlayer.pause();
     } catch (e, stackTrace) {
       logger.log('Error in pause()', error: e, stackTrace: stackTrace);
+    }
+  }
+
+  Future<void> setVolume(double value) async {
+    try {
+      await audioPlayer.setVolume(value.clamp(0.0, 1.0));
+    } catch (e, stackTrace) {
+      logger.log('Error in setVolume()', error: e, stackTrace: stackTrace);
     }
   }
 
