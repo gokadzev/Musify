@@ -48,6 +48,7 @@ import 'package:musify/utilities/language_utils.dart';
 import 'package:musify/utilities/platform_utils.dart';
 import 'package:musify/utilities/playlist_utils.dart';
 import 'package:musify/utilities/sharing_intent.dart';
+import 'package:musify/widgets/desktop_shortcuts.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
@@ -258,6 +259,7 @@ class _MusifyState extends State<Musify> with WidgetsBindingObserver {
                 : Brightness.dark,
           ),
           child: MaterialApp.router(
+            builder: (context, child) => DesktopShortcuts(child: child!),
             themeMode: themeMode,
             darkTheme: getAppTheme(colorScheme),
             theme: getAppTheme(colorScheme),

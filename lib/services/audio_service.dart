@@ -148,6 +148,9 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
 
   Stream<PositionData> get positionDataStream => _positionDataStream;
 
+  Stream<double> get volumeStream => audioPlayer.volumeStream;
+  double get volume => audioPlayer.volume;
+
   /// Current snapshot, for listeners that subscribe while paused and would
   /// otherwise see nothing until the next position event.
   PositionData get currentPositionData => PositionData(
@@ -1745,6 +1748,14 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
       await audioPlayer.pause();
     } catch (e, stackTrace) {
       logger.log('Error in pause()', error: e, stackTrace: stackTrace);
+    }
+  }
+
+  Future<void> setVolume(double value) async {
+    try {
+      await audioPlayer.setVolume(value.clamp(0.0, 1.0));
+    } catch (e, stackTrace) {
+      logger.log('Error in setVolume()', error: e, stackTrace: stackTrace);
     }
   }
 
