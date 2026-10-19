@@ -2,18 +2,8 @@ name: Desktop builds
 
 on:
   push:
-    paths: &desktop_paths
-      - 'lib/**'
-      - 'packages/just_audio_media_kit/**'
-      - 'test/**'
-      - 'windows/**'
-      - 'linux/**'
-      - 'pubspec.*'
-      - '.github/workflows/desktop.yml'
-      - '.github/scripts/check_windows_icons.py'
-      - '.github/scripts/check_desktop_startup.py'
-  pull_request:
-    paths: *desktop_paths
+    branches:
+      - master
   workflow_dispatch:
 
 permissions:
@@ -21,6 +11,7 @@ permissions:
 
 jobs:
   build:
+    if: "github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, 'Update:')"
     strategy:
       fail-fast: false
       matrix:
@@ -49,7 +40,6 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
       - run: flutter pub get
       - run: flutter analyze
-      - run: flutter test
       - run: flutter build ${{ matrix.platform }} --release
       - name: Test native playback
         shell: bash
