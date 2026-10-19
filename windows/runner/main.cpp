@@ -1,11 +1,12 @@
 #include <flutter/dart_project.h>
 #include <flutter/flutter_view_controller.h>
 #include <windows.h>
-#include <roapi.h>
+#include <iostream>
 
 #include "flutter_window.h"
 #include "app_identity.h"
 #include "utils.h"
+#include "runtime_initialization.h"
 
 int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
                       _In_ wchar_t *command_line, _In_ int show_command) {
@@ -15,8 +16,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
   }
 
   // Initialize COM and WinRT for desktop plugins and SMTC.
-  if (FAILED(::RoInitialize(RO_INIT_SINGLETHREADED))) {
-    return EXIT_FAILURE;
+  const RuntimeInitialization runtime;
+  if (FAILED(runtime.result())) {
+    std::cerr << "Windows Runtime initialization failed: 0x" << std::hex
+              << static_cast<unsigned long>(runtime.result()) << std::dec << '\n';
   }
   ConfigureAppIdentity();
 
@@ -41,6 +44,5 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
     ::DispatchMessage(&msg);
   }
 
-  ::RoUninitialize();
   return EXIT_SUCCESS;
 }
