@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -21,7 +21,7 @@ jobs:
             artifact: build/musify-linux-x64.tar.gz
           - os: windows-latest
             platform: windows
-            artifact: build/windows/x64/runner/Release/
+            artifact: build/musify-windows-x64.zip
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v5
@@ -64,8 +64,26 @@ jobs:
       - name: Archive Linux bundle
         if: runner.os == 'Linux'
         run: tar -czf build/musify-linux-x64.tar.gz -C build/linux/x64/release/bundle .
-      - uses: actions/upload-artifact@v4
+      - name: Archive Windows bundle
+        if: runner.os == 'Windows'
+        run: Compress-Archive -Path build/windows/x64/runner/Release/* -DestinationPath build/musify-windows-x64.zip
+      - name: Extract version
+        id: extract_version
+        shell: bash
+        env:
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          version=$(echo "$COMMIT_MESSAGE" | grep -oP '(?<=Update: v)\d+\.\d+\.\d+' || true)
+          echo "version=${version:-$REF_NAME}" >> "$GITHUB_OUTPUT"
+          [[ -n "$version" ]] && echo "prerelease=false" >> "$GITHUB_OUTPUT" || echo "prerelease=true" >> "$GITHUB_OUTPUT"
+      - name: Release desktop bundle
+        uses: svenstaro/upload-release-action@v2
         with:
-          name: musify-${{ matrix.platform }}-x64
-          path: ${{ matrix.artifact }}
-          if-no-files-found: error
+          repo_name: gokadzev/Musify
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ matrix.artifact }}
+          asset_name: Musify-${{ matrix.platform }}-x64.${{ matrix.platform == 'linux' && 'tar.gz' || 'zip' }}
+          tag: ${{ steps.extract_version.outputs.version }}
+          prerelease: ${{ steps.extract_version.outputs.prerelease }}
+          overwrite: true
