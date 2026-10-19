@@ -126,3 +126,10 @@ if(NOT CMAKE_BUILD_TYPE MATCHES "Debug")
   install(FILES "${AOT_LIBRARY}" DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
     COMPONENT Runtime)
 endif()
+
+# Include the launcher and icon for desktop integration.
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/musify.desktop"
+  DESTINATION "${CMAKE_INSTALL_PREFIX}/share/applications" COMPONENT Runtime)
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/../android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
+  DESTINATION "${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/192x192/apps"
+  RENAME "musify.png" COMPONENT Runtime)
