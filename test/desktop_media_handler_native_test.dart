@@ -250,7 +250,7 @@ void main() {
           );
         }
         expect(handler.audioPlayer.speed, 1);
-      }, skip: !Platform.isLinux);
+      }, skip: library == null || !Platform.isLinux);
     },
     skip: library == null
         ? 'Set MUSIFY_TEST_LIBMPV to test the real desktop handler'
