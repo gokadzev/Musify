@@ -40,6 +40,7 @@ import 'package:musify/theme/app_themes.dart';
 import 'package:musify/utilities/flutter_bottom_sheet.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/language_utils.dart';
+import 'package:musify/utilities/platform_utils.dart';
 import 'package:musify/utilities/url_launcher.dart';
 import 'package:musify/widgets/bottom_sheet_bar.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
@@ -57,24 +58,33 @@ class SettingsPage extends StatelessWidget {
     final activatedColor = Theme.of(context).colorScheme.secondaryContainer;
     final inactivatedColor = Theme.of(context).colorScheme.surfaceContainerHigh;
 
+    final content = Column(
+      children: <Widget>[
+        _buildPreferencesSection(
+          context,
+          primaryColor,
+          activatedColor,
+          inactivatedColor,
+        ),
+        if (!offlineMode.value) _buildOnlineFeaturesSection(context),
+        _buildOthersSection(context),
+        const SizedBox(height: 20),
+        const MiniPlayerBottomSpace(),
+      ],
+    );
+
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n!.settings)),
       body: SingleChildScrollView(
         padding: commonSingleChildScrollViewPadding,
-        child: Column(
-          children: <Widget>[
-            _buildPreferencesSection(
-              context,
-              primaryColor,
-              activatedColor,
-              inactivatedColor,
-            ),
-            if (!offlineMode.value) _buildOnlineFeaturesSection(context),
-            _buildOthersSection(context),
-            const SizedBox(height: 20),
-            const MiniPlayerBottomSpace(),
-          ],
-        ),
+        child: isDesktopPlatform
+            ? Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 880),
+                  child: content,
+                ),
+              )
+            : content,
       ),
     );
   }
@@ -97,6 +107,19 @@ class SettingsPage extends StatelessWidget {
           context.l10n!.accentColor,
           FluentIcons.color_24_regular,
           borderRadius: commonCustomBarRadiusFirst,
+          trailing: isDesktopPlatform
+              ? Container(
+                  width: 26,
+                  height: 26,
+                  decoration: BoxDecoration(
+                    color: primaryColorSetting,
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outlineVariant,
+                    ),
+                  ),
+                )
+              : null,
           onTap: () => _showAccentColorPicker(context),
         ),
         CustomBar(
@@ -114,11 +137,12 @@ class SettingsPage extends StatelessWidget {
           FluentIcons.music_note_1_24_regular,
           onTap: () => _showAudioQualityPicker(context),
         ),
-        CustomBar(
-          context.l10n!.equalizer,
-          FluentIcons.data_histogram_24_regular,
-          onTap: () => context.push('/settings/equalizer'),
-        ),
+        if (isAndroidPlatform)
+          CustomBar(
+            context.l10n!.equalizer,
+            FluentIcons.data_histogram_24_regular,
+            onTap: () => context.push('/settings/equalizer'),
+          ),
         if (themeMode == ThemeMode.dark)
           CustomBar(
             context.l10n!.pureBlackTheme,
@@ -129,15 +153,16 @@ class SettingsPage extends StatelessWidget {
               onChanged: (value) => _togglePureBlack(context, value),
             ),
           ),
-        CustomBar(
-          context.l10n!.dynamicColor,
-          FluentIcons.toggle_left_24_regular,
-          description: context.l10n!.dynamicColorDescription,
-          trailing: Switch(
-            value: useSystemColor.value,
-            onChanged: (value) => _toggleSystemColor(context, value),
+        if (isAndroidPlatform)
+          CustomBar(
+            context.l10n!.dynamicColor,
+            FluentIcons.toggle_left_24_regular,
+            description: context.l10n!.dynamicColorDescription,
+            trailing: Switch(
+              value: useSystemColor.value,
+              onChanged: (value) => _toggleSystemColor(context, value),
+            ),
           ),
-        ),
 
         ValueListenableBuilder<bool>(
           valueListenable: showAudioQualityBadge,
@@ -202,7 +227,7 @@ class SettingsPage extends StatelessWidget {
             );
           },
         ),
-        if (!isFdroidBuild)
+        if (!isFdroidBuild && isMobilePlatform)
           ValueListenableBuilder<bool?>(
             valueListenable: shouldWeCheckUpdates,
             builder: (_, value, __) {
@@ -429,7 +454,7 @@ class SettingsPage extends StatelessWidget {
             }
           },
         ),
-        if (!isFdroidBuild)
+        if (!isFdroidBuild && isMobilePlatform)
           CustomBar(
             context.l10n!.downloadAppUpdate,
             FluentIcons.arrow_download_24_regular,
@@ -533,6 +558,54 @@ class SettingsPage extends StatelessWidget {
   }
 
   void _showAccentColorPicker(BuildContext context) {
+    if (isDesktopPlatform) {
+      _showPickerDialog(
+        context,
+        title: context.l10n!.accentColor,
+        content: GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 10,
+            mainAxisSpacing: 10,
+            crossAxisSpacing: 10,
+          ),
+          itemCount: availableColors.length,
+          itemBuilder: (context, index) {
+            final color = availableColors[index];
+            final isSelected = color == primaryColorSetting;
+
+            return InkWell(
+              customBorder: const CircleBorder(),
+              onTap: () => _selectAccentColor(context, color),
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: color,
+                  shape: BoxShape.circle,
+                  border: isSelected
+                      ? Border.all(
+                          color: Theme.of(context).colorScheme.onSurface,
+                          width: 3,
+                        )
+                      : null,
+                ),
+                child: isSelected
+                    ? Icon(
+                        FluentIcons.checkmark_20_filled,
+                        color: color.computeLuminance() > 0.5
+                            ? Colors.black
+                            : Colors.white,
+                        size: 20,
+                      )
+                    : null,
+              ),
+            );
+          },
+        ),
+      );
+      return;
+    }
+
     final colorScheme = Theme.of(context).colorScheme;
 
     showCustomBottomSheet(
@@ -553,20 +626,7 @@ class SettingsPage extends StatelessWidget {
             final isSelected = color == primaryColorSetting;
 
             return GestureDetector(
-              onTap: () {
-                addOrUpdateData<int>(
-                  'settings',
-                  'accentColor',
-                  color.toARGB32(),
-                );
-                Musify.updateAppState(
-                  context,
-                  newAccentColor: color,
-                  useSystemColor: false,
-                );
-                showToast(context, context.l10n!.accentChangeMsg);
-                Navigator.pop(context);
-              },
+              onTap: () => _selectAccentColor(context, color),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
                 decoration: BoxDecoration(
@@ -593,13 +653,62 @@ class SettingsPage extends StatelessWidget {
     );
   }
 
+  void _selectAccentColor(BuildContext context, Color color) {
+    addOrUpdateData<int>('settings', 'accentColor', color.toARGB32());
+    Musify.updateAppState(
+      context,
+      newAccentColor: color,
+      useSystemColor: false,
+    );
+    showToast(context, context.l10n!.accentChangeMsg);
+    Navigator.pop(context);
+  }
+
   void _showThemeModePicker(BuildContext context) {
     final availableModes = [ThemeMode.system, ThemeMode.light, ThemeMode.dark];
-    const modeIcons = [
-      FluentIcons.phone_24_regular,
+    final modeIcons = [
+      if (isDesktopPlatform)
+        FluentIcons.desktop_24_regular
+      else
+        FluentIcons.phone_24_regular,
       FluentIcons.weather_sunny_24_regular,
       FluentIcons.weather_moon_24_regular,
     ];
+    final modeNames = [
+      context.l10n!.themeModeSystem,
+      context.l10n!.themeModeLight,
+      context.l10n!.themeModeDark,
+    ];
+
+    Widget buildModeBar(int index) {
+      final mode = availableModes[index];
+
+      return BottomSheetBar(
+        modeNames[index],
+        () {
+          addOrUpdateData<int>('settings', 'themeIndex', mode.index);
+          Musify.updateAppState(context, newThemeMode: mode);
+          Navigator.pop(context);
+        },
+        themeMode == mode,
+        icon: modeIcons[index],
+      );
+    }
+
+    if (isDesktopPlatform) {
+      _showPickerDialog(
+        context,
+        title: context.l10n!.themeMode,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (var index = 0; index < availableModes.length; index++)
+              buildModeBar(index),
+          ],
+        ),
+      );
+      return;
+    }
 
     showCustomBottomSheet(
       context,
@@ -608,25 +717,7 @@ class SettingsPage extends StatelessWidget {
         physics: const BouncingScrollPhysics(),
         padding: commonListViewBottomPadding,
         itemCount: availableModes.length,
-        itemBuilder: (context, index) {
-          final mode = availableModes[index];
-          final modeNames = [
-            context.l10n!.themeModeSystem,
-            context.l10n!.themeModeLight,
-            context.l10n!.themeModeDark,
-          ];
-
-          return BottomSheetBar(
-            modeNames[mode.index],
-            () {
-              addOrUpdateData<int>('settings', 'themeIndex', mode.index);
-              Musify.updateAppState(context, newThemeMode: mode);
-              Navigator.pop(context);
-            },
-            themeMode == mode,
-            icon: modeIcons[mode.index],
-          );
-        },
+        itemBuilder: (context, index) => buildModeBar(index),
       ),
     );
   }
@@ -639,6 +730,35 @@ class SettingsPage extends StatelessWidget {
         ? '$activeLanguageCode-$activeScriptCode'
         : activeLanguageCode;
 
+    Widget buildLanguageBar(int index) {
+      final language = availableLanguages[index];
+      final newLocale = getLocaleFromLanguageCode(language);
+      final newLocaleFullCode = newLocale.scriptCode != null
+          ? '${newLocale.languageCode}-${newLocale.scriptCode}'
+          : newLocale.languageCode;
+
+      return BottomSheetBar(getLanguageDisplayName(context, language), () {
+        addOrUpdateData<String>('settings', 'languageCode', newLocaleFullCode);
+        Musify.updateAppState(context, newLocale: newLocale);
+        showToast(context, context.l10n!.languageMsg);
+        Navigator.pop(context);
+      }, activeLanguageFullCode == newLocaleFullCode);
+    }
+
+    if (isDesktopPlatform) {
+      _showPickerDialog(
+        context,
+        title: context.l10n!.language,
+        height: 460,
+        content: ListView.builder(
+          padding: commonListViewBottomPadding,
+          itemCount: availableLanguages.length,
+          itemBuilder: (context, index) => buildLanguageBar(index),
+        ),
+      );
+      return;
+    }
+
     showCustomBottomSheet(
       context,
       ListView.builder(
@@ -646,24 +766,7 @@ class SettingsPage extends StatelessWidget {
         physics: const BouncingScrollPhysics(),
         padding: commonListViewBottomPadding,
         itemCount: availableLanguages.length,
-        itemBuilder: (context, index) {
-          final language = availableLanguages[index];
-          final newLocale = getLocaleFromLanguageCode(language);
-          final newLocaleFullCode = newLocale.scriptCode != null
-              ? '${newLocale.languageCode}-${newLocale.scriptCode}'
-              : newLocale.languageCode;
-
-          return BottomSheetBar(getLanguageDisplayName(context, language), () {
-            addOrUpdateData<String>(
-              'settings',
-              'languageCode',
-              newLocaleFullCode,
-            );
-            Musify.updateAppState(context, newLocale: newLocale);
-            showToast(context, context.l10n!.languageMsg);
-            Navigator.pop(context);
-          }, activeLanguageFullCode == newLocaleFullCode);
-        },
+        itemBuilder: (context, index) => buildLanguageBar(index),
       ),
     );
   }
@@ -681,6 +784,37 @@ class SettingsPage extends StatelessWidget {
       FluentIcons.speaker_2_24_filled,
     ];
 
+    Widget buildQualityBar(int index) {
+      final quality = availableQualities[index];
+
+      return BottomSheetBar(
+        qualityNames[index],
+        () {
+          addOrUpdateData<String>('settings', 'audioQuality', quality);
+          audioQualitySetting.value = quality;
+          showToast(context, context.l10n!.audioQualityMsg);
+          Navigator.pop(context);
+        },
+        audioQualitySetting.value == quality,
+        icon: qualityIcons[index],
+      );
+    }
+
+    if (isDesktopPlatform) {
+      _showPickerDialog(
+        context,
+        title: context.l10n!.audioQuality,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (var index = 0; index < availableQualities.length; index++)
+              buildQualityBar(index),
+          ],
+        ),
+      );
+      return;
+    }
+
     showCustomBottomSheet(
       context,
       ListView.builder(
@@ -688,22 +822,34 @@ class SettingsPage extends StatelessWidget {
         physics: const BouncingScrollPhysics(),
         padding: commonListViewBottomPadding,
         itemCount: availableQualities.length,
-        itemBuilder: (context, index) {
-          final quality = availableQualities[index];
-
-          return BottomSheetBar(
-            qualityNames[index],
-            () {
-              addOrUpdateData<String>('settings', 'audioQuality', quality);
-              audioQualitySetting.value = quality;
-              showToast(context, context.l10n!.audioQualityMsg);
-              Navigator.pop(context);
-            },
-            audioQualitySetting.value == quality,
-            icon: qualityIcons[index],
-          );
-        },
+        itemBuilder: (context, index) => buildQualityBar(index),
       ),
+    );
+  }
+
+  void _showPickerDialog(
+    BuildContext context, {
+    required String title,
+    required Widget content,
+    double? height,
+  }) {
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: Text(title),
+          contentPadding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+          content: SizedBox(width: 420, height: height, child: content),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: Text(
+                MaterialLocalizations.of(dialogContext).cancelButtonLabel,
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
