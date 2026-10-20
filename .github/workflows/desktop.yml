@@ -51,7 +51,7 @@ jobs:
           else
             export MUSIFY_TEST_LIBMPV="$(pwd)/build/windows/x64/runner/Release/libmpv-2.dll"
           fi
-          flutter test test/desktop_audio_native_test.dart
+          flutter test test/desktop/audio_native_test.dart test/desktop/media_handler_native_test.dart
       - name: Check Linux startup
         if: runner.os == 'Linux'
         run: dbus-run-session -- xvfb-run -a python .github/scripts/check_desktop_startup.py build/linux/x64/release/bundle/musify

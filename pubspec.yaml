@@ -16,6 +16,8 @@ dependencies:
   audio_service: ^0.18.19
   audio_session: ^0.2.4
   cached_network_image: ^4.0.4
+  crypto: ^3.0.7
+  dbus: ^0.8.0
   dynamic_color: ^2.1.0
   file_picker: ^13.1.0
   fluentui_system_icons: ^1.1.273

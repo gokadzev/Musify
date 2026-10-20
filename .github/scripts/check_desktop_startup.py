@@ -27,7 +27,12 @@ def main():
             output.seek(0)
             logs = output.read()
             print(logs)
-        for failure in ("Initialization Error", "LateInitializationError", "MissingPluginException"):
+        for failure in (
+            "Initialization Error",
+            "LateInitializationError",
+            "MissingPluginException",
+            "Could not initialize Linux media controls",
+        ):
             assert failure not in logs, f"Startup failed: {failure}"
     print("Musify remained open without initialization errors.")
 
