@@ -11,7 +11,7 @@ import 'package:musify/services/audio_service.dart';
 import 'package:musify/services/linux_media_controls.dart';
 import 'package:musify/services/settings_manager.dart';
 
-import 'support/audio_fixture.dart';
+import '../support/audio_fixture.dart';
 
 void main() {
   final library = Platform.environment['MUSIFY_TEST_LIBMPV'];

@@ -7,7 +7,7 @@ import 'package:just_audio_media_kit/mediakit_player.dart';
 import 'package:just_audio_platform_interface/just_audio_platform_interface.dart';
 import 'package:media_kit/media_kit.dart';
 
-import 'support/audio_fixture.dart';
+import '../support/audio_fixture.dart';
 
 void main() {
   final library = Platform.environment['MUSIFY_TEST_LIBMPV'];

@@ -55,7 +55,6 @@ import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
 late MusifyAudioHandler audioHandler;
 LinuxMediaControls? linuxMediaControls;
-final desktopMediaArtwork = DesktopMediaArtwork();
 StreamSubscription<String?>? sharingIntentSubscription;
 StreamSubscription<Uri?>? appLinksSubscription;
 
@@ -328,6 +327,7 @@ Future<void> initialisation() async {
     }
 
     if (!kIsWeb && defaultTargetPlatform == TargetPlatform.linux) {
+      final artwork = DesktopMediaArtwork();
       final controls = LinuxMediaControls(
         handler: audioHandler,
         skipToNext: () => audioHandler.skipToNext(
@@ -336,7 +336,7 @@ Future<void> initialisation() async {
         skipToPrevious: () => audioHandler.skipToPrevious(
           playWhenReady: audioHandler.shouldContinuePlayback,
         ),
-        resolveArtwork: desktopMediaArtwork.resolve,
+        resolveArtwork: artwork.resolve,
         volume: () => audioHandler.volume,
         volumeStream: audioHandler.volumeStream,
         setVolume: audioHandler.setVolume,
