@@ -170,6 +170,36 @@ try:
         assert snapshot(role)['data']['wrappedListeningStats']['currentMonth']['totalSeconds'] == 0
     record('explicit recap clear does not resurrect from a paired device')
 
+    reset({'wrappedListeningStats': recap(300)}, {'wrappedListeningStats': recap(300)}, {'wrappedListeningStats': recap(300)})
+    sync('a', 'b')
+    sync('b', 'c')
+    command('a', 'clearRecapAndListen')
+    command('a', 'automatic')
+    assert all(snapshot(role)['data']['wrappedListeningStats']['currentMonth']['totalSeconds'] == 60 for role in ['a', 'b', 'c'])
+    record('resuming playback before syncing a clear preserves the new one-minute recap')
+
+    reset({'likedRadioStations': ['a']}, {'likedRadioStations': ['b']})
+    sync('a', 'b')
+    sync('b', 'c')
+    command('a', 'addRadio', station='c')
+    command('a', 'automatic')
+    assert all(set(snapshot(role)['data']['likedRadioStations']) == {'a', 'b', 'c'} for role in ['a', 'b', 'c'])
+    record('editing radio favourites preserves imported stations across three peers')
+
+    history = {'2026-09': month(300)}
+    reset(*[{'wrappedListeningStats': recap(300, history)} for _ in range(3)])
+    sync('a', 'b')
+    sync('b', 'c')
+    command('a', 'edit', data={'wrappedListeningStats': recap(300)})
+    command('b', 'edit', data={'wrappedListeningStats': recap(300, {'2026-09': month(200)})})
+    command('a', 'automatic')
+    assert all('2026-09' not in snapshot(role)['data']['wrappedListeningStats']['history'] for role in ['a', 'b', 'c'])
+    command('b', 'edit', data={'wrappedListeningStats': recap(300, {'2026-09': month(10)})})
+    command('b', 'automatic')
+    assert all(snapshot(role)['data']['wrappedListeningStats']['history']['2026-09']['totalSeconds'] == 600 for role in ['a', 'b', 'c'])
+    record('concurrent history removal wins, then an intentional re-add propagates')
+
+
     reset({'likedSongs': [song('private-a')], 'wrappedListeningStats': recap(200)}, {'likedSongs': [song('private-b')], 'wrappedListeningStats': recap(300)})
     command('b', 'categories', categories=['recap'])
     sync('a', 'b')

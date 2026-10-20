@@ -4,6 +4,13 @@ on:
   workflow_dispatch:
   pull_request:
     paths:
+      - 'lib/main.dart'
+      - 'lib/screens/settings_page.dart'
+      - 'lib/services/common_services.dart'
+      - 'lib/services/listening_stats_service.dart'
+      - 'lib/utilities/listening_stats_utils.dart'
+      - 'pubspec*'
+      - 'android/app/src/main/AndroidManifest.xml'
       - 'lib/services/local_sync/**'
       - 'lib/services/local_sync_service.dart'
       - 'lib/services/library_merge_service.dart'

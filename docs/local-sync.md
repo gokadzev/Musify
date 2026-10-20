@@ -47,9 +47,17 @@ month is copied. The recap UI continues to apply upstream retention and song
 limits. Explicitly clearing the recap starts a new generation so an older peer
 cannot restore the cleared listening data.
 
+The current library format is version 3. Update both devices before syncing;
+older peers are refused before a library is sent, and existing data and pairing
+secrets are retained. Version-2 local metadata is migrated automatically.
+
 Changes use logical versions and stable device tie breaks, rather than relying
 on wall-clock modification times. Two simultaneous edits to the same item have
-one deterministic winner. Deletion markers prevent offline peers from reviving
+one deterministic winner. For recap and recently played, a deletion starts a
+new generation and wins edits from the previous generation. Intentionally adding
+the item again after receiving the deletion starts another generation; its old
+counts do not return. Complete recap months are selected without combining one
+month's value with another version's identity. Deletion markers prevent offline peers from reviving
 removed items; a later intentional addition can restore an item. These markers
 are retained while the devices may still need them, so sync metadata can grow.
 
@@ -57,7 +65,7 @@ are retained while the devices may still need them, so sync metadata can grow.
 
 Payloads are validated before import. Embedded playlist artwork is preserved
 (up to 16 MiB per data URI), with a 64 MiB limit on each encrypted wire message.
-Ordinary text fields retain their smaller limit. Imports keep a durable recovery journal;
+Ordinary text fields retain their smaller limit. All storage operations use a single serialized queue. Imports keep a durable recovery journal;
 if the app closes during a write, startup restores the interrupted transaction
 before retrying. Edits made after that write are preserved. A backup restore
 pauses sync while its storage files are replaced. Export a backup before enabling

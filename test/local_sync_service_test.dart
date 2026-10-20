@@ -162,7 +162,7 @@ void main() {
       'categories': ['favourites'],
       'library': {'schemaVersion': 999},
     });
-    expect(invalid.status, 400);
+    expect(invalid.status, 426);
     await server.setCategories({SyncCategory.recap});
     final excluded = await secure('merge', {
       'categories': ['favourites'],
@@ -297,6 +297,48 @@ void main() {
         repeated.body['library']['document'],
         result.body['library']['document'],
       );
+    },
+  );
+  test(
+    'an older peer is rejected before exporting library data and stays paired',
+    () async {
+      await Hive.box('user').put('likedSongs', [song('private')]);
+      final legacy = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+      addTearDown(() => legacy.close(force: true));
+      final paths = <String>[];
+      legacy.listen((request) async {
+        paths.add(request.uri.path);
+        final raw = jsonDecode(await utf8.decoder.bind(request).join());
+        final message = await SyncSecurity.open(
+          secret,
+          raw['encrypted'],
+          'api/sync/capabilities|$ownId|$peerId',
+        );
+        request.response.headers.contentType = ContentType.json;
+        request.response.write(
+          jsonEncode({
+            'encrypted': await SyncSecurity.seal(secret, {
+              'requestId': message['requestId'],
+              'categories': ['favourites'],
+            }, 'api/sync/capabilities|$peerId|$ownId'),
+          }),
+        );
+        await request.response.close();
+      });
+      await server.syncWith(
+        DiscoveredSyncDevice(
+          deviceId: peerId,
+          name: 'Old peer',
+          ip: '127.0.0.1',
+          port: legacy.port,
+        ),
+      );
+      expect(paths, ['/api/sync/capabilities']);
+      expect(server.state.value.status, LocalSyncStatus.error);
+      expect(server.state.value.errorMessage, contains('Update both devices'));
+      expect(server.pairedDevices.value.single.secret, secret);
+      expect(Hive.box('userNoBackup').get('localSyncDocumentV2'), isNull);
+      expect(Hive.box('user').get('likedSongs')[0]['ytid'], 'private');
     },
   );
 }

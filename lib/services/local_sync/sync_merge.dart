@@ -33,7 +33,7 @@ class SyncDocument {
     : records = records ?? {};
 
   factory SyncDocument.fromMap(Map raw) {
-    if (raw['version'] != 2 ||
+    if (![2, syncSchemaVersion].contains(raw['version']) ||
         raw['records'] is! Map ||
         raw['clock'] is! int ||
         raw['clock'] < 0) {
@@ -53,14 +53,12 @@ class SyncDocument {
           cell['deleted'] is! bool) {
         throw const FormatException('Invalid sync record');
       }
-      final epoch = cell['epoch'];
-      if (epoch != null &&
-          (epoch is! List ||
-              epoch.length != 2 ||
-              epoch[0] is! int ||
-              epoch[0] < 0 ||
-              epoch[1] is! String)) {
-        throw const FormatException('Invalid recap generation');
+      if (cell['epoch'] != null) _validateStamp(cell['epoch']);
+      if (_aggregated(key[0])) {
+        final migrated = Map<String, dynamic>.from(cell)
+          ..putIfAbsent('generation', () => _generation(cell));
+        _validateStamp(migrated['generation']);
+        records[entry.key] = migrated;
       }
       if (cell['deleted'] != true) _validateValue(key, cell['value']);
     }
@@ -70,7 +68,7 @@ class SyncDocument {
   int clock;
   final Map<String, dynamic> records;
   Map<String, dynamic> toMap() => {
-    'version': 2,
+    'version': syncSchemaVersion,
     'clock': clock,
     'records': records,
   };
@@ -98,18 +96,21 @@ class SyncDocument {
   ) {
     final now = flatten(current);
     final before = baseline == null ? <String, dynamic>{} : flatten(baseline);
+    final resetKey = _key('recapReset', '', '');
     if (baseline == null && records.isEmpty) {
+      final reset = now.containsKey(resetKey) ? [++clock, device] : null;
       for (final e in now.entries) {
         records[e.key] = {
-          'clock': 0,
-          'device': '',
+          'clock': e.key == resetKey && reset != null ? clock : 0,
+          'device': e.key == resetKey && reset != null ? device : '',
           'deleted': false,
           'value': e.value,
+          if (_parts(e.key)[0] == 'recapMonth' && reset != null) 'epoch': reset,
+          if (_aggregated(_parts(e.key)[0])) 'generation': [0, ''],
         };
       }
       return;
     }
-    final resetKey = _key('recapReset', '', '');
     final resetChanged = now[resetKey] != before[resetKey];
     final edits =
         {...now.keys, ...before.keys}
@@ -125,12 +126,19 @@ class SyncDocument {
     clock++;
     final epoch = resetChanged ? [clock, device] : _epoch(records[resetKey]);
     for (final key in edits) {
+      final kind = _parts(key)[0];
+      final previous = records[key] as Map?;
+      final deleted = !now.containsKey(key);
       records[key] = {
         'clock': clock,
         'device': device,
-        'deleted': !now.containsKey(key),
+        'deleted': deleted,
         'value': now[key],
-        if (_parts(key)[0] == 'recapMonth') 'epoch': epoch,
+        if (kind == 'recapMonth') 'epoch': epoch,
+        if (_aggregated(kind))
+          'generation': deleted || previous?['deleted'] == true
+              ? [clock, device]
+              : _generation(previous),
       };
     }
   }
@@ -140,45 +148,9 @@ class SyncDocument {
     for (final entry in other.records.entries) {
       final local = records[entry.key] as Map?;
       final incoming = entry.value as Map;
-      var winner = local == null || _compare(incoming, local) > 0
+      final winner = local == null
           ? incoming
-          : local;
-      if (local != null &&
-          _parts(entry.key)[0] == 'recentlyPlayedSongs' &&
-          local['deleted'] != true &&
-          incoming['deleted'] != true) {
-        final left = Map<String, dynamic>.from(local['value']);
-        final right = Map<String, dynamic>.from(incoming['value']);
-        final latest = _date(right['lastPlayed'])
-            .compareTo(_date(left['lastPlayed']));
-        final value = Map<String, dynamic>.from(
-          latest > 0
-              ? right
-              : latest < 0
-              ? left
-              : winner['value'],
-        );
-        value['listeningCount'] = _max(
-          _integer(left['listeningCount']),
-          _integer(right['listeningCount']),
-        );
-        winner = {...winner, 'value': value};
-      }
-      if (local != null &&
-          _parts(entry.key)[0] == 'recapMonth' &&
-          local['deleted'] != true &&
-          incoming['deleted'] != true) {
-        final left = Map<String, dynamic>.from(local['value']);
-        final right = Map<String, dynamic>.from(incoming['value']);
-        winner = {
-          ...winner,
-          ...(_compareEpoch(local['epoch'], incoming['epoch']) > 0
-              ? local
-              : _compareEpoch(local['epoch'], incoming['epoch']) < 0
-              ? incoming
-              : {'value': _compareMonth(left, right) >= 0 ? left : right}),
-        };
-      }
+          : _mergeCell(_parts(entry.key)[0], local, incoming);
       if (canonicalSync(local) != canonicalSync(winner)) {
         records[entry.key] = Map<String, dynamic>.from(winner);
         changes++;
@@ -189,6 +161,58 @@ class SyncDocument {
       clock = _max(clock, cell['clock'] as int);
     }
     return changes;
+  }
+
+  static bool _aggregated(String kind) =>
+      kind == 'recapMonth' || kind == 'recentlyPlayedSongs';
+
+  // Deletions and explicit re-adds start a new generation.
+  static List<dynamic> _generation(Map? cell) =>
+      cell?['generation'] as List? ??
+      (cell?['deleted'] == true ? _epoch(cell) : [0, '']);
+
+  static void _validateStamp(dynamic stamp) {
+    if (stamp is! List ||
+        stamp.length != 2 ||
+        stamp[0] is! int ||
+        stamp[0] < 0 ||
+        stamp[1] is! String ||
+        stamp[1].length > 128)
+      throw const FormatException('Invalid sync generation');
+  }
+
+  static Map _mergeCell(String kind, Map a, Map b) {
+    final newest = _compare(a, b) >= 0 ? a : b;
+    if (!_aggregated(kind)) return newest;
+    if (kind == 'recapMonth') {
+      final epoch = _compareEpoch(a['epoch'], b['epoch']);
+      if (epoch != 0) return epoch > 0 ? a : b;
+    }
+    final generation = _compareEpoch(_generation(a), _generation(b));
+    if (generation != 0) return generation > 0 ? a : b;
+    if (a['deleted'] == true || b['deleted'] == true) {
+      if (a['deleted'] == b['deleted']) return newest;
+      return a['deleted'] == true ? a : b;
+    }
+    if (kind == 'recapMonth') {
+      final month = _compareMonth(a['value'], b['value']);
+      return month == 0 ? newest : (month > 0 ? a : b);
+    }
+    final left = Map<String, dynamic>.from(a['value']);
+    final right = Map<String, dynamic>.from(b['value']);
+    final count = _max(
+      _integer(left.remove('listeningCount')),
+      _integer(right.remove('listeningCount')),
+    );
+    final date = _date(left['lastPlayed'])
+        .compareTo(_date(right['lastPlayed']));
+    final order = date != 0
+        ? date
+        : canonicalSync(left).compareTo(canonicalSync(right));
+    return {
+      ...newest,
+      'value': {...(order >= 0 ? left : right), 'listeningCount': count},
+    };
   }
 
   Map<String, dynamic> materialize({DateTime? now}) {

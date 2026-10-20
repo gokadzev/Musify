@@ -308,7 +308,6 @@ class _LocalSyncPageState extends State<LocalSyncPage> {
       ('Liked songs', stats['likedSongs'] ?? 0),
       ('Playlists', (stats['playlists'] ?? 0) + (stats['likedPlaylists'] ?? 0)),
       ('Custom playlists', stats['customPlaylists'] ?? 0),
-      ('Songs in custom playlists', stats['customPlaylistSongs'] ?? 0),
       ('Playlist folders', stats['playlistFolders'] ?? 0),
       ('Recently played', stats['recentlyPlayedSongs'] ?? 0),
       ('Radio stations', stats['likedRadioStations'] ?? 0),

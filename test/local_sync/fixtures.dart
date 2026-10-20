@@ -52,7 +52,7 @@ Map<String, dynamic> payload(
 }) {
   final selected = categories ?? SyncCategory.values.toSet();
   return {
-    'schemaVersion': 2,
+    'schemaVersion': syncSchemaVersion,
     'categories': selected.map((e) => e.name).toList(),
     'document': doc.select(selected).toMap(),
   };

@@ -240,4 +240,213 @@ void main() {
     (raw['records'] as Map).values.first['value'] = {'ytid': 'different'};
     expect(() => SyncDocument.fromMap(raw), throwsFormatException);
   });
+  test('a history edit and removal converge independently of merge order', () {
+    final a = document({
+      'wrappedListeningStats': recap(0, history: {'2026-09': month(300)}),
+    });
+    final b = document({'wrappedListeningStats': recap(0)});
+    final c = copyDocument(a);
+    b.capture(
+      {
+        'wrappedListeningStats': recap(0, history: {'2026-09': month(200)}),
+      },
+      b.materialize(),
+      'b',
+    );
+    c.capture({'wrappedListeningStats': recap(0)}, c.materialize(), 'a');
+    final left = copyDocument(a)
+      ..join(c)
+      ..join(b);
+    final right = copyDocument(b)
+      ..join(a)
+      ..join(c);
+    expect(
+      canonicalSync(left.materialize()),
+      canonicalSync(right.materialize()),
+    );
+  });
+  test('recap removal wins concurrent edits and an intentional re-add starts fresh', () {
+    final a = document({'wrappedListeningStats': recap(300)});
+    final b = copyDocument(a);
+    final base = a.materialize();
+    a.capture(
+      {
+        'wrappedListeningStats': recap(300, history: {'2026-09': month(300)}),
+      },
+      base,
+      'a',
+    );
+    final original = a.materialize();
+    b.join(a);
+    a.capture({'wrappedListeningStats': recap(300)}, original, 'a');
+    b.capture(
+      {
+        'wrappedListeningStats': recap(300, history: {'2026-09': month(400)}),
+      },
+      original,
+      'b',
+    );
+    a.join(b);
+    b.join(a);
+    expect(a.materialize()['wrappedListeningStats']['history'], isEmpty);
+    final removed = a.materialize();
+    a
+      ..capture(
+        {
+          'wrappedListeningStats': recap(300, history: {'2026-09': month(10)}),
+        },
+        removed,
+        'a',
+      )
+      ..join(b);
+    b.join(a);
+    expect(
+      a.materialize()['wrappedListeningStats']['history']['2026-09']['totalSeconds'],
+      600,
+    );
+    expect(canonicalSync(a.records), canonicalSync(b.records));
+  });
+
+  test(
+    'recent-played aggregation and removals converge under every grouping',
+    () {
+      for (var seed = 0; seed < 50; seed++) {
+        final random = Random(seed);
+        final initial = {
+          'recentlyPlayedSongs': [
+            {
+              ...song('a'),
+              'lastPlayed': '2026-10-01T10:00:00Z',
+              'listeningCount': 100,
+            },
+          ],
+        };
+        final a = document(initial),
+            b = document(initial),
+            c = document(initial);
+        final baseline = a.materialize();
+        b.capture(
+          {
+            ...baseline,
+            'recentlyPlayedSongs': [
+              {
+                ...song('a', 'title-$seed'),
+                'lastPlayed': '2026-10-02T10:00:00Z',
+                'listeningCount': random.nextInt(99),
+              },
+            ],
+          },
+          baseline,
+          'b',
+        );
+        if (seed.isEven) {
+          c.capture({...baseline, 'recentlyPlayedSongs': []}, baseline, 'c');
+        } else {
+          c.capture(
+            {
+              ...baseline,
+              'recentlyPlayedSongs': [
+                {
+                  ...song('a', 'other-$seed'),
+                  'lastPlayed': '2026-10-02T10:00:00Z',
+                  'listeningCount': random.nextInt(200),
+                },
+              ],
+            },
+            baseline,
+            'c',
+          );
+        }
+        expectConverges([a, b, c]);
+      }
+    },
+  );
+
+  test(
+    'version-2 local metadata migrates without reviving a deleted month',
+    () {
+      const key = '["recapMonth","","2026-09"]';
+      final live = SyncDocument.fromMap({
+        'version': 2,
+        'clock': 0,
+        'records': {
+          key: {
+            'clock': 0,
+            'device': '',
+            'deleted': false,
+            'value': month(300),
+          },
+        },
+      });
+      final removed = SyncDocument.fromMap({
+        'version': 2,
+        'clock': 1,
+        'records': {
+          key: {'clock': 1, 'device': 'a', 'deleted': true, 'value': null},
+        },
+      });
+      live.join(removed);
+      expect(live.toMap()['version'], syncSchemaVersion);
+      expect(live.materialize()['wrappedListeningStats']['history'], isEmpty);
+    },
+  );
+  test(
+    'recap merge is associative for concurrent months, removals and resets',
+    () {
+      for (var seed = 0; seed < 50; seed++) {
+        final random = Random(seed);
+        final a = document({
+          'wrappedListeningStats': recap(
+            random.nextInt(500),
+            history: {'2026-09': month(random.nextInt(500))},
+          ),
+        });
+        final b = document({
+          'wrappedListeningStats': recap(
+            random.nextInt(500),
+            history: {'2026-09': month(random.nextInt(500))},
+          ),
+        });
+        final c = copyDocument(a);
+        final before = c.materialize();
+        c.capture(
+          {
+            'wrappedListeningStats': {
+              ...recap(random.nextInt(100)),
+              if (seed.isOdd) 'syncResetId': 'clear-$seed',
+            },
+          },
+          before,
+          'c',
+        );
+        expectConverges([a, b, c]);
+      }
+    },
+  );
+}
+
+void expectConverges(List<SyncDocument> documents) {
+  final [a, b, c] = documents;
+  final expected = copyDocument(a)
+    ..join(b)
+    ..join(c);
+  for (final order in [
+    [a, b, c],
+    [a, c, b],
+    [b, a, c],
+    [b, c, a],
+    [c, a, b],
+    [c, b, a],
+  ]) {
+    final sequential = copyDocument(order[0])
+      ..join(order[1])
+      ..join(order[2]);
+    final tail = copyDocument(order[1])..join(order[2]);
+    final grouped = copyDocument(order[0])..join(tail);
+    for (final document in [sequential, grouped]) {
+      expect(canonicalSync(document.records), canonicalSync(expected.records));
+      document.join(document);
+      expect(canonicalSync(document.records), canonicalSync(expected.records));
+    }
+  }
 }

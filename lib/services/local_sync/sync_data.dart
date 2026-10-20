@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
 
+const syncSchemaVersion = 3;
 const maxSyncImageCharacters = 16 * 1024 * 1024;
 const maxSyncMessageBytes = 64 * 1024 * 1024;
 

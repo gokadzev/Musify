@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
+import 'package:musify/services/common_services.dart';
 import 'package:musify/services/library_merge_service.dart';
 import 'package:musify/services/listening_stats_service.dart';
 import 'package:musify/services/local_sync/sync_data.dart';
@@ -115,6 +116,15 @@ void main() {
             await Hive.box('user')
                 .putAll(decodeSyncValue(command['data']) as Map);
             listeningStatsService.reload();
+          } else if (op == 'addRadio') {
+            await addRadioStationToLiked(command['station'] as String);
+          } else if (op == 'clearRecapAndListen') {
+            wrappedEnabled.value = true;
+            await listeningStatsService.clearStats();
+            listeningStatsService.recordListeningTime(
+              const Duration(minutes: 1),
+            );
+            await listeningStatsService.flush();
           } else if (op == 'clearRecap') {
             await listeningStatsService.clearStats();
           } else if (op == 'categories') {

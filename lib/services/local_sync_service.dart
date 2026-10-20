@@ -228,13 +228,8 @@ class LocalSyncService {
   Timer? _localChangeTimer;
   bool _initialised = false;
   bool _silentSyncRunning = false;
-  bool _mergingRemote = false;
 
   Completer<String?>? _pinInputCompleter;
-
-  /// Merges and exports touch the whole library, so an incoming request, a
-  /// manual sync and an automatic one must not interleave their writes.
-  Future<void> _mergeLock = Future.value();
 
   // Pending pairing on the receiving side.
   String? _pendingClientId;
@@ -279,10 +274,6 @@ class LocalSyncService {
     return 'Musify ($os)';
   }
 
-  // ---------------------------------------------------------------------------
-  // Lifecycle
-  // ---------------------------------------------------------------------------
-
   Future<void> initialise() async {
     if (_initialised || !isSupportedPlatform) return;
     _initialised = true;
@@ -322,7 +313,6 @@ class LocalSyncService {
     _localChangeTimer?.cancel();
     await stopServer();
     await Future.wait(_outbound.values.toList());
-    await _mergeLock;
     await LibraryMergeService.awaitIdle();
   }
 
@@ -341,10 +331,6 @@ class LocalSyncService {
     await stopServer();
     _client.close();
   }
-
-  // ---------------------------------------------------------------------------
-  // Settings
-  // ---------------------------------------------------------------------------
 
   Future<({String message, bool success})> setEnabled(bool enabled) async {
     if (!isSupportedPlatform) {
@@ -387,10 +373,6 @@ class LocalSyncService {
       _localChangeTimer?.cancel();
     }
   }
-
-  // ---------------------------------------------------------------------------
-  // Paired devices
-  // ---------------------------------------------------------------------------
 
   bool isDevicePaired(String deviceId) =>
       deviceId.isNotEmpty &&
@@ -445,10 +427,6 @@ class LocalSyncService {
     await box.put(_deviceIdKey, id);
     return id;
   }
-
-  // ---------------------------------------------------------------------------
-  // Server side
-  // ---------------------------------------------------------------------------
 
   Future<void> startServer() async {
     if (_httpServer != null) return;
@@ -702,6 +680,7 @@ class LocalSyncService {
     try {
       final auth = await _authenticated(request);
       return await _encryptedReply(request, auth.secret, auth.id, auth.nonce, {
+        'schemaVersion': LibraryMergeService.schemaVersion,
         'categories': selectedCategories.map((e) => e.name).toList(),
       });
     } catch (_) {
@@ -723,29 +702,24 @@ class LocalSyncService {
         return _json({'error': 'categories_changed'}, status: 409);
       if (auth.body['library'] is! Map)
         return _json({'error': 'library_missing'}, status: 400);
-      final result = await _withMergeLock(() async {
-        if (_httpServer == null) throw StateError('Local sync is off');
-        _mergingRemote = true;
-        try {
-          final stats = await LibraryMergeService.mergeLibrary(
-            Map<String, dynamic>.from(auth.body['library']),
-            categories: categories,
-          );
-          final library = await LibraryMergeService.exportLibrary(
-            categories: categories,
-          );
-          return (stats: stats, library: library);
-        } finally {
-          _mergingRemote = false;
-        }
-      });
+      if (auth.body['library']['schemaVersion'] !=
+          LibraryMergeService.schemaVersion)
+        return _json({'error': 'upgrade_required'}, status: 426);
+      if (_httpServer == null) throw StateError('Local sync is off');
+      final stats = await LibraryMergeService.mergeLibrary(
+        Map<String, dynamic>.from(auth.body['library']),
+        categories: categories,
+      );
+      final library = await LibraryMergeService.exportLibrary(
+        categories: categories,
+      );
       final receipt = SyncSecurity.randomToken(16);
-      _receipts['${auth.id}:$receipt'] = syncDigest(result.library);
+      _receipts['${auth.id}:$receipt'] = syncDigest(library);
       if (_receipts.length > 128) _receipts.remove(_receipts.keys.first);
-      if (result.stats.isNotEmpty) _scheduleLocalSync();
+      if (stats.isNotEmpty) _scheduleLocalSync();
       return await _encryptedReply(request, auth.secret, auth.id, auth.nonce, {
-        'library': result.library,
-        'stats': result.stats,
+        'library': library,
+        'stats': stats,
         'receipt': receipt,
       });
     } catch (e, stack) {
@@ -796,10 +770,6 @@ class LocalSyncService {
     _pendingCompleter = null;
     incomingPairingRequest.value = null;
   }
-
-  // ---------------------------------------------------------------------------
-  // Client side
-  // ---------------------------------------------------------------------------
 
   /// Broadcasts a discovery request and collects the answers for [duration].
   Future<List<DiscoveredSyncDevice>> discoverDevices({
@@ -1217,6 +1187,8 @@ class LocalSyncService {
       '/api/sync/capabilities',
       {},
     );
+    if (capabilities['schemaVersion'] != LibraryMergeService.schemaVersion)
+      throw const _LocalSyncException('Update both devices to use Local Sync.');
     final categories = selectedCategories.intersection(
       parseSyncCategories(capabilities['categories']),
     );
@@ -1225,8 +1197,8 @@ class LocalSyncService {
         'Select at least one matching category on both devices.',
       );
     onStage?.call(LocalSyncStage.exporting);
-    final library = await _withMergeLock(
-      () => LibraryMergeService.exportLibrary(categories: categories),
+    final library = await LibraryMergeService.exportLibrary(
+      categories: categories,
     );
     onStage?.call(LocalSyncStage.exchanging);
     final response = await _securePost(target, '/api/sync/merge', {
@@ -1239,7 +1211,10 @@ class LocalSyncService {
     final remote = Map<String, dynamic>.from(response['library']);
     if (_httpServer == null)
       throw const _LocalSyncException('Local sync was turned off.');
-    final localStats = await _mergeGuarded(remote, categories: categories);
+    final localStats = await LibraryMergeService.mergeLibrary(
+      remote,
+      categories: categories,
+    );
     if (localStats.isNotEmpty) _scheduleLocalSync();
     onStage?.call(LocalSyncStage.finalizing);
     final confirmation = await _securePost(target, '/api/sync/confirm', {
@@ -1259,33 +1234,6 @@ class LocalSyncService {
     _retryAfter.remove(target.deviceId);
     _retryCount.remove(target.deviceId);
     return stats;
-  }
-
-  Future<Map<String, int>> _mergeGuarded(
-    Map<String, dynamic> library, {
-    Set<SyncCategory>? categories,
-  }) {
-    return _withMergeLock(() async {
-      _mergingRemote = true;
-      try {
-        return await LibraryMergeService.mergeLibrary(
-          library,
-          categories: categories,
-        );
-      } finally {
-        _mergingRemote = false;
-      }
-    });
-  }
-
-  /// Runs [action] after every earlier locked action finished. Only local
-  /// work goes in here, never a request to another device, so two devices
-  /// syncing with each other at the same time cannot wait on one another.
-  Future<T> _withMergeLock<T>(Future<T> Function() action) {
-    final previous = _mergeLock;
-    final completer = Completer<void>();
-    _mergeLock = completer.future;
-    return previous.then((_) => action()).whenComplete(completer.complete);
   }
 
   Future<void> _recordSync(String deviceName, Map<String, int> stats) async {
@@ -1352,7 +1300,8 @@ class LocalSyncService {
       return 'Incorrect PIN. Check the code shown on ${device.name}.';
     }
     if (error is _LocalSyncHttpException) {
-      if (error.statusCode == 426) return 'Update both devices before pairing.';
+      if (error.statusCode == 426)
+        return 'Update both devices to use Local Sync.';
       if (error.message == 'incorrect_pin') {
         return 'Incorrect PIN. Check the code shown on ${device.name}.';
       }
@@ -1375,13 +1324,8 @@ class LocalSyncService {
     return 'Sync failed: $error';
   }
 
-  // ---------------------------------------------------------------------------
-  // Automatic sync triggers
-  // ---------------------------------------------------------------------------
-
   void _onLocalChange(BoxEvent event) {
-    if (_mergingRemote ||
-        !selectedCategories
+    if (!selectedCategories
             .expand((c) => syncCategoryKeys[c]!)
             .contains(event.key.toString()) ||
         !localSyncEnabled.value ||
@@ -1400,10 +1344,6 @@ class LocalSyncService {
       () => unawaited(triggerSilentSync()),
     );
   }
-
-  // ---------------------------------------------------------------------------
-  // Network helpers
-  // ---------------------------------------------------------------------------
 
   /// The limited broadcast plus each interface's /24 broadcast, so a desktop
   /// with several interfaces still reaches the Wi-Fi the phone is on.

@@ -2,9 +2,11 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive/hive.dart';
+import 'package:musify/services/common_services.dart';
 import 'package:musify/services/library_merge_service.dart';
 import 'package:musify/services/listening_stats_service.dart';
 import 'package:musify/services/local_sync/sync_data.dart';
+import 'package:musify/services/settings_manager.dart';
 
 import 'local_sync/fixtures.dart';
 
@@ -20,6 +22,7 @@ void main() {
   setUp(() async {
     LibraryMergeService.fault = null;
     listeningStatsService.reload();
+    userLikedRadioStations.value = [];
     for (final name in ['user', 'userNoBackup', 'settings', 'cache']) {
       await Hive.box(name).clear();
     }
@@ -41,7 +44,7 @@ void main() {
         categories: {SyncCategory.favourites},
       );
       final text = canonicalSync(exported);
-      expect(exported['schemaVersion'], 2);
+      expect(exported['schemaVersion'], syncSchemaVersion);
       expect(text, contains('"ytid":"a"'));
       expect(text, isNot(contains('/private/')));
       expect(text, isNot(contains('download')));
@@ -223,4 +226,68 @@ void main() {
       );
     },
   );
+  test(
+    'cleared recap stays cleared when listening resumes before the next sync',
+    () async {
+      wrappedEnabled.value = true;
+      await Hive.box('user').put('wrappedListeningStats', recap(300));
+      listeningStatsService.reload();
+      final oldPeer = await LibraryMergeService.exportLibrary(
+        categories: {SyncCategory.recap},
+      );
+      await listeningStatsService.clearStats();
+      listeningStatsService.recordListeningTime(const Duration(minutes: 1));
+      await listeningStatsService.flush();
+      await LibraryMergeService.exportLibrary(categories: {SyncCategory.recap});
+      await LibraryMergeService.mergeLibrary(
+        oldPeer,
+        categories: {SyncCategory.recap},
+      );
+      final month = Hive.box('user')
+          .get('wrappedListeningStats')['currentMonth'];
+      expect(
+        month['totalSeconds'],
+        60,
+        reason: 'An offline peer must not resurrect the 300-minute recap that was explicitly cleared.',
+      );
+    },
+  );
+  test(
+    'editing radio favourites after sync preserves imported favourites',
+    () async {
+      await LibraryMergeService.mergeLibrary(
+        payload(
+          document({
+            'likedRadioStations': ['remote'],
+          }),
+        ),
+      );
+      expect(Hive.box('user').get('likedRadioStations'), ['remote']);
+      await addRadioStationToLiked('local');
+      expect((Hive.box('user').get('likedRadioStations') as List).toSet(), {
+        'remote',
+        'local',
+      });
+    },
+  );
+  test('a recap cleared before the first sync stays cleared after importing an old peer', () async {
+    wrappedEnabled.value = true;
+    final previous = payload(
+      document({'wrappedListeningStats': recap(300)}),
+      categories: {SyncCategory.recap},
+    );
+    await Hive.box('user').put('wrappedListeningStats', recap(300));
+    await listeningStatsService.clearStats();
+    listeningStatsService.recordListeningTime(const Duration(minutes: 1));
+    await LibraryMergeService.exportLibrary(categories: {SyncCategory.recap});
+    await LibraryMergeService.mergeLibrary(
+      previous,
+      categories: {SyncCategory.recap},
+    );
+    expect(
+      Hive.box('user')
+          .get('wrappedListeningStats')['currentMonth']['totalSeconds'],
+      60,
+    );
+  });
 }

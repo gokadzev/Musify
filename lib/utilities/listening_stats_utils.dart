@@ -126,6 +126,7 @@ Map<String, dynamic> normalizeListeningStats(dynamic raw, DateTime now) {
   );
 
   final normalized = {
+    if (stats['syncResetId'] is String) 'syncResetId': stats['syncResetId'],
     'schemaVersion': wrappedListeningStatsSchemaVersion,
     'year': now.year,
     'currentMonthKey': currentMonthKeyFromStats,

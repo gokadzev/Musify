@@ -497,7 +497,6 @@ class SettingsPage extends StatelessWidget {
                   );
                   NavigationManager.refreshRouter();
                 }
-                await LocalSyncService.instance.rebindStorageListeners();
               }
               if (context.mounted) {
                 showToast(
