@@ -20,6 +20,7 @@
  */
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:app_links/app_links.dart';
 import 'package:audio_service/audio_service.dart';
@@ -51,6 +52,7 @@ import 'package:musify/utilities/language_utils.dart';
 import 'package:musify/utilities/platform_utils.dart';
 import 'package:musify/utilities/playlist_utils.dart';
 import 'package:musify/utilities/sharing_intent.dart';
+import 'package:musify/utilities/startup_support.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
@@ -284,14 +286,29 @@ class _MusifyState extends State<Musify> with WidgetsBindingObserver {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await initialisation();
+  final startupError = await initialisation();
+  if (startupError != null) {
+    runApp(StartupErrorApp(message: startupError));
+    return;
+  }
 
   runApp(const Musify());
 }
 
-Future<void> initialisation() async {
+Future<String?> initialisation() async {
+  String? startupError;
+
   try {
-    await Hive.initFlutter();
+    applicationDirPath = await _resolveApplicationDirPath();
+
+    if (isDesktopPlatform) {
+      // Older desktop builds stored Hive boxes and downloads in the document
+      // directory. Move them before Hive opens any box in the new location.
+      await _migrateLegacyDesktopDataIfNeeded(applicationDirPath);
+      Hive.init(applicationDirPath);
+    } else {
+      await Hive.initFlutter();
+    }
 
     await Future.wait([
       Hive.openBox('settings'),
@@ -322,14 +339,32 @@ Future<void> initialisation() async {
           },
         ),
       );
+      NavigationManager.instance;
     } else {
-      // Use the desktop audio backend without mobile service plugins.
-      JustAudioMediaKit.title = 'Musify';
-      JustAudioMediaKit.ensureInitialized();
-      audioHandler = MusifyAudioHandler();
+      // Init router before the audio engine so a playback failure cannot
+      // leave the widget tree without a router.
+      NavigationManager.instance;
+      try {
+        // Use the desktop audio backend without mobile service plugins.
+        JustAudioMediaKit.title = 'Musify';
+        JustAudioMediaKit.ensureInitialized();
+        audioHandler = MusifyAudioHandler();
+      } catch (e, stackTrace) {
+        logger.log(
+          'Desktop audio initialization failed',
+          error: e,
+          stackTrace: stackTrace,
+        );
+        startupError = desktopAudioErrorMessage(e);
+      }
     }
 
-    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
+    // Desktop media controls need a working audio handler. If desktop audio
+    // initialization failed, startupError is shown instead and the handler
+    // must not be touched.
+    if (startupError == null &&
+        !kIsWeb &&
+        defaultTargetPlatform == TargetPlatform.windows) {
       final artwork = DesktopMediaArtwork();
       final controls = WindowsMediaControls(
         canGoNext: () => audioHandler.canSkipToNext,
@@ -358,7 +393,9 @@ Future<void> initialisation() async {
       }
     }
 
-    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.linux) {
+    if (startupError == null &&
+        !kIsWeb &&
+        defaultTargetPlatform == TargetPlatform.linux) {
       final artwork = DesktopMediaArtwork();
       final controls = LinuxMediaControls(
         handler: audioHandler,
@@ -400,9 +437,6 @@ Future<void> initialisation() async {
       }
     }
 
-    // Init router
-    NavigationManager.instance;
-
     try {
       // Listen to incoming links while app is running
       appLinksSubscription = appLinks.uriLinkStream.listen(
@@ -420,10 +454,66 @@ Future<void> initialisation() async {
     }
   } catch (e, stackTrace) {
     logger.log('Initialization Error', error: e, stackTrace: stackTrace);
+    if (isDesktopPlatform) {
+      startupError ??= 'Musify could not complete initialization.\n\n$e';
+    }
   }
 
-  applicationDirPath = (await getApplicationDocumentsDirectory()).path;
-  await FilePaths.ensureDirectoriesExist();
+  try {
+    await FilePaths.ensureDirectoriesExist();
+  } catch (e, stackTrace) {
+    logger.log(
+      'Failed to create application directories',
+      error: e,
+      stackTrace: stackTrace,
+    );
+  }
+
+  return startupError;
+}
+
+Future<String> _resolveApplicationDirPath() async {
+  try {
+    if (isDesktopPlatform) {
+      return (await getApplicationSupportDirectory()).path;
+    }
+    return (await getApplicationDocumentsDirectory()).path;
+  } catch (e, stackTrace) {
+    logger.log(
+      'Failed to resolve application directory',
+      error: e,
+      stackTrace: stackTrace,
+    );
+    try {
+      return (await getTemporaryDirectory()).path;
+    } catch (_) {
+      return '.';
+    }
+  }
+}
+
+Future<void> _migrateLegacyDesktopDataIfNeeded(String targetPath) async {
+  // The previous desktop release was Linux-only, so do not move document
+  // files on other platforms.
+  if (!Platform.isLinux) return;
+
+  try {
+    final legacyDirectory = await getApplicationDocumentsDirectory();
+    final report = await migrateLegacyDesktopData(
+      from: legacyDirectory,
+      to: Directory(targetPath),
+      log: logger.log,
+    );
+    if (report.hasWork) {
+      logger.log('Desktop data migration: ${report.describe()}');
+    }
+  } catch (e, stackTrace) {
+    logger.log(
+      'Desktop data migration skipped',
+      error: e,
+      stackTrace: stackTrace,
+    );
+  }
 }
 
 void handleIncomingLink(Uri? uri) async {
