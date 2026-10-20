@@ -1,0 +1,53 @@
+name: Validate Local Sync
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'lib/services/local_sync/**'
+      - 'lib/services/local_sync_service.dart'
+      - 'lib/services/library_merge_service.dart'
+      - 'lib/screens/local_sync_page.dart'
+      - 'test/local_sync/**'
+      - 'test/local_sync_service_test.dart'
+      - 'test/library_merge_service_test.dart'
+      - '.github/scripts/test_local_sync_peers.py'
+      - '.github/workflows/local_sync_validation.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install native test dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libmpv-dev pulseaudio dbus-x11
+      - name: Resolve Flutter version
+        run: |
+          echo "FLUTTER_VERSION=$(sed -n 's/^  flutter: \^*//p' pubspec.yaml)" >> "$GITHUB_ENV"
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+      - run: flutter pub get
+      - run: flutter analyze
+      - name: Run automated tests
+        run: |
+          pulseaudio --start --exit-idle-time=-1
+          pactl load-module module-null-sink sink_name=musify-test
+          export MUSIFY_TEST_LIBMPV=/usr/lib/x86_64-linux-gnu/libmpv.so.2
+          dbus-run-session -- flutter test --concurrency=2
+      - name: Test three independent sync peers
+        run: python3 .github/scripts/test_local_sync_peers.py
+      - name: Save peer test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: local-sync-peer-results
+          path: build/local-sync-peer-results
+          if-no-files-found: ignore

@@ -20,6 +20,7 @@
  */
 
 import 'dart:async';
+import 'dart:math';
 
 import 'package:hive/hive.dart';
 import 'package:just_audio/just_audio.dart';
@@ -356,6 +357,10 @@ class ListeningStatsService {
       now.year,
       currentMonthKey: listeningStatsMonthKey(now),
     );
+    cleared['syncResetId'] = List.generate(
+      16,
+      (_) => Random.secure().nextInt(256).toRadixString(16).padLeft(2, '0'),
+    ).join();
     _stats = cleared;
     await deleteData('user', storageKey);
     // Persist the cleared map last so an in-flight checkpoint flush can't
@@ -363,6 +368,16 @@ class ListeningStatsService {
     if (identical(_stats, cleared)) {
       await addOrUpdateData('user', storageKey, cleared);
     }
+  }
+
+  Future<void> prepareForSync() async {
+    final raw = Hive.box('user').get(storageKey);
+    if (raw is Map &&
+        raw['schemaVersion'] != wrappedListeningStatsSchemaVersion) {
+      _readStats();
+    }
+    recordListeningSessionProgress();
+    await flush();
   }
 
   /// Writes pending stats to disk if anything changed since the last write.

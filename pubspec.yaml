@@ -17,7 +17,9 @@ dependencies:
   audio_session: ^0.2.4
   cached_network_image: ^4.0.4
   crypto: ^3.0.7
+  cryptography: ^2.9.0
   dbus: ^0.8.0
+  dsrp: ^0.5.5
   dynamic_color: ^2.1.0
   file_picker: ^13.1.0
   fluentui_system_icons: ^1.1.273
@@ -25,6 +27,7 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
+  flutter_multicast_lock: ^1.2.1
   go_router: ^18.1.0
   hive: ^2.2.3
   hive_flutter: ^1.1.0
@@ -42,6 +45,8 @@ dependencies:
     path: ./packages/receive_sharing_intent
   rxdart: ^0.28.0
   share_plus: ^13.3.1
+  shelf: ^1.4.2
+  shelf_router: ^1.1.4
   url_launcher: ^6.3.3
   youtube_explode_dart:
     path: ./packages/youtube_explode_dart

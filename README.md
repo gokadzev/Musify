@@ -28,6 +28,7 @@ Unlock the full potential of music: Stream effortlessly with one app!
 Online song search with suggestions <br/>
 Offline listening support <br/>
 Import & export your data and never lose it <br/>
+Optional local-network sync between your devices <br/>
 Add custom playlists with link <br/>
 Listening Recaps <br/>
 Spotify playlist import <br/>
@@ -44,6 +45,19 @@ Material UI & accent colors & dynamic colors (Android 12+) <br/>
 
 </center>
 
+
+---
+
+## Local Sync
+
+Optional and off by default. Musify can sync selected library data directly
+between devices on the same local network. Pair two devices once with a
+six-digit PIN, then favourites, playlists, recently played, listening recap,
+search history and radio favourites merge both ways. No account, cloud server
+or API key is needed. Settings and downloaded audio stay on the device.
+
+See [docs/local-sync.md](docs/local-sync.md) for pairing, conflict rules and
+failure handling.
 
 ---
 

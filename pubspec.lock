@@ -177,6 +177,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.7"
+  cryptography:
+    dependency: "direct main"
+    description:
+      name: cryptography
+      sha256: "3eda3029d34ec9095a27a198ac9785630fe525c0eb6a49f3d575272f8e792ef0"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.9.0"
   csslib:
     dependency: transitive
     description:
@@ -201,6 +209,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.8.0"
+  dsrp:
+    dependency: "direct main"
+    description:
+      name: dsrp
+      sha256: e863b162aa9eacb11b99a6fbad538c63b593d236d668ac1d6629fd2ceb8d60fa
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.5.5"
   dynamic_color:
     dependency: "direct main"
     description:
@@ -315,6 +331,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_multicast_lock:
+    dependency: "direct main"
+    description:
+      name: flutter_multicast_lock
+      sha256: "148ff4a5e3f3231fc0fdb049fa2c4769e9222d4774c1404633907803375a59b3"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -381,6 +405,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.6.0"
+  http_methods:
+    dependency: transitive
+    description:
+      name: http_methods
+      sha256: "6bccce8f1ec7b5d701e7921dca35e202d425b57e317ba1a37f2638590e29e566"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.1"
   http_parser:
     dependency: transitive
     description:
@@ -739,6 +771,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.2.0"
+  shelf:
+    dependency: "direct main"
+    description:
+      name: shelf
+      sha256: e75e9cf311d7fd712048038cc17c25199c38536c20330d53e7db058b543d5a48
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.4.3"
+  shelf_router:
+    dependency: "direct main"
+    description:
+      name: shelf_router
+      sha256: "2b3eb66f2e7651c9f0af28538e0de53bc02dc102d965d55b13e6ffceafad10e3"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.5"
   simple_sparse_list:
     dependency: transitive
     description:

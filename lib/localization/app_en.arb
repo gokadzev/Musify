@@ -287,5 +287,19 @@
   "useProxyDescription": "Use the proxy only when streaming fails, unnecessary use may break playback.",
   "userPlaylists": "User playlists",
   "yes": "Yes",
-  "youtubePlaylistLinkOrId": "YouTube playlist link or ID"
+  "youtubePlaylistLinkOrId": "YouTube playlist link or ID",
+  "syncTitle": "Local sync",
+  "syncData": "Choose what to sync",
+  "syncSelections": "Only categories enabled on both devices are exchanged. Settings and downloaded audio files stay on this device.",
+  "syncFavourites": "Liked songs",
+  "syncPlaylists": "Playlists, folders and pins",
+  "syncRecent": "Recently played",
+  "syncRecap": "Listening recap",
+  "syncSearches": "Search history",
+  "syncRadio": "Liked radio stations",
+  "syncPairTitle": "Pair with this device?",
+  "syncPinInstructions": "Enter the six-digit PIN shown on the other device.",
+  "syncPinInvalid": "Enter the six-digit code",
+  "syncPairDescription": "Type this PIN on the device requesting access. Pairing finishes automatically. Cancel requests you did not start.",
+  "syncUnchanged": "No selected data changed."
 }
