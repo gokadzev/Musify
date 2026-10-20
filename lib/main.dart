@@ -299,12 +299,20 @@ Future<String?> initialisation() async {
   String? startupError;
 
   try {
-    applicationDirPath = await _resolveApplicationDirPath();
+    final resolvedDirectory = await _resolveApplicationDirPath();
+    applicationDirPath = resolvedDirectory.path;
 
     if (isDesktopPlatform) {
       // Older desktop builds stored Hive boxes and downloads in the document
       // directory. Move them before Hive opens any box in the new location.
-      await _migrateLegacyDesktopDataIfNeeded(applicationDirPath);
+      if (resolvedDirectory.isFallback) {
+        logger.log(
+          'Skipping desktop data migration: application support directory '
+          'could not be resolved',
+        );
+      } else {
+        await _migrateLegacyDesktopDataIfNeeded(applicationDirPath);
+      }
       Hive.init(applicationDirPath);
     } else {
       await Hive.initFlutter();
@@ -472,12 +480,18 @@ Future<String?> initialisation() async {
   return startupError;
 }
 
-Future<String> _resolveApplicationDirPath() async {
+Future<({String path, bool isFallback})> _resolveApplicationDirPath() async {
   try {
     if (isDesktopPlatform) {
-      return (await getApplicationSupportDirectory()).path;
+      return (
+        path: (await getApplicationSupportDirectory()).path,
+        isFallback: false,
+      );
     }
-    return (await getApplicationDocumentsDirectory()).path;
+    return (
+      path: (await getApplicationDocumentsDirectory()).path,
+      isFallback: false,
+    );
   } catch (e, stackTrace) {
     logger.log(
       'Failed to resolve application directory',
@@ -485,18 +499,14 @@ Future<String> _resolveApplicationDirPath() async {
       stackTrace: stackTrace,
     );
     try {
-      return (await getTemporaryDirectory()).path;
+      return (path: (await getTemporaryDirectory()).path, isFallback: true);
     } catch (_) {
-      return '.';
+      return (path: '.', isFallback: true);
     }
   }
 }
 
 Future<void> _migrateLegacyDesktopDataIfNeeded(String targetPath) async {
-  // The previous desktop release was Linux-only, so do not move document
-  // files on other platforms.
-  if (!Platform.isLinux) return;
-
   try {
     final legacyDirectory = await getApplicationDocumentsDirectory();
     final report = await migrateLegacyDesktopData(

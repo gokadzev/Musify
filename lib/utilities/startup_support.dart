@@ -141,6 +141,18 @@ const List<String> legacyDesktopBoxNames = [
 /// Download directories written by previous desktop builds.
 const List<String> legacyDesktopDataDirs = ['tracks', 'artworks'];
 
+/// Whether [directory] contains a Hive box written by an older desktop build.
+///
+/// Downloads are only migrated when this is true, so an unrelated documents
+/// folder is left untouched.
+Future<bool> hasLegacyDesktopHiveBoxes(Directory directory) async {
+  for (final box in legacyDesktopBoxNames) {
+    final file = File('${directory.path}${Platform.pathSeparator}$box.hive');
+    if (await file.exists()) return true;
+  }
+  return false;
+}
+
 /// Outcome of [migrateLegacyDesktopData].
 class DesktopDataMigration {
   const DesktopDataMigration({
@@ -182,6 +194,7 @@ Future<DesktopDataMigration> migrateLegacyDesktopData({
   }
 
   await to.create(recursive: true);
+  final canMigrateDownloads = await hasLegacyDesktopHiveBoxes(from);
 
   for (final box in legacyDesktopBoxNames) {
     for (final extension in const ['.hive', '.lock']) {
@@ -208,6 +221,13 @@ Future<DesktopDataMigration> migrateLegacyDesktopData({
   for (final name in legacyDesktopDataDirs) {
     final source = Directory('${from.path}${Platform.pathSeparator}$name');
     if (!await source.exists()) continue;
+
+    if (!canMigrateDownloads) {
+      log?.call(
+        'Leaving $name in the documents directory: no legacy Hive box found',
+      );
+      continue;
+    }
 
     final target = Directory('${to.path}${Platform.pathSeparator}$name');
     try {
