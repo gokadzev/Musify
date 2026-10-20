@@ -1,5 +1,8 @@
+import 'dart:async';
 import 'dart:collection';
 
+import 'package:collection/collection.dart';
+import 'package:http/http.dart' as http;
 import 'package:logging/logging.dart';
 
 import '../../exceptions/exceptions.dart';
@@ -12,20 +15,11 @@ import '../../reverse_engineering/pages/watch_page.dart';
 import '../../reverse_engineering/youtube_http_client.dart';
 import '../video_id.dart';
 import '../youtube_api_client.dart';
+import 'mixins/hls_stream_info.dart';
 import 'stream_controller.dart';
 import 'streams.dart';
 
-/// Builds the HTTP headers that must accompany any request to a stream URL
-/// minted by [client] (both the manifest-validation HEAD check and the
-/// actual byte-range download).
-///
-/// YouTube's googlevideo.com CDN ties a streaming URL to the identity of the
-/// client that requested it (in particular its `User-Agent`) for app-style
-/// clients such as ANDROID_VR, ANDROID, and IOS. Requesting that URL later
-/// with a different (e.g. generic desktop-Chrome) `User-Agent` reliably
-/// yields an HTTP 403, even though the URL itself is valid and doesn't
-/// require a PO Token. This mismatch — not an invalid/expired URL — is the
-/// most common cause of "returned 403 (stream: ...)" errors.
+/// Builds the headers associated with [client] for requests to its stream URLs.
 Map<String, String> clientRequestHeaders(YoutubeApiClient client) {
   final clientCtx = client.payload['context']?['client'];
   final userAgent = clientCtx is Map ? clientCtx['userAgent'] as String? : null;
@@ -119,8 +113,9 @@ class StreamClient {
       _logger.fine(
           'Getting stream manifest for video $videoId with client: ${client.payload['context']['client']['clientName']}');
       try {
+        late List<StreamInfo> streams;
         await retry(_httpClient, () async {
-          final streams = await _getStreams(
+          streams = await _getStreams(
             videoId,
             ytClient: client,
             requireWatchPage: requireWatchPage,
@@ -130,21 +125,10 @@ class StreamClient {
               'Video "$videoId" does not contain any playable streams.',
             );
           }
-
-          // Must use the same User-Agent/headers the client used to obtain
-          // this URL, or googlevideo.com will return 403 even for a
-          // perfectly valid, PO-Token-exempt stream.
-          final response = await _httpClient.head(
-            streams.first.url,
-            headers: clientRequestHeaders(client),
-          );
-          if (response.statusCode == 403) {
-            throw YoutubeExplodeException(
-              'Video $videoId returned 403 (stream: ${streams.first.tag})',
-            );
-          }
-          uniqueStreams.addAll(streams);
         });
+
+        await _probeStream(videoId, streams, client);
+        uniqueStreams.addAll(streams);
       } catch (e, s) {
         _logger.severe(
             'Failed to get stream manifest for video $videoId with client: ${client.payload['context']['client']['clientName']}. Reason: $e\n',
@@ -197,6 +181,95 @@ class StreamClient {
     return hlsManifest;
   }
 
+  static const _probeBytes = 1024;
+  static const _probeOffset = 1024 * 1024;
+  static const _probeTimeout = Duration(seconds: 5);
+
+  Future<void> _probeStream(
+    Object videoId,
+    List<StreamInfo> streams,
+    YoutubeApiClient client,
+  ) async {
+    final stream =
+        streams.whereType<AudioOnlyStreamInfo>().firstOrNull ?? streams.first;
+    final headers = clientRequestHeaders(client);
+
+    if (stream is HlsStreamInfo || stream.fragments.isNotEmpty) {
+      final response = await _httpClient.head(stream.url, headers: headers);
+      if (response.statusCode == 403) {
+        throw YoutubeExplodeException(
+          'Video $videoId returned 403 (stream: ${stream.tag})',
+        );
+      }
+      return;
+    }
+
+    final total = stream.size.totalBytes;
+    final starts = [0, if (total > _probeOffset + _probeBytes) _probeOffset];
+    await Future.wait(starts.map((from) async {
+      final status = await _probeStatus(videoId, stream, {
+        ...headers,
+        'Range': 'bytes=$from-${from + _probeBytes - 1}',
+      });
+      if (status == 403) {
+        throw YoutubeExplodeException(
+          'Video $videoId returned 403 at byte $from (stream: ${stream.tag})',
+        );
+      }
+    }));
+  }
+
+  Future<int> _probeStatus(
+    Object videoId,
+    StreamInfo stream,
+    Map<String, String> headers,
+  ) async {
+    for (var attempt = 1;; attempt++) {
+      final abortTrigger = Completer<void>();
+      final request = http.AbortableRequest(
+        'GET',
+        stream.url,
+        abortTrigger: abortTrigger.future,
+      )..headers.addAll(headers);
+      http.StreamedResponse response;
+      try {
+        response = await _httpClient.send(request).timeout(_probeTimeout);
+      } on TimeoutException {
+        abortTrigger.complete();
+        if (attempt >= 2) {
+          throw YoutubeExplodeException(
+            'Video $videoId: stream ${stream.tag} did not answer a probe '
+            'within ${_probeTimeout.inSeconds}s (client stalled?)',
+          );
+        }
+        continue;
+      } on Exception {
+        if (attempt >= 2 || _httpClient.closed) rethrow;
+        continue;
+      }
+
+      final iterator = StreamIterator<List<int>>(response.stream);
+      try {
+        if (response.statusCode != 403) {
+          await iterator.moveNext().timeout(_probeTimeout);
+        }
+        return response.statusCode;
+      } on TimeoutException {
+        abortTrigger.complete();
+        if (attempt >= 2) {
+          throw YoutubeExplodeException(
+            'Video $videoId: stream ${stream.tag} did not answer a probe '
+            'within ${_probeTimeout.inSeconds}s (client stalled?)',
+          );
+        }
+      } on Exception {
+        if (attempt >= 2 || _httpClient.closed) rethrow;
+      } finally {
+        await iterator.cancel();
+      }
+    }
+  }
+
   /// Gets the actual stream which is identified by the specified metadata.
   /// Usually this downloads the bytes of the stream.
   /// For HLS streams all the fragments are concatenated into a single stream.
@@ -204,10 +277,8 @@ class StreamClient {
   /// If you already know which [YoutubeApiClient] produced [streamInfo]
   /// (e.g. because you called [getManifest] with a single explicit
   /// `ytClients: [...]`), pass it as [ytClient] (or supply [headers]
-  /// yourself) — this is the fastest and most reliable option, since
-  /// YouTube's CDN ties a stream URL to the identity (in particular the
-  /// `User-Agent`) of the client that requested it, and a mismatched
-  /// `User-Agent` commonly causes an HTTP 403 even for a perfectly valid URL.
+  /// yourself) — this avoids the additional HEAD requests used to find a
+  /// compatible set of headers automatically.
   ///
   /// If you omit both (the common case when [getManifest] was called with
   /// its default, multi-client behaviour and you can't tell which client a
