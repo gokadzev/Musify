@@ -79,6 +79,8 @@ void main() {
       raised = 0;
       controls = LinuxMediaControls(
         handler: handler,
+        skipToNext: handler.skipToNext,
+        skipToPrevious: handler.skipToPrevious,
         resolveArtwork: (source) => resolveArtwork(source),
         position: () => handler.sought ?? const Duration(seconds: 10),
         bus: DBusClient(address),

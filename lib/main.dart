@@ -330,6 +330,12 @@ Future<void> initialisation() async {
     if (!kIsWeb && defaultTargetPlatform == TargetPlatform.linux) {
       final controls = LinuxMediaControls(
         handler: audioHandler,
+        skipToNext: () => audioHandler.skipToNext(
+          playWhenReady: audioHandler.shouldContinuePlayback,
+        ),
+        skipToPrevious: () => audioHandler.skipToPrevious(
+          playWhenReady: audioHandler.shouldContinuePlayback,
+        ),
         resolveArtwork: desktopMediaArtwork.resolve,
         volume: () => audioHandler.volume,
         volumeStream: audioHandler.volumeStream,

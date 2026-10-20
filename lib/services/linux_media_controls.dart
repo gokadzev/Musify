@@ -11,6 +11,8 @@ import 'package:musify/services/desktop_media_artwork.dart';
 class LinuxMediaControls extends DBusObject {
   LinuxMediaControls({
     required this.handler,
+    required this.skipToNext,
+    required this.skipToPrevious,
     required this.volume,
     required this.volumeStream,
     required this.setVolume,
@@ -30,6 +32,8 @@ class LinuxMediaControls extends DBusObject {
   static const rootInterface = 'org.mpris.MediaPlayer2';
   static const playerInterface = '$rootInterface.Player';
   final AudioHandler handler;
+  final Future<void> Function() skipToNext;
+  final Future<void> Function() skipToPrevious;
   final double Function() volume;
   final Stream<double> volumeStream;
   final Future<void> Function(double) setVolume;
@@ -252,7 +256,7 @@ class LinuxMediaControls extends DBusObject {
               if (_canSeek) {
                 final target = _position + offset;
                 if (target > _item!.duration!.inMicroseconds) {
-                  if (_active && canGoNext()) await handler.skipToNext();
+                  if (_active && canGoNext()) await skipToNext();
                 } else {
                   await handler.seek(
                     Duration(microseconds: target < 0 ? 0 : target),
@@ -288,9 +292,9 @@ class LinuxMediaControls extends DBusObject {
               return DBusMethodErrorResponse.invalidArgs();
             switch (methodCall.name) {
               case 'Next':
-                if (_active && canGoNext()) await handler.skipToNext();
+                if (_active && canGoNext()) await skipToNext();
               case 'Previous':
-                if (_active && canGoPrevious()) await handler.skipToPrevious();
+                if (_active && canGoPrevious()) await skipToPrevious();
               case 'Play':
                 if (_item != null && (!_active || !_state.playing))
                   await handler.play();
