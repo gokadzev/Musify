@@ -1,7 +1,6 @@
 #include "my_application.h"
 
 #include <flutter_linux/flutter_linux.h>
-#include <string.h>
 #ifdef GDK_WINDOWING_X11
 #include <gdk/gdkx.h>
 #endif
@@ -11,8 +10,6 @@
 struct _MyApplication {
   GtkApplication parent_instance;
   char** dart_entrypoint_arguments;
-  GtkWindow* window;
-  FlMethodChannel* window_channel;
 };
 
 G_DEFINE_TYPE(MyApplication, my_application, GTK_TYPE_APPLICATION)
@@ -22,24 +19,11 @@ static void first_frame_cb(MyApplication* self, FlView* view) {
   gtk_widget_show(gtk_widget_get_toplevel(GTK_WIDGET(view)));
 }
 
-static void window_method_call_cb(FlMethodChannel* channel,
-                                  FlMethodCall* method_call,
-                                  gpointer user_data) {
-  MyApplication* self = MY_APPLICATION(user_data);
-  if (strcmp(fl_method_call_get_name(method_call), "raise") == 0) {
-    gtk_window_present(self->window);
-    fl_method_call_respond_success(method_call, nullptr, nullptr);
-  } else {
-    fl_method_call_respond_not_implemented(method_call, nullptr);
-  }
-}
-
 // Implements GApplication::activate.
 static void my_application_activate(GApplication* application) {
   MyApplication* self = MY_APPLICATION(application);
   GtkWindow* window =
       GTK_WINDOW(gtk_application_window_new(GTK_APPLICATION(application)));
-  self->window = window;
 
   // Use a header bar when running in GNOME as this is the common style used
   // by applications and is the setup most users will be using (e.g. Ubuntu
@@ -91,13 +75,6 @@ static void my_application_activate(GApplication* application) {
 
   fl_register_plugins(FL_PLUGIN_REGISTRY(view));
 
-  g_autoptr(FlStandardMethodCodec) codec = fl_standard_method_codec_new();
-  self->window_channel = fl_method_channel_new(
-      fl_engine_get_binary_messenger(fl_view_get_engine(view)),
-      "musify/window", FL_METHOD_CODEC(codec));
-  fl_method_channel_set_method_call_handler(
-      self->window_channel, window_method_call_cb, self, nullptr);
-
   gtk_widget_grab_focus(GTK_WIDGET(view));
 }
 
@@ -143,7 +120,6 @@ static void my_application_shutdown(GApplication* application) {
 // Implements GObject::dispose.
 static void my_application_dispose(GObject* object) {
   MyApplication* self = MY_APPLICATION(object);
-  g_clear_object(&self->window_channel);
   g_clear_pointer(&self->dart_entrypoint_arguments, g_strfreev);
   G_OBJECT_CLASS(my_application_parent_class)->dispose(object);
 }
