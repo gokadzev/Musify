@@ -48,19 +48,6 @@ Material UI & accent colors & dynamic colors (Android 12+) <br/>
 
 ---
 
-## Local Sync
-
-Optional and off by default. Musify can sync selected library data directly
-between devices on the same local network. Pair two devices once with a
-six-digit PIN, then favourites, playlists, recently played, listening recap,
-search history and radio favourites merge both ways. No account, cloud server
-or API key is needed. Settings and downloaded audio stay on the device.
-
-See [docs/local-sync.md](docs/local-sync.md) for pairing, conflict rules and
-failure handling.
-
----
-
 ## Screenshots
 
 | ![Screenshot 1](https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/01.jpg) | ![Screenshot 2](https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/02.jpg) | ![Screenshot 3](https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/03.jpg) | ![Screenshot 4](https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/04.jpg) |
