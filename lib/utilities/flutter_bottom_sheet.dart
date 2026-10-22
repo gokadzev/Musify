@@ -19,7 +19,9 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
+import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:musify/utilities/platform_utils.dart';
 
 PersistentBottomSheetController? _currentBottomSheetController;
 
@@ -66,7 +68,9 @@ PersistentBottomSheetController? showCustomBottomSheet(
             ),
             child: SingleChildScrollView(
               padding: const EdgeInsets.only(bottom: 16),
-              child: content,
+              child: isDesktopPlatform
+                  ? _EscapeToClose(child: content)
+                  : content,
             ),
           ),
         ],
@@ -89,4 +93,50 @@ void closeCurrentBottomSheet() {
     _currentBottomSheetController?.close();
   } catch (_) {}
   _currentBottomSheetController = null;
+}
+
+// Capture Escape after the opening tap has settled.
+class _EscapeToClose extends StatefulWidget {
+  const _EscapeToClose({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_EscapeToClose> createState() => _EscapeToCloseState();
+}
+
+class _EscapeToCloseState extends State<_EscapeToClose> {
+  final _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _focusNode.requestFocus();
+    });
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Focus(
+      focusNode: _focusNode,
+      autofocus: true,
+      skipTraversal: true,
+      onKeyEvent: (node, event) {
+        if (event is KeyDownEvent &&
+            event.logicalKey == LogicalKeyboardKey.escape) {
+          closeCurrentBottomSheet();
+          return KeyEventResult.handled;
+        }
+        return KeyEventResult.ignored;
+      },
+      child: widget.child,
+    );
+  }
 }
