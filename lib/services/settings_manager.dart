@@ -25,6 +25,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:musify/screens/playlist_page.dart';
 import 'package:musify/screens/user_songs_page.dart';
 import 'package:musify/utilities/language_utils.dart';
+import 'package:musify/utilities/sort_utils.dart';
 
 // Preferences
 
@@ -101,6 +102,15 @@ String playlistSortSetting = Hive.box('settings')
 
 String offlineSortSetting = Hive.box('settings')
     .get('offlineSortType', defaultValue: OfflineSortType.default_.name);
+
+String librarySortSetting = Hive.box('settings')
+    .get('librarySortType', defaultValue: LibrarySortType.default_.name);
+
+/// [librarySortSetting] parsed back into its enum, stored order by default.
+LibrarySortType get currentLibrarySortType => LibrarySortType.values.firstWhere(
+  (e) => e.name == librarySortSetting,
+  orElse: () => LibrarySortType.default_,
+);
 
 Color primaryColorSetting = Color(
   Hive.box('settings').get('accentColor', defaultValue: 0xff91cef4),
@@ -186,6 +196,14 @@ void reloadSettingsFromStorage() {
   );
   if (restoredOfflineSort is String) {
     offlineSortSetting = restoredOfflineSort;
+  }
+
+  final restoredLibrarySort = settings.get(
+    'librarySortType',
+    defaultValue: LibrarySortType.default_.name,
+  );
+  if (restoredLibrarySort is String) {
+    librarySortSetting = restoredLibrarySort;
   }
 
   final restoredAccentColor = settings.get(

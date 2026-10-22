@@ -28,11 +28,13 @@ import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/app_utils.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/playlist_utils.dart';
+import 'package:musify/utilities/sort_utils.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/dialog_item.dart';
 import 'package:musify/widgets/mini_player_bottom_space.dart';
 import 'package:musify/widgets/playlist_bar.dart';
 import 'package:musify/widgets/popup_menu_item.dart';
+import 'package:musify/widgets/sort_chips.dart';
 
 class PlaylistFolderPage extends StatefulWidget {
   const PlaylistFolderPage({
@@ -63,11 +65,15 @@ class _PlaylistFolderPageState extends State<PlaylistFolderPage> {
       valueListenable: userPlaylistFolders,
       builder: (context, _, __) {
         final isOffline = offlineMode.value;
-        final playlists = isOffline
+        final folderPlaylists = isOffline
             ? getPlaylistsInFolder(widget.folderId)
                   .where(PlaylistUtils.isPlaylistOffline)
                   .toList()
             : getPlaylistsInFolder(widget.folderId);
+        final playlists = sortLibraryItems(
+          folderPlaylists,
+          currentLibrarySortType,
+        );
         return Scaffold(
           body: CustomScrollView(
             slivers: [
@@ -142,6 +148,15 @@ class _PlaylistFolderPageState extends State<PlaylistFolderPage> {
                   ),
                 ],
               ),
+              if (playlists.length > 1)
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: LibrarySortChips(
+                      onSortChanged: () => setState(() {}),
+                    ),
+                  ),
+                ),
               if (playlists.isEmpty)
                 SliverFillRemaining(child: _buildEmptyState())
               else
