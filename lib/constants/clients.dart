@@ -34,10 +34,16 @@ Future<StreamManifest> getManifestWithFallback(
   Error.throwWithStackTrace(lastError!, lastStack!);
 }
 
+/// The client that minted the stream URL of [songId]. Ranged requests for
+/// that URL have to go through the same one: another client's requests are
+/// answered with HTTP 403.
+YoutubeApiClient streamPlaybackClient(String? songId) =>
+    _songClients[songId] ?? fallbackClients.first;
+
 /// Headers googlevideo.com expects for URLs minted by the client that served
 /// [songId]; a mismatched User-Agent can cause HTTP 403.
 Map<String, String> streamPlaybackHeaders(String? songId) {
-  final client = _songClients[songId] ?? fallbackClients.first;
+  final client = streamPlaybackClient(songId);
   final userAgent = client.payload['context']?['client']?['userAgent'];
   return {
     if (userAgent is String) 'user-agent': userAgent,
