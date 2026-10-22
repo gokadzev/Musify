@@ -137,10 +137,11 @@ class ProxyManager {
       _proxiesByCountry.clear();
 
       final fetchTasks = <Future>[]
-        ..add(_fetchProxyScrape())
-        ..add(_fetchGeonode())
-        ..add(_fetchOpenProxyList())
-        ..add(_fetchSpysMe());
+        ..add(_fetchProxyScrape(allowWhenDisabled: allowWhenDisabled))
+        ..add(_fetchGeonode(allowWhenDisabled: allowWhenDisabled))
+        ..add(_fetchOpenProxyList(allowWhenDisabled: allowWhenDisabled))
+        ..add(_fetchSpysMe(allowWhenDisabled: allowWhenDisabled))
+        ..add(_fetchProxifly(allowWhenDisabled: allowWhenDisabled));
       final fetch = Future.wait(fetchTasks);
       _fetchingProxiesFuture = fetch;
       await fetch.whenComplete(() {
@@ -309,10 +310,13 @@ class ProxyManager {
     bool allowWhenDisabled = false,
   }) async {
     if (!useProxy.value && !allowWhenDisabled) return null;
+    _ProxyResources? resources;
     YoutubeExplode? ytClient;
     try {
-      final res = _ensureProxyResources(proxy, timeoutSeconds: timeoutSeconds);
-      ytClient = YoutubeExplode(httpClient: YoutubeHttpClient(res.ioClient));
+      resources = _createProxyResources(proxy, timeoutSeconds: timeoutSeconds);
+      ytClient = YoutubeExplode(
+        httpClient: YoutubeHttpClient(resources.ioClient),
+      );
       final manifest = await getManifestWithFallback(
         ytClient,
         songId,
@@ -326,7 +330,7 @@ class ProxyManager {
         error: e,
         stackTrace: stackTrace,
       );
-      _discardProxy(proxy, reason: 'validation failed', closeResources: false);
+      _discardProxy(proxy, reason: 'validation failed');
       return null;
     } finally {
       if (ytClient != null) {
@@ -334,6 +338,7 @@ class ProxyManager {
           ytClient.close();
         } catch (_) {}
       }
+      resources?.close();
     }
   }
 
@@ -425,17 +430,7 @@ class ProxyManager {
     var res = _proxyResources[key];
     if (res != null) return res;
 
-    final httpClient = HttpClient()
-      ..connectionTimeout = Duration(seconds: timeoutSeconds)
-      ..findProxy = (_) {
-        return 'PROXY ${proxy.address}; DIRECT';
-      }
-      ..badCertificateCallback = (context, _context, ___) {
-        return true;
-      };
-
-    final ioClient = IOClient(httpClient);
-    res = _ProxyResources(httpClient, ioClient);
+    res = _createProxyResources(proxy, timeoutSeconds: timeoutSeconds);
 
     if (_proxyResources.length >= _maxProxyResourcePoolSize) {
       // Skip the entry that backs _sharedYt to avoid closing its IOClient.
@@ -459,6 +454,20 @@ class ProxyManager {
 
     _proxyResources[key] = res;
     return res;
+  }
+
+  _ProxyResources _createProxyResources(
+    ProxyInfo proxy, {
+    required int timeoutSeconds,
+  }) {
+    final httpClient = HttpClient()
+      ..connectionTimeout = Duration(seconds: timeoutSeconds)
+      ..findProxy = (_) {
+        return 'PROXY ${proxy.address}';
+      };
+
+    final ioClient = IOClient(httpClient);
+    return _ProxyResources(httpClient, ioClient);
   }
 
   void _pruneStaleProxyResources() {
@@ -489,11 +498,7 @@ class ProxyManager {
     }
   }
 
-  void _discardProxy(
-    ProxyInfo proxy, {
-    String? reason,
-    bool closeResources = true,
-  }) {
+  void _discardProxy(ProxyInfo proxy, {String? reason}) {
     final address = proxy.address;
     _blockedProxyAddresses[address] = DateTime.now();
     _enforceBlockedProxiesLimit();
@@ -506,30 +511,13 @@ class ProxyManager {
 
     final resources = _proxyResources.remove(address);
     if (resources != null) {
-      if (closeResources) {
-        try {
-          resources.close();
-        } catch (e, stackTrace) {
-          logger.log(
-            'ProxyManager: Error closing discarded proxy resources',
-            error: e,
-            stackTrace: stackTrace,
-          );
-        }
-      } else {
-        // Let timed-out validation requests unwind before closing the client.
-        unawaited(
-          Future.delayed(const Duration(seconds: 2), () {
-            try {
-              resources.close();
-            } catch (e, stackTrace) {
-              logger.log(
-                'ProxyManager: Error closing discarded proxy resources',
-                error: e,
-                stackTrace: stackTrace,
-              );
-            }
-          }),
+      try {
+        resources.close();
+      } catch (e, stackTrace) {
+        logger.log(
+          'ProxyManager: Error closing discarded proxy resources',
+          error: e,
+          stackTrace: stackTrace,
         );
       }
     }
@@ -672,18 +660,19 @@ class ProxyManager {
       final proxy = await _getRandomProxy();
       if (proxy == null) break;
 
+      _ProxyResources? resources;
       try {
-        final res = _ensureProxyResources(
+        resources = _createProxyResources(
           proxy,
           timeoutSeconds: timeoutSeconds,
         );
         final ytClient = YoutubeExplode(
-          httpClient: YoutubeHttpClient(res.ioClient),
+          httpClient: YoutubeHttpClient(resources.ioClient),
         );
 
-        _workingProxies.add(proxy);
         return ytClient;
       } catch (e, stackTrace) {
+        resources?.close();
         logger.log(
           'ProxyManager: failed to create proxy youtube client for ${proxy.address}',
           error: e,
@@ -697,8 +686,8 @@ class ProxyManager {
     return null;
   }
 
-  Future<void> _fetchSpysMe() async {
-    if (!useProxy.value) return;
+  Future<void> _fetchSpysMe({bool allowWhenDisabled = false}) async {
+    if (!useProxy.value && !allowWhenDisabled) return;
     try {
       const url = 'https://spys.me/proxy.txt';
       final response = await http
@@ -745,8 +734,8 @@ class ProxyManager {
     );
   }
 
-  Future<void> _fetchProxyScrape() async {
-    if (!useProxy.value) return;
+  Future<void> _fetchProxyScrape({bool allowWhenDisabled = false}) async {
+    if (!useProxy.value && !allowWhenDisabled) return;
     try {
       const url =
           'https://api.proxyscrape.com/v4/free-proxy-list/get?request=display_proxies&proxy_format=protocolipport&format=json&protocol=http&ssl=yes';
@@ -788,8 +777,8 @@ class ProxyManager {
     }
   }
 
-  Future<void> _fetchOpenProxyList() async {
-    if (!useProxy.value) return;
+  Future<void> _fetchOpenProxyList({bool allowWhenDisabled = false}) async {
+    if (!useProxy.value && !allowWhenDisabled) return;
     try {
       const url =
           'https://raw.githubusercontent.com/roosterkid/openproxylist/main/HTTPS.txt';
@@ -820,8 +809,8 @@ class ProxyManager {
     }
   }
 
-  Future<void> _fetchGeonode() async {
-    if (!useProxy.value) return;
+  Future<void> _fetchGeonode({bool allowWhenDisabled = false}) async {
+    if (!useProxy.value && !allowWhenDisabled) return;
     try {
       const url =
           'https://proxylist.geonode.com/api/proxy-list?limit=50&page=1&sort_by=lastChecked&sort_type=desc&protocols=http%2Chttps';
@@ -854,6 +843,47 @@ class ProxyManager {
       }
     } catch (e) {
       _logProxyFetchError('geonode', e);
+    }
+  }
+
+  Future<void> _fetchProxifly({bool allowWhenDisabled = false}) async {
+    if (!useProxy.value && !allowWhenDisabled) return;
+    try {
+      const url =
+          'https://raw.githubusercontent.com/proxifly/free-proxy-list/main/proxies/protocols/http/data.txt';
+      final response = await http
+          .get(Uri.parse(url))
+          .timeout(
+            const Duration(seconds: _fetchProxyTimeoutSeconds),
+            onTimeout: () => http.Response('', 408),
+          );
+      if (response.statusCode != 200) {
+        _logProxyFetchError('proxifly', 'Status code: ${response.statusCode}');
+        return;
+      }
+
+      for (final line in response.body.split('\n')) {
+        final value = line.trim();
+        if (value.isEmpty) continue;
+        final uri = Uri.tryParse(value);
+        if (uri == null ||
+            uri.scheme != 'http' ||
+            uri.host.isEmpty ||
+            uri.host.contains(':') ||
+            !uri.hasPort ||
+            uri.port < 1 ||
+            uri.port > 65535) {
+          continue;
+        }
+
+        _addProxyCandidate(
+          source: 'proxifly',
+          address: '${uri.host}:${uri.port}',
+          country: 'Unknown',
+        );
+      }
+    } catch (e) {
+      _logProxyFetchError('proxifly', e);
     }
   }
 }
