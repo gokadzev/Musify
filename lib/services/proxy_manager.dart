@@ -125,8 +125,8 @@ class ProxyManager {
     _closeAllProxyResources();
   }
 
-  Future<void> _fetchProxies() async {
-    if (!useProxy.value) return;
+  Future<void> _fetchProxies({bool allowWhenDisabled = false}) async {
+    if (!useProxy.value && !allowWhenDisabled) return;
     final activeFetch = _fetchingProxiesFuture;
     if (activeFetch != null) {
       await activeFetch;
@@ -305,9 +305,10 @@ class ProxyManager {
   Future<StreamManifest?> _validateProxy(
     ProxyInfo proxy,
     String songId,
-    int timeoutSeconds,
-  ) async {
-    if (!useProxy.value) return null;
+    int timeoutSeconds, {
+    bool allowWhenDisabled = false,
+  }) async {
+    if (!useProxy.value && !allowWhenDisabled) return null;
     YoutubeExplode? ytClient;
     try {
       final res = _ensureProxyResources(proxy, timeoutSeconds: timeoutSeconds);
@@ -357,11 +358,19 @@ class ProxyManager {
     }
   }
 
-  Future<ProxyInfo?> _getRandomProxy({String? preferredCountry}) async {
-    if (!useProxy.value) return null;
+  Future<ProxyInfo?> _getRandomProxy({
+    String? preferredCountry,
+    bool allowWhenDisabled = false,
+  }) async {
+    if (!useProxy.value && !allowWhenDisabled) return null;
     try {
-      if (!_hasFetched) await (_fetchingProxiesFuture ?? _fetchProxies());
-      if (_hasFetched && _proxiesByCountry.isEmpty) await _fetchProxies();
+      if (!_hasFetched) {
+        await (_fetchingProxiesFuture ??
+            _fetchProxies(allowWhenDisabled: allowWhenDisabled));
+      }
+      if (_hasFetched && _proxiesByCountry.isEmpty) {
+        await _fetchProxies(allowWhenDisabled: allowWhenDisabled);
+      }
       if (_proxiesByCountry.isEmpty) return null;
 
       ProxyInfo proxy;
@@ -558,16 +567,38 @@ class ProxyManager {
     return manifest;
   }
 
-  Future<StreamManifest?> _tryProxies(String songId) async {
-    if (!useProxy.value) return null;
+  /// Attempts proxies without repeating the direct manifest lookup.
+  ///
+  /// Used as a last-resort after normal stream resolution fails, even when
+  /// the user has not enabled routine proxy use.
+  Future<StreamManifest?> getSongManifestViaProxy(String songId) async {
+    if (DateTime.now().difference(_lastFetched).inMinutes >=
+        _proxyRefreshIntervalMinutes) {
+      await _fetchProxies(allowWhenDisabled: true);
+    }
+
+    _maybeCleanupProxies();
+    return _tryProxies(songId, allowWhenDisabled: true);
+  }
+
+  Future<StreamManifest?> _tryProxies(
+    String songId, {
+    bool allowWhenDisabled = false,
+  }) async {
+    if (!useProxy.value && !allowWhenDisabled) return null;
     StreamManifest? manifest;
     var attempts = 0;
     const maxAttempts = 5;
     do {
       if (attempts++ >= maxAttempts) break;
-      final proxy = await _getRandomProxy();
+      final proxy = await _getRandomProxy(allowWhenDisabled: allowWhenDisabled);
       if (proxy == null) break;
-      manifest = await _validateProxy(proxy, songId, 5);
+      manifest = await _validateProxy(
+        proxy,
+        songId,
+        5,
+        allowWhenDisabled: allowWhenDisabled,
+      );
     } while (manifest == null);
     return manifest;
   }

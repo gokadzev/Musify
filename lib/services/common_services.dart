@@ -104,7 +104,24 @@ Future<StreamManifest?> _fetchStreamManifest(String songId) async {
     return ProxyManager().getSongManifest(songId).timeout(_manifestTimeout);
   }
 
-  return getManifestWithFallback(ytClient, songId, timeout: _manifestTimeout);
+  try {
+    return await getManifestWithFallback(
+      ytClient,
+      songId,
+      timeout: _manifestTimeout,
+    );
+  } on Exception catch (error, stackTrace) {
+    logger.log(
+      'Direct stream lookup failed for $songId; trying proxy fallback',
+      error: error,
+      stackTrace: stackTrace,
+    );
+    final manifest = await ProxyManager()
+        .getSongManifestViaProxy(songId)
+        .timeout(_manifestTimeout);
+    if (manifest != null) return manifest;
+    Error.throwWithStackTrace(error, stackTrace);
+  }
 }
 
 /// Returns a cached song URL if present and still valid.
