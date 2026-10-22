@@ -513,10 +513,14 @@ class SettingsPage extends StatelessWidget {
           onTap: () =>
               launchURL(Uri.parse('https://crowdin.com/project/musify')),
         ),
-        CustomBar(
-          '${context.l10n!.copyLogs} (${logger.getLogCount()})',
-          FluentIcons.error_circle_24_regular,
-          onTap: () async => showToast(context, await logger.copyLogs(context)),
+        ValueListenableBuilder<int>(
+          valueListenable: logger.logCount,
+          builder: (context, logCount, _) => CustomBar(
+            '${context.l10n!.copyLogs} ($logCount)',
+            FluentIcons.error_circle_24_regular,
+            onTap: () async =>
+                showToast(context, await logger.copyLogs(context)),
+          ),
         ),
         CustomBar(
           context.l10n!.about,
