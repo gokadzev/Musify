@@ -468,11 +468,15 @@ class _SongBarState extends State<SongBar> {
               const SizedBox(width: 14),
 
               Expanded(
-                child: _SongInfo(
-                  title: _songTitle,
-                  artist: _songArtist,
-                  plays: plays,
-                  colorScheme: colorScheme,
+                child: ValueListenableBuilder<bool>(
+                  valueListenable: _songOfflineStatus,
+                  builder: (_, isOffline, __) => _SongInfo(
+                    title: _songTitle,
+                    artist: _songArtist,
+                    isOffline: isOffline,
+                    plays: plays,
+                    colorScheme: colorScheme,
+                  ),
                 ),
               ),
 
@@ -664,12 +668,17 @@ class _SongInfo extends StatelessWidget {
   const _SongInfo({
     required this.title,
     required this.artist,
+    required this.isOffline,
     this.plays,
     required this.colorScheme,
   });
 
   final String title;
   final String artist;
+
+  /// Marks the song as already downloaded, on the row itself: the context
+  /// menu is not the only place where that has to show.
+  final bool isOffline;
   final String? plays;
   final ColorScheme colorScheme;
 
@@ -701,6 +710,26 @@ class _SongInfo extends StatelessWidget {
                 ),
               ),
             ),
+            if (isOffline) ...[
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: Text(
+                  '•',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ),
+              Tooltip(
+                message: context.l10n!.availableOffline,
+                child: Icon(
+                  FluentIcons.cloud_off_24_filled,
+                  size: 12,
+                  color: colorScheme.primary,
+                ),
+              ),
+            ],
             if (plays != null && plays!.isNotEmpty) ...[
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -742,15 +771,43 @@ String? _firstNonEmptyString(Iterable<Object?> values) {
   return null;
 }
 
+/// The small round marker pinned to the top right corner of an artwork.
+class _ArtworkBadge extends StatelessWidget {
+  const _ArtworkBadge({
+    required this.icon,
+    required this.backgroundColor,
+    required this.foregroundColor,
+  });
+
+  final IconData icon;
+  final Color backgroundColor;
+  final Color foregroundColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 20,
+      height: 20,
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        shape: BoxShape.circle,
+      ),
+      child: Icon(icon, size: 11, color: foregroundColor),
+    );
+  }
+}
+
 class _OfflineArtwork extends StatelessWidget {
   const _OfflineArtwork({
     required this.artworkPath,
     required this.size,
+    required this.isLiked,
     required this.colorScheme,
   });
 
   final String artworkPath;
   final double size;
+  final bool isLiked;
   final ColorScheme colorScheme;
 
   @override
@@ -770,23 +827,16 @@ class _OfflineArtwork extends StatelessWidget {
               errorBuilder: (_, __, ___) =>
                   NullArtworkWidget(iconSize: 30, size: size),
             ),
-            Positioned(
-              top: 3,
-              right: 3,
-              child: Container(
-                width: 20,
-                height: 20,
-                decoration: BoxDecoration(
-                  color: colorScheme.tertiaryContainer,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  FluentIcons.cloud_off_24_filled,
-                  size: 11,
-                  color: colorScheme.onTertiaryContainer,
+            if (isLiked)
+              Positioned(
+                top: 3,
+                right: 3,
+                child: _ArtworkBadge(
+                  icon: FluentIcons.heart_24_filled,
+                  backgroundColor: colorScheme.primaryContainer,
+                  foregroundColor: colorScheme.onPrimaryContainer,
                 ),
               ),
-            ),
           ],
         ),
       ),
@@ -801,7 +851,6 @@ class _OnlineArtwork extends StatelessWidget {
     required this.isDurationAvailable,
     required this.colorScheme,
     required this.duration,
-    required this.isOffline,
     required this.isLiked,
   });
 
@@ -810,7 +859,6 @@ class _OnlineArtwork extends StatelessWidget {
   final bool isDurationAvailable;
   final ColorScheme colorScheme;
   final dynamic duration;
-  final bool isOffline;
   final bool isLiked;
 
   @override
@@ -843,40 +891,14 @@ class _OnlineArtwork extends StatelessWidget {
                         ? const Rect.fromLTRB(1, 1, 1, 1)
                         : null,
                   ),
-                  if (isOffline)
+                  if (isLiked)
                     Positioned(
                       top: 3,
                       right: 3,
-                      child: Container(
-                        width: 20,
-                        height: 20,
-                        decoration: BoxDecoration(
-                          color: colorScheme.tertiaryContainer,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          FluentIcons.cloud_off_24_filled,
-                          size: 11,
-                          color: colorScheme.onTertiaryContainer,
-                        ),
-                      ),
-                    )
-                  else if (isLiked)
-                    Positioned(
-                      top: 3,
-                      right: 3,
-                      child: Container(
-                        width: 20,
-                        height: 20,
-                        decoration: BoxDecoration(
-                          color: colorScheme.primaryContainer,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          FluentIcons.heart_24_filled,
-                          size: 11,
-                          color: colorScheme.onPrimaryContainer,
-                        ),
+                      child: _ArtworkBadge(
+                        icon: FluentIcons.heart_24_filled,
+                        backgroundColor: colorScheme.primaryContainer,
+                        foregroundColor: colorScheme.onPrimaryContainer,
                       ),
                     ),
                 ],
@@ -885,7 +907,7 @@ class _OnlineArtwork extends StatelessWidget {
             errorWidget: (context, url, error) =>
                 NullArtworkWidget(iconSize: 30, size: size),
           ),
-          if (isDurationAvailable && !isOffline)
+          if (isDurationAvailable)
             Positioned(
               bottom: 4,
               right: 4,
@@ -937,26 +959,26 @@ class _ArtworkDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<bool>(
-      valueListenable: offlineStatus,
-      builder: (_, isOffline, __) {
-        if (isOffline && artworkPath != null) {
-          return _OfflineArtwork(
-            artworkPath: artworkPath!,
-            size: size,
-            colorScheme: colorScheme,
-          );
-        }
-
+      valueListenable: likeStatus,
+      builder: (_, isLiked, __) {
         return ValueListenableBuilder<bool>(
-          valueListenable: likeStatus,
-          builder: (_, isLiked, __) {
+          valueListenable: offlineStatus,
+          builder: (_, isOffline, __) {
+            if (isOffline && artworkPath != null) {
+              return _OfflineArtwork(
+                artworkPath: artworkPath!,
+                size: size,
+                isLiked: isLiked,
+                colorScheme: colorScheme,
+              );
+            }
+
             return _OnlineArtwork(
               lowResImageUrl: lowResImageUrl,
               size: size,
               isDurationAvailable: isDurationAvailable,
               colorScheme: colorScheme,
               duration: duration,
-              isOffline: isOffline,
               isLiked: isLiked,
             );
           },
