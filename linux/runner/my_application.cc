@@ -35,7 +35,7 @@ static void my_application_activate(GApplication* application) {
     g_autofree gchar* executable_dir = g_path_get_dirname(executable_path);
     g_autofree gchar* icon_path =
         g_build_filename(executable_dir, "data", "flutter_assets", "assets",
-                        "icons", "musify_icon.png", nullptr);
+                        "icons", "ic_launcher.png", nullptr);
     g_autoptr(GError) icon_error = nullptr;
     g_autoptr(GdkPixbuf) icon = gdk_pixbuf_new_from_file(icon_path, &icon_error);
     if (icon == nullptr) {
