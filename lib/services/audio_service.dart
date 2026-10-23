@@ -98,6 +98,7 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
   int _currentQueueIndex = 0;
   int _currentLoadingIndex = -1;
   int _currentLoadingTransitionId = -1;
+  double _volumeBeforeMute = 1;
 
   // Playback transition and state-update coordination.
   bool _isUpdatingState = false;
@@ -1755,6 +1756,14 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
       logger.log('Error in play()', error: e, stackTrace: stackTrace);
       _lastError = e.toString();
     }
+  }
+
+  Future<void> toggleMute() {
+    if (volume > 0) {
+      _volumeBeforeMute = volume;
+      return setVolume(0);
+    }
+    return setVolume(_volumeBeforeMute);
   }
 
   @override
