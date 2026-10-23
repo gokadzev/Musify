@@ -52,6 +52,16 @@ Material UI & accent colors & dynamic colors (Android 12+) <br/>
 | ![Screenshot 1](https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/01.jpg) | ![Screenshot 2](https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/02.jpg) | ![Screenshot 3](https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/03.jpg) | ![Screenshot 4](https://raw.githubusercontent.com/gokadzev/Musify/master/fastlane/metadata/android/en-US/images/phoneScreenshots/04.jpg) |
 |----------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------|
 
+---
+
+## Supported platforms
+
+| Platform | Status | Dependencies |
+|----------|--------|--------------|
+| Android  | ✅ Supported | — |
+| Linux    | ✅  Supported (Beta) | Will be added soon... |
+| Windows    | ✅  Supported (Beta) | — |
+| IOS    | ❌ Unsupported | — |
 
 ---
 
