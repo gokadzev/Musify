@@ -29,7 +29,9 @@ import 'package:just_audio/just_audio.dart';
 import 'package:musify/constants/clients.dart';
 import 'package:musify/main.dart';
 import 'package:musify/models/position_data.dart';
+import 'package:musify/models/song_chapter.dart';
 import 'package:musify/services/audio_service_android_auto.dart';
+import 'package:musify/services/chapters_service.dart';
 import 'package:musify/services/common_services.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/listening_stats_service.dart';
@@ -131,6 +133,7 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
   static const Duration _debounceInterval = Duration(milliseconds: 150);
   static const Duration _positionDataThreshold = Duration(milliseconds: 250);
   static const Duration _playbackStateHeartbeat = Duration(seconds: 1);
+  static const Duration _chapterRestartThreshold = Duration(seconds: 3);
 
   // Derived player streams.
   late final Stream<PositionData> _positionDataStream =
@@ -1432,6 +1435,7 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
       if (currentTransitionId == _currentLoadingTransitionId) {
         if (success) {
           _consecutiveErrors = 0;
+          unawaited(chaptersService.loadFor(_queueList[index]));
           _preloadUpcomingSongs();
           // Trigger background song addition if auto-play is enabled
           if (playNextSongAutomatically.value) {
@@ -1852,6 +1856,49 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
     final target = audioPlayer.position - const Duration(seconds: 15);
     final clamped = target < Duration.zero ? Duration.zero : target;
     return seek(clamped);
+  }
+
+  /// The tracklist of the song being played, or `null` when it has none or
+  /// when the one on hand was read for another song.
+  SongChapters? get currentSongChapters {
+    final chapters = chaptersService.current.value;
+    if (chapters == null || chapters.isEmpty) return null;
+    return chapters.songId == currentSong?['ytid']?.toString()
+        ? chapters
+        : null;
+  }
+
+  Future<void> seekToNextChapter() async {
+    final chapters = currentSongChapters;
+    if (chapters == null) return;
+
+    final index = chapters.indexAt(audioPlayer.position);
+    if (index < 0 || index >= chapters.length - 1) return;
+
+    await seek(chapters.chapters[index + 1].start);
+  }
+
+  Future<void> seekToPreviousChapter() async {
+    final chapters = currentSongChapters;
+    if (chapters == null) return;
+
+    final position = audioPlayer.position;
+    final index = chapters.indexAt(position);
+    if (index < 0) return;
+
+    // Well into a track, go back to its start; right at its start, go back to
+    // the one before it, the way the previous-song button already behaves.
+    final current = chapters.chapters[index];
+    final restart =
+        index == 0 || position - current.start > _chapterRestartThreshold;
+    await seek(restart ? current.start : chapters.chapters[index - 1].start);
+  }
+
+  Future<void> seekToChapter(int index) async {
+    final chapters = currentSongChapters;
+    if (chapters == null || index < 0 || index >= chapters.length) return;
+
+    await seek(chapters.chapters[index].start);
   }
 
   Future<bool> _resolveOfflineAndSetPaths(Map songData) async {
@@ -2301,6 +2348,7 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
       final mediaItem = mapToMediaItem(radioSong);
       this.mediaItem.add(mediaItem);
       queue.add([mediaItem]);
+      chaptersService.clear();
 
       // Build audio source from stream URL
       final audioSource = await buildAudioSource(
