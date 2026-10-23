@@ -15,7 +15,7 @@ dependencies:
   app_links: ^7.2.2
   audio_service: ^0.18.19
   audio_session: ^0.2.4
-  cached_network_image: ^4.0.4
+  cached_network_image: ^4.0.5
   crypto: ^3.0.7
   dbus: ^0.8.0
   dynamic_color: ^2.1.0
@@ -25,7 +25,7 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  go_router: ^18.1.0
+  go_router: ^18.1.1
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   html: ^0.15.7
@@ -34,7 +34,7 @@ dependencies:
   just_audio: ^0.10.6
   just_audio_media_kit:
     path: ./packages/just_audio_media_kit
-  material_ui: ^1.7.0
+  material_ui: ^1.8.0
   media_kit_libs_linux: ^1.2.1
   media_kit_libs_windows_audio: ^1.0.9
   path_provider: ^2.1.6
