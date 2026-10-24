@@ -24,6 +24,7 @@ import 'dart:async';
 import 'package:app_links/app_links.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:dynamic_color/dynamic_color.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -38,6 +39,7 @@ import 'package:musify/services/desktop_media_artwork.dart';
 import 'package:musify/services/io_service.dart';
 import 'package:musify/services/linux_media_controls.dart';
 import 'package:musify/services/listening_stats_service.dart';
+import 'package:musify/services/local_sync_service.dart';
 import 'package:musify/services/logger_service.dart';
 import 'package:musify/services/playlist_sharing.dart';
 import 'package:musify/services/playlists_manager.dart';
@@ -140,6 +142,9 @@ class _MusifyState extends State<Musify> with WidgetsBindingObserver {
     };
 
     offlineMode.addListener(_onOfflineModeChanged);
+    LocalSyncService.instance.incomingPairingRequest.addListener(
+      _onIncomingPairingRequest,
+    );
 
     if (isMobilePlatform) {
       sharingIntentSubscription = ReceiveSharingIntent.getTextStream().listen(
@@ -206,6 +211,9 @@ class _MusifyState extends State<Musify> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      unawaited(LocalSyncService.instance.syncOnResume());
+    }
     super.didChangeAppLifecycleState(state);
     // Persist listening stats when the app leaves the foreground. This is the
     // reliable moment to snapshot and flush: unlike widget dispose, these
@@ -227,6 +235,10 @@ class _MusifyState extends State<Musify> with WidgetsBindingObserver {
     offlineMode.removeListener(_onOfflineModeChanged);
     PlatformDispatcher.instance.onPlatformBrightnessChanged = null;
 
+    LocalSyncService.instance.incomingPairingRequest.removeListener(
+      _onIncomingPairingRequest,
+    );
+    unawaited(LocalSyncService.instance.dispose());
     unawaited(linuxMediaControls?.dispose());
     unawaited(windowsMediaControls?.dispose());
     Hive.close();
@@ -238,6 +250,76 @@ class _MusifyState extends State<Musify> with WidgetsBindingObserver {
   void _onOfflineModeChanged() {
     // Force rebuild when offline mode changes
     setState(() {});
+  }
+
+  /// Shows the PIN another device must type to pair over local sync.
+  void _onIncomingPairingRequest() {
+    final request = LocalSyncService.instance.incomingPairingRequest.value;
+    if (request == null) return;
+
+    final context = NavigationManager().context;
+    BuildContext? openDialog;
+
+    unawaited(
+      showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (dialogContext) {
+          openDialog = dialogContext;
+          final colorScheme = Theme.of(dialogContext).colorScheme;
+          return AlertDialog(
+            icon: Icon(
+              FluentIcons.phone_desktop_24_regular,
+              color: colorScheme.primary,
+              size: 32,
+            ),
+            title: Text(dialogContext.l10n!.syncPairTitle),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  '${request.clientName}\n${dialogContext.l10n!.syncPairDescription}',
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  request.pin,
+                  style: Theme.of(dialogContext).textTheme.displaySmall
+                      ?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 8,
+                        color: colorScheme.primary,
+                      ),
+                ),
+              ],
+            ),
+            actionsAlignment: MainAxisAlignment.center,
+            actions: [
+              OutlinedButton(
+                onPressed: () {
+                  LocalSyncService.instance.rejectIncomingPairing();
+                  Navigator.pop(dialogContext);
+                },
+                child: Text(dialogContext.l10n!.cancel),
+              ),
+            ],
+          );
+        },
+      ).then((_) => openDialog = null),
+    );
+
+    unawaited(
+      request.completed.then((paired) {
+        final dialog = openDialog;
+        openDialog = null;
+        if (dialog != null && dialog.mounted) {
+          Navigator.of(dialog).pop();
+        }
+        if (paired && context.mounted) {
+          showToast(context, 'Paired with ${request.clientName}');
+        }
+      }),
+    );
   }
 
   @override
@@ -299,6 +381,16 @@ Future<void> initialisation() async {
       Hive.openBox('userNoBackup'),
       Hive.openBox('cache'),
     ]);
+
+    try {
+      await LocalSyncService.instance.initialise();
+    } catch (e, stackTrace) {
+      logger.log(
+        'Local sync could not start',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
 
     if (isMobilePlatform) {
       audioHandler = await AudioService.init(

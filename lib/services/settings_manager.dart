@@ -115,6 +115,20 @@ final repeatNotifier = ValueNotifier<AudioServiceRepeatMode>(
       .get('repeatMode', defaultValue: 0)],
 );
 
+final localSyncEnabled = ValueNotifier<bool>(
+  Hive.box('settings').get('localSyncEnabled', defaultValue: false),
+);
+
+final localSyncAutomatic = ValueNotifier<bool>(
+  Hive.box('settings').get('localSyncAutomatic', defaultValue: true),
+);
+
+final localSyncLastSyncedAt = ValueNotifier<DateTime?>(
+  _readDateTimeSetting('localSyncLastSyncedAt'),
+);
+
+final localSyncStatus = ValueNotifier<String>('Local sync is off');
+
 // Non-storage notifiers
 
 var sleepTimerNotifier = ValueNotifier<Duration?>(null);
@@ -122,6 +136,17 @@ var sleepTimerNotifier = ValueNotifier<Duration?>(null);
 // Server-Notifiers
 
 final announcementURL = ValueNotifier<String?>(null);
+
+DateTime? _readDateTimeSetting(String key) {
+  final value = Hive.box('settings').get(key);
+  if (value is DateTime) {
+    return value;
+  }
+  if (value is String) {
+    return DateTime.tryParse(value);
+  }
+  return null;
+}
 
 void reloadSettingsFromStorage() {
   final settings = Hive.box('settings');
@@ -203,4 +228,15 @@ void reloadSettingsFromStorage() {
       restoredRepeatIndex < AudioServiceRepeatMode.values.length) {
     repeatNotifier.value = AudioServiceRepeatMode.values[restoredRepeatIndex];
   }
+
+  localSyncEnabled.value = settings.get(
+    'localSyncEnabled',
+    defaultValue: false,
+  );
+  localSyncAutomatic.value = settings.get(
+    'localSyncAutomatic',
+    defaultValue: true,
+  );
+
+  localSyncLastSyncedAt.value = _readDateTimeSetting('localSyncLastSyncedAt');
 }
