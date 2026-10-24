@@ -109,12 +109,15 @@ class SyncDocument {
     );
   }
 
-  // Record observed local edits, including removals, before exchanging snapshots.
-  void capture(
+  // Record observed local edits, including removals; returns whether anything changed.
+  bool capture(
     Map<String, dynamic> current,
     Map<String, dynamic>? baseline,
     String device,
   ) {
+    if (baseline != null && canonicalSync(current) == canonicalSync(baseline)) {
+      return false;
+    }
     final now = flatten(current);
     final before = baseline == null ? <String, dynamic>{} : flatten(baseline);
     final resetKey = _key('recapReset', '', '');
@@ -130,7 +133,7 @@ class SyncDocument {
           if (_aggregated(_parts(e.key)[0])) 'generation': [0, ''],
         };
       }
-      return;
+      return true;
     }
     final resetChanged = now[resetKey] != before[resetKey];
     final edits =
@@ -143,7 +146,7 @@ class SyncDocument {
             )
             .toList()
           ..sort();
-    if (edits.isEmpty) return;
+    if (edits.isEmpty) return false;
     clock++;
     final epoch = resetChanged ? [clock, device] : _epoch(records[resetKey]);
     for (final key in edits) {
@@ -162,6 +165,7 @@ class SyncDocument {
               : _generation(previous),
       };
     }
+    return true;
   }
 
   int join(SyncDocument other) {
@@ -169,13 +173,26 @@ class SyncDocument {
     for (final entry in other.records.entries) {
       final local = records[entry.key] as Map?;
       final incoming = entry.value as Map;
+      final kind = _parts(entry.key)[0];
+      final aggregated = _aggregated(kind);
+      // A device stamps each key once per clock tick, so equal stamps are the same write.
+      if (local != null &&
+          !aggregated &&
+          local['clock'] == incoming['clock'] &&
+          local['device'] == incoming['device'] &&
+          local['deleted'] == incoming['deleted'] &&
+          (local['clock'] as int) > 0) {
+        continue;
+      }
       final winner = local == null
           ? incoming
-          : _mergeCell(_parts(entry.key)[0], local, incoming);
-      if (canonicalSync(local) != canonicalSync(winner)) {
-        records[entry.key] = Map<String, dynamic>.from(winner);
-        changes++;
+          : _mergeCell(kind, local, incoming);
+      if (identical(winner, local) ||
+          (aggregated && canonicalSync(local) == canonicalSync(winner))) {
+        continue;
       }
+      records[entry.key] = Map<String, dynamic>.from(winner);
+      changes++;
     }
     clock = _max(clock, other.clock);
     for (final cell in records.values) {

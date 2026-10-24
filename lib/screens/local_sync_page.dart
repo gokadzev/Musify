@@ -19,19 +19,101 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
+import 'dart:async';
+
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:musify/constants/app_constants.dart';
 import 'package:musify/extensions/l10n.dart';
+import 'package:musify/localization/app_localizations.dart';
+import 'package:musify/services/local_sync/sync_data.dart';
 import 'package:musify/services/local_sync_service.dart';
+import 'package:musify/services/router_service.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/custom_bar.dart';
 import 'package:musify/widgets/mini_player_bottom_space.dart';
 import 'package:musify/widgets/section_header.dart';
+
+/// Localized labels for the sync categories.
+Map<SyncCategory, String> syncCategoryLabels(AppLocalizations l10n) => {
+  SyncCategory.favourites: l10n.syncFavourites,
+  SyncCategory.playlists: l10n.syncPlaylists,
+  SyncCategory.recent: l10n.syncRecent,
+  SyncCategory.recap: l10n.syncRecap,
+  SyncCategory.searches: l10n.syncSearches,
+  SyncCategory.radio: l10n.syncRadio,
+};
+
+/// Shows the PIN another device must type; listens to [LocalSyncService.incomingPairingRequest].
+void showIncomingPairingDialog() {
+  final request = LocalSyncService.instance.incomingPairingRequest.value;
+  if (request == null) return;
+
+  final context = NavigationManager().context;
+  BuildContext? openDialog;
+
+  unawaited(
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        openDialog = dialogContext;
+        final colorScheme = Theme.of(dialogContext).colorScheme;
+        return AlertDialog(
+          icon: Icon(
+            FluentIcons.phone_desktop_24_regular,
+            color: colorScheme.primary,
+            size: 32,
+          ),
+          title: Text(dialogContext.l10n!.syncPairTitle),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                '${request.clientName}\n${dialogContext.l10n!.syncPairDescription}',
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                request.pin,
+                style: Theme.of(dialogContext).textTheme.displaySmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 8,
+                  color: colorScheme.primary,
+                ),
+              ),
+            ],
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: [
+            OutlinedButton(
+              onPressed: () {
+                LocalSyncService.instance.rejectIncomingPairing();
+                Navigator.pop(dialogContext);
+              },
+              child: Text(dialogContext.l10n!.cancel),
+            ),
+          ],
+        );
+      },
+    ).then((_) => openDialog = null),
+  );
+
+  unawaited(
+    request.completed.then((paired) {
+      final dialog = openDialog;
+      openDialog = null;
+      if (dialog != null && dialog.mounted) Navigator.of(dialog).pop();
+      if (paired && context.mounted) {
+        showToast(context, context.l10n!.syncPairedWith(request.clientName));
+      }
+    }),
+  );
+}
 
 /// Devices on the local network: pair with a new one, sync with a paired one.
 class LocalSyncPage extends StatefulWidget {
@@ -51,9 +133,7 @@ class _LocalSyncPageState extends State<LocalSyncPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       _service.resetStatus();
-      if (localSyncEnabled.value) {
-        _service.startDiscovery();
-      }
+      if (localSyncEnabled.value) _service.startDiscovery();
     });
   }
 
@@ -78,7 +158,7 @@ class _LocalSyncPageState extends State<LocalSyncPage> {
                   state.status == LocalSyncStatus.waitingForPin;
               return IconButton(
                 icon: const Icon(FluentIcons.arrow_clockwise_24_filled),
-                tooltip: 'Scan again',
+                tooltip: context.l10n!.syncScanAgain,
                 onPressed: busy || !localSyncEnabled.value
                     ? null
                     : _service.startDiscovery,
@@ -90,9 +170,7 @@ class _LocalSyncPageState extends State<LocalSyncPage> {
       body: ValueListenableBuilder<bool>(
         valueListenable: localSyncEnabled,
         builder: (context, enabled, _) {
-          if (!enabled) {
-            return _buildDisabled(context);
-          }
+          if (!enabled) return _buildDisabled(context);
           return ValueListenableBuilder<LocalSyncState>(
             valueListenable: _service.state,
             builder: (context, state, _) {
@@ -101,7 +179,7 @@ class _LocalSyncPageState extends State<LocalSyncPage> {
                 children: [
                   _buildThisDevice(context),
                   const SizedBox(height: 16),
-                  ..._buildBody(context, state),
+                  _buildBody(context, state),
                   const MiniPlayerBottomSpace(),
                 ],
               );
@@ -126,27 +204,20 @@ class _LocalSyncPageState extends State<LocalSyncPage> {
               color: colorScheme.primary,
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Local sync is off. Turn it on to make this device visible to '
-              'other Musify devices on your network.',
-              textAlign: TextAlign.center,
-            ),
+            Text(context.l10n!.syncIsOff, textAlign: TextAlign.center),
             const SizedBox(height: 24),
             FilledButton.icon(
               icon: const Icon(FluentIcons.wifi_1_24_regular),
-              label: const Text('Turn on local sync'),
+              label: Text(context.l10n!.syncTurnOn),
               onPressed: () async {
-                final result = await _service.setEnabled(true);
-                if (!context.mounted) return;
-                showToast(
-                  context,
-                  result.message,
-                  icon: result.success
-                      ? null
-                      : FluentIcons.error_circle_24_regular,
-                );
-                if (result.success) {
+                if (await _service.setEnabled(true)) {
                   await _service.startDiscovery();
+                } else if (context.mounted) {
+                  showToast(
+                    context,
+                    context.l10n!.syncCouldNotStart,
+                    icon: FluentIcons.error_circle_24_regular,
+                  );
                 }
               },
             ),
@@ -166,50 +237,44 @@ class _LocalSyncPageState extends State<LocalSyncPage> {
               ? FluentIcons.plug_connected_24_regular
               : FluentIcons.plug_disconnected_24_regular,
           description: running
-              ? 'This device is visible to other Musify devices on the same network.'
-              : 'Not visible right now. Local sync could not start.',
+              ? context.l10n!.syncVisible
+              : context.l10n!.syncNotVisible,
           borderRadius: commonCustomBarRadius,
         );
       },
     );
   }
 
-  List<Widget> _buildBody(BuildContext context, LocalSyncState state) {
-    switch (state.status) {
-      case LocalSyncStatus.scanning:
-        return [
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 48),
-            child: Column(
-              children: [
-                CircularProgressIndicator(),
-                SizedBox(height: 16),
-                Text('Looking for devices on your network...'),
-              ],
-            ),
-          ),
-        ];
-      case LocalSyncStatus.syncing:
-        return [_buildProgress(context, state)];
-      case LocalSyncStatus.waitingForPin:
-        return [_buildPinInput(context, state)];
-      case LocalSyncStatus.success:
-        return [_buildSuccess(context, state)];
-      case LocalSyncStatus.error:
-        return [_buildError(context, state)];
-      case LocalSyncStatus.idle:
-        return _buildDeviceLists(context, state);
-    }
+  Widget _buildBody(BuildContext context, LocalSyncState state) {
+    return switch (state.status) {
+      LocalSyncStatus.scanning => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 48),
+        child: Column(
+          children: [
+            const CircularProgressIndicator(),
+            const SizedBox(height: 16),
+            Text(context.l10n!.syncScanning),
+          ],
+        ),
+      ),
+      LocalSyncStatus.syncing => _buildProgress(context, state),
+      LocalSyncStatus.waitingForPin => _buildPinInput(context, state),
+      LocalSyncStatus.success => _buildSuccess(context, state),
+      LocalSyncStatus.error => _buildError(context, state),
+      LocalSyncStatus.idle => _buildDeviceLists(context, state),
+    };
   }
 
+  String _activeName(LocalSyncState state) =>
+      state.activeDevice?.name ?? 'Musify';
+
   Widget _buildProgress(BuildContext context, LocalSyncState state) {
-    final theme = Theme.of(context);
+    final l10n = context.l10n!;
     final (progress, label) = switch (state.stage) {
-      LocalSyncStage.exporting => (0.15, 'Preparing your library...'),
-      LocalSyncStage.exchanging => (0.45, 'Sending it to the other device...'),
-      LocalSyncStage.merging => (0.75, 'Merging what came back...'),
-      LocalSyncStage.finalizing => (0.95, 'Finishing up...'),
-      null => (0.05, 'Connecting...'),
+      LocalSyncStage.exporting => (0.2, l10n.syncPreparing),
+      LocalSyncStage.exchanging => (0.5, l10n.syncSending),
+      LocalSyncStage.merging => (0.85, l10n.syncMerging),
+      null => (0.05, l10n.syncConnecting),
     };
 
     return Padding(
@@ -217,8 +282,8 @@ class _LocalSyncPageState extends State<LocalSyncPage> {
       child: Column(
         children: [
           Text(
-            'Syncing with ${state.activeDevice?.name ?? 'device'}',
-            style: theme.textTheme.titleMedium,
+            l10n.syncSyncingWith(_activeName(state)),
+            style: Theme.of(context).textTheme.titleMedium,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 24),
@@ -232,6 +297,7 @@ class _LocalSyncPageState extends State<LocalSyncPage> {
 
   Widget _buildPinInput(BuildContext context, LocalSyncState state) {
     final theme = Theme.of(context);
+    final l10n = context.l10n!;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 8),
       child: Column(
@@ -243,12 +309,12 @@ class _LocalSyncPageState extends State<LocalSyncPage> {
           ),
           const SizedBox(height: 16),
           Text(
-            'Pair with ${state.activeDevice?.name ?? 'device'}',
+            l10n.syncPairWith(_activeName(state)),
             style: theme.textTheme.titleMedium,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
-          Text(context.l10n!.syncPinInstructions, textAlign: TextAlign.center),
+          Text(l10n.syncPinInstructions, textAlign: TextAlign.center),
           const SizedBox(height: 24),
           SizedBox(
             width: 200,
@@ -260,8 +326,8 @@ class _LocalSyncPageState extends State<LocalSyncPage> {
               maxLength: 6,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               style: theme.textTheme.headlineSmall?.copyWith(letterSpacing: 8),
-              decoration: const InputDecoration(
-                labelText: 'PIN',
+              decoration: InputDecoration(
+                labelText: l10n.syncPin,
                 counterText: '',
               ),
               onSubmitted: (_) => _submitPin(),
@@ -276,10 +342,10 @@ class _LocalSyncPageState extends State<LocalSyncPage> {
                   _pinController.clear();
                   _service.cancelPinInput();
                 },
-                child: Text(context.l10n!.cancel),
+                child: Text(l10n.cancel),
               ),
               const SizedBox(width: 12),
-              FilledButton(onPressed: _submitPin, child: const Text('Pair')),
+              FilledButton(onPressed: _submitPin, child: Text(l10n.syncPair)),
             ],
           ),
         ],
@@ -303,17 +369,14 @@ class _LocalSyncPageState extends State<LocalSyncPage> {
 
   Widget _buildSuccess(BuildContext context, LocalSyncState state) {
     final theme = Theme.of(context);
+    final l10n = context.l10n!;
     final stats = state.stats ?? const {};
-    final rows = <(String, int)>[
-      ('Liked songs', stats['likedSongs'] ?? 0),
-      ('Playlists', (stats['playlists'] ?? 0) + (stats['likedPlaylists'] ?? 0)),
-      ('Custom playlists', stats['customPlaylists'] ?? 0),
-      ('Playlist folders', stats['playlistFolders'] ?? 0),
-      ('Recently played', stats['recentlyPlayedSongs'] ?? 0),
-      ('Radio stations', stats['likedRadioStations'] ?? 0),
-      ('Search history', stats['searchHistory'] ?? 0),
-      (context.l10n!.syncRecap, stats['wrappedListeningStats'] ?? 0),
-    ].where((row) => row.$2 > 0).toList();
+    final labels = syncCategoryLabels(l10n);
+    final changed = [
+      for (final category in SyncCategory.values)
+        if (syncCategoryKeys[category]!.any((key) => (stats[key] ?? 0) > 0))
+          labels[category]!,
+    ];
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 8),
@@ -326,26 +389,26 @@ class _LocalSyncPageState extends State<LocalSyncPage> {
           ),
           const SizedBox(height: 16),
           Text(
-            'Synced with ${state.activeDevice?.name ?? 'device'}',
+            l10n.syncSyncedWith(_activeName(state)),
             style: theme.textTheme.titleMedium,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
-          if (rows.isEmpty)
-            Text(context.l10n!.syncUnchanged, textAlign: TextAlign.center)
+          if (changed.isEmpty)
+            Text(l10n.syncUnchanged, textAlign: TextAlign.center)
           else
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
-                    for (final row in rows)
+                    for (final label in changed)
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(row.$1),
+                            Text(label),
                             Icon(
                               FluentIcons.checkmark_20_regular,
                               color: theme.colorScheme.primary,
@@ -360,15 +423,32 @@ class _LocalSyncPageState extends State<LocalSyncPage> {
           const SizedBox(height: 24),
           FilledButton(
             onPressed: _service.resetStatus,
-            child: const Text('Done'),
+            child: Text(l10n.syncDone),
           ),
         ],
       ),
     );
   }
 
+  String _errorMessage(AppLocalizations l10n, LocalSyncState state) {
+    final name = _activeName(state);
+    return switch (state.error ?? LocalSyncError.failed) {
+      LocalSyncError.notRunning => l10n.syncErrorNotRunning,
+      LocalSyncError.incorrectPin => l10n.syncErrorIncorrectPin(name),
+      LocalSyncError.rejected => l10n.syncErrorRejected(name),
+      LocalSyncError.busy => l10n.syncErrorBusy(name),
+      LocalSyncError.untrusted => l10n.syncErrorUntrusted(name),
+      LocalSyncError.updateRequired => l10n.syncErrorUpdate,
+      LocalSyncError.noCommonCategories => l10n.syncErrorNoCategories,
+      LocalSyncError.tooLarge => l10n.syncErrorTooLarge,
+      LocalSyncError.unreachable => l10n.syncErrorUnreachable(name),
+      LocalSyncError.failed => l10n.syncErrorFailed(name),
+    };
+  }
+
   Widget _buildError(BuildContext context, LocalSyncState state) {
     final theme = Theme.of(context);
+    final l10n = context.l10n!;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 8),
       child: Column(
@@ -380,7 +460,7 @@ class _LocalSyncPageState extends State<LocalSyncPage> {
           ),
           const SizedBox(height: 16),
           Text(
-            state.errorMessage ?? 'Sync failed',
+            _errorMessage(l10n, state),
             textAlign: TextAlign.center,
             style: theme.textTheme.bodyLarge,
           ),
@@ -401,12 +481,12 @@ class _LocalSyncPageState extends State<LocalSyncPage> {
             children: [
               OutlinedButton(
                 onPressed: _service.resetStatus,
-                child: const Text('Back'),
+                child: Text(l10n.back),
               ),
               const SizedBox(width: 12),
               FilledButton(
                 onPressed: _service.startDiscovery,
-                child: const Text('Scan again'),
+                child: Text(l10n.syncScanAgain),
               ),
             ],
           ),
@@ -415,79 +495,75 @@ class _LocalSyncPageState extends State<LocalSyncPage> {
     );
   }
 
-  List<Widget> _buildDeviceLists(BuildContext context, LocalSyncState state) {
-    return [
-      ValueListenableBuilder<List<PairedSyncDevice>>(
-        valueListenable: _service.pairedDevices,
-        builder: (context, paired, _) {
-          final discovered = state.discoveredDevices;
-          final others = discovered
-              .where((d) => !paired.any((p) => p.deviceId == d.deviceId))
-              .toList();
+  Widget _buildDeviceLists(BuildContext context, LocalSyncState state) {
+    final l10n = context.l10n!;
+    return ValueListenableBuilder<List<PairedSyncDevice>>(
+      valueListenable: _service.pairedDevices,
+      builder: (context, paired, _) {
+        final discovered = {
+          for (final device in state.discoveredDevices) device.deviceId: device,
+        };
+        final pairedIds = paired.map((p) => p.deviceId).toSet();
+        final others = discovered.values
+            .where((d) => !pairedIds.contains(d.deviceId))
+            .toList();
 
-          if (paired.isEmpty && others.isEmpty) {
-            return _buildEmpty(context);
-          }
+        if (paired.isEmpty && others.isEmpty) return _buildEmpty(context);
 
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              if (paired.isNotEmpty) ...[
-                const SectionHeader(
-                  title: 'Paired devices',
-                  icon: FluentIcons.link_24_filled,
-                ),
-                for (var i = 0; i < paired.length; i++)
-                  _buildPairedDevice(
-                    context,
-                    paired[i],
-                    discovered.cast<DiscoveredSyncDevice?>().firstWhere(
-                      (d) => d!.deviceId == paired[i].deviceId,
-                      orElse: () => null,
-                    ),
-                    _radiusFor(i, paired.length),
-                  ),
-              ],
-              if (others.isNotEmpty) ...[
-                const SectionHeader(
-                  title: 'Other devices',
-                  icon: FluentIcons.wifi_1_24_filled,
-                ),
-                for (var i = 0; i < others.length; i++)
-                  CustomBar(
-                    others[i].name,
-                    _iconFor(others[i].name),
-                    description: '${others[i].ip} · Tap to pair and sync',
-                    borderRadius: _radiusFor(i, others.length),
-                    onTap: () => _service.syncWith(others[i]),
-                  ),
-              ],
-              const SizedBox(height: 16),
-              CustomBar(
-                'Scan again',
-                FluentIcons.arrow_clockwise_24_regular,
-                borderRadius: paired.isEmpty
-                    ? commonCustomBarRadius
-                    : commonCustomBarRadiusFirst,
-                onTap: _service.startDiscovery,
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (paired.isNotEmpty) ...[
+              SectionHeader(
+                title: l10n.syncPairedDevices,
+                icon: FluentIcons.link_24_filled,
               ),
-              if (paired.isNotEmpty)
-                CustomBar(
-                  'Forget all devices',
-                  FluentIcons.link_dismiss_24_regular,
-                  iconColor: Theme.of(context).colorScheme.error,
-                  borderRadius: commonCustomBarRadiusLast,
-                  onTap: () => _confirmForgetAll(context),
+              for (var i = 0; i < paired.length; i++)
+                _buildPairedDevice(
+                  context,
+                  paired[i],
+                  discovered[paired[i].deviceId],
+                  _radiusFor(i, paired.length),
                 ),
             ],
-          );
-        },
-      ),
-    ];
+            if (others.isNotEmpty) ...[
+              SectionHeader(
+                title: l10n.syncOtherDevices,
+                icon: FluentIcons.wifi_1_24_filled,
+              ),
+              for (var i = 0; i < others.length; i++)
+                CustomBar(
+                  others[i].name,
+                  _iconFor(others[i].name),
+                  description: l10n.syncTapToPair(others[i].ip),
+                  borderRadius: _radiusFor(i, others.length),
+                  onTap: () => _service.syncWith(others[i]),
+                ),
+            ],
+            const SizedBox(height: 16),
+            CustomBar(
+              l10n.syncScanAgain,
+              FluentIcons.arrow_clockwise_24_regular,
+              borderRadius: paired.isEmpty
+                  ? commonCustomBarRadius
+                  : commonCustomBarRadiusFirst,
+              onTap: _service.startDiscovery,
+            ),
+            if (paired.isNotEmpty)
+              CustomBar(
+                l10n.syncForgetAll,
+                FluentIcons.link_dismiss_24_regular,
+                iconColor: Theme.of(context).colorScheme.error,
+                borderRadius: commonCustomBarRadiusLast,
+                onTap: () => _confirmForget(context, null),
+              ),
+          ],
+        );
+      },
+    );
   }
 
   Widget _buildEmpty(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 8),
       child: Column(
@@ -495,19 +571,14 @@ class _LocalSyncPageState extends State<LocalSyncPage> {
           Icon(
             FluentIcons.wifi_off_24_regular,
             size: 48,
-            color: colorScheme.onSurfaceVariant,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
           const SizedBox(height: 16),
-          const Text(
-            'No other Musify device found. Open Settings on the other device, '
-            'turn on Local sync there, and make sure both are on the same '
-            'Wi-Fi network.',
-            textAlign: TextAlign.center,
-          ),
+          Text(context.l10n!.syncNoDevices, textAlign: TextAlign.center),
           const SizedBox(height: 24),
           FilledButton.icon(
             icon: const Icon(FluentIcons.arrow_clockwise_24_regular),
-            label: const Text('Scan again'),
+            label: Text(context.l10n!.syncScanAgain),
             onPressed: _service.startDiscovery,
           ),
         ],
@@ -521,27 +592,23 @@ class _LocalSyncPageState extends State<LocalSyncPage> {
     DiscoveredSyncDevice? online,
     BorderRadius borderRadius,
   ) {
-    final colorScheme = Theme.of(context).colorScheme;
     return CustomBar(
       paired.name,
       _iconFor(paired.name),
       description: online != null
-          ? '${online.ip} · Online. Tap to sync now'
-          : 'Offline. Long press to forget this device',
-      iconColor: online != null ? colorScheme.primary : null,
+          ? context.l10n!.syncTapToSync(online.ip)
+          : context.l10n!.syncOfflineDevice,
+      iconColor: online != null ? Theme.of(context).colorScheme.primary : null,
       borderRadius: borderRadius,
       onTap: online != null ? () => _service.syncWith(online) : null,
       onLongPress: () => _confirmForget(context, paired),
     );
   }
 
-  IconData _iconFor(String deviceName) {
-    final lower = deviceName.toLowerCase();
-    if (lower.contains('android') || lower.contains('ios')) {
-      return FluentIcons.phone_24_regular;
-    }
-    return FluentIcons.desktop_24_regular;
-  }
+  IconData _iconFor(String deviceName) =>
+      deviceName.toLowerCase().contains('android')
+      ? FluentIcons.phone_24_regular
+      : FluentIcons.desktop_24_regular;
 
   BorderRadius _radiusFor(int index, int length) {
     if (length == 1) return commonCustomBarRadius;
@@ -550,36 +617,25 @@ class _LocalSyncPageState extends State<LocalSyncPage> {
     return BorderRadius.zero;
   }
 
-  void _confirmForget(BuildContext context, PairedSyncDevice device) {
+  /// Forgets [device], or every paired device when it is null.
+  void _confirmForget(BuildContext context, PairedSyncDevice? device) {
+    final l10n = context.l10n!;
     showDialog(
       context: context,
       builder: (dialogContext) => ConfirmationDialog(
-        confirmationMessage:
-            'Forget ${device.name}? You will need to pair again with a PIN '
-            'before syncing with it.',
-        submitMessage: 'Forget',
+        confirmationMessage: device == null
+            ? l10n.syncForgetAllConfirm
+            : l10n.syncForgetConfirm(device.name),
+        submitMessage: device == null ? l10n.syncForgetAll : l10n.syncForget,
         isDangerous: true,
         onCancel: () => Navigator.pop(dialogContext),
         onSubmit: () async {
           Navigator.pop(dialogContext);
-          await _service.forgetDevice(device.deviceId);
-        },
-      ),
-    );
-  }
-
-  void _confirmForgetAll(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (dialogContext) => ConfirmationDialog(
-        confirmationMessage:
-            'Forget every paired device? Each one will ask for a PIN again.',
-        submitMessage: 'Forget all',
-        isDangerous: true,
-        onCancel: () => Navigator.pop(dialogContext),
-        onSubmit: () async {
-          Navigator.pop(dialogContext);
-          await _service.forgetAllDevices();
+          if (device == null) {
+            await _service.forgetAllDevices();
+          } else {
+            await _service.forgetDevice(device.deviceId);
+          }
         },
       ),
     );

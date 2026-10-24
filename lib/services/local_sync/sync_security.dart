@@ -20,10 +20,11 @@
  */
 
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:cryptography/cryptography.dart';
-
 import 'package:musify/services/local_sync/sync_data.dart';
 
 class SyncSecurity {
@@ -38,8 +39,9 @@ class SyncSecurity {
     Map<String, dynamic> body,
     String context,
   ) async {
+    // Compressing first keeps the pure-Dart cipher fast on large libraries.
     final box = await _cipher.encrypt(
-      utf8.encode(canonicalSync(body)),
+      gzip.encode(utf8.encode(jsonEncode(body))),
       secretKey: SecretKey(base64Url.decode(secret)),
       aad: utf8.encode(context),
     );
@@ -69,9 +71,33 @@ class SyncSecurity {
       secretKey: SecretKey(base64Url.decode(secret)),
       aad: utf8.encode(context),
     );
-    final value = jsonDecode(utf8.decode(clear));
+    final value = jsonDecode(utf8.decode(_inflate(clear)));
     if (value is! Map) throw const FormatException('Invalid encrypted body');
     validateSyncJson(value);
     return Map<String, dynamic>.from(value);
   }
+
+  static List<int> _inflate(List<int> compressed) {
+    final output = _CappedSink();
+    gzip.decoder.startChunkedConversion(output)
+      ..add(compressed)
+      ..close();
+    return output.bytes.takeBytes();
+  }
+}
+
+/// Stops a compressed message from expanding beyond the sync size limit.
+class _CappedSink implements Sink<List<int>> {
+  final bytes = BytesBuilder(copy: false);
+
+  @override
+  void add(List<int> chunk) {
+    bytes.add(chunk);
+    if (bytes.length > maxSyncMessageBytes) {
+      throw const FormatException('Sync message too large');
+    }
+  }
+
+  @override
+  void close() {}
 }

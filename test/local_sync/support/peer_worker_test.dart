@@ -4,7 +4,6 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive/hive.dart';
-import 'package:http/http.dart' as http;
 import 'package:musify/services/common_services.dart';
 import 'package:musify/services/library_merge_service.dart';
 import 'package:musify/services/listening_stats_service.dart';
@@ -57,27 +56,24 @@ void main() {
           File('$root/$role.pin').writeAsStringSync(request.pin);
         }
       });
-      Future<void> ready() async {
-        final response = await http.get(
-          Uri.parse('http://127.0.0.1:${service.serverPort}/api/sync/info'),
-        );
-        final info = Map<String, dynamic>.from(jsonDecode(response.body));
-        info['port'] = service.serverPort;
-        await File('$root/$role.ready.json').writeAsString(jsonEncode(info));
-      }
+      Future<void> ready() => File('$root/$role.ready.json').writeAsString(
+        jsonEncode({
+          'deviceId': LibraryMergeService.deviceId,
+          'port': service.serverPort,
+        }),
+      );
 
       await ready();
       Future<Map<String, dynamic>> snapshot() async => {
         'library': await LibraryMergeService.exportLibrary(),
         'data': encodeSyncValue(Hive.box('user').toMap()),
         'status': service.state.value.status.name,
-        'error': service.state.value.rawError,
-        'message': service.state.value.errorMessage,
+        'error': service.state.value.error?.name,
+        'raw': service.state.value.rawError,
         'paired': {
           for (final peer in service.pairedDevices.value)
             peer.deviceId: syncDigest(peer.secret),
         },
-        'syncStatus': localSyncStatus.value,
         'journal': Hive.box('userNoBackup')
             .containsKey('localSyncPendingMergeV2'),
       };

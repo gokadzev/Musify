@@ -24,7 +24,6 @@ import 'dart:async';
 import 'package:app_links/app_links.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:dynamic_color/dynamic_color.dart';
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -33,6 +32,7 @@ import 'package:just_audio_media_kit/just_audio_media_kit.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/localization/app_localizations.dart';
+import 'package:musify/screens/local_sync_page.dart';
 import 'package:musify/services/audio_service.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/desktop_media_artwork.dart';
@@ -143,7 +143,7 @@ class _MusifyState extends State<Musify> with WidgetsBindingObserver {
 
     offlineMode.addListener(_onOfflineModeChanged);
     LocalSyncService.instance.incomingPairingRequest.addListener(
-      _onIncomingPairingRequest,
+      showIncomingPairingDialog,
     );
 
     if (isMobilePlatform) {
@@ -236,7 +236,7 @@ class _MusifyState extends State<Musify> with WidgetsBindingObserver {
     PlatformDispatcher.instance.onPlatformBrightnessChanged = null;
 
     LocalSyncService.instance.incomingPairingRequest.removeListener(
-      _onIncomingPairingRequest,
+      showIncomingPairingDialog,
     );
     unawaited(LocalSyncService.instance.dispose());
     unawaited(linuxMediaControls?.dispose());
@@ -250,76 +250,6 @@ class _MusifyState extends State<Musify> with WidgetsBindingObserver {
   void _onOfflineModeChanged() {
     // Force rebuild when offline mode changes
     setState(() {});
-  }
-
-  /// Shows the PIN another device must type to pair over local sync.
-  void _onIncomingPairingRequest() {
-    final request = LocalSyncService.instance.incomingPairingRequest.value;
-    if (request == null) return;
-
-    final context = NavigationManager().context;
-    BuildContext? openDialog;
-
-    unawaited(
-      showDialog<void>(
-        context: context,
-        barrierDismissible: false,
-        builder: (dialogContext) {
-          openDialog = dialogContext;
-          final colorScheme = Theme.of(dialogContext).colorScheme;
-          return AlertDialog(
-            icon: Icon(
-              FluentIcons.phone_desktop_24_regular,
-              color: colorScheme.primary,
-              size: 32,
-            ),
-            title: Text(dialogContext.l10n!.syncPairTitle),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  '${request.clientName}\n${dialogContext.l10n!.syncPairDescription}',
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  request.pin,
-                  style: Theme.of(dialogContext).textTheme.displaySmall
-                      ?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 8,
-                        color: colorScheme.primary,
-                      ),
-                ),
-              ],
-            ),
-            actionsAlignment: MainAxisAlignment.center,
-            actions: [
-              OutlinedButton(
-                onPressed: () {
-                  LocalSyncService.instance.rejectIncomingPairing();
-                  Navigator.pop(dialogContext);
-                },
-                child: Text(dialogContext.l10n!.cancel),
-              ),
-            ],
-          );
-        },
-      ).then((_) => openDialog = null),
-    );
-
-    unawaited(
-      request.completed.then((paired) {
-        final dialog = openDialog;
-        openDialog = null;
-        if (dialog != null && dialog.mounted) {
-          Navigator.of(dialog).pop();
-        }
-        if (paired && context.mounted) {
-          showToast(context, 'Paired with ${request.clientName}');
-        }
-      }),
-    );
   }
 
   @override

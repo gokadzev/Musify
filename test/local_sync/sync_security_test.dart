@@ -69,4 +69,15 @@ void main() {
       throwsA(anything),
     );
   });
+  test('a compressed message cannot expand past the sync size limit', () async {
+    final key = SyncSecurity.randomToken();
+    final box = await SyncSecurity.seal(key, {
+      'padding': List.filled(65 * 1024 * 1024, 'a').join(),
+    }, 'merge|A|B');
+    expect(box['ciphertext'].length, lessThan(1024 * 1024));
+    await expectLater(
+      SyncSecurity.open(key, box, 'merge|A|B'),
+      throwsFormatException,
+    );
+  });
 }

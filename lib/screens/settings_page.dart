@@ -26,6 +26,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:musify/constants/app_constants.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart';
+import 'package:musify/screens/local_sync_page.dart';
 import 'package:musify/screens/search_page.dart';
 import 'package:musify/services/common_services.dart';
 import 'package:musify/services/data_manager.dart';
@@ -319,19 +320,19 @@ class SettingsPage extends StatelessWidget {
 
     return Column(
       children: [
-        const SectionHeader(
-          title: 'Local sync',
+        SectionHeader(
+          title: context.l10n!.syncTitle,
           icon: FluentIcons.phone_desktop_24_filled,
         ),
         ValueListenableBuilder<bool>(
           valueListenable: localSyncEnabled,
           builder: (_, enabled, __) {
             return CustomBar(
-              'Sync over local network',
+              context.l10n!.syncOverNetwork,
               FluentIcons.wifi_1_24_regular,
               description: enabled
-                  ? 'This device is visible to other Musify devices on the same Wi-Fi. Pair them once with a PIN, then libraries merge both ways.'
-                  : 'Sync selected library data and listening recap between your devices over Wi-Fi. No account or cloud server.',
+                  ? context.l10n!.syncOnDescription
+                  : context.l10n!.syncOffDescription,
               borderRadius: enabled
                   ? commonCustomBarRadiusFirst
                   : commonCustomBarRadius,
@@ -354,13 +355,13 @@ class SettingsPage extends StatelessWidget {
 
             return Column(
               children: [
-                ValueListenableBuilder<String>(
-                  valueListenable: localSyncStatus,
-                  builder: (_, status, __) {
+                ValueListenableBuilder<DateTime?>(
+                  valueListenable: localSyncLastSyncedAt,
+                  builder: (_, lastSyncedAt, __) {
                     return CustomBar(
-                      'Devices',
+                      context.l10n!.syncDevices,
                       FluentIcons.arrow_sync_24_regular,
-                      description: _localSyncStatusDescription(status),
+                      description: _lastSyncDescription(context, lastSyncedAt),
                       onTap: () => context.push('/settings/local-sync'),
                     );
                   },
@@ -369,9 +370,9 @@ class SettingsPage extends StatelessWidget {
                   valueListenable: localSyncAutomatic,
                   builder: (_, automatic, __) {
                     return CustomBar(
-                      'Automatic sync',
+                      context.l10n!.syncAutomatic,
                       FluentIcons.arrow_clockwise_24_regular,
-                      description: 'Sync with paired devices that are online at startup, shortly after you change something, and every 30 minutes.',
+                      description: context.l10n!.syncAutomaticDescription,
                       trailing: Switch(
                         value: automatic,
                         onChanged: service.setAutomatic,
@@ -1022,31 +1023,20 @@ class SettingsPage extends StatelessWidget {
     showToast(context, context.l10n!.settingChangedMsg);
   }
 
-  String _localSyncStatusDescription(String status) {
-    final lastSyncedAt = localSyncLastSyncedAt.value;
-    if (lastSyncedAt == null) {
-      return '$status. Open to find devices and pair.';
-    }
-
+  String _lastSyncDescription(BuildContext context, DateTime? lastSyncedAt) {
+    if (lastSyncedAt == null) return context.l10n!.syncFindDevices;
     final local = lastSyncedAt.toLocal();
-    String pad(int number) => number.toString().padLeft(2, '0');
-    final when =
-        '${local.year}-${pad(local.month)}-${pad(local.day)} '
-        '${pad(local.hour)}:${pad(local.minute)}';
-    return '$status. Last sync: $when';
+    final material = MaterialLocalizations.of(context);
+    return context.l10n!.syncLastSynced(
+      '${material.formatShortDate(local)} '
+      '${material.formatTimeOfDay(TimeOfDay.fromDateTime(local))}',
+    );
   }
 
   void _showSyncCategories(BuildContext context) {
     final service = LocalSyncService.instance;
     final selected = service.selectedCategories;
-    final labels = {
-      SyncCategory.favourites: context.l10n!.syncFavourites,
-      SyncCategory.playlists: context.l10n!.syncPlaylists,
-      SyncCategory.recent: context.l10n!.syncRecent,
-      SyncCategory.recap: context.l10n!.syncRecap,
-      SyncCategory.searches: context.l10n!.syncSearches,
-      SyncCategory.radio: context.l10n!.syncRadio,
-    };
+    final labels = syncCategoryLabels(context.l10n!);
     showCustomBottomSheet(
       context,
       StatefulBuilder(
@@ -1079,12 +1069,14 @@ class SettingsPage extends StatelessWidget {
   }
 
   Future<void> _toggleLocalSync(BuildContext context, bool value) async {
-    final result = await LocalSyncService.instance.setEnabled(value);
+    final started = await LocalSyncService.instance.setEnabled(value);
     if (context.mounted) {
       showToast(
         context,
-        result.message,
-        icon: result.success ? null : FluentIcons.error_circle_24_regular,
+        started
+            ? context.l10n!.settingChangedMsg
+            : context.l10n!.syncCouldNotStart,
+        icon: started ? null : FluentIcons.error_circle_24_regular,
       );
     }
   }

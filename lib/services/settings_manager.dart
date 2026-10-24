@@ -127,8 +127,6 @@ final localSyncLastSyncedAt = ValueNotifier<DateTime?>(
   _readDateTimeSetting('localSyncLastSyncedAt'),
 );
 
-final localSyncStatus = ValueNotifier<String>('Local sync is off');
-
 // Non-storage notifiers
 
 var sleepTimerNotifier = ValueNotifier<Duration?>(null);

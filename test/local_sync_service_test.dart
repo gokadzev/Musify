@@ -4,8 +4,8 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
+import 'package:musify/services/library_merge_service.dart';
 import 'package:musify/services/listening_stats_service.dart';
-import 'package:musify/services/local_sync/sync_data.dart';
 import 'package:musify/services/local_sync/sync_pairing.dart';
 import 'package:musify/services/local_sync/sync_security.dart';
 import 'package:musify/services/local_sync_service.dart';
@@ -35,22 +35,11 @@ void main() {
     }
     server = LocalSyncService.forTesting();
     await server.startServer();
-    final info = jsonDecode(
-      (await http.get(
-        Uri.parse('http://127.0.0.1:${server.serverPort}/api/sync/info'),
-      )).body,
-    );
-    ownId = info['deviceId'];
+    ownId = LibraryMergeService.deviceId;
     secret = SyncSecurity.randomToken();
     sequence = 0;
     await server.savePairedDevice(
-      PairedSyncDevice(
-        deviceId: peerId,
-        name: 'Fixture',
-        ip: '127.0.0.1',
-        port: 1,
-        secret: secret,
-      ),
+      PairedSyncDevice(deviceId: peerId, name: 'Fixture', secret: secret),
     );
   });
   tearDown(() async {
@@ -61,18 +50,23 @@ void main() {
     await directory.delete(recursive: true);
   });
 
-  Future<http.Response> post(String path, Map<String, dynamic> body) =>
-      http.post(
-        Uri.parse('http://127.0.0.1:${server.serverPort}/api/sync/$path'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(body),
-      );
+  Future<http.Response> post(
+    String path,
+    Map<String, dynamic> body, {
+    String? device = peerId,
+  }) => http.post(
+    Uri.parse('http://127.0.0.1:${server.serverPort}/api/sync/$path'),
+    headers: {
+      'Content-Type': 'application/json',
+      if (device != null) 'x-musify-device': device,
+    },
+    body: jsonEncode(body),
+  );
   Future<Map<String, dynamic>> envelope(
     String path,
     Map<String, dynamic> body,
   ) async => {
-    'apiVersion': 2,
-    'clientId': peerId,
+    'apiVersion': 3,
     'encrypted': await SyncSecurity.seal(secret, {
       ...body,
       'requestId': SyncSecurity.randomToken(24),
@@ -101,12 +95,10 @@ void main() {
   pair({bool wrongPin = false}) async {
     final response = jsonDecode(
       (await post('pair-request', {
-        'apiVersion': 2,
-        'pairingVersion': 3,
+        'apiVersion': 3,
         'clientId': peerId,
         'clientName': 'New fixture',
-        'clientPort': 1,
-      })).body,
+      }, device: null)).body,
     );
     final session = response['session'] as String;
     final pin = server.incomingPairingRequest.value!.pin;
@@ -122,21 +114,26 @@ void main() {
     'declaring a trusted id without its key cannot read or mutate data',
     () async {
       await Hive.box('user').put('likedSongs', [song('private')]);
-      final response = await post('merge', {
-        'clientId': peerId,
-        'library': {
-          'likedSongs': [song('injected')],
-        },
+      final forgedMerge = await post('merge', {
+        'apiVersion': 3,
+        'encrypted': await SyncSecurity.seal(SyncSecurity.randomToken(), {
+          'requestId': SyncSecurity.randomToken(24),
+          'sequence': 1,
+          'library': {
+            'likedSongs': [song('injected')],
+          },
+        }, 'api/sync/merge|$peerId|$ownId'),
       });
-      expect(response.statusCode, 403);
-      expect(response.body, isNot(contains('private')));
+      expect(forgedMerge.statusCode, 403);
+      expect(forgedMerge.body, isNot(contains('private')));
       expect(
         (Hive.box('user').get('likedSongs') as List).single['ytid'],
         'private',
       );
+      final stranger = await post('merge', {}, device: 'stranger');
+      expect(stranger.statusCode, 403);
       final forged = await post('capabilities', {
-        'apiVersion': 2,
-        'clientId': peerId,
+        'apiVersion': 3,
         'encrypted': await SyncSecurity.seal(SyncSecurity.randomToken(), {
           'requestId': 'wrong',
         }, 'api/sync/capabilities|$peerId|$ownId'),
@@ -177,7 +174,8 @@ void main() {
     expect((Hive.box('user').get('likedSongs') as List).single['ytid'], 'keep');
   });
 
-  test('receiver records success only after an authenticated receipt acknowledgement', () async {
+  test('an authenticated merge replies with the merged library', () async {
+    expect(Hive.box('settings').get('localSyncLastSyncedAt'), null);
     final result = await secure('merge', {
       'categories': ['favourites'],
       'library': payload(
@@ -188,21 +186,11 @@ void main() {
       ),
     });
     expect(result.status, 200);
-    expect(Hive.box('settings').get('localSyncLastSyncedAt'), null);
+    expect(result.body['stats'], isNotEmpty);
     expect(
-      (await secure('confirm', {
-        'receipt': result.body['receipt'],
-        'digest': 'wrong',
-      })).status,
-      409,
+      (result.body['library']['document']['records'] as Map).keys.join(),
+      contains('new'),
     );
-    expect(Hive.box('settings').get('localSyncLastSyncedAt'), null);
-    final confirmation = await secure('confirm', {
-      'receipt': result.body['receipt'],
-      'digest': syncDigest(result.body['library']),
-    });
-    expect(confirmation.status, 200);
-    expect(confirmation.body['confirmed'], true);
     expect(Hive.box('settings').get('localSyncLastSyncedAt'), isNotNull);
   });
 
@@ -258,6 +246,17 @@ void main() {
       expect(server.pairedDevices.value.single.secret, secret);
     },
   );
+
+  test('forgetting a device also drops its replay counters', () async {
+    expect((await secure('capabilities', {})).status, 200);
+    bool hasCounters() =>
+        Hive.box('userNoBackup').keys
+            .any((key) => key.toString().contains(':$peerId:'));
+    expect(hasCounters(), isTrue);
+    await server.forgetDevice(peerId);
+    expect(hasCounters(), isFalse);
+    expect((await secure('capabilities', {})).status, 403);
+  });
 
   test('turning sync off cancels a pending pairing', () async {
     await pair();
@@ -335,7 +334,7 @@ void main() {
       );
       expect(paths, ['/api/sync/capabilities']);
       expect(server.state.value.status, LocalSyncStatus.error);
-      expect(server.state.value.errorMessage, contains('Update both devices'));
+      expect(server.state.value.error, LocalSyncError.updateRequired);
       expect(server.pairedDevices.value.single.secret, secret);
       expect(Hive.box('userNoBackup').get('localSyncDocumentV2'), isNull);
       expect(Hive.box('user').get('likedSongs')[0]['ytid'], 'private');

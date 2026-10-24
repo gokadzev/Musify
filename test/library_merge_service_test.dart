@@ -6,6 +6,7 @@ import 'package:musify/services/common_services.dart';
 import 'package:musify/services/library_merge_service.dart';
 import 'package:musify/services/listening_stats_service.dart';
 import 'package:musify/services/local_sync/sync_data.dart';
+import 'package:musify/services/local_sync/sync_merge.dart';
 import 'package:musify/services/settings_manager.dart';
 
 import 'local_sync/fixtures.dart';
@@ -53,6 +54,29 @@ void main() {
   );
 
   test(
+    'only local edits count as unsynced, not writes made by a sync',
+    () async {
+      const keys = ['likedSongs'];
+      await Hive.box('user').put('likedSongs', [song('local')]);
+      expect(await LibraryMergeService.hasUnsyncedChanges(keys), isTrue);
+      await LibraryMergeService.exportLibrary();
+      expect(await LibraryMergeService.hasUnsyncedChanges(keys), isFalse);
+      final remote = SyncDocument()
+        ..capture(
+          {
+            'likedSongs': [song('remote')],
+          },
+          null,
+          'other',
+        );
+      await LibraryMergeService.mergeLibrary(payload(remote));
+      expect(await LibraryMergeService.hasUnsyncedChanges(keys), isFalse);
+      await Hive.box('user').put('likedSongs', [song('edited')]);
+      expect(await LibraryMergeService.hasUnsyncedChanges(keys), isTrue);
+    },
+  );
+
+  test(
     'merge persists favourites, playlists, radio, history and recap',
     () async {
       await Hive.box('user').put('likedSongs', [song('local')]);
@@ -65,7 +89,7 @@ void main() {
           'wrappedListeningStats': recap(300),
         }),
       );
-      final stats = await LibraryMergeService.mergeLibrary(incoming);
+      final stats = (await LibraryMergeService.mergeLibrary(incoming)).stats;
       expect(stats, isNotEmpty);
       expect(
         (Hive.box('user').get('likedSongs') as List)
@@ -81,7 +105,7 @@ void main() {
             .get('wrappedListeningStats')['currentMonth']['totalSeconds'],
         18000,
       );
-      expect(await LibraryMergeService.mergeLibrary(incoming), isEmpty);
+      expect((await LibraryMergeService.mergeLibrary(incoming)).stats, isEmpty);
     },
   );
 
