@@ -46,6 +46,7 @@ import 'package:musify/services/playlists_manager.dart';
 import 'package:musify/services/router_service.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/services/update_manager.dart';
+import 'package:musify/services/windows_media_controls.dart';
 import 'package:musify/theme/app_themes.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/language_utils.dart';
@@ -57,6 +58,7 @@ import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
 late MusifyAudioHandler audioHandler;
 LinuxMediaControls? linuxMediaControls;
+WindowsMediaControls? windowsMediaControls;
 StreamSubscription<String?>? sharingIntentSubscription;
 StreamSubscription<Uri?>? appLinksSubscription;
 
@@ -238,6 +240,7 @@ class _MusifyState extends State<Musify> with WidgetsBindingObserver {
     );
     unawaited(LocalSyncService.instance.dispose());
     unawaited(linuxMediaControls?.dispose());
+    unawaited(windowsMediaControls?.dispose());
     Hive.close();
     unawaited(sharingIntentSubscription?.cancel());
     unawaited(appLinksSubscription?.cancel());
@@ -410,6 +413,35 @@ Future<void> initialisation() async {
       JustAudioMediaKit.title = 'Musify';
       JustAudioMediaKit.ensureInitialized();
       audioHandler = MusifyAudioHandler();
+    }
+
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
+      final artwork = DesktopMediaArtwork();
+      final controls = WindowsMediaControls(
+        canGoNext: () => audioHandler.canSkipToNext,
+        canGoPrevious: () => audioHandler.hasPrevious,
+        navigationChanges: Listenable.merge([
+          repeatNotifier,
+          playNextSongAutomatically,
+          offlineMode,
+        ]),
+        resolveArtwork: artwork.resolve,
+        onError: (error, stackTrace) => logger.log(
+          'Windows media controls error',
+          error: error,
+          stackTrace: stackTrace,
+        ),
+      );
+      try {
+        await controls.start(audioHandler);
+        windowsMediaControls = controls;
+      } catch (error, stackTrace) {
+        logger.log(
+          'Could not initialize Windows media controls',
+          error: error,
+          stackTrace: stackTrace,
+        );
+      }
     }
 
     if (!kIsWeb && defaultTargetPlatform == TargetPlatform.linux) {

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:html/dom.dart';
 import 'package:meta/meta.dart';
 
@@ -20,6 +22,18 @@ abstract class YoutubePage<T extends InitialData> {
   final T Function(JsonMap)? initialDataBuilder;
 
   T _getInitialData() {
+    final dedicatedData = root!.querySelector('script#yt-initial-data')?.text;
+    if (dedicatedData != null) {
+      try {
+        final data = json.decode(dedicatedData);
+        if (data is Map<String, dynamic>) {
+          return initialDataBuilder!(data);
+        }
+      } on FormatException {
+        // Fall back to the marker-based extraction.
+      }
+    }
+
     final scriptText = root!
         .querySelectorAll('script')
         .map((e) => e.text)

@@ -238,11 +238,14 @@ class SyncDocument {
       ];
     }
 
-    Map<String, dynamic> entries(String kind, [String parent = '']) => {
-      for (final e in live.entries)
-        if (_parts(e.key)[0] == kind && _parts(e.key)[1] == parent)
-          _parts(e.key)[2]: e.value,
-    };
+    // Group once by kind and parent to avoid a quadratic scan per playlist.
+    final grouped = <String, Map<String, Map<String, dynamic>>>{};
+    for (final e in live.entries) {
+      final parts = _parts(e.key);
+      ((grouped[parts[0]] ??= {})[parts[1]] ??= {})[parts[2]] = e.value;
+    }
+    Map<String, dynamic> entries(String kind, [String parent = '']) =>
+        grouped[kind]?[parent] ?? const {};
     List<dynamic> list(String kind, {bool strings = false}) {
       final items = entries(kind);
       return ordered(

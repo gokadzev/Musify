@@ -122,8 +122,7 @@ def record(name, **detail):
 
 
 try:
-    for role in ['a', 'b', 'c']:
-        start(role)
+    ready_ids = {role: start(role)['deviceId'] for role in ['a', 'b', 'c']}
     reset({'likedSongs': [song('a')]}, {'likedSongs': [song('b')]}, {'likedSongs': [song('c')]})
     sync('a', 'b')
     sync('b', 'c')
@@ -230,6 +229,78 @@ try:
     assert receive('b', request_b)['status'] == 'success'
     assert identities(snapshot('a')['data']) == identities(snapshot('b')['data']) == {'a', 'b'}
     record('simultaneous authenticated bidirectional sync completes without deadlock')
+
+    def unpair(x, y):
+        command(x, 'forget', target=y)
+        command(y, 'forget', target=x)
+
+    unpair('a', 'b')
+    reset({'likedSongs': [song('a')]}, {'likedSongs': [song('b')]})
+    failed = sync('a', 'b', expect_success=False, wrongPin=True)
+    assert failed['status'] == 'error', failed
+    assert not snapshot('a')['paired'].get(ready_ids['b']) and not snapshot('b')['paired'].get(ready_ids['a'])
+    assert identities(snapshot('a')['data']) == {'a'} and identities(snapshot('b')['data']) == {'b'}
+    time.sleep(3.2)  # the receiver rate-limits new pairing requests
+    sync('a', 'b')
+    assert identities(snapshot('a')['data']) == identities(snapshot('b')['data']) == {'a', 'b'}
+    record('wrong PIN pairs nothing and leaks no data; retry with the right PIN succeeds')
+
+    command('b', 'forget', target='a')
+    for attempt in range(2):
+        failed = sync('a', 'b', expect_success=False)
+        assert failed['status'] == 'error', failed
+    # The sender keeps its secret, so the message must say to forget and re-pair.
+    assert snapshot('a')['paired'].get(ready_ids['b'])
+    assert 'forget' in failed['message'].lower(), failed['message']
+    record('one-sided forget: sync fails and tells the user to forget the device and pair again')
+    unpair('a', 'b')
+    time.sleep(3.2)
+    sync('a', 'b')
+    record('one-sided forget is recoverable by forgetting on both sides and pairing again')
+
+    reset({'likedSongs': [song('a')]}, {'likedSongs': [song('b')]}, {'likedSongs': [song('c')]})
+    sync('b', 'c')
+    unpair('a', 'c')
+    command('a', 'edit', data={'likedSongs': [song('a'), song('only-a')]})
+    command('a', 'automatic')
+    command('b', 'automatic')
+    command('c', 'automatic')
+    assert 'only-a' in identities(snapshot('c')['data']), snapshot('c')['data']
+    assert not snapshot('a')['paired'].get(ready_ids['c']) and not snapshot('c')['paired'].get(ready_ids['a'])
+    record('chain topology A-B-C forwards a change from A to C without A and C being paired')
+
+    time.sleep(3.2)
+    sync('a', 'c')
+    clocks = [snapshot(role)['library']['document']['clock'] for role in 'abc']
+    for _ in range(2):
+        for role in 'abc':
+            command(role, 'automatic')
+    assert [snapshot(role)['library']['document']['clock'] for role in 'abc'] == clocks
+    assert len({json.dumps(snapshot(role)['data'], sort_keys=True) for role in 'abc'}) == 1
+    record('converged peers stay quiet: repeated automatic sync does not change logical clocks')
+
+    command('b', 'offline', value=True)
+    command('a', 'edit', data={'likedSongs': [song('a'), song('only-a'), song('while-offline')]})
+    command('b', 'automatic')
+    assert 'while-offline' not in identities(snapshot('b')['data'])
+    command('b', 'offline', value=False)
+    command('b', 'automatic')
+    assert 'while-offline' in identities(snapshot('b')['data'])
+    record('offline mode pauses that device\'s automatic sync and it catches up afterwards')
+
+    big_songs = [song(f'big{i}', 'x' * 60) for i in range(4000)]
+    big_lists = [playlist(f'bp{i}', [f'big{j}' for j in range(i, i + 60)]) for i in range(150)]
+    reset({'likedSongs': big_songs, 'customPlaylists': big_lists}, {}, {})
+    started = time.monotonic()
+    sync('a', 'b')
+    first = time.monotonic() - started
+    started = time.monotonic()
+    sync('a', 'b')
+    again = time.monotonic() - started
+    assert len(identities(snapshot('b')['data'])) == 4000
+    assert len(identities(snapshot('b')['data'], 'customPlaylists')) == 150
+    record('large library (4000 favourites, 150 playlists of 60 songs) syncs', first_seconds=round(first, 2), repeat_seconds=round(again, 2))
+    assert first < 25, first
 
     reset({'likedSongs': [song('before')]}, {'likedSongs': [song('remote')]})
     before = snapshot('a')

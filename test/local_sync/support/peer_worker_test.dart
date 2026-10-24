@@ -146,7 +146,13 @@ void main() {
             pinTimer = Timer.periodic(const Duration(milliseconds: 20), (_) {
               if (service.state.value.status == LocalSyncStatus.waitingForPin) {
                 final pin = File('$root/$targetName.pin');
-                if (pin.existsSync()) service.submitPin(pin.readAsStringSync());
+                if (pin.existsSync()) {
+                  var value = pin.readAsStringSync();
+                  if (command['wrongPin'] == true) {
+                    value = value == '000000' ? '000001' : '000000';
+                  }
+                  service.submitPin(value);
+                }
               }
             });
             await service.syncWith(target);
@@ -156,6 +162,17 @@ void main() {
             reloadSettingsFromStorage();
             await service.triggerSilentSync();
             await Hive.box('settings').put('localSyncAutomatic', false);
+            reloadSettingsFromStorage();
+          } else if (op == 'forget') {
+            final info = jsonDecode(
+              File('$root/${command['target']}.ready.json').readAsStringSync(),
+            );
+            await service.forgetDevice(info['deviceId'] as String);
+            final pin = File('$root/${command['target']}.pin');
+            if (pin.existsSync()) pin.deleteSync();
+          } else if (op == 'offline') {
+            await Hive.box('settings')
+                .put('offlineMode', command['value'] == true);
             reloadSettingsFromStorage();
           } else if (op == 'off') {
             await service.setEnabled(false);

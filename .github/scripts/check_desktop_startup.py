@@ -32,6 +32,7 @@ def main():
             "LateInitializationError",
             "MissingPluginException",
             "Could not initialize Linux media controls",
+            "Could not initialize Windows media controls",
         ):
             assert failure not in logs, f"Startup failed: {failure}"
     print("Musify remained open without initialization errors.")

@@ -5,7 +5,7 @@ repository: https://github.com/gokadzev/Musify
 issue_tracker: https://github.com/gokadzev/Musify/issues
 
 publish_to: 'none'
-version: 10.5.3+185 # run update.sh after changing the version
+version: 10.6.0+186 # run update.sh after changing the version
 
 environment:
   sdk: '>=3.13.0 <4.0.0'
@@ -15,7 +15,7 @@ dependencies:
   app_links: ^7.2.2
   audio_service: ^0.18.19
   audio_session: ^0.2.4
-  cached_network_image: ^4.0.4
+  cached_network_image: ^4.0.5
   crypto: ^3.0.7
   cryptography: ^2.9.0
   dbus: ^0.8.0
@@ -28,7 +28,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   flutter_multicast_lock: ^1.2.1
-  go_router: ^18.1.0
+  go_router: ^18.1.1
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   html: ^0.15.7
@@ -37,7 +37,7 @@ dependencies:
   just_audio: ^0.10.6
   just_audio_media_kit:
     path: ./packages/just_audio_media_kit
-  material_ui: ^1.7.0
+  material_ui: ^1.8.0
   media_kit_libs_linux: ^1.2.1
   media_kit_libs_windows_audio: ^1.0.9
   path_provider: ^2.1.6
@@ -69,6 +69,7 @@ flutter:
   assets:
     - assets/licenses/
     - assets/icons/musify_icon.png
+    - assets/icons/ic_launcher.png
 
   fonts:
     - family: paytoneOne

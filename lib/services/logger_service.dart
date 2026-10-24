@@ -25,7 +25,7 @@ import 'package:musify/extensions/l10n.dart';
 
 class Logger {
   String _logs = '';
-  int _logCount = 0;
+  final ValueNotifier<int> logCount = ValueNotifier<int>(0);
 
   void log(String errorLocation, {Object? error, StackTrace? stackTrace}) {
     final timestamp = DateTime.now().toString();
@@ -41,7 +41,7 @@ class Logger {
 
     debugPrint(logMessage);
     _logs += '$logMessage\n';
-    _logCount++;
+    logCount.value++;
   }
 
   Future<String> copyLogs(BuildContext context) async {
@@ -59,6 +59,6 @@ class Logger {
   }
 
   int getLogCount() {
-    return _logCount;
+    return logCount.value;
   }
 }

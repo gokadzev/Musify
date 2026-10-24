@@ -1305,10 +1305,15 @@ class LocalSyncService {
       if (error.message == 'incorrect_pin') {
         return 'Incorrect PIN. Check the code shown on ${device.name}.';
       }
+      if (error.statusCode == 429) {
+        return '${device.name} is busy with another pairing attempt. '
+            'Wait a few seconds and try again.';
+      }
       if (error.statusCode == 403) {
         return pairing
             ? '${device.name} rejected the pairing.'
-            : '${device.name} no longer trusts this device. Sync again to pair.';
+            : '${device.name} no longer trusts this device. Long-press it in '
+                  'the device list to forget it, then pair again.';
       }
       return '${device.name} answered with an error (${error.statusCode}).';
     }

@@ -40,6 +40,12 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
       - run: flutter pub get
       - run: flutter analyze
+      - name: Test Windows Runtime initialization
+        if: runner.os == 'Windows'
+        run: |
+          cmake -S test/windows/runtime -B build/windows-runtime-test -A x64
+          cmake --build build/windows-runtime-test --config Release
+          ctest --test-dir build/windows-runtime-test -C Release --output-on-failure
       - run: flutter build ${{ matrix.platform }} --release
       - name: Test native playback
         shell: bash
