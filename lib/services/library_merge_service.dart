@@ -36,23 +36,11 @@ export 'local_sync/sync_data.dart' show SyncCategory, syncCategoryKeys;
 
 class LibraryMergeService {
   LibraryMergeService._();
-  static const schemaVersion = syncSchemaVersion;
-  static const libraryKeys = [
-    'likedSongs',
-    'likedRadioStations',
-    'playlists',
-    'likedPlaylists',
-    'customPlaylists',
-    'playlistFolders',
-    'pinnedPlaylistIds',
-    'recentlyPlayedSongs',
-    'searchHistory',
-    'wrappedListeningStats',
-  ];
   static const _documentKey = 'localSyncDocumentV2';
   static const _baselineKey = 'localSyncBaselineV2';
   static const _journalKey = 'localSyncPendingMergeV2';
   static Future<void> _tail = Future.value();
+  static final Map<String, String> _written = {};
   @visibleForTesting
   static Future<void> Function(String stage)? fault;
 
@@ -115,21 +103,16 @@ class LibraryMergeService {
     return id;
   }
 
-  /// Whether any of [keys] changed since the last sync captured them.
-  static Future<bool> hasUnsyncedChanges(Iterable<String> keys) =>
-      _locked(() async {
-        final baseline = _baseline();
-        if (baseline == null) return true;
-        final current = _snapshot();
-        return keys.any(
-          (key) => canonicalSync(current[key]) != canonicalSync(baseline[key]),
-        );
-      });
+  /// Whether this `user` box event is the merge's own write; each write is matched once.
+  static bool isMergeWrite(String key, Object? value) {
+    final written = _written.remove(key);
+    return written != null && written == syncDigest(value);
+  }
 
   static Map<String, dynamic> _snapshot() {
     final user = Hive.box('user');
     return {
-      for (final key in libraryKeys)
+      for (final key in syncCategoryKeys.values.expand((keys) => keys))
         if (key != 'wrappedListeningStats' || user.get(key) != null)
           key: encodeSyncValue(user.get(key, defaultValue: [])),
     };
@@ -159,7 +142,7 @@ class LibraryMergeService {
     SyncDocument document,
     Set<SyncCategory> categories,
   ) => {
-    'schemaVersion': schemaVersion,
+    'schemaVersion': syncSchemaVersion,
     'categories': categories.map((e) => e.name).toList()..sort(),
     'document': document.select(categories).toMap(),
   };
@@ -177,12 +160,12 @@ class LibraryMergeService {
   });
 
   /// Merges [remote] and returns what changed plus this side's merged payload.
-  static Future<({Map<String, int> stats, Map<String, dynamic> library})>
+  static Future<({Set<String> changed, Map<String, dynamic> library})>
   mergeLibrary(Map<String, dynamic> remote, {Set<SyncCategory>? categories}) =>
       _locked(() async {
-        if (remote['schemaVersion'] != schemaVersion ||
+        if (remote['schemaVersion'] != syncSchemaVersion ||
             remote['document'] is! Map ||
-            remote['document']['version'] != schemaVersion) {
+            remote['document']['version'] != syncSchemaVersion) {
           throw const FormatException(
             'Unsupported sync version. Update both devices.',
           );
@@ -206,23 +189,25 @@ class LibraryMergeService {
           final metadataChanges = document.join(incoming);
           final reply = _payload(document, incomingCategories);
           if (!captured && metadataChanges == 0) {
-            return (stats: <String, int>{}, library: reply);
+            return (changed: <String>{}, library: reply);
           }
           final merged = document.materialize();
           final keys = incomingCategories
               .expand((c) => syncCategoryKeys[c]!)
               .toSet();
           final updates = <String, dynamic>{};
-          final stats = <String, int>{if (metadataChanges > 0) '_metadata': 1};
           for (final key in keys) {
             if (canonicalSync(current[key]) != canonicalSync(merged[key])) {
               updates[key] = merged[key];
-              stats[key] = 1;
             }
           }
+          final changed = {
+            ...updates.keys,
+            if (metadataChanges > 0) '_metadata',
+          };
           if (updates.isEmpty) {
             await _save(document, current);
-            return (stats: stats, library: reply);
+            return (changed: changed, library: reply);
           }
           final journal = {
             'user': {
@@ -248,6 +233,9 @@ class LibraryMergeService {
               await store.delete(_journalKey);
               continue;
             }
+            for (final e in updates.entries) {
+              _written[e.key] = syncDigest(e.value);
+            }
             final write = Hive.box('user')
                 .putAll(decodeSyncValue(updates) as Map);
             _refresh();
@@ -258,7 +246,7 @@ class LibraryMergeService {
             await fault?.call('metadata');
             await store.delete(_journalKey);
             await store.flush();
-            return (stats: stats, library: reply);
+            return (changed: changed, library: reply);
           } catch (_) {
             await recoverPendingMerge();
             rethrow;
@@ -267,9 +255,6 @@ class LibraryMergeService {
         throw StateError('Library is changing; try syncing again.');
       });
 
-  static int totalAdded(Map<String, int> stats) => stats.entries
-      .where((entry) => !entry.key.startsWith('_'))
-      .fold(0, (sum, entry) => sum + entry.value);
   static void _refresh() {
     reloadSettingsFromStorage();
     reloadSongLibraryStateFromStorage();

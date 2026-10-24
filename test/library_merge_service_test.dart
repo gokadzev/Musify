@@ -53,28 +53,30 @@ void main() {
     },
   );
 
-  test(
-    'only local edits count as unsynced, not writes made by a sync',
-    () async {
-      const keys = ['likedSongs'];
-      await Hive.box('user').put('likedSongs', [song('local')]);
-      expect(await LibraryMergeService.hasUnsyncedChanges(keys), isTrue);
-      await LibraryMergeService.exportLibrary();
-      expect(await LibraryMergeService.hasUnsyncedChanges(keys), isFalse);
-      final remote = SyncDocument()
-        ..capture(
-          {
-            'likedSongs': [song('remote')],
-          },
-          null,
-          'other',
-        );
-      await LibraryMergeService.mergeLibrary(payload(remote));
-      expect(await LibraryMergeService.hasUnsyncedChanges(keys), isFalse);
-      await Hive.box('user').put('likedSongs', [song('edited')]);
-      expect(await LibraryMergeService.hasUnsyncedChanges(keys), isTrue);
-    },
-  );
+  test('writes made by a merge are told apart from later user edits', () async {
+    final box = Hive.box('user');
+    await box.put('likedSongs', [song('local')]);
+    await LibraryMergeService.exportLibrary();
+    final remote = SyncDocument()
+      ..capture(
+        {
+          'likedSongs': [song('remote')],
+        },
+        null,
+        'other',
+      );
+    await LibraryMergeService.mergeLibrary(payload(remote));
+    expect(box.get('likedSongs'), hasLength(2));
+    expect(
+      LibraryMergeService.isMergeWrite('likedSongs', box.get('likedSongs')),
+      isTrue,
+    );
+    // Returning to the merged value later is a user edit.
+    expect(
+      LibraryMergeService.isMergeWrite('likedSongs', box.get('likedSongs')),
+      isFalse,
+    );
+  });
 
   test(
     'merge persists favourites, playlists, radio, history and recap',
@@ -89,8 +91,9 @@ void main() {
           'wrappedListeningStats': recap(300),
         }),
       );
-      final stats = (await LibraryMergeService.mergeLibrary(incoming)).stats;
-      expect(stats, isNotEmpty);
+      final changed = (await LibraryMergeService.mergeLibrary(incoming))
+          .changed;
+      expect(changed, isNotEmpty);
       expect(
         (Hive.box('user').get('likedSongs') as List)
             .map((e) => e['ytid'])
@@ -105,7 +108,10 @@ void main() {
             .get('wrappedListeningStats')['currentMonth']['totalSeconds'],
         18000,
       );
-      expect((await LibraryMergeService.mergeLibrary(incoming)).stats, isEmpty);
+      expect(
+        (await LibraryMergeService.mergeLibrary(incoming)).changed,
+        isEmpty,
+      );
     },
   );
 

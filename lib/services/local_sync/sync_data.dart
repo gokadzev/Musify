@@ -94,6 +94,29 @@ Object? decodeSyncValue(Object? value) {
   return value;
 }
 
+/// A sync message that exceeds [maxSyncMessageBytes].
+class SyncTooLargeException implements Exception {
+  const SyncTooLargeException();
+}
+
+/// Structural equality for decoded sync JSON, without building strings.
+bool sameSyncValue(Object? a, Object? b) {
+  if (a is Map && b is Map) {
+    return a.length == b.length &&
+        a.keys.every(
+          (key) => b.containsKey(key) && sameSyncValue(a[key], b[key]),
+        );
+  }
+  if (a is List && b is List) {
+    if (a.length != b.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      if (!sameSyncValue(a[i], b[i])) return false;
+    }
+    return true;
+  }
+  return a == b;
+}
+
 String canonicalSync(Object? value) {
   Object? ordered(Object? value) {
     if (value is Map) {
@@ -122,14 +145,14 @@ void validateSyncJson(Object? value, [int depth = 0]) {
   } else if (value is num) {
     if (!value.isFinite) throw const FormatException('Invalid sync number');
   } else if (value is List) {
-    if (value.length > 100000) {
+    if (value.length > 1000000) {
       throw const FormatException('Too many sync items');
     }
     for (final item in value) {
       validateSyncJson(item, depth + 1);
     }
   } else if (value is Map) {
-    if (value.length > 100000 || value.keys.any((e) => e is! String)) {
+    if (value.length > 1000000 || value.keys.any((e) => e is! String)) {
       throw const FormatException('Invalid sync object');
     }
     for (final item in value.values) {

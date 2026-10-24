@@ -1,4 +1,7 @@
-"""Exercise real encrypted HTTP sync with three independent Hive processes."""
+"""Exercise real encrypted HTTP sync with three independent Hive processes.
+
+Run from the repository root: python3 test/local_sync/support/run_peers.py
+"""
 import argparse
 import json
 import os
@@ -11,7 +14,7 @@ import time
 parser = argparse.ArgumentParser()
 parser.add_argument('--output', default='build/local-sync-peer-results')
 args = parser.parse_args()
-repo = Path(__file__).resolve().parents[2]
+repo = Path(__file__).resolve().parents[3]
 output = (repo / args.output).resolve()
 output.mkdir(parents=True, exist_ok=True)
 control = Path(tempfile.mkdtemp(prefix='musify-sync-peers-'))

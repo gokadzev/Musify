@@ -39,9 +39,12 @@ class SyncSecurity {
     Map<String, dynamic> body,
     String context,
   ) async {
+    final clear = utf8.encode(jsonEncode(body));
+    // The receiver applies the limit after decompressing.
+    if (clear.length > maxSyncMessageBytes) throw const SyncTooLargeException();
     // Compressing first keeps the pure-Dart cipher fast on large libraries.
     final box = await _cipher.encrypt(
-      gzip.encode(utf8.encode(jsonEncode(body))),
+      gzip.encode(clear),
       secretKey: SecretKey(base64Url.decode(secret)),
       aad: utf8.encode(context),
     );
@@ -93,9 +96,7 @@ class _CappedSink implements Sink<List<int>> {
   @override
   void add(List<int> chunk) {
     bytes.add(chunk);
-    if (bytes.length > maxSyncMessageBytes) {
-      throw const FormatException('Sync message too large');
-    }
+    if (bytes.length > maxSyncMessageBytes) throw const SyncTooLargeException();
   }
 
   @override

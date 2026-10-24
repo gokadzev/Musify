@@ -20,12 +20,12 @@
  */
 
 import 'dart:async';
-import 'dart:math';
 
 import 'package:hive/hive.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:musify/main.dart' show logger;
 import 'package:musify/services/data_manager.dart';
+import 'package:musify/services/local_sync/sync_security.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/listening_stats_utils.dart';
 import 'package:musify/utilities/map_utils.dart';
@@ -357,10 +357,7 @@ class ListeningStatsService {
       now.year,
       currentMonthKey: listeningStatsMonthKey(now),
     );
-    cleared['syncResetId'] = List.generate(
-      16,
-      (_) => Random.secure().nextInt(256).toRadixString(16).padLeft(2, '0'),
-    ).join();
+    cleared['syncResetId'] = SyncSecurity.randomToken(16);
     _stats = cleared;
     await deleteData('user', storageKey);
     // Persist the cleared map last so an in-flight checkpoint flush can't

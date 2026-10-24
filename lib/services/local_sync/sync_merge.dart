@@ -22,6 +22,7 @@
 import 'dart:convert';
 
 import 'package:musify/services/local_sync/sync_data.dart';
+import 'package:musify/utilities/listening_stats_utils.dart';
 
 const _kindKeys = <String, String>{
   'likedSongs': 'likedSongs',
@@ -173,24 +174,12 @@ class SyncDocument {
     for (final entry in other.records.entries) {
       final local = records[entry.key] as Map?;
       final incoming = entry.value as Map;
-      final kind = _parts(entry.key)[0];
-      final aggregated = _aggregated(kind);
-      // A device stamps each key once per clock tick, so equal stamps are the same write.
-      if (local != null &&
-          !aggregated &&
-          local['clock'] == incoming['clock'] &&
-          local['device'] == incoming['device'] &&
-          local['deleted'] == incoming['deleted'] &&
-          (local['clock'] as int) > 0) {
-        continue;
-      }
+      // Converged peers send identical cells, so skip them without the full merge.
+      if (local != null && sameSyncValue(local, incoming)) continue;
       final winner = local == null
           ? incoming
-          : _mergeCell(kind, local, incoming);
-      if (identical(winner, local) ||
-          (aggregated && canonicalSync(local) == canonicalSync(winner))) {
-        continue;
-      }
+          : _mergeCell(_parts(entry.key)[0], local, incoming);
+      if (identical(winner, local) || sameSyncValue(local, winner)) continue;
       records[entry.key] = Map<String, dynamic>.from(winner);
       changes++;
     }
@@ -355,7 +344,7 @@ class SyncDocument {
     final recap = entries('recapMonth');
     return {
       'wrappedListeningStats': {
-        'schemaVersion': 2,
+        'schemaVersion': wrappedListeningStatsSchemaVersion,
         if (live.containsKey(_key('recapReset', '', '')))
           'syncResetId': live[_key('recapReset', '', '')],
         'year': date.year,
@@ -473,7 +462,7 @@ class SyncDocument {
     final recap = library['wrappedListeningStats'];
     if (recap != null) {
       if (recap is! Map ||
-          recap['schemaVersion'] != 2 ||
+          recap['schemaVersion'] != wrappedListeningStatsSchemaVersion ||
           recap['history'] is! Map ||
           recap['currentMonth'] is! Map ||
           recap['currentMonthKey'] is! String) {

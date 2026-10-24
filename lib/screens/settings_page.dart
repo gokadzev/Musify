@@ -313,85 +313,62 @@ class SettingsPage extends StatelessWidget {
 
   Widget _buildLocalSyncSection(BuildContext context) {
     final service = LocalSyncService.instance;
+    if (!service.isSupportedPlatform) return const SizedBox.shrink();
 
-    if (!service.isSupportedPlatform) {
-      return const SizedBox.shrink();
-    }
-
-    return Column(
-      children: [
-        SectionHeader(
-          title: context.l10n!.syncTitle,
-          icon: FluentIcons.phone_desktop_24_filled,
-        ),
-        ValueListenableBuilder<bool>(
-          valueListenable: localSyncEnabled,
-          builder: (_, enabled, __) {
-            return CustomBar(
-              context.l10n!.syncOverNetwork,
-              FluentIcons.wifi_1_24_regular,
-              description: enabled
-                  ? context.l10n!.syncOnDescription
-                  : context.l10n!.syncOffDescription,
-              borderRadius: enabled
-                  ? commonCustomBarRadiusFirst
-                  : commonCustomBarRadius,
-              onTap: enabled
-                  ? () => context.push('/settings/local-sync')
-                  : null,
-              trailing: Switch(
-                value: enabled,
-                onChanged: (value) => _toggleLocalSync(context, value),
+    return ValueListenableBuilder<bool>(
+      valueListenable: localSyncEnabled,
+      builder: (_, enabled, __) => Column(
+        children: [
+          SectionHeader(
+            title: context.l10n!.syncTitle,
+            icon: FluentIcons.phone_desktop_24_filled,
+          ),
+          CustomBar(
+            context.l10n!.syncOverNetwork,
+            FluentIcons.wifi_1_24_regular,
+            description: enabled
+                ? context.l10n!.syncOnDescription
+                : context.l10n!.syncOffDescription,
+            borderRadius: enabled
+                ? commonCustomBarRadiusFirst
+                : commonCustomBarRadius,
+            trailing: Switch(
+              value: enabled,
+              onChanged: (value) => _toggleLocalSync(context, value),
+            ),
+          ),
+          if (enabled) ...[
+            ValueListenableBuilder<DateTime?>(
+              valueListenable: localSyncLastSyncedAt,
+              builder: (_, lastSyncedAt, __) => CustomBar(
+                context.l10n!.syncDevices,
+                FluentIcons.arrow_sync_24_regular,
+                description: _lastSyncDescription(context, lastSyncedAt),
+                onTap: () => context.push('/settings/local-sync'),
               ),
-            );
-          },
-        ),
-        ValueListenableBuilder<bool>(
-          valueListenable: localSyncEnabled,
-          builder: (_, enabled, __) {
-            if (!enabled) {
-              return const SizedBox.shrink();
-            }
-
-            return Column(
-              children: [
-                ValueListenableBuilder<DateTime?>(
-                  valueListenable: localSyncLastSyncedAt,
-                  builder: (_, lastSyncedAt, __) {
-                    return CustomBar(
-                      context.l10n!.syncDevices,
-                      FluentIcons.arrow_sync_24_regular,
-                      description: _lastSyncDescription(context, lastSyncedAt),
-                      onTap: () => context.push('/settings/local-sync'),
-                    );
-                  },
+            ),
+            ValueListenableBuilder<bool>(
+              valueListenable: localSyncAutomatic,
+              builder: (_, automatic, __) => CustomBar(
+                context.l10n!.syncAutomatic,
+                FluentIcons.arrow_clockwise_24_regular,
+                description: context.l10n!.syncAutomaticDescription,
+                trailing: Switch(
+                  value: automatic,
+                  onChanged: service.setAutomatic,
                 ),
-                ValueListenableBuilder<bool>(
-                  valueListenable: localSyncAutomatic,
-                  builder: (_, automatic, __) {
-                    return CustomBar(
-                      context.l10n!.syncAutomatic,
-                      FluentIcons.arrow_clockwise_24_regular,
-                      description: context.l10n!.syncAutomaticDescription,
-                      trailing: Switch(
-                        value: automatic,
-                        onChanged: service.setAutomatic,
-                      ),
-                    );
-                  },
-                ),
-                CustomBar(
-                  context.l10n!.syncData,
-                  FluentIcons.list_24_regular,
-                  description: context.l10n!.syncSelections,
-                  borderRadius: commonCustomBarRadiusLast,
-                  onTap: () => _showSyncCategories(context),
-                ),
-              ],
-            );
-          },
-        ),
-      ],
+              ),
+            ),
+            CustomBar(
+              context.l10n!.syncData,
+              FluentIcons.list_24_regular,
+              description: context.l10n!.syncSelections,
+              borderRadius: commonCustomBarRadiusLast,
+              onTap: () => _showSyncCategories(context),
+            ),
+          ],
+        ],
+      ),
     );
   }
 

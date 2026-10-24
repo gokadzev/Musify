@@ -69,7 +69,6 @@ void main() {
         'data': encodeSyncValue(Hive.box('user').toMap()),
         'status': service.state.value.status.name,
         'error': service.state.value.error?.name,
-        'raw': service.state.value.rawError,
         'paired': {
           for (final peer in service.pairedDevices.value)
             peer.deviceId: syncDigest(peer.secret),

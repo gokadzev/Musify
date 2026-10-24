@@ -186,7 +186,7 @@ void main() {
       ),
     });
     expect(result.status, 200);
-    expect(result.body['stats'], isNotEmpty);
+    expect(result.body['changed'], contains('likedSongs'));
     expect(
       (result.body['library']['document']['records'] as Map).keys.join(),
       contains('new'),
@@ -257,6 +257,29 @@ void main() {
     expect(hasCounters(), isFalse);
     expect((await secure('capabilities', {})).status, 403);
   });
+
+  test('garbage from another host does not cancel a pending pairing', () async {
+    await pair();
+    for (final path in ['pair-request', 'pair-verify']) {
+      final response = await http.post(
+        Uri.parse('http://127.0.0.1:${server.serverPort}/api/sync/$path'),
+        body: 'not json',
+      );
+      expect(response.statusCode, 400);
+    }
+    expect(server.incomingPairingRequest.value, isNotNull);
+  });
+
+  test(
+    'a malformed message from a paired id is invalid, not untrusted',
+    () async {
+      final response = await post('capabilities', {
+        'apiVersion': 3,
+        'encrypted': {'nonce': 'AA==', 'ciphertext': 'AA==', 'mac': 'AA=='},
+      });
+      expect(response.statusCode, 400);
+    },
+  );
 
   test('turning sync off cancels a pending pairing', () async {
     await pair();

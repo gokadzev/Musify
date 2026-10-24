@@ -22,7 +22,6 @@
 import 'dart:async';
 
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:musify/constants/app_constants.dart';
@@ -74,7 +73,7 @@ void showIncomingPairingDialog() {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                '${request.clientName}\n${dialogContext.l10n!.syncPairDescription}',
+                dialogContext.l10n!.syncPairDescription(request.clientName),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
@@ -358,7 +357,7 @@ class _LocalSyncPageState extends State<LocalSyncPage> {
     if (pin.length != 6) {
       showToast(
         context,
-        context.l10n!.syncPinInvalid,
+        context.l10n!.syncPinInstructions,
         icon: FluentIcons.error_circle_24_regular,
       );
       return;
@@ -370,11 +369,11 @@ class _LocalSyncPageState extends State<LocalSyncPage> {
   Widget _buildSuccess(BuildContext context, LocalSyncState state) {
     final theme = Theme.of(context);
     final l10n = context.l10n!;
-    final stats = state.stats ?? const {};
+    final changed = state.changed ?? const {};
     final labels = syncCategoryLabels(l10n);
-    final changed = [
+    final updated = [
       for (final category in SyncCategory.values)
-        if (syncCategoryKeys[category]!.any((key) => (stats[key] ?? 0) > 0))
+        if (syncCategoryKeys[category]!.any(changed.contains))
           labels[category]!,
     ];
 
@@ -394,7 +393,7 @@ class _LocalSyncPageState extends State<LocalSyncPage> {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
-          if (changed.isEmpty)
+          if (updated.isEmpty)
             Text(l10n.syncUnchanged, textAlign: TextAlign.center)
           else
             Card(
@@ -402,7 +401,7 @@ class _LocalSyncPageState extends State<LocalSyncPage> {
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
-                    for (final label in changed)
+                    for (final label in updated)
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4),
                         child: Row(
@@ -464,17 +463,6 @@ class _LocalSyncPageState extends State<LocalSyncPage> {
             textAlign: TextAlign.center,
             style: theme.textTheme.bodyLarge,
           ),
-          if (kDebugMode && state.rawError != null) ...[
-            const SizedBox(height: 12),
-            Text(
-              state.rawError!,
-              textAlign: TextAlign.center,
-              style: theme.textTheme.bodySmall?.copyWith(
-                fontFamily: 'monospace',
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ],
           const SizedBox(height: 24),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
