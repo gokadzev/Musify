@@ -1,3 +1,24 @@
+/*
+ *     Copyright (C) 2026 Valeri Gokadze
+ *
+ *     Musify is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     Musify is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ *
+ *     For more information about Musify, including how to contribute,
+ *     please visit: https://github.com/gokadzev/Musify
+ */
+
 import 'dart:convert';
 
 import 'package:musify/services/local_sync/sync_data.dart';
@@ -177,8 +198,9 @@ class SyncDocument {
         stamp[0] is! int ||
         stamp[0] < 0 ||
         stamp[1] is! String ||
-        stamp[1].length > 128)
+        stamp[1].length > 128) {
       throw const FormatException('Invalid sync generation');
+    }
   }
 
   static Map _mergeCell(String kind, Map a, Map b) {
@@ -384,15 +406,17 @@ class SyncDocument {
     mapList('searchHistory', library['searchHistory'], strings: true);
     void playlist(Map item, String? folder) {
       final id = item['ytid']?.toString();
-      if (id == null || id.isEmpty || item['list'] is! List)
+      if (id == null || id.isEmpty || item['list'] is! List) {
         throw const FormatException('Invalid custom playlist');
+      }
       final metadata = _portableMap(item)..remove('list');
       result[_key('customPlaylists', '', id)] = metadata;
       result[_key('playlistLocation', '', id)] = folder;
       final ids = <String>[];
       for (final song in item['list']) {
-        if (song is! Map || song['ytid'] == null)
+        if (song is! Map || song['ytid'] == null) {
           throw const FormatException('Invalid playlist song');
+        }
         final songId = song['ytid'].toString();
         if (!ids.contains(songId)) ids.add(songId);
         result[_key('playlistSong', id, songId)] = _portableMap(song);
@@ -402,8 +426,9 @@ class SyncDocument {
 
     final top = library['customPlaylists'] ?? [];
     final folders = library['playlistFolders'] ?? [];
-    if (top is! List || folders is! List)
+    if (top is! List || folders is! List) {
       throw const FormatException('Invalid playlists');
+    }
     for (final item in top) {
       if (item is! Map) throw const FormatException('Invalid playlist');
       playlist(item, null);
@@ -412,8 +437,9 @@ class SyncDocument {
         .map((e) => e['ytid'].toString())
         .toList();
     for (final item in folders) {
-      if (item is! Map || item['id'] is! String || item['playlists'] is! List)
+      if (item is! Map || item['id'] is! String || item['playlists'] is! List) {
         throw const FormatException('Invalid folder');
+      }
       final id = item['id'] as String;
       result[_key('playlistFolders', '', id)] = _portableMap(item)
         ..remove('playlists');
@@ -433,8 +459,9 @@ class SyncDocument {
           recap['schemaVersion'] != 2 ||
           recap['history'] is! Map ||
           recap['currentMonth'] is! Map ||
-          recap['currentMonthKey'] is! String)
+          recap['currentMonthKey'] is! String) {
         throw const FormatException('Invalid listening recap');
+      }
       if (recap['syncResetId'] is String) {
         result[_key('recapReset', '', '')] = recap['syncResetId'];
       }
@@ -469,15 +496,17 @@ class SyncDocument {
         value is! Map ||
         value['totalSeconds'] is! num ||
         value['totalSeconds'] < 0 ||
-        value['songs'] is! Map)
+        value['songs'] is! Map) {
       throw const FormatException('Invalid recap month');
+    }
     for (final song in value['songs'].values) {
       if (song is! Map ||
           song['playCount'] is! num ||
           song['playCount'] < 0 ||
           song['seconds'] is! num ||
-          song['seconds'] < 0)
+          song['seconds'] < 0) {
         throw const FormatException('Invalid recap song');
+      }
     }
   }
 
@@ -497,19 +526,23 @@ class SyncDocument {
 
   static void _validateValue(List<String> parts, Object? value) {
     final kind = parts[0];
-    if (parts[1].length > 1024 || parts[2].length > 1024)
+    if (parts[1].length > 1024 || parts[2].length > 1024) {
       throw const FormatException('Invalid record id');
+    }
     if (kind.endsWith('Order')) {
-      if (value is! List || value.any((e) => e is! String))
+      if (value is! List || value.any((e) => e is! String)) {
         throw const FormatException('Invalid order');
+      }
     } else if (kind == 'recapMonth') {
       _validateMonth(parts[2], value);
     } else if (kind == 'recapReset') {
-      if (value is! String || value.isEmpty || value.length > 128)
+      if (value is! String || value.isEmpty || value.length > 128) {
         throw const FormatException('Invalid recap reset');
+      }
     } else if (kind == 'playlistLocation') {
-      if (value != null && value is! String)
+      if (value != null && value is! String) {
         throw const FormatException('Invalid folder reference');
+      }
     } else if ([
       'playlists',
       'pinnedPlaylistIds',
@@ -520,11 +553,13 @@ class SyncDocument {
     } else {
       if (value is! Map) throw const FormatException('Invalid library item');
       final idKey = kind == 'playlistFolders' ? 'id' : 'ytid';
-      if (value[idKey]?.toString() != parts[2])
+      if (value[idKey]?.toString() != parts[2]) {
         throw const FormatException('Invalid item identity');
+      }
       if ((kind == 'customPlaylists' && value.containsKey('list')) ||
-          (kind == 'playlistFolders' && value.containsKey('playlists')))
+          (kind == 'playlistFolders' && value.containsKey('playlists'))) {
         throw const FormatException('Nested metadata');
+      }
     }
   }
 
@@ -553,8 +588,9 @@ class SyncDocument {
       jsonEncode([kind, parent, id]);
   static List<String> _parts(String raw) {
     final value = jsonDecode(raw);
-    if (value is! List || value.length != 3 || value.any((e) => e is! String))
+    if (value is! List || value.length != 3 || value.any((e) => e is! String)) {
       throw const FormatException('Invalid record key');
+    }
     return value.cast<String>();
   }
 

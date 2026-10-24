@@ -65,6 +65,11 @@ class LibraryMergeService {
 
   static Future<void> awaitIdle() => _locked(() async {});
 
+  /// After a backup restore, so the restored library is added rather than read as deletions.
+  static Future<void> forgetBaseline() => _locked(() async {
+    await Hive.box('userNoBackup').delete(_baselineKey);
+  });
+
   static Future<void> recoverPendingMerge() async {
     final store = Hive.box('userNoBackup');
     final journal = store.get(_journalKey);
@@ -159,19 +164,22 @@ class LibraryMergeService {
   }) => _locked(() async {
     if (remote['schemaVersion'] != schemaVersion ||
         remote['document'] is! Map ||
-        remote['document']['version'] != schemaVersion)
+        remote['document']['version'] != schemaVersion) {
       throw const FormatException(
         'Unsupported sync version. Update both devices.',
       );
+    }
     validateSyncJson(remote);
     final incomingCategories = parseSyncCategories(remote['categories']);
     final selected = categories ?? SyncCategory.values.toSet();
-    if (!selected.containsAll(incomingCategories))
+    if (!selected.containsAll(incomingCategories)) {
       throw const FormatException('Sync categories changed');
+    }
     final incoming = SyncDocument.fromMap(remote['document']);
     if (canonicalSync(incoming.select(incomingCategories).records) !=
-        canonicalSync(incoming.records))
+        canonicalSync(incoming.records)) {
       throw const FormatException('Unselected sync data');
+    }
     await listeningStatsService.prepareForSync();
     final store = Hive.box('userNoBackup');
     for (var attempt = 0; attempt < 4; attempt++) {

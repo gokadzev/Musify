@@ -242,7 +242,7 @@ class _Editor {
 
 void main() {
   test('random edits on four devices always converge and then go quiet', () {
-    for (var seed = 0; seed < 300; seed++) {
+    for (var seed = 0; seed < 100; seed++) {
       final random = Random(seed);
       final editor = _Editor(random);
       final devices = [

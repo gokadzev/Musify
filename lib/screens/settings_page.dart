@@ -371,8 +371,7 @@ class SettingsPage extends StatelessWidget {
                     return CustomBar(
                       'Automatic sync',
                       FluentIcons.arrow_clockwise_24_regular,
-                      description:
-                          'Sync with paired devices that are online at startup, shortly after you change something, and every 30 minutes.',
+                      description: 'Sync with paired devices that are online at startup, shortly after you change something, and every 30 minutes.',
                       trailing: Switch(
                         value: automatic,
                         onChanged: service.setAutomatic,

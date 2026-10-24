@@ -212,7 +212,7 @@ class _MusifyState extends State<Musify> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      unawaited(LocalSyncService.instance.triggerSilentSync());
+      unawaited(LocalSyncService.instance.syncOnResume());
     }
     super.didChangeAppLifecycleState(state);
     // Persist listening stats when the app leaves the foreground. This is the
@@ -252,9 +252,7 @@ class _MusifyState extends State<Musify> with WidgetsBindingObserver {
     setState(() {});
   }
 
-  /// Another device asked to pair over local sync: show the PIN it has to
-  /// type. The dialog closes itself once the pairing succeeds, is rejected or
-  /// times out.
+  /// Shows the PIN another device must type to pair over local sync.
   void _onIncomingPairingRequest() {
     final request = LocalSyncService.instance.incomingPairingRequest.value;
     if (request == null) return;
@@ -384,7 +382,15 @@ Future<void> initialisation() async {
       Hive.openBox('cache'),
     ]);
 
-    await LocalSyncService.instance.initialise();
+    try {
+      await LocalSyncService.instance.initialise();
+    } catch (e, stackTrace) {
+      logger.log(
+        'Local sync could not start',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
 
     if (isMobilePlatform) {
       audioHandler = await AudioService.init(
