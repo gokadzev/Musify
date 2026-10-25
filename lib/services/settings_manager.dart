@@ -72,6 +72,10 @@ final showAudioQualityBadge = ValueNotifier<bool>(
   Hive.box('settings').get('showAudioQualityBadge', defaultValue: false),
 );
 
+final syncedLyricsEnabled = ValueNotifier<bool>(
+  Hive.box('settings').get('syncedLyricsEnabled', defaultValue: true),
+);
+
 List<double> _readEqualizerGains() {
   final raw = Hive.box('settings')
       .get('equalizerBandGains', defaultValue: const <dynamic>[]);
@@ -157,6 +161,10 @@ void reloadSettingsFromStorage() {
   showAudioQualityBadge.value = settings.get(
     'showAudioQualityBadge',
     defaultValue: false,
+  );
+  syncedLyricsEnabled.value = settings.get(
+    'syncedLyricsEnabled',
+    defaultValue: true,
   );
   equalizerEnabled.value = settings.get(
     'equalizerEnabled',

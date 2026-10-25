@@ -179,6 +179,20 @@ class SettingsPage extends StatelessWidget {
           },
         ),
         ValueListenableBuilder<bool>(
+          valueListenable: syncedLyricsEnabled,
+          builder: (_, value, __) {
+            return CustomBar(
+              context.l10n!.syncedLyrics,
+              FluentIcons.text_quote_24_regular,
+              description: context.l10n!.syncedLyricsDescription,
+              trailing: Switch(
+                value: value,
+                onChanged: (value) => _toggleSyncedLyrics(context, value),
+              ),
+            );
+          },
+        ),
+        ValueListenableBuilder<bool>(
           valueListenable: useProxy,
           builder: (_, value, __) {
             return CustomBar(
@@ -874,6 +888,12 @@ class SettingsPage extends StatelessWidget {
   void _toggleAudioQualityBadge(BuildContext context, bool value) {
     addOrUpdateData<bool>('settings', 'showAudioQualityBadge', value);
     showAudioQualityBadge.value = value;
+    showToast(context, context.l10n!.settingChangedMsg);
+  }
+
+  void _toggleSyncedLyrics(BuildContext context, bool value) {
+    addOrUpdateData<bool>('settings', 'syncedLyricsEnabled', value);
+    syncedLyricsEnabled.value = value;
     showToast(context, context.l10n!.settingChangedMsg);
   }
 

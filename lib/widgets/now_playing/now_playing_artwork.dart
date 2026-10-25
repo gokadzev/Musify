@@ -190,21 +190,31 @@ class _LyricsViewState extends State<_LyricsView> {
       errorBuilder: (ctx, error, stack) => unavailable(),
       builder: (context, lyrics) {
         if (lyrics == null || lyrics.isEmpty) return unavailable();
-        if (lyrics.isSynced) return SyncedLyricsView(lyrics: lyrics);
 
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          physics: const BouncingScrollPhysics(),
-          child: Text(
-            formatPlainLyrics(lyrics),
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-              color: colorScheme.onSecondaryContainer,
-              height: 1.6,
-            ),
-            textAlign: TextAlign.center,
-          ),
+        // Re-evaluated when the setting changes, so toggling it takes effect
+        // without reloading the lyrics.
+        return ValueListenableBuilder<bool>(
+          valueListenable: syncedLyricsEnabled,
+          builder: (context, syncedEnabled, _) {
+            if (lyrics.isSynced && syncedEnabled) {
+              return SyncedLyricsView(lyrics: lyrics);
+            }
+
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              physics: const BouncingScrollPhysics(),
+              child: Text(
+                formatPlainLyrics(lyrics),
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                  color: colorScheme.onSecondaryContainer,
+                  height: 1.6,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            );
+          },
         );
       },
     );
