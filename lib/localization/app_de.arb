@@ -47,6 +47,7 @@
   "clear": "Löschen",
   "clearCache": "Cache leeren",
   "clearListeningStats": "Hörstatistik zurücksetzen",
+  "clearListeningStatsQuestion": "",
   "clearQueue": "Wiedergabeliste leeren",
   "clearQueueQuestion": "Sind Sie sicher, dass Sie die Warteschlange löschen möchten?",
   "clearRecentlyPlayed": "Wiedergabeverlauf löschen",
