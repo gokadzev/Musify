@@ -53,6 +53,8 @@ import 'package:musify/widgets/playlist_page/playlist_sliver_app_bar.dart';
 import 'package:musify/widgets/playlist_page/search_bar_section.dart';
 import 'package:musify/widgets/recommended_songs_section.dart';
 import 'package:musify/widgets/song_bar.dart';
+import 'package:musify/widgets/song_selection_bar.dart';
+import 'package:musify/widgets/song_selection_controller.dart';
 import 'package:musify/widgets/sort_chips.dart';
 import 'package:musify/widgets/spinner.dart';
 
@@ -109,6 +111,9 @@ class _PlaylistPageState extends State<PlaylistPage> {
   late final TextEditingController _searchController;
   late final FocusNode _searchFocusNode;
 
+  // Batch operations
+  final SongSelectionController _selection = SongSelectionController();
+
   List _getSourceList(String searchQuery) {
     final list = _playlist?['list'] as List? ?? [];
     return filterSongsByQuery(list, searchQuery);
@@ -130,6 +135,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
     _searchController.dispose();
     _searchFocusNode.dispose();
     _searchQueryNotifier.dispose();
+    _selection.dispose();
     super.dispose();
   }
 
@@ -192,6 +198,23 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
   @override
   Widget build(BuildContext context) {
+    return SongSelectionScope(
+      controller: _selection,
+      actionBar: SongSelectionBar(
+        controller: _selection,
+        visibleSongs: () => _getSourceList(
+          _searchQueryNotifier.value,
+        ).whereType<Map>().toList(),
+        onRemoveSelected: _playlist?['source'] == 'user-created'
+            ? _removeSongs
+            : null,
+        removeLabel: context.l10n!.removeFromPlaylist,
+      ),
+      child: _buildScaffold(context),
+    );
+  }
+
+  Widget _buildScaffold(BuildContext context) {
     return Scaffold(
       body: Padding(
         padding: commonSingleChildScrollViewPadding,
@@ -579,10 +602,35 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
   /// Removes [song] from the canonical list (and storage), then re-derives the view.
   void _removeSong(Map song) {
+    final canonicalIndex = _removeFromCanonicalList(song);
+    if (canonicalIndex == -1) return;
+    _applySort();
+    _updateSongsListOnRemove(canonicalIndex, song);
+  }
+
+  /// Batch counterpart of [_removeSong]: the same removal, one toast for the
+  /// whole lot rather than an undo per song.
+  Future<void> _removeSongs(List<Map> songs) async {
+    var removed = 0;
+    for (final song in songs) {
+      if (_removeFromCanonicalList(song) != -1) removed++;
+    }
+    if (removed == 0) return;
+
+    _applySort();
+    if (mounted) {
+      setState(() {});
+      showToast(context, context.l10n!.songsRemoved(removed));
+    }
+  }
+
+  /// Drops [song] from the canonical list and from storage, and returns the
+  /// index it held there, or -1 when it was not in the playlist.
+  int _removeFromCanonicalList(Map song) {
     final canonicalIndex = _originalPlaylistList.indexWhere(
       (s) => s is Map && s['ytid'] == song['ytid'],
     );
-    if (canonicalIndex == -1) return;
+    if (canonicalIndex == -1) return -1;
 
     // Persist in canonical order, never the sorted view order.
     final canonicalPlaylist = {..._playlist, 'list': _originalPlaylistList};
@@ -591,15 +639,14 @@ class _PlaylistPageState extends State<PlaylistPage> {
       song,
       removeOneAtIndex: canonicalIndex,
     )) {
-      return;
+      return -1;
     }
-    _updateSongsListOnRemove(canonicalIndex, song);
+    _originalPlaylistList = List<dynamic>.from(_originalPlaylistList)
+      ..removeAt(canonicalIndex);
+    return canonicalIndex;
   }
 
   void _updateSongsListOnRemove(int indexToRestore, dynamic songToRemove) {
-    _originalPlaylistList = List<dynamic>.from(_originalPlaylistList)
-      ..removeAt(indexToRestore);
-    _applySort();
     final playlistId = _playlist['ytid'];
     if (mounted) {
       setState(() {});
@@ -717,20 +764,28 @@ class _PlaylistPageState extends State<PlaylistPage> {
       logger.log('Warning: Song ${song['ytid']} not found in full playlist');
     }
 
-    return SongBar(
-      song,
-      true,
-      key: listItemKey('playlist_song', index, song),
-      onRemove: (isRemovable && !isSearching) ? () => _removeSong(song) : null,
-      onPlay: () {
-        audioHandler.playPlaylistSong(
-          playlist: _playlist,
-          songIndex: fullIndex != -1 ? fullIndex : index,
-        );
-      },
-      borderRadius: borderRadius,
-      playlistId: playlistId,
-      onRenamed: () => setState(() {}),
+    return ListenableBuilder(
+      listenable: _selection,
+      builder: (context, _) => SongBar(
+        song,
+        true,
+        key: listItemKey('playlist_song', index, song),
+        onRemove: (isRemovable && !isSearching)
+            ? () => _removeSong(song)
+            : null,
+        onPlay: () {
+          audioHandler.playPlaylistSong(
+            playlist: _playlist,
+            songIndex: fullIndex != -1 ? fullIndex : index,
+          );
+        },
+        borderRadius: borderRadius,
+        playlistId: playlistId,
+        onRenamed: () => setState(() {}),
+        isSelected: _selection.isActive ? _selection.isSelected(song) : null,
+        onSelectionToggle: () => _selection.toggle(song),
+        onLongPress: () => _selection.start(song),
+      ),
     );
   }
 }
