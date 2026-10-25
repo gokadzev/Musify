@@ -43,8 +43,12 @@ import 'package:musify/widgets/custom_search_bar.dart';
 import 'package:musify/widgets/mini_player_bottom_space.dart';
 import 'package:musify/widgets/playlist_bar.dart';
 import 'package:musify/widgets/radio_station_card.dart';
-import 'package:musify/widgets/section_title.dart';
 import 'package:musify/widgets/song_bar.dart';
+import 'package:musify/widgets/sort_chips.dart';
+
+/// The result categories the search page can show, in the order their tabs
+/// appear.
+enum _SearchCategory { songs, albums, playlists, artists, radioStations }
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -74,6 +78,9 @@ class _SearchPageState extends State<SearchPage> {
   List<dynamic> _playlistsSearchResult = [];
   List<RadioStation> _radioStationsSearchResult = [];
   List<String> _suggestionsList = [];
+  final ScrollController _scrollController = ScrollController();
+  _SearchCategory? _shownCategory;
+  bool _categoryPickedByUser = false;
   Timer? _debounce;
   int _latestSuggestionRequest = 0;
   int _latestSearchRequest = 0;
@@ -100,6 +107,7 @@ class _SearchPageState extends State<SearchPage> {
     _searchBar.dispose();
     _inputNode.dispose();
     _fetchingSongs.dispose();
+    _scrollController.dispose();
     _debounce?.cancel();
     super.dispose();
   }
@@ -116,11 +124,13 @@ class _SearchPageState extends State<SearchPage> {
       _radioStationsSearchResult = [];
       _suggestionsList = [];
       _fetchingSongs.value = false;
+      _refreshShownCategory();
       if (mounted) setState(() {});
       return;
     }
     _fetchingSongs.value = true;
 
+    _categoryPickedByUser = false;
     _songsSearchResult = [];
     _artistsSearchResult = [];
     _albumsSearchResult = [];
@@ -133,6 +143,7 @@ class _SearchPageState extends State<SearchPage> {
                   false),
         )
         .toList();
+    _refreshShownCategory();
     if (mounted) setState(() {});
 
     if (!searchHistoryNotifier.value.contains(query)) {
@@ -165,7 +176,10 @@ class _SearchPageState extends State<SearchPage> {
           }
 
           if (!mounted || requestId != _latestSearchRequest) return;
-          setState(() => _songsSearchResult = songs);
+          setState(() {
+            _songsSearchResult = songs;
+            _refreshShownCategory();
+          });
         } catch (e, stackTrace) {
           logger.log(
             'Error while searching online songs',
@@ -184,6 +198,7 @@ class _SearchPageState extends State<SearchPage> {
                 .whereType<Map>()
                 .map(Map<String, dynamic>.from)
                 .toList();
+            _refreshShownCategory();
           });
         } catch (e, stackTrace) {
           logger.log(
@@ -198,7 +213,10 @@ class _SearchPageState extends State<SearchPage> {
         try {
           final albums = await getPlaylists(query: query, type: 'album');
           if (!mounted || requestId != _latestSearchRequest) return;
-          setState(() => _albumsSearchResult = albums);
+          setState(() {
+            _albumsSearchResult = albums;
+            _refreshShownCategory();
+          });
         } catch (e, stackTrace) {
           logger.log(
             'Error while searching online albums',
@@ -212,7 +230,10 @@ class _SearchPageState extends State<SearchPage> {
         try {
           final playlists = await getPlaylists(query: query, type: 'playlist');
           if (!mounted || requestId != _latestSearchRequest) return;
-          setState(() => _playlistsSearchResult = playlists);
+          setState(() {
+            _playlistsSearchResult = playlists;
+            _refreshShownCategory();
+          });
         } catch (e, stackTrace) {
           logger.log(
             'Error while searching online playlists',
@@ -260,12 +281,49 @@ class _SearchPageState extends State<SearchPage> {
     return [];
   }
 
+  /// The categories that actually have something to show, in tab order.
+  List<_SearchCategory> get _categoriesWithResults => [
+    if (_songsSearchResult.isNotEmpty) _SearchCategory.songs,
+    if (_albumsSearchResult.isNotEmpty) _SearchCategory.albums,
+    if (_playlistsSearchResult.isNotEmpty) _SearchCategory.playlists,
+    if (_artistsSearchResult.isNotEmpty) _SearchCategory.artists,
+    if (_radioStationsSearchResult.isNotEmpty) _SearchCategory.radioStations,
+  ];
+
+  // Results come back one category at a time, so the shown tab has to be
+  // arbitrated again on every arrival: as long as nothing was tapped the first
+  // category holding results wins, which lets songs take over a tab that only
+  // got picked because albums answered first.
+  void _refreshShownCategory() {
+    final categories = _categoriesWithResults;
+    if (categories.isEmpty) {
+      _shownCategory = null;
+    } else if (!_categoryPickedByUser || !categories.contains(_shownCategory)) {
+      _shownCategory = categories.first;
+    }
+  }
+
+  String _categoryLabel(_SearchCategory category) {
+    switch (category) {
+      case _SearchCategory.songs:
+        return context.l10n!.songs;
+      case _SearchCategory.albums:
+        return context.l10n!.albums;
+      case _SearchCategory.playlists:
+        return context.l10n!.playlists;
+      case _SearchCategory.artists:
+        return context.l10n!.artists;
+      case _SearchCategory.radioStations:
+        return context.l10n!.radioStations;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final primaryColor = Theme.of(context).colorScheme.primary;
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n!.search)),
       body: SingleChildScrollView(
+        controller: _scrollController,
         padding: commonSingleChildScrollViewPadding,
         child: Column(
           children: <Widget>[
@@ -398,7 +456,7 @@ class _SearchPageState extends State<SearchPage> {
                         );
                       },
                     )
-                  : _buildSearchResults(context, primaryColor),
+                  : _buildSearchResults(context),
             ),
             const MiniPlayerBottomSpace(),
           ],
@@ -407,187 +465,164 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  Widget _buildSearchResults(BuildContext context, Color primaryColor) {
-    final widgets = <Widget>[];
+  Widget _buildSearchResults(BuildContext context) {
+    final categories = _categoriesWithResults;
+    if (categories.isEmpty) return const SizedBox.shrink();
 
-    // Artists section
-    if (_artistsSearchResult.isNotEmpty) {
-      widgets.add(
-        SectionTitle(
-          context.l10n!.artists,
-          primaryColor,
-          icon: FluentIcons.person_24_filled,
+    final shownCategory = _shownCategory ?? categories.first;
+
+    return Column(
+      key: ValueKey('results-${shownCategory.name}'),
+      children: [
+        if (categories.length > 1) ...[
+          const SizedBox(height: 12),
+          SortChips<_SearchCategory>(
+            currentSortType: shownCategory,
+            sortTypes: categories,
+            sortTypeToString: _categoryLabel,
+            onSelected: (category) {
+              setState(() {
+                _shownCategory = category;
+                _categoryPickedByUser = true;
+              });
+              // A tab is only a shortcut if it lands on its first result.
+              if (_scrollController.hasClients) _scrollController.jumpTo(0);
+            },
+          ),
+          const SizedBox(height: 12),
+        ],
+        ..._buildCategoryItems(shownCategory),
+      ],
+    );
+  }
+
+  List<Widget> _buildCategoryItems(_SearchCategory category) {
+    switch (category) {
+      case _SearchCategory.songs:
+        return _buildSongItems();
+      case _SearchCategory.albums:
+        return _buildPlaylistItems(
+          _albumsSearchResult,
+          keyPrefix: 'search_album',
+          cubeIcon: FluentIcons.cd_16_filled,
+          isAlbum: true,
+        );
+      case _SearchCategory.playlists:
+        return _buildPlaylistItems(
+          _playlistsSearchResult,
+          keyPrefix: 'search_playlist',
+          cubeIcon: FluentIcons.apps_list_24_filled,
+        );
+      case _SearchCategory.artists:
+        return _buildArtistItems();
+      case _SearchCategory.radioStations:
+        return _buildRadioStationItems();
+    }
+  }
+
+  EdgeInsets _itemPadding(int index, int count) =>
+      index == count - 1 ? commonListViewBottomPadding : EdgeInsets.zero;
+
+  List<Widget> _buildSongItems() {
+    final songs = _songsSearchResult.take(maxSongsInList).toList();
+
+    return [
+      for (var index = 0; index < songs.length; index++)
+        Padding(
+          padding: _itemPadding(index, songs.length),
+          child: SongBar(
+            songs[index],
+            true,
+            key: listItemKey('search_song', index, songs[index]),
+            showMusicDuration: true,
+            borderRadius: getItemBorderRadius(index, songs.length),
+          ),
         ),
-      );
+    ];
+  }
 
-      final artists = _artistsSearchResult.take(3).toList();
-      for (var index = 0; index < artists.length; index++) {
-        final artist = Map<String, dynamic>.from(artists[index]);
-        final artistId =
-            artist['ytid']?.toString() ?? artist['title']?.toString() ?? '';
-        if (artistId.isEmpty) continue;
+  List<Widget> _buildPlaylistItems(
+    List<dynamic> results, {
+    required String keyPrefix,
+    required IconData cubeIcon,
+    bool isAlbum = false,
+  }) {
+    final playlists = results.take(maxSongsInList).toList();
 
-        final borderRadius = getItemBorderRadius(index, artists.length);
-        widgets.add(
-          ArtistBar(
-            key: listItemKey('search_artist', index, artist),
-            artist: artist,
-            borderRadius: borderRadius,
+    return [
+      for (var index = 0; index < playlists.length; index++)
+        Padding(
+          padding: _itemPadding(index, playlists.length),
+          child: PlaylistBar(
+            key: listItemKey(keyPrefix, index, playlists[index]),
+            playlists[index]['title'],
+            playlistId: playlists[index]['ytid'],
+            playlistArtwork: playlists[index]['image'],
+            cubeIcon: cubeIcon,
+            isAlbum: isAlbum,
+            borderRadius: getItemBorderRadius(index, playlists.length),
+          ),
+        ),
+    ];
+  }
+
+  List<Widget> _buildArtistItems() {
+    // Artists without an id cannot be opened, so they are dropped before the
+    // list is laid out, otherwise they would punch holes in the rounding.
+    final artists = _artistsSearchResult
+        .take(maxSongsInList)
+        .map(Map<String, dynamic>.from)
+        .where((artist) => _artistId(artist).isNotEmpty)
+        .toList();
+
+    return [
+      for (var index = 0; index < artists.length; index++)
+        Padding(
+          padding: _itemPadding(index, artists.length),
+          child: ArtistBar(
+            key: listItemKey('search_artist', index, artists[index]),
+            artist: artists[index],
+            borderRadius: getItemBorderRadius(index, artists.length),
             onTap: () {
               context.push(
-                '${NavigationManager.searchPath}/artist/${Uri.encodeComponent(artistId)}',
-                extra: artist,
+                '${NavigationManager.searchPath}/artist/${Uri.encodeComponent(_artistId(artists[index]))}',
+                extra: artists[index],
               );
             },
           ),
-        );
-      }
-    }
-
-    // Songs section
-    if (_songsSearchResult.isNotEmpty) {
-      widgets.add(
-        SectionTitle(
-          context.l10n!.songs,
-          primaryColor,
-          icon: FluentIcons.music_note_1_24_filled,
         ),
-      );
+    ];
+  }
 
-      final songsCount = _songsSearchResult.length > maxSongsInList
-          ? maxSongsInList
-          : _songsSearchResult.length;
+  String _artistId(Map<String, dynamic> artist) =>
+      artist['ytid']?.toString() ?? artist['title']?.toString() ?? '';
 
-      for (var index = 0; index < songsCount; index++) {
-        final song = _songsSearchResult[index];
-        final borderRadius = getItemBorderRadius(index, songsCount);
-        widgets.add(
-          SongBar(
-            song,
-            true,
-            key: listItemKey('search_song', index, song),
-            showMusicDuration: true,
-            borderRadius: borderRadius,
+  List<Widget> _buildRadioStationItems() {
+    final stations = _radioStationsSearchResult.take(maxSongsInList).toList();
+
+    return [
+      for (var index = 0; index < stations.length; index++)
+        Padding(
+          padding: _itemPadding(index, stations.length),
+          child: RadioStationCard(
+            key: listItemKey('search_radio_station', index, stations[index]),
+            station: stations[index],
+            onPressed: () async {
+              final station = stations[index];
+              final success = await audioHandler.playRadioStream(
+                id: station.id,
+                name: station.name,
+                streamUrl: station.streamUrl,
+                image: station.image,
+                genre: station.genre,
+              );
+              if (!success && context.mounted) {
+                showToast(context, context.l10n!.failedPlayingRadio);
+              }
+            },
           ),
-        );
-      }
-    }
-
-    // Albums section
-    if (_albumsSearchResult.isNotEmpty) {
-      widgets.add(
-        SectionTitle(
-          context.l10n!.albums,
-          primaryColor,
-          icon: FluentIcons.album_24_filled,
         ),
-      );
-
-      final albumsCount = _albumsSearchResult.length > maxSongsInList
-          ? maxSongsInList
-          : _albumsSearchResult.length;
-
-      for (var index = 0; index < albumsCount; index++) {
-        final playlist = _albumsSearchResult[index];
-        final borderRadius = getItemBorderRadius(index, albumsCount);
-
-        widgets.add(
-          PlaylistBar(
-            key: listItemKey('search_album', index, playlist),
-            playlist['title'],
-            playlistId: playlist['ytid'],
-            playlistArtwork: playlist['image'],
-            cubeIcon: FluentIcons.cd_16_filled,
-            isAlbum: true,
-            borderRadius: borderRadius,
-          ),
-        );
-      }
-    }
-
-    // Playlists section
-    if (_playlistsSearchResult.isNotEmpty) {
-      widgets.add(
-        SectionTitle(
-          context.l10n!.playlists,
-          primaryColor,
-          icon: FluentIcons.text_bullet_list_24_filled,
-        ),
-      );
-
-      final playlistsCount = _playlistsSearchResult.length > maxSongsInList
-          ? maxSongsInList
-          : _playlistsSearchResult.length;
-
-      for (var index = 0; index < playlistsCount; index++) {
-        final playlist = _playlistsSearchResult[index];
-        final isLast = index == playlistsCount - 1;
-        final borderRadius = getItemBorderRadius(index, playlistsCount);
-
-        widgets.add(
-          Padding(
-            padding: isLast ? commonListViewBottomPadding : EdgeInsets.zero,
-            child: PlaylistBar(
-              key: listItemKey('search_playlist', index, playlist),
-              playlist['title'],
-              playlistId: playlist['ytid'],
-              playlistArtwork: playlist['image'],
-              cubeIcon: FluentIcons.apps_list_24_filled,
-              borderRadius: borderRadius,
-            ),
-          ),
-        );
-      }
-    }
-
-    // Radio Stations section
-    if (_radioStationsSearchResult.isNotEmpty) {
-      widgets.add(
-        SectionTitle(
-          context.l10n!.radioStations,
-          primaryColor,
-          icon: FluentIcons.speaker_2_24_filled,
-        ),
-      );
-
-      final stationsCount = _radioStationsSearchResult.length > maxSongsInList
-          ? maxSongsInList
-          : _radioStationsSearchResult.length;
-
-      for (var index = 0; index < stationsCount; index++) {
-        final station = _radioStationsSearchResult[index];
-        final isLast = index == stationsCount - 1;
-
-        widgets.add(
-          Padding(
-            padding: isLast ? commonListViewBottomPadding : EdgeInsets.zero,
-            child: RadioStationCard(
-              key: listItemKey('search_radio_station', index, station),
-              station: station,
-              onPressed: () async {
-                final success = await audioHandler.playRadioStream(
-                  id: station.id,
-                  name: station.name,
-                  streamUrl: station.streamUrl,
-                  image: station.image,
-                  genre: station.genre,
-                );
-                if (!success && context.mounted) {
-                  showToast(context, context.l10n!.failedPlayingRadio);
-                }
-              },
-            ),
-          ),
-        );
-      }
-    }
-
-    return Column(
-      key: ValueKey(
-        'results-${_songsSearchResult.length}-${_artistsSearchResult.length}-${_albumsSearchResult.length}-${_playlistsSearchResult.length}',
-      ),
-      children: widgets,
-    );
+    ];
   }
 
   Future<bool?> _showConfirmationDialog(BuildContext context) {
