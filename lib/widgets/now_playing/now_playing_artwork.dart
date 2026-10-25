@@ -150,6 +150,8 @@ class _LyricsViewState extends State<_LyricsView> {
     _lyricsFuture = getSongLyrics(
       widget.metadata.artist,
       widget.metadata.title,
+      duration: widget.metadata.duration,
+      album: widget.metadata.album,
     );
   }
 
