@@ -309,6 +309,7 @@ class SongBar extends StatefulWidget {
     this.playCount,
     this.barPadding,
     this.onAdd,
+    this.trailing,
     super.key,
   });
 
@@ -327,6 +328,7 @@ class SongBar extends StatefulWidget {
   final VoidCallback? onRenamed;
   final EdgeInsetsGeometry? barPadding;
   final int? rank;
+  final Widget? trailing;
 
   /// Play count to show next to the artist, e.g. `1.2B`. Presentation only,
   /// like [rank]: it belongs to where the song is listed, not to the song.
@@ -502,6 +504,8 @@ class _SongBarState extends State<SongBar> {
                   itemBuilder: (context) =>
                       _buildMenuItems(context, colorScheme),
                 ),
+              if(widget.trailing != null)
+                widget.trailing!
             ],
           ),
         ),
