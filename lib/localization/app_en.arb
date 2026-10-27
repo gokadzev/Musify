@@ -288,6 +288,7 @@
   "useProxy": "Use proxy",
   "useProxyDescription": "Use the proxy only when streaming fails, unnecessary use may break playback.",
   "userPlaylists": "User playlists",
+  "volume": "Volume",
   "yes": "Yes",
   "youtubePlaylistLinkOrId": "YouTube playlist link or ID"
 }

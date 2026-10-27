@@ -31,6 +31,7 @@ import 'package:musify/utilities/flutter_bottom_sheet.dart';
 import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/mediaitem.dart';
 import 'package:musify/utilities/playlist_dialogs.dart';
+import 'package:musify/widgets/desktop_volume_control.dart';
 import 'package:musify/widgets/queue_list_view.dart';
 
 class BottomActionsRow extends StatefulWidget {
@@ -134,6 +135,7 @@ class _BottomActionsRowState extends State<BottomActionsRow> {
         final queue = snapshot.data ?? [];
 
         final actions = <Widget>[
+          if (supportsDesktopVolumeControl) const DesktopVolumeControl(),
           if (!isRadioStation)
             _buildActionButton(
               context: context,
