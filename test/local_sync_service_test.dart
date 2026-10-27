@@ -363,4 +363,39 @@ void main() {
       expect(Hive.box('user').get('likedSongs')[0]['ytid'], 'private');
     },
   );
+  test('sync now stops at the first paired device that fails', () async {
+    final closed = await ServerSocket.bind(InternetAddress.loopbackIPv4, 0);
+    final port = closed.port;
+    await closed.close();
+    await server.savePairedDevice(
+      PairedSyncDevice(deviceId: 'second', name: 'Second', secret: secret),
+    );
+    server.state.value = LocalSyncState(
+      discoveredDevices: [
+        DiscoveredSyncDevice(
+          deviceId: peerId,
+          name: 'Fixture',
+          ip: '127.0.0.1',
+          port: port,
+        ),
+        DiscoveredSyncDevice(
+          deviceId: 'second',
+          name: 'Second',
+          ip: '127.0.0.1',
+          port: port,
+        ),
+        const DiscoveredSyncDevice(
+          deviceId: 'stranger',
+          name: 'Not paired',
+          ip: '127.0.0.1',
+          port: 1,
+        ),
+      ],
+    );
+
+    await server.syncAllNow();
+
+    expect(server.state.value.status, LocalSyncStatus.error);
+    expect(server.state.value.activeDevice?.deviceId, peerId);
+  });
 }

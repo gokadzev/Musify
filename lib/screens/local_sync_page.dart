@@ -373,6 +373,8 @@ class _LocalSyncPageState extends State<LocalSyncPage> {
             final columns = constraints.maxWidth >= 560 ? 2 : 1;
             return GridView.count(
               crossAxisCount: columns,
+              // Not the MediaQuery padding, which holds the mini player space.
+              padding: EdgeInsets.zero,
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               childAspectRatio: constraints.maxWidth / columns / 76,
@@ -425,6 +427,7 @@ class _LocalSyncPageState extends State<LocalSyncPage> {
         final others = online.values
             .where((device) => !pairedIds.contains(device.deviceId))
             .toList();
+        final onlinePaired = online.length - others.length;
 
         return Column(
           children: [
@@ -442,6 +445,17 @@ class _LocalSyncPageState extends State<LocalSyncPage> {
                 padding: const EdgeInsets.only(bottom: 12),
                 child: _buildStatus(context, state),
               ),
+            if (onlinePaired > 0) ...[
+              CustomBar(
+                l10n.syncAllNow,
+                FluentIcons.arrow_sync_24_regular,
+                description: l10n.syncAllNowDescription(onlinePaired),
+                iconColor: Theme.of(context).colorScheme.primary,
+                borderRadius: commonCustomBarRadius,
+                onTap: busy ? null : _service.syncAllNow,
+              ),
+              const SizedBox(height: 12),
+            ],
             for (var i = 0; i < paired.length; i++)
               _buildPairedDevice(
                 context,
@@ -653,7 +667,9 @@ class _LocalSyncPageState extends State<LocalSyncPage> {
             ),
             const SizedBox(height: 12),
             Text(
-              l10n.syncSyncedWith(name),
+              state.activeDevice == null
+                  ? l10n.syncSyncedAll
+                  : l10n.syncSyncedWith(name),
               style: theme.textTheme.titleMedium,
               textAlign: TextAlign.center,
             ),

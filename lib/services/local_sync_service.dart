@@ -933,6 +933,25 @@ class LocalSyncService {
     );
   }
 
+  /// Syncs with every paired device that is online, one after another.
+  Future<void> syncAllNow() async {
+    final targets = state.value.discoveredDevices
+        .where((device) => isDevicePaired(device.deviceId))
+        .toList();
+    final changed = <String>{};
+    for (final device in targets) {
+      await syncWith(device);
+      if (state.value.status != LocalSyncStatus.success) return;
+      changed.addAll(state.value.changed ?? const {});
+    }
+    if (targets.length > 1) {
+      state.value = state.value.copyWith(
+        changed: changed,
+        clearActiveDevice: true,
+      );
+    }
+  }
+
   /// Resuming fires on every desktop window focus, so it syncs at most every 2 minutes.
   Future<void> syncOnResume() async {
     final last = _lastResumeSync;
