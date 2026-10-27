@@ -26,9 +26,11 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/services/common_services.dart';
+import 'package:musify/services/lyrics/lyrics_models.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/async_loader.dart';
 import 'package:musify/widgets/flip_card.dart';
+import 'package:musify/widgets/now_playing/synced_lyrics_view.dart';
 import 'package:musify/widgets/song_artwork.dart';
 
 class NowPlayingArtwork extends StatelessWidget {
@@ -129,7 +131,7 @@ class _LyricsView extends StatefulWidget {
 
 class _LyricsViewState extends State<_LyricsView> {
   String? _resolvedKey;
-  late Future<String?> _lyricsFuture;
+  late Future<Lyrics?> _lyricsFuture;
 
   @override
   void initState() {
@@ -147,9 +149,11 @@ class _LyricsViewState extends State<_LyricsView> {
     final key = '${widget.metadata.artist} - ${widget.metadata.title}';
     if (key == _resolvedKey) return;
     _resolvedKey = key;
-    _lyricsFuture = getSongLyrics(
+    _lyricsFuture = getSongLyricsResult(
       widget.metadata.artist,
       widget.metadata.title,
+      duration: widget.metadata.duration,
+      album: widget.metadata.album,
     );
   }
 
@@ -180,24 +184,39 @@ class _LyricsViewState extends State<_LyricsView> {
       ),
     );
 
-    return AsyncLoader<String?>(
+    return AsyncLoader<Lyrics?>(
       future: _lyricsFuture,
       emptyWidget: unavailable(),
       errorBuilder: (ctx, error, stack) => unavailable(),
-      builder: (context, lyrics) => SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        physics: const BouncingScrollPhysics(),
-        child: Text(
-          lyrics ?? context.l10n!.lyricsNotAvailable,
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w500,
-            color: colorScheme.onSecondaryContainer,
-            height: 1.6,
-          ),
-          textAlign: TextAlign.center,
-        ),
-      ),
+      builder: (context, lyrics) {
+        if (lyrics == null || lyrics.isEmpty) return unavailable();
+
+        // Re-evaluated when the setting changes, so toggling it takes effect
+        // without reloading the lyrics.
+        return ValueListenableBuilder<bool>(
+          valueListenable: syncedLyricsEnabled,
+          builder: (context, syncedEnabled, _) {
+            if (lyrics.isSynced && syncedEnabled) {
+              return SyncedLyricsView(lyrics: lyrics);
+            }
+
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              physics: const BouncingScrollPhysics(),
+              child: Text(
+                formatPlainLyrics(lyrics),
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                  color: colorScheme.onSecondaryContainer,
+                  height: 1.6,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }

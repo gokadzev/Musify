@@ -183,6 +183,20 @@ class SettingsPage extends StatelessWidget {
           },
         ),
         ValueListenableBuilder<bool>(
+          valueListenable: syncedLyricsEnabled,
+          builder: (_, value, __) {
+            return CustomBar(
+              context.l10n!.syncedLyrics,
+              FluentIcons.text_quote_24_regular,
+              description: context.l10n!.syncedLyricsDescription,
+              trailing: Switch(
+                value: value,
+                onChanged: (value) => _toggleSyncedLyrics(context, value),
+              ),
+            );
+          },
+        ),
+        ValueListenableBuilder<bool>(
           valueListenable: useProxy,
           builder: (_, value, __) {
             return CustomBar(
@@ -730,7 +744,7 @@ class SettingsPage extends StatelessWidget {
       useSystemColor: false,
     );
     showToast(context, context.l10n!.accentChangeMsg);
-    Navigator.pop(context);
+    Navigator.of(context, rootNavigator: isDesktopPlatform).pop();
   }
 
   void _showThemeModePicker(BuildContext context) {
@@ -757,7 +771,7 @@ class SettingsPage extends StatelessWidget {
         () {
           addOrUpdateData<int>('settings', 'themeIndex', mode.index);
           Musify.updateAppState(context, newThemeMode: mode);
-          Navigator.pop(context);
+          Navigator.of(context, rootNavigator: isDesktopPlatform).pop();
         },
         themeMode == mode,
         icon: modeIcons[index],
@@ -810,7 +824,7 @@ class SettingsPage extends StatelessWidget {
         addOrUpdateData<String>('settings', 'languageCode', newLocaleFullCode);
         Musify.updateAppState(context, newLocale: newLocale);
         showToast(context, context.l10n!.languageMsg);
-        Navigator.pop(context);
+        Navigator.of(context, rootNavigator: isDesktopPlatform).pop();
       }, activeLanguageFullCode == newLocaleFullCode);
     }
 
@@ -862,7 +876,7 @@ class SettingsPage extends StatelessWidget {
           addOrUpdateData<String>('settings', 'audioQuality', quality);
           audioQualitySetting.value = quality;
           showToast(context, context.l10n!.audioQualityMsg);
-          Navigator.pop(context);
+          Navigator.of(context, rootNavigator: isDesktopPlatform).pop();
         },
         audioQualitySetting.value == quality,
         icon: qualityIcons[index],
@@ -943,6 +957,12 @@ class SettingsPage extends StatelessWidget {
   void _toggleAudioQualityBadge(BuildContext context, bool value) {
     addOrUpdateData<bool>('settings', 'showAudioQualityBadge', value);
     showAudioQualityBadge.value = value;
+    showToast(context, context.l10n!.settingChangedMsg);
+  }
+
+  void _toggleSyncedLyrics(BuildContext context, bool value) {
+    addOrUpdateData<bool>('settings', 'syncedLyricsEnabled', value);
+    syncedLyricsEnabled.value = value;
     showToast(context, context.l10n!.settingChangedMsg);
   }
 
