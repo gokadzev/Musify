@@ -31,7 +31,6 @@ import 'package:musify/screens/search_page.dart';
 import 'package:musify/services/common_services.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/listening_stats_service.dart';
-import 'package:musify/services/local_sync/sync_data.dart';
 import 'package:musify/services/local_sync_service.dart';
 import 'package:musify/services/playlist_download_service.dart';
 import 'package:musify/services/playlists_manager.dart';
@@ -70,7 +69,7 @@ class SettingsPage extends StatelessWidget {
           inactivatedColor,
         ),
         if (!offlineMode.value) _buildOnlineFeaturesSection(context),
-        _buildLocalSyncSection(context),
+        const LocalSyncSettingsSection(),
         _buildOthersSection(context),
         const SizedBox(height: 20),
         const MiniPlayerBottomSpace(),
@@ -322,67 +321,6 @@ class SettingsPage extends StatelessWidget {
         _buildToolsSection(context),
         _buildSponsorSection(context),
       ],
-    );
-  }
-
-  Widget _buildLocalSyncSection(BuildContext context) {
-    final service = LocalSyncService.instance;
-    if (!service.isSupportedPlatform) return const SizedBox.shrink();
-
-    return ValueListenableBuilder<bool>(
-      valueListenable: localSyncEnabled,
-      builder: (_, enabled, __) => Column(
-        children: [
-          SectionHeader(
-            title: context.l10n!.syncTitle,
-            icon: FluentIcons.phone_desktop_24_filled,
-          ),
-          CustomBar(
-            context.l10n!.syncOverNetwork,
-            FluentIcons.wifi_1_24_regular,
-            description: enabled
-                ? context.l10n!.syncOnDescription
-                : context.l10n!.syncOffDescription,
-            borderRadius: enabled
-                ? commonCustomBarRadiusFirst
-                : commonCustomBarRadius,
-            trailing: Switch(
-              value: enabled,
-              onChanged: (value) => _toggleLocalSync(context, value),
-            ),
-          ),
-          if (enabled) ...[
-            ValueListenableBuilder<DateTime?>(
-              valueListenable: localSyncLastSyncedAt,
-              builder: (_, lastSyncedAt, __) => CustomBar(
-                context.l10n!.syncDevices,
-                FluentIcons.arrow_sync_24_regular,
-                description: _lastSyncDescription(context, lastSyncedAt),
-                onTap: () => context.push('/settings/local-sync'),
-              ),
-            ),
-            ValueListenableBuilder<bool>(
-              valueListenable: localSyncAutomatic,
-              builder: (_, automatic, __) => CustomBar(
-                context.l10n!.syncAutomatic,
-                FluentIcons.arrow_clockwise_24_regular,
-                description: context.l10n!.syncAutomaticDescription,
-                trailing: Switch(
-                  value: automatic,
-                  onChanged: service.setAutomatic,
-                ),
-              ),
-            ),
-            CustomBar(
-              context.l10n!.syncData,
-              FluentIcons.list_24_regular,
-              description: context.l10n!.syncSelections,
-              borderRadius: commonCustomBarRadiusLast,
-              onTap: () => _showSyncCategories(context),
-            ),
-          ],
-        ],
-      ),
     );
   }
 
@@ -1018,64 +956,6 @@ class SettingsPage extends StatelessWidget {
     addOrUpdateData<bool>('settings', 'externalRecommendations', value);
     externalRecommendations.value = value;
     showToast(context, context.l10n!.settingChangedMsg);
-  }
-
-  String _lastSyncDescription(BuildContext context, DateTime? lastSyncedAt) {
-    if (lastSyncedAt == null) return context.l10n!.syncFindDevices;
-    final local = lastSyncedAt.toLocal();
-    final material = MaterialLocalizations.of(context);
-    return context.l10n!.syncLastSynced(
-      '${material.formatShortDate(local)} '
-      '${material.formatTimeOfDay(TimeOfDay.fromDateTime(local))}',
-    );
-  }
-
-  void _showSyncCategories(BuildContext context) {
-    final service = LocalSyncService.instance;
-    final selected = service.selectedCategories;
-    final labels = syncCategoryLabels(context.l10n!);
-    showCustomBottomSheet(
-      context,
-      StatefulBuilder(
-        builder: (context, update) => ListView(
-          shrinkWrap: true,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Text(context.l10n!.syncSelections),
-            ),
-            for (final category in SyncCategory.values)
-              CheckboxListTile(
-                title: Text(labels[category]!),
-                value: selected.contains(category),
-                onChanged: (value) async {
-                  update(() {
-                    if (value == true) {
-                      selected.add(category);
-                    } else {
-                      selected.remove(category);
-                    }
-                  });
-                  await service.setCategories(selected);
-                },
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Future<void> _toggleLocalSync(BuildContext context, bool value) async {
-    final started = await LocalSyncService.instance.setEnabled(value);
-    if (context.mounted) {
-      showToast(
-        context,
-        started
-            ? context.l10n!.settingChangedMsg
-            : context.l10n!.syncCouldNotStart,
-        icon: started ? null : FluentIcons.error_circle_24_regular,
-      );
-    }
   }
 
   void _showConfirmationDialog({
