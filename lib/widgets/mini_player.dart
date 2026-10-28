@@ -145,19 +145,7 @@ class _MiniPlayerBodyState extends State<_MiniPlayerBody>
     Navigator.of(context).push(_createSlideTransition());
   }
 
-  PageRoute<void> _createSlideTransition() {
-    return PageRouteBuilder<void>(
-      pageBuilder: (context, animation, _) => const NowPlayingPage(),
-      reverseTransitionDuration: const Duration(milliseconds: 250),
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        final tween = Tween(
-          begin: const Offset(0, 1),
-          end: Offset.zero,
-        ).chain(CurveTween(curve: Curves.easeInOut));
-        return SlideTransition(position: animation.drive(tween), child: child);
-      },
-    );
-  }
+  Route<void> _createSlideTransition() => buildNowPlayingRoute();
 
   @override
   Widget build(BuildContext context) {
