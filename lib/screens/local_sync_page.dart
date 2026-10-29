@@ -191,6 +191,8 @@ void showIncomingPairingDialog() {
   );
 }
 
+const double _pinSpacing = 10;
+
 class _PinDigits extends StatelessWidget {
   const _PinDigits(this.pin);
 
@@ -199,29 +201,34 @@ class _PinDigits extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        for (var i = 0; i < pin.length; i++)
-          Container(
-            width: 40,
-            height: 52,
-            margin: EdgeInsets.only(left: i == 0 ? 0 : (i == 3 ? 14 : 6)),
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: colorScheme.secondaryContainer,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              pin[i],
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.w700,
-                color: colorScheme.onSecondaryContainer,
+    // Narrow dialogs on small phones shrink the digits instead of cutting
+    // them off.
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (var i = 0; i < pin.length; i++)
+            Container(
+              width: 40,
+              height: 52,
+              margin: EdgeInsets.only(left: i == 0 ? 0 : (i == 3 ? 14 : 6)),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: colorScheme.secondaryContainer,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                pin[i],
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w700,
+                  color: colorScheme.onSecondaryContainer,
+                ),
               ),
             ),
-          ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -618,12 +625,20 @@ class _LocalSyncPageState extends State<LocalSyncPage> {
                 maxLength: 6,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 style: theme.textTheme.headlineSmall?.copyWith(
-                  letterSpacing: 10,
+                  letterSpacing: _pinSpacing,
                   fontWeight: FontWeight.w600,
                 ),
                 decoration: InputDecoration(
                   hintText: '······',
                   counterText: '',
+                  // Letter spacing also follows the last digit; the same
+                  // space on the left keeps the digits centred.
+                  contentPadding: const EdgeInsets.fromLTRB(
+                    12 + _pinSpacing,
+                    14,
+                    12,
+                    14,
+                  ),
                   filled: true,
                   fillColor: theme.colorScheme.surfaceContainerHighest,
                   border: OutlineInputBorder(
