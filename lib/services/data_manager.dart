@@ -274,6 +274,16 @@ Future<({String message, bool success})> backupData(
   }
 }
 
+/// Local Sync settings belong to this device, not to the library: restoring
+/// a backup from another device must not turn sync on here or show that
+/// device's last sync.
+const _localSyncSettings = [
+  'localSyncEnabled',
+  'localSyncAutomatic',
+  'localSyncCategories',
+  'localSyncLastSyncedAt',
+];
+
 Future<({String message, bool success})> restoreData(
   BuildContext context,
 ) async {
@@ -328,6 +338,11 @@ Future<({String message, bool success})> restoreData(
   }
 
   final restoredBoxes = <String>[];
+  final settings = Hive.box('settings');
+  final localSyncSettings = {
+    for (final key in _localSyncSettings)
+      if (settings.containsKey(key)) key: settings.get(key),
+  };
   try {
     for (final boxName in boxNames) {
       if (Hive.isBoxOpen(boxName)) {
@@ -363,7 +378,14 @@ Future<({String message, bool success})> restoreData(
   } finally {
     for (final boxName in boxNames) {
       try {
-        await _openBox(boxName);
+        final box = await _openBox(boxName);
+        if (boxName == 'settings' && restoredBoxes.contains(boxName)) {
+          for (final key in _localSyncSettings) {
+            localSyncSettings.containsKey(key)
+                ? await box.put(key, localSyncSettings[key])
+                : await box.delete(key);
+          }
+        }
       } catch (e, stackTrace) {
         logger.log(
           'Failed to reopen box $boxName',
