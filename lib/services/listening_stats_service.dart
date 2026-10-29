@@ -25,6 +25,7 @@ import 'package:hive/hive.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:musify/main.dart' show logger;
 import 'package:musify/services/data_manager.dart';
+import 'package:musify/services/local_sync/sync_security.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/listening_stats_utils.dart';
 import 'package:musify/utilities/map_utils.dart';
@@ -356,6 +357,7 @@ class ListeningStatsService {
       now.year,
       currentMonthKey: listeningStatsMonthKey(now),
     );
+    cleared['syncResetId'] = SyncSecurity.randomToken(16);
     _stats = cleared;
     await deleteData('user', storageKey);
     // Persist the cleared map last so an in-flight checkpoint flush can't
@@ -363,6 +365,16 @@ class ListeningStatsService {
     if (identical(_stats, cleared)) {
       await addOrUpdateData('user', storageKey, cleared);
     }
+  }
+
+  Future<void> prepareForSync() async {
+    final raw = Hive.box('user').get(storageKey);
+    if (raw is Map &&
+        raw['schemaVersion'] != wrappedListeningStatsSchemaVersion) {
+      _readStats();
+    }
+    recordListeningSessionProgress();
+    await flush();
   }
 
   /// Writes pending stats to disk if anything changed since the last write.

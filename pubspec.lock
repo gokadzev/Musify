@@ -177,6 +177,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.7"
+  cryptography:
+    dependency: "direct main"
+    description:
+      name: cryptography
+      sha256: "3eda3029d34ec9095a27a198ac9785630fe525c0eb6a49f3d575272f8e792ef0"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.9.0"
   csslib:
     dependency: transitive
     description:
@@ -201,6 +209,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.8.0"
+  dsrp:
+    dependency: "direct main"
+    description:
+      name: dsrp
+      sha256: e863b162aa9eacb11b99a6fbad538c63b593d236d668ac1d6629fd2ceb8d60fa
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.5.5"
   dynamic_color:
     dependency: "direct main"
     description:
@@ -315,6 +331,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_multicast_lock:
+    dependency: "direct main"
+    description:
+      name: flutter_multicast_lock
+      sha256: "148ff4a5e3f3231fc0fdb049fa2c4769e9222d4774c1404633907803375a59b3"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
