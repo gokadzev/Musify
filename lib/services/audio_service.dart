@@ -268,26 +268,23 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
       },
     );
 
-    audioPlayer.playerStateStream
-        .distinct()
-        .throttleTime(const Duration(milliseconds: 100))
-        .listen(
-          (state) {
-            listeningStatsService.handlePlayerStateForListeningStats(
-              state,
-              currentSong: currentSong,
-            );
-            if (state.processingState == ProcessingState.idle &&
-                !state.playing &&
-                _lastError != null) {
-              Future.microtask(_handlePlaybackError);
-            }
-            _debouncedStateUpdate();
-          },
-          onError: (error, stackTrace) {
-            _logStreamError('Player state stream error', error, stackTrace);
-          },
+    audioPlayer.playerStateStream.distinct().listen(
+      (state) {
+        listeningStatsService.handlePlayerStateForListeningStats(
+          state,
+          currentSong: currentSong,
         );
+        if (state.processingState == ProcessingState.idle &&
+            !state.playing &&
+            _lastError != null) {
+          Future.microtask(_handlePlaybackError);
+        }
+        _debouncedStateUpdate();
+      },
+      onError: (error, stackTrace) {
+        _logStreamError('Player state stream error', error, stackTrace);
+      },
+    );
 
     Rx.combineLatest2(
           audioPlayer.currentIndexStream.distinct(),
@@ -504,7 +501,9 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
   void startListeningStatsSessionIfNeeded() {
     listeningStatsService.startListeningSessionIfNeeded(
       currentSong: currentSong,
-      isPlaying: audioPlayer.playing,
+      isPlaying:
+          audioPlayer.playing &&
+          audioPlayer.processingState == ProcessingState.ready,
     );
   }
 
@@ -1750,7 +1749,9 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
           _lastError = e.toString();
         }),
       );
-      listeningStatsService.resumeListeningSession(currentSong: currentSong);
+      if (audioPlayer.processingState == ProcessingState.ready) {
+        listeningStatsService.resumeListeningSession(currentSong: currentSong);
+      }
     } catch (e, stackTrace) {
       logger.log('Error in play()', error: e, stackTrace: stackTrace);
       _lastError = e.toString();
@@ -2125,7 +2126,13 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
           countCurrentTick: true,
           wasPlaying: wasPlayingBeforeSwap,
         )
-        ..startListeningSession(song, duration: audioPlayer.duration);
+        ..startListeningSession(
+          song,
+          duration: audioPlayer.duration,
+          isPlaying:
+              audioPlayer.playing &&
+              audioPlayer.processingState == ProcessingState.ready,
+        );
       final startPlayback = transitionId == null || !isDesktopPlatform
           ? playWhenReady
           : _queuePlayWhenReady;
@@ -2550,6 +2557,9 @@ class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
         listeningStatsService.startListeningSession(
           song,
           duration: audioPlayer.duration,
+          isPlaying:
+              audioPlayer.playing &&
+              audioPlayer.processingState == ProcessingState.ready,
         );
         unawaited(updateRecentlyPlayed(song['ytid'], songFallback: song));
       }
