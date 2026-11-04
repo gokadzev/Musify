@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Plain HTTP is only for the player's own proxy on this device: just_audio
+     serves streams that need request headers from 127.0.0.1 to ExoPlayer.
+     Everything else that goes through Android's own network stack must use
+     HTTPS. Dart's HTTP client (dart:io) does not read this file. -->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false" />
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">127.0.0.1</domain>
+        <domain includeSubdomains="false">localhost</domain>
+    </domain-config>
+</network-security-config>
