@@ -30,6 +30,37 @@ void main() {
     });
   });
 
+  group('sortLibraryItems', () {
+    final folders = [
+      {'id': '1', 'name': 'rock'},
+      {'id': '2', 'name': 'Ambient'},
+      {'id': '3', 'name': 'jazz'},
+    ];
+
+    test('keeps the stored order by default', () {
+      final sorted = sortLibraryItems(folders, LibrarySortType.default_);
+
+      expect(sorted.map((f) => f['id']), ['1', '2', '3']);
+    });
+
+    test('orders by name in both directions without mutating the input', () {
+      final ascending = sortLibraryItems(
+        folders,
+        LibrarySortType.nameAsc,
+        nameKey: 'name',
+      );
+      final descending = sortLibraryItems(
+        folders,
+        LibrarySortType.nameDesc,
+        nameKey: 'name',
+      );
+
+      expect(ascending.map((f) => f['id']), ['2', '3', '1']);
+      expect(descending.map((f) => f['id']), ['1', '3', '2']);
+      expect(folders.map((f) => f['id']), ['1', '2', '3']);
+    });
+  });
+
   group('sortSongsNewestFirst', () {
     test('puts the last appended song first and keeps the input intact', () {
       final songs = [

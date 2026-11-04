@@ -20,6 +20,10 @@
  */
 
 import 'package:material_ui/material_ui.dart';
+import 'package:musify/extensions/l10n.dart';
+import 'package:musify/services/data_manager.dart';
+import 'package:musify/services/settings_manager.dart';
+import 'package:musify/utilities/sort_utils.dart';
 
 typedef SortTypeToStringConverter<T> = String Function(T type);
 typedef OnSortTypeSelected<T> = void Function(T type);
@@ -78,6 +82,32 @@ class SortChips<T extends Enum> extends StatelessWidget {
           );
         }).toList(),
       ),
+    );
+  }
+}
+
+/// [SortChips] bound to the library-wide sort: it persists the pick, then
+/// asks the hosting page to rebuild through [onSortChanged].
+class LibrarySortChips extends StatelessWidget {
+  const LibrarySortChips({required this.onSortChanged, super.key});
+
+  final VoidCallback onSortChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return SortChips<LibrarySortType>(
+      currentSortType: currentLibrarySortType,
+      sortTypes: LibrarySortType.values,
+      sortTypeToString: (type) => switch (type) {
+        LibrarySortType.default_ => context.l10n!.default_,
+        LibrarySortType.nameAsc => context.l10n!.nameAscending,
+        LibrarySortType.nameDesc => context.l10n!.nameDescending,
+      },
+      onSelected: (type) {
+        addOrUpdateData<String>('settings', 'librarySortType', type.name);
+        librarySortSetting = type.name;
+        onSortChanged();
+      },
     );
   }
 }

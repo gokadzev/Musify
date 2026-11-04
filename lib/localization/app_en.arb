@@ -167,6 +167,8 @@
   "mostPlayed": "Most played",
   "moveToFolder": "Move to folder",
   "name": "Name",
+  "nameAscending": "Name (A-Z)",
+  "nameDescending": "Name (Z-A)",
   "newAnnouncement": "New announcement posted",
   "newFolder": "New folder",
   "no": "No",
