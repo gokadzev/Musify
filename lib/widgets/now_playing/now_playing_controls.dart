@@ -450,9 +450,9 @@ class _PlaybackControlsRow extends StatelessWidget {
                 children: [
                   _PlaybackControlButton(
                     icon: FluentIcons.previous_24_regular,
-                    isEnabled:
-                        audioHandler.hasPrevious ||
-                        repeatMode != AudioServiceRepeatMode.none,
+                    // Back restarts the song when nothing sits behind it,
+                    // so it is never a dead end.
+                    isEnabled: audioHandler.currentSong != null,
                     tooltip: context.l10n!.skipToPrevious,
                     onPressed: () => audioHandler.skipToPrevious(),
                     colorScheme: colorScheme,
