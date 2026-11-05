@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 11 and older. userNoBackup holds this device's Local Sync identity
+     and pairing secrets: they must not follow a backup to another device. -->
+<full-backup-content>
+    <exclude domain="root" path="app_flutter/usernobackup.hive" />
+    <exclude domain="root" path="app_flutter/usernobackup.lock" />
+</full-backup-content>

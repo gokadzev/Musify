@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 12 and newer: same rules for the cloud backup and a device-to-device
+     transfer. -->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="root" path="app_flutter/usernobackup.hive" />
+        <exclude domain="root" path="app_flutter/usernobackup.lock" />
+    </cloud-backup>
+    <device-transfer>
+        <exclude domain="root" path="app_flutter/usernobackup.hive" />
+        <exclude domain="root" path="app_flutter/usernobackup.lock" />
+    </device-transfer>
+</data-extraction-rules>

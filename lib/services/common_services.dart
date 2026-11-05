@@ -86,6 +86,9 @@ String? lastFetchedLyrics;
 
 void reloadSongLibraryStateFromStorage() {
   final userBox = Hive.box('user');
+  userLikedRadioStations.value = List<String>.from(
+    userBox.get('likedRadioStations', defaultValue: []),
+  );
   userLikedSongsList.value = List.from(
     userBox.get('likedSongs', defaultValue: []),
   );

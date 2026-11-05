@@ -32,12 +32,14 @@ import 'package:just_audio_media_kit/just_audio_media_kit.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/localization/app_localizations.dart';
+import 'package:musify/screens/local_sync_page.dart';
 import 'package:musify/services/audio_service.dart';
 import 'package:musify/services/data_manager.dart';
 import 'package:musify/services/desktop_media_artwork.dart';
 import 'package:musify/services/io_service.dart';
 import 'package:musify/services/linux_media_controls.dart';
 import 'package:musify/services/listening_stats_service.dart';
+import 'package:musify/services/local_sync_service.dart';
 import 'package:musify/services/logger_service.dart';
 import 'package:musify/services/playlist_sharing.dart';
 import 'package:musify/services/playlists_manager.dart';
@@ -140,6 +142,9 @@ class _MusifyState extends State<Musify> with WidgetsBindingObserver {
     };
 
     offlineMode.addListener(_onOfflineModeChanged);
+    LocalSyncService.instance.incomingPairingRequest.addListener(
+      showIncomingPairingDialog,
+    );
 
     if (isMobilePlatform) {
       sharingIntentSubscription = ReceiveSharingIntent.getTextStream().listen(
@@ -206,6 +211,9 @@ class _MusifyState extends State<Musify> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      unawaited(LocalSyncService.instance.syncOnResume());
+    }
     super.didChangeAppLifecycleState(state);
     // Persist listening stats when the app leaves the foreground. This is the
     // reliable moment to snapshot and flush: unlike widget dispose, these
@@ -227,6 +235,10 @@ class _MusifyState extends State<Musify> with WidgetsBindingObserver {
     offlineMode.removeListener(_onOfflineModeChanged);
     PlatformDispatcher.instance.onPlatformBrightnessChanged = null;
 
+    LocalSyncService.instance.incomingPairingRequest.removeListener(
+      showIncomingPairingDialog,
+    );
+    unawaited(LocalSyncService.instance.dispose());
     unawaited(linuxMediaControls?.dispose());
     unawaited(windowsMediaControls?.dispose());
     Hive.close();
@@ -299,6 +311,16 @@ Future<void> initialisation() async {
       Hive.openBox('userNoBackup'),
       Hive.openBox('cache'),
     ]);
+
+    try {
+      await LocalSyncService.instance.initialise();
+    } catch (e, stackTrace) {
+      logger.log(
+        'Local sync could not start',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
 
     if (isMobilePlatform) {
       audioHandler = await AudioService.init(
