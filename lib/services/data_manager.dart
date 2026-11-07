@@ -262,8 +262,6 @@ Future<({String message, bool success})> backupData(
         final bytes = await sourceFile.readAsBytes();
         final savedPath = await FilePicker.saveFile(
           fileName: '$boxName.hive',
-          type: FileType.custom,
-          allowedExtensions: ['hive'],
           bytes: Uint8List.fromList(bytes),
         );
         if (savedPath == null) {
