@@ -24,13 +24,13 @@ import 'dart:isolate';
 import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive_ce.dart';
 // Hive 2.x exposes neither a strict backup parser nor a public registry factory.
 // Parsing in memory avoids its recovery/truncation and failed-open cleanup.
 // ignore: implementation_imports
-import 'package:hive/src/binary/binary_reader_impl.dart';
+import 'package:hive_ce/src/binary/binary_reader_impl.dart';
 // ignore: implementation_imports
-import 'package:hive/src/hive_impl.dart';
+import 'package:hive_ce/src/hive_impl.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart' show logger;

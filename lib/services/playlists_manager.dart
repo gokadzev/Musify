@@ -22,7 +22,7 @@
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive_ce.dart';
 import 'package:musify/database/albums.db.dart';
 import 'package:musify/database/playlists.db.dart';
 import 'package:musify/extensions/l10n.dart';

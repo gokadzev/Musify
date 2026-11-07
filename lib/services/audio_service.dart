@@ -24,7 +24,7 @@ import 'dart:io';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive_ce.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:musify/constants/clients.dart';
 import 'package:musify/main.dart';

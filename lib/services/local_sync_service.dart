@@ -29,7 +29,7 @@ import 'package:cryptography/cryptography.dart'
     show SecretBoxAuthenticationError;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_multicast_lock/flutter_multicast_lock.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive_ce.dart';
 import 'package:http/http.dart' as http;
 import 'package:musify/main.dart';
 import 'package:musify/services/library_merge_service.dart';
