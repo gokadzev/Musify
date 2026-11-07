@@ -20,10 +20,17 @@
  */
 
 import 'dart:io';
+import 'dart:isolate';
 import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:hive/hive.dart';
+// Hive 2.x exposes neither a strict backup parser nor a public registry factory.
+// Parsing in memory avoids its recovery/truncation and failed-open cleanup.
+// ignore: implementation_imports
+import 'package:hive/src/binary/binary_reader_impl.dart';
+// ignore: implementation_imports
+import 'package:hive/src/hive_impl.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart' show logger;
@@ -274,9 +281,23 @@ Future<({String message, bool success})> backupData(
   }
 }
 
+/// Local Sync settings belong to this device, not to the library: restoring
+/// a backup from another device must not turn sync on here or show that
+/// device's last sync.
+const _localSyncSettings = [
+  'localSyncEnabled',
+  'localSyncAutomatic',
+  'localSyncCategories',
+  'localSyncLastSyncedAt',
+];
+
+@visibleForTesting
+Future<void> Function(String stage)? restoreFault;
+
 Future<({String message, bool success})> restoreData(
-  BuildContext context,
-) async {
+  BuildContext context, {
+  void Function(bool changed)? onStorageChanged,
+}) async {
   final boxNames = ['user', 'settings'];
   final result = await FilePicker.pickFiles(
     type: FileType.custom,
@@ -328,20 +349,37 @@ Future<({String message, bool success})> restoreData(
   }
 
   final restoredBoxes = <String>[];
+  var replacementStarted = false;
+  final settings = Hive.box('settings');
+  final localSyncSettings = {
+    for (final key in _localSyncSettings)
+      if (settings.containsKey(key)) key: settings.get(key),
+  };
   try {
+    // Validate before closing live boxes; recovery must never turn a corrupt
+    // backup into an apparently valid empty library.
+    for (final boxName in boxNames) {
+      if (boxName == 'user' && backupBytes[boxName]!.isEmpty) {
+        throw const FormatException('Empty backup: user');
+      }
+      await validateHiveBackup(boxName, backupBytes[boxName]!);
+    }
     for (final boxName in boxNames) {
       if (Hive.isBoxOpen(boxName)) {
+        await Hive.box(boxName).flush();
+        originalBytes[boxName] = Uint8List.fromList(
+          await File(boxPaths[boxName]!).readAsBytes(),
+        );
         await Hive.box(boxName).close();
       }
     }
 
     for (final boxName in boxNames) {
-      await _validateHiveBytes(boxName, backupBytes[boxName]!);
-    }
-
-    for (final boxName in boxNames) {
+      replacementStarted = true;
+      onStorageChanged?.call(true);
       await _replaceHiveFile(boxPaths[boxName]!, backupBytes[boxName]!);
       restoredBoxes.add(boxName);
+      await restoreFault?.call('restored:$boxName');
       logger.log('Restored $boxName');
     }
 
@@ -350,6 +388,7 @@ Future<({String message, bool success})> restoreData(
     logger.log('Restore error', error: e, stackTrace: stackTrace);
     for (final boxName in restoredBoxes.reversed) {
       try {
+        await restoreFault?.call('rollback:$boxName');
         await _replaceHiveFile(boxPaths[boxName]!, originalBytes[boxName]!);
       } catch (rollbackError, rollbackStackTrace) {
         logger.log(
@@ -359,11 +398,42 @@ Future<({String message, bool success})> restoreData(
         );
       }
     }
+    if (replacementStarted) {
+      var unchanged = true;
+      for (final boxName in boxNames) {
+        try {
+          final actual = await File(boxPaths[boxName]!).readAsBytes();
+          final original = originalBytes[boxName]!;
+          if (actual.length != original.length) {
+            unchanged = false;
+            break;
+          }
+          for (var i = 0; i < actual.length; i++) {
+            if (actual[i] != original[i]) {
+              unchanged = false;
+              break;
+            }
+          }
+          if (!unchanged) break;
+        } catch (_) {
+          unchanged = false;
+          break;
+        }
+      }
+      onStorageChanged?.call(!unchanged);
+    }
     return (message: '${context.l10n!.restoreError}: $e', success: false);
   } finally {
     for (final boxName in boxNames) {
       try {
-        await _openBox(boxName);
+        final box = await _openBox(boxName);
+        if (boxName == 'settings' && restoredBoxes.contains(boxName)) {
+          for (final key in _localSyncSettings) {
+            localSyncSettings.containsKey(key)
+                ? await box.put(key, localSyncSettings[key])
+                : await box.delete(key);
+          }
+        }
       } catch (e, stackTrace) {
         logger.log(
           'Failed to reopen box $boxName',
@@ -379,19 +449,24 @@ Future<Uint8List> _readPickedFile(PlatformFile file) async {
   return file.readAsBytes();
 }
 
-Future<void> _validateHiveBytes(String boxName, Uint8List bytes) async {
-  final validationDirectory = await Directory.systemTemp.createTemp(
-    'musify_restore_',
-  );
-  try {
-    final validationFile = File('${validationDirectory.path}/$boxName.hive');
-    await validationFile.writeAsBytes(bytes, flush: true);
-    final box = await Hive.openBox(boxName, path: validationDirectory.path);
-    await box.close();
-  } finally {
-    await validationDirectory.delete(recursive: true);
-  }
-}
+Future<void> validateHiveBackup(String boxName, Uint8List bytes) => Isolate.run(
+  () {
+    final reader = BinaryReaderImpl(bytes, HiveImpl());
+    final liveKeys = <dynamic>{};
+    while (reader.availableBytes > 0) {
+      final frame = reader.readFrame();
+      if (frame == null) throw FormatException('Corrupt Hive backup: $boxName');
+      if (frame.deleted) {
+        liveKeys.remove(frame.key);
+      } else {
+        liveKeys.add(frame.key);
+      }
+    }
+    if (boxName == 'user' && liveKeys.isEmpty) {
+      throw const FormatException('Empty backup: user');
+    }
+  },
+);
 
 Future<void> _replaceHiveFile(String targetPath, Uint8List bytes) async {
   final targetFile = File(targetPath);

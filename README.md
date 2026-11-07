@@ -28,6 +28,7 @@ Unlock the full potential of music: Stream effortlessly with one app!
 Online song search with suggestions <br/>
 Offline listening support <br/>
 Import & export your data and never lose it <br/>
+Optional local-network sync between your devices <br/>
 Add custom playlists with link <br/>
 Listening Recaps <br/>
 Spotify playlist import <br/>
