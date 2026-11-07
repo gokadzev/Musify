@@ -28,6 +28,7 @@ import 'package:musify/main.dart';
 import 'package:musify/models/full_player_state.dart';
 import 'package:musify/models/position_data.dart';
 import 'package:musify/screens/now_playing_page.dart';
+import 'package:musify/widgets/desktop_volume_control.dart';
 import 'package:musify/widgets/marquee.dart';
 import 'package:musify/widgets/song_artwork.dart';
 import 'package:rxdart/rxdart.dart';
@@ -354,6 +355,10 @@ class _ControlsWidget extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
+        if (supportsDesktopVolumeControl) ...[
+          const DesktopVolumeControl(),
+          const SizedBox(width: 4),
+        ],
         _CircularPlayButton(
           colorScheme: colorScheme,
           playbackState: playbackState,
