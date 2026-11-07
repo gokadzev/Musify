@@ -1,52 +1,52 @@
 {
   "about": "关于",
-  "accentChangeMsg": "主题色更新成功",
-  "accentColor": "主题色",
+  "accentChangeMsg": "主题颜色更新成功",
+  "accentColor": "主题颜色",
   "add": "添加",
-  "addPlaylist": "添加播放列表",
-  "addToLikedPlaylists": "添加到喜欢的播放列表",
+  "addPlaylist": "添加至播放列表",
+  "addToLikedPlaylists": "添加至按赞列表",
   "addToLikedSongs": "添加到喜欢的歌曲",
-  "addToPlaylist": "添加到播放列表",
-  "addToQueue": "添加到队列",
+  "addToPlaylist": "添加至歌单",
+  "addToQueue": "添加至待播清单",
   "addedPlaylists": "已添加播放列表",
   "addedSuccess": "添加成功",
   "addedToLikedSongs": "已添加到喜欢的歌曲",
   "album": "专辑",
   "albums": "专辑",
   "allSongs": "所有歌曲",
-  "alreadyDownloading": "已在下载",
+  "alreadyDownloading": "正在下载",
   "annualRecap": "年度回顾",
-  "appUpdateIsAvailable": "有可用更新",
-  "artist": "艺术家",
-  "artistNotFound": "找不到艺术家。检查日志或再试一次。",
-  "artists": "艺术家",
+  "appUpdateIsAvailable": "有更新",
+  "artist": "歌手",
+  "artistNotFound": "找不到相关歌手。查看记录或再试一次。",
+  "artists": "歌手",
   "audioQuality": "音质",
   "audioQualityBadge": "显示音质标签",
-  "audioQualityBadgeDescription": "在正在播放的封面图上显示比特率/音频编码小标签。",
+  "audioQualityBadgeDescription": "正播放的封面图上显示比特率/音频编码小标签。",
   "audioQualityHigh": "高",
   "audioQualityLow": "低",
   "audioQualityMedium": "中",
-  "audioQualityMsg": "音质已更新",
-  "automaticSongPicker": "自动歌曲选择器",
-  "automaticSongPickerDescription": "当前曲目结束后自动随机播放一首歌曲。",
-  "automaticUpdateChecks": "自动检查更新",
-  "automaticUpdateChecksDescription": "启动时自动检查应用更新。",
+  "audioQualityMsg": "音质更新",
+  "automaticSongPicker": "系统自动选择歌曲",
+  "automaticSongPickerDescription": "当前曲目完结后自动播放随机一首歌曲。",
+  "automaticUpdateChecks": "自动查看最新更新",
+  "automaticUpdateChecksDescription": "应用启动自动检查最新更新。",
   "back": "返回",
-  "backToFavorites": "返回收藏夹",
-  "backedupSuccess": "数据备份成功",
-  "backupError": "备份数据时发生错误",
+  "backToFavorites": "返回心仪歌单",
+  "backedupSuccess": "用户应用数据备份成功",
+  "backupError": "数据备份时遇到问题",
   "backupUserData": "备份用户数据",
   "becomeSponsor": "成为赞助者",
   "cacheMsg": "缓存已清除",
   "cancel": "取消",
   "cancellingDownload": "取消下载……",
-  "checkForUpdates": "检查更新？",
-  "chooseBackupDir": "选择备份文件夹",
+  "checkForUpdates": "检查最新更新？",
+  "chooseBackupDir": "请选择备份档案",
   "chooseBackupFiles": "选择要备份的文件",
   "chooseCsvFile": "选择 CSV 文件",
   "clear": "清除",
   "clearCache": "清除缓存",
-  "clearListeningStats": "清空收听记录",
+  "clearListeningStats": "清空收听历史数据",
   "clearListeningStatsQuestion": "此操作将清空储存在本设备上的时光机收听记录。继续？",
   "clearQueue": "清空队列",
   "clearQueueQuestion": "您确定要清除队列吗？",
@@ -269,6 +269,169 @@
   "spotifyPlaylistProgress": "已搜索 {done}，共计 {total}",
   "suggestedArtists": "推荐艺术家",
   "suggestedPlaylists": "推荐播放列表",
+  "syncAllNow": "Sync now",
+  "syncAllNowDescription": "{count, plural, =1{With the paired device that is online} other{With the {count} paired devices online}}",
+  "syncNow": "Sync",
+  "syncOnline": "{address} · Online",
+  "syncSyncedAll": "Synced with your devices",
+  "syncThisDevice": "This device",
+  "syncTitle": "Local sync",
+  "syncData": "Choose what to sync",
+  "syncSelections": "Only categories selected on both devices are exchanged. Settings and downloaded files stay on each device.",
+  "syncFavourites": "Liked songs",
+  "syncPlaylists": "Playlists, folders and pins",
+  "syncRecent": "Recently played",
+  "syncRecap": "Listening recap",
+  "syncSearches": "Search history",
+  "syncRadio": "Liked radio stations",
+  "syncPairTitle": "Pair with this device?",
+  "syncPinInstructions": "Enter the six-digit PIN shown on the other device.",
+  "syncPairDescription": "{device} wants to pair. Type this PIN there; cancel if you did not start it.",
+  "syncUnchanged": "No selected data changed.",
+  "syncOverNetwork": "Sync over local network",
+  "syncOffDescription": "Sync your library and listening recap between your devices over Wi-Fi. No account or cloud server.",
+  "syncDevices": "Devices",
+  "syncFindDevices": "Find devices on this network and pair them.",
+  "syncLastSynced": "Last sync: {time}",
+  "syncAutomatic": "Automatic sync",
+  "syncAutomaticDescription": "With paired devices that are online: at startup, shortly after a change and every 30 minutes.",
+  "syncCouldNotStart": "Could not start local sync",
+  "syncIsOff": "Turn on local sync to make this device visible to your other Musify devices on the same network.",
+  "syncVisible": "This device is visible to other Musify devices on the same network.",
+  "syncNotVisible": "Not visible right now. Local sync could not start.",
+  "syncScanAgain": "Scan again",
+  "syncScanning": "Looking for devices on your network...",
+  "syncConnecting": "Connecting...",
+  "syncPreparing": "Preparing your library...",
+  "syncSending": "Sending it to the other device...",
+  "syncMerging": "Merging what came back...",
+  "syncSyncingWith": "Syncing with {device}",
+  "syncSyncedWith": "Synced with {device}",
+  "syncPairWith": "Pair with {device}",
+  "syncPairedWith": "Paired with {device}",
+  "syncPair": "Pair",
+  "syncDone": "Done",
+  "syncOfflineDevice": "Offline",
+  "syncNoDevices": "No other Musify device found. Turn on local sync on the other device and make sure both are on the same Wi-Fi.",
+  "syncForget": "Forget",
+  "syncForgetConfirm": "Forget {device}? You will need to pair again with a PIN before syncing with it.",
+  "syncForgetAll": "Forget all devices",
+  "syncForgetAllConfirm": "Forget every paired device? Each one will ask for a PIN again.",
+  "syncErrorNotRunning": "Turn on local sync on this device first.",
+  "syncErrorIncorrectPin": "Incorrect PIN. Check the code shown on {device}.",
+  "syncErrorRejected": "{device} rejected the pairing.",
+  "syncErrorBusy": "{device} is busy with another pairing attempt. Wait a few seconds and try again.",
+  "syncErrorUntrusted": "{device} no longer trusts this device. Forget it in the device list, then pair again.",
+  "syncErrorUpdate": "Update Musify on both devices to use local sync.",
+  "syncErrorNoCategories": "Select at least one category that is enabled on both devices.",
+  "syncErrorTooLarge": "The selected data is too large. Choose fewer categories.",
+  "syncErrorUnreachable": "Could not reach {device}. Your data is safe; make sure both devices are on the same network.",
+  "syncErrorFailed": "Sync with {device} failed. Try again.",
+  "@syncAllNowDescription": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@syncOnline": {
+    "placeholders": {
+      "address": {
+        "type": "String"
+      }
+    }
+  },
+  "@syncPairDescription": {
+    "placeholders": {
+      "device": {
+        "type": "String"
+      }
+    }
+  },
+  "@syncLastSynced": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "@syncSyncingWith": {
+    "placeholders": {
+      "device": {
+        "type": "String"
+      }
+    }
+  },
+  "@syncSyncedWith": {
+    "placeholders": {
+      "device": {
+        "type": "String"
+      }
+    }
+  },
+  "@syncPairWith": {
+    "placeholders": {
+      "device": {
+        "type": "String"
+      }
+    }
+  },
+  "@syncPairedWith": {
+    "placeholders": {
+      "device": {
+        "type": "String"
+      }
+    }
+  },
+  "@syncForgetConfirm": {
+    "placeholders": {
+      "device": {
+        "type": "String"
+      }
+    }
+  },
+  "@syncErrorIncorrectPin": {
+    "placeholders": {
+      "device": {
+        "type": "String"
+      }
+    }
+  },
+  "@syncErrorRejected": {
+    "placeholders": {
+      "device": {
+        "type": "String"
+      }
+    }
+  },
+  "@syncErrorBusy": {
+    "placeholders": {
+      "device": {
+        "type": "String"
+      }
+    }
+  },
+  "@syncErrorUntrusted": {
+    "placeholders": {
+      "device": {
+        "type": "String"
+      }
+    }
+  },
+  "@syncErrorUnreachable": {
+    "placeholders": {
+      "device": {
+        "type": "String"
+      }
+    }
+  },
+  "@syncErrorFailed": {
+    "placeholders": {
+      "device": {
+        "type": "String"
+      }
+    }
+  },
   "syncedLyrics": "Synced lyrics",
   "syncedLyricsDescription": "Highlight the current line and scroll along with the song when timed lyrics are available.",
   "tapToView": "点按以查看",
