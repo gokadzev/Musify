@@ -36,6 +36,7 @@ import 'package:musify/services/playlists_manager.dart';
 import 'package:musify/services/router_service.dart';
 import 'package:musify/utilities/app_utils.dart';
 import 'package:musify/utilities/flutter_toast.dart';
+import 'package:musify/utilities/platform_utils.dart';
 import 'package:musify/widgets/artist_bar.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/custom_bar.dart';
@@ -86,6 +87,8 @@ class _SearchPageState extends State<SearchPage> {
   @override
   void initState() {
     super.initState();
+    // Only the desktop shortcut requests focus; phones keep no listener.
+    if (!isDesktopPlatform) return;
     searchFocusRequestNotifier.addListener(_handleFocusRequest);
     // Handle shortcuts issued before the search page was mounted.
     if (searchFocusRequestNotifier.value != _handledSearchFocusRequest) {

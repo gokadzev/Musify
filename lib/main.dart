@@ -259,7 +259,10 @@ class _MusifyState extends State<Musify> with WidgetsBindingObserver {
                 : Brightness.dark,
           ),
           child: MaterialApp.router(
-            builder: (context, child) => DesktopShortcuts(child: child!),
+            // Keyboard shortcuts are desktop-only; phones skip the key handler.
+            builder: isDesktopPlatform
+                ? (context, child) => DesktopShortcuts(child: child!)
+                : null,
             themeMode: themeMode,
             darkTheme: getAppTheme(colorScheme),
             theme: getAppTheme(colorScheme),

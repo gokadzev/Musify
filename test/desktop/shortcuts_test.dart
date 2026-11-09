@@ -138,4 +138,22 @@ void main() {
     await tester.pump();
     expect(tester.takeException(), isNull);
   }, variant: desktopPlatforms);
+
+  testWidgets(
+    'mobile search page ignores the desktop focus request',
+    (tester) async {
+      requestSearchFocus();
+      await mount(tester, child: const SearchPage());
+      final bar = tester.widget<CustomSearchBar>(find.byType(CustomSearchBar));
+      expect(bar.focusNode.hasFocus, isFalse);
+      requestSearchFocus();
+      await tester.pumpAndSettle();
+      expect(bar.focusNode.hasFocus, isFalse);
+      await tester.pumpWidget(const SizedBox.shrink());
+    },
+    variant: const TargetPlatformVariant({
+      TargetPlatform.android,
+      TargetPlatform.iOS,
+    }),
+  );
 }
