@@ -845,21 +845,6 @@ Future<Lyrics?> getSongLyricsResult(
   return result;
 }
 
-Future<String?> getSongLyrics(
-  String? artist,
-  String title, {
-  Duration? duration,
-  String? album,
-}) async {
-  final result = await getSongLyricsResult(
-    artist,
-    title,
-    duration: duration,
-    album: album,
-  );
-  return result == null ? null : formatPlainLyrics(result);
-}
-
 Future<bool> makeSongOffline(dynamic song) async {
   try {
     final String? ytid = song['ytid'];

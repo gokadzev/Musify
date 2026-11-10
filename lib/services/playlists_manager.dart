@@ -1081,44 +1081,6 @@ Future<Map?> getPlaylistInfoForWidget(
   return _fetchYouTubePlaylist(normalizedId);
 }
 
-Future<Map<String, dynamic>?> resolveArtistInfoForWidget(
-  dynamic id, {
-  String? artistName,
-  String? artistImage,
-  String? sourceSongId,
-  String? sourceVideoAuthor,
-  bool preferredVerified = false,
-}) async {
-  if (id == null) return null;
-  final normalizedId = id.toString().trim();
-  if (normalizedId.isEmpty || normalizedId == 'null') return null;
-
-  final offlineArtist = _findOfflinePlaylist(normalizedId);
-  if (offlineArtist != null) {
-    return Map<String, dynamic>.from(offlineArtist);
-  }
-  if (offlineMode.value) return null;
-
-  final artist = await resolveArtist(
-    normalizedId,
-    preferredName: artistName,
-    preferredImage: artistImage,
-    sourceSongId: sourceSongId,
-    sourceVideoAuthor: sourceVideoAuthor,
-    preferredVerified: preferredVerified,
-  );
-
-  if (artist == null) {
-    logger.log(
-      'No official artist channel found for "$normalizedId"'
-      '${artistName == null ? '' : ' ($artistName)'}',
-    );
-    return null;
-  }
-
-  return {...artist, 'source': 'youtube-artist', 'isArtist': true, 'list': []};
-}
-
 ({Map playlist, bool isFromFolder})? _findCustomPlaylist(String playlistId) {
   final normalizedId = _playlistId(playlistId);
   if (normalizedId == null) return null;
