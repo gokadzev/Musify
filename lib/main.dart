@@ -312,6 +312,9 @@ Future<void> initialisation() async {
       Hive.openBox('cache'),
     ]);
 
+    // Nothing else removes cache entries nobody asks for again.
+    unawaited(cleanupOldCacheEntries());
+
     try {
       await LocalSyncService.instance.initialise();
     } catch (e, stackTrace) {
