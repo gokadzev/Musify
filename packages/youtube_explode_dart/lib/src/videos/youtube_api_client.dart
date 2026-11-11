@@ -179,7 +179,6 @@ class YoutubeApiClient {
     },
   }, 'https://www.youtube.com/youtubei/v1/player?prettyPrint=false');
 
-
   /// Note: since 2026-07 YouTube only returns these merged HLS formats for
   /// some logged-in or "trusted" sessions; anonymous requests may get fewer
   /// formats than before.

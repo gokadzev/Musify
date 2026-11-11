@@ -318,9 +318,8 @@ class MediaKitPlayer extends AudioPlayerPlatform {
 
     _dataController.add(
       PlayerDataMessage(
-        shuffleMode: shuffling
-            ? ShuffleModeMessage.all
-            : ShuffleModeMessage.none,
+        shuffleMode:
+            shuffling ? ShuffleModeMessage.all : ShuffleModeMessage.none,
       ),
     );
     return SetShuffleModeResponse();

@@ -54,7 +54,8 @@ class RelatedVideosClient {
         duration?.toDuration(),
         ThumbnailSet(videoId),
         [],
-        Engagement(views?.parseViewCount() ?? views.parseInt() ?? 0, null, null),
+        Engagement(
+            views?.parseViewCount() ?? views.parseInt() ?? 0, null, null),
         duration == 'LIVE');
   }
 

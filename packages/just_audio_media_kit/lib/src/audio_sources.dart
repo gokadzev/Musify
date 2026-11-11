@@ -19,14 +19,14 @@ Iterable<AudioSourceMessage> flattenAudioSource(
 }
 
 Media audioSourceToMedia(AudioSourceMessage source) => switch (source) {
-  UriAudioSourceMessage() => Media(source.uri, httpHeaders: source.headers),
-  ClippingAudioSourceMessage() => Media(
-    source.child.uri,
-    httpHeaders: source.child.headers,
-    start: source.start,
-    end: source.end,
-  ),
-  _ => throw UnsupportedError(
-    '${source.runtimeType} is currently not supported',
-  ),
-};
+      UriAudioSourceMessage() => Media(source.uri, httpHeaders: source.headers),
+      ClippingAudioSourceMessage() => Media(
+          source.child.uri,
+          httpHeaders: source.child.headers,
+          start: source.start,
+          end: source.end,
+        ),
+      _ => throw UnsupportedError(
+          '${source.runtimeType} is currently not supported',
+        ),
+    };
