@@ -37,10 +37,12 @@ import 'package:musify/utilities/flutter_toast.dart';
 import 'package:musify/utilities/offline_playlist_dialogs.dart';
 import 'package:musify/utilities/playlist_dialogs.dart';
 import 'package:musify/utilities/playlist_utils.dart';
+import 'package:musify/utilities/sort_utils.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/mini_player_bottom_space.dart';
 import 'package:musify/widgets/playlist_bar.dart';
 import 'package:musify/widgets/section_header.dart';
+import 'package:musify/widgets/sort_chips.dart';
 
 class LibraryPage extends StatefulWidget {
   const LibraryPage({super.key});
@@ -132,6 +134,7 @@ class _LibraryPageState extends State<LibraryPage> {
             padding: commonSingleChildScrollViewPadding,
             child: CustomScrollView(
               slivers: [
+                if (_hasSortableContent()) _buildSortChipsSliver(),
                 ..._buildPinnedSlivers(),
                 ..._buildUserPlaylistsSlivers(),
                 if (!offlineMode.value) ..._buildLikedPlaylistsSlivers(),
@@ -144,6 +147,26 @@ class _LibraryPageState extends State<LibraryPage> {
       ),
     );
   }
+
+  /// The sort row only earns its place once a list has something to reorder.
+  bool _hasSortableContent() {
+    final lists = [
+      userPlaylistFolders.value,
+      getPlaylistsNotInFolders(),
+      userPlaylists.value,
+      getLikedArtistItems(offlineOnly: offlineMode.value),
+      if (!offlineMode.value) getLikedPlaylistItems(),
+      offlinePlaylistService.offlinePlaylists.value,
+    ];
+    return lists.any((list) => list.length > 1);
+  }
+
+  Widget _buildSortChipsSliver() => SliverToBoxAdapter(
+    child: Padding(
+      padding: const EdgeInsets.only(top: 8, bottom: 4),
+      child: LibrarySortChips(onSortChanged: () => setState(() {})),
+    ),
+  );
 
   List<Widget> _buildPinnedSlivers() {
     final ids = pinnedPlaylistIds.value;
@@ -380,16 +403,18 @@ class _LibraryPageState extends State<LibraryPage> {
     bool hasItemsAfter = false,
     bool hasItemsBefore = false,
   }) {
+    final sortedPlaylists = sortLibraryItems(playlists, currentLibrarySortType);
+
     return SliverPadding(
       padding: hasItemsAfter ? EdgeInsets.zero : commonListViewBottomPadding,
       sliver: SliverList.builder(
-        itemCount: playlists.length,
+        itemCount: sortedPlaylists.length,
         itemBuilder: (BuildContext context, index) {
-          final playlist = playlists[index];
+          final playlist = sortedPlaylists[index];
           final isArtist = playlist['source']?.toString() == 'youtube-artist';
           final borderRadius = getItemBorderRadius(
             index,
-            playlists.length,
+            sortedPlaylists.length,
             hasItemsBefore: hasItemsBefore,
             hasItemsAfter: hasItemsAfter,
           );
@@ -425,11 +450,17 @@ class _LibraryPageState extends State<LibraryPage> {
   }
 
   Widget _buildFolderSliverList(List folders, bool hasPlaylistsAfter) {
+    final sortedFolders = sortLibraryItems(
+      folders,
+      currentLibrarySortType,
+      nameKey: 'name',
+    );
+
     return SliverList.builder(
-      itemCount: folders.length,
+      itemCount: sortedFolders.length,
       itemBuilder: (BuildContext context, index) {
-        final folder = folders[index];
-        final isLastFolder = index == folders.length - 1;
+        final folder = sortedFolders[index];
+        final isLastFolder = index == sortedFolders.length - 1;
         final borderRadius = isLastFolder && !hasPlaylistsAfter
             ? commonCustomBarRadiusLast
             : BorderRadius.zero;
@@ -450,16 +481,18 @@ class _LibraryPageState extends State<LibraryPage> {
     bool hasItemsAfter = false,
     bool hasItemsBefore = false,
   }) {
+    final sortedPlaylists = sortLibraryItems(playlists, currentLibrarySortType);
+
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: playlists.length,
+      itemCount: sortedPlaylists.length,
       padding: hasItemsAfter ? EdgeInsets.zero : commonListViewBottomPadding,
       itemBuilder: (BuildContext context, index) {
-        final playlist = playlists[index];
+        final playlist = sortedPlaylists[index];
         final borderRadius = getItemBorderRadius(
           index,
-          playlists.length,
+          sortedPlaylists.length,
           hasItemsBefore: hasItemsBefore,
           hasItemsAfter: hasItemsAfter,
         );
