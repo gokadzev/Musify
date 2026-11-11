@@ -26,6 +26,7 @@ import 'package:musify/extensions/l10n.dart';
 import 'package:musify/main.dart' show logger, audioHandler;
 import 'package:musify/services/common_services.dart';
 import 'package:musify/services/data_manager.dart';
+import 'package:musify/services/playlist_download_service.dart';
 import 'package:musify/services/settings_manager.dart';
 import 'package:musify/utilities/app_utils.dart';
 import 'package:musify/utilities/flutter_toast.dart';
@@ -40,6 +41,8 @@ import 'package:musify/widgets/playlist_page/playlist_header.dart';
 import 'package:musify/widgets/playlist_page/playlist_sliver_app_bar.dart';
 import 'package:musify/widgets/playlist_page/search_bar_section.dart';
 import 'package:musify/widgets/song_bar.dart';
+import 'package:musify/widgets/song_selection_bar.dart';
+import 'package:musify/widgets/song_selection_controller.dart';
 import 'package:musify/widgets/sort_chips.dart';
 
 enum OfflineSortType { default_, title, artist, dateAdded }
@@ -57,6 +60,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
   final ValueNotifier<String> _searchQueryNotifier = ValueNotifier('');
   late final TextEditingController _searchController;
   late final FocusNode _searchFocusNode;
+  final SongSelectionController _selection = SongSelectionController();
 
   List _getDisplayList(List songsList) {
     var list = filterSongsByQuery(songsList, _searchQueryNotifier.value);
@@ -78,6 +82,7 @@ class _UserSongsPageState extends State<UserSongsPage> {
     _searchController.dispose();
     _searchFocusNode.dispose();
     _searchQueryNotifier.dispose();
+    _selection.dispose();
     super.dispose();
   }
 
@@ -87,24 +92,75 @@ class _UserSongsPageState extends State<UserSongsPage> {
     final icon = getIcon(widget.page);
     final isOfflineSongs = title == context.l10n!.offlineSongs;
 
-    return Scaffold(
-      body: Padding(
-        padding: commonSingleChildScrollViewPadding,
-        child: ValueListenableBuilder(
-          valueListenable: widget.page == 'liked'
-              ? userLikedSongsList
-              : widget.page == 'offline'
-              ? userOfflineSongs
-              : userRecentlyPlayed,
-          builder: (_, songsList, __) => _buildCustomScrollView(
-            title,
-            icon,
-            songsList.length,
-            isOfflineSongs,
+    return SongSelectionScope(
+      controller: _selection,
+      actionBar: SongSelectionBar(
+        controller: _selection,
+        visibleSongs: () =>
+            _getDisplayList(_currentSongsList).whereType<Map>().toList(),
+        // Both are no-ops where every song already is liked or downloaded.
+        showLikeAction: widget.page != 'liked',
+        showOfflineAction: widget.page != 'offline',
+        onRemoveSelected: _removeSongs,
+        removeLabel: _removeLabel,
+      ),
+      child: Scaffold(
+        body: Padding(
+          padding: commonSingleChildScrollViewPadding,
+          child: ValueListenableBuilder(
+            valueListenable: widget.page == 'liked'
+                ? userLikedSongsList
+                : widget.page == 'offline'
+                ? userOfflineSongs
+                : userRecentlyPlayed,
+            builder: (_, songsList, __) => _buildCustomScrollView(
+              title,
+              icon,
+              songsList.length,
+              isOfflineSongs,
+            ),
           ),
         ),
       ),
     );
+  }
+
+  List get _currentSongsList => switch (widget.page) {
+    'liked' => userLikedSongsList.value,
+    'offline' => userOfflineSongs.value,
+    _ => userRecentlyPlayed.value,
+  };
+
+  String get _removeLabel => switch (widget.page) {
+    'liked' => context.l10n!.removeFromLikedSongs,
+    'offline' => context.l10n!.removeOffline,
+    _ => context.l10n!.removeFromRecentlyPlayed,
+  };
+
+  /// Takes the ticked songs out of the list this page shows, which is what
+  /// removing means here: unlike them, drop their download, or forget them.
+  Future<void> _removeSongs(List<Map> songs) async {
+    var removed = 0;
+    for (final song in songs) {
+      final ytid = song['ytid']?.toString() ?? '';
+      if (ytid.isEmpty) continue;
+      try {
+        switch (widget.page) {
+          case 'liked':
+            await updateSongLikeStatus(ytid, false);
+          case 'offline':
+            await OfflinePlaylistService().removeSongFromOfflineAndResync(ytid);
+          default:
+            await removeFromRecentlyPlayed(ytid);
+        }
+        removed++;
+      } catch (e, stackTrace) {
+        logger.log('Error removing song', error: e, stackTrace: stackTrace);
+      }
+    }
+    if (mounted) {
+      showToast(context, context.l10n!.songsRemoved(removed));
+    }
   }
 
   OfflineSortType _getCurrentOfflineSortType() {
@@ -380,28 +436,34 @@ class _UserSongsPageState extends State<UserSongsPage> {
   }) {
     final isLikedSongs = playlist['title'] == context.l10n!.likedSongs;
 
-    return SongBar(
-      key: listItemKey('user_song', index, song),
-      song,
-      true,
-      onPlay: () {
-        final fullIndex = PlaylistUtils.findSongIndexByYtid(
-          playlist,
-          song['ytid'],
-        );
-        if (fullIndex == -1) {
-          logger.log(
-            'Warning: Song ${song['ytid']} not found in full song list',
+    return ListenableBuilder(
+      listenable: _selection,
+      builder: (context, _) => SongBar(
+        key: listItemKey('user_song', index, song),
+        song,
+        true,
+        onPlay: () {
+          final fullIndex = PlaylistUtils.findSongIndexByYtid(
+            playlist,
+            song['ytid'],
           );
-        }
-        audioHandler.playPlaylistSong(
-          playlist: playlist,
-          songIndex: fullIndex != -1 ? fullIndex : index,
-        );
-      },
-      borderRadius: borderRadius,
-      isRecentSong: isRecentSong,
-      isFromLikedSongs: isLikedSongs,
+          if (fullIndex == -1) {
+            logger.log(
+              'Warning: Song ${song['ytid']} not found in full song list',
+            );
+          }
+          audioHandler.playPlaylistSong(
+            playlist: playlist,
+            songIndex: fullIndex != -1 ? fullIndex : index,
+          );
+        },
+        borderRadius: borderRadius,
+        isRecentSong: isRecentSong,
+        isFromLikedSongs: isLikedSongs,
+        isSelected: _selection.isActive ? _selection.isSelected(song) : null,
+        onSelectionToggle: () => _selection.toggle(song),
+        onLongPress: () => _selection.start(song),
+      ),
     );
   }
 
