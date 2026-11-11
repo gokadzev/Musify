@@ -196,12 +196,35 @@ class ProxyManager {
     }
   }
 
+  /// Public IPv4 only: a poisoned list must not point us at LAN or local hosts.
+  static bool _isPublicProxyAddress(String address) {
+    final sep = address.lastIndexOf(':');
+    if (sep <= 0) return false;
+
+    final port = int.tryParse(address.substring(sep + 1));
+    if (port == null || port < 1 || port > 65535) return false;
+
+    final ip = InternetAddress.tryParse(address.substring(0, sep));
+    if (ip == null || ip.type != InternetAddressType.IPv4) return false;
+
+    final b = ip.rawAddress;
+    if (b[0] == 0 || b[0] == 10 || b[0] == 127)
+      return false; // this-net, private, loopback
+    if (b[0] == 169 && b[1] == 254) return false; // link-local
+    if (b[0] == 172 && b[1] >= 16 && b[1] <= 31) return false; // private
+    if (b[0] == 192 && b[1] == 168) return false; // private
+    if (b[0] == 100 && b[1] >= 64 && b[1] <= 127) return false; // CGNAT
+    if (b[0] >= 224) return false; // multicast and reserved
+    return true;
+  }
+
   void _addProxyCandidate({
     required String source,
     required String address,
     required String country,
     bool? isSsl,
   }) {
+    if (!_isPublicProxyAddress(address)) return;
     if (_isBlockedProxyAddress(address)) return;
 
     final countryProxies = _proxiesByCountry.putIfAbsent(country, () => []);
@@ -462,9 +485,8 @@ class ProxyManager {
   }) {
     final httpClient = HttpClient()
       ..connectionTimeout = Duration(seconds: timeoutSeconds)
-      ..findProxy = (_) {
-        return 'PROXY ${proxy.address}';
-      };
+      ..findProxy = (uri) =>
+          uri.scheme == 'https' ? 'PROXY ${proxy.address}' : 'DIRECT';
 
     final ioClient = IOClient(httpClient);
     return _ProxyResources(httpClient, ioClient);
@@ -597,7 +619,9 @@ class ProxyManager {
     Map<String, String>? headers,
     int timeoutSeconds = 10,
   }) async {
-    if (!useProxy.value || _sharedProxyAddress == null) {
+    if (uri.scheme != 'https' ||
+        !useProxy.value ||
+        _sharedProxyAddress == null) {
       return http
           .get(uri, headers: headers)
           .timeout(
