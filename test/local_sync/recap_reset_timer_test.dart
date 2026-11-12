@@ -30,13 +30,14 @@ void main() {
     final scheduled = <CapturedTimer>[];
     await runZoned(
       () async {
-        await service.initialise();
+        // Sync only watches the library when it is on at start.
         await Hive.box('settings').putAll({
           'localSyncEnabled': true,
           'localSyncAutomatic': true,
           'localSyncCategories': ['recap', 'favourites'],
         });
         reloadSettingsFromStorage();
+        await service.initialise();
         await service.savePairedDevice(
           const PairedSyncDevice(deviceId: 'b', name: 'b', secret: 'secret'),
         );

@@ -305,17 +305,35 @@ class LocalSyncService {
       } catch (_) {
         // Logged by startServer; the settings page shows it as not visible.
       }
+      await _startBackgroundWork(startupSync: true);
     }
+  }
 
+  /// Only while local sync is on.
+  Future<void> _startBackgroundWork({bool startupSync = false}) async {
     await rebindStorageListeners();
+    _periodicTimer?.cancel();
     _periodicTimer = Timer.periodic(
       autoSyncInterval,
       (_) => unawaited(triggerSilentSync()),
     );
+    _startupTimer?.cancel();
+    _startupTimer = null;
+    if (!startupSync) return;
     _startupTimer = Timer(
       _startupSyncDelay,
       () => unawaited(triggerSilentSync()),
     );
+  }
+
+  Future<void> _stopBackgroundWork() async {
+    _periodicTimer?.cancel();
+    _periodicTimer = null;
+    _startupTimer?.cancel();
+    _startupTimer = null;
+    _localChangeTimer?.cancel();
+    await _userBoxSubscription?.cancel();
+    _userBoxSubscription = null;
   }
 
   /// Re-subscribes to the `user` box, which a backup restore silently unsubscribes.
@@ -341,8 +359,12 @@ class LocalSyncService {
   Future<void> resumeAfterStorageRestore({bool storageChanged = true}) async {
     reloadSettingsFromStorage();
     if (storageChanged) await LibraryMergeService.forgetBaseline();
-    await rebindStorageListeners();
-    if (localSyncEnabled.value) await startServer();
+    if (localSyncEnabled.value) {
+      await _startBackgroundWork();
+      await startServer();
+    } else {
+      await _stopBackgroundWork();
+    }
   }
 
   Future<void> dispose() async {
@@ -361,7 +383,7 @@ class LocalSyncService {
     localSyncEnabled.value = enabled;
 
     if (!enabled) {
-      _localChangeTimer?.cancel();
+      await _stopBackgroundWork();
       await stopServer();
       return true;
     }
@@ -372,6 +394,7 @@ class LocalSyncService {
       localSyncEnabled.value = false;
       return false;
     }
+    await _startBackgroundWork();
     unawaited(triggerSilentSync());
     return true;
   }
@@ -514,7 +537,6 @@ class LocalSyncService {
       }
 
       serverRunning.value = true;
-      logger.log('Local sync server listening on port ${server.port}');
     } catch (e, stackTrace) {
       logger.log(
         'Local sync server failed to start',
@@ -1262,11 +1284,12 @@ class LocalSyncService {
     }
   }
 
-  /// Resuming fires on every desktop window focus, so it syncs at most every 2 minutes.
+  /// Syncs on resume at most every 10 minutes, and never while sync is off.
   Future<void> syncOnResume() async {
+    if (!localSyncEnabled.value) return;
     final last = _lastResumeSync;
     if (last != null &&
-        DateTime.now().difference(last) < const Duration(minutes: 2)) {
+        DateTime.now().difference(last) < const Duration(minutes: 10)) {
       return;
     }
     _lastResumeSync = DateTime.now();
@@ -1594,7 +1617,9 @@ class LocalSyncService {
       _observedRecapReset = reset;
       if (isMerge || !resetChanged) return;
     }
+    // Each song start writes this key; it rides along with the next sync.
     if (isMerge ||
+        key == 'recentlyPlayedSongs' ||
         pairedDevices.value.isEmpty ||
         !selectedCategories.any((c) => syncCategoryKeys[c]!.contains(key))) {
       return;
