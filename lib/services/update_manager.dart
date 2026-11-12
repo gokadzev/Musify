@@ -181,11 +181,7 @@ void showUpdateCheckDialog(BuildContext context) {
     context: context,
     builder: (context) {
       return AlertDialog(
-        icon: Icon(
-          FluentIcons.arrow_sync_circle_24_regular,
-          color: colorScheme.primary,
-          size: 40,
-        ),
+        icon: const Icon(FluentIcons.arrow_sync_circle_24_regular, size: 40),
         title: Text(
           context.l10n!.checkForUpdates,
           style: TextStyle(
