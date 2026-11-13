@@ -9,6 +9,7 @@ analyzer:
     - windows/**
     - macos/**
     - linux/**
+    - lib/localization/app_localizations.dart
 
 linter:
   rules:
