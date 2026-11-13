@@ -40,11 +40,6 @@ const String checkUrl =
     'https://raw.githubusercontent.com/gokadzev/Musify/update/check.json';
 const String releasesUrl =
     'https://api.github.com/repos/gokadzev/Musify/releases/latest';
-const String downloadUrlKey = 'url';
-const String downloadUrlArm64Key = 'arm64url';
-const String downloadLinuxUrlKey = 'linuxurl';
-const String downloadWindowsUrlKey = 'windowsurl';
-const String downloadFilename = 'Musify.apk';
 
 Future<void> checkAppUpdates() async {
   try {
@@ -260,23 +255,17 @@ Future<String> getCPUArchitecture() async {
 }
 
 Future<String> getDownloadUrl(Map<String, dynamic> map) async {
-  final key = isLinuxPlatform
-      ? downloadLinuxUrlKey
+  final version = map['version'];
+
+  final filename = isLinuxPlatform
+      ? 'Musify-linux-x64.tar.gz'
       : isWindowsPlatform
-      ? downloadWindowsUrlKey
-      : isAndroidPlatform && Platform.version.isNotEmpty
-      ? (Platform.version.contains('arm64')
-            ? downloadUrlArm64Key
-            : downloadUrlKey)
-      : downloadUrlKey;
+      ? 'Musify-windows-x64.zip'
+      : isAndroidPlatform && await getCPUArchitecture() == 'aarch64'
+      ? 'Musify-arm64-v8a.apk'
+      : 'Musify.apk';
 
-  final url = map[key]?.toString();
-
-  if (url == null || url.isEmpty || url == 'null') {
-    throw StateError('No download URL available for this platform');
-  }
-
-  return url;
+  return 'https://github.com/gokadzev/Musify/releases/download/$version/$filename';
 }
 
 /// Fetch only the announcement URL from the `check.json` file and set the
