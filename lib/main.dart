@@ -45,6 +45,7 @@ import 'package:musify/services/playlist_sharing.dart';
 import 'package:musify/services/playlists_manager.dart';
 import 'package:musify/services/router_service.dart';
 import 'package:musify/services/settings_manager.dart';
+import 'package:musify/services/storage_migration_service.dart';
 import 'package:musify/services/update_manager.dart';
 import 'package:musify/services/windows_media_controls.dart';
 import 'package:musify/theme/app_themes.dart';
@@ -303,8 +304,12 @@ void main() async {
 
 Future<void> initialisation() async {
   try {
-    applicationDirPath =
-        '${(await getApplicationDocumentsDirectory()).path}/Musify';
+    final docsDir = (await getApplicationDocumentsDirectory()).path;
+    applicationDirPath = '$docsDir/Musify';
+    final migrate = await needsStorageMigration(applicationDirPath);
+    if (migrate) {
+      await migrateLegacyBoxFiles(oldDir: docsDir, newDir: applicationDirPath);
+    }
     await FilePaths.ensureDirectoriesExist();
 
     Hive.init(applicationDirPath);
@@ -315,6 +320,11 @@ Future<void> initialisation() async {
       Hive.openBox('userNoBackup'),
       Hive.openBox('cache'),
     ]);
+
+    if (migrate) {
+      await migrateOfflineSongFiles();
+      await markStorageMigrated(applicationDirPath);
+    }
 
     // Nothing else removes cache entries nobody asks for again.
     unawaited(cleanupOldCacheEntries());
