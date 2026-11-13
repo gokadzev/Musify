@@ -42,11 +42,11 @@ const String releasesUrl =
     'https://api.github.com/repos/gokadzev/Musify/releases/latest';
 const String downloadUrlKey = 'url';
 const String downloadUrlArm64Key = 'arm64url';
+const String downloadLinuxUrlKey = 'linuxurl';
+const String downloadWindowsUrlKey = 'windowsurl';
 const String downloadFilename = 'Musify.apk';
 
 Future<void> checkAppUpdates() async {
-  // Update distribution targets Android APK builds only.
-  if (!isMobilePlatform) return;
   try {
     final response = await http.get(Uri.parse(checkUrl));
 
@@ -260,10 +260,21 @@ Future<String> getCPUArchitecture() async {
 }
 
 Future<String> getDownloadUrl(Map<String, dynamic> map) async {
-  final cpuArchitecture = await getCPUArchitecture();
-  final url = cpuArchitecture == 'aarch64'
-      ? map[downloadUrlArm64Key].toString()
-      : map[downloadUrlKey].toString();
+  final key = isLinuxPlatform
+      ? downloadLinuxUrlKey
+      : isWindowsPlatform
+      ? downloadWindowsUrlKey
+      : isAndroidPlatform && Platform.version.isNotEmpty
+      ? (Platform.version.contains('arm64')
+            ? downloadUrlArm64Key
+            : downloadUrlKey)
+      : downloadUrlKey;
+
+  final url = map[key]?.toString();
+
+  if (url == null || url.isEmpty || url == 'null') {
+    throw StateError('No download URL available for this platform');
+  }
 
   return url;
 }
