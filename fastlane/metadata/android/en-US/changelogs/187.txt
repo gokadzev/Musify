@@ -1,0 +1,2 @@
+- IMPORTANT: BACKUP YOUR DATA BEFORE UPDATING
+- Full changelog: https://github.com/gokadzev/Musify/releases

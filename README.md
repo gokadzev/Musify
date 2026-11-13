@@ -57,12 +57,12 @@ Material UI & accent colors & dynamic colors (Android 12+) <br/>
 
 ## Supported platforms
 
-| Platform | Status | Dependencies |
-|----------|--------|--------------|
-| Android  | ✅ Supported | — |
-| Linux    | ✅  Supported (Beta) | Will be added soon... |
-| Windows    | ✅  Supported (Beta) | — |
-| IOS    | ❌ Unsupported | — |
+| Platform | Status |
+|----------|--------|
+| Android  | ✅ Supported |
+| Linux    | ✅  Supported |
+| Windows    | ✅  Supported |
+| IOS    | ❌ Unsupported |
 
 ---
 
