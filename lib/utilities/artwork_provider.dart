@@ -23,7 +23,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 class ArtworkProvider {
@@ -46,8 +45,7 @@ class ArtworkProvider {
         if (commaIdx == -1) throw Exception('invalid base64 image');
         final bytes = base64Decode(artwork.substring(commaIdx + 1));
         provider = MemoryImage(bytes);
-      } else if (!kIsWeb &&
-          (artwork.startsWith('file://') || artwork.startsWith('/'))) {
+      } else if (artwork.startsWith('file://') || artwork.startsWith('/')) {
         final path = artwork.replaceFirst('file://', '');
         provider = FileImage(File(path));
       } else {

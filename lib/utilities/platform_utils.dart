@@ -1,15 +1,14 @@
-import 'package:flutter/foundation.dart';
+import 'dart:io';
 
-bool get isAndroidPlatform =>
-    !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
+bool get isAndroidPlatform => Platform.isAndroid;
 
-bool get isIosPlatform =>
-    !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS;
+bool get isIosPlatform => Platform.isIOS;
 
 bool get isMobilePlatform => isAndroidPlatform || isIosPlatform;
 
+bool get isLinuxPlatform => Platform.isLinux;
+
+bool get isWindowsPlatform => Platform.isWindows;
+
 bool get isDesktopPlatform =>
-    !kIsWeb &&
-    (defaultTargetPlatform == TargetPlatform.linux ||
-        defaultTargetPlatform == TargetPlatform.windows ||
-        defaultTargetPlatform == TargetPlatform.macOS);
+    Platform.isLinux || Platform.isWindows || Platform.isMacOS;

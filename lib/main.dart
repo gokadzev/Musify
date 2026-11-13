@@ -303,7 +303,11 @@ void main() async {
 
 Future<void> initialisation() async {
   try {
-    await Hive.initFlutter();
+    applicationDirPath =
+        '${(await getApplicationDocumentsDirectory()).path}/Musify';
+    await FilePaths.ensureDirectoriesExist();
+
+    Hive.init(applicationDirPath);
 
     await Future.wait([
       Hive.openBox('settings'),
@@ -315,15 +319,17 @@ Future<void> initialisation() async {
     // Nothing else removes cache entries nobody asks for again.
     unawaited(cleanupOldCacheEntries());
 
-    try {
-      await LocalSyncService.instance.initialise();
-    } catch (e, stackTrace) {
-      logger.log(
-        'Local sync could not start',
-        error: e,
-        stackTrace: stackTrace,
-      );
-    }
+    unawaited(() async {
+      try {
+        await LocalSyncService.instance.initialise();
+      } catch (e, stackTrace) {
+        logger.log(
+          'Local sync could not start',
+          error: e,
+          stackTrace: stackTrace,
+        );
+      }
+    }());
 
     if (isMobilePlatform) {
       audioHandler = await AudioService.init(
@@ -354,76 +360,8 @@ Future<void> initialisation() async {
       audioHandler = MusifyAudioHandler();
     }
 
-    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
-      final artwork = DesktopMediaArtwork();
-      final controls = WindowsMediaControls(
-        canGoNext: () => audioHandler.canSkipToNext,
-        canGoPrevious: () => audioHandler.hasPrevious,
-        navigationChanges: Listenable.merge([
-          repeatNotifier,
-          playNextSongAutomatically,
-          offlineMode,
-        ]),
-        resolveArtwork: artwork.resolve,
-        onError: (error, stackTrace) => logger.log(
-          'Windows media controls error',
-          error: error,
-          stackTrace: stackTrace,
-        ),
-      );
-      try {
-        await controls.start(audioHandler);
-        windowsMediaControls = controls;
-      } catch (error, stackTrace) {
-        logger.log(
-          'Could not initialize Windows media controls',
-          error: error,
-          stackTrace: stackTrace,
-        );
-      }
-    }
-
-    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.linux) {
-      final artwork = DesktopMediaArtwork();
-      final controls = LinuxMediaControls(
-        handler: audioHandler,
-        skipToNext: () => audioHandler.skipToNext(
-          playWhenReady: audioHandler.shouldContinuePlayback,
-        ),
-        skipToPrevious: () => audioHandler.skipToPrevious(
-          playWhenReady: audioHandler.shouldContinuePlayback,
-        ),
-        resolveArtwork: artwork.resolve,
-        volume: () => audioHandler.volume,
-        volumeStream: audioHandler.volumeStream,
-        setVolume: audioHandler.setVolume,
-        canGoNext: () => audioHandler.canSkipToNext,
-        navigationChanges: Listenable.merge([
-          repeatNotifier,
-          playNextSongAutomatically,
-          offlineMode,
-        ]),
-        canGoPrevious: () => audioHandler.hasPrevious,
-        raise: () =>
-            const MethodChannel('musify/window').invokeMethod<void>('raise'),
-        position: () => audioHandler.currentPositionData.position,
-        onError: (error, stackTrace) => logger.log(
-          'Linux media controls error',
-          error: error,
-          stackTrace: stackTrace,
-        ),
-      );
-      try {
-        await controls.start();
-        linuxMediaControls = controls;
-      } catch (error, stackTrace) {
-        logger.log(
-          'Could not initialize Linux media controls',
-          error: error,
-          stackTrace: stackTrace,
-        );
-      }
-    }
+    unawaited(initializeWindowsMediaControls());
+    unawaited(initializeLinuxMediaControls());
 
     // Init router
     NavigationManager.instance;
@@ -441,14 +379,85 @@ Future<void> initialisation() async {
     }
 
     if (isFdroidBuild && !offlineMode.value) {
-      await fetchAnnouncementOnly();
+      unawaited(fetchAnnouncementOnly());
     }
   } catch (e, stackTrace) {
     logger.log('Initialization Error', error: e, stackTrace: stackTrace);
   }
+}
 
-  applicationDirPath = (await getApplicationDocumentsDirectory()).path;
-  await FilePaths.ensureDirectoriesExist();
+Future<void> initializeWindowsMediaControls() async {
+  if (defaultTargetPlatform != TargetPlatform.windows) return;
+  final artwork = DesktopMediaArtwork();
+  final controls = WindowsMediaControls(
+    canGoNext: () => audioHandler.canSkipToNext,
+    canGoPrevious: () => audioHandler.hasPrevious,
+    navigationChanges: Listenable.merge([
+      repeatNotifier,
+      playNextSongAutomatically,
+      offlineMode,
+    ]),
+    resolveArtwork: artwork.resolve,
+    onError: (error, stackTrace) => logger.log(
+      'Windows media controls error',
+      error: error,
+      stackTrace: stackTrace,
+    ),
+  );
+  try {
+    await controls.start(audioHandler);
+    windowsMediaControls = controls;
+  } catch (error, stackTrace) {
+    logger.log(
+      'Could not initialize Windows media controls',
+      error: error,
+      stackTrace: stackTrace,
+    );
+  }
+}
+
+Future<void> initializeLinuxMediaControls() async {
+  if (defaultTargetPlatform != TargetPlatform.linux) return;
+
+  final artwork = DesktopMediaArtwork();
+  final controls = LinuxMediaControls(
+    handler: audioHandler,
+    skipToNext: () => audioHandler.skipToNext(
+      playWhenReady: audioHandler.shouldContinuePlayback,
+    ),
+    skipToPrevious: () => audioHandler.skipToPrevious(
+      playWhenReady: audioHandler.shouldContinuePlayback,
+    ),
+    resolveArtwork: artwork.resolve,
+    volume: () => audioHandler.volume,
+    volumeStream: audioHandler.volumeStream,
+    setVolume: audioHandler.setVolume,
+    canGoNext: () => audioHandler.canSkipToNext,
+    navigationChanges: Listenable.merge([
+      repeatNotifier,
+      playNextSongAutomatically,
+      offlineMode,
+    ]),
+    canGoPrevious: () => audioHandler.hasPrevious,
+    raise: () =>
+        const MethodChannel('musify/window').invokeMethod<void>('raise'),
+    position: () => audioHandler.currentPositionData.position,
+    onError: (error, stackTrace) => logger.log(
+      'Linux media controls error',
+      error: error,
+      stackTrace: stackTrace,
+    ),
+  );
+  try {
+    await controls.start();
+    linuxMediaControls = controls;
+  } catch (error, stackTrace) {
+    logger.log(
+      'Could not initialize Linux media controls',
+      error: error,
+      stackTrace: stackTrace,
+    );
+  }
 }
 
 void handleIncomingLink(Uri? uri) async {

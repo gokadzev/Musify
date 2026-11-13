@@ -43,7 +43,7 @@ import 'package:rxdart/rxdart.dart';
 
 class MusifyAudioHandler extends BaseAudioHandler implements AndroidAutoHost {
   MusifyAudioHandler() {
-    final androidEqualizer = Platform.isAndroid ? AndroidEqualizer() : null;
+    final androidEqualizer = isAndroidPlatform ? AndroidEqualizer() : null;
     _androidEqualizer = androidEqualizer;
     audioPlayer = AudioPlayer(
       handleInterruptions: isMobilePlatform,

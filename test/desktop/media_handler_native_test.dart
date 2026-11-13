@@ -10,6 +10,7 @@ import 'package:media_kit/media_kit.dart';
 import 'package:musify/services/audio_service.dart';
 import 'package:musify/services/linux_media_controls.dart';
 import 'package:musify/services/settings_manager.dart';
+import 'package:musify/utilities/platform_utils.dart';
 
 import '../support/audio_fixture.dart';
 
@@ -90,7 +91,7 @@ void main() {
         await directory.delete(recursive: true);
       });
       setUp(() async {
-        debugDefaultTargetPlatformOverride = Platform.isWindows
+        debugDefaultTargetPlatformOverride = isWindowsPlatform
             ? TargetPlatform.windows
             : TargetPlatform.linux;
         offlineMode.value = true;
@@ -99,7 +100,7 @@ void main() {
         handler = MusifyAudioHandler();
         await handler.setVolume(0);
         errors = [];
-        if (Platform.isLinux) {
+        if (isLinuxPlatform) {
           bus = DBusServer();
           final address = await bus!.listenAddress(
             DBusAddress.unix(dir: directory),
