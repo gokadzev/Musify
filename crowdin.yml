@@ -1,3 +1,13 @@
+pull_request_title: "chore(i18n): update translations"
+
+pull_request_labels:
+  - "language"
+  - "l10n"
+
+commit_message: "chore(i18n): update translations"
+append_commit_message: false
+
+
 files:
   - source: /lib/localization/app_en.arb
     translation: /lib/localization/app_%two_letters_code%.arb
