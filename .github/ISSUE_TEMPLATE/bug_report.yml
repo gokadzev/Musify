@@ -57,33 +57,24 @@ body:
     validations:
       required: true
 
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      description: Select the platform where you're experiencing the issue.
+      options:
+        - Android
+        - Windows
+        - Linux
+    validations:
+      required: true
+
   - type: input
     id: device-and-os
     attributes:
       label: Device And Operating System
-      description: Mention the device name and the version of your operating system where you're experiencing the bug.
-      placeholder: e.g., Xiaomi 12T Pro (MIUI 14)
-    validations:
-      required: true
-
-  - type: dropdown
-    id: android-version
-    attributes:
-      label: Android Version You Use
-      options:
-        - Android 17
-        - Android 16
-        - Android 15
-        - Android 14
-        - Android 13
-        - Android 12L
-        - Android 12
-        - Android 11
-        - Android 10
-        - Android 9
-        - Android 8.1
-        - Android 8
-        - Android 7
+      description: Mention your device model and operating system version. For Linux, include your distribution and desktop environment if relevant.
+      placeholder: e.g., Xiaomi 12T Pro (Android 16) / Windows 11 / Ubuntu 24.04 (GNOME)
     validations:
       required: true
 
