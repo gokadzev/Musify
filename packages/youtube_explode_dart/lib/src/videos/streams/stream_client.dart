@@ -410,7 +410,11 @@ class StreamClient {
               _logger.fine(
                   'Decoded n-sig for stream itag $itag (individual). $nParam -> $individualDecoded}');
             } catch (e) {
-              _logger.warning('Could not decipher n-sig using JS solver: $e');
+              // An unsolved `n` makes the URL throttle or 403, so don't hand
+              // out a link that won't play (yt-dlp drops these formats too).
+              _logger.warning(
+                  'Could not decipher n-sig using JS solver, skipping stream itag $itag: $e');
+              continue;
             }
           }
         }
@@ -431,8 +435,10 @@ class StreamClient {
               _logger.fine(
                   'Decoded signature for stream itag $itag (individual). $sigParam -> $individualDecoded}');
             } catch (e) {
-              _logger
-                  .warning('Could not decipher signature using JS solver: $e');
+              // Without a valid signature the URL is guaranteed to 403.
+              _logger.warning(
+                  'Could not decipher signature using JS solver, skipping stream itag $itag: $e');
+              continue;
             }
           }
         }
