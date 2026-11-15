@@ -40,6 +40,9 @@ import 'package:musify/utilities/formatter.dart';
 import 'package:musify/utilities/map_utils.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
+const _autoPickMaxDuration = Duration(minutes: 8);
+const _autoPickMinDuration = Duration(seconds: 30);
+
 List globalSongs = [];
 
 ValueNotifier<List> userLikedSongsList = ValueNotifier<List>(
@@ -632,6 +635,14 @@ Future<List<Map<String, int>>> getSkipSegments(String id) async {
   }
 }
 
+bool _looksLikeSingleSong(Video video) {
+  if (video.isLive) return false;
+  final duration = video.duration;
+  // Unknown length: keep it, rather than drop every candidate.
+  if (duration == null) return true;
+  return duration >= _autoPickMinDuration && duration <= _autoPickMaxDuration;
+}
+
 /// The first song related to [songYtId] whose ytid is not in [excludedYtIds].
 Future<Map<String, dynamic>?> getSimilarSong(
   String songYtId, {
@@ -642,6 +653,7 @@ Future<Map<String, dynamic>?> getSimilarSong(
     final relatedSongs = await ytClient.videos.getRelatedVideos(song) ?? [];
 
     for (final video in relatedSongs) {
+      if (!_looksLikeSingleSong(video)) continue;
       final candidate = returnSongLayout(0, video);
       if (!excludedYtIds.contains(candidate['ytid']?.toString())) {
         return candidate;
