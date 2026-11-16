@@ -255,6 +255,7 @@ class _LocalSyncPageState extends State<LocalSyncPage> {
   @override
   void initState() {
     super.initState();
+    unawaited(_service.pageOpened());
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       _service.resetStatus();
@@ -264,6 +265,7 @@ class _LocalSyncPageState extends State<LocalSyncPage> {
 
   @override
   void dispose() {
+    unawaited(_service.pageClosed());
     _pinController.dispose();
     super.dispose();
   }

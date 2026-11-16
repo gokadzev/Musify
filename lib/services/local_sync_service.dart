@@ -315,17 +315,73 @@ class LocalSyncService {
     }
     _loadPairedDevices();
 
-    if (localSyncEnabled.value) {
+    if (_serverWanted) {
       try {
         await startServer();
       } catch (_) {
         // Logged by startServer; the settings page shows it as not visible.
       }
-      await _startBackgroundWork(startupSync: true);
     }
+    if (_backgroundWanted) await _startBackgroundWork(startupSync: true);
   }
 
-  /// Only while local sync is on.
+  int _pageHolds = 0;
+  Timer? _settleTimer;
+
+  bool get _backgroundWanted =>
+      localSyncEnabled.value && localSyncAutomatic.value;
+
+  bool get _serverWanted =>
+      localSyncEnabled.value && (localSyncAutomatic.value || _pageHolds > 0);
+
+  bool get _busy =>
+      _activeTransfers > 0 ||
+      _silentSyncRunning ||
+      state.value.status == LocalSyncStatus.syncing ||
+      state.value.status == LocalSyncStatus.waitingForPin;
+
+  /// Keep the server running while the page is open.
+  Future<void> pageOpened() async {
+    _pageHolds++;
+    await _settleServer();
+  }
+
+  Future<void> pageClosed() async {
+    if (_pageHolds > 0) _pageHolds--;
+    await _settleServer();
+  }
+
+  /// Update the server without interrupting transfers.
+  Future<void> _settleServer() async {
+    _settleTimer?.cancel();
+    if (_serverWanted) {
+      if (_httpServer != null) return;
+      try {
+        await startServer();
+      } catch (_) {
+        // startServer logs the error.
+        return;
+      }
+    } else if (_httpServer != null) {
+      if (_busy) {
+        _settleTimer = Timer(const Duration(seconds: 2), _settleServer);
+        return;
+      }
+      await stopServer();
+    } else {
+      return;
+    }
+    // Recheck after an asynchronous start or stop.
+    if (_serverWanted != (_httpServer != null)) await _settleServer();
+  }
+
+  @visibleForTesting
+  bool get hasBackgroundWork =>
+      _periodicTimer != null ||
+      _startupTimer != null ||
+      _userBoxSubscription != null;
+
+  /// Start the library watch and automatic sync timers.
   Future<void> _startBackgroundWork({bool startupSync = false}) async {
     await rebindStorageListeners();
     _periodicTimer?.cancel();
@@ -375,15 +431,16 @@ class LocalSyncService {
   Future<void> resumeAfterStorageRestore({bool storageChanged = true}) async {
     reloadSettingsFromStorage();
     if (storageChanged) await LibraryMergeService.forgetBaseline();
-    if (localSyncEnabled.value) {
+    if (_backgroundWanted) {
       await _startBackgroundWork();
-      await startServer();
     } else {
       await _stopBackgroundWork();
     }
+    if (_serverWanted) await startServer();
   }
 
   Future<void> dispose() async {
+    _settleTimer?.cancel();
     _periodicTimer?.cancel();
     _startupTimer?.cancel();
     _localChangeTimer?.cancel();
@@ -403,25 +460,33 @@ class LocalSyncService {
       await stopServer();
       return true;
     }
-    try {
-      await startServer();
-    } catch (_) {
-      await Hive.box('settings').put(_enabledKey, false);
-      localSyncEnabled.value = false;
-      return false;
+    if (_serverWanted) {
+      try {
+        await startServer();
+      } catch (_) {
+        await Hive.box('settings').put(_enabledKey, false);
+        localSyncEnabled.value = false;
+        return false;
+      }
     }
-    await _startBackgroundWork();
-    unawaited(triggerSilentSync());
+    if (_backgroundWanted) {
+      await _startBackgroundWork();
+      unawaited(triggerSilentSync());
+    }
     return true;
   }
 
   Future<void> setAutomatic(bool enabled) async {
     await Hive.box('settings').put(_automaticKey, enabled);
     localSyncAutomatic.value = enabled;
+    if (!localSyncEnabled.value) return;
     if (enabled) {
+      await _settleServer();
+      await _startBackgroundWork();
       unawaited(triggerSilentSync());
     } else {
-      _localChangeTimer?.cancel();
+      await _stopBackgroundWork();
+      await _settleServer();
     }
   }
 
