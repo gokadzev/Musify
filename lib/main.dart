@@ -254,11 +254,12 @@ class _MusifyState extends State<Musify> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = brightness == Brightness.dark;
+    final iconBrightness = isDark ? Brightness.light : Brightness.dark;
+
     return DynamicColorBuilder(
       builder: (lightColorScheme, darkColorScheme) {
-        final selectedScheme = (brightness == Brightness.light)
-            ? lightColorScheme
-            : darkColorScheme;
+        final selectedScheme = isDark ? darkColorScheme : lightColorScheme;
 
         final colorScheme = ColorScheme.fromSeed(
           seedColor: useSystemColor.value && selectedScheme != null
@@ -272,15 +273,9 @@ class _MusifyState extends State<Musify> with WidgetsBindingObserver {
             statusBarColor: Colors.transparent,
             systemNavigationBarColor: Colors.transparent,
             systemNavigationBarContrastEnforced: true,
-            statusBarBrightness: brightness == Brightness.dark
-                ? Brightness.light
-                : Brightness.dark,
-            statusBarIconBrightness: brightness == Brightness.dark
-                ? Brightness.light
-                : Brightness.dark,
-            systemNavigationBarIconBrightness: brightness == Brightness.dark
-                ? Brightness.light
-                : Brightness.dark,
+            statusBarBrightness: iconBrightness,
+            statusBarIconBrightness: iconBrightness,
+            systemNavigationBarIconBrightness: iconBrightness,
           ),
           child: MaterialApp.router(
             themeMode: themeMode,
