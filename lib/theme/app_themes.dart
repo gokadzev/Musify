@@ -26,16 +26,27 @@ import 'package:musify/services/settings_manager.dart';
 ThemeMode themeMode = getThemeMode(themeModeSetting);
 Brightness brightness = getBrightnessFromThemeMode(themeMode);
 
-Brightness getBrightnessFromThemeMode(ThemeMode themeMode) {
-  final themeBrightnessMapping = {
-    ThemeMode.light: Brightness.light,
-    ThemeMode.dark: Brightness.dark,
-    ThemeMode.system:
-        SchedulerBinding.instance.platformDispatcher.platformBrightness,
-  };
+const _pureBlack = Color(0xFF000000);
+const _pureBlackElevated = Color(0xFF0A0A0A);
+const _pureBlackContainer = Color(0xFF121212);
+const _pureBlackContainerHigh = Color(0xFF1A1A1A);
 
-  return themeBrightnessMapping[themeMode] ?? Brightness.dark;
-}
+ColorScheme _withPureBlackSurfaces(ColorScheme scheme) => scheme.copyWith(
+  surface: _pureBlack,
+  surfaceDim: _pureBlack,
+  surfaceContainerLowest: _pureBlack,
+  surfaceContainerLow: _pureBlackElevated,
+  surfaceContainer: _pureBlackContainer,
+  surfaceContainerHigh: _pureBlackContainerHigh,
+  surfaceContainerHighest: _pureBlackContainerHigh,
+);
+
+Brightness getBrightnessFromThemeMode(ThemeMode mode) => switch (mode) {
+  ThemeMode.light => Brightness.light,
+  ThemeMode.dark => Brightness.dark,
+  ThemeMode.system =>
+    SchedulerBinding.instance.platformDispatcher.platformBrightness,
+};
 
 ThemeMode getThemeMode(int themeModeIndex) {
   const themeModes = ThemeMode.values;
@@ -43,24 +54,6 @@ ThemeMode getThemeMode(int themeModeIndex) {
     return themeModes[themeModeIndex];
   }
   return ThemeMode.system;
-}
-
-ColorScheme getAppColorScheme(
-  ColorScheme? lightColorScheme,
-  ColorScheme? darkColorScheme,
-) {
-  final selectedScheme = (brightness == Brightness.light)
-      ? lightColorScheme
-      : darkColorScheme;
-
-  if (useSystemColor.value && selectedScheme != null) {
-    return selectedScheme;
-  } else {
-    return ColorScheme.fromSeed(
-      seedColor: primaryColorSetting,
-      brightness: brightness,
-    );
-  }
 }
 
 ThemeData getAppTheme(ColorScheme colorScheme) {
@@ -72,30 +65,17 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
   final isPureBlack =
       colorScheme.brightness == Brightness.dark && usePureBlackColor.value;
 
-  // Pure black theme colors
-  const pureBlack = Color(0xFF000000);
-  const pureBlackElevated = Color(0xFF0A0A0A);
-  const pureBlackContainer = Color(0xFF121212);
-  const pureBlackContainerHigh = Color(0xFF1A1A1A);
-
   final bgColor = isLight
       ? colorScheme.surface
-      : (isPureBlack ? pureBlack : null);
+      : (isPureBlack ? _pureBlack : null);
 
   final cardBgColor = isLight
       ? colorScheme.surfaceContainerLow
-      : (isPureBlack ? pureBlackElevated : null);
+      : (isPureBlack ? _pureBlackElevated : null);
 
   // modified color scheme for pure black theme
   final effectiveColorScheme = isPureBlack
-      ? colorScheme.copyWith(
-          surface: pureBlack,
-          surfaceContainerLowest: pureBlack,
-          surfaceContainerLow: pureBlackElevated,
-          surfaceContainer: pureBlackContainer,
-          surfaceContainerHigh: pureBlackContainerHigh,
-          surfaceContainerHighest: pureBlackContainerHigh,
-        )
+      ? _withPureBlackSurfaces(colorScheme)
       : colorScheme;
 
   return ThemeData(
@@ -142,7 +122,7 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
     bottomSheetTheme: base.bottomSheetTheme.copyWith(
       backgroundColor: isLight
           ? colorScheme.surfaceContainerLow
-          : (isPureBlack ? pureBlackElevated : null),
+          : (isPureBlack ? _pureBlackElevated : null),
     ),
     inputDecorationTheme: base.inputDecorationTheme.copyWith(
       filled: true,
@@ -150,7 +130,7 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
       fillColor: isLight
           ? colorScheme.surfaceContainerHighest
           : (isPureBlack
-                ? pureBlackContainerHigh
+                ? _pureBlackContainerHigh
                 : colorScheme.surfaceContainerHigh),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
@@ -161,7 +141,7 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
     dialogTheme: base.dialogTheme.copyWith(
       backgroundColor: isLight
           ? colorScheme.surfaceContainerLow
-          : (isPureBlack ? pureBlackContainer : null),
+          : (isPureBlack ? _pureBlackContainer : null),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
     ),
     navigationBarTheme: base.navigationBarTheme.copyWith(
@@ -222,7 +202,7 @@ ThemeData getAppTheme(ColorScheme colorScheme) {
     popupMenuTheme: base.popupMenuTheme.copyWith(
       color: isLight
           ? colorScheme.surfaceContainerLow
-          : (isPureBlack ? pureBlackContainer : null),
+          : (isPureBlack ? _pureBlackContainer : null),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     ),
     dividerTheme: base.dividerTheme.copyWith(
