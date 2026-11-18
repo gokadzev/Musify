@@ -21,7 +21,7 @@ dependencies:
   dbus: ^0.8.0
   dsrp: ^0.5.5
   dynamic_color: ^2.1.0
-  file_picker: ^13.3.3
+  file_picker: ^13.4.0
   fluentui_system_icons: ^1.1.273
   flutter:
     sdk: flutter
@@ -37,7 +37,7 @@ dependencies:
   just_audio: ^0.10.6
   just_audio_media_kit:
     path: ./packages/just_audio_media_kit
-  material_ui: ^1.11.0
+  material_ui: ^1.11.1
   media_kit_libs_linux: ^1.2.1
   media_kit_libs_windows_audio: ^1.0.9
   path_provider: ^2.1.6
