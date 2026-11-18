@@ -107,10 +107,10 @@
             android:name="flutterEmbedding"
             android:value="2" />
 
-        <!-- Enable Hcpp for Flutter embedding -->
+        <!-- Disable Hcpp for Flutter embedding -->
         <meta-data
         android:name="io.flutter.embedding.android.EnableHcpp"
-            android:value="true" />
+            android:value="false" />
 
         <!-- AudioService -->
         <service android:name="com.ryanheise.audioservice.AudioService"
