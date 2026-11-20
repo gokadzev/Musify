@@ -36,6 +36,7 @@ import 'package:musify/services/playlists_manager.dart';
 import 'package:musify/services/router_service.dart';
 import 'package:musify/utilities/app_utils.dart';
 import 'package:musify/utilities/flutter_toast.dart';
+import 'package:musify/utilities/platform_utils.dart';
 import 'package:musify/widgets/artist_bar.dart';
 import 'package:musify/widgets/confirmation_dialog.dart';
 import 'package:musify/widgets/custom_bar.dart';
@@ -63,6 +64,11 @@ void reloadSearchHistoryFromStorage() {
       .get('searchHistory', defaultValue: []);
 }
 
+final searchFocusRequestNotifier = ValueNotifier<int>(0);
+int _handledSearchFocusRequest = 0;
+
+void requestSearchFocus() => searchFocusRequestNotifier.value++;
+
 class _SearchPageState extends State<SearchPage> {
   final TextEditingController _searchBar = TextEditingController();
   final FocusNode _inputNode = FocusNode();
@@ -77,6 +83,25 @@ class _SearchPageState extends State<SearchPage> {
   Timer? _debounce;
   int _latestSuggestionRequest = 0;
   int _latestSearchRequest = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    // Only the desktop shortcut requests focus; phones keep no listener.
+    if (!isDesktopPlatform) return;
+    searchFocusRequestNotifier.addListener(_handleFocusRequest);
+    // Handle shortcuts issued before the search page was mounted.
+    if (searchFocusRequestNotifier.value != _handledSearchFocusRequest) {
+      _handleFocusRequest();
+    }
+  }
+
+  void _handleFocusRequest() {
+    _handledSearchFocusRequest = searchFocusRequestNotifier.value;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _inputNode.requestFocus();
+    });
+  }
 
   Future<void> _submitSearch([String? query]) async {
     if (query != null) {
@@ -97,6 +122,7 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   void dispose() {
+    searchFocusRequestNotifier.removeListener(_handleFocusRequest);
     _searchBar.dispose();
     _inputNode.dispose();
     _fetchingSongs.dispose();
