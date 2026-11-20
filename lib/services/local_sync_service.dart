@@ -390,6 +390,7 @@ class LocalSyncService {
     await _userBoxSubscription?.cancel();
     await stopServer();
     _client.close();
+    _initialised = false;
   }
 
   /// Turns local sync on or off; false if the server could not start.
