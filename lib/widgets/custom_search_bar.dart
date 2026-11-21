@@ -22,7 +22,7 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:material_ui/material_ui.dart';
 
-class CustomSearchBar extends StatefulWidget {
+class CustomSearchBar extends StatelessWidget {
   const CustomSearchBar({
     super.key,
     required this.onSubmitted,
@@ -32,106 +32,85 @@ class CustomSearchBar extends StatefulWidget {
     this.onChanged,
     this.loadingProgressNotifier,
   });
-  final Function(String) onSubmitted;
+
+  final ValueChanged<String> onSubmitted;
+  final ValueChanged<String>? onChanged;
   final ValueNotifier<bool>? loadingProgressNotifier;
   final TextEditingController controller;
   final FocusNode focusNode;
   final String labelText;
-  final Function(String)? onChanged;
 
-  @override
-  _CustomSearchBarState createState() => _CustomSearchBarState();
-}
+  void _clear() {
+    controller.clear();
+    onChanged?.call('');
+    focusNode.requestFocus();
+  }
 
-class _CustomSearchBarState extends State<CustomSearchBar> {
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final cs = Theme.of(context).colorScheme;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16),
       child: SearchBar(
-        elevation: WidgetStateProperty.all(0),
-        shadowColor: WidgetStateProperty.all(Colors.transparent),
-        backgroundColor: WidgetStateProperty.all(
-          colorScheme.surfaceContainerHigh,
-        ),
-        overlayColor: WidgetStateProperty.all(
-          colorScheme.primary.withValues(alpha: 0.08),
-        ),
-        shape: WidgetStateProperty.all(
+        controller: controller,
+        focusNode: focusNode,
+        hintText: labelText,
+        elevation: const WidgetStatePropertyAll(0),
+        backgroundColor: WidgetStatePropertyAll(cs.surfaceContainerHigh),
+        shape: WidgetStatePropertyAll(
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         ),
-        padding: WidgetStateProperty.all(
-          const EdgeInsets.symmetric(horizontal: 16),
+        padding: const WidgetStatePropertyAll(
+          EdgeInsets.symmetric(horizontal: 16),
         ),
-        hintText: widget.labelText,
-        hintStyle: WidgetStateProperty.all(
-          TextStyle(
-            color: colorScheme.onSurfaceVariant,
-            fontSize: 16,
-            fontWeight: FontWeight.w400,
-          ),
-        ),
-        textStyle: WidgetStateProperty.all(
-          TextStyle(
-            color: colorScheme.onSurface,
-            fontSize: 16,
-            fontWeight: FontWeight.w400,
-          ),
-        ),
+        textInputAction: TextInputAction.search,
         leading: Icon(
           FluentIcons.search_24_regular,
-          color: colorScheme.onSurfaceVariant,
+          color: cs.onSurfaceVariant,
           size: 22,
         ),
-        onSubmitted: (String value) {
-          widget.onSubmitted(value);
-          widget.focusNode.unfocus();
+        onChanged: onChanged,
+        onSubmitted: (value) {
+          onSubmitted(value);
+          focusNode.unfocus();
         },
-        onChanged: widget.onChanged != null
-            ? (value) async {
-                widget.onChanged!(value);
-                setState(() {});
-              }
-            : null,
-        textInputAction: TextInputAction.search,
-        controller: widget.controller,
-        focusNode: widget.focusNode,
         trailing: [
-          if (widget.controller.text.isNotEmpty)
-            IconButton(
-              icon: Icon(
-                FluentIcons.dismiss_24_regular,
-                color: colorScheme.onSurfaceVariant,
-                size: 20,
-              ),
-              onPressed: () {
-                widget.controller.clear();
-                widget.onChanged?.call('');
-                setState(() {});
-              },
-            ),
-          if (widget.loadingProgressNotifier != null)
-            ValueListenableBuilder<bool>(
-              valueListenable: widget.loadingProgressNotifier!,
-              builder: (_, value, __) {
-                if (value) {
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: colorScheme.primary,
+          ListenableBuilder(
+            listenable: Listenable.merge([controller, loadingProgressNotifier]),
+            builder: (context, _) {
+              final isLoading = loadingProgressNotifier?.value ?? false;
+              final hasText = controller.text.isNotEmpty;
+
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (isLoading)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: SizedBox.square(
+                        dimension: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: cs.primary,
+                        ),
                       ),
                     ),
-                  );
-                }
-                return const SizedBox.shrink();
-              },
-            ),
+                  if (hasText)
+                    IconButton(
+                      onPressed: _clear,
+                      tooltip: MaterialLocalizations.of(context)
+                          .clearButtonTooltip,
+                      icon: Icon(
+                        FluentIcons.dismiss_24_regular,
+                        color: cs.onSurfaceVariant,
+                        size: 20,
+                      ),
+                    ),
+                ],
+              );
+            },
+          ),
         ],
       ),
     );
