@@ -294,8 +294,6 @@ class _Controls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -304,17 +302,12 @@ class _Controls extends StatelessWidget {
           fallbackDuration: fallbackDuration,
         ),
         if (hasNext) ...[
-          const SizedBox(width: 4),
-          IconButton(
+          const SizedBox(width: 8),
+          IconButton.filledTonal(
             onPressed: audioHandler.skipToNext,
             splashColor: Colors.transparent,
             highlightColor: Colors.transparent,
-            visualDensity: VisualDensity.compact,
-            icon: Icon(
-              FluentIcons.next_24_filled,
-              color: colorScheme.onSurfaceVariant,
-              size: 24,
-            ),
+            icon: const Icon(FluentIcons.next_24_filled, size: 22),
           ),
         ],
       ],
@@ -389,7 +382,7 @@ class _PlayButton extends StatelessWidget {
               onPressed: onPressed,
               splashColor: Colors.transparent,
               highlightColor: Colors.transparent,
-              visualDensity: VisualDensity.compact,
+              hoverColor: Colors.transparent,
               icon: Icon(icon, color: colorScheme.primary, size: 22),
             ),
         ],
@@ -419,8 +412,7 @@ class _WavyProgressPainter extends CustomPainter {
 
   static const double _strokeWidth = 3;
   static const double _waveAmplitude = 1.5;
-  static const double _waveFrequency =
-      12; // must be an integer to close the loop
+  static const double _waveFrequency = 12;
   static const double _startAngle = -math.pi / 2;
 
   final double progress;
