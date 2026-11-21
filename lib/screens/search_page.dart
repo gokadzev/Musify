@@ -269,69 +269,43 @@ class _SearchPageState extends State<SearchPage> {
         padding: commonSingleChildScrollViewPadding,
         child: Column(
           children: <Widget>[
-            LayoutBuilder(
-              builder: (context, constraints) {
-                final isWide = constraints.maxWidth > 600;
-                final bar = ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxWidth: isWide ? 600 : double.infinity,
-                  ),
-                  child: CustomSearchBar(
-                    loadingProgressNotifier: _fetchingSongs,
-                    controller: _searchBar,
-                    focusNode: _inputNode,
-                    labelText: '${context.l10n!.search}...',
-                    onChanged: (value) {
-                      // debounce suggestions to avoid rapid API calls
-                      _debounce?.cancel();
-                      final query = value;
-                      final requestId = ++_latestSuggestionRequest;
+            CustomSearchBar(
+              loadingProgressNotifier: _fetchingSongs,
+              controller: _searchBar,
+              focusNode: _inputNode,
+              labelText: '${context.l10n!.search}...',
+              onChanged: (value) {
+                // debounce suggestions to avoid rapid API calls
+                _debounce?.cancel();
+                final query = value;
+                final requestId = ++_latestSuggestionRequest;
 
-                      // An emptied field goes back to the search history, and
-                      // the history only shows while nothing has been found
-                      // yet. Dropping the suggestions is not enough: the
-                      // results of the last search have to go with them.
-                      if (query.isEmpty) {
-                        unawaited(search());
-                        return;
-                      }
-
-                      _debounce = Timer(
-                        const Duration(milliseconds: 300),
-                        () async {
-                          final searchSuggestions = await getSearchSuggestions(
-                            query,
-                          );
-
-                          if (!mounted ||
-                              requestId != _latestSuggestionRequest ||
-                              _searchBar.text != query) {
-                            return;
-                          }
-
-                          _suggestionsList = List<String>.from(
-                            searchSuggestions,
-                          );
-                          if (mounted) setState(() {});
-                        },
-                      );
-                    },
-                    onSubmitted: (String value) {
-                      _submitSearch();
-                    },
-                  ),
-                );
-                if (isWide) {
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [bar],
-                  );
-                } else {
-                  return bar;
+                // An emptied field goes back to the search history, and
+                // the history only shows while nothing has been found
+                // yet. Dropping the suggestions is not enough: the
+                // results of the last search have to go with them.
+                if (query.isEmpty) {
+                  unawaited(search());
+                  return;
                 }
+
+                _debounce = Timer(const Duration(milliseconds: 300), () async {
+                  final searchSuggestions = await getSearchSuggestions(query);
+
+                  if (!mounted ||
+                      requestId != _latestSuggestionRequest ||
+                      _searchBar.text != query) {
+                    return;
+                  }
+
+                  _suggestionsList = List<String>.from(searchSuggestions);
+                  if (mounted) setState(() {});
+                });
+              },
+              onSubmitted: (String value) {
+                _submitSearch();
               },
             ),
-
             AnimatedSwitcher(
               duration: const Duration(milliseconds: 200),
               child:
