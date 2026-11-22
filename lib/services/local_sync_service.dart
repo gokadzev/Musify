@@ -1466,9 +1466,10 @@ class LocalSyncService {
       'clientId': LibraryMergeService.deviceId,
       'clientName': deviceName,
     }, timeout: _shortTimeout);
-    if (response['deviceId'] != target.deviceId ||
-        response['session'] is! String ||
-        response['challenge'] is! Map) {
+    if (response['deviceId'] != target.deviceId) {
+      throw const _LocalSyncException(LocalSyncError.unreachable);
+    }
+    if (response['session'] is! String || response['challenge'] is! Map) {
       throw const _LocalSyncException(LocalSyncError.updateRequired);
     }
     _outgoingSession = response['session'];
