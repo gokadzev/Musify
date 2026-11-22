@@ -1447,10 +1447,15 @@ class LocalSyncService {
       return result.local.isNotEmpty;
     } catch (e) {
       logger.log('Automatic local sync with ${device.name} failed: $e');
+      final untrusted =
+          (e is _LocalSyncException && e.error == LocalSyncError.untrusted) ||
+          (e is _HttpFailure && e.status == 403 && e.code == 'not_paired');
       final count = (_retryCount[device.deviceId] ?? 0) + 1;
       _retryCount[device.deviceId] = count;
       _retryAfter[device.deviceId] = DateTime.now().add(
-        Duration(seconds: min(1800, 30 * pow(2, min(count, 6)).toInt())),
+        untrusted
+            ? const Duration(hours: 24)
+            : Duration(seconds: min(1800, 30 * pow(2, min(count, 6)).toInt())),
       );
       return false;
     }
