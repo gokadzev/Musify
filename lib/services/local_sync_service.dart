@@ -1528,7 +1528,7 @@ class LocalSyncService {
     }
     await _trust(
       target.deviceId,
-      proof['deviceName']?.toString() ?? target.name,
+      _sanitizeName(proof['deviceName']?.toString() ?? target.name),
       secret,
     );
     _outgoingSession = null;
