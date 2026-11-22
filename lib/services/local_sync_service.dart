@@ -616,6 +616,9 @@ class LocalSyncService {
     final datagram = _udpSocket?.receive();
     final server = _httpServer;
     if (datagram == null || server == null) return;
+    if (!_isPeerAddress(datagram.address, allowLoopback: _allowLoopbackPeers)) {
+      return;
+    }
 
     String message;
     try {
@@ -633,6 +636,16 @@ class LocalSyncService {
   }
 
   Future<void> _handle(HttpRequest request) async {
+    final remote = request.connectionInfo?.remoteAddress;
+    if (remote == null ||
+        !_isPeerAddress(remote, allowLoopback: _allowLoopbackPeers)) {
+      try {
+        request.response.statusCode = 403;
+        await request.response.close();
+      } catch (_) {}
+      return;
+    }
+
     final handler = request.method != 'POST'
         ? null
         : switch (request.uri.path) {
