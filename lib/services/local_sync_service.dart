@@ -1666,18 +1666,35 @@ class LocalSyncService {
     if (encoded.length > maxSyncMessageBytes) {
       throw const _LocalSyncException(LocalSyncError.tooLarge);
     }
+
+    final abort = Completer<void>();
+    final deadline = Timer(timeout, () {
+      if (!abort.isCompleted) abort.complete();
+    });
     final outgoing =
-        http.Request(
+        http.AbortableRequest(
             'POST',
             Uri(scheme: 'http', host: target.ip, port: target.port, path: path),
+            abortTrigger: abort.future,
           )
           // A peer must not be able to send this request on to another host.
           ..followRedirects = false
           ..maxRedirects = 0
           ..headers.addAll({'Content-Type': 'application/json', ...headers})
           ..bodyBytes = encoded;
-    final response = await _client.send(outgoing).timeout(timeout);
-    final responseBytes = await _readMessage(response.stream).timeout(timeout);
+
+    final int statusCode;
+    final Uint8List responseBytes;
+    try {
+      final response = await _client.send(outgoing);
+      statusCode = response.statusCode;
+      responseBytes = await _readMessage(response.stream);
+    } on http.RequestAbortedException {
+      throw TimeoutException('Request to ${target.ip} timed out');
+    } finally {
+      deadline.cancel();
+    }
+
     dynamic decoded;
     try {
       decoded = json.decode(utf8.decode(responseBytes));
@@ -1685,9 +1702,9 @@ class LocalSyncService {
       decoded = null;
     }
 
-    if (response.statusCode < 200 || response.statusCode >= 300) {
+    if (statusCode < 200 || statusCode >= 300) {
       final code = decoded is Map ? decoded['error']?.toString() : null;
-      throw _HttpFailure(response.statusCode, code ?? '');
+      throw _HttpFailure(statusCode, code ?? '');
     }
     if (decoded is! Map) {
       throw const _LocalSyncException(LocalSyncError.failed);
