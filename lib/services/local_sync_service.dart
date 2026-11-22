@@ -1698,6 +1698,7 @@ class LocalSyncService {
         429 => LocalSyncError.busy,
         413 => LocalSyncError.tooLarge,
         403 when error.code == 'incorrect_pin' => LocalSyncError.incorrectPin,
+        403 when error.code == 'replayed_request' => LocalSyncError.failed,
         403 => pairing ? LocalSyncError.rejected : LocalSyncError.untrusted,
         _ => LocalSyncError.failed,
       };
