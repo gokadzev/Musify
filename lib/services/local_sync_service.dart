@@ -619,8 +619,9 @@ class LocalSyncService {
     }
     if (message != _discoveryRequest) return;
 
+    final safeName = _sanitizeName(deviceName.replaceAll(';', ' '));
     final response =
-        '$_discoveryResponse;${deviceName.replaceAll(';', ' ')};'
+        '$_discoveryResponse;$safeName;'
         '${server.port};${LibraryMergeService.deviceId}';
     _udpSocket?.send(utf8.encode(response), datagram.address, datagram.port);
   }
