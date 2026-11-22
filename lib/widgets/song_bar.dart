@@ -309,6 +309,9 @@ class SongBar extends StatefulWidget {
     this.playCount,
     this.barPadding,
     this.onAdd,
+    this.isSelected,
+    this.onSelectionToggle,
+    this.onLongPress,
     super.key,
   });
 
@@ -334,6 +337,14 @@ class SongBar extends StatefulWidget {
 
   /// Replaces the trailing overflow menu with an add button when set.
   final VoidCallback? onAdd;
+
+  /// Non-null while the list is in selection mode: the bar then shows a
+  /// checkmark instead of its menu, and a tap ticks the song.
+  final bool? isSelected;
+  final VoidCallback? onSelectionToggle;
+
+  /// Enters selection mode on the list the bar belongs to.
+  final VoidCallback? onLongPress;
 
   @override
   State<SongBar> createState() => _SongBarState();
@@ -432,13 +443,18 @@ class _SongBarState extends State<SongBar> {
     final plays = widget.showPlayTime
         ? _listeningCountLabel()
         : widget.playCount;
+    final isSelecting = widget.isSelected != null;
+    final isSelected = widget.isSelected ?? false;
 
     return Material(
-      color: widget.backgroundColor ?? colorScheme.surfaceContainerLow,
+      color: isSelected
+          ? colorScheme.secondaryContainer
+          : widget.backgroundColor ?? colorScheme.surfaceContainerLow,
       borderRadius: widget.borderRadius,
       clipBehavior: Clip.antiAlias,
       child: InkWell(
-        onTap: _handleSongTap,
+        onTap: isSelecting ? widget.onSelectionToggle : _handleSongTap,
+        onLongPress: widget.onLongPress,
         child: Padding(
           padding:
               widget.barPadding ??
@@ -476,7 +492,16 @@ class _SongBarState extends State<SongBar> {
                 ),
               ),
 
-              if (widget.onAdd != null)
+              if (isSelecting)
+                Icon(
+                  isSelected
+                      ? FluentIcons.checkmark_circle_24_filled
+                      : FluentIcons.circle_24_regular,
+                  color: isSelected
+                      ? colorScheme.primary
+                      : colorScheme.onSurfaceVariant,
+                )
+              else if (widget.onAdd != null)
                 IconButton(
                   padding: EdgeInsets.zero,
                   icon: Icon(
