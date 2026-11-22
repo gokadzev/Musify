@@ -30,6 +30,7 @@ class SortChips<T extends Enum> extends StatelessWidget {
     required this.sortTypes,
     required this.sortTypeToString,
     required this.onSelected,
+    this.trailing = const [],
     super.key,
   });
 
@@ -38,45 +39,73 @@ class SortChips<T extends Enum> extends StatelessWidget {
   final SortTypeToStringConverter<T> sortTypeToString;
   final OnSortTypeSelected<T> onSelected;
 
+  /// Chips shown after the sort ones, in the same scrolling row. Filters
+  /// belong next to the sort they apply to, not in a row of their own.
+  final List<Widget> trailing;
+
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
-        children: sortTypes.map((type) {
-          final isSelected = currentSortType == type;
-          return Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: FilterChip(
-              selected: isSelected,
-              showCheckmark: false,
-              label: Text(
-                sortTypeToString(type),
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
-                  color: isSelected
-                      ? colorScheme.onSecondaryContainer
-                      : colorScheme.onSurfaceVariant,
-                ),
-              ),
-              backgroundColor: colorScheme.surfaceContainerHigh,
-              selectedColor: colorScheme.secondaryContainer,
-              side: BorderSide.none,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-              onSelected: (_) {
+        children: [
+          for (final type in sortTypes)
+            SortChip(
+              label: sortTypeToString(type),
+              isSelected: currentSortType == type,
+              onSelected: () {
                 if (currentSortType == type) return;
                 onSelected(type);
               },
             ),
-          );
-        }).toList(),
+          ...trailing,
+        ],
+      ),
+    );
+  }
+}
+
+/// A single chip of a [SortChips] row.
+class SortChip extends StatelessWidget {
+  const SortChip({
+    required this.label,
+    required this.isSelected,
+    required this.onSelected,
+    super.key,
+  });
+
+  final String label;
+  final bool isSelected;
+  final VoidCallback onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: FilterChip(
+        selected: isSelected,
+        showCheckmark: false,
+        label: Text(
+          label,
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 14,
+            color: isSelected
+                ? colorScheme.onSecondaryContainer
+                : colorScheme.onSurfaceVariant,
+          ),
+        ),
+        backgroundColor: colorScheme.surfaceContainerHigh,
+        selectedColor: colorScheme.secondaryContainer,
+        side: BorderSide.none,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        onSelected: (_) => onSelected(),
       ),
     );
   }
