@@ -510,11 +510,17 @@ class LocalSyncService {
       ..removeWhere((item) => item.deviceId == deviceId);
     await _storePairedDevices(updated);
     await _dropCounters((key) => key.contains(':$deviceId:'));
+    _retryAfter.remove(deviceId);
+    _retryCount.remove(deviceId);
+    _verifiedAddress.remove(deviceId);
   });
 
   Future<void> forgetAllDevices() => _serializePaired(() async {
     await _storePairedDevices(const []);
     await _dropCounters((_) => true);
+    _retryAfter.clear();
+    _retryCount.clear();
+    _verifiedAddress.clear();
   });
 
   Iterable<String> _counterKeys(bool Function(String key) matches) =>
@@ -933,6 +939,8 @@ class LocalSyncService {
         await _savePairedDeviceUnlocked(
           PairedSyncDevice(deviceId: deviceId, name: name, secret: secret),
         );
+        _retryAfter.remove(deviceId);
+        _retryCount.remove(deviceId);
         await _dropCounters(
           (key) =>
               key.contains(':$deviceId:') && !key.endsWith(syncDigest(secret)),
