@@ -244,8 +244,10 @@ class LocalSyncService {
   /// Runs once a pairing is trusted and before the reply is sent (tests).
   @visibleForTesting
   Future<void> Function()? beforePairingReply;
-  final http.Client _client = http.Client();
+  http.Client? _clientInstance;
+  http.Client get _client => _clientInstance ??= http.Client();
   Future<void> _pairedWrites = Future.value();
+  final Map<String, Future<void>> _counterWrites = {};
   Future<void> _serverOperations = Future.value();
   int _activeTransfers = 0;
   Completer<void>? _transfersIdle;
@@ -389,7 +391,8 @@ class LocalSyncService {
     _localChangeTimer?.cancel();
     await _userBoxSubscription?.cancel();
     await stopServer();
-    _client.close();
+    _clientInstance?.close();
+    _clientInstance = null;
     _initialised = false;
   }
 
@@ -461,6 +464,27 @@ class LocalSyncService {
       .firstOrNull;
 
   bool isDevicePaired(String deviceId) => _paired(deviceId) != null;
+
+  Future<T> _serializeCounter<T>(
+    String deviceId,
+    Future<T> Function() action,
+  ) async {
+    final previous = _counterWrites[deviceId] ?? Future<void>.value();
+    final done = Completer<void>();
+
+    _counterWrites[deviceId] = done.future;
+
+    try {
+      await previous;
+      return await action();
+    } finally {
+      done.complete();
+
+      if (identical(_counterWrites[deviceId], done.future)) {
+        unawaited(_counterWrites.remove(deviceId));
+      }
+    }
+  }
 
   Future<void> _serializePaired(Future<void> Function() action) {
     final result = _pairedWrites.then((_) => action());
@@ -705,7 +729,7 @@ class LocalSyncService {
         return (426, {'error': 'upgrade_required'});
       }
       final id = data['clientId'];
-      if (id is! String || id.isEmpty || id.length > 128) {
+      if (id is! String || !_isValidDeviceId(id)) {
         return (400, {'error': 'invalid_pairing'});
       }
       final now = _pairingNow();
@@ -722,8 +746,7 @@ class LocalSyncService {
       }
       _lastPairingRequest = now;
       _pendingClientId = id;
-      final name = data['clientName']?.toString() ?? 'Musify';
-      _pendingClientName = name.substring(0, min(100, name.length));
+      _pendingClientName = _sanitizeName(data['clientName']?.toString() ?? '');
       final session = SyncSecurity.randomToken(16);
       _pendingSession = session;
       _pendingCompleter = Completer<bool>();
@@ -818,8 +841,15 @@ class LocalSyncService {
         error: e,
         stackTrace: stackTrace,
       );
+
       _cancelPendingPairing();
+
+      if (completer != null && !completer.isCompleted) {
+        completer.complete(false);
+      }
+
       await _undoTrust(id, previous, counters);
+
       return (500, {'error': 'pairing_failed'});
     }
   }
@@ -958,15 +988,25 @@ class LocalSyncService {
     if (nonce is! String || nonce.length < 20 || nonce.length > 128) {
       throw const _HttpFailure(400, 'invalid_request');
     }
-    final store = Hive.box('userNoBackup');
     final counterKey = 'localSyncReceived:$id:${syncDigest(peer.secret)}';
+
     final sequence = body['sequence'];
-    if (sequence is! int ||
-        sequence <= (store.get(counterKey, defaultValue: 0) as int)) {
-      throw const _HttpFailure(403, 'replayed_request');
+
+    if (sequence is! int || sequence < 1) {
+      throw const _HttpFailure(400, 'invalid_request');
     }
-    await store.put(counterKey, sequence);
-    await store.flush();
+
+    await _serializeCounter(id, () async {
+      final store = Hive.box('userNoBackup');
+      final previous = store.get(counterKey, defaultValue: 0);
+
+      if (previous is! int || sequence <= previous) {
+        throw const _HttpFailure(403, 'replayed_request');
+      }
+
+      await store.put(counterKey, sequence);
+      await store.flush();
+    });
     return (body: body, peer: peer);
   }
 
