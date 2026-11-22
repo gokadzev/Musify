@@ -1118,10 +1118,13 @@ class LocalSyncService {
     RawDatagramSocket? socket;
     StreamSubscription<RawSocketEvent>? subscription;
     final ownDeviceId = LibraryMergeService.deviceId;
+    var acquiredLock = false;
 
     try {
-      if (isAndroidPlatform) await _acquireMulticastLock();
-
+      if (isAndroidPlatform && _httpServer == null) {
+        await _acquireMulticastLock();
+        acquiredLock = true;
+      }
       socket = await RawDatagramSocket.bind(InternetAddress.anyIPv4, 0)
         ..broadcastEnabled = true;
 
@@ -1211,9 +1214,7 @@ class LocalSyncService {
     } finally {
       await subscription?.cancel();
       socket?.close();
-      if (isAndroidPlatform && _httpServer == null) {
-        await _releaseMulticastLock();
-      }
+      if (acquiredLock) await _releaseMulticastLock();
     }
 
     return discovered;
